@@ -65,10 +65,10 @@ tr:last-child td{border-bottom:none}
 .rotatorShell{position:relative;height:calc(100% - 34px)}
 .rotatorPanel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}
 .rotatorPanel.active{opacity:1;pointer-events:auto}
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
-.kpi{border:1px solid var(--line);border-radius:12px;padding:7px;background:rgba(255,255,255,.03)}
-.kpi .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.kpi .v{font-size:20px;font-weight:900;margin-top:3px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;align-items:stretch;min-height:74px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px 14px 12px;background:rgba(255,255,255,.03);overflow:visible;min-height:74px;display:flex;flex-direction:column;justify-content:center}
+.kpi .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;line-height:1.15}
+.kpi .v{font-size:20px;font-weight:900;margin-top:5px;line-height:1.25;padding-bottom:6px;overflow:visible}
 .gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:calc(100% - 28px)}
 .gcard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 50% 0%, rgba(110,231,249,.08), transparent 35%), rgba(255,255,255,.03);padding:8px;text-align:center;display:grid;grid-template-rows:24px 1fr auto auto;align-items:center;overflow:hidden}
 .gtitle{font-size:12px;font-weight:900;line-height:1.1}
@@ -317,7 +317,7 @@ html, body {
           <div><div class="title">Advisor Performance</div><div class="note">Daily Avg = MTD Hrs ÷ completed workdays. You update one day behind, so completed workdays means workdays before today.</div></div>
           <div class="chips" id="advisorChips"></div>
         </div>
-        <div class="tableArea" style="height:calc(100% - 72px)">
+        <div class="tableArea" style="height:calc(100% - 92px)">
           <table>
             <thead><tr><th>Advisor</th><th>Daily Avg</th><th>MTD Hrs<br><span style="color:#95a9c6;font-size:7px">Goal 300</span></th><th>Hrs/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.4</span></th><th>Alignment %<br><span style="color:#95a9c6;font-size:7px">Goal 10%</span></th><th>Tires %<br><span style="color:#95a9c6;font-size:7px">Goal 15%</span></th><th>Valvoline %<br><span style="color:#95a9c6;font-size:7px">Goal 25%</span></th><th>Roh$50 HRS/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.2</span></th><th>CSI<br><span style="color:#95a9c6;font-size:7px">Goal 920</span></th><th>ASR %<br><span style="color:#95a9c6;font-size:7px">Goal 21%</span></th><th>ELR %<br><span style="color:#95a9c6;font-size:7px">Goal 88%</span></th><th>Last Month Total</th></tr></thead>
             <tbody id="advisorBody"></tbody>
@@ -825,7 +825,7 @@ function renderAdvisor(){
   [["Avg Alignments",pct(data.advisorSummary.align,1)],["Avg Tires",pct(data.advisorSummary.tires,1)],["Avg Valvoline",pct(data.advisorSummary.valvoline,1)],["Avg CSI",Math.round(safe(data.advisorSummary.csi)).toString()]].forEach(([k,v])=>{
     const el=document.createElement("div"); el.className="kpi"; el.innerHTML=`<div class="k">${k}</div><div class="v">${v}</div>`; kpis.appendChild(el);
   });
-  fitTableRows("advisorBody", 30, 16, 12);
+  fitTableRows("advisorBody", 28, 15, 11);
 }
 function renderGauges(){
   const gs=buildGaugeData();
@@ -1199,7 +1199,7 @@ document.getElementById("saveUserBtn").onclick=saveUser;
 document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
 document.getElementById("clearSelectedUserBtn").onclick=clearSelectedUser;
 document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
-window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",28,16,12); fitTableRows("techTrainingBody",26,14,10); fitTableRows("advisorTrainingBody",26,14,10); fitTableRows("vacationBody",26,14,10); fitTableRows("advisorBody",30,16,12); renderGauges(); }); });
+window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",28,16,12); fitTableRows("techTrainingBody",26,14,10); fitTableRows("advisorTrainingBody",26,14,10); fitTableRows("vacationBody",26,14,10); fitTableRows("advisorBody",28,15,11); renderGauges(); }); });
 
 setClock();
 fitStage();
