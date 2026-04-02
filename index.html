@@ -226,7 +226,7 @@ html, body {
           <div class="header-row">
             <div style="flex:1;min-width:0">
               <h1 id="pageTitle"></h1>
-              <div class="sub">Samsung TV browser TV-style version</div>
+              <div class="sub">Samsung TV browser TV-style version • build-refresh fixed</div>
             </div>
             <div class="rightHeader">
               <div class="login">
@@ -236,6 +236,7 @@ html, body {
                 <button id="loginBtn">Login</button>
                 <button id="logoutBtn" class="secondary" style="display:none">Logout</button>
                 <button id="editBtn" style="display:none">Edit Dashboard</button>
+                <button id="resetPageBtn" class="secondary" title="Reload uploaded file" style="display:none">Reset</button>
               </div>
               <div class="clock">
                 <div class="date" id="liveDate"></div>
@@ -517,6 +518,8 @@ html, body {
 const STORAGE_KEY = "serviceDashboardCleanRebuildV4AdvisorGoals";
 const VACATION_KEY = "serviceDashboardVacationsV1";
 const AUTH_KEY = "serviceDashboardAuthV1";
+const BUILD_VERSION = "20260402_201441";
+const BUILD_VERSION_KEY = "serviceDashboardBuildVersionV1";
 const DEFAULT_USERNAME = "admin";
 const DEFAULT_PASSWORD = "Hyundai2026";
 const USERS_KEY = "dashboardUsersV1";
@@ -526,6 +529,12 @@ if (!users.find(u => u.username === DEFAULT_USERNAME)) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 const initialData = {"title": "Bob Rohrman Hyundai Daily Summary", "technicians": [{"name": "EDGAR", "goal": 47.5, "mon": 2.6, "tue": 8.4, "wed": 7.0, "thu": 5.5, "fri": 0.0, "sat": 19.3, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 48.675, "certified": "YES", "trainings_due": "\u2014", "excel_training": "95.0"}, {"name": "MIKE", "goal": 47.5, "mon": 3.0, "tue": 7.9, "wed": 7.7, "thu": 11.0, "fri": 0.0, "sat": 0.0, "total": 29.6, "goal_pct": 0.6231578947, "pacing": 37.0, "certified": "YES", "trainings_due": "\u2014", "excel_training": "317.0"}, {"name": "GAVEN", "goal": 47.5, "mon": 10.2, "tue": 7.8, "wed": 4.1, "thu": 11.4, "fri": 0.0, "sat": 0.0, "total": 33.5, "goal_pct": 0.7052631579, "pacing": 41.875, "certified": "YES", "trainings_due": "\u2014", "excel_training": "100.0"}, {"name": "JACOB", "goal": 47.5, "mon": 15.1, "tue": 6.8, "wed": 14.5, "thu": 6.4, "fri": 0.0, "sat": 0.0, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 53.5, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CORY", "goal": 47.5, "mon": 2.5, "tue": 4.5, "wed": 9.4, "thu": 2.2, "fri": 0.0, "sat": 0.0, "total": 18.6, "goal_pct": 0.3915789474, "pacing": 23.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "342.0"}, {"name": "WEST", "goal": 25.5, "mon": 4.6, "tue": 1.9, "wed": 2.7, "thu": 3.8, "fri": 0.0, "sat": 0.0, "total": 13.0, "goal_pct": 0.5098039216, "pacing": 16.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CARTER", "goal": 25.5, "mon": 2.6, "tue": 4.1, "wed": 4.0, "thu": 2.8, "fri": 0.0, "sat": 4.6, "total": 18.1, "goal_pct": 0.7098039216, "pacing": 21.475, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}], "advisors": [{"name": "DAVID", "daily_avg": 11.15, "mtd_hours": 245.3, "hours_per_ro": 1.32, "align": 0.0561, "tires": 0.0374, "valvoline": 0.2991, "csi": 891.0, "asr": 0.2163, "elr": 0.93, "last_month_total": 0}, {"name": "JORDAN", "daily_avg": 12.58636364, "mtd_hours": 276.9, "hours_per_ro": 1.4, "align": 0.213, "tires": 0.2222, "valvoline": 0.259, "csi": 936.0, "asr": 0.1713, "elr": 0.93, "last_month_total": 0}, {"name": "NEVEN", "daily_avg": 7.936363636, "mtd_hours": 174.6, "hours_per_ro": 1.27, "align": 0.0938, "tires": 0.0625, "valvoline": 0.1875, "csi": 925.0, "asr": 0.1549, "elr": 0.92, "last_month_total": 0}], "advisorTraining": [{"name": "DAVID", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "JORDAN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "NEVEN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}], "vacations": [{"name": "WEST", "dates": "4/13-4/14", "status": "APPROVED"}, {"name": "DAVID", "dates": "5/26-6/3", "status": "APPROVED"}, {"name": "JACOB", "dates": "5/22-5/25", "status": "APPROVED"}, {"name": "CARTER", "dates": "6/5/26-7/10/26 40HR", "status": "APPROVED"}, {"name": "JACOB", "dates": "8/17-8/21 40HR", "status": "APPROVED"}, {"name": "GAVEN", "dates": "4/23 4/24 4/27", "status": "APPROVED"}, {"name": "MIKE", "dates": "5/1 8HR", "status": "APPROVED"}, {"name": "MIKE", "dates": "3/27 8HR", "status": "APPROVED"}, {"name": "NEVEN", "dates": "5/20-5/24 40HR", "status": "APPROVED"}], "advisorSummary": {"date": "March 27, 2026", "total_hours": 696.8, "align": 0.1209666667, "tires": 0.1073666667, "valvoline": 0.2485333333, "csi": 927.0}, "techTotals": {"mon": 40.6, "tue": 41.4, "wed": 49.4, "thu": 43.1, "fri": 0.0, "sat": 23.9, "week_total": 198.4, "week_pct": 0.687694974}, "grossGoal": 135544.0, "grossActual": 138307.0, "cpGoal": 58395.0, "cpActual": 55958.0, "advisorMonthlyWorkdays": 27};
+const storedBuildVersion = localStorage.getItem(BUILD_VERSION_KEY);
+if (storedBuildVersion !== BUILD_VERSION) {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(VACATION_KEY);
+  localStorage.setItem(BUILD_VERSION_KEY, BUILD_VERSION);
+}
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || structuredClone(initialData);
 let vacations = JSON.parse(localStorage.getItem(VACATION_KEY) || "null") || structuredClone(initialData.vacations);
 
@@ -575,26 +584,7 @@ function advisorMonthProgress(){
   return { completed: Math.max(1, completed), total: Math.max(1, total) };
 }
 
-function advisorMonthProgress(){
-  const now = new Date();
-  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
-  const dim = new Date(y, m + 1, 0).getDate();
 
-  let completed = 0;
-  let total = 0;
-  for (let d = 1; d <= dim; d++) {
-    const dow = new Date(y, m, d).getDay();
-    if (dow !== 0) { // Sunday excluded
-      total += 1;
-      if (d < today) completed += 1; // user updates yesterday's totals this morning
-    }
-  }
-
-  const override = safe(data.advisorMonthlyWorkdays, 0);
-  if (override > 0) total = override;
-
-  return { completed: Math.max(1, completed), total: Math.max(1, total) };
-}
 
 function currentWorkingDays(){
   const p = advisorMonthProgress();
@@ -678,15 +668,8 @@ function recalcAdvisorSummary(){
   data.advisorSummary.valvoline=data.advisors.reduce((s,a)=>s+safe(a.valvoline,0),0)/count;
   data.advisorSummary.csi=data.advisors.reduce((s,a)=>s+safe(a.csi,0),0)/count;
 }
-function advisorProjectedHours(advisor){
-  const p = advisorMonthProgress();
-  return advisorDailyAverage(advisor) * p.total;
-}
-function advisorGoalPct(advisor){
-  const projected = advisorProjectedHours(advisor);
-  const goal = 300;
-  return goal > 0 ? projected / goal : 0;
-}
+
+
 function buildGaugeData(){
   const wd=currentWorkingDays();
   const gpPct=safe(data.grossGoal,0)>0 ? safe(data.grossActual,0)/safe(data.grossGoal,0) : 0;
