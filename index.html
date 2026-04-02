@@ -130,6 +130,20 @@ tr:last-child td{border-bottom:none}
 }
 </style>
 
+
+<style id="user-management-clickable-style">
+.user-row-list{display:grid;gap:8px;margin-top:8px}
+.user-row-item{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(255,255,255,.04);cursor:pointer;
+}
+.user-row-item:hover{background:rgba(255,255,255,.07)}
+.user-row-item.selected{border-color:rgba(110,231,249,.45);background:rgba(110,231,249,.12)}
+.user-row-name{font-size:12px;font-weight:800}
+.user-row-meta{font-size:10px;color:var(--muted)}
+</style>
+
 </head>
 <body>
 <div class="viewport">
@@ -393,19 +407,26 @@ tr:last-child td{border-bottom:none}
         <div class="group-body">
           <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
             <div class="title">User Management</div>
-            <div class="small">Add or edit dashboard users and passwords.</div>
-            <div id="userList"></div>
+            <div class="small">Click a user below to select them, then click Delete Selected User. Add User stays available below.</div>
+            <div id="userList" class="user-row-list"></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Delete Selected User</div>
+            <div class="small" id="selectedUserLabel">No user selected</div>
+            <div class="actions">
+              <button id="deleteSelectedUserBtn" class="secondary">Delete Selected User</button>
+            </div>
           </div>
 
           <div class="form-section" id="userUpdateSection">
-            <div class="title">Add / Update User</div>
+            <div class="title">Add User</div>
             <div class="form-grid">
               <div class="field"><label>Username</label><input id="newUserName"></div>
               <div class="field"><label>Password</label><input id="newUserPassword"></div>
             </div>
             <div class="actions">
-              <button id="saveUserBtn">Save User</button>
-              <button id="deleteUserBtn" class="secondary">Delete User</button>
+              <button id="saveUserBtn">Add User</button>
             </div>
           </div>
         </div>
@@ -907,16 +928,26 @@ function removeVacationEntry(){
 renderAll(); populateEditor();
 }
 
+let selectedUserForDelete = "";
+
 function renderUsers(){
   const list=document.getElementById("userList");
+  const selectedLabel=document.getElementById("selectedUserLabel");
   if(!list) return;
   list.innerHTML="";
   users.forEach(u=>{
-    const div=document.createElement("div");
-    div.className="chip";
-    div.textContent=u.username;
-    list.appendChild(div);
+    const row=document.createElement("div");
+    row.className="user-row-item" + (selectedUserForDelete === u.username ? " selected" : "");
+    row.innerHTML=`<div><div class="user-row-name">${u.username}</div><div class="user-row-meta">${u.username === "admin" ? "Admin account" : "Standard user"}</div></div>`;
+    row.onclick=()=>{
+      selectedUserForDelete = u.username;
+      renderUsers();
+    };
+    list.appendChild(row);
   });
+  if (selectedLabel) {
+    selectedLabel.textContent = selectedUserForDelete ? `Selected user: ${selectedUserForDelete}` : "No user selected";
+  }
 }
 
 function saveUser(){
@@ -934,6 +965,8 @@ function saveUser(){
     users.push({username:u,password:p});
   }
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  document.getElementById("newUserName").value="";
+  document.getElementById("newUserPassword").value="";
   renderUsers();
 }
 
@@ -942,9 +975,17 @@ function deleteUser(){
     alert("Only admin can manage users.");
     return;
   }
-  const u=document.getElementById("newUserName").value.trim();
-  users=users.filter(x=>x.username!==u);
+  if(!selectedUserForDelete){
+    alert("Select a user to delete.");
+    return;
+  }
+  if(selectedUserForDelete === "admin"){
+    alert("Admin cannot be deleted.");
+    return;
+  }
+  users=users.filter(x=>x.username!==selectedUserForDelete);
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  selectedUserForDelete = "";
   renderUsers();
 }
 
@@ -981,7 +1022,8 @@ document.getElementById("addAdvisorBtn").onclick=addAdvisor;
 document.getElementById("removeAdvisorBtn").onclick=removeAdvisor;
 document.getElementById("addVacationBtn").onclick=addVacationEntry;
 document.getElementById("saveUserBtn").onclick=saveUser;
-document.getElementById("deleteUserBtn").onclick=deleteUser;
+document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
+document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
 document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
 window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); }); });
 
