@@ -165,7 +165,7 @@ tr:last-child td{border-bottom:none}
       <section class="top">
         <div class="card">
           <div class="panel-head">
-            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing</div></div>
+            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing projected from each tech’s entered sold days. Monday-Friday is a 5-day week, and Saturday adds a 6th day only when that tech has Saturday hours.</div></div>
             <div class="chips" id="techChips"></div>
           </div>
           <div class="tableArea">
@@ -469,18 +469,37 @@ function currentWorkingDays(){
   }
   return {elapsed:Math.max(1,elapsed), total:Math.max(1,total)};
 }
+function techWeekProgressForTech(t){
+  // Base week is Monday-Friday = 5 days.
+  // Saturday adds a 6th day only when this tech actually has Saturday hours.
+  const total = safe(t.sat, 0) > 0 ? 6 : 5;
+
+  // Elapsed days are the sold days actually entered for this tech.
+  // Friday and Saturday can count when they have hours; Monday-Thursday count when they have hours.
+  const enteredDays = ["fri","sat","mon","tue","wed","thu"].filter(day => {
+    if (day === "sat") return safe(t.sat, 0) > 0;
+    return safe(t[day], 0) > 0;
+  }).length;
+
+  return { elapsed: Math.max(1, enteredDays), total };
+}
+
 function recalcTech(){
   const days=["mon","tue","wed","thu","fri","sat"];
   let totalGoal=0, weekTotal=0;
   const totals={mon:0,tue:0,wed:0,thu:0,fri:0,sat:0};
+
   data.technicians.forEach(t=>{
     t.total=0;
     days.forEach(k=>{ t[k]=safe(t[k],0); t.total+=t[k]; totals[k]+=t[k]; });
     t.goal=safe(t.goal,0);
     totalGoal+=t.goal; weekTotal+=t.total;
     t.goal_pct=t.goal>0 ? t.total/t.goal : 0;
-    t.pacing=t.total;
+
+    const progress = techWeekProgressForTech(t);
+    t.pacing = progress.elapsed > 0 ? (t.total / progress.elapsed) * progress.total : t.total;
   });
+
   Object.assign(data.techTotals, totals);
   data.techTotals.week_total=weekTotal;
   data.techTotals.week_pct=totalGoal>0 ? weekTotal/totalGoal : 0;
@@ -579,7 +598,7 @@ function renderTech(){
   data.technicians.forEach(t=>{
     const width=Math.max(0,Math.min(100,safe(t.goal_pct)*100));
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} hrs</span></td>`;
+    tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} proj</span></td>`;
     body.appendChild(tr);
   });
   fitTableRows("techBody", 16, 10, 8);
