@@ -17,12 +17,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050b13;col
  radial-gradient(circle at 100% 0%, rgba(110,231,249,.11), transparent 18%),
  linear-gradient(180deg,var(--bg),var(--bg2));}
 .stage{position:absolute;width:1920px;height:1080px;transform-origin:top left}
-.dashboard{width:1920px;height:1080px;padding:8px;display:grid;grid-template-rows:80px 328px 242px 366px;gap:6px}
-.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:14px;padding:7px 9px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.dashboard{width:1920px;height:1080px;padding:10px;display:grid;grid-template-rows:88px 336px 254px 372px;gap:8px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:16px;padding:10px 12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:6px}
 .header-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);font-weight:800;margin-bottom:4px}
-h1{margin:0;font-size:22px;line-height:1.02}
+h1{margin:0;font-size:28px;line-height:1.02}
 .sub{font-size:10px;color:var(--muted);margin-top:4px}
 .rightHeader{display:flex;align-items:flex-start;gap:10px}
 .login{display:flex;align-items:center;gap:6px;padding:4px 6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
@@ -33,25 +33,25 @@ button{cursor:pointer;border:none;color:var(--text);border-radius:10px;padding:6
 button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
 .clock{text-align:right;min-width:180px}
 .clock .date{font-size:12px;color:var(--muted)}
-.clock .time{font-size:22px;font-weight:900;line-height:1}
+.clock .time{font-size:28px;font-weight:900;line-height:1}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:100%}
 .stat{border:1px solid var(--line);border-radius:12px;padding:8px;background:rgba(255,255,255,.04)}
 .stat .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.stat .v{font-size:20px;font-weight:800;margin-top:3px;line-height:1.05}
+.stat .v{font-size:24px;font-weight:900;margin-top:4px;line-height:1.05}
 .top{display:grid;grid-template-columns:1.62fr .98fr;gap:6px}
 .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
-.title{font-size:14px;font-weight:800;line-height:1.05}
-.note{font-size:10px;color:var(--muted)}
+.title{font-size:18px;font-weight:900;line-height:1.05}
+.note{font-size:12px;color:var(--muted)}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
-.chip{font-size:8px;border:1px solid var(--line);border-radius:999px;padding:3px 6px;background:rgba(255,255,255,.05)}
+.chip{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:4px 8px;background:rgba(255,255,255,.05)}
 .tableArea{height:calc(100% - 34px)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
-th{font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);line-height:1.02}
-td{font-size:8px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.02;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);line-height:1.08}
+td{font-size:12px;padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.08;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
 tr:last-child td{border-bottom:none}
-.name{font-weight:700}
+.name{font-weight:900;font-size:15px;letter-spacing:.02em}
 .center{text-align:center}
-.badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;border-radius:999px;padding:1px 4px;font-size:7px;font-weight:800;border:1px solid transparent}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:42px;border-radius:999px;padding:3px 7px;font-size:10px;font-weight:900;border:1px solid transparent}
 .good{color:#c2f8d2;background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.24)}
 .warn{color:#ffe4ad;background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.24)}
 .bad{color:#ffc3c3;background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.24)}
@@ -61,20 +61,20 @@ tr:last-child td{border-bottom:none}
 .trainingGrid{display:grid;grid-template-rows:1fr 1fr;gap:6px;height:100%}
 .inner{border:1px solid var(--line);border-radius:12px;padding:6px;background:rgba(255,255,255,.03);overflow:hidden;display:flex;flex-direction:column;min-height:0}
 .innerTitle{font-size:9px;color:var(--cyan);font-weight:800;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
-.inner .tableArea{height:calc(100% - 16px)}
+.inner .tableArea{height:calc(100% - 16px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none;}
 .rotatorShell{position:relative;height:calc(100% - 34px)}
 .rotatorPanel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}
 .rotatorPanel.active{opacity:1;pointer-events:auto}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:7px;background:rgba(255,255,255,.03)}
 .kpi .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.kpi .v{font-size:15px;font-weight:800;margin-top:2px}
+.kpi .v{font-size:20px;font-weight:900;margin-top:3px}
 .gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:calc(100% - 28px)}
 .gcard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 50% 0%, rgba(110,231,249,.08), transparent 35%), rgba(255,255,255,.03);padding:8px;text-align:center;display:grid;grid-template-rows:24px 1fr auto auto;align-items:center;overflow:hidden}
-.gtitle{font-size:10px;font-weight:800;line-height:1.1}
-.gsvg{width:100%;height:138px}
-.gmain{font-size:22px;font-weight:900;line-height:1}
-.gsub{font-size:9px;color:var(--muted);line-height:1.15}
+.gtitle{font-size:12px;font-weight:900;line-height:1.1}
+.gsvg{width:100%;height:144px}
+.gmain{font-size:26px;font-weight:900;line-height:1}
+.gsub{font-size:11px;color:var(--muted);line-height:1.15}
 .admin{position:absolute;top:88px;right:10px;width:620px;max-height:980px;overflow:auto;background:rgba(8,17,28,.97);border:1px solid var(--line);border-radius:16px;padding:12px;display:none;z-index:50}
 .admin.open{display:block}
 .admin h2{margin:0 0 8px 0;font-size:16px}
@@ -164,6 +164,57 @@ html, body {
 }
 </style>
 
+
+<style id="tv-style-readability-boost">
+#techBody td, #advisorBody td{
+  font-size:14px !important;
+  font-weight:700;
+}
+#techBody td.name, #advisorBody td.name{
+  font-size:18px !important;
+  font-weight:900 !important;
+}
+#techBody .badge, #advisorBody .badge{
+  font-size:11px !important;
+}
+#techBody th, #advisorBody th{
+  font-size:11px !important;
+}
+#techBody tr, #advisorBody tr{
+  height:36px;
+}
+</style>
+
+
+<style id="tv-training-vacation-boost">
+#techTrainingBody td,
+#advisorTrainingBody td,
+#vacationBody td{
+  font-size:14px !important;
+  font-weight:700;
+}
+
+#techTrainingBody td.name,
+#advisorTrainingBody td.name,
+#vacationBody td.name{
+  font-size:18px !important;
+  font-weight:900 !important;
+}
+
+#techTrainingBody th,
+#advisorTrainingBody th,
+#vacationBody th{
+  font-size:11px !important;
+}
+
+#techTrainingBody tr,
+#advisorTrainingBody tr,
+#vacationBody tr{
+  height:36px;
+}
+.inner .tableArea::-webkit-scrollbar{display:none}
+</style>
+
 </head>
 <body>
 <div class="viewport">
@@ -175,7 +226,7 @@ html, body {
           <div class="header-row">
             <div style="flex:1;min-width:0">
               <h1 id="pageTitle"></h1>
-              <div class="sub">Samsung TV browser fit version</div>
+              <div class="sub">Samsung TV browser TV-style version</div>
             </div>
             <div class="rightHeader">
               <div class="login">
@@ -199,8 +250,8 @@ html, body {
       <section class="top">
         <div class="card">
           <div class="panel-head">
-            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing</div></div>
-            <div class="chips" id="techChips"></div>
+            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing. Saturday hours count in total hours, but pacing days are the number of Monday-Friday days that tech has hours entered.</div></div>
+            
           </div>
           <div class="tableArea">
             <table>
@@ -566,18 +617,55 @@ function advisorGoalPct(advisor){
   return goal > 0 ? projected / goal : 0;
 }
 
+function techElapsedWeekdays(){
+  // Pacing follows the latest weekday column that has been entered on the sheet.
+  // Saturday never increases the day count; it only adds hours into the total.
+  const techs = data.technicians || [];
+
+  if (techs.some(t => safe(t.fri, 0) > 0)) return 5;
+  if (techs.some(t => safe(t.thu, 0) > 0)) return 4;
+  if (techs.some(t => safe(t.wed, 0) > 0)) return 3;
+  if (techs.some(t => safe(t.tue, 0) > 0)) return 2;
+  if (techs.some(t => safe(t.mon, 0) > 0)) return 1;
+
+  // If only Saturday has been entered, treat it as the first pacing day.
+  if (techs.some(t => safe(t.sat, 0) > 0)) return 1;
+
+  return 1;
+}
+
 function recalcTech(){
   const days=["mon","tue","wed","thu","fri","sat"];
   let totalGoal=0, weekTotal=0;
   const totals={mon:0,tue:0,wed:0,thu:0,fri:0,sat:0};
+  const pacingDays = 5;
+
   data.technicians.forEach(t=>{
     t.total=0;
-    days.forEach(k=>{ t[k]=safe(t[k],0); t.total+=t[k]; totals[k]+=t[k]; });
+    days.forEach(k=>{
+      t[k]=safe(t[k],0);
+      t.total+=t[k];
+      totals[k]+=t[k];
+    });
+
     t.goal=safe(t.goal,0);
-    totalGoal+=t.goal; weekTotal+=t.total;
+    totalGoal+=t.goal;
+    weekTotal+=t.total;
     t.goal_pct=t.goal>0 ? t.total/t.goal : 0;
-    t.pacing=t.total;
+
+    // Count only Monday-Friday days that have hours for this tech.
+    // Saturday adds into total hours but never increases pacing day count.
+    let workedWeekdays = 0;
+    ["mon","tue","wed","thu","fri"].forEach(k=>{
+      if (safe(t[k],0) > 0) workedWeekdays += 1;
+    });
+
+    // If only Saturday has hours so far, treat it like the first pacing day.
+    const effectiveDays = workedWeekdays > 0 ? workedWeekdays : (safe(t.sat,0) > 0 ? 1 : 1);
+
+    t.pacing = effectiveDays > 0 ? (t.total / effectiveDays) * pacingDays : t.total;
   });
+
   Object.assign(data.techTotals, totals);
   data.techTotals.week_total=weekTotal;
   data.techTotals.week_pct=totalGoal>0 ? weekTotal/totalGoal : 0;
@@ -679,10 +767,7 @@ function renderStats(){
 }
 function renderTech(){
   document.getElementById("pageTitle").textContent=data.title||"Bob Rohrman Hyundai Daily Summary";
-  const chips=document.getElementById("techChips"); chips.innerHTML="";
-  [["Mon","mon"],["Tue","tue"],["Wed","wed"],["Thu","thu"],["Fri","fri"],["Sat","sat"]].forEach(([l,k])=>{
-    const c=document.createElement("div"); c.className="chip"; c.textContent=`${l} ${n(data.techTotals[k],1)}`; chips.appendChild(c);
-  });
+
   const body=document.getElementById("techBody"); body.innerHTML="";
   data.technicians.forEach(t=>{
     const width=Math.max(0,Math.min(100,safe(t.goal_pct)*100));
@@ -690,7 +775,7 @@ function renderTech(){
     tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} hrs</span></td>`;
     body.appendChild(tr);
   });
-  fitTableRows("techBody", 16, 10, 8);
+  fitTableRows("techBody", 28, 16, 12);
 }
 function renderTraining(){
   const tb=document.getElementById("techTrainingBody"); tb.innerHTML="";
@@ -713,8 +798,8 @@ function renderTraining(){
     tr.innerHTML=`<td class="name">${a.name||"—"}</td><td class="center"><span class="badge ${badgeCls(certified)}">${certified}</span></td><td class="center"><span class="badge neutral">${due}</span></td><td class="center"><span class="badge neutral">${excel}</span></td>`;
     ab.appendChild(tr);
   });
-  fitTableRows("techTrainingBody", 12, 8, 6);
-  fitTableRows("advisorTrainingBody", 12, 8, 6);
+  fitTableRows("techTrainingBody", 26, 14, 10);
+  fitTableRows("advisorTrainingBody", 26, 14, 10);
 }
 function renderVacation(){
   const body=document.getElementById("vacationBody"); body.innerHTML="";
@@ -723,7 +808,7 @@ function renderVacation(){
     tr.innerHTML=`<td class="name">${v.name||"—"}</td><td>${v.dates||"—"}</td><td class="center"><span class="badge neutral">${v.status||"—"}</span></td>`;
     body.appendChild(tr);
   });
-  fitTableRows("vacationBody", 12, 8, 6);
+  fitTableRows("vacationBody", 26, 14, 10);
 }
 function renderAdvisor(){
   const chips=document.getElementById("advisorChips"); chips.innerHTML="";
@@ -740,7 +825,7 @@ function renderAdvisor(){
   [["Avg Alignments",pct(data.advisorSummary.align,1)],["Avg Tires",pct(data.advisorSummary.tires,1)],["Avg Valvoline",pct(data.advisorSummary.valvoline,1)],["Avg CSI",Math.round(safe(data.advisorSummary.csi)).toString()]].forEach(([k,v])=>{
     const el=document.createElement("div"); el.className="kpi"; el.innerHTML=`<div class="k">${k}</div><div class="v">${v}</div>`; kpis.appendChild(el);
   });
-  fitTableRows("advisorBody", 18, 10, 8);
+  fitTableRows("advisorBody", 30, 16, 12);
 }
 function renderGauges(){
   const gs=buildGaugeData();
@@ -755,12 +840,12 @@ function fitTableRows(bodyId, minHeight, maxFont, minFont){
   const thead=table?table.querySelector("thead"):null;
   const avail=Math.max(24, (area?area.clientHeight:0) - (thead?thead.offsetHeight:0) - 2);
   const h=Math.max(minHeight, Math.floor(avail/rows.length));
-  let fs=minFont, py=1, badgeFs=minFont;
-  if(h>=18){ fs=Math.min(maxFont, minFont+1); py=2; badgeFs=minFont; }
-  if(h>=24){ fs=maxFont; py=3; badgeFs=Math.min(maxFont-1, minFont+1); }
+  let fs=minFont, py=2, badgeFs=minFont;
+  if(h>=24){ fs=Math.min(maxFont-1, minFont+2); py=3; badgeFs=minFont+1; }
+  if(h>=30){ fs=maxFont; py=4; badgeFs=Math.min(maxFont-1, minFont+2); }
   rows.forEach(r=>r.style.height=h+"px");
   body.querySelectorAll("td").forEach(td=>{ td.style.fontSize=fs+"px"; td.style.paddingTop=py+"px"; td.style.paddingBottom=py+"px"; });
-  body.querySelectorAll(".badge").forEach(b=>{ b.style.fontSize=badgeFs+"px"; b.style.padding=(Math.max(1,py-1))+"px 4px"; });
+  body.querySelectorAll(".badge").forEach(b=>{ b.style.fontSize=badgeFs+"px"; b.style.padding=(Math.max(2,py-1))+"px 6px"; });
 }
 function startTopRightRotator(){
   const training=document.getElementById("trainingPanel");
@@ -1114,7 +1199,7 @@ document.getElementById("saveUserBtn").onclick=saveUser;
 document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
 document.getElementById("clearSelectedUserBtn").onclick=clearSelectedUser;
 document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
-window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); renderGauges(); }); });
+window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",28,16,12); fitTableRows("techTrainingBody",26,14,10); fitTableRows("advisorTrainingBody",26,14,10); fitTableRows("vacationBody",26,14,10); fitTableRows("advisorBody",30,16,12); renderGauges(); }); });
 
 setClock();
 fitStage();
@@ -1122,5 +1207,82 @@ setAuthUI();
 renderUsers();
 renderAll();
 </script>
+
+
+<script id="training-vacation-auto-scroll">
+function attachSlowAutoScroll(container, options = {}){
+  if(!container) return;
+  const speed = options.speed ?? 0.2;
+  const bottomPause = options.bottomPause ?? 1800;
+  const topPause = options.topPause ?? 600;
+
+  let scrollAmount = 0;
+  let pausedUntil = 0;
+  let rafId = null;
+
+  function hasOverflow(){
+    return container.scrollHeight - container.clientHeight > 8;
+  }
+
+  function step(ts){
+    if (document.hidden) {
+      rafId = requestAnimationFrame(step);
+      return;
+    }
+
+    // Only scroll when the panel containing this table is active
+    const panel = container.closest(".rotatorPanel");
+    if (panel && !panel.classList.contains("active")) {
+      rafId = requestAnimationFrame(step);
+      return;
+    }
+
+    if (!hasOverflow()){
+      container.scrollTop = 0;
+      rafId = requestAnimationFrame(step);
+      return;
+    }
+
+    if (ts < pausedUntil){
+      rafId = requestAnimationFrame(step);
+      return;
+    }
+
+    scrollAmount += speed;
+    container.scrollTop = scrollAmount;
+
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    if (scrollAmount >= maxScroll){
+      scrollAmount = maxScroll;
+      container.scrollTop = maxScroll;
+      pausedUntil = ts + bottomPause;
+      setTimeout(()=>{
+        scrollAmount = 0;
+        container.scrollTop = 0;
+      }, bottomPause);
+      pausedUntil = ts + bottomPause + topPause;
+    }
+
+    rafId = requestAnimationFrame(step);
+  }
+
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(step);
+}
+
+function startTrainingVacationAutoScroll(){
+  const techTrainingArea = document.querySelector("#techTrainingBody")?.closest(".tableArea");
+  const advisorTrainingArea = document.querySelector("#advisorTrainingBody")?.closest(".tableArea");
+  const vacationArea = document.querySelector("#vacationBody")?.closest(".tableArea");
+
+  attachSlowAutoScroll(techTrainingArea, { speed: 0.18, bottomPause: 2200, topPause: 700 });
+  attachSlowAutoScroll(advisorTrainingArea, { speed: 0.18, bottomPause: 2200, topPause: 700 });
+  attachSlowAutoScroll(vacationArea, { speed: 0.22, bottomPause: 2000, topPause: 700 });
+}
+
+document.addEventListener("DOMContentLoaded", startTrainingVacationAutoScroll);
+</script>
+
+
 </body>
 </html>
