@@ -17,12 +17,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050b13;col
  radial-gradient(circle at 100% 0%, rgba(110,231,249,.11), transparent 18%),
  linear-gradient(180deg,var(--bg),var(--bg2));}
 .stage{position:absolute;width:1920px;height:1080px;transform-origin:top left}
-.dashboard{width:1920px;height:1080px;padding:10px;display:grid;grid-template-rows:86px 340px 250px 384px;gap:8px}
-.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:14px;padding:8px 10px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:8px}
+.dashboard{width:1920px;height:1080px;padding:8px;display:grid;grid-template-rows:80px 328px 242px 366px;gap:6px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:14px;padding:7px 9px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:6px}
 .header-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);font-weight:800;margin-bottom:4px}
-h1{margin:0;font-size:24px;line-height:1.02}
+h1{margin:0;font-size:22px;line-height:1.02}
 .sub{font-size:10px;color:var(--muted);margin-top:4px}
 .rightHeader{display:flex;align-items:flex-start;gap:10px}
 .login{display:flex;align-items:center;gap:6px;padding:4px 6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
@@ -33,12 +33,12 @@ button{cursor:pointer;border:none;color:var(--text);border-radius:10px;padding:6
 button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
 .clock{text-align:right;min-width:180px}
 .clock .date{font-size:12px;color:var(--muted)}
-.clock .time{font-size:24px;font-weight:900;line-height:1}
+.clock .time{font-size:22px;font-weight:900;line-height:1}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:100%}
 .stat{border:1px solid var(--line);border-radius:12px;padding:8px;background:rgba(255,255,255,.04)}
 .stat .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .stat .v{font-size:20px;font-weight:800;margin-top:3px;line-height:1.05}
-.top{display:grid;grid-template-columns:1.62fr .98fr;gap:8px}
+.top{display:grid;grid-template-columns:1.62fr .98fr;gap:6px}
 .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
 .title{font-size:14px;font-weight:800;line-height:1.05}
 .note{font-size:10px;color:var(--muted)}
@@ -46,8 +46,8 @@ button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
 .chip{font-size:8px;border:1px solid var(--line);border-radius:999px;padding:3px 6px;background:rgba(255,255,255,.05)}
 .tableArea{height:calc(100% - 34px)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
-th{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);line-height:1.02}
-td{font-size:9px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.02;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+th{font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);line-height:1.02}
+td{font-size:8px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.02;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 .name{font-weight:700}
 .center{text-align:center}
@@ -65,15 +65,15 @@ tr:last-child td{border-bottom:none}
 .rotatorShell{position:relative;height:calc(100% - 34px)}
 .rotatorPanel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}
 .rotatorPanel.active{opacity:1;pointer-events:auto}
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:7px;background:rgba(255,255,255,.03)}
 .kpi .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .kpi .v{font-size:15px;font-weight:800;margin-top:2px}
-.gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;height:calc(100% - 30px)}
+.gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:calc(100% - 28px)}
 .gcard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 50% 0%, rgba(110,231,249,.08), transparent 35%), rgba(255,255,255,.03);padding:8px;text-align:center;display:grid;grid-template-rows:24px 1fr auto auto;align-items:center;overflow:hidden}
 .gtitle{font-size:10px;font-weight:800;line-height:1.1}
-.gsvg{width:100%;height:150px}
-.gmain{font-size:24px;font-weight:900;line-height:1}
+.gsvg{width:100%;height:138px}
+.gmain{font-size:22px;font-weight:900;line-height:1}
 .gsub{font-size:9px;color:var(--muted);line-height:1.15}
 .admin{position:absolute;top:88px;right:10px;width:620px;max-height:980px;overflow:auto;background:rgba(8,17,28,.97);border:1px solid var(--line);border-radius:16px;padding:12px;display:none;z-index:50}
 .admin.open{display:block}
@@ -144,6 +144,26 @@ tr:last-child td{border-bottom:none}
 .user-row-meta{font-size:10px;color:var(--muted)}
 </style>
 
+
+<style id="samsung-tv-safe-fit">
+html, body {
+  overscroll-behavior: none;
+}
+.viewport {
+  padding: 0;
+}
+.stage {
+  will-change: transform;
+}
+.dashboard {
+  box-sizing: border-box;
+}
+@media (min-width: 1200px) {
+  .login input { width: 68px !important; }
+  #password { width: 84px !important; }
+}
+</style>
+
 </head>
 <body>
 <div class="viewport">
@@ -155,7 +175,7 @@ tr:last-child td{border-bottom:none}
           <div class="header-row">
             <div style="flex:1;min-width:0">
               <h1 id="pageTitle"></h1>
-              <div class="sub"></div>
+              <div class="sub">Samsung TV browser fit version</div>
             </div>
             <div class="rightHeader">
               <div class="login">
@@ -621,11 +641,20 @@ function gaugeSvg(g){
     </svg>`;
 }
 function fitStage(){
-  const baseW=1920, baseH=1080;
-  const vw=window.innerWidth, vh=window.innerHeight;
-  const scale=Math.min(vw/baseW, vh/baseH);
-  const left=(vw-baseW*scale)/2, top=(vh-baseH*scale)/2;
-  document.getElementById("stage").style.transform=`translate(${left}px, ${top}px) scale(${scale})`;
+  const baseW = 1920, baseH = 1080;
+  const vw = window.innerWidth, vh = window.innerHeight;
+
+  // Safe margins for Samsung TV browser chrome / overscan
+  const safeW = Math.max(320, vw - 24);
+  const safeH = Math.max(240, vh - 36);
+
+  // Slight safety multiplier so bottom row does not clip
+  const scale = Math.min(safeW / baseW, safeH / baseH) * 0.985;
+
+  const left = Math.max(0, (vw - baseW * scale) / 2);
+  const top = Math.max(0, (vh - baseH * scale) / 2);
+
+  document.getElementById("stage").style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
 }
 function setClock(){
   const now=new Date();
@@ -1085,7 +1114,7 @@ document.getElementById("saveUserBtn").onclick=saveUser;
 document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
 document.getElementById("clearSelectedUserBtn").onclick=clearSelectedUser;
 document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
-window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); }); });
+window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); renderGauges(); }); });
 
 setClock();
 fitStage();
