@@ -229,7 +229,7 @@ tr:last-child td{border-bottom:none}
 
       <section class="card">
         <div class="panel-head">
-          <div><div class="title">Advisor Performance</div><div class="note">Advisor metrics</div></div>
+          <div><div class="title">Advisor Performance</div><div class="note">Daily Avg is auto-calculated from MTD Hrs ÷ elapsed working days in the live current month</div></div>
           <div class="chips" id="advisorChips"></div>
         </div>
         <div class="tableArea" style="height:calc(100% - 72px)">
@@ -283,7 +283,7 @@ tr:last-child td{border-bottom:none}
         <div class="group-body">
           <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
             <div class="title">Edit Advisor Performance</div>
-            <div class="small">Each advisor has editable boxes for Daily Avg, MTD Hrs, Hrs/RO, Alignment %, Tires %, Valvoline %, Roh$50 HRS/RO, CSI, ASR %, ELR %, and Previous Month. You can type % values like 12% for Alignment, Tires, Valvoline, ASR, and ELR.</div>
+            <div class="small">Daily Avg is auto-calculated from MTD Hrs and the elapsed working days in the live current month. You can edit MTD Hrs, Hrs/RO, Alignment %, Tires %, Valvoline %, Roh$50 HRS/RO, CSI, ASR %, ELR %, and Previous Month. You can type % values like 12% for Alignment, Tires, Valvoline, ASR, and ELR.</div>
             <div id="advisorEditForm"></div>
           </div>
         </div>
@@ -296,7 +296,7 @@ tr:last-child td{border-bottom:none}
             <div class="title">Add Advisor</div>
             <div class="form-grid">
               <div class="field"><label>Name</label><input id="newAdvisorName"></div>
-              <div class="field"><label>Daily Avg</label><input id="newAdvisorDailyAvg"></div>
+              <div class="field"><label>Daily Avg</label><input value="Auto from MTD Hrs / elapsed workdays" disabled></div>
               <div class="field"><label>MTD Hrs</label><input id="newAdvisorMtdHrs"></div>
               <div class="field"><label>Hrs/RO</label><input id="newAdvisorHrsRo"></div>
               <div class="field"><label>Align</label><input id="newAdvisorAlign" placeholder="12%"></div>
@@ -460,9 +460,7 @@ function badgeCls(text){
   return "neutral";
 }
 function currentWorkingDays(){
-  const raw = data?.advisorSummary?.date ? String(data.advisorSummary.date).trim() : "";
-  let refDate = new Date(raw);
-  if (Number.isNaN(refDate.getTime())) refDate = new Date();
+  const refDate = new Date(); // use live current date
   const y=refDate.getFullYear(), m=refDate.getMonth(), refDay=refDate.getDate();
   const dim=new Date(y,m+1,0).getDate();
   let elapsed=0,total=0;
@@ -628,7 +626,7 @@ function renderAdvisor(){
   const body=document.getElementById("advisorBody"); body.innerHTML="";
   data.advisors.forEach(a=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td class="name">${a.name}</td><td>${n(a.daily_avg,2)}</td><td>${n(a.mtd_hours,1)}</td><td>${n(a.hours_per_ro,2)}</td><td>${pct(a.align,1)}</td><td>${pct(a.tires,1)}</td><td>${pct(a.valvoline,1)}</td><td>${n(a.roh50_hrs_ro,2)}</td><td>${Math.round(safe(a.csi)).toString()}</td><td>${pct(a.asr,1)}</td><td>${pct(a.elr,0)}</td><td>${a.previous_month ?? "—"}</td>`;
+    tr.innerHTML=`<td class="name">${a.name}</td><td>${n(currentWorkingDays().elapsed > 0 ? safe(a.mtd_hours,0)/currentWorkingDays().elapsed : 0,2)}</td><td>${n(a.mtd_hours,1)}</td><td>${n(a.hours_per_ro,2)}</td><td>${pct(a.align,1)}</td><td>${pct(a.tires,1)}</td><td>${pct(a.valvoline,1)}</td><td>${n(a.roh50_hrs_ro,2)}</td><td>${Math.round(safe(a.csi)).toString()}</td><td>${pct(a.asr,1)}</td><td>${pct(a.elr,0)}</td><td>${a.previous_month ?? "—"}</td>`;
     body.appendChild(tr);
   });
   const kpis=document.getElementById("advisorKpis"); kpis.innerHTML="";
@@ -713,7 +711,7 @@ function populateEditor(){
     const sec=document.createElement("div"); sec.className="form-section";
     sec.innerHTML=`<div class="title" style="margin-bottom:6px">${a.name}</div>
       <div class="form-grid">
-        <div class="field"><label>Daily Avg</label><input data-ai="${idx}" data-ak="daily_avg" value="${a.daily_avg}"></div>
+        <div class="field"><label>Daily Avg</label><input value="${n(currentWorkingDays().elapsed > 0 ? safe(a.mtd_hours,0)/currentWorkingDays().elapsed : 0,2)}" disabled></div>
         <div class="field"><label>MTD Hrs (Goal 300)</label><input data-ai="${idx}" data-ak="mtd_hours" value="${a.mtd_hours}"></div>
         <div class="field"><label>Hrs/RO (Goal 1.4)</label><input data-ai="${idx}" data-ak="hours_per_ro" value="${a.hours_per_ro}"></div>
         <div class="field"><label>Alignment % (Goal 10%)</label><input data-ai="${idx}" data-ak="align" value="${percentEditValue(a.align)}"></div>
@@ -785,9 +783,15 @@ function saveEditor(){
     const i=+inp.dataset.ai, k=inp.dataset.ak;
     if(["align","tires","valvoline","asr","elr"].includes(k)){
       data.advisors[i][k]=parsePercentInput(inp.value, data.advisors[i][k]);
+    } else if (k === "previous_month") {
+      data.advisors[i][k] = inp.value.trim() || "—";
     } else {
       data.advisors[i][k]=safe(inp.value,data.advisors[i][k]);
     }
+  });
+  data.advisors.forEach(a => {
+    const wd = currentWorkingDays().elapsed;
+    a.daily_avg = wd > 0 ? safe(a.mtd_hours,0) / wd : 0;
   });
   document.querySelectorAll("#trainingEditForm input[data-tti]").forEach(inp=>{
     const i=+inp.dataset.tti, k=inp.dataset.ttk, val=inp.value.trim()||"—";
@@ -834,8 +838,8 @@ function addAdvisor(){
   if(!name) return alert("Enter an advisor name.");
   data.advisors.push({
     name,
-    daily_avg:safe(document.getElementById("newAdvisorDailyAvg").value,0),
     mtd_hours:safe(document.getElementById("newAdvisorMtdHrs").value,0),
+    daily_avg:(()=>{ const m = safe(document.getElementById("newAdvisorMtdHrs").value,0); const wd = currentWorkingDays().elapsed; return wd > 0 ? m / wd : 0; })(),
     hours_per_ro:safe(document.getElementById("newAdvisorHrsRo").value,0),
     align:parsePercentInput(document.getElementById("newAdvisorAlign").value,0),
     tires:parsePercentInput(document.getElementById("newAdvisorTires").value,0),
