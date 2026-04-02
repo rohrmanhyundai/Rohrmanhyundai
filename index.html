@@ -131,7 +131,7 @@ tr:last-child td{border-bottom:none}
 </style>
 
 
-<style id="user-management-clickable-style">
+<style id="user-management-click-style">
 .user-row-list{display:grid;gap:8px;margin-top:8px}
 .user-row-item{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -179,7 +179,7 @@ tr:last-child td{border-bottom:none}
       <section class="top">
         <div class="card">
           <div class="panel-head">
-            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing projected from each tech’s entered sold days. Monday-Friday is a 5-day week, and Saturday adds a 6th day only when that tech has Saturday hours.</div></div>
+            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing</div></div>
             <div class="chips" id="techChips"></div>
           </div>
           <div class="tableArea">
@@ -243,12 +243,12 @@ tr:last-child td{border-bottom:none}
 
       <section class="card">
         <div class="panel-head">
-          <div><div class="title">Advisor Performance</div><div class="note">Daily Avg is auto-calculated from MTD Hrs ÷ elapsed working days in the live current month</div></div>
+          <div><div class="title">Advisor Performance</div><div class="note">Daily Avg = MTD Hrs ÷ completed workdays. You update one day behind, so completed workdays means workdays before today.</div></div>
           <div class="chips" id="advisorChips"></div>
         </div>
         <div class="tableArea" style="height:calc(100% - 72px)">
           <table>
-            <thead><tr><th>Advisor</th><th>Daily Avg</th><th>MTD Hrs<br><span style="color:#95a9c6;font-size:7px">Goal 300</span></th><th>Hrs/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.4</span></th><th>Alignment %<br><span style="color:#95a9c6;font-size:7px">Goal 10%</span></th><th>Tires %<br><span style="color:#95a9c6;font-size:7px">Goal 15%</span></th><th>Valvoline %<br><span style="color:#95a9c6;font-size:7px">Goal 25%</span></th><th>Roh$50 HRS/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.2</span></th><th>CSI<br><span style="color:#95a9c6;font-size:7px">Goal 920</span></th><th>ASR %<br><span style="color:#95a9c6;font-size:7px">Goal 21%</span></th><th>ELR %<br><span style="color:#95a9c6;font-size:7px">Goal 88%</span></th><th>Previous Month</th></tr></thead>
+            <thead><tr><th>Advisor</th><th>Daily Avg</th><th>MTD Hrs<br><span style="color:#95a9c6;font-size:7px">Goal 300</span></th><th>Hrs/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.4</span></th><th>Alignment %<br><span style="color:#95a9c6;font-size:7px">Goal 10%</span></th><th>Tires %<br><span style="color:#95a9c6;font-size:7px">Goal 15%</span></th><th>Valvoline %<br><span style="color:#95a9c6;font-size:7px">Goal 25%</span></th><th>Roh$50 HRS/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.2</span></th><th>CSI<br><span style="color:#95a9c6;font-size:7px">Goal 920</span></th><th>ASR %<br><span style="color:#95a9c6;font-size:7px">Goal 21%</span></th><th>ELR %<br><span style="color:#95a9c6;font-size:7px">Goal 88%</span></th></tr></thead>
             <tbody id="advisorBody"></tbody>
           </table>
         </div>
@@ -257,7 +257,7 @@ tr:last-child td{border-bottom:none}
 
       <section class="card">
         <div class="panel-head">
-          <div><div class="title">Performance Gauges</div><div class="note">Needle = projected monthly hours vs 300-hour goal. Big number = projected monthly hours.</div></div>
+          <div><div class="title">Performance Gauges</div><div class="note">Needle = percent to goal. Big number = projected monthly hours.</div></div>
         </div>
         <div class="gauges" id="gauges"></div>
       </section>
@@ -287,6 +287,7 @@ tr:last-child td{border-bottom:none}
               <div class="field"><label>Gross Profit Actual</label><input id="grossActualInput"></div>
               <div class="field"><label>Customer Pay Goal</label><input id="cpGoalInput"></div>
               <div class="field"><label>Customer Pay Actual</label><input id="cpActualInput"></div>
+              <div class="field"><label>Advisor Monthly Workdays</label><input id="advisorMonthlyWorkdaysInput"></div>
             </div>
           </div>
         </div>
@@ -297,7 +298,7 @@ tr:last-child td{border-bottom:none}
         <div class="group-body">
           <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
             <div class="title">Edit Advisor Performance</div>
-            <div class="small">Daily Avg is auto-calculated from MTD Hrs and the elapsed working days in the live current month. You can edit MTD Hrs, Hrs/RO, Alignment %, Tires %, Valvoline %, Roh$50 HRS/RO, CSI, ASR %, ELR %, and Previous Month. You can type % values like 12% for Alignment, Tires, Valvoline, ASR, and ELR.</div>
+            <div class="small">Daily Avg is automatic: MTD Hrs ÷ completed workdays. You update one day behind, so completed workdays means workdays before today. You can edit MTD Hrs, Hrs/RO, Alignment %, Tires %, Valvoline %, Roh$50 HRS/RO, CSI, ASR %, ELR %, and Previous Month.</div>
             <div id="advisorEditForm"></div>
           </div>
         </div>
@@ -310,7 +311,7 @@ tr:last-child td{border-bottom:none}
             <div class="title">Add Advisor</div>
             <div class="form-grid">
               <div class="field"><label>Name</label><input id="newAdvisorName"></div>
-              <div class="field"><label>Daily Avg</label><input value="Auto from MTD Hrs / elapsed workdays" disabled></div>
+              <div class="field"><label>Daily Avg</label><input id="newAdvisorDailyAvg"></div>
               <div class="field"><label>MTD Hrs</label><input id="newAdvisorMtdHrs"></div>
               <div class="field"><label>Hrs/RO</label><input id="newAdvisorHrsRo"></div>
               <div class="field"><label>Align</label><input id="newAdvisorAlign" placeholder="12%"></div>
@@ -320,7 +321,6 @@ tr:last-child td{border-bottom:none}
               <div class="field"><label>CSI</label><input id="newAdvisorCsi" placeholder="920"></div>
               <div class="field"><label>ASR %</label><input id="newAdvisorAsr" placeholder="21%"></div>
               <div class="field"><label>ELR %</label><input id="newAdvisorElr" placeholder="88%"></div>
-              <div class="field"><label>Previous Month</label><input id="newAdvisorPreviousMonth"></div>
               <div class="field"><label>Certified</label><input id="newAdvisorCertified"></div>
               <div class="field"><label>Training Due</label><input id="newAdvisorTrainingDue"></div>
               <div class="field"><label>Excel Training</label><input id="newAdvisorExcel"></div>
@@ -407,26 +407,27 @@ tr:last-child td{border-bottom:none}
         <div class="group-body">
           <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
             <div class="title">User Management</div>
-            <div class="small">Click a user below to select them, then click Delete Selected User. Add User stays available below.</div>
+            <div class="small">Click a user to load them into the form. Then you can edit that user, delete that user, or add a new user below.</div>
             <div id="userList" class="user-row-list"></div>
           </div>
 
           <div class="form-section">
-            <div class="title">Delete Selected User</div>
+            <div class="title">Selected User Actions</div>
             <div class="small" id="selectedUserLabel">No user selected</div>
             <div class="actions">
               <button id="deleteSelectedUserBtn" class="secondary">Delete Selected User</button>
+              <button id="clearSelectedUserBtn" class="secondary">Clear Selection</button>
             </div>
           </div>
 
           <div class="form-section" id="userUpdateSection">
-            <div class="title">Add User</div>
+            <div class="title">Add / Edit User</div>
             <div class="form-grid">
               <div class="field"><label>Username</label><input id="newUserName"></div>
               <div class="field"><label>Password</label><input id="newUserPassword"></div>
             </div>
             <div class="actions">
-              <button id="saveUserBtn">Add User</button>
+              <button id="saveUserBtn">Save User</button>
             </div>
           </div>
         </div>
@@ -452,7 +453,7 @@ if (!users.find(u => u.username === DEFAULT_USERNAME)) {
   users.push({username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD});
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
-const initialData = {"title": "Bob Rohrman Hyundai Daily Summary", "technicians": [{"name": "EDGAR", "goal": 47.5, "mon": 2.6, "tue": 8.4, "wed": 7.0, "thu": 5.5, "fri": 0.0, "sat": 19.3, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 48.675, "certified": "YES", "trainings_due": "\u2014", "excel_training": "95.0"}, {"name": "MIKE", "goal": 47.5, "mon": 3.0, "tue": 7.9, "wed": 7.7, "thu": 11.0, "fri": 0.0, "sat": 0.0, "total": 29.6, "goal_pct": 0.6231578947, "pacing": 37.0, "certified": "YES", "trainings_due": "\u2014", "excel_training": "317.0"}, {"name": "GAVEN", "goal": 47.5, "mon": 10.2, "tue": 7.8, "wed": 4.1, "thu": 11.4, "fri": 0.0, "sat": 0.0, "total": 33.5, "goal_pct": 0.7052631579, "pacing": 41.875, "certified": "YES", "trainings_due": "\u2014", "excel_training": "100.0"}, {"name": "JACOB", "goal": 47.5, "mon": 15.1, "tue": 6.8, "wed": 14.5, "thu": 6.4, "fri": 0.0, "sat": 0.0, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 53.5, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CORY", "goal": 47.5, "mon": 2.5, "tue": 4.5, "wed": 9.4, "thu": 2.2, "fri": 0.0, "sat": 0.0, "total": 18.6, "goal_pct": 0.3915789474, "pacing": 23.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "342.0"}, {"name": "WEST", "goal": 25.5, "mon": 4.6, "tue": 1.9, "wed": 2.7, "thu": 3.8, "fri": 0.0, "sat": 0.0, "total": 13.0, "goal_pct": 0.5098039216, "pacing": 16.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CARTER", "goal": 25.5, "mon": 2.6, "tue": 4.1, "wed": 4.0, "thu": 2.8, "fri": 0.0, "sat": 4.6, "total": 18.1, "goal_pct": 0.7098039216, "pacing": 21.475, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}], "advisors": [{"name": "DAVID", "daily_avg": 11.15, "mtd_hours": 245.3, "hours_per_ro": 1.32, "align": 0.0561, "tires": 0.0374, "valvoline": 0.2991, "csi": 891.0, "asr": 0.2163, "elr": 0.93, "previous_month": "—"}, {"name": "JORDAN", "daily_avg": 12.58636364, "mtd_hours": 276.9, "hours_per_ro": 1.4, "align": 0.213, "tires": 0.2222, "valvoline": 0.259, "csi": 936.0, "asr": 0.1713, "elr": 0.93, "previous_month": "—"}, {"name": "NEVEN", "daily_avg": 7.936363636, "mtd_hours": 174.6, "hours_per_ro": 1.27, "align": 0.0938, "tires": 0.0625, "valvoline": 0.1875, "csi": 925.0, "asr": 0.1549, "elr": 0.92, "previous_month": "—"}], "advisorTraining": [{"name": "DAVID", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "JORDAN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "NEVEN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}], "vacations": [{"name": "WEST", "dates": "4/13-4/14", "status": "APPROVED"}, {"name": "DAVID", "dates": "5/26-6/3", "status": "APPROVED"}, {"name": "JACOB", "dates": "5/22-5/25", "status": "APPROVED"}, {"name": "CARTER", "dates": "6/5/26-7/10/26 40HR", "status": "APPROVED"}, {"name": "JACOB", "dates": "8/17-8/21 40HR", "status": "APPROVED"}, {"name": "GAVEN", "dates": "4/23 4/24 4/27", "status": "APPROVED"}, {"name": "MIKE", "dates": "5/1 8HR", "status": "APPROVED"}, {"name": "MIKE", "dates": "3/27 8HR", "status": "APPROVED"}, {"name": "NEVEN", "dates": "5/20-5/24 40HR", "status": "APPROVED"}], "advisorSummary": {"date": "March 27, 2026", "total_hours": 696.8, "align": 0.1209666667, "tires": 0.1073666667, "valvoline": 0.2485333333, "csi": 927.0}, "techTotals": {"mon": 40.6, "tue": 41.4, "wed": 49.4, "thu": 43.1, "fri": 0.0, "sat": 23.9, "week_total": 198.4, "week_pct": 0.687694974}, "grossGoal": 135544.0, "grossActual": 138307.0, "cpGoal": 58395.0, "cpActual": 55958.0};
+const initialData = {"title": "Bob Rohrman Hyundai Daily Summary", "technicians": [{"name": "EDGAR", "goal": 47.5, "mon": 2.6, "tue": 8.4, "wed": 7.0, "thu": 5.5, "fri": 0.0, "sat": 19.3, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 48.675, "certified": "YES", "trainings_due": "\u2014", "excel_training": "95.0"}, {"name": "MIKE", "goal": 47.5, "mon": 3.0, "tue": 7.9, "wed": 7.7, "thu": 11.0, "fri": 0.0, "sat": 0.0, "total": 29.6, "goal_pct": 0.6231578947, "pacing": 37.0, "certified": "YES", "trainings_due": "\u2014", "excel_training": "317.0"}, {"name": "GAVEN", "goal": 47.5, "mon": 10.2, "tue": 7.8, "wed": 4.1, "thu": 11.4, "fri": 0.0, "sat": 0.0, "total": 33.5, "goal_pct": 0.7052631579, "pacing": 41.875, "certified": "YES", "trainings_due": "\u2014", "excel_training": "100.0"}, {"name": "JACOB", "goal": 47.5, "mon": 15.1, "tue": 6.8, "wed": 14.5, "thu": 6.4, "fri": 0.0, "sat": 0.0, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 53.5, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CORY", "goal": 47.5, "mon": 2.5, "tue": 4.5, "wed": 9.4, "thu": 2.2, "fri": 0.0, "sat": 0.0, "total": 18.6, "goal_pct": 0.3915789474, "pacing": 23.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "342.0"}, {"name": "WEST", "goal": 25.5, "mon": 4.6, "tue": 1.9, "wed": 2.7, "thu": 3.8, "fri": 0.0, "sat": 0.0, "total": 13.0, "goal_pct": 0.5098039216, "pacing": 16.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CARTER", "goal": 25.5, "mon": 2.6, "tue": 4.1, "wed": 4.0, "thu": 2.8, "fri": 0.0, "sat": 4.6, "total": 18.1, "goal_pct": 0.7098039216, "pacing": 21.475, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}], "advisors": [{"name": "DAVID", "daily_avg": 11.15, "mtd_hours": 245.3, "hours_per_ro": 1.32, "align": 0.0561, "tires": 0.0374, "valvoline": 0.2991, "csi": 891.0, "asr": 0.2163, "elr": 0.93}, {"name": "JORDAN", "daily_avg": 12.58636364, "mtd_hours": 276.9, "hours_per_ro": 1.4, "align": 0.213, "tires": 0.2222, "valvoline": 0.259, "csi": 936.0, "asr": 0.1713, "elr": 0.93}, {"name": "NEVEN", "daily_avg": 7.936363636, "mtd_hours": 174.6, "hours_per_ro": 1.27, "align": 0.0938, "tires": 0.0625, "valvoline": 0.1875, "csi": 925.0, "asr": 0.1549, "elr": 0.92}], "advisorTraining": [{"name": "DAVID", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "JORDAN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "NEVEN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}], "vacations": [{"name": "WEST", "dates": "4/13-4/14", "status": "APPROVED"}, {"name": "DAVID", "dates": "5/26-6/3", "status": "APPROVED"}, {"name": "JACOB", "dates": "5/22-5/25", "status": "APPROVED"}, {"name": "CARTER", "dates": "6/5/26-7/10/26 40HR", "status": "APPROVED"}, {"name": "JACOB", "dates": "8/17-8/21 40HR", "status": "APPROVED"}, {"name": "GAVEN", "dates": "4/23 4/24 4/27", "status": "APPROVED"}, {"name": "MIKE", "dates": "5/1 8HR", "status": "APPROVED"}, {"name": "MIKE", "dates": "3/27 8HR", "status": "APPROVED"}, {"name": "NEVEN", "dates": "5/20-5/24 40HR", "status": "APPROVED"}], "advisorSummary": {"date": "March 27, 2026", "total_hours": 696.8, "align": 0.1209666667, "tires": 0.1073666667, "valvoline": 0.2485333333, "csi": 927.0}, "techTotals": {"mon": 40.6, "tue": 41.4, "wed": 49.4, "thu": 43.1, "fri": 0.0, "sat": 23.9, "week_total": 198.4, "week_pct": 0.687694974}, "grossGoal": 135544.0, "grossActual": 138307.0, "cpGoal": 58395.0, "cpActual": 55958.0, "advisorMonthlyWorkdays": 27};
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || structuredClone(initialData);
 let vacations = JSON.parse(localStorage.getItem(VACATION_KEY) || "null") || structuredClone(initialData.vacations);
 
@@ -480,47 +481,82 @@ function badgeCls(text){
   if (t.includes("yes") || (t.includes("certified") && !t.includes("not"))) return "good";
   return "neutral";
 }
-function currentWorkingDays(){
-  const refDate = new Date(); // use live current date
-  const y=refDate.getFullYear(), m=refDate.getMonth(), refDay=refDate.getDate();
-  const dim=new Date(y,m+1,0).getDate();
-  let elapsed=0,total=0;
-  for(let d=1; d<=dim; d++){
-    if(new Date(y,m,d).getDay()!==0){ total++; if(d<=refDay) elapsed++; }
+function advisorMonthProgress(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+  const dim = new Date(y, m + 1, 0).getDate();
+
+  let completed = 0;
+  let total = 0;
+
+  for (let d = 1; d <= dim; d++) {
+    const dow = new Date(y, m, d).getDay();
+    if (dow !== 0) { // Sunday excluded
+      total += 1;
+      if (d < today) completed += 1; // completed days only, because user updates next morning
+    }
   }
-  return {elapsed:Math.max(1,elapsed), total:Math.max(1,total)};
+
+  const override = safe(data.advisorMonthlyWorkdays, 0);
+  if (override > 0) total = override;
+
+  return { completed: Math.max(1, completed), total: Math.max(1, total) };
 }
-function techWeekProgressForTech(t){
-  // Base week is Monday-Friday = 5 days.
-  // Saturday adds a 6th day only when this tech actually has Saturday hours.
-  const total = safe(t.sat, 0) > 0 ? 6 : 5;
 
-  // Elapsed days are the sold days actually entered for this tech.
-  // Friday and Saturday can count when they have hours; Monday-Thursday count when they have hours.
-  const enteredDays = ["fri","sat","mon","tue","wed","thu"].filter(day => {
-    if (day === "sat") return safe(t.sat, 0) > 0;
-    return safe(t[day], 0) > 0;
-  }).length;
+function advisorMonthProgress(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+  const dim = new Date(y, m + 1, 0).getDate();
 
-  return { elapsed: Math.max(1, enteredDays), total };
+  let completed = 0;
+  let total = 0;
+  for (let d = 1; d <= dim; d++) {
+    const dow = new Date(y, m, d).getDay();
+    if (dow !== 0) { // Sunday excluded
+      total += 1;
+      if (d < today) completed += 1; // user updates yesterday's totals this morning
+    }
+  }
+
+  const override = safe(data.advisorMonthlyWorkdays, 0);
+  if (override > 0) total = override;
+
+  return { completed: Math.max(1, completed), total: Math.max(1, total) };
+}
+
+function currentWorkingDays(){
+  const p = advisorMonthProgress();
+  return { elapsed: p.completed, total: p.total };
+}
+
+function advisorDailyAverage(advisor){
+  const p = advisorMonthProgress();
+  return p.completed > 0 ? safe(advisor.mtd_hours, 0) / p.completed : 0;
+}
+
+function advisorProjectedHours(advisor){
+  const p = advisorMonthProgress();
+  return advisorDailyAverage(advisor) * p.total;
+}
+
+function advisorGoalPct(advisor){
+  const projected = advisorProjectedHours(advisor);
+  const goal = 300;
+  return goal > 0 ? projected / goal : 0;
 }
 
 function recalcTech(){
   const days=["mon","tue","wed","thu","fri","sat"];
   let totalGoal=0, weekTotal=0;
   const totals={mon:0,tue:0,wed:0,thu:0,fri:0,sat:0};
-
   data.technicians.forEach(t=>{
     t.total=0;
     days.forEach(k=>{ t[k]=safe(t[k],0); t.total+=t[k]; totals[k]+=t[k]; });
     t.goal=safe(t.goal,0);
     totalGoal+=t.goal; weekTotal+=t.total;
     t.goal_pct=t.goal>0 ? t.total/t.goal : 0;
-
-    const progress = techWeekProgressForTech(t);
-    t.pacing = progress.elapsed > 0 ? (t.total / progress.elapsed) * progress.total : t.total;
+    t.pacing=t.total;
   });
-
   Object.assign(data.techTotals, totals);
   data.techTotals.week_total=weekTotal;
   data.techTotals.week_pct=totalGoal>0 ? weekTotal/totalGoal : 0;
@@ -534,13 +570,13 @@ function recalcAdvisorSummary(){
   data.advisorSummary.csi=data.advisors.reduce((s,a)=>s+safe(a.csi,0),0)/count;
 }
 function advisorProjectedHours(advisor){
-  const wd=currentWorkingDays();
-  return wd.elapsed>0 ? (safe(advisor.mtd_hours,0)/wd.elapsed)*wd.total : 0;
+  const p = advisorMonthProgress();
+  return advisorDailyAverage(advisor) * p.total;
 }
 function advisorGoalPct(advisor){
-  const projected=advisorProjectedHours(advisor);
-  const goal=300; // monthly advisor hours goal
-  return goal>0 ? projected/goal : 0;
+  const projected = advisorProjectedHours(advisor);
+  const goal = 300;
+  return goal > 0 ? projected / goal : 0;
 }
 function buildGaugeData(){
   const wd=currentWorkingDays();
@@ -551,14 +587,16 @@ function buildGaugeData(){
     {label:"Pacing Customer Pay Goal", pct:cpPct, main:pct(cpPct,1), sub:money(data.cpActual)+" / "+money(data.cpGoal)}
   ];
   data.advisors.slice(0,3).forEach(a=>{
-    const projected=advisorProjectedHours(a);
-    const goalHours=300;
-    const p=advisorGoalPct(a);
+    const progress = advisorMonthProgress();
+    const dailyAvg = advisorDailyAverage(a);
+    const projected = advisorProjectedHours(a);
+    const goalHours = 300;
+    const p = advisorGoalPct(a);
     gauges.push({
       label:a.name+" Projected Hours",
       pct:p,
       main:n(projected,1)+" hrs",
-      sub:pct(p,1)+" to goal • goal "+n(goalHours,1)+" hrs"
+      sub:n(dailyAvg,1)+" daily avg × "+n(progress.total,0)+" workdays • goal "+n(goalHours,1)+" hrs"
     });
   });
   return gauges;
@@ -619,7 +657,7 @@ function renderTech(){
   data.technicians.forEach(t=>{
     const width=Math.max(0,Math.min(100,safe(t.goal_pct)*100));
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} proj</span></td>`;
+    tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} hrs</span></td>`;
     body.appendChild(tr);
   });
   fitTableRows("techBody", 16, 10, 8);
@@ -665,7 +703,7 @@ function renderAdvisor(){
   const body=document.getElementById("advisorBody"); body.innerHTML="";
   data.advisors.forEach(a=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td class="name">${a.name}</td><td>${n(currentWorkingDays().elapsed > 0 ? safe(a.mtd_hours,0)/currentWorkingDays().elapsed : 0,2)}</td><td>${n(a.mtd_hours,1)}</td><td>${n(a.hours_per_ro,2)}</td><td>${pct(a.align,1)}</td><td>${pct(a.tires,1)}</td><td>${pct(a.valvoline,1)}</td><td>${n(a.roh50_hrs_ro,2)}</td><td>${Math.round(safe(a.csi)).toString()}</td><td>${pct(a.asr,1)}</td><td>${pct(a.elr,0)}</td><td>${a.previous_month ?? "—"}</td>`;
+    tr.innerHTML=`<td class="name">${a.name}</td><td>${n(advisorDailyAverage(a),2)}</td><td>${n(a.mtd_hours,1)}</td><td>${n(a.hours_per_ro,2)}</td><td>${pct(a.align,1)}</td><td>${pct(a.tires,1)}</td><td>${pct(a.valvoline,1)}</td><td>${n(a.roh50_hrs_ro,2)}</td><td>${Math.round(safe(a.csi)).toString()}</td><td>${pct(a.asr,1)}</td><td>${pct(a.elr,0)}</td>`;
     body.appendChild(tr);
   });
   const kpis=document.getElementById("advisorKpis"); kpis.innerHTML="";
@@ -744,13 +782,14 @@ function populateEditor(){
   document.getElementById("grossActualInput").value=data.grossActual??0;
   document.getElementById("cpGoalInput").value=data.cpGoal??0;
   document.getElementById("cpActualInput").value=data.cpActual??0;
+  document.getElementById("advisorMonthlyWorkdaysInput").value=data.advisorMonthlyWorkdays??27;
 
   const aef=document.getElementById("advisorEditForm"); aef.innerHTML="";
   data.advisors.forEach((a,idx)=>{
     const sec=document.createElement("div"); sec.className="form-section";
     sec.innerHTML=`<div class="title" style="margin-bottom:6px">${a.name}</div>
       <div class="form-grid">
-        <div class="field"><label>Daily Avg</label><input value="${n(currentWorkingDays().elapsed > 0 ? safe(a.mtd_hours,0)/currentWorkingDays().elapsed : 0,2)}" disabled></div>
+        <div class="field"><label>Daily Avg</label><input value="${n(advisorDailyAverage(a),2)}" disabled></div>
         <div class="field"><label>MTD Hrs (Goal 300)</label><input data-ai="${idx}" data-ak="mtd_hours" value="${a.mtd_hours}"></div>
         <div class="field"><label>Hrs/RO (Goal 1.4)</label><input data-ai="${idx}" data-ak="hours_per_ro" value="${a.hours_per_ro}"></div>
         <div class="field"><label>Alignment % (Goal 10%)</label><input data-ai="${idx}" data-ak="align" value="${percentEditValue(a.align)}"></div>
@@ -760,7 +799,6 @@ function populateEditor(){
         <div class="field"><label>CSI (Goal 920)</label><input data-ai="${idx}" data-ak="csi" value="${a.csi}"></div>
         <div class="field"><label>ASR % (Goal 21%)</label><input data-ai="${idx}" data-ak="asr" value="${percentEditValue(a.asr)}"></div>
         <div class="field"><label>ELR % (Goal 88%)</label><input data-ai="${idx}" data-ak="elr" value="${percentEditValue(a.elr)}"></div>
-        <div class="field"><label>Previous Month</label><input data-ai="${idx}" data-ak="previous_month" value="${a.previous_month ?? ""}"></div>
       </div>`;
     aef.appendChild(sec);
   });
@@ -817,21 +855,19 @@ function saveEditor(){
   data.grossActual=safe(document.getElementById("grossActualInput").value,data.grossActual);
   data.cpGoal=safe(document.getElementById("cpGoalInput").value,data.cpGoal);
   data.cpActual=safe(document.getElementById("cpActualInput").value,data.cpActual);
+  data.advisorMonthlyWorkdays=safe(document.getElementById("advisorMonthlyWorkdaysInput").value,data.advisorMonthlyWorkdays||27);
 
   document.querySelectorAll("#advisorEditForm input[data-ai]").forEach(inp=>{
     const i=+inp.dataset.ai, k=inp.dataset.ak;
     if(["align","tires","valvoline","asr","elr"].includes(k)){
       data.advisors[i][k]=parsePercentInput(inp.value, data.advisors[i][k]);
     } else if (k === "previous_month") {
-      data.advisors[i][k] = inp.value.trim() || "—";
+      data.advisors[i][k]=inp.value.trim() || "—";
     } else {
-      data.advisors[i][k]=safe(inp.value,data.advisors[i][k]);
+      data.advisors[i][k]=safe(inp.value, data.advisors[i][k]);
     }
   });
-  data.advisors.forEach(a => {
-    const wd = currentWorkingDays().elapsed;
-    a.daily_avg = wd > 0 ? safe(a.mtd_hours,0) / wd : 0;
-  });
+  data.advisors.forEach(a => { a.daily_avg = advisorDailyAverage(a); });
   document.querySelectorAll("#trainingEditForm input[data-tti]").forEach(inp=>{
     const i=+inp.dataset.tti, k=inp.dataset.ttk, val=inp.value.trim()||"—";
     data.technicians[i][k]=val;
@@ -878,7 +914,7 @@ function addAdvisor(){
   data.advisors.push({
     name,
     mtd_hours:safe(document.getElementById("newAdvisorMtdHrs").value,0),
-    daily_avg:(()=>{ const m = safe(document.getElementById("newAdvisorMtdHrs").value,0); const wd = currentWorkingDays().elapsed; return wd > 0 ? m / wd : 0; })(),
+    daily_avg:0,
     hours_per_ro:safe(document.getElementById("newAdvisorHrsRo").value,0),
     align:parsePercentInput(document.getElementById("newAdvisorAlign").value,0),
     tires:parsePercentInput(document.getElementById("newAdvisorTires").value,0),
@@ -886,9 +922,9 @@ function addAdvisor(){
     roh50_hrs_ro:safe(document.getElementById("newAdvisorRoh50").value,0),
     csi:safe(document.getElementById("newAdvisorCsi").value,0),
     asr:parsePercentInput(document.getElementById("newAdvisorAsr").value,0),
-    elr:parsePercentInput(document.getElementById("newAdvisorElr").value,0),
-    previous_month:document.getElementById("newAdvisorPreviousMonth").value.trim()||"—"
+    elr:parsePercentInput(document.getElementById("newAdvisorElr").value,0)
   });
+  data.advisors[data.advisors.length - 1].daily_avg = advisorDailyAverage(data.advisors[data.advisors.length - 1]);
   data.advisorTraining.push({
     name,
     certified:document.getElementById("newAdvisorCertified").value.trim()||"—",
@@ -930,6 +966,26 @@ renderAll(); populateEditor();
 
 let selectedUserForDelete = "";
 
+function loadSelectedUserIntoForm(){
+  const user = users.find(u => u.username === selectedUserForDelete);
+  const nameInput = document.getElementById("newUserName");
+  const passInput = document.getElementById("newUserPassword");
+  if (!nameInput || !passInput) return;
+  if (user){
+    nameInput.value = user.username;
+    passInput.value = user.password || "";
+  } else {
+    nameInput.value = "";
+    passInput.value = "";
+  }
+}
+
+function clearSelectedUser(){
+  selectedUserForDelete = "";
+  loadSelectedUserIntoForm();
+  renderUsers();
+}
+
 function renderUsers(){
   const list=document.getElementById("userList");
   const selectedLabel=document.getElementById("selectedUserLabel");
@@ -941,6 +997,7 @@ function renderUsers(){
     row.innerHTML=`<div><div class="user-row-name">${u.username}</div><div class="user-row-meta">${u.username === "admin" ? "Admin account" : "Standard user"}</div></div>`;
     row.onclick=()=>{
       selectedUserForDelete = u.username;
+      loadSelectedUserIntoForm();
       renderUsers();
     };
     list.appendChild(row);
@@ -958,15 +1015,17 @@ function saveUser(){
   const u=document.getElementById("newUserName").value.trim();
   const p=document.getElementById("newUserPassword").value;
   if(!u||!p) return alert("Enter username and password");
+
   const existing=users.find(x=>x.username===u);
   if(existing){
     existing.password=p;
   } else {
     users.push({username:u,password:p});
   }
+
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  document.getElementById("newUserName").value="";
-  document.getElementById("newUserPassword").value="";
+  selectedUserForDelete = u;
+  loadSelectedUserIntoForm();
   renderUsers();
 }
 
@@ -983,10 +1042,9 @@ function deleteUser(){
     alert("Admin cannot be deleted.");
     return;
   }
-  users=users.filter(x=>x.username!==selectedUserForDelete);
+  users = users.filter(x=>x.username!==selectedUserForDelete);
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  selectedUserForDelete = "";
-  renderUsers();
+  clearSelectedUser();
 }
 
 function setAuthUI(){
@@ -1023,7 +1081,7 @@ document.getElementById("removeAdvisorBtn").onclick=removeAdvisor;
 document.getElementById("addVacationBtn").onclick=addVacationEntry;
 document.getElementById("saveUserBtn").onclick=saveUser;
 document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
-document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
+document.getElementById("clearSelectedUserBtn").onclick=clearSelectedUser;
 document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
 window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); }); });
 
