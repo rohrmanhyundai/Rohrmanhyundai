@@ -243,7 +243,7 @@ tr:last-child td{border-bottom:none}
 
       <section class="card">
         <div class="panel-head">
-          <div><div class="title">Performance Gauges</div><div class="note">Needle = percent to goal. Big number = projected monthly hours.</div></div>
+          <div><div class="title">Performance Gauges</div><div class="note">Needle = projected monthly hours vs 300-hour goal. Big number = projected monthly hours.</div></div>
         </div>
         <div class="gauges" id="gauges"></div>
       </section>
@@ -498,9 +498,8 @@ function advisorProjectedHours(advisor){
   return wd.elapsed>0 ? (safe(advisor.mtd_hours,0)/wd.elapsed)*wd.total : 0;
 }
 function advisorGoalPct(advisor){
-  const wd=currentWorkingDays();
   const projected=advisorProjectedHours(advisor);
-  const goal=safe(advisor.daily_avg,0)*wd.total;
+  const goal=300; // monthly advisor hours goal
   return goal>0 ? projected/goal : 0;
 }
 function buildGaugeData(){
@@ -513,7 +512,7 @@ function buildGaugeData(){
   ];
   data.advisors.slice(0,3).forEach(a=>{
     const projected=advisorProjectedHours(a);
-    const goalHours=safe(a.daily_avg,0)*wd.total;
+    const goalHours=300;
     const p=advisorGoalPct(a);
     gauges.push({
       label:a.name+" Projected Hours",
