@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Service Dashboard Clean Rebuild</title>
+<style>
+:root{
+  --bg:#08111c; --bg2:#0b1523; --panel:#121c2c; --line:rgba(255,255,255,.08);
+  --text:#edf4ff; --muted:#95a9c6; --cyan:#6ee7f9; --teal:#3dd6c3;
+  --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050b13;color:var(--text);font-family:Inter,Arial,sans-serif}
+.viewport{position:fixed;inset:0;overflow:hidden;background:
+ radial-gradient(circle at 0% 0%, rgba(61,214,195,.18), transparent 22%),
+ radial-gradient(circle at 100% 0%, rgba(110,231,249,.11), transparent 18%),
+ linear-gradient(180deg,var(--bg),var(--bg2));}
+.stage{position:absolute;width:1920px;height:1080px;transform-origin:top left}
+.dashboard{width:1920px;height:1080px;padding:8px;display:grid;grid-template-rows:80px 328px 242px 366px;gap:6px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:14px;padding:7px 9px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:6px}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);font-weight:800;margin-bottom:4px}
+h1{margin:0;font-size:22px;line-height:1.02}
+.sub{font-size:10px;color:var(--muted);margin-top:4px}
+.rightHeader{display:flex;align-items:flex-start;gap:10px}
+.login{display:flex;align-items:center;gap:6px;padding:4px 6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+.login span{font-size:9px;font-weight:800;color:var(--muted)}
+input,select,button{font-family:inherit}
+.login input,.admin input,.admin select{background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:5px 6px;font-size:11px;outline:none}
+button{cursor:pointer;border:none;color:var(--text);border-radius:10px;padding:6px 9px;font-size:10px;font-weight:800;background:linear-gradient(180deg,rgba(110,231,249,.22),rgba(61,214,195,.18));border:1px solid rgba(110,231,249,.18)}
+button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
+.clock{text-align:right;min-width:180px}
+.clock .date{font-size:12px;color:var(--muted)}
+.clock .time{font-size:22px;font-weight:900;line-height:1}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:100%}
+.stat{border:1px solid var(--line);border-radius:12px;padding:8px;background:rgba(255,255,255,.04)}
+.stat .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.stat .v{font-size:20px;font-weight:800;margin-top:3px;line-height:1.05}
+.top{display:grid;grid-template-columns:1.62fr .98fr;gap:6px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.title{font-size:14px;font-weight:800;line-height:1.05}
+.note{font-size:10px;color:var(--muted)}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:8px;border:1px solid var(--line);border-radius:999px;padding:3px 6px;background:rgba(255,255,255,.05)}
+.tableArea{height:calc(100% - 34px)}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);line-height:1.02}
+td{font-size:8px;padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.02;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.name{font-weight:700}
+.center{text-align:center}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;border-radius:999px;padding:1px 4px;font-size:7px;font-weight:800;border:1px solid transparent}
+.good{color:#c2f8d2;background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.24)}
+.warn{color:#ffe4ad;background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.24)}
+.bad{color:#ffc3c3;background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.24)}
+.neutral{color:#e6efff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.08)}
+.bar{height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:2px}
+.fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan))}
+.trainingGrid{display:grid;grid-template-rows:1fr 1fr;gap:6px;height:100%}
+.inner{border:1px solid var(--line);border-radius:12px;padding:6px;background:rgba(255,255,255,.03);overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.innerTitle{font-size:9px;color:var(--cyan);font-weight:800;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
+.inner .tableArea{height:calc(100% - 16px)}
+.rotatorShell{position:relative;height:calc(100% - 34px)}
+.rotatorPanel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}
+.rotatorPanel.active{opacity:1;pointer-events:auto}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:7px;background:rgba(255,255,255,.03)}
+.kpi .k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.kpi .v{font-size:15px;font-weight:800;margin-top:2px}
+.gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:calc(100% - 28px)}
+.gcard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 50% 0%, rgba(110,231,249,.08), transparent 35%), rgba(255,255,255,.03);padding:8px;text-align:center;display:grid;grid-template-rows:24px 1fr auto auto;align-items:center;overflow:hidden}
+.gtitle{font-size:10px;font-weight:800;line-height:1.1}
+.gsvg{width:100%;height:138px}
+.gmain{font-size:22px;font-weight:900;line-height:1}
+.gsub{font-size:9px;color:var(--muted);line-height:1.15}
+.admin{position:absolute;top:88px;right:10px;width:620px;max-height:980px;overflow:auto;background:rgba(8,17,28,.97);border:1px solid var(--line);border-radius:16px;padding:12px;display:none;z-index:50}
+.admin.open{display:block}
+.admin h2{margin:0 0 8px 0;font-size:16px}
+.small{font-size:10px;color:var(--muted)}
+.form-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.actions{display:flex;gap:8px;margin-top:10px}
+.training-edit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.vacation-edit-grid{display:grid;grid-template-columns:1fr 1.2fr .8fr;gap:8px;margin-bottom:8px}
+#techBody td:first-child,#techBody th:first-child{width:15%;text-align:left}
+#techTrainingBody th:first-child,#advisorTrainingBody th:first-child,#vacationBody th:first-child{width:34%}
+#techTrainingBody th:nth-child(2),#advisorTrainingBody th:nth-child(2){width:16%}
+#techTrainingBody th:nth-child(3),#advisorTrainingBody th:nth-child(3){width:22%}
+#techTrainingBody th:nth-child(4),#advisorTrainingBody th:nth-child(4){width:28%}
+#vacationBody th:nth-child(2){width:42%}
+#vacationBody th:nth-child(3){width:24%}
+</style>
+
+<style id="edit-dropdown-clean">
+.admin details.edit-group{
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+  overflow:hidden;
+}
+.admin details.edit-group > summary{
+  list-style:none;
+  cursor:pointer;
+  padding:10px 12px;
+  font-size:12px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(255,255,255,.04);
+}
+.admin details.edit-group > summary::-webkit-details-marker{
+  display:none;
+}
+.admin details.edit-group > summary::after{
+  content:"▾";
+  color:var(--muted);
+  font-size:12px;
+}
+.admin details.edit-group[open] > summary::after{
+  content:"▴";
+}
+.admin .group-body{
+  padding:10px 12px 12px 12px;
+}
+</style>
+
+
+<style id="user-management-click-style">
+.user-row-list{display:grid;gap:8px;margin-top:8px}
+.user-row-item{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(255,255,255,.04);cursor:pointer;
+}
+.user-row-item:hover{background:rgba(255,255,255,.07)}
+.user-row-item.selected{border-color:rgba(110,231,249,.45);background:rgba(110,231,249,.12)}
+.user-row-name{font-size:12px;font-weight:800}
+.user-row-meta{font-size:10px;color:var(--muted)}
+</style>
+
+
+<style id="samsung-tv-safe-fit">
+html, body {
+  overscroll-behavior: none;
+}
+.viewport {
+  padding: 0;
+}
+.stage {
+  will-change: transform;
+}
+.dashboard {
+  box-sizing: border-box;
+}
+@media (min-width: 1200px) {
+  .login input { width: 68px !important; }
+  #password { width: 84px !important; }
+}
+</style>
+
+</head>
+<body>
+<div class="viewport">
+  <div class="stage" id="stage">
+    <div class="dashboard">
+      <section class="hero">
+        <div class="card">
+          <div class="eyebrow">Service Operations Dashboard</div>
+          <div class="header-row">
+            <div style="flex:1;min-width:0">
+              <h1 id="pageTitle"></h1>
+              <div class="sub">Samsung TV browser fit version</div>
+            </div>
+            <div class="rightHeader">
+              <div class="login">
+                <span>LOGIN</span>
+                <input id="username" placeholder="user" style="width:70px"/>
+                <input id="password" type="password" placeholder="password" style="width:88px"/>
+                <button id="loginBtn">Login</button>
+                <button id="logoutBtn" class="secondary" style="display:none">Logout</button>
+                <button id="editBtn" style="display:none">Edit Dashboard</button>
+              </div>
+              <div class="clock">
+                <div class="date" id="liveDate"></div>
+                <div class="time" id="liveTime"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card"><div class="stats" id="statGrid"></div></div>
+      </section>
+
+      <section class="top">
+        <div class="card">
+          <div class="panel-head">
+            <div><div class="title">Technician Production</div><div class="note">Daily hours, totals, and pacing</div></div>
+            <div class="chips" id="techChips"></div>
+          </div>
+          <div class="tableArea">
+            <table>
+              <thead><tr><th>Tech</th><th>Goal</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Total</th><th>Goal %</th><th>Pacing</th></tr></thead>
+              <tbody id="techBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="panel-head">
+            <div>
+              <div class="title" id="rotatorTitle">Training Center</div>
+              <div class="note" id="rotatorNote">Columns: Certified, Training Due, Excel Training</div>
+            </div>
+            <div class="chips">
+              <div class="chip" id="rotatorChip">Training Center</div>
+              <div class="chip" id="techTrainingCount">Techs: 0</div>
+            </div>
+          </div>
+
+          <div class="rotatorShell">
+            <div class="rotatorPanel active" id="trainingPanel">
+              <div class="trainingGrid">
+                <div class="inner">
+                  <div class="innerTitle">Technicians</div>
+                  <div class="tableArea">
+                    <table>
+                      <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th><th>Excel Training</th></tr></thead>
+                      <tbody id="techTrainingBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="inner">
+                  <div class="innerTitle">Advisors</div>
+                  <div class="tableArea">
+                    <table>
+                      <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th><th>Excel Training</th></tr></thead>
+                      <tbody id="advisorTrainingBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rotatorPanel" id="vacationPanel">
+              <div class="inner" style="height:100%">
+                <div class="innerTitle">Approved Vacation</div>
+                <div class="tableArea">
+                  <table>
+                    <thead><tr><th>Name</th><th>Dates</th><th>Status</th></tr></thead>
+                    <tbody id="vacationBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="panel-head">
+          <div><div class="title">Advisor Performance</div><div class="note">Daily Avg = MTD Hrs ÷ completed workdays. You update one day behind, so completed workdays means workdays before today.</div></div>
+          <div class="chips" id="advisorChips"></div>
+        </div>
+        <div class="tableArea" style="height:calc(100% - 72px)">
+          <table>
+            <thead><tr><th>Advisor</th><th>Daily Avg</th><th>MTD Hrs<br><span style="color:#95a9c6;font-size:7px">Goal 300</span></th><th>Hrs/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.4</span></th><th>Alignment %<br><span style="color:#95a9c6;font-size:7px">Goal 10%</span></th><th>Tires %<br><span style="color:#95a9c6;font-size:7px">Goal 15%</span></th><th>Valvoline %<br><span style="color:#95a9c6;font-size:7px">Goal 25%</span></th><th>Roh$50 HRS/RO<br><span style="color:#95a9c6;font-size:7px">Goal 1.2</span></th><th>CSI<br><span style="color:#95a9c6;font-size:7px">Goal 920</span></th><th>ASR %<br><span style="color:#95a9c6;font-size:7px">Goal 21%</span></th><th>ELR %<br><span style="color:#95a9c6;font-size:7px">Goal 88%</span></th><th>Last Month Total</th></tr></thead>
+            <tbody id="advisorBody"></tbody>
+          </table>
+        </div>
+        <div class="kpi-row" id="advisorKpis"></div>
+      </section>
+
+      <section class="card">
+        <div class="panel-head">
+          <div><div class="title">Performance Gauges</div><div class="note">Needle = percent to goal. Big number = projected monthly hours.</div></div>
+        </div>
+        <div class="gauges" id="gauges"></div>
+      </section>
+    </div>
+
+    <aside class="admin" id="adminPanel">
+      <h2>Edit Dashboard</h2>
+      <div class="small">This is a clean rebuild. Training Center, Vacation Approved, advisor pacing, and all edit boxes are rebuilt to behave consistently.</div>
+
+      
+      <details class="edit-group" open>
+        <summary>Dashboard Settings</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="field"><label>Dashboard Title</label><input id="titleInput"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Goal Gauges</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Goal Gauges</div>
+            <div class="form-grid">
+              <div class="field"><label>Gross Profit Goal</label><input id="grossGoalInput"></div>
+              <div class="field"><label>Gross Profit Actual</label><input id="grossActualInput"></div>
+              <div class="field"><label>Customer Pay Goal</label><input id="cpGoalInput"></div>
+              <div class="field"><label>Customer Pay Actual</label><input id="cpActualInput"></div>
+              <div class="field"><label>Advisor Monthly Workdays</label><input id="advisorMonthlyWorkdaysInput"></div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Advisor Performance</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Edit Advisor Performance</div>
+            <div class="small">Daily Avg is automatic: MTD Hrs ÷ completed workdays. You update one day behind, so completed workdays means workdays before today. You can edit MTD Hrs, Hrs/RO, Alignment %, Tires %, Valvoline %, Roh$50 HRS/RO, CSI, ASR %, ELR %, and Last Month Total.</div>
+            <div id="advisorEditForm"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Advisor Users</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Add Advisor</div>
+            <div class="form-grid">
+              <div class="field"><label>Name</label><input id="newAdvisorName"></div>
+              <div class="field"><label>Daily Avg</label><input id="newAdvisorDailyAvg"></div>
+              <div class="field"><label>MTD Hrs</label><input id="newAdvisorMtdHrs"></div>
+              <div class="field"><label>Hrs/RO</label><input id="newAdvisorHrsRo"></div>
+              <div class="field"><label>Align</label><input id="newAdvisorAlign" placeholder="12%"></div>
+              <div class="field"><label>Tires</label><input id="newAdvisorTires" placeholder="8%"></div>
+              <div class="field"><label>Valvoline %</label><input id="newAdvisorValvoline" placeholder="30%"></div>
+              <div class="field"><label>Roh$50 HRS/RO</label><input id="newAdvisorRoh50" placeholder="1.2"></div>
+              <div class="field"><label>CSI</label><input id="newAdvisorCsi" placeholder="920"></div>
+              <div class="field"><label>ASR %</label><input id="newAdvisorAsr" placeholder="21%"></div>
+              <div class="field"><label>ELR %</label><input id="newAdvisorElr" placeholder="88%"></div>
+              <div class="field"><label>Last Month Total</label><input id="newAdvisorLastMonthTotal" placeholder="0"></div>
+              <div class="field"><label>Certified</label><input id="newAdvisorCertified"></div>
+              <div class="field"><label>Training Due</label><input id="newAdvisorTrainingDue"></div>
+              <div class="field"><label>Excel Training</label><input id="newAdvisorExcel"></div>
+            </div>
+            <div class="actions"><button id="addAdvisorBtn">Add Advisor</button></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Remove Advisor</div>
+            <div class="field"><label>Advisor</label><select id="removeAdvisorSelect"></select></div>
+            <div class="actions"><button id="removeAdvisorBtn" class="secondary">Remove Advisor</button></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Training Center</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Edit Training Center</div>
+            <div class="small">Every tech and advisor has editable boxes for Certified, Training Due, and Excel Training.</div>
+            <div id="trainingEditForm"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Technicians</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Technician Daily Hours</div>
+            <div id="techHoursForm"></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Add Technician</div>
+            <div class="form-grid">
+              <div class="field"><label>Name</label><input id="newTechName"></div>
+              <div class="field"><label>Weekly Goal</label><input id="newTechGoal"></div>
+              <div class="field"><label>Certified</label><input id="newTechCertified"></div>
+              <div class="field"><label>Training Due</label><input id="newTechDue"></div>
+              <div class="field"><label>Excel Training</label><input id="newTechExcel"></div>
+            </div>
+            <div class="actions"><button id="addTechBtn">Add Technician</button></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Remove Technician</div>
+            <div class="field"><label>Technician</label><select id="removeTechSelect"></select></div>
+            <div class="actions"><button id="removeTechBtn" class="secondary">Remove Technician</button></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group">
+        <summary>Approved Vacation</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">Edit Approved Vacation</div>
+            <div class="small">Edit each approved vacation entry shown in the rotating Vacation Approved screen.</div>
+            <div id="vacationEditForm"></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Add Vacation Entry</div>
+            <div class="form-grid">
+              <div class="field"><label>Name</label><input id="newVacationName"></div>
+              <div class="field"><label>Dates</label><input id="newVacationDates"></div>
+              <div class="field"><label>Status</label><input id="newVacationStatus" value="Approved"></div>
+            </div>
+            <div class="actions"><button id="addVacationBtn">Add Vacation</button></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Remove Vacation Entry</div>
+            <div class="field"><label>Vacation Entry</label><select id="removeVacationSelect"></select></div>
+            <div class="actions"><button id="removeVacationBtn" class="secondary">Remove Vacation</button></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="edit-group" id="userManagementSection">
+        <summary>User Management</summary>
+        <div class="group-body">
+          <div class="form-section" style="margin-top:0;padding-top:0;border-top:none">
+            <div class="title">User Management</div>
+            <div class="small">Click a user to load them into the form. Then you can edit that user, delete that user, or add a new user below.</div>
+            <div id="userList" class="user-row-list"></div>
+          </div>
+
+          <div class="form-section">
+            <div class="title">Selected User Actions</div>
+            <div class="small" id="selectedUserLabel">No user selected</div>
+            <div class="actions">
+              <button id="deleteSelectedUserBtn" class="secondary">Delete Selected User</button>
+              <button id="clearSelectedUserBtn" class="secondary">Clear Selection</button>
+            </div>
+          </div>
+
+          <div class="form-section" id="userUpdateSection">
+            <div class="title">Add / Edit User</div>
+            <div class="form-grid">
+              <div class="field"><label>Username</label><input id="newUserName"></div>
+              <div class="field"><label>Password</label><input id="newUserPassword"></div>
+            </div>
+            <div class="actions">
+              <button id="saveUserBtn">Save User</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
+<div class="actions">
+        <button id="saveBtn">Save Changes</button>
+        <button id="closeBtn" class="secondary">Close</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "serviceDashboardCleanRebuildV4AdvisorGoals";
+const VACATION_KEY = "serviceDashboardVacationsV1";
+const AUTH_KEY = "serviceDashboardAuthV1";
+const SAVE_ENDPOINT = "https://69cedcf04d902b0b6b932625--resonant-begonia-305283.netlify.app/.netlify/functions/save-dashboard";
+const DEFAULT_USERNAME = "admin";
+const DEFAULT_PASSWORD = "Hyundai2026";
+const USERS_KEY = "dashboardUsersV1";
+let users = JSON.parse(localStorage.getItem(USERS_KEY) || "null") || [{username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD}];
+if (!users.find(u => u.username === DEFAULT_USERNAME)) {
+  users.push({username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD});
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+const initialData = {"title": "Bob Rohrman Hyundai Daily Summary", "technicians": [{"name": "EDGAR", "goal": 47.5, "mon": 2.6, "tue": 8.4, "wed": 7.0, "thu": 5.5, "fri": 0.0, "sat": 19.3, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 48.675, "certified": "YES", "trainings_due": "\u2014", "excel_training": "95.0"}, {"name": "MIKE", "goal": 47.5, "mon": 3.0, "tue": 7.9, "wed": 7.7, "thu": 11.0, "fri": 0.0, "sat": 0.0, "total": 29.6, "goal_pct": 0.6231578947, "pacing": 37.0, "certified": "YES", "trainings_due": "\u2014", "excel_training": "317.0"}, {"name": "GAVEN", "goal": 47.5, "mon": 10.2, "tue": 7.8, "wed": 4.1, "thu": 11.4, "fri": 0.0, "sat": 0.0, "total": 33.5, "goal_pct": 0.7052631579, "pacing": 41.875, "certified": "YES", "trainings_due": "\u2014", "excel_training": "100.0"}, {"name": "JACOB", "goal": 47.5, "mon": 15.1, "tue": 6.8, "wed": 14.5, "thu": 6.4, "fri": 0.0, "sat": 0.0, "total": 42.8, "goal_pct": 0.9010526316, "pacing": 53.5, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CORY", "goal": 47.5, "mon": 2.5, "tue": 4.5, "wed": 9.4, "thu": 2.2, "fri": 0.0, "sat": 0.0, "total": 18.6, "goal_pct": 0.3915789474, "pacing": 23.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "342.0"}, {"name": "WEST", "goal": 25.5, "mon": 4.6, "tue": 1.9, "wed": 2.7, "thu": 3.8, "fri": 0.0, "sat": 0.0, "total": 13.0, "goal_pct": 0.5098039216, "pacing": 16.25, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}, {"name": "CARTER", "goal": 25.5, "mon": 2.6, "tue": 4.1, "wed": 4.0, "thu": 2.8, "fri": 0.0, "sat": 4.6, "total": 18.1, "goal_pct": 0.7098039216, "pacing": 21.475, "certified": "YES", "trainings_due": "\u2014", "excel_training": "NA"}], "advisors": [{"name": "DAVID", "daily_avg": 11.15, "mtd_hours": 245.3, "hours_per_ro": 1.32, "align": 0.0561, "tires": 0.0374, "valvoline": 0.2991, "csi": 891.0, "asr": 0.2163, "elr": 0.93, "last_month_total": 0}, {"name": "JORDAN", "daily_avg": 12.58636364, "mtd_hours": 276.9, "hours_per_ro": 1.4, "align": 0.213, "tires": 0.2222, "valvoline": 0.259, "csi": 936.0, "asr": 0.1713, "elr": 0.93, "last_month_total": 0}, {"name": "NEVEN", "daily_avg": 7.936363636, "mtd_hours": 174.6, "hours_per_ro": 1.27, "align": 0.0938, "tires": 0.0625, "valvoline": 0.1875, "csi": 925.0, "asr": 0.1549, "elr": 0.92, "last_month_total": 0}], "advisorTraining": [{"name": "DAVID", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "JORDAN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}, {"name": "NEVEN", "certified": "\u2014", "trainings_due": "YES", "excel_training": "\u2014"}], "vacations": [{"name": "WEST", "dates": "4/13-4/14", "status": "APPROVED"}, {"name": "DAVID", "dates": "5/26-6/3", "status": "APPROVED"}, {"name": "JACOB", "dates": "5/22-5/25", "status": "APPROVED"}, {"name": "CARTER", "dates": "6/5/26-7/10/26 40HR", "status": "APPROVED"}, {"name": "JACOB", "dates": "8/17-8/21 40HR", "status": "APPROVED"}, {"name": "GAVEN", "dates": "4/23 4/24 4/27", "status": "APPROVED"}, {"name": "MIKE", "dates": "5/1 8HR", "status": "APPROVED"}, {"name": "MIKE", "dates": "3/27 8HR", "status": "APPROVED"}, {"name": "NEVEN", "dates": "5/20-5/24 40HR", "status": "APPROVED"}], "advisorSummary": {"date": "March 27, 2026", "total_hours": 696.8, "align": 0.1209666667, "tires": 0.1073666667, "valvoline": 0.2485333333, "csi": 927.0}, "techTotals": {"mon": 40.6, "tue": 41.4, "wed": 49.4, "thu": 43.1, "fri": 0.0, "sat": 23.9, "week_total": 198.4, "week_pct": 0.687694974}, "grossGoal": 135544.0, "grossActual": 138307.0, "cpGoal": 58395.0, "cpActual": 55958.0, "advisorMonthlyWorkdays": 27};
+let data = structuredClone(initialData);
+let vacations = structuredClone(initialData.vacations);
+
+function safe(v,f=0){ const x=parseFloat(v); return Number.isFinite(x)?x:f; }
+function parsePercentInput(v, fallback=0){
+  const raw = String(v ?? "").trim();
+  if (!raw) return fallback;
+  const hasPct = raw.includes("%");
+  const num = parseFloat(raw.replace("%","").trim());
+  if (!Number.isFinite(num)) return fallback;
+  if (hasPct) return num / 100;
+  if (num > 1) return num / 100;
+  return num;
+}
+function percentEditValue(v){
+  const out = (safe(v,0) * 100).toFixed(1);
+  return (out.endsWith(".0") ? out.slice(0, -2) : out) + "%";
+}
+function n(v,d=1){ return safe(v,0).toFixed(d); }
+function pct(v,d=1){ return (safe(v,0)*100).toFixed(d)+"%"; }
+function money(v){ return "$"+safe(v,0).toLocaleString(undefined,{maximumFractionDigits:0}); }
+function badgeCls(text){
+  const t=String(text||"").toLowerCase();
+  if (t.includes("not") || t==="no") return "bad";
+  if (t.includes("yes") || (t.includes("certified") && !t.includes("not"))) return "good";
+  return "neutral";
+}
+function advisorMonthProgress(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+  const dim = new Date(y, m + 1, 0).getDate();
+
+  let completed = 0;
+  let total = 0;
+
+  for (let d = 1; d <= dim; d++) {
+    const dow = new Date(y, m, d).getDay();
+    if (dow !== 0) { // Sunday excluded
+      total += 1;
+      if (d < today) completed += 1; // completed days only, because user updates next morning
+    }
+  }
+
+  const override = safe(data.advisorMonthlyWorkdays, 0);
+  if (override > 0) total = override;
+
+  return { completed: Math.max(1, completed), total: Math.max(1, total) };
+}
+
+function advisorMonthProgress(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+  const dim = new Date(y, m + 1, 0).getDate();
+
+  let completed = 0;
+  let total = 0;
+  for (let d = 1; d <= dim; d++) {
+    const dow = new Date(y, m, d).getDay();
+    if (dow !== 0) { // Sunday excluded
+      total += 1;
+      if (d < today) completed += 1; // user updates yesterday's totals this morning
+    }
+  }
+
+  const override = safe(data.advisorMonthlyWorkdays, 0);
+  if (override > 0) total = override;
+
+  return { completed: Math.max(1, completed), total: Math.max(1, total) };
+}
+
+function currentWorkingDays(){
+  const p = advisorMonthProgress();
+  return { elapsed: p.completed, total: p.total };
+}
+
+function advisorDailyAverage(advisor){
+  const p = advisorMonthProgress();
+  return p.completed > 0 ? safe(advisor.mtd_hours, 0) / p.completed : 0;
+}
+
+function advisorProjectedHours(advisor){
+  const p = advisorMonthProgress();
+  return advisorDailyAverage(advisor) * p.total;
+}
+
+function advisorGoalPct(advisor){
+  const projected = advisorProjectedHours(advisor);
+  const goal = 300;
+  return goal > 0 ? projected / goal : 0;
+}
+
+function recalcTech(){
+  const days=["mon","tue","wed","thu","fri","sat"];
+  let totalGoal=0, weekTotal=0;
+  const totals={mon:0,tue:0,wed:0,thu:0,fri:0,sat:0};
+  data.technicians.forEach(t=>{
+    t.total=0;
+    days.forEach(k=>{ t[k]=safe(t[k],0); t.total+=t[k]; totals[k]+=t[k]; });
+    t.goal=safe(t.goal,0);
+    totalGoal+=t.goal; weekTotal+=t.total;
+    t.goal_pct=t.goal>0 ? t.total/t.goal : 0;
+    t.pacing=t.total;
+  });
+  Object.assign(data.techTotals, totals);
+  data.techTotals.week_total=weekTotal;
+  data.techTotals.week_pct=totalGoal>0 ? weekTotal/totalGoal : 0;
+}
+function recalcAdvisorSummary(){
+  const count=data.advisors.length || 1;
+  data.advisorSummary.total_hours=data.advisors.reduce((s,a)=>s+safe(a.mtd_hours,0),0);
+  data.advisorSummary.align=data.advisors.reduce((s,a)=>s+safe(a.align,0),0)/count;
+  data.advisorSummary.tires=data.advisors.reduce((s,a)=>s+safe(a.tires,0),0)/count;
+  data.advisorSummary.valvoline=data.advisors.reduce((s,a)=>s+safe(a.valvoline,0),0)/count;
+  data.advisorSummary.csi=data.advisors.reduce((s,a)=>s+safe(a.csi,0),0)/count;
+}
+function advisorProjectedHours(advisor){
+  const p = advisorMonthProgress();
+  return advisorDailyAverage(advisor) * p.total;
+}
+function advisorGoalPct(advisor){
+  const projected = advisorProjectedHours(advisor);
+  const goal = 300;
+  return goal > 0 ? projected / goal : 0;
+}
+function buildGaugeData(){
+  const wd=currentWorkingDays();
+  const gpPct=safe(data.grossGoal,0)>0 ? safe(data.grossActual,0)/safe(data.grossGoal,0) : 0;
+  const cpPct=safe(data.cpGoal,0)>0 ? safe(data.cpActual,0)/safe(data.cpGoal,0) : 0;
+  const gauges=[
+    {label:"Pacing Gross Profit Goal", pct:gpPct, main:pct(gpPct,1), sub:money(data.grossActual)+" / "+money(data.grossGoal)},
+    {label:"Pacing Customer Pay Goal", pct:cpPct, main:pct(cpPct,1), sub:money(data.cpActual)+" / "+money(data.cpGoal)}
+  ];
+  data.advisors.slice(0,3).forEach(a=>{
+    const progress = advisorMonthProgress();
+    const dailyAvg = advisorDailyAverage(a);
+    const projected = advisorProjectedHours(a);
+    const goalHours = 300;
+    const p = advisorGoalPct(a);
+    gauges.push({
+      label:a.name+" Projected Hours",
+      pct:p,
+      main:n(projected,1)+" hrs",
+      sub:n(dailyAvg,1)+" daily avg × "+n(progress.total,0)+" workdays • goal "+n(goalHours,1)+" hrs"
+    });
+  });
+  return gauges;
+}
+function gaugeSvg(g){
+  const p=Math.max(0,Math.min(1.2,safe(g.pct,0)));
+  const angle=Math.PI*(1-p/1.2);
+  const x=110+78*Math.cos(angle), y=98-78*Math.sin(angle);
+  const color=p>=1 ? "#22c55e" : (p>=.9 ? "#f59e0b" : "#ef4444");
+  const total=Math.PI*78, prog=total*(p/1.2);
+  return `
+    <svg viewBox="0 0 220 130" class="gsvg">
+      <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3dd6c3"/><stop offset="100%" stop-color="#6ee7f9"/></linearGradient></defs>
+      <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="14" stroke-linecap="round"/>
+      <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke="url(#grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${prog} ${total}"/>
+      <line x1="110" y1="98" x2="${x}" y2="${y}" stroke="${color}" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="110" cy="98" r="8" fill="${color}"/>
+      <text x="32" y="116" fill="#8fa7c8" font-size="10" text-anchor="middle">0%</text>
+      <text x="110" y="16" fill="#8fa7c8" font-size="10" text-anchor="middle">60%</text>
+      <text x="188" y="116" fill="#8fa7c8" font-size="10" text-anchor="middle">120%</text>
+    </svg>`;
+}
+function fitStage(){
+  const baseW = 1920, baseH = 1080;
+  const vw = window.innerWidth, vh = window.innerHeight;
+
+  // Safe margins for Samsung TV browser chrome / overscan
+  const safeW = Math.max(320, vw - 24);
+  const safeH = Math.max(240, vh - 36);
+
+  // Slight safety multiplier so bottom row does not clip
+  const scale = Math.min(safeW / baseW, safeH / baseH) * 0.985;
+
+  const left = Math.max(0, (vw - baseW * scale) / 2);
+  const top = Math.max(0, (vh - baseH * scale) / 2);
+
+  document.getElementById("stage").style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+}
+function setClock(){
+  const now=new Date();
+  document.getElementById("liveDate").textContent=now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+  document.getElementById("liveTime").textContent=now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+}
+setInterval(setClock,1000);
+
+function renderStats(){
+  const sg=document.getElementById("statGrid"); sg.innerHTML="";
+  [
+    ["Tech Week Total", n(data.techTotals.week_total,1)],
+    ["Tech Goal %", pct(data.techTotals.week_pct,0)],
+    ["Advisor MTD Hrs", n(data.advisorSummary.total_hours,1)],
+    ["CSI Avg", Math.round(safe(data.advisorSummary.csi,0)).toString()]
+  ].forEach(([k,v])=>{
+    const el=document.createElement("div");
+    el.className="stat";
+    el.innerHTML=`<div class="k">${k}</div><div class="v">${v}</div>`;
+    sg.appendChild(el);
+  });
+}
+function renderTech(){
+  document.getElementById("pageTitle").textContent=data.title||"Bob Rohrman Hyundai Daily Summary";
+  const chips=document.getElementById("techChips"); chips.innerHTML="";
+  [["Mon","mon"],["Tue","tue"],["Wed","wed"],["Thu","thu"],["Fri","fri"],["Sat","sat"]].forEach(([l,k])=>{
+    const c=document.createElement("div"); c.className="chip"; c.textContent=`${l} ${n(data.techTotals[k],1)}`; chips.appendChild(c);
+  });
+  const body=document.getElementById("techBody"); body.innerHTML="";
+  data.technicians.forEach(t=>{
+    const width=Math.max(0,Math.min(100,safe(t.goal_pct)*100));
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="name">${t.name}</td><td>${n(t.goal,1)}</td><td>${n(t.mon,1)}</td><td>${n(t.tue,1)}</td><td>${n(t.wed,1)}</td><td>${n(t.thu,1)}</td><td>${n(t.fri,1)}</td><td>${n(t.sat,1)}</td><td>${n(t.total,1)}</td><td><div>${pct(t.goal_pct,0)}</div><div class="bar"><div class="fill" style="width:${width}%"></div></div></td><td><span class="badge ${safe(t.goal_pct)>=.9?'good':safe(t.goal_pct)>=.75?'warn':'bad'}">${n(t.pacing,1)} hrs</span></td>`;
+    body.appendChild(tr);
+  });
+  fitTableRows("techBody", 16, 10, 8);
+}
+function renderTraining(){
+  const tb=document.getElementById("techTrainingBody"); tb.innerHTML="";
+  (data.technicians||[]).forEach(t=>{
+    const certified=t.certified||"—";
+    const due=t.trainings_due||"—";
+    const excel=t.excel_training||t.excel||"—";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="name">${t.name||"—"}</td><td class="center"><span class="badge ${badgeCls(certified)}">${certified}</span></td><td class="center"><span class="badge neutral">${due}</span></td><td class="center"><span class="badge neutral">${excel}</span></td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById("techTrainingCount").textContent="Techs: "+(data.technicians?.length||0);
+
+  const ab=document.getElementById("advisorTrainingBody"); ab.innerHTML="";
+  (data.advisorTraining||[]).forEach(a=>{
+    const certified=a.certified||"—";
+    const due=a.trainings_due||"—";
+    const excel=a.excel_training||a.excel||"—";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="name">${a.name||"—"}</td><td class="center"><span class="badge ${badgeCls(certified)}">${certified}</span></td><td class="center"><span class="badge neutral">${due}</span></td><td class="center"><span class="badge neutral">${excel}</span></td>`;
+    ab.appendChild(tr);
+  });
+  fitTableRows("techTrainingBody", 12, 8, 6);
+  fitTableRows("advisorTrainingBody", 12, 8, 6);
+}
+function renderVacation(){
+  const body=document.getElementById("vacationBody"); body.innerHTML="";
+  (vacations||[]).forEach(v=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="name">${v.name||"—"}</td><td>${v.dates||"—"}</td><td class="center"><span class="badge neutral">${v.status||"—"}</span></td>`;
+    body.appendChild(tr);
+  });
+  fitTableRows("vacationBody", 12, 8, 6);
+}
+function renderAdvisor(){
+  const chips=document.getElementById("advisorChips"); chips.innerHTML="";
+  [["Snapshot",data.advisorSummary.date],["Align",pct(data.advisorSummary.align,1)],["Tires",pct(data.advisorSummary.tires,1)],["Valvoline",pct(data.advisorSummary.valvoline,1)]].forEach(([k,v])=>{
+    const c=document.createElement("div"); c.className="chip"; c.textContent=`${k} ${v}`; chips.appendChild(c);
+  });
+  const body=document.getElementById("advisorBody"); body.innerHTML="";
+  data.advisors.forEach(a=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="name">${a.name}</td><td>${n(advisorDailyAverage(a),2)}</td><td>${n(a.mtd_hours,1)}</td><td>${n(a.hours_per_ro,2)}</td><td>${pct(a.align,1)}</td><td>${pct(a.tires,1)}</td><td>${pct(a.valvoline,1)}</td><td>${n(a.roh50_hrs_ro,2)}</td><td>${Math.round(safe(a.csi)).toString()}</td><td>${pct(a.asr,1)}</td><td>${pct(a.elr,0)}</td><td>${n(a.last_month_total,1)}</td>`;
+    body.appendChild(tr);
+  });
+  const kpis=document.getElementById("advisorKpis"); kpis.innerHTML="";
+  [["Avg Alignments",pct(data.advisorSummary.align,1)],["Avg Tires",pct(data.advisorSummary.tires,1)],["Avg Valvoline",pct(data.advisorSummary.valvoline,1)],["Avg CSI",Math.round(safe(data.advisorSummary.csi)).toString()]].forEach(([k,v])=>{
+    const el=document.createElement("div"); el.className="kpi"; el.innerHTML=`<div class="k">${k}</div><div class="v">${v}</div>`; kpis.appendChild(el);
+  });
+  fitTableRows("advisorBody", 18, 10, 8);
+}
+function renderGauges(){
+  const gs=buildGaugeData();
+  document.getElementById("gauges").innerHTML=gs.map(g=>`<div class="gcard"><div class="gtitle">${g.label}</div>${gaugeSvg(g)}<div class="gmain">${g.main}</div><div class="gsub">${g.sub}</div></div>`).join("");
+}
+function fitTableRows(bodyId, minHeight, maxFont, minFont){
+  const body=document.getElementById(bodyId);
+  const rows=[...body.querySelectorAll("tr")];
+  if(!rows.length) return;
+  const table=body.closest("table");
+  const area=body.closest(".tableArea");
+  const thead=table?table.querySelector("thead"):null;
+  const avail=Math.max(24, (area?area.clientHeight:0) - (thead?thead.offsetHeight:0) - 2);
+  const h=Math.max(minHeight, Math.floor(avail/rows.length));
+  let fs=minFont, py=1, badgeFs=minFont;
+  if(h>=18){ fs=Math.min(maxFont, minFont+1); py=2; badgeFs=minFont; }
+  if(h>=24){ fs=maxFont; py=3; badgeFs=Math.min(maxFont-1, minFont+1); }
+  rows.forEach(r=>r.style.height=h+"px");
+  body.querySelectorAll("td").forEach(td=>{ td.style.fontSize=fs+"px"; td.style.paddingTop=py+"px"; td.style.paddingBottom=py+"px"; });
+  body.querySelectorAll(".badge").forEach(b=>{ b.style.fontSize=badgeFs+"px"; b.style.padding=(Math.max(1,py-1))+"px 4px"; });
+}
+
+async function loadSharedData(){
+  try{
+    const res = await fetch(`data.json?v=${Date.now()}`, { cache: "no-store" });
+    if(!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
+    const payload = await res.json();
+    if(payload && payload.data){
+      data = payload.data;
+      vacations = Array.isArray(payload.vacations) ? payload.vacations : (payload.data.vacations || []);
+    }
+  }catch(err){
+    console.warn("Falling back to embedded dashboard data.", err);
+    data = structuredClone(initialData);
+    vacations = structuredClone(initialData.vacations);
+  }
+}
+
+async function saveDashboardRemote(){
+  const payload = { data, vacations };
+  const res = await fetch(SAVE_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  let out = {};
+  try { out = await res.json(); } catch(e) {}
+
+  if(!res.ok){
+    throw new Error(out.error || `Save failed (${res.status})`);
+  }
+  return out;
+}
+
+function startTopRightRotator(){
+  const training=document.getElementById("trainingPanel");
+  const vacation=document.getElementById("vacationPanel");
+  const title=document.getElementById("rotatorTitle");
+  const note=document.getElementById("rotatorNote");
+  const chip=document.getElementById("rotatorChip");
+  if(!training||!vacation) return;
+  let showingTraining=true;
+  function apply(){
+    training.classList.toggle("active", showingTraining);
+    vacation.classList.toggle("active", !showingTraining);
+    if(showingTraining){
+      title.textContent="Training Center";
+      note.textContent="Columns: Certified, Training Due, Excel Training";
+      chip.textContent="Training Center";
+    } else {
+      title.textContent="Vacation Approved";
+      note.textContent="Rotates with Training Center every 15 seconds";
+      chip.textContent="Vacation Approved";
+    }
+  }
+  apply();
+  if(window.__rotator) clearInterval(window.__rotator);
+  window.__rotator=setInterval(()=>{ showingTraining=!showingTraining; apply(); }, 15000);
+}
+function renderAll(){
+  recalcTech();
+  recalcAdvisorSummary();
+  renderStats();
+  renderTech();
+  renderTraining();
+  renderVacation();
+  renderAdvisor();
+  renderGauges();
+  startTopRightRotator();
+}
+function persist(){ /* shared save version: browser localStorage is not used as the source of truth */ }
+function populateSelects(){
+  document.getElementById("removeTechSelect").innerHTML=(data.technicians||[]).map((t,i)=>`<option value="${i}">${t.name}</option>`).join("");
+  document.getElementById("removeAdvisorSelect").innerHTML=(data.advisors||[]).map((a,i)=>`<option value="${i}">${a.name}</option>`).join("");
+  document.getElementById("removeVacationSelect").innerHTML=(vacations||[]).map((v,i)=>`<option value="${i}">${v.name||"—"} | ${v.dates||"—"}</option>`).join("");
+}
+function openAdmin(){ populateEditor(); document.getElementById("adminPanel").classList.add("open"); }
+function closeAdmin(){ document.getElementById("adminPanel").classList.remove("open"); }
+function populateEditor(){
+  document.getElementById("titleInput").value=data.title||"";
+  document.getElementById("grossGoalInput").value=data.grossGoal??0;
+  document.getElementById("grossActualInput").value=data.grossActual??0;
+  document.getElementById("cpGoalInput").value=data.cpGoal??0;
+  document.getElementById("cpActualInput").value=data.cpActual??0;
+  document.getElementById("advisorMonthlyWorkdaysInput").value=data.advisorMonthlyWorkdays??27;
+
+  const aef=document.getElementById("advisorEditForm"); aef.innerHTML="";
+  data.advisors.forEach((a,idx)=>{
+    const sec=document.createElement("div"); sec.className="form-section";
+    sec.innerHTML=`<div class="title" style="margin-bottom:6px">${a.name}</div>
+      <div class="form-grid">
+        <div class="field"><label>Daily Avg</label><input value="${n(advisorDailyAverage(a),2)}" disabled></div>
+        <div class="field"><label>MTD Hrs (Goal 300)</label><input data-ai="${idx}" data-ak="mtd_hours" value="${a.mtd_hours}"></div>
+        <div class="field"><label>Hrs/RO (Goal 1.4)</label><input data-ai="${idx}" data-ak="hours_per_ro" value="${a.hours_per_ro}"></div>
+        <div class="field"><label>Alignment % (Goal 10%)</label><input data-ai="${idx}" data-ak="align" value="${percentEditValue(a.align)}"></div>
+        <div class="field"><label>Tires % (Goal 15%)</label><input data-ai="${idx}" data-ak="tires" value="${percentEditValue(a.tires)}"></div>
+        <div class="field"><label>Valvoline % (Goal 25%)</label><input data-ai="${idx}" data-ak="valvoline" value="${percentEditValue(a.valvoline)}"></div>
+        <div class="field"><label>Roh$50 HRS/RO (Goal 1.2)</label><input data-ai="${idx}" data-ak="roh50_hrs_ro" value="${a.roh50_hrs_ro ?? ""}"></div>
+        <div class="field"><label>CSI (Goal 920)</label><input data-ai="${idx}" data-ak="csi" value="${a.csi}"></div>
+        <div class="field"><label>ASR % (Goal 21%)</label><input data-ai="${idx}" data-ak="asr" value="${percentEditValue(a.asr)}"></div>
+        <div class="field"><label>ELR % (Goal 88%)</label><input data-ai="${idx}" data-ak="elr" value="${percentEditValue(a.elr)}"></div>
+        <div class="field"><label>Last Month Total</label><input data-ai="${idx}" data-ak="last_month_total" value="${a.last_month_total ?? 0}"></div>
+      </div>`;
+    aef.appendChild(sec);
+  });
+
+  const trf=document.getElementById("trainingEditForm"); trf.innerHTML="";
+  const techTitle=document.createElement("div");
+  techTitle.className="title"; techTitle.style.marginBottom="6px"; techTitle.textContent="Technicians"; trf.appendChild(techTitle);
+  data.technicians.forEach((t,idx)=>{
+    const row=document.createElement("div"); row.className="training-edit-grid";
+    row.innerHTML=`<div class="field"><label>${t.name} Certified</label><input data-tti="${idx}" data-ttk="certified" value="${t.certified||""}"></div>
+      <div class="field"><label>${t.name} Training Due</label><input data-tti="${idx}" data-ttk="trainings_due" value="${t.trainings_due||""}"></div>
+      <div class="field"><label>${t.name} Excel Training</label><input data-tti="${idx}" data-ttk="excel_training" value="${t.excel_training||t.excel||""}"></div>`;
+    trf.appendChild(row);
+  });
+  const advTitle=document.createElement("div");
+  advTitle.className="form-section"; advTitle.innerHTML=`<div class="title" style="margin-bottom:6px">Advisors</div>`; trf.appendChild(advTitle);
+  data.advisorTraining.forEach((a,idx)=>{
+    const row=document.createElement("div"); row.className="training-edit-grid";
+    row.innerHTML=`<div class="field"><label>${a.name} Certified</label><input data-ati="${idx}" data-atk="certified" value="${a.certified||""}"></div>
+      <div class="field"><label>${a.name} Training Due</label><input data-ati="${idx}" data-atk="trainings_due" value="${a.trainings_due||""}"></div>
+      <div class="field"><label>${a.name} Excel Training</label><input data-ati="${idx}" data-atk="excel_training" value="${a.excel_training||a.excel||""}"></div>`;
+    trf.appendChild(row);
+  });
+
+  const thf=document.getElementById("techHoursForm"); thf.innerHTML="";
+  data.technicians.forEach((t,idx)=>{
+    const sec=document.createElement("div"); sec.className="form-section";
+    sec.innerHTML=`<div class="title" style="margin-bottom:6px">${t.name}</div>
+      <div class="form-grid">
+        <div class="field"><label>Mon</label><input data-ti="${idx}" data-tk="mon" value="${t.mon}"></div>
+        <div class="field"><label>Tue</label><input data-ti="${idx}" data-tk="tue" value="${t.tue}"></div>
+        <div class="field"><label>Wed</label><input data-ti="${idx}" data-tk="wed" value="${t.wed}"></div>
+        <div class="field"><label>Thu</label><input data-ti="${idx}" data-tk="thu" value="${t.thu}"></div>
+        <div class="field"><label>Fri</label><input data-ti="${idx}" data-tk="fri" value="${t.fri}"></div>
+        <div class="field"><label>Sat</label><input data-ti="${idx}" data-tk="sat" value="${t.sat}"></div>
+      </div>`;
+    thf.appendChild(sec);
+  });
+
+  const vef=document.getElementById("vacationEditForm"); vef.innerHTML="";
+  vacations.forEach((v,idx)=>{
+    const row=document.createElement("div"); row.className="vacation-edit-grid";
+    row.innerHTML=`<div class="field"><label>Name</label><input data-vi="${idx}" data-vk="name" value="${v.name||""}"></div>
+      <div class="field"><label>Dates</label><input data-vi="${idx}" data-vk="dates" value="${v.dates||""}"></div>
+      <div class="field"><label>Status</label><input data-vi="${idx}" data-vk="status" value="${v.status||""}"></div>`;
+    vef.appendChild(row);
+  });
+
+  populateSelects();
+}
+function saveEditor(){
+  data.title=document.getElementById("titleInput").value.trim()||data.title;
+  data.grossGoal=safe(document.getElementById("grossGoalInput").value,data.grossGoal);
+  data.grossActual=safe(document.getElementById("grossActualInput").value,data.grossActual);
+  data.cpGoal=safe(document.getElementById("cpGoalInput").value,data.cpGoal);
+  data.cpActual=safe(document.getElementById("cpActualInput").value,data.cpActual);
+  data.advisorMonthlyWorkdays=safe(document.getElementById("advisorMonthlyWorkdaysInput").value,data.advisorMonthlyWorkdays||27);
+
+  document.querySelectorAll("#advisorEditForm input[data-ai]").forEach(inp=>{
+    const i=+inp.dataset.ai, k=inp.dataset.ak;
+    if(["align","tires","valvoline","asr","elr"].includes(k)){
+      data.advisors[i][k]=parsePercentInput(inp.value, data.advisors[i][k]);
+    } else if (k === "previous_month") {
+      data.advisors[i][k]=inp.value.trim() || "—";
+    } else {
+      data.advisors[i][k]=safe(inp.value, data.advisors[i][k]);
+    }
+  });
+  data.advisors.forEach(a => { a.daily_avg = advisorDailyAverage(a); });
+  document.querySelectorAll("#trainingEditForm input[data-tti]").forEach(inp=>{
+    const i=+inp.dataset.tti, k=inp.dataset.ttk, val=inp.value.trim()||"—";
+    data.technicians[i][k]=val;
+    if(k==="excel_training") data.technicians[i].excel=val;
+  });
+  document.querySelectorAll("#trainingEditForm input[data-ati]").forEach(inp=>{
+    const i=+inp.dataset.ati, k=inp.dataset.atk, val=inp.value.trim()||"—";
+    data.advisorTraining[i][k]=val;
+    if(k==="excel_training") data.advisorTraining[i].excel=val;
+  });
+  document.querySelectorAll("#techHoursForm input[data-ti]").forEach(inp=>{ const i=+inp.dataset.ti, k=inp.dataset.tk; data.technicians[i][k]=safe(inp.value,data.technicians[i][k]); });
+  document.querySelectorAll("#vacationEditForm input[data-vi]").forEach(inp=>{ const i=+inp.dataset.vi, k=inp.dataset.vk; vacations[i][k]=inp.value.trim()||"—"; });
+
+  persist();
+  renderUsers();
+renderAll();
+  closeAdmin();
+}
+function addTech(){
+  const name=document.getElementById("newTechName").value.trim();
+  if(!name) return alert("Enter a technician name.");
+  data.technicians.push({
+    name,
+    goal:safe(document.getElementById("newTechGoal").value,0),
+    mon:0,tue:0,wed:0,thu:0,fri:0,sat:0,total:0,goal_pct:0,pacing:0,
+    certified:document.getElementById("newTechCertified").value.trim()||"—",
+    trainings_due:document.getElementById("newTechDue").value.trim()||"—",
+    excel_training:document.getElementById("newTechExcel").value.trim()||"—",
+    excel:document.getElementById("newTechExcel").value.trim()||"—"
+  });
+  persist(); renderUsers();
+renderAll(); populateEditor();
+}
+function removeTech(){
+  const sel=document.getElementById("removeTechSelect");
+  if(sel.value==="") return;
+  data.technicians.splice(+sel.value,1);
+  persist(); renderUsers();
+renderAll(); populateEditor();
+}
+function addAdvisor(){
+  const name=document.getElementById("newAdvisorName").value.trim();
+  if(!name) return alert("Enter an advisor name.");
+  data.advisors.push({
+    name,
+    mtd_hours:safe(document.getElementById("newAdvisorMtdHrs").value,0),
+    daily_avg:0,
+    hours_per_ro:safe(document.getElementById("newAdvisorHrsRo").value,0),
+    align:parsePercentInput(document.getElementById("newAdvisorAlign").value,0),
+    tires:parsePercentInput(document.getElementById("newAdvisorTires").value,0),
+    valvoline:parsePercentInput(document.getElementById("newAdvisorValvoline").value,0),
+    roh50_hrs_ro:safe(document.getElementById("newAdvisorRoh50").value,0),
+    csi:safe(document.getElementById("newAdvisorCsi").value,0),
+    asr:parsePercentInput(document.getElementById("newAdvisorAsr").value,0),
+    elr:parsePercentInput(document.getElementById("newAdvisorElr").value,0)
+  });
+  data.advisors[data.advisors.length - 1].daily_avg = advisorDailyAverage(data.advisors[data.advisors.length - 1]);
+  data.advisorTraining.push({
+    name,
+    certified:document.getElementById("newAdvisorCertified").value.trim()||"—",
+    trainings_due:document.getElementById("newAdvisorTrainingDue").value.trim()||"—",
+    excel_training:document.getElementById("newAdvisorExcel").value.trim()||"—",
+    excel:document.getElementById("newAdvisorExcel").value.trim()||"—"
+  });
+  persist(); renderUsers();
+renderAll(); populateEditor();
+}
+function removeAdvisor(){
+  const sel=document.getElementById("removeAdvisorSelect");
+  if(sel.value==="") return;
+  data.advisors.splice(+sel.value,1);
+  if(data.advisorTraining[+sel.value]) data.advisorTraining.splice(+sel.value,1);
+  persist(); renderUsers();
+renderAll(); populateEditor();
+}
+function addVacationEntry(){
+  const name=document.getElementById("newVacationName").value.trim();
+  const dates=document.getElementById("newVacationDates").value.trim();
+  const status=document.getElementById("newVacationStatus").value.trim()||"Approved";
+  if(!name && !dates) return alert("Enter at least a name or dates.");
+  vacations.push({name:name||"—", dates:dates||"—", status});
+  persist(); renderUsers();
+renderAll(); populateEditor();
+  document.getElementById("newVacationName").value="";
+  document.getElementById("newVacationDates").value="";
+  document.getElementById("newVacationStatus").value="Approved";
+}
+function removeVacationEntry(){
+  const sel=document.getElementById("removeVacationSelect");
+  if(sel.value==="") return;
+  vacations.splice(+sel.value,1);
+  if(!vacations.length) vacations=[{name:"—", dates:"—", status:"—"}];
+  persist(); renderUsers();
+renderAll(); populateEditor();
+}
+
+let selectedUserForDelete = "";
+
+function loadSelectedUserIntoForm(){
+  const user = users.find(u => u.username === selectedUserForDelete);
+  const nameInput = document.getElementById("newUserName");
+  const passInput = document.getElementById("newUserPassword");
+  if (!nameInput || !passInput) return;
+  if (user){
+    nameInput.value = user.username;
+    passInput.value = user.password || "";
+  } else {
+    nameInput.value = "";
+    passInput.value = "";
+  }
+}
+
+function clearSelectedUser(){
+  selectedUserForDelete = "";
+  loadSelectedUserIntoForm();
+  renderUsers();
+}
+
+function renderUsers(){
+  const list=document.getElementById("userList");
+  const selectedLabel=document.getElementById("selectedUserLabel");
+  if(!list) return;
+  list.innerHTML="";
+  users.forEach(u=>{
+    const row=document.createElement("div");
+    row.className="user-row-item" + (selectedUserForDelete === u.username ? " selected" : "");
+    row.innerHTML=`<div><div class="user-row-name">${u.username}</div><div class="user-row-meta">${u.username === "admin" ? "Admin account" : "Standard user"}</div></div>`;
+    row.onclick=()=>{
+      selectedUserForDelete = u.username;
+      loadSelectedUserIntoForm();
+      renderUsers();
+    };
+    list.appendChild(row);
+  });
+  if (selectedLabel) {
+    selectedLabel.textContent = selectedUserForDelete ? `Selected user: ${selectedUserForDelete}` : "No user selected";
+  }
+}
+
+function saveUser(){
+  if(localStorage.getItem("currentUser") !== "admin"){
+    alert("Only admin can manage users.");
+    return;
+  }
+  const u=document.getElementById("newUserName").value.trim();
+  const p=document.getElementById("newUserPassword").value;
+  if(!u||!p) return alert("Enter username and password");
+
+  const existing=users.find(x=>x.username===u);
+  if(existing){
+    existing.password=p;
+  } else {
+    users.push({username:u,password:p});
+  }
+
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  selectedUserForDelete = u;
+  loadSelectedUserIntoForm();
+  renderUsers();
+}
+
+function deleteUser(){
+  if(localStorage.getItem("currentUser") !== "admin"){
+    alert("Only admin can manage users.");
+    return;
+  }
+  if(!selectedUserForDelete){
+    alert("Select a user to delete.");
+    return;
+  }
+  if(selectedUserForDelete === "admin"){
+    alert("Admin cannot be deleted.");
+    return;
+  }
+  users = users.filter(x=>x.username!==selectedUserForDelete);
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  clearSelectedUser();
+}
+
+function setAuthUI(){
+  const currentUser = localStorage.getItem("currentUser");
+  const userMgmt = document.getElementById("userManagementSection");
+  const userUpdate = document.getElementById("userUpdateSection");
+  if (userMgmt) userMgmt.style.display = (currentUser === "admin") ? "" : "none";
+  if (userUpdate) userUpdate.style.display = (currentUser === "admin") ? "" : "none";
+
+  const logged=localStorage.getItem(AUTH_KEY)==="true";
+  document.getElementById("loginBtn").style.display=logged?"none":"";
+  document.getElementById("logoutBtn").style.display=logged?"":"none";
+  document.getElementById("editBtn").style.display=logged?"":"none";
+}
+document.getElementById("loginBtn").onclick=()=>{
+  const u=document.getElementById("username").value.trim();
+const p=document.getElementById("password").value;
+const match=users.find(x=>x.username===u && x.password===p);
+if(match){ localStorage.setItem("currentUser", match.username); }
+if(match){
+    localStorage.setItem(AUTH_KEY,"true");
+    setAuthUI();
+    document.getElementById("username").value=""; document.getElementById("password").value="";
+  } else alert("Login failed. Use admin / admin123");
+};
+document.getElementById("logoutBtn").onclick=()=>{ localStorage.removeItem(AUTH_KEY); localStorage.removeItem("currentUser"); setAuthUI(); closeAdmin(); };
+document.getElementById("editBtn").onclick=openAdmin;
+document.getElementById("closeBtn").onclick=closeAdmin;
+document.getElementById("saveBtn").onclick=async ()=>{
+  try{
+    saveEditor();
+    await saveDashboardRemote();
+    alert("Dashboard saved. Refresh the TV after GitHub Pages republishes.");
+  }catch(err){
+    console.error(err);
+    alert("Save failed: " + err.message);
+  }
+};
+document.getElementById("addTechBtn").onclick=addTech;
+document.getElementById("removeTechBtn").onclick=removeTech;
+document.getElementById("addAdvisorBtn").onclick=addAdvisor;
+document.getElementById("removeAdvisorBtn").onclick=removeAdvisor;
+document.getElementById("addVacationBtn").onclick=addVacationEntry;
+document.getElementById("saveUserBtn").onclick=saveUser;
+document.getElementById("deleteSelectedUserBtn").onclick=deleteUser;
+document.getElementById("clearSelectedUserBtn").onclick=clearSelectedUser;
+document.getElementById("removeVacationBtn").onclick=removeVacationEntry;
+window.addEventListener("resize", ()=>{ fitStage(); requestAnimationFrame(()=>{ fitTableRows("techBody",16,10,8); fitTableRows("techTrainingBody",12,8,6); fitTableRows("advisorTrainingBody",12,8,6); fitTableRows("vacationBody",12,8,6); fitTableRows("advisorBody",18,10,8); renderGauges(); }); });
+
+setClock();
+fitStage();
+setAuthUI();
+renderUsers();
+loadSharedData().then(()=>{ renderAll(); }).catch(()=>{ renderAll(); });
+</script>
+</body>
+</html>
