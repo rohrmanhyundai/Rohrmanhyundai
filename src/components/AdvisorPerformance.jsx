@@ -36,15 +36,15 @@ export default function AdvisorPerformance({ data }) {
             <tr>
               <th>Advisor</th>
               <th>Daily Avg</th>
-              <th>MTD Hrs<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 300</span></th>
-              <th>Hrs/RO<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 1.4</span></th>
-              <th>Alignment %<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 10%</span></th>
-              <th>Tires %<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 15%</span></th>
-              <th>Valvoline %<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 25%</span></th>
-              <th>Roh$50 HRS/RO<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 1.2</span></th>
-              <th>CSI<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 920</span></th>
-              <th>ASR %<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 21%</span></th>
-              <th>ELR %<br /><span style={{ color: '#95a9c6', fontSize: '10px' }}>Goal 88%</span></th>
+              <th>MTD Hrs<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 300</span></th>
+              <th>Hrs/RO<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 1.4</span></th>
+              <th>Alignment %<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 10%</span></th>
+              <th>Tires %<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 15%</span></th>
+              <th>Valvoline %<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 25%</span></th>
+              <th>Roh$50 HRS/RO<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 1.2</span></th>
+              <th>CSI<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 920</span></th>
+              <th>ASR %<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 21%</span></th>
+              <th>ELR %<br /><span style={{ color: '#95a9c6', fontSize: '11px' }}>Goal 88%</span></th>
               <th>Last Month Total</th>
             </tr>
           </thead>
