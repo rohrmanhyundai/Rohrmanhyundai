@@ -30,7 +30,7 @@ export default function AdvisorPerformance({ data }) {
           ))}
         </div>
       </div>
-      <div className="tableArea" style={{ height: 'calc(100% - 72px)' }}>
+      <div className="tableArea" style={{ height: 'auto' }}>
         <table>
           <thead>
             <tr>
