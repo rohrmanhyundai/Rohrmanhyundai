@@ -119,15 +119,16 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 100,
-        "hours_per_ro": 1.32,
-        "align": 0.0561,
+        "mtd_hours": 102.1,
+        "hours_per_ro": 1.26,
+        "align": 0.14300000000000002,
         "tires": 0.0374,
-        "valvoline": 0.2991,
-        "csi": 891,
-        "asr": 0.2163,
-        "elr": 0.93,
-        "last_month_total": 0
+        "valvoline": 0.405,
+        "csi": 901,
+        "asr": 0.204,
+        "elr": 0.96,
+        "last_month_total": 305.7,
+        "roh50_hrs_ro": 1.21
       },
       {
         "name": "JORDAN",
@@ -225,11 +226,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 284.6,
-      "align": 0.12096666666666667,
+      "total_hours": 286.7,
+      "align": 0.14993333333333334,
       "tires": 0.10736666666666667,
-      "valvoline": 0.24853333333333336,
-      "csi": 917.3333333333334
+      "valvoline": 0.2838333333333333,
+      "csi": 920.6666666666666
     },
     "techTotals": {
       "mon": 40.6,
