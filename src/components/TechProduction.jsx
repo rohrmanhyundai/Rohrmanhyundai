@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
+const BASE_FONT = 15; // baseline td font size
+const BASE_ROWS = 7;  // baseline number of techs
+
 export default function TechProduction({ data }) {
+  const containerRef = useRef(null);
+  const tableRef = useRef(null);
+  const [fontSize, setFontSize] = useState(BASE_FONT);
+
+  useEffect(() => {
+    if (!containerRef.current || !tableRef.current) return;
+    const count = data.technicians.length || BASE_ROWS;
+    // Scale font proportionally: fewer rows = bigger font, more rows = smaller
+    const scale = Math.min(1, BASE_ROWS / count);
+    setFontSize(Math.round(BASE_FONT * scale * 10) / 10);
+  }, [data.technicians.length]);
+
   const dayChips = [
     ['Mon', 'mon'], ['Tue', 'tue'], ['Wed', 'wed'],
     ['Thu', 'thu'], ['Fri', 'fri'], ['Sat', 'sat'],
   ];
+
+  const thStyle = { fontSize: Math.round(fontSize * 0.85) };
+  const tdStyle = { fontSize, padding: `${Math.max(3, fontSize * 0.35)}px 8px` };
 
   return (
     <div className="card">
@@ -20,12 +38,12 @@ export default function TechProduction({ data }) {
           ))}
         </div>
       </div>
-      <div className="tableArea">
-        <table>
+      <div className="tableArea" ref={containerRef}>
+        <table ref={tableRef}>
           <thead>
             <tr>
-              <th>Tech</th><th>Goal</th><th>Mon</th><th>Tue</th><th>Wed</th>
-              <th>Thu</th><th>Fri</th><th>Sat</th><th>Total</th><th>Goal %</th><th>Pacing</th>
+              <th style={thStyle}>Tech</th><th style={thStyle}>Goal</th><th style={thStyle}>Mon</th><th style={thStyle}>Tue</th><th style={thStyle}>Wed</th>
+              <th style={thStyle}>Thu</th><th style={thStyle}>Fri</th><th style={thStyle}>Sat</th><th style={thStyle}>Total</th><th style={thStyle}>Goal %</th><th style={thStyle}>Pacing</th>
             </tr>
           </thead>
           <tbody>
@@ -34,20 +52,20 @@ export default function TechProduction({ data }) {
               const cls = safe(t.goal_pct) >= 0.9 ? 'good' : safe(t.goal_pct) >= 0.75 ? 'warn' : 'bad';
               return (
                 <tr key={t.name}>
-                  <td className="name">{t.name}</td>
-                  <td>{n(t.goal, 1)}</td>
-                  <td>{n(t.mon, 1)}</td>
-                  <td>{n(t.tue, 1)}</td>
-                  <td>{n(t.wed, 1)}</td>
-                  <td>{n(t.thu, 1)}</td>
-                  <td>{n(t.fri, 1)}</td>
-                  <td>{n(t.sat, 1)}</td>
-                  <td>{n(t.total, 1)}</td>
-                  <td>
+                  <td className="name" style={tdStyle}>{t.name}</td>
+                  <td style={tdStyle}>{n(t.goal, 1)}</td>
+                  <td style={tdStyle}>{n(t.mon, 1)}</td>
+                  <td style={tdStyle}>{n(t.tue, 1)}</td>
+                  <td style={tdStyle}>{n(t.wed, 1)}</td>
+                  <td style={tdStyle}>{n(t.thu, 1)}</td>
+                  <td style={tdStyle}>{n(t.fri, 1)}</td>
+                  <td style={tdStyle}>{n(t.sat, 1)}</td>
+                  <td style={tdStyle}>{n(t.total, 1)}</td>
+                  <td style={tdStyle}>
                     <div>{pct(t.goal_pct, 0)}</div>
                     <div className="bar"><div className="fill" style={{ width: `${width}%` }} /></div>
                   </td>
-                  <td><span className={`badge ${cls}`}>{n(t.pacing, 1)} hrs</span></td>
+                  <td style={tdStyle}><span className={`badge ${cls}`} style={{ fontSize: Math.round(fontSize * 0.8) }}>{n(t.pacing, 1)} hrs</span></td>
                 </tr>
               );
             })}
