@@ -113,6 +113,22 @@
         "certified": "YES",
         "trainings_due": "—",
         "excel_training": "NA"
+      },
+      {
+        "name": "TEST",
+        "goal": 25,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 0,
+        "goal_pct": 0,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
@@ -239,7 +255,7 @@
       "fri": 0,
       "sat": 23.9,
       "week_total": 198.39999999999998,
-      "week_pct": 0.6876949740034661
+      "week_pct": 0.6328548644338118
     },
     "grossGoal": 135544,
     "grossActual": 138307,
