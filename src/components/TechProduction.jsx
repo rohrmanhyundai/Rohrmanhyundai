@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-const BASE_FONT = 15; // baseline td font size
-const BASE_ROWS = 7;  // baseline number of techs
+const CONTAINER_H = 290; // approximate usable height for rows (340px card - header/th)
+const BASE_FONT = 15;
 
 export default function TechProduction({ data }) {
   const containerRef = useRef(null);
@@ -10,11 +10,10 @@ export default function TechProduction({ data }) {
   const [fontSize, setFontSize] = useState(BASE_FONT);
 
   useEffect(() => {
-    if (!containerRef.current || !tableRef.current) return;
-    const count = data.technicians.length || BASE_ROWS;
-    // Scale font proportionally: fewer rows = bigger font, more rows = smaller
-    const scale = Math.min(1, BASE_ROWS / count);
-    setFontSize(Math.round(BASE_FONT * scale * 10) / 10);
+    const count = data.technicians.length || 7;
+    // Each row needs ~font*2.4 for text + padding + border
+    const maxFont = Math.floor(CONTAINER_H / (count * 2.4));
+    setFontSize(Math.min(BASE_FONT, Math.max(10, maxFont)));
   }, [data.technicians.length]);
 
   const dayChips = [
