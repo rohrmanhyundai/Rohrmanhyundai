@@ -15,7 +15,7 @@
         "goal_pct": 0,
         "pacing": 0,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "95.0"
       },
       {
@@ -31,7 +31,7 @@
         "goal_pct": 0.1726315789473684,
         "pacing": 8.2,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "317.0"
       },
       {
@@ -47,7 +47,7 @@
         "goal_pct": 0,
         "pacing": 0,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "100.0"
       },
       {
@@ -63,7 +63,7 @@
         "goal_pct": 0.19157894736842104,
         "pacing": 9.1,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "NA"
       },
       {
@@ -79,7 +79,7 @@
         "goal_pct": 0,
         "pacing": 0,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "342.0"
       },
       {
@@ -95,7 +95,7 @@
         "goal_pct": 0.08627450980392158,
         "pacing": 2.2,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "NA"
       },
       {
@@ -111,7 +111,7 @@
         "goal_pct": 0,
         "pacing": 0,
         "certified": "YES",
-        "trainings_due": "—",
+        "trainings_due": "0",
         "excel_training": "NA"
       }
     ],
