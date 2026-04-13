@@ -24,8 +24,9 @@ export async function saveDashboardToGitHub(payload) {
     'User-Agent': 'rohrman-dashboard',
   };
 
-  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${encodeURIComponent(GITHUB_PATH)}?ref=${encodeURIComponent(GITHUB_BRANCH)}`;
-  const getRes = await fetch(getUrl, { headers });
+  const apiPath = GITHUB_PATH;
+  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}?ref=${GITHUB_BRANCH}&_=${Date.now()}`;
+  const getRes = await fetch(getUrl, { headers, cache: 'no-store' });
 
   let sha = null;
   if (getRes.ok) {
@@ -39,7 +40,7 @@ export async function saveDashboardToGitHub(payload) {
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
   const putRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${encodeURIComponent(GITHUB_PATH)}`,
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}`,
     {
       method: 'PUT',
       headers: { ...headers, 'Content-Type': 'application/json' },
