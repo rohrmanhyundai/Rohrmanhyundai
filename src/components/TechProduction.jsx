@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-const CONTAINER_H = 290; // approximate usable height for rows (340px card - header/th)
 const BASE_FONT = 15;
 
 export default function TechProduction({ data }) {
@@ -10,10 +9,13 @@ export default function TechProduction({ data }) {
   const [fontSize, setFontSize] = useState(BASE_FONT);
 
   useEffect(() => {
+    if (!containerRef.current) return;
     const count = data.technicians.length || 7;
-    // Each row needs ~font*2.4 for text + padding + border
-    const maxFont = Math.floor(CONTAINER_H / (count * 2.4));
-    setFontSize(Math.min(BASE_FONT, Math.max(10, maxFont)));
+    // Measure actual available height and calculate font to fit
+    const available = containerRef.current.clientHeight;
+    // Each row needs ~font*2.5 for text + padding + border, plus ~30px for thead
+    const maxFont = Math.floor((available - 30) / (count * 2.5));
+    setFontSize(Math.min(BASE_FONT, Math.max(9, maxFont)));
   }, [data.technicians.length]);
 
   const dayChips = [
