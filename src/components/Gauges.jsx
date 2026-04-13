@@ -1,6 +1,7 @@
 import React from 'react';
 import { safe } from '../utils/formatters';
 import { buildGaugeData } from '../utils/calculations';
+import quotes from '../data/quotes';
 
 function gaugeSvg(g) {
   const p = Math.max(0, Math.min(1.2, safe(g.pct, 0)));
@@ -30,8 +31,16 @@ function gaugeSvg(g) {
   );
 }
 
+function getDailyQuote() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  return quotes[dayOfYear % quotes.length];
+}
+
 export default function Gauges({ data }) {
   const gauges = buildGaugeData(data);
+  const quote = getDailyQuote();
 
   return (
     <section className="card">
@@ -50,6 +59,11 @@ export default function Gauges({ data }) {
             <div className="gsub">{g.sub}</div>
           </div>
         ))}
+        <div className="quote-card">
+          <div className="quote-icon">&#x201C;</div>
+          <div className="quote-text">{quote.text}</div>
+          <div className="quote-author">&mdash; {quote.author}</div>
+        </div>
       </div>
     </section>
   );
