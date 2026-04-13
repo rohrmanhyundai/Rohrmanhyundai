@@ -57,9 +57,7 @@ export default function App() {
     if (!stageRef.current) return;
     const baseW = 1920, baseH = 1080;
     const vw = window.innerWidth, vh = window.innerHeight;
-    const safeW = Math.max(320, vw - 24);
-    const safeH = Math.max(240, vh - 36);
-    const scale = Math.min(safeW / baseW, safeH / baseH) * 0.985;
+    const scale = Math.min(vw / baseW, vh / baseH);
     const left = Math.max(0, (vw - baseW * scale) / 2);
     const top = Math.max(0, (vh - baseH * scale) / 2);
     stageRef.current.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
