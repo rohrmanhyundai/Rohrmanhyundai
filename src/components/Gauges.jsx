@@ -61,7 +61,7 @@ export default function Gauges({ data }) {
         ))}
         <div className="quote-card">
           <div className="quote-icon">&#x201C;</div>
-          <div className="quote-text">{quote.text}</div>
+          <div className="quote-text" style={{ fontSize: Math.max(14, Math.min(28, Math.floor(400 / Math.max(1, quote.text.length)  * 10))) }}>{quote.text}</div>
           <div className="quote-author">&mdash; {quote.author}</div>
         </div>
       </div>

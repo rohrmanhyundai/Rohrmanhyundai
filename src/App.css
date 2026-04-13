@@ -102,9 +102,9 @@ tr:last-child td{border-bottom:none}
   padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;overflow:hidden;
 }
-.quote-icon{font-size:42px;color:var(--cyan);line-height:1;margin-bottom:4px;opacity:.6}
-.quote-text{font-size:15px;font-style:italic;line-height:1.35;color:var(--text);padding:0 4px}
-.quote-author{font-size:13px;color:var(--cyan);font-weight:700;margin-top:8px}
+.quote-icon{font-size:36px;color:var(--cyan);line-height:1;margin-bottom:2px;opacity:.6}
+.quote-text{font-style:italic;line-height:1.3;color:var(--text);padding:0 6px}
+.quote-author{font-size:14px;color:var(--cyan);font-weight:700;margin-top:6px}
 
 /* Admin panel */
 .admin{position:absolute;top:88px;right:10px;width:620px;max-height:980px;overflow:auto;background:rgba(8,17,28,.97);border:1px solid var(--line);border-radius:16px;padding:12px;display:none;z-index:50}
