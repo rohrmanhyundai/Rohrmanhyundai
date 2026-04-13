@@ -62,7 +62,7 @@ export default function Gauges({ data }) {
         <div className="quote-card">
           <div className="quote-icon">&#x201C;</div>
           {(() => {
-            const fs = Math.max(14, Math.min(28, Math.floor(400 / Math.max(1, quote.text.length) * 10)));
+            const fs = Math.max(13, Math.min(24, Math.floor(380 / Math.max(1, quote.text.length) * 10)));
             return (
               <>
                 <div className="quote-text" style={{ fontSize: fs }}>{quote.text}</div>
