@@ -133,28 +133,30 @@
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 10,
-        "hours_per_ro": 1.4,
-        "align": 0.213,
-        "tires": 0.2222,
-        "valvoline": 0.259,
-        "csi": 936,
-        "asr": 0.1713,
-        "elr": 0.93,
-        "last_month_total": 0
+        "mtd_hours": 114,
+        "hours_per_ro": 1.3,
+        "align": 0.163,
+        "tires": 0.102,
+        "valvoline": 0.405,
+        "csi": 988,
+        "asr": 0.17,
+        "elr": 0.95,
+        "last_month_total": 333.4,
+        "roh50_hrs_ro": 0.7
       },
       {
         "name": "NEVEN",
         "daily_avg": 7.936363636,
-        "mtd_hours": 174.6,
-        "hours_per_ro": 1.27,
-        "align": 0.0938,
-        "tires": 0.0625,
-        "valvoline": 0.1875,
-        "csi": 925,
-        "asr": 0.1549,
-        "elr": 0.92,
-        "last_month_total": 0
+        "mtd_hours": 89.9,
+        "hours_per_ro": 1.1,
+        "align": 0.06,
+        "tires": 0.114,
+        "valvoline": 0.17800000000000002,
+        "csi": 917,
+        "asr": 0.17800000000000002,
+        "elr": 0.91,
+        "last_month_total": 204,
+        "roh50_hrs_ro": 0.7
       }
     ],
     "advisorTraining": [
@@ -226,11 +228,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 286.7,
-      "align": 0.14993333333333334,
-      "tires": 0.10736666666666667,
-      "valvoline": 0.2838333333333333,
-      "csi": 920.6666666666666
+      "total_hours": 306,
+      "align": 0.12200000000000001,
+      "tires": 0.08446666666666668,
+      "valvoline": 0.32933333333333337,
+      "csi": 935.3333333333334
     },
     "techTotals": {
       "mon": 40.6,
