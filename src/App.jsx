@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import TechProduction from './components/TechProduction';
-import TrainingRotator from './components/TrainingRotator';
+import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
@@ -115,11 +115,8 @@ export default function App() {
             onEdit={() => setAdminOpen(true)}
           />
 
-          <section className="top">
-            <TechProduction data={data} />
-            <TrainingRotator data={data} vacations={vacations} />
-          </section>
-
+          <TechProduction data={data} />
+          <TickerPanel data={data} vacations={vacations} />
           <AdvisorPerformance data={data} />
           <Gauges data={data} />
         </div>
