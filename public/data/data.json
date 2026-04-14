@@ -162,20 +162,20 @@
     "advisorTraining": [
       {
         "name": "DAVID",
-        "certified": "—",
-        "trainings_due": "YES",
+        "certified": "NO",
+        "trainings_due": "6",
         "excel_training": "—"
       },
       {
         "name": "JORDAN",
-        "certified": "—",
-        "trainings_due": "YES",
+        "certified": "NO",
+        "trainings_due": "6",
         "excel_training": "—"
       },
       {
         "name": "NEVEN",
-        "certified": "—",
-        "trainings_due": "YES",
+        "certified": "NO",
+        "trainings_due": "6",
         "excel_training": "—"
       }
     ],
