@@ -53,15 +53,15 @@
       {
         "name": "JACOB",
         "goal": 47.5,
-        "mon": 17.2,
+        "mon": 10.1,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 9.1,
-        "total": 26.299999999999997,
-        "goal_pct": 0.5536842105263158,
-        "pacing": 26.299999999999997,
+        "total": 19.2,
+        "goal_pct": 0.40421052631578946,
+        "pacing": 19.2,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -235,14 +235,14 @@
       "csi": 931.3333333333334
     },
     "techTotals": {
-      "mon": 48.7,
+      "mon": 41.6,
       "tue": 0,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 19.499999999999996,
-      "week_total": 68.2,
-      "week_pct": 0.23639514731369152
+      "week_total": 61.10000000000001,
+      "week_pct": 0.21178509532062395
     },
     "grossGoal": 154287,
     "grossActual": 150287,
