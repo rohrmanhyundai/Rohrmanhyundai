@@ -5,15 +5,15 @@
       {
         "name": "EDGAR",
         "goal": 47.5,
-        "mon": 0,
+        "mon": 9,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "total": 9,
+        "goal_pct": 0.18947368421052632,
+        "pacing": 9,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "95.0"
@@ -21,15 +21,15 @@
       {
         "name": "MIKE",
         "goal": 47.5,
-        "mon": 0,
+        "mon": 10.1,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 8.2,
-        "total": 8.2,
-        "goal_pct": 0.1726315789473684,
-        "pacing": 8.2,
+        "total": 18.299999999999997,
+        "goal_pct": 0.3852631578947368,
+        "pacing": 18.299999999999997,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "317.0"
@@ -37,15 +37,15 @@
       {
         "name": "GAVEN",
         "goal": 47.5,
-        "mon": 0,
+        "mon": 7,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "total": 7,
+        "goal_pct": 0.14736842105263157,
+        "pacing": 7,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "100.0"
@@ -69,15 +69,15 @@
       {
         "name": "CORY",
         "goal": 47.5,
-        "mon": 0,
+        "mon": 10.7,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "total": 10.7,
+        "goal_pct": 0.22526315789473683,
+        "pacing": 10.7,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "342.0"
@@ -101,15 +101,15 @@
       {
         "name": "CARTER",
         "goal": 25.5,
-        "mon": 0,
+        "mon": 3.7,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "total": 3.7,
+        "goal_pct": 0.1450980392156863,
+        "pacing": 3.7,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -235,14 +235,14 @@
       "csi": 935.3333333333334
     },
     "techTotals": {
-      "mon": 0,
+      "mon": 40.5,
       "tue": 0,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 19.499999999999996,
-      "week_total": 19.499999999999996,
-      "week_pct": 0.06759098786828421
+      "week_total": 60,
+      "week_pct": 0.20797227036395147
     },
     "grossGoal": 135544,
     "grossActual": 138307,
@@ -289,12 +289,17 @@
     {
       "name": "—",
       "dates": "—",
-      "status": "—"
+      "status": "APPROVED"
     },
     {
       "name": "—",
       "dates": "—",
       "status": "—"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "5/18-5/22",
+      "status": "APPROVED"
     }
   ]
 }
