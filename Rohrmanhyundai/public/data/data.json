@@ -1,0 +1,305 @@
+{
+  "data": {
+    "title": "Bob Rohrman Hyundai Daily Summary",
+    "technicians": [
+      {
+        "name": "EDGAR",
+        "goal": 47.5,
+        "mon": 9,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 9,
+        "goal_pct": 0.18947368421052632,
+        "pacing": 9,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "95.0"
+      },
+      {
+        "name": "MIKE",
+        "goal": 47.5,
+        "mon": 10.1,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 8.2,
+        "total": 18.299999999999997,
+        "goal_pct": 0.3852631578947368,
+        "pacing": 18.299999999999997,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "317.0"
+      },
+      {
+        "name": "GAVEN",
+        "goal": 47.5,
+        "mon": 7,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 7,
+        "goal_pct": 0.14736842105263157,
+        "pacing": 7,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "100.0"
+      },
+      {
+        "name": "JACOB",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 9.1,
+        "total": 9.1,
+        "goal_pct": 0.19157894736842104,
+        "pacing": 9.1,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "NA"
+      },
+      {
+        "name": "CORY",
+        "goal": 47.5,
+        "mon": 10.7,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 10.7,
+        "goal_pct": 0.22526315789473683,
+        "pacing": 10.7,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "342.0"
+      },
+      {
+        "name": "WEST",
+        "goal": 25.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 2.2,
+        "total": 2.2,
+        "goal_pct": 0.08627450980392158,
+        "pacing": 2.2,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "NA"
+      },
+      {
+        "name": "CARTER",
+        "goal": 25.5,
+        "mon": 3.7,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 3.7,
+        "goal_pct": 0.1450980392156863,
+        "pacing": 3.7,
+        "certified": "YES",
+        "trainings_due": "0",
+        "excel_training": "NA"
+      }
+    ],
+    "advisors": [
+      {
+        "name": "DAVID",
+        "daily_avg": 11.15,
+        "mtd_hours": 125.3,
+        "hours_per_ro": 1.35,
+        "align": 0.1429,
+        "tires": 0.2857,
+        "valvoline": 0.38780000000000003,
+        "csi": 901,
+        "asr": 0.2073,
+        "elr": 0.96,
+        "last_month_total": 305.7,
+        "roh50_hrs_ro": 1.13
+      },
+      {
+        "name": "JORDAN",
+        "daily_avg": 12.58636364,
+        "mtd_hours": 129.8,
+        "hours_per_ro": 1.21,
+        "align": 0.1552,
+        "tires": 0.0862,
+        "valvoline": 0.2241,
+        "csi": 976,
+        "asr": 0.18230000000000002,
+        "elr": 0.94,
+        "last_month_total": 333.4,
+        "roh50_hrs_ro": 0.83
+      },
+      {
+        "name": "NEVEN",
+        "daily_avg": 7.936363636,
+        "mtd_hours": 94.2,
+        "hours_per_ro": 1.05,
+        "align": 0.0526,
+        "tires": 0.10529999999999999,
+        "valvoline": 0.10529999999999999,
+        "csi": 917,
+        "asr": 0.1134,
+        "elr": 0.94,
+        "last_month_total": 204,
+        "roh50_hrs_ro": 0.66
+      }
+    ],
+    "advisorTraining": [
+      {
+        "name": "DAVID",
+        "certified": "—",
+        "trainings_due": "YES",
+        "excel_training": "—"
+      },
+      {
+        "name": "JORDAN",
+        "certified": "—",
+        "trainings_due": "YES",
+        "excel_training": "—"
+      },
+      {
+        "name": "NEVEN",
+        "certified": "—",
+        "trainings_due": "YES",
+        "excel_training": "—"
+      }
+    ],
+    "vacations": [
+      {
+        "name": "WEST",
+        "dates": "4/13-4/14",
+        "status": "APPROVED"
+      },
+      {
+        "name": "DAVID",
+        "dates": "5/26-6/3",
+        "status": "APPROVED"
+      },
+      {
+        "name": "JACOB",
+        "dates": "5/22-5/25",
+        "status": "APPROVED"
+      },
+      {
+        "name": "CARTER",
+        "dates": "6/5/26-7/10/26 40HR",
+        "status": "APPROVED"
+      },
+      {
+        "name": "JACOB",
+        "dates": "8/17-8/21 40HR",
+        "status": "APPROVED"
+      },
+      {
+        "name": "GAVEN",
+        "dates": "4/23 4/24 4/27",
+        "status": "APPROVED"
+      },
+      {
+        "name": "MIKE",
+        "dates": "5/1 8HR",
+        "status": "APPROVED"
+      },
+      {
+        "name": "MIKE",
+        "dates": "3/27 8HR",
+        "status": "APPROVED"
+      },
+      {
+        "name": "NEVEN",
+        "dates": "5/20-5/24 40HR",
+        "status": "APPROVED"
+      }
+    ],
+    "advisorSummary": {
+      "date": "March 27, 2026",
+      "total_hours": 349.3,
+      "align": 0.1169,
+      "tires": 0.15906666666666666,
+      "valvoline": 0.23906666666666665,
+      "csi": 931.3333333333334
+    },
+    "techTotals": {
+      "mon": 40.5,
+      "tue": 0,
+      "wed": 0,
+      "thu": 0,
+      "fri": 0,
+      "sat": 19.499999999999996,
+      "week_total": 60,
+      "week_pct": 0.20797227036395147
+    },
+    "grossGoal": 154287,
+    "grossActual": 150287,
+    "cpGoal": 60404,
+    "cpActual": 58600,
+    "advisorMonthlyWorkdays": 27
+  },
+  "vacations": [
+    {
+      "name": "WEST",
+      "dates": "4/13-4/14",
+      "status": "APPROVED"
+    },
+    {
+      "name": "DAVID",
+      "dates": "5/26-6/3",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "5/22-5/25",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CARTER",
+      "dates": "6/5/26-7/10/26 40HR",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "8/17-8/21 40HR",
+      "status": "APPROVED"
+    },
+    {
+      "name": "GAVEN",
+      "dates": "4/23 4/24 4/27",
+      "status": "APPROVED"
+    },
+    {
+      "name": "MIKE",
+      "dates": "5/1 8HR",
+      "status": "APPROVED"
+    },
+    {
+      "name": "—",
+      "dates": "—",
+      "status": "APPROVED"
+    },
+    {
+      "name": "—",
+      "dates": "—",
+      "status": "—"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "5/18-5/22",
+      "status": "APPROVED"
+    }
+  ]
+}
