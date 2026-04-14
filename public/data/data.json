@@ -21,15 +21,15 @@
       {
         "name": "MIKE",
         "goal": 47.5,
-        "mon": 10.1,
+        "mon": 11.8,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 8.2,
-        "total": 18.299999999999997,
-        "goal_pct": 0.3852631578947368,
-        "pacing": 18.299999999999997,
+        "total": 20,
+        "goal_pct": 0.42105263157894735,
+        "pacing": 20,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "317.0"
@@ -53,15 +53,15 @@
       {
         "name": "JACOB",
         "goal": 47.5,
-        "mon": 10.7,
+        "mon": 17.2,
         "tue": 0,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 9.1,
-        "total": 19.799999999999997,
-        "goal_pct": 0.41684210526315785,
-        "pacing": 19.799999999999997,
+        "total": 26.299999999999997,
+        "goal_pct": 0.5536842105263158,
+        "pacing": 26.299999999999997,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -235,14 +235,14 @@
       "csi": 931.3333333333334
     },
     "techTotals": {
-      "mon": 40.5,
+      "mon": 48.7,
       "tue": 0,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 19.499999999999996,
-      "week_total": 60,
-      "week_pct": 0.20797227036395147
+      "week_total": 68.2,
+      "week_pct": 0.23639514731369152
     },
     "grossGoal": 154287,
     "grossActual": 150287,
