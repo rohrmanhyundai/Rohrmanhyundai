@@ -108,8 +108,12 @@ tr:last-child td{border-bottom:none}
 .quote-author{color:var(--cyan);font-weight:700;margin-top:4px}
 
 /* Admin panel */
-.admin{position:absolute;top:88px;right:10px;width:620px;max-height:980px;overflow:auto;background:rgba(8,17,28,.97);border:1px solid var(--line);border-radius:16px;padding:12px;display:none;z-index:50}
-.admin.open{display:block}
+.admin{position:fixed;inset:0;display:none;z-index:100;background:var(--bg);flex-direction:column}
+.admin.open{display:flex}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line);background:var(--panel);flex-shrink:0}
+.admin-topbar h2{margin:0;font-size:22px;font-weight:900}
+.admin-topbar .actions{margin:0}
+.admin-body{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:8px}
 .admin h2{margin:0 0 8px 0;font-size:16px}
 .small{font-size:10px;color:var(--muted)}
 .form-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
