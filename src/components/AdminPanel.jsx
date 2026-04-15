@@ -142,7 +142,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   return (
     <aside className="admin open">
-      <h2>Edit Dashboard</h2>
+      <div className="admin-topbar">
+        <h2>Edit Dashboard</h2>
+        <div className="actions">
+          <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+          <button className="secondary" onClick={onClose}>Close</button>
+        </div>
+      </div>
+      <div className="admin-body">
       <div className="small">Training Center, Vacation Approved, advisor pacing, and all edit boxes are rebuilt to behave consistently.</div>
 
       {/* GitHub Settings */}
@@ -317,9 +324,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         </details>
       )}
 
-      <div className="actions">
-        <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-        <button className="secondary" onClick={onClose}>Close</button>
       </div>
     </aside>
   );
