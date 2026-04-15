@@ -37,6 +37,7 @@ button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
 .note{font-size:14px;color:var(--muted)}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
 .chip{font-size:14px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:rgba(255,255,255,.05)}
+.chip--pacing{background:rgba(99,179,237,.15);border-color:rgba(99,179,237,.5);color:#63b3ed;font-weight:600}
 .tableArea{height:calc(100% - 34px)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#9db1d0;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);line-height:1.1}

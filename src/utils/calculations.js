@@ -67,6 +67,7 @@ export function recalcTech(data) {
   Object.assign(data.techTotals, totals);
   data.techTotals.week_total = weekTotal;
   data.techTotals.week_pct = totalGoal > 0 ? weekTotal / totalGoal : 0;
+  data.techTotals.shop_pacing = data.technicians.reduce((s, t) => s + safe(t.pacing, 0), 0);
 }
 
 export function recalcAdvisorSummary(data) {
