@@ -74,8 +74,10 @@ tr:last-child td{border-bottom:none}
 }
 .ticker-content{
   display:flex;gap:28px;white-space:nowrap;
-  animation:ticker 60s linear infinite;
+  animation:ticker 40s linear infinite;
   padding:0 12px;
+  width:max-content;
+  flex-shrink:0;
 }
 .ticker-item{
   display:flex;align-items:center;gap:8px;
