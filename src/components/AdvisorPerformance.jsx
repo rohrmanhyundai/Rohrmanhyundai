@@ -37,7 +37,6 @@ export default function AdvisorPerformance({ data }) {
       <div className="panel-head">
         <div>
           <div className="title">Advisor Performance</div>
-          <div className="note">Daily Avg = MTD Hrs &divide; completed workdays. You update one day behind, so completed workdays means workdays before today.</div>
         </div>
         <div className="chips">
           {chips.map(([k, v]) => (
