@@ -18,6 +18,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [selectedUser, setSelectedUser] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
+  const [newUserRole, setNewUserRole] = useState('advisor');
+
+  const ROLES = ['advisor', 'technician', 'parts', 'parts manager'];
 
   useEffect(() => {
     localStorage.setItem('dashboardUsersV1', JSON.stringify(users));
@@ -121,9 +124,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setUsers(prev => {
       const existing = prev.find(u => u.username === newUserName);
       if (existing) {
-        return prev.map(u => u.username === newUserName ? { ...u, password: newUserPass } : u);
+        return prev.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole } : u);
       }
-      return [...prev, { username: newUserName, password: newUserPass }];
+      return [...prev, { username: newUserName, password: newUserPass, role: newUserRole }];
     });
     setSelectedUser(newUserName);
   }
@@ -136,6 +139,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setSelectedUser('');
     setNewUserName('');
     setNewUserPass('');
+    setNewUserRole('advisor');
   }
 
   if (!isOpen) return null;
@@ -296,27 +300,33 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div
                   key={u.username}
                   className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); }}
+                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); }}
                 >
                   <div>
                     <div className="user-row-name">{u.username}</div>
-                    <div className="user-row-meta">{u.username === 'admin' ? 'Admin account' : 'Standard user'}</div>
+                    <div className="user-row-meta">{u.username === 'admin' ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}</div>
                   </div>
                 </div>
               ))}
             </div>
             <div className="form-section">
-              <div className="small">{selectedUser ? `Selected user: ${selectedUser}` : 'No user selected'}</div>
+              <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
               <div className="actions">
-                <button className="secondary" onClick={handleDeleteUser}>Delete Selected User</button>
-                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); }}>Clear Selection</button>
+                <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
+                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); }}>Clear</button>
               </div>
             </div>
             <div className="form-section">
-              <div className="title">Add / Edit User</div>
+              <div className="title" style={{ marginBottom: 8 }}>Add / Edit User</div>
               <div className="form-grid">
                 <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
-                <div className="field"><label>Password</label><input value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
+                <div className="field"><label>Password</label><input type="password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
+                <div className="field">
+                  <label>Role</label>
+                  <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
+                    {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+                  </select>
+                </div>
               </div>
               <div className="actions"><button onClick={handleSaveUser}>Save User</button></div>
             </div>
