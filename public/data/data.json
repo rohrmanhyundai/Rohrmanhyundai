@@ -128,7 +128,7 @@
         "asr": 0.2021,
         "elr": 0.96,
         "last_month_total": 305.7,
-        "roh50_hrs_ro": 1.13
+        "roh50_hrs_ro": 1.07
       },
       {
         "name": "JORDAN",
@@ -142,7 +142,7 @@
         "asr": 0.18030000000000002,
         "elr": 0.93,
         "last_month_total": 333.4,
-        "roh50_hrs_ro": 0.83
+        "roh50_hrs_ro": 0.8
       },
       {
         "name": "NEVEN",
@@ -156,7 +156,7 @@
         "asr": 0.11689999999999999,
         "elr": 0.9,
         "last_month_total": 204,
-        "roh50_hrs_ro": 0.66
+        "roh50_hrs_ro": 0.64
       }
     ],
     "advisorTraining": [
