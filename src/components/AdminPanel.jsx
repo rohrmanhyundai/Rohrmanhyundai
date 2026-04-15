@@ -104,16 +104,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function addVacation() {
-    const name = prompt('Name:');
-    const dates = prompt('Dates:');
-    if (!name && !dates) return;
     const newVac = structuredClone(vacations);
-    newVac.push({ name: name || '\u2014', dates: dates || '\u2014', status: 'APPROVED' });
+    newVac.push({ name: '', dates: '', status: 'APPROVED' });
     onDataChange(data, newVac);
   }
 
   function removeVacation(idx) {
-    if (!confirm('Remove this vacation entry?')) return;
     const newVac = structuredClone(vacations);
     newVac.splice(idx, 1);
     onDataChange(data, newVac);
@@ -271,18 +267,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <summary>Approved Vacation</summary>
         <div className="group-body">
           {vacations.map((v, idx) => (
-            <div className="vacation-edit-grid" key={idx}>
-              <div className="field"><label>Name</label><input defaultValue={v.name || ''} onBlur={e => updateField(`vacations.${idx}.name`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Dates</label><input defaultValue={v.dates || ''} onBlur={e => updateField(`vacations.${idx}.dates`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Status</label>
-                <div style={{ display: 'flex', gap: 4 }}>
-                  <input defaultValue={v.status || ''} onBlur={e => updateField(`vacations.${idx}.status`, e.target.value.trim() || '\u2014')} style={{ flex: 1 }} />
-                  <button className="secondary" onClick={() => removeVacation(idx)}>X</button>
-                </div>
-              </div>
+            <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginBottom: 8 }}>
+              <div className="field" style={{ flex: 1 }}><label>Name</label><input defaultValue={v.name || ''} onBlur={e => updateField(`vacations.${idx}.name`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field" style={{ flex: 1.4 }}><label>Dates</label><input defaultValue={v.dates || ''} onBlur={e => updateField(`vacations.${idx}.dates`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field" style={{ flex: 1 }}><label>Status</label><input defaultValue={v.status || ''} onBlur={e => updateField(`vacations.${idx}.status`, e.target.value.trim() || '\u2014')} /></div>
+              <button className="secondary" style={{ flexShrink: 0, padding: '5px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>Remove</button>
             </div>
           ))}
-          <div className="actions"><button onClick={addVacation}>Add Vacation</button></div>
+          <div className="actions"><button onClick={addVacation}>+ Add Vacation</button></div>
         </div>
       </details>
 
