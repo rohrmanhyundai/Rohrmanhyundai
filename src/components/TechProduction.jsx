@@ -37,6 +37,7 @@ export default function TechProduction({ data }) {
           {dayChips.map(([label, key]) => (
             <div className="chip" key={key}>{label} {n(data.techTotals[key], 1)}</div>
           ))}
+          <div className="chip chip--pacing">Shop Pacing {n(data.techTotals.shop_pacing, 1)} hrs</div>
         </div>
       </div>
       <div className="tableArea" ref={containerRef}>
