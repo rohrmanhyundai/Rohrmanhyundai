@@ -5,6 +5,8 @@ import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
+import AdvisorCalendar from './components/AdvisorCalendar';
+import AdvisorDayForm from './components/AdvisorDayForm';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
@@ -30,7 +32,10 @@ export default function App() {
   const [vacations, setVacations] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem(AUTH_KEY) === 'true');
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
+  const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
   const [adminOpen, setAdminOpen] = useState(false);
+  const [page, setPage] = useState('dashboard');
+  const [selectedDay, setSelectedDay] = useState(null);
   const stageRef = useRef(null);
 
   useEffect(() => {
@@ -77,8 +82,10 @@ export default function App() {
     if (match) {
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
+      localStorage.setItem('currentRole', match.role || '');
       setIsLoggedIn(true);
       setCurrentUser(match.username);
+      setCurrentRole(match.role || '');
     } else {
       alert('Login failed.');
     }
@@ -87,9 +94,12 @@ export default function App() {
   function handleLogout() {
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentRole');
     setIsLoggedIn(false);
     setCurrentUser('');
+    setCurrentRole('');
     setAdminOpen(false);
+    setPage('dashboard');
   }
 
   function handleDataChange(newData, newVacations) {
@@ -103,6 +113,26 @@ export default function App() {
     setVacations([...newVacations]);
   }
 
+  // Advisor pages render full-screen outside the scaled stage
+  if (page === 'advisor-calendar') {
+    return (
+      <AdvisorCalendar
+        advisorName={currentUser.toUpperCase()}
+        onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
+        onBack={() => setPage('dashboard')}
+      />
+    );
+  }
+  if (page === 'advisor-day' && selectedDay) {
+    return (
+      <AdvisorDayForm
+        advisorName={currentUser.toUpperCase()}
+        date={selectedDay}
+        onBack={() => setPage('advisor-calendar')}
+      />
+    );
+  }
+
   return (
     <div className="viewport">
       <div className="stage" ref={stageRef}>
@@ -110,9 +140,11 @@ export default function App() {
           <Header
             data={data}
             isLoggedIn={isLoggedIn}
+            currentRole={currentRole}
             onLogin={handleLogin}
             onLogout={handleLogout}
             onEdit={() => setAdminOpen(true)}
+            onAdvisor={() => setPage('advisor-calendar')}
           />
 
           <TechProduction data={data} />
