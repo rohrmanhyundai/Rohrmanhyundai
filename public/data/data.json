@@ -13,7 +13,7 @@
         "sat": 0,
         "total": 19,
         "goal_pct": 0.4,
-        "pacing": 19,
+        "pacing": 47.5,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "95.0"
@@ -29,7 +29,7 @@
         "sat": 8.2,
         "total": 24.5,
         "goal_pct": 0.5157894736842106,
-        "pacing": 24.5,
+        "pacing": 49,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "317.0"
@@ -45,7 +45,7 @@
         "sat": 0,
         "total": 17.9,
         "goal_pct": 0.37684210526315787,
-        "pacing": 17.9,
+        "pacing": 44.75,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "100.0"
@@ -61,7 +61,7 @@
         "sat": 9.1,
         "total": 42.9,
         "goal_pct": 0.903157894736842,
-        "pacing": 42.9,
+        "pacing": 85.8,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -93,7 +93,7 @@
         "sat": 2.2,
         "total": 2.2,
         "goal_pct": 0.08627450980392158,
-        "pacing": 2.2,
+        "pacing": 4.4,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -109,7 +109,7 @@
         "sat": 0,
         "total": 7.9,
         "goal_pct": 0.30980392156862746,
-        "pacing": 7.9,
+        "pacing": 19.75,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -147,8 +147,8 @@
       {
         "name": "NEVEN",
         "daily_avg": 7.936363636,
-        "mtd_hours": 96.0,
-        "hours_per_ro": 1.10,
+        "mtd_hours": 96,
+        "hours_per_ro": 1.1,
         "align": 0.05,
         "tires": 0.125,
         "valvoline": 0.1,
@@ -228,10 +228,10 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 360.9,
+      "total_hours": 357.8,
       "align": 0.11793333333333333,
       "tires": 0.15916666666666665,
-      "valvoline": 0.2571333333333333,
+      "valvoline": 0.25683333333333336,
       "csi": 931.3333333333334
     },
     "techTotals": {
@@ -242,7 +242,8 @@
       "fri": 0,
       "sat": 19.499999999999996,
       "week_total": 114.4,
-      "week_pct": 0.39653379549393414
+      "week_pct": 0.39653379549393414,
+      "shop_pacing": 251.20000000000002
     },
     "grossGoal": 154287,
     "grossActual": 147757,
