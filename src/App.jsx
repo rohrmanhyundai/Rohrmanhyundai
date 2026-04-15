@@ -51,6 +51,8 @@ export default function App() {
       }
     }
     load();
+    const interval = setInterval(load, 10 * 60 * 1000); // refresh every 10 minutes
+    return () => clearInterval(interval);
   }, []);
 
   const fitStage = useCallback(() => {
