@@ -43,24 +43,22 @@ export default function Header({ data, isLoggedIn, currentRole, onLogin, onLogou
           </div>
           <div className="rightHeader">
             <div className="login">
-              <span>LOGIN</span>
               {!isLoggedIn ? (
                 <>
+                  <span>LOGIN</span>
                   <input placeholder="user" style={{ width: 70 }} value={username} onChange={e => setUsername(e.target.value)} />
-                  <input type="password" placeholder="password" style={{ width: 88 }} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+                  <input type="password" placeholder="pass" style={{ width: 80 }} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} />
                   <button onClick={handleLogin}>Login</button>
                 </>
               ) : (
                 <>
-                  <button className="secondary" onClick={onLogout}>Logout</button>
                   {currentRole === 'advisor' && (
                     <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)' }}>
                       Advisor
                     </button>
                   )}
-                  <button className={currentRole === 'advisor' ? 'secondary' : ''} onClick={onEdit}>
-                    {currentRole === 'advisor' ? 'Edit' : 'Edit Dashboard'}
-                  </button>
+                  <button className="secondary" onClick={onEdit}>Edit Dashboard</button>
+                  <button className="secondary" onClick={onLogout}>Logout</button>
                 </>
               )}
             </div>
