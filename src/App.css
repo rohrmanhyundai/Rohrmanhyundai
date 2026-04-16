@@ -25,7 +25,7 @@ input,select,button{font-family:inherit}
 button{cursor:pointer;border:none;color:var(--text);border-radius:10px;padding:6px 9px;font-size:13px;font-weight:800;background:linear-gradient(180deg,rgba(110,231,249,.22),rgba(61,214,195,.18));border:1px solid rgba(110,231,249,.18)}
 button.secondary{background:rgba(255,255,255,.06);border-color:var(--line)}
 .clock{text-align:right;min-width:180px}
-.clock-user{font-size:12px;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:2px;opacity:.85}
+.clock-user{font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:.04em;margin-top:3px;opacity:.9}
 .clock .date{font-size:18px;color:var(--muted)}
 .clock .time{font-size:36px;font-weight:900;line-height:1}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:100%}
