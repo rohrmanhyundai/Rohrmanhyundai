@@ -1,30 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers } from '../utils/github';
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, currentUser }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, currentUser, users, onUsersChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
-  const [users, setUsers] = useState(() => {
-    const stored = localStorage.getItem('dashboardUsersV1');
-    const parsed = stored ? JSON.parse(stored) : null;
-    const list = parsed || [{ username: 'admin', password: 'Hyundai2026' }];
-    if (!list.find(u => u.username === 'admin')) {
-      list.push({ username: 'admin', password: 'Hyundai2026' });
-    }
-    return list;
-  });
+  const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
 
   const ROLES = ['advisor', 'technician', 'parts', 'parts manager'];
-
-  useEffect(() => {
-    localStorage.setItem('dashboardUsersV1', JSON.stringify(users));
-  }, [users]);
 
   function updateField(path, value) {
     const newData = structuredClone(data);
@@ -121,25 +109,26 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function handleSaveUser() {
     if (currentUser !== 'admin') { alert('Only admin can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
-    setUsers(prev => {
-      const existing = prev.find(u => u.username === newUserName);
-      if (existing) {
-        return prev.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole } : u);
-      }
-      return [...prev, { username: newUserName, password: newUserPass, role: newUserRole }];
-    });
-    setSelectedUser(newUserName);
+    const updated = users.find(u => u.username === newUserName)
+      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole } : u)
+      : [...users, { username: newUserName, password: newUserPass, role: newUserRole }];
+    setUserSaving(true);
+    saveUsers(updated)
+      .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
+      .catch(err => alert('Failed to save user: ' + err.message))
+      .finally(() => setUserSaving(false));
   }
 
   function handleDeleteUser() {
     if (currentUser !== 'admin') { alert('Only admin can manage users.'); return; }
     if (!selectedUser) { alert('Select a user to delete.'); return; }
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
-    setUsers(prev => prev.filter(u => u.username !== selectedUser));
-    setSelectedUser('');
-    setNewUserName('');
-    setNewUserPass('');
-    setNewUserRole('advisor');
+    const updated = users.filter(u => u.username !== selectedUser);
+    setUserSaving(true);
+    saveUsers(updated)
+      .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); })
+      .catch(err => alert('Failed to delete user: ' + err.message))
+      .finally(() => setUserSaving(false));
   }
 
   if (!isOpen) return null;
@@ -328,7 +317,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   </select>
                 </div>
               </div>
-              <div className="actions"><button onClick={handleSaveUser}>Save User</button></div>
+              <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>
             </div>
           </div>
         </details>
