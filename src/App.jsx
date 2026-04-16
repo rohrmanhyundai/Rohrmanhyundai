@@ -127,7 +127,7 @@ export default function App() {
     setVacations([...newVacations]);
   }
 
-  const advisorList = (data.advisors || []).map(a => a.name);
+  const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
