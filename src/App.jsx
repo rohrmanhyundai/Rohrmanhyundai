@@ -182,6 +182,7 @@ export default function App() {
           onClose={() => setAdminOpen(false)}
           onDataChange={handleDataChange}
           currentUser={currentUser}
+          currentRole={currentRole}
           users={users}
           onUsersChange={setUsers}
         />
