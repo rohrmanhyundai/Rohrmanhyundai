@@ -8,7 +8,7 @@
       "criticalDeferredService": "fue;",
       "waiter": true,
       "technician": "ass",
-      "notes": "test"
+      "notes": "[SHAWN]\ntest\ntest test "
     },
     {
       "customerName": "",
@@ -35,5 +35,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T12:57:57.002Z"
+  "savedAt": "2026-04-16T12:58:20.981Z"
 }
