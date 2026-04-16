@@ -52,7 +52,7 @@ export default function Header({ data, isLoggedIn, currentRole, onLogin, onLogou
                 </>
               ) : (
                 <>
-                  {currentRole === 'advisor' && (
+                  {(currentRole === 'advisor' || currentRole === 'admin') && (
                     <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)' }}>
                       Advisor
                     </button>
