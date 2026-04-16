@@ -63,11 +63,11 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, onL
               )}
             </div>
             <div className="clock">
+              {isLoggedIn && currentUser && (
+                <div className="clock-user">{currentUser}</div>
+              )}
               <div className="date">{clock.date}</div>
               <div className="time">{clock.time}</div>
-              {isLoggedIn && currentUser && (
-                <div className="clock-user">Logged in: {currentUser}</div>
-              )}
             </div>
           </div>
         </div>
