@@ -47,8 +47,8 @@
         "customerPay": false
       },
       "customerFeedback": {
-        "good": true,
-        "poor": false
+        "poor": true,
+        "good": false
       },
       "notes": [
         {
@@ -122,5 +122,5 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-16T18:30:30.987Z"
+  "savedAt": "2026-04-16T18:56:16.313Z"
 }
