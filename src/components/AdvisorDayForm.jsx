@@ -10,6 +10,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   const [notesOpen, setNotesOpen] = useState(null); // index of row whose notes are open
   const [notesDraft, setNotesDraft] = useState('');
   const notesRef = useRef(null);
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows; // always stays in sync with latest state
 
   useEffect(() => {
     loadAdvisorNotes(advisorName, date).then(data => {
@@ -57,11 +59,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   }
 
   async function handleSave() {
-    // Build the rows to save — if the notes modal is still open, fold the
-    // draft in directly rather than relying on commitNotes' async setRows.
-    let currentRows = rows;
+    // Use the ref so we always get the absolute latest rows regardless of
+    // React's async batching. If notes modal is open, fold the draft in too.
+    let currentRows = rowsRef.current;
     if (notesOpen !== null) {
-      currentRows = rows.map((r, i) => i === notesOpen ? { ...r, notes: notesDraft } : r);
+      currentRows = rowsRef.current.map((r, i) => i === notesOpen ? { ...r, notes: notesDraft } : r);
       setRows(currentRows);
       setNotesOpen(null);
       setNotesDraft('');

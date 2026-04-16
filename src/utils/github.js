@@ -81,6 +81,19 @@ async function saveGitHubFile(headers, path, data, message) {
   if (!putRes.ok) { const j = await putRes.json(); throw new Error(j.message || 'GitHub save failed'); }
 }
 
+// Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay)
+async function readGitHubFile(headers, path) {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      { headers, cache: 'no-store' }
+    );
+    if (!res.ok) return null;
+    const fileData = await res.json();
+    return JSON.parse(atob(fileData.content.replace(/\s/g, '')));
+  } catch { return null; }
+}
+
 export async function saveAdvisorNotes(advisorName, date, rows) {
   const token = getGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
@@ -90,16 +103,27 @@ export async function saveAdvisorNotes(advisorName, date, rows) {
     { advisorName, date, rows, savedAt: new Date().toISOString() },
     `Advisor notes: ${advisorName} ${date}`);
 
+  // Read index via GitHub API so we get the latest version, not a stale cached page
   let indexData = { dates: [] };
   try {
-    const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/index.json?v=${Date.now()}`, { cache: 'no-store' });
-    if (res.ok) indexData = await res.json();
+    const apiIndex = await readGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`);
+    if (apiIndex) indexData = apiIndex;
   } catch {}
   if (!indexData.dates.includes(date)) indexData.dates = [date, ...indexData.dates].sort().reverse();
   await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`, indexData, `Notes index: ${advisorName}`);
 }
 
 export async function loadAdvisorNotes(advisorName, date) {
+  // Try GitHub API first — instant, no GitHub Pages rebuild delay
+  const token = getGithubToken();
+  if (token) {
+    try {
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+      const data = await readGitHubFile(headers, `public/data/advisor-notes/${advisorName}/${date}.json`);
+      if (data) return data;
+    } catch {}
+  }
+  // Fallback: GitHub Pages (used on devices without a token set yet)
   try {
     const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/${date}.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return null;
