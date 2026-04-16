@@ -4,7 +4,7 @@ import { loadAdvisorNoteIndex } from '../utils/github';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function AdvisorCalendar({ advisorName, onSelectDay, onBack }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -13,11 +13,11 @@ export default function AdvisorCalendar({ advisorName, onSelectDay, onBack }) {
 
   useEffect(() => {
     setLoading(true);
-    loadAdvisorNoteIndex(advisorName).then(dates => {
+    loadAdvisorNoteIndex(viewingAdvisor).then(dates => {
       setNoteDates(new Set(dates));
       setLoading(false);
     });
-  }, [advisorName]);
+  }, [viewingAdvisor]);
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
@@ -36,15 +36,35 @@ export default function AdvisorCalendar({ advisorName, onSelectDay, onBack }) {
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
+  const isViewingOwn = viewingAdvisor === ownAdvisor;
+
   return (
     <div className="adv-page">
       <div className="adv-topbar">
         <div>
           <div className="adv-title">Appointment Prep Calendar</div>
-          <div className="adv-sub">{advisorName}</div>
+          <div className="adv-sub">
+            {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
+          </div>
         </div>
         <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
       </div>
+
+      {/* Advisor switcher tabs */}
+      {advisorList.length > 0 && (
+        <div className="adv-advisor-tabs">
+          {advisorList.map(name => (
+            <button
+              key={name}
+              className={`adv-advisor-tab${viewingAdvisor === name ? ' adv-advisor-tab--active' : ''}${name === ownAdvisor ? ' adv-advisor-tab--own' : ''}`}
+              onClick={() => onViewingChange(name)}
+            >
+              {name}
+              {name === ownAdvisor && <span className="adv-tab-mine"> (Mine)</span>}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="adv-cal-wrap">
         <div className="adv-cal-nav">
