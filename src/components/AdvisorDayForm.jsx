@@ -80,7 +80,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
       {/* Top bar */}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="secondary" disabled={saving} onClick={async () => { await handleSave(); onBack(); }}>
+          <button className="secondary" disabled={saving} onClick={async () => { try { await handleSave(); } catch {} onBack(); }}>
             ← Back to Calendar
           </button>
           {advisorName !== ownAdvisor && (
