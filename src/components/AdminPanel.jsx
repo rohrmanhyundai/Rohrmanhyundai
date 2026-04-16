@@ -12,7 +12,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
 
-  const ROLES = ['advisor', 'technician', 'parts', 'parts manager'];
+  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);
