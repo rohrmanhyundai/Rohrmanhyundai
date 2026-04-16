@@ -3,12 +3,12 @@
   "date": "2026-04-15",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "1233",
+      "appointmentTime": "22",
+      "criticalDeferredService": "22",
       "waiter": false,
-      "technician": "",
-      "notes": ""
+      "technician": "22",
+      "notes": "2222"
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T03:28:48.184Z"
+  "savedAt": "2026-04-16T03:29:15.975Z"
 }
