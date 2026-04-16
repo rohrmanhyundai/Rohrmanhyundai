@@ -8,5 +8,10 @@
     "username": "test1",
     "password": "test1",
     "role": "advisor"
+  },
+  {
+    "username": "Shawn",
+    "password": "1234",
+    "role": "admin"
   }
 ]
