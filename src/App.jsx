@@ -31,7 +31,14 @@ const emptyData = {
 export default function App() {
   const [data, setData] = useState(emptyData);
   const [vacations, setVacations] = useState([]);
-  const [users, setUsers] = useState([{ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }]);
+  const [users, setUsers] = useState(() => {
+    // Use localStorage cache so login works instantly on any device
+    const cached = localStorage.getItem(USERS_KEY);
+    if (cached) {
+      try { return JSON.parse(cached); } catch {}
+    }
+    return [{ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }];
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem(AUTH_KEY) === 'true');
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
@@ -66,10 +73,11 @@ export default function App() {
   useEffect(() => {
     loadUsers().then(githubUsers => {
       if (githubUsers && githubUsers.length > 0) {
-        // Always ensure admin account exists
         const hasAdmin = githubUsers.find(u => u.username === DEFAULT_USERNAME);
         if (!hasAdmin) githubUsers.push({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD });
         setUsers(githubUsers);
+        // Cache to localStorage so every device has users available immediately on next visit
+        localStorage.setItem(USERS_KEY, JSON.stringify(githubUsers));
       }
     });
   }, []);
@@ -184,7 +192,7 @@ export default function App() {
           currentUser={currentUser}
           currentRole={currentRole}
           users={users}
-          onUsersChange={setUsers}
+          onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
         />
       </div>
     </div>
