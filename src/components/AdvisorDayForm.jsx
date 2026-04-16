@@ -93,15 +93,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
           <button className="secondary" disabled={saving} onClick={async () => {
             try {
               await handleSave();
+              onBack();
             } catch (err) {
-              const leave = window.confirm(
-                'Notes could not be saved: ' + err.message + '\n\nGo back anyway? Your changes will be lost.'
-              );
-              if (!leave) return;
+              alert('Save failed: ' + err.message);
             }
-            onBack();
           }}>
-            ← Back to Calendar
+            {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
           {advisorName !== ownAdvisor && (
             <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>
@@ -111,9 +108,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="secondary" onClick={() => window.print()}>Print</button>
-          <button onClick={async () => { try { await handleSave(); } catch (err) { alert('Save failed: ' + err.message); } }} disabled={saving}>
-            {saving ? 'Saving...' : saveStatus === 'saved' ? '✓ Saved' : 'Save to GitHub'}
-          </button>
         </div>
       </div>
 
