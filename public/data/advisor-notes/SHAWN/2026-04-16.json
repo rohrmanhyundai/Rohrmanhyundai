@@ -48,5 +48,87 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-16T15:16:03.293Z"
+  "afterCallRows": [
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-16T17:49:44.497Z"
 }
