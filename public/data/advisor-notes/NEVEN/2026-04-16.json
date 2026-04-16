@@ -1,0 +1,52 @@
+{
+  "advisorName": "NEVEN",
+  "date": "2026-04-16",
+  "rows": [
+    {
+      "customerName": "test",
+      "appointmentTime": "9",
+      "criticalDeferredService": "ghk",
+      "waiter": true,
+      "technician": "gg",
+      "notes": [
+        {
+          "author": "SHAWN",
+          "text": "yes"
+        }
+      ]
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-16T15:07:16.568Z"
+}
