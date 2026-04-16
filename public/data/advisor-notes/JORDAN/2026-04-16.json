@@ -1,0 +1,47 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-04-16",
+  "rows": [
+    {
+      "customerName": "asde",
+      "appointmentTime": "900",
+      "criticalDeferredService": "qwd",
+      "waiter": true,
+      "technician": "",
+      "notes": "testing "
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    }
+  ],
+  "savedAt": "2026-04-16T12:26:56.597Z"
+}
