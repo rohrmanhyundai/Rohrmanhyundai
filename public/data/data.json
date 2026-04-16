@@ -13,7 +13,7 @@
         "sat": 0,
         "total": 19,
         "goal_pct": 0.4,
-        "pacing": 47.5,
+        "pacing": 31.666666666666664,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "95.0"
@@ -29,7 +29,7 @@
         "sat": 8.2,
         "total": 24.5,
         "goal_pct": 0.5157894736842106,
-        "pacing": 49,
+        "pacing": 36.75,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "317.0"
@@ -45,7 +45,7 @@
         "sat": 0,
         "total": 17.9,
         "goal_pct": 0.37684210526315787,
-        "pacing": 44.75,
+        "pacing": 29.83333333333333,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "100.0"
@@ -61,7 +61,7 @@
         "sat": 9.1,
         "total": 42.9,
         "goal_pct": 0.903157894736842,
-        "pacing": 85.8,
+        "pacing": 64.35,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -93,7 +93,7 @@
         "sat": 2.2,
         "total": 2.2,
         "goal_pct": 0.08627450980392158,
-        "pacing": 4.4,
+        "pacing": 3.3000000000000003,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -109,7 +109,7 @@
         "sat": 0,
         "total": 7.9,
         "goal_pct": 0.30980392156862746,
-        "pacing": 19.75,
+        "pacing": 13.166666666666666,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -140,7 +140,7 @@
         "valvoline": 0.2667,
         "csi": 976,
         "asr": 0.18030000000000002,
-        "elr": 0.93,
+        "elr": 0.94,
         "last_month_total": 333.4,
         "roh50_hrs_ro": 0.8
       },
@@ -243,7 +243,7 @@
       "sat": 19.499999999999996,
       "week_total": 114.4,
       "week_pct": 0.39653379549393414,
-      "shop_pacing": 251.20000000000002
+      "shop_pacing": 179.06666666666663
     },
     "grossGoal": 154287,
     "grossActual": 147757,
