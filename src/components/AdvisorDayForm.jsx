@@ -218,30 +218,34 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
               <button className="secondary adv-del-btn" onClick={commitNotes}>×</button>
             </div>
 
-            {/* Show red author badge if note was left by someone else */}
-            {noteAuthor && noteAuthor !== advisorName && (
-              <div className="adv-note-author">
-                ✎ Note left by {noteAuthor}
-              </div>
-            )}
-
-            {/* Show editing-as badge when guest is writing */}
+            {/* Editing-as badge only when a guest is writing a brand-new note */}
             {isGuest && !noteAuthor && (
               <div className="adv-note-author adv-note-author--writing">
                 ✎ You are adding a note as {ownAdvisor}
               </div>
             )}
 
-            <textarea
-              className="adv-notes-textarea"
-              autoFocus
-              value={noteBody}
-              onChange={e => {
-                const author = noteAuthor || (isGuest ? ownAdvisor : null);
-                setNotesDraft(author ? `[${author}]\n${e.target.value}` : e.target.value);
-              }}
-              placeholder="Add notes for this appointment..."
-            />
+            {/* Unified note box: author name in red at top, editable body below */}
+            <div className="adv-notes-body-wrap">
+              {noteAuthor && (
+                <div className="adv-notes-author-bar">
+                  <span className={noteAuthor !== advisorName ? 'adv-notes-author-name adv-notes-author-name--other' : 'adv-notes-author-name'}>
+                    {noteAuthor}
+                  </span>
+                  <span className="adv-notes-author-dash"> —</span>
+                </div>
+              )}
+              <textarea
+                className="adv-notes-textarea adv-notes-textarea--inset"
+                autoFocus
+                value={noteBody}
+                onChange={e => {
+                  const author = noteAuthor || (isGuest ? ownAdvisor : null);
+                  setNotesDraft(author ? `[${author}]\n${e.target.value}` : e.target.value);
+                }}
+                placeholder="Add notes for this appointment..."
+              />
+            </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
               <button onClick={commitNotes}>Done</button>
             </div>

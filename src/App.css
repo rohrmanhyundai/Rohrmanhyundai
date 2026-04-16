@@ -222,10 +222,18 @@ tr:last-child td{border-bottom:none}
 .adv-row-has-notes td:first-child{border-left:3px solid var(--teal)}
 .adv-note-author{display:flex;align-items:center;gap:6px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:12px;font-weight:800;padding:6px 10px;border-radius:8px;margin-bottom:8px}
 .adv-note-author--writing{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#f59e0b}
+.adv-notes-body-wrap{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06)}
+.adv-notes-body-wrap:focus-within{border-color:rgba(110,231,249,.4)}
+.adv-notes-author-bar{padding:8px 10px 7px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:2px;background:rgba(255,255,255,.04)}
+.adv-notes-author-name{font-size:14px;font-weight:800;letter-spacing:.05em;color:var(--text)}
+.adv-notes-author-name--other{color:#ef4444}
+.adv-notes-author-dash{font-size:14px;color:var(--muted);font-weight:400}
+.adv-notes-textarea--inset{border:none!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.adv-notes-textarea--inset:focus{border-color:transparent!important;outline:none}
 .adv-notes-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:center;justify-content:center}
 .adv-notes-modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .adv-notes-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px;font-weight:800;color:var(--cyan)}
-.adv-notes-textarea{width:100%;height:160px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:10px;resize:vertical;outline:none;box-sizing:border-box}
+.adv-notes-textarea{width:100%;height:160px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:10px;resize:vertical;outline:none;box-sizing:border-box;display:block}
 .adv-notes-textarea:focus{border-color:rgba(110,231,249,.4)}
 
 /* Print styles */
