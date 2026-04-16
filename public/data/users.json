@@ -13,5 +13,10 @@
     "username": "Jordan",
     "password": "[REDACTED]",
     "role": "advisor"
+  },
+  {
+    "username": "Neven",
+    "password": "[REDACTED]",
+    "role": "advisor"
   }
 ]
