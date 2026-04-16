@@ -7,36 +7,41 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": true,
-      "technician": "mike"
+      "technician": "mike",
+      "notes": "test drove vehicle\nall good "
     },
     {
       "customerName": "",
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
-      "technician": ""
+      "technician": "",
+      "notes": ""
     },
     {
       "customerName": "",
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
-      "technician": ""
+      "technician": "",
+      "notes": ""
     },
     {
       "customerName": "",
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
-      "technician": ""
+      "technician": "",
+      "notes": ""
     },
     {
       "customerName": "",
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
-      "technician": ""
+      "technician": "",
+      "notes": ""
     }
   ],
-  "savedAt": "2026-04-15T21:01:19.634Z"
+  "savedAt": "2026-04-16T00:54:14.697Z"
 }
