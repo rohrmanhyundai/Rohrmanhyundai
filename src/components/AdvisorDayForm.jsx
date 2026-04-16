@@ -3,7 +3,7 @@ import { saveAdvisorNotes, loadAdvisorNotes, getGithubToken, setGithubToken } fr
 
 const EMPTY_ROW = () => ({
   customerName: '', appointmentTime: '', criticalDeferredService: '',
-  waiter: false, technician: '', notes: []
+  waiter: false, dropOff: false, technician: '', notes: []
 });
 
 const EMPTY_AFTER_CALL_ROW = () => ({
@@ -216,6 +216,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                 <th>APPOINTMENT TIME</th>
                 <th>CRITICAL DEFERRED SERVICE</th>
                 <th>WAITER</th>
+                <th>DROP OFF</th>
                 <th>TECHNICIAN</th>
                 <th className="no-print adv-action-col"></th>
               </tr>
@@ -232,6 +233,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                   <td className="adv-waiter-cell">
                     <input type="checkbox" className="adv-checkbox" checked={row.waiter}
                       onChange={e => updateRow(idx, 'waiter', e.target.checked)} />
+                  </td>
+                  <td className="adv-waiter-cell">
+                    <input type="checkbox" className="adv-checkbox" checked={row.dropOff}
+                      onChange={e => updateRow(idx, 'dropOff', e.target.checked)} />
                   </td>
                   <td><input className="adv-cell-input" value={row.technician}
                     onChange={e => updateRow(idx, 'technician', e.target.value)} placeholder="Tech name" /></td>
