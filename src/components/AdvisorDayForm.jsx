@@ -57,6 +57,16 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   }
 
   async function handleSave() {
+    // Build the rows to save — if the notes modal is still open, fold the
+    // draft in directly rather than relying on commitNotes' async setRows.
+    let currentRows = rows;
+    if (notesOpen !== null) {
+      currentRows = rows.map((r, i) => i === notesOpen ? { ...r, notes: notesDraft } : r);
+      setRows(currentRows);
+      setNotesOpen(null);
+      setNotesDraft('');
+    }
+
     // Check for token; prompt once per device if missing
     if (!getGithubToken()) {
       const code = prompt(
@@ -69,12 +79,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     setSaving(true);
     setSaveStatus('');
     try {
-      await saveAdvisorNotes(advisorName, date, rows);
+      await saveAdvisorNotes(advisorName, date, currentRows);
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus(''), 3000);
     } catch (err) {
       setSaving(false);
-      throw err; // re-throw so callers know it failed
+      throw err;
     } finally {
       setSaving(false);
     }
