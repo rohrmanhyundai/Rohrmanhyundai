@@ -1,37 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { saveAdvisorNotes, loadAdvisorNotes, getGithubToken, setGithubToken } from '../utils/github';
 
-const EMPTY_ROW = () => ({ customerName: '', appointmentTime: '', criticalDeferredService: '', waiter: false, technician: '', notes: '' });
+const EMPTY_ROW = () => ({ customerName: '', appointmentTime: '', criticalDeferredService: '', waiter: false, technician: '', notes: [] });
 
-// Parse "[AUTHORNAME]\nbody" format — returns { author, body }
-function parseNote(text) {
-  const m = (text || '').match(/^\[([^\]]+)\]\n([\s\S]*)$/);
-  return m ? { author: m[1], body: m[2] } : { author: null, body: text || '' };
-}
-
-// Stamp a note with the editor's name if it hasn't been stamped yet
-function stampNote(draft, editorName) {
-  if (!draft.trim()) return draft;
-  if (parseNote(draft).author) return draft; // already stamped
-  return `[${editorName}]\n${draft}`;
+// Convert any saved notes format into an array of { author, text } entries
+function parseNotesField(notes) {
+  if (!notes) return [];
+  if (Array.isArray(notes)) return notes.filter(e => e && e.text);
+  // Legacy string format: "[AUTHOR]\nbody"
+  const m = String(notes).match(/^\[([^\]]+)\]\n([\s\S]*)$/);
+  if (m) return [{ author: m[1], text: m[2] }];
+  if (String(notes).trim()) return [{ author: null, text: String(notes).trim() }];
+  return [];
 }
 
 export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }) {
   const [rows, setRows] = useState(() => Array.from({ length: 5 }, EMPTY_ROW));
   const [saving, setSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('');
-  const [notesOpen, setNotesOpen] = useState(null);
-  const [notesDraft, setNotesDraft] = useState('');
+  const [notesOpen, setNotesOpen] = useState(null);   // row index of open modal
+  const [notesEntries, setNotesEntries] = useState([]); // entries for the open row
+  const [newNoteDraft, setNewNoteDraft] = useState(''); // text being typed for new entry
   const notesRef = useRef(null);
   const rowsRef = useRef(rows);
   rowsRef.current = rows;
-
-  const isGuest = advisorName !== ownAdvisor; // viewing someone else's calendar
+  const notesEntriesRef = useRef(notesEntries);
+  notesEntriesRef.current = notesEntries;
+  const newNoteDraftRef = useRef(newNoteDraft);
+  newNoteDraftRef.current = newNoteDraft;
 
   useEffect(() => {
     loadAdvisorNotes(advisorName, date).then(data => {
       if (data && Array.isArray(data.rows) && data.rows.length > 0) {
-        setRows(data.rows.map(r => ({ ...EMPTY_ROW(), ...r })));
+        setRows(data.rows.map(r => ({ ...EMPTY_ROW(), ...r, notes: parseNotesField(r.notes) })));
       }
     });
   }, [advisorName, date]);
@@ -45,20 +45,29 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [notesOpen, notesDraft]);
+  }, [notesOpen, notesEntries, newNoteDraft]);
 
   function openNotes(idx) {
-    setNotesDraft(rows[idx].notes || '');
+    setNotesEntries(parseNotesField(rows[idx].notes));
+    setNewNoteDraft('');
     setNotesOpen(idx);
   }
 
+  // Flush pending draft entry and write back to rows
   function commitNotes() {
     if (notesOpen !== null) {
-      const finalDraft = isGuest ? stampNote(notesDraft, ownAdvisor) : notesDraft;
-      setRows(prev => prev.map((r, i) => i === notesOpen ? { ...r, notes: finalDraft } : r));
+      const entries = [...notesEntriesRef.current];
+      const draft = newNoteDraftRef.current.trim();
+      if (draft) entries.push({ author: ownAdvisor, text: draft });
+      setRows(prev => prev.map((r, i) => i === notesOpen ? { ...r, notes: entries } : r));
     }
     setNotesOpen(null);
-    setNotesDraft('');
+    setNotesEntries([]);
+    setNewNoteDraft('');
+  }
+
+  function deleteEntry(entryIdx) {
+    setNotesEntries(prev => prev.filter((_, i) => i !== entryIdx));
   }
 
   function updateRow(idx, field, value) {
@@ -77,11 +86,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   async function handleSave() {
     let currentRows = rowsRef.current;
     if (notesOpen !== null) {
-      const finalDraft = isGuest ? stampNote(notesDraft, ownAdvisor) : notesDraft;
-      currentRows = rowsRef.current.map((r, i) => i === notesOpen ? { ...r, notes: finalDraft } : r);
+      const entries = [...notesEntriesRef.current];
+      const draft = newNoteDraftRef.current.trim();
+      if (draft) entries.push({ author: ownAdvisor, text: draft });
+      currentRows = rowsRef.current.map((r, i) => i === notesOpen ? { ...r, notes: entries } : r);
       setRows(currentRows);
       setNotesOpen(null);
-      setNotesDraft('');
+      setNotesEntries([]);
+      setNewNoteDraft('');
     }
 
     if (!getGithubToken()) {
@@ -93,11 +105,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     }
 
     setSaving(true);
-    setSaveStatus('');
     try {
       await saveAdvisorNotes(advisorName, date, currentRows);
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus(''), 3000);
     } catch (err) {
       setSaving(false);
       throw err;
@@ -105,9 +114,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
       setSaving(false);
     }
   }
-
-  // Derive author/body from notesDraft for modal display
-  const { author: noteAuthor, body: noteBody } = parseNote(notesDraft);
 
   const [y, m, d] = date.split('-');
   const displayDate = new Date(+y, +m - 1, +d).toLocaleDateString(undefined, {
@@ -129,7 +135,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
-          {isGuest && (
+          {advisorName !== ownAdvisor && (
             <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>
               Editing: {advisorName}'s Calendar
             </span>
@@ -163,10 +169,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
           </thead>
           <tbody>
             {rows.map((row, idx) => {
-              const { author: rowNoteAuthor } = parseNote(row.notes);
-              const noteFromOther = rowNoteAuthor && rowNoteAuthor !== advisorName;
+              const entries = parseNotesField(row.notes);
+              const hasNotes = entries.length > 0;
+              const hasOtherNotes = entries.some(e => e.author && e.author !== ownAdvisor);
               return (
-                <tr key={idx} className={row.notes ? 'adv-row-has-notes' : ''}>
+                <tr key={idx} className={hasNotes ? 'adv-row-has-notes' : ''}>
                   <td>
                     <input className="adv-cell-input" value={row.customerName}
                       onChange={e => updateRow(idx, 'customerName', e.target.value)} placeholder="Customer name" />
@@ -190,10 +197,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                   <td className="no-print adv-action-col">
                     <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
                       <button
-                        className={`secondary adv-notes-btn${row.notes ? ' adv-notes-btn--active' : ''}${noteFromOther ? ' adv-notes-btn--other' : ''}`}
+                        className={`secondary adv-notes-btn${hasNotes ? ' adv-notes-btn--active' : ''}${hasOtherNotes ? ' adv-notes-btn--other' : ''}`}
                         onClick={() => openNotes(idx)}
-                        title={noteFromOther ? `Note left by ${rowNoteAuthor}` : row.notes ? 'Edit notes' : 'Add notes'}
-                      >Notes</button>
+                        title={hasOtherNotes ? 'Has notes from other advisors' : hasNotes ? 'View / edit notes' : 'Add notes'}
+                      >
+                        Notes{hasNotes ? ` (${entries.length})` : ''}
+                      </button>
                       <button className="secondary adv-del-btn" onClick={() => removeRow(idx)}
                         disabled={rows.length <= 1}>×</button>
                     </div>
@@ -218,34 +227,43 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
               <button className="secondary adv-del-btn" onClick={commitNotes}>×</button>
             </div>
 
-            {/* Editing-as badge only when a guest is writing a brand-new note */}
-            {isGuest && !noteAuthor && (
-              <div className="adv-note-author adv-note-author--writing">
-                ✎ You are adding a note as {ownAdvisor}
-              </div>
-            )}
-
-            {/* Unified note box: author name in red at top, editable body below */}
-            <div className="adv-notes-body-wrap">
-              {noteAuthor && (
-                <div className="adv-notes-author-bar">
-                  <span className={noteAuthor !== advisorName ? 'adv-notes-author-name adv-notes-author-name--other' : 'adv-notes-author-name'}>
-                    {noteAuthor}
-                  </span>
-                  <span className="adv-notes-author-dash"> —</span>
-                </div>
+            {/* Existing entries */}
+            <div className="adv-notes-entries">
+              {notesEntries.length === 0 ? (
+                <div className="adv-notes-empty">No notes yet — add one below.</div>
+              ) : (
+                notesEntries.map((entry, i) => (
+                  <div key={i} className="adv-notes-entry">
+                    <div className="adv-notes-entry-body">
+                      {entry.author && (
+                        <span className={entry.author !== ownAdvisor ? 'adv-notes-entry-author adv-notes-entry-author--other' : 'adv-notes-entry-author'}>
+                          {entry.author}&mdash;&nbsp;
+                        </span>
+                      )}
+                      <span className="adv-notes-entry-text">{entry.text}</span>
+                    </div>
+                    {/* Only let the author (or ownAdvisor on their own calendar) delete their entry */}
+                    {(!entry.author || entry.author === ownAdvisor) && (
+                      <button className="secondary adv-del-btn adv-notes-entry-del" onClick={() => deleteEntry(i)} title="Remove this note">×</button>
+                    )}
+                  </div>
+                ))
               )}
+            </div>
+
+            {/* New note input */}
+            <div className="adv-notes-add-row">
+              <span className="adv-notes-add-who">{ownAdvisor}—</span>
               <textarea
-                className="adv-notes-textarea adv-notes-textarea--inset"
+                className="adv-notes-textarea adv-notes-new-input"
                 autoFocus
-                value={noteBody}
-                onChange={e => {
-                  const author = noteAuthor || (isGuest ? ownAdvisor : null);
-                  setNotesDraft(author ? `[${author}]\n${e.target.value}` : e.target.value);
-                }}
-                placeholder="Add notes for this appointment..."
+                value={newNoteDraft}
+                onChange={e => setNewNoteDraft(e.target.value)}
+                placeholder="Type your note here..."
+                rows={3}
               />
             </div>
+
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
               <button onClick={commitNotes}>Done</button>
             </div>
