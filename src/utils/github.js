@@ -107,13 +107,13 @@ function authHeaders() {
   return publicHeaders();
 }
 
-export async function saveAdvisorNotes(advisorName, date, rows) {
+export async function saveAdvisorNotes(advisorName, date, rows, afterCallRows) {
   const token = getGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
 
   await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/${date}.json`,
-    { advisorName, date, rows, savedAt: new Date().toISOString() },
+    { advisorName, date, rows, afterCallRows: afterCallRows || [], savedAt: new Date().toISOString() },
     `Advisor notes: ${advisorName} ${date}`);
 
   // Read index via GitHub API so we get the latest version, not stale cached page
