@@ -81,7 +81,8 @@ async function saveGitHubFile(headers, path, data, message) {
   if (!putRes.ok) { const j = await putRes.json(); throw new Error(j.message || 'GitHub save failed'); }
 }
 
-// Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay)
+// Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay).
+// Works without a token for public repos (60 req/hr unauthenticated).
 async function readGitHubFile(headers, path) {
   try {
     const res = await fetch(
@@ -94,16 +95,28 @@ async function readGitHubFile(headers, path) {
   } catch { return null; }
 }
 
+// Minimal headers for unauthenticated reads on a public repo
+function publicHeaders() {
+  return { Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+}
+
+// Auth headers when we have a token, otherwise fall back to public read headers
+function authHeaders() {
+  const token = getGithubToken();
+  if (token) return { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  return publicHeaders();
+}
+
 export async function saveAdvisorNotes(advisorName, date, rows) {
   const token = getGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  const headers = authHeaders();
 
   await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/${date}.json`,
     { advisorName, date, rows, savedAt: new Date().toISOString() },
     `Advisor notes: ${advisorName} ${date}`);
 
-  // Read index via GitHub API so we get the latest version, not a stale cached page
+  // Read index via GitHub API so we get the latest version, not stale cached page
   let indexData = { dates: [] };
   try {
     const apiIndex = await readGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`);
@@ -114,16 +127,12 @@ export async function saveAdvisorNotes(advisorName, date, rows) {
 }
 
 export async function loadAdvisorNotes(advisorName, date) {
-  // Try GitHub API first — instant, no GitHub Pages rebuild delay
-  const token = getGithubToken();
-  if (token) {
-    try {
-      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-      const data = await readGitHubFile(headers, `public/data/advisor-notes/${advisorName}/${date}.json`);
-      if (data) return data;
-    } catch {}
-  }
-  // Fallback: GitHub Pages (used on devices without a token set yet)
+  // Always try the GitHub API first — instant, fresh, works without a token on public repos
+  try {
+    const data = await readGitHubFile(authHeaders(), `public/data/advisor-notes/${advisorName}/${date}.json`);
+    if (data) return data;
+  } catch {}
+  // Fallback: GitHub Pages (last resort if API fails)
   try {
     const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/${date}.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return null;
@@ -147,6 +156,12 @@ export async function saveUsers(users) {
 }
 
 export async function loadAdvisorNoteIndex(advisorName) {
+  // Try GitHub API first so the calendar reflects saves immediately
+  try {
+    const data = await readGitHubFile(authHeaders(), `public/data/advisor-notes/${advisorName}/index.json`);
+    if (data) return data.dates || [];
+  } catch {}
+  // Fallback: GitHub Pages
   try {
     const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/index.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return [];

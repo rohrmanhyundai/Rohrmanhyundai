@@ -46,6 +46,7 @@ export default function App() {
   const [page, setPage] = useState('dashboard');
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
+  const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const stageRef = useRef(null);
 
   useEffect(() => {
@@ -149,6 +150,7 @@ export default function App() {
         onViewingChange={name => setViewingAdvisor(name)}
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
         onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
+        refreshKey={calendarRefreshKey}
       />
     );
   }
@@ -158,7 +160,7 @@ export default function App() {
         advisorName={activeAdvisor}
         ownAdvisor={ownAdvisor}
         date={selectedDay}
-        onBack={() => setPage('advisor-calendar')}
+        onBack={() => { setCalendarRefreshKey(k => k + 1); setPage('advisor-calendar'); }}
       />
     );
   }

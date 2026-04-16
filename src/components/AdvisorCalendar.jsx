@@ -4,7 +4,7 @@ import { loadAdvisorNoteIndex } from '../utils/github';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, refreshKey }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -17,7 +17,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       setNoteDates(new Set(dates));
       setLoading(false);
     });
-  }, [viewingAdvisor]);
+  }, [viewingAdvisor, refreshKey]);
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
