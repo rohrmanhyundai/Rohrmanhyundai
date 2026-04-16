@@ -17,7 +17,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setOpenSection(prev => prev === name ? null : name);
   }
 
-  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager'];
+  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);
