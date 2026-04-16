@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { saveAdvisorNotes, loadAdvisorNotes } from '../utils/github';
+import { saveAdvisorNotes, loadAdvisorNotes, getGithubToken, setGithubToken } from '../utils/github';
 
 const EMPTY_ROW = () => ({ customerName: '', appointmentTime: '', criticalDeferredService: '', waiter: false, technician: '', notes: '' });
 
@@ -57,6 +57,15 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   }
 
   async function handleSave() {
+    // Check for token; prompt once per device if missing
+    if (!getGithubToken()) {
+      const code = prompt(
+        'This device needs a one-time save code to save appointment notes.\n\nEnter the save code (ask your admin for it):'
+      );
+      if (!code) throw new Error('No save code entered.');
+      setGithubToken(code.trim());
+    }
+
     setSaving(true);
     setSaveStatus('');
     try {
@@ -64,7 +73,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus(''), 3000);
     } catch (err) {
-      alert('Save failed: ' + err.message);
+      setSaving(false);
+      throw err; // re-throw so callers know it failed
     } finally {
       setSaving(false);
     }
@@ -80,7 +90,17 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
       {/* Top bar */}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="secondary" disabled={saving} onClick={async () => { try { await handleSave(); } catch {} onBack(); }}>
+          <button className="secondary" disabled={saving} onClick={async () => {
+            try {
+              await handleSave();
+            } catch (err) {
+              const leave = window.confirm(
+                'Notes could not be saved: ' + err.message + '\n\nGo back anyway? Your changes will be lost.'
+              );
+              if (!leave) return;
+            }
+            onBack();
+          }}>
             ← Back to Calendar
           </button>
           {advisorName !== ownAdvisor && (
@@ -91,7 +111,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="secondary" onClick={() => window.print()}>Print</button>
-          <button onClick={handleSave} disabled={saving}>
+          <button onClick={async () => { try { await handleSave(); } catch (err) { alert('Save failed: ' + err.message); } }} disabled={saving}>
             {saving ? 'Saving...' : saveStatus === 'saved' ? '✓ Saved' : 'Save to GitHub'}
           </button>
         </div>
