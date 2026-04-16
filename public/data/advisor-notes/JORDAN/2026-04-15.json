@@ -3,22 +3,6 @@
   "date": "2026-04-15",
   "rows": [
     {
-      "customerName": "tst",
-      "appointmentTime": "6",
-      "criticalDeferredService": "test",
-      "waiter": true,
-      "technician": "test",
-      "notes": "tes"
-    },
-    {
-      "customerName": "test",
-      "appointmentTime": "test",
-      "criticalDeferredService": "tst",
-      "waiter": false,
-      "technician": "no",
-      "notes": "no"
-    },
-    {
       "customerName": "test",
       "appointmentTime": "test",
       "criticalDeferredService": "test",
@@ -35,5 +19,5 @@
       "notes": "te"
     }
   ],
-  "savedAt": "2026-04-16T02:19:35.054Z"
+  "savedAt": "2026-04-16T02:19:50.385Z"
 }
