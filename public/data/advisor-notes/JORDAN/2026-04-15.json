@@ -11,20 +11,20 @@
       "notes": "test"
     },
     {
-      "customerName": "test",
-      "appointmentTime": "9",
+      "customerName": "tst",
+      "appointmentTime": "6",
       "criticalDeferredService": "test",
-      "waiter": false,
+      "waiter": true,
       "technician": "test",
-      "notes": "test"
+      "notes": "tes"
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "test",
+      "appointmentTime": "test",
+      "criticalDeferredService": "tst",
       "waiter": false,
-      "technician": "",
-      "notes": ""
+      "technician": "no",
+      "notes": "no"
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T02:10:54.193Z"
+  "savedAt": "2026-04-16T02:11:14.813Z"
 }
