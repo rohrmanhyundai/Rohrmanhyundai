@@ -79,7 +79,9 @@ export default function AdvisorDayForm({ advisorName, date, onBack }) {
     <div className="adv-page adv-form-page">
       {/* Top bar */}
       <div className="adv-topbar no-print">
-        <button className="secondary" onClick={onBack}>← Back to Calendar</button>
+        <button className="secondary" disabled={saving} onClick={async () => { await handleSave(); onBack(); }}>
+          ← Back to Calendar
+        </button>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="secondary" onClick={() => window.print()}>Print</button>
           <button onClick={handleSave} disabled={saving}>
