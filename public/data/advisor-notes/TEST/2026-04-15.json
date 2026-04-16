@@ -8,7 +8,7 @@
       "criticalDeferredService": "",
       "waiter": true,
       "technician": "mike",
-      "notes": "test drove vehicle\nall good "
+      "notes": "test drove vehicle"
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T00:54:14.697Z"
+  "savedAt": "2026-04-16T00:54:47.063Z"
 }
