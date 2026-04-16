@@ -142,6 +142,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     try {
       await saveAdvisorNotes(advisorName, date, currentRows, currentAfterCallRows);
     } catch (err) {
+      // If the stored token is now bad, clear it so next attempt re-prompts cleanly
+      if (/bad credentials|unauthorized|401/i.test(err.message)) {
+        setGithubToken('');
+      }
       setSaving(false);
       throw err;
     } finally {
@@ -180,8 +184,34 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button className="secondary" disabled={saving} onClick={async () => {
-            try { await handleSave(); onBack(); }
-            catch (err) { alert('Save failed: ' + err.message); }
+            const attemptSave = async () => {
+              try {
+                await handleSave();
+                onBack();
+              } catch (err) {
+                const isBadToken = /bad credentials|unauthorized|401/i.test(err.message);
+                if (isBadToken) {
+                  // Clear the bad token and ask for a new one
+                  setGithubToken('');
+                  const code = prompt(
+                    'Your save code is invalid or expired.\n\nPlease enter a new save code (ask your admin for it):'
+                  );
+                  if (code && code.trim()) {
+                    setGithubToken(code.trim());
+                    // Retry once with the new token
+                    try {
+                      await handleSave();
+                      onBack();
+                    } catch (err2) {
+                      alert('Save failed: ' + err2.message);
+                    }
+                  }
+                } else {
+                  alert('Save failed: ' + err.message);
+                }
+              }
+            };
+            attemptSave();
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
