@@ -7,6 +7,7 @@ import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
+import DocumentLibrary from './components/DocumentLibrary';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers } from './utils/github';
 
@@ -150,6 +151,7 @@ export default function App() {
         onViewingChange={name => setViewingAdvisor(name)}
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
         onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
+        onDocumentLibrary={() => setPage('document-library')}
         refreshKey={calendarRefreshKey}
       />
     );
@@ -161,6 +163,15 @@ export default function App() {
         ownAdvisor={ownAdvisor}
         date={selectedDay}
         onBack={() => { setCalendarRefreshKey(k => k + 1); setPage('advisor-calendar'); }}
+      />
+    );
+  }
+  if (page === 'document-library') {
+    return (
+      <DocumentLibrary
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onBack={() => setPage('advisor-calendar')}
       />
     );
   }

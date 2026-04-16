@@ -4,7 +4,7 @@ import { loadAdvisorNoteIndex } from '../utils/github';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, refreshKey }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, refreshKey }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -47,7 +47,12 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
           </div>
         </div>
-        <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
+            📁 Document Library
+          </button>
+          <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
+        </div>
       </div>
 
       {/* Advisor switcher tabs */}

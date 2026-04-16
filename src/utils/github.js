@@ -155,6 +155,118 @@ export async function saveUsers(users) {
   await saveGitHubFile(headers, 'public/data/users.json', users, 'Update users');
 }
 
+// ── Document Library ──────────────────────────────────────────────────────────
+
+const DOCS_PATH  = 'public/data/documents';
+const DOCS_INDEX = 'public/data/documents/index.json';
+// Raw GitHub URL — instantly available after push, no Pages rebuild wait
+const RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/public/data/documents/`;
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function deleteGitHubFile(headers, path, message) {
+  const getRes = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+    { headers, cache: 'no-store' }
+  );
+  if (!getRes.ok) return; // file already gone
+  const { sha } = await getRes.json();
+  await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+    {
+      method: 'DELETE',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, sha, branch: GITHUB_BRANCH }),
+    }
+  );
+}
+
+export function docRawUrl(filename) {
+  return RAW_BASE + encodeURIComponent(filename);
+}
+
+export async function loadDocumentIndex() {
+  try {
+    const data = await readGitHubFile(authHeaders(), DOCS_INDEX);
+    if (data) return Array.isArray(data) ? data : [];
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/documents/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function uploadDocument(file, label, uploaderName) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  const safeFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const filePath = `${DOCS_PATH}/${safeFilename}`;
+
+  const base64Content = await fileToBase64(file);
+
+  // Upload the actual file (raw base64, not JSON-wrapped)
+  const putRes = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`,
+    {
+      method: 'PUT',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `Upload document: ${label}`,
+        content: base64Content,
+        branch: GITHUB_BRANCH,
+      }),
+    }
+  );
+  if (!putRes.ok) {
+    const j = await putRes.json();
+    throw new Error(j.message || 'File upload failed');
+  }
+
+  // Update index
+  const currentIndex = await loadDocumentIndex();
+  const newEntry = {
+    id,
+    label,
+    filename: safeFilename,
+    fileType: ['doc', 'docx'].includes(ext) ? ext : 'pdf',
+    size: file.size,
+    uploadedBy: uploaderName,
+    uploadedAt: new Date().toISOString(),
+  };
+  const newIndex = [newEntry, ...currentIndex];
+  await saveGitHubFile(headers, DOCS_INDEX, newIndex, `Document index: add ${label}`);
+  return newIndex;
+}
+
+export async function deleteDocument(doc) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+
+  // Delete the actual file
+  await deleteGitHubFile(headers, `${DOCS_PATH}/${doc.filename}`, `Delete document: ${doc.label}`);
+
+  // Update index
+  const currentIndex = await loadDocumentIndex();
+  const newIndex = currentIndex.filter(d => d.id !== doc.id);
+  await saveGitHubFile(headers, DOCS_INDEX, newIndex, `Document index: remove ${doc.label}`);
+  return newIndex;
+}
+
+// ── Advisor note index ─────────────────────────────────────────────────────────
+
 export async function loadAdvisorNoteIndex(advisorName) {
   // Try GitHub API first so the calendar reflects saves immediately
   try {
