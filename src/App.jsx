@@ -38,6 +38,7 @@ export default function App() {
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [selectedDay, setSelectedDay] = useState(null);
+  const [viewingAdvisor, setViewingAdvisor] = useState('');
   const stageRef = useRef(null);
 
   useEffect(() => {
@@ -112,6 +113,7 @@ export default function App() {
     setCurrentRole('');
     setAdminOpen(false);
     setPage('dashboard');
+    setViewingAdvisor('');
   }
 
   function handleDataChange(newData, newVacations) {
@@ -125,20 +127,28 @@ export default function App() {
     setVacations([...newVacations]);
   }
 
+  const advisorList = (data.advisors || []).map(a => a.name);
+  const ownAdvisor = currentUser.toUpperCase();
+  const activeAdvisor = viewingAdvisor || ownAdvisor;
+
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'advisor-calendar') {
     return (
       <AdvisorCalendar
-        advisorName={currentUser.toUpperCase()}
+        ownAdvisor={ownAdvisor}
+        viewingAdvisor={activeAdvisor}
+        advisorList={advisorList}
+        onViewingChange={name => setViewingAdvisor(name)}
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
-        onBack={() => setPage('dashboard')}
+        onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
       />
     );
   }
   if (page === 'advisor-day' && selectedDay) {
     return (
       <AdvisorDayForm
-        advisorName={currentUser.toUpperCase()}
+        advisorName={activeAdvisor}
+        ownAdvisor={ownAdvisor}
         date={selectedDay}
         onBack={() => setPage('advisor-calendar')}
       />

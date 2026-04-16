@@ -3,7 +3,7 @@ import { saveAdvisorNotes, loadAdvisorNotes } from '../utils/github';
 
 const EMPTY_ROW = () => ({ customerName: '', appointmentTime: '', criticalDeferredService: '', waiter: false, technician: '', notes: '' });
 
-export default function AdvisorDayForm({ advisorName, date, onBack }) {
+export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }) {
   const [rows, setRows] = useState(() => Array.from({ length: 5 }, EMPTY_ROW));
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
@@ -79,9 +79,16 @@ export default function AdvisorDayForm({ advisorName, date, onBack }) {
     <div className="adv-page adv-form-page">
       {/* Top bar */}
       <div className="adv-topbar no-print">
-        <button className="secondary" disabled={saving} onClick={async () => { await handleSave(); onBack(); }}>
-          ← Back to Calendar
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button className="secondary" disabled={saving} onClick={async () => { await handleSave(); onBack(); }}>
+            ← Back to Calendar
+          </button>
+          {advisorName !== ownAdvisor && (
+            <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>
+              Editing: {advisorName}'s Calendar
+            </span>
+          )}
+        </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="secondary" onClick={() => window.print()}>Print</button>
           <button onClick={handleSave} disabled={saving}>
