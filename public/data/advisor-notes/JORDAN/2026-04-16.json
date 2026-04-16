@@ -3,20 +3,12 @@
   "date": "2026-04-16",
   "rows": [
     {
-      "customerName": "asde",
-      "appointmentTime": "900",
-      "criticalDeferredService": "qwd",
+      "customerName": "1234",
+      "appointmentTime": "9",
+      "criticalDeferredService": "fue;",
       "waiter": true,
-      "technician": "",
-      "notes": "[SHAWN]\ntesting \ntesting "
-    },
-    {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
-      "technician": "",
-      "notes": ""
+      "technician": "ass",
+      "notes": "test"
     },
     {
       "customerName": "",
@@ -43,5 +35,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T12:28:54.131Z"
+  "savedAt": "2026-04-16T12:57:50.544Z"
 }
