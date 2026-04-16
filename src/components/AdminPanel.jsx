@@ -3,7 +3,7 @@ import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatter
 import { advisorDailyAverage } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers } from '../utils/github';
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, currentUser, users, onUsersChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, currentUser, currentRole, users, onUsersChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
@@ -107,7 +107,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function handleSaveUser() {
-    if (currentUser !== 'admin') { alert('Only admin can manage users.'); return; }
+    if (currentRole !== 'admin') { alert('Only admin can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
       ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole } : u)
@@ -120,7 +120,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function handleDeleteUser() {
-    if (currentUser !== 'admin') { alert('Only admin can manage users.'); return; }
+    if (currentRole !== 'admin') { alert('Only admin can manage users.'); return; }
     if (!selectedUser) { alert('Select a user to delete.'); return; }
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
     const updated = users.filter(u => u.username !== selectedUser);
@@ -279,7 +279,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* User Management */}
-      {currentUser === 'admin' && (
+      {currentRole === 'admin' && (
         <details className="edit-group">
           <summary>User Management</summary>
           <div className="group-body">
