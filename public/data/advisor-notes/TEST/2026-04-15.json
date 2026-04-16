@@ -11,12 +11,12 @@
       "notes": "test drove vehicle"
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "test",
+      "appointmentTime": "10am",
+      "criticalDeferredService": "test",
       "waiter": false,
-      "technician": "",
-      "notes": ""
+      "technician": "test",
+      "notes": "test notes "
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T00:54:47.063Z"
+  "savedAt": "2026-04-16T01:05:52.731Z"
 }
