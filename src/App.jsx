@@ -182,19 +182,20 @@ export default function App() {
           <AdvisorPerformance data={data} />
           <Gauges data={data} />
         </div>
-
-        <AdminPanel
-          data={data}
-          vacations={vacations}
-          isOpen={adminOpen}
-          onClose={() => setAdminOpen(false)}
-          onDataChange={handleDataChange}
-          currentUser={currentUser}
-          currentRole={currentRole}
-          users={users}
-          onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
-        />
       </div>
+
+      {/* AdminPanel rendered outside the scaled stage so position:fixed covers the real viewport */}
+      <AdminPanel
+        data={data}
+        vacations={vacations}
+        isOpen={adminOpen}
+        onClose={() => setAdminOpen(false)}
+        onDataChange={handleDataChange}
+        currentUser={currentUser}
+        currentRole={currentRole}
+        users={users}
+        onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
+      />
     </div>
   );
 }
