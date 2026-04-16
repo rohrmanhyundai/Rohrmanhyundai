@@ -4,22 +4,6 @@
   "rows": [
     {
       "customerName": "test",
-      "appointmentTime": "9am",
-      "criticalDeferredService": "furl",
-      "waiter": true,
-      "technician": "test",
-      "notes": "test"
-    },
-    {
-      "customerName": "tst",
-      "appointmentTime": "6",
-      "criticalDeferredService": "test",
-      "waiter": true,
-      "technician": "test",
-      "notes": "tes"
-    },
-    {
-      "customerName": "test",
       "appointmentTime": "test",
       "criticalDeferredService": "tst",
       "waiter": false,
@@ -35,13 +19,13 @@
       "notes": "note"
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "1234",
+      "appointmentTime": "1234",
+      "criticalDeferredService": "1234",
+      "waiter": true,
       "technician": "",
-      "notes": ""
+      "notes": "test"
     }
   ],
-  "savedAt": "2026-04-16T02:16:59.825Z"
+  "savedAt": "2026-04-16T02:17:21.905Z"
 }
