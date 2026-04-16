@@ -11,6 +11,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserName, setNewUserName] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
+  const [openSection, setOpenSection] = useState('github');
+
+  function toggle(name) {
+    setOpenSection(prev => prev === name ? null : name);
+  }
 
   const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager'];
 
@@ -146,8 +151,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       <div className="small">Training Center, Vacation Approved, advisor pacing, and all edit boxes are rebuilt to behave consistently.</div>
 
       {/* GitHub Settings */}
-      <details className="edit-group" open>
-        <summary>GitHub Settings</summary>
+      <details className="edit-group" open={openSection === 'github'} onToggle={e => e.target.open ? setOpenSection('github') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('github'); }}>GitHub Settings</summary>
         <div className="group-body">
           <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
             <div className="small">Enter a GitHub Personal Access Token with repo scope to enable saving.</div>
@@ -161,8 +166,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Dashboard Settings */}
-      <details className="edit-group">
-        <summary>Dashboard Settings</summary>
+      <details className="edit-group" open={openSection === 'dashboard'} onToggle={e => e.target.open ? setOpenSection('dashboard') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('dashboard'); }}>Dashboard Settings</summary>
         <div className="group-body">
           <div className="field">
             <label>Dashboard Title</label>
@@ -172,8 +177,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Goal Gauges */}
-      <details className="edit-group">
-        <summary>Goal Gauges</summary>
+      <details className="edit-group" open={openSection === 'gauges'} onToggle={e => e.target.open ? setOpenSection('gauges') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('gauges'); }}>Goal Gauges</summary>
         <div className="group-body">
           <div className="form-grid">
             <div className="field"><label>Gross Profit Goal</label><input value={data.grossGoal ?? 0} onChange={e => updateField('grossGoal', safe(e.target.value, data.grossGoal))} /></div>
@@ -186,8 +191,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Advisor Performance */}
-      <details className="edit-group">
-        <summary>Advisor Performance</summary>
+      <details className="edit-group" open={openSection === 'advisors'} onToggle={e => e.target.open ? setOpenSection('advisors') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('advisors'); }}>Advisor Performance</summary>
         <div className="group-body">
           <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
           {data.advisors.map((a, idx) => (
@@ -216,8 +221,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Training Center */}
-      <details className="edit-group">
-        <summary>Training Center</summary>
+      <details className="edit-group" open={openSection === 'training'} onToggle={e => e.target.open ? setOpenSection('training') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('training'); }}>Training Center</summary>
         <div className="group-body">
           <div className="title" style={{ marginBottom: 6 }}>Technicians</div>
           {data.technicians.map((t, idx) => (
@@ -241,8 +246,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Technicians */}
-      <details className="edit-group">
-        <summary>Technicians</summary>
+      <details className="edit-group" open={openSection === 'technicians'} onToggle={e => e.target.open ? setOpenSection('technicians') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('technicians'); }}>Technicians</summary>
         <div className="group-body">
           <div className="title">Technician Daily Hours</div>
           {data.technicians.map((t, idx) => (
@@ -263,8 +268,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* Approved Vacation */}
-      <details className="edit-group">
-        <summary>Approved Vacation</summary>
+      <details className="edit-group" open={openSection === 'vacation'} onToggle={e => e.target.open ? setOpenSection('vacation') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('vacation'); }}>Approved Vacation</summary>
         <div className="group-body">
           {vacations.map((v, idx) => (
             <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginBottom: 8 }}>
@@ -280,8 +285,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
       {/* User Management */}
       {currentRole === 'admin' && (
-        <details className="edit-group">
-          <summary>User Management</summary>
+        <details className="edit-group" open={openSection === 'users'} onToggle={e => e.target.open ? setOpenSection('users') : setOpenSection(null)}>
+          <summary onClick={e => { e.preventDefault(); toggle('users'); }}>User Management</summary>
           <div className="group-body">
             <div className="small">Click a user to load them into the form.</div>
             <div className="user-row-list">
