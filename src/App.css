@@ -211,8 +211,16 @@ tr:last-child td{border-bottom:none}
 .adv-cell-input::placeholder{color:rgba(149,169,198,.4)}
 .adv-waiter-cell{text-align:center;width:70px}
 .adv-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--teal)}
-.adv-del-col{width:42px;text-align:center}
+.adv-action-col{width:110px;text-align:center}
 .adv-del-btn{padding:2px 8px;font-size:16px;line-height:1;color:#ef4444;border-color:rgba(239,68,68,.3)}
+.adv-notes-btn{padding:3px 10px;font-size:12px;font-weight:700;color:var(--muted)}
+.adv-notes-btn--active{color:var(--teal);border-color:rgba(61,214,195,.45);background:rgba(61,214,195,.1)}
+.adv-row-has-notes td:first-child{border-left:3px solid var(--teal)}
+.adv-notes-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:center;justify-content:center}
+.adv-notes-modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.adv-notes-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px;font-weight:800;color:var(--cyan)}
+.adv-notes-textarea{width:100%;height:160px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:10px;resize:vertical;outline:none;box-sizing:border-box}
+.adv-notes-textarea:focus{border-color:rgba(110,231,249,.4)}
 
 /* Print styles */
 @media print {
