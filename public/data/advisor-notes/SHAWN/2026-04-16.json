@@ -8,7 +8,12 @@
       "criticalDeferredService": "",
       "waiter": false,
       "technician": "",
-      "notes": ""
+      "notes": [
+        {
+          "author": "SHAWN",
+          "text": "test"
+        }
+      ]
     },
     {
       "customerName": "",
@@ -16,7 +21,7 @@
       "criticalDeferredService": "",
       "waiter": false,
       "technician": "",
-      "notes": ""
+      "notes": []
     },
     {
       "customerName": "",
@@ -24,7 +29,7 @@
       "criticalDeferredService": "",
       "waiter": false,
       "technician": "",
-      "notes": ""
+      "notes": []
     },
     {
       "customerName": "",
@@ -32,7 +37,7 @@
       "criticalDeferredService": "",
       "waiter": false,
       "technician": "",
-      "notes": ""
+      "notes": []
     },
     {
       "customerName": "",
@@ -40,8 +45,8 @@
       "criticalDeferredService": "",
       "waiter": false,
       "technician": "",
-      "notes": ""
+      "notes": []
     }
   ],
-  "savedAt": "2026-04-16T13:34:58.225Z"
+  "savedAt": "2026-04-16T14:08:39.524Z"
 }
