@@ -37,20 +37,25 @@
   ],
   "afterCallRows": [
     {
-      "customerName": "",
-      "phoneNumber": "",
-      "repairOrderNumber": "",
+      "customerName": "TEST",
+      "phoneNumber": "555-555-5555",
+      "repairOrderNumber": "7777777",
       "servicePerformed": {
-        "maintenance": false,
+        "maintenance": true,
         "diagnosticRepair": false,
         "warranty": false,
         "customerPay": false
       },
       "customerFeedback": {
-        "good": false,
+        "good": true,
         "poor": false
       },
-      "notes": []
+      "notes": [
+        {
+          "author": "JORDAN",
+          "text": "GOOD TEST"
+        }
+      ]
     },
     {
       "customerName": "",
@@ -117,5 +122,5 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-16T17:51:07.108Z"
+  "savedAt": "2026-04-16T18:30:30.987Z"
 }
