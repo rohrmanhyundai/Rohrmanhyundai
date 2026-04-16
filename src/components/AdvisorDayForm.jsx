@@ -3,15 +3,30 @@ import { saveAdvisorNotes, loadAdvisorNotes, getGithubToken, setGithubToken } fr
 
 const EMPTY_ROW = () => ({ customerName: '', appointmentTime: '', criticalDeferredService: '', waiter: false, technician: '', notes: '' });
 
+// Parse "[AUTHORNAME]\nbody" format — returns { author, body }
+function parseNote(text) {
+  const m = (text || '').match(/^\[([^\]]+)\]\n([\s\S]*)$/);
+  return m ? { author: m[1], body: m[2] } : { author: null, body: text || '' };
+}
+
+// Stamp a note with the editor's name if it hasn't been stamped yet
+function stampNote(draft, editorName) {
+  if (!draft.trim()) return draft;
+  if (parseNote(draft).author) return draft; // already stamped
+  return `[${editorName}]\n${draft}`;
+}
+
 export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }) {
   const [rows, setRows] = useState(() => Array.from({ length: 5 }, EMPTY_ROW));
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
-  const [notesOpen, setNotesOpen] = useState(null); // index of row whose notes are open
+  const [notesOpen, setNotesOpen] = useState(null);
   const [notesDraft, setNotesDraft] = useState('');
   const notesRef = useRef(null);
   const rowsRef = useRef(rows);
-  rowsRef.current = rows; // always stays in sync with latest state
+  rowsRef.current = rows;
+
+  const isGuest = advisorName !== ownAdvisor; // viewing someone else's calendar
 
   useEffect(() => {
     loadAdvisorNotes(advisorName, date).then(data => {
@@ -39,7 +54,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
 
   function commitNotes() {
     if (notesOpen !== null) {
-      setRows(prev => prev.map((r, i) => i === notesOpen ? { ...r, notes: notesDraft } : r));
+      const finalDraft = isGuest ? stampNote(notesDraft, ownAdvisor) : notesDraft;
+      setRows(prev => prev.map((r, i) => i === notesOpen ? { ...r, notes: finalDraft } : r));
     }
     setNotesOpen(null);
     setNotesDraft('');
@@ -59,17 +75,15 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   }
 
   async function handleSave() {
-    // Use the ref so we always get the absolute latest rows regardless of
-    // React's async batching. If notes modal is open, fold the draft in too.
     let currentRows = rowsRef.current;
     if (notesOpen !== null) {
-      currentRows = rowsRef.current.map((r, i) => i === notesOpen ? { ...r, notes: notesDraft } : r);
+      const finalDraft = isGuest ? stampNote(notesDraft, ownAdvisor) : notesDraft;
+      currentRows = rowsRef.current.map((r, i) => i === notesOpen ? { ...r, notes: finalDraft } : r);
       setRows(currentRows);
       setNotesOpen(null);
       setNotesDraft('');
     }
 
-    // Check for token; prompt once per device if missing
     if (!getGithubToken()) {
       const code = prompt(
         'This device needs a one-time save code to save appointment notes.\n\nEnter the save code (ask your admin for it):'
@@ -92,6 +106,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     }
   }
 
+  // Derive author/body from notesDraft for modal display
+  const { author: noteAuthor, body: noteBody } = parseNote(notesDraft);
+
   const [y, m, d] = date.split('-');
   const displayDate = new Date(+y, +m - 1, +d).toLocaleDateString(undefined, {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -112,7 +129,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
-          {advisorName !== ownAdvisor && (
+          {isGuest && (
             <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>
               Editing: {advisorName}'s Calendar
             </span>
@@ -145,41 +162,45 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, idx) => (
-              <tr key={idx} className={row.notes ? 'adv-row-has-notes' : ''}>
-                <td>
-                  <input className="adv-cell-input" value={row.customerName}
-                    onChange={e => updateRow(idx, 'customerName', e.target.value)} placeholder="Customer name" />
-                </td>
-                <td>
-                  <input className="adv-cell-input" value={row.appointmentTime}
-                    onChange={e => updateRow(idx, 'appointmentTime', e.target.value)} placeholder="e.g. 9:00 AM" />
-                </td>
-                <td>
-                  <input className="adv-cell-input" value={row.criticalDeferredService}
-                    onChange={e => updateRow(idx, 'criticalDeferredService', e.target.value)} placeholder="Deferred service notes" />
-                </td>
-                <td className="adv-waiter-cell">
-                  <input type="checkbox" className="adv-checkbox" checked={row.waiter}
-                    onChange={e => updateRow(idx, 'waiter', e.target.checked)} />
-                </td>
-                <td>
-                  <input className="adv-cell-input" value={row.technician}
-                    onChange={e => updateRow(idx, 'technician', e.target.value)} placeholder="Tech name" />
-                </td>
-                <td className="no-print adv-action-col">
-                  <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                    <button
-                      className={`secondary adv-notes-btn${row.notes ? ' adv-notes-btn--active' : ''}`}
-                      onClick={() => openNotes(idx)}
-                      title={row.notes ? 'Edit notes' : 'Add notes'}
-                    >Notes</button>
-                    <button className="secondary adv-del-btn" onClick={() => removeRow(idx)}
-                      disabled={rows.length <= 1}>×</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {rows.map((row, idx) => {
+              const { author: rowNoteAuthor } = parseNote(row.notes);
+              const noteFromOther = rowNoteAuthor && rowNoteAuthor !== advisorName;
+              return (
+                <tr key={idx} className={row.notes ? 'adv-row-has-notes' : ''}>
+                  <td>
+                    <input className="adv-cell-input" value={row.customerName}
+                      onChange={e => updateRow(idx, 'customerName', e.target.value)} placeholder="Customer name" />
+                  </td>
+                  <td>
+                    <input className="adv-cell-input" value={row.appointmentTime}
+                      onChange={e => updateRow(idx, 'appointmentTime', e.target.value)} placeholder="e.g. 9:00 AM" />
+                  </td>
+                  <td>
+                    <input className="adv-cell-input" value={row.criticalDeferredService}
+                      onChange={e => updateRow(idx, 'criticalDeferredService', e.target.value)} placeholder="Deferred service notes" />
+                  </td>
+                  <td className="adv-waiter-cell">
+                    <input type="checkbox" className="adv-checkbox" checked={row.waiter}
+                      onChange={e => updateRow(idx, 'waiter', e.target.checked)} />
+                  </td>
+                  <td>
+                    <input className="adv-cell-input" value={row.technician}
+                      onChange={e => updateRow(idx, 'technician', e.target.value)} placeholder="Tech name" />
+                  </td>
+                  <td className="no-print adv-action-col">
+                    <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                      <button
+                        className={`secondary adv-notes-btn${row.notes ? ' adv-notes-btn--active' : ''}${noteFromOther ? ' adv-notes-btn--other' : ''}`}
+                        onClick={() => openNotes(idx)}
+                        title={noteFromOther ? `Note left by ${rowNoteAuthor}` : row.notes ? 'Edit notes' : 'Add notes'}
+                      >Notes</button>
+                      <button className="secondary adv-del-btn" onClick={() => removeRow(idx)}
+                        disabled={rows.length <= 1}>×</button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -196,11 +217,29 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
               <span>Notes — {rows[notesOpen]?.customerName || `Row ${notesOpen + 1}`}</span>
               <button className="secondary adv-del-btn" onClick={commitNotes}>×</button>
             </div>
+
+            {/* Show red author badge if note was left by someone else */}
+            {noteAuthor && noteAuthor !== advisorName && (
+              <div className="adv-note-author">
+                ✎ Note left by {noteAuthor}
+              </div>
+            )}
+
+            {/* Show editing-as badge when guest is writing */}
+            {isGuest && !noteAuthor && (
+              <div className="adv-note-author adv-note-author--writing">
+                ✎ You are adding a note as {ownAdvisor}
+              </div>
+            )}
+
             <textarea
               className="adv-notes-textarea"
               autoFocus
-              value={notesDraft}
-              onChange={e => setNotesDraft(e.target.value)}
+              value={noteBody}
+              onChange={e => {
+                const author = noteAuthor || (isGuest ? ownAdvisor : null);
+                setNotesDraft(author ? `[${author}]\n${e.target.value}` : e.target.value);
+              }}
               placeholder="Add notes for this appointment..."
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
