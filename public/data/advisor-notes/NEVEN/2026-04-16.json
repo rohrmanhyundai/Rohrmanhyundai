@@ -3,27 +3,6 @@
   "date": "2026-04-16",
   "rows": [
     {
-      "customerName": "test",
-      "appointmentTime": "9",
-      "criticalDeferredService": "ghk",
-      "waiter": true,
-      "technician": "gg",
-      "notes": [
-        {
-          "author": "SHAWN",
-          "text": "yes"
-        },
-        {
-          "author": "JORDAN",
-          "text": "test"
-        },
-        {
-          "author": "SHAWN",
-          "text": "yes this works"
-        }
-      ]
-    },
-    {
       "customerName": "",
       "appointmentTime": "",
       "criticalDeferredService": "",
@@ -56,5 +35,87 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-16T15:16:20.836Z"
+  "afterCallRows": [
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-16T17:50:02.473Z"
 }
