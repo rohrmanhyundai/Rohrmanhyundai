@@ -170,6 +170,7 @@ export default function App() {
           <Header
             data={data}
             isLoggedIn={isLoggedIn}
+            currentUser={currentUser}
             currentRole={currentRole}
             onLogin={handleLogin}
             onLogout={handleLogout}
