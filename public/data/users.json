@@ -23,5 +23,10 @@
     "username": "David",
     "password": "1234",
     "role": "advisor"
+  },
+  {
+    "username": "Parker",
+    "password": "1234",
+    "role": "advisor"
   }
 ]
