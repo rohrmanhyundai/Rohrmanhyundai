@@ -1,3 +1,12 @@
 [
-  { "username": "admin", "password": "[REDACTED]", "role": "admin" }
+  {
+    "username": "admin",
+    "password": "[REDACTED]",
+    "role": "admin"
+  },
+  {
+    "username": "test",
+    "password": "[REDACTED]",
+    "role": "advisor"
+  }
 ]
