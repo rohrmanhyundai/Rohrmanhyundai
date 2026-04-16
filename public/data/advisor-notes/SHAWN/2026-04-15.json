@@ -11,12 +11,12 @@
       "notes": "test"
     },
     {
-      "customerName": "test again",
-      "appointmentTime": "9am",
-      "criticalDeferredService": "test",
-      "waiter": true,
-      "technician": "dave",
-      "notes": "test"
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T01:54:43.089Z"
+  "savedAt": "2026-04-16T02:03:15.612Z"
 }
