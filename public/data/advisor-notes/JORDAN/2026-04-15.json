@@ -31,8 +31,8 @@
       "appointmentTime": "test",
       "criticalDeferredService": "test",
       "waiter": true,
-      "technician": "Dave",
-      "notes": "note"
+      "technician": "test",
+      "notes": "no"
     },
     {
       "customerName": "",
@@ -43,5 +43,5 @@
       "notes": ""
     }
   ],
-  "savedAt": "2026-04-16T02:11:55.546Z"
+  "savedAt": "2026-04-16T02:12:21.547Z"
 }
