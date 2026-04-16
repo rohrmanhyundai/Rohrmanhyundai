@@ -215,8 +215,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                 <th>CUSTOMER NAME</th>
                 <th>APPOINTMENT TIME</th>
                 <th>CRITICAL DEFERRED SERVICE</th>
-                <th>WAITER</th>
-                <th>DROP OFF</th>
+                <th>WAITER / DROP OFF</th>
                 <th>TECHNICIAN</th>
                 <th className="no-print adv-action-col"></th>
               </tr>
@@ -231,12 +230,18 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                   <td><input className="adv-cell-input" value={row.criticalDeferredService}
                     onChange={e => updateRow(idx, 'criticalDeferredService', e.target.value)} placeholder="Deferred service notes" /></td>
                   <td className="adv-waiter-cell">
-                    <input type="checkbox" className="adv-checkbox" checked={row.waiter}
-                      onChange={e => updateRow(idx, 'waiter', e.target.checked)} />
-                  </td>
-                  <td className="adv-waiter-cell">
-                    <input type="checkbox" className="adv-checkbox" checked={row.dropOff}
-                      onChange={e => updateRow(idx, 'dropOff', e.target.checked)} />
+                    <div className="adv-check-pair">
+                      <label className="adv-check-label">
+                        <input type="checkbox" className="adv-checkbox" checked={row.waiter}
+                          onChange={e => updateRow(idx, 'waiter', e.target.checked)} />
+                        <span>Waiter</span>
+                      </label>
+                      <label className="adv-check-label">
+                        <input type="checkbox" className="adv-checkbox" checked={row.dropOff}
+                          onChange={e => updateRow(idx, 'dropOff', e.target.checked)} />
+                        <span>Drop Off</span>
+                      </label>
+                    </div>
                   </td>
                   <td><input className="adv-cell-input" value={row.technician}
                     onChange={e => updateRow(idx, 'technician', e.target.value)} placeholder="Tech name" /></td>

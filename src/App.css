@@ -212,7 +212,10 @@ tr:last-child td{border-bottom:none}
 .adv-cell-input{width:100%;background:transparent;border:none;color:var(--text);font-size:15px;font-family:inherit;outline:none;padding:4px 2px}
 .adv-cell-input:focus{background:rgba(110,231,249,.06);border-radius:4px}
 .adv-cell-input::placeholder{color:rgba(149,169,198,.4)}
-.adv-waiter-cell{text-align:center;width:70px}
+.adv-waiter-cell{text-align:center;width:140px}
+.adv-check-pair{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:2px 4px}
+.adv-check-label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.adv-check-label:hover{color:var(--text)}
 .adv-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--teal)}
 .adv-action-col{width:110px;text-align:center}
 .adv-del-btn{padding:2px 8px;font-size:16px;line-height:1;color:#ef4444;border-color:rgba(239,68,68,.3)}
