@@ -22,48 +22,60 @@ function formatDate(iso) {
 
 // ── Document Preview Modal ────────────────────────────────────────────────────
 function PreviewModal({ doc, onClose }) {
-  const rawUrl = docRawUrl(doc.filename);
-  const isPdf  = doc.fileType === 'pdf';
-  const iframeRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const rawUrl  = docRawUrl(doc.filename);
+  const isPdf   = doc.fileType === 'pdf';
+  const isWord  = doc.fileType === 'doc' || doc.fileType === 'docx';
 
-  // Build embed URL
-  const embedUrl = isPdf
-    ? rawUrl
-    : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(rawUrl)}`;
+  const [blobUrl,   setBlobUrl]   = useState(null);  // PDF only
+  const [loading,   setLoading]   = useState(true);
+  const [fetchErr,  setFetchErr]  = useState(false);
 
-  // Download: fetch as blob so the browser saves the file rather than opening it
+  // For PDFs: fetch as blob → object URL (bypasses GitHub's iframe-blocking headers)
+  useEffect(() => {
+    if (!isPdf) { return; } // Word: stays loading=true until iframe onLoad fires
+    let objectUrl = null;
+    setLoading(true);
+    setFetchErr(false);
+    fetch(rawUrl)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(blob => {
+        objectUrl = URL.createObjectURL(blob);
+        setBlobUrl(objectUrl);
+        setLoading(false);
+      })
+      .catch(() => { setFetchErr(true); setLoading(false); });
+    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [rawUrl, isPdf]);
+
+  // Word docs: Google Docs viewer embedded (works without login, handles .doc/.docx)
+  const wordEmbedUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawUrl)}&embedded=true`;
+
+  // Download: fetch as blob so browser saves it instead of opening
   async function handleDownload() {
     try {
-      const res = await fetch(rawUrl);
+      const res  = await fetch(rawUrl);
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
-      a.download = doc.filename.replace(/^[a-z0-9]+-/, ''); // strip the id prefix
+      a.download = doc.filename.replace(/^[a-z0-9]+-/, '');
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
-    } catch {
-      // Fallback: just open the raw URL in a new tab
-      window.open(rawUrl, '_blank');
-    }
+    } catch { window.open(rawUrl, '_blank'); }
   }
 
-  // Print: for PDFs we call print on the iframe; for Word the viewer has its own print button
+  // Print
   function handlePrint() {
-    if (isPdf) {
-      try {
-        iframeRef.current?.contentWindow?.print();
-      } catch {
-        window.open(rawUrl, '_blank'); // cross-origin fallback — opens & user prints
-      }
+    if (isPdf && blobUrl) {
+      // Open blob URL in new tab so user can print it cleanly
+      window.open(blobUrl, '_blank');
     } else {
-      // Office Online has a print button built-in; also let user open in full viewer
-      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(rawUrl)}`, '_blank');
+      // For Word: open Google Docs full viewer — has its own print button
+      window.open(`https://docs.google.com/gview?url=${encodeURIComponent(rawUrl)}`, '_blank');
     }
   }
 
-  // Close on Escape key
+  // Close on Escape
   useEffect(() => {
     function handleKey(e) { if (e.key === 'Escape') onClose(); }
     document.addEventListener('keydown', handleKey);
@@ -80,32 +92,52 @@ function PreviewModal({ doc, onClose }) {
             <span>{doc.label}</span>
           </div>
           <div className="doc-preview-actions">
-            {!isPdf && (
-              <span className="doc-preview-hint">Word doc — use Print button inside the viewer</span>
-            )}
-            <button onClick={handlePrint} title={isPdf ? 'Print document' : 'Open in full viewer to print'}>
-              🖨 {isPdf ? 'Print' : 'Open to Print'}
+            <button onClick={handlePrint}>
+              🖨 Print
             </button>
-            <button onClick={handleDownload} title="Download file">
+            <button onClick={handleDownload}>
               ⬇ Download
             </button>
             <button className="secondary adv-del-btn" onClick={onClose} title="Close preview" style={{ fontSize: 20 }}>×</button>
           </div>
         </div>
 
-        {/* Iframe viewer */}
+        {/* Viewer body */}
         <div className="doc-preview-body">
-          {loading && (
+          {/* Loading spinner */}
+          {loading && !fetchErr && (
             <div className="doc-preview-loading">Loading document…</div>
           )}
-          <iframe
-            ref={iframeRef}
-            src={embedUrl}
-            className="doc-preview-iframe"
-            title={doc.label}
-            onLoad={() => setLoading(false)}
-            allowFullScreen
-          />
+
+          {/* Fetch error (PDF) */}
+          {fetchErr && (
+            <div className="doc-preview-loading">
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 18, marginBottom: 12 }}>Could not load document preview.</div>
+                <button onClick={() => window.open(rawUrl, '_blank')}>Open in New Tab</button>
+              </div>
+            </div>
+          )}
+
+          {/* PDF: use blob URL so GitHub frame-blocking headers are bypassed */}
+          {isPdf && blobUrl && (
+            <iframe
+              src={blobUrl}
+              className="doc-preview-iframe"
+              title={doc.label}
+            />
+          )}
+
+          {/* Word doc: Google Docs viewer embed — always render so it can trigger onLoad */}
+          {isWord && (
+            <iframe
+              src={wordEmbedUrl}
+              className="doc-preview-iframe"
+              title={doc.label}
+              style={{ display: loading ? 'none' : 'block' }}
+              onLoad={() => setLoading(false)}
+            />
+          )}
         </div>
       </div>
     </div>
