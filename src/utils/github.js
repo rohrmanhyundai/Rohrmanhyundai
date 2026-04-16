@@ -107,6 +107,21 @@ export async function loadAdvisorNotes(advisorName, date) {
   } catch { return null; }
 }
 
+export async function loadUsers() {
+  try {
+    const res = await fetch(`${BASE}data/users.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+export async function saveUsers(users) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  await saveGitHubFile(headers, 'public/data/users.json', users, 'Update users');
+}
+
 export async function loadAdvisorNoteIndex(advisorName) {
   try {
     const res = await fetch(`${BASE}data/advisor-notes/${advisorName}/index.json?v=${Date.now()}`, { cache: 'no-store' });

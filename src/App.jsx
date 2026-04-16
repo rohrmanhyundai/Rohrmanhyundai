@@ -8,6 +8,7 @@ import AdminPanel from './components/AdminPanel';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
+import { loadUsers, saveUsers } from './utils/github';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -30,6 +31,7 @@ const emptyData = {
 export default function App() {
   const [data, setData] = useState(emptyData);
   const [vacations, setVacations] = useState([]);
+  const [users, setUsers] = useState([{ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }]);
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem(AUTH_KEY) === 'true');
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
@@ -60,6 +62,17 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    loadUsers().then(githubUsers => {
+      if (githubUsers && githubUsers.length > 0) {
+        // Always ensure admin account exists
+        const hasAdmin = githubUsers.find(u => u.username === DEFAULT_USERNAME);
+        if (!hasAdmin) githubUsers.push({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD });
+        setUsers(githubUsers);
+      }
+    });
+  }, []);
+
   const fitStage = useCallback(() => {
     if (!stageRef.current) return;
     const baseW = 1920, baseH = 1080;
@@ -77,8 +90,7 @@ export default function App() {
   }, [fitStage]);
 
   function handleLogin(username, password) {
-    const stored = JSON.parse(localStorage.getItem(USERS_KEY) || 'null') || [{ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }];
-    const match = stored.find(u => u.username === username && u.password === password);
+    const match = users.find(u => u.username === username && u.password === password);
     if (match) {
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
@@ -160,6 +172,8 @@ export default function App() {
           onClose={() => setAdminOpen(false)}
           onDataChange={handleDataChange}
           currentUser={currentUser}
+          users={users}
+          onUsersChange={setUsers}
         />
       </div>
     </div>
