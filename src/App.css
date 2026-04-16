@@ -213,7 +213,7 @@ tr:last-child td{border-bottom:none}
 .adv-cell-input:focus{background:rgba(110,231,249,.06);border-radius:4px}
 .adv-cell-input::placeholder{color:rgba(149,169,198,.4)}
 .adv-waiter-cell{text-align:center;width:140px}
-.adv-check-pair{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:2px 4px}
+.adv-check-pair{display:flex;flex-direction:row;gap:10px;align-items:center;justify-content:center;padding:2px 4px;flex-wrap:wrap}
 .adv-check-label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
 .adv-check-label:hover{color:var(--text)}
 .adv-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--teal)}
