@@ -165,7 +165,12 @@ tr:last-child td{border-bottom:none}
 .user-row-item:hover{background:rgba(255,255,255,.07)}
 .user-row-item.selected{border-color:rgba(110,231,249,.45);background:rgba(110,231,249,.12)}
 .user-row-name{font-size:12px;font-weight:800}
-.user-row-meta{font-size:10px;color:var(--muted)}
+.user-row-meta{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.user-edit-badge{font-size:10px;font-weight:700;color:var(--teal);background:rgba(61,214,195,.12);border:1px solid rgba(61,214,195,.3);border-radius:4px;padding:1px 5px}
+.user-edit-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0;margin-top:4px;flex-wrap:wrap}
+.user-edit-toggle input{width:16px;height:16px;cursor:pointer;accent-color:var(--teal);flex-shrink:0}
+.user-edit-toggle span:first-of-type{font-size:13px;font-weight:700;color:var(--text)}
+.user-edit-toggle-hint{font-size:11px;color:var(--muted);font-weight:400}
 
 /* ── Advisor Pages ─────────────────────────────────────────── */
 .adv-page{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:200;overflow:hidden}
