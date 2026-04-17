@@ -11,6 +11,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserName, setNewUserName] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
+  const [newUserCanEdit, setNewUserCanEdit] = useState(false);
   const [openSection, setOpenSection] = useState('github');
 
   function toggle(name) {
@@ -116,8 +117,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (currentRole !== 'admin') { alert('Only admin can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole } : u)
-      : [...users, { username: newUserName, password: newUserPass, role: newUserRole }];
+      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit } : u)
+      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit }];
     setUserSaving(true);
     saveUsers(updated)
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -295,11 +296,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div
                   key={u.username}
                   className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); }}
+                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); }}
                 >
                   <div>
                     <div className="user-row-name">{u.username}</div>
-                    <div className="user-row-meta">{u.username === 'admin' ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}</div>
+                    <div className="user-row-meta">
+                      {u.username === 'admin' ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
+                      {(u.canEditDashboard || u.role === 'admin') && <span className="user-edit-badge">✎ Can Edit</span>}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -308,7 +312,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
               <div className="actions">
                 <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); }}>Clear</button>
+                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); }}>Clear</button>
               </div>
             </div>
             <div className="form-section">
@@ -323,6 +327,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   </select>
                 </div>
               </div>
+              <label className="user-edit-toggle">
+                <input type="checkbox" checked={newUserCanEdit} onChange={e => setNewUserCanEdit(e.target.checked)} />
+                <span>Can Edit Dashboard</span>
+                <span className="user-edit-toggle-hint">Allows this user to open and save changes to the Edit Dashboard</span>
+              </label>
               <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>
             </div>
           </div>

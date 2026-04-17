@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentRole, onLogin, onLogout, onEdit, onAdvisor }) {
+export default function Header({ data, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -57,7 +57,9 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, onL
                       Advisor
                     </button>
                   )}
-                  <button className="secondary" onClick={onEdit}>Edit Dashboard</button>
+                  {canEditDashboard && (
+                    <button className="secondary" onClick={onEdit}>Edit Dashboard</button>
+                  )}
                   <button className="secondary" onClick={onLogout}>Logout</button>
                 </>
               )}

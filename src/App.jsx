@@ -43,6 +43,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem(AUTH_KEY) === 'true');
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
+  const [canEditDashboard, setCanEditDashboard] = useState(localStorage.getItem('canEditDashboard') === 'true');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [selectedDay, setSelectedDay] = useState(null);
@@ -104,12 +105,15 @@ export default function App() {
   function handleLogin(username, password) {
     const match = users.find(u => u.username === username && u.password === password);
     if (match) {
+      const canEdit = match.role === 'admin' || !!match.canEditDashboard;
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
       localStorage.setItem('currentRole', match.role || '');
+      localStorage.setItem('canEditDashboard', String(canEdit));
       setIsLoggedIn(true);
       setCurrentUser(match.username);
       setCurrentRole(match.role || '');
+      setCanEditDashboard(canEdit);
     } else {
       alert('Login failed.');
     }
@@ -119,9 +123,11 @@ export default function App() {
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
+    localStorage.removeItem('canEditDashboard');
     setIsLoggedIn(false);
     setCurrentUser('');
     setCurrentRole('');
+    setCanEditDashboard(false);
     setAdminOpen(false);
     setPage('dashboard');
     setViewingAdvisor('');
@@ -186,6 +192,7 @@ export default function App() {
             isLoggedIn={isLoggedIn}
             currentUser={currentUser}
             currentRole={currentRole}
+            canEditDashboard={canEditDashboard}
             onLogin={handleLogin}
             onLogout={handleLogout}
             onEdit={() => setAdminOpen(true)}
