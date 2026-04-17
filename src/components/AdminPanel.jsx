@@ -3,7 +3,7 @@ import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatter
 import { advisorDailyAverage } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers } from '../utils/github';
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, currentUser, currentRole, users, onUsersChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, onUsersChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
@@ -144,6 +144,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <h2>Edit Dashboard</h2>
         <div className="actions">
           <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+          <button className="secondary" onClick={onRefresh} title="Pull latest data from GitHub and update the dashboard display">⟳ Refresh Dashboard</button>
           <button className="secondary" onClick={onClose}>Close</button>
         </div>
       </div>
