@@ -12,7 +12,8 @@
   {
     "username": "Jordan",
     "password": "[REDACTED]",
-    "role": "advisor"
+    "role": "advisor",
+    "canEditDashboard": true
   },
   {
     "username": "Neven",
