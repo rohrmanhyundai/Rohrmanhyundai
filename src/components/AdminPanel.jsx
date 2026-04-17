@@ -45,7 +45,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     try {
       const payload = { data, vacations };
       await saveDashboardToGitHub(payload);
-      alert('Dashboard saved to GitHub. Refresh the TV after GitHub Pages republishes.');
+      // Reload the dashboard data so the TV screen updates immediately
+      if (onRefresh) await onRefresh();
     } catch (err) {
       alert('Save failed: ' + err.message);
     } finally {
@@ -144,7 +145,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <h2>Edit Dashboard</h2>
         <div className="actions">
           <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-          <button className="secondary" onClick={onRefresh} title="Pull latest data from GitHub and update the dashboard display">⟳ Refresh Dashboard</button>
           <button className="secondary" onClick={onClose}>Close</button>
         </div>
       </div>
