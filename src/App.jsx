@@ -50,27 +50,28 @@ export default function App() {
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const stageRef = useRef(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`${BASE}data/data.json?v=${Date.now()}`, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
-        const payload = await res.json();
-        if (payload && payload.data) {
-          const d = payload.data;
-          recalcTech(d);
-          recalcAdvisorSummary(d);
-          setData(d);
-          setVacations(Array.isArray(payload.vacations) ? payload.vacations : (d.vacations || []));
-        }
-      } catch (err) {
-        console.warn('Failed to load data.json, using empty state', err);
+  const loadDashboard = useCallback(async () => {
+    try {
+      const res = await fetch(`${BASE}data/data.json?v=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
+      const payload = await res.json();
+      if (payload && payload.data) {
+        const d = payload.data;
+        recalcTech(d);
+        recalcAdvisorSummary(d);
+        setData(d);
+        setVacations(Array.isArray(payload.vacations) ? payload.vacations : (d.vacations || []));
       }
+    } catch (err) {
+      console.warn('Failed to load data.json, using empty state', err);
     }
-    load();
-    const interval = setInterval(load, 10 * 60 * 1000); // refresh every 10 minutes
-    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    loadDashboard();
+    const interval = setInterval(loadDashboard, 10 * 60 * 1000); // refresh every 10 minutes
+    return () => clearInterval(interval);
+  }, [loadDashboard]);
 
   useEffect(() => {
     loadUsers().then(githubUsers => {
@@ -205,6 +206,7 @@ export default function App() {
         isOpen={adminOpen}
         onClose={() => setAdminOpen(false)}
         onDataChange={handleDataChange}
+        onRefresh={loadDashboard}
         currentUser={currentUser}
         currentRole={currentRole}
         users={users}
