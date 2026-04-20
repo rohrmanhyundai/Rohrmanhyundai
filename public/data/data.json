@@ -78,9 +78,9 @@
         "total": 45.6,
         "goal_pct": 0.9600000000000001,
         "pacing": 45.60000000000001,
-        "certified": "NO",
-        "trainings_due": "3",
-        "excel_training": "59"
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       },
       {
         "name": "CORY",
@@ -94,9 +94,9 @@
         "total": 28.9,
         "goal_pct": 0.6084210526315789,
         "pacing": 48.166666666666664,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
+        "certified": "NO",
+        "trainings_due": "3",
+        "excel_training": "59"
       }
     ],
     "advisors": [
