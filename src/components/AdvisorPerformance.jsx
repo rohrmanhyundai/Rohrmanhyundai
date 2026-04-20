@@ -8,11 +8,13 @@ const BASE_ROWS = 3;  // baseline number of advisors
 export default function AdvisorPerformance({ data }) {
   const [fontSize, setFontSize] = useState(BASE_FONT);
 
+  const visibleAdvisors = data.advisors.filter(a => !a.hidden);
+
   useEffect(() => {
-    const count = data.advisors.length || BASE_ROWS;
+    const count = visibleAdvisors.length || BASE_ROWS;
     const scale = Math.min(1, BASE_ROWS / count);
     setFontSize(Math.round(BASE_FONT * scale * 10) / 10);
-  }, [data.advisors.length]);
+  }, [visibleAdvisors.length]);
 
   const chips = [
     ['Snapshot', data.advisorSummary.date],
@@ -64,7 +66,7 @@ export default function AdvisorPerformance({ data }) {
             </tr>
           </thead>
           <tbody>
-            {data.advisors.map(a => (
+            {visibleAdvisors.map(a => (
               <tr key={a.name}>
                 <td className="name" style={tdStyle}>{a.name}</td>
                 <td style={tdStyle}>{n(advisorDailyAverage(a, data), 2)}</td>

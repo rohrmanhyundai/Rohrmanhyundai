@@ -199,9 +199,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
           {data.advisors.map((a, idx) => (
             <div className="form-section" key={a.name}>
-              <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
-                {a.name}
-                <button className="secondary" onClick={() => removeAdvisor(idx)}>Remove</button>
+              <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>
+                  {a.name}
+                  {a.hidden && <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Hidden</span>}
+                </span>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    className="secondary"
+                    style={a.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}}
+                    onClick={() => updateField(`advisors.${idx}.hidden`, !a.hidden)}
+                  >
+                    {a.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
+                  </button>
+                  <button className="secondary" onClick={() => removeAdvisor(idx)}>Remove</button>
+                </div>
               </div>
               <div className="form-grid">
                 <div className="field"><label>Daily Avg</label><input value={n(advisorDailyAverage(a, data), 2)} disabled /></div>
