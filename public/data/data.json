@@ -140,7 +140,8 @@
         "asr": 0.1125,
         "elr": 0.9,
         "last_month_total": 204,
-        "roh50_hrs_ro": 0.6
+        "roh50_hrs_ro": 0.6,
+        "hidden": true
       },
       {
         "name": "PARKER",
