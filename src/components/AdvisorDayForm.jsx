@@ -133,9 +133,18 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     }
 
     if (!getGithubToken()) {
-      const code = prompt('This device needs a one-time save code.\n\nEnter the save code (ask your admin for it):');
-      if (!code) throw new Error('No save code entered.');
-      setGithubToken(code.trim());
+      // Silently try to pull the shared token from users.json before prompting
+      let autoFilled = false;
+      try {
+        const result = await loadUsers();
+        const freshCode = result?.sharedSaveCode;
+        if (freshCode) { setGithubToken(freshCode); autoFilled = true; }
+      } catch {}
+      if (!autoFilled) {
+        const code = prompt('This device needs a one-time save code.\n\nEnter the save code (ask your admin for it):');
+        if (!code) throw new Error('No save code entered.');
+        setGithubToken(code.trim());
+      }
     }
 
     setSaving(true);
