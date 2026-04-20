@@ -14,7 +14,7 @@
         "total": 35.8,
         "goal_pct": 0.7536842105263157,
         "pacing": 35.8,
-        "certified": "NO",
+        "certified": "YES",
         "trainings_due": "3",
         "excel_training": "59"
       },
@@ -30,8 +30,8 @@
         "total": 96,
         "goal_pct": 2.0210526315789474,
         "pacing": 96,
-        "certified": "YES",
-        "trainings_due": "0",
+        "certified": "NO",
+        "trainings_due": "3",
         "excel_training": "NA"
       },
       {
@@ -47,7 +47,7 @@
         "goal_pct": 0.403921568627451,
         "pacing": 15.450000000000001,
         "certified": "YES",
-        "trainings_due": "0",
+        "trainings_due": "3",
         "excel_training": "NA"
       },
       {
@@ -63,7 +63,7 @@
         "goal_pct": 0.6705882352941177,
         "pacing": 17.1,
         "certified": "YES",
-        "trainings_due": "0",
+        "trainings_due": "3",
         "excel_training": "NA"
       },
       {
@@ -78,9 +78,9 @@
         "total": 45.6,
         "goal_pct": 0.9600000000000001,
         "pacing": 45.60000000000001,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
+        "certified": "NO",
+        "trainings_due": "3",
+        "excel_training": "59"
       },
       {
         "name": "CORY",
@@ -94,9 +94,9 @@
         "total": 28.9,
         "goal_pct": 0.6084210526315789,
         "pacing": 48.166666666666664,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
+        "certified": "NO",
+        "trainings_due": "3",
+        "excel_training": "59"
       }
     ],
     "advisors": [
