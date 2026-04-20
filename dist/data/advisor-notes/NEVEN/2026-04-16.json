@@ -1,0 +1,126 @@
+{
+  "advisorName": "NEVEN",
+  "date": "2026-04-16",
+  "rows": [
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [
+    {
+      "customerName": "TEST",
+      "phoneNumber": "555-555-5555",
+      "repairOrderNumber": "7777777",
+      "servicePerformed": {
+        "maintenance": true,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "poor": true,
+        "good": false
+      },
+      "notes": [
+        {
+          "author": "JORDAN",
+          "text": "GOOD TEST"
+        }
+      ]
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-16T18:56:16.313Z"
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "username": "admin",
+    "password": "Hyundai2026",
+    "role": "admin"
+  },
+  {
+    "username": "Shawn",
+    "password": "1234",
+    "role": "service manager"
+  },
+  {
+    "username": "Jordan",
+    "password": "1234",
+    "role": "advisor"
+  },
+  {
+    "username": "Neven",
+    "password": "1234",
+    "role": "advisor"
+  },
+  {
+    "username": "David",
+    "password": "1234",
+    "role": "advisor"
+  },
+  {
+    "username": "Parker",
+    "password": "1234",
+    "role": "advisor"
+  },
+  {
+    "username": "Jason",
+    "password": "jasonT",
+    "role": "admin"
+  }
+]

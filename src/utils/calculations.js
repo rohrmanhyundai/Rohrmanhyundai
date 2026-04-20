@@ -42,10 +42,6 @@ export function recalcTech(data) {
   let totalGoal = 0, weekTotal = 0;
   const totals = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
 
-  // Week runs Sat–Fri. Completed Mon–Fri days (excluding today): Mon=0, Tue=1, Wed=2, Thu=3, Fri=4
-  const dow = new Date().getDay(); // 0=Sun,1=Mon,...,6=Sat
-  const monFriElapsed = (dow >= 1 && dow <= 5) ? dow - 1 : 0;
-
   data.technicians.forEach(t => {
     t.total = 0;
     days.forEach(k => {
@@ -58,9 +54,12 @@ export function recalcTech(data) {
     weekTotal += t.total;
     t.goal_pct = t.goal > 0 ? t.total / t.goal : 0;
 
+    // Count days this tech actually has hours entered — avoids calendar-day
+    // edge cases that caused pacing to show 0 or wildly inflated numbers.
     const workedSat = t.sat > 0;
     const totalWorkdays = workedSat ? 6 : 5;
-    const daysWorked = monFriElapsed + (workedSat ? 1 : 0);
+    const daysWorked = ['mon','tue','wed','thu','fri'].filter(d => t[d] > 0).length
+                     + (workedSat ? 1 : 0);
     t.pacing = daysWorked > 0 ? (t.total / daysWorked) * totalWorkdays : 0;
   });
 

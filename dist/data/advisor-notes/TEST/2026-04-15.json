@@ -1,0 +1,47 @@
+{
+  "advisorName": "TEST",
+  "date": "2026-04-15",
+  "rows": [
+    {
+      "customerName": "test",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "technician": "mike",
+      "notes": "test drove vehicle"
+    },
+    {
+      "customerName": "test",
+      "appointmentTime": "10am",
+      "criticalDeferredService": "test",
+      "waiter": false,
+      "technician": "test",
+      "notes": "test notes \nmore notes"
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "technician": "",
+      "notes": ""
+    }
+  ],
+  "savedAt": "2026-04-16T01:12:53.599Z"
+}
