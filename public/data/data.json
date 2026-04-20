@@ -97,22 +97,6 @@
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
-      },
-      {
-        "name": "CORY",
-        "goal": 47.5,
-        "mon": 0,
-        "tue": 0,
-        "wed": 12.6,
-        "thu": 3.3,
-        "fri": 13,
-        "sat": 0,
-        "total": 28.9,
-        "goal_pct": 0.6084210526315789,
-        "pacing": 0,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
       }
     ],
     "advisors": [
@@ -237,12 +221,12 @@
     "techTotals": {
       "mon": 29.8,
       "tue": 48.800000000000004,
-      "wed": 65.3,
-      "thu": 44.1,
-      "fri": 20.2,
+      "wed": 52.699999999999996,
+      "thu": 40.800000000000004,
+      "fri": 7.2,
       "sat": 11.3,
-      "week_total": 219.49999999999997,
-      "week_pct": 0.7608318890814557,
+      "week_total": 190.59999999999997,
+      "week_pct": 0.7908713692946057,
       "shop_pacing": 505.79999999999995
     },
     "grossGoal": 154287,
