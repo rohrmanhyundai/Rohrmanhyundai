@@ -81,6 +81,38 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
+      },
+      {
+        "name": "GAVEN",
+        "goal": 47.5,
+        "mon": 7,
+        "tue": 10.9,
+        "wed": 5.5,
+        "thu": 15,
+        "fri": 7.2,
+        "sat": 0,
+        "total": 45.6,
+        "goal_pct": 0.9600000000000001,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
+      },
+      {
+        "name": "CORY",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 12.6,
+        "thu": 3.3,
+        "fri": 13,
+        "sat": 0,
+        "total": 28.9,
+        "goal_pct": 0.6084210526315789,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
@@ -203,14 +235,14 @@
       "csi": 932.6666666666666
     },
     "techTotals": {
-      "mon": 22.8,
-      "tue": 37.900000000000006,
-      "wed": 47.199999999999996,
-      "thu": 25.800000000000004,
-      "fri": 0,
+      "mon": 29.8,
+      "tue": 48.800000000000004,
+      "wed": 65.3,
+      "thu": 44.1,
+      "fri": 20.2,
       "sat": 11.3,
-      "week_total": 144.99999999999997,
-      "week_pct": 0.7493540051679585,
+      "week_total": 219.49999999999997,
+      "week_pct": 0.7608318890814557,
       "shop_pacing": 505.79999999999995
     },
     "grossGoal": 154287,
