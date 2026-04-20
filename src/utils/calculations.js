@@ -87,7 +87,7 @@ export function buildGaugeData(data) {
     { label: 'Pacing Customer Pay Goal', pct: cpPct, main: (cpPct * 100).toFixed(1) + '%', sub: '$' + safe(data.cpActual, 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / $' + safe(data.cpGoal, 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) },
   ];
 
-  data.advisors.slice(0, 3).forEach(a => {
+  data.advisors.filter(a => !a.hidden).slice(0, 3).forEach(a => {
     const progress = advisorMonthProgress(data);
     const dailyAvg = advisorDailyAverage(a, data);
     const projected = advisorProjectedHours(a, data);
