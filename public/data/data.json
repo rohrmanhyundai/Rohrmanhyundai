@@ -13,7 +13,7 @@
         "sat": 0,
         "total": 35.8,
         "goal_pct": 0.7536842105263157,
-        "pacing": 0,
+        "pacing": 35.8,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "95.0"
@@ -29,7 +29,7 @@
         "sat": 9.1,
         "total": 96,
         "goal_pct": 2.0210526315789474,
-        "pacing": 576,
+        "pacing": 96,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -45,7 +45,7 @@
         "sat": 2.2,
         "total": 10.3,
         "goal_pct": 0.403921568627451,
-        "pacing": 61.800000000000004,
+        "pacing": 15.450000000000001,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -61,7 +61,7 @@
         "sat": 0,
         "total": 17.1,
         "goal_pct": 0.6705882352941177,
-        "pacing": 0,
+        "pacing": 17.1,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -77,7 +77,7 @@
         "sat": 0,
         "total": 45.6,
         "goal_pct": 0.9600000000000001,
-        "pacing": 0,
+        "pacing": 45.60000000000001,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
@@ -93,7 +93,7 @@
         "sat": 0,
         "total": 28.9,
         "goal_pct": 0.6084210526315789,
-        "pacing": 0,
+        "pacing": 48.166666666666664,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
@@ -117,7 +117,7 @@
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 131.3,
+        "mtd_hours": 183,
         "hours_per_ro": 1.27,
         "align": 0.15710000000000002,
         "tires": 0.07139999999999999,
@@ -131,7 +131,7 @@
       {
         "name": "NEVEN",
         "daily_avg": 7.936363636,
-        "mtd_hours": 96,
+        "mtd_hours": 121,
         "hours_per_ro": 1.01,
         "align": 0.0556,
         "tires": 0.0926,
@@ -212,7 +212,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 357.8,
+      "total_hours": 434.5,
       "align": 0.12216666666666669,
       "tires": 0.13949999999999999,
       "valvoline": 0.2376666666666667,
@@ -227,7 +227,7 @@
       "sat": 11.3,
       "week_total": 233.70000000000002,
       "week_pct": 0.9697095435684648,
-      "shop_pacing": 637.8
+      "shop_pacing": 258.1166666666667
     },
     "grossGoal": 154287,
     "grossActual": 146968,
