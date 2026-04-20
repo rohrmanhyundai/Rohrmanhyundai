@@ -140,19 +140,46 @@ export async function loadAdvisorNotes(advisorName, date) {
   } catch { return null; }
 }
 
+// Parse users.json — handles both old array format and new {users, sharedSaveCode} format
+function parseUsersPayload(raw) {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '' };
+  return { users: Array.isArray(raw.users) ? raw.users : [], sharedSaveCode: raw.sharedSaveCode || '' };
+}
+
 export async function loadUsers() {
+  // Try GitHub API first — returns the absolute freshest version
+  try {
+    const raw = await readGitHubFile(publicHeaders(), 'public/data/users.json');
+    const parsed = parseUsersPayload(raw);
+    if (parsed) return parsed;
+  } catch {}
+  // Fallback: GitHub Pages CDN
   try {
     const res = await fetch(`${BASE}data/users.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return null;
-    return await res.json();
+    return parseUsersPayload(await res.json());
   } catch { return null; }
 }
 
-export async function saveUsers(users) {
+// Save users list, always preserving the sharedSaveCode field
+export async function saveUsers(users, sharedSaveCode) {
   const token = getGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  await saveGitHubFile(headers, 'public/data/users.json', users, 'Update users');
+  await saveGitHubFile(headers, 'public/data/users.json', { users, sharedSaveCode: sharedSaveCode ?? '' }, 'Update users');
+}
+
+// Sync a new GitHub token into users.json so ALL devices get it automatically on next load
+export async function saveSharedToken(newToken) {
+  const headers = { Authorization: `Bearer ${newToken}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  let users = [];
+  try {
+    const raw = await readGitHubFile(headers, 'public/data/users.json');
+    const parsed = parseUsersPayload(raw);
+    if (parsed) users = parsed.users;
+  } catch {}
+  await saveGitHubFile(headers, 'public/data/users.json', { users, sharedSaveCode: newToken }, 'Sync shared save code');
 }
 
 // ── Document Library ──────────────────────────────────────────────────────────
