@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken } from '../utils/github';
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, onUsersChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
@@ -71,9 +71,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  function handleTokenSave() {
+  const [tokenSyncing, setTokenSyncing] = useState(false);
+
+  async function handleTokenSave() {
+    if (!githubToken) { alert('Enter a token first.'); return; }
     setGithubToken(githubToken);
-    alert('GitHub token saved.');
+    setTokenSyncing(true);
+    try {
+      await saveSharedToken(githubToken);
+      if (onSharedSaveCodeChange) onSharedSaveCodeChange(githubToken);
+      alert('Token saved and synced to all advisors. They will get it automatically on their next page load.');
+    } catch (err) {
+      alert('Token saved locally, but could not sync to GitHub: ' + err.message + '\n\nAdvisors may still need to enter it manually.');
+    } finally {
+      setTokenSyncing(false);
+    }
   }
 
   function addTechnician() {
@@ -136,7 +148,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit } : u)
       : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit }];
     setUserSaving(true);
-    saveUsers(updated)
+    saveUsers(updated, sharedSaveCode || '')
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
       .catch(err => alert('Failed to save user: ' + err.message))
       .finally(() => setUserSaving(false));
@@ -148,7 +160,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
     const updated = users.filter(u => u.username !== selectedUser);
     setUserSaving(true);
-    saveUsers(updated)
+    saveUsers(updated, sharedSaveCode || '')
       .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
@@ -173,12 +185,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <summary onClick={e => { e.preventDefault(); toggle('github'); }}>GitHub Settings</summary>
         <div className="group-body">
           <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-            <div className="small">Enter a GitHub Personal Access Token with repo scope to enable saving.</div>
+            <div className="small">Enter a GitHub Personal Access Token with repo scope. Saving here automatically syncs it to all advisor devices — they will never need to enter a save code manually.</div>
             <div className="field" style={{ marginTop: 8 }}>
               <label>GitHub Token</label>
               <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
             </div>
-            <div className="actions"><button onClick={handleTokenSave}>Save Token</button></div>
+            <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
           </div>
         </div>
       </details>

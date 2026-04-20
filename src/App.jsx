@@ -9,7 +9,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
-import { loadUsers, saveUsers } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken } from './utils/github';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -44,6 +44,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
   const [canEditDashboard, setCanEditDashboard] = useState(localStorage.getItem('canEditDashboard') === 'true');
+  const [sharedSaveCode, setSharedSaveCode] = useState('');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [selectedDay, setSelectedDay] = useState(null);
@@ -75,12 +76,19 @@ export default function App() {
   }, [loadDashboard]);
 
   useEffect(() => {
-    loadUsers().then(githubUsers => {
+    loadUsers().then(result => {
+      if (!result) return;
+      const { users: githubUsers, sharedSaveCode: code } = result;
+      // Auto-apply the shared save code so all advisor devices stay in sync —
+      // admin updates it once in GitHub Settings and everyone gets it automatically.
+      if (code) {
+        setGithubToken(code);
+        setSharedSaveCode(code);
+      }
       if (githubUsers && githubUsers.length > 0) {
         const hasAdmin = githubUsers.find(u => u.username === DEFAULT_USERNAME);
         if (!hasAdmin) githubUsers.push({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD });
         setUsers(githubUsers);
-        // Cache to localStorage so every device has users available immediately on next visit
         localStorage.setItem(USERS_KEY, JSON.stringify(githubUsers));
       }
     });
@@ -217,6 +225,8 @@ export default function App() {
         currentUser={currentUser}
         currentRole={currentRole}
         users={users}
+        sharedSaveCode={sharedSaveCode}
+        onSharedSaveCodeChange={setSharedSaveCode}
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
       />
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { saveAdvisorNotes, loadAdvisorNotes, getGithubToken, setGithubToken } from '../utils/github';
+import { saveAdvisorNotes, loadAdvisorNotes, loadUsers, getGithubToken, setGithubToken } from '../utils/github';
 
 const EMPTY_ROW = () => ({
   customerName: '', appointmentTime: '', criticalDeferredService: '',
@@ -191,19 +191,32 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
               } catch (err) {
                 const isBadToken = /bad credentials|unauthorized|401/i.test(err.message);
                 if (isBadToken) {
-                  // Clear the bad token and ask for a new one
                   setGithubToken('');
-                  const code = prompt(
-                    'Your save code is invalid or expired.\n\nPlease enter a new save code (ask your admin for it):'
-                  );
-                  if (code && code.trim()) {
-                    setGithubToken(code.trim());
-                    // Retry once with the new token
-                    try {
+                  // First: silently try to pull the latest shared token from users.json
+                  let autoRefreshed = false;
+                  try {
+                    const result = await loadUsers();
+                    const freshCode = result?.sharedSaveCode;
+                    if (freshCode) {
+                      setGithubToken(freshCode);
                       await handleSave();
                       onBack();
-                    } catch (err2) {
-                      alert('Save failed: ' + err2.message);
+                      autoRefreshed = true;
+                    }
+                  } catch {}
+                  if (!autoRefreshed) {
+                    // Fall back to manual prompt only if auto-refresh failed
+                    const code = prompt(
+                      'Your save code is invalid or expired.\n\nPlease enter a new save code (ask your admin for it):'
+                    );
+                    if (code && code.trim()) {
+                      setGithubToken(code.trim());
+                      try {
+                        await handleSave();
+                        onBack();
+                      } catch (err2) {
+                        alert('Save failed: ' + err2.message);
+                      }
                     }
                   }
                 } else {
