@@ -13,6 +13,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
   const [openSection, setOpenSection] = useState('github');
+  // Controlled local copy of vacations so Remove always targets the right row
+  const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
+
+  useEffect(() => {
+    setVacEdit(vacations.map(v => ({ ...v })));
+  }, [vacations]);
+
+  function updateVacEdit(idx, field, value) {
+    setVacEdit(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
+  }
+
+  function commitVacEdit(idx, field, value) {
+    const trimmed = value.trim() || '\u2014';
+    updateVacEdit(idx, field, trimmed);
+    updateField(`vacations.${idx}.${field}`, trimmed);
+  }
 
   function toggle(name) {
     setOpenSection(prev => prev === name ? null : name);
@@ -285,11 +301,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       <details className="edit-group" open={openSection === 'vacation'} onToggle={e => e.target.open ? setOpenSection('vacation') : setOpenSection(null)}>
         <summary onClick={e => { e.preventDefault(); toggle('vacation'); }}>Approved Vacation</summary>
         <div className="group-body">
-          {vacations.map((v, idx) => (
+          {vacEdit.map((v, idx) => (
             <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginBottom: 8 }}>
-              <div className="field" style={{ flex: 1 }}><label>Name</label><input defaultValue={v.name || ''} onBlur={e => updateField(`vacations.${idx}.name`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field" style={{ flex: 1.4 }}><label>Dates</label><input defaultValue={v.dates || ''} onBlur={e => updateField(`vacations.${idx}.dates`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field" style={{ flex: 1 }}><label>Status</label><input defaultValue={v.status || ''} onBlur={e => updateField(`vacations.${idx}.status`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field" style={{ flex: 1 }}>
+                <label>Name</label>
+                <input
+                  value={v.name === '\u2014' ? '' : (v.name || '')}
+                  onChange={e => updateVacEdit(idx, 'name', e.target.value)}
+                  onBlur={e => commitVacEdit(idx, 'name', e.target.value)}
+                />
+              </div>
+              <div className="field" style={{ flex: 1.4 }}>
+                <label>Dates</label>
+                <input
+                  value={v.dates === '\u2014' ? '' : (v.dates || '')}
+                  onChange={e => updateVacEdit(idx, 'dates', e.target.value)}
+                  onBlur={e => commitVacEdit(idx, 'dates', e.target.value)}
+                />
+              </div>
+              <div className="field" style={{ flex: 1 }}>
+                <label>Status</label>
+                <input
+                  value={v.status === '\u2014' ? '' : (v.status || '')}
+                  onChange={e => updateVacEdit(idx, 'status', e.target.value)}
+                  onBlur={e => commitVacEdit(idx, 'status', e.target.value)}
+                />
+              </div>
               <button className="secondary" style={{ flexShrink: 0, padding: '5px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>Remove</button>
             </div>
           ))}

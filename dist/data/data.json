@@ -13,7 +13,7 @@
         "sat": 0,
         "total": 35.8,
         "goal_pct": 0.7536842105263157,
-        "pacing": 0,
+        "pacing": 35.8,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "95.0"
@@ -29,7 +29,7 @@
         "sat": 9.1,
         "total": 96,
         "goal_pct": 2.0210526315789474,
-        "pacing": 576,
+        "pacing": 96,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -45,7 +45,7 @@
         "sat": 2.2,
         "total": 10.3,
         "goal_pct": 0.403921568627451,
-        "pacing": 61.800000000000004,
+        "pacing": 15.450000000000001,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -61,7 +61,7 @@
         "sat": 0,
         "total": 17.1,
         "goal_pct": 0.6705882352941177,
-        "pacing": 0,
+        "pacing": 17.1,
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
@@ -77,7 +77,7 @@
         "sat": 0,
         "total": 45.6,
         "goal_pct": 0.9600000000000001,
-        "pacing": 0,
+        "pacing": 45.60000000000001,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
@@ -93,7 +93,7 @@
         "sat": 0,
         "total": 28.9,
         "goal_pct": 0.6084210526315789,
-        "pacing": 0,
+        "pacing": 48.166666666666664,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
@@ -106,27 +106,27 @@
         "mtd_hours": 130.5,
         "hours_per_ro": 1.53,
         "align": 0.15380000000000002,
-        "tires": 0.2545,
-        "valvoline": 0.3818,
+        "tires": 0.2059,
+        "valvoline": 0.3235,
         "csi": 901,
         "asr": 0.20129999999999998,
         "elr": 0.96,
         "last_month_total": 305.7,
-        "roh50_hrs_ro": 1.14
+        "roh50_hrs_ro": 0.96
       },
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
         "mtd_hours": 131.3,
         "hours_per_ro": 1.27,
-        "align": 0.15710000000000002,
-        "tires": 0.07139999999999999,
-        "valvoline": 0.2571,
+        "align": 0.2821,
+        "tires": 0.16670000000000001,
+        "valvoline": 0.2821,
         "csi": 976,
         "asr": 0.1732,
         "elr": 0.94,
         "last_month_total": 333.4,
-        "roh50_hrs_ro": 0.8
+        "roh50_hrs_ro": 1.1
       },
       {
         "name": "NEVEN",
@@ -134,13 +134,27 @@
         "mtd_hours": 96,
         "hours_per_ro": 1.01,
         "align": 0.0556,
-        "tires": 0.0926,
-        "valvoline": 0.0741,
+        "tires": 0.0833,
+        "valvoline": 0.067,
         "csi": 921,
         "asr": 0.1125,
         "elr": 0.9,
         "last_month_total": 204,
-        "roh50_hrs_ro": 0.59
+        "roh50_hrs_ro": 0.6
+      },
+      {
+        "name": "PARKER",
+        "mtd_hours": 3.6,
+        "daily_avg": 0,
+        "hours_per_ro": 0,
+        "align": 0,
+        "tires": 0,
+        "valvoline": 0,
+        "roh50_hrs_ro": 0,
+        "csi": 0,
+        "asr": 0,
+        "elr": 0,
+        "last_month_total": 0
       }
     ],
     "advisorTraining": [
@@ -160,6 +174,12 @@
         "name": "NEVEN",
         "certified": "NO",
         "trainings_due": "5",
+        "excel_training": "—"
+      },
+      {
+        "name": "PARKER",
+        "certified": "—",
+        "trainings_due": "—",
         "excel_training": "—"
       }
     ],
@@ -212,11 +232,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 357.8,
-      "align": 0.12216666666666669,
-      "tires": 0.13949999999999999,
-      "valvoline": 0.2376666666666667,
-      "csi": 932.6666666666666
+      "total_hours": 361.40000000000003,
+      "align": 0.12287500000000001,
+      "tires": 0.113975,
+      "valvoline": 0.16815000000000002,
+      "csi": 699.5
     },
     "techTotals": {
       "mon": 29.8,
@@ -227,12 +247,12 @@
       "sat": 11.3,
       "week_total": 233.70000000000002,
       "week_pct": 0.9697095435684648,
-      "shop_pacing": 637.8
+      "shop_pacing": 258.1166666666667
     },
     "grossGoal": 154287,
-    "grossActual": 146968,
+    "grossActual": 150210,
     "cpGoal": 60404,
-    "cpActual": 57527,
+    "cpActual": 58803,
     "advisorMonthlyWorkdays": 27
   },
   "vacations": [
