@@ -88,14 +88,11 @@ export default function App() {
 
   const fitStage = useCallback(() => {
     if (!stageRef.current) return;
-    const stageW = 1920, stageH = 1080;
-    // Use a larger safe-zone reference so the stage scales to ~90% on a
-    // 1920x1080 TV, keeping all content inside the Samsung overscan crop area.
-    const safeW = 2133, safeH = 1200;
+    const baseW = 1920, baseH = 1080;
     const vw = window.innerWidth, vh = window.innerHeight;
-    const scale = Math.min(vw / safeW, vh / safeH);
-    const left = Math.max(0, (vw - stageW * scale) / 2);
-    const top  = Math.max(0, (vh - stageH * scale) / 2);
+    const scale = Math.min(vw / baseW, vh / baseH);
+    const left = Math.max(0, (vw - baseW * scale) / 2);
+    const top  = Math.max(0, (vh - baseH * scale) / 2);
     stageRef.current.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
   }, []);
 
