@@ -8,7 +8,8 @@
     {
       "username": "Shawn",
       "password": "1234",
-      "role": "service manager"
+      "role": "service manager",
+      "canEditDashboard": true
     },
     {
       "username": "Jordan",
