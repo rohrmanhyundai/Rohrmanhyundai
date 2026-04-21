@@ -9,7 +9,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
-import { loadUsers, saveUsers, setGithubToken } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData } from './utils/github';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -54,9 +54,14 @@ export default function App() {
 
   const loadDashboard = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE}data/data.json?v=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
-      const payload = await res.json();
+      // Try GitHub API first — instant after a save, no GitHub Pages rebuild wait
+      let payload = await loadDashboardData();
+      if (!payload) {
+        // Fallback: GitHub Pages CDN (no auth token or API unavailable)
+        const res = await fetch(`${BASE}data/data.json?v=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
+        payload = await res.json();
+      }
       if (payload && payload.data) {
         const d = payload.data;
         recalcTech(d);
@@ -71,7 +76,7 @@ export default function App() {
 
   useEffect(() => {
     loadDashboard();
-    const interval = setInterval(loadDashboard, 10 * 60 * 1000); // refresh every 10 minutes
+    const interval = setInterval(loadDashboard, 90 * 1000); // refresh every 90 seconds
     return () => clearInterval(interval);
   }, [loadDashboard]);
 
