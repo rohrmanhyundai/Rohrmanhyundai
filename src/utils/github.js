@@ -101,7 +101,8 @@ async function readGitHubFile(headers, path) {
     );
     if (!res.ok) return null;
     const fileData = await res.json();
-    return JSON.parse(atob(fileData.content.replace(/\s/g, '')));
+    const bytes = Uint8Array.from(atob(fileData.content.replace(/\s/g, '')), c => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
   } catch { return null; }
 }
 
