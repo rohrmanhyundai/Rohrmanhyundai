@@ -1,38 +1,36 @@
-[
-  {
-    "username": "admin",
-    "password": "[REDACTED]",
-    "role": "admin"
-  },
-  {
-    "username": "Shawn",
-    "password": "[REDACTED]",
-    "role": "service manager"
-  },
-  {
-    "username": "Jordan",
-    "password": "[REDACTED]",
-    "role": "advisor",
-    "canEditDashboard": true
-  },
-  {
-    "username": "Neven",
-    "password": "[REDACTED]",
-    "role": "advisor"
-  },
-  {
-    "username": "David",
-    "password": "[REDACTED]",
-    "role": "advisor"
-  },
-  {
-    "username": "Parker",
-    "password": "[REDACTED]",
-    "role": "advisor"
-  },
-  {
-    "username": "Jason",
-    "password": "[REDACTED]",
-    "role": "admin"
-  }
-]
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "[REDACTED]",
+      "role": "admin"
+    },
+    {
+      "username": "Shawn",
+      "password": "[REDACTED]",
+      "role": "service manager"
+    },
+    {
+      "username": "Jordan",
+      "password": "[REDACTED]",
+      "role": "advisor",
+      "canEditDashboard": true
+    },
+    {
+      "username": "David",
+      "password": "[REDACTED]",
+      "role": "advisor"
+    },
+    {
+      "username": "Parker",
+      "password": "[REDACTED]",
+      "role": "advisor"
+    },
+    {
+      "username": "Jason",
+      "password": "[REDACTED]",
+      "role": "admin"
+    }
+  ],
+  "sharedSaveCode": ""
+}
