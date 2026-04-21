@@ -140,7 +140,7 @@
         "asr": 0.1125,
         "elr": 0.88,
         "last_month_total": 204,
-        "roh50_hrs_ro": 0.6,
+        "roh50_hrs_ro": 0.63,
         "hidden": true
       },
       {
@@ -169,19 +169,19 @@
         "name": "JORDAN",
         "certified": "NO",
         "trainings_due": "5",
-        "excel_training": "ÃÂ¢ÃÂÃÂ"
+        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
       },
       {
         "name": "NEVEN",
         "certified": "NO",
         "trainings_due": "5",
-        "excel_training": "ÃÂ¢ÃÂÃÂ"
+        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
       },
       {
         "name": "PARKER",
-        "certified": "ÃÂ¢ÃÂÃÂ",
-        "trainings_due": "ÃÂ¢ÃÂÃÂ",
-        "excel_training": "ÃÂ¢ÃÂÃÂ"
+        "certified": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ",
+        "trainings_due": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ",
+        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
       }
     ],
     "vacations": [
