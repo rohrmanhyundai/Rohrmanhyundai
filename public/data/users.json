@@ -25,7 +25,8 @@
     {
       "username": "Parker",
       "password": "[REDACTED]",
-      "role": "advisor"
+      "role": "advisor",
+      "canEditDashboard": false
     },
     {
       "username": "Jason",
