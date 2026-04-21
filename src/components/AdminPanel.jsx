@@ -148,7 +148,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit } : u)
       : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit }];
     setUserSaving(true);
-    saveUsers(updated, sharedSaveCode || '')
+    saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
       .catch(err => alert('Failed to save user: ' + err.message))
       .finally(() => setUserSaving(false));
@@ -160,7 +160,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
     const updated = users.filter(u => u.username !== selectedUser);
     setUserSaving(true);
-    saveUsers(updated, sharedSaveCode || '')
+    saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
