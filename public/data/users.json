@@ -18,8 +18,9 @@
     },
     {
       "username": "David",
-      "password": "1234",
-      "role": "advisor"
+      "password": "david2026",
+      "role": "advisor",
+      "canEditDashboard": true
     },
     {
       "username": "Parker",
