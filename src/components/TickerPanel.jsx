@@ -61,6 +61,10 @@ function TickerStrip({ label, items }) {
 }
 
 export default function TickerPanel({ data, vacations }) {
+  const hiddenAdvisors = new Set(
+    (data.advisors || []).filter(a => a.hidden).map(a => a.name.toUpperCase())
+  );
+
   const trainingItems = [
     ...(data.technicians || []).map(t => (
       <span className="ticker-item" key={`t-${t.name}`}>
@@ -72,25 +76,29 @@ export default function TickerPanel({ data, vacations }) {
         <span className="badge neutral">{t.excel_training || t.excel || '\u2014'}</span>
       </span>
     )),
-    ...(data.advisorTraining || []).map(a => (
-      <span className="ticker-item" key={`a-${a.name}`}>
-        <span className="ticker-name">{a.name}</span>
-        <span className={`badge ${badgeCls(a.certified)}`}>{a.certified || '\u2014'}</span>
-        <span style={{ color: '#95a9c6', fontSize: 11 }}>Training:</span>
-        <span className="badge neutral">{a.trainings_due || '\u2014'}</span>
-        <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
-        <span className="badge neutral">{a.excel_training || a.excel || '\u2014'}</span>
-      </span>
-    )),
+    ...(data.advisorTraining || [])
+      .filter(a => !hiddenAdvisors.has(a.name.toUpperCase()))
+      .map(a => (
+        <span className="ticker-item" key={`a-${a.name}`}>
+          <span className="ticker-name">{a.name}</span>
+          <span className={`badge ${badgeCls(a.certified)}`}>{a.certified || '\u2014'}</span>
+          <span style={{ color: '#95a9c6', fontSize: 11 }}>Training:</span>
+          <span className="badge neutral">{a.trainings_due || '\u2014'}</span>
+          <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
+          <span className="badge neutral">{a.excel_training || a.excel || '\u2014'}</span>
+        </span>
+      )),
   ];
 
-  const vacationItems = (vacations || []).map(v => (
-    <span className="ticker-item" key={`v-${v.name}-${v.dates}`}>
-      <span className="ticker-name">{v.name || '\u2014'}</span>
-      <span>{v.dates || '\u2014'}</span>
-      <span className="badge neutral">{v.status || '\u2014'}</span>
-    </span>
-  ));
+  const vacationItems = (vacations || [])
+    .filter(v => !hiddenAdvisors.has((v.name || '').toUpperCase()))
+    .map(v => (
+      <span className="ticker-item" key={`v-${v.name}-${v.dates}`}>
+        <span className="ticker-name">{v.name || '\u2014'}</span>
+        <span>{v.dates || '\u2014'}</span>
+        <span className="badge neutral">{v.status || '\u2014'}</span>
+      </span>
+    ));
 
   return (
     <div className="ticker-section">
