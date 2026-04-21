@@ -107,7 +107,7 @@
         "hours_per_ro": 1.48,
         "align": 0.1618,
         "tires": 0.2059,
-        "valvoline": 0.3235,
+        "valvoline": 0.3014,
         "csi": 901,
         "asr": 0.20129999999999998,
         "elr": 0.96,
@@ -135,7 +135,7 @@
         "hours_per_ro": 0.94,
         "align": 0.0667,
         "tires": 0.0833,
-        "valvoline": 0.0667,
+        "valvoline": 0.0794,
         "csi": 921,
         "asr": 0.1125,
         "elr": 0.88,
@@ -150,7 +150,7 @@
         "hours_per_ro": 1.73,
         "align": 0,
         "tires": 0,
-        "valvoline": 0,
+        "valvoline": 0.16670000000000001,
         "roh50_hrs_ro": 0.3,
         "csi": 0,
         "asr": 0,
@@ -169,19 +169,19 @@
         "name": "JORDAN",
         "certified": "NO",
         "trainings_due": "5",
-        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
+        "excel_training": "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
       },
       {
         "name": "NEVEN",
         "certified": "NO",
         "trainings_due": "5",
-        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
+        "excel_training": "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
       },
       {
         "name": "PARKER",
-        "certified": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ",
-        "trainings_due": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ",
-        "excel_training": "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ"
+        "certified": "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+        "trainings_due": "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+        "excel_training": "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
       }
     ],
     "vacations": [
@@ -236,7 +236,7 @@
       "total_hours": 532.9,
       "align": 0.095575,
       "tires": 0.113975,
-      "valvoline": 0.168075,
+      "valvoline": 0.20740000000000003,
       "csi": 699.5
     },
     "techTotals": {
