@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadDocumentIndex, uploadDocument, deleteDocument, docRawUrl, getGithubToken, setGithubToken } from '../utils/github';
+import { loadDocumentIndex, uploadDocument, deleteDocument, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 
@@ -138,6 +138,14 @@ export default function DocumentLibrary({ currentUser, currentRole, onBack }) {
     if (!file || !label.trim()) { setFileError('Please select a file and enter a label.'); return; }
     setActionError('');
 
+    if (!getGithubToken()) {
+      // Silently try the shared token from users.json before prompting manually
+      try {
+        const result = await loadUsers();
+        const shared = result?.sharedSaveCode;
+        if (shared) setGithubToken(shared);
+      } catch {}
+    }
     if (!getGithubToken()) {
       const code = prompt('This device needs a one-time save code to upload documents.\n\nEnter the save code (ask your admin for it):');
       if (!code) return;
