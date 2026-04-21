@@ -20,7 +20,7 @@
       "username": "David",
       "password": "david2026",
       "role": "advisor",
-      "canEditDashboard": true
+      "canEditDashboard": false
     },
     {
       "username": "Parker",
