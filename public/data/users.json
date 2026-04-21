@@ -24,8 +24,9 @@
     },
     {
       "username": "Parker",
-      "password": "1234",
-      "role": "advisor"
+      "password": "parker2026",
+      "role": "advisor",
+      "canEditDashboard": false
     },
     {
       "username": "Jason",
