@@ -62,8 +62,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     try {
       const payload = { data, vacations };
       await saveDashboardToGitHub(payload);
-      // Reload the dashboard data so the TV screen updates immediately
-      if (onRefresh) await onRefresh();
+      // Local state is already correct from user edits — no re-fetch needed.
+      // The TV will pick up the new data on its next 90-second poll via the GitHub API.
     } catch (err) {
       alert('Save failed: ' + err.message);
     } finally {

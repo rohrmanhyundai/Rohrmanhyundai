@@ -13,6 +13,16 @@ export function setGithubToken(token) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
+// Read dashboard data directly from the GitHub API — instant, bypasses GitHub Pages rebuild delay.
+// Falls back to null if the API is unavailable (caller should fall back to GitHub Pages CDN).
+export async function loadDashboardData() {
+  try {
+    const data = await readGitHubFile(authHeaders(), GITHUB_PATH);
+    if (data) return data;
+  } catch {}
+  return null;
+}
+
 export async function saveDashboardToGitHub(payload) {
   const token = getGithubToken();
   if (!token) {
