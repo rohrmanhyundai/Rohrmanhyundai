@@ -1,6 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { loadAdvisorNoteIndex } from '../utils/github';
 
+const RANK_BASE = 'https://dealerplateguy.github.io/Advisor-Rank-Board/data';
+const METRIC_KEYS = ['ro', 'openRo', 'cpHrs', 'warrHrs', 'rap', '_combined', 'alignCnt', 'tireCnt', 'valvCnt'];
+const INVERSE_KEYS = new Set(['openRo']);
+
+function computeRanks(advisors, csiAdvisors) {
+  if (!advisors || advisors.length === 0) return {};
+  const csiSet = new Set(csiAdvisors.map(n => String(n).toUpperCase()));
+  const rows = advisors.map(a => ({
+    ...a,
+    _totalHrs: (a.cpHrs || 0) + (a.warrHrs || 0),
+    _combined: (a.alignCnt || 0) + (a.tireCnt || 0) + (a.valvCnt || 0),
+    _rp: {},
+  }));
+
+  // Assign percentile rank for each metric (average rank on ties)
+  METRIC_KEYS.forEach(key => {
+    const sorted = [...rows].sort((a, b) => {
+      const av = key === '_combined' ? a._combined : (a[key] || 0);
+      const bv = key === '_combined' ? b._combined : (b[key] || 0);
+      return INVERSE_KEYS.has(key) ? av - bv : bv - av;
+    });
+    let i = 0;
+    while (i < sorted.length) {
+      let j = i + 1;
+      const val = key === '_combined' ? sorted[i]._combined : (sorted[i][key] || 0);
+      while (j < sorted.length && (key === '_combined' ? sorted[j]._combined : (sorted[j][key] || 0)) === val) j++;
+      const avgRank = (sorted.length - i + sorted.length - j + 1) / 2;
+      for (let k = i; k < j; k++) sorted[k]._rp[key] = Math.round(avgRank * 10) / 10;
+      i = j;
+    }
+  });
+
+  rows.forEach(a => {
+    const total = METRIC_KEYS.reduce((sum, k) => sum + (a._rp[k] || 0), 0);
+    const bonus = a.sunbitApps || 0;
+    const csiPass = csiSet.has(String(a.name || '').toUpperCase());
+    a._rankScore = Math.round(csiPass ? (total + bonus) * 1.1 : total + bonus);
+  });
+
+  const sorted = [...rows].sort((a, b) =>
+    b._rankScore !== a._rankScore ? b._rankScore - a._rankScore :
+    b._totalHrs !== a._totalHrs ? b._totalHrs - a._totalHrs :
+    (a.openRo || 0) - (b.openRo || 0)
+  );
+
+  const rankMap = {};
+  sorted.forEach((a, i) => { rankMap[String(a.name).toUpperCase()] = i + 1; });
+  return rankMap;
+}
+
+function useRankBoard() {
+  const [ranks, setRanks] = useState({});
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    Promise.all([
+      fetch(`${RANK_BASE}/advisors.json?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${RANK_BASE}/config.json?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.json()),
+    ]).then(([advisors, config]) => {
+      const csiAdvisors = (config.advisors || []).filter(a => a.csi === 'Y').map(a => a.name);
+      setTotal(advisors.length);
+      setRanks(computeRanks(advisors, csiAdvisors));
+    }).catch(() => {});
+  }, []);
+  return { ranks, total };
+}
+
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -10,6 +76,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
   const [loading, setLoading] = useState(true);
+  const { ranks, total } = useRankBoard();
 
   useEffect(() => {
     setLoading(true);
@@ -64,16 +131,29 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       {/* Advisor switcher tabs */}
       {advisorList.length > 0 && (
         <div className="adv-advisor-tabs">
-          {advisorList.map(name => (
-            <button
-              key={name}
-              className={`adv-advisor-tab${viewingAdvisor === name ? ' adv-advisor-tab--active' : ''}${name === ownAdvisor ? ' adv-advisor-tab--own' : ''}`}
-              onClick={() => onViewingChange(name)}
-            >
-              {name}
-              {name === ownAdvisor && <span className="adv-tab-mine"> (Mine)</span>}
-            </button>
-          ))}
+          {advisorList.map(name => {
+            const rank = ranks[name.toUpperCase()];
+            const rankColor = rank === 1 ? '#fbbf24' : rank === 2 ? '#94a3b8' : rank === 3 ? '#cd7c3a' : 'rgba(148,163,184,0.5)';
+            return (
+              <button
+                key={name}
+                className={`adv-advisor-tab${viewingAdvisor === name ? ' adv-advisor-tab--active' : ''}${name === ownAdvisor ? ' adv-advisor-tab--own' : ''}`}
+                onClick={() => onViewingChange(name)}
+              >
+                {name}
+                {name === ownAdvisor && <span className="adv-tab-mine"> (Mine)</span>}
+                {rank && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: rankColor, color: rank <= 3 ? '#111' : '#cdd6e8',
+                    borderRadius: 4, padding: '1px 5px', verticalAlign: 'middle',
+                  }}>
+                    #{rank}{total ? ` / ${total}` : ''}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
 
