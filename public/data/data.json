@@ -179,8 +179,8 @@
       },
       {
         "name": "PARKER",
-        "certified": "NO",
-        "trainings_due": "1",
+        "certified": "YES",
+        "trainings_due": "0",
         "excel_training": "N/A"
       }
     ],
