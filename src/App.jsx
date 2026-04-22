@@ -118,7 +118,7 @@ export default function App() {
   function handleLogin(username, password) {
     const match = users.find(u => u.username === username && u.password === password);
     if (match) {
-      const canEdit = match.role === 'admin' || !!match.canEditDashboard;
+      const canEdit = match.role === 'admin' || (match.role || '').includes('manager') || !!match.canEditDashboard;
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
       localStorage.setItem('currentRole', match.role || '');
