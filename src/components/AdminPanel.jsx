@@ -3,6 +3,8 @@ import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatter
 import { advisorDailyAverage } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken } from '../utils/github';
 
+const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
+
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
@@ -142,7 +144,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function handleSaveUser() {
-    if (currentRole !== 'admin') { alert('Only admin can manage users.'); return; }
+    if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
       ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit } : u)
@@ -155,7 +157,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function handleDeleteUser() {
-    if (currentRole !== 'admin') { alert('Only admin can manage users.'); return; }
+    if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!selectedUser) { alert('Select a user to delete.'); return; }
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
     const updated = users.filter(u => u.username !== selectedUser);
@@ -347,7 +349,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </details>
 
       {/* User Management */}
-      {currentRole === 'admin' && (
+      {isAdminOrManager(currentRole) && (
         <details className="edit-group" open={openSection === 'users'} onToggle={e => e.target.open ? setOpenSection('users') : setOpenSection(null)}>
           <summary onClick={e => { e.preventDefault(); toggle('users'); }}>User Management</summary>
           <div className="group-body">
@@ -363,7 +365,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     <div className="user-row-name">{u.username}</div>
                     <div className="user-row-meta">
                       {u.username === 'admin' ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
-                      {(u.canEditDashboard || u.role === 'admin') && <span className="user-edit-badge">✎ Can Edit</span>}
+                      {(u.canEditDashboard || isAdminOrManager(u.role)) && <span className="user-edit-badge">✎ Can Edit</span>}
                     </div>
                   </div>
                 </div>
