@@ -97,7 +97,7 @@ function PreviewModal({ doc, onClose }) {
 
 // ── Main Document Library ─────────────────────────────────────────────────────
 export default function DocumentLibrary({ currentUser, currentRole, onBack }) {
-  const canManage = currentRole === 'admin' || currentRole === 'service manager';
+  const canManage = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [docs, setDocs]               = useState([]);
   const [loading, setLoading]         = useState(true);
