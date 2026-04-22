@@ -51,6 +51,12 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
             📁 Document Library
           </button>
+          <button
+            onClick={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+            style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}
+          >
+            🏆 Advisor Rank Board
+          </button>
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
       </div>
