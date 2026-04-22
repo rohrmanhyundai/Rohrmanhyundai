@@ -7,7 +7,7 @@
     },
     {
       "username": "Shawn",
-      "password": "1234",
+      "password": "Hyundai2026",
       "role": "service manager",
       "canEditDashboard": true
     },
@@ -35,5 +35,5 @@
       "role": "admin"
     }
   ],
-  "sharedSaveCode": ""
+  "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
 }
