@@ -148,7 +148,7 @@
         "mtd_hours": 29.3,
         "daily_avg": 0,
         "hours_per_ro": 1.73,
-        "align": 0.111,
+        "align": 0.22219999999999998,
         "tires": 0,
         "valvoline": 0.11109999999999999,
         "roh50_hrs_ro": 0.3,
@@ -234,7 +234,7 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 594.1999999999999,
-      "align": 0.130825,
+      "align": 0.158625,
       "tires": 0.14165,
       "valvoline": 0.198725,
       "csi": 703
