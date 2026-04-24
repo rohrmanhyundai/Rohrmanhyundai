@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function monthLabel(year, month) {
@@ -50,13 +50,17 @@ function ShiftBadge({ name, val, isOwn }) {
 function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
-  const firstDow = getFirstDayOfWeek(year, month);
+  const firstDow = getFirstDayOfWeek(year, month); // 0=Sun,1=Mon,...
+  // Mon–Sat grid: skip Sundays entirely
+  const leadingEmpties = firstDow === 0 ? 0 : firstDow - 1;
   const cells = [];
-  for (let i = 0; i < firstDow; i++) cells.push(null);
-  for (let d = 1; d <= totalDays; d++) cells.push(d);
-  while (cells.length % 7 !== 0) cells.push(null);
+  for (let i = 0; i < leadingEmpties; i++) cells.push(null);
+  for (let d = 1; d <= totalDays; d++) {
+    if (new Date(year, month, d).getDay() !== 0) cells.push(d);
+  }
+  while (cells.length % 6 !== 0) cells.push(null);
 
-  const numRows = cells.length / 7;
+  const numRows = cells.length / 6;
 
   return (
     <div className="ws-print-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1117' }}>
@@ -75,14 +79,14 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
 
       <div className="ws-print-inner" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
         {/* Day headers */}
-        <div className="ws-print-dayheader" style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
+        <div className="ws-print-dayheader" style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
           {DAYS.map(d => (
             <div key={d} style={{ textAlign: 'center', color: '#7a92b8', fontWeight: 700, fontSize: 12, padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>
           ))}
         </div>
 
         {/* Calendar grid */}
-        <div className="ws-print-grid" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
+        <div className="ws-print-grid" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} />;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
