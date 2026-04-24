@@ -176,6 +176,7 @@ export default function App() {
       <TechResources
         currentUser={currentUser.toUpperCase()}
         onWorkSchedule={() => setPage('tech-work-schedule')}
+        onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -189,6 +190,30 @@ export default function App() {
         employeeNames={allTechUsers}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('tech-resources')}
+      />
+    );
+  }
+
+  if (page === 'tech-view-advisor-schedule') {
+    const allAdvisorUsers = advisorList.length > 0 ? advisorList : users.map(u => u.username.toUpperCase());
+    return (
+      <WorkSchedule
+        schedules={schedules}
+        employeeNames={allAdvisorUsers}
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage('tech-resources')}
+      />
+    );
+  }
+
+  if (page === 'advisor-view-tech-schedule') {
+    const allTechUsers = techList.length > 0 ? techList : users.map(u => u.username.toUpperCase());
+    return (
+      <WorkSchedule
+        schedules={schedules}
+        employeeNames={allTechUsers}
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage('advisor-calendar')}
       />
     );
   }
@@ -217,6 +242,7 @@ export default function App() {
         onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
         onDocumentLibrary={() => setPage('document-library')}
         onWorkSchedule={() => setPage('work-schedule')}
+        onTechSchedule={() => setPage('advisor-view-tech-schedule')}
         refreshKey={calendarRefreshKey}
       />
     );
