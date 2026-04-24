@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { n, safe } from '../utils/formatters';
+import { advisorProjectedHours } from '../utils/calculations';
 
 function pct(val) {
   if (val == null || val === '' || val === '—') return val ?? '—';
@@ -120,6 +121,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 0' }}>
               {[
                 ['MTD Hours', `${a.mtd_hours ?? '—'}`],
+                ['Pacing', `${advisorProjectedHours(a, data).toFixed(1)} hrs`],
                 ['Hrs/RO', `${a.hours_per_ro ?? '—'}`],
                 ['Alignment', pct(a.align)],
                 ['Tires', pct(a.tires)],
