@@ -46,23 +46,25 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
   for (let d = 1; d <= totalDays; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
 
+  const numRows = cells.length / 7;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1117' }}>
+      <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>{monthLabel(year, month)} — Work Schedule</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
         {/* Day headers */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
           {DAYS.map(d => (
             <div key={d} style={{ textAlign: 'center', color: '#7a92b8', fontWeight: 700, fontSize: 12, padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>
           ))}
         </div>
 
-        {/* Calendar grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4 }}>
+        {/* Calendar grid — fills remaining height */}
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},1fr)`, gap: 4, minHeight: 0 }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} />;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -74,7 +76,7 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
 
             return (
               <div key={i} style={{
-                minHeight: 80,
+                overflow: 'hidden',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 8, padding: '5px 6px',
@@ -88,7 +90,7 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
         </div>
 
         {/* Legend */}
-        <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
           {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation'], ['#64748b', 'Off']].map(([color, label]) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
