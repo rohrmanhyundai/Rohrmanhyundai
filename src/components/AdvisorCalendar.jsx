@@ -132,7 +132,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       {advisorList.length > 0 && (
         <div className="adv-advisor-tabs">
           {advisorList.map(name => {
-            const rank = ranks[name.toUpperCase()];
+            const upper = name.toUpperCase();
+            // Exact match first, then fall back to matching by first name
+            // (tab shows "JORDAN" but rank board stores "JORDAN TROXEL")
+            const rank = ranks[upper] ??
+              (Object.entries(ranks).find(([k]) => k.startsWith(upper + ' '))?.[1]);
             const rankColor = rank === 1 ? '#fbbf24' : rank === 2 ? '#94a3b8' : rank === 3 ? '#cd7c3a' : 'rgba(148,163,184,0.5)';
             return (
               <button
