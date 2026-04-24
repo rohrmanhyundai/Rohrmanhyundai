@@ -28,18 +28,18 @@ function ShiftBadge({ name, val }) {
   const shiftPart = parts ? parts[0] : null;
   const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, width: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <span style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <span style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700 }}>
           {name.split(' ')[0]}
         </span>
-        <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3' }}>
           {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
         </span>
       </div>
       {lunchPart && (
-        <div style={{ fontSize: 9, color: '#f59e0b', paddingLeft: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center' }}>
           🍽 {lunchPart}
         </div>
       )}
@@ -73,8 +73,8 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
           ))}
         </div>
 
-        {/* Calendar grid — fills remaining height */}
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},1fr)`, gap: 4, minHeight: 0 }}>
+        {/* Calendar grid — rows grow to fit content, whole grid scrolls if needed */}
+        <div style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} />;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -86,13 +86,13 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
 
             return (
               <div key={i} style={{
-                overflow: 'hidden',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 8, padding: '5px 6px',
+                borderRadius: 8, padding: '6px 8px',
               }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: 2 }}>{day}</div>
-                {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', marginTop: 2 }}>🎉 Holiday</div>}
+                <div style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: entries.length ? 4 : 0, textAlign: 'center' }}>{day}</div>
+                {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
                 {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} />)}
               </div>
             );
