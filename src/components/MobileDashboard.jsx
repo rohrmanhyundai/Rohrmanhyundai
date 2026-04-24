@@ -53,8 +53,10 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
   const [loginPass, setLoginPass] = useState('');
 
   const advisors = (data.advisors || []).filter(a => !a.hidden);
+  const hiddenNames = new Set((data.advisors || []).filter(a => a.hidden).map(a => a.name.toUpperCase()));
   const techs = data.technicians || [];
   const vacs = (vacations || []);
+  const advisorTraining = (data.advisorTraining || []).filter(a => !hiddenNames.has(a.name.toUpperCase()));
 
   const techWeekTotal = data.techTotals?.week_total ?? 0;
   const techWeekGoal = techs.reduce((s, t) => s + (t.goal || 0), 0);
@@ -138,6 +140,33 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             </div>
           </div>
         ))}
+      </Card>
+
+      {/* Training */}
+      <Card title="Training Center">
+        {techs.length === 0 && advisorTraining.length === 0
+          ? <div style={{ color: '#7a92b8', fontSize: 13 }}>No training data.</div>
+          : [...techs, ...advisorTraining].map((p, i) => (
+            <div key={i} style={{ padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{p.name}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4 }}>
+                {[
+                  ['Certified', p.certified],
+                  ['Training Due', p.trainings_due],
+                  ['Excel', p.excel_training ?? p.excel],
+                ].map(([lbl, val]) => (
+                  <div key={lbl} style={{ textAlign: 'center', background: 'rgba(255,255,255,0.04)', borderRadius: 6, padding: '4px 2px' }}>
+                    <div style={{ color: '#7a92b8', fontSize: 10, marginBottom: 2 }}>{lbl}</div>
+                    <div style={{
+                      color: val === 'YES' ? '#4ade80' : val === 'NO' ? '#f87171' : '#e2e8f0',
+                      fontWeight: 700, fontSize: 12,
+                    }}>{val || '—'}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        }
       </Card>
 
       {/* Vacations */}
