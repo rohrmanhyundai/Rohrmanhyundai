@@ -22,13 +22,13 @@ function shiftColor(val) {
   return '#3dd6c3';
 }
 
-function ShiftBadge({ name, val }) {
+function ShiftBadge({ name, val, isOwn }) {
   const color = shiftColor(val);
   const parts = val && val !== 'vacation' && val !== 'off' ? val.split(' | ') : null;
   const shiftPart = parts ? parts[0] : null;
   const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, width: '100%' }}>
+    <div className={isOwn ? 'ws-badge-mine' : 'ws-badge-other'} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
         <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700 }}>
@@ -47,7 +47,7 @@ function ShiftBadge({ name, val }) {
   );
 }
 
-function CalendarView({ year, month, schedules, employeeNames, onBack }) {
+function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month);
@@ -70,6 +70,7 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
       <div className="ws-print-header" style={{ display: 'none' }}>
         <div style={{ textAlign: 'center', fontWeight: 900, fontSize: 22 }}>Bob Rohrman Hyundai</div>
         <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{monthLabel(year, month)} — Work Schedule</div>
+        {currentUser && <div style={{ textAlign: 'center', fontSize: 13, marginTop: 2 }}>{currentUser}</div>}
       </div>
 
       <div className="ws-print-inner" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
@@ -101,7 +102,7 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
               }}>
                 <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: entries.length ? 4 : 0, textAlign: 'center' }}>{day}</div>
                 {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
-                {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} />)}
+                {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} isOwn={e.name.toUpperCase() === currentUser} />)}
               </div>
             );
           })}
@@ -121,7 +122,7 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
   );
 }
 
-export default function WorkSchedule({ schedules, employeeNames, onBack }) {
+export default function WorkSchedule({ schedules, employeeNames, currentUser, onBack }) {
   const today = new Date();
   const months = [
     { year: today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear(), month: (today.getMonth() + 11) % 12 },
@@ -137,6 +138,7 @@ export default function WorkSchedule({ schedules, employeeNames, onBack }) {
         <CalendarView
           year={year} month={month}
           schedules={schedules} employeeNames={employeeNames}
+          currentUser={currentUser}
           onBack={() => setSelected(null)}
         />
       </div>

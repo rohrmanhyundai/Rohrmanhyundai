@@ -175,6 +175,7 @@ export default function App() {
       <WorkSchedule
         schedules={schedules}
         employeeNames={allUsers}
+        currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('advisor-calendar')}
       />
     );
