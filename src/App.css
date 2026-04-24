@@ -339,6 +339,7 @@ tr:last-child td{border-bottom:none}
   .ws-print-badge-shift--off{color:#475569 !important}
   .ws-print-badge-lunch{color:#b45309 !important;font-size:8px !important}
   .ws-print-legend{margin-top:10px;font-size:11px;color:#333}
+  .ws-badge-other{display:none !important}
 }
 
 /* Samsung TV safe fit */
