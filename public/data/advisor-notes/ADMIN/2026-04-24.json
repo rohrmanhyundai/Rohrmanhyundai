@@ -1,0 +1,134 @@
+{
+  "advisorName": "ADMIN",
+  "date": "2026-04-24",
+  "rows": [
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-24T12:11:29.852Z"
+}
