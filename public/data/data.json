@@ -152,7 +152,7 @@
         "tires": 0,
         "valvoline": 0.11109999999999999,
         "roh50_hrs_ro": 0.34,
-        "csi": 0,
+        "csi": 915,
         "asr": 0.11320000000000001,
         "elr": 0.92,
         "last_month_total": 0
@@ -237,7 +237,7 @@
       "align": 0.158625,
       "tires": 0.145625,
       "valvoline": 0.198725,
-      "csi": 705.75
+      "csi": 934.5
     },
     "techTotals": {
       "mon": 39.5,
