@@ -424,10 +424,8 @@ const ITEM_H = 44;
 function DrumPicker({ items, selected, onChange, width = 58 }) {
   const ref = React.useRef(null);
   const programmatic = React.useRef(false);
-  const debounce = React.useRef(null);
+  const snapTimer = React.useRef(null);
 
-  // Only force-scroll when something external changed selected (e.g. opening a day).
-  // If the user just scrolled there themselves, skip to avoid fighting their gesture.
   React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -437,21 +435,24 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
     if (Math.abs(el.scrollTop - target) > ITEM_H * 0.6) {
       programmatic.current = true;
       el.scrollTop = target;
-      setTimeout(() => { programmatic.current = false; }, 150);
+      setTimeout(() => { programmatic.current = false; }, 80);
     }
   }, [selected, items]);
 
   function handleScroll() {
     if (programmatic.current) return;
-    // Debounce: only report the final snapped position, never during the gesture.
-    // This prevents onChange → re-render → useEffect → scrollTop reset mid-scroll.
-    clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => {
+    clearTimeout(snapTimer.current);
+    // Wait until scrolling fully stops (including momentum), then snap + report.
+    // No scroll-snap-type so the browser never forces a mid-gesture stop.
+    snapTimer.current = setTimeout(() => {
       const el = ref.current;
       if (!el || programmatic.current) return;
       const idx = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / ITEM_H)));
+      programmatic.current = true;
+      el.scrollTop = idx * ITEM_H;
+      setTimeout(() => { programmatic.current = false; }, 80);
       if (items[idx] !== selected) onChange(items[idx]);
-    }, 150);
+    }, 100);
   }
 
   return (
@@ -462,17 +463,21 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
       <div
         ref={ref}
         onScroll={handleScroll}
-        style={{ height: '100%', overflowY: 'scroll', scrollSnapType: 'y mandatory', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingTop: ITEM_H * 2, paddingBottom: ITEM_H * 2, boxSizing: 'content-box' }}
+        style={{ height: '100%', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch', paddingTop: ITEM_H * 2, paddingBottom: ITEM_H * 2, boxSizing: 'content-box' }}
       >
         {items.map(item => (
           <div
             key={item}
             onClick={() => {
               const idx = items.indexOf(item);
-              if (ref.current) ref.current.scrollTop = idx * ITEM_H;
+              if (ref.current) {
+                programmatic.current = true;
+                ref.current.scrollTop = idx * ITEM_H;
+                setTimeout(() => { programmatic.current = false; }, 80);
+              }
               onChange(item);
             }}
-            style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', scrollSnapAlign: 'center', fontSize: 22, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
+            style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
           >
             {item}
           </div>
