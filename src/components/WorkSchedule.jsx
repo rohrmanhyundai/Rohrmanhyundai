@@ -28,7 +28,12 @@ function ShiftBadge({ name, val, isOwn }) {
   const shiftPart = parts ? parts[0] : null;
   const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
-    <div className={isOwn ? 'ws-badge-mine' : 'ws-badge-other'} style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 3, width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
+    <div className={isOwn ? 'ws-badge-mine' : 'ws-badge-other'} style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexWrap: 'wrap', gap: 4, marginTop: 3,
+      background: 'rgba(255,255,255,0.06)', borderRadius: 5,
+      padding: '3px 6px', boxSizing: 'border-box', width: '100%',
+    }}>
       <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
       <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700, whiteSpace: 'nowrap' }}>
         {name.split(' ')[0]}
@@ -97,10 +102,11 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
 
             return (
               <div key={i} className={cellClass} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center',
+                position: 'relative',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 8, padding: '6px 8px', position: 'relative',
+                borderRadius: 8, padding: '24px 6px 6px',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
               }}>
                 <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ position: 'absolute', top: 5, left: 8, fontWeight: 700, fontSize: 12, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8' }}>{day}</div>
                 {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
