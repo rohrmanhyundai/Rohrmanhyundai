@@ -10,7 +10,8 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
+import WorkSchedule from './components/WorkSchedule';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -48,6 +49,7 @@ export default function App() {
   const [sharedSaveCode, setSharedSaveCode] = useState('');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
+  const [schedules, setSchedules] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
@@ -80,6 +82,10 @@ export default function App() {
     const interval = setInterval(loadDashboard, 90 * 1000); // refresh every 90 seconds
     return () => clearInterval(interval);
   }, [loadDashboard]);
+
+  useEffect(() => {
+    loadSchedules().then(s => setSchedules(s || {})).catch(() => {});
+  }, []);
 
   useEffect(() => {
     loadUsers().then(result => {
@@ -163,6 +169,17 @@ export default function App() {
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
   // Advisor pages render full-screen outside the scaled stage
+  if (page === 'work-schedule') {
+    const allUsers = users.map(u => u.username.toUpperCase());
+    return (
+      <WorkSchedule
+        schedules={schedules}
+        employeeNames={allUsers}
+        onBack={() => setPage('advisor-calendar')}
+      />
+    );
+  }
+
   if (page === 'advisor-calendar') {
     return (
       <AdvisorCalendar
@@ -173,6 +190,7 @@ export default function App() {
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
         onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
         onDocumentLibrary={() => setPage('document-library')}
+        onWorkSchedule={() => setPage('work-schedule')}
         refreshKey={calendarRefreshKey}
       />
     );
@@ -215,6 +233,7 @@ export default function App() {
           users={users} sharedSaveCode={sharedSaveCode}
           onSharedSaveCodeChange={setSharedSaveCode}
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
+          schedules={schedules} onSchedulesChange={setSchedules}
         />
       </>
     );
@@ -257,6 +276,8 @@ export default function App() {
         sharedSaveCode={sharedSaveCode}
         onSharedSaveCodeChange={setSharedSaveCode}
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
+        schedules={schedules}
+        onSchedulesChange={setSchedules}
       />
     </div>
   );

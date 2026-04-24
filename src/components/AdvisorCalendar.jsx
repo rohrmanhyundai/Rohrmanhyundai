@@ -70,7 +70,7 @@ function useRankBoard() {
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, refreshKey }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, refreshKey }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -123,6 +123,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}
           >
             🏆 Advisor Rank Board
+          </button>
+          <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+            📅 Work Schedule
           </button>
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
