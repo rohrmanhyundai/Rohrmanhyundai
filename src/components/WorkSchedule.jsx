@@ -24,15 +24,25 @@ function shiftColor(val) {
 
 function ShiftBadge({ name, val }) {
   const color = shiftColor(val);
+  const parts = val && val !== 'vacation' && val !== 'off' ? val.split(' | ') : null;
+  const shiftPart = parts ? parts[0] : null;
+  const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-      <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-      <span style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        {name.split(' ')[0]}
-      </span>
-      <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
-        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val.split(' | ')[0]}
-      </span>
+    <div style={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+        <span style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {name.split(' ')[0]}
+        </span>
+        <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
+          {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
+        </span>
+      </div>
+      {lunchPart && (
+        <div style={{ fontSize: 9, color: '#f59e0b', paddingLeft: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          🍽 {lunchPart}
+        </div>
+      )}
     </div>
   );
 }
