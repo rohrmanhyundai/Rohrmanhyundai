@@ -125,7 +125,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             🏆 Advisor Rank Board
           </button>
           <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-            📅 Work Schedule
+            📅 Advisor Schedule
           </button>
           <button onClick={onTechSchedule} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
             🔧 Tech Schedule

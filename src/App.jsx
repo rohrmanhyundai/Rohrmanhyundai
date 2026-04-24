@@ -183,11 +183,10 @@ export default function App() {
   }
 
   if (page === 'tech-work-schedule') {
-    const allTechUsers = techList.length > 0 ? techList : users.map(u => u.username.toUpperCase());
     return (
       <WorkSchedule
         schedules={schedules}
-        employeeNames={allTechUsers}
+        employeeNames={techList}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('tech-resources')}
       />
@@ -195,11 +194,10 @@ export default function App() {
   }
 
   if (page === 'tech-view-advisor-schedule') {
-    const allAdvisorUsers = advisorList.length > 0 ? advisorList : users.map(u => u.username.toUpperCase());
     return (
       <WorkSchedule
         schedules={schedules}
-        employeeNames={allAdvisorUsers}
+        employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('tech-resources')}
       />
@@ -207,11 +205,10 @@ export default function App() {
   }
 
   if (page === 'advisor-view-tech-schedule') {
-    const allTechUsers = techList.length > 0 ? techList : users.map(u => u.username.toUpperCase());
     return (
       <WorkSchedule
         schedules={schedules}
-        employeeNames={allTechUsers}
+        employeeNames={techList}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('advisor-calendar')}
       />
@@ -220,11 +217,10 @@ export default function App() {
 
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
-    const allUsers = users.map(u => u.username.toUpperCase());
     return (
       <WorkSchedule
         schedules={schedules}
-        employeeNames={allUsers}
+        employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage('advisor-calendar')}
       />
