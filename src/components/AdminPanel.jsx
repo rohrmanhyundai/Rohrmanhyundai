@@ -415,6 +415,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 }
 
 const SCHED_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const HOLIDAY_KEY = '__HOLIDAY__';
 const DRUM_HOURS = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 const DRUM_MINS  = ['00','05','10','15','20','25','30','35','40','45','50','55'];
 const DRUM_AMPM  = ['AM','PM'];
@@ -509,6 +510,10 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
   }
 
   function openDay(dateStr) {
+    if (schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday') {
+      setEditing({ dateStr, isHoliday: true });
+      return;
+    }
     const current = schedEmployee ? schedules[schedEmployee]?.[dateStr] || '' : '';
     const parsed = parseShiftTime(current);
     if (parsed) {
@@ -518,7 +523,24 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
       setStartH('8'); setStartM('00'); setStartAP('AM');
       setEndH('5'); setEndM('00'); setEndAP('PM');
     }
-    setEditing({ dateStr, current });
+    setEditing({ dateStr, isHoliday: false, current });
+  }
+
+  async function applyHoliday() {
+    const updated = { ...schedules, [HOLIDAY_KEY]: { ...(schedules[HOLIDAY_KEY] || {}), [editing.dateStr]: 'holiday' } };
+    setSaving(true);
+    try { await saveSchedules(updated); onSchedulesChange(updated); setEditing(null); }
+    catch (err) { alert('Save failed: ' + err.message); }
+    finally { setSaving(false); }
+  }
+
+  async function clearHoliday() {
+    const updated = { ...schedules, [HOLIDAY_KEY]: { ...(schedules[HOLIDAY_KEY] || {}) } };
+    delete updated[HOLIDAY_KEY][editing.dateStr];
+    setSaving(true);
+    try { await saveSchedules(updated); onSchedulesChange(updated); setEditing(null); }
+    catch (err) { alert('Save failed: ' + err.message); }
+    finally { setSaving(false); }
   }
 
   async function applyShift(value) {
@@ -581,12 +603,14 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
             {cells.map((day, i) => {
               if (!day) return <div key={`e-${i}`} />;
               const dateStr = `${schedYear}-${String(schedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-              const val = schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
-              const color = !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
-              const border = !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
+              const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
+              const val = !isHoliday && schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
+              const color = isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
+              const border = isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
               return (
                 <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `1px solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>{day}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
+                  {isHoliday && <span style={{ fontSize: 9, color: '#ef4444', lineHeight: 1.2, marginTop: 2, fontWeight: 700 }}>Holiday</span>}
                   {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
                     {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val.replace(' AM','a').replace(' PM','p')}
                   </span>}
@@ -597,30 +621,45 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
 
           {/* Day editor */}
           {editing && (
-            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: 16, marginTop: 8 }}>
-              <div style={{ fontWeight: 700, color: '#6ee7f9', marginBottom: 12 }}>{schedEmployee} — {editing.dateStr}</div>
-
-              {/* Drum time picker */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
-                <DrumPicker items={DRUM_HOURS} selected={startH} onChange={setStartH} width={54} />
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                <DrumPicker items={DRUM_MINS} selected={startM} onChange={setStartM} width={52} />
-                <DrumPicker items={DRUM_AMPM} selected={startAP} onChange={setStartAP} width={58} />
-                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, fontWeight: 700, margin: '0 6px', alignSelf: 'center' }}>—</span>
-                <DrumPicker items={DRUM_HOURS} selected={endH} onChange={setEndH} width={54} />
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                <DrumPicker items={DRUM_MINS} selected={endM} onChange={setEndM} width={52} />
-                <DrumPicker items={DRUM_AMPM} selected={endAP} onChange={setEndAP} width={58} />
+            <div style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${editing.isHoliday ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: 16, marginTop: 8 }}>
+              <div style={{ fontWeight: 700, color: editing.isHoliday ? '#ef4444' : '#6ee7f9', marginBottom: 12 }}>
+                {editing.isHoliday ? '🎉 Holiday' : schedEmployee} — {editing.dateStr}
               </div>
-              <div style={{ textAlign: 'center', color: '#3dd6c3', fontWeight: 700, fontSize: 14, marginBottom: 14 }}>{timeShift}</div>
 
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button onClick={() => applyShift(timeShift)} disabled={saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
-                <button onClick={() => applyShift('vacation')} disabled={saving} style={{ background: 'rgba(245,158,11,0.2)', borderColor: 'rgba(245,158,11,0.5)', color: '#f59e0b' }}>🌴 Vacation</button>
-                <button onClick={() => applyShift('off')} disabled={saving} style={{ background: 'rgba(100,116,139,0.2)', borderColor: 'rgba(100,116,139,0.4)', color: '#94a3b8' }}>Off</button>
-                <button onClick={() => applyShift('')} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>Clear Day</button>
-                <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
-              </div>
+              {editing.isHoliday ? (
+                <>
+                  <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 14 }}>This day is marked as a company holiday. No employee shifts can be added.</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={clearHoliday} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>{saving ? 'Clearing…' : 'Remove Holiday'}</button>
+                    <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Drum time picker */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
+                    <DrumPicker items={DRUM_HOURS} selected={startH} onChange={setStartH} width={54} />
+                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
+                    <DrumPicker items={DRUM_MINS} selected={startM} onChange={setStartM} width={52} />
+                    <DrumPicker items={DRUM_AMPM} selected={startAP} onChange={setStartAP} width={58} />
+                    <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, fontWeight: 700, margin: '0 6px', alignSelf: 'center' }}>—</span>
+                    <DrumPicker items={DRUM_HOURS} selected={endH} onChange={setEndH} width={54} />
+                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
+                    <DrumPicker items={DRUM_MINS} selected={endM} onChange={setEndM} width={52} />
+                    <DrumPicker items={DRUM_AMPM} selected={endAP} onChange={setEndAP} width={58} />
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#3dd6c3', fontWeight: 700, fontSize: 14, marginBottom: 14 }}>{timeShift}</div>
+
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button onClick={() => applyShift(timeShift)} disabled={saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
+                    <button onClick={() => applyShift('vacation')} disabled={saving} style={{ background: 'rgba(245,158,11,0.2)', borderColor: 'rgba(245,158,11,0.5)', color: '#f59e0b' }}>🌴 Vacation</button>
+                    <button onClick={() => applyShift('off')} disabled={saving} style={{ background: 'rgba(100,116,139,0.2)', borderColor: 'rgba(100,116,139,0.4)', color: '#94a3b8' }}>Off</button>
+                    <button onClick={applyHoliday} disabled={saving} style={{ background: 'rgba(239,68,68,0.18)', borderColor: 'rgba(239,68,68,0.5)', color: '#ef4444' }}>🎉 Holiday</button>
+                    <button onClick={() => applyShift('')} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>Clear Day</button>
+                    <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
