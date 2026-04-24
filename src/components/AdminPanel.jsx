@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules } from '../utils/github';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
@@ -401,7 +401,156 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         </details>
       )}
 
+      {/* Work Schedule Editor */}
+      {isAdminOrManager(currentRole) && (
+        <ScheduleEditor
+          schedules={schedules} onSchedulesChange={onSchedulesChange}
+          users={users} toggle={toggle} openSection={openSection}
+        />
+      )}
+
       </div>
     </aside>
+  );
+}
+
+const SHIFT_PRESETS = [
+  '7:00 AM - 4:00 PM', '7:30 AM - 4:30 PM', '8:00 AM - 5:00 PM',
+  '8:30 AM - 5:30 PM', '9:00 AM - 6:00 PM', '10:00 AM - 7:00 PM',
+];
+const SCHED_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function ScheduleEditor({ schedules, onSchedulesChange, users, toggle, openSection }) {
+  const today = new Date();
+  const [schedYear, setSchedYear] = React.useState(today.getFullYear());
+  const [schedMonth, setSchedMonth] = React.useState(today.getMonth());
+  const [schedEmployee, setSchedEmployee] = React.useState('');
+  const [editing, setEditing] = React.useState(null); // { dateStr, current }
+  const [shiftInput, setShiftInput] = React.useState('');
+  const [saving, setSaving] = React.useState(false);
+
+  const allEmployees = users.map(u => u.username.toUpperCase()).filter(Boolean);
+
+  function getDaysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+  function getFirstDow(y, m) { return new Date(y, m, 1).getDay(); }
+
+  function prevMonth() {
+    if (schedMonth === 0) { setSchedMonth(11); setSchedYear(y => y - 1); }
+    else setSchedMonth(m => m - 1);
+  }
+  function nextMonth() {
+    if (schedMonth === 11) { setSchedMonth(0); setSchedYear(y => y + 1); }
+    else setSchedMonth(m => m + 1);
+  }
+
+  function openDay(dateStr) {
+    const current = schedEmployee ? schedules[schedEmployee]?.[dateStr] || '' : '';
+    setEditing({ dateStr, current });
+    setShiftInput(current === 'vacation' || current === 'off' ? '' : current);
+  }
+
+  async function applyShift(value) {
+    if (!schedEmployee) { alert('Select an employee first.'); return; }
+    const updated = {
+      ...schedules,
+      [schedEmployee]: { ...(schedules[schedEmployee] || {}), [editing.dateStr]: value },
+    };
+    if (!value) delete updated[schedEmployee][editing.dateStr];
+    setSaving(true);
+    try {
+      await saveSchedules(updated);
+      onSchedulesChange(updated);
+      setEditing(null);
+    } catch (err) { alert('Save failed: ' + err.message); }
+    finally { setSaving(false); }
+  }
+
+  const totalDays = getDaysInMonth(schedYear, schedMonth);
+  const firstDow = getFirstDow(schedYear, schedMonth);
+  const cells = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= totalDays; d++) cells.push(d);
+
+  const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  return (
+    <details className="edit-group" open={openSection === 'schedule'} onToggle={e => e.target.open ? toggle('schedule') : toggle(null)}>
+      <summary onClick={e => { e.preventDefault(); toggle('schedule'); }}>Work Schedule Editor</summary>
+      <div className="group-body">
+        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+
+          {/* Employee selector */}
+          <div className="field">
+            <label>Employee</label>
+            <select value={schedEmployee} onChange={e => setSchedEmployee(e.target.value)} style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0' }}>
+              <option value="">— Select employee —</option>
+              {allEmployees.map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+
+          {/* Month nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0 8px' }}>
+            <button className="secondary" onClick={prevMonth} style={{ padding: '4px 12px' }}>‹</button>
+            <span style={{ fontWeight: 700, color: '#6ee7f9', flex: 1, textAlign: 'center' }}>{SCHED_MONTHS[schedMonth]} {schedYear}</span>
+            <button className="secondary" onClick={nextMonth} style={{ padding: '4px 12px' }}>›</button>
+          </div>
+
+          {/* Calendar grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 3, marginBottom: 12 }}>
+            {dayNames.map(d => (
+              <div key={d} style={{ textAlign: 'center', color: '#7a92b8', fontSize: 11, fontWeight: 700, padding: '2px 0' }}>{d}</div>
+            ))}
+            {cells.map((day, i) => {
+              if (!day) return <div key={`e-${i}`} />;
+              const dateStr = `${schedYear}-${String(schedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+              const val = schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
+              const color = !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
+              const border = !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
+              return (
+                <div key={dateStr} onClick={() => openDay(dateStr)} style={{
+                  minHeight: 44, background: color, border: `1px solid ${border}`,
+                  borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>{day}</span>
+                  {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
+                    {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val.replace(' AM', 'a').replace(' PM', 'p')}
+                  </span>}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Day editor */}
+          {editing && (
+            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: 14, marginTop: 8 }}>
+              <div style={{ fontWeight: 700, color: '#6ee7f9', marginBottom: 10 }}>
+                {schedEmployee} — {editing.dateStr}
+              </div>
+
+              <div className="field">
+                <label>Quick select shift</label>
+                <select onChange={e => setShiftInput(e.target.value)} value={SHIFT_PRESETS.includes(shiftInput) ? shiftInput : ''} style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0' }}>
+                  <option value="">— Choose preset —</option>
+                  {SHIFT_PRESETS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+
+              <div className="field" style={{ marginTop: 8 }}>
+                <label>Custom shift time</label>
+                <input value={shiftInput} onChange={e => setShiftInput(e.target.value)} placeholder="e.g. 7:30 AM - 4:30 PM" style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0' }} />
+              </div>
+
+              <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                <button onClick={() => applyShift(shiftInput)} disabled={!shiftInput || saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
+                <button onClick={() => applyShift('vacation')} disabled={saving} style={{ background: 'rgba(245,158,11,0.2)', borderColor: 'rgba(245,158,11,0.5)', color: '#f59e0b' }}>🌴 Vacation</button>
+                <button onClick={() => applyShift('off')} disabled={saving} style={{ background: 'rgba(100,116,139,0.2)', borderColor: 'rgba(100,116,139,0.4)', color: '#94a3b8' }}>Off</button>
+                <button onClick={() => applyShift('')} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>Clear Day</button>
+                <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </details>
   );
 }
