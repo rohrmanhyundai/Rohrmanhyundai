@@ -7,6 +7,7 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
+      "dropOff": false,
       "technician": "",
       "notes": [
         {
@@ -20,6 +21,7 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
+      "dropOff": false,
       "technician": "",
       "notes": []
     },
@@ -28,6 +30,7 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
+      "dropOff": false,
       "technician": "",
       "notes": []
     },
@@ -36,6 +39,7 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
+      "dropOff": false,
       "technician": "",
       "notes": []
     },
@@ -44,6 +48,7 @@
       "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
+      "dropOff": false,
       "technician": "",
       "notes": []
     }
@@ -130,5 +135,5 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-16T17:49:44.497Z"
+  "savedAt": "2026-04-24T15:36:00.631Z"
 }
