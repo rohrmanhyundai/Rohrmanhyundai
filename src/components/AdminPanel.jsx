@@ -405,7 +405,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       {isAdminOrManager(currentRole) && (
         <ScheduleEditor
           schedules={schedules} onSchedulesChange={onSchedulesChange}
-          users={users} toggle={toggle} openSection={openSection}
+          users={users}
         />
       )}
 
@@ -420,8 +420,9 @@ const SHIFT_PRESETS = [
 ];
 const SCHED_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function ScheduleEditor({ schedules, onSchedulesChange, users, toggle, openSection }) {
+function ScheduleEditor({ schedules, onSchedulesChange, users }) {
   const today = new Date();
+  const [isOpen, setIsOpen] = React.useState(false);
   const [schedYear, setSchedYear] = React.useState(today.getFullYear());
   const [schedMonth, setSchedMonth] = React.useState(today.getMonth());
   const [schedEmployee, setSchedEmployee] = React.useState('');
@@ -474,8 +475,8 @@ function ScheduleEditor({ schedules, onSchedulesChange, users, toggle, openSecti
   const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
   return (
-    <details className="edit-group" open={openSection === 'schedule'} onToggle={e => e.target.open ? toggle('schedule') : toggle(null)}>
-      <summary onClick={e => { e.preventDefault(); toggle('schedule'); }}>Work Schedule Editor</summary>
+    <details className="edit-group" open={isOpen} onToggle={e => setIsOpen(e.target.open)}>
+      <summary onClick={e => { e.preventDefault(); setIsOpen(o => !o); }}>Work Schedule Editor</summary>
       <div className="group-body">
         <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
 
