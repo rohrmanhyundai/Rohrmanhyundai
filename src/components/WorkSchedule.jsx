@@ -97,7 +97,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
 
             return (
               <div key={i} className={cellClass} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 8, padding: '6px 8px', position: 'relative',
