@@ -65,59 +65,54 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
 
   const numRows = cells.length / 6;
 
+  // Pre-compute cell data once for both screen and print
+  const cellData = cells.map((day) => {
+    if (!day) return { day: null };
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+    const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
+    const entries = isHoliday ? [] : employeeNames
+      .map(name => ({ name, val: schedules[name]?.[dateStr] }))
+      .filter(e => e.val);
+    return { day, dateStr, isToday, isHoliday, entries };
+  });
+
   return (
     <div className="ws-print-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1117' }}>
+
+      {/* ── Screen toolbar ── */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — Work Schedule</span>
         <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print</button>
       </div>
 
-      {/* Print-only header */}
-      <div className="ws-print-header" style={{ display: 'none' }}>
-        <div style={{ textAlign: 'center', fontWeight: 900, fontSize: 22 }}>Bob Rohrman Hyundai</div>
-        <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{monthLabel(year, month)} — Work Schedule</div>
-        {currentUser && <div style={{ textAlign: 'center', fontSize: 13, marginTop: 2 }}>{currentUser}</div>}
-      </div>
-
-      <div className="ws-print-inner" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
-        {/* Day headers */}
-        <div className="ws-print-dayheader" style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
+      {/* ── Screen calendar ── */}
+      <div className="no-print" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
           {DAYS.map(d => (
             <div key={d} style={{ textAlign: 'center', color: '#7a92b8', fontWeight: 700, fontSize: 12, padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>
           ))}
         </div>
-
-        {/* Calendar grid */}
-        <div className="ws-print-grid" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
-          {cells.map((day, i) => {
-            if (!day) return <div key={i} />;
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
-            const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
-            const entries = isHoliday ? [] : employeeNames
-              .map(name => ({ name, val: schedules[name]?.[dateStr] }))
-              .filter(e => e.val);
-            const cellClass = `ws-print-cell${isToday ? ' ws-print-cell--today' : isHoliday ? ' ws-print-cell--holiday' : ''}`;
-
+        <div style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
+          {cellData.map((c, i) => {
+            if (!c.day) return <div key={i} />;
             return (
-              <div key={i} className={cellClass} style={{
+              <div key={i} style={{
                 position: 'relative',
-                background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                background: c.isHoliday ? 'rgba(239,68,68,0.1)' : c.isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${c.isHoliday ? 'rgba(239,68,68,0.4)' : c.isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 8, padding: '24px 6px 6px',
                 display: 'flex', flexDirection: 'column', justifyContent: 'center',
               }}>
-                <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ position: 'absolute', top: 5, left: 8, fontWeight: 700, fontSize: 12, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8' }}>{day}</div>
-                {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
-                {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} isOwn={e.name.toUpperCase() === currentUser} />)}
+                <div style={{ position: 'absolute', top: 5, left: 8, fontWeight: 700, fontSize: 12, color: c.isHoliday ? '#ef4444' : c.isToday ? '#3dd6c3' : '#94a3b8' }}>{c.day}</div>
+                {c.isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
+                {c.entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} isOwn={e.name.toUpperCase() === currentUser} />)}
               </div>
             );
           })}
         </div>
-
-        {/* Legend */}
-        <div className="ws-print-legend" style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
           {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation / Lunch'], ['#64748b', 'Off']].map(([color, label]) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
@@ -126,6 +121,52 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
           ))}
         </div>
       </div>
+
+      {/* ── Print-only page (hidden on screen, shown when printing) ── */}
+      <div className="ws-po-page">
+        <div className="ws-po-header">
+          <div className="ws-po-title">Bob Rohrman Hyundai</div>
+          <div className="ws-po-subtitle">{monthLabel(year, month)} — Work Schedule</div>
+          {currentUser && <div className="ws-po-user">{currentUser}</div>}
+        </div>
+
+        <div className="ws-po-dayrow">
+          {DAYS.map(d => <div key={d} className="ws-po-dayname">{d}</div>)}
+        </div>
+
+        <div className="ws-po-grid" style={{ '--rows': numRows }}>
+          {cellData.map((c, i) => {
+            if (!c.day) return <div key={i} className="ws-po-cell ws-po-cell--empty" />;
+            return (
+              <div key={i} className={`ws-po-cell${c.isToday ? ' ws-po-cell--today' : ''}${c.isHoliday ? ' ws-po-cell--holiday' : ''}`}>
+                <div className="ws-po-num">{c.day}</div>
+                {c.isHoliday && <div className="ws-po-holiday">🎉 Holiday</div>}
+                {c.entries.map(e => {
+                  const parts = e.val && e.val !== 'vacation' && e.val !== 'off' ? e.val.split(' | ') : null;
+                  const shift = parts ? parts[0] : (e.val === 'vacation' ? 'Vacation' : e.val === 'off' ? 'Off' : e.val);
+                  const lunch = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
+                  const isOwn = e.name.toUpperCase() === currentUser;
+                  return (
+                    <div key={e.name} className={`ws-po-entry${isOwn ? ' ws-po-entry--own' : ''}`}>
+                      <span className="ws-po-name">{e.name.split(' ')[0]}</span>
+                      <span className={`ws-po-shift${e.val === 'vacation' ? ' ws-po-shift--vac' : e.val === 'off' ? ' ws-po-shift--off' : ''}`}>{shift}</span>
+                      {lunch && <span className="ws-po-lunch">🍽 {lunch}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="ws-po-legend">
+          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--shift" />Scheduled Shift</span>
+          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--vac" />Vacation</span>
+          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--off" />Off</span>
+          <span className="ws-po-legend-item ws-po-dot--lunch">🍽 Lunch break</span>
+        </div>
+      </div>
+
     </div>
   );
 }

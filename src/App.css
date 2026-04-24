@@ -304,9 +304,15 @@ tr:last-child td{border-bottom:none}
 .doc-preview-iframe{width:100%;height:100%;border:none;display:block}
 
 /* Print styles */
+/* ── Print-only work schedule page (hidden on screen) ── */
+.ws-po-page { display: none; }
+
 @media print {
-  .no-print{display:none !important}
-  .adv-page{position:static;background:#fff;color:#000}
+  @page { size: landscape; margin: 8mm; }
+
+  /* Hide everything on screen except our dedicated print page */
+  .no-print { display: none !important; }
+  .adv-page { position: static; background: #fff; color: #000; }
   .adv-form-wrap{padding:10px}
   .adv-form-title{color:#000;font-size:18px}
   .adv-form-meta{color:#333}
@@ -321,25 +327,105 @@ tr:last-child td{border-bottom:none}
   .adv-chip{color:#000;border:1px solid #999;background:#fff;font-size:10px}
   .adv-chip--on,.adv-chip--good,.adv-chip--poor{background:#ddd;border-color:#333}
 
-  /* Work Schedule print layout */
-  .ws-print-root{height:auto !important;background:#fff !important;color:#000 !important}
-  .ws-print-header{display:block !important;margin-bottom:12px}
-  .ws-print-inner{padding:0 !important;flex:none !important;overflow:visible !important}
-  .ws-print-dayheader div{color:#333 !important;font-size:11px !important}
-  .ws-print-grid{display:grid !important;grid-template-columns:repeat(7,1fr);gap:3px !important;overflow:visible !important;flex:none !important}
-  .ws-print-cell{border:1px solid #bbb !important;border-radius:4px !important;background:#fff !important;padding:4px 5px !important;page-break-inside:avoid}
-  .ws-print-cell--today{background:#e8fdf9 !important;border-color:#3dd6c3 !important}
-  .ws-print-cell--holiday{background:#fff0f0 !important;border-color:#ef4444 !important}
-  .ws-print-daynum{color:#333 !important;font-size:12px !important;font-weight:700}
-  .ws-print-daynum--today{color:#0a9488 !important}
-  .ws-print-daynum--holiday{color:#dc2626 !important}
-  .ws-print-badge-name{color:#111 !important;font-size:9px !important}
-  .ws-print-badge-shift{color:#0a9488 !important;font-size:8px !important}
-  .ws-print-badge-shift--vac{color:#b45309 !important}
-  .ws-print-badge-shift--off{color:#475569 !important}
-  .ws-print-badge-lunch{color:#b45309 !important;font-size:8px !important}
-  .ws-print-legend{margin-top:10px;font-size:11px;color:#333}
-  .ws-badge-other{display:none !important}
+  /* Work schedule: hide screen view, show print page */
+  .ws-print-root { height: auto !important; background: #fff !important; }
+  .ws-print-root .no-print { display: none !important; }
+
+  .ws-po-page {
+    display: flex !important;
+    flex-direction: column;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #000;
+    background: #fff;
+  }
+  .ws-po-header { text-align: center; margin-bottom: 6px; flex-shrink: 0; }
+  .ws-po-title  { font-size: 20px; font-weight: 900; }
+  .ws-po-subtitle { font-size: 13px; font-weight: 700; margin-top: 1px; }
+  .ws-po-user   { font-size: 11px; color: #555; margin-top: 1px; }
+
+  .ws-po-dayrow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+  }
+  .ws-po-dayname {
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 3px 0;
+    border-bottom: 2px solid #000;
+    color: #000;
+  }
+
+  .ws-po-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .ws-po-cell {
+    border: 1px solid #c0c0c0;
+    border-radius: 3px;
+    padding: 4px 5px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    page-break-inside: avoid;
+  }
+  .ws-po-cell--empty { border-color: #e8e8e8; background: #fafafa; }
+  .ws-po-cell--today { background: #e8fdf9; border-color: #0a9488; }
+  .ws-po-cell--holiday { background: #fff0f0; border-color: #dc2626; }
+
+  .ws-po-num {
+    font-weight: 800;
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 3px;
+  }
+  .ws-po-cell--today .ws-po-num  { color: #0a9488; }
+  .ws-po-cell--holiday .ws-po-num { color: #dc2626; }
+  .ws-po-holiday { font-size: 9px; font-weight: 700; color: #dc2626; }
+
+  .ws-po-entry {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin-top: 2px;
+  }
+  .ws-po-entry--own { background: #e0fdf4; }
+  .ws-badge-other { display: none !important; }
+
+  .ws-po-name  { font-weight: 800; font-size: 9px; color: #111; white-space: nowrap; }
+  .ws-po-shift { font-size: 8.5px; color: #0a7a70; white-space: nowrap; }
+  .ws-po-shift--vac { color: #b45309; }
+  .ws-po-shift--off { color: #6b7280; }
+  .ws-po-lunch { font-size: 8px; color: #b45309; white-space: nowrap; }
+
+  .ws-po-legend {
+    flex-shrink: 0;
+    display: flex;
+    gap: 16px;
+    margin-top: 5px;
+    font-size: 9px;
+    color: #555;
+  }
+  .ws-po-legend-item { display: flex; align-items: center; gap: 4px; }
+  .ws-po-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .ws-po-dot--shift { background: #0a9488; }
+  .ws-po-dot--vac   { background: #b45309; }
+  .ws-po-dot--off   { background: #6b7280; }
 }
 
 /* Samsung TV safe fit */
