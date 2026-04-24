@@ -462,7 +462,7 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
       <div
         ref={ref}
         onScroll={handleScroll}
-        style={{ height: '100%', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch', paddingTop: ITEM_H * 2, paddingBottom: ITEM_H * 2, boxSizing: 'content-box' }}
+        style={{ height: '100%', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch', paddingTop: ITEM_H * 2, paddingBottom: ITEM_H * 2, boxSizing: 'border-box' }}
       >
         {items.map(item => (
           <div
