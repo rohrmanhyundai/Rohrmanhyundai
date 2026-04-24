@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
+import MobileDashboard from './components/MobileDashboard';
 import TechProduction from './components/TechProduction';
 import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
@@ -193,6 +194,29 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage('advisor-calendar')}
       />
+    );
+  }
+
+  // Phone-only mobile view — tablet/desktop/TV use the existing scaled layout unchanged
+  if (window.innerWidth < 600) {
+    return (
+      <>
+        <MobileDashboard
+          data={data} vacations={vacations}
+          isLoggedIn={isLoggedIn} currentUser={currentUser}
+          currentRole={currentRole} canEditDashboard={canEditDashboard}
+          onLogin={handleLogin} onLogout={handleLogout}
+          onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')}
+        />
+        <AdminPanel
+          data={data} vacations={vacations} isOpen={adminOpen}
+          onClose={() => setAdminOpen(false)} onDataChange={handleDataChange}
+          onRefresh={loadDashboard} currentUser={currentUser} currentRole={currentRole}
+          users={users} sharedSaveCode={sharedSaveCode}
+          onSharedSaveCodeChange={setSharedSaveCode}
+          onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
+        />
+      </>
     );
   }
 
