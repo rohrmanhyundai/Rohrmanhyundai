@@ -484,10 +484,15 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
 
 function parseShiftTime(val) {
   if (!val || val === 'vacation' || val === 'off') return null;
+  const nearest = v => DRUM_MINS.reduce((a, b) => Math.abs(parseInt(b) - parseInt(v)) < Math.abs(parseInt(a) - parseInt(v)) ? b : a);
   const m = val.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
   if (!m) return null;
-  const nearest = v => DRUM_MINS.reduce((a, b) => Math.abs(parseInt(b) - parseInt(v)) < Math.abs(parseInt(a) - parseInt(v)) ? b : a);
-  return { sh: m[1], sm: nearest(m[2]), sa: m[3].toUpperCase(), eh: m[4], em: nearest(m[5]), ea: m[6].toUpperCase() };
+  const lm = val.match(/Lunch\s+(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  return {
+    sh: m[1], sm: nearest(m[2]), sa: m[3].toUpperCase(),
+    eh: m[4], em: nearest(m[5]), ea: m[6].toUpperCase(),
+    lunch: lm ? { lh: lm[1], lm: nearest(lm[2]), la: lm[3].toUpperCase(), leh: lm[4], lem: nearest(lm[5]), lea: lm[6].toUpperCase() } : null,
+  };
 }
 
 function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
@@ -502,10 +507,19 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   const [endH, setEndH]   = React.useState('5');
   const [endM, setEndM]   = React.useState('00');
   const [endAP, setEndAP] = React.useState('PM');
+  const [includeLunch, setIncludeLunch] = React.useState(true);
+  const [lunchH, setLunchH]   = React.useState('12');
+  const [lunchM, setLunchM]   = React.useState('00');
+  const [lunchAP, setLunchAP] = React.useState('PM');
+  const [lunchEH, setLunchEH]   = React.useState('1');
+  const [lunchEM, setLunchEM]   = React.useState('00');
+  const [lunchEAP, setLunchEAP] = React.useState('PM');
   const [saving, setSaving] = React.useState(false);
 
   const allEmployees = users.map(u => u.username.toUpperCase()).filter(Boolean);
-  const timeShift = `${startH}:${startM} ${startAP} - ${endH}:${endM} ${endAP}`;
+  const shiftBase = `${startH}:${startM} ${startAP} - ${endH}:${endM} ${endAP}`;
+  const lunchStr = `${lunchH}:${lunchM} ${lunchAP} - ${lunchEH}:${lunchEM} ${lunchEAP}`;
+  const timeShift = includeLunch ? `${shiftBase} | Lunch ${lunchStr}` : shiftBase;
 
   function getDaysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
   function getFirstDow(y, m) { return new Date(y, m, 1).getDay(); }
@@ -529,9 +543,19 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
     if (parsed) {
       setStartH(parsed.sh); setStartM(parsed.sm); setStartAP(parsed.sa);
       setEndH(parsed.eh); setEndM(parsed.em); setEndAP(parsed.ea);
+      if (parsed.lunch) {
+        setIncludeLunch(true);
+        setLunchH(parsed.lunch.lh); setLunchM(parsed.lunch.lm); setLunchAP(parsed.lunch.la);
+        setLunchEH(parsed.lunch.leh); setLunchEM(parsed.lunch.lem); setLunchEAP(parsed.lunch.lea);
+      } else {
+        setIncludeLunch(false);
+      }
     } else {
       setStartH('8'); setStartM('00'); setStartAP('AM');
       setEndH('5'); setEndM('00'); setEndAP('PM');
+      setIncludeLunch(true);
+      setLunchH('12'); setLunchM('00'); setLunchAP('PM');
+      setLunchEH('1'); setLunchEM('00'); setLunchEAP('PM');
     }
     setEditing({ dateStr, isHoliday: false, current });
   }
@@ -622,7 +646,7 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                   <span style={{ fontSize: 11, fontWeight: 700, color: isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
                   {isHoliday && <span style={{ fontSize: 9, color: '#ef4444', lineHeight: 1.2, marginTop: 2, fontWeight: 700 }}>Holiday</span>}
                   {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
-                    {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val.replace(' AM','a').replace(' PM','p')}
+                    {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val.split(' | ')[0].replace(' AM','a').replace(' PM','p')}
                   </span>}
                 </div>
               );
@@ -646,7 +670,8 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                 </>
               ) : (
                 <>
-                  {/* Drum time picker */}
+                  {/* Shift drum picker */}
+                  <div style={{ fontSize: 11, color: '#7a92b8', fontWeight: 700, textAlign: 'center', letterSpacing: 1, marginBottom: 4, textTransform: 'uppercase' }}>Shift Hours</div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
                     <DrumPicker items={DRUM_HOURS} selected={startH} onChange={setStartH} width={54} />
                     <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
@@ -658,7 +683,32 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                     <DrumPicker items={DRUM_MINS} selected={endM} onChange={setEndM} width={52} />
                     <DrumPicker items={DRUM_AMPM} selected={endAP} onChange={setEndAP} width={58} />
                   </div>
-                  <div style={{ textAlign: 'center', color: '#3dd6c3', fontWeight: 700, fontSize: 14, marginBottom: 14 }}>{timeShift}</div>
+
+                  {/* Lunch toggle + picker */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 6 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none' }}>
+                      <input type="checkbox" checked={includeLunch} onChange={e => setIncludeLunch(e.target.checked)} style={{ accentColor: '#3dd6c3', width: 15, height: 15 }} />
+                      <span style={{ fontSize: 11, color: '#7a92b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>Lunch Break</span>
+                    </label>
+                  </div>
+                  {includeLunch && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
+                      <DrumPicker items={DRUM_HOURS} selected={lunchH} onChange={setLunchH} width={54} />
+                      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
+                      <DrumPicker items={DRUM_MINS} selected={lunchM} onChange={setLunchM} width={52} />
+                      <DrumPicker items={DRUM_AMPM} selected={lunchAP} onChange={setLunchAP} width={58} />
+                      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, fontWeight: 700, margin: '0 6px', alignSelf: 'center' }}>—</span>
+                      <DrumPicker items={DRUM_HOURS} selected={lunchEH} onChange={setLunchEH} width={54} />
+                      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
+                      <DrumPicker items={DRUM_MINS} selected={lunchEM} onChange={setLunchEM} width={52} />
+                      <DrumPicker items={DRUM_AMPM} selected={lunchEAP} onChange={setLunchEAP} width={58} />
+                    </div>
+                  )}
+
+                  <div style={{ textAlign: 'center', color: '#3dd6c3', fontWeight: 700, fontSize: 13, marginBottom: 14, lineHeight: 1.5 }}>
+                    {shiftBase}
+                    {includeLunch && <><br /><span style={{ color: '#f59e0b', fontSize: 12 }}>Lunch: {lunchStr}</span></>}
+                  </div>
 
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button onClick={() => applyShift(timeShift)} disabled={saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
