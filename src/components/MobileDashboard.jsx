@@ -139,16 +139,20 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
       </Card>
 
       {/* Vacations */}
-      {vacs.length > 0 && (
-        <Card title="Approved Vacation">
-          {vacs.map((v, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 13 }}>
+      <Card title="Approved Vacation">
+        {vacs.length === 0
+          ? <div style={{ color: '#7a92b8', fontSize: 13 }}>No vacations scheduled.</div>
+          : vacs.map((v, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 13 }}>
               <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{v.name}</span>
-              <span style={{ color: '#7a92b8' }}>{v.dates}</span>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: '#7a92b8' }}>{v.dates}</div>
+                <div style={{ color: '#4ade80', fontSize: 11, fontWeight: 600 }}>{v.status}</div>
+              </div>
             </div>
-          ))}
-        </Card>
-      )}
+          ))
+        }
+      </Card>
     </div>
   );
 }
