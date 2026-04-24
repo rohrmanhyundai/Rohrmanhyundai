@@ -28,20 +28,18 @@ function ShiftBadge({ name, val, isOwn }) {
   const shiftPart = parts ? parts[0] : null;
   const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
-    <div className={isOwn ? 'ws-badge-mine' : 'ws-badge-other'} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, width: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700 }}>
-          {name.split(' ')[0]}
-        </span>
-        <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3' }}>
-          {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
-        </span>
-      </div>
+    <div className={isOwn ? 'ws-badge-mine' : 'ws-badge-other'} style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 3, width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+      <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700, whiteSpace: 'nowrap' }}>
+        {name.split(' ')[0]}
+      </span>
+      <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
+        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
+      </span>
       {lunchPart && (
-        <div className="ws-print-badge-lunch" style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center' }}>
+        <span className="ws-print-badge-lunch" style={{ fontSize: 9, color: '#f59e0b', whiteSpace: 'nowrap' }}>
           🍽 {lunchPart}
-        </div>
+        </span>
       )}
     </div>
   );
