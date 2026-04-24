@@ -31,15 +31,15 @@ function ShiftBadge({ name, val }) {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <span style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700 }}>
+        <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700 }}>
           {name.split(' ')[0]}
         </span>
-        <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3' }}>
+        <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3' }}>
           {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
         </span>
       </div>
       {lunchPart && (
-        <div style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center' }}>
+        <div className="ws-print-badge-lunch" style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center' }}>
           🍽 {lunchPart}
         </div>
       )}
@@ -59,22 +59,29 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
   const numRows = cells.length / 7;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1117' }}>
+    <div className="ws-print-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1117' }}>
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
-        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>{monthLabel(year, month)} — Work Schedule</span>
+        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — Work Schedule</span>
+        <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print</button>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
+      {/* Print-only header */}
+      <div className="ws-print-header" style={{ display: 'none' }}>
+        <div style={{ textAlign: 'center', fontWeight: 900, fontSize: 22 }}>Bob Rohrman Hyundai</div>
+        <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{monthLabel(year, month)} — Work Schedule</div>
+      </div>
+
+      <div className="ws-print-inner" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
         {/* Day headers */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
+        <div className="ws-print-dayheader" style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
           {DAYS.map(d => (
             <div key={d} style={{ textAlign: 'center', color: '#7a92b8', fontWeight: 700, fontSize: 12, padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>
           ))}
         </div>
 
-        {/* Calendar grid — rows grow to fit content, whole grid scrolls if needed */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
+        {/* Calendar grid */}
+        <div className="ws-print-grid" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gridTemplateRows: `repeat(${numRows},minmax(min-content,1fr))`, gap: 4, alignContent: 'stretch' }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} />;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -83,15 +90,16 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
             const entries = isHoliday ? [] : employeeNames
               .map(name => ({ name, val: schedules[name]?.[dateStr] }))
               .filter(e => e.val);
+            const cellClass = `ws-print-cell${isToday ? ' ws-print-cell--today' : isHoliday ? ' ws-print-cell--holiday' : ''}`;
 
             return (
-              <div key={i} style={{
+              <div key={i} className={cellClass} style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 8, padding: '6px 8px',
               }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: entries.length ? 4 : 0, textAlign: 'center' }}>{day}</div>
+                <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: entries.length ? 4 : 0, textAlign: 'center' }}>{day}</div>
                 {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
                 {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} />)}
               </div>
@@ -100,8 +108,8 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
         </div>
 
         {/* Legend */}
-        <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
-          {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation'], ['#64748b', 'Off']].map(([color, label]) => (
+        <div className="ws-print-legend" style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
+          {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation / Lunch'], ['#64748b', 'Off']].map(([color, label]) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
               <span style={{ color: '#7a92b8', fontSize: 12 }}>{label}</span>

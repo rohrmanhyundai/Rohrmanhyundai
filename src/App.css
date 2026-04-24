@@ -320,6 +320,25 @@ tr:last-child td{border-bottom:none}
   .adv-section-divider{border-top:2px solid #000;margin:20px 0}
   .adv-chip{color:#000;border:1px solid #999;background:#fff;font-size:10px}
   .adv-chip--on,.adv-chip--good,.adv-chip--poor{background:#ddd;border-color:#333}
+
+  /* Work Schedule print layout */
+  .ws-print-root{height:auto !important;background:#fff !important;color:#000 !important}
+  .ws-print-header{display:block !important;margin-bottom:12px}
+  .ws-print-inner{padding:0 !important;flex:none !important;overflow:visible !important}
+  .ws-print-dayheader div{color:#333 !important;font-size:11px !important}
+  .ws-print-grid{display:grid !important;grid-template-columns:repeat(7,1fr);gap:3px !important;overflow:visible !important;flex:none !important}
+  .ws-print-cell{border:1px solid #bbb !important;border-radius:4px !important;background:#fff !important;padding:4px 5px !important;page-break-inside:avoid}
+  .ws-print-cell--today{background:#e8fdf9 !important;border-color:#3dd6c3 !important}
+  .ws-print-cell--holiday{background:#fff0f0 !important;border-color:#ef4444 !important}
+  .ws-print-daynum{color:#333 !important;font-size:12px !important;font-weight:700}
+  .ws-print-daynum--today{color:#0a9488 !important}
+  .ws-print-daynum--holiday{color:#dc2626 !important}
+  .ws-print-badge-name{color:#111 !important;font-size:9px !important}
+  .ws-print-badge-shift{color:#0a9488 !important;font-size:8px !important}
+  .ws-print-badge-shift--vac{color:#b45309 !important}
+  .ws-print-badge-shift--off{color:#475569 !important}
+  .ws-print-badge-lunch{color:#b45309 !important;font-size:8px !important}
+  .ws-print-legend{margin-top:10px;font-size:11px;color:#333}
 }
 
 /* Samsung TV safe fit */
