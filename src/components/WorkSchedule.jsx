@@ -100,9 +100,9 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 8, padding: '6px 8px',
+                borderRadius: 8, padding: '6px 8px', position: 'relative',
               }}>
-                <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: entries.length ? 4 : 0, textAlign: 'center' }}>{day}</div>
+                <div className={`ws-print-daynum${isToday ? ' ws-print-daynum--today' : isHoliday ? ' ws-print-daynum--holiday' : ''}`} style={{ position: 'absolute', top: 5, left: 8, fontWeight: 700, fontSize: 12, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8' }}>{day}</div>
                 {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
                 {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} isOwn={e.name.toUpperCase() === currentUser} />)}
               </div>
