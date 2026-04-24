@@ -12,6 +12,7 @@ import DocumentLibrary from './components/DocumentLibrary';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
+import TechResources from './components/TechResources';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -165,8 +166,32 @@ export default function App() {
   }
 
   const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
+  const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
+
+  // Technician pages
+  if (page === 'tech-resources') {
+    return (
+      <TechResources
+        currentUser={currentUser.toUpperCase()}
+        onWorkSchedule={() => setPage('tech-work-schedule')}
+        onBack={() => setPage('dashboard')}
+      />
+    );
+  }
+
+  if (page === 'tech-work-schedule') {
+    const allTechUsers = techList.length > 0 ? techList : users.map(u => u.username.toUpperCase());
+    return (
+      <WorkSchedule
+        schedules={schedules}
+        employeeNames={allTechUsers}
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage('tech-resources')}
+      />
+    );
+  }
 
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
@@ -225,7 +250,7 @@ export default function App() {
           isLoggedIn={isLoggedIn} currentUser={currentUser}
           currentRole={currentRole} canEditDashboard={canEditDashboard}
           onLogin={handleLogin} onLogout={handleLogout}
-          onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')}
+          onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')} onTechnician={() => setPage('tech-resources')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
@@ -254,6 +279,7 @@ export default function App() {
             onLogout={handleLogout}
             onEdit={() => setAdminOpen(true)}
             onAdvisor={() => setPage('advisor-calendar')}
+            onTechnician={() => setPage('tech-resources')}
           />
 
           <TechProduction data={data} />
