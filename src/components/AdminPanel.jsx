@@ -417,7 +417,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 const SCHED_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const HOLIDAY_KEY = '__HOLIDAY__';
 const DRUM_HOURS = ['1','2','3','4','5','6','7','8','9','10','11','12'];
-const DRUM_MINS  = ['00','05','10','15','20','25','30','35','40','45','50','55'];
+const DRUM_MINS  = ['00','15','30','45'];
 const DRUM_AMPM  = ['AM','PM'];
 const ITEM_H = 44;
 
@@ -430,9 +430,15 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
     if (!el) return;
     const idx = items.indexOf(String(selected));
     if (idx < 0) return;
-    ignoreScroll.current = true;
-    el.scrollTop = idx * ITEM_H;
-    setTimeout(() => { ignoreScroll.current = false; }, 80);
+    const target = idx * ITEM_H;
+    // Only force-scroll when position is meaningfully off (external selection change).
+    // If the user just scrolled there themselves, scrollTop is already correct — don't
+    // set it again or it will block their ongoing scroll gesture.
+    if (Math.abs(el.scrollTop - target) > ITEM_H * 0.6) {
+      ignoreScroll.current = true;
+      el.scrollTop = target;
+      setTimeout(() => { ignoreScroll.current = false; }, 120);
+    }
   }, [selected, items]);
 
   function handleScroll() {
