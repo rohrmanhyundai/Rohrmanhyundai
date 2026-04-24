@@ -31,7 +31,7 @@ function ShiftBadge({ name, val }) {
         {name.split(' ')[0]}
       </span>
       <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
-        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val}
+        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val.split(' | ')[0]}
       </span>
     </div>
   );
