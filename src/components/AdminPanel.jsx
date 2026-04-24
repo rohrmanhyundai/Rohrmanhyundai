@@ -640,8 +640,8 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                 <>
                   <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 14 }}>This day is marked as a company holiday. No employee shifts can be added.</div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={clearHoliday} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>{saving ? 'Clearing…' : 'Remove Holiday'}</button>
-                    <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
+                    <button onClick={clearHoliday} disabled={saving} style={{ background: 'rgba(239,68,68,0.18)', borderColor: 'rgba(239,68,68,0.5)', color: '#ef4444' }}>{saving ? 'Removing…' : 'Remove Holiday'}</button>
+                    <button onClick={clearHoliday} disabled={saving} className="secondary">{saving ? 'Removing…' : 'Cancel Holiday'}</button>
                   </div>
                 </>
               ) : (
