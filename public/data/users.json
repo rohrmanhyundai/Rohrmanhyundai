@@ -33,6 +33,12 @@
       "username": "Jason",
       "password": "jasonT",
       "role": "admin"
+    },
+    {
+      "username": "Gaven",
+      "password": "gaven2026",
+      "role": "technician",
+      "canEditDashboard": false
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
