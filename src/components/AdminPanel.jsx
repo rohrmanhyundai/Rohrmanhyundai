@@ -479,7 +479,7 @@ function parseShiftTime(val) {
   return { sh: m[1], sm: nearest(m[2]), sa: m[3].toUpperCase(), eh: m[4], em: nearest(m[5]), ea: m[6].toUpperCase() };
 }
 
-function ScheduleEditor({ schedules, onSchedulesChange, users }) {
+function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   const today = new Date();
   const [isOpen, setIsOpen] = React.useState(false);
   const [schedYear, setSchedYear] = React.useState(today.getFullYear());
@@ -564,8 +564,16 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
   const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
   return (
-    <details className="edit-group" open={isOpen} onToggle={e => setIsOpen(e.target.open)}>
-      <summary onClick={e => { e.preventDefault(); setIsOpen(o => !o); }}>Work Schedule Editor</summary>
+    <div className="edit-group">
+      <div
+        className="edit-group-header"
+        onClick={() => setIsOpen(o => !o)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', userSelect: 'none', padding: '10px 14px' }}
+      >
+        <span style={{ fontWeight: 600 }}>Work Schedule Editor</span>
+        <span style={{ fontSize: 12, color: '#7a92b8', transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>▾</span>
+      </div>
+      {isOpen && (
       <div className="group-body">
         <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
 
@@ -664,6 +672,7 @@ function ScheduleEditor({ schedules, onSchedulesChange, users }) {
           )}
         </div>
       </div>
-    </details>
+      )}
+    </div>
   );
 }
