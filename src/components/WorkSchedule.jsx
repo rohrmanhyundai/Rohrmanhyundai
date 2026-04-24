@@ -67,17 +67,20 @@ function CalendarView({ year, month, schedules, employeeNames, onBack }) {
             if (!day) return <div key={i} />;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
-            const entries = employeeNames
+            const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
+            const entries = isHoliday ? [] : employeeNames
               .map(name => ({ name, val: schedules[name]?.[dateStr] }))
               .filter(e => e.val);
 
             return (
               <div key={i} style={{
-                minHeight: 80, background: isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                minHeight: 80,
+                background: isHoliday ? 'rgba(239,68,68,0.1)' : isToday ? 'rgba(61,214,195,0.1)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isHoliday ? 'rgba(239,68,68,0.4)' : isToday ? 'rgba(61,214,195,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 8, padding: '5px 6px',
               }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: isToday ? '#3dd6c3' : '#94a3b8', marginBottom: 2 }}>{day}</div>
+                <div style={{ fontWeight: 700, fontSize: 13, color: isHoliday ? '#ef4444' : isToday ? '#3dd6c3' : '#94a3b8', marginBottom: 2 }}>{day}</div>
+                {isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', marginTop: 2 }}>🎉 Holiday</div>}
                 {entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} />)}
               </div>
             );
