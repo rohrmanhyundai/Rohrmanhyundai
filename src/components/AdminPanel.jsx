@@ -442,17 +442,16 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
   function handleScroll() {
     if (programmatic.current) return;
     clearTimeout(snapTimer.current);
-    // Wait until scrolling fully stops (including momentum), then snap + report.
-    // No scroll-snap-type so the browser never forces a mid-gesture stop.
     snapTimer.current = setTimeout(() => {
       const el = ref.current;
       if (!el || programmatic.current) return;
       const idx = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / ITEM_H)));
-      programmatic.current = true;
-      el.scrollTop = idx * ITEM_H;
-      setTimeout(() => { programmatic.current = false; }, 80);
+      const target = idx * ITEM_H;
+      // Only set scrollTop if it needs correcting. Setting to the same value
+      // fires no scroll event, so no loop and no blocking of the next gesture.
+      if (Math.abs(el.scrollTop - target) > 1) el.scrollTop = target;
       if (items[idx] !== selected) onChange(items[idx]);
-    }, 100);
+    }, 120);
   }
 
   return (
@@ -470,11 +469,7 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
             key={item}
             onClick={() => {
               const idx = items.indexOf(item);
-              if (ref.current) {
-                programmatic.current = true;
-                ref.current.scrollTop = idx * ITEM_H;
-                setTimeout(() => { programmatic.current = false; }, 80);
-              }
+              if (ref.current) ref.current.scrollTop = idx * ITEM_H;
               onChange(item);
             }}
             style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
