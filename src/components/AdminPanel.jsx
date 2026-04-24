@@ -423,30 +423,35 @@ const ITEM_H = 44;
 
 function DrumPicker({ items, selected, onChange, width = 58 }) {
   const ref = React.useRef(null);
-  const ignoreScroll = React.useRef(false);
+  const programmatic = React.useRef(false);
+  const debounce = React.useRef(null);
 
+  // Only force-scroll when something external changed selected (e.g. opening a day).
+  // If the user just scrolled there themselves, skip to avoid fighting their gesture.
   React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const idx = items.indexOf(String(selected));
     if (idx < 0) return;
     const target = idx * ITEM_H;
-    // Only force-scroll when position is meaningfully off (external selection change).
-    // If the user just scrolled there themselves, scrollTop is already correct — don't
-    // set it again or it will block their ongoing scroll gesture.
     if (Math.abs(el.scrollTop - target) > ITEM_H * 0.6) {
-      ignoreScroll.current = true;
+      programmatic.current = true;
       el.scrollTop = target;
-      setTimeout(() => { ignoreScroll.current = false; }, 120);
+      setTimeout(() => { programmatic.current = false; }, 150);
     }
   }, [selected, items]);
 
   function handleScroll() {
-    if (ignoreScroll.current) return;
-    const el = ref.current;
-    if (!el) return;
-    const idx = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / ITEM_H)));
-    if (items[idx] !== selected) onChange(items[idx]);
+    if (programmatic.current) return;
+    // Debounce: only report the final snapped position, never during the gesture.
+    // This prevents onChange → re-render → useEffect → scrollTop reset mid-scroll.
+    clearTimeout(debounce.current);
+    debounce.current = setTimeout(() => {
+      const el = ref.current;
+      if (!el || programmatic.current) return;
+      const idx = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / ITEM_H)));
+      if (items[idx] !== selected) onChange(items[idx]);
+    }, 150);
   }
 
   return (
@@ -464,7 +469,7 @@ function DrumPicker({ items, selected, onChange, width = 58 }) {
             key={item}
             onClick={() => {
               const idx = items.indexOf(item);
-              ref.current?.scrollTo({ top: idx * ITEM_H, behavior: 'smooth' });
+              if (ref.current) ref.current.scrollTop = idx * ITEM_H;
               onChange(item);
             }}
             style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', scrollSnapAlign: 'center', fontSize: 22, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
