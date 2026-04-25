@@ -15,6 +15,7 @@ import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules 
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import MobileSchedule from './components/MobileSchedule';
+import PartsHub from './components/PartsHub';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -235,6 +236,23 @@ export default function App() {
     );
   }
 
+  // Parts Hub
+  if (page === 'parts-hub') {
+    return (
+      <PartsHub
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        userPages={currentPages}
+        onBack={() => setPage('dashboard')}
+        onAftermarketWarranty={() => setPage('aftermarket-warranty')}
+        onDocumentLibrary={() => setPage('document-library')}
+        onAdvisorSchedule={() => setPage('work-schedule')}
+        onTechSchedule={() => setPage('advisor-view-tech-schedule')}
+        onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+      />
+    );
+  }
+
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
     if (window.innerWidth < 600) return (
@@ -289,11 +307,13 @@ export default function App() {
 
   if (page === 'aftermarket-warranty') {
     if (!canAccess('aftermarketWarranty')) { setPage('advisor-calendar'); return null; }
+    // Parts users navigate back to parts-hub; advisors go back to advisor-calendar
+    const warrantyBack = (currentRole === 'parts' || currentRole === 'parts manager') ? 'parts-hub' : 'advisor-calendar';
     return (
       <AftermarketWarranty
         currentUser={currentUser}
         currentRole={currentRole}
-        onBack={() => setPage('advisor-calendar')}
+        onBack={() => setPage(warrantyBack)}
       />
     );
   }
@@ -362,6 +382,7 @@ export default function App() {
             onEdit={() => setAdminOpen(true)}
             onAdvisor={() => setPage('advisor-calendar')}
             onTechnician={() => setPage('tech-resources')}
+            onParts={() => setPage('parts-hub')}
           />
 
           <TechProduction data={data} />
