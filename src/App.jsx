@@ -222,7 +222,8 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} onBack={() => setPage('tech-resources')} />
+        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
+        onBack={() => setPage('tech-resources')} />
     );
   }
 
@@ -234,7 +235,8 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()} onBack={() => setPage('tech-resources')} />
+        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
+        onBack={() => setPage('tech-resources')} />
     );
   }
 
@@ -248,6 +250,7 @@ export default function App() {
     return (
       <WorkSchedule schedules={schedules} employeeNames={techList}
         currentUser={currentUser.toUpperCase()}
+        title="Tech Schedule"
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={tsBackLabel} />
     );
@@ -273,15 +276,31 @@ export default function App() {
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
     const wsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
+    const backDest = prevPage || 'advisor-calendar';
+    // Technicians routed here should see the tech schedule, not advisor schedule
+    if (currentRole === 'technician') {
+      if (window.innerWidth < 600) return (
+        <MobileSchedule schedules={schedules} employeeNames={techList}
+          currentUser={currentUser.toUpperCase()} title="Tech Schedule"
+          onBack={() => setPage(backDest)} />
+      );
+      return (
+        <WorkSchedule schedules={schedules} employeeNames={techList}
+          currentUser={currentUser.toUpperCase()}
+          onBack={() => setPage(backDest)}
+          backLabel={wsBackLabel} />
+      );
+    }
     if (window.innerWidth < 600) return (
       <MobileSchedule schedules={schedules} employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
-        onBack={() => setPage(prevPage || 'advisor-calendar')} />
+        onBack={() => setPage(backDest)} />
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()}
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        title="Advisor Schedule"
+        onBack={() => setPage(backDest)}
         backLabel={wsBackLabel} />
     );
   }

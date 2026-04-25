@@ -564,7 +564,25 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   const [saving, setSaving] = React.useState(false);
   const [copiedDay, setCopiedDay] = React.useState(null); // { dateStr, shifts: { EMP: value, ... } }
 
+  // Build employee list with role info, grouped by role for display
   const allEmployees = users.map(u => u.username.toUpperCase()).filter(Boolean);
+  const employeesByRole = [
+    { roleLabel: '📅 Advisors',     color: '#3dd6c3', borderColor: 'rgba(61,214,195,.5)',   bg: 'rgba(61,214,195,.08)',   emps: users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '🔧 Technicians',  color: '#c4b5fd', borderColor: 'rgba(167,139,250,.5)',  bg: 'rgba(167,139,250,.08)', emps: users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '📦 Parts',        color: '#fde68a', borderColor: 'rgba(251,191,36,.5)',   bg: 'rgba(251,191,36,.08)',   emps: users.filter(u => u.role === 'parts' || u.role === 'parts manager').map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '👤 Other / Admin',color: '#94a3b8', borderColor: 'rgba(148,163,184,.5)', bg: 'rgba(148,163,184,.08)', emps: users.filter(u => !u.role || (u.role !== 'advisor' && u.role !== 'technician' && u.role !== 'parts' && u.role !== 'parts manager')).map(u => u.username.toUpperCase()).filter(Boolean) },
+  ].filter(g => g.emps.length > 0);
+  // Map employee name → role color for tab styling
+  const empRoleColor = {};
+  const empRoleBorder = {};
+  users.forEach(u => {
+    const nm = u.username.toUpperCase();
+    if (u.role === 'advisor')                               { empRoleColor[nm] = '#3dd6c3'; empRoleBorder[nm] = 'rgba(61,214,195,.6)'; }
+    else if (u.role === 'technician')                       { empRoleColor[nm] = '#c4b5fd'; empRoleBorder[nm] = 'rgba(167,139,250,.6)'; }
+    else if (u.role === 'parts' || u.role === 'parts manager') { empRoleColor[nm] = '#fde68a'; empRoleBorder[nm] = 'rgba(251,191,36,.6)'; }
+    else                                                     { empRoleColor[nm] = '#94a3b8'; empRoleBorder[nm] = 'rgba(148,163,184,.5)'; }
+  });
+
   const shiftBase = `${startH}:${startM} ${startAP} - ${endH}:${endM} ${endAP}`;
   const lunchStr = `${lunchH}:${lunchM} ${lunchAP} - ${lunchEH}:${lunchEM} ${lunchEAP}`;
   const timeShift = includeLunch ? `${shiftBase} | Lunch ${lunchStr}` : shiftBase;
@@ -677,22 +695,34 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
       <div className="group-body">
         <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
 
-          {/* Employee tabs */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-            {allEmployees.map(name => (
-              <button
-                key={name}
-                onClick={() => { setSchedEmployee(name); setEditing(null); }}
-                style={{
-                  padding: '5px 14px', fontSize: 12, fontWeight: 700, borderRadius: 20,
-                  background: schedEmployee === name ? 'linear-gradient(135deg,rgba(61,214,195,.35),rgba(110,231,249,.25))' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${schedEmployee === name ? 'rgba(61,214,195,.6)' : 'rgba(255,255,255,0.12)'}`,
-                  color: schedEmployee === name ? '#6ee7f9' : '#94a3b8',
-                  cursor: 'pointer',
-                }}
-              >
-                {name}
-              </button>
+          {/* Employee tabs — grouped by role */}
+          <div style={{ marginBottom: 14 }}>
+            {employeesByRole.map(group => (
+              <div key={group.roleLabel} style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: group.color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
+                  {group.roleLabel} — shifts appear in the {group.roleLabel.includes('Tech') ? 'Tech Schedule' : group.roleLabel.includes('Advisor') ? 'Advisor Schedule' : 'Work Schedule'} view
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {group.emps.map(name => {
+                    const isActive = schedEmployee === name;
+                    return (
+                      <button
+                        key={name}
+                        onClick={() => { setSchedEmployee(name); setEditing(null); }}
+                        style={{
+                          padding: '5px 14px', fontSize: 12, fontWeight: 700, borderRadius: 20,
+                          background: isActive ? group.bg : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${isActive ? group.borderColor : 'rgba(255,255,255,0.12)'}`,
+                          color: isActive ? group.color : '#94a3b8',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             ))}
           </div>
 
