@@ -304,6 +304,8 @@ export default function App() {
         advisorName={activeAdvisor}
         ownAdvisor={ownAdvisor}
         date={selectedDay}
+        currentRole={currentRole}
+        canEditDashboard={canEditDashboard}
         onBack={() => { setCalendarRefreshKey(k => k + 1); setPage('advisor-calendar'); }}
       />
     );
