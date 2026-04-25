@@ -5,6 +5,83 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
+// ── Vacation → Schedule helpers ────────────────────────────────────────────
+const MONTH_ABBRS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+function _parseSingleDate(token, defaultYear) {
+  token = token.trim().replace(/,\s*$/, '');
+  // MM/DD or MM/DD/YYYY
+  const md = token.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?$/);
+  if (md) return new Date(md[3] ? +md[3] : defaultYear, +md[1] - 1, +md[2]);
+  // Month Day [Year] e.g. "May 1" or "May 1 2026" or "May 1, 2026"
+  const mdy = token.match(/^([A-Za-z]+)\.?\s+(\d{1,2})(?:[,\s]+(\d{4}))?$/);
+  if (mdy) {
+    const mIdx = MONTH_ABBRS.findIndex(m => mdy[1].toLowerCase().startsWith(m));
+    if (mIdx >= 0) return new Date(mdy[3] ? +mdy[3] : defaultYear, mIdx, +mdy[2]);
+  }
+  return null;
+}
+
+function parseDateRange(str) {
+  if (!str) return null;
+  str = str.trim();
+  const yr = new Date().getFullYear();
+
+  // "Month Day-Day [, Year]" e.g. "May 1-5" or "May 1-5, 2026"
+  const compact = str.match(/^([A-Za-z]+)\.?\s+(\d{1,2})-(\d{1,2})(?:[,\s]+(\d{4}))?$/);
+  if (compact) {
+    const mIdx = MONTH_ABBRS.findIndex(m => compact[1].toLowerCase().startsWith(m));
+    if (mIdx >= 0) {
+      const y = compact[4] ? +compact[4] : yr;
+      return { start: new Date(y, mIdx, +compact[2]), end: new Date(y, mIdx, +compact[3]) };
+    }
+  }
+
+  // Split on " - " / " – " / " — "
+  const halves = str.split(/\s*[-–—]\s+/);
+  if (halves.length >= 2) {
+    const start = _parseSingleDate(halves[0], yr);
+    if (start) {
+      const end = _parseSingleDate(halves.slice(1).join(' - '), start.getFullYear());
+      if (end) return { start, end };
+    }
+  }
+
+  // Single date
+  const single = _parseSingleDate(str, yr);
+  if (single) return { start: single, end: single };
+  return null;
+}
+
+function getWorkingDays(start, end) {
+  const days = [];
+  const cur = new Date(start); cur.setHours(0, 0, 0, 0);
+  const fin = new Date(end);   fin.setHours(23, 59, 59, 0);
+  while (cur <= fin) {
+    if (cur.getDay() !== 0) { // skip Sunday
+      days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+function matchEmployeeName(name, users) {
+  if (!name || name === '—') return null;
+  const up = name.trim().toUpperCase();
+  // Exact username match
+  let u = users.find(u => u.username.toUpperCase() === up);
+  if (u) return u.username.toUpperCase();
+  // First word of name matches username
+  const first = up.split(/\s+/)[0];
+  u = users.find(u => u.username.toUpperCase() === first);
+  if (u) return u.username.toUpperCase();
+  // Username starts with name's first word
+  u = users.find(u => u.username.toUpperCase().startsWith(first));
+  if (u) return u.username.toUpperCase();
+  return null;
+}
+
 const PAGE_ACCESS = [
   { key: 'advisorCalendar',    label: '📅 Advisor Calendar',        group: 'Advisor' },
   { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Advisor' },
@@ -30,6 +107,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [openSection, setOpenSection] = useState('github');
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
+  const [vacSyncStatus, setVacSyncStatus] = useState({}); // { idx: 'ok' | 'err:msg' | 'syncing' }
 
   useEffect(() => {
     setVacEdit(vacations.map(v => ({ ...v })));
@@ -43,6 +121,41 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const trimmed = value.trim() || '\u2014';
     updateVacEdit(idx, field, trimmed);
     updateField(`vacations.${idx}.${field}`, trimmed);
+    // Auto-sync to work schedule whenever status is set to APPROVED
+    if (field === 'status' && trimmed.toUpperCase() === 'APPROVED') {
+      const vac = { ...vacEdit[idx], [field]: trimmed };
+      syncVacationToSchedule(idx, vac);
+    }
+  }
+
+  async function syncVacationToSchedule(idx, vac) {
+    const empKey = matchEmployeeName(vac.name, users);
+    if (!empKey) {
+      setVacSyncStatus(s => ({ ...s, [idx]: 'err:No matching employee found for "' + vac.name + '"' }));
+      return;
+    }
+    const range = parseDateRange(vac.dates);
+    if (!range) {
+      setVacSyncStatus(s => ({ ...s, [idx]: 'err:Could not parse dates "' + vac.dates + '"' }));
+      return;
+    }
+    const days = getWorkingDays(range.start, range.end);
+    if (days.length === 0) {
+      setVacSyncStatus(s => ({ ...s, [idx]: 'err:No working days found in that range' }));
+      return;
+    }
+    setVacSyncStatus(s => ({ ...s, [idx]: 'syncing' }));
+    try {
+      const empSchedule = { ...(schedules[empKey] || {}) };
+      days.forEach(d => { empSchedule[d] = 'vacation'; });
+      const updated = { ...schedules, [empKey]: empSchedule };
+      await saveSchedules(updated);
+      onSchedulesChange(updated);
+      setVacSyncStatus(s => ({ ...s, [idx]: `ok:${days.length} day${days.length !== 1 ? 's' : ''} marked vacation for ${empKey}` }));
+      setTimeout(() => setVacSyncStatus(s => { const n = { ...s }; delete n[idx]; return n; }), 5000);
+    } catch (err) {
+      setVacSyncStatus(s => ({ ...s, [idx]: 'err:' + err.message }));
+    }
   }
 
   function toggle(name) {
@@ -328,35 +441,66 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       <details className="edit-group" open={openSection === 'vacation'} onToggle={e => e.target.open ? setOpenSection('vacation') : setOpenSection(null)}>
         <summary onClick={e => { e.preventDefault(); toggle('vacation'); }}>Approved Vacation</summary>
         <div className="group-body">
-          {vacEdit.map((v, idx) => (
-            <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginBottom: 8 }}>
-              <div className="field" style={{ flex: 1 }}>
-                <label>Name</label>
-                <input
-                  value={v.name === '\u2014' ? '' : (v.name || '')}
-                  onChange={e => updateVacEdit(idx, 'name', e.target.value)}
-                  onBlur={e => commitVacEdit(idx, 'name', e.target.value)}
-                />
+          <div className="small" style={{ marginBottom: 10 }}>
+            Changing status to <strong>APPROVED</strong> automatically marks those days as vacation in the Work Schedule. Use 📅 to manually sync an existing approved entry.
+          </div>
+          {vacEdit.map((v, idx) => {
+            const isApproved = (v.status || '').toUpperCase() === 'APPROVED';
+            const syncState = vacSyncStatus[idx];
+            const isSyncing = syncState === 'syncing';
+            const isOk  = syncState?.startsWith('ok:');
+            const isErr = syncState?.startsWith('err:');
+            return (
+              <div key={idx} style={{ marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>Name</label>
+                    <input
+                      value={v.name === '\u2014' ? '' : (v.name || '')}
+                      onChange={e => updateVacEdit(idx, 'name', e.target.value)}
+                      onBlur={e => commitVacEdit(idx, 'name', e.target.value)}
+                    />
+                  </div>
+                  <div className="field" style={{ flex: 1.4 }}>
+                    <label>Dates</label>
+                    <input
+                      value={v.dates === '\u2014' ? '' : (v.dates || '')}
+                      onChange={e => updateVacEdit(idx, 'dates', e.target.value)}
+                      onBlur={e => commitVacEdit(idx, 'dates', e.target.value)}
+                    />
+                  </div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>Status</label>
+                    <input
+                      value={v.status === '\u2014' ? '' : (v.status || '')}
+                      onChange={e => updateVacEdit(idx, 'status', e.target.value)}
+                      onBlur={e => commitVacEdit(idx, 'status', e.target.value)}
+                      style={{ borderColor: isApproved ? 'rgba(34,197,94,.5)' : undefined, color: isApproved ? '#86efac' : undefined }}
+                    />
+                  </div>
+                  {isApproved && (
+                    <button
+                      title="Sync these vacation days to the Work Schedule"
+                      disabled={isSyncing}
+                      onClick={() => syncVacationToSchedule(idx, v)}
+                      style={{ flexShrink: 0, padding: '5px 10px', background: 'rgba(34,197,94,.15)', borderColor: 'rgba(34,197,94,.4)', color: '#86efac', fontWeight: 700 }}
+                    >
+                      {isSyncing ? '…' : '📅'}
+                    </button>
+                  )}
+                  <button className="secondary" style={{ flexShrink: 0, padding: '5px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>Remove</button>
+                </div>
+                {syncState && (
+                  <div style={{ marginTop: 4, fontSize: 11, paddingLeft: 2,
+                    color: isOk ? '#86efac' : isErr ? '#fca5a5' : '#94a3b8' }}>
+                    {isSyncing && '⏳ Syncing to Work Schedule…'}
+                    {isOk  && `✅ ${syncState.slice(3)}`}
+                    {isErr && `⚠️ ${syncState.slice(4)}`}
+                  </div>
+                )}
               </div>
-              <div className="field" style={{ flex: 1.4 }}>
-                <label>Dates</label>
-                <input
-                  value={v.dates === '\u2014' ? '' : (v.dates || '')}
-                  onChange={e => updateVacEdit(idx, 'dates', e.target.value)}
-                  onBlur={e => commitVacEdit(idx, 'dates', e.target.value)}
-                />
-              </div>
-              <div className="field" style={{ flex: 1 }}>
-                <label>Status</label>
-                <input
-                  value={v.status === '\u2014' ? '' : (v.status || '')}
-                  onChange={e => updateVacEdit(idx, 'status', e.target.value)}
-                  onBlur={e => commitVacEdit(idx, 'status', e.target.value)}
-                />
-              </div>
-              <button className="secondary" style={{ flexShrink: 0, padding: '5px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>Remove</button>
-            </div>
-          ))}
+            );
+          })}
           <div className="actions"><button onClick={addVacation}>+ Add Vacation</button></div>
         </div>
       </details>
