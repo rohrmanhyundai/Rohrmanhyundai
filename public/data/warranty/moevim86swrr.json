@@ -1,7 +1,7 @@
 {
   "id": "moevim86swrr",
   "createdAt": "2026-04-25T21:50:49.350Z",
-  "updatedAt": "2026-04-25T21:55:01.714Z",
+  "updatedAt": "2026-04-25T21:55:13.122Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "john doe",
   "customerPhone": "23223332",
@@ -38,8 +38,8 @@
   "notes": "",
   "approved": true,
   "waiting": true,
-  "paid": false,
-  "paymentDate": "",
+  "paid": true,
+  "paymentDate": "2026-04-25",
   "repairsFinished": false,
   "repairsFinishedDate": ""
 }
