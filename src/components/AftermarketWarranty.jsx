@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract } from '../utils/github';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
@@ -96,8 +96,12 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
 }
 
 // ── Contract Form ─────────────────────────────────────────────────────────────
-function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole }) {
+const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole }, ref) {
   const [form, setForm] = useState(() => initial ? { ...initial } : emptyForm());
+
+  useImperativeHandle(ref, () => ({
+    getForm: () => ({ ...form, updatedAt: new Date().toISOString() }),
+  }));
   const [vinLoading, setVinLoading] = useState(false);
   const [vinError, setVinError] = useState('');
 
@@ -310,7 +314,7 @@ function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole
       </div>
     </div>
   );
-}
+});
 
 // ── Print / Detail View ───────────────────────────────────────────────────────
 function PrintRow({ label, value, bold = false }) {
@@ -674,6 +678,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
   const [activeContract, setActiveContract] = useState(null);
   const [editingContract, setEditingContract] = useState(null);
   const [saveError, setSaveError] = useState('');
+  const formRef = useRef(null);
 
   const loadContracts = useCallback(async () => {
     setLoading(true);
@@ -750,7 +755,14 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
 
       {/* Top bar */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-        <button className="secondary" onClick={view === 'list' ? onBack : () => setView('list')}>
+        <button className="secondary" onClick={async () => {
+          if (view === 'list') { onBack(); return; }
+          if (view === 'form' && formRef.current) {
+            await handleSave(formRef.current.getForm());
+          } else {
+            setView('list');
+          }
+        }}>
           {view === 'list' ? '← Back' : '← Contracts'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty</span>
@@ -771,6 +783,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
       )}
       {view === 'form' && (
         <ContractForm
+          ref={formRef}
           initial={editingContract}
           onSave={handleSave}
           onCancel={() => setView(activeContract ? 'detail' : 'list')}
