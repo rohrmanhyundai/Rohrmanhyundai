@@ -21,7 +21,15 @@
       "username": "David",
       "password": "david2026",
       "role": "advisor",
-      "canEditDashboard": false
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
     },
     {
       "username": "Parker",
