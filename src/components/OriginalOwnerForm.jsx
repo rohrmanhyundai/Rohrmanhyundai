@@ -1,25 +1,37 @@
 import React, { useState } from 'react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
-// Coordinates are in pdf-lib points (origin = bottom-left of page).
-// These are calibrated for the SVC-1248 scanned affidavit PDF.
-// If text lands slightly off, adjust the constants below.
-const DEALER_CODE_X  = 118;   // x: right after "Dealer Code: " label
-const DEALER_CODE_Y  = 338;   // y from bottom of page
-const RO_NUMBER_X    = 302;   // x: right after "Repair Order (RO) Number: "
-const RO_NUMBER_Y    = 338;
-const REPAIR_DATE_X  = 487;   // x: right after "Repair Date: "
-const REPAIR_DATE_Y  = 338;
-const VIN_X          = 236;   // x: right after "17-Digit Vehicle..." label
-const VIN_Y          = 317;   // one line below the dealer row
-const TEXT_SIZE      = 9;     // pt — fits inside the blanks without overflow
+// All coordinates are in pdf-lib points — origin is BOTTOM-LEFT of the page.
+// Calibrated against the SVC-1248 scanned affidavit (img20260421_16124652.pdf).
+// Adjust any constant below if a field still lands slightly off after testing.
+
+// ── Dealership section ─────────────────────────────────────────────────────────
+const DEALER_CODE_X   = 118;   // after "Dealer Code: " label
+const DEALER_CODE_Y   = 432;
+const RO_NUMBER_X     = 298;   // after "Repair Order (RO) Number: "
+const RO_NUMBER_Y     = 432;
+const REPAIR_DATE_X   = 467;   // after "Repair Date: "
+const REPAIR_DATE_Y   = 432;
+const VIN_X           = 265;   // after "17-Digit Vehicle Identification Number (VIN): "
+const VIN_Y           = 412;
+
+// ── Signature date fields ──────────────────────────────────────────────────────
+// These go on the signature LINE (the blank above the label text)
+const CUSTOMER_DATE_X = 518;   // right side of customer signature line
+const CUSTOMER_DATE_Y = 547;
+const MANAGER_DATE_X  = 518;   // right side of dealer manager signature line
+const MANAGER_DATE_Y  = 262;
+
+const TEXT_SIZE = 9;           // pt — small enough to fit neatly inside blanks
 
 export default function OriginalOwnerForm({ onBack }) {
-  const [dealerCode, setDealerCode] = useState('');
-  const [roNumber,   setRoNumber]   = useState('');
-  const [repairDate, setRepairDate] = useState('');
-  const [vin,        setVin]        = useState('');
-  const [busy,       setBusy]       = useState(false);
+  const [dealerCode,    setDealerCode]    = useState('');
+  const [roNumber,      setRoNumber]      = useState('');
+  const [repairDate,    setRepairDate]    = useState('');
+  const [vin,           setVin]           = useState('');
+  const [customerDate,  setCustomerDate]  = useState('');
+  const [managerDate,   setManagerDate]   = useState('');
+  const [busy,          setBusy]          = useState(false);
 
   function fmtDate(iso) {
     if (!iso) return '';
@@ -27,19 +39,14 @@ export default function OriginalOwnerForm({ onBack }) {
     return `${m}/${d}/${y}`;
   }
 
-  // Space VIN chars to align with the dash boxes on the form
+  // Space out VIN characters to align with the dash boxes on the printed form
   function fmtVin(v) {
     return v.replace(/\s/g, '').split('').join('  ');
   }
 
   async function handleGenerate(action) {
-    if (!dealerCode && !roNumber && !repairDate && !vin) {
-      alert('Please fill in at least one field before generating.');
-      return;
-    }
     setBusy(true);
     try {
-      // Load the original PDF from the public folder
       const base = import.meta.env.BASE_URL || '/';
       const url  = `${base}original-owner-affidavit.pdf`;
       const res  = await fetch(url);
@@ -48,39 +55,35 @@ export default function OriginalOwnerForm({ onBack }) {
 
       const pdfDoc = await PDFDocument.load(existingPdfBytes);
       const font   = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const pages  = pdfDoc.getPages();
-      const page   = pages[0];
+      const page   = pdfDoc.getPages()[0];
+
+      // Log actual page size to console (helpful for re-calibration)
+      const { width: pw, height: ph } = page.getSize();
+      console.log(`PDF page size: ${pw.toFixed(1)} × ${ph.toFixed(1)} pts`);
 
       const draw = (text, x, y) => {
         if (!text) return;
-        page.drawText(text, {
-          x, y,
-          size: TEXT_SIZE,
-          font,
-          color: rgb(0, 0, 0),
-        });
+        page.drawText(text, { x, y, size: TEXT_SIZE, font, color: rgb(0, 0, 0) });
       };
 
-      draw(dealerCode,         DEALER_CODE_X, DEALER_CODE_Y);
-      draw(roNumber,           RO_NUMBER_X,   RO_NUMBER_Y);
-      draw(fmtDate(repairDate), REPAIR_DATE_X, REPAIR_DATE_Y);
-      draw(fmtVin(vin),        VIN_X,         VIN_Y);
+      // Dealership fields
+      draw(dealerCode,            DEALER_CODE_X,  DEALER_CODE_Y);
+      draw(roNumber,              RO_NUMBER_X,    RO_NUMBER_Y);
+      draw(fmtDate(repairDate),   REPAIR_DATE_X,  REPAIR_DATE_Y);
+      draw(fmtVin(vin),           VIN_X,          VIN_Y);
+
+      // Signature dates
+      draw(fmtDate(customerDate), CUSTOMER_DATE_X, CUSTOMER_DATE_Y);
+      draw(fmtDate(managerDate),  MANAGER_DATE_X,  MANAGER_DATE_Y);
 
       const filledBytes = await pdfDoc.save();
       const blob        = new Blob([filledBytes], { type: 'application/pdf' });
       const blobUrl     = URL.createObjectURL(blob);
 
       if (action === 'print') {
-        // Open in new tab for printing
         const w = window.open(blobUrl, '_blank');
-        if (w) {
-          w.addEventListener('load', () => {
-            w.focus();
-            w.print();
-          });
-        }
+        if (w) w.addEventListener('load', () => { w.focus(); w.print(); });
       } else {
-        // Download
         const a = document.createElement('a');
         a.href     = blobUrl;
         a.download = `OriginalOwnerAffidavit_RO${roNumber || 'form'}.pdf`;
@@ -121,7 +124,8 @@ export default function OriginalOwnerForm({ onBack }) {
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Top bar */}
+
+      {/* ── Top bar ── */}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ flex: 1, fontWeight: 700, fontSize: 16, color: '#6ee7f9' }}>
@@ -131,13 +135,10 @@ export default function OriginalOwnerForm({ onBack }) {
           onClick={() => handleGenerate('print')}
           disabled={busy}
           style={{
-            background: 'rgba(148,163,184,.12)',
-            border: '1px solid rgba(148,163,184,.3)',
-            color: '#94a3b8',
-            borderRadius: 8, padding: '8px 20px',
+            background: 'rgba(148,163,184,.12)', border: '1px solid rgba(148,163,184,.3)',
+            color: '#94a3b8', borderRadius: 8, padding: '8px 20px',
             fontWeight: 700, fontSize: 14,
-            cursor: busy ? 'not-allowed' : 'pointer',
-            opacity: busy ? 0.6 : 1,
+            cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? 0.6 : 1,
           }}
         >
           🖨 Print
@@ -147,12 +148,9 @@ export default function OriginalOwnerForm({ onBack }) {
           disabled={busy}
           style={{
             background: 'linear-gradient(135deg,rgba(61,214,195,.2),rgba(110,231,249,.15))',
-            border: '1px solid rgba(61,214,195,.4)',
-            color: '#3dd6c3',
-            borderRadius: 8, padding: '8px 20px',
-            fontWeight: 700, fontSize: 14,
-            cursor: busy ? 'not-allowed' : 'pointer',
-            opacity: busy ? 0.6 : 1,
+            border: '1px solid rgba(61,214,195,.4)', color: '#3dd6c3',
+            borderRadius: 8, padding: '8px 20px', fontWeight: 700, fontSize: 14,
+            cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? 0.6 : 1,
           }}
         >
           {busy ? '⏳ Generating…' : '⬇ Download PDF'}
@@ -162,45 +160,27 @@ export default function OriginalOwnerForm({ onBack }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px', display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
 
         {/* ── Input Panel ── */}
-        <div style={{ flex: '0 0 340px', minWidth: 280 }}>
+        <div style={{ flex: '0 0 360px', minWidth: 300 }}>
           <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 16, padding: '24px 24px 28px' }}>
-            <div style={{ fontWeight: 800, fontSize: 15, color: '#6ee7f9', marginBottom: 4 }}>Dealership Information</div>
-            <div style={{ fontSize: 12, color: '#475569', marginBottom: 24, lineHeight: 1.6 }}>
-              Fill in the dealer section below. Click <strong style={{ color: '#3dd6c3' }}>Download PDF</strong> or <strong style={{ color: '#94a3b8' }}>Print</strong> to get the official Hyundai form with your data filled in.
-            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {/* Dealership section */}
+            <div style={{ fontWeight: 800, fontSize: 14, color: '#6ee7f9', marginBottom: 4 }}>Dealership Information</div>
+            <div style={{ fontSize: 12, color: '#475569', marginBottom: 20 }}>Fills the Dealership Verification section</div>
 
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={labelStyle}>Dealer Code</label>
-                <input
-                  style={inputStyle}
-                  value={dealerCode}
-                  onChange={e => setDealerCode(e.target.value)}
-                  placeholder="e.g. 38147"
-                  maxLength={20}
-                />
+                <input style={inputStyle} value={dealerCode} onChange={e => setDealerCode(e.target.value)} placeholder="e.g. 38147" maxLength={20} />
               </div>
 
               <div>
                 <label style={labelStyle}>Repair Order (RO) Number</label>
-                <input
-                  style={inputStyle}
-                  value={roNumber}
-                  onChange={e => setRoNumber(e.target.value)}
-                  placeholder="e.g. 776889"
-                  maxLength={30}
-                />
+                <input style={inputStyle} value={roNumber} onChange={e => setRoNumber(e.target.value)} placeholder="e.g. 776889" maxLength={30} />
               </div>
 
               <div>
                 <label style={labelStyle}>Repair Date</label>
-                <input
-                  type="date"
-                  style={inputStyle}
-                  value={repairDate}
-                  onChange={e => setRepairDate(e.target.value)}
-                />
+                <input type="date" style={inputStyle} value={repairDate} onChange={e => setRepairDate(e.target.value)} />
               </div>
 
               <div>
@@ -215,30 +195,38 @@ export default function OriginalOwnerForm({ onBack }) {
                 <input
                   style={{
                     ...inputStyle,
-                    fontFamily: 'monospace',
-                    letterSpacing: 2,
-                    textTransform: 'uppercase',
-                    borderColor: vin && !vinOk
-                      ? 'rgba(245,158,11,.5)'
-                      : vinOk
-                        ? 'rgba(34,197,94,.4)'
-                        : 'rgba(255,255,255,.15)',
+                    fontFamily: 'monospace', letterSpacing: 2, textTransform: 'uppercase',
+                    borderColor: vin && !vinOk ? 'rgba(245,158,11,.5)' : vinOk ? 'rgba(34,197,94,.4)' : 'rgba(255,255,255,.15)',
                   }}
                   value={vin}
                   onChange={e => setVin(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                   placeholder="17-character VIN"
                   maxLength={17}
                 />
-                {vin && !vinOk && (
-                  <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 4 }}>
-                    VIN must be exactly 17 characters
-                  </div>
-                )}
+                {vin && !vinOk && <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 4 }}>VIN must be exactly 17 characters</div>}
               </div>
-
             </div>
 
-            <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,.08)', fontSize: 12, color: '#475569', lineHeight: 1.7 }}>
+            {/* Divider */}
+            <div style={{ height: 1, background: 'rgba(255,255,255,.08)', margin: '24px 0' }} />
+
+            {/* Signature dates */}
+            <div style={{ fontWeight: 800, fontSize: 14, color: '#a5b4fc', marginBottom: 4 }}>Signature Dates</div>
+            <div style={{ fontSize: 12, color: '#475569', marginBottom: 20 }}>Fills the Date field on each signature line</div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Customer Date</label>
+                <input type="date" style={inputStyle} value={customerDate} onChange={e => setCustomerDate(e.target.value)} />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Dealer Service Manager Date</label>
+                <input type="date" style={inputStyle} value={managerDate} onChange={e => setManagerDate(e.target.value)} />
+              </div>
+            </div>
+
+            <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,.08)', fontSize: 12, color: '#475569', lineHeight: 1.7 }}>
               <strong style={{ color: '#94a3b8' }}>After printing, attach:</strong><br />
               1. Copy of customer's DMV registration<br />
               2. Warranty Vehicle Information Screen printout
@@ -247,20 +235,20 @@ export default function OriginalOwnerForm({ onBack }) {
         </div>
 
         {/* ── Info Panel ── */}
-        <div style={{ flex: 1, minWidth: 300 }}>
-          <div style={{ background: 'rgba(99,102,241,.08)', border: '1px solid rgba(99,102,241,.25)', borderRadius: 16, padding: '24px 28px' }}>
+        <div style={{ flex: 1, minWidth: 280 }}>
+          <div style={{ background: 'rgba(99,102,241,.08)', border: '1px solid rgba(99,102,241,.25)', borderRadius: 16, padding: '24px 28px', marginBottom: 16 }}>
             <div style={{ fontWeight: 700, fontSize: 15, color: '#a5b4fc', marginBottom: 16 }}>📄 How This Works</div>
-            <ol style={{ color: '#94a3b8', fontSize: 13, lineHeight: 2, paddingLeft: 20 }}>
-              <li>Fill in the <strong style={{ color: '#e2e8f0' }}>Dealer Code</strong>, <strong style={{ color: '#e2e8f0' }}>RO Number</strong>, <strong style={{ color: '#e2e8f0' }}>Repair Date</strong>, and <strong style={{ color: '#e2e8f0' }}>VIN</strong> on the left.</li>
-              <li>Click <strong style={{ color: '#3dd6c3' }}>⬇ Download PDF</strong> — the official Hyundai form is downloaded with your info already typed in.</li>
-              <li>Print the downloaded PDF.</li>
-              <li>The <strong style={{ color: '#e2e8f0' }}>Customer</strong> signs the top section and the <strong style={{ color: '#e2e8f0' }}>Service Manager</strong> signs the dealership section by hand.</li>
-              <li>Attach to the RO and file in the vehicle folder.</li>
+            <ol style={{ color: '#94a3b8', fontSize: 13, lineHeight: 2.1, paddingLeft: 20 }}>
+              <li>Fill in the fields on the left.</li>
+              <li>Click <strong style={{ color: '#3dd6c3' }}>⬇ Download PDF</strong> to get the official Hyundai form with your info typed in.</li>
+              <li>The <strong style={{ color: '#e2e8f0' }}>Customer</strong> signs the top section.</li>
+              <li>The <strong style={{ color: '#e2e8f0' }}>Service Manager</strong> signs the dealership section.</li>
+              <li>Attach to the RO and retain in the vehicle file.</li>
             </ol>
           </div>
 
-          <div style={{ marginTop: 16, background: 'rgba(245,158,11,.07)', border: '1px solid rgba(245,158,11,.2)', borderRadius: 12, padding: '14px 18px', fontSize: 12, color: '#92400e', lineHeight: 1.7 }}>
-            <strong style={{ color: '#fbbf24' }}>⚠ Reminder:</strong> This form is required for all 10-Year/100,000-Mile Powertrain Warranty claims. HMA may request this document and may issue a claim debit if it is missing or incomplete.
+          <div style={{ background: 'rgba(245,158,11,.07)', border: '1px solid rgba(245,158,11,.2)', borderRadius: 12, padding: '14px 18px', fontSize: 12, color: '#92400e', lineHeight: 1.7 }}>
+            <strong style={{ color: '#fbbf24' }}>⚠ Reminder:</strong> Required for all 10-Year/100,000-Mile Powertrain Warranty claims. HMA may request this document and may issue a claim debit if missing or incomplete.
           </div>
         </div>
       </div>
