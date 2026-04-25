@@ -70,8 +70,15 @@ function useRankBoard() {
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+// Keys that are OFF by default — must be explicitly granted in user pages settings
+const DEFAULT_OFF_KEYS = new Set(['surveyReports']);
+
 function canSee(pages, role, key) {
   if (role === 'admin' || (role || '').includes('manager')) return true;
+  if (DEFAULT_OFF_KEYS.has(key)) {
+    // Feature is off unless explicitly set to true in user's pages
+    return !!(pages && pages[key] === true);
+  }
   if (!pages) return true;
   return pages[key] !== false;
 }
