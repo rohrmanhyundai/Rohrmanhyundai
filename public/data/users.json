@@ -47,7 +47,16 @@
       "username": "Gaven",
       "password": "gaven2026",
       "role": "technician",
-      "canEditDashboard": false
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
     },
     {
       "username": "Austin",
