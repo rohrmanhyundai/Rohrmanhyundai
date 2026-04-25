@@ -265,14 +265,17 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
   }
 
   // ── Filtered survey rows ──────────────────────────────────────────────────
-  const advisorSurveys = siData.filter(row => {
-    if (row.__meta) return false;
+  const allDataRows = siData.filter(r => !r.__meta);
+  const advisorSurveys = allDataRows.filter(row => {
     if (!matchesAdvisor(row.consultant, advisorName)) return false;
     if (!isDelivered(row.status)) return false;
     const dateToCheck = row.serviceDate || row.invitationDate;
     if (!isWithin4Months(dateToCheck)) return false;
     return true;
   });
+
+  // For admin/manager debug: unique consultant names detected in the xlsx
+  const detectedConsultants = [...new Set(allDataRows.map(r => r.consultant).filter(Boolean))].sort();
 
   // ── Display helpers ───────────────────────────────────────────────────────
   const [y, m, d] = date.split('-');
@@ -546,14 +549,33 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                   )}
                 </div>
               ) : advisorSurveys.length === 0 ? (
-                <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-                  <div style={{ color: '#64748b', fontSize: 15 }}>
-                    No delivered surveys found for <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> in the last 4 months.
+                <div style={{ padding: '28px 0 12px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                    <div style={{ fontSize: 32, marginBottom: 10 }}>🔍</div>
+                    <div style={{ color: '#64748b', fontSize: 15 }}>
+                      No delivered surveys found for <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> in the last 4 months.
+                    </div>
                   </div>
-                  <div style={{ marginTop: 6, fontSize: 12, color: '#475569' }}>
-                    Make sure the report contains "Service Consultant Name" matching this advisor.
-                  </div>
+
+                  {/* Admin: show what consultants ARE in the file */}
+                  {canUpload && detectedConsultants.length > 0 && (
+                    <div style={{ background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '18px 22px' }}>
+                      <div style={{ fontWeight: 800, color: '#fbbf24', marginBottom: 10, fontSize: 13 }}>
+                        📊 {allDataRows.length} total rows loaded — Consultants found in the file:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                        {detectedConsultants.map(name => (
+                          <span key={name} style={{ background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.25)', borderRadius: 8, padding: '4px 12px', fontSize: 13, color: '#6ee7f9', fontWeight: 600 }}>
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                      <div style={{ marginTop: 12, fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
+                        The advisor page name <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> must match the first name of one of the consultants above.<br />
+                        Navigate to that advisor's calendar day to see their surveys.
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <>
