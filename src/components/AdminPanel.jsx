@@ -134,9 +134,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       setVacSyncStatus(s => ({ ...s, [idx]: 'err:No matching employee found for "' + vac.name + '"' }));
       return;
     }
-    const range = parseDateRange(vac.dates);
+    // Use picker ISO dates when available; fall back to parsing the text dates field
+    let range;
+    if (vac.dateStart) {
+      const s = new Date(vac.dateStart + 'T00:00:00');
+      const e = vac.dateEnd ? new Date(vac.dateEnd + 'T00:00:00') : s;
+      range = { start: s, end: e };
+    } else {
+      range = parseDateRange(vac.dates);
+    }
     if (!range) {
-      setVacSyncStatus(s => ({ ...s, [idx]: 'err:Could not parse dates "' + vac.dates + '"' }));
+      setVacSyncStatus(s => ({ ...s, [idx]: 'err:Could not parse dates. Please use the date pickers.' }));
       return;
     }
     const days = getWorkingDays(range.start, range.end);
@@ -257,9 +265,47 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, vacations);
   }
 
+  // Build a human-readable date range string from ISO date strings (for ticker / display)
+  function fmtVacDateRange(start, end) {
+    if (!start) return '';
+    const fmt = iso => {
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+    if (!end || end === start) return fmt(start);
+    // Same month+year → "Apr 13–14, 2026"; otherwise "Apr 13 – May 2, 2026"
+    const s = new Date(start + 'T00:00:00');
+    const e = new Date(end   + 'T00:00:00');
+    if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+      return `${s.toLocaleDateString('en-US',{month:'short'})} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`;
+    }
+    return `${fmt(start)} – ${fmt(end)}`;
+  }
+
+  function commitVacDate(idx, field, isoValue) {
+    // field is 'dateStart' or 'dateEnd'
+    const updated = { ...vacEdit[idx], [field]: isoValue };
+    // Rebuild the dates display string any time either picker changes
+    const displayStr = fmtVacDateRange(
+      field === 'dateStart' ? isoValue : (updated.dateStart || ''),
+      field === 'dateEnd'   ? isoValue : (updated.dateEnd   || '')
+    ) || '\u2014';
+    updated.dates = displayStr;
+    // Push both fields to local state and to the saved data in one shot
+    setVacEdit(prev => prev.map((v, i) => i === idx ? updated : v));
+    const newData = structuredClone(data);
+    const newVac  = structuredClone(vacations);
+    newVac[idx] = { ...newVac[idx], [field]: isoValue, dates: displayStr };
+    onDataChange(newData, newVac);
+    // Auto-sync if status is already APPROVED and we have both dates
+    if ((updated.status || '').toUpperCase() === 'APPROVED' && updated.dateStart && updated.dateEnd) {
+      syncVacationToSchedule(idx, updated);
+    }
+  }
+
   function addVacation() {
     const newVac = structuredClone(vacations);
-    newVac.push({ name: '', dates: '', status: 'APPROVED' });
+    newVac.push({ name: '', dates: '', dateStart: '', dateEnd: '', status: 'APPROVED' });
     onDataChange(data, newVac);
   }
 
@@ -441,8 +487,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       <details className="edit-group" open={openSection === 'vacation'} onToggle={e => e.target.open ? setOpenSection('vacation') : setOpenSection(null)}>
         <summary onClick={e => { e.preventDefault(); toggle('vacation'); }}>Approved Vacation</summary>
         <div className="group-body">
-          <div className="small" style={{ marginBottom: 10 }}>
-            Changing status to <strong>APPROVED</strong> automatically marks those days as vacation in the Work Schedule. Use 📅 to manually sync an existing approved entry.
+          <div className="small" style={{ marginBottom: 12 }}>
+            Pick start &amp; end dates — approved vacations are automatically synced to the Work Schedule. Use 📅 to manually re-sync.
           </div>
           {vacEdit.map((v, idx) => {
             const isApproved = (v.status || '').toUpperCase() === 'APPROVED';
@@ -450,49 +496,87 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             const isSyncing = syncState === 'syncing';
             const isOk  = syncState?.startsWith('ok:');
             const isErr = syncState?.startsWith('err:');
+            // If old text-only entry (no dateStart), show current dates as a read note
+            const hasPickerDates = !!v.dateStart;
+            const oldDatesNote = !hasPickerDates && v.dates && v.dates !== '—' ? v.dates : null;
             return (
-              <div key={idx} style={{ marginBottom: 10 }}>
-                <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
-                  <div className="field" style={{ flex: 1 }}>
-                    <label>Name</label>
+              <div key={idx} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 10, padding: '10px 12px', marginBottom: 10 }}>
+                {/* Row 1: Name + Status + buttons */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginBottom: 8 }}>
+                  <div className="field" style={{ flex: 2 }}>
+                    <label>Employee Name</label>
                     <input
                       value={v.name === '\u2014' ? '' : (v.name || '')}
                       onChange={e => updateVacEdit(idx, 'name', e.target.value)}
                       onBlur={e => commitVacEdit(idx, 'name', e.target.value)}
-                    />
-                  </div>
-                  <div className="field" style={{ flex: 1.4 }}>
-                    <label>Dates</label>
-                    <input
-                      value={v.dates === '\u2014' ? '' : (v.dates || '')}
-                      onChange={e => updateVacEdit(idx, 'dates', e.target.value)}
-                      onBlur={e => commitVacEdit(idx, 'dates', e.target.value)}
+                      placeholder="e.g. JORDAN"
                     />
                   </div>
                   <div className="field" style={{ flex: 1 }}>
                     <label>Status</label>
-                    <input
-                      value={v.status === '\u2014' ? '' : (v.status || '')}
-                      onChange={e => updateVacEdit(idx, 'status', e.target.value)}
-                      onBlur={e => commitVacEdit(idx, 'status', e.target.value)}
-                      style={{ borderColor: isApproved ? 'rgba(34,197,94,.5)' : undefined, color: isApproved ? '#86efac' : undefined }}
-                    />
+                    <select
+                      value={(v.status === '\u2014' || !v.status) ? 'APPROVED' : v.status}
+                      onChange={e => commitVacEdit(idx, 'status', e.target.value)}
+                      style={{
+                        background: '#0f172a', border: `1px solid ${isApproved ? 'rgba(34,197,94,.5)' : 'rgba(255,255,255,.15)'}`,
+                        color: isApproved ? '#86efac' : '#e2e8f0', borderRadius: 6, padding: '6px 8px', fontSize: 13, width: '100%', cursor: 'pointer',
+                      }}
+                    >
+                      <option value="APPROVED">✅ APPROVED</option>
+                      <option value="PENDING">⏳ PENDING</option>
+                      <option value="DENIED">❌ DENIED</option>
+                    </select>
                   </div>
                   {isApproved && (
                     <button
-                      title="Sync these vacation days to the Work Schedule"
+                      title="Manually sync vacation days to the Work Schedule"
                       disabled={isSyncing}
                       onClick={() => syncVacationToSchedule(idx, v)}
-                      style={{ flexShrink: 0, padding: '5px 10px', background: 'rgba(34,197,94,.15)', borderColor: 'rgba(34,197,94,.4)', color: '#86efac', fontWeight: 700 }}
+                      style={{ flexShrink: 0, padding: '6px 12px', background: 'rgba(34,197,94,.15)', borderColor: 'rgba(34,197,94,.4)', color: '#86efac', fontWeight: 700, fontSize: 13 }}
                     >
-                      {isSyncing ? '…' : '📅'}
+                      {isSyncing ? '⏳' : '📅 Sync'}
                     </button>
                   )}
-                  <button className="secondary" style={{ flexShrink: 0, padding: '5px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>Remove</button>
+                  <button className="secondary" style={{ flexShrink: 0, padding: '6px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>✕</button>
                 </div>
+
+                {/* Row 2: Date pickers */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>Start Date</label>
+                    <input
+                      type="date"
+                      value={v.dateStart || ''}
+                      onChange={e => commitVacDate(idx, 'dateStart', e.target.value)}
+                      style={{ colorScheme: 'dark' }}
+                    />
+                  </div>
+                  <div style={{ paddingBottom: 8, color: '#475569', fontWeight: 700 }}>→</div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>End Date</label>
+                    <input
+                      type="date"
+                      value={v.dateEnd || ''}
+                      min={v.dateStart || ''}
+                      onChange={e => commitVacDate(idx, 'dateEnd', e.target.value)}
+                      style={{ colorScheme: 'dark' }}
+                    />
+                  </div>
+                  {v.dateStart && (
+                    <div style={{ paddingBottom: 8, fontSize: 12, color: '#64748b', whiteSpace: 'nowrap' }}>
+                      {fmtVacDateRange(v.dateStart, v.dateEnd)}
+                    </div>
+                  )}
+                  {oldDatesNote && !v.dateStart && (
+                    <div style={{ paddingBottom: 8, fontSize: 11, color: '#f59e0b', whiteSpace: 'nowrap' }}>
+                      ⚠ Old: "{oldDatesNote}" — pick dates above to enable sync
+                    </div>
+                  )}
+                </div>
+
+                {/* Sync status */}
                 {syncState && (
-                  <div style={{ marginTop: 4, fontSize: 11, paddingLeft: 2,
-                    color: isOk ? '#86efac' : isErr ? '#fca5a5' : '#94a3b8' }}>
+                  <div style={{ marginTop: 6, fontSize: 11, color: isOk ? '#86efac' : isErr ? '#fca5a5' : '#94a3b8' }}>
                     {isSyncing && '⏳ Syncing to Work Schedule…'}
                     {isOk  && `✅ ${syncState.slice(3)}`}
                     {isErr && `⚠️ ${syncState.slice(4)}`}
