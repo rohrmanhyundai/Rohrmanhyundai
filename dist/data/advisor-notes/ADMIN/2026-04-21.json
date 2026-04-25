@@ -1,6 +1,6 @@
 {
-  "advisorName": "SHAWN",
-  "date": "2026-04-16",
+  "advisorName": "ADMIN",
+  "date": "2026-04-21",
   "rows": [
     {
       "customerName": "",
@@ -9,12 +9,7 @@
       "waiter": false,
       "dropOff": false,
       "technician": "",
-      "notes": [
-        {
-          "author": "SHAWN",
-          "text": "test"
-        }
-      ]
+      "notes": []
     },
     {
       "customerName": "",
@@ -135,5 +130,5 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-24T15:36:00.631Z"
+  "savedAt": "2026-04-21T19:34:21.594Z"
 }

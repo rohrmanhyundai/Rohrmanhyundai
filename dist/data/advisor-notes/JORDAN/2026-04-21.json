@@ -1,53 +1,89 @@
 {
-  "advisorName": "SHAWN",
-  "date": "2026-04-16",
+  "advisorName": "JORDAN",
+  "date": "2026-04-21",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Cardoza Reyes",
+      "appointmentTime": "7:40 am",
+      "criticalDeferredService": "front and rear brake pads",
       "waiter": false,
-      "dropOff": false,
-      "technician": "",
+      "dropOff": true,
+      "technician": "Luis",
       "notes": [
         {
-          "author": "SHAWN",
-          "text": "test"
+          "author": "JORDAN",
+          "text": "save"
         }
       ]
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Michael Rockstroh",
+      "appointmentTime": "8 am",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Chris Kuczynski",
+      "appointmentTime": "8:20 am",
+      "criticalDeferredService": "4 tires",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Wanda Orem",
+      "appointmentTime": "9 am",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Gaven",
+      "notes": []
+    },
+    {
+      "customerName": "Joyce Chambers",
+      "appointmentTime": "9 am",
+      "criticalDeferredService": "tune up",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "Frankie",
+      "notes": []
+    },
+    {
+      "customerName": "Mario Amador Torralba",
+      "appointmentTime": "10 am",
+      "criticalDeferredService": "first service",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Cade Condo",
+      "appointmentTime": "1 pm",
+      "criticalDeferredService": "4 tires",
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Trevor Foley",
+      "appointmentTime": "1:20 pm",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Michael Carlson",
+      "appointmentTime": "2 pm ",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
@@ -135,5 +171,5 @@
       "notes": []
     }
   ],
-  "savedAt": "2026-04-24T15:36:00.631Z"
+  "savedAt": "2026-04-22T19:01:41.968Z"
 }
