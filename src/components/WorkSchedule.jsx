@@ -50,7 +50,7 @@ function ShiftBadge({ name, val, isOwn }) {
   );
 }
 
-function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack }) {
+function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack, title }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month); // 0=Sun,1=Mon,...
@@ -83,7 +83,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
       {/* ── Screen toolbar ── */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
-        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — Work Schedule</span>
+        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — {title || 'Work Schedule'}</span>
         <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print</button>
       </div>
 
@@ -171,7 +171,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
   );
 }
 
-export default function WorkSchedule({ schedules, employeeNames, currentUser, onBack, backLabel }) {
+export default function WorkSchedule({ schedules, employeeNames, currentUser, onBack, backLabel, title }) {
   const today = new Date();
   const months = [
     { year: today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear(), month: (today.getMonth() + 11) % 12 },
@@ -188,6 +188,7 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, on
           year={year} month={month}
           schedules={schedules} employeeNames={employeeNames}
           currentUser={currentUser}
+          title={title}
           onBack={() => setSelected(null)}
         />
       </div>
@@ -198,7 +199,7 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, on
     <div className="adv-page">
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button className="secondary" onClick={onBack}>{backLabel || '← Appointment Prep'}</button>
-        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>Employee Work Schedule</span>
+        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>{title || 'Employee Work Schedule'}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
