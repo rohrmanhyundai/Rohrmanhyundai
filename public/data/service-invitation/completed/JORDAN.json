@@ -43,6 +43,7 @@
     "phone": "7777777777",
     "notes": "pissed off customer",
     "submittedAt": "2026-04-25T21:46:52.816Z",
-    "submittedBy": "ADMIN"
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
   }
 ]
