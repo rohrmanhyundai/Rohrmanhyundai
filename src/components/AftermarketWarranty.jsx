@@ -36,6 +36,8 @@ const emptyForm = () => ({
   notes: '',
   status: '',
   paymentDate: '',
+  repairsFinished: false,
+  repairsFinishedDate: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -266,6 +268,20 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+
+          {/* Repairs Finished — visible to ALL users */}
+          <button
+            onClick={() => setForm(f => ({ ...f, repairsFinished: !f.repairsFinished, repairsFinishedDate: f.repairsFinished ? '' : f.repairsFinishedDate }))}
+            style={{ background: form.repairsFinished ? 'rgba(239,68,68,0.3)' : 'rgba(239,68,68,0.08)', border: `1px solid ${form.repairsFinished ? 'rgba(239,68,68,0.7)' : 'rgba(239,68,68,0.3)'}`, color: form.repairsFinished ? '#fca5a5' : '#f87171', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+            🔧 Repairs Finished
+          </button>
+          {form.repairsFinished && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.35)', borderRadius: 10, padding: '6px 14px' }}>
+              <label style={{ fontSize: 12, color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}>Finished Date:</label>
+              <input type="date" value={form.repairsFinishedDate} onChange={e => setForm(f => ({ ...f, repairsFinishedDate: e.target.value }))}
+                style={{ background: 'transparent', border: 'none', color: '#fca5a5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
+            </div>
+          )}
 
           {/* Status & Delete buttons — admin/manager only */}
           {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
@@ -745,6 +761,15 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
                   <td style={{ padding: '11px 14px', fontSize: 13, fontWeight: 800, color: '#92400e' }}>Total Due by Customer</td>
                   <td style={{ padding: '11px 14px', fontSize: 15, fontWeight: 900, color: '#b45309', textAlign: 'right' }}>{fmtDol(totalDue)}</td>
                 </tr>
+                {/* Repairs finished */}
+                {contract.repairsFinished && (
+                  <tr style={{ background: '#fef2f2' }}>
+                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#b91c1c' }}>🔧 Repairs Finished</td>
+                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#b91c1c', textAlign: 'right' }}>
+                      {contract.repairsFinishedDate ? new Date(contract.repairsFinishedDate + 'T12:00:00').toLocaleDateString() : '—'}
+                    </td>
+                  </tr>
+                )}
                 {/* Payment date if paid */}
                 {contract.status === 'paid' && contract.paymentDate && (
                   <tr style={{ background: '#f0fdf4' }}>
@@ -820,17 +845,26 @@ function ContractList({ contracts, loading, onNew, onView }) {
               {contracts.map(c => {
                 const { totalClaim, totalDue } = calcTotals(c);
                 const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
-                const isApproved = c.status === 'approved';
-                const isWaiting  = c.status === 'waiting';
-                const isPaid     = c.status === 'paid';
-                const rowBg = isApproved ? 'rgba(34,197,94,0.22)' : '';
-                const rowBorder = isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                const isFinished  = !!c.repairsFinished;
+                const isApproved  = c.status === 'approved';
+                const isWaiting   = c.status === 'waiting';
+                const isPaid      = c.status === 'paid';
+                // Red takes top priority (repairs done, ready for processing)
+                const rowBg = isFinished
+                  ? 'rgba(239,68,68,0.22)'
+                  : isApproved ? 'rgba(34,197,94,0.22)' : '';
+                const rowBgHover = isFinished
+                  ? 'rgba(239,68,68,0.34)'
+                  : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
+                const rowBorder = isFinished
+                  ? '1px solid rgba(239,68,68,0.45)'
+                  : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
                 const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
                 const statusLabel = isPaid ? 'Claim Paid' : isWaiting ? 'Waiting for Payment' : isApproved ? 'Approved' : '';
                 return (
                   <tr key={c.id} onClick={() => onView(c)}
                     style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)'}
+                    onMouseEnter={e => e.currentTarget.style.background = rowBgHover}
                     onMouseLeave={e => e.currentTarget.style.background = rowBg}>
                     <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
@@ -838,7 +872,8 @@ function ContractList({ contracts, loading, onNew, onView }) {
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                    <td style={{ padding: '12px 14px', textAlign: 'center' }} title={statusLabel}>
+                    <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : statusLabel}>
+                      {isFinished && <div style={{ fontSize: 11, fontWeight: 800, color: '#fca5a5', marginBottom: 2 }}>🔧 Ready</div>}
                       <span style={{ fontSize: 18 }}>{statusEmoji}</span>
                       {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
                     </td>
