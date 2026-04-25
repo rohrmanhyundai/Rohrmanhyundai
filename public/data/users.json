@@ -39,6 +39,12 @@
       "password": "gaven2026",
       "role": "technician",
       "canEditDashboard": false
+    },
+    {
+      "username": "Austin",
+      "password": "dealerplayguy",
+      "role": "admin",
+      "canEditDashboard": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
