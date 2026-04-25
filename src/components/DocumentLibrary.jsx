@@ -53,7 +53,7 @@ function RoleCheckboxes({ selected, onChange }) {
   return (
     <div style={{ padding: '18px 0 4px' }}>
       <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 14, lineHeight: 1.6 }}>
-        Select which roles can view this document. Leave <strong style={{ color: '#6ee7f9' }}>All Roles</strong> checked to make it visible to everyone.
+        Select which roles can view this document. Check <strong style={{ color: '#6ee7f9' }}>All Roles</strong> to make it visible to everyone, or pick specific roles below.
       </div>
 
       {/* All Roles toggle */}
@@ -67,23 +67,22 @@ function RoleCheckboxes({ selected, onChange }) {
         <span style={{ fontWeight: 700, fontSize: 14, color: allChecked ? '#6ee7f9' : '#94a3b8' }}>🌐 All Roles (public)</span>
       </label>
 
-      {/* Per-role checkboxes */}
+      {/* Per-role checkboxes — always enabled; clicking one auto-unchecks "All Roles" */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 8 }}>
         {DOC_ROLES.map(role => {
           const checked = selected.includes(role.key);
           return (
             <label
               key={role.key}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '9px 12px', background: checked ? 'rgba(110,231,249,.1)' : 'rgba(255,255,255,.03)', border: `1px solid ${checked ? 'rgba(110,231,249,.3)' : 'rgba(255,255,255,.07)'}`, borderRadius: 9, transition: 'all .15s', opacity: allChecked ? 0.4 : 1 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '9px 12px', background: checked ? 'rgba(110,231,249,.1)' : 'rgba(255,255,255,.03)', border: `1px solid ${checked ? 'rgba(110,231,249,.3)' : 'rgba(255,255,255,.07)'}`, borderRadius: 9, transition: 'all .15s' }}
             >
               <input
                 type="checkbox"
                 checked={checked}
-                disabled={allChecked}
                 onChange={() => toggleRole(role.key)}
-                style={{ width: 15, height: 15, accentColor: '#6ee7f9', cursor: allChecked ? 'not-allowed' : 'pointer' }}
+                style={{ width: 15, height: 15, accentColor: '#6ee7f9', cursor: 'pointer' }}
               />
-              <span style={{ fontSize: 13, color: checked ? '#e2e8f0' : '#64748b', fontWeight: checked ? 600 : 400 }}>{role.label}</span>
+              <span style={{ fontSize: 13, color: checked ? '#e2e8f0' : '#94a3b8', fontWeight: checked ? 600 : 400 }}>{role.label}</span>
             </label>
           );
         })}
