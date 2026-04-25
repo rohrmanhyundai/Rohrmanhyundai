@@ -846,78 +846,125 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
   );
 }
 
+// ── Legend ────────────────────────────────────────────────────────────────────
+function ContractLegend() {
+  const pill = (bg, border, color, children) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+      <div style={{ width: 14, height: 14, borderRadius: 3, background: bg, border: `1px solid ${border}`, flexShrink: 0 }} />
+      <span style={{ color, fontSize: 12 }}>{children}</span>
+    </div>
+  );
+  const icon = (emoji, color, children) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <span style={{ fontSize: 15, lineHeight: 1 }}>{emoji}</span>
+      <span style={{ color, fontSize: 12, fontWeight: 600 }}>{children}</span>
+    </div>
+  );
+  return (
+    <div style={{ flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.07)', background: 'rgba(0,0,0,0.25)', padding: '10px 32px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, flexShrink: 0 }}>Legend</span>
+
+        {/* Row color codes */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          {pill('rgba(239,68,68,0.22)', 'rgba(239,68,68,0.45)', '#fca5a5', 'Repairs Finished — Ready for Processing')}
+          {pill('rgba(34,197,94,0.22)', 'rgba(34,197,94,0.4)', '#86efac', 'Approved Claim')}
+          {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)', '#64748b', 'No status set')}
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
+
+        {/* Status icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          {icon('🔧', '#fca5a5', 'Repairs Finished')}
+          {icon('⏳', '#fbbf24', 'Waiting for Payment')}
+          {icon('💳', '#6ee7f9', 'Claim Paid')}
+          {icon('✅', '#4ade80', 'Approved Claim')}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Contract List ─────────────────────────────────────────────────────────────
 function ContractList({ contracts, loading, onNew, onView }) {
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 48px' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading contracts…</div>
-        ) : contracts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 60 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🛡</div>
-            <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No contracts yet</div>
-            <div style={{ color: '#64748b', fontSize: 14, marginBottom: 24 }}>Click "New Contract" to create your first aftermarket warranty claim.</div>
-            <button onClick={onNew} style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
-              + New Contract
-            </button>
-          </div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', 'Claim Status', ''].map(h => (
-                  <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {contracts.map(c => {
-                const { totalClaim, totalDue } = calcTotals(c);
-                const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
-                const isFinished  = !!c.repairsFinished;
-                const isApproved  = !!(c.approved ?? (c.status === 'approved'));
-                const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
-                const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
-                // Red (repairs done) takes top priority; green (approved) otherwise
-                const rowBg = isFinished
-                  ? 'rgba(239,68,68,0.22)'
-                  : isApproved ? 'rgba(34,197,94,0.22)' : '';
-                const rowBgHover = isFinished
-                  ? 'rgba(239,68,68,0.34)'
-                  : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
-                const rowBorder = isFinished
-                  ? '1px solid rgba(239,68,68,0.45)'
-                  : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
-                // Multiple statuses can be active — show most prominent emoji + all labels
-                const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
-                const statusLabel = [isPaid && 'Claim Paid', isWaiting && 'Waiting', isApproved && 'Approved'].filter(Boolean).join(' · ') || '';
-                return (
-                  <tr key={c.id} onClick={() => onView(c)}
-                    style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = rowBgHover}
-                    onMouseLeave={e => e.currentTarget.style.background = rowBg}>
-                    <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                    <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : statusLabel}>
-                      {isFinished && <div style={{ fontSize: 11, fontWeight: 800, color: '#fca5a5', marginBottom: 2 }}>🔧 Ready</div>}
-                      <span style={{ fontSize: 18 }}>{statusEmoji}</span>
-                      {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
-                    </td>
-                    <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                      <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Scrollable table area */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading contracts…</div>
+          ) : contracts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: 60 }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🛡</div>
+              <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No contracts yet</div>
+              <div style={{ color: '#64748b', fontSize: 14, marginBottom: 24 }}>Click "New Contract" to create your first aftermarket warranty claim.</div>
+              <button onClick={onNew} style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
+                + New Contract
+              </button>
+            </div>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', 'Claim Status', ''].map(h => (
+                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {contracts.map(c => {
+                  const { totalClaim, totalDue } = calcTotals(c);
+                  const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
+                  const isFinished  = !!c.repairsFinished;
+                  const isApproved  = !!(c.approved ?? (c.status === 'approved'));
+                  const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
+                  const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
+                  // Red (repairs done) takes top priority; green (approved) otherwise
+                  const rowBg = isFinished
+                    ? 'rgba(239,68,68,0.22)'
+                    : isApproved ? 'rgba(34,197,94,0.22)' : '';
+                  const rowBgHover = isFinished
+                    ? 'rgba(239,68,68,0.34)'
+                    : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
+                  const rowBorder = isFinished
+                    ? '1px solid rgba(239,68,68,0.45)'
+                    : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                  // Multiple statuses can be active — show most prominent emoji + all labels
+                  const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
+                  const statusLabel = [isPaid && 'Claim Paid', isWaiting && 'Waiting', isApproved && 'Approved'].filter(Boolean).join(' · ') || '';
+                  return (
+                    <tr key={c.id} onClick={() => onView(c)}
+                      style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = rowBgHover}
+                      onMouseLeave={e => e.currentTarget.style.background = rowBg}>
+                      <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
+                      <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : statusLabel}>
+                        {isFinished && <div style={{ fontSize: 11, fontWeight: 800, color: '#fca5a5', marginBottom: 2 }}>🔧 Ready</div>}
+                        <span style={{ fontSize: 18 }}>{statusEmoji}</span>
+                        {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
+                      </td>
+                      <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                        <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
+
+      {/* Always-visible legend pinned at the bottom */}
+      <ContractLegend />
     </div>
   );
 }
