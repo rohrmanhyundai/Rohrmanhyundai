@@ -369,87 +369,77 @@ function ContractDetail({ contract, onEdit, onBack }) {
   async function handleSavePDF() {
     if (!pdfRef.current) return;
     setGeneratingPDF(true);
-    const el = pdfRef.current;
+    let clone = null;
     try {
-      // Use position:absolute (NOT fixed) so content taller than the viewport is fully captured
-      el.style.display = 'block';
-      el.style.position = 'absolute';
-      el.style.left = '-9999px';
-      el.style.top = '0';
-      el.style.width = '816px'; // letter width at 96dpi
-      el.style.background = '#ffffff';
-      el.style.padding = '0';
-      el.style.margin = '0';
-      el.style.zIndex = '9999';
+      // Clone the print element and attach directly to <body> so it renders
+      // at a known position with no scroll offset or clipping from parent containers.
+      clone = pdfRef.current.cloneNode(true);
+      clone.style.cssText = [
+        'display:block',
+        'position:fixed',
+        'left:-9999px',
+        'top:0',
+        'width:816px',
+        'background:#ffffff',
+        'padding:0',
+        'margin:0',
+        'box-sizing:border-box',
+        'z-index:-1',
+        'overflow:visible',
+      ].join(';');
+      document.body.appendChild(clone);
 
-      await new Promise(r => setTimeout(r, 200)); // let browser fully render
+      await new Promise(r => setTimeout(r, 250)); // let browser fully render the clone
 
-      const canvas = await html2canvas(el, {
+      const canvas = await html2canvas(clone, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
         width: 816,
-        height: el.scrollHeight,   // capture full content height — not just viewport
+        height: clone.scrollHeight,  // full content height, not clamped to viewport
         windowWidth: 816,
+        scrollX: 0,
+        scrollY: 0,
       });
 
-      // Restore hidden
-      el.style.display = 'none';
-      el.style.position = '';
-      el.style.left = '';
-      el.style.top = '';
-      el.style.width = '';
-      el.style.padding = '';
-      el.style.margin = '';
-      el.style.zIndex = '';
+      document.body.removeChild(clone);
+      clone = null;
 
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-      const pageW = pdf.internal.pageSize.getWidth();   // 215.9mm
-      const pageH = pdf.internal.pageSize.getHeight();  // 279.4mm
-      const margin = 10; // mm on all sides
+      const pageW = pdf.internal.pageSize.getWidth();   // 215.9 mm
+      const pageH = pdf.internal.pageSize.getHeight();  // 279.4 mm
+      const margin = 10;
       const contentW = pageW - 2 * margin;
       const contentH = pageH - 2 * margin;
 
-      // px-per-mm ratio based on canvas width vs usable content width
-      const pxPerMm = canvas.width / contentW;
-      const pageHeightPx = Math.round(contentH * pxPerMm);
-      const totalPages = Math.ceil(canvas.height / pageHeightPx);
+      const pxPerMm    = canvas.width / contentW;
+      const pageHtPx   = Math.round(contentH * pxPerMm);
+      const totalPages = Math.ceil(canvas.height / pageHtPx);
 
       for (let page = 0; page < totalPages; page++) {
         if (page > 0) pdf.addPage();
 
-        const startY = page * pageHeightPx;
-        const sliceH = Math.min(pageHeightPx, canvas.height - startY);
+        const startY  = page * pageHtPx;
+        const sliceH  = Math.min(pageHtPx, canvas.height - startY);
+        const sliceMm = sliceH / pxPerMm; // exact mm for this slice (last page may be shorter)
 
-        // Render just this page's slice onto a fresh canvas
         const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = pageHeightPx;
+        pageCanvas.width  = canvas.width;
+        pageCanvas.height = sliceH;
         const ctx = pageCanvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        // src: (canvas, sx, sy, sw, sh, dx, dy, dw, dh)
         ctx.drawImage(canvas, 0, startY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
 
-        // Scale rendered slice to fit the content area — last page naturally has white space below
-        const sliceMmH = (sliceH / pxPerMm); // actual mm height of this slice
-        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, contentW, sliceMmH);
+        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, contentW, sliceMm);
       }
 
       const filename = `Warranty_${(contract.customerName || 'Contract').replace(/\s+/g,'_')}_RO${contract.repairOrder || contract.claimNumber || ''}.pdf`;
       pdf.save(filename);
     } catch (err) {
-      // Ensure element is always restored on error
-      el.style.display = 'none';
-      el.style.position = '';
-      el.style.left = '';
-      el.style.top = '';
-      el.style.width = '';
-      el.style.padding = '';
-      el.style.margin = '';
-      el.style.zIndex = '';
       alert('PDF generation failed: ' + err.message);
     } finally {
+      if (clone && clone.parentNode) clone.parentNode.removeChild(clone);
       setGeneratingPDF(false);
     }
   }
