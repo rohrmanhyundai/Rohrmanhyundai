@@ -40,8 +40,9 @@ function calcTotals(form) {
   const laborTotal = num(form.laborRate) * (num(form.laborTime) + num(form.diagnosisTime));
   const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.price), 0);
   const taxAmt = partsTotal * (num(form.taxPct) / 100);
-  const totalClaim = laborTotal + partsTotal + taxAmt;
-  const totalDue = num(form.deductible);
+  const deductible = num(form.deductible);
+  const totalClaim = laborTotal + partsTotal + taxAmt - deductible;
+  const totalDue = deductible;
   return { laborTotal, partsTotal, taxAmt, totalClaim, totalDue };
 }
 
