@@ -274,12 +274,15 @@ export default function App() {
       const mobileEmployees = currentRole === 'advisor' ? advisorList
         : currentRole === 'technician' ? techList
         : users.map(u => u.username.toUpperCase());
+      const mobileTitle = currentRole === 'advisor' ? 'Advisor Schedule'
+        : currentRole === 'technician' ? 'Tech Schedule'
+        : 'Work Schedule';
       return (
         <MobileSchedule
           schedules={schedules}
           employeeNames={mobileEmployees}
           currentUser={currentUser.toUpperCase()}
-          title="Work Schedule"
+          title={mobileTitle}
           onBack={() => setPage('dashboard')}
         />
       );
