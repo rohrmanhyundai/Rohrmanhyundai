@@ -70,7 +70,13 @@ function useRankBoard() {
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, refreshKey }) {
+function canSee(pages, role, key) {
+  if (role === 'admin' || (role || '').includes('manager')) return true;
+  if (!pages) return true;
+  return pages[key] !== false;
+}
+
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, refreshKey, userPages, currentRole }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -114,25 +120,35 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
-            📁 Document Library
-          </button>
-          <button
-            onClick={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
-            style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}
-          >
-            🏆 Advisor Rank Board
-          </button>
-          <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-            📅 Advisor Schedule
-          </button>
-          <button onClick={onTechSchedule} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
-            🔧 Tech Schedule
-          </button>
-          <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-            🛡 After Market Warranty
-          </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {canSee(userPages, currentRole, 'documentLibrary') && (
+            <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
+              📁 Document Library
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'advisorRankBoard') && (
+            <button
+              onClick={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+              style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}
+            >
+              🏆 Advisor Rank Board
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'advisorSchedule') && (
+            <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+              📅 Advisor Schedule
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'techSchedule') && (
+            <button onClick={onTechSchedule} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
+              🔧 Tech Schedule
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'aftermarketWarranty') && (
+            <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+              🛡 After Market Warranty
+            </button>
+          )}
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
       </div>

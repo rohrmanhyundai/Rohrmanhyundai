@@ -5,6 +5,16 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
+const PAGE_ACCESS = [
+  { key: 'advisorCalendar',    label: '📅 Advisor Calendar' },
+  { key: 'documentLibrary',    label: '📁 Document Library' },
+  { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board' },
+  { key: 'advisorSchedule',    label: '📅 Advisor Schedule' },
+  { key: 'techSchedule',       label: '🔧 Tech Schedule' },
+  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty' },
+];
+const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, true]));
+
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [saving, setSaving] = useState(false);
@@ -14,6 +24,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
+  const [newUserPages, setNewUserPages] = useState({ ...DEFAULT_PAGES });
   const [openSection, setOpenSection] = useState('github');
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
@@ -147,8 +158,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit } : u)
-      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit }];
+      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages } : u)
+      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages }];
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -359,7 +370,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div
                   key={u.username}
                   className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); }}
+                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); }}
                 >
                   <div>
                     <div className="user-row-name">{u.username}</div>
@@ -375,7 +386,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
               <div className="actions">
                 <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); }}>Clear</button>
+                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); }}>Clear</button>
               </div>
             </div>
             <div className="form-section">
@@ -395,6 +406,35 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <span>Can Edit Dashboard</span>
                 <span className="user-edit-toggle-hint">Allows this user to open and save changes to the Edit Dashboard</span>
               </label>
+
+              {/* Page Access */}
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
+                  Page Access
+                  <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 24px' }}>
+                  {PAGE_ACCESS.map(p => (
+                    <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
+                      <input
+                        type="checkbox"
+                        checked={newUserPages[p.key] !== false}
+                        onChange={e => setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked }))}
+                        style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }}
+                      />
+                      <span>{p.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
+                    onClick={() => setNewUserPages({ ...DEFAULT_PAGES })}>Check All</button>
+                  {' '}
+                  <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
+                    onClick={() => setNewUserPages(Object.fromEntries(PAGE_ACCESS.map(p => [p.key, false])))}>Uncheck All</button>
+                </div>
+              </div>
+
               <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>
             </div>
           </div>
