@@ -277,6 +277,13 @@
       "dateStart": "2026-07-06",
       "dateEnd": "2026-07-10",
       "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "Aug 17–21, 2026",
+      "dateStart": "2026-08-17",
+      "dateEnd": "2026-08-21",
+      "status": "APPROVED"
     }
   ]
 }
