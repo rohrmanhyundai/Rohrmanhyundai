@@ -54,6 +54,13 @@ export default function App() {
   const [sharedSaveCode, setSharedSaveCode] = useState('');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
+  const [prevPage, setPrevPage] = useState('dashboard');
+
+  // Navigate to a page while remembering where we came from
+  function goTo(dest, from) {
+    if (from !== undefined) setPrevPage(from);
+    setPage(dest);
+  }
   const [schedules, setSchedules] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
@@ -225,14 +232,17 @@ export default function App() {
   }
 
   if (page === 'advisor-view-tech-schedule') {
+    const tsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
     if (window.innerWidth < 600) return (
       <MobileSchedule schedules={schedules} employeeNames={techList}
         currentUser={currentUser.toUpperCase()} title="Tech Schedule"
-        onBack={() => setPage('advisor-calendar')} />
+        onBack={() => setPage(prevPage || 'advisor-calendar')} />
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} onBack={() => setPage('advisor-calendar')} />
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={tsBackLabel} />
     );
   }
 
@@ -244,10 +254,10 @@ export default function App() {
         currentRole={currentRole}
         userPages={currentPages}
         onBack={() => setPage('dashboard')}
-        onAftermarketWarranty={() => setPage('aftermarket-warranty')}
-        onDocumentLibrary={() => setPage('document-library')}
-        onAdvisorSchedule={() => setPage('work-schedule')}
-        onTechSchedule={() => setPage('advisor-view-tech-schedule')}
+        onAftermarketWarranty={() => goTo('aftermarket-warranty', 'parts-hub')}
+        onDocumentLibrary={() => goTo('document-library', 'parts-hub')}
+        onAdvisorSchedule={() => goTo('work-schedule', 'parts-hub')}
+        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
         onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
       />
     );
@@ -255,14 +265,17 @@ export default function App() {
 
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
+    const wsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
     if (window.innerWidth < 600) return (
       <MobileSchedule schedules={schedules} employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
-        onBack={() => setPage('advisor-calendar')} />
+        onBack={() => setPage(prevPage || 'advisor-calendar')} />
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()} onBack={() => setPage('advisor-calendar')} />
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={wsBackLabel} />
     );
   }
 
@@ -275,10 +288,10 @@ export default function App() {
         onViewingChange={name => setViewingAdvisor(name)}
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
         onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
-        onDocumentLibrary={() => setPage('document-library')}
-        onWorkSchedule={() => setPage('work-schedule')}
-        onTechSchedule={() => setPage('advisor-view-tech-schedule')}
-        onAftermarketWarranty={() => setPage('aftermarket-warranty')}
+        onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
+        onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
+        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
+        onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
@@ -296,24 +309,26 @@ export default function App() {
     );
   }
   if (page === 'document-library') {
+    const dlBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
     return (
       <DocumentLibrary
         currentUser={currentUser}
         currentRole={currentRole}
-        onBack={() => setPage('advisor-calendar')}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={dlBackLabel}
       />
     );
   }
 
   if (page === 'aftermarket-warranty') {
-    if (!canAccess('aftermarketWarranty')) { setPage('advisor-calendar'); return null; }
-    // Parts users navigate back to parts-hub; advisors go back to advisor-calendar
-    const warrantyBack = (currentRole === 'parts' || currentRole === 'parts manager') ? 'parts-hub' : 'advisor-calendar';
+    if (!canAccess('aftermarketWarranty')) { setPage(prevPage || 'advisor-calendar'); return null; }
+    const awBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
     return (
       <AftermarketWarranty
         currentUser={currentUser}
         currentRole={currentRole}
-        onBack={() => setPage(warrantyBack)}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={awBackLabel}
       />
     );
   }

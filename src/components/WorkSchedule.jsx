@@ -171,7 +171,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
   );
 }
 
-export default function WorkSchedule({ schedules, employeeNames, currentUser, onBack }) {
+export default function WorkSchedule({ schedules, employeeNames, currentUser, onBack, backLabel }) {
   const today = new Date();
   const months = [
     { year: today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear(), month: (today.getMonth() + 11) % 12 },
@@ -197,7 +197,7 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, on
   return (
     <div className="adv-page">
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button className="secondary" onClick={onBack}>← Appointment Prep</button>
+        <button className="secondary" onClick={onBack}>{backLabel || '← Appointment Prep'}</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>Employee Work Schedule</span>
       </div>
 

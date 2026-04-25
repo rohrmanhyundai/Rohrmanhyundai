@@ -96,7 +96,7 @@ function PreviewModal({ doc, onClose }) {
 }
 
 // ── Main Document Library ─────────────────────────────────────────────────────
-export default function DocumentLibrary({ currentUser, currentRole, onBack }) {
+export default function DocumentLibrary({ currentUser, currentRole, onBack, backLabel }) {
   const canManage = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [docs, setDocs]               = useState([]);
@@ -184,7 +184,7 @@ export default function DocumentLibrary({ currentUser, currentRole, onBack }) {
       {/* Top bar */}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <button className="secondary" onClick={onBack}>← Back to Calendar</button>
+          <button className="secondary" onClick={onBack}>{backLabel || '← Back to Calendar'}</button>
           <span className="doc-lib-topbar-title">Document Library</span>
         </div>
       </div>

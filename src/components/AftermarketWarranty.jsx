@@ -970,7 +970,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
-export default function AftermarketWarranty({ currentUser, currentRole, onBack }) {
+export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel }) {
   const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1063,7 +1063,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
             setView('list');
           }
         }}>
-          {view === 'list' ? '← Back' : '← Contracts'}
+          {view === 'list' ? (backLabel || '← Back') : '← Contracts'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty</span>
 
