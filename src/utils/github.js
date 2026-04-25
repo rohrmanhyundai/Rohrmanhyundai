@@ -368,3 +368,40 @@ export async function saveSchedules(schedules) {
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
   await saveGitHubFile(headers, SCHEDULE_PATH, schedules, `Update work schedules ${new Date().toISOString()}`);
 }
+
+// ── Aftermarket Warranty Contracts ────────────────────────────────────────────
+const WARRANTY_INDEX_PATH = 'public/data/warranty/index.json';
+const warrantyContractPath = id => `public/data/warranty/${id}.json`;
+
+export async function loadWarrantyIndex() {
+  try {
+    const data = await readGitHubFile(authHeaders(), WARRANTY_INDEX_PATH);
+    if (data) return Array.isArray(data) ? data : [];
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/warranty/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function loadWarrantyContract(id) {
+  try {
+    const data = await readGitHubFile(authHeaders(), warrantyContractPath(id));
+    if (data) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/warranty/${id}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
+export async function saveWarrantyContract(contract, index) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  await saveGitHubFile(headers, warrantyContractPath(contract.id), contract,
+    `Warranty contract ${contract.id} - ${contract.customerName || 'unknown'}`);
+  await saveGitHubFile(headers, WARRANTY_INDEX_PATH, index, `Update warranty index ${new Date().toISOString()}`);
+}
