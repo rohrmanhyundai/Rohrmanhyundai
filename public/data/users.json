@@ -28,7 +28,7 @@
         "advisorRankBoard": true,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
+        "aftermarketWarranty": true
       }
     },
     {
