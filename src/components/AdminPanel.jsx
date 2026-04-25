@@ -996,11 +996,25 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.35)', borderRadius: 8, padding: '7px 12px', marginBottom: 10 }}>
               <span style={{ fontSize: 16 }}>📋</span>
               <span style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 13, flex: 1 }}>
-                {copiedDay.dateStr} copied — click any day below and paste all shifts
+                {copiedDay.dateStr} copied{editing && editing.dateStr !== copiedDay.dateStr ? ` — paste to ${editing.dateStr}?` : ' — select a day below to paste'}
               </span>
               <span style={{ fontSize: 12, color: '#64748b' }}>
                 {Object.keys(copiedDay.shifts).length} employee{Object.keys(copiedDay.shifts).length !== 1 ? 's' : ''}
               </span>
+              <button
+                onClick={() => editing && editing.dateStr !== copiedDay.dateStr && pasteCopiedDay(editing.dateStr)}
+                disabled={saving || !editing || editing.dateStr === copiedDay.dateStr}
+                style={{
+                  background: 'rgba(110,231,249,.2)',
+                  borderColor: 'rgba(110,231,249,.45)',
+                  color: '#6ee7f9',
+                  fontWeight: 700, padding: '4px 14px', fontSize: 13,
+                  opacity: (!editing || editing.dateStr === copiedDay.dateStr) ? 0.4 : 1,
+                  cursor: (editing && editing.dateStr !== copiedDay.dateStr) ? 'pointer' : 'default',
+                }}
+              >
+                {saving ? 'Pasting…' : '📥 Paste Shifts'}
+              </button>
               <button onClick={() => setCopiedDay(null)} className="secondary" style={{ padding: '2px 10px', fontSize: 12 }}>✕ Clear</button>
             </div>
           )}
@@ -1087,23 +1101,6 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                     {shiftBase}
                     {includeLunch && <><br /><span style={{ color: '#f59e0b', fontSize: 12 }}>Lunch: {lunchStr}</span></>}
                   </div>
-
-                  {/* Paste banner — shown when a day has been copied */}
-                  {copiedDay && editing.dateStr !== copiedDay.dateStr && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,.08)', border: '1px solid rgba(110,231,249,.3)', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
-                      <span style={{ fontSize: 14 }}>📋</span>
-                      <span style={{ color: '#6ee7f9', fontSize: 12, fontWeight: 700, flex: 1 }}>
-                        Paste all shifts from {copiedDay.dateStr}?
-                      </span>
-                      <button
-                        onClick={() => pasteCopiedDay(editing.dateStr)}
-                        disabled={saving}
-                        style={{ background: 'rgba(110,231,249,.2)', borderColor: 'rgba(110,231,249,.45)', color: '#6ee7f9', fontWeight: 700, padding: '4px 14px', fontSize: 13 }}
-                      >
-                        {saving ? 'Pasting…' : '📥 Paste Shifts'}
-                      </button>
-                    </div>
-                  )}
 
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button onClick={() => applyShift(timeShift)} disabled={saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
