@@ -2,7 +2,7 @@
   {
     "id": "modyxlewtqan",
     "createdAt": "2026-04-25T06:38:40.808Z",
-    "updatedAt": "2026-04-25T09:09:25.615Z",
+    "updatedAt": "2026-04-25T09:12:05.234Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "test  ",
     "customerPhone": "7654481502",
@@ -23,12 +23,6 @@
         "partNumber": "121232",
         "description": "test part ",
         "price": "120"
-      },
-      {
-        "id": "modyy3yhtr1l",
-        "partNumber": "123er",
-        "description": "part",
-        "price": "123"
       }
     ],
     "taxPct": "7",
