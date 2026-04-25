@@ -184,47 +184,51 @@ export default function App() {
   }
 
   if (page === 'tech-work-schedule') {
+    if (window.innerWidth < 600) return (
+      <MobileSchedule schedules={schedules} employeeNames={techList}
+        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
+        onBack={() => setPage('tech-resources')} />
+    );
     return (
-      <WorkSchedule
-        schedules={schedules}
-        employeeNames={techList}
-        currentUser={currentUser.toUpperCase()}
-        onBack={() => setPage('tech-resources')}
-      />
+      <WorkSchedule schedules={schedules} employeeNames={techList}
+        currentUser={currentUser.toUpperCase()} onBack={() => setPage('tech-resources')} />
     );
   }
 
   if (page === 'tech-view-advisor-schedule') {
+    if (window.innerWidth < 600) return (
+      <MobileSchedule schedules={schedules} employeeNames={advisorList}
+        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
+        onBack={() => setPage('tech-resources')} />
+    );
     return (
-      <WorkSchedule
-        schedules={schedules}
-        employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()}
-        onBack={() => setPage('tech-resources')}
-      />
+      <WorkSchedule schedules={schedules} employeeNames={advisorList}
+        currentUser={currentUser.toUpperCase()} onBack={() => setPage('tech-resources')} />
     );
   }
 
   if (page === 'advisor-view-tech-schedule') {
+    if (window.innerWidth < 600) return (
+      <MobileSchedule schedules={schedules} employeeNames={techList}
+        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
+        onBack={() => setPage('advisor-calendar')} />
+    );
     return (
-      <WorkSchedule
-        schedules={schedules}
-        employeeNames={techList}
-        currentUser={currentUser.toUpperCase()}
-        onBack={() => setPage('advisor-calendar')}
-      />
+      <WorkSchedule schedules={schedules} employeeNames={techList}
+        currentUser={currentUser.toUpperCase()} onBack={() => setPage('advisor-calendar')} />
     );
   }
 
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
+    if (window.innerWidth < 600) return (
+      <MobileSchedule schedules={schedules} employeeNames={advisorList}
+        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
+        onBack={() => setPage('advisor-calendar')} />
+    );
     return (
-      <WorkSchedule
-        schedules={schedules}
-        employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()}
-        onBack={() => setPage('advisor-calendar')}
-      />
+      <WorkSchedule schedules={schedules} employeeNames={advisorList}
+        currentUser={currentUser.toUpperCase()} onBack={() => setPage('advisor-calendar')} />
     );
   }
 
@@ -275,6 +279,7 @@ export default function App() {
           schedules={schedules}
           employeeNames={mobileEmployees}
           currentUser={currentUser.toUpperCase()}
+          title="Work Schedule"
           onBack={() => setPage('dashboard')}
         />
       );
