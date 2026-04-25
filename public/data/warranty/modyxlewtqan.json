@@ -1,7 +1,7 @@
 {
   "id": "modyxlewtqan",
   "createdAt": "2026-04-25T06:38:40.808Z",
-  "updatedAt": "2026-04-25T06:49:53.665Z",
+  "updatedAt": "2026-04-25T07:13:14.034Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "test  ",
   "customerPhone": "7654481502",
@@ -33,5 +33,6 @@
   "taxPct": "7",
   "deductible": "100",
   "notes": "",
-  "repairOrder": "770980"
+  "repairOrder": "770980",
+  "status": "approved"
 }
