@@ -866,8 +866,144 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
               )}
             </div>
           )}
+
+          {/* ── Live schedule overview ── */}
+          <ScheduleOverview
+            schedules={schedules}
+            users={users}
+            year={schedYear}
+            month={schedMonth}
+            activeEmployee={schedEmployee}
+            activeDate={editing?.dateStr}
+            onClickDay={dateStr => openDay(dateStr)}
+          />
         </div>
       </div>
     </details>
+  );
+}
+
+// ── Compact month overview shown below the editor ──────────────────────────
+const SCHED_DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function fmtShiftShort(val) {
+  if (!val) return null;
+  if (val === 'vacation') return { label: 'Vac', color: '#f59e0b' };
+  if (val === 'off')      return { label: 'Off', color: '#64748b' };
+  // "8:00 AM - 5:00 PM | Lunch 12:00 PM - 1:00 PM"
+  const m = val.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return { label: val.slice(0, 8), color: '#3dd6c3' };
+  const fmt = (h, ap) => `${h}${ap.toLowerCase()}`;
+  return { label: `${fmt(m[1], m[3])}-${fmt(m[4], m[6])}`, color: '#3dd6c3' };
+}
+
+function ScheduleOverview({ schedules, users, year, month, activeEmployee, activeDate, onClickDay }) {
+  const advisors = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase()).filter(Boolean);
+  const techs    = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).filter(Boolean);
+
+  if (advisors.length === 0 && techs.length === 0) return null;
+
+  const totalDays = new Date(year, month + 1, 0).getDate();
+  const HOLIDAY_KEY = '__HOLIDAY__';
+
+  // Build day rows: Mon–Sat only
+  const dayRows = [];
+  for (let d = 1; d <= totalDays; d++) {
+    const dow = new Date(year, month, d).getDay();
+    if (dow === 0) continue; // skip Sunday
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
+    dayRows.push({ d, dow, dateStr, isHoliday });
+  }
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  function OverviewTable({ label, color, emps }) {
+    if (emps.length === 0) return null;
+    return (
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{label}</div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 10 }}>
+            <thead>
+              <tr>
+                <th style={{ width: 36, textAlign: 'left', color: '#475569', fontWeight: 700, padding: '3px 4px', borderBottom: '1px solid rgba(255,255,255,.08)', whiteSpace: 'nowrap' }}>Day</th>
+                {emps.map(name => (
+                  <th key={name} style={{
+                    padding: '3px 4px', textAlign: 'center', whiteSpace: 'nowrap',
+                    color: name === activeEmployee ? color : '#64748b',
+                    fontWeight: name === activeEmployee ? 900 : 600,
+                    borderBottom: '1px solid rgba(255,255,255,.08)',
+                    background: name === activeEmployee ? `rgba(${color === '#3dd6c3' ? '61,214,195' : '167,139,250'},.07)` : 'transparent',
+                  }}>
+                    {name.split(' ')[0]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dayRows.map(({ d, dow, dateStr, isHoliday }) => {
+                const isToday   = dateStr === todayStr;
+                const isActive  = dateStr === activeDate;
+                const rowBg     = isActive  ? 'rgba(110,231,249,.1)'   :
+                                  isToday   ? 'rgba(61,214,195,.06)'    :
+                                  isHoliday ? 'rgba(239,68,68,.07)'     : 'transparent';
+                return (
+                  <tr
+                    key={dateStr}
+                    onClick={() => onClickDay(dateStr)}
+                    style={{ background: rowBg, cursor: 'pointer' }}
+                    onMouseEnter={e => e.currentTarget.style.background = isActive ? 'rgba(110,231,249,.14)' : 'rgba(255,255,255,.04)'}
+                    onMouseLeave={e => e.currentTarget.style.background = rowBg}
+                  >
+                    <td style={{ padding: '3px 4px', whiteSpace: 'nowrap', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+                      <span style={{ color: isToday ? '#3dd6c3' : isHoliday ? '#ef4444' : '#64748b', fontWeight: isToday ? 900 : 600 }}>
+                        {SCHED_DAYS_SHORT[dow]} {d}
+                      </span>
+                      {isHoliday && <span style={{ color: '#ef4444', marginLeft: 2 }}>🎉</span>}
+                    </td>
+                    {isHoliday ? (
+                      <td colSpan={emps.length} style={{ padding: '3px 4px', textAlign: 'center', color: '#ef4444', fontSize: 9, fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,.04)' }}>Holiday</td>
+                    ) : (
+                      emps.map(name => {
+                        const val = schedules[name]?.[dateStr];
+                        const fmt = fmtShiftShort(val);
+                        const isMe = name === activeEmployee;
+                        return (
+                          <td key={name} style={{
+                            padding: '2px 4px', textAlign: 'center',
+                            borderBottom: '1px solid rgba(255,255,255,.04)',
+                            background: isMe ? `rgba(${color === '#3dd6c3' ? '61,214,195' : '167,139,250'},.05)` : 'transparent',
+                          }}>
+                            {fmt ? (
+                              <span style={{ color: fmt.color, fontWeight: 700, whiteSpace: 'nowrap' }}>{fmt.label}</span>
+                            ) : (
+                              <span style={{ color: 'rgba(255,255,255,.1)' }}>—</span>
+                            )}
+                          </td>
+                        );
+                      })
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ marginTop: 24, borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 16 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 14 }}>
+        📊 Current Month Overview — click any row to edit that day
+      </div>
+      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <OverviewTable label="📅 Advisor Schedule" color="#3dd6c3" emps={advisors} />
+        <OverviewTable label="🔧 Tech Schedule"    color="#c4b5fd" emps={techs} />
+      </div>
+    </div>
   );
 }
