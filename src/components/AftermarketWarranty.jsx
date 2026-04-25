@@ -9,7 +9,7 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-const emptyPart = () => ({ id: genId(), partNumber: '', description: '', price: '' });
+const emptyPart = () => ({ id: genId(), partNumber: '', description: '', qty: '1', price: '' });
 
 const emptyForm = () => ({
   id: genId(),
@@ -47,7 +47,7 @@ function fmtDol(v) { return '$' + num(v).toFixed(2); }
 
 function calcTotals(form) {
   const laborTotal = num(form.laborRate) * (num(form.laborTime) + num(form.diagnosisTime));
-  const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.price), 0);
+  const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.qty || 1) * num(p.price), 0);
   const taxAmt = partsTotal * (num(form.taxPct) / 100);
   const deductible = num(form.deductible);
   const totalClaim = laborTotal + partsTotal + taxAmt - deductible;
@@ -205,18 +205,22 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
         {/* Parts */}
         <Section title="Parts">
           <div style={{ marginBottom: 8 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr 110px 36px', gap: 8, marginBottom: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr 72px 110px 36px', gap: 8, marginBottom: 6 }}>
               <label style={labelSt}>Part Number</label>
               <label style={labelSt}>Description</label>
-              <label style={labelSt}>Price ($)</label>
+              <label style={labelSt}>Qty</label>
+              <label style={labelSt}>Unit Price ($)</label>
               <div />
             </div>
             {form.parts.map(p => (
-              <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 110px 36px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+              <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 72px 110px 36px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
                 <input value={p.partNumber} onChange={e => setPart(p.id, 'partNumber', e.target.value)}
                   placeholder="Part #" style={{ ...inpSt, fontFamily: 'monospace', fontSize: 13 }} />
                 <input value={p.description} onChange={e => setPart(p.id, 'description', e.target.value)}
                   placeholder="Part description" style={inpSt} />
+                <input type="number" value={p.qty ?? '1'} min="1" step="1"
+                  onChange={e => setPart(p.id, 'qty', e.target.value)}
+                  style={{ ...inpSt, textAlign: 'center' }} />
                 <input type="number" value={p.price} onChange={e => setPart(p.id, 'price', e.target.value)}
                   placeholder="0.00" style={inpSt} />
                 <button onClick={() => removePart(p.id)} disabled={form.parts.length === 1}
@@ -517,21 +521,27 @@ function ContractDetail({ contract, onEdit, onBack }) {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'rgba(255,255,255,0.04)' }}>
-                  {['Part Number', 'Description', 'Price'].map(h => (
-                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                  {['Part Number', 'Description', 'Qty', 'Unit Price', 'Total'].map((h, i) => (
+                    <th key={h} style={{ padding: '8px 12px', textAlign: i >= 2 ? 'center' : 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {(contract.parts || []).map((p, i) => (
-                  <tr key={p.id || i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '8px 12px', fontSize: 13, color: '#94a3b8', fontFamily: 'monospace' }}>{p.partNumber || '—'}</td>
-                    <td style={{ padding: '8px 12px', fontSize: 13, color: '#e2e8f0' }}>{p.description || '—'}</td>
-                    <td style={{ padding: '8px 12px', fontSize: 13, color: '#e2e8f0', textAlign: 'right' }}>{fmtDol(num(p.price))}</td>
-                  </tr>
-                ))}
+                {(contract.parts || []).map((p, i) => {
+                  const qty = num(p.qty || 1);
+                  const lineTotal = qty * num(p.price);
+                  return (
+                    <tr key={p.id || i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '8px 12px', fontSize: 13, color: '#94a3b8', fontFamily: 'monospace' }}>{p.partNumber || '—'}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 13, color: '#e2e8f0' }}>{p.description || '—'}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 13, color: '#e2e8f0', textAlign: 'center' }}>{qty}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 13, color: '#94a3b8', textAlign: 'center' }}>{fmtDol(num(p.price))}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 13, color: '#e2e8f0', textAlign: 'right', fontWeight: 600 }}>{fmtDol(lineTotal)}</td>
+                    </tr>
+                  );
+                })}
                 <tr>
-                  <td colSpan={2} style={{ padding: '8px 12px', fontWeight: 700, color: '#64748b', fontSize: 13, textAlign: 'right' }}>Parts Total</td>
+                  <td colSpan={4} style={{ padding: '8px 12px', fontWeight: 700, color: '#64748b', fontSize: 13, textAlign: 'right' }}>Parts Total</td>
                   <td style={{ padding: '8px 12px', fontWeight: 800, color: '#3dd6c3', fontSize: 14, textAlign: 'right' }}>{fmtDol(partsTotal)}</td>
                 </tr>
               </tbody>
@@ -712,19 +722,27 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: '#fafafa' }}>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'left', borderBottom: '1px solid #e2e8f0', width: '22%' }}>Part Number</th>
+                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'left', borderBottom: '1px solid #e2e8f0', width: '20%' }}>Part Number</th>
                 <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Description</th>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right', borderBottom: '1px solid #e2e8f0', width: '14%' }}>Price</th>
+                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center', borderBottom: '1px solid #e2e8f0', width: '8%' }}>Qty</th>
+                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right', borderBottom: '1px solid #e2e8f0', width: '13%' }}>Unit Price</th>
+                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right', borderBottom: '1px solid #e2e8f0', width: '13%' }}>Total</th>
               </tr>
             </thead>
             <tbody>
-              {(contract.parts || []).map((p, i) => (
-                <tr key={p.id || i} style={{ borderBottom: '1px solid #f1f5f9', background: i % 2 === 1 ? '#fafafa' : '#fff' }}>
-                  <td style={{ padding: '9px 14px', fontSize: 12, fontFamily: 'monospace', color: '#334155', wordBreak: 'break-all' }}>{p.partNumber || '—'}</td>
-                  <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a' }}>{p.description || '—'}</td>
-                  <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a', textAlign: 'right', fontWeight: 600 }}>{fmtDol(num(p.price))}</td>
-                </tr>
-              ))}
+              {(contract.parts || []).map((p, i) => {
+                const qty = num(p.qty || 1);
+                const lineTotal = qty * num(p.price);
+                return (
+                  <tr key={p.id || i} style={{ borderBottom: '1px solid #f1f5f9', background: i % 2 === 1 ? '#fafafa' : '#fff' }}>
+                    <td style={{ padding: '9px 14px', fontSize: 12, fontFamily: 'monospace', color: '#334155', wordBreak: 'break-all' }}>{p.partNumber || '—'}</td>
+                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a' }}>{p.description || '—'}</td>
+                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#334155', textAlign: 'center' }}>{qty}</td>
+                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#475569', textAlign: 'right' }}>{fmtDol(num(p.price))}</td>
+                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a', textAlign: 'right', fontWeight: 600 }}>{fmtDol(lineTotal)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
