@@ -1,7 +1,7 @@
 {
   "id": "moe07dfu26pc",
   "createdAt": "2026-04-25T07:14:16.651Z",
-  "updatedAt": "2026-04-25T08:11:32.126Z",
+  "updatedAt": "2026-04-25T08:12:02.043Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "don",
   "customerPhone": "7654481502",
@@ -36,5 +36,6 @@
   "notes": "",
   "status": "waiting",
   "paymentDate": "",
-  "repairsFinished": true
+  "repairsFinished": true,
+  "repairsFinishedDate": ""
 }
