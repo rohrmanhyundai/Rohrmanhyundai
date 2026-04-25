@@ -49,7 +49,7 @@
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": true,
+        "advisorCalendar": false,
         "documentLibrary": true,
         "advisorRankBoard": false,
         "surveyReports": false,
