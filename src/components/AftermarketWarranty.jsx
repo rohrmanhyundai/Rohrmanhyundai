@@ -261,31 +261,33 @@ function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
 
-          {/* Status buttons */}
-          <button
-            onClick={() => setForm(f => ({ ...f, status: 'approved' }))}
-            style={{ background: form.status === 'approved' ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.08)', border: `1px solid ${form.status === 'approved' ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.25)'}`, color: '#4ade80', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-            ✅ Approved Claim
-          </button>
-          <button
-            onClick={() => setForm(f => ({ ...f, status: 'waiting', paymentDate: '' }))}
-            style={{ background: form.status === 'waiting' ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.08)', border: `1px solid ${form.status === 'waiting' ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.25)'}`, color: '#fbbf24', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-            ⏳ Waiting for Payment
-          </button>
-          <button
-            onClick={() => setForm(f => ({ ...f, status: 'paid' }))}
-            style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-            💳 Claim Paid
-          </button>
+          {/* Status & Delete buttons — admin/manager only */}
+          {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
+            <button
+              onClick={() => setForm(f => ({ ...f, status: f.status === 'approved' ? '' : 'approved' }))}
+              style={{ background: form.status === 'approved' ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.08)', border: `1px solid ${form.status === 'approved' ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.25)'}`, color: '#4ade80', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              ✅ Approved Claim
+            </button>
+            <button
+              onClick={() => setForm(f => ({ ...f, status: f.status === 'waiting' ? '' : 'waiting', paymentDate: '' }))}
+              style={{ background: form.status === 'waiting' ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.08)', border: `1px solid ${form.status === 'waiting' ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.25)'}`, color: '#fbbf24', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              ⏳ Waiting for Payment
+            </button>
+            <button
+              onClick={() => setForm(f => ({ ...f, status: f.status === 'paid' ? '' : 'paid', paymentDate: f.status === 'paid' ? '' : f.paymentDate }))}
+              style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              💳 Claim Paid
+            </button>
 
-          {/* Payment date — shown only when Claim Paid is selected */}
-          {form.status === 'paid' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 14px' }}>
-              <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
-              <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
-                style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
-            </div>
-          )}
+            {/* Payment date — shown only when Claim Paid is selected */}
+            {form.status === 'paid' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 14px' }}>
+                <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
+                <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
+                  style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
+              </div>
+            )}
+          </>)}
 
           <div style={{ flex: 1 }} />
 
