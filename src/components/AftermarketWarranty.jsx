@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract } from '../utils/github';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
@@ -329,16 +331,62 @@ function PrintRow({ label, value, bold = false }) {
 function ContractDetail({ contract, onEdit, onBack }) {
   const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
+  const pdfRef = useRef(null);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
 
   function handlePrint() {
     window.print();
   }
 
-  function handleSavePDF() {
-    const prev = document.title;
-    document.title = `Warranty_${contract.customerName || 'Contract'}_RO${contract.repairOrder || contract.claimNumber || ''}`;
-    window.print();
-    setTimeout(() => { document.title = prev; }, 2000);
+  async function handleSavePDF() {
+    if (!pdfRef.current) return;
+    setGeneratingPDF(true);
+    try {
+      // Temporarily make the print div visible off-screen so html2canvas can capture it
+      const el = pdfRef.current;
+      el.style.display = 'block';
+      el.style.position = 'fixed';
+      el.style.left = '-9999px';
+      el.style.top = '0';
+      el.style.width = '816px'; // letter width at 96dpi
+      el.style.background = '#fff';
+      el.style.padding = '40px';
+      el.style.zIndex = '-1';
+
+      await new Promise(r => setTimeout(r, 100)); // let browser render
+
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+
+      // Restore hidden
+      el.style.display = '';
+      el.style.position = '';
+      el.style.left = '';
+      el.style.top = '';
+      el.style.width = '';
+      el.style.padding = '';
+      el.style.zIndex = '';
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const imgH = (canvas.height * pageW) / canvas.width;
+
+      // If content spans multiple pages
+      let y = 0;
+      while (y < imgH) {
+        if (y > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, -y, pageW, imgH);
+        y += pageH;
+      }
+
+      const filename = `Warranty_${contract.customerName || 'Contract'}_RO${contract.repairOrder || contract.claimNumber || ''}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      alert('PDF generation failed: ' + err.message);
+    } finally {
+      setGeneratingPDF(false);
+    }
   }
 
   return (
@@ -368,14 +416,14 @@ function ContractDetail({ contract, onEdit, onBack }) {
           style={{ background: 'rgba(148,163,184,0.12)', border: '1px solid rgba(148,163,184,0.3)', color: '#94a3b8', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 600 }}>
           🖨 Print
         </button>
-        <button onClick={handleSavePDF}
-          style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.2),rgba(110,231,249,0.15))', border: '1px solid rgba(61,214,195,0.35)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 600 }}>
-          ⬇ Save PDF
+        <button onClick={handleSavePDF} disabled={generatingPDF}
+          style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.2),rgba(110,231,249,0.15))', border: '1px solid rgba(61,214,195,0.35)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', cursor: generatingPDF ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: generatingPDF ? 0.7 : 1 }}>
+          {generatingPDF ? '⏳ Generating…' : '⬇ Save PDF'}
         </button>
       </div>
 
-      {/* Print-only document */}
-      <div className="amw-print-doc">
+      {/* Print-only document (also used for PDF capture via ref) */}
+      <div className="amw-print-doc" ref={pdfRef}>
         <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} totalClaim={totalClaim} totalDue={totalDue} date={date} />
       </div>
 
