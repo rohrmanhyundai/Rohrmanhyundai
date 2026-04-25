@@ -45,6 +45,12 @@
       "password": "[REDACTED]",
       "role": "admin",
       "canEditDashboard": true
+    },
+    {
+      "username": "Brandon",
+      "password": "[REDACTED]",
+      "role": "admin",
+      "canEditDashboard": true
     }
   ],
   "sharedSaveCode": ""
