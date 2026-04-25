@@ -1,5 +1,20 @@
 [
   {
+    "id": "moeqgurgszv7",
+    "label": "Employee Handbook   IN",
+    "filename": "moeqgurgszv7-Employee_Handbook_-_IN.pdf",
+    "fileType": "pdf",
+    "size": 320422,
+    "uploadedBy": "admin",
+    "uploadedAt": "2026-04-25T19:29:30.294Z",
+    "allowedRoles": [
+      "technician",
+      "service manager",
+      "parts",
+      "general manager"
+    ]
+  },
+  {
     "id": "mo9397p8jz2n",
     "label": "Original Owner Form",
     "filename": "mo9397p8jz2n-img20260421_16124652.pdf",
