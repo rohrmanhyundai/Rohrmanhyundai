@@ -1,7 +1,7 @@
 {
   "id": "moe07dfu26pc",
   "createdAt": "2026-04-25T07:14:16.651Z",
-  "updatedAt": "2026-04-25T07:17:11.241Z",
+  "updatedAt": "2026-04-25T07:28:01.140Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "don",
   "customerPhone": "7654481502",
@@ -34,6 +34,6 @@
   "taxPct": "7",
   "deductible": "500",
   "notes": "",
-  "status": "approved",
+  "status": "",
   "paymentDate": ""
 }
