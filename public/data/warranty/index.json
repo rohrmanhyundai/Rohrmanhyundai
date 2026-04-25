@@ -1,50 +1,5 @@
 [
   {
-    "id": "moevim86swrr",
-    "createdAt": "2026-04-25T21:50:49.350Z",
-    "updatedAt": "2026-04-25T21:55:13.122Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "john doe",
-    "customerPhone": "23223332",
-    "repairOrder": "7771717",
-    "vin": "5NPEC4AB3DH667268",
-    "vehicleYear": "2013",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Sonata",
-    "mileage": "123342",
-    "warrantyCompany": "jo blow",
-    "warrantyPhone": "7654481502",
-    "claimNumber": "",
-    "laborRate": "175",
-    "laborTime": "13",
-    "diagnosisTime": "1",
-    "parts": [
-      {
-        "id": "moevim86szmi",
-        "partNumber": "2332",
-        "description": "ENGINE ",
-        "qty": "1",
-        "price": "7623.98"
-      },
-      {
-        "id": "moevmabxerge",
-        "partNumber": "909",
-        "description": "OIL",
-        "qty": "4",
-        "price": "10"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "",
-    "notes": "",
-    "approved": true,
-    "waiting": true,
-    "paid": true,
-    "paymentDate": "2026-04-25",
-    "repairsFinished": false,
-    "repairsFinishedDate": ""
-  },
-  {
     "id": "moe2o3z5g7cl",
     "createdAt": "2026-04-25T08:23:16.769Z",
     "updatedAt": "2026-04-25T08:30:45.103Z",
