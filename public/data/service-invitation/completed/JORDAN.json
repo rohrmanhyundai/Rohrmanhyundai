@@ -12,7 +12,8 @@
     "satisfied": "yes",
     "notes": "very happy customer",
     "submittedAt": "2026-04-25T17:17:35.881Z",
-    "submittedBy": "ADMIN"
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
   },
   {
     "consultant": "JORDAN TROXEL",
