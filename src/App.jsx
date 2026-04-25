@@ -270,19 +270,24 @@ export default function App() {
 
   // Phone-only mobile view — tablet/desktop/TV use the existing scaled layout unchanged
   if (window.innerWidth < 600) {
-    if (page === 'mobile-schedule') {
-      const mobileEmployees = currentRole === 'advisor' ? advisorList
-        : currentRole === 'technician' ? techList
-        : users.map(u => u.username.toUpperCase());
-      const mobileTitle = currentRole === 'advisor' ? 'Advisor Schedule'
-        : currentRole === 'technician' ? 'Tech Schedule'
-        : 'Work Schedule';
+    if (page === 'mobile-advisor-schedule') {
       return (
         <MobileSchedule
           schedules={schedules}
-          employeeNames={mobileEmployees}
+          employeeNames={advisorList}
           currentUser={currentUser.toUpperCase()}
-          title={mobileTitle}
+          title="Advisor Schedule"
+          onBack={() => setPage('dashboard')}
+        />
+      );
+    }
+    if (page === 'mobile-tech-schedule') {
+      return (
+        <MobileSchedule
+          schedules={schedules}
+          employeeNames={techList}
+          currentUser={currentUser.toUpperCase()}
+          title="Tech Schedule"
           onBack={() => setPage('dashboard')}
         />
       );
@@ -296,7 +301,8 @@ export default function App() {
           currentRole={currentRole} canEditDashboard={canEditDashboard}
           onLogin={handleLogin} onLogout={handleLogout}
           onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')} onTechnician={() => setPage('tech-resources')}
-          onSchedule={() => setPage('mobile-schedule')}
+          onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
+          onTechSchedule={() => setPage('mobile-tech-schedule')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
