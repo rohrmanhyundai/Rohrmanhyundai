@@ -341,6 +341,32 @@ export async function deleteDocument(doc) {
   return newIndex;
 }
 
+// ── Service Invitation Completed Reviews ───────────────────────────────────────
+const COMPLETED_BASE = 'public/data/service-invitation/completed';
+
+export async function loadCompletedReviews(advisorName) {
+  const name = advisorName.toUpperCase();
+  const path = `${COMPLETED_BASE}/${name}.json`;
+  try {
+    const data = await readGitHubFile(authHeaders(), path);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/service-invitation/completed/${name}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function saveCompletedReviews(advisorName, reviews) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const path = `${COMPLETED_BASE}/${advisorName.toUpperCase()}.json`;
+  await saveGitHubFile(headers, path, reviews, `Survey reviews updated: ${advisorName}`);
+  return reviews;
+}
+
 // ── Service Invitation Data ────────────────────────────────────────────────────
 const SI_PATH = 'public/data/service-invitation/data.json';
 
