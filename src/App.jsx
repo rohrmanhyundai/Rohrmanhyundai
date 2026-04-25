@@ -16,6 +16,7 @@ import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
+import SurveyReports from './components/SurveyReports';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -292,9 +293,19 @@ export default function App() {
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
+        onSurveyReports={() => setPage('survey-reports')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
+      />
+    );
+  }
+
+  if (page === 'survey-reports') {
+    return (
+      <SurveyReports
+        advisorList={advisorList}
+        onBack={() => setPage('advisor-calendar')}
       />
     );
   }
