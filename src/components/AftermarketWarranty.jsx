@@ -320,8 +320,8 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
 function PrintRow({ label, value, bold = false }) {
   return (
     <tr>
-      <td style={{ padding: '5px 10px', fontWeight: 600, color: '#555', fontSize: 13, whiteSpace: 'nowrap', verticalAlign: 'top' }}>{label}</td>
-      <td style={{ padding: '5px 10px', color: bold ? '#000' : '#222', fontWeight: bold ? 800 : 400, fontSize: 13 }}>{value}</td>
+      <td style={{ padding: '5px 10px', fontWeight: 600, color: '#555', fontSize: 13, verticalAlign: 'top', width: '38%' }}>{label}</td>
+      <td style={{ padding: '5px 10px', color: bold ? '#000' : '#222', fontWeight: bold ? 800 : 400, fontSize: 13, wordBreak: 'break-all' }}>{value}</td>
     </tr>
   );
 }
@@ -329,6 +329,17 @@ function PrintRow({ label, value, bold = false }) {
 function ContractDetail({ contract, onEdit, onBack }) {
   const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
+
+  function handlePrint() {
+    window.print();
+  }
+
+  function handleSavePDF() {
+    const prev = document.title;
+    document.title = `Warranty_${contract.customerName || 'Contract'}_RO${contract.repairOrder || contract.claimNumber || ''}`;
+    window.print();
+    setTimeout(() => { document.title = prev; }, 2000);
+  }
 
   return (
     <>
@@ -338,7 +349,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
           .amw-no-print { display: none !important; }
           .amw-print-doc { display: block !important; padding: 0 !important; }
           .amw-screen-preview { display: none !important; }
-          @page { size: letter portrait; margin: 15mm 18mm; }
+          @page { size: letter portrait; margin: 12mm 15mm; }
         }
         .amw-print-doc { display: none; }
       `}</style>
@@ -353,9 +364,13 @@ function ContractDetail({ contract, onEdit, onBack }) {
           style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.3)', color: '#fbbf24', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 600 }}>
           ✏️ Edit
         </button>
-        <button onClick={() => window.print()}
+        <button onClick={handlePrint}
+          style={{ background: 'rgba(148,163,184,0.12)', border: '1px solid rgba(148,163,184,0.3)', color: '#94a3b8', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 600 }}>
+          🖨 Print
+        </button>
+        <button onClick={handleSavePDF}
           style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.2),rgba(110,231,249,0.15))', border: '1px solid rgba(61,214,195,0.35)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 600 }}>
-          🖨 Print / Save PDF
+          ⬇ Save PDF
         </button>
       </div>
 
@@ -495,7 +510,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 16 }}>
         <div>
           <div style={h3St}>Customer</div>
-          <table style={{ fontSize: 12, width: '100%' }}>
+          <table style={{ fontSize: 12, width: '100%', tableLayout: 'fixed', wordBreak: 'break-word' }}>
             <tbody>
               <PrintRow label="Name:" value={contract.customerName} />
               <PrintRow label="Phone:" value={contract.customerPhone} />
@@ -505,7 +520,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
         </div>
         <div>
           <div style={h3St}>Vehicle</div>
-          <table style={{ fontSize: 12, width: '100%' }}>
+          <table style={{ fontSize: 12, width: '100%', tableLayout: 'fixed', wordBreak: 'break-word' }}>
             <tbody>
               <PrintRow label="VIN:" value={contract.vin} />
               <PrintRow label="Year:" value={contract.vehicleYear} />
@@ -517,7 +532,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
         </div>
         <div>
           <div style={h3St}>Warranty Company</div>
-          <table style={{ fontSize: 12, width: '100%' }}>
+          <table style={{ fontSize: 12, width: '100%', tableLayout: 'fixed', wordBreak: 'break-word' }}>
             <tbody>
               <PrintRow label="Company:" value={contract.warrantyCompany} />
               <PrintRow label="Phone:" value={contract.warrantyPhone} />
