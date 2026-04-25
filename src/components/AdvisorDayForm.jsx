@@ -37,16 +37,22 @@ function findCol(row, ...candidates) {
 }
 
 function parseXlsxRows(rawRows) {
-  return rawRows.map(row => ({
-    consultant:     findCol(row, 'Service Consultant Name', 'Service Consultant', 'Consultant', 'SA Name', 'Advisor Name', 'Advisor'),
-    customerName:   findCol(row, 'Customer Name', 'Owner Name', 'Customer', 'Name', 'Owner'),
-    repairOrder:    findCol(row, 'RO Number', 'R/O Number', 'Repair Order', 'RO#', 'R/O No.', 'RO No', 'Repair Order Number', 'RO'),
-    vin:            findCol(row, 'VIN', 'VIN Number', 'Vin'),
-    model:          findCol(row, 'Model', 'Model Name', 'Vehicle Model', 'Year Model', 'Make Model', 'Vehicle Description', 'Model Year'),
-    serviceDate:    findCol(row, 'Service Date', 'RO Close Date', 'Close Date', 'Repair Order Date', 'RO Date', 'Completed Date', 'In Service Date'),
-    invitationDate: findCol(row, 'Invitation Date', 'Survey Date', 'Survey Sent Date', 'Sent Date', 'Delivery Date', 'Email Date'),
-    status:         findCol(row, 'Status', 'Survey Status', 'Delivery Status', 'Email Status', 'Survey Delivery Status'),
-  }));
+  return rawRows.map(row => {
+    const firstName = findCol(row, 'Customer First Name', 'First Name', 'Owner First Name');
+    const lastName  = findCol(row, 'Customer Last Name',  'Last Name',  'Owner Last Name');
+    const fullName  = [firstName, lastName].filter(Boolean).join(' ').trim()
+                   || findCol(row, 'Customer Name', 'Owner Name', 'Customer', 'Name', 'Owner', 'Contact Name');
+    return {
+      consultant:     findCol(row, 'Service Consultant Name', 'Service Consultant', 'Consultant', 'SA Name', 'Advisor Name', 'Advisor'),
+      customerName:   fullName,
+      repairOrder:    findCol(row, 'RO Number', 'R/O Number', 'Repair Order', 'RO#', 'R/O No.', 'RO No', 'Repair Order Number', 'RO'),
+      vin:            findCol(row, 'VIN', 'VIN Number', 'Vin'),
+      model:          findCol(row, 'Model', 'Model Name', 'Vehicle Model', 'Year Model', 'Make Model', 'Vehicle Description', 'Model Year'),
+      serviceDate:    findCol(row, 'Service Date', 'RO Close Date', 'Close Date', 'Repair Order Date', 'RO Date', 'Completed Date', 'In Service Date'),
+      invitationDate: findCol(row, 'Invitation Date', 'Survey Date', 'Survey Sent Date', 'Sent Date', 'Delivery Date', 'Email Date'),
+      status:         findCol(row, 'Status', 'Survey Status', 'Delivery Status', 'Email Status', 'Survey Delivery Status'),
+    };
+  });
 }
 
 function matchesAdvisor(consultant, advisorName) {
