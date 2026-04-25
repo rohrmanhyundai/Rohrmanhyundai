@@ -341,6 +341,29 @@ export async function deleteDocument(doc) {
   return newIndex;
 }
 
+// ── Service Invitation Data ────────────────────────────────────────────────────
+const SI_PATH = 'public/data/service-invitation/data.json';
+
+export async function loadServiceInvitations() {
+  try {
+    const data = await readGitHubFile(authHeaders(), SI_PATH);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/service-invitation/data.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function saveServiceInvitations(rows) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  await saveGitHubFile(headers, SI_PATH, rows, 'Update service invitation data');
+  return rows;
+}
+
 // ── Advisor note index ─────────────────────────────────────────────────────────
 
 export async function loadAdvisorNoteIndex(advisorName) {
