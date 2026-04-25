@@ -64,7 +64,7 @@ function fmtShiftStr(val) {
   return { text: `${fmt(m[1],m[2],m[3])}–${fmt(m[4],m[5],m[6])}${lunch}`, cls: 'shift' };
 }
 
-function openPrintWindow({ year, month, employeeNames, schedules, title }) {
+function buildScheduleHTML({ year, month, employeeNames, schedules, title }, forPrint) {
   const HOLIDAY_KEY = '__HOLIDAY__';
   const totalDays = new Date(year, month + 1, 0).getDate();
   const today = new Date();
@@ -231,14 +231,40 @@ function openPrintWindow({ year, month, employeeNames, schedules, title }) {
     <div class="footer-note">Bob Rohrman Hyundai — Confidential</div>
   </div>
 
-  <script>window.onload = function(){ window.print(); }<\/script>
+  ${forPrint ? '<script>window.onload=function(){window.focus();window.print();}<\/script>' : ''}
 </body>
 </html>`;
+  return html;
+}
 
-  const win = window.open('', '_blank', 'width=1100,height=750');
-  if (!win) { alert('Please allow pop-ups for this site to use Print / Download PDF.'); return; }
-  win.document.write(html);
-  win.document.close();
+// Print via hidden iframe — no popup permission needed
+function printSchedule(opts) {
+  const html = buildScheduleHTML(opts, true);
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;left:-9999px;top:-9999px;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  iframe.contentWindow.focus();
+  setTimeout(() => {
+    iframe.contentWindow.print();
+    setTimeout(() => document.body.removeChild(iframe), 2000);
+  }, 500);
+}
+
+// Download as .html file — opens beautifully in any browser, save as PDF from there
+function downloadSchedule(opts) {
+  const html = buildScheduleHTML(opts, false);
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const monthName = MONTHS[opts.month];
+  a.href     = url;
+  a.download = `${opts.title || 'Schedule'}-${monthName}-${opts.year}.html`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 500);
 }
 
 function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack, title }) {
@@ -276,9 +302,13 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — {title || 'Work Schedule'}</span>
         <button
-          onClick={() => openPrintWindow({ year, month, employeeNames, schedules, title })}
+          onClick={() => printSchedule({ year, month, employeeNames, schedules, title })}
           style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}
-        >🖨 Print / Download PDF</button>
+        >🖨 Print</button>
+        <button
+          onClick={() => downloadSchedule({ year, month, employeeNames, schedules, title })}
+          style={{ background: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}
+        >⬇ Download</button>
       </div>
 
       {/* ── Screen calendar ── */}
