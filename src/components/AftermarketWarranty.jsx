@@ -353,7 +353,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
       el.style.padding = '0';
       el.style.zIndex = '-1';
 
-      await new Promise(r => setTimeout(r, 100)); // let browser render
+      await new Promise(r => setTimeout(r, 150)); // let browser render
 
       const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
 
@@ -366,21 +366,40 @@ function ContractDetail({ contract, onEdit, onBack }) {
       el.style.padding = '';
       el.style.zIndex = '';
 
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const imgH = (canvas.height * pageW) / canvas.width;
+      const pageW = pdf.internal.pageSize.getWidth();   // 215.9mm
+      const pageH = pdf.internal.pageSize.getHeight();  // 279.4mm
+      const margin = 10; // mm on all sides
+      const contentW = pageW - 2 * margin;              // usable width per page
+      const contentH = pageH - 2 * margin;              // usable height per page
 
-      // If content spans multiple pages
-      let y = 0;
-      while (y < imgH) {
-        if (y > 0) pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, -y, pageW, imgH);
-        y += pageH;
+      // How many canvas pixels equal one mm of content width?
+      const pxPerMm = canvas.width / contentW;
+      // Height of one page worth of content in canvas pixels
+      const pageHeightPx = Math.round(contentH * pxPerMm);
+      const totalPages = Math.ceil(canvas.height / pageHeightPx);
+
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) pdf.addPage();
+
+        const startY = page * pageHeightPx;
+        const sliceH = Math.min(pageHeightPx, canvas.height - startY);
+
+        // Crop canvas to just this page's slice
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = pageHeightPx; // always full page height (white fills the rest)
+        const ctx = pageCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        ctx.drawImage(canvas, 0, startY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+        const pageImgData = pageCanvas.toDataURL('image/png');
+        // Place cropped image inside the margin area
+        pdf.addImage(pageImgData, 'PNG', margin, margin, contentW, contentH);
       }
 
-      const filename = `Warranty_${contract.customerName || 'Contract'}_RO${contract.repairOrder || contract.claimNumber || ''}.pdf`;
+      const filename = `Warranty_${(contract.customerName || 'Contract').replace(/\s+/g,'_')}_RO${contract.repairOrder || contract.claimNumber || ''}.pdf`;
       pdf.save(filename);
     } catch (err) {
       alert('PDF generation failed: ' + err.message);
