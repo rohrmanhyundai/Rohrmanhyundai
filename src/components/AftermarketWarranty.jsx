@@ -32,6 +32,7 @@ const emptyForm = () => ({
   taxPct: '',
   deductible: '',
   notes: '',
+  status: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -94,7 +95,7 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
 }
 
 // ── Contract Form ─────────────────────────────────────────────────────────────
-function ContractForm({ initial, onSave, onCancel, saving }) {
+function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole }) {
   const [form, setForm] = useState(() => initial ? { ...initial } : emptyForm());
   const [vinLoading, setVinLoading] = useState(false);
   const [vinError, setVinError] = useState('');
@@ -257,7 +258,35 @@ function ContractForm({ initial, onSave, onCancel, saving }) {
         </Section>
 
         {/* Actions */}
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 8 }}>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+
+          {/* Status buttons */}
+          <button
+            onClick={() => setForm(f => ({ ...f, status: 'approved' }))}
+            style={{ background: form.status === 'approved' ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.08)', border: `1px solid ${form.status === 'approved' ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.25)'}`, color: '#4ade80', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+            ✅ Approved Claim
+          </button>
+          <button
+            onClick={() => setForm(f => ({ ...f, status: 'paid' }))}
+            style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+            💰 Claim Paid
+          </button>
+          <button
+            onClick={() => setForm(f => ({ ...f, status: 'waiting' }))}
+            style={{ background: form.status === 'waiting' ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.08)', border: `1px solid ${form.status === 'waiting' ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.25)'}`, color: '#fbbf24', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+            ⏳ Waiting for Payment
+          </button>
+
+          <div style={{ flex: 1 }} />
+
+          {/* Delete — admin/manager only */}
+          {(currentRole === 'admin' || (currentRole || '').includes('manager')) && onDelete && (
+            <button onClick={onDelete}
+              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              🗑 Delete Claim
+            </button>
+          )}
+
           <button onClick={onCancel} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#94a3b8', borderRadius: 10, padding: '11px 26px', cursor: 'pointer', fontSize: 14 }}>
             Cancel
           </button>
@@ -672,6 +701,23 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
     setView('form');
   }
 
+  async function handleDelete() {
+    if (!activeContract) return;
+    if (!window.confirm(`Delete contract for ${activeContract.customerName || 'this customer'}? This cannot be undone.`)) return;
+    setSaving(true); setSaveError('');
+    try {
+      const newContracts = contracts.filter(c => c.id !== activeContract.id);
+      await saveWarrantyContract(activeContract, newContracts);
+      setContracts(newContracts);
+      setActiveContract(null);
+      setView('list');
+    } catch (err) {
+      setSaveError(err.message || 'Delete failed');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 
@@ -701,7 +747,9 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
           initial={editingContract}
           onSave={handleSave}
           onCancel={() => setView(activeContract ? 'detail' : 'list')}
+          onDelete={editingContract ? handleDelete : null}
           saving={saving}
+          currentRole={currentRole}
         />
       )}
       {view === 'detail' && activeContract && (
