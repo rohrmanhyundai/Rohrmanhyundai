@@ -308,14 +308,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
   function updateDraft(ro, field, value) {
     setReviewDrafts(prev => ({
       ...prev,
-      [ro]: { contacted: null, satisfied: null, notes: '', ...prev[ro], [field]: value },
+      [ro]: { contacted: null, satisfied: null, phone: '', notes: '', ...prev[ro], [field]: value },
     }));
   }
 
   // ── Submit a completed review ─────────────────────────────────────────────
   async function handleSubmitReview(survey) {
     const draft = reviewDrafts[survey.repairOrder] || {};
-    if (!draft.contacted || !draft.satisfied) return;
+    if (!draft.contacted || !draft.satisfied || !draft.phone) return;
     setSubmittingRO(survey.repairOrder);
     try {
       if (!await ensureToken('Enter save code to submit this review:')) { setSubmittingRO(null); return; }
@@ -323,6 +323,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
         ...survey,
         contacted:   draft.contacted,
         satisfied:   draft.satisfied,
+        phone:       draft.phone || '',
         notes:       draft.notes || '',
         submittedAt: new Date().toISOString(),
         submittedBy: ownAdvisor,
@@ -550,7 +551,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                 </div>
                 {pendingSurveys.map(survey => {
                   const draft = reviewDrafts[survey.repairOrder] || {};
-                  const canSubmit = !!(draft.contacted && draft.satisfied);
+                  const canSubmit = !!(draft.contacted && draft.satisfied && draft.phone && draft.phone.trim());
                   const isSubmitting = submittingRO === survey.repairOrder;
 
                   return (
@@ -599,6 +600,25 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                           </div>
                         </div>
 
+                        {/* Phone Number */}
+                        <div style={{ minWidth: 150 }}>
+                          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
+                            Phone Number {draft.phone && draft.phone.trim() && <span style={{ color: '#86efac' }}>✓</span>}
+                          </div>
+                          <input
+                            type="tel"
+                            value={draft.phone || ''}
+                            onChange={e => updateDraft(survey.repairOrder, 'phone', e.target.value)}
+                            placeholder="(555) 555-5555"
+                            style={{
+                              width: '100%', background: 'rgba(255,255,255,.05)',
+                              border: `1px solid ${draft.phone && draft.phone.trim() ? 'rgba(34,197,94,.4)' : 'rgba(255,255,255,.1)'}`,
+                              borderRadius: 8, color: '#e2e8f0', fontSize: 13,
+                              padding: '8px 10px', fontFamily: 'inherit', boxSizing: 'border-box',
+                            }}
+                          />
+                        </div>
+
                         {/* Notes */}
                         <div style={{ flex: 1, minWidth: 180 }}>
                           <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>Notes</div>
@@ -635,7 +655,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                           )}
                           {!canSubmit && (
                             <div style={{ fontSize: 11, color: '#334155', fontStyle: 'italic', paddingBottom: 6 }}>
-                              Answer both questions to unlock submit
+                              {!draft.contacted ? 'Select Contacted' : !draft.satisfied ? 'Select Customer Satisfied' : 'Enter Phone Number'} to unlock submit
                             </div>
                           )}
                         </div>
@@ -668,6 +688,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <th>REPAIR ORDER</th>
                         <th>MODEL</th>
                         <th>SERVICE DATE</th>
+                        <th>PHONE</th>
                         <th>CONTACTED</th>
                         <th>SATISFIED</th>
                         <th>NOTES</th>
@@ -681,6 +702,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                           <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9' }}>{row.repairOrder || '—'}</td>
                           <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
                           <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.serviceDate)}</td>
+                          <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9', whiteSpace: 'nowrap' }}>{row.phone || '—'}</td>
                           <td>
                             <span style={{
                               background: row.contacted === 'yes' ? 'rgba(34,197,94,.15)' : 'rgba(251,191,36,.15)',

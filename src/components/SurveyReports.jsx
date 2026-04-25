@@ -186,6 +186,7 @@ export default function SurveyReports({ advisorList, canDelete, onBack }) {
                       <th>REPAIR ORDER</th>
                       <th>MODEL</th>
                       <th>SERVICE DATE</th>
+                      <th>PHONE</th>
                       <th>CONTACTED</th>
                       <th>SATISFIED</th>
                       <th>NOTES</th>
@@ -205,6 +206,7 @@ export default function SurveyReports({ advisorList, canDelete, onBack }) {
                         <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9' }}>{row.repairOrder || '—'}</td>
                         <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.serviceDate)}</td>
+                        <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9', whiteSpace: 'nowrap' }}>{row.phone || '—'}</td>
                         <td><Badge val={row.contacted} type="contacted" /></td>
                         <td><Badge val={row.satisfied} type="satisfied" /></td>
                         <td style={{ color: '#94a3b8', fontSize: 13, maxWidth: 200 }}>{row.notes || <span style={{ color: '#334155' }}>—</span>}</td>
