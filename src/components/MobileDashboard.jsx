@@ -47,7 +47,7 @@ function GaugeBar({ label, actual, goal, prefix = '$' }) {
   );
 }
 
-export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician }) {
+export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onSchedule }) {
   const [showLogin, setShowLogin] = useState(false);
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
@@ -83,6 +83,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             {(currentRole === 'technician' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
               <button onClick={onTechnician} style={btnStyle('#2d1f4e', '#c4b5fd')}>Technicians</button>
             )}
+            <button onClick={onSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Schedule</button>
             <button onClick={onLogout} style={btnStyle('#2a1f1f', '#f87171')}>Logout</button>
           </>
         ) : (

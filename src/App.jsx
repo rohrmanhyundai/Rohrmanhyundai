@@ -13,6 +13,7 @@ import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
+import MobileSchedule from './components/MobileSchedule';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -265,6 +266,20 @@ export default function App() {
 
   // Phone-only mobile view — tablet/desktop/TV use the existing scaled layout unchanged
   if (window.innerWidth < 600) {
+    if (page === 'mobile-schedule') {
+      const mobileEmployees = currentRole === 'advisor' ? advisorList
+        : currentRole === 'technician' ? techList
+        : users.map(u => u.username.toUpperCase());
+      return (
+        <MobileSchedule
+          schedules={schedules}
+          employeeNames={mobileEmployees}
+          currentUser={currentUser.toUpperCase()}
+          onBack={() => setPage('dashboard')}
+        />
+      );
+    }
+
     return (
       <>
         <MobileDashboard
@@ -273,6 +288,7 @@ export default function App() {
           currentRole={currentRole} canEditDashboard={canEditDashboard}
           onLogin={handleLogin} onLogout={handleLogout}
           onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')} onTechnician={() => setPage('tech-resources')}
+          onSchedule={() => setPage('mobile-schedule')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
