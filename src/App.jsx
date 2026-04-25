@@ -305,6 +305,7 @@ export default function App() {
     return (
       <SurveyReports
         advisorList={advisorList}
+        canDelete={isAdminOrManager}
         onBack={() => setPage('advisor-calendar')}
       />
     );

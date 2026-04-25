@@ -1,0 +1,17 @@
+[
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "SUSANN TINDALL",
+    "repairOrder": "774249",
+    "vin": "KM8R5DHE1NU437663",
+    "model": "PALISADE",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "notes": "very happy customer",
+    "submittedAt": "2026-04-25T17:17:35.881Z",
+    "submittedBy": "ADMIN"
+  }
+]

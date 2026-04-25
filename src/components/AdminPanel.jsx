@@ -9,11 +9,13 @@ const PAGE_ACCESS = [
   { key: 'advisorCalendar',    label: '📅 Advisor Calendar',        group: 'Advisor' },
   { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Advisor' },
   { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board',      group: 'Advisor' },
+  { key: 'surveyReports',      label: '📊 Survey Reports',          group: 'Advisor', defaultOff: true },
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Shared' },
 ];
-const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, true]));
+// defaultOff entries start unchecked for new/existing users; others default on
+const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());

@@ -149,7 +149,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               🛡 After Market Warranty
             </button>
           )}
-          {(currentRole === 'admin' || (currentRole || '').includes('manager')) && onSurveyReports && (
+          {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (
             <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
               📊 Survey Reports
             </button>
