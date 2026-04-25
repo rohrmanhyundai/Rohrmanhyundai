@@ -244,6 +244,7 @@ export default function App() {
         onDocumentLibrary={() => setPage('document-library')}
         onWorkSchedule={() => setPage('work-schedule')}
         onTechSchedule={() => setPage('advisor-view-tech-schedule')}
+        onAftermarketWarranty={() => setPage('aftermarket-warranty')}
         refreshKey={calendarRefreshKey}
       />
     );
@@ -265,6 +266,22 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage('advisor-calendar')}
       />
+    );
+  }
+
+  if (page === 'aftermarket-warranty') {
+    return (
+      <div className="adv-page">
+        <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button className="secondary" onClick={() => setPage('advisor-calendar')}>← Back</button>
+          <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>🛡 After Market Warranty</span>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+          <div style={{ fontSize: 48 }}>🛡</div>
+          <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 22 }}>After Market Warranty</div>
+          <div style={{ color: '#64748b', fontSize: 15, textAlign: 'center' }}>Content coming soon. Contact your admin to configure this section.</div>
+        </div>
+      </div>
     );
   }
 
