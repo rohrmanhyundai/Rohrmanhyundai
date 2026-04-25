@@ -6,12 +6,12 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
 const PAGE_ACCESS = [
-  { key: 'advisorCalendar',    label: '📅 Advisor Calendar' },
-  { key: 'documentLibrary',    label: '📁 Document Library' },
-  { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board' },
-  { key: 'advisorSchedule',    label: '📅 Advisor Schedule' },
-  { key: 'techSchedule',       label: '🔧 Tech Schedule' },
-  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty' },
+  { key: 'advisorCalendar',    label: '📅 Advisor Calendar',        group: 'Advisor' },
+  { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Advisor' },
+  { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board',      group: 'Advisor' },
+  { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
+  { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
+  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Shared' },
 ];
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, true]));
 
@@ -413,19 +413,24 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   Page Access
                   <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 24px' }}>
-                  {PAGE_ACCESS.map(p => (
-                    <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
-                      <input
-                        type="checkbox"
-                        checked={newUserPages[p.key] !== false}
-                        onChange={e => setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked }))}
-                        style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }}
-                      />
-                      <span>{p.label}</span>
-                    </label>
-                  ))}
-                </div>
+                {['Advisor', 'Shared'].map(group => (
+                  <div key={group} style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
+                      {PAGE_ACCESS.filter(p => p.group === group).map(p => (
+                        <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
+                          <input
+                            type="checkbox"
+                            checked={newUserPages[p.key] !== false}
+                            onChange={e => setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked }))}
+                            style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }}
+                          />
+                          <span>{p.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
                 <div style={{ marginTop: 8 }}>
                   <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
                     onClick={() => setNewUserPages({ ...DEFAULT_PAGES })}>Check All</button>
