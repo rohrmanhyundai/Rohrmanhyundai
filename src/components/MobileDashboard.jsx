@@ -115,6 +115,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
                 ['MTD Hours', n(a.mtd_hours, 1)],
                 ['Pacing', `${advisorProjectedHours(a, data).toFixed(1)} hrs`],
                 ['Hrs/RO', n(a.hours_per_ro, 2)],
+                ['Roh$50 HRS/RO', n(a.roh50_hrs_ro, 2)],
                 ['Alignment %', pct(a.align, 1)],
                 ['Tires %', pct(a.tires, 1)],
                 ['Valvoline %', pct(a.valvoline, 1)],
