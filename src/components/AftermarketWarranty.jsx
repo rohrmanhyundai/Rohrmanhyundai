@@ -16,6 +16,7 @@ const emptyForm = () => ({
   dealershipName: 'Bob Rohrman Hyundai',
   customerName: '',
   customerPhone: '',
+  repairOrder: '',
   vin: '',
   vehicleYear: '',
   vehicleMake: '',
@@ -138,6 +139,7 @@ function ContractForm({ initial, onSave, onCancel, saving }) {
             <F label="Dealership Name" value={form.dealershipName} onChange={v => set('dealershipName', v)} />
             <F label="Customer Name" value={form.customerName} onChange={v => set('customerName', v)} />
             <F label="Customer Phone" value={form.customerPhone} onChange={v => set('customerPhone', v)} type="tel" />
+            <F label="Repair Order #" value={form.repairOrder} onChange={v => set('repairOrder', v)} placeholder="RO-XXXXXXXX" />
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>VIN Number</label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -338,6 +340,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
             <InfoBlock title="Customer">
               <InfoRow label="Name" value={contract.customerName} />
               <InfoRow label="Phone" value={contract.customerPhone} />
+              <InfoRow label="Repair Order #" value={contract.repairOrder} />
             </InfoBlock>
             <InfoBlock title="Warranty Company">
               <InfoRow label="Company" value={contract.warrantyCompany} />
@@ -451,6 +454,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
             <tbody>
               <PrintRow label="Name:" value={contract.customerName} />
               <PrintRow label="Phone:" value={contract.customerPhone} />
+              <PrintRow label="Repair Order #:" value={contract.repairOrder} />
             </tbody>
           </table>
         </div>
