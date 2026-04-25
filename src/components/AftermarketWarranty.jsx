@@ -33,6 +33,7 @@ const emptyForm = () => ({
   deductible: '',
   notes: '',
   status: '',
+  paymentDate: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -267,15 +268,24 @@ function ContractForm({ initial, onSave, onCancel, onDelete, saving, currentRole
             ✅ Approved Claim
           </button>
           <button
-            onClick={() => setForm(f => ({ ...f, status: 'paid' }))}
-            style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-            💰 Claim Paid
-          </button>
-          <button
-            onClick={() => setForm(f => ({ ...f, status: 'waiting' }))}
+            onClick={() => setForm(f => ({ ...f, status: 'waiting', paymentDate: '' }))}
             style={{ background: form.status === 'waiting' ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.08)', border: `1px solid ${form.status === 'waiting' ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.25)'}`, color: '#fbbf24', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
             ⏳ Waiting for Payment
           </button>
+          <button
+            onClick={() => setForm(f => ({ ...f, status: 'paid' }))}
+            style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+            💳 Claim Paid
+          </button>
+
+          {/* Payment date — shown only when Claim Paid is selected */}
+          {form.status === 'paid' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 14px' }}>
+              <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
+              <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
+                style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
+            </div>
+          )}
 
           <div style={{ flex: 1 }} />
 
@@ -563,6 +573,9 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
           <tr><td style={{ ...tdSt, background: '#f8fafc' }}>Tax</td><td style={{ ...tdSt, textAlign: 'right', background: '#f8fafc' }}>{fmtDol(taxAmt)}</td></tr>
           <tr><td style={{ ...tdSt, fontWeight: 800, fontSize: 13 }}>Total Warranty Claim</td><td style={{ ...tdSt, fontWeight: 800, fontSize: 13, textAlign: 'right' }}>{fmtDol(totalClaim)}</td></tr>
           <tr><td style={{ ...tdSt, fontWeight: 800, fontSize: 13, background: '#fef9c3' }}>Total Due by Customer</td><td style={{ ...tdSt, fontWeight: 800, fontSize: 13, textAlign: 'right', background: '#fef9c3' }}>{fmtDol(totalDue)}</td></tr>
+          {contract.status === 'paid' && contract.paymentDate && (
+            <tr><td style={{ ...tdSt, fontWeight: 700, color: '#16a34a', background: '#f0fdf4' }}>💳 Payment Received</td><td style={{ ...tdSt, fontWeight: 700, color: '#16a34a', textAlign: 'right', background: '#f0fdf4' }}>{new Date(contract.paymentDate + 'T12:00:00').toLocaleDateString()}</td></tr>
+          )}
         </tbody>
       </table>
 
@@ -605,7 +618,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', ''].map(h => (
+                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', '', ''].map(h => (
                   <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
                 ))}
               </tr>
@@ -614,10 +627,16 @@ function ContractList({ contracts, loading, onNew, onView }) {
               {contracts.map(c => {
                 const { totalClaim, totalDue } = calcTotals(c);
                 const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
+                const isApproved = c.status === 'approved';
+                const isWaiting  = c.status === 'waiting';
+                const isPaid     = c.status === 'paid';
+                const rowBg = isApproved ? 'rgba(74,222,128,0.08)' : '';
+                const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '';
                 return (
-                  <tr key={c.id} onClick={() => onView(c)} style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background .15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-                    onMouseLeave={e => e.currentTarget.style.background = ''}>
+                  <tr key={c.id} onClick={() => onView(c)}
+                    style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', background: rowBg, transition: 'background .15s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = isApproved ? 'rgba(74,222,128,0.14)' : 'rgba(255,255,255,0.04)'}
+                    onMouseLeave={e => e.currentTarget.style.background = rowBg}>
                     <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
@@ -626,6 +645,9 @@ function ContractList({ contracts, loading, onNew, onView }) {
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
                     <td style={{ padding: '12px 14px' }}>
                       <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600 }}>View →</span>
+                    </td>
+                    <td style={{ padding: '12px 10px', fontSize: 20, textAlign: 'center' }} title={isPaid ? 'Claim Paid' : isWaiting ? 'Waiting for Payment' : ''}>
+                      {statusEmoji}
                     </td>
                   </tr>
                 );
