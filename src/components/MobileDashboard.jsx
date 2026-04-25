@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import { n, safe } from '../utils/formatters';
+import { n, pct, safe } from '../utils/formatters';
 import { advisorProjectedHours } from '../utils/calculations';
-
-function pct(val) {
-  if (val == null || val === '' || val === '—') return val ?? '—';
-  const num = parseFloat(val);
-  if (isNaN(num)) return val;
-  return num.toFixed(1) + '%';
-}
 
 function StatRow({ label, value, highlight }) {
   return (
@@ -119,15 +112,15 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{a.name}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 0' }}>
               {[
-                ['MTD Hours', `${a.mtd_hours ?? '—'}`],
+                ['MTD Hours', n(a.mtd_hours, 1)],
                 ['Pacing', `${advisorProjectedHours(a, data).toFixed(1)} hrs`],
-                ['Hrs/RO', `${a.hours_per_ro ?? '—'}`],
-                ['Alignment', pct(a.align)],
-                ['Tires', pct(a.tires)],
-                ['Valvoline', pct(a.valvoline)],
-                ['CSI', `${a.csi ?? '—'}`],
-                ['ELR', `$${a.elr ?? '—'}`],
-                ['ASR', pct(a.asr)],
+                ['Hrs/RO', n(a.hours_per_ro, 2)],
+                ['Alignment %', pct(a.align, 1)],
+                ['Tires %', pct(a.tires, 1)],
+                ['Valvoline %', pct(a.valvoline, 1)],
+                ['CSI', Math.round(safe(a.csi, 0)).toString()],
+                ['ASR %', pct(a.asr, 1)],
+                ['ELR %', pct(a.elr, 0)],
               ].map(([lbl, val]) => (
                 <React.Fragment key={lbl}>
                   <span style={{ color: '#7a92b8', fontSize: 12 }}>{lbl}</span>
