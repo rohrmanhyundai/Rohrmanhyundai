@@ -59,6 +59,20 @@
       "password": "bigB",
       "role": "admin",
       "canEditDashboard": true
+    },
+    {
+      "username": "Devin",
+      "password": "devin2026",
+      "role": "parts",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": true
+      }
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
