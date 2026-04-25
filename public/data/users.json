@@ -45,6 +45,12 @@
       "password": "dealerplayguy",
       "role": "admin",
       "canEditDashboard": true
+    },
+    {
+      "username": "Brandon",
+      "password": "bigB",
+      "role": "admin",
+      "canEditDashboard": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
