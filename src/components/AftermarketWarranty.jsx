@@ -861,7 +861,7 @@ function ContractLegend() {
     </div>
   );
   return (
-    <div style={{ flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.07)', background: 'rgba(0,0,0,0.25)', padding: '10px 32px' }}>
+    <div style={{ flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.07)', background: 'rgba(0,0,0,0.25)', padding: '10px 32px', minHeight: 0 }}>
       <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, flexShrink: 0 }}>Legend</span>
 
@@ -890,9 +890,9 @@ function ContractLegend() {
 // ── Contract List ─────────────────────────────────────────────────────────────
 function ContractList({ contracts, loading, onNew, onView }) {
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      {/* Scrollable table area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 24px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      {/* Scrollable table area — minHeight:0 is required so flex doesn't prevent shrinking */}
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 32px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           {loading ? (
             <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading contracts…</div>
@@ -1051,7 +1051,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack }
   }
 
   return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
 
       {/* Top bar */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
