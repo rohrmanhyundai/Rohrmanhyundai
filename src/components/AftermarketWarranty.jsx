@@ -576,7 +576,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Claim #', 'Customer', 'Vehicle', 'Warranty Company', 'Total Claim', 'Due by Customer', 'Date', ''].map(h => (
+                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', ''].map(h => (
                   <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
                 ))}
               </tr>
@@ -589,13 +589,12 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   <tr key={c.id} onClick={() => onView(c)} style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background .15s' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
                     onMouseLeave={e => e.currentTarget.style.background = ''}>
-                    <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.claimNumber || '—'}</td>
+                    <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
+                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.warrantyCompany || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
                     <td style={{ padding: '12px 14px' }}>
                       <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600 }}>View →</span>
                     </td>
