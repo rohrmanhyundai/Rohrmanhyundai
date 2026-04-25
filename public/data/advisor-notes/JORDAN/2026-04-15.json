@@ -7,49 +7,167 @@
       "appointmentTime": "test",
       "criticalDeferredService": "test",
       "waiter": true,
+      "dropOff": false,
       "technician": "Dave",
-      "notes": "note"
+      "notes": [
+        {
+          "author": null,
+          "body": "note"
+        }
+      ]
     },
     {
       "customerName": "test",
       "appointmentTime": "12",
       "criticalDeferredService": "12",
       "waiter": true,
+      "dropOff": false,
       "technician": "",
-      "notes": "12"
+      "notes": [
+        {
+          "author": null,
+          "body": "12"
+        }
+      ]
     },
     {
       "customerName": "aaa",
       "appointmentTime": "12",
       "criticalDeferredService": "ww",
       "waiter": false,
+      "dropOff": false,
       "technician": "qw",
-      "notes": "qw"
+      "notes": [
+        {
+          "author": null,
+          "body": "qw"
+        }
+      ]
     },
     {
       "customerName": "11",
       "appointmentTime": "11",
       "criticalDeferredService": "ww",
       "waiter": true,
+      "dropOff": false,
       "technician": "",
-      "notes": "hahha"
+      "notes": [
+        {
+          "author": null,
+          "body": "hahha"
+        }
+      ]
     },
     {
       "customerName": "12",
       "appointmentTime": "22",
       "criticalDeferredService": "sss",
       "waiter": false,
+      "dropOff": false,
       "technician": "dd",
-      "notes": "ceec"
+      "notes": [
+        {
+          "author": null,
+          "body": "ceec"
+        }
+      ]
     },
     {
       "customerName": "123",
       "appointmentTime": "12",
       "criticalDeferredService": "ddd",
       "waiter": false,
+      "dropOff": false,
       "technician": "dd",
-      "notes": "dc"
+      "notes": [
+        {
+          "author": null,
+          "body": "dc"
+        }
+      ]
     }
   ],
-  "savedAt": "2026-04-16T11:06:27.057Z"
+  "afterCallRows": [
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "phoneNumber": "",
+      "repairOrderNumber": "",
+      "servicePerformed": {
+        "maintenance": false,
+        "diagnosticRepair": false,
+        "warranty": false,
+        "customerPay": false
+      },
+      "customerFeedback": {
+        "good": false,
+        "poor": false
+      },
+      "notes": []
+    }
+  ],
+  "savedAt": "2026-04-25T15:20:35.830Z"
 }
