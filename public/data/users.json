@@ -59,6 +59,20 @@
       "password": "[REDACTED]",
       "role": "admin",
       "canEditDashboard": true
+    },
+    {
+      "username": "Devin",
+      "password": "[REDACTED]",
+      "role": "parts",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": true
+      }
     }
   ],
   "sharedSaveCode": ""
