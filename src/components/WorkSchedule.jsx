@@ -52,16 +52,193 @@ function ShiftBadge({ name, val, isOwn }) {
 
 const PRINT_DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-function fmtPrintShift(val) {
-  if (!val) return null;
-  if (val === 'vacation') return { text: 'VACATION', type: 'vac' };
-  if (val === 'off')      return { text: 'OFF',      type: 'off' };
+function fmtShiftStr(val) {
+  if (!val) return { text: '', cls: 'empty' };
+  if (val === 'vacation') return { text: 'VACATION', cls: 'vac' };
+  if (val === 'off')      return { text: 'OFF',      cls: 'off' };
   const m = val.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
-  if (!m) return { text: val.slice(0, 14), type: 'shift' };
-  const fmt = (h, mn, ap) => `${h}${mn !== '00' ? ':' + mn : ''}${ap[0].toLowerCase()}`;
-  const lm = val.match(/Lunch\s+(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
-  const lunch = lm ? `  🍽 ${fmt(lm[1],lm[2],lm[3])}–${fmt(lm[4],lm[5],lm[6])}` : '';
-  return { text: `${fmt(m[1],m[2],m[3])}–${fmt(m[4],m[5],m[6])}`, lunch, type: 'shift' };
+  if (!m) return { text: val.slice(0, 14), cls: 'shift' };
+  const fmt = (h, mn, ap) => `${h}${mn !== '00' ? ':'+mn : ''}${ap[0].toLowerCase()}`;
+  const lm  = val.match(/Lunch\s+(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  const lunch = lm ? `<br><span class="lunch">🍽 ${fmt(lm[1],lm[2],lm[3])}–${fmt(lm[4],lm[5],lm[6])}</span>` : '';
+  return { text: `${fmt(m[1],m[2],m[3])}–${fmt(m[4],m[5],m[6])}${lunch}`, cls: 'shift' };
+}
+
+function openPrintWindow({ year, month, employeeNames, schedules, title }) {
+  const HOLIDAY_KEY = '__HOLIDAY__';
+  const totalDays = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const monthName = MONTHS[month];
+  const printedOn = today.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+
+  // Build working day rows
+  const rows = [];
+  for (let d = 1; d <= totalDays; d++) {
+    const dow = new Date(year, month, d).getDay();
+    if (dow === 0) continue; // skip Sunday
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
+    const isToday   = dateStr === todayStr;
+    rows.push({ d, dow, dateStr, isHoliday, isToday });
+  }
+
+  // Build column headers HTML
+  const thCols = employeeNames.map(n =>
+    `<th>${n.split(' ')[0]}</th>`
+  ).join('');
+
+  // Build table rows HTML
+  const trRows = rows.map((r, i) => {
+    const cls = [
+      i % 2 ? 'alt' : '',
+      r.isToday   ? 'today'   : '',
+      r.isHoliday ? 'holiday' : '',
+    ].filter(Boolean).join(' ');
+
+    const dayName = PRINT_DAY_NAMES[r.dow];
+    const dateCell = `<td class="date-col"><span class="dow">${dayName}</span><span class="daynum">${r.d}</span></td>`;
+
+    let dataCells;
+    if (r.isHoliday) {
+      dataCells = `<td colspan="${employeeNames.length}" class="holiday-cell">🎉 Company Holiday</td>`;
+    } else {
+      dataCells = employeeNames.map(name => {
+        const val = schedules[name]?.[r.dateStr];
+        const { text, cls: sCls } = fmtShiftStr(val);
+        return `<td class="cell ${sCls}">${text || '<span class="dash">—</span>'}</td>`;
+      }).join('');
+    }
+    return `<tr class="${cls}">${dateCell}${dataCells}</tr>`;
+  }).join('');
+
+  const colWidth = Math.max(60, Math.floor(650 / (employeeNames.length + 1)));
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>${title || 'Work Schedule'} — ${monthName} ${year}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @page { size: landscape; margin: 10mm 12mm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #111; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0f172a; color: #fff;
+    padding: 10px 18px; border-radius: 6px 6px 0 0;
+    border-bottom: 3px solid #14b8a6;
+  }
+  .h-company { font-size: 13px; font-weight: 900; letter-spacing: .4px; }
+  .h-dept    { font-size: 8px; color: #94a3b8; margin-top: 2px; text-transform: uppercase; letter-spacing: .6px; }
+  .h-title   { font-size: 17px; font-weight: 900; color: #5eead4; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+  .h-month   { font-size: 11px; color: #cbd5e1; text-align: center; margin-top: 3px; font-weight: 600; }
+  .h-right   { text-align: right; }
+  .h-printed-label { font-size: 8px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; }
+  .h-printed-date  { font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 2px; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 8.5px; table-layout: fixed; margin-top: 2px; }
+  thead tr { background: #1e293b; }
+  th {
+    color: #e2e8f0; font-weight: 800; font-size: 8px;
+    text-transform: uppercase; letter-spacing: .5px;
+    padding: 5px 4px; text-align: center;
+    border: 1px solid #334155;
+    width: ${colWidth}px;
+  }
+  th:first-child { text-align: left; padding-left: 8px; color: #94a3b8; width: 58px; }
+
+  tr { background: #fff; }
+  tr.alt     { background: #f8fafc; }
+  tr.today   { background: #ecfdf5 !important; }
+  tr.holiday { background: #fff5f5 !important; }
+
+  td { border: 1px solid #e2e8f0; padding: 3px 4px; text-align: center; vertical-align: middle; line-height: 1.35; }
+
+  td.date-col {
+    text-align: left; padding-left: 8px; white-space: nowrap;
+    border-left: 3px solid #e2e8f0; font-weight: 700;
+  }
+  tr.today   td.date-col { border-left-color: #14b8a6; }
+  tr.holiday td.date-col { border-left-color: #ef4444; }
+
+  .dow    { font-size: 7px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .4px; display: inline-block; width: 24px; }
+  .daynum { font-size: 10px; font-weight: 900; color: #1e293b; }
+  tr.today   .dow, tr.today   .daynum { color: #0d9488; }
+  tr.holiday .dow, tr.holiday .daynum { color: #ef4444; }
+
+  td.cell        { font-weight: 600; }
+  td.shift       { color: #0d9488; background: #f0fdfa; }
+  td.vac         { color: #b45309; background: #fffbeb; font-weight: 800; }
+  td.off         { color: #94a3b8; background: #f9fafb; }
+  td.empty       { color: #e5e7eb; }
+  td.holiday-cell{ color: #ef4444; font-weight: 700; background: #fff5f5; font-size: 8px; letter-spacing: .3px; }
+  .dash          { color: #e2e8f0; }
+  .lunch         { display: block; font-size: 7px; color: #b45309; margin-top: 1px; }
+
+  /* Footer */
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 2px solid #0f172a; padding: 5px 6px; margin-top: 3px;
+  }
+  .legend { display: flex; gap: 14px; }
+  .leg    { font-size: 8px; font-weight: 700; }
+  .leg-shift { color: #0d9488; }
+  .leg-vac   { color: #b45309; }
+  .leg-off   { color: #94a3b8; }
+  .leg-today { color: #14b8a6; }
+  .footer-note { font-size: 7.5px; color: #94a3b8; font-style: italic; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="h-company">Bob Rohrman Hyundai</div>
+      <div class="h-dept">Service Department</div>
+    </div>
+    <div>
+      <div class="h-title">${title || 'Work Schedule'}</div>
+      <div class="h-month">${monthName} ${year}</div>
+    </div>
+    <div class="h-right">
+      <div class="h-printed-label">Printed</div>
+      <div class="h-printed-date">${printedOn}</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        ${thCols}
+      </tr>
+    </thead>
+    <tbody>
+      ${trRows}
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="legend">
+      <span class="leg leg-shift">● Working Shift</span>
+      <span class="leg leg-vac">● Vacation</span>
+      <span class="leg leg-off">● Off</span>
+      <span class="leg leg-today">● Today</span>
+    </div>
+    <div class="footer-note">Bob Rohrman Hyundai — Confidential</div>
+  </div>
+
+  <script>window.onload = function(){ window.print(); }<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=1100,height=750');
+  if (!win) { alert('Please allow pop-ups for this site to use Print / Download PDF.'); return; }
+  win.document.write(html);
+  win.document.close();
 }
 
 function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack, title }) {
@@ -98,7 +275,10 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — {title || 'Work Schedule'}</span>
-        <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print / Download PDF</button>
+        <button
+          onClick={() => openPrintWindow({ year, month, employeeNames, schedules, title })}
+          style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}
+        >🖨 Print / Download PDF</button>
       </div>
 
       {/* ── Screen calendar ── */}
@@ -133,90 +313,6 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
               <span style={{ color: '#7a92b8', fontSize: 12 }}>{label}</span>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* ── Print-only table layout (hidden on screen) ── */}
-      <div className="ws-pt-page">
-        {/* Header bar */}
-        <div className="ws-pt-header">
-          <div className="ws-pt-header-left">
-            <div className="ws-pt-company">Bob Rohrman Hyundai</div>
-            <div className="ws-pt-dept">Service Department</div>
-          </div>
-          <div className="ws-pt-header-center">
-            <div className="ws-pt-title-text">{title || 'Work Schedule'}</div>
-            <div className="ws-pt-month-text">{monthLabel(year, month)}</div>
-          </div>
-          <div className="ws-pt-header-right">
-            <div className="ws-pt-printed-label">Printed</div>
-            <div className="ws-pt-printed-date">{new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-          </div>
-        </div>
-
-        {/* Schedule table */}
-        <table className="ws-pt-table">
-          <thead>
-            <tr>
-              <th className="ws-pt-th ws-pt-th-date">Date</th>
-              {employeeNames.map(name => (
-                <th key={name} className="ws-pt-th">{name.split(' ')[0]}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {cellData.filter(c => c.day).map((c, rowIdx) => {
-              const dow = new Date(c.dateStr).getDay();
-              const isHoliday = c.isHoliday;
-              return (
-                <tr key={c.dateStr} className={
-                  `ws-pt-tr` +
-                  (c.isToday   ? ' ws-pt-tr--today'   : '') +
-                  (isHoliday   ? ' ws-pt-tr--holiday'  : '') +
-                  (rowIdx % 2  ? ' ws-pt-tr--alt'      : '')
-                }>
-                  <td className="ws-pt-td-date">
-                    <span className="ws-pt-dow">{PRINT_DAY_NAMES[dow]}</span>
-                    <span className="ws-pt-day">{c.day}</span>
-                  </td>
-                  {isHoliday ? (
-                    <td colSpan={employeeNames.length} className="ws-pt-td ws-pt-td-holiday">
-                      🎉 Company Holiday
-                    </td>
-                  ) : (
-                    employeeNames.map(name => {
-                      const val = schedules[name]?.[c.dateStr];
-                      const fmt = fmtPrintShift(val);
-                      const isMe = name.toUpperCase() === currentUser;
-                      return (
-                        <td key={name} className={`ws-pt-td ws-pt-td--${fmt?.type || 'empty'}${isMe ? ' ws-pt-td--me' : ''}`}>
-                          {fmt ? (
-                            <>
-                              <span className="ws-pt-shift-text">{fmt.text}</span>
-                              {fmt.lunch && <span className="ws-pt-lunch-text">{fmt.lunch}</span>}
-                            </>
-                          ) : (
-                            <span className="ws-pt-empty-dash">—</span>
-                          )}
-                        </td>
-                      );
-                    })
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        {/* Footer legend */}
-        <div className="ws-pt-footer">
-          <div className="ws-pt-legend">
-            <span className="ws-pt-leg-item ws-pt-leg--shift">● Working Shift</span>
-            <span className="ws-pt-leg-item ws-pt-leg--vac">● Vacation</span>
-            <span className="ws-pt-leg-item ws-pt-leg--off">● Off</span>
-            <span className="ws-pt-leg-item ws-pt-leg--today">● Today</span>
-          </div>
-          <div className="ws-pt-footer-note">Bob Rohrman Hyundai — Confidential</div>
         </div>
       </div>
 
