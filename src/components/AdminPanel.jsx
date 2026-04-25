@@ -562,6 +562,7 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   const [lunchEM, setLunchEM]   = React.useState('00');
   const [lunchEAP, setLunchEAP] = React.useState('PM');
   const [saving, setSaving] = React.useState(false);
+  const [copiedDay, setCopiedDay] = React.useState(null); // { dateStr, shifts: { EMP: value, ... } }
 
   const allEmployees = users.map(u => u.username.toUpperCase()).filter(Boolean);
   const shiftBase = `${startH}:${startM} ${startAP} - ${endH}:${endM} ${endAP}`;
@@ -624,6 +625,32 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
     finally { setSaving(false); }
   }
 
+  function copyDay(dateStr) {
+    // Snapshot all employees' shift values for this date
+    const shifts = {};
+    allEmployees.forEach(emp => {
+      const val = schedules[emp]?.[dateStr];
+      if (val) shifts[emp] = val;
+    });
+    setCopiedDay({ dateStr, shifts });
+  }
+
+  async function pasteCopiedDay(targetDateStr) {
+    if (!copiedDay) return;
+    setSaving(true);
+    try {
+      let updated = { ...schedules };
+      Object.entries(copiedDay.shifts).forEach(([emp, val]) => {
+        updated = { ...updated, [emp]: { ...(updated[emp] || {}), [targetDateStr]: val } };
+      });
+      // Also clear employees that had no shift on the source day (optional: skip this for safety)
+      await saveSchedules(updated);
+      onSchedulesChange(updated);
+      setEditing(null);
+    } catch (err) { alert('Paste failed: ' + err.message); }
+    finally { setSaving(false); }
+  }
+
   async function applyShift(value) {
     if (!schedEmployee) { alert('Select an employee first.'); return; }
     const updated = { ...schedules, [schedEmployee]: { ...(schedules[schedEmployee] || {}), [editing.dateStr]: value } };
@@ -676,6 +703,20 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
             <button className="secondary" onClick={nextMonth} style={{ padding: '4px 12px' }}>›</button>
           </div>
 
+          {/* Copy-day banner */}
+          {copiedDay && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.35)', borderRadius: 8, padding: '7px 12px', marginBottom: 10 }}>
+              <span style={{ fontSize: 16 }}>📋</span>
+              <span style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 13, flex: 1 }}>
+                {copiedDay.dateStr} copied — click any day below and paste all shifts
+              </span>
+              <span style={{ fontSize: 12, color: '#64748b' }}>
+                {Object.keys(copiedDay.shifts).length} employee{Object.keys(copiedDay.shifts).length !== 1 ? 's' : ''}
+              </span>
+              <button onClick={() => setCopiedDay(null)} className="secondary" style={{ padding: '2px 10px', fontSize: 12 }}>✕ Clear</button>
+            </div>
+          )}
+
           {/* Calendar grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 3, marginBottom: 12 }}>
             {dayNames.map(d => (
@@ -686,11 +727,13 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
               const dateStr = `${schedYear}-${String(schedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
               const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
               const val = !isHoliday && schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
-              const color = isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
-              const border = isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
+              const isCopied = copiedDay?.dateStr === dateStr;
+              const color = isCopied ? 'rgba(110,231,249,0.18)' : isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
+              const border = isCopied ? 'rgba(110,231,249,0.7)' : isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
               return (
-                <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `1px solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
+                <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `1px solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: isCopied ? '#6ee7f9' : isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
+                  {isCopied && <span style={{ fontSize: 8, color: '#6ee7f9', fontWeight: 700, lineHeight: 1.2, marginTop: 1 }}>📋 copied</span>}
                   {isHoliday && <span style={{ fontSize: 9, color: '#ef4444', lineHeight: 1.2, marginTop: 2, fontWeight: 700 }}>Holiday</span>}
                   {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
                     {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val.split(' | ')[0].replace(' AM','a').replace(' PM','p')}
@@ -757,12 +800,36 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                     {includeLunch && <><br /><span style={{ color: '#f59e0b', fontSize: 12 }}>Lunch: {lunchStr}</span></>}
                   </div>
 
+                  {/* Paste banner — shown when a day has been copied */}
+                  {copiedDay && editing.dateStr !== copiedDay.dateStr && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,.08)', border: '1px solid rgba(110,231,249,.3)', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
+                      <span style={{ fontSize: 14 }}>📋</span>
+                      <span style={{ color: '#6ee7f9', fontSize: 12, fontWeight: 700, flex: 1 }}>
+                        Paste all shifts from {copiedDay.dateStr}?
+                      </span>
+                      <button
+                        onClick={() => pasteCopiedDay(editing.dateStr)}
+                        disabled={saving}
+                        style={{ background: 'rgba(110,231,249,.2)', borderColor: 'rgba(110,231,249,.45)', color: '#6ee7f9', fontWeight: 700, padding: '4px 14px', fontSize: 13 }}
+                      >
+                        {saving ? 'Pasting…' : '📥 Paste Shifts'}
+                      </button>
+                    </div>
+                  )}
+
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button onClick={() => applyShift(timeShift)} disabled={saving}>{saving ? 'Saving…' : 'Save Shift'}</button>
                     <button onClick={() => applyShift('vacation')} disabled={saving} style={{ background: 'rgba(245,158,11,0.2)', borderColor: 'rgba(245,158,11,0.5)', color: '#f59e0b' }}>🌴 Vacation</button>
                     <button onClick={() => applyShift('off')} disabled={saving} style={{ background: 'rgba(100,116,139,0.2)', borderColor: 'rgba(100,116,139,0.4)', color: '#94a3b8' }}>Off</button>
                     <button onClick={applyHoliday} disabled={saving} style={{ background: 'rgba(239,68,68,0.18)', borderColor: 'rgba(239,68,68,0.5)', color: '#ef4444' }}>🎉 Holiday</button>
                     <button onClick={() => applyShift('')} disabled={saving} className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }}>Clear Day</button>
+                    <button
+                      onClick={() => copyDay(editing.dateStr)}
+                      style={{ background: 'rgba(110,231,249,.12)', borderColor: 'rgba(110,231,249,.3)', color: '#6ee7f9' }}
+                      title="Copy all employees' shifts for this day"
+                    >
+                      📋 Copy Day
+                    </button>
                     <button onClick={() => setEditing(null)} className="secondary">Cancel</button>
                   </div>
                 </>
