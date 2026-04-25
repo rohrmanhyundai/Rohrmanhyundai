@@ -267,7 +267,7 @@ export async function loadDocumentIndex() {
   } catch { return []; }
 }
 
-export async function uploadDocument(file, label, uploaderName) {
+export async function uploadDocument(file, label, uploaderName, allowedRoles) {
   const token = getGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
@@ -307,9 +307,22 @@ export async function uploadDocument(file, label, uploaderName) {
     size: file.size,
     uploadedBy: uploaderName,
     uploadedAt: new Date().toISOString(),
+    allowedRoles: Array.isArray(allowedRoles) && allowedRoles.length > 0 ? allowedRoles : [],
   };
   const newIndex = [newEntry, ...currentIndex];
   await saveGitHubFile(headers, DOCS_INDEX, newIndex, `Document index: add ${label}`);
+  return newIndex;
+}
+
+export async function updateDocumentPermissions(docId, allowedRoles) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const currentIndex = await loadDocumentIndex();
+  const newIndex = currentIndex.map(d =>
+    d.id === docId ? { ...d, allowedRoles: Array.isArray(allowedRoles) ? allowedRoles : [] } : d
+  );
+  await saveGitHubFile(headers, DOCS_INDEX, newIndex, `Document permissions updated`);
   return newIndex;
 }
 
