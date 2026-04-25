@@ -98,6 +98,21 @@
         "techSchedule": true,
         "aftermarketWarranty": false
       }
+    },
+    {
+      "username": "Cory",
+      "password": "cory2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
