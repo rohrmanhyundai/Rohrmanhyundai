@@ -28,7 +28,7 @@ const emptyForm = () => ({
   laborTime: '',
   diagnosisTime: '',
   parts: [emptyPart()],
-  tax: '',
+  taxPct: '',
   deductible: '',
   notes: '',
 });
@@ -39,7 +39,7 @@ function fmtDol(v) { return '$' + num(v).toFixed(2); }
 function calcTotals(form) {
   const laborTotal = num(form.laborRate) * (num(form.laborTime) + num(form.diagnosisTime));
   const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.price), 0);
-  const taxAmt = num(form.tax);
+  const taxAmt = partsTotal * (num(form.taxPct) / 100);
   const totalClaim = laborTotal + partsTotal + taxAmt;
   const totalDue = num(form.deductible);
   return { laborTotal, partsTotal, taxAmt, totalClaim, totalDue };
@@ -221,8 +221,20 @@ function ContractForm({ initial, onSave, onCancel, saving }) {
 
         {/* Totals */}
         <Section title="Financials">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px', marginBottom: 16 }}>
-            <F label="Tax ($)" value={form.tax} onChange={v => set('tax', v)} type="number" placeholder="0.00" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px', marginBottom: 16 }}>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Tax Rate (%)</label>
+              <input type="number" value={form.taxPct} onChange={e => set('taxPct', e.target.value)}
+                placeholder="e.g. 7.5" min="0" max="100" step="0.01" style={inpSt} />
+              <div style={{ marginTop: 6, fontSize: 12, color: '#64748b' }}>
+                Tax on parts: <span style={{ color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(taxAmt)}</span>
+                {num(form.taxPct) > 0 && <span style={{ color: '#475569' }}> ({num(form.taxPct)}% of {fmtDol(partsTotal)})</span>}
+              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Tax Amount ($)</label>
+              <input value={taxAmt.toFixed(2)} readOnly style={roSt} />
+            </div>
             <F label="Deductible ($)" value={form.deductible} onChange={v => set('deductible', v)} type="number" placeholder="0.00" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 12 }}>
