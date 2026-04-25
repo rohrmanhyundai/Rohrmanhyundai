@@ -1,0 +1,134 @@
+[
+  {
+    "id": "moe2o3z5g7cl",
+    "createdAt": "2026-04-25T08:23:16.769Z",
+    "updatedAt": "2026-04-25T08:30:45.103Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "john doe",
+    "customerPhone": "7654481502",
+    "repairOrder": "770921",
+    "vin": "KMHLL4DG5RU764236",
+    "vehicleYear": "2024",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "10121",
+    "warrantyCompany": "big warrany",
+    "warrantyPhone": "8772042242",
+    "claimNumber": "121212",
+    "laborRate": "169",
+    "laborTime": "16.3",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "moe2o3z5c0il",
+        "partNumber": "121232",
+        "description": "test part ",
+        "price": "120"
+      },
+      {
+        "id": "moe2pgjhlw5a",
+        "partNumber": "1232",
+        "description": "transmission",
+        "price": "2345.33"
+      },
+      {
+        "id": "moe2q0ohpksq",
+        "partNumber": "3367",
+        "description": "fluid",
+        "price": "13.98",
+        "qty": "12"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "500",
+    "notes": "",
+    "approved": true,
+    "waiting": false,
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": ""
+  },
+  {
+    "id": "moe07dfu26pc",
+    "createdAt": "2026-04-25T07:14:16.651Z",
+    "updatedAt": "2026-04-25T08:23:12.144Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "don",
+    "customerPhone": "7654481502",
+    "repairOrder": "770980",
+    "vin": "KMHLL4DG5RU764236",
+    "vehicleYear": "2024",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "10000",
+    "warrantyCompany": "test",
+    "warrantyPhone": "big test ",
+    "claimNumber": "121212",
+    "laborRate": "190",
+    "laborTime": "8.6",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "moe07dfv9v2o",
+        "partNumber": "121232",
+        "description": "test part ",
+        "price": "120"
+      },
+      {
+        "id": "moe08apa514j",
+        "partNumber": "1254",
+        "description": "engine",
+        "price": "6783.89"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "500",
+    "notes": "",
+    "status": "waiting",
+    "paymentDate": "",
+    "repairsFinished": true,
+    "repairsFinishedDate": "2026-04-25",
+    "approved": false,
+    "waiting": true
+  },
+  {
+    "id": "modyxlewtqan",
+    "createdAt": "2026-04-25T06:38:40.808Z",
+    "updatedAt": "2026-04-25T07:13:51.342Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "test  ",
+    "customerPhone": "7654481502",
+    "vin": "KMHLL4DG5RU764236",
+    "vehicleYear": "2024",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "10000",
+    "warrantyCompany": "test",
+    "warrantyPhone": "7654481502",
+    "claimNumber": "121212",
+    "laborRate": "150",
+    "laborTime": "2",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "modyxlewylj5",
+        "partNumber": "121232",
+        "description": "test part ",
+        "price": "120"
+      },
+      {
+        "id": "modyy3yhtr1l",
+        "partNumber": "123er",
+        "description": "part",
+        "price": "123"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "100",
+    "notes": "",
+    "repairOrder": "770980",
+    "status": "waiting",
+    "paymentDate": ""
+  }
+]
