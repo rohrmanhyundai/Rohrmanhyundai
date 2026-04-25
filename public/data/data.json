@@ -256,41 +256,5 @@
     "cpActual": 60710,
     "advisorMonthlyWorkdays": 27
   },
-  "vacations": [
-    {
-      "name": "WEST",
-      "dates": "4/13-4/14",
-      "status": "APPROVED"
-    },
-    {
-      "name": "DAVID",
-      "dates": "5/26-6/3",
-      "status": "APPROVED"
-    },
-    {
-      "name": "JACOB",
-      "dates": "5/22-5/25",
-      "status": "APPROVED"
-    },
-    {
-      "name": "CARTER",
-      "dates": "7/6/26-7/10/26 40HR",
-      "status": "APPROVED"
-    },
-    {
-      "name": "JACOB",
-      "dates": "8/17-8/21 40HR",
-      "status": "APPROVED"
-    },
-    {
-      "name": "GAVEN",
-      "dates": "4/23 4/24 4/27",
-      "status": "APPROVED"
-    },
-    {
-      "name": "SHAWN",
-      "dates": "5/18 5/22 40HR",
-      "status": "APPROVED"
-    }
-  ]
+  "vacations": []
 }
