@@ -618,7 +618,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', '', ''].map(h => (
+                {['Repair Order', 'Date', 'Customer', 'Vehicle', 'Total Claim', 'Due by Customer', 'Claim Status', ''].map(h => (
                   <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
                 ))}
               </tr>
@@ -630,12 +630,14 @@ function ContractList({ contracts, loading, onNew, onView }) {
                 const isApproved = c.status === 'approved';
                 const isWaiting  = c.status === 'waiting';
                 const isPaid     = c.status === 'paid';
-                const rowBg = isApproved ? 'rgba(74,222,128,0.08)' : '';
-                const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '';
+                const rowBg = isApproved ? 'rgba(34,197,94,0.22)' : '';
+                const rowBorder = isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
+                const statusLabel = isPaid ? 'Claim Paid' : isWaiting ? 'Waiting for Payment' : isApproved ? 'Approved' : '';
                 return (
                   <tr key={c.id} onClick={() => onView(c)}
-                    style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', background: rowBg, transition: 'background .15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = isApproved ? 'rgba(74,222,128,0.14)' : 'rgba(255,255,255,0.04)'}
+                    style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)'}
                     onMouseLeave={e => e.currentTarget.style.background = rowBg}>
                     <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
@@ -643,11 +645,12 @@ function ContractList({ contracts, loading, onNew, onView }) {
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600 }}>View →</span>
+                    <td style={{ padding: '12px 14px', textAlign: 'center' }} title={statusLabel}>
+                      <span style={{ fontSize: 18 }}>{statusEmoji}</span>
+                      {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
                     </td>
-                    <td style={{ padding: '12px 10px', fontSize: 20, textAlign: 'center' }} title={isPaid ? 'Claim Paid' : isWaiting ? 'Waiting for Payment' : ''}>
-                      {statusEmoji}
+                    <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                      <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
                     </td>
                   </tr>
                 );
