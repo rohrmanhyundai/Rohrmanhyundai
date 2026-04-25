@@ -50,6 +50,20 @@ function ShiftBadge({ name, val, isOwn }) {
   );
 }
 
+const PRINT_DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function fmtPrintShift(val) {
+  if (!val) return null;
+  if (val === 'vacation') return { text: 'VACATION', type: 'vac' };
+  if (val === 'off')      return { text: 'OFF',      type: 'off' };
+  const m = val.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return { text: val.slice(0, 14), type: 'shift' };
+  const fmt = (h, mn, ap) => `${h}${mn !== '00' ? ':' + mn : ''}${ap[0].toLowerCase()}`;
+  const lm = val.match(/Lunch\s+(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  const lunch = lm ? `  🍽 ${fmt(lm[1],lm[2],lm[3])}–${fmt(lm[4],lm[5],lm[6])}` : '';
+  return { text: `${fmt(m[1],m[2],m[3])}–${fmt(m[4],m[5],m[6])}`, lunch, type: 'shift' };
+}
+
 function CalendarView({ year, month, schedules, employeeNames, currentUser, onBack, title }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
@@ -84,7 +98,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={onBack}>← Back</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — {title || 'Work Schedule'}</span>
-        <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print</button>
+        <button onClick={() => window.print()} style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>🖨 Print / Download PDF</button>
       </div>
 
       {/* ── Screen calendar ── */}
@@ -122,48 +136,87 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, onBa
         </div>
       </div>
 
-      {/* ── Print-only page (hidden on screen, shown when printing) ── */}
-      <div className="ws-po-page">
-        <div className="ws-po-header">
-          <div className="ws-po-title">Bob Rohrman Hyundai</div>
-          <div className="ws-po-subtitle">{monthLabel(year, month)} — Work Schedule</div>
-          {currentUser && <div className="ws-po-user">{currentUser}</div>}
+      {/* ── Print-only table layout (hidden on screen) ── */}
+      <div className="ws-pt-page">
+        {/* Header bar */}
+        <div className="ws-pt-header">
+          <div className="ws-pt-header-left">
+            <div className="ws-pt-company">Bob Rohrman Hyundai</div>
+            <div className="ws-pt-dept">Service Department</div>
+          </div>
+          <div className="ws-pt-header-center">
+            <div className="ws-pt-title-text">{title || 'Work Schedule'}</div>
+            <div className="ws-pt-month-text">{monthLabel(year, month)}</div>
+          </div>
+          <div className="ws-pt-header-right">
+            <div className="ws-pt-printed-label">Printed</div>
+            <div className="ws-pt-printed-date">{new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+          </div>
         </div>
 
-        <div className="ws-po-dayrow">
-          {DAYS.map(d => <div key={d} className="ws-po-dayname">{d}</div>)}
-        </div>
+        {/* Schedule table */}
+        <table className="ws-pt-table">
+          <thead>
+            <tr>
+              <th className="ws-pt-th ws-pt-th-date">Date</th>
+              {employeeNames.map(name => (
+                <th key={name} className="ws-pt-th">{name.split(' ')[0]}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {cellData.filter(c => c.day).map((c, rowIdx) => {
+              const dow = new Date(c.dateStr).getDay();
+              const isHoliday = c.isHoliday;
+              return (
+                <tr key={c.dateStr} className={
+                  `ws-pt-tr` +
+                  (c.isToday   ? ' ws-pt-tr--today'   : '') +
+                  (isHoliday   ? ' ws-pt-tr--holiday'  : '') +
+                  (rowIdx % 2  ? ' ws-pt-tr--alt'      : '')
+                }>
+                  <td className="ws-pt-td-date">
+                    <span className="ws-pt-dow">{PRINT_DAY_NAMES[dow]}</span>
+                    <span className="ws-pt-day">{c.day}</span>
+                  </td>
+                  {isHoliday ? (
+                    <td colSpan={employeeNames.length} className="ws-pt-td ws-pt-td-holiday">
+                      🎉 Company Holiday
+                    </td>
+                  ) : (
+                    employeeNames.map(name => {
+                      const val = schedules[name]?.[c.dateStr];
+                      const fmt = fmtPrintShift(val);
+                      const isMe = name.toUpperCase() === currentUser;
+                      return (
+                        <td key={name} className={`ws-pt-td ws-pt-td--${fmt?.type || 'empty'}${isMe ? ' ws-pt-td--me' : ''}`}>
+                          {fmt ? (
+                            <>
+                              <span className="ws-pt-shift-text">{fmt.text}</span>
+                              {fmt.lunch && <span className="ws-pt-lunch-text">{fmt.lunch}</span>}
+                            </>
+                          ) : (
+                            <span className="ws-pt-empty-dash">—</span>
+                          )}
+                        </td>
+                      );
+                    })
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
 
-        <div className="ws-po-grid" style={{ '--rows': numRows }}>
-          {cellData.map((c, i) => {
-            if (!c.day) return <div key={i} className="ws-po-cell ws-po-cell--empty" />;
-            return (
-              <div key={i} className={`ws-po-cell${c.isToday ? ' ws-po-cell--today' : ''}${c.isHoliday ? ' ws-po-cell--holiday' : ''}`}>
-                <div className="ws-po-num">{c.day}</div>
-                {c.isHoliday && <div className="ws-po-holiday">🎉 Holiday</div>}
-                {c.entries.map(e => {
-                  const parts = e.val && e.val !== 'vacation' && e.val !== 'off' ? e.val.split(' | ') : null;
-                  const shift = parts ? parts[0] : (e.val === 'vacation' ? 'Vacation' : e.val === 'off' ? 'Off' : e.val);
-                  const lunch = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
-                  const isOwn = e.name.toUpperCase() === currentUser;
-                  return (
-                    <div key={e.name} className={`ws-po-entry${isOwn ? ' ws-po-entry--own' : ''}`}>
-                      <span className="ws-po-name">{e.name.split(' ')[0]}</span>
-                      <span className={`ws-po-shift${e.val === 'vacation' ? ' ws-po-shift--vac' : e.val === 'off' ? ' ws-po-shift--off' : ''}`}>{shift}</span>
-                      {lunch && <span className="ws-po-lunch">🍽 {lunch}</span>}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="ws-po-legend">
-          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--shift" />Scheduled Shift</span>
-          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--vac" />Vacation</span>
-          <span className="ws-po-legend-item"><span className="ws-po-dot ws-po-dot--off" />Off</span>
-          <span className="ws-po-legend-item ws-po-dot--lunch">🍽 Lunch break</span>
+        {/* Footer legend */}
+        <div className="ws-pt-footer">
+          <div className="ws-pt-legend">
+            <span className="ws-pt-leg-item ws-pt-leg--shift">● Working Shift</span>
+            <span className="ws-pt-leg-item ws-pt-leg--vac">● Vacation</span>
+            <span className="ws-pt-leg-item ws-pt-leg--off">● Off</span>
+            <span className="ws-pt-leg-item ws-pt-leg--today">● Today</span>
+          </div>
+          <div className="ws-pt-footer-note">Bob Rohrman Hyundai — Confidential</div>
         </div>
       </div>
 
