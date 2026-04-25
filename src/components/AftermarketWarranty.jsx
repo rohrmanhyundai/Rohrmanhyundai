@@ -34,7 +34,9 @@ const emptyForm = () => ({
   taxPct: '',
   deductible: '',
   notes: '',
-  status: '',
+  approved: false,
+  waiting: false,
+  paid: false,
   paymentDate: '',
   repairsFinished: false,
   repairsFinishedDate: '',
@@ -266,68 +268,74 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             style={{ ...inpSt, resize: 'vertical', fontFamily: 'inherit' }} />
         </Section>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* ── Action bar ── */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginTop: 8 }}>
 
-          {/* Repairs Finished — visible to ALL users */}
-          <button
-            onClick={() => setForm(f => ({ ...f, repairsFinished: !f.repairsFinished, repairsFinishedDate: f.repairsFinished ? '' : f.repairsFinishedDate }))}
-            style={{ background: form.repairsFinished ? 'rgba(239,68,68,0.3)' : 'rgba(239,68,68,0.08)', border: `1px solid ${form.repairsFinished ? 'rgba(239,68,68,0.7)' : 'rgba(239,68,68,0.3)'}`, color: form.repairsFinished ? '#fca5a5' : '#f87171', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-            🔧 Repairs Finished
-          </button>
-          {form.repairsFinished && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.35)', borderRadius: 10, padding: '6px 14px' }}>
-              <label style={{ fontSize: 12, color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}>Finished Date:</label>
-              <input type="date" value={form.repairsFinishedDate} onChange={e => setForm(f => ({ ...f, repairsFinishedDate: e.target.value }))}
-                style={{ background: 'transparent', border: 'none', color: '#fca5a5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
-            </div>
-          )}
+          {/* Row 1 — status toggles */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
 
-          {/* Status & Delete buttons — admin/manager only */}
-          {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
+            {/* Repairs Finished — ALL users */}
             <button
-              onClick={() => setForm(f => ({ ...f, status: f.status === 'approved' ? '' : 'approved' }))}
-              style={{ background: form.status === 'approved' ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.08)', border: `1px solid ${form.status === 'approved' ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.25)'}`, color: '#4ade80', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              ✅ Approved Claim
+              onClick={() => setForm(f => ({ ...f, repairsFinished: !f.repairsFinished, repairsFinishedDate: f.repairsFinished ? '' : new Date().toISOString().slice(0,10) }))}
+              style={{ background: form.repairsFinished ? 'rgba(239,68,68,0.28)' : 'rgba(239,68,68,0.07)', border: `1px solid ${form.repairsFinished ? 'rgba(239,68,68,0.65)' : 'rgba(239,68,68,0.28)'}`, color: form.repairsFinished ? '#fca5a5' : '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              🔧 Repairs Finished
             </button>
-            <button
-              onClick={() => setForm(f => ({ ...f, status: f.status === 'waiting' ? '' : 'waiting', paymentDate: '' }))}
-              style={{ background: form.status === 'waiting' ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.08)', border: `1px solid ${form.status === 'waiting' ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.25)'}`, color: '#fbbf24', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              ⏳ Waiting for Payment
-            </button>
-            <button
-              onClick={() => setForm(f => ({ ...f, status: f.status === 'paid' ? '' : 'paid', paymentDate: f.status === 'paid' ? '' : f.paymentDate }))}
-              style={{ background: form.status === 'paid' ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.08)', border: `1px solid ${form.status === 'paid' ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.25)'}`, color: '#6ee7f9', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              💳 Claim Paid
-            </button>
-
-            {/* Payment date — shown only when Claim Paid is selected */}
-            {form.status === 'paid' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 14px' }}>
-                <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
-                <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
-                  style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
+            {form.repairsFinished && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.09)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '6px 13px' }}>
+                <label style={{ fontSize: 12, color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}>Finished Date:</label>
+                <input type="date" value={form.repairsFinishedDate} onChange={e => setForm(f => ({ ...f, repairsFinishedDate: e.target.value }))}
+                  style={{ background: 'transparent', border: 'none', color: '#fca5a5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
               </div>
             )}
-          </>)}
 
-          <div style={{ flex: 1 }} />
+            {/* Admin / manager status buttons */}
+            {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
+              <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.1)', margin: '0 4px', flexShrink: 0 }} />
+              <button
+                onClick={() => setForm(f => ({ ...f, approved: !f.approved }))}
+                style={{ background: form.approved ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.07)', border: `1px solid ${form.approved ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.22)'}`, color: '#4ade80', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                ✅ Approved Claim
+              </button>
+              <button
+                onClick={() => setForm(f => ({ ...f, waiting: !f.waiting }))}
+                style={{ background: form.waiting ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.07)', border: `1px solid ${form.waiting ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.22)'}`, color: '#fbbf24', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                ⏳ Waiting for Payment
+              </button>
+              <button
+                onClick={() => setForm(f => {
+                  const nowOn = !f.paid;
+                  return { ...f, paid: nowOn, paymentDate: nowOn ? (f.paymentDate || new Date().toISOString().slice(0,10)) : '' };
+                })}
+                style={{ background: form.paid ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.07)', border: `1px solid ${form.paid ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.22)'}`, color: '#6ee7f9', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                💳 Claim Paid
+              </button>
+              {form.paid && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 13px' }}>
+                  <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
+                  <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
+                    style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
+                </div>
+              )}
+            </>)}
+          </div>
 
-          {/* Delete — admin/manager only */}
-          {(currentRole === 'admin' || (currentRole || '').includes('manager')) && onDelete && (
-            <button onClick={onDelete}
-              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', borderRadius: 10, padding: '11px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              🗑 Delete Claim
+          {/* Row 2 — form actions */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            {(currentRole === 'admin' || (currentRole || '').includes('manager')) && onDelete && (
+              <button onClick={onDelete}
+                style={{ background: 'rgba(239,68,68,0.09)', border: '1px solid rgba(239,68,68,0.28)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                🗑 Delete Claim
+              </button>
+            )}
+            <div style={{ flex: 1 }} />
+            <button onClick={onCancel} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: '#94a3b8', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontSize: 14 }}>
+              Cancel
             </button>
-          )}
-
-          <button onClick={onCancel} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#94a3b8', borderRadius: 10, padding: '11px 26px', cursor: 'pointer', fontSize: 14 }}>
-            Cancel
-          </button>
-          <button onClick={() => onSave({ ...form, updatedAt: new Date().toISOString() })} disabled={saving}
-            style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '11px 30px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 15, opacity: saving ? 0.7 : 1 }}>
-            {saving ? 'Saving…' : '💾 Save Contract'}
-          </button>
+            <button onClick={() => onSave({ ...form, updatedAt: new Date().toISOString() })} disabled={saving}
+              style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '10px 28px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 15, opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Saving…' : '💾 Save Contract'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -571,12 +579,14 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 
 // ── Print document (white/light, for actual printing & PDF export) ────────────
 function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, totalDue, date }) {
-  const statusColor = contract.status === 'approved' ? '#16a34a'
-    : contract.status === 'paid' ? '#0369a1'
-    : contract.status === 'waiting' ? '#b45309' : null;
-  const statusLabel = contract.status === 'approved' ? '✅ APPROVED'
-    : contract.status === 'paid' ? '💳 CLAIM PAID'
-    : contract.status === 'waiting' ? '⏳ WAITING FOR PAYMENT' : null;
+  const isApproved = !!(contract.approved ?? (contract.status === 'approved'));
+  const isWaiting  = !!(contract.waiting  ?? (contract.status === 'waiting'));
+  const isPaid     = !!(contract.paid     ?? (contract.status === 'paid'));
+  const statusBadges = [
+    isPaid     && { label: '💳 CLAIM PAID',          color: '#0369a1' },
+    isWaiting  && { label: '⏳ WAITING FOR PAYMENT', color: '#b45309' },
+    isApproved && { label: '✅ APPROVED',             color: '#16a34a' },
+  ].filter(Boolean);
 
   const cell = (label, value, mono = false) => (
     <div style={{ marginBottom: 10 }}>
@@ -596,9 +606,11 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
             <div style={{ fontSize: 13, color: '#67e8f9', marginTop: 4, fontWeight: 500, letterSpacing: 0.5 }}>AFTERMARKET WARRANTY CLAIM</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            {statusLabel && (
-              <div style={{ display: 'inline-block', background: statusColor, color: '#fff', fontSize: 11, fontWeight: 800, padding: '4px 12px', borderRadius: 20, letterSpacing: 0.5, marginBottom: 8 }}>
-                {statusLabel}
+            {statusBadges.length > 0 && (
+              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', flexWrap: 'wrap', marginBottom: 8 }}>
+                {statusBadges.map(b => (
+                  <span key={b.label} style={{ display: 'inline-block', background: b.color, color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 20, letterSpacing: 0.5 }}>{b.label}</span>
+                ))}
               </div>
             )}
             <div style={{ color: '#cbd5e1', fontSize: 12 }}>
@@ -771,7 +783,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
                   </tr>
                 )}
                 {/* Payment date if paid */}
-                {contract.status === 'paid' && contract.paymentDate && (
+                {isPaid && contract.paymentDate && (
                   <tr style={{ background: '#f0fdf4' }}>
                     <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#15803d' }}>💳 Payment Received</td>
                     <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#15803d', textAlign: 'right' }}>{new Date(contract.paymentDate + 'T12:00:00').toLocaleDateString()}</td>
@@ -846,10 +858,10 @@ function ContractList({ contracts, loading, onNew, onView }) {
                 const { totalClaim, totalDue } = calcTotals(c);
                 const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
                 const isFinished  = !!c.repairsFinished;
-                const isApproved  = c.status === 'approved';
-                const isWaiting   = c.status === 'waiting';
-                const isPaid      = c.status === 'paid';
-                // Red takes top priority (repairs done, ready for processing)
+                const isApproved  = !!(c.approved ?? (c.status === 'approved'));
+                const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
+                const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
+                // Red (repairs done) takes top priority; green (approved) otherwise
                 const rowBg = isFinished
                   ? 'rgba(239,68,68,0.22)'
                   : isApproved ? 'rgba(34,197,94,0.22)' : '';
@@ -859,8 +871,9 @@ function ContractList({ contracts, loading, onNew, onView }) {
                 const rowBorder = isFinished
                   ? '1px solid rgba(239,68,68,0.45)'
                   : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                // Multiple statuses can be active — show most prominent emoji + all labels
                 const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
-                const statusLabel = isPaid ? 'Claim Paid' : isWaiting ? 'Waiting for Payment' : isApproved ? 'Approved' : '';
+                const statusLabel = [isPaid && 'Claim Paid', isWaiting && 'Waiting', isApproved && 'Approved'].filter(Boolean).join(' · ') || '';
                 return (
                   <tr key={c.id} onClick={() => onView(c)}
                     style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
