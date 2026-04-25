@@ -75,14 +75,6 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {isLoggedIn ? (
           <>
-            <span style={{ color: '#94a3b8', fontSize: 12, alignSelf: 'center' }}>Logged in: {currentUser}</span>
-            {canEditDashboard && <button onClick={onEdit} style={btnStyle('#1e3a5f', '#4fc3f7')}>Edit Dashboard</button>}
-            {(currentRole === 'advisor' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
-              <button onClick={onAdvisor} style={btnStyle('#1a3a2e', '#4ade80')}>Advisor</button>
-            )}
-            {(currentRole === 'technician' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
-              <button onClick={onTechnician} style={btnStyle('#2d1f4e', '#c4b5fd')}>Technicians</button>
-            )}
             <button onClick={onAdvisorSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Advisor Schedule</button>
             <button onClick={onTechSchedule} style={btnStyle('#1f2a3a', '#818cf8')}>🔧 Tech Schedule</button>
             <button onClick={onLogout} style={btnStyle('#2a1f1f', '#f87171')}>Logout</button>
