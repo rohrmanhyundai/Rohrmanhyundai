@@ -49,6 +49,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
   const [canEditDashboard, setCanEditDashboard] = useState(localStorage.getItem('canEditDashboard') === 'true');
+  const [currentPages, setCurrentPages] = useState(() => { try { const p = localStorage.getItem('currentPages'); return p ? JSON.parse(p) : null; } catch { return null; } });
   const [sharedSaveCode, setSharedSaveCode] = useState('');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
@@ -129,14 +130,17 @@ export default function App() {
     const match = users.find(u => u.username === username && u.password === password);
     if (match) {
       const canEdit = match.role === 'admin' || (match.role || '').includes('manager') || !!match.canEditDashboard;
+      const pages = match.pages || null;
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
       localStorage.setItem('currentRole', match.role || '');
       localStorage.setItem('canEditDashboard', String(canEdit));
+      localStorage.setItem('currentPages', JSON.stringify(pages));
       setIsLoggedIn(true);
       setCurrentUser(match.username);
       setCurrentRole(match.role || '');
       setCanEditDashboard(canEdit);
+      setCurrentPages(pages);
     } else {
       alert('Login failed.');
     }
@@ -147,10 +151,12 @@ export default function App() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
     localStorage.removeItem('canEditDashboard');
+    localStorage.removeItem('currentPages');
     setIsLoggedIn(false);
     setCurrentUser('');
     setCurrentRole('');
     setCanEditDashboard(false);
+    setCurrentPages(null);
     setAdminOpen(false);
     setPage('dashboard');
     setViewingAdvisor('');
@@ -165,6 +171,15 @@ export default function App() {
     });
     setData({ ...newData });
     setVacations([...newVacations]);
+  }
+
+  // Check if the current user can access a page key.
+  // Admins and managers always have full access. Others use their saved pages map.
+  const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+  function canAccess(key) {
+    if (isAdminOrManager) return true;
+    if (!currentPages) return true; // no restrictions saved yet
+    return currentPages[key] !== false;
   }
 
   const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
@@ -247,6 +262,8 @@ export default function App() {
         onTechSchedule={() => setPage('advisor-view-tech-schedule')}
         onAftermarketWarranty={() => setPage('aftermarket-warranty')}
         refreshKey={calendarRefreshKey}
+        userPages={currentPages}
+        currentRole={currentRole}
       />
     );
   }
@@ -271,6 +288,7 @@ export default function App() {
   }
 
   if (page === 'aftermarket-warranty') {
+    if (!canAccess('aftermarketWarranty')) { setPage('advisor-calendar'); return null; }
     return (
       <AftermarketWarranty
         currentUser={currentUser}
