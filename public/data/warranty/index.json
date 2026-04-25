@@ -1,38 +1,5 @@
 [
   {
-    "id": "modyxlewtqan",
-    "createdAt": "2026-04-25T06:38:40.808Z",
-    "updatedAt": "2026-04-25T09:12:05.234Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "test  ",
-    "customerPhone": "7654481502",
-    "vin": "KMHLL4DG5RU764236",
-    "vehicleYear": "2024",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Elantra",
-    "mileage": "10000",
-    "warrantyCompany": "test",
-    "warrantyPhone": "7654481502",
-    "claimNumber": "121212",
-    "laborRate": "150",
-    "laborTime": "2",
-    "diagnosisTime": "1",
-    "parts": [
-      {
-        "id": "modyxlewylj5",
-        "partNumber": "121232",
-        "description": "test part ",
-        "price": "120"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "100",
-    "notes": "",
-    "repairOrder": "770980",
-    "status": "waiting",
-    "paymentDate": ""
-  },
-  {
     "id": "moe2o3z5g7cl",
     "createdAt": "2026-04-25T08:23:16.769Z",
     "updatedAt": "2026-04-25T08:30:45.103Z",
