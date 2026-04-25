@@ -113,6 +113,36 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setVacEdit(vacations.map(v => ({ ...v })));
   }, [vacations]);
 
+  // Auto-remove expired vacations when the panel opens
+  useEffect(() => {
+    if (!isOpen || !vacations.length) return;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const active = vacations.filter(v => {
+      // Only auto-remove APPROVED entries whose end date has passed
+      if ((v.status || '').toUpperCase() !== 'APPROVED') return true;
+      // Use dateEnd picker value first
+      if (v.dateEnd) {
+        const end = new Date(v.dateEnd + 'T00:00:00');
+        return end >= today; // keep if end date is today or future
+      }
+      // Fall back to dateStart
+      if (v.dateStart) {
+        const start = new Date(v.dateStart + 'T00:00:00');
+        return start >= today;
+      }
+      // Fall back to parsing the text dates field
+      const range = parseDateRange(v.dates);
+      if (range) return range.end >= today;
+      return true; // can't determine — keep it
+    });
+
+    if (active.length < vacations.length) {
+      onDataChange(data, active);
+    }
+  }, [isOpen]);
+
   function updateVacEdit(idx, field, value) {
     setVacEdit(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
   }
