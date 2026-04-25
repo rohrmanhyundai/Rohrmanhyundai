@@ -369,21 +369,29 @@ function ContractDetail({ contract, onEdit, onBack }) {
   async function handleSavePDF() {
     if (!pdfRef.current) return;
     setGeneratingPDF(true);
+    const el = pdfRef.current;
     try {
-      // Temporarily make the print div visible off-screen so html2canvas can capture it
-      const el = pdfRef.current;
+      // Use position:absolute (NOT fixed) so content taller than the viewport is fully captured
       el.style.display = 'block';
-      el.style.position = 'fixed';
+      el.style.position = 'absolute';
       el.style.left = '-9999px';
       el.style.top = '0';
       el.style.width = '816px'; // letter width at 96dpi
-      el.style.background = '#fff';
+      el.style.background = '#ffffff';
       el.style.padding = '0';
-      el.style.zIndex = '-1';
+      el.style.margin = '0';
+      el.style.zIndex = '9999';
 
-      await new Promise(r => setTimeout(r, 150)); // let browser render
+      await new Promise(r => setTimeout(r, 200)); // let browser fully render
 
-      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        width: 816,
+        height: el.scrollHeight,   // capture full content height — not just viewport
+        windowWidth: 816,
+      });
 
       // Restore hidden
       el.style.display = 'none';
@@ -392,18 +400,18 @@ function ContractDetail({ contract, onEdit, onBack }) {
       el.style.top = '';
       el.style.width = '';
       el.style.padding = '';
+      el.style.margin = '';
       el.style.zIndex = '';
 
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
       const pageW = pdf.internal.pageSize.getWidth();   // 215.9mm
       const pageH = pdf.internal.pageSize.getHeight();  // 279.4mm
       const margin = 10; // mm on all sides
-      const contentW = pageW - 2 * margin;              // usable width per page
-      const contentH = pageH - 2 * margin;              // usable height per page
+      const contentW = pageW - 2 * margin;
+      const contentH = pageH - 2 * margin;
 
-      // How many canvas pixels equal one mm of content width?
+      // px-per-mm ratio based on canvas width vs usable content width
       const pxPerMm = canvas.width / contentW;
-      // Height of one page worth of content in canvas pixels
       const pageHeightPx = Math.round(contentH * pxPerMm);
       const totalPages = Math.ceil(canvas.height / pageHeightPx);
 
@@ -413,23 +421,33 @@ function ContractDetail({ contract, onEdit, onBack }) {
         const startY = page * pageHeightPx;
         const sliceH = Math.min(pageHeightPx, canvas.height - startY);
 
-        // Crop canvas to just this page's slice
+        // Render just this page's slice onto a fresh canvas
         const pageCanvas = document.createElement('canvas');
         pageCanvas.width = canvas.width;
-        pageCanvas.height = pageHeightPx; // always full page height (white fills the rest)
+        pageCanvas.height = pageHeightPx;
         const ctx = pageCanvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        // src: (canvas, sx, sy, sw, sh, dx, dy, dw, dh)
         ctx.drawImage(canvas, 0, startY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
 
-        const pageImgData = pageCanvas.toDataURL('image/png');
-        // Place cropped image inside the margin area
-        pdf.addImage(pageImgData, 'PNG', margin, margin, contentW, contentH);
+        // Scale rendered slice to fit the content area — last page naturally has white space below
+        const sliceMmH = (sliceH / pxPerMm); // actual mm height of this slice
+        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, contentW, sliceMmH);
       }
 
       const filename = `Warranty_${(contract.customerName || 'Contract').replace(/\s+/g,'_')}_RO${contract.repairOrder || contract.claimNumber || ''}.pdf`;
       pdf.save(filename);
     } catch (err) {
+      // Ensure element is always restored on error
+      el.style.display = 'none';
+      el.style.position = '';
+      el.style.left = '';
+      el.style.top = '';
+      el.style.width = '';
+      el.style.padding = '';
+      el.style.margin = '';
+      el.style.zIndex = '';
       alert('PDF generation failed: ' + err.message);
     } finally {
       setGeneratingPDF(false);
