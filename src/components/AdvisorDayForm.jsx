@@ -102,6 +102,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
   const [siFile, setSiFile]               = useState(null);
   const [siParseError, setSiParseError]   = useState('');
   const [siUploadedAt, setSiUploadedAt]   = useState('');
+  const [siRawColumns, setSiRawColumns]   = useState([]);
 
   const notesRef          = useRef(null);
   const rowsRef           = useRef(rows);
@@ -125,9 +126,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
   useEffect(() => {
     loadServiceInvitations().then(data => {
       if (data && Array.isArray(data)) {
-        const meta = data.__meta;
+        const meta = data.find(r => r.__meta);
         if (meta?.uploadedAt) setSiUploadedAt(meta.uploadedAt);
-        setSiData(data.filter(r => r.consultant !== undefined));
+        if (meta?.rawColumns) setSiRawColumns(meta.rawColumns);
+        setSiData(data.filter(r => !r.__meta && r.consultant !== undefined));
       }
       setSiLoading(false);
     });
@@ -239,18 +241,20 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
       if (raw.length === 0) throw new Error('The file appears empty or has no readable rows.');
 
+      const rawColumns = Object.keys(raw[0]); // capture actual column headers for debugging
       const parsed = parseXlsxRows(raw);
       setSiUploadStatus('Saving to server…');
 
-      // Attach metadata row to track upload time
+      // Attach metadata row to track upload time + raw column headers for debugging
       const payload = [
-        { __meta: true, uploadedAt: new Date().toISOString(), uploadedBy: ownAdvisor, rowCount: parsed.length },
+        { __meta: true, uploadedAt: new Date().toISOString(), uploadedBy: ownAdvisor, rowCount: parsed.length, rawColumns },
         ...parsed,
       ];
 
       await saveServiceInvitations(payload);
 
       setSiData(parsed);
+      setSiRawColumns(rawColumns);
       setSiUploadedAt(new Date().toISOString());
       setSiFile(null);
       if (siFileInputRef.current) siFileInputRef.current.value = '';
@@ -557,23 +561,38 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                     </div>
                   </div>
 
-                  {/* Admin: show what consultants ARE in the file */}
-                  {canUpload && detectedConsultants.length > 0 && (
-                    <div style={{ background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '18px 22px' }}>
-                      <div style={{ fontWeight: 800, color: '#fbbf24', marginBottom: 10, fontSize: 13 }}>
-                        📊 {allDataRows.length} total rows loaded — Consultants found in the file:
+                  {/* Admin: show what consultants ARE in the file + raw column names */}
+                  {canUpload && allDataRows.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                      <div style={{ background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '18px 22px' }}>
+                        <div style={{ fontWeight: 800, color: '#fbbf24', marginBottom: 10, fontSize: 13 }}>
+                          📊 {allDataRows.length} total rows loaded — Consultants found in the file:
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                          {detectedConsultants.map(name => (
+                            <span key={name} style={{ background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.25)', borderRadius: 8, padding: '4px 12px', fontSize: 13, color: '#6ee7f9', fontWeight: 600 }}>
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                        <div style={{ marginTop: 12, fontSize: 12, color: '#64748b' }}>
+                          Advisor name <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> is matched by first name against the list above.
+                        </div>
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                        {detectedConsultants.map(name => (
-                          <span key={name} style={{ background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.25)', borderRadius: 8, padding: '4px 12px', fontSize: 13, color: '#6ee7f9', fontWeight: 600 }}>
-                            {name}
-                          </span>
-                        ))}
-                      </div>
-                      <div style={{ marginTop: 12, fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
-                        The advisor page name <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> must match the first name of one of the consultants above.<br />
-                        Navigate to that advisor's calendar day to see their surveys.
-                      </div>
+                      {siRawColumns.length > 0 && (
+                        <div style={{ background: 'rgba(167,139,250,.07)', border: '1px solid rgba(167,139,250,.22)', borderRadius: 14, padding: '18px 22px' }}>
+                          <div style={{ fontWeight: 800, color: '#c4b5fd', marginBottom: 10, fontSize: 13 }}>
+                            📋 Raw column headers detected in your xlsx ({siRawColumns.length} columns):
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {siRawColumns.map(col => (
+                              <span key={col} style={{ background: 'rgba(167,139,250,.1)', border: '1px solid rgba(167,139,250,.25)', borderRadius: 6, padding: '3px 10px', fontSize: 12, color: '#c4b5fd', fontFamily: 'monospace' }}>
+                                {col}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
