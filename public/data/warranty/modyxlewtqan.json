@@ -1,7 +1,7 @@
 {
   "id": "modyxlewtqan",
   "createdAt": "2026-04-25T06:38:40.808Z",
-  "updatedAt": "2026-04-25T07:13:28.025Z",
+  "updatedAt": "2026-04-25T07:13:51.342Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "test  ",
   "customerPhone": "7654481502",
@@ -34,5 +34,6 @@
   "deductible": "100",
   "notes": "",
   "repairOrder": "770980",
-  "status": "paid"
+  "status": "waiting",
+  "paymentDate": ""
 }
