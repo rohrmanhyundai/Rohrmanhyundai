@@ -83,6 +83,21 @@
         "techSchedule": true,
         "aftermarketWarranty": true
       }
+    },
+    {
+      "username": "West",
+      "password": "[REDACTED]",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
     }
   ],
   "sharedSaveCode": ""
