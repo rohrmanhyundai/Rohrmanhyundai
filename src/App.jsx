@@ -185,8 +185,14 @@ export default function App() {
   // Check if the current user can access a page key.
   // Admins and managers always have full access. Others use their saved pages map.
   const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+  // Keys that are OFF by default — must be explicitly granted in user pages settings
+  const DEFAULT_OFF_KEYS = new Set(['surveyReports']);
   function canAccess(key) {
     if (isAdminOrManager) return true;
+    if (DEFAULT_OFF_KEYS.has(key)) {
+      // Feature is off unless explicitly set to true in user's pages
+      return !!(currentPages && currentPages[key] === true);
+    }
     if (!currentPages) return true; // no restrictions saved yet
     return currentPages[key] !== false;
   }
@@ -302,6 +308,7 @@ export default function App() {
   }
 
   if (page === 'survey-reports') {
+    if (!canAccess('surveyReports')) { setPage('advisor-calendar'); return null; }
     return (
       <SurveyReports
         advisorList={advisorList}
