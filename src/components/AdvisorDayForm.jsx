@@ -351,8 +351,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
     .filter(s => !completedROs.has(s.repairOrder))
     .sort((a, b) => parseDateVal(b.serviceDate) - parseDateVal(a.serviceDate));
 
-  // Survey Uploads = completed reviews sorted newest first
+  // Survey Uploads = completed reviews sorted newest first, excluding manager-deleted
   const sortedCompleted = [...completedReviews]
+    .filter(r => !r.managerDeleted)
     .sort((a, b) => parseDateVal(b.submittedAt) - parseDateVal(a.submittedAt));
 
   const detectedConsultants = [...new Set(allDataRows.map(r => r.consultant).filter(Boolean))].sort();
