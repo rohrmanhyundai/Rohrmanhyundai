@@ -23,7 +23,8 @@
     "uploadedAt": "2026-04-26T01:47:30.972Z",
     "allowedRoles": [
       "service manager",
-      "general manager"
+      "general manager",
+      "parts manager"
     ]
   },
   {
