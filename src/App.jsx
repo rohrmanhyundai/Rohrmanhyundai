@@ -379,7 +379,13 @@ export default function App() {
     );
   }
   if (page === 'document-library') {
-    const dlBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
+    const dlBackLabels = {
+      'parts-hub':      '← Parts Hub',
+      'manager-hub':    '← Manager Hub',
+      'tech-resources': '← Tech Resources',
+      'advisor-calendar': '← Advisor Calendar',
+    };
+    const dlBackLabel = dlBackLabels[prevPage] || '← Back';
     return (
       <DocumentLibrary
         currentUser={currentUser}
