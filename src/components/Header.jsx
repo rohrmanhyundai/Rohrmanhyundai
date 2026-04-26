@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts }) {
+export default function Header({ data, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -65,6 +65,11 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, can
                   {(currentRole === 'parts' || currentRole === 'parts manager' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
                     <button onClick={onParts} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.35),rgba(245,158,11,.22))', borderColor: 'rgba(251,191,36,.4)' }}>
                       Parts
+                    </button>
+                  )}
+                  {(currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager')) && (
+                    <button onClick={onManager} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.35),rgba(139,92,246,.22))', borderColor: 'rgba(167,139,250,.4)' }}>
+                      Manager
                     </button>
                   )}
                   {canEditDashboard && (
