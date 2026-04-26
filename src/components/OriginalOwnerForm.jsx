@@ -7,12 +7,12 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 // Tweak these if any field still lands off after testing.
 
 const FIELDS = {
-  dealerCode:   { x: 0.195, y: 0.468 },  // after "Dealer Code: "
-  roNumber:     { x: 0.490, y: 0.468 },  // after "Repair Order (RO) Number: "
-  repairDate:   { x: 0.762, y: 0.468 },  // after "Repair Date: "
-  vin:          { x: 0.455, y: 0.540 },  // after "17-Digit Vehicle Identification Number (VIN): "
-  customerDate: { x: 0.840, y: 0.262 },  // Date field on customer signature line
-  managerDate:  { x: 0.840, y: 0.720 },  // Date field on dealer manager signature line
+  dealerCode:   { x: 0.195, y: 0.505 },  // after "Dealer Code: "
+  roNumber:     { x: 0.490, y: 0.505 },  // after "Repair Order (RO) Number: "
+  repairDate:   { x: 0.762, y: 0.505 },  // after "Repair Date: "
+  vin:          { x: 0.455, y: 0.528 },  // after "17-Digit Vehicle Identification Number (VIN): "
+  customerDate: { x: 0.840, y: 0.275 },  // Date field on customer signature line
+  managerDate:  { x: 0.840, y: 0.748 },  // Date field on dealer manager signature line
 };
 
 const TEXT_SIZE = 9;
