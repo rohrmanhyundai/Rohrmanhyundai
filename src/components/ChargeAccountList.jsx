@@ -223,54 +223,71 @@ export default function ChargeAccountList({ onBack }) {
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
-          {/* ── Stats + search ── */}
+          {/* ── Stats + controls ── */}
           {accounts.length > 0 && (
-            <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
-              <div style={{ background: 'rgba(61,214,195,.1)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Total In File</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#6ee7f9', lineHeight: 1.1 }}>{accounts.length}</div>
+            <div style={{ marginBottom: 24 }}>
+
+              {/* Stats bar */}
+              <div style={{
+                display: 'flex', alignItems: 'stretch',
+                background: 'rgba(255,255,255,.04)',
+                border: '1px solid rgba(255,255,255,.09)',
+                borderRadius: 14, overflow: 'hidden',
+                marginBottom: 12,
+              }}>
+                {[
+                  { label: 'Total in File', value: accounts.length, color: '#6ee7f9', dot: 'rgba(61,214,195,.7)' },
+                  { label: 'Charge Accounts', value: approvedCount, color: '#a5b4fc', dot: 'rgba(99,102,241,.7)' },
+                  { label: 'Tax Exempt', value: exemptCount, color: '#86efac', dot: 'rgba(134,239,172,.7)' },
+                  { label: 'Not Exempt', value: nonExemptCount, color: '#fdba74', dot: 'rgba(251,146,60,.7)' },
+                ].map((s, idx, arr) => (
+                  <div
+                    key={s.label}
+                    style={{
+                      flex: 1, padding: '16px 20px',
+                      borderRight: idx < arr.length - 1 ? '1px solid rgba(255,255,255,.07)' : 'none',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                    }}
+                  >
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: s.dot, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 3 }}>{s.label}</div>
+                      <div style={{ fontSize: 24, fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div style={{ background: 'rgba(99,102,241,.1)', border: '1px solid rgba(99,102,241,.28)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Charge Acct ✓</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#a5b4fc', lineHeight: 1.1 }}>{approvedCount}</div>
-              </div>
-              <div style={{ background: 'rgba(134,239,172,.1)', border: '1px solid rgba(134,239,172,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Tax Exempt</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#86efac', lineHeight: 1.1 }}>{exemptCount}</div>
-              </div>
-              <div style={{ background: 'rgba(251,146,60,.1)', border: '1px solid rgba(251,146,60,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Not Exempt</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#fdba74', lineHeight: 1.1 }}>{nonExemptCount}</div>
-              </div>
-              {/* Filter toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+
+              {/* Controls row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <button
                   onClick={() => setApprovedOnly(v => !v)}
                   style={{
-                    background: approvedOnly ? 'rgba(99,102,241,.2)' : 'rgba(255,255,255,.06)',
-                    border: `1px solid ${approvedOnly ? 'rgba(99,102,241,.5)' : 'rgba(255,255,255,.12)'}`,
-                    borderRadius: 8, color: approvedOnly ? '#a5b4fc' : '#64748b',
-                    padding: '7px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
-                    whiteSpace: 'nowrap',
+                    background: approvedOnly ? 'rgba(99,102,241,.18)' : 'rgba(255,255,255,.05)',
+                    border: `1px solid ${approvedOnly ? 'rgba(99,102,241,.45)' : 'rgba(255,255,255,.10)'}`,
+                    borderRadius: 8, color: approvedOnly ? '#a5b4fc' : '#475569',
+                    padding: '8px 16px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                    whiteSpace: 'nowrap', transition: 'all .15s', flexShrink: 0,
                   }}
                 >
-                  {approvedOnly ? '✓ Approved Only' : 'Show All'}
+                  {approvedOnly ? '✓ Approved Only' : '· Show All'}
                 </button>
+                <div style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    placeholder="Search by name or customer ID…"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    style={{
+                      width: '100%', background: 'rgba(255,255,255,.05)',
+                      border: '1px solid rgba(255,255,255,.10)', borderRadius: 8,
+                      color: '#e2e8f0', fontSize: 14, padding: '8px 14px',
+                      fontFamily: 'inherit', boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
               </div>
-              <div style={{ flex: 1, minWidth: 220 }}>
-                <input
-                  type="text"
-                  placeholder="🔍  Search by name or customer ID…"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  style={{
-                    width: '100%', background: 'rgba(255,255,255,.06)',
-                    border: '1px solid rgba(255,255,255,.12)', borderRadius: 8,
-                    color: '#e2e8f0', fontSize: 14, padding: '10px 14px',
-                    fontFamily: 'inherit', boxSizing: 'border-box',
-                  }}
-                />
-              </div>
+
             </div>
           )}
 
