@@ -211,6 +211,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         onWorkSchedule={() => setPage('tech-work-schedule')}
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
+        onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onBack={() => setPage('dashboard')}
       />
     );
