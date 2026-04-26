@@ -49,8 +49,6 @@
     "size": 241760,
     "uploadedBy": "admin",
     "uploadedAt": "2026-04-21T20:40:51.304Z",
-    "allowedRoles": [
-      "advisor"
-    ]
+    "allowedRoles": []
   }
 ]
