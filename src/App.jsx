@@ -11,6 +11,7 @@ import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import ManagerHub from './components/ManagerHub';
+import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
@@ -290,8 +291,15 @@ export default function App() {
         onAdvisorSchedule={() => goTo('work-schedule', 'manager-hub')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'manager-hub')}
         onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+        onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
       />
     );
+  }
+
+  if (page === 'charge-account-list') {
+    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return <ChargeAccountList onBack={() => setPage(prevPage || 'manager-hub')} />;
   }
 
   // Advisor pages render full-screen outside the scaled stage

@@ -2,6 +2,15 @@ import React from 'react';
 
 const NAV_BUTTONS = [
   {
+    key: 'chargeAccountList',
+    label: '💳 Charge Account List',
+    desc: 'View approved charge accounts, customer IDs, and tax exempt status',
+    bg: 'linear-gradient(135deg,rgba(99,102,241,.28),rgba(79,70,229,.18))',
+    border: 'rgba(99,102,241,.45)',
+    color: '#a5b4fc',
+    prop: 'onChargeAccountList',
+  },
+  {
     key: 'surveyReports',
     label: '📊 Survey Reports',
     desc: 'View and manage advisor survey review history',
@@ -70,10 +79,12 @@ export default function ManagerHub({
   currentUser, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
+  onChargeAccountList,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
+    onChargeAccountList,
   };
 
   return (
