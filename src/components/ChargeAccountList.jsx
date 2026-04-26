@@ -223,57 +223,6 @@ export default function ChargeAccountList({ onBack }) {
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
-          {/* ── Upload zone ── */}
-          <div
-            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) processFile(f); }}
-            onClick={() => fileRef.current?.click()}
-            style={{
-              border: `2px dashed ${dragOver ? 'rgba(61,214,195,.75)' : 'rgba(255,255,255,.14)'}`,
-              borderRadius: 14, padding: '26px 32px', textAlign: 'center',
-              cursor: loading ? 'default' : 'pointer',
-              background: dragOver ? 'rgba(61,214,195,.06)' : 'rgba(255,255,255,.025)',
-              marginBottom: 24, transition: 'all .2s',
-            }}
-          >
-            <input ref={fileRef} type="file" accept=".pdf" style={{ display: 'none' }}
-              onChange={e => { if (e.target.files[0]) processFile(e.target.files[0]); e.target.value = ''; }} />
-            {loading ? (
-              <div style={{ color: '#6ee7f9', fontSize: 15 }}>⏳ Reading PDF and parsing accounts…</div>
-            ) : (
-              <>
-                <div style={{ fontSize: 34, marginBottom: 8 }}>📄</div>
-                <div style={{ fontWeight: 700, color: '#e2e8f0', fontSize: 15, marginBottom: 4 }}>
-                  {accounts.length > 0 ? 'Re-upload Charge Account PDF' : 'Upload Charge Account PDF'}
-                </div>
-                <div style={{ color: '#475569', fontSize: 13 }}>Drag & drop or click to select · PDF files only</div>
-                {uploadedAt && (
-                  <div style={{ marginTop: 8, fontSize: 12, color: '#334155' }}>Last uploaded: {uploadedAt}</div>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Error / debug banner */}
-          {error && (
-            <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#fca5a5', fontSize: 13 }}>
-              ⚠ {error}
-            </div>
-          )}
-
-          {/* Raw text debug (shown only when parse fails) */}
-          {rawLines && (
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontWeight: 700, color: '#94a3b8', fontSize: 13, marginBottom: 8 }}>
-                Raw extracted lines from PDF ({rawLines.length}):
-              </div>
-              <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.1)', borderRadius: 10, padding: 16, maxHeight: 320, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
-                {rawLines.map((l, i) => `${String(i + 1).padStart(4, ' ')}  ${l}`).join('\n')}
-              </div>
-            </div>
-          )}
-
           {/* ── Stats + search ── */}
           {accounts.length > 0 && (
             <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -423,9 +372,64 @@ export default function ChargeAccountList({ onBack }) {
             <div style={{ textAlign: 'center', padding: '64px 0', color: '#475569' }}>
               <div style={{ fontSize: 52, marginBottom: 14 }}>📋</div>
               <div style={{ fontSize: 16, color: '#64748b', marginBottom: 6 }}>No charge accounts loaded yet</div>
-              <div style={{ fontSize: 13, color: '#334155' }}>Upload your charge account PDF above to populate the list</div>
+              <div style={{ fontSize: 13, color: '#334155' }}>Upload your charge account PDF below to populate the list</div>
             </div>
           )}
+
+          {/* ── Upload zone (bottom) ── */}
+          <div style={{ marginTop: 32 }}>
+            <div
+              onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) processFile(f); }}
+              onClick={() => fileRef.current?.click()}
+              style={{
+                border: `2px dashed ${dragOver ? 'rgba(61,214,195,.75)' : 'rgba(255,255,255,.10)'}`,
+                borderRadius: 12, padding: '18px 24px', textAlign: 'center',
+                cursor: loading ? 'default' : 'pointer',
+                background: dragOver ? 'rgba(61,214,195,.06)' : 'transparent',
+                transition: 'all .2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14,
+              }}
+            >
+              <input ref={fileRef} type="file" accept=".pdf" style={{ display: 'none' }}
+                onChange={e => { if (e.target.files[0]) processFile(e.target.files[0]); e.target.value = ''; }} />
+              {loading ? (
+                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ Reading PDF and parsing accounts…</div>
+              ) : (
+                <>
+                  <span style={{ fontSize: 22 }}>📄</span>
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: 700, color: '#64748b', fontSize: 13 }}>
+                      {accounts.length > 0 ? 'Re-upload Charge Account PDF' : 'Upload Charge Account PDF'}
+                    </div>
+                    <div style={{ color: '#334155', fontSize: 12 }}>
+                      Drag & drop or click · PDF only
+                      {uploadedAt && <span style={{ marginLeft: 10 }}>· Last uploaded: {uploadedAt}</span>}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Error / debug banner */}
+            {error && (
+              <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '12px 18px', marginTop: 12, color: '#fca5a5', fontSize: 13 }}>
+                ⚠ {error}
+              </div>
+            )}
+
+            {/* Raw text debug */}
+            {rawLines && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 700, color: '#94a3b8', fontSize: 13, marginBottom: 8 }}>
+                  Raw extracted lines from PDF ({rawLines.length}):
+                </div>
+                <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.1)', borderRadius: 10, padding: 16, maxHeight: 320, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                  {rawLines.map((l, i) => `${String(i + 1).padStart(4, ' ')}  ${l}`).join('\n')}
+                </div>
+              </div>
+            )}
+          </div>
 
         </div>
       </div>
