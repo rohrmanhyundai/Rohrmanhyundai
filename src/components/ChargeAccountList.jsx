@@ -63,59 +63,56 @@ async function extractLines(file) {
 }
 
 // ── Parse lines into account objects ─────────────────────────────────────────
-const SKIP = [
-  /charge\s+account/i, /as\s+of\s+\d/i, /credit\s+limit/i, /print\s+date/i,
-  /page\s+\d/i, /^total/i, /listing/i, /report/i, /^cust\b/i, /^acct\b/i,
-  /^account\b/i, /^customer\s+name/i, /^name\b/i, /dealer/i, /date:/i,
-  /^\s*[-=]+\s*$/, /company:/i, /balance/i, /^#\s/i, /^id\s/i,
-];
+// Format from this DMS PDF:
+//   CUSTOMER NAME  CUSTOMER_ID  ZIP  (WHOLESALE|RETAIL|PARTS|CASH)  [YES NO YES YES ...]
+// The YES/NO block may wrap to the next line.
+// Column order after the sale type keyword:
+//   [0] Charge Acct   [1] Tax Exempt On File   [2] Verified   [3] Add/Phone ...
 
-const TAX_YES = /\b(y(?:es)?|tax.?exempt)\b/i;
-const TAX_NO  = /\b(n(?:o)?|non.?exempt)\b/i;
-
-function detectTax(s) {
-  if (TAX_YES.test(s)) return 'Yes';
-  if (TAX_NO.test(s))  return 'No';
-  return null;
-}
+// Matches the start of a customer record line
+const RECORD_RE = /^([A-Z0-9][A-Z0-9\s&'.,''\-\/]*?)\s+(\d{4}[_\-]\d{4}|\d{5,8})\s+\d{5}\s+(?:WHOLESALE|RETAIL|PARTS|CASH|FLEET)/i;
 
 function parseAccounts(lines) {
   const results = [];
 
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line || line.length < 4) continue;
-    if (SKIP.some(r => r.test(line))) continue;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
 
-    // ── Strategy 1: ID  NAME  TAX (ID leads, whitespace-separated)
-    let m = line.match(/^(\d{2,10})\s{1,}(.{2,50}?)\s{2,}(Y(?:es)?|N(?:o)?|TAX.?EXEMPT|NON.?EXEMPT)\s*$/i);
-    if (m) {
-      results.push({ id: m[1], name: m[2].replace(/\s+/g, ' ').trim(), taxExempt: detectTax(m[3]) || 'No' });
-      continue;
+    const match = line.match(RECORD_RE);
+    if (!match) continue;
+
+    const name = match[1].trim().replace(/\s+/g, ' ');
+    const customerId = match[2];
+
+    // Text that comes after the matched portion on the same line
+    let yesNoSource = line.slice(match[0].length).trim();
+
+    // If no YES/NO on this line, peek at the next line (continuation)
+    if (!/\b(YES|NO)\b/i.test(yesNoSource) && i + 1 < lines.length) {
+      const nextLine = lines[i + 1].trim();
+      if (/^(YES|NO)\b/i.test(nextLine)) {
+        yesNoSource = nextLine;
+        i++; // consume the continuation line
+      }
     }
 
-    // ── Strategy 2: NAME  ID  TAX (name leads)
-    m = line.match(/^(.{3,50}?)\s{2,}(\d{2,10})\s{2,}(Y(?:es)?|N(?:o)?|TAX.?EXEMPT|NON.?EXEMPT)\s*$/i);
-    if (m) {
-      results.push({ id: m[2], name: m[1].replace(/\s+/g, ' ').trim(), taxExempt: detectTax(m[3]) || 'No' });
-      continue;
+    // Extract YES/NO tokens in order
+    const yesNos = [];
+    const ynRe = /\b(YES|NO)\b/gi;
+    let m;
+    while ((m = ynRe.exec(yesNoSource)) !== null) {
+      yesNos.push(m[1].toUpperCase());
     }
 
-    // ── Strategy 3: ID  NAME  (no explicit tax field)
-    m = line.match(/^(\d{3,10})\s{2,}([A-Z].{2,48}?)\s*$/);
-    if (m && !/^\d/.test(m[2])) {
-      results.push({ id: m[1], name: m[2].replace(/\s+/g, ' ').trim(), taxExempt: 'No' });
-      continue;
-    }
+    // Column mapping: [0] = Charge Acct, [1] = Tax Exempt On File
+    const chargeAcct = yesNos[0] === 'YES' ? 'Yes' : 'No';
+    const taxExempt  = yesNos[1] === 'YES' ? 'Yes' : (yesNos[1] === 'NO' ? 'No' : '—');
 
-    // ── Strategy 4: NAME  ID  (name leads, no tax)
-    m = line.match(/^([A-Z].{2,48}?)\s{2,}(\d{4,10})\s*$/);
-    if (m) {
-      results.push({ id: m[2], name: m[1].replace(/\s+/g, ' ').trim(), taxExempt: 'No' });
-    }
+    results.push({ name, id: customerId, chargeAcct, taxExempt });
   }
 
-  // Deduplicate by id
+  // Deduplicate by ID
   const seen = new Set();
   return results.filter(a => { if (seen.has(a.id)) return false; seen.add(a.id); return true; });
 }
@@ -130,6 +127,7 @@ export default function ChargeAccountList({ onBack }) {
   const [uploadedAt, setUploadedAt] = useState(() => localStorage.getItem(UPLOAD_TS_KEY) || '');
   const [rawLines, setRawLines]   = useState(null);   // null = hide, array = show
   const [error, setError]         = useState('');
+  const [approvedOnly, setApprovedOnly] = useState(true); // filter to Charge Acct = Yes
   const fileRef = useRef();
 
   // ── Process uploaded file ──────────────────────────────────────────────────
@@ -191,12 +189,14 @@ export default function ChargeAccountList({ onBack }) {
 
   // ── Filtered list ─────────────────────────────────────────────────────────
   const q = search.trim().toLowerCase();
+  const base = approvedOnly ? accounts.filter(a => a.chargeAcct === 'Yes') : accounts;
   const filtered = q
-    ? accounts.filter(a => a.name.toLowerCase().includes(q) || a.id.includes(q))
-    : accounts;
+    ? base.filter(a => a.name.toLowerCase().includes(q) || a.id.includes(q))
+    : base;
 
-  const exemptCount    = accounts.filter(a => a.taxExempt === 'Yes').length;
-  const nonExemptCount = accounts.length - exemptCount;
+  const approvedCount  = accounts.filter(a => a.chargeAcct === 'Yes').length;
+  const exemptCount    = base.filter(a => a.taxExempt === 'Yes').length;
+  const nonExemptCount = base.filter(a => a.taxExempt === 'No').length;
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -278,8 +278,12 @@ export default function ChargeAccountList({ onBack }) {
           {accounts.length > 0 && (
             <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
               <div style={{ background: 'rgba(61,214,195,.1)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Total</div>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Total In File</div>
                 <div style={{ fontSize: 26, fontWeight: 900, color: '#6ee7f9', lineHeight: 1.1 }}>{accounts.length}</div>
+              </div>
+              <div style={{ background: 'rgba(99,102,241,.1)', border: '1px solid rgba(99,102,241,.28)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Charge Acct ✓</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#a5b4fc', lineHeight: 1.1 }}>{approvedCount}</div>
               </div>
               <div style={{ background: 'rgba(134,239,172,.1)', border: '1px solid rgba(134,239,172,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
                 <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Tax Exempt</div>
@@ -288,6 +292,21 @@ export default function ChargeAccountList({ onBack }) {
               <div style={{ background: 'rgba(251,146,60,.1)', border: '1px solid rgba(251,146,60,.25)', borderRadius: 10, padding: '10px 18px', minWidth: 110 }}>
                 <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Not Exempt</div>
                 <div style={{ fontSize: 26, fontWeight: 900, color: '#fdba74', lineHeight: 1.1 }}>{nonExemptCount}</div>
+              </div>
+              {/* Filter toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  onClick={() => setApprovedOnly(v => !v)}
+                  style={{
+                    background: approvedOnly ? 'rgba(99,102,241,.2)' : 'rgba(255,255,255,.06)',
+                    border: `1px solid ${approvedOnly ? 'rgba(99,102,241,.5)' : 'rgba(255,255,255,.12)'}`,
+                    borderRadius: 8, color: approvedOnly ? '#a5b4fc' : '#64748b',
+                    padding: '7px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {approvedOnly ? '✓ Approved Only' : 'Show All'}
+                </button>
               </div>
               <div style={{ flex: 1, minWidth: 220 }}>
                 <input
@@ -316,13 +335,14 @@ export default function ChargeAccountList({ onBack }) {
                       <th style={TH}>#</th>
                       <th style={{ ...TH, textAlign: 'left' }}>Customer Name</th>
                       <th style={{ ...TH, textAlign: 'left' }}>Customer ID</th>
+                      <th style={{ ...TH, textAlign: 'center' }}>Charge Acct</th>
                       <th style={{ ...TH, textAlign: 'center' }}>Tax Exempt on File</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#475569' }}>
+                        <td colSpan={5} style={{ padding: '32px', textAlign: 'center', color: '#475569' }}>
                           No accounts match your search.
                         </td>
                       </tr>
@@ -359,6 +379,19 @@ export default function ChargeAccountList({ onBack }) {
                           </button>
                         </td>
 
+                        {/* Charge Acct */}
+                        <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                          <span style={{
+                            display: 'inline-block', padding: '3px 14px', borderRadius: 20,
+                            fontSize: 12, fontWeight: 700,
+                            background: a.chargeAcct === 'Yes' ? 'rgba(99,102,241,.15)' : 'rgba(100,116,139,.1)',
+                            border: `1px solid ${a.chargeAcct === 'Yes' ? 'rgba(99,102,241,.4)' : 'rgba(100,116,139,.25)'}`,
+                            color: a.chargeAcct === 'Yes' ? '#a5b4fc' : '#64748b',
+                          }}>
+                            {a.chargeAcct === 'Yes' ? '✓ Yes' : '✗ No'}
+                          </span>
+                        </td>
+
                         {/* Tax Exempt */}
                         <td style={{ padding: '10px 14px', textAlign: 'center' }}>
                           <span style={{
@@ -368,7 +401,7 @@ export default function ChargeAccountList({ onBack }) {
                             border: `1px solid ${a.taxExempt === 'Yes' ? 'rgba(134,239,172,.38)' : 'rgba(251,146,60,.38)'}`,
                             color: a.taxExempt === 'Yes' ? '#86efac' : '#fdba74',
                           }}>
-                            {a.taxExempt === 'Yes' ? '✓ Yes' : '✗ No'}
+                            {a.taxExempt === 'Yes' ? '✓ Yes' : a.taxExempt === 'No' ? '✗ No' : '—'}
                           </span>
                         </td>
                       </tr>
