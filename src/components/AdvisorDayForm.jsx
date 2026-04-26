@@ -472,7 +472,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                 <div className="no-print" style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,.05)', borderRadius: 10, padding: 3 }}>
                   <TabBtn active={afterCallTab === 'report'}   onClick={() => setAfterCallTab('report')}   color="cyan">📋 View Report</TabBtn>
                   <TabBtn active={afterCallTab === 'complete'} onClick={() => setAfterCallTab('complete')} color="green">✅ Complete Review</TabBtn>
-                  <TabBtn active={afterCallTab === 'uploads'}  onClick={() => setAfterCallTab('uploads')}  color="purple">📁 Survey Uploads{sortedCompleted.length > 0 ? ` (${sortedCompleted.length})` : ''}</TabBtn>
+                  {canUpload && <TabBtn active={afterCallTab === 'uploads'}  onClick={() => setAfterCallTab('uploads')}  color="purple">📁 Survey Uploads{sortedCompleted.length > 0 ? ` (${sortedCompleted.length})` : ''}</TabBtn>}
                   {canUpload && <TabBtn active={afterCallTab === 'upload'} onClick={() => setAfterCallTab('upload')} color="amber">📤 Upload Report</TabBtn>}
                 </div>
               </div>
@@ -498,7 +498,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                 <div style={{ textAlign: 'center', marginBottom: 20 }}>
                   <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
                   <div style={{ color: '#64748b', fontSize: 15 }}>No pending surveys for <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong> in the last 4 months.</div>
-                  {sortedCompleted.length > 0 && <div style={{ marginTop: 8, fontSize: 13, color: '#475569' }}>{sortedCompleted.length} survey{sortedCompleted.length !== 1 ? 's' : ''} already completed — see <button onClick={() => setAfterCallTab('uploads')} style={{ background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline', padding: 0 }}>📁 Survey Uploads</button>.</div>}
+                  {canUpload && sortedCompleted.length > 0 && <div style={{ marginTop: 8, fontSize: 13, color: '#475569' }}>{sortedCompleted.length} survey{sortedCompleted.length !== 1 ? 's' : ''} already completed — see <button onClick={() => setAfterCallTab('uploads')} style={{ background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline', padding: 0 }}>📁 Survey Uploads</button>.</div>}
                 </div>
                 {canUpload && detectedConsultants.length > 0 && (
                   <div style={{ background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '16px 20px' }}>
@@ -542,7 +542,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
               <div style={{ padding: '40px 0', textAlign: 'center' }}>
                 <div style={{ fontSize: 32, marginBottom: 10 }}>✅</div>
                 <div style={{ color: '#64748b', fontSize: 15 }}>No pending surveys to review for <strong style={{ color: '#e2e8f0' }}>{advisorName}</strong>.</div>
-                {sortedCompleted.length > 0 && <div style={{ marginTop: 8, fontSize: 13, color: '#475569' }}>All done! See <button onClick={() => setAfterCallTab('uploads')} style={{ background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline', padding: 0 }}>📁 Survey Uploads</button> for completed reviews.</div>}
+                {canUpload && sortedCompleted.length > 0 && <div style={{ marginTop: 8, fontSize: 13, color: '#475569' }}>All done! See <button onClick={() => setAfterCallTab('uploads')} style={{ background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline', padding: 0 }}>📁 Survey Uploads</button> for completed reviews.</div>}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 16 }}>
