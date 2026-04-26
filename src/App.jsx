@@ -10,6 +10,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
+import ManagerHub from './components/ManagerHub';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
@@ -273,6 +274,26 @@ export default function App() {
     );
   }
 
+  // Manager Hub
+  if (page === 'manager-hub') {
+    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return (
+      <ManagerHub
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => setPage('dashboard')}
+        onSurveyReports={() => { setViewingAdvisor(ownAdvisor || advisorList[0] || ''); goTo('survey-reports', 'manager-hub'); }}
+        onAdvisorCalendar={() => { setViewingAdvisor(ownAdvisor || advisorList[0] || ''); goTo('advisor-calendar', 'manager-hub'); }}
+        onAftermarketWarranty={() => goTo('aftermarket-warranty', 'manager-hub')}
+        onDocumentLibrary={() => goTo('document-library', 'manager-hub')}
+        onAdvisorSchedule={() => goTo('work-schedule', 'manager-hub')}
+        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'manager-hub')}
+        onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+      />
+    );
+  }
+
   // Advisor pages render full-screen outside the scaled stage
   if (page === 'work-schedule') {
     const wsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
@@ -327,12 +348,12 @@ export default function App() {
   }
 
   if (page === 'survey-reports') {
-    if (!canAccess('surveyReports')) { setPage('advisor-calendar'); return null; }
+    if (!canAccess('surveyReports')) { setPage(prevPage || 'advisor-calendar'); return null; }
     return (
       <SurveyReports
         advisorList={advisorList}
         canDelete={isAdminOrManager}
-        onBack={() => setPage('advisor-calendar')}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
   }
@@ -438,6 +459,7 @@ export default function App() {
             onAdvisor={() => setPage('advisor-calendar')}
             onTechnician={() => setPage('tech-resources')}
             onParts={() => setPage('parts-hub')}
+            onManager={() => setPage('manager-hub')}
           />
 
           <TechProduction data={data} />
