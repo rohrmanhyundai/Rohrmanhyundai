@@ -1,5 +1,32 @@
 [
   {
+    "id": "mof416r5kzsg",
+    "label": "Employee Counseling Form",
+    "filename": "mof416r5kzsg-Employee_Counseling_Form.docx",
+    "fileType": "docx",
+    "size": 27673,
+    "uploadedBy": "admin",
+    "uploadedAt": "2026-04-26T01:49:13.674Z",
+    "allowedRoles": [
+      "parts manager",
+      "service manager",
+      "general manager"
+    ]
+  },
+  {
+    "id": "mof3yzght0pz",
+    "label": "Separation Report Form",
+    "filename": "mof3yzght0pz-Separation_Report_Form.pdf",
+    "fileType": "pdf",
+    "size": 163505,
+    "uploadedBy": "admin",
+    "uploadedAt": "2026-04-26T01:47:30.972Z",
+    "allowedRoles": [
+      "service manager",
+      "general manager"
+    ]
+  },
+  {
     "id": "moeqgurgszv7",
     "label": "Employee Handbook   IN",
     "filename": "moeqgurgszv7-Employee_Handbook_-_IN.pdf",
