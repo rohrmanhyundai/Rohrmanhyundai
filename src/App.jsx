@@ -10,7 +10,6 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
-import OriginalOwnerForm from './components/OriginalOwnerForm';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
@@ -319,7 +318,6 @@ export default function App() {
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
-        onOriginalOwnerForm={() => goTo('original-owner-form', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
@@ -371,14 +369,6 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={awBackLabel}
-      />
-    );
-  }
-
-  if (page === 'original-owner-form') {
-    return (
-      <OriginalOwnerForm
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
   }
