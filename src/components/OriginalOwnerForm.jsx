@@ -1,28 +1,21 @@
 import React, { useState } from 'react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
-// All coordinates are in pdf-lib points — origin is BOTTOM-LEFT of the page.
-// Calibrated against the SVC-1248 scanned affidavit (img20260421_16124652.pdf).
-// Adjust any constant below if a field still lands slightly off after testing.
+// Coordinates use percentage of actual page size so they work regardless of
+// whether the scanned PDF is Letter, A4, or any other size.
+// xPct = fraction from LEFT edge, yPct = fraction from TOP edge.
+// Tweak these if any field still lands off after testing.
 
-// ── Dealership section ─────────────────────────────────────────────────────────
-const DEALER_CODE_X   = 118;   // after "Dealer Code: " label
-const DEALER_CODE_Y   = 432;
-const RO_NUMBER_X     = 298;   // after "Repair Order (RO) Number: "
-const RO_NUMBER_Y     = 432;
-const REPAIR_DATE_X   = 467;   // after "Repair Date: "
-const REPAIR_DATE_Y   = 432;
-const VIN_X           = 265;   // after "17-Digit Vehicle Identification Number (VIN): "
-const VIN_Y           = 412;
+const FIELDS = {
+  dealerCode:   { x: 0.195, y: 0.468 },  // after "Dealer Code: "
+  roNumber:     { x: 0.490, y: 0.468 },  // after "Repair Order (RO) Number: "
+  repairDate:   { x: 0.762, y: 0.468 },  // after "Repair Date: "
+  vin:          { x: 0.455, y: 0.540 },  // after "17-Digit Vehicle Identification Number (VIN): "
+  customerDate: { x: 0.840, y: 0.262 },  // Date field on customer signature line
+  managerDate:  { x: 0.840, y: 0.720 },  // Date field on dealer manager signature line
+};
 
-// ── Signature date fields ──────────────────────────────────────────────────────
-// These go on the signature LINE (the blank above the label text)
-const CUSTOMER_DATE_X = 518;   // right side of customer signature line
-const CUSTOMER_DATE_Y = 547;
-const MANAGER_DATE_X  = 518;   // right side of dealer manager signature line
-const MANAGER_DATE_Y  = 262;
-
-const TEXT_SIZE = 9;           // pt — small enough to fit neatly inside blanks
+const TEXT_SIZE = 9;
 
 export default function OriginalOwnerForm({ onBack }) {
   const [dealerCode,    setDealerCode]    = useState('');
@@ -61,20 +54,27 @@ export default function OriginalOwnerForm({ onBack }) {
       const { width: pw, height: ph } = page.getSize();
       console.log(`PDF page size: ${pw.toFixed(1)} × ${ph.toFixed(1)} pts`);
 
-      const draw = (text, x, y) => {
+      const drawAt = (text, fieldKey) => {
         if (!text) return;
-        page.drawText(text, { x, y, size: TEXT_SIZE, font, color: rgb(0, 0, 0) });
+        const f = FIELDS[fieldKey];
+        page.drawText(text, {
+          x: pw * f.x,
+          y: ph * (1 - f.y),
+          size: TEXT_SIZE,
+          font,
+          color: rgb(0, 0, 0),
+        });
       };
 
       // Dealership fields
-      draw(dealerCode,            DEALER_CODE_X,  DEALER_CODE_Y);
-      draw(roNumber,              RO_NUMBER_X,    RO_NUMBER_Y);
-      draw(fmtDate(repairDate),   REPAIR_DATE_X,  REPAIR_DATE_Y);
-      draw(fmtVin(vin),           VIN_X,          VIN_Y);
+      drawAt(dealerCode,           'dealerCode');
+      drawAt(roNumber,             'roNumber');
+      drawAt(fmtDate(repairDate),  'repairDate');
+      drawAt(fmtVin(vin),          'vin');
 
       // Signature dates
-      draw(fmtDate(customerDate), CUSTOMER_DATE_X, CUSTOMER_DATE_Y);
-      draw(fmtDate(managerDate),  MANAGER_DATE_X,  MANAGER_DATE_Y);
+      drawAt(fmtDate(customerDate), 'customerDate');
+      drawAt(fmtDate(managerDate),  'managerDate');
 
       const filledBytes = await pdfDoc.save();
       const blob        = new Blob([filledBytes], { type: 'application/pdf' });

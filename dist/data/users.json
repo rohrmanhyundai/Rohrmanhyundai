@@ -26,6 +26,7 @@
         "advisorCalendar": true,
         "documentLibrary": true,
         "advisorRankBoard": true,
+        "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
         "aftermarketWarranty": true
@@ -46,7 +47,16 @@
       "username": "Gaven",
       "password": "gaven2026",
       "role": "technician",
-      "canEditDashboard": false
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
     },
     {
       "username": "Austin",
@@ -72,6 +82,96 @@
         "advisorSchedule": true,
         "techSchedule": true,
         "aftermarketWarranty": true
+      }
+    },
+    {
+      "username": "West",
+      "password": "west2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
+    },
+    {
+      "username": "Cory",
+      "password": "cory2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
+    },
+    {
+      "username": "Carter",
+      "password": "carter2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
+    },
+    {
+      "username": "Jacob",
+      "password": "jacob2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
+    },
+    {
+      "username": "Edgar",
+      "password": "edgar2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
+      }
+    },
+    {
+      "username": "Derrick",
+      "password": "derrick2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": false
       }
     }
   ],

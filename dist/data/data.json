@@ -258,38 +258,45 @@
   },
   "vacations": [
     {
-      "name": "WEST",
-      "dates": "4/13-4/14",
-      "status": "APPROVED"
-    },
-    {
       "name": "DAVID",
-      "dates": "5/26-6/3",
+      "dates": "May 26, 2026 – Jun 6, 2026",
+      "dateStart": "2026-05-26",
+      "dateEnd": "2026-06-06",
       "status": "APPROVED"
     },
     {
       "name": "JACOB",
-      "dates": "5/22-5/25",
+      "dates": "May 22, 2026",
+      "dateStart": "2026-05-22",
+      "dateEnd": "2026-05-22",
       "status": "APPROVED"
     },
     {
       "name": "CARTER",
-      "dates": "7/6/26-7/10/26 40HR",
+      "dates": "Jul 6–10, 2026",
+      "dateStart": "2026-07-06",
+      "dateEnd": "2026-07-10",
       "status": "APPROVED"
     },
     {
       "name": "JACOB",
-      "dates": "8/17-8/21 40HR",
-      "status": "APPROVED"
-    },
-    {
-      "name": "GAVEN",
-      "dates": "4/23 4/24 4/27",
+      "dates": "Aug 17–21, 2026",
+      "dateStart": "2026-08-17",
+      "dateEnd": "2026-08-21",
       "status": "APPROVED"
     },
     {
       "name": "SHAWN",
-      "dates": "5/18 5/22 40HR",
+      "dates": "May 18–22, 2026",
+      "dateStart": "2026-05-18",
+      "dateEnd": "2026-05-22",
+      "status": "APPROVED"
+    },
+    {
+      "name": "GAVEN",
+      "dates": "Apr 27, 2026",
+      "dateStart": "2026-04-27",
+      "dateEnd": "2026-04-27",
       "status": "APPROVED"
     }
   ]

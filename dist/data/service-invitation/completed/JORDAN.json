@@ -12,6 +12,40 @@
     "satisfied": "yes",
     "notes": "very happy customer",
     "submittedAt": "2026-04-25T17:17:35.881Z",
-    "submittedBy": "ADMIN"
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ANDREW PUCKA",
+    "repairOrder": "774797",
+    "vin": "KMHLM4DJ8SU158847",
+    "model": "ELANTRA HEV",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "notes": "HAPPY CUSTOMER",
+    "submittedAt": "2026-04-25T21:32:17.334Z",
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "HARISH KOTHANDARAMAN",
+    "repairOrder": "774835",
+    "vin": "KMHLM4AG2PU563053",
+    "model": "ELANTRA",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "no",
+    "phone": "7777777777",
+    "notes": "pissed off customer",
+    "submittedAt": "2026-04-25T21:46:52.816Z",
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
   }
 ]

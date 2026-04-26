@@ -1,0 +1,38 @@
+{
+  "id": "moexkrslqs4q",
+  "createdAt": "2026-04-25T22:48:29.109Z",
+  "updatedAt": "2026-04-25T22:51:27.211Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "",
+  "customerPhone": "",
+  "repairOrder": "",
+  "vin": "",
+  "vehicleYear": "",
+  "vehicleMake": "",
+  "vehicleModel": "",
+  "mileage": "",
+  "warrantyCompany": "",
+  "warrantyPhone": "",
+  "claimNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "moexkrsl1ue2",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "",
+  "deductible": "",
+  "notes": "",
+  "approved": false,
+  "waiting": false,
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": ""
+}
