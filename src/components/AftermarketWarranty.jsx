@@ -940,18 +940,18 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
                   const isReady     = !!c.readySubmission;
-                  // Priority: red (repairs done) > light blue (ready submission) > green (approved)
-                  const rowBg = isFinished
-                    ? 'rgba(239,68,68,0.22)'
-                    : isReady ? 'rgba(56,189,248,0.18)'
+                  // Priority: light blue (ready submission) > red (repairs done) > green (approved)
+                  const rowBg = isReady
+                    ? 'rgba(56,189,248,0.18)'
+                    : isFinished ? 'rgba(239,68,68,0.22)'
                     : isApproved ? 'rgba(34,197,94,0.22)' : '';
-                  const rowBgHover = isFinished
-                    ? 'rgba(239,68,68,0.34)'
-                    : isReady ? 'rgba(56,189,248,0.28)'
+                  const rowBgHover = isReady
+                    ? 'rgba(56,189,248,0.28)'
+                    : isFinished ? 'rgba(239,68,68,0.34)'
                     : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
-                  const rowBorder = isFinished
-                    ? '1px solid rgba(239,68,68,0.45)'
-                    : isReady ? '1px solid rgba(56,189,248,0.45)'
+                  const rowBorder = isReady
+                    ? '1px solid rgba(56,189,248,0.45)'
+                    : isFinished ? '1px solid rgba(239,68,68,0.45)'
                     : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
                   // Multiple statuses can be active — show most prominent emoji + all labels
                   const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
