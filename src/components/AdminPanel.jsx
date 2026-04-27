@@ -84,16 +84,13 @@ function matchEmployeeName(name, users) {
 
 const PAGE_ACCESS = [
   { key: 'advisorCalendar',    label: '📅 Advisor Calendar',        group: 'Advisor' },
-  { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Advisor' },
   { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board',      group: 'Advisor' },
   { key: 'surveyReports',      label: '📊 Survey Reports',          group: 'Advisor', defaultOff: true },
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
-  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Shared' },
-  { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Shared' },
-  { key: 'warrantyDashboard',  label: '🛡 Warranty Dashboard',      group: 'Warranty', defaultOff: true },
-  { key: 'warrantyReports',    label: '📋 Warranty Reports',        group: 'Warranty', defaultOff: true },
-  { key: 'warrantyDocuments',  label: '📁 Warranty Documents',      group: 'Warranty', defaultOff: true },
+  { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Shared' },
+  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Warranty' },
+  { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Warranty' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
