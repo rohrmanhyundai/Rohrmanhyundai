@@ -90,6 +90,9 @@ const PAGE_ACCESS = [
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Shared' },
+  { key: 'warrantyDashboard',  label: '🛡 Warranty Dashboard',      group: 'Warranty', defaultOff: true },
+  { key: 'warrantyReports',    label: '📋 Warranty Reports',        group: 'Warranty', defaultOff: true },
+  { key: 'warrantyDocuments',  label: '📁 Warranty Documents',      group: 'Warranty', defaultOff: true },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
@@ -200,7 +203,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setOpenSection(prev => prev === name ? null : name);
   }
 
-  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager'];
+  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager', 'warranty'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);
@@ -626,21 +629,60 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="group-body">
             <div className="small">Click a user to load them into the form.</div>
             <div className="user-row-list">
-              {users.map(u => (
-                <div
-                  key={u.username}
-                  className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                  onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); }}
-                >
-                  <div>
-                    <div className="user-row-name">{u.username}</div>
-                    <div className="user-row-meta">
-                      {u.username === 'admin' ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
-                      {(u.canEditDashboard || isAdminOrManager(u.role)) && <span className="user-edit-badge">✎ Can Edit</span>}
+              {users.map(u => {
+                const isBuiltinAdmin = u.username === 'admin';
+                const hasAdminRole = u.role === 'admin';
+                const hasEditAccess = u.canEditDashboard || isAdminOrManager(u.role);
+
+                async function quickToggleAdmin(e) {
+                  e.stopPropagation();
+                  if (isBuiltinAdmin) return;
+                  const newRole = hasAdminRole ? 'advisor' : 'admin';
+                  const updated = users.map(x => x.username === u.username ? { ...x, role: newRole, canEditDashboard: newRole === 'admin' ? true : x.canEditDashboard } : x);
+                  setUserSaving(true);
+                  try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+                }
+
+                async function quickToggleEdit(e) {
+                  e.stopPropagation();
+                  if (isAdminOrManager(u.role)) return;
+                  const updated = users.map(x => x.username === u.username ? { ...x, canEditDashboard: !x.canEditDashboard } : x);
+                  setUserSaving(true);
+                  try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+                }
+
+                return (
+                  <div
+                    key={u.username}
+                    className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
+                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); }}
+                  >
+                    <div>
+                      <div className="user-row-name">{u.username}</div>
+                      <div className="user-row-meta">
+                        {isBuiltinAdmin ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
+                        {hasEditAccess && <span className="user-edit-badge">✎ Can Edit</span>}
+                      </div>
                     </div>
+                    {!isBuiltinAdmin && (
+                      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                        <button
+                          className="secondary"
+                          style={{ fontSize: 10, padding: '3px 8px', color: hasAdminRole ? '#f87171' : '#94a3b8', borderColor: hasAdminRole ? 'rgba(248,113,113,.4)' : undefined }}
+                          onClick={quickToggleAdmin}
+                          title={hasAdminRole ? 'Remove Admin' : 'Make Admin'}
+                        >{hasAdminRole ? 'Admin ✓' : 'Admin'}</button>
+                        <button
+                          className="secondary"
+                          style={{ fontSize: 10, padding: '3px 8px', color: hasEditAccess ? '#3dd6c3' : '#94a3b8', borderColor: hasEditAccess ? 'rgba(61,214,195,.4)' : undefined, opacity: isAdminOrManager(u.role) ? 0.4 : 1 }}
+                          onClick={quickToggleEdit}
+                          title={isAdminOrManager(u.role) ? 'Managers always have edit access' : hasEditAccess ? 'Remove Edit Access' : 'Grant Edit Access'}
+                        >{hasEditAccess ? 'Edit ✓' : 'Edit'}</button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="form-section">
               <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
@@ -673,7 +715,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   Page Access
                   <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
                 </div>
-                {['Advisor', 'Shared'].map(group => (
+                {['Advisor', 'Shared', 'Warranty'].map(group => (
                   <div key={group} style={{ marginBottom: 10 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
