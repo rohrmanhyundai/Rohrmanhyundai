@@ -46,13 +46,15 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": true
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "Parker",
