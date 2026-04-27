@@ -177,7 +177,7 @@
     {
       "username": "Jerry",
       "password": "1234",
-      "role": "advisor",
+      "role": "warranty",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
