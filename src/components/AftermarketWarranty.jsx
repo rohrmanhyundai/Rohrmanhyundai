@@ -935,9 +935,9 @@ function ContractLegend() {
           {pill('rgba(239,68,68,0.18)',   'rgba(239,68,68,0.4)',   '#fca5a5', '🔧 Repairs Finished')}
           {pill('rgba(56,189,248,0.15)',  'rgba(56,189,248,0.4)',  '#7dd3fc', '📋 Ready for Submission')}
           {pill('rgba(34,197,94,0.18)',   'rgba(34,197,94,0.4)',   '#86efac', '✅ Approved Claim')}
-          {pill('rgba(251,191,36,0.15)',  'rgba(251,191,36,0.4)',  '#fbbf24', '⏳ Waiting for Payment')}
-          {pill('rgba(110,231,249,0.15)', 'rgba(110,231,249,0.4)', '#6ee7f9', '💳 Claim Paid')}
           {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)','#64748b', 'No status set')}
+          {icon('⏳', '#fbbf24', 'Waiting for Payment — label only')}
+          {icon('💳', '#6ee7f9', 'Claim Paid — label only')}
         </div>
 
         {/* Divider */}
@@ -991,23 +991,16 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
                   const isReady     = !!c.readySubmission;
-                  // Priority (highest = furthest along in workflow):
-                  // Claim Paid (cyan) > Waiting for Payment (amber) > Approved (green) > Ready for Submission (blue) > Repairs Finished (red)
-                  const rowBg = isPaid      ? 'rgba(110,231,249,0.15)'
-                    : isWaiting   ? 'rgba(251,191,36,0.15)'
-                    : isApproved  ? 'rgba(34,197,94,0.18)'
-                    : isReady     ? 'rgba(56,189,248,0.15)'
-                    : isFinished  ? 'rgba(239,68,68,0.18)' : '';
-                  const rowBgHover = isPaid ? 'rgba(110,231,249,0.25)'
-                    : isWaiting   ? 'rgba(251,191,36,0.25)'
-                    : isApproved  ? 'rgba(34,197,94,0.28)'
-                    : isReady     ? 'rgba(56,189,248,0.25)'
-                    : isFinished  ? 'rgba(239,68,68,0.28)' : 'rgba(255,255,255,0.04)';
-                  const rowBorder = isPaid  ? '1px solid rgba(110,231,249,0.4)'
-                    : isWaiting   ? '1px solid rgba(251,191,36,0.4)'
-                    : isApproved  ? '1px solid rgba(34,197,94,0.4)'
-                    : isReady     ? '1px solid rgba(56,189,248,0.4)'
-                    : isFinished  ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                  // Only the 3 exclusive buttons affect row background color
+                  const rowBg = isApproved ? 'rgba(34,197,94,0.18)'
+                    : isReady    ? 'rgba(56,189,248,0.15)'
+                    : isFinished ? 'rgba(239,68,68,0.18)' : '';
+                  const rowBgHover = isApproved ? 'rgba(34,197,94,0.28)'
+                    : isReady    ? 'rgba(56,189,248,0.25)'
+                    : isFinished ? 'rgba(239,68,68,0.28)' : 'rgba(255,255,255,0.04)';
+                  const rowBorder = isApproved ? '1px solid rgba(34,197,94,0.4)'
+                    : isReady    ? '1px solid rgba(56,189,248,0.4)'
+                    : isFinished ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.05)';
                   const statusLabel = [
                     isPaid     && '💳 Claim Paid',
                     isWaiting  && '⏳ Waiting',
