@@ -496,6 +496,7 @@ export default function App() {
             isLoggedIn={isLoggedIn}
             currentUser={currentUser}
             currentRole={currentRole}
+            userPages={currentPages}
             canEditDashboard={canEditDashboard}
             onLogin={handleLogin}
             onLogout={handleLogout}
