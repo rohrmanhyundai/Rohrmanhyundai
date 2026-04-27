@@ -1,0 +1,42 @@
+{
+  "id": "mohj2bbx3hmm",
+  "createdAt": "2026-04-27T18:25:31.869Z",
+  "updatedAt": "2026-04-27T18:26:49.573Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Emily N Warren",
+  "customerPhone": "7655430974",
+  "repairOrder": "777084",
+  "vin": "5FNRL5H64GB014404",
+  "vehicleYear": "2016",
+  "vehicleMake": "HONDA",
+  "vehicleModel": "Odyssey",
+  "mileage": "198199",
+  "warrantyCompany": "Wheelz",
+  "warrantyPhone": "",
+  "claimNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "mohj2bbx9n5p",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "",
+  "deductible": "",
+  "notes": "",
+  "approved": false,
+  "approvedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": ""
+}
