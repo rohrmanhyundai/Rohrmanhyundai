@@ -1,0 +1,38 @@
+{
+  "id": "moh9496s5xsb",
+  "createdAt": "2026-04-27T13:47:06.244Z",
+  "updatedAt": "2026-04-27T13:48:19.513Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "jo dong",
+  "customerPhone": "4454455532",
+  "repairOrder": "56589+6",
+  "vin": "1GC4YREY7LF346660",
+  "vehicleYear": "2020",
+  "vehicleMake": "CHEVROLET",
+  "vehicleModel": "Silverado",
+  "mileage": "125325",
+  "warrantyCompany": "aagi",
+  "warrantyPhone": "565955665",
+  "claimNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "moh9496ssaks",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "",
+  "deductible": "",
+  "notes": "",
+  "approved": false,
+  "waiting": false,
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": ""
+}
