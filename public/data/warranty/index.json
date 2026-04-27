@@ -2,7 +2,7 @@
   {
     "id": "moh9496s5xsb",
     "createdAt": "2026-04-27T13:47:06.244Z",
-    "updatedAt": "2026-04-27T15:04:01.571Z",
+    "updatedAt": "2026-04-27T17:02:01.956Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "jo dong",
     "customerPhone": "4454455532",
@@ -38,7 +38,7 @@
     "deductible": "150",
     "notes": "",
     "approved": false,
-    "waiting": true,
+    "waiting": false,
     "paid": true,
     "paymentDate": "2026-04-27",
     "repairsFinished": true,
@@ -46,7 +46,7 @@
     "readySubmission": false,
     "approvedDate": "",
     "readySubmissionDate": "",
-    "waitingDate": "2026-04-27"
+    "waitingDate": ""
   },
   {
     "id": "moh79i8mgv6i",
