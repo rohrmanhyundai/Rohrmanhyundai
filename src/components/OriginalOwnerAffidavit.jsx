@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
+import { AFFIDAVIT_PDF_B64 } from '../assets/originalOwnerPdfBase64';
 
-const DEALER_CODE    = 'IN007';
-const SERVICE_MGR    = 'Shawn Laughner';
-const PDF_PATH       = '/data/original-owner-affidavit.pdf';
+const DEALER_CODE = 'IN007';
+const SERVICE_MGR = 'Shawn Laughner';
 
 // VIN boxes in left-to-right order (Text13..Text29)
 const VIN_FIELDS = [
@@ -41,6 +41,7 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
   const [repairDate,  setRepairDate]  = useState(today);
   const [vin,         setVin]         = useState('');
   const [generating,  setGenerating]  = useState(false);
+  const [printing,    setPrinting]    = useState(false);
   const [error,       setError]       = useState('');
 
   const customerName = `${firstName.trim()} ${lastName.trim()}`.trim();
@@ -51,53 +52,78 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     return `${m}/${d}/${y}`;
   }
 
-  async function handleGenerate() {
-    if (!firstName || !lastName)    { setError('Please enter customer first and last name.'); return; }
-    if (!repairOrder)               { setError('Please enter a Repair Order number.'); return; }
-    if (vin.trim().length !== 17)   { setError('VIN must be exactly 17 characters.'); return; }
+  function validate() {
+    if (!firstName || !lastName) { setError('Please enter customer first and last name.'); return false; }
+    if (!repairOrder)            { setError('Please enter a Repair Order number.'); return false; }
+    if (vin.trim().length !== 17){ setError('VIN must be exactly 17 characters.'); return false; }
     setError('');
+    return true;
+  }
+
+  async function buildFilledPdf() {
+    const raw    = atob(AFFIDAVIT_PDF_B64);
+    const bytes  = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+
+    const pdfDoc = await PDFDocument.load(bytes);
+    const form   = pdfDoc.getForm();
+
+    form.getTextField('I further certify that the vehicle is not being used for commercial purposes')
+        .setText(customerName);
+    form.getTextField('Text11').setText(fmtDate(customerDate));
+    form.getTextField('Dealer Code').setText(DEALER_CODE);
+    form.getTextField('DEALERSHIP VERFICATION  TO BE COMPLETED BY THE DEALER').setText(repairOrder);
+    form.getTextField('Repair Date').setText(fmtDate(repairDate));
+
+    const vinStr = vin.trim().toUpperCase().padEnd(17, ' ');
+    VIN_FIELDS.forEach((fieldId, i) => {
+      form.getTextField(fieldId).setText(vinStr[i] || '');
+    });
+
+    form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines')
+        .setText(SERVICE_MGR);
+    form.getTextField('Text30').setText(fmtDate(repairDate));
+
+    form.flatten();
+    return await pdfDoc.save();
+  }
+
+  async function handleDownload() {
+    if (!validate()) return;
     setGenerating(true);
     try {
-      const bytes    = await fetch(PDF_PATH + '?v=' + Date.now()).then(r => r.arrayBuffer());
-      const pdfDoc   = await PDFDocument.load(bytes);
-      const form     = pdfDoc.getForm();
-
-      // Customer section
-      form.getTextField('I further certify that the vehicle is not being used for commercial purposes')
-          .setText(customerName);
-      form.getTextField('Text11').setText(fmtDate(customerDate));
-
-      // Dealer section
-      form.getTextField('Dealer Code').setText(DEALER_CODE);
-      form.getTextField('DEALERSHIP VERFICATION  TO BE COMPLETED BY THE DEALER').setText(repairOrder);
-      form.getTextField('Repair Date').setText(fmtDate(repairDate));
-
-      // VIN — one character per box
-      const vinStr = vin.trim().toUpperCase().padEnd(17, ' ');
-      VIN_FIELDS.forEach((fieldId, i) => {
-        form.getTextField(fieldId).setText(vinStr[i] || '');
-      });
-
-      // Service manager section
-      form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines')
-          .setText(SERVICE_MGR);
-      form.getTextField('Text30').setText(fmtDate(repairDate));
-
-      // Flatten so values are visible in all viewers
-      form.flatten();
-
-      const filled = await pdfDoc.save();
-      const blob   = new Blob([filled], { type: 'application/pdf' });
-      const url    = URL.createObjectURL(blob);
-      const a      = document.createElement('a');
-      a.href       = url;
-      a.download   = `OriginalOwner_${lastName}_RO${repairOrder}.pdf`;
+      const filled   = await buildFilledPdf();
+      const blob     = new Blob([filled], { type: 'application/pdf' });
+      const url      = URL.createObjectURL(blob);
+      const a        = document.createElement('a');
+      a.href         = url;
+      a.download     = `OriginalOwner_${lastName}_RO${repairOrder}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
       setError('PDF generation failed: ' + err.message);
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handlePrint() {
+    if (!validate()) return;
+    setPrinting(true);
+    try {
+      const filled = await buildFilledPdf();
+      const blob   = new Blob([filled], { type: 'application/pdf' });
+      const url    = URL.createObjectURL(blob);
+      const win    = window.open(url, '_blank');
+      if (win) {
+        win.onload = () => { win.print(); };
+      }
+      // revoke after a delay to give the browser time to load it
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err) {
+      setError('Print failed: ' + err.message);
+    } finally {
+      setPrinting(false);
     }
   }
 
@@ -171,12 +197,20 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
             </div>
           )}
 
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            style={{ marginTop: 28, width: '100%', background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '14px 0', cursor: generating ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 16, opacity: generating ? 0.7 : 1 }}>
-            {generating ? '⏳ Generating PDF…' : '⬇ Generate & Download Affidavit PDF'}
-          </button>
+          <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <button
+              onClick={handleDownload}
+              disabled={generating || printing}
+              style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 10, padding: '14px 0', cursor: (generating || printing) ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 15, opacity: (generating || printing) ? 0.7 : 1 }}>
+              {generating ? '⏳ Generating…' : '⬇ Download PDF'}
+            </button>
+            <button
+              onClick={handlePrint}
+              disabled={generating || printing}
+              style={{ background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.4)', color: '#c4b5fd', borderRadius: 10, padding: '14px 0', cursor: (generating || printing) ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 15, opacity: (generating || printing) ? 0.7 : 1 }}>
+              {printing ? '⏳ Opening…' : '🖨 Print PDF'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
