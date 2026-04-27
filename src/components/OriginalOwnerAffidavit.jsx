@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PDFDocument, TextAlignment, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { AFFIDAVIT_PDF_B64 } from '../assets/originalOwnerPdfBase64';
 
 const DEALER_CODE = 'IN007';
@@ -61,55 +61,59 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
   }
 
   async function buildFilledPdf() {
-    const raw    = atob(AFFIDAVIT_PDF_B64);
-    const bytes  = new Uint8Array(raw.length);
+    const raw   = atob(AFFIDAVIT_PDF_B64);
+    const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
-    const pdfDoc = await PDFDocument.load(bytes);
-    const form   = pdfDoc.getForm();
+    const pdfDoc    = await PDFDocument.load(bytes);
+    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const page      = pdfDoc.getPages()[0];
+    const BLACK     = rgb(0, 0, 0);
 
-    const nameField = form.getTextField('I further certify that the vehicle is not being used for commercial purposes');
-    nameField.setText(customerName);
-    nameField.setAlignment(TextAlignment.Center);
-    nameField.setFontSize(11);
-    const custDateField = form.getTextField('Text11');
-    custDateField.setText(fmtDate(customerDate));
-    custDateField.setFontSize(11);
-    form.getTextField('Dealer Code').setText(DEALER_CODE);
-    form.getTextField('DEALERSHIP VERFICATION  TO BE COMPLETED BY THE DEALER').setText(repairOrder);
-    form.getTextField('Repair Date').setText(fmtDate(repairDate));
+    // Helper: draw text centered within a field rect [x0, y0, x1, y1]
+    function drawCentered(text, x0, x1, y, size = 11) {
+      const w = helvetica.widthOfTextAtSize(text, size);
+      page.drawText(text, { x: (x0 + x1) / 2 - w / 2, y, size, font: helvetica, color: BLACK });
+    }
 
-    const vinStr = vin.trim().toUpperCase().padEnd(17, ' ');
-    VIN_FIELDS.forEach((fieldId, i) => {
-      form.getTextField(fieldId).setText(vinStr[i] || '');
+    // ── Customer section ─────────────────────────────────────
+    // Name field rect: [237.348, 574.8, 442.342, 600.84]
+    drawCentered(customerName, 237.348, 442.342, 582);
+    // Date field (Text11) rect: [452.42, 574.684, 555.817, 596.684]
+    drawCentered(fmtDate(customerDate), 452.42, 555.817, 582);
+
+    // ── Dealer section ───────────────────────────────────────
+    // Dealer Code rect: [86.76, 398.64, 152.76, 424.68]
+    drawCentered(DEALER_CODE, 86.76, 152.76, 407, 10);
+    // RO Number rect: [282.24, 398.64, 375.72, 424.68]
+    drawCentered(repairOrder, 282.24, 375.72, 407, 10);
+    // Repair Date rect: [438.36, 398.64, 531.84, 424.68]
+    drawCentered(fmtDate(repairDate), 438.36, 531.84, 407, 10);
+
+    // ── VIN — one char per box ───────────────────────────────
+    // Boxes sorted left→right, x positions from field rects
+    const vinXPositions = [
+      230.923, 248.082, 266.41, 284.504, 302.075, 320.17, 338.264,
+      355.311, 373.406, 390.977, 408.548, 426.642, 444.445, 462.249,
+      480.344, 498.438, 516.009,
+    ];
+    const vinStr = vin.trim().toUpperCase();
+    vinXPositions.forEach((x0, i) => {
+      if (vinStr[i]) drawCentered(vinStr[i], x0, x0 + 16.5, 380, 9);
     });
 
-    // Draw manager name and date directly for precise centering
-    // Manager name field rect: [219.796, 301.56, 459.349, 327.6]
-    // Text30 (date) field rect: [461.476, 301.347, 560.684, 322.3]
-    // PDF page 1 (index 0), y=0 is bottom
-    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize  = 11;
-    const page      = pdfDoc.getPages()[0];
+    // ── Manager section ──────────────────────────────────────
+    // Name rect: [219.796, 301.56, 459.349, 327.6]
+    drawCentered(SERVICE_MGR, 219.796, 459.349, 308);
+    // Date rect: [461.476, 301.347, 560.684, 322.3]
+    drawCentered(fmtDate(repairDate), 461.476, 560.684, 308);
 
-    // Clear the form fields so they don't overlap
-    form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines').setText('');
-    form.getTextField('Text30').setText('');
+    // Remove all form fields so nothing overlaps the drawn text
+    const form = pdfDoc.getForm();
+    form.getFields().forEach(f => {
+      try { pdfDoc.getForm().removeField(f); } catch {}
+    });
 
-    // Draw manager name centered in its field box
-    const mgrName   = SERVICE_MGR;
-    const mgrX0 = 219.796, mgrX1 = 459.349, mgrY = 308;
-    const mgrW  = helvetica.widthOfTextAtSize(mgrName, fontSize);
-    page.drawText(mgrName, { x: (mgrX0 + mgrX1) / 2 - mgrW / 2, y: mgrY, size: fontSize, font: helvetica, color: rgb(0, 0, 0) });
-
-    // Draw manager date centered in its field box
-    const mgrDate  = fmtDate(repairDate);
-    const dtX0 = 461.476, dtX1 = 560.684, dtY = 308;
-    const dtW   = helvetica.widthOfTextAtSize(mgrDate, fontSize);
-    page.drawText(mgrDate, { x: (dtX0 + dtX1) / 2 - dtW / 2, y: dtY, size: fontSize, font: helvetica, color: rgb(0, 0, 0) });
-
-    await pdfDoc.updateFieldAppearances(helvetica);
-    form.flatten();
     return await pdfDoc.save();
   }
 
