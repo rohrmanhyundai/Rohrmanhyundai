@@ -2,7 +2,7 @@
   {
     "id": "mohj2bbx3hmm",
     "createdAt": "2026-04-27T18:25:31.869Z",
-    "updatedAt": "2026-04-27T18:47:47.175Z",
+    "updatedAt": "2026-04-27T18:53:30.486Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Emily N Warren",
     "customerPhone": "7655430974",
@@ -15,20 +15,20 @@
     "warrantyCompany": "Wheelz",
     "warrantyPhone": "",
     "claimNumber": "",
-    "laborRate": "",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "laborRate": "170",
+    "laborTime": "2.2",
+    "diagnosisTime": ".5",
     "parts": [
       {
         "id": "mohj2bbx9n5p",
-        "partNumber": "",
-        "description": "",
+        "partNumber": "DL5629-6-11",
+        "description": "REMAN. ALTERNATOR",
         "qty": "1",
-        "price": ""
+        "price": "361.68"
       }
     ],
-    "taxPct": "",
-    "deductible": "",
+    "taxPct": "7",
+    "deductible": "250",
     "notes": "",
     "approved": false,
     "approvedDate": "",
