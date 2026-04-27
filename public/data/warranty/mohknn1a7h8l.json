@@ -1,0 +1,42 @@
+{
+  "id": "mohknn1a7h8l",
+  "createdAt": "2026-04-27T19:10:06.430Z",
+  "updatedAt": "2026-04-27T19:11:49.933Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Brian Hamilton",
+  "customerPhone": "8282161222",
+  "repairOrder": "777089",
+  "vin": "KM8R74HEXMU324674",
+  "vehicleYear": "2021",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Palisade",
+  "mileage": "",
+  "warrantyCompany": "CPO",
+  "warrantyPhone": "8004778089",
+  "claimNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "mohknn1acqoh",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "",
+  "deductible": "",
+  "notes": "",
+  "approved": false,
+  "approvedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": ""
+}
