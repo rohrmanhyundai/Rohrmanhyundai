@@ -4,15 +4,18 @@ import { loadChatMessages, saveChatMessages } from '../utils/github';
 const POLL_MS = 5000;
 const TYPING_PAUSE_MS = 2000;
 
-export default function Chat({ currentUser, hasChatAccess }) {
+export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [deleting, setDeleting] = useState(null);
   const [error, setError] = useState('');
   const bottomRef = useRef(null);
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
   const pollRef = useRef(null);
+
+  const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -79,6 +82,20 @@ export default function Chat({ currentUser, hasChatAccess }) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   }
 
+  async function handleDelete(id) {
+    setDeleting(id);
+    setError('');
+    try {
+      const latest = await loadChatMessages();
+      const updated = await saveChatMessages(latest.filter(m => m.id !== id));
+      setMessages(updated);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(null);
+    }
+  }
+
   function fmtTime(ts) {
     const d = new Date(ts);
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
@@ -119,14 +136,28 @@ export default function Chat({ currentUser, hasChatAccess }) {
                   {`${msg.username} · ${fmtTime(msg.timestamp)}`}
                 </div>
               )}
-              <div style={{
-                maxWidth: '78%', padding: '7px 12px', borderRadius: msg.isFirst ? (isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px') : (isMe ? '14px 4px 4px 14px' : '4px 14px 14px 14px'),
-                background: isMe ? 'rgba(61,214,195,0.22)' : 'rgba(255,255,255,0.07)',
-                border: isMe ? '1px solid rgba(61,214,195,0.3)' : '1px solid rgba(255,255,255,0.08)',
-                color: isMe ? '#a7f3d0' : '#cbd5e1',
-                fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word',
-              }}>
-                {msg.text}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row' }}>
+                <div style={{
+                  maxWidth: '78%', padding: '7px 12px', borderRadius: msg.isFirst ? (isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px') : (isMe ? '14px 4px 4px 14px' : '4px 14px 14px 14px'),
+                  background: isMe ? 'rgba(61,214,195,0.22)' : 'rgba(255,255,255,0.07)',
+                  border: isMe ? '1px solid rgba(61,214,195,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                  color: isMe ? '#a7f3d0' : '#cbd5e1',
+                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word',
+                }}>
+                  {msg.text}
+                </div>
+                {canDelete && (
+                  <button
+                    onClick={() => handleDelete(msg.id)}
+                    disabled={deleting === msg.id}
+                    title="Delete message"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', fontSize: 13, padding: '2px 4px', opacity: deleting === msg.id ? 0.4 : 1, lineHeight: 1 }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#475569'}
+                  >
+                    🗑
+                  </button>
+                )}
               </div>
             </div>
           );

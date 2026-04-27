@@ -9,13 +9,35 @@
       "username": "Shawn",
       "password": "Hyundai2026",
       "role": "service manager",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "Jordan",
       "password": "1234",
       "role": "advisor",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "David",
@@ -24,19 +46,32 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": true
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "Parker",
       "password": "parker2026",
       "role": "advisor",
-      "canEditDashboard": false
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "Jason",

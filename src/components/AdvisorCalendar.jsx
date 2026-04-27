@@ -241,6 +241,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         <div style={{ width: 300, flexShrink: 0 }}>
           <Chat
             currentUser={currentUser || ''}
+            currentRole={currentRole}
             hasChatAccess={chatUsers && chatUsers.map(u => u.toUpperCase()).includes((currentUser || '').toUpperCase())}
           />
         </div>
