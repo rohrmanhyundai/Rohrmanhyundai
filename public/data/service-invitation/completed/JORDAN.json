@@ -63,5 +63,21 @@
     "notes": "VERY HAPPY ",
     "submittedAt": "2026-04-27T12:13:09.688Z",
     "submittedBy": "ADMIN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ERIC BOWEN",
+    "repairOrder": "774808",
+    "vin": "KMHLM4AG0NU264755",
+    "model": "ELANTRA",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "no",
+    "phone": "765-444-4444",
+    "notes": "customer is happy ",
+    "submittedAt": "2026-04-27T13:44:07.526Z",
+    "submittedBy": "ADMIN"
   }
 ]
