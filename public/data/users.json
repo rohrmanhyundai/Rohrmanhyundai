@@ -9,7 +9,18 @@
       "username": "Shawn",
       "password": "Hyundai2026",
       "role": "service manager",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true
+      },
+      "chatAccess": true
     },
     {
       "username": "Jordan",
