@@ -173,6 +173,25 @@
         "techSchedule": true,
         "aftermarketWarranty": false
       }
+    },
+    {
+      "username": "Jerry",
+      "password": "1234",
+      "role": "advisor",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "documentLibrary": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "warrantyDashboard": true,
+        "warrantyReports": false,
+        "warrantyDocuments": true
+      }
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
