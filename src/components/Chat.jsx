@@ -116,7 +116,7 @@ export default function Chat({ currentUser, hasChatAccess }) {
             <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', marginTop: msg.isFirst ? 10 : 2 }}>
               {msg.isFirst && (
                 <div style={{ fontSize: 10, color: '#475569', marginBottom: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
-                  {isMe ? fmtTime(msg.timestamp) : `${msg.username} · ${fmtTime(msg.timestamp)}`}
+                  {`${msg.username} · ${fmtTime(msg.timestamp)}`}
                 </div>
               )}
               <div style={{
