@@ -105,6 +105,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
   const [newUserPages, setNewUserPages] = useState({ ...DEFAULT_PAGES });
+  const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState('github');
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
@@ -350,8 +351,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages } : u)
-      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages }];
+      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess } : u)
+      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess }];
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -653,7 +654,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <div
                     key={u.username}
                     className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); }}
+                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); }}
                   >
                     <div>
                       <div className="user-row-name">{u.username}</div>
@@ -686,7 +687,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
               <div className="actions">
                 <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); }}>Clear</button>
+                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
               </div>
             </div>
             <div className="form-section">
@@ -738,6 +739,20 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
                     onClick={() => setNewUserPages(Object.fromEntries(PAGE_ACCESS.map(p => [p.key, false])))}>Uncheck All</button>
                 </div>
+              </div>
+
+              {/* Chat Access */}
+              <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>Chat Access</div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserChatAccess ? '#e2e8f0' : '#475569' }}>
+                  <input
+                    type="checkbox"
+                    checked={!!newUserChatAccess}
+                    onChange={e => setNewUserChatAccess(e.target.checked)}
+                    style={{ accentColor: '#3dd6c3', width: 14, height: 14 }}
+                  />
+                  <span>💬 Allow access to Team Chat</span>
+                </label>
               </div>
 
               <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>

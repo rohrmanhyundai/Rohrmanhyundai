@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadAdvisorNoteIndex } from '../utils/github';
+import Chat from './Chat';
 
 const RANK_BASE = 'https://dealerplateguy.github.io/Advisor-Rank-Board/data';
 const METRIC_KEYS = ['ro', 'openRo', 'cpHrs', 'warrHrs', 'rap', '_combined', 'alignCnt', 'tireCnt', 'valvCnt'];
@@ -83,7 +84,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, refreshKey, userPages, currentRole }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, refreshKey, userPages, currentRole, currentUser, chatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -119,7 +120,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const isViewingOwn = viewingAdvisor === ownAdvisor;
 
   return (
-    <div className="adv-page">
+    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="adv-topbar">
         <div>
           <div className="adv-title">Appointment Prep Calendar</div>
@@ -203,36 +204,46 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         </div>
       )}
 
-      <div className="adv-cal-wrap">
-        <div className="adv-cal-nav">
-          <button className="secondary adv-nav-btn" onClick={prevMonth}>‹</button>
-          <span className="adv-cal-month">{MONTH_NAMES[month]} {year}</span>
-          <button className="secondary adv-nav-btn" onClick={nextMonth}>›</button>
-        </div>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 16, padding: '8px 16px 16px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+          <div className="adv-cal-wrap">
+            <div className="adv-cal-nav">
+              <button className="secondary adv-nav-btn" onClick={prevMonth}>‹</button>
+              <span className="adv-cal-month">{MONTH_NAMES[month]} {year}</span>
+              <button className="secondary adv-nav-btn" onClick={nextMonth}>›</button>
+            </div>
 
-        <div className="adv-cal-grid">
-          {DAY_NAMES.map(d => (
-            <div key={d} className="adv-cal-dayname">{d}</div>
-          ))}
-          {cells.map((d, i) => {
-            if (!d) return <div key={`empty-${i}`} className="adv-cal-day adv-cal-empty" />;
-            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const isToday = dateStr === todayStr;
-            const hasNotes = noteDates.has(dateStr);
-            return (
-              <div
-                key={dateStr}
-                className={`adv-cal-day${isToday ? ' adv-today' : ''}${hasNotes ? ' adv-has-notes' : ''}`}
-                onClick={() => onSelectDay(dateStr)}
-              >
-                <span className="adv-day-num">{d}</span>
-                {hasNotes && <span className="adv-note-dot" title="Notes saved" />}
-              </div>
-            );
-          })}
-        </div>
+            <div className="adv-cal-grid">
+              {DAY_NAMES.map(d => (
+                <div key={d} className="adv-cal-dayname">{d}</div>
+              ))}
+              {cells.map((d, i) => {
+                if (!d) return <div key={`empty-${i}`} className="adv-cal-day adv-cal-empty" />;
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const isToday = dateStr === todayStr;
+                const hasNotes = noteDates.has(dateStr);
+                return (
+                  <div
+                    key={dateStr}
+                    className={`adv-cal-day${isToday ? ' adv-today' : ''}${hasNotes ? ' adv-has-notes' : ''}`}
+                    onClick={() => onSelectDay(dateStr)}
+                  >
+                    <span className="adv-day-num">{d}</span>
+                    {hasNotes && <span className="adv-note-dot" title="Notes saved" />}
+                  </div>
+                );
+              })}
+            </div>
 
-        {loading && <div className="adv-loading">Loading saved notes...</div>}
+            {loading && <div className="adv-loading">Loading saved notes...</div>}
+          </div>
+        </div>
+        <div style={{ width: 300, flexShrink: 0 }}>
+          <Chat
+            currentUser={currentUser || ''}
+            hasChatAccess={chatUsers && chatUsers.map(u => u.toUpperCase()).includes((currentUser || '').toUpperCase())}
+          />
+        </div>
       </div>
     </div>
   );
