@@ -83,7 +83,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, refreshKey, userPages, currentRole }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, refreshKey, userPages, currentRole }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -154,6 +154,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {canSee(userPages, currentRole, 'aftermarketWarranty') && (
             <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
               🛡 After Market Warranty
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'originalOwner') && onOriginalOwner && (
+            <button onClick={onOriginalOwner} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}>
+              📋 Original Owner
             </button>
           )}
           {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (

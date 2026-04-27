@@ -10,6 +10,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
+import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
@@ -348,6 +349,7 @@ export default function App() {
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
+        onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
@@ -405,6 +407,16 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={awBackLabel}
+      />
+    );
+  }
+
+  if (page === 'original-owner') {
+    if (!canAccess('originalOwner')) { setPage(prevPage || 'advisor-calendar'); return null; }
+    return (
+      <OriginalOwnerAffidavit
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel="← Advisor Calendar"
       />
     );
   }
