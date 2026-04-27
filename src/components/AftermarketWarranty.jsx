@@ -35,12 +35,15 @@ const emptyForm = () => ({
   deductible: '',
   notes: '',
   approved: false,
+  approvedDate: '',
   waiting: false,
+  waitingDate: '',
   paid: false,
   paymentDate: '',
   repairsFinished: false,
   repairsFinishedDate: '',
   readySubmission: false,
+  readySubmissionDate: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -98,6 +101,93 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
     <div style={{ padding: big ? '14px 16px' : '10px 14px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${color}30`, borderRadius: 10, textAlign: 'center' }}>
       <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: big ? 22 : 16, fontWeight: 900, color }}>{value}</div>
+    </div>
+  );
+}
+
+// ── Status Buttons with Date Popup ───────────────────────────────────────────
+const STATUS_BTNS = [
+  { key: 'readySubmission', dateKey: 'readySubmissionDate', label: '📋 Ready for Submission', on: { bg: 'rgba(56,189,248,0.28)',  border: 'rgba(56,189,248,0.65)',  text: '#7dd3fc' }, off: { bg: 'rgba(56,189,248,0.07)',  border: 'rgba(56,189,248,0.28)',  text: '#38bdf8' } },
+  { key: 'approved',        dateKey: 'approvedDate',        label: '✅ Approved Claim',        on: { bg: 'rgba(74,222,128,0.25)',  border: 'rgba(74,222,128,0.6)',   text: '#4ade80' }, off: { bg: 'rgba(74,222,128,0.07)',  border: 'rgba(74,222,128,0.22)',  text: '#4ade80' } },
+  { key: 'repairsFinished', dateKey: 'repairsFinishedDate', label: '🔧 Repairs Finished',      on: { bg: 'rgba(239,68,68,0.28)',   border: 'rgba(239,68,68,0.65)',   text: '#fca5a5' }, off: { bg: 'rgba(239,68,68,0.07)',   border: 'rgba(239,68,68,0.28)',   text: '#f87171' } },
+  { key: 'waiting',         dateKey: 'waitingDate',         label: '⏳ Waiting for Payment',   on: { bg: 'rgba(251,191,36,0.25)',  border: 'rgba(251,191,36,0.6)',   text: '#fbbf24' }, off: { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.22)',  text: '#fbbf24' } },
+  { key: 'paid',            dateKey: 'paymentDate',         label: '💳 Claim Paid',            on: { bg: 'rgba(110,231,249,0.25)', border: 'rgba(110,231,249,0.6)',  text: '#6ee7f9' }, off: { bg: 'rgba(110,231,249,0.07)', border: 'rgba(110,231,249,0.22)', text: '#6ee7f9' } },
+];
+
+function StatusButtons({ form, setForm }) {
+  const [openKey, setOpenKey] = useState(null);
+  const [popupDate, setPopupDate] = useState('');
+  const [popupPos, setPopupPos]   = useState({ top: 0, left: 0 });
+  const popupRef = useRef(null);
+
+  // Close popup on outside click
+  React.useEffect(() => {
+    if (!openKey) return;
+    function handler(e) {
+      if (popupRef.current && !popupRef.current.contains(e.target)) setOpenKey(null);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [openKey]);
+
+  function handleBtnClick(btn, e) {
+    if (openKey === btn.key) { setOpenKey(null); return; }
+    // If toggling on, also set the flag
+    if (!form[btn.key]) setForm(f => ({ ...f, [btn.key]: true }));
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPopupPos({ top: rect.bottom + 8, left: rect.left });
+    setPopupDate(form[btn.dateKey] || new Date().toISOString().slice(0, 10));
+    setOpenKey(btn.key);
+  }
+
+  function handleSave(btn) {
+    setForm(f => ({ ...f, [btn.key]: true, [btn.dateKey]: popupDate }));
+    setOpenKey(null);
+  }
+
+  function handleRemove(btn) {
+    setForm(f => ({ ...f, [btn.key]: false, [btn.dateKey]: '' }));
+    setOpenKey(null);
+  }
+
+  const activeBtn = STATUS_BTNS.find(b => b.key === openKey);
+
+  return (
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginTop: 8, marginBottom: 14 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        {STATUS_BTNS.map(btn => {
+          const active = !!form[btn.key];
+          const st = active ? btn.on : btn.off;
+          return (
+            <button key={btn.key} onClick={e => handleBtnClick(btn, e)}
+              style={{ background: st.bg, border: `1px solid ${st.border}`, color: st.text, borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13, outline: openKey === btn.key ? `2px solid ${st.border}` : 'none', outlineOffset: 2 }}>
+              {btn.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Date popup — fixed so it's never clipped by scroll containers */}
+      {openKey && activeBtn && (
+        <div ref={popupRef} style={{ position: 'fixed', top: popupPos.top, left: popupPos.left, zIndex: 9999, background: '#0f172a', border: `1px solid ${activeBtn.on.border}`, borderRadius: 12, padding: '14px 16px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 260 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: activeBtn.on.text, marginBottom: 10 }}>{activeBtn.label}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Date:</label>
+            <input type="date" value={popupDate} onChange={e => setPopupDate(e.target.value)}
+              style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${activeBtn.on.border}`, borderRadius: 7, color: activeBtn.on.text, padding: '6px 10px', fontSize: 13, fontWeight: 700, outline: 'none', colorScheme: 'dark' }} />
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => handleSave(activeBtn)}
+              style={{ flex: 1, background: activeBtn.on.bg, border: `1px solid ${activeBtn.on.border}`, color: activeBtn.on.text, borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              Save
+            </button>
+            <button onClick={() => handleRemove(activeBtn)}
+              style={{ flex: 1, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -274,63 +364,9 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
         </Section>
 
         {/* ── Action bar ── */}
+        <StatusButtons form={form} setForm={setForm} />
+
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginTop: 8 }}>
-
-          {/* Row 1 — status toggles */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
-
-            {/* Repairs Finished — ALL users */}
-            <button
-              onClick={() => setForm(f => ({ ...f, repairsFinished: !f.repairsFinished, repairsFinishedDate: f.repairsFinished ? '' : new Date().toISOString().slice(0,10) }))}
-              style={{ background: form.repairsFinished ? 'rgba(239,68,68,0.28)' : 'rgba(239,68,68,0.07)', border: `1px solid ${form.repairsFinished ? 'rgba(239,68,68,0.65)' : 'rgba(239,68,68,0.28)'}`, color: form.repairsFinished ? '#fca5a5' : '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              🔧 Repairs Finished
-            </button>
-            {form.repairsFinished && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.09)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '6px 13px' }}>
-                <label style={{ fontSize: 12, color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}>Finished Date:</label>
-                <input type="date" value={form.repairsFinishedDate} onChange={e => setForm(f => ({ ...f, repairsFinishedDate: e.target.value }))}
-                  style={{ background: 'transparent', border: 'none', color: '#fca5a5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
-              </div>
-            )}
-
-            {/* Ready for Submission — ALL users */}
-            <button
-              onClick={() => setForm(f => ({ ...f, readySubmission: !f.readySubmission }))}
-              style={{ background: form.readySubmission ? 'rgba(56,189,248,0.28)' : 'rgba(56,189,248,0.07)', border: `1px solid ${form.readySubmission ? 'rgba(56,189,248,0.65)' : 'rgba(56,189,248,0.28)'}`, color: form.readySubmission ? '#7dd3fc' : '#38bdf8', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              📋 Ready for Submission
-            </button>
-
-            {/* Admin / manager status buttons */}
-            {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
-              <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.1)', margin: '0 4px', flexShrink: 0 }} />
-              <button
-                onClick={() => setForm(f => ({ ...f, approved: !f.approved }))}
-                style={{ background: form.approved ? 'rgba(74,222,128,0.25)' : 'rgba(74,222,128,0.07)', border: `1px solid ${form.approved ? 'rgba(74,222,128,0.6)' : 'rgba(74,222,128,0.22)'}`, color: '#4ade80', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-                ✅ Approved Claim
-              </button>
-              <button
-                onClick={() => setForm(f => ({ ...f, waiting: !f.waiting }))}
-                style={{ background: form.waiting ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.07)', border: `1px solid ${form.waiting ? 'rgba(251,191,36,0.6)' : 'rgba(251,191,36,0.22)'}`, color: '#fbbf24', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-                ⏳ Waiting for Payment
-              </button>
-              <button
-                onClick={() => setForm(f => {
-                  const nowOn = !f.paid;
-                  return { ...f, paid: nowOn, paymentDate: nowOn ? (f.paymentDate || new Date().toISOString().slice(0,10)) : '' };
-                })}
-                style={{ background: form.paid ? 'rgba(110,231,249,0.25)' : 'rgba(110,231,249,0.07)', border: `1px solid ${form.paid ? 'rgba(110,231,249,0.6)' : 'rgba(110,231,249,0.22)'}`, color: '#6ee7f9', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-                💳 Claim Paid
-              </button>
-              {form.paid && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)', borderRadius: 10, padding: '6px 13px' }}>
-                  <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Payment Date:</label>
-                  <input type="date" value={form.paymentDate} onChange={e => setForm(f => ({ ...f, paymentDate: e.target.value }))}
-                    style={{ background: 'transparent', border: 'none', color: '#6ee7f9', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
-                </div>
-              )}
-            </>)}
-          </div>
-
           {/* Row 2 — form actions */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             {(currentRole === 'admin' || (currentRole || '').includes('manager')) && onDelete && (
