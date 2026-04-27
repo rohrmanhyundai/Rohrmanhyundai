@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, TextAlignment } from 'pdf-lib';
 import { AFFIDAVIT_PDF_B64 } from '../assets/originalOwnerPdfBase64';
 
 const DEALER_CODE = 'IN007';
@@ -68,8 +68,9 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     const pdfDoc = await PDFDocument.load(bytes);
     const form   = pdfDoc.getForm();
 
-    form.getTextField('I further certify that the vehicle is not being used for commercial purposes')
-        .setText(customerName);
+    const nameField = form.getTextField('I further certify that the vehicle is not being used for commercial purposes');
+    nameField.setText(customerName);
+    nameField.setAlignment(TextAlignment.Center);
     form.getTextField('Text11').setText(fmtDate(customerDate));
     form.getTextField('Dealer Code').setText(DEALER_CODE);
     form.getTextField('DEALERSHIP VERFICATION  TO BE COMPLETED BY THE DEALER').setText(repairOrder);
