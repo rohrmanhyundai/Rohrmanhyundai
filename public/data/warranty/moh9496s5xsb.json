@@ -1,7 +1,7 @@
 {
   "id": "moh9496s5xsb",
   "createdAt": "2026-04-27T13:47:06.244Z",
-  "updatedAt": "2026-04-27T13:48:19.513Z",
+  "updatedAt": "2026-04-27T13:50:33.725Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "jo dong",
   "customerPhone": "4454455532",
@@ -13,23 +13,30 @@
   "mileage": "125325",
   "warrantyCompany": "aagi",
   "warrantyPhone": "565955665",
-  "claimNumber": "",
-  "laborRate": "",
-  "laborTime": "",
-  "diagnosisTime": "",
+  "claimNumber": "5658556",
+  "laborRate": "175",
+  "laborTime": "5",
+  "diagnosisTime": "1",
   "parts": [
     {
       "id": "moh9496ssaks",
-      "partNumber": "",
-      "description": "",
+      "partNumber": "45625",
+      "description": "transmission",
       "qty": "1",
-      "price": ""
+      "price": "1250.35"
+    },
+    {
+      "id": "moh97tlaaq6m",
+      "partNumber": "66555",
+      "description": "fluid ",
+      "qty": "5",
+      "price": "12"
     }
   ],
-  "taxPct": "",
-  "deductible": "",
+  "taxPct": "7",
+  "deductible": "150",
   "notes": "",
-  "approved": false,
+  "approved": true,
   "waiting": false,
   "paid": false,
   "paymentDate": "",
