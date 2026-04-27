@@ -47,5 +47,21 @@
     "submittedAt": "2026-04-25T21:46:52.816Z",
     "submittedBy": "ADMIN",
     "managerDeleted": true
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "SHRIRAM JOSHI",
+    "repairOrder": "774806",
+    "vin": "KMHL64JAXSA501948",
+    "model": "SONATA",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765845801",
+    "notes": "VERY HAPPY ",
+    "submittedAt": "2026-04-27T12:13:09.688Z",
+    "submittedBy": "ADMIN"
   }
 ]
