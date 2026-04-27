@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty }) {
+export default function Header({ data, isLoggedIn, currentUser, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -52,7 +52,7 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, can
                 </>
               ) : (
                 <>
-                  {(currentRole === 'advisor' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
+                  {(currentRole === 'advisor' || currentRole === 'admin' || (currentRole || '').includes('manager') || (currentRole === 'warranty' && userPages && userPages.advisorCalendar !== false)) && (
                     <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)' }}>
                       Advisor
                     </button>
