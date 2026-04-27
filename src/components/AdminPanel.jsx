@@ -90,6 +90,7 @@ const PAGE_ACCESS = [
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Shared' },
+  { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Shared' },
   { key: 'warrantyDashboard',  label: '🛡 Warranty Dashboard',      group: 'Warranty', defaultOff: true },
   { key: 'warrantyReports',    label: '📋 Warranty Reports',        group: 'Warranty', defaultOff: true },
   { key: 'warrantyDocuments',  label: '📁 Warranty Documents',      group: 'Warranty', defaultOff: true },
