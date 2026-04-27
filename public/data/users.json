@@ -181,11 +181,11 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "documentLibrary": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
+        "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
         "warrantyDashboard": true,
