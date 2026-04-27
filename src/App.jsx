@@ -370,6 +370,8 @@ export default function App() {
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
+        currentUser={currentUser.toUpperCase()}
+        chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
       />
     );
   }

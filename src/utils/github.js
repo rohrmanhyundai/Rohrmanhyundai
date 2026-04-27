@@ -431,6 +431,33 @@ export async function saveSchedules(schedules) {
   await saveGitHubFile(headers, SCHEDULE_PATH, schedules, `Update work schedules ${new Date().toISOString()}`);
 }
 
+// ── Group Chat ─────────────────────────────────────────────────────────────────
+const CHAT_PATH = 'public/data/chat/messages.json';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+export async function loadChatMessages() {
+  try {
+    const data = await readGitHubFile(authHeaders(), CHAT_PATH);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/chat/messages.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveChatMessages(messages) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  // Prune messages older than 30 days
+  const cutoff = Date.now() - THIRTY_DAYS_MS;
+  const pruned = messages.filter(m => m.timestamp > cutoff);
+  await saveGitHubFile(headers, CHAT_PATH, pruned, `Chat update ${new Date().toISOString()}`);
+  return pruned;
+}
+
 // ── Aftermarket Warranty Contracts ────────────────────────────────────────────
 const WARRANTY_INDEX_PATH = 'public/data/warranty/index.json';
 const warrantyContractPath = id => `public/data/warranty/${id}.json`;
