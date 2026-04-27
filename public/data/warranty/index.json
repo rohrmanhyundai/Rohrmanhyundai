@@ -2,7 +2,7 @@
   {
     "id": "mohknn1a7h8l",
     "createdAt": "2026-04-27T19:10:06.430Z",
-    "updatedAt": "2026-04-27T20:12:15.375Z",
+    "updatedAt": "2026-04-27T20:52:27.012Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Brian Hamilton",
     "customerPhone": "8282161222",
@@ -30,16 +30,16 @@
     "taxPct": "7.0",
     "deductible": "100.00",
     "notes": "send final r.o. to zcagle@sgintl.com for payment (not a statement pay policy) safegaurd poilcy under hyundai.",
-    "approved": true,
-    "approvedDate": "2026-04-27",
+    "approved": false,
+    "approvedDate": "",
     "waiting": false,
     "waitingDate": "",
     "paid": false,
     "paymentDate": "",
     "repairsFinished": false,
     "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
+    "readySubmission": true,
+    "readySubmissionDate": "2026-04-27"
   },
   {
     "id": "mohk77za0mrl",
