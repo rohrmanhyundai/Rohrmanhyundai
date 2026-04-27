@@ -919,10 +919,12 @@ function ContractLegend() {
 
         {/* Row color codes */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          {pill('rgba(239,68,68,0.22)', 'rgba(239,68,68,0.45)', '#fca5a5', 'Repairs Finished — Ready for Processing')}
-          {pill('rgba(56,189,248,0.18)', 'rgba(56,189,248,0.45)', '#7dd3fc', 'Ready for Submission')}
-          {pill('rgba(34,197,94,0.22)', 'rgba(34,197,94,0.4)', '#86efac', 'Approved Claim')}
-          {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)', '#64748b', 'No status set')}
+          {pill('rgba(239,68,68,0.18)',   'rgba(239,68,68,0.4)',   '#fca5a5', '🔧 Repairs Finished')}
+          {pill('rgba(56,189,248,0.15)',  'rgba(56,189,248,0.4)',  '#7dd3fc', '📋 Ready for Submission')}
+          {pill('rgba(34,197,94,0.18)',   'rgba(34,197,94,0.4)',   '#86efac', '✅ Approved Claim')}
+          {pill('rgba(251,191,36,0.15)',  'rgba(251,191,36,0.4)',  '#fbbf24', '⏳ Waiting for Payment')}
+          {pill('rgba(110,231,249,0.15)', 'rgba(110,231,249,0.4)', '#6ee7f9', '💳 Claim Paid')}
+          {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)','#64748b', 'No status set')}
         </div>
 
         {/* Divider */}
@@ -976,22 +978,30 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
                   const isReady     = !!c.readySubmission;
-                  // Priority: light blue (ready submission) > red (repairs done) > green (approved)
-                  const rowBg = isReady
-                    ? 'rgba(56,189,248,0.18)'
-                    : isFinished ? 'rgba(239,68,68,0.22)'
-                    : isApproved ? 'rgba(34,197,94,0.22)' : '';
-                  const rowBgHover = isReady
-                    ? 'rgba(56,189,248,0.28)'
-                    : isFinished ? 'rgba(239,68,68,0.34)'
-                    : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
-                  const rowBorder = isReady
-                    ? '1px solid rgba(56,189,248,0.45)'
-                    : isFinished ? '1px solid rgba(239,68,68,0.45)'
-                    : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
-                  // Multiple statuses can be active — show most prominent emoji + all labels
-                  const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
-                  const statusLabel = [isPaid && 'Claim Paid', isWaiting && 'Waiting', isApproved && 'Approved'].filter(Boolean).join(' · ') || '';
+                  // Priority (highest = furthest along in workflow):
+                  // Claim Paid (cyan) > Waiting for Payment (amber) > Approved (green) > Ready for Submission (blue) > Repairs Finished (red)
+                  const rowBg = isPaid      ? 'rgba(110,231,249,0.15)'
+                    : isWaiting   ? 'rgba(251,191,36,0.15)'
+                    : isApproved  ? 'rgba(34,197,94,0.18)'
+                    : isReady     ? 'rgba(56,189,248,0.15)'
+                    : isFinished  ? 'rgba(239,68,68,0.18)' : '';
+                  const rowBgHover = isPaid ? 'rgba(110,231,249,0.25)'
+                    : isWaiting   ? 'rgba(251,191,36,0.25)'
+                    : isApproved  ? 'rgba(34,197,94,0.28)'
+                    : isReady     ? 'rgba(56,189,248,0.25)'
+                    : isFinished  ? 'rgba(239,68,68,0.28)' : 'rgba(255,255,255,0.04)';
+                  const rowBorder = isPaid  ? '1px solid rgba(110,231,249,0.4)'
+                    : isWaiting   ? '1px solid rgba(251,191,36,0.4)'
+                    : isApproved  ? '1px solid rgba(34,197,94,0.4)'
+                    : isReady     ? '1px solid rgba(56,189,248,0.4)'
+                    : isFinished  ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.05)';
+                  const statusLabel = [
+                    isPaid     && '💳 Claim Paid',
+                    isWaiting  && '⏳ Waiting',
+                    isApproved && '✅ Approved',
+                    isReady    && '📋 Submission',
+                    isFinished && '🔧 Ready',
+                  ].filter(Boolean).join(' · ') || '';
                   return (
                     <tr key={c.id} onClick={() => onView(c)}
                       style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
@@ -1003,11 +1013,12 @@ function ContractList({ contracts, loading, onNew, onView }) {
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : isReady ? 'Ready for Submission' : statusLabel}>
-                        {isFinished && <div style={{ fontSize: 11, fontWeight: 800, color: '#fca5a5', marginBottom: 2 }}>🔧 Ready</div>}
-                        {isReady && <div style={{ fontSize: 11, fontWeight: 800, color: '#7dd3fc', marginBottom: 2 }}>📋 Submission</div>}
-                        <span style={{ fontSize: 18 }}>{statusEmoji}</span>
-                        {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
+                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                        {statusLabel
+                          ? statusLabel.split(' · ').map(s => (
+                              <div key={s} style={{ fontSize: 11, fontWeight: 700, color: s.includes('💳') ? '#6ee7f9' : s.includes('⏳') ? '#fbbf24' : s.includes('✅') ? '#4ade80' : s.includes('📋') ? '#7dd3fc' : '#fca5a5', whiteSpace: 'nowrap', lineHeight: 1.7 }}>{s}</div>
+                            ))
+                          : <span style={{ color: '#334155' }}>—</span>}
                       </td>
                       <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                         <span style={{ fontSize: 12, color: '#6ee7f9', fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
