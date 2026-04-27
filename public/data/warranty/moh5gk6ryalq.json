@@ -1,7 +1,7 @@
 {
   "id": "moh5gk6ryalq",
   "createdAt": "2026-04-27T12:04:41.907Z",
-  "updatedAt": "2026-04-27T12:10:00.056Z",
+  "updatedAt": "2026-04-27T12:10:53.548Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "JO BLOW",
   "customerPhone": "7655522556",
@@ -37,9 +37,9 @@
   "deductible": "150",
   "notes": "",
   "approved": false,
-  "waiting": true,
-  "paid": false,
-  "paymentDate": "",
-  "repairsFinished": true,
-  "repairsFinishedDate": "2026-04-27"
+  "waiting": false,
+  "paid": true,
+  "paymentDate": "2026-04-27",
+  "repairsFinished": false,
+  "repairsFinishedDate": ""
 }
