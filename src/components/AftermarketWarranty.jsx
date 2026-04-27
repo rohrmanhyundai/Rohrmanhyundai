@@ -40,6 +40,7 @@ const emptyForm = () => ({
   paymentDate: '',
   repairsFinished: false,
   repairsFinishedDate: '',
+  readySubmission: false,
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -291,6 +292,13 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                   style={{ background: 'transparent', border: 'none', color: '#fca5a5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer' }} />
               </div>
             )}
+
+            {/* Ready for Submission — ALL users */}
+            <button
+              onClick={() => setForm(f => ({ ...f, readySubmission: !f.readySubmission }))}
+              style={{ background: form.readySubmission ? 'rgba(56,189,248,0.28)' : 'rgba(56,189,248,0.07)', border: `1px solid ${form.readySubmission ? 'rgba(56,189,248,0.65)' : 'rgba(56,189,248,0.28)'}`, color: form.readySubmission ? '#7dd3fc' : '#38bdf8', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              📋 Ready for Submission
+            </button>
 
             {/* Admin / manager status buttons */}
             {(currentRole === 'admin' || (currentRole || '').includes('manager')) && (<>
@@ -876,6 +884,7 @@ function ContractLegend() {
         {/* Row color codes */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           {pill('rgba(239,68,68,0.22)', 'rgba(239,68,68,0.45)', '#fca5a5', 'Repairs Finished — Ready for Processing')}
+          {pill('rgba(56,189,248,0.18)', 'rgba(56,189,248,0.45)', '#7dd3fc', 'Ready for Submission')}
           {pill('rgba(34,197,94,0.22)', 'rgba(34,197,94,0.4)', '#86efac', 'Approved Claim')}
           {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)', '#64748b', 'No status set')}
         </div>
@@ -930,15 +939,19 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const isApproved  = !!(c.approved ?? (c.status === 'approved'));
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
-                  // Red (repairs done) takes top priority; green (approved) otherwise
+                  const isReady     = !!c.readySubmission;
+                  // Priority: red (repairs done) > light blue (ready submission) > green (approved)
                   const rowBg = isFinished
                     ? 'rgba(239,68,68,0.22)'
+                    : isReady ? 'rgba(56,189,248,0.18)'
                     : isApproved ? 'rgba(34,197,94,0.22)' : '';
                   const rowBgHover = isFinished
                     ? 'rgba(239,68,68,0.34)'
+                    : isReady ? 'rgba(56,189,248,0.28)'
                     : isApproved ? 'rgba(34,197,94,0.32)' : 'rgba(255,255,255,0.04)';
                   const rowBorder = isFinished
                     ? '1px solid rgba(239,68,68,0.45)'
+                    : isReady ? '1px solid rgba(56,189,248,0.45)'
                     : isApproved ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.05)';
                   // Multiple statuses can be active — show most prominent emoji + all labels
                   const statusEmoji = isPaid ? '💳' : isWaiting ? '⏳' : '—';
@@ -954,8 +967,9 @@ function ContractList({ contracts, loading, onNew, onView }) {
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{fmtDol(totalClaim)}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{fmtDol(totalDue)}</td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : statusLabel}>
+                      <td style={{ padding: '12px 14px', textAlign: 'center' }} title={isFinished ? 'Repairs Finished' : isReady ? 'Ready for Submission' : statusLabel}>
                         {isFinished && <div style={{ fontSize: 11, fontWeight: 800, color: '#fca5a5', marginBottom: 2 }}>🔧 Ready</div>}
+                        {isReady && <div style={{ fontSize: 11, fontWeight: 800, color: '#7dd3fc', marginBottom: 2 }}>📋 Submission</div>}
                         <span style={{ fontSize: 18 }}>{statusEmoji}</span>
                         {statusLabel && <div style={{ fontSize: 10, color: isPaid ? '#6ee7f9' : isWaiting ? '#fbbf24' : '#4ade80', fontWeight: 700, marginTop: 2 }}>{statusLabel}</div>}
                       </td>
