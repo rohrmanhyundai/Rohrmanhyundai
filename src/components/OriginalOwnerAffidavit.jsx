@@ -65,7 +65,7 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
-    const pdfDoc    = await PDFDocument.load(bytes);
+    const pdfDoc    = await PDFDocument.load(bytes, { ignoreEncryption: true });
     const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const page      = pdfDoc.getPages()[0];
     const BLACK     = rgb(0, 0, 0);
@@ -107,12 +107,6 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     drawCentered(SERVICE_MGR, 219.796, 459.349, 308);
     // Date rect: [461.476, 301.347, 560.684, 322.3]
     drawCentered(fmtDate(repairDate), 461.476, 560.684, 308);
-
-    // Remove all form fields so nothing overlaps the drawn text
-    const form = pdfDoc.getForm();
-    form.getFields().forEach(f => {
-      try { pdfDoc.getForm().removeField(f); } catch {}
-    });
 
     return await pdfDoc.save();
   }
