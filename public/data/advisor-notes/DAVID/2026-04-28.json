@@ -1,0 +1,62 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-04-28",
+  "rows": [
+    {
+      "customerName": "Annastasia Bonczyk",
+      "appointmentTime": "7:40am",
+      "criticalDeferredService": "Doing all recs",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "Any",
+      "notes": []
+    },
+    {
+      "customerName": "Dylan Bays",
+      "appointmentTime": "8:00am",
+      "criticalDeferredService": "Fuel Injection Service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Any",
+      "notes": []
+    },
+    {
+      "customerName": "Gabrielle Jones",
+      "appointmentTime": "9:00am",
+      "criticalDeferredService": "N/A",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Any",
+      "notes": []
+    },
+    {
+      "customerName": "Siddesh Savale",
+      "appointmentTime": "9:20am",
+      "criticalDeferredService": "HCM1",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Any",
+      "notes": []
+    },
+    {
+      "customerName": "Hollyn Mccart",
+      "appointmentTime": "10:20am",
+      "criticalDeferredService": "60k Fluids",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Any",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-04-27T18:06:30.389Z"
+}
