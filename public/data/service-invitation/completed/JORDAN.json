@@ -79,5 +79,21 @@
     "notes": "customer is happy ",
     "submittedAt": "2026-04-27T13:44:07.526Z",
     "submittedBy": "ADMIN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "CORNELIUS MASUKU",
+    "repairOrder": "776889",
+    "vin": "KM8JFCA12NU058635",
+    "model": "TUCSON HEV",
+    "serviceDate": "04/22/2026",
+    "invitationDate": "04/24/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "4127092795",
+    "notes": "didn't have any extra notes, appreciates the call",
+    "submittedAt": "2026-04-27T18:58:08.889Z",
+    "submittedBy": "JORDAN"
   }
 ]
