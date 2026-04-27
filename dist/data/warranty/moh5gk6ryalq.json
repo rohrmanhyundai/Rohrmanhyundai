@@ -1,0 +1,45 @@
+{
+  "id": "moh5gk6ryalq",
+  "createdAt": "2026-04-27T12:04:41.907Z",
+  "updatedAt": "2026-04-27T12:10:53.548Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "JO BLOW",
+  "customerPhone": "7655522556",
+  "repairOrder": "777777",
+  "vin": "KMHDH4AE1DU679864",
+  "vehicleYear": "2013",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Elantra",
+  "mileage": "1200000",
+  "warrantyCompany": "AAGI",
+  "warrantyPhone": "7654481502",
+  "claimNumber": "",
+  "laborRate": "165",
+  "laborTime": "12",
+  "diagnosisTime": "1",
+  "parts": [
+    {
+      "id": "moh5gk6r8nek",
+      "partNumber": "2332",
+      "description": "TRANMISSIOM",
+      "qty": "1",
+      "price": "1250.00"
+    },
+    {
+      "id": "moh5ip4sp0p8",
+      "partNumber": "12552",
+      "description": "TRANSMISSION FLUID",
+      "qty": "1",
+      "price": "12.00"
+    }
+  ],
+  "taxPct": "7",
+  "deductible": "150",
+  "notes": "",
+  "approved": false,
+  "waiting": false,
+  "paid": true,
+  "paymentDate": "2026-04-27",
+  "repairsFinished": false,
+  "repairsFinishedDate": ""
+}

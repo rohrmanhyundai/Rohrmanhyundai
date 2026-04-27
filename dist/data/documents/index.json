@@ -23,7 +23,8 @@
     "uploadedAt": "2026-04-26T01:47:30.972Z",
     "allowedRoles": [
       "service manager",
-      "general manager"
+      "general manager",
+      "parts manager"
     ]
   },
   {
@@ -34,12 +35,7 @@
     "size": 320422,
     "uploadedBy": "admin",
     "uploadedAt": "2026-04-25T19:29:30.294Z",
-    "allowedRoles": [
-      "technician",
-      "service manager",
-      "parts",
-      "general manager"
-    ]
+    "allowedRoles": []
   },
   {
     "id": "mo9397p8jz2n",
@@ -49,8 +45,6 @@
     "size": 241760,
     "uploadedBy": "admin",
     "uploadedAt": "2026-04-21T20:40:51.304Z",
-    "allowedRoles": [
-      "advisor"
-    ]
+    "allowedRoles": []
   }
 ]
