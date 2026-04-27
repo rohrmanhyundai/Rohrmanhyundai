@@ -108,13 +108,12 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
 // ── Status Buttons with Date Popup ───────────────────────────────────────────
 // exclusive: true means only one of these can be active at a time
 const STATUS_BTNS = [
-  { key: 'readySubmission', dateKey: 'readySubmissionDate', label: '📋 Ready for Submission', exclusive: true,  on: { bg: 'rgba(56,189,248,0.28)',  border: 'rgba(56,189,248,0.65)',  text: '#7dd3fc' }, off: { bg: 'rgba(56,189,248,0.07)',  border: 'rgba(56,189,248,0.28)',  text: '#38bdf8' } },
-  { key: 'approved',        dateKey: 'approvedDate',        label: '✅ Approved Claim',        exclusive: true,  on: { bg: 'rgba(74,222,128,0.25)',  border: 'rgba(74,222,128,0.6)',   text: '#4ade80' }, off: { bg: 'rgba(74,222,128,0.07)',  border: 'rgba(74,222,128,0.22)',  text: '#4ade80' } },
-  { key: 'repairsFinished', dateKey: 'repairsFinishedDate', label: '🔧 Repairs Finished',      exclusive: true,  on: { bg: 'rgba(239,68,68,0.28)',   border: 'rgba(239,68,68,0.65)',   text: '#fca5a5' }, off: { bg: 'rgba(239,68,68,0.07)',   border: 'rgba(239,68,68,0.28)',   text: '#f87171' } },
-  { key: 'waiting',         dateKey: 'waitingDate',         label: '⏳ Waiting for Payment',   exclusive: false, on: { bg: 'rgba(251,191,36,0.25)',  border: 'rgba(251,191,36,0.6)',   text: '#fbbf24' }, off: { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.22)',  text: '#fbbf24' } },
-  { key: 'paid',            dateKey: 'paymentDate',         label: '💳 Claim Paid',            exclusive: false, on: { bg: 'rgba(110,231,249,0.25)', border: 'rgba(110,231,249,0.6)',  text: '#6ee7f9' }, off: { bg: 'rgba(110,231,249,0.07)', border: 'rgba(110,231,249,0.22)', text: '#6ee7f9' } },
+  { key: 'readySubmission', dateKey: 'readySubmissionDate', label: '📋 Ready for Submission', exclusive: true, group: 'status', on: { bg: 'rgba(56,189,248,0.28)',  border: 'rgba(56,189,248,0.65)',  text: '#7dd3fc' }, off: { bg: 'rgba(56,189,248,0.07)',  border: 'rgba(56,189,248,0.28)',  text: '#38bdf8' } },
+  { key: 'approved',        dateKey: 'approvedDate',        label: '✅ Approved Claim',        exclusive: true, group: 'status', on: { bg: 'rgba(74,222,128,0.25)',  border: 'rgba(74,222,128,0.6)',   text: '#4ade80' }, off: { bg: 'rgba(74,222,128,0.07)',  border: 'rgba(74,222,128,0.22)',  text: '#4ade80' } },
+  { key: 'repairsFinished', dateKey: 'repairsFinishedDate', label: '🔧 Repairs Finished',      exclusive: true, group: 'status', on: { bg: 'rgba(239,68,68,0.28)',   border: 'rgba(239,68,68,0.65)',   text: '#fca5a5' }, off: { bg: 'rgba(239,68,68,0.07)',   border: 'rgba(239,68,68,0.28)',   text: '#f87171' } },
+  { key: 'waiting',         dateKey: 'waitingDate',         label: '⏳ Waiting for Payment',   exclusive: true, group: 'payment', on: { bg: 'rgba(251,191,36,0.25)',  border: 'rgba(251,191,36,0.6)',   text: '#fbbf24' }, off: { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.22)',  text: '#fbbf24' } },
+  { key: 'paid',            dateKey: 'paymentDate',         label: '💳 Claim Paid',            exclusive: true, group: 'payment', on: { bg: 'rgba(110,231,249,0.25)', border: 'rgba(110,231,249,0.6)',  text: '#6ee7f9' }, off: { bg: 'rgba(110,231,249,0.07)', border: 'rgba(110,231,249,0.22)', text: '#6ee7f9' } },
 ];
-const EXCLUSIVE_KEYS = STATUS_BTNS.filter(b => b.exclusive).map(b => b.key);
 
 function StatusButtons({ form, setForm }) {
   const [openKey, setOpenKey] = useState(null);
@@ -143,14 +142,11 @@ function StatusButtons({ form, setForm }) {
   function handleSave(btn) {
     setForm(f => {
       const update = { ...f, [btn.key]: true, [btn.dateKey]: popupDate };
-      // Clear the other exclusive buttons
+      // Clear others in the same exclusive group
       if (btn.exclusive) {
-        EXCLUSIVE_KEYS.forEach(k => {
-          if (k !== btn.key) {
-            update[k] = false;
-            const other = STATUS_BTNS.find(b => b.key === k);
-            if (other) update[other.dateKey] = '';
-          }
+        STATUS_BTNS.filter(b => b.exclusive && b.group === btn.group && b.key !== btn.key).forEach(other => {
+          update[other.key] = false;
+          update[other.dateKey] = '';
         });
       }
       return update;
