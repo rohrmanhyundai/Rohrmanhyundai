@@ -71,7 +71,10 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     const nameField = form.getTextField('I further certify that the vehicle is not being used for commercial purposes');
     nameField.setText(customerName);
     nameField.setAlignment(TextAlignment.Center);
-    form.getTextField('Text11').setText(fmtDate(customerDate));
+    nameField.setFontSize(11);
+    const custDateField = form.getTextField('Text11');
+    custDateField.setText(fmtDate(customerDate));
+    custDateField.setFontSize(11);
     form.getTextField('Dealer Code').setText(DEALER_CODE);
     form.getTextField('DEALERSHIP VERFICATION  TO BE COMPLETED BY THE DEALER').setText(repairOrder);
     form.getTextField('Repair Date').setText(fmtDate(repairDate));
@@ -81,9 +84,13 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
       form.getTextField(fieldId).setText(vinStr[i] || '');
     });
 
-    form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines')
-        .setText(SERVICE_MGR);
-    form.getTextField('Text30').setText(fmtDate(repairDate));
+    const mgrField = form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines');
+    mgrField.setText(SERVICE_MGR);
+    mgrField.setAlignment(TextAlignment.Center);
+    mgrField.setFontSize(11);
+    const mgrDateField = form.getTextField('Text30');
+    mgrDateField.setText(fmtDate(repairDate));
+    mgrDateField.setFontSize(11);
 
     form.flatten();
     return await pdfDoc.save();
