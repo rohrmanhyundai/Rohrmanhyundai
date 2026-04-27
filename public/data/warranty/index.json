@@ -2,7 +2,7 @@
   {
     "id": "mohj2bbx3hmm",
     "createdAt": "2026-04-27T18:25:31.869Z",
-    "updatedAt": "2026-04-27T18:53:52.910Z",
+    "updatedAt": "2026-04-27T18:55:23.118Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Emily N Warren",
     "customerPhone": "7655430974",
@@ -29,7 +29,7 @@
     ],
     "taxPct": "7",
     "deductible": "250",
-    "notes": "",
+    "notes": "jordan make sure you the customer signs with Emily Warran. if customer wants to update name call warranty company 1888-442-2886",
     "approved": true,
     "approvedDate": "2026-04-27",
     "waiting": false,
