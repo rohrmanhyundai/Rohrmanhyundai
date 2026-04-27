@@ -46,5 +46,21 @@
     "notes": "",
     "submittedAt": "2026-04-27T19:12:23.780Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "MINDY FOWLER",
+    "repairOrder": "776839",
+    "vin": "KM8HBCAB6SU218241",
+    "model": "KONA",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(765) 480 - 0901",
+    "notes": "",
+    "submittedAt": "2026-04-27T19:15:00.440Z",
+    "submittedBy": "PARKER"
   }
 ]
