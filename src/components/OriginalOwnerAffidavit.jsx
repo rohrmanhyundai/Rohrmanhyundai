@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PDFDocument, TextAlignment } from 'pdf-lib';
+import { PDFDocument, TextAlignment, StandardFonts, rgb } from 'pdf-lib';
 import { AFFIDAVIT_PDF_B64 } from '../assets/originalOwnerPdfBase64';
 
 const DEALER_CODE = 'IN007';
@@ -84,13 +84,29 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
       form.getTextField(fieldId).setText(vinStr[i] || '');
     });
 
-    const mgrField = form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines');
-    mgrField.setText(SERVICE_MGR);
-    mgrField.setAlignment(TextAlignment.Center);
-    mgrField.setFontSize(11);
-    const mgrDateField = form.getTextField('Text30');
-    mgrDateField.setText(fmtDate(repairDate));
-    mgrDateField.setFontSize(11);
+    // Draw manager name and date directly for precise centering
+    // Manager name field rect: [219.796, 301.56, 459.349, 327.6]
+    // Text30 (date) field rect: [461.476, 301.347, 560.684, 322.3]
+    // PDF page 1 (index 0), y=0 is bottom
+    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize  = 11;
+    const page      = pdfDoc.getPages()[0];
+
+    // Clear the form fields so they don't overlap
+    form.getTextField('10 Years100000 Miles Powertrain Warranty under HMA published warranty coverage guidelines').setText('');
+    form.getTextField('Text30').setText('');
+
+    // Draw manager name centered in its field box
+    const mgrName   = SERVICE_MGR;
+    const mgrX0 = 219.796, mgrX1 = 459.349, mgrY = 308;
+    const mgrW  = helvetica.widthOfTextAtSize(mgrName, fontSize);
+    page.drawText(mgrName, { x: (mgrX0 + mgrX1) / 2 - mgrW / 2, y: mgrY, size: fontSize, font: helvetica, color: rgb(0, 0, 0) });
+
+    // Draw manager date centered in its field box
+    const mgrDate  = fmtDate(repairDate);
+    const dtX0 = 461.476, dtX1 = 560.684, dtY = 308;
+    const dtW   = helvetica.widthOfTextAtSize(mgrDate, fontSize);
+    page.drawText(mgrDate, { x: (dtX0 + dtX1) / 2 - dtW / 2, y: dtY, size: fontSize, font: helvetica, color: rgb(0, 0, 0) });
 
     form.flatten();
     return await pdfDoc.save();
