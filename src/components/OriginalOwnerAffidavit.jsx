@@ -65,7 +65,7 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     const bytes  = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
-    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pdfDoc = await PDFDocument.load(bytes);
     const form   = pdfDoc.getForm();
 
     form.getTextField('I further certify that the vehicle is not being used for commercial purposes')
