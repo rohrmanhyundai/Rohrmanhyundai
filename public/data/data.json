@@ -112,13 +112,13 @@
         "asr": 0.1948,
         "elr": 0.96,
         "last_month_total": 305.7,
-        "roh50_hrs_ro": 0.85
+        "roh50_hrs_ro": 0.78
       },
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
         "mtd_hours": 250.4,
-        "hours_per_ro": 1.27,
+        "hours_per_ro": 1.3,
         "align": 0.16829999999999998,
         "tires": 0.22769999999999999,
         "valvoline": 0.2967,
@@ -126,7 +126,7 @@
         "asr": 0.19390000000000002,
         "elr": 0.93,
         "last_month_total": 333.4,
-        "roh50_hrs_ro": 1.26
+        "roh50_hrs_ro": 1.3
       },
       {
         "name": "NEVEN",
@@ -151,7 +151,7 @@
         "align": 0.22219999999999998,
         "tires": 0,
         "valvoline": 0.11109999999999999,
-        "roh50_hrs_ro": 0.34,
+        "roh50_hrs_ro": 0.36,
         "csi": 915,
         "asr": 0.11320000000000001,
         "elr": 0.92,
