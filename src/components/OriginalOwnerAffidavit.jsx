@@ -108,6 +108,7 @@ export default function OriginalOwnerAffidavit({ onBack, backLabel }) {
     const dtW   = helvetica.widthOfTextAtSize(mgrDate, fontSize);
     page.drawText(mgrDate, { x: (dtX0 + dtX1) / 2 - dtW / 2, y: dtY, size: fontSize, font: helvetica, color: rgb(0, 0, 0) });
 
+    await pdfDoc.updateFieldAppearances(helvetica);
     form.flatten();
     return await pdfDoc.save();
   }
