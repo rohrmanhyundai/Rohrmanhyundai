@@ -1,0 +1,18 @@
+[
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "KARLA RUSSELL",
+    "repairOrder": "776887",
+    "vin": "KM8JEDD15SU391752",
+    "model": "TUCSON HEV",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 426 - 6512",
+    "notes": "Said she is going to look for the Email / Survey now to fill out!",
+    "submittedAt": "2026-04-27T19:12:08.051Z",
+    "submittedBy": "PARKER"
+  }
+]
