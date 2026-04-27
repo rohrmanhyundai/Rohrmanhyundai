@@ -19,6 +19,7 @@ import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
+import WarrantyHub from './components/WarrantyHub';
 import SurveyReports from './components/SurveyReports';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
@@ -277,6 +278,21 @@ export default function App() {
     );
   }
 
+  // Warranty Hub
+  if (page === 'warranty-hub') {
+    return (
+      <WarrantyHub
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        userPages={currentPages}
+        onBack={() => setPage('dashboard')}
+        onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
+        onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
+        onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
+      />
+    );
+  }
+
   // Manager Hub
   if (page === 'manager-hub') {
     const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
@@ -400,7 +416,7 @@ export default function App() {
 
   if (page === 'aftermarket-warranty') {
     if (!canAccess('aftermarketWarranty')) { setPage(prevPage || 'advisor-calendar'); return null; }
-    const awBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
+    const awBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
     return (
       <AftermarketWarranty
         currentUser={currentUser}
@@ -413,10 +429,11 @@ export default function App() {
 
   if (page === 'original-owner') {
     if (!canAccess('originalOwner')) { setPage(prevPage || 'advisor-calendar'); return null; }
+    const ooBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
     return (
       <OriginalOwnerAffidavit
         onBack={() => setPage(prevPage || 'advisor-calendar')}
-        backLabel="← Advisor Calendar"
+        backLabel={ooBackLabel}
       />
     );
   }
@@ -486,6 +503,7 @@ export default function App() {
             onAdvisor={() => setPage('advisor-calendar')}
             onTechnician={() => setPage('tech-resources')}
             onParts={() => setPage('parts-hub')}
+            onWarranty={() => setPage('warranty-hub')}
             onManager={() => setPage('manager-hub')}
           />
 
