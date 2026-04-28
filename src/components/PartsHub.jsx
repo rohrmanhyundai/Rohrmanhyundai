@@ -52,14 +52,23 @@ const NAV_BUTTONS = [
     color: '#fde68a',
     prop: 'onAdvisorRankBoard',
   },
+  {
+    key: 'workInProgress',
+    label: '🔧 Work in Progress',
+    desc: 'View and manage technician work in progress',
+    bg: 'linear-gradient(135deg,rgba(251,146,60,.28),rgba(234,88,12,.18))',
+    border: 'rgba(251,146,60,.45)',
+    color: '#fb923c',
+    prop: 'onWorkInProgress',
+  },
 ];
 
 export default function PartsHub({
   currentUser, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
+  onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

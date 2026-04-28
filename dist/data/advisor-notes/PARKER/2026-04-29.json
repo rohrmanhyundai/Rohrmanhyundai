@@ -1,0 +1,17 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-04-29",
+  "rows": [
+    {
+      "customerName": "Michael Carpenter",
+      "appointmentTime": "1PM",
+      "criticalDeferredService": "NONE",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-04-28T19:33:43.446Z"
+}

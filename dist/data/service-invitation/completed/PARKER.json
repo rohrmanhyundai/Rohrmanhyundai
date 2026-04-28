@@ -62,5 +62,53 @@
     "notes": "",
     "submittedAt": "2026-04-27T19:15:00.440Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "NICOLE SEARS",
+    "repairOrder": "776868",
+    "vin": "KM8R5DGE4RU806586",
+    "model": "PALISADE",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(574) 270 - 1114",
+    "notes": "Did not even let me leave a message, just hung up on me",
+    "submittedAt": "2026-04-28T19:34:43.445Z",
+    "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "DONNA ZUEHL",
+    "repairOrder": "776813",
+    "vin": "KMHLM4DJ7SU143059",
+    "model": "ELANTRA HEV",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(574) 870 - 5916",
+    "notes": "Left VM",
+    "submittedAt": "2026-04-28T19:37:09.681Z",
+    "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "AMANDA TRAN",
+    "repairOrder": "776876",
+    "vin": "5NMJE3AE3NH105060",
+    "model": "TUCSON",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "04/22/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(219) 533 - 8465",
+    "notes": "NUMBER WRONG // goes to a limousine company??",
+    "submittedAt": "2026-04-28T19:39:07.129Z",
+    "submittedBy": "PARKER"
   }
 ]

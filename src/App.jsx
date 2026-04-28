@@ -317,7 +317,7 @@ export default function App() {
 
   if (page === 'work-in-progress') {
     if (!canAccess('workInProgress')) { setPage('tech-resources'); return null; }
-    const wipBackLabel = prevPage === 'advisor-calendar' ? '← Advisor Calendar' : '← Technician Resources';
+    const wipBackLabel = prevPage === 'advisor-calendar' ? '← Advisor Calendar' : prevPage === 'parts-hub' ? '← Parts Hub' : '← Technician Resources';
     return (
       <WorkInProgress
         currentUser={currentUser.toUpperCase()}
@@ -359,6 +359,7 @@ export default function App() {
         onAdvisorSchedule={() => goTo('work-schedule', 'parts-hub')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
         onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+        onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
       />
     );
   }

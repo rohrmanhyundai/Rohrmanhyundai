@@ -95,5 +95,53 @@
     "notes": "didn't have any extra notes, appreciates the call",
     "submittedAt": "2026-04-27T18:58:08.889Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ETHAN BREWER",
+    "repairOrder": "776872",
+    "vin": "KM8HACA38SU204546",
+    "model": "KONA",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654912294",
+    "notes": "left vm\n",
+    "submittedAt": "2026-04-28T19:23:44.095Z",
+    "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "LOVEJEET SINGH",
+    "repairOrder": "776837",
+    "vin": "KM8RMES24TU057382",
+    "model": "PALISADE",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "3173790088",
+    "notes": "left vm\n",
+    "submittedAt": "2026-04-28T19:25:49.495Z",
+    "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "LACIENYA NICKSON",
+    "repairOrder": "776819",
+    "vin": "KMHL34J29PA327881",
+    "model": "SONATA",
+    "serviceDate": "04/18/2026",
+    "invitationDate": "04/21/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7736390661",
+    "notes": "customer will be ordering tires soon\n",
+    "submittedAt": "2026-04-28T19:28:14.945Z",
+    "submittedBy": "JORDAN"
   }
 ]
