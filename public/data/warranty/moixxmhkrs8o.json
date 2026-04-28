@@ -1,0 +1,42 @@
+{
+  "id": "moixxmhkrs8o",
+  "createdAt": "2026-04-28T18:09:33.464Z",
+  "updatedAt": "2026-04-28T18:10:44.501Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Darneatryce Scott",
+  "customerPhone": "219-378-6414",
+  "repairOrder": "777078",
+  "vin": "KM8S2DA16MU007322",
+  "vehicleYear": "2021",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Santa Fe",
+  "mileage": "108337",
+  "warrantyCompany": "AAGI",
+  "warrantyPhone": "",
+  "claimNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "moixxmhkrued",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "",
+  "deductible": "",
+  "notes": "",
+  "approved": false,
+  "approvedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": ""
+}
