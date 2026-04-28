@@ -41,6 +41,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [savingRow, setSavingRow] = useState(null);
   const [deletingRow, setDeletingRow] = useState(null);
   const [error, setError] = useState('');
+  const [searchRO, setSearchRO] = useState('');
+  const [searchResults, setSearchResults] = useState(null); // null = not searching
+  const [searching, setSearching] = useState(false);
 
   const load = useCallback(async (tech) => {
     setLoading(true);
@@ -92,6 +95,26 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
     onBack();
   }
 
+  async function handleSearch() {
+    const q = searchRO.trim();
+    if (!q) { setSearchResults(null); return; }
+    setSearching(true);
+    setSearchResults(null);
+    try {
+      const all = await Promise.all(
+        techList.map(async tech => {
+          const data = await loadWipData(tech);
+          const matches = data.filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()));
+          return matches.map(r => ({ ...r, techName: tech }));
+        })
+      );
+      setSearchResults(all.flat());
+    } catch (e) { setError(e.message); }
+    finally { setSearching(false); }
+  }
+
+  function clearSearch() { setSearchRO(''); setSearchResults(null); }
+
   const labelSt = { fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
   const backText = backLabel || '← Technician Resources';
 
@@ -109,22 +132,47 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
         </button>
       </div>
 
-      {/* Tech tabs (manager/advisor/admin/warranty only) */}
+      {/* Tech tabs + RO search (manager/advisor/admin/warranty only) */}
       {canSeeTabs && techList.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, padding: '10px 20px 0', flexWrap: 'wrap', borderBottom: '1px solid rgba(255,255,255,.06)', paddingBottom: 10 }}>
-          {techList.map(name => (
-            <button
-              key={name}
-              onClick={() => setActiveTech(name)}
-              style={{
-                background: activeTech === name ? 'rgba(167,139,250,.25)' : 'rgba(255,255,255,.04)',
-                border: `1px solid ${activeTech === name ? 'rgba(167,139,250,.5)' : 'rgba(255,255,255,.1)'}`,
-                color: activeTech === name ? '#c4b5fd' : '#64748b',
-                borderRadius: 8, padding: '6px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13,
-                transition: 'all .15s',
-              }}
-            >{name}</button>
-          ))}
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,.06)' }}>
+          {/* Tabs row */}
+          <div style={{ display: 'flex', gap: 8, padding: '10px 20px 10px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {techList.map(name => (
+              <button
+                key={name}
+                onClick={() => { setActiveTech(name); clearSearch(); }}
+                style={{
+                  background: activeTech === name && !searchResults ? 'rgba(167,139,250,.25)' : 'rgba(255,255,255,.04)',
+                  border: `1px solid ${activeTech === name && !searchResults ? 'rgba(167,139,250,.5)' : 'rgba(255,255,255,.1)'}`,
+                  color: activeTech === name && !searchResults ? '#c4b5fd' : '#64748b',
+                  borderRadius: 8, padding: '6px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13,
+                  transition: 'all .15s',
+                }}
+              >{name}</button>
+            ))}
+            {/* RO Search */}
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+              <input
+                value={searchRO}
+                onChange={e => setSearchRO(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                placeholder="Search RO#…"
+                style={{
+                  background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.18)',
+                  borderRadius: 8, color: '#f1f5f9', padding: '6px 12px', fontSize: 13,
+                  outline: 'none', fontFamily: 'inherit', width: 160,
+                }}
+              />
+              <button
+                onClick={handleSearch}
+                disabled={searching}
+                style={{ background: 'rgba(61,214,195,.2)', border: '1px solid rgba(61,214,195,.4)', color: '#6ee7b7', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}
+              >{searching ? '⏳' : '🔍 Search'}</button>
+              {searchResults !== null && (
+                <button onClick={clearSearch} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>✕ Clear</button>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -132,9 +180,35 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
         {error && <div style={{ marginBottom: 12, padding: '10px 14px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, color: '#f87171', fontSize: 13 }}>{error}</div>}
 
+        {/* Search results panel */}
+        {searchResults !== null && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>
+              {searchResults.length === 0
+                ? `No results found for RO# "${searchRO}"`
+                : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for RO# "${searchRO}"`}
+            </div>
+            {searchResults.map((r, idx) => (
+              <div key={r.id + idx} style={{ background: 'rgba(61,214,195,.07)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 14, padding: '14px 18px', marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#3dd6c3', textTransform: 'uppercase' }}>Tech: {r.techName}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#6ee7f9' }}>RO# {r.ro}</span>
+                  {r.roDate && <span style={{ fontSize: 11, color: '#94a3b8' }}>{r.roDate}</span>}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '6px 16px' }}>
+                  {r.jobDesc && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Job: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.jobDesc}</span></div>}
+                  {r.etaParts && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>ETA Parts: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.etaParts}</span></div>}
+                  {r.etaCompletion && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>ETA Completion: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.etaCompletion}</span></div>}
+                  <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Parts Arrived: </span><span style={{ fontSize: 13, color: r.partsArrived === true ? '#86efac' : r.partsArrived === false ? '#fca5a5' : '#475569' }}>{r.partsArrived === true ? '✓ Yes' : r.partsArrived === false ? '✗ No' : '—'}</span></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {loading ? (
           <div style={{ color: '#475569', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
-        ) : (
+        ) : searchResults !== null ? null : (
           <>
             {rows.length === 0 && (
               <div style={{ color: '#475569', textAlign: 'center', padding: '40px 0', fontSize: 14 }}>No work in progress. Click "Add Row" to get started.</div>
