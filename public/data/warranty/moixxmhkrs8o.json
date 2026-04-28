@@ -1,7 +1,7 @@
 {
   "id": "moixxmhkrs8o",
   "createdAt": "2026-04-28T18:09:33.464Z",
-  "updatedAt": "2026-04-28T19:15:44.108Z",
+  "updatedAt": "2026-04-28T19:18:50.490Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Darneatryce Scott",
   "customerPhone": "219-378-6414",
@@ -38,6 +38,5 @@
   "repairsFinished": false,
   "repairsFinishedDate": "",
   "readySubmission": false,
-  "readySubmissionDate": "",
-  "rental": "245.00"
+  "readySubmissionDate": ""
 }
