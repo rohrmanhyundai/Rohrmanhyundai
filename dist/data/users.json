@@ -18,9 +18,11 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
-        "originalOwner": true
+        "originalOwner": true,
+        "workInProgress": true
       },
-      "chatAccess": true
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Jordan",
@@ -35,9 +37,11 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
-        "originalOwner": true
+        "originalOwner": true,
+        "workInProgress": true
       },
-      "chatAccess": true
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "David",
@@ -52,9 +56,11 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
-        "originalOwner": true
+        "originalOwner": true,
+        "workInProgress": true
       },
-      "chatAccess": true
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Parker",
@@ -69,9 +75,11 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
-        "originalOwner": true
+        "originalOwner": true,
+        "workInProgress": true
       },
-      "chatAccess": true
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Jason",
@@ -85,13 +93,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Austin",
@@ -112,12 +124,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": false,
+        "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": true
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "West",
@@ -126,13 +143,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Cory",
@@ -141,13 +162,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Carter",
@@ -156,13 +181,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Jacob",
@@ -171,13 +200,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Edgar",
@@ -186,13 +219,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Derrick",
@@ -223,10 +260,13 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
+        "workInProgress": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
-      }
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
