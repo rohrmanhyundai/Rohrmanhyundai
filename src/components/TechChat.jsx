@@ -60,7 +60,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
   }
 
   async function handleSend() {
-    const trimmed = text.trim();
+    const trimmed = text.trim().replace(/\n+/g, ' ');
     if (!trimmed || sending) return;
     setSending(true);
     setError('');
@@ -155,7 +155,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
                   background: isMe ? 'rgba(251,146,60,0.2)' : 'rgba(255,255,255,0.07)',
                   border: isMe ? '1px solid rgba(251,146,60,0.35)' : '1px solid rgba(255,255,255,0.08)',
                   color: isMe ? '#fed7aa' : '#cbd5e1',
-                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap',
+                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', minWidth: 48,
                 }}>
                   {msg.text}
                 </div>
