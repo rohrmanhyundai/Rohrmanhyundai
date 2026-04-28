@@ -32,7 +32,7 @@ const inpSt = {
 };
 
 export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel, chatUsers }) {
-  const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || (currentRole || '').includes('manager');
+  const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
   const [activeTech, setActiveTech] = useState(
     canSeeTabs ? (techList[0] || currentUser) : currentUser
   );
