@@ -284,8 +284,8 @@
         "originalOwner": true,
         "workInProgress": true
       },
-      "chatAccess": false,
-      "techChatAccess": false
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
