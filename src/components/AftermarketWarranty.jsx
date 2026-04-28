@@ -33,6 +33,9 @@ const emptyForm = () => ({
   parts: [emptyPart()],
   taxPct: '',
   deductible: '',
+  rental: '',
+  towing: '',
+  sublet: '',
   notes: '',
   approved: false,
   approvedDate: '',
@@ -54,9 +57,12 @@ function calcTotals(form) {
   const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.qty || 1) * num(p.price), 0);
   const taxAmt = partsTotal * (num(form.taxPct) / 100);
   const deductible = num(form.deductible);
-  const totalClaim = laborTotal + partsTotal + taxAmt - deductible;
+  const rental = num(form.rental);
+  const towing = num(form.towing);
+  const sublet = num(form.sublet);
+  const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet - deductible;
   const totalDue = deductible;
-  return { laborTotal, partsTotal, taxAmt, totalClaim, totalDue };
+  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue };
 }
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -356,10 +362,57 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             </div>
             <F label="Deductible ($)" value={form.deductible} onChange={v => set('deductible', v)} type="number" placeholder="0.00" />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 12 }}>
+
+          {/* Additional charges — Rental / Towing / Sublet */}
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Additional Charges</div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              {[
+                { key: 'rental', label: 'RENTAL', color: '#a78bfa', bg: 'rgba(167,139,250,', border: 'rgba(167,139,250,' },
+                { key: 'towing', label: 'TOWING', color: '#fb923c', bg: 'rgba(251,146,60,', border: 'rgba(251,146,60,' },
+                { key: 'sublet', label: 'SUBLET', color: '#6ee7f9', bg: 'rgba(110,231,249,', border: 'rgba(110,231,249,' },
+              ].map(({ key, label, color, bg, border }) => {
+                const active = form[key] !== '';
+                return (
+                  <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8, background: active ? `${bg}0.1)` : 'rgba(255,255,255,0.03)', border: `1px solid ${active ? `${border}0.4)` : 'rgba(255,255,255,0.12)'}`, borderRadius: 10, padding: '8px 14px', transition: 'all .15s' }}>
+                    <button
+                      onClick={() => set(key, active ? '' : '0')}
+                      style={{ background: active ? `${bg}0.25)` : 'rgba(255,255,255,0.06)', border: `1px solid ${active ? `${border}0.5)` : 'rgba(255,255,255,0.15)'}`, color: active ? color : '#64748b', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, letterSpacing: 0.5, transition: 'all .15s' }}
+                    >{label}</button>
+                    {active && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>$</span>
+                        <input
+                          type="number"
+                          value={form[key]}
+                          onChange={e => set(key, e.target.value)}
+                          placeholder="0.00"
+                          min="0"
+                          step="0.01"
+                          autoFocus
+                          style={{ ...inpSt, width: 110, padding: '6px 10px', fontSize: 13, color, fontWeight: 700 }}
+                        />
+                        {num(form[key]) > 0 && <span style={{ fontSize: 12, color, fontWeight: 700 }}>{fmtDol(num(form[key]))}</span>}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {(num(form.rental) > 0 || num(form.towing) > 0 || num(form.sublet) > 0) && (
+              <div style={{ marginTop: 8, fontSize: 12, color: '#64748b' }}>
+                Additional total: <span style={{ color: '#a78bfa', fontWeight: 700 }}>{fmtDol(num(form.rental) + num(form.towing) + num(form.sublet))}</span>
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
             <TotalBox label="Labor Total" value={fmtDol(laborTotal)} />
             <TotalBox label="Parts Total" value={fmtDol(partsTotal)} />
             <TotalBox label="Tax" value={fmtDol(taxAmt)} />
+            {num(form.rental) > 0 && <TotalBox label="Rental" value={fmtDol(num(form.rental))} color="#a78bfa" />}
+            {num(form.towing) > 0 && <TotalBox label="Towing" value={fmtDol(num(form.towing))} color="#fb923c" />}
+            {num(form.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(num(form.sublet))} color="#6ee7f9" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
             <TotalBox label="Total Due by Customer" value={fmtDol(totalDue)} color="#fbbf24" big />
           </div>
@@ -532,7 +585,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
 
       {/* Print-only document (also used for PDF capture via ref) */}
       <div className="amw-print-doc" ref={pdfRef}>
-        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} totalClaim={totalClaim} totalDue={totalDue} date={date} />
+        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} rental={rental} towing={towing} sublet={sublet} totalClaim={totalClaim} totalDue={totalDue} date={date} />
       </div>
 
       {/* Screen preview (styled like the print doc but in dark theme) */}
@@ -610,10 +663,13 @@ function ContractDetail({ contract, onEdit, onBack }) {
           </div>
 
           {/* Totals */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10, marginBottom: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, marginBottom: 20 }}>
             <TotalBox label="Labor Total" value={fmtDol(laborTotal)} />
             <TotalBox label="Parts Total" value={fmtDol(partsTotal)} />
             <TotalBox label="Tax" value={fmtDol(taxAmt)} />
+            {num(contract.rental) > 0 && <TotalBox label="Rental" value={fmtDol(rental)} color="#a78bfa" />}
+            {num(contract.towing) > 0 && <TotalBox label="Towing" value={fmtDol(towing)} color="#fb923c" />}
+            {num(contract.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(sublet)} color="#6ee7f9" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
             <TotalBox label="Total Due by Customer" value={fmtDol(totalDue)} color="#fbbf24" big />
           </div>
@@ -649,7 +705,7 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 }
 
 // ── Print document (white/light, for actual printing & PDF export) ────────────
-function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, totalDue, date }) {
+function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue, date }) {
   const isApproved = !!(contract.approved ?? (contract.status === 'approved'));
   const isWaiting  = !!(contract.waiting  ?? (contract.status === 'waiting'));
   const isPaid     = !!(contract.paid     ?? (contract.status === 'paid'));
@@ -835,8 +891,11 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, totalClaim, t
                   { label: 'Labor Total', value: fmtDol(laborTotal), bg: '#fff' },
                   { label: 'Parts Total', value: fmtDol(partsTotal), bg: '#f8fafc' },
                   { label: `Tax (${num(contract.taxPct) > 0 ? num(contract.taxPct) + '%' : '—'})`, value: fmtDol(taxAmt), bg: '#fff' },
+                  rental > 0 && { label: 'Rental', value: fmtDol(rental), bg: '#f8fafc' },
+                  towing > 0 && { label: 'Towing', value: fmtDol(towing), bg: '#fff' },
+                  sublet > 0 && { label: 'Sublet', value: fmtDol(sublet), bg: '#f8fafc' },
                   { label: 'Deductible', value: `− ${fmtDol(num(contract.deductible))}`, bg: '#f8fafc' },
-                ].map(row => (
+                ].filter(Boolean).map(row => (
                   <tr key={row.label} style={{ borderBottom: '1px solid #e2e8f0', background: row.bg }}>
                     <td style={{ padding: '9px 14px', fontSize: 12, color: '#475569' }}>{row.label}</td>
                     <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a', textAlign: 'right', fontWeight: 600 }}>{row.value}</td>
