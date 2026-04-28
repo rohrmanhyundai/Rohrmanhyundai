@@ -127,5 +127,21 @@
     "notes": "left vm\n",
     "submittedAt": "2026-04-28T19:25:49.495Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "LACIENYA NICKSON",
+    "repairOrder": "776819",
+    "vin": "KMHL34J29PA327881",
+    "model": "SONATA",
+    "serviceDate": "04/18/2026",
+    "invitationDate": "04/21/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7736390661",
+    "notes": "customer will be ordering tires soon\n",
+    "submittedAt": "2026-04-28T19:28:14.945Z",
+    "submittedBy": "JORDAN"
   }
 ]
