@@ -189,11 +189,18 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for RO# "${searchRO}"`}
             </div>
             {searchResults.map((r, idx) => (
-              <div key={r.id + idx} style={{ background: 'rgba(61,214,195,.07)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 14, padding: '14px 18px', marginBottom: 10 }}>
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
+              <div
+                key={r.id + idx}
+                onClick={() => { setActiveTech(r.techName); clearSearch(); }}
+                style={{ background: 'rgba(61,214,195,.07)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 14, padding: '14px 18px', marginBottom: 10, cursor: 'pointer', transition: 'background .15s, border-color .15s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(61,214,195,.15)'; e.currentTarget.style.borderColor = 'rgba(61,214,195,.5)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(61,214,195,.07)'; e.currentTarget.style.borderColor = 'rgba(61,214,195,.25)'; }}
+              >
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#3dd6c3', textTransform: 'uppercase' }}>Tech: {r.techName}</span>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#6ee7f9' }}>RO# {r.ro}</span>
                   {r.roDate && <span style={{ fontSize: 11, color: '#94a3b8' }}>{r.roDate}</span>}
+                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>Click to view →</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '6px 16px' }}>
                   {r.jobDesc && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Job: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.jobDesc}</span></div>}
