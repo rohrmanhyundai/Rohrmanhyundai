@@ -95,5 +95,21 @@
     "notes": "didn't have any extra notes, appreciates the call",
     "submittedAt": "2026-04-27T18:58:08.889Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ETHAN BREWER",
+    "repairOrder": "776872",
+    "vin": "KM8HACA38SU204546",
+    "model": "KONA",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654912294",
+    "notes": "left vm\n",
+    "submittedAt": "2026-04-28T19:23:44.095Z",
+    "submittedBy": "JORDAN"
   }
 ]
