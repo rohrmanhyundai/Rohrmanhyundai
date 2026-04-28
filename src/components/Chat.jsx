@@ -62,7 +62,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   }
 
   async function handleSend() {
-    const trimmed = text.trim();
+    const trimmed = text.trim().replace(/\n+/g, ' ');
     if (!trimmed || sending) return;
     setSending(true);
     setError('');
@@ -160,7 +160,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                   background: isMe ? 'rgba(61,214,195,0.22)' : 'rgba(255,255,255,0.07)',
                   border: isMe ? '1px solid rgba(61,214,195,0.3)' : '1px solid rgba(255,255,255,0.08)',
                   color: isMe ? '#a7f3d0' : '#cbd5e1',
-                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap',
+                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', minWidth: 48,
                 }}>
                   {msg.text}
                 </div>
