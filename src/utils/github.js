@@ -494,3 +494,25 @@ export async function saveWarrantyContract(contract, index) {
     `Warranty contract ${contract.id} - ${contract.customerName || 'unknown'}`);
   await saveGitHubFile(headers, WARRANTY_INDEX_PATH, index, `Update warranty index ${new Date().toISOString()}`);
 }
+
+// ── Work In Progress ──────────────────────────────────────────────────────────
+export async function loadWipData(techName) {
+  const path = `public/data/wip/${techName.toUpperCase()}.json`;
+  try {
+    const data = await readGitHubFile(authHeaders(), path);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/wip/${techName.toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveWipData(techName, rows) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  await saveGitHubFile(headers, `public/data/wip/${techName.toUpperCase()}.json`, rows, `WIP update: ${techName}`);
+  return rows;
+}

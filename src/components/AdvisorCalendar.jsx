@@ -84,7 +84,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, refreshKey, userPages, currentRole, currentUser, chatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, refreshKey, userPages, currentRole, currentUser, chatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -165,6 +165,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (
             <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
               📊 Survey Reports
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
+            <button onClick={onWorkInProgress} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
+              🔧 Work in Progress
             </button>
           )}
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>

@@ -91,6 +91,7 @@ const PAGE_ACCESS = [
   { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Shared' },
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Warranty' },
   { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Warranty' },
+  { key: 'workInProgress',     label: '🔧 Work in Progress',         group: 'Tech' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
@@ -714,7 +715,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   Page Access
                   <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
                 </div>
-                {['Advisor', 'Shared', 'Warranty'].map(group => (
+                {['Advisor', 'Shared', 'Warranty', 'Tech'].map(group => (
                   <div key={group} style={{ marginBottom: 10 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
