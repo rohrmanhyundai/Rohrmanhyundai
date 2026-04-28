@@ -463,7 +463,7 @@ function PrintRow({ label, value, bold = false }) {
 }
 
 function ContractDetail({ contract, onEdit, onBack }) {
-  const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(contract);
+  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
   const pdfRef = useRef(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
