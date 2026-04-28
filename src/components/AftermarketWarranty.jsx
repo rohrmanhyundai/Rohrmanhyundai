@@ -706,144 +706,160 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 
 // ── Print document (white/light, for actual printing & PDF export) ────────────
 function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue, date }) {
-  const isApproved = !!(contract.approved ?? (contract.status === 'approved'));
-  const isWaiting  = !!(contract.waiting  ?? (contract.status === 'waiting'));
-  const isPaid     = !!(contract.paid     ?? (contract.status === 'paid'));
+  const isApproved      = !!(contract.approved ?? (contract.status === 'approved'));
+  const isWaiting       = !!(contract.waiting  ?? (contract.status === 'waiting'));
+  const isPaid          = !!(contract.paid     ?? (contract.status === 'paid'));
+  const isRepairsFinished = !!contract.repairsFinished;
+  const isReadySubmission = !!contract.readySubmission;
+
   const statusBadges = [
-    isPaid     && { label: '💳 CLAIM PAID',          color: '#0369a1' },
-    isWaiting  && { label: '⏳ WAITING FOR PAYMENT', color: '#b45309' },
-    isApproved && { label: '✅ APPROVED',             color: '#16a34a' },
+    isPaid            && { label: 'CLAIM PAID',            bg: '#0369a1' },
+    isWaiting         && { label: 'WAITING FOR PAYMENT',   bg: '#b45309' },
+    isApproved        && { label: 'APPROVED',               bg: '#15803d' },
+    isRepairsFinished && { label: 'REPAIRS FINISHED',       bg: '#b91c1c' },
+    isReadySubmission && { label: 'READY FOR SUBMISSION',   bg: '#0e7490' },
   ].filter(Boolean);
 
-  const cell = (label, value, mono = false) => (
-    <div style={{ marginBottom: 10 }}>
-      <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 12, color: '#0f172a', fontFamily: mono ? 'monospace' : 'inherit', fontWeight: mono ? 600 : 400, wordBreak: 'break-all', lineHeight: 1.4 }}>{value || '—'}</div>
+  const PD_ACCENT = '#0ea5e9';   // sky-500 — modern blue accent
+  const PD_DARK   = '#0f172a';
+  const PD_MID    = '#475569';
+  const PD_LIGHT  = '#f8fafc';
+  const PD_BORDER = '#e2e8f0';
+
+  const SectionHead = ({ children }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+      <div style={{ width: 3, height: 14, background: PD_ACCENT, borderRadius: 2, flexShrink: 0 }} />
+      <span style={{ fontSize: 9, fontWeight: 800, color: PD_ACCENT, textTransform: 'uppercase', letterSpacing: 1.2 }}>{children}</span>
     </div>
   );
 
-  return (
-    <div style={{ fontFamily: "'Segoe UI', Arial, sans-serif", color: '#0f172a', background: '#ffffff', width: '100%', boxSizing: 'border-box' }}>
+  const DataCell = ({ label, value, mono = false, span = false }) => (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ fontSize: 8, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: span ? 13 : 11.5, color: PD_DARK, fontFamily: mono ? '"Courier New", monospace' : 'inherit', fontWeight: mono || span ? 700 : 500, letterSpacing: mono ? 1 : 0, wordBreak: 'break-all', lineHeight: 1.35 }}>{value || '—'}</div>
+    </div>
+  );
 
-      {/* ── Header Banner ── */}
-      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)', padding: '22px 32px', marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  const TH = ({ children, right = false, center = false, width }) => (
+    <th style={{ padding: '7px 12px', fontSize: 9, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: right ? 'right' : center ? 'center' : 'left', background: PD_DARK, borderBottom: `2px solid ${PD_ACCENT}`, ...(width ? { width } : {}) }}>{children}</th>
+  );
+
+  const TD = ({ children, right = false, center = false, mono = false, bold = false, muted = false }) => (
+    <td style={{ padding: '8px 12px', fontSize: 11, color: muted ? PD_MID : PD_DARK, textAlign: right ? 'right' : center ? 'center' : 'left', fontFamily: mono ? '"Courier New", monospace' : 'inherit', fontWeight: bold ? 700 : 400, verticalAlign: 'middle' }}>{children}</td>
+  );
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', system-ui, Arial, sans-serif", color: PD_DARK, background: '#ffffff', width: '100%', boxSizing: 'border-box' }}>
+
+      {/* ── HEADER ─────────────────────────────────────────────── */}
+      <div style={{ background: PD_DARK, padding: '0 0 0 0', position: 'relative', overflow: 'hidden' }}>
+        {/* Top accent stripe */}
+        <div style={{ height: 4, background: `linear-gradient(90deg, ${PD_ACCENT}, #38bdf8, ${PD_ACCENT})` }} />
+
+        <div style={{ padding: '20px 32px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          {/* Left — branding */}
           <div>
-            <div style={{ fontWeight: 900, fontSize: 24, color: '#ffffff', letterSpacing: -0.5 }}>{contract.dealershipName || 'Bob Rohrman Hyundai'}</div>
-            <div style={{ fontSize: 13, color: '#67e8f9', marginTop: 4, fontWeight: 500, letterSpacing: 0.5 }}>AFTERMARKET WARRANTY CLAIM</div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontWeight: 900, fontSize: 22, color: '#ffffff', letterSpacing: -0.3, lineHeight: 1.1 }}>
+              {contract.dealershipName || 'Bob Rohrman Hyundai'}
+            </div>
+            <div style={{ fontSize: 10, color: PD_ACCENT, marginTop: 5, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase' }}>
+              Aftermarket Warranty Claim
+            </div>
             {statusBadges.length > 0 && (
-              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', flexWrap: 'wrap', marginBottom: 8 }}>
+              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 10 }}>
                 {statusBadges.map(b => (
-                  <span key={b.label} style={{ display: 'inline-block', background: b.color, color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 20, letterSpacing: 0.5 }}>{b.label}</span>
+                  <span key={b.label} style={{ display: 'inline-block', background: b.bg, color: '#fff', fontSize: 8, fontWeight: 800, padding: '3px 9px', borderRadius: 20, letterSpacing: 0.8, textTransform: 'uppercase' }}>{b.label}</span>
                 ))}
               </div>
             )}
-            <div style={{ color: '#cbd5e1', fontSize: 12 }}>
-              <span style={{ fontWeight: 700, color: '#ffffff' }}>Claim #</span> {contract.claimNumber || '—'}
+          </div>
+
+          {/* Right — claim meta */}
+          <div style={{ textAlign: 'right', minWidth: 180 }}>
+            <div style={{ fontSize: 8, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Claim Number</div>
+            <div style={{ fontSize: 20, fontWeight: 900, color: PD_ACCENT, letterSpacing: 0.5 }}>{contract.claimNumber || '—'}</div>
+            <div style={{ marginTop: 8, display: 'grid', gridTemplateColumns: 'auto auto', gap: '3px 10px', justifyContent: 'end' }}>
+              <span style={{ fontSize: 9, color: '#64748b' }}>Repair Order</span>
+              <span style={{ fontSize: 9, color: '#cbd5e1', fontWeight: 700, textAlign: 'right' }}>{contract.repairOrder || '—'}</span>
+              <span style={{ fontSize: 9, color: '#64748b' }}>Date</span>
+              <span style={{ fontSize: 9, color: '#cbd5e1', fontWeight: 700, textAlign: 'right' }}>{date}</span>
             </div>
-            <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 3 }}>
-              <span style={{ fontWeight: 600, color: '#cbd5e1' }}>RO #</span> {contract.repairOrder || '—'}
-            </div>
-            <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 3 }}>Date: {date}</div>
           </div>
         </div>
-        {/* Teal accent bar */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg, #06b6d4, #3dd6c3, #06b6d4)', borderRadius: 2, marginTop: 16 }} />
       </div>
 
-      {/* ── Body ── */}
-      <div style={{ padding: '24px 32px 28px' }}>
+      {/* ── BODY ───────────────────────────────────────────────── */}
+      <div style={{ padding: '20px 32px 28px', background: '#fff' }}>
 
-        {/* ── Row 1: Customer + Warranty Company ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 20 }}>
+        {/* ── Row 1: Customer · Warranty Company · Vehicle ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.4fr', gap: 16, marginBottom: 16 }}>
 
           {/* Customer */}
-          <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-            <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Customer Information</span>
-            </div>
-            <div style={{ padding: '12px 14px' }}>
-              {cell('Customer Name', contract.customerName)}
-              {cell('Phone Number', contract.customerPhone)}
-              {cell('Repair Order #', contract.repairOrder)}
-            </div>
+          <div style={{ border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '14px 14px 10px', background: PD_LIGHT }}>
+            <SectionHead>Customer</SectionHead>
+            <DataCell label="Name" value={contract.customerName} />
+            <DataCell label="Phone" value={contract.customerPhone} />
+            <DataCell label="Repair Order #" value={contract.repairOrder} />
           </div>
 
           {/* Warranty Company */}
-          <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-            <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Warranty Company</span>
-            </div>
-            <div style={{ padding: '12px 14px' }}>
-              {cell('Company Name', contract.warrantyCompany)}
-              {cell('Phone Number', contract.warrantyPhone)}
-              {cell('Claim Number', contract.claimNumber)}
-            </div>
+          <div style={{ border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '14px 14px 10px', background: PD_LIGHT }}>
+            <SectionHead>Warranty Company</SectionHead>
+            <DataCell label="Company" value={contract.warrantyCompany} />
+            <DataCell label="Phone" value={contract.warrantyPhone} />
+            <DataCell label="Claim Number" value={contract.claimNumber} />
           </div>
-        </div>
 
-        {/* ── Row 2: Vehicle (full width so VIN has room) ── */}
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
-          <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Vehicle Information</span>
-          </div>
-          <div style={{ padding: '12px 14px' }}>
-            {/* VIN full-width row */}
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 3 }}>VIN Number</div>
-              <div style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: '#0f172a', letterSpacing: 2, wordBreak: 'break-all', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 5, padding: '7px 10px' }}>
-                {contract.vin || '—'}
-              </div>
+          {/* Vehicle */}
+          <div style={{ border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '14px 14px 10px', background: PD_LIGHT }}>
+            <SectionHead>Vehicle</SectionHead>
+            <div style={{ marginBottom: 8 }}>
+              <div style={{ fontSize: 8, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 3 }}>VIN</div>
+              <div style={{ fontSize: 11, fontFamily: '"Courier New", monospace', fontWeight: 700, color: PD_DARK, letterSpacing: 1.5, background: '#fff', border: `1px solid ${PD_BORDER}`, borderRadius: 4, padding: '4px 8px', wordBreak: 'break-all' }}>{contract.vin || '—'}</div>
             </div>
-            {/* Year / Make / Model / Mileage in 4 columns */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 16 }}>
-              {cell('Year', contract.vehicleYear)}
-              {cell('Make', contract.vehicleMake)}
-              {cell('Model', contract.vehicleModel)}
-              {cell('Mileage', contract.mileage ? Number(contract.mileage).toLocaleString() + ' mi' : '')}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8 }}>
+              <DataCell label="Year" value={contract.vehicleYear} />
+              <DataCell label="Make" value={contract.vehicleMake} />
+              <DataCell label="Model" value={contract.vehicleModel} />
+              <DataCell label="Mileage" value={contract.mileage ? Number(contract.mileage).toLocaleString() + ' mi' : ''} />
             </div>
           </div>
         </div>
 
         {/* ── Labor ── */}
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
-          <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Labor</span>
-          </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{ marginBottom: 16 }}>
+          <SectionHead>Labor</SectionHead>
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${PD_BORDER}`, borderRadius: 6, overflow: 'hidden' }}>
             <thead>
-              <tr style={{ background: '#fafafa' }}>
-                {['Labor Rate', 'Labor Time', 'Diagnosis Time', 'Labor Total'].map((h, i) => (
-                  <th key={h} style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: i === 3 ? 'right' : 'left', borderBottom: '1px solid #e2e8f0' }}>{h}</th>
-                ))}
+              <tr>
+                <TH>Labor Rate</TH>
+                <TH>Labor Time</TH>
+                <TH>Diagnosis Time</TH>
+                <TH right>Labor Total</TH>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#0f172a' }}>${num(contract.laborRate).toFixed(2)} / hr</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#0f172a' }}>{num(contract.laborTime).toFixed(1)} hrs</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#0f172a' }}>{num(contract.diagnosisTime).toFixed(1)} hrs</td>
-                <td style={{ padding: '10px 14px', fontSize: 14, fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>{fmtDol(laborTotal)}</td>
+              <tr style={{ background: PD_LIGHT }}>
+                <TD>${num(contract.laborRate).toFixed(2)} / hr</TD>
+                <TD>{num(contract.laborTime).toFixed(1)} hrs</TD>
+                <TD>{num(contract.diagnosisTime).toFixed(1)} hrs</TD>
+                <TD right bold>{fmtDol(laborTotal)}</TD>
               </tr>
             </tbody>
           </table>
         </div>
 
         {/* ── Parts ── */}
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
-          <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Parts</span>
-          </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{ marginBottom: 16 }}>
+          <SectionHead>Parts</SectionHead>
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${PD_BORDER}`, borderRadius: 6, overflow: 'hidden' }}>
             <thead>
-              <tr style={{ background: '#fafafa' }}>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'left', borderBottom: '1px solid #e2e8f0', width: '20%' }}>Part Number</th>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Description</th>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center', borderBottom: '1px solid #e2e8f0', width: '8%' }}>Qty</th>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right', borderBottom: '1px solid #e2e8f0', width: '13%' }}>Unit Price</th>
-                <th style={{ padding: '8px 14px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right', borderBottom: '1px solid #e2e8f0', width: '13%' }}>Total</th>
+              <tr>
+                <TH width="18%">Part Number</TH>
+                <TH>Description</TH>
+                <TH center width="7%">Qty</TH>
+                <TH right width="13%">Unit Price</TH>
+                <TH right width="13%">Total</TH>
               </tr>
             </thead>
             <tbody>
@@ -851,114 +867,134 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                 const qty = num(p.qty || 1);
                 const lineTotal = qty * num(p.price);
                 return (
-                  <tr key={p.id || i} style={{ borderBottom: '1px solid #f1f5f9', background: i % 2 === 1 ? '#fafafa' : '#fff' }}>
-                    <td style={{ padding: '9px 14px', fontSize: 12, fontFamily: 'monospace', color: '#334155', wordBreak: 'break-all' }}>{p.partNumber || '—'}</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a' }}>{p.description || '—'}</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#334155', textAlign: 'center' }}>{qty}</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#475569', textAlign: 'right' }}>{fmtDol(num(p.price))}</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a', textAlign: 'right', fontWeight: 600 }}>{fmtDol(lineTotal)}</td>
+                  <tr key={p.id || i} style={{ borderBottom: `1px solid ${PD_BORDER}`, background: i % 2 === 0 ? '#fff' : PD_LIGHT }}>
+                    <TD mono muted>{p.partNumber || '—'}</TD>
+                    <TD>{p.description || '—'}</TD>
+                    <TD center muted>{qty}</TD>
+                    <TD right muted>{fmtDol(num(p.price))}</TD>
+                    <TD right bold>{fmtDol(lineTotal)}</TD>
                   </tr>
                 );
               })}
+              <tr style={{ background: PD_DARK }}>
+                <td colSpan={4} style={{ padding: '8px 12px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: 'right', textTransform: 'uppercase', letterSpacing: 0.5 }}>Parts Subtotal</td>
+                <td style={{ padding: '8px 12px', fontSize: 12, fontWeight: 800, color: '#fff', textAlign: 'right' }}>{fmtDol(partsTotal)}</td>
+              </tr>
             </tbody>
           </table>
         </div>
 
         {/* ── Financial Summary ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 20, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start', marginBottom: 20 }}>
 
-          {/* Tax detail (left) */}
-          <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-            <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Tax Calculation</span>
-            </div>
-            <div style={{ padding: '12px 14px' }}>
-              {cell('Tax Rate', num(contract.taxPct) > 0 ? `${num(contract.taxPct)}%` : '—')}
-              {cell('Parts Subtotal (taxable)', fmtDol(partsTotal))}
-              {cell('Tax Amount', fmtDol(taxAmt))}
-              {cell('Deductible', fmtDol(num(contract.deductible)))}
-            </div>
-          </div>
-
-          {/* Totals (right) */}
-          <div style={{ border: '2px solid #0f172a', borderRadius: 8, overflow: 'hidden' }}>
-            <div style={{ background: '#0f172a', padding: '8px 14px' }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#67e8f9', textTransform: 'uppercase', letterSpacing: 1 }}>Claim Summary</span>
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          {/* Left — charge breakdown */}
+          <div>
+            <SectionHead>Charge Breakdown</SectionHead>
+            <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${PD_BORDER}`, borderRadius: 6, overflow: 'hidden' }}>
+              <thead>
+                <tr>
+                  <TH>Description</TH>
+                  <TH right width="30%">Amount</TH>
+                </tr>
+              </thead>
               <tbody>
                 {[
-                  { label: 'Labor Total', value: fmtDol(laborTotal), bg: '#fff' },
-                  { label: 'Parts Total', value: fmtDol(partsTotal), bg: '#f8fafc' },
-                  { label: `Tax (${num(contract.taxPct) > 0 ? num(contract.taxPct) + '%' : '—'})`, value: fmtDol(taxAmt), bg: '#fff' },
-                  rental > 0 && { label: 'Rental', value: fmtDol(rental), bg: '#f8fafc' },
-                  towing > 0 && { label: 'Towing', value: fmtDol(towing), bg: '#fff' },
-                  sublet > 0 && { label: 'Sublet', value: fmtDol(sublet), bg: '#f8fafc' },
-                  { label: 'Deductible', value: `− ${fmtDol(num(contract.deductible))}`, bg: '#f8fafc' },
-                ].filter(Boolean).map(row => (
-                  <tr key={row.label} style={{ borderBottom: '1px solid #e2e8f0', background: row.bg }}>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#475569' }}>{row.label}</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, color: '#0f172a', textAlign: 'right', fontWeight: 600 }}>{row.value}</td>
+                  { label: 'Labor Total', value: fmtDol(laborTotal) },
+                  { label: 'Parts Subtotal', value: fmtDol(partsTotal) },
+                  { label: `Parts Tax (${num(contract.taxPct) > 0 ? num(contract.taxPct) + '%' : '—'})`, value: fmtDol(taxAmt) },
+                  rental > 0 ? { label: 'Rental', value: fmtDol(rental) } : null,
+                  towing > 0 ? { label: 'Towing', value: fmtDol(towing) } : null,
+                  sublet > 0 ? { label: 'Sublet', value: fmtDol(sublet) } : null,
+                  { label: `Deductible (customer)`, value: `− ${fmtDol(num(contract.deductible))}` },
+                ].filter(Boolean).map((row, i) => (
+                  <tr key={row.label} style={{ borderBottom: `1px solid ${PD_BORDER}`, background: i % 2 === 0 ? '#fff' : PD_LIGHT }}>
+                    <TD>{row.label}</TD>
+                    <TD right>{row.value}</TD>
                   </tr>
                 ))}
-                {/* Total Warranty Claim — highlighted */}
-                <tr style={{ background: '#eff6ff', borderBottom: '1px solid #bfdbfe' }}>
-                  <td style={{ padding: '11px 14px', fontSize: 13, fontWeight: 800, color: '#1e40af' }}>Total Warranty Claim</td>
-                  <td style={{ padding: '11px 14px', fontSize: 15, fontWeight: 900, color: '#1e40af', textAlign: 'right' }}>{fmtDol(totalClaim)}</td>
-                </tr>
-                {/* Total Due by Customer — highlighted yellow */}
-                <tr style={{ background: '#fefce8' }}>
-                  <td style={{ padding: '11px 14px', fontSize: 13, fontWeight: 800, color: '#92400e' }}>Total Due by Customer</td>
-                  <td style={{ padding: '11px 14px', fontSize: 15, fontWeight: 900, color: '#b45309', textAlign: 'right' }}>{fmtDol(totalDue)}</td>
-                </tr>
-                {/* Repairs finished */}
-                {contract.repairsFinished && (
-                  <tr style={{ background: '#fef2f2' }}>
-                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#b91c1c' }}>🔧 Repairs Finished</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#b91c1c', textAlign: 'right' }}>
-                      {contract.repairsFinishedDate ? new Date(contract.repairsFinishedDate + 'T12:00:00').toLocaleDateString() : '—'}
-                    </td>
-                  </tr>
-                )}
-                {/* Payment date if paid */}
-                {isPaid && contract.paymentDate && (
-                  <tr style={{ background: '#f0fdf4' }}>
-                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#15803d' }}>💳 Payment Received</td>
-                    <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#15803d', textAlign: 'right' }}>{new Date(contract.paymentDate + 'T12:00:00').toLocaleDateString()}</td>
-                  </tr>
-                )}
               </tbody>
             </table>
+          </div>
+
+          {/* Right — totals box */}
+          <div>
+            <SectionHead>Claim Totals</SectionHead>
+            <div style={{ border: `2px solid ${PD_DARK}`, borderRadius: 6, overflow: 'hidden' }}>
+              {/* Warranty claim */}
+              <div style={{ background: PD_DARK, padding: '16px 18px', textAlign: 'center' }}>
+                <div style={{ fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Total Warranty Claim</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: PD_ACCENT, letterSpacing: -0.5 }}>{fmtDol(totalClaim)}</div>
+              </div>
+              {/* Customer due */}
+              <div style={{ background: '#fffbeb', padding: '14px 18px', textAlign: 'center', borderTop: `2px solid #fbbf24` }}>
+                <div style={{ fontSize: 8, color: '#92400e', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Due by Customer</div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: '#b45309' }}>{fmtDol(totalDue)}</div>
+              </div>
+              {/* Status dates */}
+              {(isRepairsFinished || isPaid || isApproved || isReadySubmission) && (
+                <div style={{ background: '#f8fafc', borderTop: `1px solid ${PD_BORDER}`, padding: '10px 14px' }}>
+                  {isReadySubmission && contract.readySubmissionDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#0e7490', fontWeight: 700 }}>Ready for Submission</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.readySubmissionDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isApproved && contract.approvedDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#15803d', fontWeight: 700 }}>Approved</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.approvedDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isRepairsFinished && contract.repairsFinishedDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#b91c1c', fontWeight: 700 }}>Repairs Finished</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.repairsFinishedDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isWaiting && contract.waitingDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#b45309', fontWeight: 700 }}>Waiting for Payment</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.waitingDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isPaid && contract.paymentDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#0369a1', fontWeight: 700 }}>Payment Received</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.paymentDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* ── Notes ── */}
         {contract.notes && (
-          <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
-            <div style={{ background: '#f1f5f9', padding: '8px 14px', borderBottom: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>Notes</span>
-            </div>
-            <div style={{ padding: '12px 14px', fontSize: 12, color: '#334155', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{contract.notes}</div>
+          <div style={{ marginBottom: 20, border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '12px 14px', background: PD_LIGHT }}>
+            <SectionHead>Notes</SectionHead>
+            <div style={{ fontSize: 11, color: '#334155', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{contract.notes}</div>
           </div>
         )}
 
         {/* ── Signature Lines ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 32 }}>
-          {['Advisor Signature', 'Customer Signature'].map(s => (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 28 }}>
+          {['Service Advisor', 'Customer'].map(s => (
             <div key={s}>
-              <div style={{ height: 40 }} />
-              <div style={{ borderTop: '1.5px solid #0f172a', paddingTop: 8, display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 11, color: '#475569', fontWeight: 600 }}>{s}</span>
-                <span style={{ fontSize: 11, color: '#94a3b8' }}>Date: ___________</span>
+              <div style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>Authorized {s} Signature</div>
+              <div style={{ height: 36 }} />
+              <div style={{ borderTop: `1.5px solid ${PD_DARK}`, paddingTop: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 9, color: PD_MID, fontWeight: 700 }}>{s}</span>
+                <span style={{ fontSize: 9, color: '#94a3b8' }}>Date: ___________</span>
               </div>
             </div>
           ))}
         </div>
 
         {/* ── Footer ── */}
-        <div style={{ marginTop: 24, paddingTop: 12, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: 10, color: '#94a3b8' }}>{contract.dealershipName} · Aftermarket Warranty Claim</div>
-          <div style={{ fontSize: 10, color: '#94a3b8' }}>Generated: {new Date().toLocaleDateString()}</div>
+        <div style={{ marginTop: 22, paddingTop: 10, borderTop: `1px solid ${PD_BORDER}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: 8.5, color: '#94a3b8' }}>{contract.dealershipName} · Aftermarket Warranty Claim · Confidential</div>
+          <div style={{ fontSize: 8.5, color: '#94a3b8' }}>Generated {new Date().toLocaleDateString()}</div>
         </div>
 
       </div>
