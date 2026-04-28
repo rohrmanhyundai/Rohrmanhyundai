@@ -260,10 +260,13 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
+        "workInProgress": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
-      }
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
