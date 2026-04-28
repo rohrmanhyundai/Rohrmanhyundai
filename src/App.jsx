@@ -14,7 +14,7 @@ import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import WorkInProgress from './components/WorkInProgress';
@@ -71,6 +71,8 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
+  const [advisorUnread, setAdvisorUnread] = useState(0);
+  const [techUnread, setTechUnread] = useState(0);
   const stageRef = useRef(null);
 
   const loadDashboard = useCallback(async () => {
@@ -104,6 +106,26 @@ export default function App() {
   useEffect(() => {
     loadSchedules().then(s => setSchedules(s || {})).catch(() => {});
   }, []);
+
+  // Chat notification polling — check for new messages every 5s
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    function getLastSeen(key) { return parseInt(localStorage.getItem(key) || '0', 10); }
+
+    async function pollChats() {
+      try {
+        const [advisorMsgs, techMsgs] = await Promise.all([loadChatMessages(), loadTechChatMessages()]);
+        const advisorSeen = getLastSeen('advisorChatLastSeen');
+        const techSeen = getLastSeen('techChatLastSeen');
+        setAdvisorUnread(advisorMsgs.filter(m => m.timestamp > advisorSeen && m.username.toUpperCase() !== currentUser.toUpperCase()).length);
+        setTechUnread(techMsgs.filter(m => m.timestamp > techSeen && m.username.toUpperCase() !== currentUser.toUpperCase()).length);
+      } catch {}
+    }
+
+    pollChats();
+    const id = setInterval(pollChats, 5000);
+    return () => clearInterval(id);
+  }, [isLoggedIn, currentUser]);
 
   useEffect(() => {
     loadUsers().then(result => {
@@ -490,7 +512,10 @@ export default function App() {
           isLoggedIn={isLoggedIn} currentUser={currentUser}
           currentRole={currentRole} canEditDashboard={canEditDashboard}
           onLogin={handleLogin} onLogout={handleLogout}
-          onEdit={() => setAdminOpen(true)} onAdvisor={() => setPage('advisor-calendar')} onTechnician={() => setPage('tech-resources')}
+          onEdit={() => setAdminOpen(true)}
+          onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
+          onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
+          advisorUnread={advisorUnread} techUnread={techUnread}
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
         />
@@ -521,11 +546,13 @@ export default function App() {
             onLogin={handleLogin}
             onLogout={handleLogout}
             onEdit={() => setAdminOpen(true)}
-            onAdvisor={() => setPage('advisor-calendar')}
-            onTechnician={() => setPage('tech-resources')}
+            onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
+            onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
             onParts={() => setPage('parts-hub')}
             onWarranty={() => setPage('warranty-hub')}
             onManager={() => setPage('manager-hub')}
+            advisorUnread={advisorUnread}
+            techUnread={techUnread}
           />
 
           <TechProduction data={data} />

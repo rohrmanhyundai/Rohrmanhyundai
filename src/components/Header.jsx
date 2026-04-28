@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty }) {
+export default function Header({ data, isLoggedIn, currentUser, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, advisorUnread, techUnread }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -53,13 +53,23 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, use
               ) : (
                 <>
                   {(currentRole === 'advisor' || currentRole === 'admin' || (currentRole || '').includes('manager') || (currentRole === 'warranty' && userPages && userPages.advisorCalendar !== false)) && (
-                    <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)' }}>
+                    <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)', position: 'relative' }}>
                       Advisor
+                      {advisorUnread > 0 && (
+                        <span style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', boxShadow: '0 0 0 2px rgba(0,0,0,0.4)', lineHeight: 1 }}>
+                          {advisorUnread > 99 ? '99+' : advisorUnread}
+                        </span>
+                      )}
                     </button>
                   )}
                   {(currentRole === 'technician' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
-                    <button onClick={onTechnician} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.35),rgba(139,92,246,.22))', borderColor: 'rgba(167,139,250,.4)' }}>
+                    <button onClick={onTechnician} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.35),rgba(139,92,246,.22))', borderColor: 'rgba(167,139,250,.4)', position: 'relative' }}>
                       Technicians
+                      {techUnread > 0 && (
+                        <span style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', boxShadow: '0 0 0 2px rgba(0,0,0,0.4)', lineHeight: 1 }}>
+                          {techUnread > 99 ? '99+' : techUnread}
+                        </span>
+                      )}
                     </button>
                   )}
                   {(currentRole === 'warranty' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
