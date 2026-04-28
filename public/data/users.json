@@ -93,13 +93,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     },
     {
       "username": "Austin",
