@@ -111,5 +111,21 @@
     "notes": "left vm\n",
     "submittedAt": "2026-04-28T19:23:44.095Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "LOVEJEET SINGH",
+    "repairOrder": "776837",
+    "vin": "KM8RMES24TU057382",
+    "model": "PALISADE",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "3173790088",
+    "notes": "left vm\n",
+    "submittedAt": "2026-04-28T19:25:49.495Z",
+    "submittedBy": "JORDAN"
   }
 ]
