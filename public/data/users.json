@@ -75,9 +75,11 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
-        "originalOwner": true
+        "originalOwner": true,
+        "workInProgress": true
       },
-      "chatAccess": true
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Jason",
