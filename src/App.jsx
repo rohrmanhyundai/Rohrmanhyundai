@@ -17,6 +17,7 @@ import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
+import WorkInProgress from './components/WorkInProgress';
 import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
@@ -214,6 +215,7 @@ export default function App() {
         onWorkSchedule={() => setPage('tech-work-schedule')}
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
+        onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -242,6 +244,20 @@ export default function App() {
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
         onBack={() => setPage('tech-resources')} />
+    );
+  }
+
+  if (page === 'work-in-progress') {
+    if (!canAccess('workInProgress')) { setPage('tech-resources'); return null; }
+    const wipBackLabel = prevPage === 'advisor-calendar' ? '← Advisor Calendar' : '← Technician Resources';
+    return (
+      <WorkInProgress
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        techList={techList}
+        backLabel={wipBackLabel}
+        onBack={() => setPage(prevPage || 'tech-resources')}
+      />
     );
   }
 
@@ -367,6 +383,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
+        onWorkInProgress={() => goTo('work-in-progress', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
