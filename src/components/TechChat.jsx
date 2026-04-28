@@ -150,12 +150,12 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row' }}>
                 <div style={{
-                  maxWidth: '78%', padding: '7px 12px',
+                  maxWidth: '88%', padding: '7px 12px',
                   borderRadius: msg.isFirst ? (isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px') : (isMe ? '14px 4px 4px 14px' : '4px 14px 14px 14px'),
                   background: isMe ? 'rgba(251,146,60,0.2)' : 'rgba(255,255,255,0.07)',
                   border: isMe ? '1px solid rgba(251,146,60,0.35)' : '1px solid rgba(255,255,255,0.08)',
                   color: isMe ? '#fed7aa' : '#cbd5e1',
-                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word',
+                  fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap',
                 }}>
                   {msg.text}
                 </div>
