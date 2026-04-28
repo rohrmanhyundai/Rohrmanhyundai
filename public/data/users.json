@@ -124,12 +124,17 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "documentLibrary": true,
         "advisorRankBoard": false,
+        "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": true
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "West",
