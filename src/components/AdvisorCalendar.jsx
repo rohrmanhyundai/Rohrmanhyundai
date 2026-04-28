@@ -243,7 +243,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {loading && <div className="adv-loading">Loading saved notes...</div>}
           </div>
         </div>
-        <div style={{ width: 300, flexShrink: 0 }}>
+        <div style={{ width: 320, flexShrink: 0 }}>
           <Chat
             currentUser={currentUser || ''}
             currentRole={currentRole}
