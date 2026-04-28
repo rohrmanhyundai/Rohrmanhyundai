@@ -297,7 +297,7 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
+        currentUser={currentUser.toUpperCase()} currentRole={currentRole} title="Tech Schedule"
         onBack={() => setPage('tech-resources')} />
     );
   }
@@ -310,7 +310,7 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
+        currentUser={currentUser.toUpperCase()} currentRole={currentRole} title="Advisor Schedule"
         onBack={() => setPage('tech-resources')} />
     );
   }
@@ -339,7 +339,7 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()}
+        currentUser={currentUser.toUpperCase()} currentRole={currentRole}
         title="Tech Schedule"
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={tsBackLabel} />
@@ -419,7 +419,7 @@ export default function App() {
       );
       return (
         <WorkSchedule schedules={schedules} employeeNames={techList}
-          currentUser={currentUser.toUpperCase()}
+          currentUser={currentUser.toUpperCase()} currentRole={currentRole}
           onBack={() => setPage(backDest)}
           backLabel={wsBackLabel} />
       );
@@ -431,7 +431,7 @@ export default function App() {
     );
     return (
       <WorkSchedule schedules={schedules} employeeNames={advisorList}
-        currentUser={currentUser.toUpperCase()}
+        currentUser={currentUser.toUpperCase()} currentRole={currentRole}
         title="Advisor Schedule"
         onBack={() => setPage(backDest)}
         backLabel={wsBackLabel} />
