@@ -289,7 +289,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
         )}
       </div>
       {/* Tech Chat panel */}
-      <div style={{ width: 300, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.06)', padding: 12 }}>
+      <div style={{ width: 320, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.06)', padding: 12, display: 'flex', flexDirection: 'column' }}>
         <TechChat currentUser={currentUser} currentRole={currentRole} hasChatAccess={hasChatAccess} />
       </div>
       </div>
