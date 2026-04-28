@@ -148,7 +148,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
         {grouped.map(msg => {
           const isMe = msg.username.toUpperCase() === currentUser.toUpperCase();
           return (
-            <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', marginTop: msg.isFirst ? 10 : 2 }}>
+            <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', marginTop: msg.isFirst ? 10 : 2, width: '100%' }}>
               {msg.isFirst && (
                 <div style={{ fontSize: 10, color: '#475569', marginBottom: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
                   {`${msg.username} · ${fmtTime(msg.timestamp)}`}
