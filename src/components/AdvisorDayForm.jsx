@@ -556,11 +556,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
                   return (
                     <div key={survey.repairOrder} style={{
-                      background: 'rgba(255,255,255,.03)',
-                      border: '1px solid rgba(255,255,255,.08)',
+                      background: canSubmit ? 'rgba(34,197,94,.08)' : 'rgba(30,41,59,.85)',
+                      border: `1px solid ${canSubmit ? 'rgba(34,197,94,.35)' : 'rgba(99,132,165,.25)'}`,
                       borderRadius: 14, padding: '18px 20px',
-                      transition: 'border-color .2s',
-                      borderColor: canSubmit ? 'rgba(34,197,94,.35)' : 'rgba(255,255,255,.08)',
+                      transition: 'background .2s, border-color .2s',
                     }}>
                       {/* Survey info */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '4px 20px', marginBottom: 16 }}>
