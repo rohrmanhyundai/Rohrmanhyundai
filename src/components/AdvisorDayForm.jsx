@@ -563,12 +563,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                     }}>
                       {/* Survey info */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '4px 20px', marginBottom: 16 }}>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Customer</div><div style={{ fontWeight: 700, color: '#e2e8f0', fontSize: 14 }}>{survey.customerName || '—'}</div></div>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>RO #</div><div style={{ fontFamily: 'monospace', color: '#6ee7f9', fontSize: 13 }}>{survey.repairOrder || '—'}</div></div>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Model</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{survey.model || '—'}</div></div>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#94a3b8', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Invitation Date</div><div style={{ color: '#94a3b8', fontSize: 13 }}>{fmtDate(survey.invitationDate)}</div></div>
-                        <div><div style={{ fontSize: 10, color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>VIN</div><div style={{ fontFamily: 'monospace', color: '#64748b', fontSize: 11 }}>{survey.vin || '—'}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Customer</div><div style={{ fontWeight: 800, color: '#f1f5f9', fontSize: 14 }}>{survey.customerName || '—'}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>RO #</div><div style={{ fontFamily: 'monospace', color: '#6ee7f9', fontSize: 13, fontWeight: 700 }}>{survey.repairOrder || '—'}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Model</div><div style={{ color: '#e2e8f0', fontSize: 13, fontWeight: 600 }}>{survey.model || '—'}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Invitation Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.invitationDate)}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>VIN</div><div style={{ fontFamily: 'monospace', color: '#94a3b8', fontSize: 11 }}>{survey.vin || '—'}</div></div>
                       </div>
 
                       {/* Divider */}
@@ -579,7 +579,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
                         {/* Contacted */}
                         <div>
-                          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
+                          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
                             Contacted {draft.contacted && <span style={{ color: '#86efac' }}>✓</span>}
                           </div>
                           <div style={{ display: 'flex', gap: 6 }}>
@@ -590,7 +590,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
                         {/* Customer Satisfied */}
                         <div>
-                          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
+                          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
                             Customer Satisfied {draft.satisfied && <span style={{ color: '#86efac' }}>✓</span>}
                           </div>
                           <div style={{ display: 'flex', gap: 6 }}>
@@ -601,7 +601,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
                         {/* Phone Number */}
                         <div style={{ minWidth: 150 }}>
-                          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
+                          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
                             Phone Number {draft.phone && draft.phone.trim() && <span style={{ color: '#86efac' }}>✓</span>}
                           </div>
                           <input
@@ -620,7 +620,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
                         {/* Notes */}
                         <div style={{ flex: 1, minWidth: 180 }}>
-                          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>Notes</div>
+                          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>Notes</div>
                           <textarea
                             value={draft.notes || ''}
                             onChange={e => updateDraft(survey.repairOrder, 'notes', e.target.value)}
