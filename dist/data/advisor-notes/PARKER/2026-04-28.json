@@ -3,28 +3,28 @@
   "date": "2026-04-28",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Wayne Brunner",
+      "appointmentTime": "8AM",
+      "criticalDeferredService": "No Deferred Items",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Kim Sang",
+      "appointmentTime": "11AM",
+      "criticalDeferredService": "Reason he is coming in is for the Deferred Items",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
-      "dropOff": false,
-      "technician": "",
-      "notes": []
-    },
-    {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Sina Kaabipour",
+      "appointmentTime": "4PM",
+      "criticalDeferredService": "Fuel System Service // Reason he is coming in is for the other Deferred Items",
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
@@ -49,5 +49,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-04-27T18:42:55.418Z"
+  "savedAt": "2026-04-28T13:17:39.256Z"
 }
