@@ -16,6 +16,14 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const pollRef = useRef(null);
 
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const [showEmoji, setShowEmoji] = useState(false);
+  const textareaRef = useRef(null);
+
+  const EMOJIS = [
+    '😀','😂','😍','🥰','😎','🤔','😅','🙏','👍','👎','🔥','💯',
+    '❤️','✅','⚠️','🚗','🔧','📋','📞','💬','🎉','👏','💪','🤝',
+    '😊','😬','🤦','🙌','👀','💀','😤','🥳','😴','🤯','😭','😱',
+  ];
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -80,6 +88,16 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  }
+
+  function insertEmoji(emoji) {
+    const el = textareaRef.current;
+    if (!el) { setText(t => t + emoji); return; }
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const newText = text.slice(0, start) + emoji + text.slice(end);
+    setText(newText);
+    setTimeout(() => { el.selectionStart = el.selectionEnd = start + emoji.length; el.focus(); }, 0);
   }
 
   async function handleDelete(id) {
@@ -167,10 +185,40 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
 
       {/* Input */}
       {hasChatAccess ? (
-        <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
+        <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, position: 'relative' }}>
+          {/* Emoji picker */}
+          {showEmoji && (
+            <div style={{
+              position: 'absolute', bottom: '100%', left: 12, right: 12, marginBottom: 6,
+              background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 12, padding: 10, display: 'flex', flexWrap: 'wrap', gap: 4, zIndex: 10,
+              boxShadow: '0 -4px 20px rgba(0,0,0,0.4)',
+            }}>
+              {EMOJIS.map(e => (
+                <button key={e} onClick={() => insertEmoji(e)} style={{
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 20,
+                  padding: '3px 4px', borderRadius: 6, lineHeight: 1,
+                  transition: 'background .1s',
+                }}
+                  onMouseEnter={el => el.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  onMouseLeave={el => el.currentTarget.style.background = 'none'}
+                >{e}</button>
+              ))}
+            </div>
+          )}
           {error && <div style={{ fontSize: 11, color: '#f87171', marginBottom: 6 }}>{error}</div>}
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              onClick={() => setShowEmoji(s => !s)}
+              title="Emoji"
+              style={{
+                background: showEmoji ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
+                fontSize: 18, padding: '0 10px', cursor: 'pointer', alignSelf: 'stretch', lineHeight: 1,
+              }}
+            >😊</button>
             <textarea
+              ref={textareaRef}
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
