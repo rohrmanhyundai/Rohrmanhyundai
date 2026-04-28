@@ -65,14 +65,17 @@ export default function App() {
   // Navigate to a page while remembering where we came from
   function goTo(dest, from) {
     if (from !== undefined) setPrevPage(from);
+    pageRef.current = dest;
     setPage(dest);
   }
+  function navTo(dest) { pageRef.current = dest; setPage(dest); }
   const [schedules, setSchedules] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [advisorUnread, setAdvisorUnread] = useState(0);
   const [techUnread, setTechUnread] = useState(0);
+  const pageRef = useRef(page);
   const stageRef = useRef(null);
 
   const loadDashboard = useCallback(async () => {
@@ -109,16 +112,31 @@ export default function App() {
 
   // Chat notification polling — check for new messages every 5s
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !currentUser) return;
+    const me = currentUser.toUpperCase();
+
+    // Initialize lastSeen to now on first login so old messages don't trigger badge
+    if (!localStorage.getItem('advisorChatLastSeen')) localStorage.setItem('advisorChatLastSeen', Date.now().toString());
+    if (!localStorage.getItem('techChatLastSeen')) localStorage.setItem('techChatLastSeen', Date.now().toString());
+
     function getLastSeen(key) { return parseInt(localStorage.getItem(key) || '0', 10); }
 
     async function pollChats() {
       try {
+        const curPage = pageRef.current;
+
+        // If user is currently viewing the chat, keep lastSeen current so no stale badges on return
+        if (curPage === 'advisor-calendar') localStorage.setItem('advisorChatLastSeen', Date.now().toString());
+        if (curPage === 'work-in-progress') localStorage.setItem('techChatLastSeen', Date.now().toString());
+
         const [advisorMsgs, techMsgs] = await Promise.all([loadChatMessages(), loadTechChatMessages()]);
         const advisorSeen = getLastSeen('advisorChatLastSeen');
         const techSeen = getLastSeen('techChatLastSeen');
-        setAdvisorUnread(advisorMsgs.filter(m => m.timestamp > advisorSeen && m.username.toUpperCase() !== currentUser.toUpperCase()).length);
-        setTechUnread(techMsgs.filter(m => m.timestamp > techSeen && m.username.toUpperCase() !== currentUser.toUpperCase()).length);
+
+        setAdvisorUnread(curPage === 'advisor-calendar' ? 0 :
+          advisorMsgs.filter(m => m.timestamp > advisorSeen && m.username.toUpperCase() !== me).length);
+        setTechUnread(curPage === 'work-in-progress' ? 0 :
+          techMsgs.filter(m => m.timestamp > techSeen && m.username.toUpperCase() !== me).length);
       } catch {}
     }
 
@@ -278,7 +296,7 @@ export default function App() {
         currentRole={currentRole}
         techList={techList}
         backLabel={wipBackLabel}
-        onBack={() => setPage(prevPage || 'tech-resources')}
+        onBack={() => navTo(prevPage || 'tech-resources')}
         chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
     );
@@ -399,7 +417,7 @@ export default function App() {
         advisorList={advisorList}
         onViewingChange={name => setViewingAdvisor(name)}
         onSelectDay={day => { setSelectedDay(day); setPage('advisor-day'); }}
-        onBack={() => { setViewingAdvisor(''); setPage('dashboard'); }}
+        onBack={() => { setViewingAdvisor(''); navTo('dashboard'); }}
         onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
@@ -434,7 +452,7 @@ export default function App() {
         date={selectedDay}
         currentRole={currentRole}
         canEditDashboard={canEditDashboard}
-        onBack={() => { setCalendarRefreshKey(k => k + 1); setPage('advisor-calendar'); }}
+        onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
       />
     );
   }
@@ -546,8 +564,8 @@ export default function App() {
             onLogin={handleLogin}
             onLogout={handleLogout}
             onEdit={() => setAdminOpen(true)}
-            onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
-            onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
+            onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); navTo('advisor-calendar'); }}
+            onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); navTo('tech-resources'); }}
             onParts={() => setPage('parts-hub')}
             onWarranty={() => setPage('warranty-hub')}
             onManager={() => setPage('manager-hub')}
