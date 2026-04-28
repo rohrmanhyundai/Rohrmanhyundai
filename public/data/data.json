@@ -251,9 +251,9 @@
       "shop_pacing": 270.55
     },
     "grossGoal": 154287,
-    "grossActual": 146300,
+    "grossActual": 153488,
     "cpGoal": 60404,
-    "cpActual": 57225,
+    "cpActual": 58510,
     "advisorMonthlyWorkdays": 27
   },
   "vacations": [
@@ -290,13 +290,6 @@
       "dates": "May 18–22, 2026",
       "dateStart": "2026-05-18",
       "dateEnd": "2026-05-22",
-      "status": "APPROVED"
-    },
-    {
-      "name": "GAVEN",
-      "dates": "Apr 27, 2026",
-      "dateStart": "2026-04-27",
-      "dateEnd": "2026-04-27",
       "status": "APPROVED"
     }
   ]
