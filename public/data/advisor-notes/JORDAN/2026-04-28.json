@@ -3,26 +3,26 @@
   "date": "2026-04-28",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Erik Grant",
+      "appointmentTime": "8 am",
+      "criticalDeferredService": "first visit",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "David Harris",
+      "appointmentTime": "10:20 am",
+      "criticalDeferredService": "customer has less than 3k miles",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
+      "customerName": "Ingesson Primer",
+      "appointmentTime": "1:20 pm",
       "criticalDeferredService": "",
       "waiter": false,
       "dropOff": false,
@@ -49,5 +49,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-04-28T11:39:23.839Z"
+  "savedAt": "2026-04-28T18:38:01.124Z"
 }
