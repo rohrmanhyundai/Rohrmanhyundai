@@ -82,7 +82,7 @@ export default function TechResources({ currentUser, onWorkSchedule, onAdvisorSc
             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             <span style={{ fontSize: 36 }}>🔧</span>
-            <span style={{ fontWeight: 800, fontSize: 16, color: '#fdba74' }}>Work in Progress</span>
+            <span style={{ fontWeight: 800, fontSize: 16, color: '#fb923c' }}>Work in Progress</span>
           </button>
         </div>
       </div>
