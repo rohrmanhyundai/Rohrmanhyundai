@@ -25,8 +25,8 @@ const emptyRow = () => ({
 });
 
 const inpSt = {
-  background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.12)',
-  borderRadius: 8, color: '#e2e8f0', padding: '7px 10px', fontSize: 13,
+  background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.18)',
+  borderRadius: 8, color: '#f1f5f9', padding: '7px 10px', fontSize: 13,
   outline: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
 };
 
@@ -92,7 +92,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
     onBack();
   }
 
-  const labelSt = { fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
+  const labelSt = { fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
   const backText = backLabel || '← Technician Resources';
 
   return (
@@ -146,7 +146,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 borderRadius: 14, padding: '16px 20px', marginBottom: 14,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#475569' }}>ROW {idx + 1}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b' }}>ROW {idx + 1}</span>
                 </div>
 
                 {/* Fields grid */}
