@@ -145,7 +145,7 @@
       },
       {
         "name": "PARKER",
-        "mtd_hours": 54.1,
+        "mtd_hours": 54.4,
         "daily_avg": 0,
         "hours_per_ro": 1.73,
         "align": 0.0625,
@@ -233,7 +233,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 718.7,
+      "total_hours": 719,
       "align": 0.114725,
       "tires": 0.1888,
       "valvoline": 0.185725,
