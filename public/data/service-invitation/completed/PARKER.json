@@ -62,5 +62,21 @@
     "notes": "",
     "submittedAt": "2026-04-27T19:15:00.440Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "NICOLE SEARS",
+    "repairOrder": "776868",
+    "vin": "KM8R5DGE4RU806586",
+    "model": "PALISADE",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(574) 270 - 1114",
+    "notes": "Did not even let me leave a message, just hung up on me",
+    "submittedAt": "2026-04-28T19:34:43.445Z",
+    "submittedBy": "PARKER"
   }
 ]
