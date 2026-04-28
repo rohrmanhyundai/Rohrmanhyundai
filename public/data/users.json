@@ -267,6 +267,25 @@
       },
       "chatAccess": true,
       "techChatAccess": true
+    },
+    {
+      "username": "Kai",
+      "password": "kai2026",
+      "role": "parts manager",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": true,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true
+      },
+      "chatAccess": false,
+      "techChatAccess": false
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
