@@ -516,3 +516,28 @@ export async function saveWipData(techName, rows) {
   await saveGitHubFile(headers, `public/data/wip/${techName.toUpperCase()}.json`, rows, `WIP update: ${techName}`);
   return rows;
 }
+
+// ── Tech Group Chat ───────────────────────────────────────────────────────────
+const TECH_CHAT_PATH = 'public/data/tech-chat/messages.json';
+
+export async function loadTechChatMessages() {
+  try {
+    const data = await readGitHubFile(authHeaders(), TECH_CHAT_PATH);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/tech-chat/messages.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveTechChatMessages(messages) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const pruned = messages.filter(m => m.timestamp > cutoff);
+  await saveGitHubFile(headers, TECH_CHAT_PATH, pruned, `Tech chat update ${new Date().toISOString()}`);
+  return pruned;
+}

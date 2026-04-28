@@ -107,6 +107,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
   const [newUserPages, setNewUserPages] = useState({ ...DEFAULT_PAGES });
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
+  const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState('github');
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
@@ -352,8 +353,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess } : u)
-      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess }];
+      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
+      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -655,7 +656,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <div
                     key={u.username}
                     className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); }}
+                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
                   >
                     <div>
                       <div className="user-row-name">{u.username}</div>
@@ -752,7 +753,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     onChange={e => setNewUserChatAccess(e.target.checked)}
                     style={{ accentColor: '#3dd6c3', width: 14, height: 14 }}
                   />
-                  <span>💬 Allow access to Team Chat</span>
+                  <span>💬 Allow access to Advisor Team Chat</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserTechChatAccess ? '#e2e8f0' : '#475569', marginTop: 8 }}>
+                  <input
+                    type="checkbox"
+                    checked={!!newUserTechChatAccess}
+                    onChange={e => setNewUserTechChatAccess(e.target.checked)}
+                    style={{ accentColor: '#fb923c', width: 14, height: 14 }}
+                  />
+                  <span>🔧 Allow access to Tech Chat</span>
                 </label>
               </div>
 
