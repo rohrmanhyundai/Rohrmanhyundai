@@ -257,6 +257,7 @@ export default function App() {
         techList={techList}
         backLabel={wipBackLabel}
         onBack={() => setPage(prevPage || 'tech-resources')}
+        chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
     );
   }

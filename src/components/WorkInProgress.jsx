@@ -1,6 +1,7 @@
 /* wip */
 import React, { useState, useEffect, useCallback } from 'react';
 import { loadWipData, saveWipData } from '../utils/github';
+import TechChat from './TechChat';
 
 function ChipBtn({ active, color, onClick, children }) {
   const colors = {
@@ -30,7 +31,7 @@ const inpSt = {
   outline: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
 };
 
-export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel }) {
+export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel, chatUsers }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || (currentRole || '').includes('manager');
   const [activeTech, setActiveTech] = useState(
     canSeeTabs ? (techList[0] || currentUser) : currentUser
@@ -118,6 +119,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const labelSt = { fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
   const backText = backLabel || '← Technician Resources';
 
+  const hasChatAccess = chatUsers && chatUsers.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {/* Topbar */}
@@ -176,7 +179,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
         </div>
       )}
 
-      {/* Content */}
+      {/* Content + Chat */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
         {error && <div style={{ marginBottom: 12, padding: '10px 14px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, color: '#f87171', fontSize: 13 }}>{error}</div>}
 
@@ -283,6 +287,11 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
             >+ Add Row</button>
           </>
         )}
+      </div>
+      {/* Tech Chat panel */}
+      <div style={{ width: 300, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.06)', padding: 12 }}>
+        <TechChat currentUser={currentUser} currentRole={currentRole} hasChatAccess={hasChatAccess} />
+      </div>
       </div>
     </div>
   );
