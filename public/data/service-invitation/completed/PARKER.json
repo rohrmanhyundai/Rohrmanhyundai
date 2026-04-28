@@ -94,5 +94,21 @@
     "notes": "Left VM",
     "submittedAt": "2026-04-28T19:37:09.681Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "AMANDA TRAN",
+    "repairOrder": "776876",
+    "vin": "5NMJE3AE3NH105060",
+    "model": "TUCSON",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "04/22/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(219) 533 - 8465",
+    "notes": "NUMBER WRONG // goes to a limousine company??",
+    "submittedAt": "2026-04-28T19:39:07.129Z",
+    "submittedBy": "PARKER"
   }
 ]
