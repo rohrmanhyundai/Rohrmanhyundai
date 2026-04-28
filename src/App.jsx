@@ -121,6 +121,27 @@ export default function App() {
 
     function getLastSeen(key) { return parseInt(localStorage.getItem(key) || '0', 10); }
 
+    function playBell() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.8);
+        osc.onended = () => ctx.close();
+      } catch {}
+    }
+
+    let prevAdvisor = 0;
+    let prevTech = 0;
+
     async function pollChats() {
       try {
         const curPage = pageRef.current;
@@ -133,10 +154,17 @@ export default function App() {
         const advisorSeen = getLastSeen('advisorChatLastSeen');
         const techSeen = getLastSeen('techChatLastSeen');
 
-        setAdvisorUnread(curPage === 'advisor-calendar' ? 0 :
-          advisorMsgs.filter(m => m.timestamp > advisorSeen && m.username.toUpperCase() !== me).length);
-        setTechUnread(curPage === 'work-in-progress' ? 0 :
-          techMsgs.filter(m => m.timestamp > techSeen && m.username.toUpperCase() !== me).length);
+        const newAdvisor = curPage === 'advisor-calendar' ? 0 :
+          advisorMsgs.filter(m => m.timestamp > advisorSeen && m.username.toUpperCase() !== me).length;
+        const newTech = curPage === 'work-in-progress' ? 0 :
+          techMsgs.filter(m => m.timestamp > techSeen && m.username.toUpperCase() !== me).length;
+
+        if (newAdvisor > prevAdvisor || newTech > prevTech) playBell();
+        prevAdvisor = newAdvisor;
+        prevTech = newTech;
+
+        setAdvisorUnread(newAdvisor);
+        setTechUnread(newTech);
       } catch {}
     }
 
