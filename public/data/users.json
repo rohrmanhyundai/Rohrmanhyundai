@@ -271,8 +271,8 @@
     {
       "username": "Kai",
       "password": "kai2026",
-      "role": "parts manager",
-      "canEditDashboard": false,
+      "role": "admin",
+      "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
         "advisorRankBoard": true,
