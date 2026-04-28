@@ -84,48 +84,6 @@
     "readySubmissionDate": "2026-04-27"
   },
   {
-    "id": "mohk77za0mrl",
-    "createdAt": "2026-04-27T18:57:20.422Z",
-    "updatedAt": "2026-04-27T18:57:25.774Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "",
-    "customerPhone": "",
-    "repairOrder": "",
-    "vin": "",
-    "vehicleYear": "",
-    "vehicleMake": "",
-    "vehicleModel": "",
-    "mileage": "",
-    "warrantyCompany": "",
-    "warrantyPhone": "",
-    "claimNumber": "",
-    "laborRate": "",
-    "laborTime": "",
-    "diagnosisTime": "",
-    "parts": [
-      {
-        "id": "mohk77za326y",
-        "partNumber": "",
-        "description": "",
-        "qty": "1",
-        "price": ""
-      }
-    ],
-    "taxPct": "",
-    "deductible": "",
-    "notes": "",
-    "approved": false,
-    "approvedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
-  },
-  {
     "id": "moh9496s5xsb",
     "createdAt": "2026-04-27T13:47:06.244Z",
     "updatedAt": "2026-04-27T17:02:19.733Z",
