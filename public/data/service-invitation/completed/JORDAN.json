@@ -143,5 +143,21 @@
     "notes": "customer will be ordering tires soon\n",
     "submittedAt": "2026-04-28T19:28:14.945Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "MELISSA SCHMIDT",
+    "repairOrder": "774811",
+    "vin": "5NPEG4JA4NH146508",
+    "model": "SONATA",
+    "serviceDate": "01/29/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "no",
+    "phone": "5555555555",
+    "notes": "very upset ",
+    "submittedAt": "2026-04-29T00:59:34.217Z",
+    "submittedBy": "SHAWN"
   }
 ]
