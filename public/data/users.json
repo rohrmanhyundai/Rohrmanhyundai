@@ -188,7 +188,8 @@
         "originalOwner": true,
         "workInProgress": true,
         "chargeAccountList": false,
-        "partsHub": true
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": true,
       "techChatAccess": true
