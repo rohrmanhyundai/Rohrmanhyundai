@@ -63,6 +63,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [awaitingPickerId, setAwaitingPickerId] = useState(null); // id of row showing assign picker
   const [reassignPickerId, setReassignPickerId] = useState(null); // id of WIP row showing reassign picker
   const [movingId, setMovingId] = useState(null);
+  const [awaitingSavingId, setAwaitingSavingId] = useState(null);
 
   const load = useCallback(async (tech) => {
     setLoading(true);
@@ -160,7 +161,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   }
 
   async function saveAwaitingRow(id) {
-    await saveAwaiting(awaiting);
+    setAwaitingSavingId(id);
+    try {
+      await saveAwaitingData(awaiting);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setAwaitingSavingId(null);
+    }
   }
 
   // Move from awaiting → tech's WIP
@@ -464,8 +472,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                     <button
                       onClick={() => saveAwaitingRow(aw.id)}
-                      style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
-                    >💾 Save</button>
+                      disabled={awaitingSavingId === aw.id}
+                      style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12, opacity: awaitingSavingId === aw.id ? 0.6 : 1 }}
+                    >{awaitingSavingId === aw.id ? '⏳ Saving…' : '💾 Save'}</button>
 
                     {/* Claim It — techs only (claims for themselves) */}
                     {isTech && (
