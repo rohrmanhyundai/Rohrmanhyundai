@@ -134,7 +134,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "partsHub": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -312,7 +313,8 @@
         "aftermarketWarranty": true,
         "originalOwner": false,
         "workInProgress": true,
-        "chargeAccountList": true
+        "chargeAccountList": true,
+        "partsHub": true
       },
       "chatAccess": true,
       "techChatAccess": true
