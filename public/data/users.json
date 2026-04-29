@@ -342,6 +342,8 @@
         "originalOwner": true,
         "workInProgress": true,
         "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
