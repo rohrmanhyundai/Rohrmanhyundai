@@ -1,7 +1,7 @@
 {
   "id": "mojcsbjsnikm",
   "createdAt": "2026-04-29T01:05:20.248Z",
-  "updatedAt": "2026-04-29T01:19:23.273Z",
+  "updatedAt": "2026-04-29T01:19:55.531Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "jo dong",
   "customerPhone": "555-555-5555",
@@ -39,14 +39,14 @@
   "towing": "126",
   "sublet": "123",
   "notes": "",
-  "approved": true,
-  "approvedDate": "2026-04-29",
+  "approved": false,
+  "approvedDate": "",
   "waiting": false,
   "waitingDate": "",
   "paid": false,
   "paymentDate": "",
-  "repairsFinished": false,
-  "repairsFinishedDate": "",
+  "repairsFinished": true,
+  "repairsFinishedDate": "2026-04-29",
   "readySubmission": false,
   "readySubmissionDate": ""
 }
