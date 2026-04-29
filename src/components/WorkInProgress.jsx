@@ -33,7 +33,7 @@ const inpSt = {
 
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '',
+  ro: '', roDate: '', jobDesc: '', highPriority: false,
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel, chatUsers }) {
@@ -451,7 +451,13 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
               ) : awaiting.length === 0 ? (
                 <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
               ) : awaiting.map(aw => (
-                <div key={aw.id} style={{ background: 'rgba(251,191,36,.06)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '16px 20px', marginBottom: 12 }}>
+                <div key={aw.id} style={{ background: aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)'}`, borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
+                  {aw.highPriority && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, padding: '6px 12px' }}>
+                      <span style={{ fontSize: 16 }}>🚨</span>
+                      <span style={{ fontWeight: 900, fontSize: 12, color: '#fca5a5', textTransform: 'uppercase', letterSpacing: 1 }}>High Priority</span>
+                    </div>
+                  )}
                   {/* Fields */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
                     <div>
@@ -470,6 +476,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
 
                   {/* Actions */}
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button
+                      onClick={() => { updateAwaiting(aw.id, 'highPriority', !aw.highPriority); }}
+                      style={{ background: aw.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: aw.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, transition: 'all .15s' }}
+                    >{aw.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
                     <button
                       onClick={() => saveAwaitingRow(aw.id)}
                       disabled={awaitingSavingId === aw.id}
