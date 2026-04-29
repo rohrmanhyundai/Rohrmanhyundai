@@ -2,7 +2,7 @@
   {
     "id": "mokbb1eiegmw",
     "createdAt": "2026-04-29T17:11:40.506Z",
-    "updatedAt": "2026-04-29T17:17:13.256Z",
+    "updatedAt": "2026-04-29T17:46:10.914Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Sarah O'Brien",
     "customerPhone": "(765) 250 - 6124",
@@ -14,7 +14,7 @@
     "mileage": "15899",
     "warrantyCompany": "SMART DRIVER",
     "warrantyPhone": "8886849327",
-    "claimNumber": "292-16516294 AUTH # 3222503-8428294",
+    "claimNumber": "292-16516294",
     "laborRate": "73.32",
     "laborTime": ".30",
     "diagnosisTime": "",
@@ -42,7 +42,8 @@
     "repairsFinished": false,
     "repairsFinishedDate": "",
     "readySubmission": false,
-    "readySubmissionDate": ""
+    "readySubmissionDate": "",
+    "authNumber": "3222503-8428294"
   },
   {
     "id": "mok7o6crsp88",
