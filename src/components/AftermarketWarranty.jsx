@@ -33,9 +33,9 @@ const emptyForm = () => ({
   parts: [emptyPart()],
   taxPct: '',
   deductible: '',
-  rental: '',
-  towing: '',
-  sublet: '',
+  rental: null,
+  towing: null,
+  sublet: null,
   notes: '',
   approved: false,
   approvedDate: '',
@@ -373,11 +373,11 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                 { key: 'towing', label: 'TOWING', color: '#fb923c', bg: 'rgba(251,146,60,', border: 'rgba(251,146,60,' },
                 { key: 'sublet', label: 'SUBLET', color: '#6ee7f9', bg: 'rgba(110,231,249,', border: 'rgba(110,231,249,' },
               ].map(({ key, label, color, bg, border }) => {
-                const active = form[key] !== '';
+                const active = form[key] !== null && form[key] !== undefined && form[key] !== false;
                 return (
                   <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8, background: active ? `${bg}0.1)` : 'rgba(255,255,255,0.03)', border: `1px solid ${active ? `${border}0.4)` : 'rgba(255,255,255,0.12)'}`, borderRadius: 10, padding: '8px 14px', transition: 'all .15s' }}>
                     <button
-                      onClick={() => set(key, active ? '' : '0')}
+                      onClick={() => set(key, active ? null : '')}
                       style={{ background: active ? `${bg}0.25)` : 'rgba(255,255,255,0.06)', border: `1px solid ${active ? `${border}0.5)` : 'rgba(255,255,255,0.15)'}`, color: active ? color : '#64748b', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, letterSpacing: 0.5, transition: 'all .15s' }}
                     >{label}</button>
                     {active && (
@@ -387,7 +387,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                           type="number"
                           value={form[key]}
                           onChange={e => set(key, e.target.value)}
-                          placeholder="0.00"
+                          placeholder="Enter amount"
                           min="0"
                           step="0.01"
                           autoFocus
