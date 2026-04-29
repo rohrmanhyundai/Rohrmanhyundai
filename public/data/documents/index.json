@@ -7,7 +7,9 @@
     "size": 29458,
     "uploadedBy": "Kai",
     "uploadedAt": "2026-04-29T14:46:17.139Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "parts"
+    ]
   },
   {
     "id": "mok60tby722a",
