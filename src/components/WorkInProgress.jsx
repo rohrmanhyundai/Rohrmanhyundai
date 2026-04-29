@@ -453,7 +453,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 <div style={{ color: '#475569', fontSize: 13, padding: '16px 0' }}>Loading…</div>
               ) : awaiting.length === 0 ? (
                 <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
-              ) : awaiting.map(aw => (
+              ) : [...awaiting].sort((a, b) => {
+                  if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
+                  return new Date(b.roDate || 0) - new Date(a.roDate || 0);
+                }).map(aw => (
                 <div key={aw.id} style={{ background: aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)'}`, borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
 
                   {/* High priority banner */}
