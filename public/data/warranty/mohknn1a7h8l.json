@@ -1,7 +1,7 @@
 {
   "id": "mohknn1a7h8l",
   "createdAt": "2026-04-27T19:10:06.430Z",
-  "updatedAt": "2026-04-29T12:33:01.393Z",
+  "updatedAt": "2026-04-29T12:33:54.537Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brian Hamilton",
   "customerPhone": "8282161222",
@@ -37,6 +37,6 @@
   "paymentDate": "2026-04-29",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-04-27"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
