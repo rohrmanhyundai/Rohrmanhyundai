@@ -1,7 +1,7 @@
 {
   "id": "moj0dys9j0f8",
   "createdAt": "2026-04-28T19:18:15.129Z",
-  "updatedAt": "2026-04-29T00:49:33.661Z",
+  "updatedAt": "2026-04-29T12:34:47.025Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "HYOJIN AMERICA INC",
   "customerPhone": "(678) 776 - 8370",
@@ -28,7 +28,7 @@
   ],
   "taxPct": "",
   "deductible": "",
-  "notes": "",
+  "notes": "REPAIR NOT COVERED UNDER POWERTRAIN WARRANTY.",
   "approved": false,
   "approvedDate": "",
   "waiting": false,
