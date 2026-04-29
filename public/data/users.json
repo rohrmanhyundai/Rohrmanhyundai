@@ -264,6 +264,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
+        "chargeAccountList": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
