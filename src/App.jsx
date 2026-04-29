@@ -174,7 +174,7 @@ export default function App() {
     }
 
     pollChats();
-    const id = setInterval(pollChats, 5000);
+    const id = setInterval(pollChats, 30000);
     return () => clearInterval(id);
   }, [isLoggedIn, currentUser]);
 
