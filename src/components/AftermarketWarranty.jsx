@@ -258,22 +258,30 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
     partLookupTimers.current[id] = setTimeout(async () => {
       setLookingUp(s => ({ ...s, [id]: true }));
       try {
-        const encoded = encodeURIComponent(
-          `https://www.hyundaipartsdeal.com/search.html?q=${encodeURIComponent(val)}`
-        );
-        const res = await fetch(`https://api.allorigins.win/raw?url=${encoded}`);
-        if (!res.ok) throw new Error('fetch failed');
+        const partLower = val.toLowerCase();
+        // hyundaipartsdeal.com redirects hyundai~{part} to hyundai-{desc}~{part}
+        // We parse the description slug out of the redirect Location header
+        const targetUrl = `https://www.hyundaipartsdeal.com/genuine/hyundai~${partLower}.html`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error('no response');
         const html = await res.text();
 
-        // Pull first product title from search results
-        const m = html.match(/<a[^>]+class="[^"]*product[^"]*name[^"]*"[^>]*>([^<]+)<\/a>/i)
-          || html.match(/class="[^"]*part[^"]*name[^"]*"[^>]*>([^<]+)</i)
-          || html.match(/<span[^>]+itemprop="name"[^>]*>([^<]{4,80})<\/span>/i)
-          || html.match(/<h1[^>]*>([^<]{4,80})<\/h1>/i);
+        // The proxy follows redirects — extract part name from <h1> or <title>
+        // h1 pattern: "Hyundai 27310-3L030 Coil-Ignition" or <strong>Coil-Ignition</strong>
+        let desc = '';
+        const h1Strong = html.match(/<h1[^>]*>[^<]*<strong[^>]*>([^<]+)<\/strong>/i);
+        if (h1Strong) {
+          desc = h1Strong[1].trim();
+        } else {
+          const h1 = html.match(/<h1[^>]*>([^<]{4,120})<\/h1>/i);
+          if (h1) {
+            // Strip the part number from the title to get just the description
+            desc = h1[1].trim().replace(new RegExp(val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '').replace(/hyundai/i, '').trim();
+          }
+        }
 
-        if (m) {
-          const desc = m[1].trim().replace(/\s+/g, ' ');
-          // Only fill if description is still empty (don't overwrite user edits)
+        if (desc && desc.length > 2 && !desc.toLowerCase().includes("can't find") && !desc.toLowerCase().includes('not found')) {
           setForm(f => ({
             ...f,
             parts: f.parts.map(p =>
@@ -282,7 +290,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
           }));
         }
       } catch {
-        // Silent fail — just leave description blank
+        // Silent fail — leave blank
       } finally {
         setLookingUp(s => ({ ...s, [id]: false }));
       }
