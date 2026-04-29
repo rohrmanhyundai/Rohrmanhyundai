@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { loadTechChatMessages, saveTechChatMessages } from '../utils/github';
+import { getPusher, triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 
-const POLL_MS = 5000;
 const TYPING_PAUSE_MS = 2000;
 
 export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
@@ -14,7 +14,6 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
   const bottomRef = useRef(null);
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
-  const pollRef = useRef(null);
   const textareaRef = useRef(null);
 
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -32,18 +31,14 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
     } catch {}
   }, []);
 
-  const startPoll = useCallback(() => {
-    if (pollRef.current) return;
-    pollRef.current = setInterval(() => {
-      if (!isTypingRef.current) fetchMessages();
-    }, POLL_MS);
-  }, [fetchMessages]);
-
   useEffect(() => {
     fetchMessages();
-    startPoll();
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [fetchMessages, startPoll]);
+    const channel = getPusher().subscribe(TECH_CHANNEL);
+    channel.bind(NEW_MSG_EVENT, () => {
+      if (!isTypingRef.current) fetchMessages();
+    });
+    return () => { getPusher().unsubscribe(TECH_CHANNEL); };
+  }, [fetchMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -76,6 +71,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
       setMessages(saved);
       setText('');
       isTypingRef.current = false;
+      triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { loadChatMessages, saveChatMessages } from '../utils/github';
+import { getPusher, triggerEvent, ADVISOR_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 
-const POLL_MS = 5000;
 const TYPING_PAUSE_MS = 2000;
 
 export default function Chat({ currentUser, currentRole, hasChatAccess }) {
@@ -13,8 +13,6 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const bottomRef = useRef(null);
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
-  const pollRef = useRef(null);
-
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [showEmoji, setShowEmoji] = useState(false);
   const textareaRef = useRef(null);
@@ -32,19 +30,14 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     } catch {}
   }, []);
 
-  // Start/stop polling based on typing state
-  const startPoll = useCallback(() => {
-    if (pollRef.current) return;
-    pollRef.current = setInterval(() => {
-      if (!isTypingRef.current) fetchMessages();
-    }, POLL_MS);
-  }, [fetchMessages]);
-
   useEffect(() => {
     fetchMessages();
-    startPoll();
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [fetchMessages, startPoll]);
+    const channel = getPusher().subscribe(ADVISOR_CHANNEL);
+    channel.bind(NEW_MSG_EVENT, () => {
+      if (!isTypingRef.current) fetchMessages();
+    });
+    return () => { getPusher().unsubscribe(ADVISOR_CHANNEL); };
+  }, [fetchMessages]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -79,6 +72,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       setMessages(saved);
       setText('');
       isTypingRef.current = false;
+      triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT);
     } catch (err) {
       setError(err.message);
     } finally {
