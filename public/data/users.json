@@ -323,7 +323,7 @@
         "partsHub": true,
         "tireQuote": true
       },
-      "chatAccess": true,
+      "chatAccess": false,
       "techChatAccess": true
     },
     {
