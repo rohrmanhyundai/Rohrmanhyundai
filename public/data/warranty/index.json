@@ -2,7 +2,7 @@
   {
     "id": "mok7o6crsp88",
     "createdAt": "2026-04-29T15:29:54.987Z",
-    "updatedAt": "2026-04-29T15:35:55.857Z",
+    "updatedAt": "2026-04-29T15:36:44.065Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "GSA",
     "customerPhone": "(217) 597 - 6603",
@@ -15,7 +15,7 @@
     "warrantyCompany": "GSA FLEET",
     "warrantyPhone": "AUTO-INAGRATE",
     "claimNumber": "87646111A5666",
-    "laborRate": "99",
+    "laborRate": "100.00",
     "laborTime": ".30",
     "diagnosisTime": "",
     "parts": [
