@@ -38,7 +38,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -57,7 +58,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -76,7 +78,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -261,6 +264,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
+        "chargeAccountList": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
@@ -282,7 +286,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
