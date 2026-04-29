@@ -121,7 +121,7 @@
         "hours_per_ro": 1.32,
         "align": 0.1578,
         "tires": 0.41229999999999994,
-        "valvoline": 0.24600000000000002,
+        "valvoline": 0.2462,
         "csi": 979,
         "asr": 0.19640000000000002,
         "elr": 0.93,
@@ -236,7 +236,7 @@
       "total_hours": 756.3,
       "align": 0.132625,
       "tires": 0.1888,
-      "valvoline": 0.186725,
+      "valvoline": 0.186775,
       "csi": 935
     },
     "techTotals": {
