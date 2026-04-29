@@ -296,7 +296,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
