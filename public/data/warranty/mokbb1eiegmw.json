@@ -1,7 +1,7 @@
 {
   "id": "mokbb1eiegmw",
   "createdAt": "2026-04-29T17:11:40.506Z",
-  "updatedAt": "2026-04-29T18:25:15.856Z",
+  "updatedAt": "2026-04-29T18:29:36.858Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Sarah O'Brien",
   "customerPhone": "(765) 250 - 6124",
@@ -32,8 +32,8 @@
   "towing": null,
   "sublet": null,
   "notes": "TIRE TX 2.50, DISP 3.00 TOTAL 190.10",
-  "approved": true,
-  "approvedDate": "2026-04-29",
+  "approved": false,
+  "approvedDate": "",
   "waiting": false,
   "waitingDate": "",
   "paid": false,
@@ -44,5 +44,7 @@
   "readySubmissionDate": "",
   "authNumber": "3222503-8428294",
   "tireTax": null,
-  "tireDisposal": null
+  "tireDisposal": null,
+  "denied": true,
+  "deniedDate": "2026-04-29"
 }
