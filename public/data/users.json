@@ -92,7 +92,7 @@
       "pages": {
         "advisorCalendar": true,
         "advisorRankBoard": true,
-        "surveyReports": false,
+        "surveyReports": true,
         "advisorSchedule": true,
         "techSchedule": true,
         "documentLibrary": true,
