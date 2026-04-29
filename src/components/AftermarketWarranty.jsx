@@ -27,6 +27,7 @@ const emptyForm = () => ({
   warrantyCompany: '',
   warrantyPhone: '',
   claimNumber: '',
+  authNumber: '',
   laborRate: '',
   laborTime: '',
   diagnosisTime: '',
@@ -296,6 +297,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             <F label="Warranty Company Name" value={form.warrantyCompany} onChange={v => set('warrantyCompany', v)} />
             <F label="Warranty Company Phone" value={form.warrantyPhone} onChange={v => set('warrantyPhone', v)} type="tel" />
             <F label="Claim Number" value={form.claimNumber} onChange={v => set('claimNumber', v)} placeholder="WC-XXXXXXXX" />
+            <F label="Authorization Number" value={form.authNumber} onChange={v => set('authNumber', v)} placeholder="" />
           </div>
         </Section>
 
@@ -639,6 +641,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#e2e8f0' }}>Claim # {contract.claimNumber || '—'}</div>
+              {contract.authNumber && <div style={{ fontWeight: 600, fontSize: 13, color: '#94a3b8', marginTop: 2 }}>Auth # {contract.authNumber}</div>}
               <div style={{ color: '#64748b', fontSize: 12, marginTop: 4 }}>{date}</div>
             </div>
           </div>
@@ -654,6 +657,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
               <InfoRow label="Company" value={contract.warrantyCompany} />
               <InfoRow label="Phone" value={contract.warrantyPhone} />
               <InfoRow label="Claim #" value={contract.claimNumber} />
+              <InfoRow label="Auth #" value={contract.authNumber} />
             </InfoBlock>
             <InfoBlock title="Vehicle">
               <InfoRow label="VIN" value={contract.vin} mono />
@@ -820,6 +824,10 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
             <div style={{ fontSize: 8, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Claim Number</div>
             <div style={{ fontSize: 20, fontWeight: 900, color: PD_ACCENT, letterSpacing: 0.5 }}>{contract.claimNumber || '—'}</div>
             <div style={{ marginTop: 8, display: 'grid', gridTemplateColumns: 'auto auto', gap: '3px 10px', justifyContent: 'end' }}>
+              {contract.authNumber && <>
+                <span style={{ fontSize: 9, color: '#64748b' }}>Auth #</span>
+                <span style={{ fontSize: 9, color: '#cbd5e1', fontWeight: 700, textAlign: 'right' }}>{contract.authNumber}</span>
+              </>}
               <span style={{ fontSize: 9, color: '#64748b' }}>Repair Order</span>
               <span style={{ fontSize: 9, color: '#cbd5e1', fontWeight: 700, textAlign: 'right' }}>{contract.repairOrder || '—'}</span>
               <span style={{ fontSize: 9, color: '#64748b' }}>Date</span>
