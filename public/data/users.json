@@ -240,14 +240,19 @@
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
-        "documentLibrary": true,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Jerry",
