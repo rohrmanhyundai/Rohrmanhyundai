@@ -1,6 +1,6 @@
 /* wip */
 import React, { useState, useEffect, useCallback } from 'react';
-import { loadWipData, saveWipData } from '../utils/github';
+import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData } from '../utils/github';
 import TechChat from './TechChat';
 
 function ChipBtn({ active, color, onClick, children }) {
@@ -31,8 +31,17 @@ const inpSt = {
   outline: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
 };
 
+const emptyAwaiting = () => ({
+  id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+  ro: '', roDate: '', jobDesc: '',
+});
+
 export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel, chatUsers }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
+  const isManager  = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const isTech     = currentRole === 'technician';
+  const canDeleteAwaiting = isManager || currentRole === 'advisor' || currentRole === 'warranty';
+  const canAssignAwaiting = !isTech; // techs only see "Claim It"
   const [activeTech, setActiveTech] = useState(
     canSeeTabs ? (techList[0] || currentUser) : currentUser
   );
@@ -47,6 +56,13 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [searching, setSearching] = useState(false);
   const [showTechPicker, setShowTechPicker] = useState(false);
   const [creatingForTech, setCreatingForTech] = useState(null);
+
+  // Cars Awaiting Technician
+  const [awaiting, setAwaiting] = useState([]);
+  const [awaitingLoading, setAwaitingLoading] = useState(true);
+  const [awaitingPickerId, setAwaitingPickerId] = useState(null); // id of row showing assign picker
+  const [reassignPickerId, setReassignPickerId] = useState(null); // id of WIP row showing reassign picker
+  const [movingId, setMovingId] = useState(null);
 
   const load = useCallback(async (tech) => {
     setLoading(true);
@@ -117,6 +133,69 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   }
 
   function clearSearch() { setSearchRO(''); setSearchResults(null); setShowTechPicker(false); setCreatingForTech(null); }
+
+  // Load awaiting on mount
+  useEffect(() => {
+    loadAwaitingData().then(d => { setAwaiting(d); setAwaitingLoading(false); }).catch(() => setAwaitingLoading(false));
+  }, []);
+
+  function updateAwaiting(id, field, value) {
+    setAwaiting(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
+  }
+
+  async function saveAwaiting(rows) {
+    try { await saveAwaitingData(rows); } catch (e) { setError(e.message); }
+  }
+
+  async function addAwaitingRow() {
+    const updated = [...awaiting, emptyAwaiting()];
+    setAwaiting(updated);
+    await saveAwaiting(updated);
+  }
+
+  async function deleteAwaitingRow(id) {
+    const updated = awaiting.filter(r => r.id !== id);
+    setAwaiting(updated);
+    await saveAwaiting(updated);
+  }
+
+  async function saveAwaitingRow(id) {
+    await saveAwaiting(awaiting);
+  }
+
+  // Move from awaiting → tech's WIP
+  async function claimAwaiting(awaitingRow, tech) {
+    setMovingId(awaitingRow.id);
+    try {
+      const existing = await loadWipData(tech);
+      const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc };
+      await saveWipData(tech, [...existing, newWipRow]);
+      const updatedAwaiting = awaiting.filter(r => r.id !== awaitingRow.id);
+      setAwaiting(updatedAwaiting);
+      await saveAwaitingData(updatedAwaiting);
+      setActiveTech(tech);
+      const data = await loadWipData(tech);
+      setRows(data);
+      setAwaitingPickerId(null);
+    } catch (e) { setError(e.message); }
+    finally { setMovingId(null); }
+  }
+
+  // Reassign existing WIP row to different tech (managers only)
+  async function reassignRow(wipRow, newTech) {
+    setMovingId(wipRow.id);
+    try {
+      // Remove from current tech
+      const current = rows.filter(r => r.id !== wipRow.id);
+      await saveWipData(activeTech, current);
+      setRows(current);
+      // Add to new tech
+      const existing = await loadWipData(newTech);
+      await saveWipData(newTech, [...existing, { ...wipRow }]);
+      setReassignPickerId(null);
+    } catch (e) { setError(e.message); }
+    finally { setMovingId(null); }
+  }
 
   async function createForTech(tech) {
     setCreatingForTech(tech);
@@ -271,6 +350,27 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b' }}>ROW {idx + 1}</span>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+                    {isManager && (
+                      <>
+                        <button
+                          onClick={() => setReassignPickerId(reassignPickerId === row.id ? null : row.id)}
+                          style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 7, padding: '4px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 11 }}
+                        >🔀 Assign Different Tech</button>
+                        {reassignPickerId === row.id && (
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                            {techList.filter(t => t !== activeTech).map(tech => (
+                              <button key={tech}
+                                onClick={() => reassignRow(row, tech)}
+                                disabled={movingId === row.id}
+                                style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.45)', color: '#fbbf24', borderRadius: 7, padding: '4px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                              >{movingId === row.id ? '⏳' : tech}</button>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {/* Fields grid */}
@@ -324,6 +424,91 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
               onClick={addRow}
               style={{ background: 'rgba(167,139,250,.15)', border: '1px solid rgba(167,139,250,.35)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, marginTop: 4 }}
             >+ Add Row</button>
+
+            {/* ── Cars Awaiting Technician ── */}
+            <div style={{ marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(251,191,36,.25)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1 }}>🚗 Cars Awaiting Technician</div>
+                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Unassigned repair orders — claim or assign to a tech</div>
+                </div>
+                <button
+                  onClick={addAwaitingRow}
+                  style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                >+ Add</button>
+              </div>
+
+              {awaitingLoading ? (
+                <div style={{ color: '#475569', fontSize: 13, padding: '16px 0' }}>Loading…</div>
+              ) : awaiting.length === 0 ? (
+                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
+              ) : awaiting.map(aw => (
+                <div key={aw.id} style={{ background: 'rgba(251,191,36,.06)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 14, padding: '16px 20px', marginBottom: 12 }}>
+                  {/* Fields */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
+                    <div>
+                      <div style={labelSt}>Repair Order #</div>
+                      <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} placeholder="RO#" />
+                    </div>
+                    <div>
+                      <div style={labelSt}>RO Date</div>
+                      <input style={inpSt} type="date" value={aw.roDate} onChange={e => updateAwaiting(aw.id, 'roDate', e.target.value)} />
+                    </div>
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <div style={labelSt}>Job Description</div>
+                      <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} placeholder="Describe the job…" />
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button
+                      onClick={() => saveAwaitingRow(aw.id)}
+                      style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
+                    >💾 Save</button>
+
+                    {/* Claim It — techs only (claims for themselves) */}
+                    {isTech && (
+                      <button
+                        onClick={() => claimAwaiting(aw, currentUser)}
+                        disabled={movingId === aw.id}
+                        style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                      >{movingId === aw.id ? '⏳ Moving…' : '✋ Claim It'}</button>
+                    )}
+
+                    {/* Assign Tech — non-techs only */}
+                    {canAssignAwaiting && (
+                      <>
+                        <button
+                          onClick={() => setAwaitingPickerId(awaitingPickerId === aw.id ? null : aw.id)}
+                          style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.45)', color: '#c4b5fd', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                        >👤 Assign Tech</button>
+                        {awaitingPickerId === aw.id && (
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                            <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700 }}>→</span>
+                            {techList.map(tech => (
+                              <button key={tech}
+                                onClick={() => claimAwaiting(aw, tech)}
+                                disabled={movingId === aw.id}
+                                style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.4)', color: '#c4b5fd', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                              >{movingId === aw.id ? '⏳' : tech}</button>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* Delete — managers, advisors, warranty only */}
+                    {canDeleteAwaiting && (
+                      <button
+                        onClick={() => deleteAwaitingRow(aw.id)}
+                        style={{ marginLeft: 'auto', background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#f87171', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
+                      >🗑 Delete</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </>
         )}
       </div>
