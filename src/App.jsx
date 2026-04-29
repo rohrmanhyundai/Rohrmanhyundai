@@ -14,6 +14,11 @@ import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
+
+function openRankBoard() {
+  navigator.clipboard.writeText('INFINITEPURSUIT').catch(() => {});
+  window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
+}
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
@@ -364,7 +369,7 @@ export default function App() {
         onAdvisorCalendar={() => goTo('advisor-calendar', 'parts-hub')}
         onAdvisorSchedule={() => goTo('work-schedule', 'parts-hub')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
-        onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+        onAdvisorRankBoard={openRankBoard}
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
       />
     );
@@ -400,7 +405,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'manager-hub')}
         onAdvisorSchedule={() => goTo('work-schedule', 'manager-hub')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'manager-hub')}
-        onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
+        onAdvisorRankBoard={openRankBoard}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
       />
     );
