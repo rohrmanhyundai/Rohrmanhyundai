@@ -1,7 +1,7 @@
 {
   "id": "mojcsbjsnikm",
   "createdAt": "2026-04-29T01:05:20.248Z",
-  "updatedAt": "2026-04-29T01:16:56.053Z",
+  "updatedAt": "2026-04-29T01:18:32.427Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "jo dong",
   "customerPhone": "555-555-5555",
@@ -14,23 +14,30 @@
   "warrantyCompany": "",
   "warrantyPhone": "",
   "claimNumber": "",
-  "laborRate": "",
-  "laborTime": "",
-  "diagnosisTime": "",
+  "laborRate": "175",
+  "laborTime": "2.2",
+  "diagnosisTime": "1.0",
   "parts": [
     {
       "id": "mojcsbjs296c",
-      "partNumber": "",
-      "description": "",
-      "qty": "1",
-      "price": ""
+      "partNumber": "1232",
+      "description": "coils",
+      "qty": "3",
+      "price": "124"
+    },
+    {
+      "id": "mojd8c9i165e",
+      "partNumber": "33554",
+      "description": "boots",
+      "qty": "3",
+      "price": "13"
     }
   ],
-  "taxPct": "",
-  "deductible": "",
+  "taxPct": "7",
+  "deductible": "200",
   "rental": "30",
-  "towing": "",
-  "sublet": "",
+  "towing": "126",
+  "sublet": "123",
   "notes": "",
   "approved": false,
   "approvedDate": "",
