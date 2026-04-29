@@ -26,6 +26,15 @@ const NAV_BUTTONS = [
     prop: 'onDocumentLibrary',
   },
   {
+    key: 'advisorCalendar',
+    label: '📅 Advisor Calendar',
+    desc: 'View the advisor daily calendar',
+    bg: 'linear-gradient(135deg,rgba(167,139,250,.28),rgba(139,92,246,.18))',
+    border: 'rgba(167,139,250,.45)',
+    color: '#c4b5fd',
+    prop: 'onAdvisorCalendar',
+  },
+  {
     key: 'advisorSchedule',
     label: '📅 Advisor Schedule',
     desc: 'View the service advisor work schedule',
@@ -66,9 +75,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress,
+  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

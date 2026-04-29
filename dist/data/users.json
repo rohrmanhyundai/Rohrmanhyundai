@@ -135,6 +135,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
+        "chargeAccountList": false,
         "partsHub": true
       },
       "chatAccess": true,

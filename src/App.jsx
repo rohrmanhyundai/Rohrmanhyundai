@@ -361,6 +361,7 @@ export default function App() {
         onBack={() => setPage('dashboard')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'parts-hub')}
         onDocumentLibrary={() => goTo('document-library', 'parts-hub')}
+        onAdvisorCalendar={() => goTo('advisor-calendar', 'parts-hub')}
         onAdvisorSchedule={() => goTo('work-schedule', 'parts-hub')}
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
         onAdvisorRankBoard={() => window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank')}
