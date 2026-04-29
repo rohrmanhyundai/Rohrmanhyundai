@@ -1,7 +1,7 @@
 {
   "id": "mokbb1eiegmw",
   "createdAt": "2026-04-29T17:11:40.506Z",
-  "updatedAt": "2026-04-29T17:46:10.914Z",
+  "updatedAt": "2026-04-29T18:08:08.090Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Sarah O'Brien",
   "customerPhone": "(765) 250 - 6124",
@@ -42,5 +42,7 @@
   "repairsFinishedDate": "",
   "readySubmission": false,
   "readySubmissionDate": "",
-  "authNumber": "3222503-8428294"
+  "authNumber": "3222503-8428294",
+  "tireTax": null,
+  "tireDisposal": null
 }
