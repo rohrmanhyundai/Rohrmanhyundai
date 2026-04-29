@@ -455,79 +455,85 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
               ) : awaiting.map(aw => (
                 <div key={aw.id} style={{ background: aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)'}`, borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
+
+                  {/* High priority banner */}
                   {aw.highPriority && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, padding: '6px 12px' }}>
                       <span style={{ fontSize: 16 }}>🚨</span>
                       <span style={{ fontWeight: 900, fontSize: 12, color: '#fca5a5', textTransform: 'uppercase', letterSpacing: 1 }}>High Priority</span>
                     </div>
                   )}
-                  {/* Fields */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
-                    <div>
-                      <div style={labelSt}>Repair Order #</div>
-                      <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} placeholder="RO#" />
-                    </div>
-                    <div>
-                      <div style={labelSt}>RO Date</div>
-                      <input style={inpSt} type="date" value={aw.roDate} onChange={e => updateAwaiting(aw.id, 'roDate', e.target.value)} />
-                    </div>
-                    <div style={{ gridColumn: 'span 2' }}>
-                      <div style={labelSt}>Job Description</div>
-                      <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} placeholder="Describe the job…" />
-                    </div>
-                  </div>
 
-                  {/* Actions */}
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                    <button
-                      onClick={() => { updateAwaiting(aw.id, 'highPriority', !aw.highPriority); }}
-                      style={{ background: aw.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: aw.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, transition: 'all .15s' }}
-                    >{aw.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
-                    <button
-                      onClick={() => saveAwaitingRow(aw.id)}
-                      disabled={awaitingSavingId === aw.id}
-                      style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12, opacity: awaitingSavingId === aw.id ? 0.6 : 1 }}
-                    >{awaitingSavingId === aw.id ? '⏳ Saving…' : '💾 Save'}</button>
-
-                    {/* Claim It — techs only (claims for themselves) */}
-                    {isTech && (
+                  {isTech ? (
+                    /* ── TECH VIEW: read-only + Claim It only ── */
+                    <>
+                      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 14, alignItems: 'center' }}>
+                        <div><div style={labelSt}>Repair Order #</div><div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>{aw.ro || '—'}</div></div>
+                        <div><div style={labelSt}>RO Date</div><div style={{ fontSize: 14, color: '#94a3b8' }}>{aw.roDate || '—'}</div></div>
+                        <div style={{ flex: 1 }}><div style={labelSt}>Job Description</div><div style={{ fontSize: 14, color: '#e2e8f0' }}>{aw.jobDesc || '—'}</div></div>
+                      </div>
                       <button
                         onClick={() => claimAwaiting(aw, currentUser)}
                         disabled={movingId === aw.id}
-                        style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                        style={{ background: 'rgba(74,222,128,.25)', border: '1px solid rgba(74,222,128,.55)', color: '#4ade80', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 900, fontSize: 13 }}
                       >{movingId === aw.id ? '⏳ Moving…' : '✋ Claim It'}</button>
-                    )}
-
-                    {/* Assign Tech — non-techs only */}
-                    {canAssignAwaiting && (
-                      <>
+                    </>
+                  ) : (
+                    /* ── MANAGER / ADVISOR VIEW: editable + all controls ── */
+                    <>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
+                        <div>
+                          <div style={labelSt}>Repair Order #</div>
+                          <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} placeholder="RO#" />
+                        </div>
+                        <div>
+                          <div style={labelSt}>RO Date</div>
+                          <input style={inpSt} type="date" value={aw.roDate} onChange={e => updateAwaiting(aw.id, 'roDate', e.target.value)} />
+                        </div>
+                        <div style={{ gridColumn: 'span 2' }}>
+                          <div style={labelSt}>Job Description</div>
+                          <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} placeholder="Describe the job…" />
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                         <button
-                          onClick={() => setAwaitingPickerId(awaitingPickerId === aw.id ? null : aw.id)}
-                          style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.45)', color: '#c4b5fd', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
-                        >👤 Assign Tech</button>
-                        {awaitingPickerId === aw.id && (
-                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                            <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700 }}>→</span>
-                            {techList.map(tech => (
-                              <button key={tech}
-                                onClick={() => claimAwaiting(aw, tech)}
-                                disabled={movingId === aw.id}
-                                style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.4)', color: '#c4b5fd', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
-                              >{movingId === aw.id ? '⏳' : tech}</button>
-                            ))}
-                          </div>
+                          onClick={() => { updateAwaiting(aw.id, 'highPriority', !aw.highPriority); }}
+                          style={{ background: aw.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: aw.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, transition: 'all .15s' }}
+                        >{aw.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
+                        <button
+                          onClick={() => saveAwaitingRow(aw.id)}
+                          disabled={awaitingSavingId === aw.id}
+                          style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12, opacity: awaitingSavingId === aw.id ? 0.6 : 1 }}
+                        >{awaitingSavingId === aw.id ? '⏳ Saving…' : '💾 Save'}</button>
+                        {canAssignAwaiting && (
+                          <>
+                            <button
+                              onClick={() => setAwaitingPickerId(awaitingPickerId === aw.id ? null : aw.id)}
+                              style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.45)', color: '#c4b5fd', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                            >👤 Assign Tech</button>
+                            {awaitingPickerId === aw.id && (
+                              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                                <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700 }}>→</span>
+                                {techList.map(tech => (
+                                  <button key={tech}
+                                    onClick={() => claimAwaiting(aw, tech)}
+                                    disabled={movingId === aw.id}
+                                    style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.4)', color: '#c4b5fd', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
+                                  >{movingId === aw.id ? '⏳' : tech}</button>
+                                ))}
+                              </div>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-
-                    {/* Delete — managers, advisors, warranty only */}
-                    {canDeleteAwaiting && (
-                      <button
-                        onClick={() => deleteAwaitingRow(aw.id)}
-                        style={{ marginLeft: 'auto', background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#f87171', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
-                      >🗑 Delete</button>
-                    )}
-                  </div>
+                        {canDeleteAwaiting && (
+                          <button
+                            onClick={() => deleteAwaitingRow(aw.id)}
+                            style={{ marginLeft: 'auto', background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#f87171', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
+                          >🗑 Delete</button>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
