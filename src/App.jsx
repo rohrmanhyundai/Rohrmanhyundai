@@ -174,7 +174,7 @@ export default function App() {
     }
 
     pollChats();
-    const id = setInterval(pollChats, 30000);
+    const id = setInterval(pollChats, 300000); // 5-min fallback; Pusher handles real-time
     return () => clearInterval(id);
   }, [isLoggedIn, currentUser]);
 
