@@ -1,7 +1,7 @@
 {
   "id": "mohknn1a7h8l",
   "createdAt": "2026-04-27T19:10:06.430Z",
-  "updatedAt": "2026-04-29T00:30:22.217Z",
+  "updatedAt": "2026-04-29T01:05:13.785Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brian Hamilton",
   "customerPhone": "8282161222",
@@ -12,7 +12,7 @@
   "vehicleModel": "Palisade",
   "mileage": "137114",
   "warrantyCompany": "CPO",
-  "warrantyPhone": "8004778089",
+  "warrantyPhone": "800-477-8089",
   "claimNumber": "71965808",
   "laborRate": "163.77",
   "laborTime": "1.0",

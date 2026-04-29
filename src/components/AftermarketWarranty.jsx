@@ -384,12 +384,11 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>$</span>
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="decimal"
                           value={form[key]}
                           onChange={e => set(key, e.target.value)}
-                          placeholder="Enter amount"
-                          min="0"
-                          step="0.01"
+                          placeholder="0.00"
                           autoFocus
                           style={{ ...inpSt, width: 110, padding: '6px 10px', fontSize: 13, color, fontWeight: 700 }}
                         />
