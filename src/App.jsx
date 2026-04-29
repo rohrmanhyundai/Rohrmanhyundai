@@ -290,6 +290,8 @@ export default function App() {
     return (
       <TechResources
         currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        userPages={currentPages}
         onWorkSchedule={() => setPage('tech-work-schedule')}
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
