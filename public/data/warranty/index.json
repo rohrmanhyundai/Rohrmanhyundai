@@ -1,5 +1,48 @@
 [
   {
+    "id": "moj0dys9j0f8",
+    "createdAt": "2026-04-28T19:18:15.129Z",
+    "updatedAt": "2026-04-29T12:34:47.025Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "HYOJIN AMERICA INC",
+    "customerPhone": "(678) 776 - 8370",
+    "repairOrder": "776913",
+    "vin": "5NMS64AJ9MH301264",
+    "vehicleYear": "2021",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Santa Fe",
+    "mileage": "65662",
+    "warrantyCompany": "HMA",
+    "warrantyPhone": "ONLINE",
+    "claimNumber": "",
+    "laborRate": "190",
+    "laborTime": "0.50",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "moj0dys9ogg4",
+        "partNumber": "27300-2S000",
+        "description": "COIL ASSY-IGNITION",
+        "qty": "1",
+        "price": "250.99"
+      }
+    ],
+    "taxPct": "",
+    "deductible": "",
+    "notes": "REPAIR NOT COVERED UNDER POWERTRAIN WARRANTY.",
+    "approved": false,
+    "approvedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "sublet": "0"
+  },
+  {
     "id": "mohknn1a7h8l",
     "createdAt": "2026-04-27T19:10:06.430Z",
     "updatedAt": "2026-04-29T12:33:54.537Z",
@@ -125,48 +168,5 @@
     "readySubmission": false,
     "readySubmissionDate": "",
     "rental": "245.00"
-  },
-  {
-    "id": "moj0dys9j0f8",
-    "createdAt": "2026-04-28T19:18:15.129Z",
-    "updatedAt": "2026-04-29T00:49:33.661Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "HYOJIN AMERICA INC",
-    "customerPhone": "(678) 776 - 8370",
-    "repairOrder": "776913",
-    "vin": "5NMS64AJ9MH301264",
-    "vehicleYear": "2021",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Santa Fe",
-    "mileage": "65662",
-    "warrantyCompany": "HMA",
-    "warrantyPhone": "ONLINE",
-    "claimNumber": "",
-    "laborRate": "190",
-    "laborTime": "0.50",
-    "diagnosisTime": "1",
-    "parts": [
-      {
-        "id": "moj0dys9ogg4",
-        "partNumber": "27300-2S000",
-        "description": "COIL ASSY-IGNITION",
-        "qty": "1",
-        "price": "250.99"
-      }
-    ],
-    "taxPct": "",
-    "deductible": "",
-    "notes": "",
-    "approved": false,
-    "approvedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": "",
-    "sublet": "0"
   }
 ]
