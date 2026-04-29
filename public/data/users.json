@@ -298,7 +298,7 @@
       "role": "parts",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
@@ -307,7 +307,7 @@
         "aftermarketWarranty": true,
         "originalOwner": false,
         "workInProgress": true,
-        "chargeAccountList": false
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
