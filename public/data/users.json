@@ -154,7 +154,23 @@
       "username": "Brandon",
       "password": "bigB",
       "role": "admin",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Devin",
