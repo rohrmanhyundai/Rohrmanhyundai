@@ -77,6 +77,7 @@ export default function App() {
   const [techUnread, setTechUnread] = useState(0);
   const pageRef = useRef(page);
   const stageRef = useRef(null);
+  const adminOpenRef = useRef(false);
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -100,9 +101,13 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => { adminOpenRef.current = adminOpen; }, [adminOpen]);
+
   useEffect(() => {
     loadDashboard();
-    const interval = setInterval(loadDashboard, 90 * 1000); // refresh every 90 seconds
+    const interval = setInterval(() => {
+      if (!adminOpenRef.current) loadDashboard();
+    }, 90 * 1000); // refresh every 90 seconds, but skip while Edit Dashboard is open
     return () => clearInterval(interval);
   }, [loadDashboard]);
 
@@ -259,7 +264,7 @@ export default function App() {
   // Admins and managers always have full access. Others use their saved pages map.
   const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   // Keys that are OFF by default — must be explicitly granted in user pages settings
-  const DEFAULT_OFF_KEYS = new Set(['surveyReports']);
+  const DEFAULT_OFF_KEYS = new Set(['surveyReports', 'chargeAccountList']);
   function canAccess(key) {
     if (isAdminOrManager) return true;
     if (DEFAULT_OFF_KEYS.has(key)) {
@@ -401,8 +406,7 @@ export default function App() {
   }
 
   if (page === 'charge-account-list') {
-    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
-    if (!isManager) { setPage('dashboard'); return null; }
+    if (!canAccess('chargeAccountList')) { setPage('dashboard'); return null; }
     return <ChargeAccountList onBack={() => setPage(prevPage || 'manager-hub')} />;
   }
 
