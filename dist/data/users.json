@@ -126,7 +126,7 @@
       "role": "parts",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
@@ -241,14 +241,19 @@
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
-        "documentLibrary": true,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "aftermarketWarranty": false
-      }
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Jerry",
@@ -299,7 +304,7 @@
       "role": "parts",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
@@ -308,7 +313,7 @@
         "aftermarketWarranty": true,
         "originalOwner": false,
         "workInProgress": true,
-        "chargeAccountList": false,
+        "chargeAccountList": true,
         "partsHub": true
       },
       "chatAccess": true,
