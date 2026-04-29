@@ -1082,6 +1082,7 @@ function ContractLegend() {
           {pill('rgba(239,68,68,0.18)',   'rgba(239,68,68,0.4)',   '#fca5a5', '🔧 Repairs Finished')}
           {pill('rgba(56,189,248,0.15)',  'rgba(56,189,248,0.4)',  '#7dd3fc', '📋 Ready for Submission')}
           {pill('rgba(34,197,94,0.18)',   'rgba(34,197,94,0.4)',   '#86efac', '✅ Approved Claim')}
+          {pill('rgba(251,113,133,0.18)', 'rgba(251,113,133,0.4)', '#fda4af', '❌ Claim Denied')}
           {pill('rgba(255,255,255,0.04)', 'rgba(255,255,255,0.08)','#64748b', 'No status set')}
           {icon('⏳', '#fbbf24', 'Waiting for Payment — label only')}
           {icon('💳', '#6ee7f9', 'Claim Paid — label only')}
@@ -1096,6 +1097,7 @@ function ContractLegend() {
           {icon('⏳', '#fbbf24', 'Waiting for Payment')}
           {icon('💳', '#6ee7f9', 'Claim Paid')}
           {icon('✅', '#4ade80', 'Approved Claim')}
+          {icon('❌', '#fb7185', 'Claim Denied')}
         </div>
       </div>
     </div>
