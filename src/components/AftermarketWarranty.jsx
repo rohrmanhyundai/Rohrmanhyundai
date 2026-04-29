@@ -245,57 +245,6 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
     setForm(f => ({ ...f, parts: f.parts.map(p => p.id === id ? { ...p, [key]: val } : p) }));
   }
 
-  const partLookupTimers = useRef({});
-  const [lookingUp, setLookingUp] = useState({});
-
-  function handlePartNumberChange(id, raw) {
-    const val = raw.toUpperCase();
-    setPart(id, 'partNumber', val);
-
-    clearTimeout(partLookupTimers.current[id]);
-    if (val.replace(/[-\s]/g, '').length < 8) return;
-
-    partLookupTimers.current[id] = setTimeout(async () => {
-      setLookingUp(s => ({ ...s, [id]: true }));
-      try {
-        const partLower = val.toLowerCase();
-        // hyundaipartsdeal.com redirects hyundai~{part} to hyundai-{desc}~{part}
-        // We parse the description slug out of the redirect Location header
-        const targetUrl = `https://www.hyundaipartsdeal.com/genuine/hyundai~${partLower}.html`;
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error('no response');
-        const html = await res.text();
-
-        // The proxy follows redirects — extract part name from <h1> or <title>
-        // h1 pattern: "Hyundai 27310-3L030 Coil-Ignition" or <strong>Coil-Ignition</strong>
-        let desc = '';
-        const h1Strong = html.match(/<h1[^>]*>[^<]*<strong[^>]*>([^<]+)<\/strong>/i);
-        if (h1Strong) {
-          desc = h1Strong[1].trim();
-        } else {
-          const h1 = html.match(/<h1[^>]*>([^<]{4,120})<\/h1>/i);
-          if (h1) {
-            // Strip the part number from the title to get just the description
-            desc = h1[1].trim().replace(new RegExp(val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '').replace(/hyundai/i, '').trim();
-          }
-        }
-
-        if (desc && desc.length > 2 && !desc.toLowerCase().includes("can't find") && !desc.toLowerCase().includes('not found')) {
-          setForm(f => ({
-            ...f,
-            parts: f.parts.map(p =>
-              p.id === id && !p.description ? { ...p, description: desc } : p
-            ),
-          }));
-        }
-      } catch {
-        // Silent fail — leave blank
-      } finally {
-        setLookingUp(s => ({ ...s, [id]: false }));
-      }
-    }, 700);
-  }
 
   const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(form);
 
@@ -372,16 +321,10 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             </div>
             {form.parts.map(p => (
               <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 72px 110px 36px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-                <input value={p.partNumber} onChange={e => handlePartNumberChange(p.id, e.target.value)}
+                <input value={p.partNumber} onChange={e => setPart(p.id, 'partNumber', e.target.value)}
                   placeholder="Part #" style={{ ...inpSt, fontFamily: 'monospace', fontSize: 13 }} />
-                <div style={{ position: 'relative' }}>
-                  <input value={p.description} onChange={e => setPart(p.id, 'description', e.target.value)}
-                    placeholder={lookingUp[p.id] ? 'Looking up…' : 'Part description'}
-                    style={{ ...inpSt, width: '100%', paddingRight: lookingUp[p.id] ? 32 : undefined }} />
-                  {lookingUp[p.id] && (
-                    <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: '#64748b' }}>⏳</span>
-                  )}
-                </div>
+                <input value={p.description} onChange={e => setPart(p.id, 'description', e.target.value)}
+                  placeholder="Part description" style={inpSt} />
                 <input type="number" value={p.qty ?? '1'} min="1" step="1"
                   onChange={e => setPart(p.id, 'qty', e.target.value)}
                   style={{ ...inpSt, textAlign: 'center' }} />
