@@ -1,0 +1,1578 @@
+{
+  "accounts": [
+    {
+      "name": "1ST CLASS AUTO GLASS",
+      "id": "1715_7383",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "A & J AUTO REPAIRS",
+      "id": "765235",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "A&L AUTOMOTIVE",
+      "id": "765187",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "AA AUTO BODY INC",
+      "id": "765002",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AAMCO TRANSMISSIONS",
+      "id": "1715_7202",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AARON'S AUTO REPAIR",
+      "id": "765150",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ABBOTTS PRECISION COLLISION",
+      "id": "1018970",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ACCENT AUTO REPAIR",
+      "id": "765005",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ACE AUTOMOTIVE SERVICES",
+      "id": "765006",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ADAMS AUTO GROUP",
+      "id": "765007",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ADVANTAGE AUTO GLASS & TRIM",
+      "id": "765008",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AFFORDABLE AUTO CENTER",
+      "id": "765009",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AFFORDABLE AUTO SERVICE",
+      "id": "765236",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "AKARD'S TIRE CO",
+      "id": "765256",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "AL'S BODY SHOP",
+      "id": "1715_7126",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AMERICAN AUTOMOTIVE SERVICES INC",
+      "id": "765011",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AMERICAN BODY SHOP",
+      "id": "765258",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ANDY MOORE HYUNDAI",
+      "id": "765181",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ANDY'S AUTO",
+      "id": "765237",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ASUKA MOTORWERKS",
+      "id": "765238",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "AUTO BODY SPECIALTIES",
+      "id": "1715_7803",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTO DIAGNOSTIC REPAIR",
+      "id": "765013",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTO EXPRESS",
+      "id": "1715_7254",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTO SPECIALTY OF LAFAYETTE",
+      "id": "765015",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTOGLASS EXPRESS",
+      "id": "765016",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTOMOTIVE IMPORTS",
+      "id": "765017",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTOMOTIVE SOLUTIONS",
+      "id": "765018",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTOTORIUM",
+      "id": "765019",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "AUTOWORKS",
+      "id": "765020",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BEN DAVIS CHEVROLET INC",
+      "id": "1152839",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "B&B AUTO CENTER",
+      "id": "765021",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BAKER'S BODY SHOP-PERFORMANCE",
+      "id": "765023",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BANE'S AUTOMOTIVE",
+      "id": "1715_5127",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BASIC BODY AND PAINT LLC",
+      "id": "765025",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BEARS AUTO SALES",
+      "id": "765239",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "BECKS AUTO CENTER",
+      "id": "1715_7348",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BELLE TIRE DISTRIBUTORS",
+      "id": "1715_7246",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BEST CHOICE MOTORS",
+      "id": "918039",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BEST ONE OF LAFAYETTE",
+      "id": "1715_7828",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BIG WHEELS CUSTOMS, LLC",
+      "id": "765030",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BILLY'S AUTO REPAIR",
+      "id": "765031",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BLANKENSHIP AUTO CARE",
+      "id": "765032",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "BOB BOURFF AUTO BODY",
+      "id": "765240",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "BRAD'S MOTOR MARKETPLACE",
+      "id": "1715_7097",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BROWN'S AUTO COSMETICS",
+      "id": "1072326",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BUDREAU BODY SHOP",
+      "id": "765252",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BURGNER GARAGE",
+      "id": "765034",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "BUTTON DODGE",
+      "id": "765036",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "BYRIDER SALES OF INDIANA",
+      "id": "765037",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CALIBER COLLISION CREASY",
+      "id": "765038",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CALIBER COLLISION FARABEE DR",
+      "id": "765039",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CALIBER COLLISION LEBANON",
+      "id": "765040",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CALIBER COLLISION LOGANSPORT",
+      "id": "1159655",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CALIBER COLLISION WEST LAFAYETTE",
+      "id": "765041",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CALIFORNIA BODY SHOP",
+      "id": "765241",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CAR X AUTO SERVICE INC LAF.",
+      "id": "765042",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CAR X AUTO SERVICE INC WEST LAF.",
+      "id": "765043",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CARS TO GO",
+      "id": "1715_5155",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CARTECH OF LAFAYETTE",
+      "id": "765044",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CASS COUNTY TIRE INC",
+      "id": "1715_7154",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CHAMPION AUTO BODY",
+      "id": "765250",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CHARIOT COLLISION CENTER",
+      "id": "984512",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CHATO'S MECHANIC SERVICE",
+      "id": "765242",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CHICAGO MUFFLER & BRAKES",
+      "id": "765243",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CHRISTI HUBLER AUTOMOTIVE",
+      "id": "1715_7927",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CITY SERVICE CENTER",
+      "id": "765247",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "CLEARVIEW AUTO GLASS",
+      "id": "765244",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "COLLISION CORNER",
+      "id": "765048",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "COLLISION RESTORATION LLC",
+      "id": "1715_7938",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "COLLISION WORLD",
+      "id": "765050",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "COLLISIONS UNLIMITED INC",
+      "id": "1715_7992",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "COMPLETE AUTO AND TIRE",
+      "id": "765051",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "CONCORD AUTO SALES",
+      "id": "765052",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DADACZ SERVICE CENTER",
+      "id": "1715_7238",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "D'ANGELES AUTO SERVICES",
+      "id": "765054",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DAVE'S AUTO REPAIR",
+      "id": "765067",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DAVE'S BODY SHOP & TOWING",
+      "id": "765055",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DE VAULT'S BODY SHOP",
+      "id": "1715_1124",
+      "chargeAcct": "Yes",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DEAN'S AUTO SERVICES",
+      "id": "765057",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DEFOUW CHEVROLET BMW",
+      "id": "1715_7034",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DEFOUW NISSAN OF LAFAYETTE",
+      "id": "1715_7713",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DEL REAL AUTO CONNECTION",
+      "id": "765068",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DEL REAL AUTO SALES",
+      "id": "765060",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DEL REAL FRANKFORT",
+      "id": "765061",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DENNYS BODY SHOP",
+      "id": "1715_7432",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DENNY'S BODY SHOP VEEDERSBURG",
+      "id": "1715_5112",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DONATO & SONS MOTORS",
+      "id": "765064",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "DONERIGHT AUTOMOTIVE REPAIR",
+      "id": "765264",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DOWELL AUTOMOTIVE REPAIR INC.",
+      "id": "765065",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DOWN THE ROAD MOTORS",
+      "id": "765066",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DS CUSTOMZ & MAINTENANCE",
+      "id": "765265",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "DUBBER'S ALIGNMENT & AUTO REPAIR",
+      "id": "1715_7330",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "EAGLE AUTOMOTIVE CENTER",
+      "id": "765082",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "EAST POINT MUFFLER & BRAKES",
+      "id": "765083",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "EAST SIDE MOTORS",
+      "id": "765084",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ELSTON AUTO REPAIR",
+      "id": "765085",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ELTOLIZMA AUTO SALES",
+      "id": "765086",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ENTERPRISE RENTAL",
+      "id": "1715_7670",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ERIKS CHEVROLET",
+      "id": "1715_7237",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ERNIE'S B.W.C. AUTO CARE CENTER",
+      "id": "765089",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ESSERMAN TIRE",
+      "id": "1715_7689",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "FARNEY AUTO PARTS",
+      "id": "1715_5227",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "FIRESTONE TIRE & SERVICE",
+      "id": "1715_7047",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "FLATLINE AUTO",
+      "id": "765093",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "FRANKIE'S GARAGE",
+      "id": "765094",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "FROEDGES INC",
+      "id": "1715_6939",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GAETA AUTO SALES",
+      "id": "765096",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "GARCIA'S AUTO SALES",
+      "id": "765097",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "GERBER COLLISION FAIRFIELD",
+      "id": "1715_7301",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GERBER COLLISION FARABEE",
+      "id": "1715_7299",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GILLILAND MOTORS",
+      "id": "1715_7026",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GOLD ONE AUTO",
+      "id": "765266",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GOULD BODY AND PAINT INC",
+      "id": "1715_6865",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GTA AUTO SALES",
+      "id": "765102",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GUARANTEE TRANS",
+      "id": "765103",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GUNTERS INC",
+      "id": "765104",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "GUTWEIN MOTOR COMPANY",
+      "id": "1715_5110",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HC'S GARAGE AND TIRE MART",
+      "id": "765106",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HERRERAS AUTO REPAIR",
+      "id": "765107",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HERRERAS BODY SHOP",
+      "id": "765108",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "HRI RESTORATION AND REPAIR",
+      "id": "765109",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HUBBARD AUTO CENTER INC",
+      "id": "1715_7343",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HUFTY ALIGNMENT & RADIATOR SERVICES",
+      "id": "765111",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "HUGHES ENTERPRISES",
+      "id": "765112",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "INDY HYUNDAI",
+      "id": "1715_7229",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "INDY MUFFLER AND AUTO REPAIR",
+      "id": "765113",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "INTERSTATE AUTOMOTIVE SERVICES",
+      "id": "765114",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "J&R AUTO BODY",
+      "id": "765115",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JEFF NEAL PAINT & BODY",
+      "id": "765116",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JERRY'S BODY SHOP",
+      "id": "1715_5071",
+      "chargeAcct": "Yes",
+      "taxExempt": "No"
+    },
+    {
+      "name": "JIM DOBSON FORD",
+      "id": "1715_5244",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JIM FARMERS AUTO MALL",
+      "id": "1715_5302",
+      "chargeAcct": "Yes",
+      "taxExempt": "No"
+    },
+    {
+      "name": "JIM'S BODY SHOP",
+      "id": "765121",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "JIM'S GARAGE INC",
+      "id": "1715_5072",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JM PRO AUTOMOTIVE",
+      "id": "765267",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JONS BODY SHOP",
+      "id": "1715_7073",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JTR REPAIR INC",
+      "id": "1715_7662",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "JTR REPAIR LEBANON",
+      "id": "765245",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "KANTZ AUTO & TRAILER SOLUTIONS",
+      "id": "765125",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "KINGDOM AUTO GROUP",
+      "id": "765126",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "KMA TRUCK & AUTO",
+      "id": "765127",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "KT CONNECTORS",
+      "id": "765128",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "L&M REPAIR",
+      "id": "765101",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "L&P BODY SHOP",
+      "id": "1715_7700",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE AUTO PLUS",
+      "id": "765131",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE AUTO SALES",
+      "id": "765133",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE FORD LINCOLN",
+      "id": "765134",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE FLEET SERVICES",
+      "id": "1175170",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE GMC",
+      "id": "765135",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LAFAYETTE VOLKSWAGON/ AUDI",
+      "id": "765270",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LEWIS MOTOR SALES",
+      "id": "1715_7959",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "LOPEZ AUTO SERVICE",
+      "id": "765137",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "LYONS ALIGNMENT",
+      "id": "765139",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "M&M AUTO REPAIR",
+      "id": "765140",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "MAGIC GLASS HOLDINGS LLC",
+      "id": "1715_5089",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MAGIC ROOSTER",
+      "id": "765132",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "MANN CHEVROLET GMC",
+      "id": "1715_6719",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MANOLO AUTO SALES",
+      "id": "765143",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MARTIN'S BODY AND PAINT",
+      "id": "1715_7846",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MCGONIGAL BUICK GMC",
+      "id": "1715_5993",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIDAS",
+      "id": "967432",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIDAS LEBANON",
+      "id": "765147",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIDWEST MUFFLERS",
+      "id": "765151",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "MIKE ALSOP CHEVROLET-BUICK",
+      "id": "1715_7509",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIKE ALSOP ROCKVILLE CHEVROLET",
+      "id": "1079643",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIKE ALSOP ST RD 38",
+      "id": "765149",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIKE ANDERSON CHRYSLER LOGANSPORT",
+      "id": "1715_5390",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIKE ANDERSON GM SUPERTORE",
+      "id": "1715_7305",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIKE ANDERSON ROCHESTER",
+      "id": "1715_7387",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MILLER'S BODY AND CHASSIS",
+      "id": "1715_5118",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MILLER'S BODY SHOP AND TOWING",
+      "id": "1715_6983",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MIRANDA'S",
+      "id": "765260",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MODEL 1 CHEVROLET",
+      "id": "1715_7979",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "Moffitt's Collision & Auto Painting",
+      "id": "765156",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MOMAX AUTO REPAIR",
+      "id": "765157",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MOMAX AUTO SALES",
+      "id": "765158",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MONTICELLO MOTORS",
+      "id": "1715_7195",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MOONSTAR AUTO SALES",
+      "id": "765160",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MOOZ MOTORS",
+      "id": "765161",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "MOTOR WISE OF KOKOMO",
+      "id": "765162",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MOTORS SANTA FE A/S",
+      "id": "765163",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "MR & MRS TIRE",
+      "id": "1715_7277",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "MUNOZ AUTO SALES",
+      "id": "765165",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "NAVARRETE AUTO SALES",
+      "id": "765167",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "NEAL TIRE & AUTO SERVICE",
+      "id": "1715_6971",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "NICK'S AUTO NOOK",
+      "id": "765169",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "OLIVER DYNAMIC",
+      "id": "765261",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "OLSON PAINT AND BODY",
+      "id": "765170",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "PADFIELD'S AUTO BODY & PAINT SHOP",
+      "id": "1161787",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PAUL'S AUTO REPAIR & TOWING",
+      "id": "765172",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PEP BOYS",
+      "id": "765173",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PERFORMANCE AUTOMOTIVE",
+      "id": "1715_7937",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PERFORMANCE COLLISION CENTER",
+      "id": "1715_7881",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PIT STOP AUTO SERVICE LLC",
+      "id": "1161010",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "POMPS TIRE",
+      "id": "1715_7207",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PRIME BODY & PAINT CRAWFORDSVILLE",
+      "id": "1715_7346",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PRIME BODY & PAINT SOUTH",
+      "id": "1715_7345",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PRIME BODY AND PAINT RASCAL",
+      "id": "1715_7802",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PRO SOURCE AUTO SALES & SERVICE",
+      "id": "765180",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "PURDUE TRANSPORTATION",
+      "id": "765148",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RABBIT TRACK REPAIR",
+      "id": "765182",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RANDO'S ROD & CUSTOMS",
+      "id": "765183",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RAY SKILLMAN WESTSIDE IMPORTS",
+      "id": "1715_7185",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RESURRECTION AUTOMOTIVE",
+      "id": "765186",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "RHODES AUTO",
+      "id": "765188",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RICK GALVIN AUTO SALES",
+      "id": "765189",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "RIGHT WAY AUTOMOTIVE",
+      "id": "765253",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RNR TIRE EXPRESS",
+      "id": "765190",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ROBERTO'S BODY SHOP",
+      "id": "765191",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ROD'S MUFFLER & MORE",
+      "id": "765192",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ROHRMAN BODY SHOP",
+      "id": "1715_6850",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ROHRMAN HONDA",
+      "id": "1715_7060",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ROHRMAN KIA",
+      "id": "1715_7049",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ROHRMAN TOYOTA",
+      "id": "1715_7137",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ROTHROCK TIRE",
+      "id": "765198",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ROUTE 52 AUTO",
+      "id": "765199",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "ROYAL AUTOMOTIVE GROUP",
+      "id": "1092285",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "RW COLLISION CENTER",
+      "id": "765200",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "SAAVEDRA AUTO REPAIR",
+      "id": "765203",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "SAFELITE AUTO GLASS",
+      "id": "1715_7699",
+      "chargeAcct": "Yes",
+      "taxExempt": "No"
+    },
+    {
+      "name": "SANDS BODY SHOP",
+      "id": "765202",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "SEDALIA AUTO REPAIR",
+      "id": "765204",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "SINGH AUTO GROUP",
+      "id": "765205",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "SPECIAL TOUCH COLLISION",
+      "id": "1715_7178",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "SPEED SHOP MOTORSPORTS",
+      "id": "765207",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "SPEEDWAY AUTO",
+      "id": "765208",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "SURBS TIRE",
+      "id": "765209",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "SYNESAEL GARAGE",
+      "id": "1715_7166",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "T&S MOTORS",
+      "id": "765248",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TAYLOR TRANSMISSION",
+      "id": "765262",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "THOMPSON BROS. AUTO SALES",
+      "id": "1715_5102",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TIM'S AUTO BODY & SALES",
+      "id": "1053659",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TIME 4 RIDE",
+      "id": "765268",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TIRE BARN WAREHOUSE",
+      "id": "765213",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "TIRE SPECIALTY SAFETY CENTER",
+      "id": "1715_5067",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TONY'S AUTOMOTIVE REPAIR",
+      "id": "765215",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TONY'S MECHANICS",
+      "id": "765216",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "TREJO SALES AND SERVICE",
+      "id": "765217",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "TT AUTO SHOP",
+      "id": "765251",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TWIN CITY DODGE CHRYSLER INC",
+      "id": "1715_7140",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "TWIN LAKES CHRYSLER DODGE JEEP RAM",
+      "id": "1715_5076",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "UNION STREET AUTO SALES",
+      "id": "765220",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "UNIQUE AUTOMOTIVE",
+      "id": "765221",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "UNIVERSITY MOTORS",
+      "id": "765223",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "US 24 AUTO",
+      "id": "765222",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "VAZCAR MOTORS",
+      "id": "765255",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "VELAZQUEZ AUTO SERVICE",
+      "id": "765224",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WAGNER BODY SHOP",
+      "id": "765225",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "WALKER'S AUTO REPAIR",
+      "id": "765226",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "WALTER'S AUTO SALES INC.",
+      "id": "1154048",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WALTER'S AUTO IMPORTS REPAIR",
+      "id": "1715_5687",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WALT'S SERVICE CENTER",
+      "id": "1715_6884",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WATSON TIRE & AUTO SERVICE",
+      "id": "1715_7172",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WAYNE'S AUTO REPAIR",
+      "id": "765263",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "WEISE SERVICE CENTER",
+      "id": "765230",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WELLS DIESEL",
+      "id": "765231",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "WHISTLE STOP BODY SHOP",
+      "id": "765232",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    },
+    {
+      "name": "WILSON'S AUTO TECH",
+      "id": "1715_5136",
+      "chargeAcct": "Yes",
+      "taxExempt": "No"
+    },
+    {
+      "name": "YORK CHRYSLER DODGE JEEP INC",
+      "id": "1715_7766",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ZEIGLER OF LAFAYETTE",
+      "id": "943135",
+      "chargeAcct": "Yes",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "ZIMS AUTO SALES & SERVICE",
+      "id": "765234",
+      "chargeAcct": "No",
+      "taxExempt": "Yes"
+    },
+    {
+      "name": "765 COLLISION REPAIR",
+      "id": "765249",
+      "chargeAcct": "No",
+      "taxExempt": "No"
+    }
+  ],
+  "uploadedAt": "4/29/2026, 8:52:33 AM",
+  "savedAt": "2026-04-29T12:52:33.274Z"
+}
