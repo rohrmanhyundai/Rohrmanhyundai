@@ -19,7 +19,9 @@
     "size": 831398,
     "uploadedBy": "Kai",
     "uploadedAt": "2026-04-29T13:05:24.224Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "parts"
+    ]
   },
   {
     "id": "mof416r5kzsg",
