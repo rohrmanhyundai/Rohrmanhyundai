@@ -366,7 +366,9 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": true
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": true,
       "techChatAccess": true
