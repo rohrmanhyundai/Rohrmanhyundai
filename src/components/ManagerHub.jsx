@@ -92,7 +92,7 @@ export default function ManagerHub({
       {/* Top bar */}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
-          <div className="adv-title">Parts Hub</div>
+          <div className="adv-title">Manager Hub</div>
           <div className="adv-sub">{currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
