@@ -38,7 +38,8 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": true
       },
       "chatAccess": true,
       "techChatAccess": true
