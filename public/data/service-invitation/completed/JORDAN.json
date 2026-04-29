@@ -78,7 +78,8 @@
     "phone": "765-444-4444",
     "notes": "customer is happy ",
     "submittedAt": "2026-04-27T13:44:07.526Z",
-    "submittedBy": "ADMIN"
+    "submittedBy": "ADMIN",
+    "managerDeleted": true
   },
   {
     "consultant": "JORDAN TROXEL",
