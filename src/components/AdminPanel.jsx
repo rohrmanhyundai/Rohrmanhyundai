@@ -94,6 +94,7 @@ const PAGE_ACCESS = [
   { key: 'workInProgress',     label: '🔧 Work in Progress',         group: 'Tech' },
   { key: 'chargeAccountList', label: '💳 Charge Account List',      group: 'Manager', defaultOff: true },
   { key: 'partsHub',           label: '📦 Parts Hub',               group: 'Parts' },
+  { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
