@@ -126,7 +126,7 @@
       "role": "parts",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
+        "advisorCalendar": true,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
@@ -135,6 +135,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
+        "chargeAccountList": false,
         "partsHub": true
       },
       "chatAccess": true,
