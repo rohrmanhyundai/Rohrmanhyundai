@@ -87,7 +87,24 @@
     {
       "username": "Jason",
       "password": "jasonT",
-      "role": "admin"
+      "role": "admin",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Gaven",
