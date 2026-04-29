@@ -1,7 +1,7 @@
 {
   "id": "mojcsbjsnikm",
   "createdAt": "2026-04-29T01:05:20.248Z",
-  "updatedAt": "2026-04-29T01:18:32.427Z",
+  "updatedAt": "2026-04-29T01:19:23.273Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "jo dong",
   "customerPhone": "555-555-5555",
@@ -11,8 +11,8 @@
   "vehicleMake": "HYUNDAI",
   "vehicleModel": "Palisade",
   "mileage": "12235",
-  "warrantyCompany": "",
-  "warrantyPhone": "",
+  "warrantyCompany": "AAGI",
+  "warrantyPhone": "8772042242",
   "claimNumber": "",
   "laborRate": "175",
   "laborTime": "2.2",
@@ -39,14 +39,14 @@
   "towing": "126",
   "sublet": "123",
   "notes": "",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-04-29",
   "waiting": false,
   "waitingDate": "",
   "paid": false,
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-04-29"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
