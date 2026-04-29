@@ -245,6 +245,50 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
     setForm(f => ({ ...f, parts: f.parts.map(p => p.id === id ? { ...p, [key]: val } : p) }));
   }
 
+  const partLookupTimers = useRef({});
+  const [lookingUp, setLookingUp] = useState({});
+
+  function handlePartNumberChange(id, raw) {
+    const val = raw.toUpperCase();
+    setPart(id, 'partNumber', val);
+
+    clearTimeout(partLookupTimers.current[id]);
+    if (val.replace(/[-\s]/g, '').length < 8) return;
+
+    partLookupTimers.current[id] = setTimeout(async () => {
+      setLookingUp(s => ({ ...s, [id]: true }));
+      try {
+        const encoded = encodeURIComponent(
+          `https://www.hyundaipartsdeal.com/search.html?q=${encodeURIComponent(val)}`
+        );
+        const res = await fetch(`https://api.allorigins.win/raw?url=${encoded}`);
+        if (!res.ok) throw new Error('fetch failed');
+        const html = await res.text();
+
+        // Pull first product title from search results
+        const m = html.match(/<a[^>]+class="[^"]*product[^"]*name[^"]*"[^>]*>([^<]+)<\/a>/i)
+          || html.match(/class="[^"]*part[^"]*name[^"]*"[^>]*>([^<]+)</i)
+          || html.match(/<span[^>]+itemprop="name"[^>]*>([^<]{4,80})<\/span>/i)
+          || html.match(/<h1[^>]*>([^<]{4,80})<\/h1>/i);
+
+        if (m) {
+          const desc = m[1].trim().replace(/\s+/g, ' ');
+          // Only fill if description is still empty (don't overwrite user edits)
+          setForm(f => ({
+            ...f,
+            parts: f.parts.map(p =>
+              p.id === id && !p.description ? { ...p, description: desc } : p
+            ),
+          }));
+        }
+      } catch {
+        // Silent fail — just leave description blank
+      } finally {
+        setLookingUp(s => ({ ...s, [id]: false }));
+      }
+    }, 700);
+  }
+
   const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(form);
 
   return (
@@ -320,10 +364,16 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             </div>
             {form.parts.map(p => (
               <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 72px 110px 36px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-                <input value={p.partNumber} onChange={e => setPart(p.id, 'partNumber', e.target.value)}
+                <input value={p.partNumber} onChange={e => handlePartNumberChange(p.id, e.target.value)}
                   placeholder="Part #" style={{ ...inpSt, fontFamily: 'monospace', fontSize: 13 }} />
-                <input value={p.description} onChange={e => setPart(p.id, 'description', e.target.value)}
-                  placeholder="Part description" style={inpSt} />
+                <div style={{ position: 'relative' }}>
+                  <input value={p.description} onChange={e => setPart(p.id, 'description', e.target.value)}
+                    placeholder={lookingUp[p.id] ? 'Looking up…' : 'Part description'}
+                    style={{ ...inpSt, width: '100%', paddingRight: lookingUp[p.id] ? 32 : undefined }} />
+                  {lookingUp[p.id] && (
+                    <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: '#64748b' }}>⏳</span>
+                  )}
+                </div>
                 <input type="number" value={p.qty ?? '1'} min="1" step="1"
                   onChange={e => setPart(p.id, 'qty', e.target.value)}
                   style={{ ...inpSt, textAlign: 'center' }} />
