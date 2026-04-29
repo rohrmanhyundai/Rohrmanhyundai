@@ -30,9 +30,9 @@
     "id": "mokkzm00im8",
     "ro": "777013",
     "roDate": "",
-    "jobDesc": "",
+    "jobDesc": "BATTERY DRAIN BEING DIAG WORKING WITH TL",
     "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null
+    "etaCompletion": "30",
+    "partsArrived": false
   }
 ]
