@@ -38,10 +38,11 @@ const emptyAwaiting = () => ({
 
 export default function WorkInProgress({ currentUser, currentRole, techList, onBack, backLabel, chatUsers }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
-  const isManager  = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const isTech     = currentRole === 'technician';
-  const canDeleteAwaiting = isManager || currentRole === 'advisor' || currentRole === 'warranty';
-  const canAssignAwaiting = !isTech; // techs only see "Claim It"
+  const isManager        = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const isTech           = currentRole === 'technician';
+  const isManagerOrAdvisor = isManager || currentRole === 'advisor';
+  const canDeleteAwaiting  = isManagerOrAdvisor;
+  const canAssignAwaiting  = isManagerOrAdvisor;
   const [activeTech, setActiveTech] = useState(
     canSeeTabs ? (techList[0] || currentUser) : currentUser
   );
@@ -440,10 +441,12 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1 }}>🚗 Cars Awaiting Technician</div>
                   <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Unassigned repair orders — claim or assign to a tech</div>
                 </div>
-                <button
-                  onClick={addAwaitingRow}
-                  style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
-                >+ Add</button>
+                {!isTech && (
+                  <button
+                    onClick={addAwaitingRow}
+                    style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                  >+ Add</button>
+                )}
               </div>
 
               {awaitingLoading ? (
