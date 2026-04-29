@@ -172,6 +172,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               🔧 Work in Progress
             </button>
           )}
+          {canSee(userPages, currentRole, 'tireQuote') && (
+            <button onClick={() => window.open('https://hyundaitirecenter.com/InitDealer?dealer=IN007', '_blank')} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
+              🛞 Tire Quote
+            </button>
+          )}
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
       </div>
