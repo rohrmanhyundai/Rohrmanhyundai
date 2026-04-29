@@ -136,7 +136,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           )}
           {canSee(userPages, currentRole, 'advisorRankBoard') && (
             <button
-              onClick={() => { navigator.clipboard.writeText('INFINITEPURSUIT').catch(() => {}); window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank'); }}
+              onClick={() => { navigator.clipboard.writeText('infinitepursuit').catch(() => {}); window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank'); }}
               style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}
             >
               🏆 Advisor Rank Board

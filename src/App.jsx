@@ -16,7 +16,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 
 function openRankBoard() {
-  navigator.clipboard.writeText('INFINITEPURSUIT').catch(() => {});
+  navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages } from './utils/github';
