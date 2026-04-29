@@ -87,7 +87,24 @@
     {
       "username": "Jason",
       "password": "jasonT",
-      "role": "admin"
+      "role": "admin",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": true,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Gaven",
@@ -103,7 +120,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -112,13 +132,45 @@
       "username": "Austin",
       "password": "dealerplayguy",
       "role": "admin",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Brandon",
       "password": "bigB",
       "role": "admin",
-      "canEditDashboard": true
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     },
     {
       "username": "Devin",
@@ -136,7 +188,8 @@
         "originalOwner": true,
         "workInProgress": true,
         "chargeAccountList": false,
-        "partsHub": true
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -155,7 +208,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -174,7 +230,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -193,7 +252,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -212,7 +274,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -231,7 +296,10 @@
         "documentLibrary": true,
         "aftermarketWarranty": false,
         "originalOwner": true,
-        "workInProgress": true
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -242,18 +310,20 @@
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": true,
+        "advisorCalendar": false,
         "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
         "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": false,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true
       },
-      "chatAccess": true,
+      "chatAccess": false,
       "techChatAccess": true
     },
     {
@@ -272,6 +342,8 @@
         "originalOwner": true,
         "workInProgress": true,
         "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
@@ -294,7 +366,9 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": true
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": true,
       "techChatAccess": true
@@ -315,7 +389,8 @@
         "originalOwner": false,
         "workInProgress": true,
         "chargeAccountList": true,
-        "partsHub": true
+        "partsHub": true,
+        "tireQuote": true
       },
       "chatAccess": true,
       "techChatAccess": true
