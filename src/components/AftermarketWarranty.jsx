@@ -36,6 +36,8 @@ const emptyForm = () => ({
   rental: null,
   towing: null,
   sublet: null,
+  tireTax: null,
+  tireDisposal: null,
   notes: '',
   approved: false,
   approvedDate: '',
@@ -60,9 +62,12 @@ function calcTotals(form) {
   const rental = num(form.rental);
   const towing = num(form.towing);
   const sublet = num(form.sublet);
-  const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet - deductible;
+  const tireTax = num(form.tireTax);
+  const tireDisposal = num(form.tireDisposal);
+  const tireFees = tireTax + tireDisposal;
+  const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet + tireFees - deductible;
   const totalDue = deductible;
-  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue };
+  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, tireFees, totalClaim, totalDue };
 }
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -364,7 +369,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             <F label="Deductible ($)" value={form.deductible} onChange={v => set('deductible', v)} type="number" placeholder="0.00" />
           </div>
 
-          {/* Additional charges — Rental / Towing / Sublet */}
+          {/* Additional charges — Rental / Towing / Sublet / Tire Tax */}
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Additional Charges</div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -398,10 +403,42 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                   </div>
                 );
               })}
+
+              {/* Tire Tax — expands into Tire Tax + Tire Disposal fields */}
+              {(() => {
+                const tireTaxColor = '#4ade80';
+                const tireTaxBg = 'rgba(74,222,128,';
+                const tireTaxBorder = 'rgba(74,222,128,';
+                const active = form.tireTax !== null && form.tireTax !== undefined;
+                const total = num(form.tireTax) + num(form.tireDisposal);
+                return (
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: active ? `${tireTaxBg}0.1)` : 'rgba(255,255,255,0.03)', border: `1px solid ${active ? `${tireTaxBorder}0.4)` : 'rgba(255,255,255,0.12)'}`, borderRadius: 10, padding: '8px 14px', transition: 'all .15s' }}>
+                    <button
+                      onClick={() => { set('tireTax', active ? null : ''); if (active) set('tireDisposal', null); }}
+                      style={{ background: active ? `${tireTaxBg}0.25)` : 'rgba(255,255,255,0.06)', border: `1px solid ${active ? `${tireTaxBorder}0.5)` : 'rgba(255,255,255,0.15)'}`, color: active ? tireTaxColor : '#64748b', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, letterSpacing: 0.5, transition: 'all .15s', whiteSpace: 'nowrap' }}
+                    >TIRE TAX</button>
+                    {active && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, width: 80 }}>Tire Tax</span>
+                          <span style={{ fontSize: 12, color: '#64748b' }}>$</span>
+                          <input type="text" inputMode="decimal" value={form.tireTax ?? ''} onChange={e => set('tireTax', e.target.value)} placeholder="0.00" autoFocus style={{ ...inpSt, width: 90, padding: '5px 8px', fontSize: 13, color: tireTaxColor, fontWeight: 700 }} />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, width: 80 }}>Tire Disposal</span>
+                          <span style={{ fontSize: 12, color: '#64748b' }}>$</span>
+                          <input type="text" inputMode="decimal" value={form.tireDisposal ?? ''} onChange={e => set('tireDisposal', e.target.value)} placeholder="0.00" style={{ ...inpSt, width: 90, padding: '5px 8px', fontSize: 13, color: tireTaxColor, fontWeight: 700 }} />
+                        </div>
+                        {total > 0 && <div style={{ fontSize: 11, color: tireTaxColor, fontWeight: 700, textAlign: 'right' }}>Total: {fmtDol(total)}</div>}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
-            {(num(form.rental) > 0 || num(form.towing) > 0 || num(form.sublet) > 0) && (
+            {(num(form.rental) > 0 || num(form.towing) > 0 || num(form.sublet) > 0 || num(form.tireTax) + num(form.tireDisposal) > 0) && (
               <div style={{ marginTop: 8, fontSize: 12, color: '#64748b' }}>
-                Additional total: <span style={{ color: '#a78bfa', fontWeight: 700 }}>{fmtDol(num(form.rental) + num(form.towing) + num(form.sublet))}</span>
+                Additional total: <span style={{ color: '#a78bfa', fontWeight: 700 }}>{fmtDol(num(form.rental) + num(form.towing) + num(form.sublet) + num(form.tireTax) + num(form.tireDisposal))}</span>
               </div>
             )}
           </div>
@@ -413,6 +450,8 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             {num(form.rental) > 0 && <TotalBox label="Rental" value={fmtDol(num(form.rental))} color="#a78bfa" />}
             {num(form.towing) > 0 && <TotalBox label="Towing" value={fmtDol(num(form.towing))} color="#fb923c" />}
             {num(form.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(num(form.sublet))} color="#6ee7f9" />}
+            {num(form.tireTax) > 0 && <TotalBox label="Tire Tax" value={fmtDol(num(form.tireTax))} color="#4ade80" />}
+            {num(form.tireDisposal) > 0 && <TotalBox label="Tire Disposal" value={fmtDol(num(form.tireDisposal))} color="#4ade80" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
             <TotalBox label="Total Due by Customer" value={fmtDol(totalDue)} color="#fbbf24" big />
           </div>
@@ -463,7 +502,7 @@ function PrintRow({ label, value, bold = false }) {
 }
 
 function ContractDetail({ contract, onEdit, onBack }) {
-  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue } = calcTotals(contract);
+  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
   const pdfRef = useRef(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -585,7 +624,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
 
       {/* Print-only document (also used for PDF capture via ref) */}
       <div className="amw-print-doc" ref={pdfRef}>
-        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} rental={rental} towing={towing} sublet={sublet} totalClaim={totalClaim} totalDue={totalDue} date={date} />
+        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} rental={rental} towing={towing} sublet={sublet} tireTax={tireTax} tireDisposal={tireDisposal} totalClaim={totalClaim} totalDue={totalDue} date={date} />
       </div>
 
       {/* Screen preview (styled like the print doc but in dark theme) */}
@@ -670,6 +709,8 @@ function ContractDetail({ contract, onEdit, onBack }) {
             {num(contract.rental) > 0 && <TotalBox label="Rental" value={fmtDol(rental)} color="#a78bfa" />}
             {num(contract.towing) > 0 && <TotalBox label="Towing" value={fmtDol(towing)} color="#fb923c" />}
             {num(contract.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(sublet)} color="#6ee7f9" />}
+            {tireTax > 0 && <TotalBox label="Tire Tax" value={fmtDol(tireTax)} color="#4ade80" />}
+            {tireDisposal > 0 && <TotalBox label="Tire Disposal" value={fmtDol(tireDisposal)} color="#4ade80" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
             <TotalBox label="Total Due by Customer" value={fmtDol(totalDue)} color="#fbbf24" big />
           </div>
@@ -705,7 +746,7 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 }
 
 // ── Print document (white/light, for actual printing & PDF export) ────────────
-function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, totalClaim, totalDue, date }) {
+function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, totalClaim, totalDue, date }) {
   const isApproved      = !!(contract.approved ?? (contract.status === 'approved'));
   const isWaiting       = !!(contract.waiting  ?? (contract.status === 'waiting'));
   const isPaid          = !!(contract.paid     ?? (contract.status === 'paid'));
@@ -905,6 +946,8 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                   rental > 0 ? { label: 'Rental', value: fmtDol(rental) } : null,
                   towing > 0 ? { label: 'Towing', value: fmtDol(towing) } : null,
                   sublet > 0 ? { label: 'Sublet', value: fmtDol(sublet) } : null,
+                  tireTax > 0 ? { label: 'Tire Tax', value: fmtDol(tireTax) } : null,
+                  tireDisposal > 0 ? { label: 'Tire Disposal', value: fmtDol(tireDisposal) } : null,
                   { label: `Deductible (customer)`, value: `− ${fmtDol(num(contract.deductible))}` },
                 ].filter(Boolean).map((row, i) => (
                   <tr key={row.label} style={{ borderBottom: `1px solid ${PD_BORDER}`, background: i % 2 === 0 ? '#fff' : PD_LIGHT }}>
