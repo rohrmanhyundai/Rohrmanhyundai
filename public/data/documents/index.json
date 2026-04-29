@@ -7,7 +7,9 @@
     "size": 132036,
     "uploadedBy": "Kai",
     "uploadedAt": "2026-04-29T14:48:28.184Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "parts"
+    ]
   },
   {
     "id": "mok641iolugb",
