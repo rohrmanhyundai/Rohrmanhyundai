@@ -189,7 +189,7 @@ tr:last-child td{border-bottom:none}
 .adv-tab-mine{font-size:11px;opacity:.7;font-weight:600}
 
 /* Calendar */
-.adv-cal-wrap{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.adv-cal-wrap{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:18px;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
 .adv-cal-nav{display:flex;align-items:center;gap:20px}
 .adv-cal-month{font-size:28px;font-weight:900;min-width:260px;text-align:center}
 .adv-nav-btn{font-size:24px;padding:4px 16px;line-height:1}
@@ -206,7 +206,7 @@ tr:last-child td{border-bottom:none}
 .adv-loading{color:var(--muted);font-size:14px}
 
 /* Day Form */
-.adv-form-wrap{flex:1;overflow-y:auto;padding:24px 32px}
+.adv-form-wrap{flex:1;overflow-y:auto;padding:24px 32px;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
 .adv-form-header{margin-bottom:18px}
 .adv-form-title{font-size:26px;font-weight:900;text-transform:uppercase;text-align:center;letter-spacing:.04em;margin:0 0 12px}
 .adv-form-meta{display:flex;gap:40px;font-size:16px;justify-content:center;color:var(--muted)}
@@ -264,7 +264,7 @@ tr:last-child td{border-bottom:none}
 /* ── Document Library ─────────────────────────────────────────────────────── */
 .doc-lib-page{display:flex;flex-direction:column;height:100vh;background:var(--bg);color:var(--text)}
 .doc-lib-topbar-title{font-size:20px;font-weight:900;color:var(--cyan);letter-spacing:.04em}
-.doc-lib-wrap{flex:1;overflow-y:auto;padding:28px 36px;display:flex;flex-direction:column;gap:28px;max-width:900px;width:100%;margin:0 auto}
+.doc-lib-wrap{flex:1;overflow-y:auto;padding:28px 36px;display:flex;flex-direction:column;gap:28px;max-width:900px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
 .doc-lib-panel-title{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);margin-bottom:14px}
 .doc-lib-count{color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0}
 /* Upload panel */
@@ -315,4 +315,26 @@ html, body {
 @media (min-width: 1200px) {
   .login input { width: 68px !important; }
   #password { width: 84px !important; }
+}
+
+/* Mobile touch-scroll fix — Android (SM-A546U etc) needs these on every
+   overflow:auto container inside a fixed/overflow:hidden parent */
+@media (max-width: 900px) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  [style*="overflow-y: auto"],
+  [style*="overflowY: auto"],
+  [style*="overflow: auto"] {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Prevent the scaled stage from eating touch events on mobile */
+  .stage {
+    touch-action: pan-y pinch-zoom;
+  }
+  /* Ensure adv-page itself allows inner scroll */
+  .adv-page {
+    touch-action: pan-y;
+  }
 }
