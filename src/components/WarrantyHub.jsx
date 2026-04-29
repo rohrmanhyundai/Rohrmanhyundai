@@ -34,6 +34,15 @@ const NAV_BUTTONS = [
     color: '#6ee7f9',
     prop: 'onDocumentLibrary',
   },
+  {
+    key: 'tireQuote',
+    label: '🛞 Tire Quote',
+    desc: 'Get a tire quote from Hyundai Tire Center',
+    bg: 'linear-gradient(135deg,rgba(74,222,128,.28),rgba(34,197,94,.18))',
+    border: 'rgba(74,222,128,.45)',
+    color: '#4ade80',
+    href: 'https://hyundaitirecenter.com/InitDealer?dealer=IN007',
+  },
 ];
 
 export default function WarrantyHub({
@@ -83,7 +92,7 @@ export default function WarrantyHub({
               {visible.map(btn => (
                 <button
                   key={btn.key}
-                  onClick={handlers[btn.prop]}
+                  onClick={btn.href ? () => window.open(btn.href, '_blank') : handlers[btn.prop]}
                   style={{
                     background: btn.bg,
                     border: `1px solid ${btn.border}`,
