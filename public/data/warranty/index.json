@@ -1,5 +1,47 @@
 [
   {
+    "id": "mohj2bbx3hmm",
+    "createdAt": "2026-04-27T18:25:31.869Z",
+    "updatedAt": "2026-04-29T12:30:54.242Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Emily N Warren",
+    "customerPhone": "7655430974",
+    "repairOrder": "777084",
+    "vin": "5FNRL5H64GB014404",
+    "vehicleYear": "2016",
+    "vehicleMake": "HONDA",
+    "vehicleModel": "Odyssey",
+    "mileage": "198199",
+    "warrantyCompany": "Wheelz",
+    "warrantyPhone": "",
+    "claimNumber": "590337",
+    "laborRate": "170",
+    "laborTime": "2.2",
+    "diagnosisTime": ".5",
+    "parts": [
+      {
+        "id": "mohj2bbx9n5p",
+        "partNumber": "DL5629-6-11",
+        "description": "REMAN. ALTERNATOR",
+        "qty": "1",
+        "price": "361.68"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "250",
+    "notes": "jordan make sure you the customer signs with Emily Warran. if customer wants to update name call warranty company 1888-442-2886.\n04/28/2026 repair complete and contacted customer.\nCLAIM PAYMENT SENT 04/29/2026 TO DEALERSHIP AND SENT UP TO OFFICE ON 04/30/2026 JERRY.",
+    "approved": false,
+    "approvedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": true,
+    "paymentDate": "2026-04-29",
+    "repairsFinished": true,
+    "repairsFinishedDate": "2026-04-28",
+    "readySubmission": false,
+    "readySubmissionDate": ""
+  },
+  {
     "id": "moixxmhkrs8o",
     "createdAt": "2026-04-28T18:09:33.464Z",
     "updatedAt": "2026-04-29T12:17:02.053Z",
@@ -126,47 +168,5 @@
     "readySubmission": false,
     "readySubmissionDate": "",
     "sublet": "0"
-  },
-  {
-    "id": "mohj2bbx3hmm",
-    "createdAt": "2026-04-27T18:25:31.869Z",
-    "updatedAt": "2026-04-28T15:28:38.896Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Emily N Warren",
-    "customerPhone": "7655430974",
-    "repairOrder": "777084",
-    "vin": "5FNRL5H64GB014404",
-    "vehicleYear": "2016",
-    "vehicleMake": "HONDA",
-    "vehicleModel": "Odyssey",
-    "mileage": "198199",
-    "warrantyCompany": "Wheelz",
-    "warrantyPhone": "",
-    "claimNumber": "590337",
-    "laborRate": "170",
-    "laborTime": "2.2",
-    "diagnosisTime": ".5",
-    "parts": [
-      {
-        "id": "mohj2bbx9n5p",
-        "partNumber": "DL5629-6-11",
-        "description": "REMAN. ALTERNATOR",
-        "qty": "1",
-        "price": "361.68"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "250",
-    "notes": "jordan make sure you the customer signs with Emily Warran. if customer wants to update name call warranty company 1888-442-2886.\n04/28/2026 repair complete and contacted customer.",
-    "approved": false,
-    "approvedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": true,
-    "repairsFinishedDate": "2026-04-28",
-    "readySubmission": false,
-    "readySubmissionDate": ""
   }
 ]
