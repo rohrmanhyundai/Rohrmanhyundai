@@ -42,6 +42,8 @@ const emptyForm = () => ({
   notes: '',
   approved: false,
   approvedDate: '',
+  denied: false,
+  deniedDate: '',
   waiting: false,
   waitingDate: '',
   paid: false,
@@ -122,6 +124,7 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
 const STATUS_BTNS = [
   { key: 'readySubmission', dateKey: 'readySubmissionDate', label: '📋 Ready for Submission', exclusive: true, group: 'status', on: { bg: 'rgba(56,189,248,0.28)',  border: 'rgba(56,189,248,0.65)',  text: '#7dd3fc' }, off: { bg: 'rgba(56,189,248,0.07)',  border: 'rgba(56,189,248,0.28)',  text: '#38bdf8' } },
   { key: 'approved',        dateKey: 'approvedDate',        label: '✅ Approved Claim',        exclusive: true, group: 'status', on: { bg: 'rgba(74,222,128,0.25)',  border: 'rgba(74,222,128,0.6)',   text: '#4ade80' }, off: { bg: 'rgba(74,222,128,0.07)',  border: 'rgba(74,222,128,0.22)',  text: '#4ade80' } },
+  { key: 'denied',          dateKey: 'deniedDate',          label: '❌ Claim Denied',           exclusive: true, group: 'status', on: { bg: 'rgba(251,113,133,0.25)', border: 'rgba(251,113,133,0.6)',  text: '#fb7185' }, off: { bg: 'rgba(251,113,133,0.07)', border: 'rgba(251,113,133,0.22)', text: '#fb7185' } },
   { key: 'repairsFinished', dateKey: 'repairsFinishedDate', label: '🔧 Repairs Finished',      exclusive: true, group: 'status', on: { bg: 'rgba(239,68,68,0.28)',   border: 'rgba(239,68,68,0.65)',   text: '#fca5a5' }, off: { bg: 'rgba(239,68,68,0.07)',   border: 'rgba(239,68,68,0.28)',   text: '#f87171' } },
   { key: 'waiting',         dateKey: 'waitingDate',         label: '⏳ Waiting for Payment',   exclusive: true, group: 'payment', on: { bg: 'rgba(251,191,36,0.25)',  border: 'rgba(251,191,36,0.6)',   text: '#fbbf24' }, off: { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.22)',  text: '#fbbf24' } },
   { key: 'paid',            dateKey: 'paymentDate',         label: '💳 Claim Paid',            exclusive: true, group: 'payment', on: { bg: 'rgba(110,231,249,0.25)', border: 'rgba(110,231,249,0.6)',  text: '#6ee7f9' }, off: { bg: 'rgba(110,231,249,0.07)', border: 'rgba(110,231,249,0.22)', text: '#6ee7f9' } },
@@ -752,6 +755,7 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 // ── Print document (white/light, for actual printing & PDF export) ────────────
 function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, totalClaim, totalDue, date }) {
   const isApproved      = !!(contract.approved ?? (contract.status === 'approved'));
+  const isDenied        = !!contract.denied;
   const isWaiting       = !!(contract.waiting  ?? (contract.status === 'waiting'));
   const isPaid          = !!(contract.paid     ?? (contract.status === 'paid'));
   const isRepairsFinished = !!contract.repairsFinished;
@@ -760,6 +764,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
   const statusBadges = [
     isPaid            && { label: 'CLAIM PAID',            bg: '#0369a1' },
     isWaiting         && { label: 'WAITING FOR PAYMENT',   bg: '#b45309' },
+    isDenied          && { label: 'CLAIM DENIED',           bg: '#9f1239' },
     isApproved        && { label: 'APPROVED',               bg: '#15803d' },
     isRepairsFinished && { label: 'REPAIRS FINISHED',       bg: '#b91c1c' },
     isReadySubmission && { label: 'READY FOR SUBMISSION',   bg: '#0e7490' },
@@ -1130,22 +1135,26 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
                   const isFinished  = !!c.repairsFinished;
                   const isApproved  = !!(c.approved ?? (c.status === 'approved'));
+                  const isDenied    = !!c.denied;
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
                   const isReady     = !!c.readySubmission;
-                  // Only the 3 exclusive buttons affect row background color
-                  const rowBg = isApproved ? 'rgba(34,197,94,0.18)'
+                  const rowBg = isDenied   ? 'rgba(251,113,133,0.18)'
+                    : isApproved ? 'rgba(34,197,94,0.18)'
                     : isReady    ? 'rgba(56,189,248,0.15)'
                     : isFinished ? 'rgba(239,68,68,0.18)' : '';
-                  const rowBgHover = isApproved ? 'rgba(34,197,94,0.28)'
+                  const rowBgHover = isDenied   ? 'rgba(251,113,133,0.28)'
+                    : isApproved ? 'rgba(34,197,94,0.28)'
                     : isReady    ? 'rgba(56,189,248,0.25)'
                     : isFinished ? 'rgba(239,68,68,0.28)' : 'rgba(255,255,255,0.04)';
-                  const rowBorder = isApproved ? '1px solid rgba(34,197,94,0.4)'
+                  const rowBorder = isDenied   ? '1px solid rgba(251,113,133,0.4)'
+                    : isApproved ? '1px solid rgba(34,197,94,0.4)'
                     : isReady    ? '1px solid rgba(56,189,248,0.4)'
                     : isFinished ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.05)';
                   const statusLabel = [
                     isPaid     && '💳 Claim Paid',
                     isWaiting  && '⏳ Waiting',
+                    isDenied   && '❌ Denied',
                     isApproved && '✅ Approved',
                     isReady    && '📋 Submission',
                     isFinished && '🔧 Ready',
