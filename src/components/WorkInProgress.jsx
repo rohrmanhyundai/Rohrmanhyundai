@@ -65,6 +65,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [reassignPickerId, setReassignPickerId] = useState(null); // id of WIP row showing reassign picker
   const [movingId, setMovingId] = useState(null);
   const [awaitingSavingId, setAwaitingSavingId] = useState(null);
+  const [claimConfirm, setClaimConfirm] = useState(null); // { aw, tech } pending confirmation
 
   const load = useCallback(async (tech) => {
     setLoading(true);
@@ -476,7 +477,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                         <div style={{ flex: 1 }}><div style={labelSt}>Job Description</div><div style={{ fontSize: 14, color: '#e2e8f0' }}>{aw.jobDesc || '—'}</div></div>
                       </div>
                       <button
-                        onClick={() => claimAwaiting(aw, currentUser)}
+                        onClick={() => setClaimConfirm({ aw, tech: currentUser })}
                         disabled={movingId === aw.id}
                         style={{ background: 'rgba(74,222,128,.25)', border: '1px solid rgba(74,222,128,.55)', color: '#4ade80', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 900, fontSize: 13 }}
                       >{movingId === aw.id ? '⏳ Moving…' : '✋ Claim It'}</button>
@@ -549,5 +550,31 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
       </div>
       </div>
     </div>
+
+    {/* Claim Confirmation Modal */}
+    {claimConfirm && (
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+        <div style={{ background: '#1e293b', border: '2px solid rgba(251,191,36,.4)', borderRadius: 20, padding: '36px 40px', maxWidth: 420, width: '90%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,.6)' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontWeight: 900, fontSize: 20, color: '#fbbf24', marginBottom: 10 }}>Before You Claim This Job</div>
+          <div style={{ color: '#cbd5e1', fontSize: 15, marginBottom: 8 }}>
+            RO <strong style={{ color: '#f1f5f9' }}>#{claimConfirm.aw.ro || '—'}</strong>
+          </div>
+          <div style={{ color: '#94a3b8', fontSize: 14, marginBottom: 28 }}>
+            Do you have the repair order in hand?
+          </div>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+            <button
+              onClick={() => { claimAwaiting(claimConfirm.aw, claimConfirm.tech); setClaimConfirm(null); }}
+              style={{ background: 'rgba(74,222,128,.25)', border: '2px solid rgba(74,222,128,.6)', color: '#4ade80', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15 }}
+            >✅ Yes, Claim It</button>
+            <button
+              onClick={() => setClaimConfirm(null)}
+              style={{ background: 'rgba(239,68,68,.18)', border: '2px solid rgba(239,68,68,.45)', color: '#f87171', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15 }}
+            >❌ No</button>
+          </div>
+        </div>
+      </div>
+    )}
   );
 }
