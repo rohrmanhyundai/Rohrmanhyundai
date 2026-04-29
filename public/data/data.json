@@ -107,7 +107,7 @@
         "hours_per_ro": 1.4,
         "align": 0.15689999999999998,
         "tires": 0.2159,
-        "valvoline": 0.2851,
+        "valvoline": 0.2404,
         "csi": 923,
         "asr": 0.1841,
         "elr": 0.95,
@@ -150,7 +150,7 @@
         "hours_per_ro": 1.02,
         "align": 0.1364,
         "tires": 0,
-        "valvoline": 0.1364,
+        "valvoline": 0.1304,
         "roh50_hrs_ro": 0.57,
         "csi": 915,
         "asr": 0.11019999999999999,
@@ -236,7 +236,7 @@
       "total_hours": 756.3,
       "align": 0.132625,
       "tires": 0.1888,
-      "valvoline": 0.186775,
+      "valvoline": 0.1741,
       "csi": 935
     },
     "techTotals": {
