@@ -291,6 +291,26 @@
       },
       "chatAccess": true,
       "techChatAccess": true
+    },
+    {
+      "username": "Seth",
+      "password": "seth2026",
+      "role": "parts",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDioYFFYZEgNABitJDgQHABdVXzh2TzIyF2BgejoyIgooKloyeg=="
