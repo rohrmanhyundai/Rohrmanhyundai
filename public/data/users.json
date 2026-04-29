@@ -307,7 +307,7 @@
         "aftermarketWarranty": true,
         "originalOwner": false,
         "workInProgress": true,
-        "chargeAccountList": true
+        "chargeAccountList": false
       },
       "chatAccess": true,
       "techChatAccess": true
