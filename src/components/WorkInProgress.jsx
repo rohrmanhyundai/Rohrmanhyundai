@@ -45,6 +45,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [searchRO, setSearchRO] = useState('');
   const [searchResults, setSearchResults] = useState(null); // null = not searching
   const [searching, setSearching] = useState(false);
+  const [showTechPicker, setShowTechPicker] = useState(false);
+  const [creatingForTech, setCreatingForTech] = useState(null);
 
   const load = useCallback(async (tech) => {
     setLoading(true);
@@ -114,7 +116,21 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
     finally { setSearching(false); }
   }
 
-  function clearSearch() { setSearchRO(''); setSearchResults(null); }
+  function clearSearch() { setSearchRO(''); setSearchResults(null); setShowTechPicker(false); setCreatingForTech(null); }
+
+  async function createForTech(tech) {
+    setCreatingForTech(tech);
+    try {
+      const existing = await loadWipData(tech);
+      const newRow = { ...emptyRow(), ro: searchRO.trim() };
+      const updated = [...existing, newRow];
+      await saveWipData(tech, updated);
+      setActiveTech(tech);
+      setRows(updated);
+      clearSearch();
+    } catch (e) { setError(e.message); }
+    finally { setCreatingForTech(null); }
+  }
 
   const labelSt = { fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
   const backText = backLabel || '← Technician Resources';
@@ -188,10 +204,33 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
         {searchResults !== null && (
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>
-              {searchResults.length === 0
-                ? `No results found for RO# "${searchRO}"`
-                : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for RO# "${searchRO}"`}
+              {searchResults.length === 0 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                  <span style={{ color: '#94a3b8' }}>No results found for RO# &ldquo;{searchRO}&rdquo;</span>
+                  {!showTechPicker && (
+                    <button
+                      onClick={() => setShowTechPicker(true)}
+                      style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '6px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                    >+ Create</button>
+                  )}
+                </div>
+              ) : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for RO# "${searchRO}"`}
             </div>
+            {showTechPicker && searchResults.length === 0 && (
+              <div style={{ background: 'rgba(74,222,128,.07)', border: '1px solid rgba(74,222,128,.25)', borderRadius: 14, padding: '16px 20px', marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>Select Technician</div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {techList.map(tech => (
+                    <button
+                      key={tech}
+                      onClick={() => createForTech(tech)}
+                      disabled={!!creatingForTech}
+                      style={{ background: creatingForTech === tech ? 'rgba(74,222,128,.35)' : 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'all .15s' }}
+                    >{creatingForTech === tech ? '⏳ Adding…' : tech}</button>
+                  ))}
+                </div>
+              </div>
+            )}
             {searchResults.map((r, idx) => (
               <div
                 key={r.id + idx}
