@@ -2,7 +2,7 @@
   {
     "id": "mojcsbjsnikm",
     "createdAt": "2026-04-29T01:05:20.248Z",
-    "updatedAt": "2026-04-29T01:16:28.487Z",
+    "updatedAt": "2026-04-29T01:16:56.053Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "jo dong",
     "customerPhone": "555-555-5555",
@@ -31,7 +31,7 @@
     "deductible": "",
     "rental": "30",
     "towing": "",
-    "sublet": "0.03",
+    "sublet": "",
     "notes": "",
     "approved": false,
     "approvedDate": "",
