@@ -517,6 +517,28 @@ export async function saveWipData(techName, rows) {
   return rows;
 }
 
+// ── Charge Account List ───────────────────────────────────────────────────────
+const CHARGE_ACCOUNT_PATH = 'public/data/charge-accounts.json';
+
+export async function loadChargeAccounts() {
+  try {
+    const data = await readGitHubFile(authHeaders(), CHARGE_ACCOUNT_PATH);
+    if (data && Array.isArray(data.accounts)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/charge-accounts.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
+export async function saveChargeAccounts(accounts, uploadedAt) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  await saveGitHubFile(headers, CHARGE_ACCOUNT_PATH, { accounts, uploadedAt, savedAt: new Date().toISOString() }, `Update charge account list ${new Date().toISOString()}`);
+}
+
 // ── Tech Group Chat ───────────────────────────────────────────────────────────
 const TECH_CHAT_PATH = 'public/data/tech-chat/messages.json';
 

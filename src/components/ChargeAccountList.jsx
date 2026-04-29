@@ -1,15 +1,5 @@
-import React, { useState, useRef } from 'react';
-
-const STORAGE_KEY = 'chargeAccountListV1';
-const UPLOAD_TS_KEY = 'chargeAccountUploadedAt';
-
-// ── Persist helpers ────────────────────────────────────────────────────────────
-function loadSaved() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-}
-function persist(accounts) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts));
-}
+import React, { useState, useRef, useEffect } from 'react';
+import { loadChargeAccounts, saveChargeAccounts } from '../utils/github';
 
 // ── PDF.js – loaded from CDN on first use ─────────────────────────────────────
 let pdfjsPromise = null;
@@ -119,16 +109,29 @@ function parseAccounts(lines) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function ChargeAccountList({ onBack }) {
-  const [accounts, setAccounts]   = useState(loadSaved);
-  const [loading, setLoading]     = useState(false);
+  const [accounts, setAccounts]   = useState([]);
+  const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
   const [copiedId, setCopiedId]   = useState(null);
   const [dragOver, setDragOver]   = useState(false);
-  const [uploadedAt, setUploadedAt] = useState(() => localStorage.getItem(UPLOAD_TS_KEY) || '');
+  const [uploadedAt, setUploadedAt] = useState('');
   const [rawLines, setRawLines]   = useState(null);   // null = hide, array = show
   const [error, setError]         = useState('');
   const [approvedOnly, setApprovedOnly] = useState(true); // filter to Charge Acct = Yes
+  const [saving, setSaving]       = useState(false);
   const fileRef = useRef();
+
+  useEffect(() => {
+    loadChargeAccounts()
+      .then(data => {
+        if (data && Array.isArray(data.accounts)) {
+          setAccounts(data.accounts);
+          setUploadedAt(data.uploadedAt || '');
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   // ── Process uploaded file ──────────────────────────────────────────────────
   async function processFile(file) {
@@ -149,16 +152,17 @@ export default function ChargeAccountList({ onBack }) {
         return;
       }
 
-      setAccounts(parsed);
-      persist(parsed);
       const ts = new Date().toLocaleString();
+      setSaving(true);
+      await saveChargeAccounts(parsed, ts);
+      setAccounts(parsed);
       setUploadedAt(ts);
-      localStorage.setItem(UPLOAD_TS_KEY, ts);
     } catch (err) {
-      setError('Error reading PDF: ' + err.message);
+      setError('Error: ' + err.message);
       console.error(err);
     } finally {
       setLoading(false);
+      setSaving(false);
     }
   }
 
@@ -177,14 +181,17 @@ export default function ChargeAccountList({ onBack }) {
   }
 
   // ── Clear ─────────────────────────────────────────────────────────────────
-  function clearList() {
+  async function clearList() {
     if (!window.confirm('Remove all charge account data?')) return;
+    try {
+      await saveChargeAccounts([], '');
+    } catch (err) {
+      setError('Clear failed: ' + err.message); return;
+    }
     setAccounts([]);
     setUploadedAt('');
     setRawLines(null);
     setError('');
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(UPLOAD_TS_KEY);
   }
 
   // ── Filtered list ─────────────────────────────────────────────────────────
@@ -410,8 +417,10 @@ export default function ChargeAccountList({ onBack }) {
             >
               <input ref={fileRef} type="file" accept=".pdf" style={{ display: 'none' }}
                 onChange={e => { if (e.target.files[0]) processFile(e.target.files[0]); e.target.value = ''; }} />
-              {loading ? (
-                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ Reading PDF and parsing accounts…</div>
+              {saving ? (
+                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ Saving to GitHub…</div>
+              ) : loading ? (
+                <div style={{ color: '#6ee7f9', fontSize: 14 }}>⏳ {accounts.length === 0 ? 'Loading…' : 'Reading PDF and parsing accounts…'}</div>
               ) : (
                 <>
                   <span style={{ fontSize: 22 }}>📄</span>
