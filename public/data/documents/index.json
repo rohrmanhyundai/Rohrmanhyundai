@@ -27,7 +27,9 @@
     "size": 2630436,
     "uploadedBy": "Kai",
     "uploadedAt": "2026-04-29T14:42:56.604Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "parts"
+    ]
   },
   {
     "id": "mok5vdctyl5l",
