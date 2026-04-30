@@ -278,18 +278,25 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const raw   = atob(DCT_MTM_PDF_B64);
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    const pdfDoc   = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    const font     = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const page     = pdfDoc.getPages()[0];
-    const BLACK    = rgb(0,0,0);
-    const h        = page.getHeight();
+    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pages = pdfDoc.getPages();
+    if (!pages || pages.length === 0) throw new Error('PDF has no pages after loading');
+    const page = pages[0];
 
-    // Use arrow function (not function declaration) to avoid hoisting / TDZ issues with const font
-    const t = (text, x, y, size = 9, f) => {
-      const usedFont = f !== undefined ? f : font;
-      if (!usedFont) return; // safety guard
-      page.drawText(String(text || ''), { x, y: h - y, size, font: usedFont, color: BLACK });
+    // Use string literals instead of StandardFonts enum to avoid any bundling/tree-shake issues
+    const font     = await pdfDoc.embedFont('Helvetica');
+    const boldFont = await pdfDoc.embedFont('Helvetica-Bold');
+    if (!font)     throw new Error('Failed to embed Helvetica — font is undefined');
+    if (!boldFont) throw new Error('Failed to embed Helvetica-Bold — font is undefined');
+
+    const BLACK = rgb(0, 0, 0);
+    const h     = page.getHeight();
+
+    const t = (text, x, y, size = 9, bold = false) => {
+      const f = bold ? boldFont : font;
+      const str = String(text || '');
+      if (!str) return;
+      page.drawText(str, { x, y: h - y, size, font: f, color: BLACK });
     };
 
     t(_ro,            470, 82,  9);
@@ -298,8 +305,8 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     t(fmtDate(_repairDate), 415, 112, 9);
     t(_mileage,       530, 112, 9);
     (_vin || '').split('').slice(0,17).forEach((ch, i) => t(ch, 52 + i * 18.5, 134, 9));
-    if (_repairType === 'Warranty')     t('X', 418, 134, 9, boldFont);
-    if (_repairType === 'Customer Pay') t('X', 499, 134, 9, boldFont);
+    if (_repairType === 'Warranty')     t('X', 418, 134, 9, true);
+    if (_repairType === 'Customer Pay') t('X', 499, 134, 9, true);
     t(_removedPN,   48,  158, 9);
     t(_removedSN,   330, 158, 9);
     t(_installedPN, 48,  178, 9);
@@ -307,17 +314,17 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     t(_conditionCode, 195, 204, 9);
     t(_specificCondition, 195, 232, 8);
     t(_howLong,           195, 248, 8);
-    if (_howOften === 'Always')       t('X', 194, 263, 9, boldFont);
-    if (_howOften === 'Sometimes')    t('X', 249, 263, 9, boldFont);
-    if (_howOften === 'Intermittent') t('X', 315, 263, 9, boldFont);
-    if (_whenHotCold === 'Hot')  t('X', 469, 263, 9, boldFont);
-    if (_whenHotCold === 'Cold') t('X', 515, 263, 9, boldFont);
-    if (_beenInBefore === 'Yes') t('X', 182, 279, 9, boldFont);
-    if (_beenInBefore === 'No')  t('X', 218, 279, 9, boldFont);
-    if (_checkedTSB === 'Yes') t('X', 435, 279, 9, boldFont);
-    if (_checkedTSB === 'No')  t('X', 471, 279, 9, boldFont);
-    if (_canDuplicate === 'Yes') t('X', 182, 295, 9, boldFont);
-    if (_canDuplicate === 'No')  t('X', 218, 295, 9, boldFont);
+    if (_howOften === 'Always')       t('X', 194, 263, 9, true);
+    if (_howOften === 'Sometimes')    t('X', 249, 263, 9, true);
+    if (_howOften === 'Intermittent') t('X', 315, 263, 9, true);
+    if (_whenHotCold === 'Hot')  t('X', 469, 263, 9, true);
+    if (_whenHotCold === 'Cold') t('X', 515, 263, 9, true);
+    if (_beenInBefore === 'Yes') t('X', 182, 279, 9, true);
+    if (_beenInBefore === 'No')  t('X', 218, 279, 9, true);
+    if (_checkedTSB === 'Yes') t('X', 435, 279, 9, true);
+    if (_checkedTSB === 'No')  t('X', 471, 279, 9, true);
+    if (_canDuplicate === 'Yes') t('X', 182, 295, 9, true);
+    if (_canDuplicate === 'No')  t('X', 218, 295, 9, true);
     t(_howDuplicate, 285, 295, 8);
     t(_testDriveResults, 195, 311, 8);
     t(_fluidLevel,   55,  352, 8);
@@ -331,17 +338,17 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const gearY = [348,363,378,393,408,423,438,453,468,483];
     GEARS.forEach((g, i) => {
       const res = (_gearResults || {})[g];
-      if (res === 'OK')     t('X', 268, gearY[i], 9, boldFont);
-      if (res === 'SLIPS')  t('X', 292, gearY[i], 9, boldFont);
-      if (res === 'GRINDS') t('X', 316, gearY[i], 9, boldFont);
+      if (res === 'OK')     t('X', 268, gearY[i], 9, true);
+      if (res === 'SLIPS')  t('X', 292, gearY[i], 9, true);
+      if (res === 'GRINDS') t('X', 316, gearY[i], 9, true);
     });
     t(_tpsIdle, 430, 370, 8);
     t(_tpsWot,  430, 383, 8);
-    if (_gdsDctStep1 === 'PASS') t('X', 430, 413, 9, boldFont);
-    if (_gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, boldFont);
+    if (_gdsDctStep1 === 'PASS') t('X', 430, 413, 9, true);
+    if (_gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, true);
     t(_gdsDctMsg1, 380, 427, 8);
-    if (_gdsDctStep2 === 'PASS') t('X', 430, 441, 9, boldFont);
-    if (_gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, boldFont);
+    if (_gdsDctStep2 === 'PASS') t('X', 430, 441, 9, true);
+    if (_gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, true);
     t(_gdsDctMsg2, 380, 455, 8);
     t(_noiseType,  395, 480, 8);
     t(_noiseLoc,   395, 495, 8);
