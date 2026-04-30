@@ -160,14 +160,21 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setSearching(true);
     setSearchResults(null);
     try {
-      const all = await Promise.all(
+      // Search all tech WIP lists
+      const wipResults = await Promise.all(
         techList.map(async tech => {
           const data = await loadWipData(tech);
-          const matches = data.filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()));
-          return matches.map(r => ({ ...r, techName: tech }));
+          return data
+            .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+            .map(r => ({ ...r, techName: tech, _source: 'wip' }));
         })
       );
-      setSearchResults(all.flat());
+      // Also search Cars Awaiting
+      const awaitingMatches = awaiting
+        .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+        .map(r => ({ ...r, techName: 'Cars Awaiting', _source: 'awaiting' }));
+
+      setSearchResults([...wipResults.flat(), ...awaitingMatches]);
     } catch (e) { setError(e.message); }
     finally { setSearching(false); }
   }
@@ -444,19 +451,24 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                 </div>
               </div>
             )}
-            {searchResults.map((r, idx) => (
+            {searchResults.map((r, idx) => {
+              const isAwaiting = r._source === 'awaiting';
+              return (
               <div
                 key={r.id + idx}
-                onClick={() => { setActiveTech(r.techName); clearSearch(); }}
-                style={{ background: 'rgba(61,214,195,.07)', border: '1px solid rgba(61,214,195,.25)', borderRadius: 14, padding: '14px 18px', marginBottom: 10, cursor: 'pointer', transition: 'background .15s, border-color .15s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(61,214,195,.15)'; e.currentTarget.style.borderColor = 'rgba(61,214,195,.5)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(61,214,195,.07)'; e.currentTarget.style.borderColor = 'rgba(61,214,195,.25)'; }}
+                onClick={() => { if (!isAwaiting) setActiveTech(r.techName); clearSearch(); }}
+                style={{ background: isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)', border: `1px solid ${isAwaiting ? 'rgba(251,191,36,.3)' : 'rgba(61,214,195,.25)'}`, borderRadius: 14, padding: '14px 18px', marginBottom: 10, cursor: 'pointer', transition: 'background .15s, border-color .15s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.15)' : 'rgba(61,214,195,.15)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)'; }}
               >
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#3dd6c3', textTransform: 'uppercase' }}>Tech: {r.techName}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: isAwaiting ? '#fbbf24' : '#3dd6c3', textTransform: 'uppercase' }}>
+                    {isAwaiting ? '⏳ Cars Awaiting' : `Tech: ${r.techName}`}
+                  </span>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#6ee7f9' }}>RO# {r.ro}</span>
                   {r.roDate && <span style={{ fontSize: 11, color: '#94a3b8' }}>{r.roDate}</span>}
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>Click to view →</span>
+                  {r.highPriority && <span style={{ fontSize: 11, fontWeight: 800, color: '#f87171' }}>🔴 HIGH PRIORITY</span>}
+                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>{isAwaiting ? 'In Cars Awaiting' : 'Click to view →'}</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '6px 16px' }}>
                   {r.jobDesc && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Job: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.jobDesc}</span></div>}
@@ -465,7 +477,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Parts Arrived: </span><span style={{ fontSize: 13, color: r.partsArrived === true ? '#86efac' : r.partsArrived === false ? '#fca5a5' : '#475569' }}>{r.partsArrived === true ? '✓ Yes' : r.partsArrived === false ? '✗ No' : '—'}</span></div>
                 </div>
               </div>
-            ))}
+            );})}
+
           </div>
         )}
 
