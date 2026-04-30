@@ -757,7 +757,6 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
               <Field label="Techline Case # *" value={techlineCase} onChange={setTechlineCase} />
               <Field label="Prior Authorization # *" value={priorAuth} onChange={setPriorAuth} />
-              <Field label="Service Manager Signature" value={svcMgrSig} onChange={setSvcMgrSig} />
               <Field label="Tech SSN (last 4 digits ONLY) *" value={techSSN} onChange={v => setTechSSN(v.replace(/\D/g,'').slice(0,4))} placeholder="XXXX" />
             </div>
           </div>
