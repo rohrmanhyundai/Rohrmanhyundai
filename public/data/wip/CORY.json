@@ -6,7 +6,8 @@
     "jobDesc": "ENGINE",
     "etaParts": "",
     "etaCompletion": "30",
-    "partsArrived": true
+    "partsArrived": null,
+    "partsArrivedDate": ""
   },
   {
     "id": "moiuw6klccs",
@@ -15,7 +16,7 @@
     "jobDesc": "ENGINE ",
     "etaParts": "WIP",
     "etaCompletion": "",
-    "partsArrived": true
+    "partsArrived": false
   },
   {
     "id": "mokkvfqhbd0",
