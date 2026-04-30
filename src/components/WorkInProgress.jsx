@@ -51,6 +51,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
   const [saving, setSaving] = useState(false);
   const [savingRow, setSavingRow] = useState(null);
   const [deletingRow, setDeletingRow] = useState(null);
+  const [workCompleteConfirmId, setWorkCompleteConfirmId] = useState(null);
   const [error, setError] = useState('');
   const [searchRO, setSearchRO] = useState('');
   const [searchResults, setSearchResults] = useState(null); // null = not searching
@@ -417,10 +418,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 {/* Row actions */}
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                   <button
-                    onClick={() => deleteRow(row.id)}
+                    onClick={() => isTech ? setWorkCompleteConfirmId(row.id) : deleteRow(row.id)}
                     disabled={deletingRow === row.id}
-                    style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#f87171', borderRadius: 8, padding: '6px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13, opacity: deletingRow === row.id ? 0.5 : 1 }}
-                  >{deletingRow === row.id ? '⏳' : '🗑 Delete Row'}</button>
+                    style={{ background: isTech ? 'rgba(74,222,128,.12)' : 'rgba(239,68,68,.12)', border: `1px solid ${isTech ? 'rgba(74,222,128,.4)' : 'rgba(239,68,68,.35)'}`, color: isTech ? '#4ade80' : '#f87171', borderRadius: 8, padding: '6px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13, opacity: deletingRow === row.id ? 0.5 : 1 }}
+                  >{deletingRow === row.id ? '⏳' : isTech ? '✅ Work Completed' : '🗑 Delete Row'}</button>
                   <button
                     onClick={() => saveRow(row.id)}
                     disabled={savingRow === row.id}
@@ -570,6 +571,28 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
                 onClick={() => setClaimConfirm(null)}
                 style={{ background: 'rgba(239,68,68,.18)', border: '2px solid rgba(239,68,68,.45)', color: '#f87171', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15 }}
               >❌ No</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Work Completed Confirmation Modal */}
+      {workCompleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: '#1e293b', border: '2px solid rgba(74,222,128,.4)', borderRadius: 20, padding: '36px 40px', maxWidth: 420, width: '90%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,.6)' }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+            <div style={{ fontWeight: 900, fontSize: 20, color: '#4ade80', marginBottom: 12 }}>Work Completed?</div>
+            <div style={{ color: '#94a3b8', fontSize: 14, marginBottom: 28 }}>
+              Are you sure this job is finished? This will remove it from your work list.
+            </div>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+              <button
+                onClick={() => { deleteRow(workCompleteConfirmId); setWorkCompleteConfirmId(null); }}
+                style={{ background: 'rgba(74,222,128,.25)', border: '2px solid rgba(74,222,128,.6)', color: '#4ade80', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15 }}
+              >✅ Yes, Done</button>
+              <button
+                onClick={() => setWorkCompleteConfirmId(null)}
+                style={{ background: 'rgba(239,68,68,.18)', border: '2px solid rgba(239,68,68,.45)', color: '#f87171', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15 }}
+              >❌ Cancel</button>
             </div>
           </div>
         </div>
