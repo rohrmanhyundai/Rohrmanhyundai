@@ -305,9 +305,11 @@ export default function App() {
   }
 
   if (page === 'at-diag-worksheet') {
+    const atBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Technician Resources';
     return (
       <ATDiagWorksheet
-        onBack={() => navTo('tech-resources')}
+        backLabel={atBackLabel}
+        onBack={() => navTo(prevPage || 'tech-resources')}
         onDCTMTM={() => goTo('dct-mtm-worksheet', 'at-diag-worksheet')}
       />
     );
@@ -411,6 +413,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
+        onATDiagWorksheet={() => goTo('at-diag-worksheet', 'warranty-hub')}
       />
     );
   }

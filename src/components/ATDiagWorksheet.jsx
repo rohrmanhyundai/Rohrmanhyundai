@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ATDiagWorksheet({ onBack, onDCTMTM }) {
+export default function ATDiagWorksheet({ onBack, onDCTMTM, backLabel = '← Technician Resources' }) {
   return (
     <div className="adv-page">
       <div className="adv-topbar">
@@ -8,7 +8,7 @@ export default function ATDiagWorksheet({ onBack, onDCTMTM }) {
           <div className="adv-title">⚙️ AT Diag Worksheet</div>
           <div className="adv-sub">Automatic Transmission Diagnosis Worksheets</div>
         </div>
-        <button className="secondary" onClick={onBack}>← Technician Resources</button>
+        <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>

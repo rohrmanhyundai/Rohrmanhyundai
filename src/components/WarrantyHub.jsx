@@ -43,13 +43,22 @@ const NAV_BUTTONS = [
     color: '#4ade80',
     href: 'https://hyundaitirecenter.com/InitDealer?dealer=IN007',
   },
+  {
+    key: 'atDiagWorksheet',
+    label: '⚙️ AT Diag Worksheet',
+    desc: 'DCT & MTM transmission diagnosis worksheets',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
+    border: 'rgba(251,191,36,.45)',
+    color: '#fbbf24',
+    prop: 'onATDiagWorksheet',
+  },
 ];
 
 export default function WarrantyHub({
   currentUser, currentRole, userPages,
-  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary,
+  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (
