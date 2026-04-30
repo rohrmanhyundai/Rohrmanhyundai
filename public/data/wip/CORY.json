@@ -40,6 +40,7 @@
     "etaParts": "",
     "etaCompletion": "30",
     "partsArrived": false,
-    "advisor": "JORDAN"
+    "advisor": "JORDAN",
+    "highPriority": true
   }
 ]
