@@ -380,9 +380,6 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     setTxt('Service Manager Signature',  _svcMgrSig);
     setTxt('Technician SSN last 4 digits', _techSSN);
 
-    // Flatten so fields become static printed text
-    form.flatten();
-
     return pdfDoc.save();
   }
 
