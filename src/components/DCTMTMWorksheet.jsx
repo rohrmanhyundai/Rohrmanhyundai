@@ -202,6 +202,8 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
   const [loadingList, setLoadingList] = useState(true);
   const [showUploads, setShowUploads] = useState(false);
   const [showConditionChart, setShowConditionChart] = useState(false);
+  const [deletingId,  setDeletingId]  = useState(null);
+  const [pdfLoading,  setPdfLoading]  = useState(null); // item.id being generated
 
   // Load saved worksheets index
   function refreshIndex() {
@@ -227,136 +229,176 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     return true;
   }
 
-  async function buildPdf() {
+  async function buildPdf(d) {
+    // d = saved data object, or falls back to current form state
+    const _ro            = d?.ro            ?? ro;
+    const _dealerCode    = d?.dealerCode    ?? dealerCode;
+    const _techName      = d?.techName      ?? techName;
+    const _repairDate    = d?.repairDate    ?? repairDate;
+    const _mileage       = d?.mileage       ?? mileage;
+    const _vin           = d?.vin           ?? vin;
+    const _repairType    = d?.repairType    ?? repairType;
+    const _removedPN     = d?.removedPN     ?? removedPN;
+    const _removedSN     = d?.removedSN     ?? removedSN;
+    const _installedPN   = d?.installedPN   ?? installedPN;
+    const _installedSN   = d?.installedSN   ?? installedSN;
+    const _conditionCode = d?.conditionCode ?? conditionCode;
+    const _specificCondition = d?.specificCondition ?? specificCondition;
+    const _howLong       = d?.howLong       ?? howLong;
+    const _howOften      = d?.howOften      ?? howOften;
+    const _whenHotCold   = d?.whenHotCold   ?? whenHotCold;
+    const _beenInBefore  = d?.beenInBefore  ?? beenInBefore;
+    const _checkedTSB    = d?.checkedTSB    ?? checkedTSB;
+    const _canDuplicate  = d?.canDuplicate  ?? canDuplicate;
+    const _howDuplicate  = d?.howDuplicate  ?? howDuplicate;
+    const _testDriveResults = d?.testDriveResults ?? testDriveResults;
+    const _fluidLevel    = d?.fluidLevel    ?? fluidLevel;
+    const _fluidSmell    = d?.fluidSmell    ?? fluidSmell;
+    const _fluidColor    = d?.fluidColor    ?? fluidColor;
+    const _leakLocation  = d?.leakLocation  ?? leakLocation;
+    const _gdsCode1      = d?.gdsCode1      ?? gdsCode1;
+    const _gdsCode2      = d?.gdsCode2      ?? gdsCode2;
+    const _ecmLevel      = d?.ecmLevel      ?? ecmLevel;
+    const _tcmLevel      = d?.tcmLevel      ?? tcmLevel;
+    const _gearResults   = d?.gearResults   ?? gearResults;
+    const _tpsIdle       = d?.tpsIdle       ?? tpsIdle;
+    const _tpsWot        = d?.tpsWot        ?? tpsWot;
+    const _gdsDctStep1   = d?.gdsDctStep1   ?? gdsDctStep1;
+    const _gdsDctMsg1    = d?.gdsDctMsg1    ?? gdsDctMsg1;
+    const _gdsDctStep2   = d?.gdsDctStep2   ?? gdsDctStep2;
+    const _gdsDctMsg2    = d?.gdsDctMsg2    ?? gdsDctMsg2;
+    const _noiseType     = d?.noiseType     ?? noiseType;
+    const _noiseLoc      = d?.noiseLoc      ?? noiseLoc;
+    const _noiseSpeed    = d?.noiseSpeed    ?? noiseSpeed;
+    const _techlineCase  = d?.techlineCase  ?? techlineCase;
+    const _priorAuth     = d?.priorAuth     ?? priorAuth;
+    const _svcMgrSig     = d?.svcMgrSig     ?? svcMgrSig;
+    const _techSSN       = d?.techSSN       ?? techSSN;
+
     const raw   = atob(DCT_MTM_PDF_B64);
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    const font   = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const pdfDoc  = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const font     = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const page   = pdfDoc.getPages()[0];
-    const BLACK  = rgb(0,0,0);
-    const h      = page.getHeight(); // 792
+    const page    = pdfDoc.getPages()[0];
+    const BLACK   = rgb(0,0,0);
+    const h       = page.getHeight();
 
     function t(text, x, y, size = 9, f = font) {
       page.drawText(String(text || ''), { x, y: h - y, size, font: f, color: BLACK });
     }
 
-    // Row 1: RO, Dealer Code, Name, Repair Date, Mileage
-    t(ro,            470, 82,  9);
-    t(dealerCode,    48,  112, 9);
-    t(techName,      135, 112, 9);
-    t(fmtDate(repairDate), 415, 112, 9);
-    t(mileage,       530, 112, 9);
-
-    // VIN (individual boxes ~18px wide starting at x=48)
-    vin.split('').slice(0,17).forEach((ch, i) => t(ch, 52 + i * 18.5, 134, 9));
-
-    // Repair Type checkboxes
-    if (repairType === 'Warranty')     t('X', 418, 134, 9, boldFont);
-    if (repairType === 'Customer Pay') t('X', 499, 134, 9, boldFont);
-
-    // Part numbers
-    t(removedPN,   48,  158, 9);
-    t(removedSN,   330, 158, 9);
-    t(installedPN, 48,  178, 9);
-    t(installedSN, 330, 178, 9);
-
-    // Condition code
-    t(conditionCode, 195, 204, 9);
-
-    // Symptom
-    t(specificCondition, 195, 232, 8);
-    t(howLong,           195, 248, 8);
-    // How often checkboxes
-    if (howOften === 'Always')       t('X', 194, 263, 9, boldFont);
-    if (howOften === 'Sometimes')    t('X', 249, 263, 9, boldFont);
-    if (howOften === 'Intermittent') t('X', 315, 263, 9, boldFont);
-    if (whenHotCold === 'Hot')  t('X', 469, 263, 9, boldFont);
-    if (whenHotCold === 'Cold') t('X', 515, 263, 9, boldFont);
-    // Been in before
-    if (beenInBefore === 'Yes') t('X', 182, 279, 9, boldFont);
-    if (beenInBefore === 'No')  t('X', 218, 279, 9, boldFont);
-    // TSB check
-    if (checkedTSB === 'Yes') t('X', 435, 279, 9, boldFont);
-    if (checkedTSB === 'No')  t('X', 471, 279, 9, boldFont);
-    // Duplicate
-    if (canDuplicate === 'Yes') t('X', 182, 295, 9, boldFont);
-    if (canDuplicate === 'No')  t('X', 218, 295, 9, boldFont);
-    t(howDuplicate, 285, 295, 8);
-    t(testDriveResults, 195, 311, 8);
-
-    // Fluid
-    t(fluidLevel,   55,  352, 8);
-    t(fluidSmell,   55,  368, 8);
-    t(fluidColor,   105, 368, 8);
-    t(leakLocation, 55,  395, 8);
-    t(gdsCode1,     55,  435, 8);
-    t(gdsCode2,     55,  447, 8);
-    t(ecmLevel,     90,  490, 8);
-    t(tcmLevel,     90,  503, 8);
-
-    // Gear results
+    t(_ro,            470, 82,  9);
+    t(_dealerCode,    48,  112, 9);
+    t(_techName,      135, 112, 9);
+    t(fmtDate(_repairDate), 415, 112, 9);
+    t(_mileage,       530, 112, 9);
+    (_vin || '').split('').slice(0,17).forEach((ch, i) => t(ch, 52 + i * 18.5, 134, 9));
+    if (_repairType === 'Warranty')     t('X', 418, 134, 9, boldFont);
+    if (_repairType === 'Customer Pay') t('X', 499, 134, 9, boldFont);
+    t(_removedPN,   48,  158, 9);
+    t(_removedSN,   330, 158, 9);
+    t(_installedPN, 48,  178, 9);
+    t(_installedSN, 330, 178, 9);
+    t(_conditionCode, 195, 204, 9);
+    t(_specificCondition, 195, 232, 8);
+    t(_howLong,           195, 248, 8);
+    if (_howOften === 'Always')       t('X', 194, 263, 9, boldFont);
+    if (_howOften === 'Sometimes')    t('X', 249, 263, 9, boldFont);
+    if (_howOften === 'Intermittent') t('X', 315, 263, 9, boldFont);
+    if (_whenHotCold === 'Hot')  t('X', 469, 263, 9, boldFont);
+    if (_whenHotCold === 'Cold') t('X', 515, 263, 9, boldFont);
+    if (_beenInBefore === 'Yes') t('X', 182, 279, 9, boldFont);
+    if (_beenInBefore === 'No')  t('X', 218, 279, 9, boldFont);
+    if (_checkedTSB === 'Yes') t('X', 435, 279, 9, boldFont);
+    if (_checkedTSB === 'No')  t('X', 471, 279, 9, boldFont);
+    if (_canDuplicate === 'Yes') t('X', 182, 295, 9, boldFont);
+    if (_canDuplicate === 'No')  t('X', 218, 295, 9, boldFont);
+    t(_howDuplicate, 285, 295, 8);
+    t(_testDriveResults, 195, 311, 8);
+    t(_fluidLevel,   55,  352, 8);
+    t(_fluidSmell,   55,  368, 8);
+    t(_fluidColor,   105, 368, 8);
+    t(_leakLocation, 55,  395, 8);
+    t(_gdsCode1,     55,  435, 8);
+    t(_gdsCode2,     55,  447, 8);
+    t(_ecmLevel,     90,  490, 8);
+    t(_tcmLevel,     90,  503, 8);
     const gearY = [348,363,378,393,408,423,438,453,468,483];
     GEARS.forEach((g, i) => {
-      const res = gearResults[g];
+      const res = (_gearResults || {})[g];
       if (res === 'OK')     t('X', 268, gearY[i], 9, boldFont);
       if (res === 'SLIPS')  t('X', 292, gearY[i], 9, boldFont);
       if (res === 'GRINDS') t('X', 316, gearY[i], 9, boldFont);
     });
-
-    // Driveability
-    t(tpsIdle, 430, 370, 8);
-    t(tpsWot,  430, 383, 8);
-    // GDS relearn
-    if (gdsDctStep1 === 'PASS') t('X', 430, 413, 9, boldFont);
-    if (gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, boldFont);
-    t(gdsDctMsg1, 380, 427, 8);
-    if (gdsDctStep2 === 'PASS') t('X', 430, 441, 9, boldFont);
-    if (gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, boldFont);
-    t(gdsDctMsg2, 380, 455, 8);
-
-    // Noise
-    t(noiseType,  395, 480, 8);
-    t(noiseLoc,   395, 495, 8);
-    t(noiseSpeed, 395, 510, 8);
-
-    // Bottom
-    t(techlineCase, 390, 540, 8);
-    t(priorAuth,    500, 540, 8);
-    t(svcMgrSig,    145, 558, 8);
-    t(techSSN,      195, 574, 9);
+    t(_tpsIdle, 430, 370, 8);
+    t(_tpsWot,  430, 383, 8);
+    if (_gdsDctStep1 === 'PASS') t('X', 430, 413, 9, boldFont);
+    if (_gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, boldFont);
+    t(_gdsDctMsg1, 380, 427, 8);
+    if (_gdsDctStep2 === 'PASS') t('X', 430, 441, 9, boldFont);
+    if (_gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, boldFont);
+    t(_gdsDctMsg2, 380, 455, 8);
+    t(_noiseType,  395, 480, 8);
+    t(_noiseLoc,   395, 495, 8);
+    t(_noiseSpeed, 395, 510, 8);
+    t(_techlineCase, 390, 540, 8);
+    t(_priorAuth,    500, 540, 8);
+    t(_svcMgrSig,    145, 558, 8);
+    t(_techSSN,      195, 574, 9);
 
     return pdfDoc.save();
   }
 
-  async function handlePrint() {
-    if (!validate()) return;
-    setStatus('⏳ Generating PDF…');
-    try {
-      const pdfBytes = await buildPdf();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const url  = URL.createObjectURL(blob);
-      const win  = window.open(url, '_blank');
-      if (win) win.focus();
-      setStatus('✅ Opened for printing.');
-    } catch(e) { setStatus(`❌ ${e.message}`); }
+  async function openPdf(data, roNum) {
+    const pdfBytes = await buildPdf(data);
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    if (win) win.focus();
   }
 
-  async function handleDownload() {
-    if (!validate()) return;
-    setStatus('⏳ Generating PDF…');
+  async function downloadPdf(data, roNum) {
+    const pdfBytes = await buildPdf(data);
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = `DCT_MTM_Worksheet_RO${roNum || 'unknown'}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleViewSaved(item) {
+    setPdfLoading(item.id + '_view');
     try {
-      const pdfBytes = await buildPdf();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url;
-      a.download = `DCT_MTM_Worksheet_RO${ro || 'unknown'}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setStatus('✅ Downloaded.');
-    } catch(e) { setStatus(`❌ ${e.message}`); }
+      const d = await loadGithubFile(`data/dct-worksheets/${item.id}.json`);
+      if (!d) { alert('Could not load worksheet. Try again in a moment.'); return; }
+      await openPdf(d, d.ro);
+    } catch(e) { alert(`Error: ${e.message}`); }
+    finally { setPdfLoading(null); }
+  }
+
+  async function handleDownloadSaved(item) {
+    setPdfLoading(item.id + '_dl');
+    try {
+      const d = await loadGithubFile(`data/dct-worksheets/${item.id}.json`);
+      if (!d) { alert('Could not load worksheet. Try again in a moment.'); return; }
+      await downloadPdf(d, d.ro);
+    } catch(e) { alert(`Error: ${e.message}`); }
+    finally { setPdfLoading(null); }
+  }
+
+  async function handleDeleteSaved(item) {
+    if (!window.confirm(`Delete worksheet RO# ${item.ro || item.id}? This cannot be undone.`)) return;
+    setDeletingId(item.id);
+    try {
+      const newIndex = savedList.filter(s => s.id !== item.id);
+      await saveGithubFile('data/dct-worksheets/index.json', newIndex, `Delete worksheet ${item.id}`);
+      setSavedList(newIndex);
+    } catch(e) { alert(`Delete failed: ${e.message}`); }
+    finally { setDeletingId(null); }
   }
 
   async function handleSave() {
@@ -666,53 +708,15 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-            <button onClick={handlePrint}
-              style={{ background: 'rgba(139,92,246,.2)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
-              🖨️ Print
-            </button>
-            <button onClick={handleDownload}
-              style={{ background: 'rgba(61,214,195,.2)', border: '1px solid rgba(61,214,195,.5)', color: '#6ee7f9', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
-              ⬇️ Download PDF
-            </button>
             <button onClick={handleSave} disabled={saving}
               style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
-              💾 Upload
+              💾 {saving ? 'Uploading…' : 'Upload'}
             </button>
-            <button onClick={() => { const next = !showUploads; setShowUploads(next); if (next) refreshIndex(); }}
-              style={{ background: showUploads ? 'rgba(139,92,246,.25)' : 'rgba(255,255,255,.06)', border: `1px solid ${showUploads ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.15)'}`, color: showUploads ? '#c4b5fd' : '#94a3b8', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+            <button onClick={() => { setShowUploads(true); refreshIndex(); }}
+              style={{ background: 'rgba(139,92,246,.2)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
               📂 View Uploads {savedList.length > 0 ? `(${savedList.length})` : ''}
             </button>
           </div>
-          {/* Uploads panel */}
-          {showUploads && (
-            <div style={{ ...section, marginBottom: 20 }}>
-              <div style={sectionTitle}>📂 Uploaded Worksheets</div>
-              {loadingList ? (
-                <div style={{ color: '#64748b', fontSize: 13 }}>Loading…</div>
-              ) : savedList.length === 0 ? (
-                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>No uploaded worksheets yet.</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {savedList.map(s => (
-                    <button key={s.id} onClick={() => { loadSaved(s); setShowUploads(false); }}
-                      style={{ background: 'rgba(139,92,246,.08)', border: '1px solid rgba(139,92,246,.25)', borderRadius: 10, padding: '12px 16px', cursor: 'pointer', textAlign: 'left', display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', transition: 'background .15s' }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,.18)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,.08)'}
-                    >
-                      <span style={{ fontWeight: 900, fontSize: 14, color: '#c4b5fd' }}>RO# {s.ro || '—'}</span>
-                      <span style={{ fontSize: 12, color: '#94a3b8' }}>VIN: {s.vin || '—'}</span>
-                      <span style={{ fontSize: 12, color: '#64748b' }}>Tech: {s.techName || '—'}</span>
-                      <span style={{ fontSize: 12, color: '#64748b' }}>Date: {s.repairDate || '—'}</span>
-                      <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto' }}>
-                        Uploaded {s.savedAt ? new Date(s.savedAt).toLocaleDateString() : '—'}
-                      </span>
-                      <span style={{ fontSize: 11, color: '#6ee7b7', fontWeight: 700 }}>Click to Load →</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
           {!getGithubToken() && (
             <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16, padding: '8px 12px', background: 'rgba(255,255,255,.03)', borderRadius: 8, border: '1px solid rgba(255,255,255,.07)' }}>
@@ -721,6 +725,70 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
           )}
         </div>
       </div>
+
+      {/* Uploads Modal */}
+      {showUploads && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.82)', zIndex: 9998, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          onClick={() => setShowUploads(false)}>
+          <div style={{ background: '#1e293b', border: '1px solid rgba(139,92,246,.4)', borderRadius: 18, width: '100%', maxWidth: 860, maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 60px rgba(0,0,0,0.7)' }}
+            onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', borderBottom: '1px solid rgba(255,255,255,.08)', background: 'rgba(139,92,246,.08)', flexShrink: 0 }}>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 18, color: '#c4b5fd' }}>📂 Uploaded Worksheets</div>
+                <div style={{ fontSize: 12, color: '#7c3aed', marginTop: 2 }}>Click View to open the PDF, or Download to save it</div>
+              </div>
+              <button onClick={() => setShowUploads(false)}
+                style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', color: '#94a3b8', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+                ✕ Close
+              </button>
+            </div>
+            {/* List */}
+            <div style={{ overflowY: 'auto', padding: '16px 20px', flex: 1 }}>
+              {loadingList ? (
+                <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: 40 }}>⏳ Loading…</div>
+              ) : savedList.length === 0 ? (
+                <div style={{ color: '#475569', fontSize: 14, textAlign: 'center', padding: 40 }}>No uploaded worksheets yet.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {savedList.map(s => (
+                    <div key={s.id} style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.09)', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 180 }}>
+                        <div style={{ fontWeight: 900, fontSize: 15, color: '#c4b5fd', marginBottom: 4 }}>RO# {s.ro || '—'}</div>
+                        <div style={{ fontSize: 12, color: '#94a3b8' }}>VIN: {s.vin || '—'}</div>
+                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Tech: {s.techName || '—'} &nbsp;|&nbsp; Date: {s.repairDate || '—'}</div>
+                        <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>Uploaded: {s.savedAt ? new Date(s.savedAt).toLocaleString() : '—'}</div>
+                      </div>
+                      {/* Actions */}
+                      <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
+                        <button
+                          onClick={() => handleViewSaved(s)}
+                          disabled={pdfLoading === s.id + '_view'}
+                          style={{ background: 'rgba(139,92,246,.25)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13, opacity: pdfLoading === s.id + '_view' ? 0.6 : 1 }}>
+                          {pdfLoading === s.id + '_view' ? '⏳' : '🖨️'} {pdfLoading === s.id + '_view' ? 'Opening…' : 'View / Print'}
+                        </button>
+                        <button
+                          onClick={() => handleDownloadSaved(s)}
+                          disabled={pdfLoading === s.id + '_dl'}
+                          style={{ background: 'rgba(61,214,195,.2)', border: '1px solid rgba(61,214,195,.5)', color: '#6ee7f9', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13, opacity: pdfLoading === s.id + '_dl' ? 0.6 : 1 }}>
+                          {pdfLoading === s.id + '_dl' ? '⏳' : '⬇️'} {pdfLoading === s.id + '_dl' ? 'Downloading…' : 'Download PDF'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSaved(s)}
+                          disabled={deletingId === s.id}
+                          style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13, opacity: deletingId === s.id ? 0.5 : 1 }}>
+                          {deletingId === s.id ? '⏳ Deleting…' : '🗑 Delete'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Condition Code Chart Modal */}
       {showConditionChart && (
