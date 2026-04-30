@@ -14,5 +14,21 @@
     "notes": "Left VM",
     "submittedAt": "2026-04-30T20:12:01.696Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "GAVIN RUTAN",
+    "repairOrder": "776860",
+    "vin": "KMHLN4DJXSU142808",
+    "model": "ELANTRA HEV",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "317) 778 - 9434",
+    "notes": "Left VM",
+    "submittedAt": "2026-04-30T20:13:43.632Z",
+    "submittedBy": "DAVID"
   }
 ]
