@@ -382,7 +382,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
       page.drawRectangle({ x: M, y: gy - 3, width: PW/2 - M - 10, height: 14, color: i % 2 === 0 ? LGRAY : WHITE, borderColor: rgb(0.85,0.87,0.90), borderWidth: 0.3 });
       page.drawText(g, { x: gCols[0]+4, y: gy + 1, size: 8, font, color: DARK });
       const res = (_gearResults || {})[g] || '';
-      const mark = (col) => page.drawText('✓', { x: col + 8, y: gy + 1, size: 9, font: boldFont, color: BLUE });
+      const mark = (col) => page.drawText('X', { x: col + 8, y: gy + 1, size: 9, font: boldFont, color: BLUE });
       if (res === 'OK')     mark(gCols[1]);
       if (res === 'SLIPS')  mark(gCols[2]);
       if (res === 'GRINDS') mark(gCols[3]);
