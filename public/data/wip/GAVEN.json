@@ -35,16 +35,5 @@
     "etaParts": "30",
     "etaCompletion": "30",
     "partsArrived": false
-  },
-  {
-    "id": "moktrilsofg",
-    "ro": "775657",
-    "roDate": "",
-    "jobDesc": "",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "highPriority": false,
-    "advisor": ""
   }
 ]
