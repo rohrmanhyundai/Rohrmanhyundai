@@ -278,16 +278,19 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const raw   = atob(DCT_MTM_PDF_B64);
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    const pdfDoc  = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pdfDoc   = await PDFDocument.load(bytes, { ignoreEncryption: true });
     const font     = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const page    = pdfDoc.getPages()[0];
-    const BLACK   = rgb(0,0,0);
-    const h       = page.getHeight();
+    const page     = pdfDoc.getPages()[0];
+    const BLACK    = rgb(0,0,0);
+    const h        = page.getHeight();
 
-    function t(text, x, y, size = 9, f = font) {
-      page.drawText(String(text || ''), { x, y: h - y, size, font: f, color: BLACK });
-    }
+    // Use arrow function (not function declaration) to avoid hoisting / TDZ issues with const font
+    const t = (text, x, y, size = 9, f) => {
+      const usedFont = f !== undefined ? f : font;
+      if (!usedFont) return; // safety guard
+      page.drawText(String(text || ''), { x, y: h - y, size, font: usedFont, color: BLACK });
+    };
 
     t(_ro,            470, 82,  9);
     t(_dealerCode,    48,  112, 9);
