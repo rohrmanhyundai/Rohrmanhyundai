@@ -1,16 +1,5 @@
 [
   {
-    "id": "moitpcq187h",
-    "ro": "776882",
-    "roDate": "2026-04-20",
-    "jobDesc": "ENGINE",
-    "etaParts": "",
-    "etaCompletion": "30",
-    "partsArrived": true,
-    "notes": "all parts here, handed them to cory this morning",
-    "advisor": "DAVID"
-  },
-  {
     "id": "moiuw6klccs",
     "ro": "777108",
     "roDate": "2026-04-02",
@@ -31,6 +20,7 @@
     "etaCompletion": "30",
     "partsArrived": false,
     "advisor": "JORDAN",
-    "highPriority": true
+    "highPriority": true,
+    "notes": "BATTERY IS APPROVED "
   }
 ]

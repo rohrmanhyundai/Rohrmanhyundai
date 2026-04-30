@@ -1,16 +1,5 @@
 [
   {
-    "id": "moit8po054x",
-    "ro": "776783",
-    "roDate": "2026-04-16",
-    "jobDesc": "ENGINE ",
-    "etaParts": "HERE",
-    "etaCompletion": "29-30",
-    "partsArrived": true,
-    "partsArrivedDate": "04/30/2026",
-    "advisor": "DAVID"
-  },
-  {
     "id": "moito45k09z",
     "ro": "776846",
     "roDate": "2026-04-20",
@@ -21,36 +10,14 @@
     "advisor": "JORDAN"
   },
   {
-    "id": "moivh7bp0g7",
-    "ro": "776998",
-    "roDate": "2026-04-20",
-    "jobDesc": "EGR VALVE ",
-    "etaParts": "",
-    "etaCompletion": "30",
-    "partsArrived": true,
-    "advisor": "DAVID"
-  },
-  {
     "id": "moivm3lleau",
     "ro": "776980",
     "roDate": "2026-04-23",
     "jobDesc": "EGR WITH VALVOLINE SERVICES SOLD ",
     "etaParts": "",
     "etaCompletion": "30TH",
-    "partsArrived": null,
-    "advisor": "PARKER"
-  },
-  {
-    "id": "molh9ikp9ky",
-    "ro": "777148",
-    "roDate": "2026-04-30",
-    "jobDesc": "align/fuel service/oil change",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": ""
+    "partsArrived": true,
+    "advisor": "PARKER",
+    "partsArrivedDate": "04/30/2026"
   }
 ]
