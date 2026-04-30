@@ -281,8 +281,15 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
-    const templateDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    const pdfDoc      = await PDFDocument.create();
+    // Try empty-password decrypt first (most forms just use owner-level protection),
+    // fall back to ignoreEncryption if that throws
+    let templateDoc;
+    try {
+      templateDoc = await PDFDocument.load(bytes, { password: '' });
+    } catch {
+      templateDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    }
+    const pdfDoc       = await PDFDocument.create();
     const [copiedPage] = await pdfDoc.copyPages(templateDoc, [0]);
     pdfDoc.addPage(copiedPage);
 
