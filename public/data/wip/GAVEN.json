@@ -7,7 +7,7 @@
     "etaParts": "Backorder",
     "etaCompletion": "BY END OF DAY 30TH",
     "partsArrived": true,
-    "highPriority": false,
+    "highPriority": true,
     "partsArrivedDate": "04/29/2026"
   },
   {
