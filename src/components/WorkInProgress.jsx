@@ -89,6 +89,23 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
   }
 
+  // Silent auto-save for single-click toggles (no loading state shown)
+  function updateRowAndSave(id, field, value) {
+    setRows(prev => {
+      const updated = prev.map(r => r.id === id ? { ...r, [field]: value } : r);
+      saveWipData(activeTech, updated).catch(e => setError(e.message));
+      return updated;
+    });
+  }
+
+  function updateAwaitingAndSave(id, field, value) {
+    setAwaiting(prev => {
+      const updated = prev.map(r => r.id === id ? { ...r, [field]: value } : r);
+      saveAwaitingData(updated).catch(e => setError(e.message));
+      return updated;
+    });
+  }
+
   async function saveRow(id) {
     setSavingRow(id);
     setError('');
@@ -372,7 +389,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
                     {isManagerOrAdvisor && (
                       <button
-                        onClick={() => updateRow(row.id, 'highPriority', !row.highPriority)}
+                        onClick={() => updateRowAndSave(row.id, 'highPriority', !row.highPriority)}
                         style={{ background: row.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: row.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 11, transition: 'all .15s' }}
                       >{row.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
                     )}
@@ -423,8 +440,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <div>
                     <div style={labelSt}>Parts Arrived</div>
                     <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
-                      <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => updateRow(row.id, 'partsArrived', row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
-                      <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => updateRow(row.id, 'partsArrived', row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
+                      <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => updateRowAndSave(row.id, 'partsArrived', row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
+                      <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => updateRowAndSave(row.id, 'partsArrived', row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
                     </div>
                   </div>
                   <div>
@@ -437,10 +454,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                       {advisorPickerId === row.id && (
                         <div style={{ position: 'absolute', top: '110%', left: 0, zIndex: 100, background: '#1e293b', border: '1px solid rgba(139,92,246,.4)', borderRadius: 10, padding: 8, minWidth: 180, boxShadow: '0 8px 24px rgba(0,0,0,.5)' }}>
                           {row.advisor && (
-                            <button onClick={() => { updateRow(row.id, 'advisor', ''); setAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(239,68,68,.1)', border: 'none', color: '#f87171', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginBottom: 4 }}>✕ Clear</button>
+                            <button onClick={() => { updateRowAndSave(row.id, 'advisor', ''); setAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(239,68,68,.1)', border: 'none', color: '#f87171', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginBottom: 4 }}>✕ Clear</button>
                           )}
                           {advisorList.map(adv => (
-                            <button key={adv} onClick={() => { updateRow(row.id, 'advisor', adv); setAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: row.advisor === adv ? 'rgba(139,92,246,.25)' : 'transparent', border: 'none', color: row.advisor === adv ? '#c4b5fd' : '#cbd5e1', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 13, fontWeight: row.advisor === adv ? 800 : 400 }}>{adv}</button>
+                            <button key={adv} onClick={() => { updateRowAndSave(row.id, 'advisor', adv); setAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: row.advisor === adv ? 'rgba(139,92,246,.25)' : 'transparent', border: 'none', color: row.advisor === adv ? '#c4b5fd' : '#cbd5e1', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 13, fontWeight: row.advisor === adv ? 800 : 400 }}>{adv}</button>
                           ))}
                         </div>
                       )}
@@ -536,7 +553,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                       </div>
                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                         <button
-                          onClick={() => { updateAwaiting(aw.id, 'highPriority', !aw.highPriority); }}
+                          onClick={() => { updateAwaitingAndSave(aw.id, 'highPriority', !aw.highPriority); }}
                           style={{ background: aw.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: aw.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, transition: 'all .15s' }}
                         >{aw.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
                         {/* Advisor picker */}
@@ -548,10 +565,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                           {awAdvisorPickerId === aw.id && (
                             <div style={{ position: 'absolute', top: '110%', left: 0, zIndex: 100, background: '#1e293b', border: '1px solid rgba(139,92,246,.4)', borderRadius: 10, padding: 8, minWidth: 180, boxShadow: '0 8px 24px rgba(0,0,0,.5)' }}>
                               {aw.advisor && (
-                                <button onClick={() => { updateAwaiting(aw.id, 'advisor', ''); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(239,68,68,.1)', border: 'none', color: '#f87171', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginBottom: 4 }}>✕ Clear</button>
+                                <button onClick={() => { updateAwaitingAndSave(aw.id, 'advisor', ''); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(239,68,68,.1)', border: 'none', color: '#f87171', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginBottom: 4 }}>✕ Clear</button>
                               )}
                               {advisorList.map(adv => (
-                                <button key={adv} onClick={() => { updateAwaiting(aw.id, 'advisor', adv); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: aw.advisor === adv ? 'rgba(139,92,246,.25)' : 'transparent', border: 'none', color: aw.advisor === adv ? '#c4b5fd' : '#cbd5e1', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 13, fontWeight: aw.advisor === adv ? 800 : 400 }}>{adv}</button>
+                                <button key={adv} onClick={() => { updateAwaitingAndSave(aw.id, 'advisor', adv); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: aw.advisor === adv ? 'rgba(139,92,246,.25)' : 'transparent', border: 'none', color: aw.advisor === adv ? '#c4b5fd' : '#cbd5e1', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 13, fontWeight: aw.advisor === adv ? 800 : 400 }}>{adv}</button>
                               ))}
                             </div>
                           )}
