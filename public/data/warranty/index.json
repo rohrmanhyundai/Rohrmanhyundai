@@ -2,7 +2,7 @@
   {
     "id": "moixxmhkrs8o",
     "createdAt": "2026-04-28T18:09:33.464Z",
-    "updatedAt": "2026-04-30T18:29:03.819Z",
+    "updatedAt": "2026-04-30T18:31:27.227Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Darneatryce Scott",
     "customerPhone": "219-378-6414",
@@ -29,7 +29,7 @@
     ],
     "taxPct": "7.0",
     "deductible": "100.00",
-    "notes": "MAX FOR RENTAL 7 DAYS @ 35.00 A DAY = $245.00 FOR A TOTAL CLAIM $1,231.26. ",
+    "notes": "MAX FOR RENTAL 7 DAYS @ 35.00 A DAY = $245.00 FOR A TOTAL CLAIM $986.26",
     "approved": true,
     "approvedDate": "2026-04-28",
     "waiting": false,
