@@ -19,18 +19,5 @@
     "partsArrived": true,
     "advisor": "PARKER",
     "partsArrivedDate": "04/30/2026"
-  },
-  {
-    "id": "molh9ikp9ky",
-    "ro": "777148",
-    "roDate": "2026-04-30",
-    "jobDesc": "align/fuel service/oil change",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": ""
   }
 ]
