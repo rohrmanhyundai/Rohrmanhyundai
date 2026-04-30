@@ -62,5 +62,21 @@
     "notes": "Enjoyed experience but there was a small miscommunication between tech and advisor which led to confusion over a CEL but was resolved quickly",
     "submittedAt": "2026-04-30T20:18:42.816Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "PAYTON POWELL",
+    "repairOrder": "776869",
+    "vin": "KMHLM4AG7PU440039",
+    "model": "ELANTRA",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "04/22/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "555555555",
+    "notes": "No phone number in system or contact info?",
+    "submittedAt": "2026-04-30T20:20:07.237Z",
+    "submittedBy": "DAVID"
   }
 ]
