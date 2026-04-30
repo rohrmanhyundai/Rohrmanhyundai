@@ -36,7 +36,7 @@ const inpSt = {
 
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: todayUS(), jobDesc: '', highPriority: false, advisor: '',
+  ro: '', roDate: todayUS(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers }) {
@@ -202,7 +202,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   async function saveAwaitingRow(id) {
     setAwaitingSavingId(id);
     try {
-      await saveAwaitingData(awaiting);
+      // Clear isNew flag so row moves into sorted order after save
+      const committed = awaiting.map(r => r.id === id ? { ...r, isNew: false } : r);
+      await saveAwaitingData(committed);
+      setAwaiting(committed);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -538,7 +541,11 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               ) : awaiting.length === 0 ? (
                 <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
               ) : [...awaiting].sort((a, b) => {
+                  // 1. Unsaved new rows always on top
+                  if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
+                  // 2. High priority next
                   if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
+                  // 3. Newest date first
                   return new Date(b.roDate || 0) - new Date(a.roDate || 0);
                 }).map(aw => (
                 <div key={aw.id} style={{ background: aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)'}`, borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
