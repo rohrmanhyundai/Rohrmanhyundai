@@ -261,14 +261,26 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     finally { setCreatingForTech(null); }
   }
 
+  // Multi-step "Add to Awaiting" wizard: step 0=idle, 1=pick advisor, 2=job desc
+  const [awaitingWizardStep, setAwaitingWizardStep] = useState(0);
+  const [awaitingWizardAdvisor, setAwaitingWizardAdvisor] = useState('');
+  const [awaitingWizardJobDesc, setAwaitingWizardJobDesc] = useState('');
   const [creatingForAwaiting, setCreatingForAwaiting] = useState(false);
+
+  function cancelAwaitingWizard() {
+    setAwaitingWizardStep(0);
+    setAwaitingWizardAdvisor('');
+    setAwaitingWizardJobDesc('');
+  }
+
   async function createForAwaiting() {
     setCreatingForAwaiting(true);
     try {
-      const fresh = { ...emptyAwaiting(), ro: searchRO.trim(), isNew: false };
+      const fresh = { ...emptyAwaiting(), ro: searchRO.trim(), advisor: awaitingWizardAdvisor, jobDesc: awaitingWizardJobDesc, isNew: false };
       const updated = [fresh, ...awaiting];
       await saveAwaitingData(updated);
       setAwaiting(updated);
+      cancelAwaitingWizard();
       clearSearch();
     } catch (e) { setError(e.message); }
     finally { setCreatingForAwaiting(false); }
@@ -374,15 +386,61 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                     ))}
                   </div>
                 </div>
-                {/* Cars Awaiting Technician */}
-                <div style={{ flex: 1, minWidth: 260, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '16px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 10 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 0.5 }}>🚗 Cars Awaiting Technician</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>Not assigned to a tech yet? Add it to the waiting list.</div>
-                  <button
-                    onClick={createForAwaiting}
-                    disabled={creatingForAwaiting}
-                    style={{ background: creatingForAwaiting ? 'rgba(251,191,36,.35)' : 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 8, padding: '8px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 13 }}
-                  >{creatingForAwaiting ? '⏳ Adding…' : '+ Add to Awaiting'}</button>
+                {/* Cars Awaiting Technician wizard */}
+                <div style={{ flex: 1, minWidth: 260, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 0.5 }}>🚗 Cars Awaiting Technician</div>
+                    {awaitingWizardStep > 0 && (
+                      <button onClick={cancelAwaitingWizard} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>✕ Cancel</button>
+                    )}
+                  </div>
+
+                  {awaitingWizardStep === 0 && (
+                    <>
+                      <div style={{ fontSize: 12, color: '#94a3b8' }}>Not assigned to a tech yet? Add it to the waiting list.</div>
+                      <button
+                        onClick={() => setAwaitingWizardStep(1)}
+                        style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 8, padding: '8px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 13, alignSelf: 'flex-start' }}
+                      >+ Add to Awaiting</button>
+                    </>
+                  )}
+
+                  {awaitingWizardStep === 1 && (
+                    <>
+                      <div style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>Step 1 of 2 — Select Advisor</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {advisorList.length === 0 && <span style={{ fontSize: 12, color: '#64748b' }}>No advisors found.</span>}
+                        {advisorList.map(adv => (
+                          <button key={adv}
+                            onClick={() => { setAwaitingWizardAdvisor(adv); setAwaitingWizardStep(2); }}
+                            style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '7px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                          >{adv}</button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {awaitingWizardStep === 2 && (
+                    <>
+                      <div style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>Step 2 of 2 — Job Description</div>
+                      <div style={{ fontSize: 11, color: '#94a3b8' }}>Advisor: <strong style={{ color: '#fbbf24' }}>{awaitingWizardAdvisor}</strong></div>
+                      <input
+                        value={awaitingWizardJobDesc}
+                        onChange={e => setAwaitingWizardJobDesc(e.target.value)}
+                        placeholder="Describe the job…"
+                        style={{ ...inpSt }}
+                        autoFocus
+                      />
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button onClick={() => setAwaitingWizardStep(1)} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.15)', color: '#94a3b8', borderRadius: 8, padding: '7px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>← Back</button>
+                        <button
+                          onClick={createForAwaiting}
+                          disabled={!awaitingWizardJobDesc.trim() || creatingForAwaiting}
+                          style={{ background: awaitingWizardJobDesc.trim() ? 'rgba(74,222,128,.25)' : 'rgba(255,255,255,.04)', border: `1px solid ${awaitingWizardJobDesc.trim() ? 'rgba(74,222,128,.5)' : 'rgba(255,255,255,.1)'}`, color: awaitingWizardJobDesc.trim() ? '#4ade80' : '#475569', borderRadius: 8, padding: '7px 20px', cursor: awaitingWizardJobDesc.trim() ? 'pointer' : 'not-allowed', fontWeight: 900, fontSize: 13 }}
+                        >{creatingForAwaiting ? '⏳ Creating…' : '✅ Create & Add to Awaiting'}</button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}

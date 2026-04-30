@@ -7,7 +7,8 @@
     "etaParts": "HERE",
     "etaCompletion": "29-30",
     "partsArrived": true,
-    "partsArrivedDate": "04/30/2026"
+    "partsArrivedDate": "04/30/2026",
+    "advisor": "DAVID"
   },
   {
     "id": "moito45k09z",
@@ -16,7 +17,8 @@
     "jobDesc": "ENGINE",
     "etaParts": "",
     "etaCompletion": "30",
-    "partsArrived": true
+    "partsArrived": true,
+    "advisor": "JORDAN"
   },
   {
     "id": "moivh7bp0g7",
@@ -25,16 +27,8 @@
     "jobDesc": "EGR VALVE ",
     "etaParts": "",
     "etaCompletion": "30",
-    "partsArrived": true
-  },
-  {
-    "id": "moivirnj3ar",
-    "ro": "776950",
-    "roDate": "2026-04-22",
-    "jobDesc": "BLOWER FAN ",
-    "etaParts": "2 DAYS ",
-    "etaCompletion": "",
-    "partsArrived": false
+    "partsArrived": true,
+    "advisor": "DAVID"
   },
   {
     "id": "moivm3lleau",
@@ -43,6 +37,7 @@
     "jobDesc": "EGR WITH VALVOLINE SERVICES SOLD ",
     "etaParts": "",
     "etaCompletion": "30TH",
-    "partsArrived": null
+    "partsArrived": null,
+    "advisor": "PARKER"
   }
 ]
