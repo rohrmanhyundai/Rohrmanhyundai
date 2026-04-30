@@ -275,107 +275,113 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const _svcMgrSig     = d?.svcMgrSig     ?? svcMgrSig;
     const _techSSN       = d?.techSSN       ?? techSSN;
 
-    // Load encrypted template into a staging doc, then COPY the page into a
-    // fresh unencrypted doc — this strips the encryption dict so save() works.
+    // Load the decrypted PDF template
     const raw   = atob(DCT_MTM_PDF_B64);
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-
-    // PDF is now decrypted — load directly, no encryption options needed
     const pdfDoc = await PDFDocument.load(bytes);
+    const form   = pdfDoc.getForm();
 
-    const font     = await pdfDoc.embedFont('Helvetica');
-    const boldFont = await pdfDoc.embedFont('Helvetica-Bold');
-    const page     = pdfDoc.getPages()[0];
-    if (!page) throw new Error('PDF loaded but has no pages');
-    const BLACK    = rgb(0, 0, 0);
-    const h        = page.getHeight(); // 792
-
-    const t = (text, x, y, size = 9, bold = false) => {
-      const str = String(text || '');
-      if (!str) return;
-      page.drawText(str, { x, y: h - y, size, font: bold ? boldFont : font, color: BLACK });
+    // Helper: safely set a text field
+    const setTxt = (name, value) => {
+      if (!value && value !== 0) return;
+      try { form.getTextField(name).setText(String(value)); } catch {}
+    };
+    // Helper: safely check a checkbox
+    const chk = (name, condition) => {
+      try {
+        const cb = form.getCheckBox(name);
+        condition ? cb.check() : cb.uncheck();
+      } catch {}
     };
 
-    // Row 1: RO, Dealer Code, Name, Repair Date, Mileage
-    t(_ro,                   470, 82,  9);
-    t(_dealerCode,            48, 112,  9);
-    t(_techName,             135, 112,  9);
-    t(fmtDate(_repairDate),  415, 112,  9);
-    t(_mileage,              530, 112,  9);
+    // ── Basic Info ──
+    setTxt('Repair Order Number', _ro);
+    setTxt('Dealer Code',         _dealerCode);
+    setTxt('NameF',               _techName);
+    setTxt('RO Date',             fmtDate(_repairDate));
+    setTxt('Mileage',             _mileage);
+    setTxt('VIN',                 _vin);
+    chk('Warranty',     _repairType === 'Warranty');
+    chk('Customer Pay', _repairType === 'Customer Pay');
 
-    // VIN — individual character boxes
-    (_vin || '').split('').slice(0, 17).forEach((ch, i) => t(ch, 52 + i * 18.5, 134, 9));
+    // ── Part Numbers ──
+    setTxt('Removed Part Number',    _removedPN);
+    setTxt('Removed Serial Number',  _removedSN);
+    setTxt('Installed Part Number',  _installedPN);
+    setTxt('Installed Serial Number',_installedSN);
 
-    // Repair Type checkboxes
-    if (_repairType === 'Warranty')     t('X', 418, 134, 9, true);
-    if (_repairType === 'Customer Pay') t('X', 499, 134, 9, true);
+    // ── Condition Code ──
+    setTxt('What is the specific condition code', _conditionCode);
 
-    // Part numbers
-    t(_removedPN,   48,  158, 9);
-    t(_removedSN,  330,  158, 9);
-    t(_installedPN, 48,  178, 9);
-    t(_installedSN,330,  178, 9);
+    // ── Symptom ──
+    setTxt('What is the specific conditionconcerns', _specificCondition);
+    setTxt('How long has it been occurring',         _howLong);
+    chk('Always',       _howOften === 'Always');
+    chk('Sometimes',    _howOften === 'Sometimes');
+    chk('Intermittent', _howOften === 'Intermittent');
+    chk('Hot',  _whenHotCold === 'Hot');
+    chk('Cold', _whenHotCold === 'Cold');
+    chk('Yes1', _beenInBefore === 'Yes');
+    chk('No1',  _beenInBefore === 'No');
+    chk('Yes2', _checkedTSB === 'Yes');
+    chk('No2',  _checkedTSB === 'No');
+    chk('Yes3', _canDuplicate === 'Yes');
+    chk('No3',  _canDuplicate === 'No');
+    setTxt('If yes how',      _howDuplicate);
+    setTxt('Test Drive Results', _testDriveResults);
 
-    // Condition code
-    t(_conditionCode, 195, 204, 9);
+    // ── Fluid / Software ──
+    setTxt('Level',              _fluidLevel);
+    setTxt('Smell',              _fluidSmell);
+    setTxt('Color',              _fluidColor);
+    setTxt('LEAKS LOCATION',     _leakLocation);
+    setTxt('From Engine  AT Menu 1', _gdsCode1);
+    setTxt('From Engine  AT Menu 2', _gdsCode2);
+    setTxt('ECM', _ecmLevel);
+    setTxt('TCM', _tcmLevel);
 
-    // Symptom
-    t(_specificCondition, 195, 232, 8);
-    t(_howLong,           195, 248, 8);
-    if (_howOften === 'Always')       t('X', 194, 263, 9, true);
-    if (_howOften === 'Sometimes')    t('X', 249, 263, 9, true);
-    if (_howOften === 'Intermittent') t('X', 315, 263, 9, true);
-    if (_whenHotCold === 'Hot')       t('X', 469, 263, 9, true);
-    if (_whenHotCold === 'Cold')      t('X', 515, 263, 9, true);
-    if (_beenInBefore === 'Yes') t('X', 182, 279, 9, true);
-    if (_beenInBefore === 'No')  t('X', 218, 279, 9, true);
-    if (_checkedTSB === 'Yes')   t('X', 435, 279, 9, true);
-    if (_checkedTSB === 'No')    t('X', 471, 279, 9, true);
-    if (_canDuplicate === 'Yes') t('X', 182, 295, 9, true);
-    if (_canDuplicate === 'No')  t('X', 218, 295, 9, true);
-    t(_howDuplicate,     285, 295, 8);
-    t(_testDriveResults, 195, 311, 8);
-
-    // Fluid
-    t(_fluidLevel,    55, 352, 8);
-    t(_fluidSmell,    55, 368, 8);
-    t(_fluidColor,   105, 368, 8);
-    t(_leakLocation,  55, 395, 8);
-    t(_gdsCode1,      55, 435, 8);
-    t(_gdsCode2,      55, 447, 8);
-    t(_ecmLevel,      90, 490, 8);
-    t(_tcmLevel,      90, 503, 8);
-
-    // Gear results
-    const gearY = [348,363,378,393,408,423,438,453,468,483];
+    // ── Gear Results ──
+    const gearFields = [
+      ['Gear ok1','Gear Slips1','Gear Grinds1'],
+      ['Gear ok2','Gear Slips2','Gear Grinds2'],
+      ['Gear ok3','Gear Slips3','Gear Grinds3'],
+      ['Gear ok4','Gear Slips4','Gear Grinds4'],
+      ['Gear ok5','Gear Slips5','Gear Grinds5'],
+      ['Gear ok6','Gear Slips6','Gear Grinds6'],
+      ['Gear ok7','Gear Slips7','Gear Grinds7'],
+      ['Gear ok8','Gear Slips8','Gear Grinds8'],
+      ['Clutch 1 Judder ok','Clutch 1 Judder Slips','Clutch 1 Judder Grinds'],
+      ['Clutch 2 Judder ok','Clutch 2 Judder Slips','Clutch 2 Judder Grinds'],
+    ];
     GEARS.forEach((g, i) => {
       const res = (_gearResults || {})[g];
-      if (res === 'OK')     t('X', 268, gearY[i], 9, true);
-      if (res === 'SLIPS')  t('X', 292, gearY[i], 9, true);
-      if (res === 'GRINDS') t('X', 316, gearY[i], 9, true);
+      chk(gearFields[i][0], res === 'OK');
+      chk(gearFields[i][1], res === 'SLIPS');
+      chk(gearFields[i][2], res === 'GRINDS');
     });
 
-    // Driveability
-    t(_tpsIdle, 430, 370, 8);
-    t(_tpsWot,  430, 383, 8);
-    if (_gdsDctStep1 === 'PASS') t('X', 430, 413, 9, true);
-    if (_gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, true);
-    t(_gdsDctMsg1, 380, 427, 8);
-    if (_gdsDctStep2 === 'PASS') t('X', 430, 441, 9, true);
-    if (_gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, true);
-    t(_gdsDctMsg2, 380, 455, 8);
+    // ── Driveability ──
+    setTxt('TPS idle', _tpsIdle);
+    setTxt('TPS WOT',  _tpsWot);
+    chk('PASS1', _gdsDctStep1 === 'PASS');
+    chk('FAIL1', _gdsDctStep1 === 'FAIL');
+    setTxt('Failure Message 1', _gdsDctMsg1);
+    chk('PASS2', _gdsDctStep2 === 'PASS');
+    chk('FAIL2', _gdsDctStep2 === 'FAIL');
+    setTxt('Failure Message 2', _gdsDctMsg2);
+    setTxt('Type:',        _noiseType);
+    setTxt('Location:',    _noiseLoc);
+    setTxt('Speed & Gear:', _noiseSpeed);
 
-    // Noise
-    t(_noiseType,  395, 480, 8);
-    t(_noiseLoc,   395, 495, 8);
-    t(_noiseSpeed, 395, 510, 8);
+    // ── Authorization ──
+    setTxt('Techline Case',              _techlineCase);
+    setTxt('Prior Authorization',        _priorAuth);
+    setTxt('Service Manager Signature',  _svcMgrSig);
+    setTxt('Technician SSN last 4 digits', _techSSN);
 
-    // Authorization
-    t(_techlineCase, 390, 540, 8);
-    t(_priorAuth,    500, 540, 8);
-    t(_svcMgrSig,    145, 558, 8);
-    t(_techSSN,      195, 574, 9);
+    // Flatten so fields become static printed text
+    form.flatten();
 
     return pdfDoc.save();
   }
