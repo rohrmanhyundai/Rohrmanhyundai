@@ -6,7 +6,8 @@
     "jobDesc": "ENGINE ",
     "etaParts": "HERE",
     "etaCompletion": "29-30",
-    "partsArrived": true
+    "partsArrived": null,
+    "partsArrivedDate": ""
   },
   {
     "id": "moito45k09z",
