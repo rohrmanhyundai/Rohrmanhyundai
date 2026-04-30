@@ -6,7 +6,8 @@
     "jobDesc": "engine",
     "etaParts": "Backorder",
     "etaCompletion": "BY END OF DAY 30TH",
-    "partsArrived": true
+    "partsArrived": true,
+    "highPriority": true
   },
   {
     "id": "moithp3753e",
