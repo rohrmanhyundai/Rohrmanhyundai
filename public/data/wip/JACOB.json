@@ -6,15 +6,6 @@
     "jobDesc": "",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": false
-  },
-  {
-    "id": "mokh8hiebot",
-    "ro": "776982",
-    "roDate": "",
-    "jobDesc": "under shield",
-    "etaParts": "2",
-    "etaCompletion": "",
-    "partsArrived": false
+    "partsArrived": null
   }
 ]
