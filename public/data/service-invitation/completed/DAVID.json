@@ -46,5 +46,21 @@
     "notes": "Enjoyed her experience and feels as though it went well",
     "submittedAt": "2026-04-30T20:15:26.114Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "CLINT HANTHORN",
+    "repairOrder": "776874",
+    "vin": "KM8RMESA3TU053539",
+    "model": "PALISADE HEV",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "04/23/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 268 - 0150",
+    "notes": "Enjoyed experience but there was a small miscommunication between tech and advisor which led to confusion over a CEL but was resolved quickly",
+    "submittedAt": "2026-04-30T20:18:42.816Z",
+    "submittedBy": "DAVID"
   }
 ]
