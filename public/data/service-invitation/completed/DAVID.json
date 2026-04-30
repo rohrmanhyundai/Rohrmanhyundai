@@ -1,0 +1,18 @@
+[
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "WILLIAM NOVACK",
+    "repairOrder": "776933",
+    "vin": "KM8R4DGE7SU946771",
+    "model": "PALISADE",
+    "serviceDate": "04/22/2026",
+    "invitationDate": "04/24/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(765) 586 - 1126",
+    "notes": "Left VM",
+    "submittedAt": "2026-04-30T20:12:01.696Z",
+    "submittedBy": "DAVID"
+  }
+]
