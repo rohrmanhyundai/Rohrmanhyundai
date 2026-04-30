@@ -496,7 +496,14 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
           <div className="adv-title">⚙️ DCT & MTM Diagnosis Worksheet</div>
           <div className="adv-sub">Remanufactured DCT & MTM — SVC-1401</div>
         </div>
-        <button className="secondary" onClick={onBack}>← AT Diag Worksheet</button>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <button
+            onClick={() => { setShowUploads(true); refreshIndex(); }}
+            style={{ background: 'rgba(139,92,246,.2)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 10, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+            📂 View Uploads {savedList.length > 0 ? `(${savedList.length})` : ''}
+          </button>
+          <button className="secondary" onClick={onBack}>← AT Diag Worksheet</button>
+        </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px', display: 'flex', gap: 24 }}>
@@ -743,10 +750,6 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
             <button onClick={handleSave} disabled={saving}
               style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
               💾 {saving ? 'Uploading…' : 'Upload'}
-            </button>
-            <button onClick={() => { setShowUploads(true); refreshIndex(); }}
-              style={{ background: 'rgba(139,92,246,.2)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
-              📂 View Uploads {savedList.length > 0 ? `(${savedList.length})` : ''}
             </button>
           </div>
 
