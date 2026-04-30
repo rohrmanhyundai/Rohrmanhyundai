@@ -29,7 +29,8 @@
     "jobDesc": "IGNITION COIL",
     "etaParts": "TOMORROW",
     "etaCompletion": "",
-    "partsArrived": false
+    "partsArrived": false,
+    "advisor": "DAVID"
   },
   {
     "id": "mokkzm00im8",
