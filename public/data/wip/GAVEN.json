@@ -6,9 +6,9 @@
     "jobDesc": "engine",
     "etaParts": "Backorder",
     "etaCompletion": "BY END OF DAY 30TH",
-    "partsArrived": false,
+    "partsArrived": true,
     "highPriority": true,
-    "partsArrivedDate": ""
+    "partsArrivedDate": "04/29/2026"
   },
   {
     "id": "moithp3753e",
