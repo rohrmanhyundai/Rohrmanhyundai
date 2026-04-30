@@ -6,8 +6,8 @@
     "jobDesc": "ENGINE",
     "etaParts": "",
     "etaCompletion": "30",
-    "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrived": true,
+    "partsArrivedDate": "04/30/2026"
   },
   {
     "id": "moiuw6klccs",
