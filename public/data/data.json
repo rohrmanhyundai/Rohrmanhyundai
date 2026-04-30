@@ -112,7 +112,7 @@
         "asr": 0.19699999999999998,
         "elr": 0.95,
         "last_month_total": 305.7,
-        "roh50_hrs_ro": 0.87
+        "roh50_hrs_ro": 0.96
       },
       {
         "name": "JORDAN",
@@ -126,7 +126,7 @@
         "asr": 0.1909,
         "elr": 0.92,
         "last_month_total": 333.4,
-        "roh50_hrs_ro": 1.2
+        "roh50_hrs_ro": 1.18
       },
       {
         "name": "NEVEN",
@@ -151,7 +151,7 @@
         "align": 0.12119999999999999,
         "tires": 0.12119999999999999,
         "valvoline": 0.1515,
-        "roh50_hrs_ro": 0.57,
+        "roh50_hrs_ro": 0.52,
         "csi": 915,
         "asr": 0.1288,
         "elr": 0.92,
