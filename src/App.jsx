@@ -472,6 +472,7 @@ export default function App() {
         currentRole={currentRole}
         currentUser={currentUser.toUpperCase()}
         chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
+        techChatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
     );
   }

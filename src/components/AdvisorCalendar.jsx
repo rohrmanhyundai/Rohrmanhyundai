@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loadAdvisorNoteIndex } from '../utils/github';
 import Chat from './Chat';
+import TechChat from './TechChat';
 
 const RANK_BASE = 'https://dealerplateguy.github.io/Advisor-Rank-Board/data';
 const METRIC_KEYS = ['ro', 'openRo', 'cpHrs', 'warrHrs', 'rap', '_combined', 'alignCnt', 'tireCnt', 'valvCnt'];
@@ -84,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, refreshKey, userPages, currentRole, currentUser, chatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -215,6 +216,15 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       )}
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 16, padding: '8px 16px 16px', overflow: 'hidden' }}>
+        {/* Tech Chat — left */}
+        <div style={{ width: 300, flexShrink: 0 }}>
+          <TechChat
+            currentUser={currentUser || ''}
+            currentRole={currentRole}
+            hasChatAccess={techChatUsers && techChatUsers.map(u => u.toUpperCase()).includes((currentUser || '').toUpperCase())}
+          />
+        </div>
+        {/* Calendar — middle */}
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
           <div className="adv-cal-wrap">
             <div className="adv-cal-nav">
@@ -248,7 +258,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {loading && <div className="adv-loading">Loading saved notes...</div>}
           </div>
         </div>
-        <div style={{ width: 320, flexShrink: 0 }}>
+        {/* Advisor Chat — right */}
+        <div style={{ width: 300, flexShrink: 0 }}>
           <Chat
             currentUser={currentUser || ''}
             currentRole={currentRole}
