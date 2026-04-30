@@ -204,12 +204,14 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
   const [showConditionChart, setShowConditionChart] = useState(false);
 
   // Load saved worksheets index
-  useEffect(() => {
+  function refreshIndex() {
+    setLoadingList(true);
     loadGithubFile('data/dct-worksheets/index.json')
       .then(d => setSavedList(Array.isArray(d) ? d : []))
       .catch(() => setSavedList([]))
       .finally(() => setLoadingList(false));
-  }, []);
+  }
+  useEffect(() => { refreshIndex(); }, []);
 
   function fmtDate(iso) {
     if (!iso) return '';
@@ -388,6 +390,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     setStatus('⏳ Loading…');
     try {
       const d = await loadGithubFile(`data/dct-worksheets/${item.id}.json`);
+      if (!d) { setStatus('❌ Could not load worksheet — file not found or still deploying. Try again in a moment.'); return; }
       setRo(d.ro || ''); setDealerCode(d.dealerCode || DEALER_CODE); setTechName(d.techName || '');
       setRepairDate(d.repairDate || today); setMileage(d.mileage || ''); setVin(d.vin || '');
       setRepairType(d.repairType || ''); setRemovedPN(d.removedPN || ''); setRemovedSN(d.removedSN || '');
@@ -675,7 +678,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
               style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
               💾 Upload
             </button>
-            <button onClick={() => setShowUploads(v => !v)}
+            <button onClick={() => { const next = !showUploads; setShowUploads(next); if (next) refreshIndex(); }}
               style={{ background: showUploads ? 'rgba(139,92,246,.25)' : 'rgba(255,255,255,.06)', border: `1px solid ${showUploads ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.15)'}`, color: showUploads ? '#c4b5fd' : '#94a3b8', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
               📂 View Uploads {savedList.length > 0 ? `(${savedList.length})` : ''}
             </button>
