@@ -29,8 +29,7 @@
     "etaParts": "",
     "etaCompletion": "end of day thursday",
     "partsArrived": null,
-    "advisor": "JORDAN",
-    "notes": "left customer vm to update we had vehicle in the shop\n"
+    "advisor": "JORDAN"
   },
   {
     "id": "molng5j7bnj",
@@ -57,18 +56,5 @@
     "highPriority": true,
     "advisor": "",
     "notes": ""
-  },
-  {
-    "id": "molwac3h4go",
-    "ro": "777161",
-    "roDate": "2026-04-30",
-    "jobDesc": "CEL ",
-    "etaParts": "5/1 or 5/2",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "ordered ITM, will be here tomorrow or saturday, left a vm for the customer, close ro if needed"
   }
 ]
