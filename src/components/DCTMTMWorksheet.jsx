@@ -41,6 +41,104 @@ function CheckRow({ label, value, onChange, options }) {
 
 const GEARS = ['1st Gear','2nd Gear','3rd Gear','4th Gear','5th Gear','6th Gear','7th Gear','8th Gear','Clutch 1 Judder','Clutch 2 Judder'];
 
+const CONDITION_CODES = [
+  { group: 'SLIPS', codes: [
+    { code: '400', desc: 'Slips in Reverse' },
+    { code: '401', desc: 'Slips in Drive' },
+    { code: '402', desc: 'Slips in 1st gear' },
+    { code: '403', desc: 'Slips in 2nd gear' },
+    { code: '404', desc: 'Slips in 3rd gear' },
+    { code: '405', desc: 'Slips in 4th gear' },
+    { code: '406', desc: 'Slips in 5th gear' },
+    { code: '407', desc: 'Slips other gear (specify)' },
+  ]},
+  { group: 'GRINDING', codes: [
+    { code: '410', desc: 'Grinds into 1st' },
+    { code: '411', desc: 'Grinds into 2nd' },
+    { code: '412', desc: 'Grinds into 3rd' },
+    { code: '413', desc: 'Grinds into 4th' },
+    { code: '414', desc: 'Grinds into 5th' },
+    { code: '415', desc: 'Grinds into 6th' },
+    { code: '416', desc: 'Grinds into 7th' },
+    { code: '417', desc: 'Grinds into reverse' },
+    { code: '418', desc: 'Grinds - Other (specify)' },
+  ]},
+  { group: 'SHIFT JUDDER', codes: [
+    { code: '420', desc: 'Shudder into Drive' },
+    { code: '421', desc: 'Shudder into Reverse' },
+    { code: '422', desc: 'Shudder 1-2 shift' },
+    { code: '423', desc: 'Shudder 2-3 shift' },
+    { code: '424', desc: 'Shudder 3-4 shift' },
+    { code: '425', desc: 'Shudder 4-5 shift' },
+    { code: '426', desc: 'Shudder during acceleration from stop' },
+    { code: '427', desc: 'Shudder - Other (specify)' },
+  ]},
+  { group: 'SHIFTS ERRATIC / UP OR DOWN TOO OFTEN', codes: [
+    { code: '430', desc: 'Erratic upshift (specify)' },
+    { code: '431', desc: 'Erratic downshift (specify)' },
+    { code: '432', desc: 'Erratic shift - other (specify)' },
+  ]},
+  { group: 'CHECK ENGINE LIGHT ON', codes: [
+    { code: '440', desc: 'Check engine light on — "Engine" menu (specify DTC)' },
+    { code: '441', desc: 'Check engine light on — "Trans" menu (specify DTC)' },
+  ]},
+  { group: 'LEAKS', codes: [
+    { code: '450', desc: 'Leaks at bellhousing' },
+    { code: '451', desc: 'Leaks at case (specify location)' },
+    { code: '452', desc: 'Leaks at differential oil seal (specify left or right)' },
+    { code: '453', desc: 'Leaks between transaxle and transfer case' },
+    { code: '454', desc: 'Leaks between case halves' },
+    { code: '455', desc: 'Leaks at rear cover' },
+    { code: '456', desc: 'Oil leak due to crack in case (specify location)' },
+    { code: '457', desc: 'Other leak (specify)' },
+  ]},
+  { group: 'CASE BROKEN / CRACKED', codes: [
+    { code: '460', desc: 'Bellhousing broken/cracked (specify location)' },
+    { code: '461', desc: 'Transaxle case broken/cracked (specify location)' },
+  ]},
+  { group: 'WILL NOT MOVE', codes: [
+    { code: '470', desc: 'Will not move in Reverse' },
+    { code: '471', desc: 'Will not move in Drive / No forward gears' },
+  ]},
+  { group: 'SHIFTS HARSH or ROUGH / BANGS / JERKS', codes: [
+    { code: '480', desc: 'Harsh shift in Drive' },
+    { code: '481', desc: 'Harsh shift into Reverse' },
+    { code: '482', desc: 'Harsh upshift (specify gears)' },
+    { code: '483', desc: 'Harsh downshift (specify gears)' },
+  ]},
+  { group: 'DELAYED SHIFT', codes: [
+    { code: '490', desc: 'Delayed shift into Drive' },
+    { code: '491', desc: 'Delayed shift into Reverse' },
+    { code: '492', desc: 'Delayed upshift (specify gears)' },
+    { code: '493', desc: 'Delayed downshift (specify gears)' },
+  ]},
+  { group: "WON'T SHIFT / STUCK IN GEAR", codes: [
+    { code: '500', desc: "Won't shift in Drive" },
+    { code: '501', desc: 'Stuck in 1st gear' },
+    { code: '502', desc: 'Stuck in 2nd gear (specify DTC)' },
+    { code: '503', desc: 'Stuck in 3rd gear (specify DTC)' },
+    { code: '504', desc: 'Stuck in 4th gear (specify DTC)' },
+    { code: '505', desc: 'Stuck in 5th gear (specify DTC)' },
+    { code: '506', desc: 'Stuck in 6th gear (specify DTC)' },
+    { code: '507', desc: 'Stuck in 7th gear (specify DTC)' },
+    { code: '508', desc: "Won't shift - other (specify)" },
+  ]},
+  { group: 'NOISE', codes: [
+    { code: '520', desc: 'Noise in 1st gear' },
+    { code: '521', desc: 'Noise in 2nd gear' },
+    { code: '522', desc: 'Noise in 3rd gear' },
+    { code: '523', desc: 'Noise in 4th gear' },
+    { code: '524', desc: 'Noise in 5th gear' },
+    { code: '525', desc: 'Noise in 6th gear' },
+    { code: '526', desc: 'Noise in 7th gear' },
+    { code: '527', desc: 'Noise in reverse' },
+    { code: '528', desc: 'Noise during acceleration/deceleration' },
+    { code: '529', desc: 'Whine noise (specify road speed)' },
+    { code: '528', desc: 'Noise from differential (specify road speed)' },
+    { code: '529', desc: 'Noise - other (specify)' },
+  ]},
+];
+
 export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -103,6 +201,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
   const [savedList, setSavedList] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
   const [showUploads, setShowUploads] = useState(false);
+  const [showConditionChart, setShowConditionChart] = useState(false);
 
   // Load saved worksheets index
   useEffect(() => {
@@ -360,7 +459,21 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
               <Field label="Installed Serial Number *" value={installedSN} onChange={setInstalledSN} />
             </div>
             <div style={{ marginTop: 14 }}>
-              <Field label="Condition Code *" value={conditionCode} onChange={setConditionCode} placeholder="Refer to DCT/MTM Condition Codes chart" />
+              <label style={lbl}>Condition Code *</label>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <input
+                  value={conditionCode}
+                  onChange={e => setConditionCode(e.target.value)}
+                  placeholder="Click 'Condition Chart' to select a code"
+                  style={{ ...inp, flex: 1 }}
+                />
+                <button
+                  onClick={() => setShowConditionChart(true)}
+                  style={{ whiteSpace: 'nowrap', background: 'linear-gradient(135deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                >
+                  📋 Condition Chart
+                </button>
+              </div>
             </div>
           </div>
 
@@ -605,6 +718,49 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
           )}
         </div>
       </div>
+
+      {/* Condition Code Chart Modal */}
+      {showConditionChart && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          onClick={() => setShowConditionChart(false)}>
+          <div style={{ background: '#1e293b', border: '1px solid rgba(251,191,36,.4)', borderRadius: 18, width: '100%', maxWidth: 900, maxHeight: '88vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 60px rgba(0,0,0,0.6)' }}
+            onClick={e => e.stopPropagation()}>
+            {/* Modal header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', borderBottom: '1px solid rgba(255,255,255,.08)', background: 'rgba(251,191,36,.08)', flexShrink: 0 }}>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 18, color: '#fbbf24', letterSpacing: 1 }}>📋 DCT/MTM CONDITION CODES</div>
+                <div style={{ fontSize: 12, color: '#92400e', marginTop: 2 }}>Click any condition to auto-fill the code</div>
+              </div>
+              <button onClick={() => setShowConditionChart(false)}
+                style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', color: '#94a3b8', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+                ✕ Close
+              </button>
+            </div>
+            {/* Scrollable code list — two columns */}
+            <div style={{ overflowY: 'auto', padding: '20px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px', alignItems: 'start' }}>
+              {CONDITION_CODES.map(group => (
+                <div key={group.group} style={{ marginBottom: 20 }}>
+                  <div style={{ fontWeight: 900, fontSize: 11, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 8, paddingBottom: 4, borderBottom: '1px solid rgba(251,191,36,.2)' }}>
+                    {group.group}
+                  </div>
+                  {group.codes.map(item => (
+                    <button
+                      key={`${item.code}-${item.desc}`}
+                      onClick={() => { setConditionCode(item.code); setShowConditionChart(false); }}
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, background: 'transparent', border: 'none', borderRadius: 6, padding: '6px 8px', cursor: 'pointer', textAlign: 'left', marginBottom: 2, transition: 'background .1s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(251,191,36,.12)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <span style={{ minWidth: 38, fontWeight: 900, fontSize: 14, color: '#fbbf24', fontFamily: 'monospace' }}>{item.code}</span>
+                      <span style={{ fontSize: 13, color: '#cbd5e1' }}>{item.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
