@@ -15,7 +15,8 @@
     "jobDesc": "ENGINE ",
     "etaParts": "WIP",
     "etaCompletion": "",
-    "partsArrived": false
+    "partsArrived": true,
+    "partsArrivedDate": "04/30/2026"
   },
   {
     "id": "mokkvfqhbd0",
