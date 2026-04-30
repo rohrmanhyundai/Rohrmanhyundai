@@ -22,7 +22,7 @@ function ChipBtn({ active, color, onClick, children }) {
 
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, highPriority: false, advisor: '',
+  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '',
 });
 
 const inpSt = {
@@ -87,6 +87,20 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   function updateRow(id, field, value) {
     setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
+  }
+
+  // Toggle Parts Arrived with auto date stamp
+  function togglePartsArrived(id, value) {
+    const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    setRows(prev => {
+      const updated = prev.map(r => r.id === id ? {
+        ...r,
+        partsArrived: value,
+        partsArrivedDate: value === true ? today : '',
+      } : r);
+      saveWipData(activeTech, updated).catch(e => setError(e.message));
+      return updated;
+    });
   }
 
   // Silent auto-save for single-click toggles (no loading state shown)
@@ -440,9 +454,12 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <div>
                     <div style={labelSt}>Parts Arrived</div>
                     <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
-                      <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => updateRowAndSave(row.id, 'partsArrived', row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
-                      <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => updateRowAndSave(row.id, 'partsArrived', row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
+                      <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => togglePartsArrived(row.id, row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
+                      <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => togglePartsArrived(row.id, row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
                     </div>
+                    {row.partsArrived === true && row.partsArrivedDate && (
+                      <div style={{ marginTop: 4, fontSize: 11, color: '#86efac', fontWeight: 700 }}>📅 {row.partsArrivedDate}</div>
+                    )}
                   </div>
                   <div>
                     <div style={labelSt}>Advisor</div>
