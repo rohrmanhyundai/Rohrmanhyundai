@@ -7,7 +7,8 @@
     "etaParts": "Backorder",
     "etaCompletion": "BY END OF DAY 30TH",
     "partsArrived": true,
-    "highPriority": true
+    "highPriority": true,
+    "partsArrivedDate": "04/29/2026"
   },
   {
     "id": "moithp3753e",
@@ -34,6 +35,7 @@
     "jobDesc": "BELT AND ADJUSTER ",
     "etaParts": "30",
     "etaCompletion": "30",
-    "partsArrived": false
+    "partsArrived": false,
+    "highPriority": true
   }
 ]

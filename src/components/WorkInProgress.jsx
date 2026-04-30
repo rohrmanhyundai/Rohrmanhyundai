@@ -20,9 +20,12 @@ function ChipBtn({ active, color, onClick, children }) {
   );
 }
 
+const todayISO = () => new Date().toISOString().slice(0, 10); // yyyy-mm-dd for date inputs
+const todayUS  = () => new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
+  ro: '', roDate: todayISO(), jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
 });
 
 const inpSt = {
@@ -33,7 +36,7 @@ const inpSt = {
 
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '', highPriority: false, advisor: '',
+  ro: '', roDate: todayUS(), jobDesc: '', highPriority: false, advisor: '',
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers }) {
@@ -141,7 +144,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }
 
   function addRow() {
-    setRows(prev => [...prev, emptyRow()]);
+    setRows(prev => [emptyRow(), ...prev]);
   }
 
   async function handleBack() {
@@ -185,7 +188,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }
 
   async function addAwaitingRow() {
-    const updated = [...awaiting, emptyAwaiting()];
+    const updated = [emptyAwaiting(), ...awaiting];
     setAwaiting(updated);
     await saveAwaiting(updated);
   }
