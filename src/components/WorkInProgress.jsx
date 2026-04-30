@@ -36,7 +36,7 @@ const inpSt = {
 
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: todayUS(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
+  ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers }) {
