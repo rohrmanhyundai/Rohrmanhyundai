@@ -261,6 +261,19 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     finally { setCreatingForTech(null); }
   }
 
+  const [creatingForAwaiting, setCreatingForAwaiting] = useState(false);
+  async function createForAwaiting() {
+    setCreatingForAwaiting(true);
+    try {
+      const fresh = { ...emptyAwaiting(), ro: searchRO.trim(), isNew: false };
+      const updated = [fresh, ...awaiting];
+      await saveAwaitingData(updated);
+      setAwaiting(updated);
+      clearSearch();
+    } catch (e) { setError(e.message); }
+    finally { setCreatingForAwaiting(false); }
+  }
+
   const labelSt = { fontSize: 11, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 };
   const backText = backLabel || '← Technician Resources';
 
@@ -346,17 +359,30 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               ) : `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for RO# "${searchRO}"`}
             </div>
             {showTechPicker && searchResults.length === 0 && (
-              <div style={{ background: 'rgba(74,222,128,.07)', border: '1px solid rgba(74,222,128,.25)', borderRadius: 14, padding: '16px 20px', marginBottom: 14 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>Select Technician</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {techList.map(tech => (
-                    <button
-                      key={tech}
-                      onClick={() => createForTech(tech)}
-                      disabled={!!creatingForTech}
-                      style={{ background: creatingForTech === tech ? 'rgba(74,222,128,.35)' : 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'all .15s' }}
-                    >{creatingForTech === tech ? '⏳ Adding…' : tech}</button>
-                  ))}
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
+                {/* Assign to Tech */}
+                <div style={{ flex: 1, minWidth: 260, background: 'rgba(74,222,128,.07)', border: '1px solid rgba(74,222,128,.25)', borderRadius: 14, padding: '16px 20px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>Select Technician</div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {techList.map(tech => (
+                      <button
+                        key={tech}
+                        onClick={() => createForTech(tech)}
+                        disabled={!!creatingForTech}
+                        style={{ background: creatingForTech === tech ? 'rgba(74,222,128,.35)' : 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'all .15s' }}
+                      >{creatingForTech === tech ? '⏳ Adding…' : tech}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Cars Awaiting Technician */}
+                <div style={{ flex: 1, minWidth: 260, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '16px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 0.5 }}>🚗 Cars Awaiting Technician</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>Not assigned to a tech yet? Add it to the waiting list.</div>
+                  <button
+                    onClick={createForAwaiting}
+                    disabled={creatingForAwaiting}
+                    style={{ background: creatingForAwaiting ? 'rgba(251,191,36,.35)' : 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 8, padding: '8px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 13 }}
+                  >{creatingForAwaiting ? '⏳ Adding…' : '+ Add to Awaiting'}</button>
                 </div>
               </div>
             )}
