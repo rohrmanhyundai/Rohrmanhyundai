@@ -8,7 +8,8 @@
     "etaCompletion": "BY END OF DAY 30TH",
     "partsArrived": true,
     "highPriority": true,
-    "partsArrivedDate": "04/29/2026"
+    "partsArrivedDate": "04/29/2026",
+    "advisor": "DAVID"
   },
   {
     "id": "moithp3753e",
@@ -17,7 +18,8 @@
     "jobDesc": "BANK 1 O2 SENSOR UP STREAM ",
     "etaParts": "2 DAYS ",
     "etaCompletion": "CAR NOT HERE",
-    "partsArrived": true
+    "partsArrived": true,
+    "advisor": "JORDAN"
   },
   {
     "id": "mok9jmb2xfc",
@@ -26,16 +28,7 @@
     "jobDesc": "top engine inspection approved ",
     "etaParts": "",
     "etaCompletion": "end of day thursday",
-    "partsArrived": null
-  },
-  {
-    "id": "mokl1rnfgl8",
-    "ro": "777078",
-    "roDate": "",
-    "jobDesc": "BELT AND ADJUSTER ",
-    "etaParts": "30",
-    "etaCompletion": "30",
-    "partsArrived": false,
-    "highPriority": true
+    "partsArrived": null,
+    "advisor": "JORDAN"
   }
 ]
