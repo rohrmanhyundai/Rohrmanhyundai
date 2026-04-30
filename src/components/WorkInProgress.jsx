@@ -218,7 +218,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setMovingId(awaitingRow.id);
     try {
       const existing = await loadWipData(tech);
-      const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc };
+      const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc, highPriority: !!awaitingRow.highPriority, advisor: awaitingRow.advisor || '' };
       await saveWipData(tech, [...existing, newWipRow]);
       const updatedAwaiting = awaiting.filter(r => r.id !== awaitingRow.id);
       setAwaiting(updatedAwaiting);
