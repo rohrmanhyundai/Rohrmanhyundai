@@ -22,7 +22,7 @@ function ChipBtn({ active, color, onClick, children }) {
 
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '',
+  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
 });
 
 const inpSt = {
@@ -480,6 +480,18 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* Notes */}
+                <div style={{ marginBottom: 14 }}>
+                  <div style={labelSt}>Notes</div>
+                  <textarea
+                    value={row.notes || ''}
+                    onChange={e => updateRow(row.id, 'notes', e.target.value)}
+                    placeholder="Add notes here…"
+                    rows={2}
+                    style={{ ...inpSt, resize: 'vertical', lineHeight: 1.5 }}
+                  />
                 </div>
 
                 {/* Row actions */}
