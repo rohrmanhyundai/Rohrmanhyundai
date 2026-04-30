@@ -130,7 +130,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     }}>
       {/* Header */}
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)', flexShrink: 0 }}>
-        <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0' }}>💬 Team Chat</div>
+        <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0' }}>💬 Advisor Chat</div>
         <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>Advisor group — messages expire after 30 days</div>
       </div>
 
