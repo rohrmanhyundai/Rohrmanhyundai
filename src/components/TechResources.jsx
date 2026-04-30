@@ -47,10 +47,18 @@ const NAV_BUTTONS = [
     color: '#4ade80',
     href: 'https://hyundaitirecenter.com/InitDealer?dealer=IN007',
   },
+  {
+    key: 'atDiagWorksheet',
+    label: '⚙️ AT Diag Worksheet',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.25),rgba(245,158,11,.18))',
+    border: 'rgba(251,191,36,.45)',
+    color: '#fbbf24',
+    prop: 'onATDiagWorksheet',
+  },
 ];
 
-export default function TechResources({ currentUser, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onBack }) {
-  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress };
+export default function TechResources({ currentUser, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onBack }) {
+  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

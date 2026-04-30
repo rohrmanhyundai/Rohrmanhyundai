@@ -27,6 +27,8 @@ import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
 import SurveyReports from './components/SurveyReports';
+import ATDiagWorksheet from './components/ATDiagWorksheet';
+import DCTMTMWorksheet from './components/DCTMTMWorksheet';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -296,7 +298,27 @@ export default function App() {
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
+        onATDiagWorksheet={() => goTo('at-diag-worksheet', 'tech-resources')}
         onBack={() => setPage('dashboard')}
+      />
+    );
+  }
+
+  if (page === 'at-diag-worksheet') {
+    return (
+      <ATDiagWorksheet
+        onBack={() => navTo('tech-resources')}
+        onDCTMTM={() => goTo('dct-mtm-worksheet', 'at-diag-worksheet')}
+      />
+    );
+  }
+
+  if (page === 'dct-mtm-worksheet') {
+    return (
+      <DCTMTMWorksheet
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => navTo('at-diag-worksheet')}
       />
     );
   }
