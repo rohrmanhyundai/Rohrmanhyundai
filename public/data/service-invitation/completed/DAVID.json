@@ -30,5 +30,21 @@
     "notes": "Left VM",
     "submittedAt": "2026-04-30T20:13:43.632Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "CINDY WHEELOCK",
+    "repairOrder": "776886",
+    "vin": "5NTJCDDE8SH133203",
+    "model": "SANTA CRUZ",
+    "serviceDate": "04/22/2026",
+    "invitationDate": "04/24/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(219) 613 - 5342",
+    "notes": "Enjoyed her experience and feels as though it went well",
+    "submittedAt": "2026-04-30T20:15:26.114Z",
+    "submittedBy": "DAVID"
   }
 ]
