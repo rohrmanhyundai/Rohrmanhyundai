@@ -281,21 +281,13 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
-    // Try empty-password decrypt first (most forms just use owner-level protection),
-    // fall back to ignoreEncryption if that throws
-    let templateDoc;
-    try {
-      templateDoc = await PDFDocument.load(bytes, { password: '' });
-    } catch {
-      templateDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    }
-    const pdfDoc       = await PDFDocument.create();
-    const [copiedPage] = await pdfDoc.copyPages(templateDoc, [0]);
-    pdfDoc.addPage(copiedPage);
+    // PDF is now decrypted — load directly, no encryption options needed
+    const pdfDoc = await PDFDocument.load(bytes);
 
     const font     = await pdfDoc.embedFont('Helvetica');
     const boldFont = await pdfDoc.embedFont('Helvetica-Bold');
     const page     = pdfDoc.getPages()[0];
+    if (!page) throw new Error('PDF loaded but has no pages');
     const BLACK    = rgb(0, 0, 0);
     const h        = page.getHeight(); // 792
 
