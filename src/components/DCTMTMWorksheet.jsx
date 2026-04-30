@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import { DCT_MTM_PDF_B64 } from '../assets/dctMtmPdfBase64';
+import { PDFDocument, rgb } from 'pdf-lib';
 import { loadGithubFile, saveGithubFile, getGithubToken } from '../utils/github';
 
 const DEALER_CODE = 'IN007';
@@ -275,88 +274,146 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     const _svcMgrSig     = d?.svcMgrSig     ?? svcMgrSig;
     const _techSSN       = d?.techSSN       ?? techSSN;
 
-    const raw   = atob(DCT_MTM_PDF_B64);
-    const bytes = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    const pages = pdfDoc.getPages();
-    if (!pages || pages.length === 0) throw new Error('PDF has no pages after loading');
-    const page = pages[0];
-
-    // Use string literals instead of StandardFonts enum to avoid any bundling/tree-shake issues
+    // Build a brand-new clean PDF (avoids AES-encrypted template issues)
+    const pdfDoc   = await PDFDocument.create();
     const font     = await pdfDoc.embedFont('Helvetica');
     const boldFont = await pdfDoc.embedFont('Helvetica-Bold');
-    if (!font)     throw new Error('Failed to embed Helvetica — font is undefined');
-    if (!boldFont) throw new Error('Failed to embed Helvetica-Bold — font is undefined');
+    const page     = pdfDoc.addPage([612, 792]);
+    const DARK     = rgb(0.08, 0.08, 0.10);
+    const GRAY     = rgb(0.35, 0.40, 0.48);
+    const BLUE     = rgb(0.18, 0.38, 0.72);
+    const WHITE    = rgb(1, 1, 1);
+    const LGRAY    = rgb(0.94, 0.95, 0.97);
 
-    const BLACK = rgb(0, 0, 0);
-    const h     = page.getHeight();
+    let y = 762;
+    const PW = 612, M = 36;
 
-    const t = (text, x, y, size = 9, bold = false) => {
-      const f = bold ? boldFont : font;
-      const str = String(text || '');
-      if (!str) return;
-      page.drawText(str, { x, y: h - y, size, font: f, color: BLACK });
+    // Header bar
+    page.drawRectangle({ x: 0, y: y - 10, width: PW, height: 36, color: BLUE });
+    page.drawText('DCT & MTM CORE RETURN DIAGNOSIS WORKSHEET', { x: M, y: y + 6, size: 13, font: boldFont, color: WHITE });
+    page.drawText('SVC-1401', { x: PW - 90, y: y + 6, size: 10, font, color: WHITE });
+    y -= 28;
+
+    // Helper: labeled value row
+    const lv = (label, value, xL, xV, yy, w = 160) => {
+      page.drawText(label + ':', { x: xL, y: yy, size: 8, font: boldFont, color: GRAY });
+      page.drawRectangle({ x: xV, y: yy - 3, width: w, height: 13, color: LGRAY, borderColor: rgb(0.78,0.80,0.84), borderWidth: 0.5 });
+      if (value) page.drawText(String(value), { x: xV + 4, y: yy + 1, size: 9, font, color: DARK });
+    };
+    const sectionHeader = (title, yy) => {
+      page.drawRectangle({ x: M, y: yy - 2, width: PW - M * 2, height: 16, color: rgb(0.22, 0.30, 0.50) });
+      page.drawText(title, { x: M + 6, y: yy + 2, size: 9, font: boldFont, color: WHITE });
+      return yy - 22;
+    };
+    const row = (items, yy) => { // items: [{label, value, x, w}]
+      items.forEach(({ label, value, x, w = 140 }) => lv(label, value, x, x + label.length * 5.5 + 4, yy, w));
+      return yy - 18;
     };
 
-    t(_ro,            470, 82,  9);
-    t(_dealerCode,    48,  112, 9);
-    t(_techName,      135, 112, 9);
-    t(fmtDate(_repairDate), 415, 112, 9);
-    t(_mileage,       530, 112, 9);
-    (_vin || '').split('').slice(0,17).forEach((ch, i) => t(ch, 52 + i * 18.5, 134, 9));
-    if (_repairType === 'Warranty')     t('X', 418, 134, 9, true);
-    if (_repairType === 'Customer Pay') t('X', 499, 134, 9, true);
-    t(_removedPN,   48,  158, 9);
-    t(_removedSN,   330, 158, 9);
-    t(_installedPN, 48,  178, 9);
-    t(_installedSN, 330, 178, 9);
-    t(_conditionCode, 195, 204, 9);
-    t(_specificCondition, 195, 232, 8);
-    t(_howLong,           195, 248, 8);
-    if (_howOften === 'Always')       t('X', 194, 263, 9, true);
-    if (_howOften === 'Sometimes')    t('X', 249, 263, 9, true);
-    if (_howOften === 'Intermittent') t('X', 315, 263, 9, true);
-    if (_whenHotCold === 'Hot')  t('X', 469, 263, 9, true);
-    if (_whenHotCold === 'Cold') t('X', 515, 263, 9, true);
-    if (_beenInBefore === 'Yes') t('X', 182, 279, 9, true);
-    if (_beenInBefore === 'No')  t('X', 218, 279, 9, true);
-    if (_checkedTSB === 'Yes') t('X', 435, 279, 9, true);
-    if (_checkedTSB === 'No')  t('X', 471, 279, 9, true);
-    if (_canDuplicate === 'Yes') t('X', 182, 295, 9, true);
-    if (_canDuplicate === 'No')  t('X', 218, 295, 9, true);
-    t(_howDuplicate, 285, 295, 8);
-    t(_testDriveResults, 195, 311, 8);
-    t(_fluidLevel,   55,  352, 8);
-    t(_fluidSmell,   55,  368, 8);
-    t(_fluidColor,   105, 368, 8);
-    t(_leakLocation, 55,  395, 8);
-    t(_gdsCode1,     55,  435, 8);
-    t(_gdsCode2,     55,  447, 8);
-    t(_ecmLevel,     90,  490, 8);
-    t(_tcmLevel,     90,  503, 8);
-    const gearY = [348,363,378,393,408,423,438,453,468,483];
+    // ── Basic Info ──
+    y = sectionHeader('BASIC INFORMATION', y);
+    y = row([
+      { label: 'Repair Order #', value: _ro,          x: M },
+      { label: 'Dealer Code',    value: _dealerCode,  x: 185 },
+      { label: 'Technician',     value: _techName,    x: 310 },
+      { label: 'Repair Date',    value: fmtDate(_repairDate), x: 440, w: 100 },
+    ], y);
+    y = row([
+      { label: 'Mileage',  value: _mileage,    x: M,   w: 90 },
+      { label: 'VIN',      value: _vin,        x: 145, w: 200 },
+      { label: 'Repair Type', value: _repairType, x: 370, w: 120 },
+    ], y);
+    y -= 4;
+    y = row([
+      { label: 'Removed Part #',    value: _removedPN,   x: M,   w: 150 },
+      { label: 'Removed Serial #',  value: _removedSN,   x: 220, w: 150 },
+      { label: 'Installed Part #',  value: _installedPN, x: M,   w: 150 },
+      { label: 'Installed Serial #',value: _installedSN, x: 220, w: 150 },
+    ].slice(0, 2), y);
+    y = row([
+      { label: 'Installed Part #',  value: _installedPN, x: M,   w: 150 },
+      { label: 'Installed Serial #',value: _installedSN, x: 220, w: 150 },
+      { label: 'Condition Code',    value: _conditionCode, x: 370, w: 100 },
+    ], y);
+    y -= 6;
+
+    // ── Symptom ──
+    y = sectionHeader('SYMPTOM', y);
+    lv('Specific Condition/Concerns', _specificCondition, M, M + 148, y, PW - M - M - 148); y -= 18;
+    y = row([
+      { label: 'How Long Occurring', value: _howLong,   x: M,   w: 130 },
+      { label: 'How Often',          value: _howOften,  x: 240, w: 100 },
+      { label: 'When',               value: _whenHotCold, x: 370, w: 80 },
+    ], y);
+    y = row([
+      { label: 'Been In Before', value: _beenInBefore, x: M,   w: 60 },
+      { label: 'Checked TSBs',   value: _checkedTSB,   x: 180, w: 60 },
+      { label: 'Can Duplicate',  value: _canDuplicate, x: 300, w: 60 },
+      { label: 'How',            value: _howDuplicate, x: 390, w: 150 },
+    ], y);
+    lv('Test Drive Results', _testDriveResults, M, M + 100, y, PW - M - M - 100); y -= 22;
+
+    // ── Fluid / Software ──
+    y = sectionHeader('FLUID CHECK & SOFTWARE', y);
+    y = row([
+      { label: 'Fluid Level', value: _fluidLevel, x: M,   w: 100 },
+      { label: 'Fluid Smell', value: _fluidSmell, x: 175, w: 100 },
+      { label: 'Fluid Color', value: _fluidColor, x: 305, w: 100 },
+    ], y);
+    lv('Leak Location', _leakLocation, M, M + 76, y, 250); y -= 18;
+    y = row([
+      { label: 'GDS Code 1', value: _gdsCode1, x: M,   w: 100 },
+      { label: 'GDS Code 2', value: _gdsCode2, x: 175, w: 100 },
+      { label: 'ECM Level',  value: _ecmLevel, x: 305, w: 100 },
+      { label: 'TCM Level',  value: _tcmLevel, x: 420, w: 100 },
+    ], y);
+    y -= 6;
+
+    // ── Gear Test ──
+    y = sectionHeader('TEST DRIVE RESULT — PER GEAR', y);
+    const gCols = [M, M+130, M+210, M+290];
+    page.drawText('Gear', { x: gCols[0]+4, y, size: 8, font: boldFont, color: GRAY });
+    page.drawText('OK', { x: gCols[1]+6, y, size: 8, font: boldFont, color: GRAY });
+    page.drawText('SLIPS', { x: gCols[2]+4, y, size: 8, font: boldFont, color: GRAY });
+    page.drawText('GRINDS', { x: gCols[3]+2, y, size: 8, font: boldFont, color: GRAY });
+    y -= 4;
     GEARS.forEach((g, i) => {
-      const res = (_gearResults || {})[g];
-      if (res === 'OK')     t('X', 268, gearY[i], 9, true);
-      if (res === 'SLIPS')  t('X', 292, gearY[i], 9, true);
-      if (res === 'GRINDS') t('X', 316, gearY[i], 9, true);
+      const gy = y - i * 15;
+      page.drawRectangle({ x: M, y: gy - 3, width: PW/2 - M - 10, height: 14, color: i % 2 === 0 ? LGRAY : WHITE, borderColor: rgb(0.85,0.87,0.90), borderWidth: 0.3 });
+      page.drawText(g, { x: gCols[0]+4, y: gy + 1, size: 8, font, color: DARK });
+      const res = (_gearResults || {})[g] || '';
+      const mark = (col) => page.drawText('✓', { x: col + 8, y: gy + 1, size: 9, font: boldFont, color: BLUE });
+      if (res === 'OK')     mark(gCols[1]);
+      if (res === 'SLIPS')  mark(gCols[2]);
+      if (res === 'GRINDS') mark(gCols[3]);
     });
-    t(_tpsIdle, 430, 370, 8);
-    t(_tpsWot,  430, 383, 8);
-    if (_gdsDctStep1 === 'PASS') t('X', 430, 413, 9, true);
-    if (_gdsDctStep1 === 'FAIL') t('X', 460, 413, 9, true);
-    t(_gdsDctMsg1, 380, 427, 8);
-    if (_gdsDctStep2 === 'PASS') t('X', 430, 441, 9, true);
-    if (_gdsDctStep2 === 'FAIL') t('X', 460, 441, 9, true);
-    t(_gdsDctMsg2, 380, 455, 8);
-    t(_noiseType,  395, 480, 8);
-    t(_noiseLoc,   395, 495, 8);
-    t(_noiseSpeed, 395, 510, 8);
-    t(_techlineCase, 390, 540, 8);
-    t(_priorAuth,    500, 540, 8);
-    t(_svcMgrSig,    145, 558, 8);
-    t(_techSSN,      195, 574, 9);
+    y -= GEARS.length * 15 + 10;
+
+    // ── Driveability (right column during gear table) ──
+    const DX = PW / 2 + 10;
+    let dy = y + GEARS.length * 15 + 10;
+    page.drawRectangle({ x: DX - 4, y: dy - 2, width: PW - DX - M + 4, height: 16, color: rgb(0.22,0.30,0.50) });
+    page.drawText('DRIVEABILITY DATA', { x: DX, y: dy + 2, size: 9, font: boldFont, color: WHITE });
+    dy -= 18;
+    lv('TPS Idle (% / V)', _tpsIdle, DX, DX + 96, dy, 80); dy -= 18;
+    lv('TPS WOT (% / V)',  _tpsWot,  DX, DX + 90, dy, 80); dy -= 18;
+    lv('GDS Relearn Step 1', _gdsDctStep1, DX, DX + 110, dy, 60); dy -= 18;
+    lv('Step 1 Message',   _gdsDctMsg1, DX, DX + 94, dy, 140); dy -= 18;
+    lv('GDS Relearn Step 2', _gdsDctStep2, DX, DX + 110, dy, 60); dy -= 18;
+    lv('Step 2 Message',   _gdsDctMsg2, DX, DX + 94, dy, 140); dy -= 18;
+    lv('Noise Type',  _noiseType,  DX, DX + 72, dy, 110); dy -= 18;
+    lv('Noise Loc.',  _noiseLoc,   DX, DX + 68, dy, 110); dy -= 18;
+    lv('Noise Speed', _noiseSpeed, DX, DX + 76, dy, 110);
+
+    // ── Authorization ──
+    y -= 10;
+    y = sectionHeader('AUTHORIZATION & SIGNATURE', y);
+    y = row([
+      { label: 'Techline Case #',    value: _techlineCase, x: M,   w: 120 },
+      { label: 'Prior Authorization #', value: _priorAuth, x: 210, w: 120 },
+      { label: 'Svc Mgr Signature',  value: _svcMgrSig,   x: 375, w: 140 },
+    ], y);
+    lv('Tech SSN (Last 4)', _techSSN, M, M + 108, y, 60); y -= 18;
 
     return pdfDoc.save();
   }
