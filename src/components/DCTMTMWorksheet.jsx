@@ -102,6 +102,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
   const [saving,    setSaving]    = useState(false);
   const [savedList, setSavedList] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [showUploads, setShowUploads] = useState(false);
 
   // Load saved worksheets index
   useEffect(() => {
@@ -326,23 +327,6 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
         {/* Main form */}
         <div style={{ flex: 1, minWidth: 0 }}>
 
-          {/* Saved worksheets */}
-          {!loadingList && savedList.length > 0 && (
-            <div style={{ ...section, marginBottom: 24 }}>
-              <div style={sectionTitle}>📂 Saved Worksheets</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {savedList.map(s => (
-                  <button key={s.id} onClick={() => loadSaved(s)}
-                    style={{ background: 'rgba(139,92,246,.1)', border: '1px solid rgba(139,92,246,.3)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', textAlign: 'left', color: '#c4b5fd', display: 'flex', gap: 16, alignItems: 'center' }}>
-                    <span style={{ fontWeight: 800 }}>RO# {s.ro || '—'}</span>
-                    <span style={{ color: '#94a3b8', fontSize: 12 }}>VIN: {s.vin || '—'}</span>
-                    <span style={{ color: '#64748b', fontSize: 12 }}>Tech: {s.techName}</span>
-                    <span style={{ color: '#475569', fontSize: 11, marginLeft: 'auto' }}>{s.savedAt ? new Date(s.savedAt).toLocaleDateString() : ''}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Basic Info */}
           <div style={section}>
@@ -565,7 +549,7 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
           )}
 
           {/* Action buttons */}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 32 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
             <button onClick={handlePrint}
               style={{ background: 'rgba(139,92,246,.2)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
               🖨️ Print
@@ -576,9 +560,44 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
             </button>
             <button onClick={handleSave} disabled={saving}
               style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
-              💾 Save to GitHub
+              💾 Upload
+            </button>
+            <button onClick={() => setShowUploads(v => !v)}
+              style={{ background: showUploads ? 'rgba(139,92,246,.25)' : 'rgba(255,255,255,.06)', border: `1px solid ${showUploads ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.15)'}`, color: showUploads ? '#c4b5fd' : '#94a3b8', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+              📂 View Uploads {savedList.length > 0 ? `(${savedList.length})` : ''}
             </button>
           </div>
+          {/* Uploads panel */}
+          {showUploads && (
+            <div style={{ ...section, marginBottom: 20 }}>
+              <div style={sectionTitle}>📂 Uploaded Worksheets</div>
+              {loadingList ? (
+                <div style={{ color: '#64748b', fontSize: 13 }}>Loading…</div>
+              ) : savedList.length === 0 ? (
+                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>No uploaded worksheets yet.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {savedList.map(s => (
+                    <button key={s.id} onClick={() => { loadSaved(s); setShowUploads(false); }}
+                      style={{ background: 'rgba(139,92,246,.08)', border: '1px solid rgba(139,92,246,.25)', borderRadius: 10, padding: '12px 16px', cursor: 'pointer', textAlign: 'left', display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', transition: 'background .15s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,.18)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,.08)'}
+                    >
+                      <span style={{ fontWeight: 900, fontSize: 14, color: '#c4b5fd' }}>RO# {s.ro || '—'}</span>
+                      <span style={{ fontSize: 12, color: '#94a3b8' }}>VIN: {s.vin || '—'}</span>
+                      <span style={{ fontSize: 12, color: '#64748b' }}>Tech: {s.techName || '—'}</span>
+                      <span style={{ fontSize: 12, color: '#64748b' }}>Date: {s.repairDate || '—'}</span>
+                      <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto' }}>
+                        Uploaded {s.savedAt ? new Date(s.savedAt).toLocaleDateString() : '—'}
+                      </span>
+                      <span style={{ fontSize: 11, color: '#6ee7b7', fontWeight: 700 }}>Click to Load →</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {!getGithubToken() && (
             <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16, padding: '8px 12px', background: 'rgba(255,255,255,.03)', borderRadius: 8, border: '1px solid rgba(255,255,255,.07)' }}>
               ℹ️ <strong style={{ color: '#94a3b8' }}>Print & Download work for everyone.</strong> To save worksheets to GitHub for other users to access, a manager must first set the GitHub token in Admin Settings on this device.
