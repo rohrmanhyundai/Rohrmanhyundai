@@ -583,3 +583,24 @@ export async function saveTechChatMessages(messages) {
   await saveGitHubFile(headers, TECH_CHAT_PATH, pruned, `Tech chat update ${new Date().toISOString()}`);
   return pruned;
 }
+
+
+// ── Generic file helpers for DCT/MTM worksheets ──────────────────────────────
+export async function loadGithubFile(path) {
+  try {
+    const data = await readGitHubFile(authHeaders(), `public/${path}`);
+    if (data !== null) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}${path}?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
+export async function saveGithubFile(path, data, message) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  await saveGitHubFile(authHeaders(), `public/${path}`, data, message || `Update ${path}`);
+  return data;
+}
