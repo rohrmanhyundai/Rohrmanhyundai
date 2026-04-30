@@ -161,5 +161,21 @@
     "submittedAt": "2026-04-29T00:59:34.217Z",
     "submittedBy": "SHAWN",
     "managerDeleted": true
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "BRENDA OSTERMEYER",
+    "repairOrder": "774850",
+    "vin": "KM8R5DGE7PU626659",
+    "model": "PALISADE",
+    "serviceDate": "01/30/2026",
+    "invitationDate": "02/03/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "no",
+    "phone": "77777777",
+    "notes": "ljgylugylhgblu",
+    "submittedAt": "2026-04-30T16:10:01.689Z",
+    "submittedBy": "SHAWN"
   }
 ]
