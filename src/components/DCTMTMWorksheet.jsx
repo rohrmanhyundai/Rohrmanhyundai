@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument, PDFName, rgb } from 'pdf-lib';
 import { DCT_MTM_PDF_B64 } from '../assets/dctMtmPdfBase64';
 import { loadGithubFile, saveGithubFile, getGithubToken } from '../utils/github';
 
@@ -287,11 +287,31 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
       if (!value && value !== 0) return;
       try { form.getTextField(name).setText(String(value)); } catch {}
     };
-    // Helper: safely check a checkbox
+    // Helper: safely check a checkbox (supports non-standard on-state keys like /1)
     const chk = (name, condition) => {
       try {
-        const cb = form.getCheckBox(name);
-        condition ? cb.check() : cb.uncheck();
+        const field = form.getField(name);
+        const acroField = field.acroField;
+        // Find the actual on-state key from the AP/N dictionary
+        let onState = 'Yes'; // default
+        try {
+          const ap = acroField.dict.lookup(PDFName.of('AP'));
+          if (ap) {
+            const n = ap.lookup(PDFName.of('N'));
+            if (n) {
+              const keys = n.dict ? Array.from(n.dict.keys()) : [];
+              const nonOff = keys.find(k => k.encodedName !== '/Off');
+              if (nonOff) onState = nonOff.encodedName.replace(/^\//, '');
+            }
+          }
+        } catch {}
+        if (condition) {
+          acroField.dict.set(PDFName.of('V'),  PDFName.of(onState));
+          acroField.dict.set(PDFName.of('AS'), PDFName.of(onState));
+        } else {
+          acroField.dict.set(PDFName.of('V'),  PDFName.of('Off'));
+          acroField.dict.set(PDFName.of('AS'), PDFName.of('Off'));
+        }
       } catch {}
     };
 
@@ -299,7 +319,11 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
     setTxt('Repair Order Number', _ro);
     setTxt('Dealer Code',         _dealerCode);
     setTxt('NameF',               _techName);
-    setTxt('RO Date',             fmtDate(_repairDate));
+    // RO Date is split across 3 MaxLen=2 fields: month / day / year (2-digit)
+    const dateParts = fmtDate(_repairDate).split('/'); // ['MM','DD','YYYY']
+    setTxt('RO Date',     dateParts[0] || '');
+    setTxt('undefined',   dateParts[1] || '');
+    setTxt('undefined_2', (dateParts[2] || '').slice(-2));
     setTxt('Mileage',             _mileage);
     setTxt('VIN',                 _vin);
     chk('Warranty',     _repairType === 'Warranty');
