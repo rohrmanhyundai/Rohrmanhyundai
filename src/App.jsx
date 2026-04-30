@@ -335,6 +335,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         techList={techList}
+        advisorList={advisorList}
         backLabel={wipBackLabel}
         onBack={() => navTo(prevPage || 'tech-resources')}
         chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
