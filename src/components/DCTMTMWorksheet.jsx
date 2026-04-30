@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { DCT_MTM_PDF_B64 } from '../assets/dctMtmPdfBase64';
-import { loadGithubFile, saveGithubFile } from '../utils/github';
+import { loadGithubFile, saveGithubFile, getGithubToken } from '../utils/github';
 
 const DEALER_CODE = 'IN007';
 
@@ -476,52 +476,73 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
           {/* Test Drive Results per gear */}
           <div style={section}>
             <div style={sectionTitle}>🏎 Test Drive Result — Per Gear</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 6 }}>
-              {GEARS.map(g => (
-                <CheckRow key={g} label={g} value={gearResults[g]}
-                  onChange={v => setGearResults(prev => ({ ...prev, [g]: v }))}
-                  options={['OK','SLIPS','GRINDS']} />
-              ))}
+            {/* Header row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '160px 80px 80px 90px', gap: '0 8px', marginBottom: 6, paddingBottom: 6, borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+              <span style={{ ...lbl, marginBottom: 0 }}>Gear</span>
+              <span style={{ ...lbl, marginBottom: 0, textAlign: 'center' }}>OK</span>
+              <span style={{ ...lbl, marginBottom: 0, textAlign: 'center' }}>SLIPS</span>
+              <span style={{ ...lbl, marginBottom: 0, textAlign: 'center' }}>GRINDS</span>
             </div>
+            {GEARS.map((g, i) => (
+              <div key={g} style={{ display: 'grid', gridTemplateColumns: '160px 80px 80px 90px', gap: '0 8px', alignItems: 'center', padding: '6px 0', borderBottom: i < GEARS.length - 1 ? '1px solid rgba(255,255,255,.04)' : 'none', background: i % 2 === 0 ? 'rgba(255,255,255,.02)' : 'transparent', borderRadius: 4 }}>
+                <span style={{ fontSize: 13, color: '#cbd5e1', fontWeight: 600, paddingLeft: 6 }}>{g}</span>
+                {['OK','SLIPS','GRINDS'].map(opt => (
+                  <div key={opt} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <input type="radio" name={`gear-${g}`} value={opt} checked={gearResults[g] === opt}
+                        onChange={() => setGearResults(prev => ({ ...prev, [g]: opt }))}
+                        style={{ accentColor: opt === 'OK' ? '#4ade80' : opt === 'SLIPS' ? '#fbbf24' : '#f87171', width: 16, height: 16, cursor: 'pointer' }} />
+                    </label>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
 
           {/* Driveability */}
           <div style={section}>
             <div style={sectionTitle}>📊 Driveability Data (Engine Off — Trans Menu)</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
               <Field label="TPS Idle (% / V)" value={tpsIdle} onChange={setTpsIdle} placeholder="e.g. 0.5" />
               <Field label="TPS WOT (% / V)" value={tpsWot} onChange={setTpsWot} placeholder="e.g. 4.8" />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-              <div>
-                <label style={lbl}>GDS DCT Relearn — Step 1</label>
-                <div style={{ display: 'flex', gap: 16, marginBottom: 6 }}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+              {/* Step 1 */}
+              <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ ...lbl, marginBottom: 10 }}>GDS DCT Relearn — Step 1</div>
+                <div style={{ display: 'flex', gap: 20, marginBottom: 10 }}>
                   {['PASS','FAIL'].map(opt => (
-                    <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', color: gdsDctStep1 === opt ? (opt === 'PASS' ? '#4ade80' : '#f87171') : '#64748b', fontWeight: gdsDctStep1 === opt ? 700 : 400, fontSize: 14 }}>
-                      <input type="radio" name="step1" checked={gdsDctStep1 === opt} onChange={() => setGdsDctStep1(opt)} style={{ accentColor: opt === 'PASS' ? '#4ade80' : '#f87171' }} />
-                      {opt}
+                    <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="radio" name="step1" checked={gdsDctStep1 === opt} onChange={() => setGdsDctStep1(opt)}
+                        style={{ accentColor: opt === 'PASS' ? '#4ade80' : '#f87171', width: 16, height: 16, cursor: 'pointer' }} />
+                      <span style={{ color: gdsDctStep1 === opt ? (opt === 'PASS' ? '#4ade80' : '#f87171') : '#64748b', fontWeight: gdsDctStep1 === opt ? 800 : 400, fontSize: 14 }}>{opt}</span>
                     </label>
                   ))}
                 </div>
                 <input style={inp} value={gdsDctMsg1} onChange={e => setGdsDctMsg1(e.target.value)} placeholder="Failure message (if any)" />
               </div>
-              <div>
-                <label style={lbl}>GDS DCT Relearn — Step 2</label>
-                <div style={{ display: 'flex', gap: 16, marginBottom: 6 }}>
+              {/* Step 2 */}
+              <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ ...lbl, marginBottom: 10 }}>GDS DCT Relearn — Step 2</div>
+                <div style={{ display: 'flex', gap: 20, marginBottom: 10 }}>
                   {['PASS','FAIL'].map(opt => (
-                    <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', color: gdsDctStep2 === opt ? (opt === 'PASS' ? '#4ade80' : '#f87171') : '#64748b', fontWeight: gdsDctStep2 === opt ? 700 : 400, fontSize: 14 }}>
-                      <input type="radio" name="step2" checked={gdsDctStep2 === opt} onChange={() => setGdsDctStep2(opt)} style={{ accentColor: opt === 'PASS' ? '#4ade80' : '#f87171' }} />
-                      {opt}
+                    <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="radio" name="step2" checked={gdsDctStep2 === opt} onChange={() => setGdsDctStep2(opt)}
+                        style={{ accentColor: opt === 'PASS' ? '#4ade80' : '#f87171', width: 16, height: 16, cursor: 'pointer' }} />
+                      <span style={{ color: gdsDctStep2 === opt ? (opt === 'PASS' ? '#4ade80' : '#f87171') : '#64748b', fontWeight: gdsDctStep2 === opt ? 800 : 400, fontSize: 14 }}>{opt}</span>
                     </label>
                   ))}
                 </div>
                 <input style={inp} value={gdsDctMsg2} onChange={e => setGdsDctMsg2(e.target.value)} placeholder="Failure message (if any)" />
               </div>
             </div>
+
+            <div style={{ ...lbl, marginBottom: 10 }}>Noise</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-              <Field label="Noise Type" value={noiseType} onChange={setNoiseType} placeholder="e.g. Grinding" />
-              <Field label="Noise Location" value={noiseLoc} onChange={setNoiseLoc} placeholder="e.g. Front of trans" />
-              <Field label="Noise Speed & Gear" value={noiseSpeed} onChange={setNoiseSpeed} placeholder="e.g. 30mph 3rd gear" />
+              <Field label="Type" value={noiseType} onChange={setNoiseType} placeholder="e.g. Grinding" />
+              <Field label="Location" value={noiseLoc} onChange={setNoiseLoc} placeholder="e.g. Front of trans" />
+              <Field label="Speed & Gear" value={noiseSpeed} onChange={setNoiseSpeed} placeholder="e.g. 30mph 3rd gear" />
             </div>
           </div>
 
@@ -558,6 +579,11 @@ export default function DCTMTMWorksheet({ onBack, currentUser, currentRole }) {
               💾 Save to GitHub
             </button>
           </div>
+          {!getGithubToken() && (
+            <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16, padding: '8px 12px', background: 'rgba(255,255,255,.03)', borderRadius: 8, border: '1px solid rgba(255,255,255,.07)' }}>
+              ℹ️ <strong style={{ color: '#94a3b8' }}>Print & Download work for everyone.</strong> To save worksheets to GitHub for other users to access, a manager must first set the GitHub token in Admin Settings on this device.
+            </div>
+          )}
         </div>
       </div>
     </div>
