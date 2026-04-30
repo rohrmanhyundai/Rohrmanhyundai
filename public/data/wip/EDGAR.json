@@ -16,8 +16,9 @@
     "jobDesc": "EGR WITH VALVOLINE SERVICES SOLD ",
     "etaParts": "",
     "etaCompletion": "30TH",
-    "partsArrived": null,
-    "advisor": "PARKER"
+    "partsArrived": true,
+    "advisor": "PARKER",
+    "partsArrivedDate": "04/30/2026"
   },
   {
     "id": "molh9ikp9ky",
