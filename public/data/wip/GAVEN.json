@@ -35,6 +35,7 @@
     "jobDesc": "BELT AND ADJUSTER ",
     "etaParts": "30",
     "etaCompletion": "30",
-    "partsArrived": false
+    "partsArrived": false,
+    "highPriority": true
   }
 ]
