@@ -7,8 +7,7 @@
     "etaParts": "",
     "etaCompletion": "30",
     "partsArrived": true,
-    "notes": "all parts here, handed them to cory this morning",
-    "advisor": "DAVID"
+    "notes": "all parts here, handed them to cory this morning"
   },
   {
     "id": "moiuw6klccs",
@@ -28,7 +27,8 @@
     "jobDesc": "IGNITION COIL",
     "etaParts": "TOMORROW",
     "etaCompletion": "",
-    "partsArrived": false
+    "partsArrived": true,
+    "partsArrivedDate": "04/30/2026"
   },
   {
     "id": "mokkzm00im8",
