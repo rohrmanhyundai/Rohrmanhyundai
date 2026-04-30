@@ -393,7 +393,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               <div style={{ color: '#475569', textAlign: 'center', padding: '40px 0', fontSize: 14 }}>No work in progress. Click "Add Row" to get started.</div>
             )}
 
-            {rows.map((row, idx) => (
+            {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => (
               <div key={row.id} style={{
                 background: row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)',
                 border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)'}`,
