@@ -29,6 +29,7 @@ import WarrantyHub from './components/WarrantyHub';
 import SurveyReports from './components/SurveyReports';
 import ATDiagWorksheet from './components/ATDiagWorksheet';
 import DCTMTMWorksheet from './components/DCTMTMWorksheet';
+import IVTWorksheet from './components/IVTWorksheet';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -311,6 +312,17 @@ export default function App() {
         backLabel={atBackLabel}
         onBack={() => navTo(prevPage || 'tech-resources')}
         onDCTMTM={() => goTo('dct-mtm-worksheet', 'at-diag-worksheet')}
+        onIVT={() => goTo('ivt-worksheet', 'at-diag-worksheet')}
+      />
+    );
+  }
+
+  if (page === 'ivt-worksheet') {
+    return (
+      <IVTWorksheet
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => navTo('at-diag-worksheet')}
       />
     );
   }
