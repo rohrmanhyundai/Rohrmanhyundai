@@ -51,8 +51,8 @@
     "jobDesc": "belt and adjuster ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "04/30/2026",
     "highPriority": true,
     "advisor": "",
     "notes": ""
