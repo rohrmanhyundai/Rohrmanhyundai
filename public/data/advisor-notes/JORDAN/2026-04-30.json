@@ -1,0 +1,63 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-04-30",
+  "rows": [
+    {
+      "customerName": "Wendy Bryant (LTOC)",
+      "appointmentTime": "9:40 am",
+      "criticalDeferredService": "align",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Fran Bolton",
+      "appointmentTime": "10 am",
+      "criticalDeferredService": "4 tires/align",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Mike",
+      "notes": [
+        {
+          "author": "JORDAN",
+          "text": "this customer was pissed we didn't have parts in for recall last visit"
+        }
+      ]
+    },
+    {
+      "customerName": "Carrie Hudson ",
+      "appointmentTime": "12:20 pm",
+      "criticalDeferredService": "was at 3k last visit",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [
+        {
+          "author": "JORDAN",
+          "text": "coming in for quote on damage from hitting a rabbit? will probably refer to body shop"
+        }
+      ]
+    },
+    {
+      "customerName": "Melinda Henry",
+      "appointmentTime": "4 pm",
+      "criticalDeferredService": "align/fuel service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Courtney Dunk",
+      "appointmentTime": "4:20 pm",
+      "criticalDeferredService": "4 tires/align",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-04-30T12:28:37.360Z"
+}
