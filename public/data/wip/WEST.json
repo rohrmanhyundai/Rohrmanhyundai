@@ -19,8 +19,8 @@
     "jobDesc": "oil change/4 tires/align",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "04/30/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": ""
