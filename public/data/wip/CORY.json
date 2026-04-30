@@ -31,6 +31,7 @@
     "etaCompletion": "30",
     "partsArrived": false,
     "advisor": "JORDAN",
-    "highPriority": true
+    "highPriority": true,
+    "notes": "BATTERY IS APPROVED "
   }
 ]
