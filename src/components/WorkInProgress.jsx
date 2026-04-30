@@ -22,7 +22,7 @@ function ChipBtn({ active, color, onClick, children }) {
 
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null,
+  ro: '', roDate: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, highPriority: false,
 });
 
 const inpSt = {
@@ -356,12 +356,24 @@ export default function WorkInProgress({ currentUser, currentRole, techList, onB
 
             {rows.map((row, idx) => (
               <div key={row.id} style={{
-                background: 'rgba(30,41,59,.85)', border: '1px solid rgba(99,132,165,.25)',
-                borderRadius: 14, padding: '16px 20px', marginBottom: 14,
+                background: row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)',
+                border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)'}`,
+                borderRadius: 14, padding: '16px 20px', marginBottom: 14, transition: 'all .2s',
               }}>
+                {row.highPriority && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    <span style={{ fontSize: 13, fontWeight: 900, color: '#fca5a5', letterSpacing: 1 }}>🚨 HIGH PRIORITY</span>
+                  </div>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b' }}>ROW {idx + 1}</span>
                   <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+                    {isManagerOrAdvisor && (
+                      <button
+                        onClick={() => updateRow(row.id, 'highPriority', !row.highPriority)}
+                        style={{ background: row.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: row.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 11, transition: 'all .15s' }}
+                      >{row.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
+                    )}
                     {isManager && (
                       <>
                         <button
