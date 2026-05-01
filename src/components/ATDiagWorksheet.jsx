@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ATDiagWorksheet({ onBack, onDCTMTM, onIVT, backLabel = '← Technician Resources' }) {
+export default function ATDiagWorksheet({ onBack, onDCTMTM, onIVT, onATM, backLabel = '← Technician Resources' }) {
   const cards = [
     {
       onClick: onDCTMTM,
@@ -21,6 +21,16 @@ export default function ATDiagWorksheet({ onBack, onDCTMTM, onIVT, backLabel = '
       border: 'rgba(99,179,237,.45)',
       color: '#63b3ed',
       subColor: '#1e3a5f',
+    },
+    {
+      onClick: onATM,
+      icon: '🔩',
+      label: 'ATM Core Return Worksheet',
+      sub: 'Remanufactured ATM — SVC-H1359',
+      bg: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))',
+      border: 'rgba(167,139,250,.45)',
+      color: '#c4b5fd',
+      subColor: '#3b1f6b',
     },
   ];
 
