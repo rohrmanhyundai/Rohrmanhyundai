@@ -374,6 +374,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
     if (!isWithin4Months(row.serviceDate || row.invitationDate)) return false;
     const s = (row.status || '').toUpperCase();
     if (s.startsWith('QUARANTINE')) return false;
+    if (s === 'HARDBOUNCE')        return false;
+    if (s === 'INVALID_EMAIL')     return false;
+    if (s === 'MISSING_EMAIL')     return false;
+    if (s === 'BUSINESS_NAME')     return false;
+    if (s === 'LIST_UNSUBSCRIBES') return false;
+    if (s === 'OPT_OUT')           return false;
     return true;
   });
 
