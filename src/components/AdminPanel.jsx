@@ -749,8 +749,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     );
 
     if (openSection === 'schedule') return (
-      <div className="group-body" style={{ padding: 0, background: 'none', border: 'none' }}>
-        <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} />
+      <div style={{ margin: '0 -8px' }}>
+        <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} embedded={true} />
       </div>
     );
 
@@ -925,7 +925,7 @@ function parseShiftTime(val) {
   };
 }
 
-function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
+function ScheduleEditor({ schedules = {}, onSchedulesChange, users, embedded = false }) {
   const today = new Date();
   const [schedYear, setSchedYear] = React.useState(today.getFullYear());
   const [schedMonth, setSchedMonth] = React.useState(today.getMonth());
@@ -1073,8 +1073,8 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
   return (
-    <details className="edit-group">
-      <summary>Work Schedule Editor</summary>
+    <details className="edit-group" open={embedded || undefined}>
+      <summary style={embedded ? { display: 'none' } : {}}>Work Schedule Editor</summary>
       <div className="group-body">
         <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
 
