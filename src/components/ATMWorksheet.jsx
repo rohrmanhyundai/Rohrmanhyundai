@@ -668,13 +668,13 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
           </div>
         </div>
 
-        {/* Gear Selector & TPS */}
+        {/* Stall Test & TPS */}
         <div style={section}>
-          <div style={sectionTitle}>📊 Gear Selector Readings & TPS</div>
+          <div style={sectionTitle}>📊 Stall Test Readings & TPS</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 14 }}>
-            <Field label="D (Drive)" value={gearD} onChange={setGearD} placeholder="Reading in D" />
-            <Field label="L (Low)" value={gearL} onChange={setGearL} placeholder="Reading in L" />
-            <Field label="R (Reverse)" value={gearR} onChange={setGearR} placeholder="Reading in R" />
+            <Field label="D — Drive (RPM)" value={gearD} onChange={setGearD} placeholder="e.g. 2200" />
+            <Field label="L — Low (RPM)" value={gearL} onChange={setGearL} placeholder="e.g. 2200" />
+            <Field label="R — Reverse (RPM)" value={gearR} onChange={setGearR} placeholder="e.g. 2200" />
             <Field label="TPS Idle (% / V)" value={tpsIdle} onChange={setTpsIdle} placeholder="e.g. 0.5" />
             <Field label="TPS WOT (% / V)" value={tpsWot} onChange={setTpsWot} placeholder="e.g. 4.8" />
           </div>
