@@ -972,13 +972,13 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
   }
 
   function copyDay(dateStr) {
-    // Snapshot all employees' shift values for this date
+    // Only copy the currently-selected employee's shift
     const shifts = {};
-    allEmployees.forEach(emp => {
-      const val = schedules[emp]?.[dateStr];
-      if (val) shifts[emp] = val;
-    });
-    setCopiedDay({ dateStr, shifts });
+    if (schedEmployee) {
+      const val = schedules[schedEmployee]?.[dateStr];
+      if (val) shifts[schedEmployee] = val;
+    }
+    setCopiedDay({ dateStr, shifts, singleEmployee: schedEmployee });
   }
 
   async function pasteCopiedDay(targetDateStr) {
@@ -1066,10 +1066,7 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.35)', borderRadius: 8, padding: '7px 12px', marginBottom: 10 }}>
               <span style={{ fontSize: 16 }}>📋</span>
               <span style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 13, flex: 1 }}>
-                {copiedDay.dateStr} copied{editing && editing.dateStr !== copiedDay.dateStr ? ` — paste to ${editing.dateStr}?` : ' — select a day below to paste'}
-              </span>
-              <span style={{ fontSize: 12, color: '#64748b' }}>
-                {Object.keys(copiedDay.shifts).length} employee{Object.keys(copiedDay.shifts).length !== 1 ? 's' : ''}
+                {copiedDay.singleEmployee || 'Shift'} — {copiedDay.dateStr} copied{editing && editing.dateStr !== copiedDay.dateStr ? ` — paste to ${editing.dateStr}?` : ' — select a day below to paste'}
               </span>
               <button
                 onClick={() => editing && editing.dateStr !== copiedDay.dateStr && pasteCopiedDay(editing.dateStr)}
