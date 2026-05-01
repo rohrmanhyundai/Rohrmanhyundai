@@ -518,7 +518,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                   {siUploadedAt && <span style={{ fontSize: 12, color: '#475569' }}>Data as of {new Date(siUploadedAt).toLocaleDateString()}</span>}
                 </div>
                 <table className="adv-table">
-                  <thead><tr><th>CUSTOMER NAME</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th><th>APPLIED BUSINESS RULE</th><th>DELIVERED</th></tr></thead>
+                  <thead><tr><th>CUSTOMER NAME</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th><th>DELIVERY IN PROGRESS</th><th>DELIVERED</th></tr></thead>
                   <tbody>
                     {pendingSurveys.map((row, idx) => (
                       <tr key={idx}>
@@ -577,7 +577,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Invitation Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.invitationDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>VIN</div><div style={{ fontFamily: 'monospace', color: '#94a3b8', fontSize: 11 }}>{survey.vin || '—'}</div></div>
-                        {survey.appliedBusinessRule && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Applied Business Rule</div><div style={{ color: '#a78bfa', fontSize: 12, fontWeight: 600 }}>{survey.appliedBusinessRule}</div></div>}
+                        {survey.appliedBusinessRule && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Delivery In Progress</div><div style={{ color: '#a78bfa', fontSize: 12, fontWeight: 600 }}>{survey.appliedBusinessRule}</div></div>}
                         {survey.delivered && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Delivered</div><div style={{ color: '#86efac', fontSize: 12, fontWeight: 700 }}>{survey.delivered}</div></div>}
                       </div>
 
