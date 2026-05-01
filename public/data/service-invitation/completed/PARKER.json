@@ -158,5 +158,21 @@
     "notes": "Talked to & was satisfied",
     "submittedAt": "2026-05-01T19:44:21.088Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "BRENT DARDEEN",
+    "repairOrder": "776811",
+    "vin": "KM8KRDAF7PU154518",
+    "model": "IONIQ 5",
+    "serviceDate": "04/26/2026",
+    "invitationDate": "04/28/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 476 - 3935",
+    "notes": "asked to fill out Survey",
+    "submittedAt": "2026-05-01T19:51:59.223Z",
+    "submittedBy": "PARKER"
   }
 ]
