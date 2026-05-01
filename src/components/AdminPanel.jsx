@@ -794,9 +794,9 @@ const HOLIDAY_KEY = '__HOLIDAY__';
 const DRUM_HOURS = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 const DRUM_MINS  = ['00','15','30','45'];
 const DRUM_AMPM  = ['AM','PM'];
-const ITEM_H = 31;
+const ITEM_H = 28;
 
-function DrumPicker({ items, selected, onChange, width = 41 }) {
+function DrumPicker({ items, selected, onChange, width = 37 }) {
   const ref = React.useRef(null);
   const programmatic = React.useRef(false);
   const snapTimer = React.useRef(null);
@@ -847,7 +847,7 @@ function DrumPicker({ items, selected, onChange, width = 41 }) {
               if (ref.current) ref.current.scrollTop = idx * ITEM_H;
               onChange(item);
             }}
-            style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
+            style={{ height: ITEM_H, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: item === selected ? '#e2e8f0' : 'rgba(255,255,255,0.18)', cursor: 'pointer', userSelect: 'none' }}
           >
             {item}
           </div>
@@ -1137,12 +1137,12 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
                     <DrumPicker items={DRUM_HOURS} selected={startH} onChange={setStartH} width={54} />
                     <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                    <DrumPicker items={DRUM_MINS} selected={startM} onChange={setStartM} width={36} />
+                    <DrumPicker items={DRUM_MINS} selected={startM} onChange={setStartM} width={32} />
                     <DrumPicker items={DRUM_AMPM} selected={startAP} onChange={setStartAP} width={58} />
                     <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, fontWeight: 700, margin: '0 6px', alignSelf: 'center' }}>—</span>
                     <DrumPicker items={DRUM_HOURS} selected={endH} onChange={setEndH} width={54} />
                     <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                    <DrumPicker items={DRUM_MINS} selected={endM} onChange={setEndM} width={36} />
+                    <DrumPicker items={DRUM_MINS} selected={endM} onChange={setEndM} width={32} />
                     <DrumPicker items={DRUM_AMPM} selected={endAP} onChange={setEndAP} width={58} />
                   </div>
 
@@ -1157,12 +1157,12 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'rgba(0,0,0,0.3)', borderRadius: 16, padding: '6px 10px', marginBottom: 10 }}>
                       <DrumPicker items={DRUM_HOURS} selected={lunchH} onChange={setLunchH} width={54} />
                       <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                      <DrumPicker items={DRUM_MINS} selected={lunchM} onChange={setLunchM} width={36} />
+                      <DrumPicker items={DRUM_MINS} selected={lunchM} onChange={setLunchM} width={32} />
                       <DrumPicker items={DRUM_AMPM} selected={lunchAP} onChange={setLunchAP} width={58} />
                       <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, fontWeight: 700, margin: '0 6px', alignSelf: 'center' }}>—</span>
                       <DrumPicker items={DRUM_HOURS} selected={lunchEH} onChange={setLunchEH} width={54} />
                       <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 24, fontWeight: 700, lineHeight: 1, alignSelf: 'center', padding: '0 2px' }}>:</span>
-                      <DrumPicker items={DRUM_MINS} selected={lunchEM} onChange={setLunchEM} width={36} />
+                      <DrumPicker items={DRUM_MINS} selected={lunchEM} onChange={setLunchEM} width={32} />
                       <DrumPicker items={DRUM_AMPM} selected={lunchEAP} onChange={setLunchEAP} width={58} />
                     </div>
                   )}
