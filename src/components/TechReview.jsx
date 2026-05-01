@@ -164,11 +164,9 @@ export default function TechReview({ onBack, techList, currentUser }) {
       setPdfStatus('🤖 AI is analyzing the form structure…');
       const def = await analyzeReviewForm(text);
       if (!def?.sections?.length) throw new Error('No sections found in form.');
-      // Save same base form to both files — manager can edit each independently
-      await Promise.all([
-        saveGithubFile('data/tech-reviews/tech-form-definition.json', def, 'Upload tech review form'),
-        saveGithubFile('data/tech-reviews/mgr-form-definition.json',  def, 'Upload manager review form'),
-      ]);
+      // Save sequentially — parallel saves cause GitHub SHA conflicts
+      await saveGithubFile('data/tech-reviews/tech-form-definition.json', def, 'Upload tech review form');
+      await saveGithubFile('data/tech-reviews/mgr-form-definition.json',  def, 'Upload manager review form');
       setTechFormDef(def);
       setMgrFormDef(def);
       const fc = def.sections.reduce((n, s) => n + s.fields.length, 0);
