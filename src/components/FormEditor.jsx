@@ -312,7 +312,7 @@ function reduce(state, action) {
 }
 
 // ── Main FormEditor ───────────────────────────────────────────────────────────
-export default function FormEditor({ initialDef, onSave, onCancel, saving }) {
+export default function FormEditor({ initialDef, onSave, onCancel, saving, title, subtitle }) {
   const [def, dispatch] = React.useReducer(reduce, initialDef || { title: '', sections: [] });
 
   return (
@@ -321,8 +321,8 @@ export default function FormEditor({ initialDef, onSave, onCancel, saving }) {
       {/* Top bar */}
       <div className="adv-topbar">
         <div>
-          <div className="adv-title">✏️ Edit Review Form</div>
-          <div className="adv-sub">Customize questions, options, and sections — changes apply to both tech and manager</div>
+          <div className="adv-title">{title || '✏️ Edit Review Form'}</div>
+          <div className="adv-sub">{subtitle || 'Customize questions, options, and sections'}</div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={onCancel} className="secondary">✕ Cancel</button>
@@ -344,7 +344,7 @@ export default function FormEditor({ initialDef, onSave, onCancel, saving }) {
             <div>
               <div style={{ fontWeight: 900, color: '#a5b4fc', fontSize: 14, marginBottom: 4 }}>Customize Your Review Form</div>
               <div style={{ fontSize: 13, color: '#64748b', lineHeight: 1.7 }}>
-                Edit any question label, add descriptions to skill levels, reorder or remove fields, and add new questions. When saved, the updated form applies to <strong style={{ color: '#a5b4fc' }}>both the tech self-evaluation and your manager evaluation</strong>.
+                Edit question labels, add descriptions to skill levels, reorder or remove fields, and add new questions. Changes only affect <strong style={{ color: '#a5b4fc' }}>this form</strong> — the tech form and manager form are edited separately.
               </div>
             </div>
           </div>
