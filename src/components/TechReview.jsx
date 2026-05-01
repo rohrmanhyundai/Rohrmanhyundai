@@ -69,9 +69,87 @@ function parseQuestionsFromText(text) {
   return [...new Set(questions)]; // deduplicate
 }
 
+// ── Preview: what the tech sees ───────────────────────────────────────────
+function ReviewPreview({ questions, onClose }) {
+  const [answers, setAnswers] = useState(questions.map(() => ''));
+  const inpStyle = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, color: '#e2e8f0', padding: '8px 11px', fontSize: 13, outline: 'none', width: '100%', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'vertical' };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 9999, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', padding: '40px 24px' }}>
+      <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 20, width: '100%', maxWidth: 720, boxShadow: '0 32px 80px rgba(0,0,0,0.7)' }}>
+
+        {/* Header */}
+        <div style={{ background: 'linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.08))', borderBottom: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px 20px 0 0', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: '#fbbf24', marginBottom: 2 }}>👁 Preview — What the Tech Sees</div>
+            <div style={{ fontSize: 12, color: '#64748b' }}>This is exactly how the review will appear to the technician. You can type sample answers to test it.</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', color: '#94a3b8', borderRadius: 10, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✕ Close Preview</button>
+        </div>
+
+        {/* Simulated tech review form */}
+        <div style={{ padding: '28px' }}>
+
+          {/* Mock topbar */}
+          <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: '14px 18px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontWeight: 900, fontSize: 15, color: '#e2e8f0' }}>📋 My Performance Review</div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>TECHNICIAN NAME</div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: '#64748b', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700 }}>← Technician Resources</div>
+          </div>
+
+          {/* Instructions banner */}
+          <div style={{ background: 'linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.06))', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '18px 22px', marginBottom: 24 }}>
+            <div style={{ fontWeight: 900, fontSize: 15, color: '#fbbf24', marginBottom: 5 }}>📋 Performance Self-Review</div>
+            <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>Please answer each question honestly and thoroughly. Your manager will read your responses and complete their own evaluation. Once you submit, you cannot make changes.</div>
+          </div>
+
+          {/* Questions */}
+          {questions.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#475569', fontSize: 14 }}>No questions yet — upload a PDF or add questions manually.</div>
+          ) : (
+            questions.map((q, i) => (
+              <div key={i} style={{ marginBottom: 22 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 5 }}>Question {i + 1} of {questions.length}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', marginBottom: 10 }}>{q.question || q}</div>
+                <textarea
+                  value={answers[i] || ''}
+                  onChange={e => { const a = [...answers]; a[i] = e.target.value; setAnswers(a); }}
+                  rows={4}
+                  placeholder="Type your answer here…"
+                  style={inpStyle}
+                />
+              </div>
+            ))
+          )}
+
+          {/* Submit button (disabled — just for show) */}
+          {questions.length > 0 && (
+            <div style={{ marginTop: 8 }}>
+              <div style={{ background: 'linear-gradient(135deg,rgba(74,222,128,.25),rgba(34,197,94,.15))', border: '2px solid rgba(74,222,128,.5)', color: '#4ade80', borderRadius: 12, padding: '14px 32px', fontWeight: 900, fontSize: 15, textAlign: 'center', opacity: 0.6 }}>
+                ✅ Submit My Review
+              </div>
+              <div style={{ fontSize: 12, color: '#475569', textAlign: 'center', marginTop: 8 }}>Once submitted you cannot make changes.</div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer note */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', padding: '16px 28px', borderRadius: '0 0 20px 20px', background: 'rgba(251,191,36,.05)' }}>
+          <div style={{ fontSize: 12, color: '#64748b', textAlign: 'center' }}>
+            👁 This is a <strong style={{ color: '#fbbf24' }}>preview only</strong> — answers typed here are not saved. Close and click <strong style={{ color: '#fbbf24' }}>Send Review</strong> on a technician to send the real form.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TechReview({ onBack, techList, currentUser }) {
   const [view, setView] = useState('list'); // 'list' | 'tech'
   const [selectedTech, setSelectedTech] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Questions management
   const [questions, setQuestions]   = useState([]);
@@ -374,11 +452,22 @@ export default function TechReview({ onBack, techList, currentUser }) {
           <button className="secondary" onClick={onBack}>← Employee Review</button>
         </div>
 
+        {showPreview && <ReviewPreview questions={questions} onClose={() => setShowPreview(false)} />}
+
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
 
           {/* Question Builder */}
           <div style={section}>
-            <div style={sectionTitle}>📋 Review Questions</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8 }}>
+              <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: 1 }}>📋 Review Questions</div>
+              {questions.length > 0 && (
+                <button
+                  onClick={() => setShowPreview(true)}
+                  style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 9, padding: '7px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  👁 Preview Review
+                </button>
+              )}
+            </div>
             <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>
               Upload a PDF review form and the questions will be extracted automatically — or add questions manually below.
             </p>
