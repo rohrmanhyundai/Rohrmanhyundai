@@ -46,9 +46,11 @@ function parseXlsxRows(rawRows) {
       repairOrder:    findCol(row, 'RO Number', 'R/O Number', 'Repair Order', 'RO#', 'R/O No.', 'RO No', 'Repair Order Number', 'RO'),
       vin:            findCol(row, 'VIN', 'VIN Number', 'Vin'),
       model:          findCol(row, 'Model', 'Model Name', 'Vehicle Model', 'Year Model', 'Make Model', 'Vehicle Description', 'Model Year'),
-      serviceDate:    findCol(row, 'Service Date', 'RO Close Date', 'Close Date', 'Repair Order Date', 'RO Date', 'Completed Date', 'In Service Date'),
-      invitationDate: findCol(row, 'Invitation Date', 'Survey Date', 'Survey Sent Date', 'Sent Date', 'Delivery Date', 'Email Date'),
-      status:         findCol(row, 'Status', 'Survey Status', 'Delivery Status', 'Email Status', 'Survey Delivery Status'),
+      serviceDate:         findCol(row, 'Service Date', 'RO Close Date', 'Close Date', 'Repair Order Date', 'RO Date', 'Completed Date', 'In Service Date'),
+      invitationDate:      findCol(row, 'Invitation Date', 'Survey Date', 'Survey Sent Date', 'Sent Date', 'Delivery Date', 'Email Date'),
+      status:              findCol(row, 'Status', 'Survey Status', 'Delivery Status', 'Email Status', 'Survey Delivery Status'),
+      appliedBusinessRule: findCol(row, 'Applied Business Rule', 'Business Rule', 'Applied Rule', 'Rule Applied', 'Business Rules'),
+      delivered:           findCol(row, 'Delivered', 'Delivery', 'Survey Delivered', 'Email Delivered', 'Delivered Status'),
     };
   });
 }
@@ -516,7 +518,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                   {siUploadedAt && <span style={{ fontSize: 12, color: '#475569' }}>Data as of {new Date(siUploadedAt).toLocaleDateString()}</span>}
                 </div>
                 <table className="adv-table">
-                  <thead><tr><th>CUSTOMER NAME</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th></tr></thead>
+                  <thead><tr><th>CUSTOMER NAME</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th><th>APPLIED BUSINESS RULE</th><th>DELIVERED</th></tr></thead>
                   <tbody>
                     {pendingSurveys.map((row, idx) => (
                       <tr key={idx}>
@@ -526,6 +528,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.serviceDate)}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.invitationDate)}</td>
+                        <td style={{ color: '#a78bfa', fontSize: 12 }}>{row.appliedBusinessRule || '—'}</td>
+                        <td>
+                          {row.delivered
+                            ? <span style={{ background: 'rgba(34,197,94,.13)', border: '1px solid rgba(34,197,94,.3)', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700, color: '#86efac', whiteSpace: 'nowrap' }}>{row.delivered}</span>
+                            : <span style={{ color: '#334155' }}>—</span>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -569,6 +577,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Invitation Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.invitationDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>VIN</div><div style={{ fontFamily: 'monospace', color: '#94a3b8', fontSize: 11 }}>{survey.vin || '—'}</div></div>
+                        {survey.appliedBusinessRule && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Applied Business Rule</div><div style={{ color: '#a78bfa', fontSize: 12, fontWeight: 600 }}>{survey.appliedBusinessRule}</div></div>}
+                        {survey.delivered && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Delivered</div><div style={{ color: '#86efac', fontSize: 12, fontWeight: 700 }}>{survey.delivered}</div></div>}
                       </div>
 
                       {/* Divider */}
