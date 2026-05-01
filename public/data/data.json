@@ -117,7 +117,7 @@
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 311.7,
+        "mtd_hours": 0,
         "hours_per_ro": 1.32,
         "align": 0.1679,
         "tires": 0.4672,
@@ -125,7 +125,7 @@
         "csi": 979,
         "asr": 0.1909,
         "elr": 0.92,
-        "last_month_total": 333.4,
+        "last_month_total": 326.2,
         "roh50_hrs_ro": 1.18
       },
       {
@@ -233,7 +233,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 498.5,
+      "total_hours": 186.8,
       "align": 0.13699999999999998,
       "tires": 0.230125,
       "valvoline": 0.1842,
