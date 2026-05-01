@@ -209,7 +209,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
     setSavingMgr(true); setStatus('⏳ Saving manager evaluation…');
     try {
       const key = selectedTech.toLowerCase();
-      const usedForm = mgrReview?.formDef || mgrFormDef;
+      const usedForm = mgrReview?.formDef || mgrFormDef || techFormDef;
       const payload = { values: mgrValues, formDef: usedForm, savedBy: currentUser, savedAt: new Date().toISOString(), techName: selectedTech };
       await saveGithubFile(`data/tech-reviews/manager-reviews/${key}/latest.json`, payload, `Manager evaluation for ${selectedTech}`);
       setMgrReview(payload);
@@ -437,7 +437,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   // ── TECH VIEW ─────────────────────────────────────────────────────────────
   const activeTechForm = submission?.formDef || pending?.formDef || techFormDef;
-  const activeMgrForm  = mgrReview?.formDef  || mgrFormDef;
+  const activeMgrForm  = mgrReview?.formDef  || mgrFormDef || techFormDef;
   const techDone = !!submission;
   const mgrDone  = !!mgrReview;
   const bothDone = techDone && mgrDone;
