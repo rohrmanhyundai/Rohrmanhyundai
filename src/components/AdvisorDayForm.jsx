@@ -76,6 +76,32 @@ function isDelivered(status) {
   return status.trim().toLowerCase() === 'delivered';
 }
 
+function statusInfo(status) {
+  const s = (status || '').toUpperCase().trim();
+  if (s === 'DELIVERED')                return { label: '✓ Delivered',       color: '#86efac', bg: 'rgba(34,197,94,.15)',   border: 'rgba(34,197,94,.35)',   col: 'delivered' };
+  if (s === 'COMPLETE')                 return { label: '✓ Complete',         color: '#86efac', bg: 'rgba(34,197,94,.15)',   border: 'rgba(34,197,94,.35)',   col: 'delivered' };
+  if (s === 'APPLIED_BUSINESS_RULE')    return { label: '⏳ Business Rule',   color: '#fbbf24', bg: 'rgba(251,191,36,.15)', border: 'rgba(251,191,36,.35)', col: 'progress' };
+  if (s === 'READY_TO_PROCESS_INVITE')  return { label: '📬 Queued',          color: '#6ee7f9', bg: 'rgba(61,214,195,.12)', border: 'rgba(61,214,195,.3)',  col: 'progress' };
+  if (s === 'QUARANTINE_HISTORY')       return { label: '🔒 Quarantine',      color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)',col: 'progress' };
+  if (s === 'QUARANTINE_CURRENT')       return { label: '🔒 Quarantine',      color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)',col: 'progress' };
+  if (s === 'HARDBOUNCE')               return { label: '↩ Bounced',          color: '#fca5a5', bg: 'rgba(239,68,68,.12)',  border: 'rgba(239,68,68,.3)',   col: 'progress' };
+  if (s === 'INVALID_EMAIL')            return { label: '⚠ Invalid Email',    color: '#fdba74', bg: 'rgba(251,146,60,.12)', border: 'rgba(251,146,60,.3)',  col: 'progress' };
+  if (s === 'MISSING_EMAIL')            return { label: '⚠ Missing Email',    color: '#fdba74', bg: 'rgba(251,146,60,.12)', border: 'rgba(251,146,60,.3)',  col: 'progress' };
+  if (s === 'BUSINESS_NAME')            return { label: '🏢 Business',         color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)',col: 'progress' };
+  if (s === 'LIST_UNSUBSCRIBES' || s === 'OPT_OUT') return { label: '🚫 Opted Out', color: '#fca5a5', bg: 'rgba(239,68,68,.1)', border: 'rgba(239,68,68,.25)', col: 'progress' };
+  if (s === 'MATCH_DEALER_PHONE')       return { label: '📞 Phone Match',      color: '#c4b5fd', bg: 'rgba(167,139,250,.12)',border: 'rgba(167,139,250,.3)', col: 'progress' };
+  return { label: s || '—', color: '#64748b', bg: 'rgba(255,255,255,.05)', border: 'rgba(255,255,255,.1)', col: 'progress' };
+}
+
+function StatusBadge({ status }) {
+  const info = statusInfo(status);
+  return (
+    <span style={{ background: info.bg, border: `1px solid ${info.border}`, borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700, color: info.color, whiteSpace: 'nowrap' }}>
+      {info.label}
+    </span>
+  );
+}
+
 function fmtDate(val) {
   if (!val) return '—';
   const d = new Date(val);
@@ -345,11 +371,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
 
   const advisorSurveys = allDataRows.filter(row =>
     matchesAdvisor(row.consultant, advisorName) &&
-    isDelivered(row.status) &&
     isWithin4Months(row.serviceDate || row.invitationDate)
   );
 
-  // Pending = not yet submitted, sorted newest first
+  // Pending = not yet submitted (only DELIVERED/COMPLETE can actually be called on), sorted newest first
   const pendingSurveys = advisorSurveys
     .filter(s => !completedROs.has(s.repairOrder))
     .sort((a, b) => parseDateVal(b.serviceDate) - parseDateVal(a.serviceDate));
@@ -528,10 +553,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.serviceDate)}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.invitationDate)}</td>
-                        <td style={{ color: '#a78bfa', fontSize: 12 }}>{row.appliedBusinessRule || '—'}</td>
                         <td>
-                          {row.delivered
-                            ? <span style={{ background: 'rgba(34,197,94,.13)', border: '1px solid rgba(34,197,94,.3)', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700, color: '#86efac', whiteSpace: 'nowrap' }}>{row.delivered}</span>
+                          {statusInfo(row.status).col === 'progress'
+                            ? <StatusBadge status={row.status} />
+                            : <span style={{ color: '#334155' }}>—</span>}
+                        </td>
+                        <td>
+                          {statusInfo(row.status).col === 'delivered'
+                            ? <StatusBadge status={row.status} />
                             : <span style={{ color: '#334155' }}>—</span>}
                         </td>
                       </tr>
@@ -577,8 +606,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Invitation Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.invitationDate)}</div></div>
                         <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>VIN</div><div style={{ fontFamily: 'monospace', color: '#94a3b8', fontSize: 11 }}>{survey.vin || '—'}</div></div>
-                        {survey.appliedBusinessRule && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Delivery In Progress</div><div style={{ color: '#a78bfa', fontSize: 12, fontWeight: 600 }}>{survey.appliedBusinessRule}</div></div>}
-                        {survey.delivered && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Delivered</div><div style={{ color: '#86efac', fontSize: 12, fontWeight: 700 }}>{survey.delivered}</div></div>}
+                        {survey.status && <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>{statusInfo(survey.status).col === 'delivered' ? 'Delivered' : 'Delivery In Progress'}</div><div style={{ marginTop: 3 }}><StatusBadge status={survey.status} /></div></div>}
                       </div>
 
                       {/* Divider */}
