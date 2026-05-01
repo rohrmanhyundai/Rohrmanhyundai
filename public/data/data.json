@@ -103,7 +103,7 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 296.2,
+        "mtd_hours": 0,
         "hours_per_ro": 1.46,
         "align": 0.1795,
         "tires": 0.2051,
@@ -111,7 +111,7 @@
         "csi": 923,
         "asr": 0.19699999999999998,
         "elr": 0.95,
-        "last_month_total": 305.7,
+        "last_month_total": 321.2,
         "roh50_hrs_ro": 0.96
       },
       {
@@ -233,7 +233,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 794.6999999999999,
+      "total_hours": 498.5,
       "align": 0.13699999999999998,
       "tires": 0.230125,
       "valvoline": 0.1842,
