@@ -10,17 +10,5 @@
     "partsArrivedDate": "04/30/2026",
     "notes": "all parts here",
     "advisor": "PARKER"
-  },
-  {
-    "id": "mokkzm00im8",
-    "ro": "777013",
-    "roDate": "",
-    "jobDesc": "BATTERY DRAIN BEING DIAG WORKING WITH TL",
-    "etaParts": "",
-    "etaCompletion": "30",
-    "partsArrived": false,
-    "advisor": "JORDAN",
-    "highPriority": true,
-    "notes": "BATTERY IS APPROVED \n5/1 Battery replaced."
   }
 ]
