@@ -1,0 +1,113 @@
+{
+  "id": "mon9pz6ax36l",
+  "createdAt": "2026-05-01T18:50:36.754Z",
+  "updatedAt": "2026-05-01T19:04:25.835Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Cory Hammond",
+  "customerPhone": "(574) 398 - 7139",
+  "repairOrder": "",
+  "vin": "5NPD84LF0LH501401",
+  "vehicleYear": "2020",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Elantra",
+  "mileage": "",
+  "warrantyCompany": "AAGI",
+  "warrantyPhone": "18884428286",
+  "claimNumber": "",
+  "authNumber": "",
+  "laborRate": "170",
+  "laborTime": "7.4",
+  "diagnosisTime": "1.0",
+  "parts": [
+    {
+      "id": "mon9pz6alerx",
+      "partNumber": "24321-2E010",
+      "description": "CHAIN-TIMING",
+      "qty": "1",
+      "price": "174.26"
+    },
+    {
+      "id": "mon9xy8q0h6e",
+      "partNumber": "24361-25000",
+      "description": "BOLT-CVVT",
+      "qty": "1",
+      "price": "2.82"
+    },
+    {
+      "id": "mon9y9j6f7ei",
+      "partNumber": "24370-2E020",
+      "description": "CVVT ASSY-EXHAUST",
+      "qty": "1",
+      "price": "365.68"
+    },
+    {
+      "id": "mon9yexuzum1",
+      "partNumber": "24410-2E000",
+      "description": "TENSIONER ASSY-TIMING CHAIN",
+      "qty": "1",
+      "price": "128.69"
+    },
+    {
+      "id": "mon9ylog81zs",
+      "partNumber": "24420-2J000",
+      "description": "TENSIONER ARM ASSY",
+      "qty": "1",
+      "price": "31.61"
+    },
+    {
+      "id": "mon9ysq78j1x",
+      "partNumber": "24430-2J000",
+      "description": "GUIDE-CHAIN",
+      "qty": "1",
+      "price": "30.90"
+    },
+    {
+      "id": "mon9z3x9d1yr",
+      "partNumber": "520V ",
+      "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND",
+      "qty": "4",
+      "price": "4.99"
+    },
+    {
+      "id": "mon9zmy7nuo8",
+      "partNumber": "21350-2E740",
+      "description": "COVER ASSY-TIMING CHAIN",
+      "qty": "1",
+      "price": "543.98"
+    },
+    {
+      "id": "mon9zs4hyuc2",
+      "partNumber": "00232-19061",
+      "description": "RTV SILICONE GRAY GASKET MAKER",
+      "qty": "1",
+      "price": "18.56"
+    },
+    {
+      "id": "mon9zy5v7g5b",
+      "partNumber": "24200-2E074",
+      "description": "CAMSHAFT ASSY-EXHAUST",
+      "qty": "1",
+      "price": "309.11"
+    }
+  ],
+  "taxPct": "7",
+  "deductible": "",
+  "rental": null,
+  "towing": null,
+  "sublet": null,
+  "tireTax": null,
+  "tireDisposal": null,
+  "notes": "",
+  "approved": false,
+  "approvedDate": "",
+  "denied": false,
+  "deniedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": ""
+}
