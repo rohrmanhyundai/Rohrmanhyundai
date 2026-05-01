@@ -30,6 +30,7 @@ import SurveyReports from './components/SurveyReports';
 import ATDiagWorksheet from './components/ATDiagWorksheet';
 import DCTMTMWorksheet from './components/DCTMTMWorksheet';
 import IVTWorksheet from './components/IVTWorksheet';
+import ATMWorksheet from './components/ATMWorksheet';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -313,6 +314,17 @@ export default function App() {
         onBack={() => navTo(prevPage || 'tech-resources')}
         onDCTMTM={() => goTo('dct-mtm-worksheet', 'at-diag-worksheet')}
         onIVT={() => goTo('ivt-worksheet', 'at-diag-worksheet')}
+        onATM={() => goTo('atm-worksheet', 'at-diag-worksheet')}
+      />
+    );
+  }
+
+  if (page === 'atm-worksheet') {
+    return (
+      <ATMWorksheet
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => navTo('at-diag-worksheet')}
       />
     );
   }
