@@ -126,7 +126,7 @@ export default function SalesAdmin({ currentUser }) {
   const sp = data.salespeople || [];
 
   return (
-    <div style={{ padding: '24px 28px', maxWidth: 960, margin: '0 auto' }}>
+    <div style={{ padding: '24px 28px', maxWidth: 960, margin: '0 auto', overflowY: 'auto', height: 'calc(100vh - 52px)' }}>
 
       {/* Top actions */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
