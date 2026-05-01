@@ -19,12 +19,13 @@ function shiftColor(val) {
   if (!val) return null;
   if (val === 'vacation') return '#f59e0b';
   if (val === 'off') return '#64748b';
+  if (val === 'training') return '#a78bfa';
   return '#3dd6c3';
 }
 
 function ShiftBadge({ name, val, isOwn }) {
   const color = shiftColor(val);
-  const parts = val && val !== 'vacation' && val !== 'off' ? val.split(' | ') : null;
+  const parts = val && val !== 'vacation' && val !== 'off' && val !== 'training' ? val.split(' | ') : null;
   const shiftPart = parts ? parts[0] : null;
   const lunchPart = parts && parts[1] ? parts[1].replace('Lunch ', '') : null;
   return (
@@ -38,8 +39,8 @@ function ShiftBadge({ name, val, isOwn }) {
       <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700, whiteSpace: 'nowrap' }}>
         {name.split(' ')[0]}
       </span>
-      <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', whiteSpace: 'nowrap' }}>
-        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : shiftPart}
+      <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : val === 'training' ? '#a78bfa' : '#3dd6c3', whiteSpace: 'nowrap' }}>
+        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val === 'training' ? '🎓 Training' : shiftPart}
       </span>
       {lunchPart && (
         <span className="ws-print-badge-lunch" style={{ fontSize: 9, color: '#f59e0b', whiteSpace: 'nowrap' }}>
@@ -55,8 +56,9 @@ const PRINT_DAY_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Fri
 
 function fmtShiftStr(val) {
   if (!val) return { text: '', cls: 'empty', shiftText: '', lunchText: '' };
-  if (val === 'vacation') return { text: 'VACATION', cls: 'vac', shiftText: 'Vacation', lunchText: '' };
-  if (val === 'off')      return { text: 'OFF',      cls: 'off', shiftText: 'Off', lunchText: '' };
+  if (val === 'vacation') return { text: 'VACATION', cls: 'vac',      shiftText: 'Vacation', lunchText: '' };
+  if (val === 'off')      return { text: 'OFF',      cls: 'off',      shiftText: 'Off',      lunchText: '' };
+  if (val === 'training') return { text: 'TRAINING', cls: 'training', shiftText: '🎓 Training', lunchText: '' };
   const m = val.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
   if (!m) return { text: val.slice(0, 14), cls: 'shift', shiftText: val.slice(0, 14), lunchText: '' };
   const fmt = (h, mn, ap) => `${h}${mn !== '00' ? ':'+mn : ''}${ap[0].toLowerCase()}`;

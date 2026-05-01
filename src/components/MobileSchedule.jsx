@@ -6,6 +6,7 @@ const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 function shiftColor(val) {
   if (val === 'vacation') return '#f59e0b';
   if (val === 'off') return '#64748b';
+  if (val === 'training') return '#a78bfa';
   return '#3dd6c3';
 }
 
@@ -155,8 +156,8 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
                       <div style={{ padding: '6px 10px 8px' }}>
                         {entries.map(e => {
                           const isMe = e.name.toUpperCase() === currentUser;
-                          const parts = e.val !== 'vacation' && e.val !== 'off' ? e.val.split(' | ') : null;
-                          const shift = parts ? parts[0] : (e.val === 'vacation' ? '🌴 Vacation' : 'Off');
+                          const parts = e.val !== 'vacation' && e.val !== 'off' && e.val !== 'training' ? e.val.split(' | ') : null;
+                          const shift = parts ? parts[0] : (e.val === 'vacation' ? '🌴 Vacation' : e.val === 'training' ? '🎓 Training' : 'Off');
                           const lunch = parts?.[1]?.replace('Lunch ', '');
                           const dot = shiftColor(e.val);
                           return (
@@ -175,7 +176,7 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
                                 {isMe && <span style={{ fontSize: 9, fontWeight: 700, color: '#3dd6c3', background: 'rgba(61,214,195,0.15)', borderRadius: 4, padding: '1px 5px', textTransform: 'uppercase', letterSpacing: 0.5 }}>Me</span>}
                               </div>
                               <div style={{ marginTop: 4, paddingLeft: 16 }}>
-                                <div style={{ fontSize: 13, color: e.val === 'vacation' ? '#f59e0b' : e.val === 'off' ? '#94a3b8' : '#e2e8f0', fontWeight: 600 }}>{shift}</div>
+                                <div style={{ fontSize: 13, color: e.val === 'vacation' ? '#f59e0b' : e.val === 'off' ? '#94a3b8' : e.val === 'training' ? '#a78bfa' : '#e2e8f0', fontWeight: 600 }}>{shift}</div>
                                 {lunch && (
                                   <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 2 }}>🍽 Lunch {lunch}</div>
                                 )}
