@@ -3,10 +3,9 @@ import { loadUsers } from '../utils/github';
 import SalesDashboard from './SalesDashboard';
 import SalesAdmin from './SalesAdmin';
 
-const ROLES_WITH_ADMIN = ['admin', 'manager'];
-
 function isAdminOrManager(role) {
-  return ROLES_WITH_ADMIN.includes((role || '').toLowerCase());
+  const r = (role || '').toLowerCase();
+  return r === 'admin' || r.includes('manager');
 }
 
 export default function SalesApp() {
