@@ -86,7 +86,7 @@
     },
     {
       "username": "Jason",
-      "password": "jasonT",
+      "password": "jason2026",
       "role": "admin",
       "canEditDashboard": false,
       "pages": {
@@ -101,7 +101,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "atDiagWorksheet": true
       },
       "chatAccess": true,
       "techChatAccess": true
