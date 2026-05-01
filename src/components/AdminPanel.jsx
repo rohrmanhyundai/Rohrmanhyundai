@@ -382,183 +382,160 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   if (!isOpen) return null;
 
-  return (
-    <aside className="admin open">
-      <div className="admin-topbar">
-        <h2>Edit Dashboard</h2>
-        <div className="actions">
-          <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-          <button className="secondary" onClick={onClose}>Close</button>
+  // ── Card definitions ──────────────────────────────────────────────────────────
+  const ADMIN_CARDS = [
+    { id: 'github',     icon: '🔑', label: 'GitHub Settings',      desc: 'Sync your access token to all advisor devices',       color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
+    { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
+    { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
+    { id: 'gauges',     icon: '🎯', label: 'Goal Gauges',           desc: 'Set gross profit and customer pay targets',           color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  border: 'rgba(251,191,36,.35)'  },
+    { id: 'advisors',   icon: '📊', label: 'Advisor Performance',   desc: 'Edit advisor hours, rates, and percentages',          color: '#fb923c', bg: 'rgba(251,146,60,.12)',  border: 'rgba(251,146,60,.35)'  },
+    { id: 'training',   icon: '🎓', label: 'Training Center',       desc: 'Update tech and advisor certification status',        color: '#2dd4bf', bg: 'rgba(45,212,191,.12)',  border: 'rgba(45,212,191,.35)'  },
+    { id: 'technicians',icon: '🔧', label: 'Technicians',           desc: 'Manage technician daily hours and shift schedules',   color: '#f97316', bg: 'rgba(249,115,22,.12)',  border: 'rgba(249,115,22,.35)'  },
+    { id: 'vacation',   icon: '🏖️', label: 'Approved Vacation',     desc: 'Track and sync approved vacation dates',              color: '#60a5fa', bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.35)'  },
+    ...(isAdminOrManager(currentRole) ? [
+      { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
+      { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
+    ] : []),
+  ];
+
+  const activeCard = ADMIN_CARDS.find(c => c.id === openSection);
+
+  // ── Section body renderer ─────────────────────────────────────────────────────
+  function renderSectionBody() {
+    if (openSection === 'github') return (
+      <div className="group-body">
+        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+          <div className="small">Enter a GitHub Personal Access Token with repo scope. Saving here automatically syncs it to all advisor devices — they will never need to enter a save code manually.</div>
+          <div className="field" style={{ marginTop: 8 }}>
+            <label>GitHub Token</label>
+            <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
+          </div>
+          <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
         </div>
       </div>
-      <div className="admin-body">
-      <div className="small">Training Center, Vacation Approved, advisor pacing, and all edit boxes are rebuilt to behave consistently.</div>
+    );
 
-      {/* GitHub Settings */}
-      <details className="edit-group" open={openSection === 'github'} onToggle={e => e.target.open ? setOpenSection('github') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('github'); }}>GitHub Settings</summary>
-        <div className="group-body">
-          <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-            <div className="small">Enter a GitHub Personal Access Token with repo scope. Saving here automatically syncs it to all advisor devices — they will never need to enter a save code manually.</div>
-            <div className="field" style={{ marginTop: 8 }}>
-              <label>GitHub Token</label>
-              <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
-            </div>
-            <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
+    if (openSection === 'openai') return (
+      <div className="group-body">
+        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+          <div className="small">Enter your OpenAI API key to enable AI-generated performance review reports in Employee Reviews. The key is stored locally on this device only.</div>
+          <div className="field" style={{ marginTop: 8 }}>
+            <label>OpenAI API Key</label>
+            <input type="password" value={openAIKey} onChange={e => setOpenAIKeyState(e.target.value)} placeholder="sk-..." />
+          </div>
+          <div className="actions">
+            <button onClick={() => { setOpenAIKey(openAIKey); alert('OpenAI API key saved!'); }}>Save OpenAI Key</button>
+            {openAIKey && <button className="secondary" style={{ marginLeft: 8 }} onClick={() => { setOpenAIKeyState(''); setOpenAIKey(''); }}>Clear Key</button>}
           </div>
         </div>
-      </details>
+      </div>
+    );
 
-      {/* OpenAI Settings */}
-      <details className="edit-group" open={openSection === 'openai'} onToggle={e => e.target.open ? setOpenSection('openai') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('openai'); }}>OpenAI Settings</summary>
-        <div className="group-body">
-          <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-            <div className="small">Enter your OpenAI API key to enable AI-generated performance review reports in Employee Reviews. The key is stored locally on this device only.</div>
-            <div className="field" style={{ marginTop: 8 }}>
-              <label>OpenAI API Key</label>
-              <input
-                type="password"
-                value={openAIKey}
-                onChange={e => setOpenAIKeyState(e.target.value)}
-                placeholder="sk-..."
-              />
-            </div>
-            <div className="actions">
-              <button onClick={() => { setOpenAIKey(openAIKey); alert('OpenAI API key saved!'); }}>
-                Save OpenAI Key
-              </button>
-              {openAIKey && (
-                <button className="secondary" style={{ marginLeft: 8 }} onClick={() => { setOpenAIKeyState(''); setOpenAIKey(''); }}>
-                  Clear Key
+    if (openSection === 'dashboard') return (
+      <div className="group-body">
+        <div className="field">
+          <label>Dashboard Title</label>
+          <input value={data.title || ''} onChange={e => updateField('title', e.target.value)} />
+        </div>
+      </div>
+    );
+
+    if (openSection === 'gauges') return (
+      <div className="group-body">
+        <div className="form-grid">
+          <div className="field"><label>Gross Profit Goal</label><input value={data.grossGoal ?? 0} onChange={e => updateField('grossGoal', safe(e.target.value, data.grossGoal))} /></div>
+          <div className="field"><label>Gross Profit Actual</label><input value={data.grossActual ?? 0} onChange={e => updateField('grossActual', safe(e.target.value, data.grossActual))} /></div>
+          <div className="field"><label>Customer Pay Goal</label><input value={data.cpGoal ?? 0} onChange={e => updateField('cpGoal', safe(e.target.value, data.cpGoal))} /></div>
+          <div className="field"><label>Customer Pay Actual</label><input value={data.cpActual ?? 0} onChange={e => updateField('cpActual', safe(e.target.value, data.cpActual))} /></div>
+          <div className="field"><label>Advisor Monthly Workdays</label><input value={data.advisorMonthlyWorkdays ?? 27} onChange={e => updateField('advisorMonthlyWorkdays', safe(e.target.value, 27))} /></div>
+        </div>
+      </div>
+    );
+
+    if (openSection === 'advisors') return (
+      <div className="group-body">
+        <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
+        {data.advisors.map((a, idx) => (
+          <div className="form-section" key={a.name}>
+            <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>
+                {a.name}
+                {a.hidden && <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Hidden</span>}
+              </span>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button className="secondary" style={a.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}} onClick={() => updateField(`advisors.${idx}.hidden`, !a.hidden)}>
+                  {a.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
                 </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </details>
-
-      {/* Dashboard Settings */}
-      <details className="edit-group" open={openSection === 'dashboard'} onToggle={e => e.target.open ? setOpenSection('dashboard') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('dashboard'); }}>Dashboard Settings</summary>
-        <div className="group-body">
-          <div className="field">
-            <label>Dashboard Title</label>
-            <input value={data.title || ''} onChange={e => updateField('title', e.target.value)} />
-          </div>
-        </div>
-      </details>
-
-      {/* Goal Gauges */}
-      <details className="edit-group" open={openSection === 'gauges'} onToggle={e => e.target.open ? setOpenSection('gauges') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('gauges'); }}>Goal Gauges</summary>
-        <div className="group-body">
-          <div className="form-grid">
-            <div className="field"><label>Gross Profit Goal</label><input value={data.grossGoal ?? 0} onChange={e => updateField('grossGoal', safe(e.target.value, data.grossGoal))} /></div>
-            <div className="field"><label>Gross Profit Actual</label><input value={data.grossActual ?? 0} onChange={e => updateField('grossActual', safe(e.target.value, data.grossActual))} /></div>
-            <div className="field"><label>Customer Pay Goal</label><input value={data.cpGoal ?? 0} onChange={e => updateField('cpGoal', safe(e.target.value, data.cpGoal))} /></div>
-            <div className="field"><label>Customer Pay Actual</label><input value={data.cpActual ?? 0} onChange={e => updateField('cpActual', safe(e.target.value, data.cpActual))} /></div>
-            <div className="field"><label>Advisor Monthly Workdays</label><input value={data.advisorMonthlyWorkdays ?? 27} onChange={e => updateField('advisorMonthlyWorkdays', safe(e.target.value, 27))} /></div>
-          </div>
-        </div>
-      </details>
-
-      {/* Advisor Performance */}
-      <details className="edit-group" open={openSection === 'advisors'} onToggle={e => e.target.open ? setOpenSection('advisors') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('advisors'); }}>Advisor Performance</summary>
-        <div className="group-body">
-          <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
-          {data.advisors.map((a, idx) => (
-            <div className="form-section" key={a.name}>
-              <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>
-                  {a.name}
-                  {a.hidden && <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Hidden</span>}
-                </span>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <button
-                    className="secondary"
-                    style={a.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}}
-                    onClick={() => updateField(`advisors.${idx}.hidden`, !a.hidden)}
-                  >
-                    {a.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
-                  </button>
-                  <button className="secondary" onClick={() => removeAdvisor(idx)}>Remove</button>
-                </div>
+                <button className="secondary" onClick={() => removeAdvisor(idx)}>Remove</button>
               </div>
-              <div className="form-grid">
-                <div className="field"><label>Daily Avg</label><input value={n(advisorDailyAverage(a, data), 2)} disabled /></div>
-                <div className="field"><label>MTD Hrs</label><input defaultValue={a.mtd_hours} onBlur={e => updateField(`advisors.${idx}.mtd_hours`, safe(e.target.value, a.mtd_hours))} /></div>
-                <div className="field"><label>Hrs/RO</label><input defaultValue={a.hours_per_ro} onBlur={e => updateField(`advisors.${idx}.hours_per_ro`, safe(e.target.value, a.hours_per_ro))} /></div>
-                <div className="field"><label>Alignment %</label><input defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
-                <div className="field"><label>Tires %</label><input defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
-                <div className="field"><label>Valvoline %</label><input defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
-                <div className="field"><label>Roh$50 HRS/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
-                <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
-                <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
-                <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
+            </div>
+            <div className="form-grid">
+              <div className="field"><label>Daily Avg</label><input value={n(advisorDailyAverage(a, data), 2)} disabled /></div>
+              <div className="field"><label>MTD Hrs</label><input defaultValue={a.mtd_hours} onBlur={e => updateField(`advisors.${idx}.mtd_hours`, safe(e.target.value, a.mtd_hours))} /></div>
+              <div className="field"><label>Hrs/RO</label><input defaultValue={a.hours_per_ro} onBlur={e => updateField(`advisors.${idx}.hours_per_ro`, safe(e.target.value, a.hours_per_ro))} /></div>
+              <div className="field"><label>Alignment %</label><input defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
+              <div className="field"><label>Tires %</label><input defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
+              <div className="field"><label>Valvoline %</label><input defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
+              <div className="field"><label>Roh$50 HRS/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
+              <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
+              <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
               </div>
             </div>
           ))}
           <div className="actions"><button onClick={addAdvisor}>Add Advisor</button></div>
         </div>
-      </details>
+    );
 
-      {/* Training Center */}
-      <details className="edit-group" open={openSection === 'training'} onToggle={e => e.target.open ? setOpenSection('training') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('training'); }}>Training Center</summary>
-        <div className="group-body">
-          <div className="title" style={{ marginBottom: 6 }}>Technicians</div>
-          {data.technicians.map((t, idx) => (
-            <div className="training-edit-grid" key={t.name}>
-              <div className="field"><label>{t.name} Certified</label><input defaultValue={t.certified || ''} onBlur={e => updateField(`technicians.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Training Due</label><input defaultValue={t.trainings_due || ''} onBlur={e => updateField(`technicians.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Excel Training</label><input defaultValue={t.excel_training || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
+    if (openSection === 'training') return (
+      <div className="group-body">
+        <div className="title" style={{ marginBottom: 6 }}>Technicians</div>
+        {data.technicians.map((t, idx) => (
+          <div className="training-edit-grid" key={t.name}>
+            <div className="field"><label>{t.name} Certified</label><input defaultValue={t.certified || ''} onBlur={e => updateField(`technicians.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
+            <div className="field"><label>Training Due</label><input defaultValue={t.trainings_due || ''} onBlur={e => updateField(`technicians.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
+            <div className="field"><label>Excel Training</label><input defaultValue={t.excel_training || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
+          </div>
+        ))}
+        <div className="form-section">
+          <div className="title" style={{ marginBottom: 6 }}>Advisors</div>
+          {(data.advisorTraining || []).map((a, idx) => (
+            <div className="training-edit-grid" key={a.name}>
+              <div className="field"><label>{a.name} Certified</label><input defaultValue={a.certified || ''} onBlur={e => updateField(`advisorTraining.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field"><label>Training Due</label><input defaultValue={a.trainings_due || ''} onBlur={e => updateField(`advisorTraining.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field"><label>Excel Training</label><input defaultValue={a.excel_training || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
             </div>
           ))}
-          <div className="form-section">
-            <div className="title" style={{ marginBottom: 6 }}>Advisors</div>
-            {(data.advisorTraining || []).map((a, idx) => (
-              <div className="training-edit-grid" key={a.name}>
-                <div className="field"><label>{a.name} Certified</label><input defaultValue={a.certified || ''} onBlur={e => updateField(`advisorTraining.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
-                <div className="field"><label>Training Due</label><input defaultValue={a.trainings_due || ''} onBlur={e => updateField(`advisorTraining.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-                <div className="field"><label>Excel Training</label><input defaultValue={a.excel_training || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
-              </div>
-            ))}
-          </div>
         </div>
-      </details>
+      </div>
+    );
 
-      {/* Technicians */}
-      <details className="edit-group" open={openSection === 'technicians'} onToggle={e => e.target.open ? setOpenSection('technicians') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('technicians'); }}>Technicians</summary>
-        <div className="group-body">
-          <div className="title">Technician Daily Hours</div>
-          {data.technicians.map((t, idx) => (
-            <div className="form-section" key={t.name}>
-              <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
-                {t.name}
-                <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
-              </div>
-              <div className="form-grid">
-                {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
-                  <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)}</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
-                ))}
-              </div>
+    if (openSection === 'technicians') return (
+      <div className="group-body">
+        <div className="title">Technician Daily Hours</div>
+        {data.technicians.map((t, idx) => (
+          <div className="form-section" key={t.name}>
+            <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
+              {t.name}
+              <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
             </div>
-          ))}
-          <div className="actions"><button onClick={addTechnician}>Add Technician</button></div>
-        </div>
-      </details>
-
-      {/* Approved Vacation */}
-      <details className="edit-group" open={openSection === 'vacation'} onToggle={e => e.target.open ? setOpenSection('vacation') : setOpenSection(null)}>
-        <summary onClick={e => { e.preventDefault(); toggle('vacation'); }}>Approved Vacation</summary>
-        <div className="group-body">
-          <div className="small" style={{ marginBottom: 12 }}>
-            Pick start &amp; end dates — approved vacations are automatically synced to the Work Schedule. Use 📅 to manually re-sync.
+            <div className="form-grid">
+              {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
+                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)}</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
+              ))}
+            </div>
           </div>
+        ))}
+        <div className="actions"><button onClick={addTechnician}>Add Technician</button></div>
+      </div>
+    );
+
+    if (openSection === 'vacation') return (
+      <div className="group-body">
+        <div className="small" style={{ marginBottom: 12 }}>
+          Pick start &amp; end dates — approved vacations are automatically synced to the Work Schedule. Use 📅 to manually re-sync.
+        </div>
           {vacEdit.map((v, idx) => {
             const isApproved = (v.status || '').toUpperCase() === 'APPROVED';
             const syncState = vacSyncStatus[idx];
@@ -656,167 +633,214 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           })}
           <div className="actions"><button onClick={addVacation}>+ Add Vacation</button></div>
         </div>
-      </details>
+    );
 
-      {/* User Management */}
-      {isAdminOrManager(currentRole) && (
-        <details className="edit-group" open={openSection === 'users'} onToggle={e => e.target.open ? setOpenSection('users') : setOpenSection(null)}>
-          <summary onClick={e => { e.preventDefault(); toggle('users'); }}>User Management</summary>
-          <div className="group-body">
-            <div className="small">Click a user to load them into the form.</div>
-            <div className="user-row-list">
-              {users.map(u => {
-                const isBuiltinAdmin = u.username === 'admin';
-                const hasAdminRole = u.role === 'admin';
-                const hasEditAccess = u.canEditDashboard || isAdminOrManager(u.role);
+    if (openSection === 'users') return (
+      <div className="group-body">
+        <div className="small">Click a user to load them into the form.</div>
+        <div className="user-row-list">
+          {users.map(u => {
+            const isBuiltinAdmin = u.username === 'admin';
+            const hasAdminRole = u.role === 'admin';
+            const hasEditAccess = u.canEditDashboard || isAdminOrManager(u.role);
 
-                async function quickToggleAdmin(e) {
-                  e.stopPropagation();
-                  if (isBuiltinAdmin) return;
-                  const newRole = hasAdminRole ? 'advisor' : 'admin';
-                  const updated = users.map(x => x.username === u.username ? { ...x, role: newRole, canEditDashboard: newRole === 'admin' ? true : x.canEditDashboard } : x);
-                  setUserSaving(true);
-                  try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
-                }
+            async function quickToggleAdmin(e) {
+              e.stopPropagation();
+              if (isBuiltinAdmin) return;
+              const newRole = hasAdminRole ? 'advisor' : 'admin';
+              const updated = users.map(x => x.username === u.username ? { ...x, role: newRole, canEditDashboard: newRole === 'admin' ? true : x.canEditDashboard } : x);
+              setUserSaving(true);
+              try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+            }
 
-                async function quickToggleEdit(e) {
-                  e.stopPropagation();
-                  if (isAdminOrManager(u.role)) return;
-                  const updated = users.map(x => x.username === u.username ? { ...x, canEditDashboard: !x.canEditDashboard } : x);
-                  setUserSaving(true);
-                  try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
-                }
+            async function quickToggleEdit(e) {
+              e.stopPropagation();
+              if (isAdminOrManager(u.role)) return;
+              const updated = users.map(x => x.username === u.username ? { ...x, canEditDashboard: !x.canEditDashboard } : x);
+              setUserSaving(true);
+              try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+            }
 
-                return (
-                  <div
-                    key={u.username}
-                    className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                    onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
-                  >
-                    <div>
-                      <div className="user-row-name">{u.username}</div>
-                      <div className="user-row-meta">
-                        {isBuiltinAdmin ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
-                        {hasEditAccess && <span className="user-edit-badge">✎ Can Edit</span>}
-                      </div>
-                    </div>
-                    {!isBuiltinAdmin && (
-                      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
-                        <button
-                          className="secondary"
-                          style={{ fontSize: 10, padding: '3px 8px', color: hasAdminRole ? '#f87171' : '#94a3b8', borderColor: hasAdminRole ? 'rgba(248,113,113,.4)' : undefined }}
-                          onClick={quickToggleAdmin}
-                          title={hasAdminRole ? 'Remove Admin' : 'Make Admin'}
-                        >{hasAdminRole ? 'Admin ✓' : 'Admin'}</button>
-                        <button
-                          className="secondary"
-                          style={{ fontSize: 10, padding: '3px 8px', color: hasEditAccess ? '#3dd6c3' : '#94a3b8', borderColor: hasEditAccess ? 'rgba(61,214,195,.4)' : undefined, opacity: isAdminOrManager(u.role) ? 0.4 : 1 }}
-                          onClick={quickToggleEdit}
-                          title={isAdminOrManager(u.role) ? 'Managers always have edit access' : hasEditAccess ? 'Remove Edit Access' : 'Grant Edit Access'}
-                        >{hasEditAccess ? 'Edit ✓' : 'Edit'}</button>
-                      </div>
-                    )}
+            return (
+              <div
+                key={u.username}
+                className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
+              >
+                <div>
+                  <div className="user-row-name">{u.username}</div>
+                  <div className="user-row-meta">
+                    {isBuiltinAdmin ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
+                    {hasEditAccess && <span className="user-edit-badge">✎ Can Edit</span>}
                   </div>
-                );
-              })}
-            </div>
-            <div className="form-section">
-              <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
-              <div className="actions">
-                <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-                <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
-              </div>
-            </div>
-            <div className="form-section">
-              <div className="title" style={{ marginBottom: 8 }}>Add / Edit User</div>
-              <div className="form-grid">
-                <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
-                <div className="field"><label>Password</label><input type="password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
-                <div className="field">
-                  <label>Role</label>
-                  <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
-                    {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
-                  </select>
                 </div>
-              </div>
-              <label className="user-edit-toggle">
-                <input type="checkbox" checked={newUserCanEdit} onChange={e => setNewUserCanEdit(e.target.checked)} />
-                <span>Can Edit Dashboard</span>
-                <span className="user-edit-toggle-hint">Allows this user to open and save changes to the Edit Dashboard</span>
-              </label>
-
-              {/* Page Access */}
-              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
-                  Page Access
-                  <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
-                </div>
-                {['Advisor', 'Shared', 'Warranty', 'Tech', 'Manager', 'Parts'].map(group => (
-                  <div key={group} style={{ marginBottom: 10 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
-                      {PAGE_ACCESS.filter(p => p.group === group).map(p => (
-                        <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
-                          <input
-                            type="checkbox"
-                            checked={newUserPages[p.key] !== false}
-                            onChange={e => setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked }))}
-                            style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }}
-                          />
-                          <span>{p.label}</span>
-                        </label>
-                      ))}
-                    </div>
+                {!isBuiltinAdmin && (
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                    <button className="secondary" style={{ fontSize: 10, padding: '3px 8px', color: hasAdminRole ? '#f87171' : '#94a3b8', borderColor: hasAdminRole ? 'rgba(248,113,113,.4)' : undefined }} onClick={quickToggleAdmin} title={hasAdminRole ? 'Remove Admin' : 'Make Admin'}>{hasAdminRole ? 'Admin ✓' : 'Admin'}</button>
+                    <button className="secondary" style={{ fontSize: 10, padding: '3px 8px', color: hasEditAccess ? '#3dd6c3' : '#94a3b8', borderColor: hasEditAccess ? 'rgba(61,214,195,.4)' : undefined, opacity: isAdminOrManager(u.role) ? 0.4 : 1 }} onClick={quickToggleEdit} title={isAdminOrManager(u.role) ? 'Managers always have edit access' : hasEditAccess ? 'Remove Edit Access' : 'Grant Edit Access'}>{hasEditAccess ? 'Edit ✓' : 'Edit'}</button>
                   </div>
-                ))}
-                <div style={{ marginTop: 8 }}>
-                  <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
-                    onClick={() => setNewUserPages({ ...DEFAULT_PAGES })}>Check All</button>
-                  {' '}
-                  <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }}
-                    onClick={() => setNewUserPages(Object.fromEntries(PAGE_ACCESS.map(p => [p.key, false])))}>Uncheck All</button>
-                </div>
+                )}
               </div>
-
-              {/* Chat Access */}
-              <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>Chat Access</div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserChatAccess ? '#e2e8f0' : '#475569' }}>
-                  <input
-                    type="checkbox"
-                    checked={!!newUserChatAccess}
-                    onChange={e => setNewUserChatAccess(e.target.checked)}
-                    style={{ accentColor: '#3dd6c3', width: 14, height: 14 }}
-                  />
-                  <span>💬 Allow access to Advisor Team Chat</span>
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserTechChatAccess ? '#e2e8f0' : '#475569', marginTop: 8 }}>
-                  <input
-                    type="checkbox"
-                    checked={!!newUserTechChatAccess}
-                    onChange={e => setNewUserTechChatAccess(e.target.checked)}
-                    style={{ accentColor: '#fb923c', width: 14, height: 14 }}
-                  />
-                  <span>🔧 Allow access to Tech Chat</span>
-                </label>
-              </div>
-
-              <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>
+            );
+          })}
+        </div>
+        <div className="form-section">
+          <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
+          <div className="actions">
+            <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
+          </div>
+        </div>
+        <div className="form-section">
+          <div className="title" style={{ marginBottom: 8 }}>Add / Edit User</div>
+          <div className="form-grid">
+            <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
+            <div className="field"><label>Password</label><input type="password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
+            <div className="field">
+              <label>Role</label>
+              <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
+                {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+              </select>
             </div>
           </div>
-        </details>
-      )}
+          <label className="user-edit-toggle">
+            <input type="checkbox" checked={newUserCanEdit} onChange={e => setNewUserCanEdit(e.target.checked)} />
+            <span>Can Edit Dashboard</span>
+            <span className="user-edit-toggle-hint">Allows this user to open and save changes to the Edit Dashboard</span>
+          </label>
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
+              Page Access
+              <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
+            </div>
+            {['Advisor', 'Shared', 'Warranty', 'Tech', 'Manager', 'Parts'].map(group => (
+              <div key={group} style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
+                  {PAGE_ACCESS.filter(p => p.group === group).map(p => (
+                    <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
+                      <input type="checkbox" checked={newUserPages[p.key] !== false} onChange={e => setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked }))} style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }} />
+                      <span>{p.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div style={{ marginTop: 8 }}>
+              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => setNewUserPages({ ...DEFAULT_PAGES })}>Check All</button>
+              {' '}
+              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => setNewUserPages(Object.fromEntries(PAGE_ACCESS.map(p => [p.key, false])))}>Uncheck All</button>
+            </div>
+          </div>
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>Chat Access</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserChatAccess ? '#e2e8f0' : '#475569' }}>
+              <input type="checkbox" checked={!!newUserChatAccess} onChange={e => setNewUserChatAccess(e.target.checked)} style={{ accentColor: '#3dd6c3', width: 14, height: 14 }} />
+              <span>💬 Allow access to Advisor Team Chat</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserTechChatAccess ? '#e2e8f0' : '#475569', marginTop: 8 }}>
+              <input type="checkbox" checked={!!newUserTechChatAccess} onChange={e => setNewUserTechChatAccess(e.target.checked)} style={{ accentColor: '#fb923c', width: 14, height: 14 }} />
+              <span>🔧 Allow access to Tech Chat</span>
+            </label>
+          </div>
+          <div className="actions"><button onClick={handleSaveUser} disabled={userSaving}>{userSaving ? 'Saving...' : 'Save User'}</button></div>
+        </div>
+      </div>
+    );
 
-      {/* Work Schedule Editor */}
-      {isAdminOrManager(currentRole) && (
-        <ScheduleEditor
-          schedules={schedules} onSchedulesChange={onSchedulesChange}
-          users={users}
-        />
-      )}
+    if (openSection === 'schedule') return (
+      <div className="group-body" style={{ padding: 0, background: 'none', border: 'none' }}>
+        <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} />
+      </div>
+    );
+
+    return null;
+  }
+
+  // ── Main render ───────────────────────────────────────────────────────────────
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: '#0b1120', zIndex: 1000, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+      {/* Top bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 60, borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {openSection && (
+            <button
+              onClick={() => setOpenSection(null)}
+              style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              ← Back
+            </button>
+          )}
+          <div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: '#e2e8f0', lineHeight: 1.2 }}>
+              {activeCard ? `${activeCard.icon} ${activeCard.label}` : '⚙️ Edit Dashboard'}
+            </div>
+            {activeCard && <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>{activeCard.desc}</div>}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={handleSave} disabled={saving} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.4)', color: '#60a5fa', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+            Close
+          </button>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
+
+        {!openSection ? (
+          /* ── Card grid ── */
+          <div>
+            <div style={{ maxWidth: 860, margin: '0 auto' }}>
+              <div style={{ marginBottom: 28, background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 14, padding: '16px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                <span style={{ fontSize: 28 }}>🏢</span>
+                <div>
+                  <div style={{ fontWeight: 900, fontSize: 16, color: '#e2e8f0' }}>Bob Rohrman Hyundai — Manager Portal</div>
+                  <div style={{ fontSize: 13, color: '#475569', marginTop: 2 }}>Select a category below to edit dashboard settings</div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                {ADMIN_CARDS.map(card => (
+                  <button
+                    key={card.id}
+                    onClick={() => setOpenSection(card.id)}
+                    style={{
+                      background: card.bg,
+                      border: `1px solid ${card.border}`,
+                      borderRadius: 16,
+                      padding: '24px 22px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'transform .15s, box-shadow .15s',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 10,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 30px ${card.border}`; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+                  >
+                    <div style={{ fontSize: 36 }}>{card.icon}</div>
+                    <div>
+                      <div style={{ fontWeight: 900, fontSize: 15, color: card.color, marginBottom: 5 }}>{card.label}</div>
+                      <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.55 }}>{card.desc}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* ── Section detail ── */
+          <div style={{ maxWidth: 820, margin: '0 auto' }}>
+            {renderSectionBody()}
+          </div>
+        )}
 
       </div>
-    </aside>
+    </div>
   );
 }
 
