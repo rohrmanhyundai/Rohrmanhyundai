@@ -73,18 +73,27 @@ const NAV_BUTTONS = [
     color: '#fde68a',
     prop: 'onAdvisorRankBoard',
   },
+  {
+    key: 'employeeReview',
+    label: '⭐ Employee Review',
+    desc: 'Technician and advisor performance reviews',
+    bg: 'linear-gradient(135deg,rgba(236,72,153,.28),rgba(219,39,119,.18))',
+    border: 'rgba(236,72,153,.45)',
+    color: '#f9a8d4',
+    prop: 'onEmployeeReview',
+  },
 ];
 
 export default function ManagerHub({
   currentUser, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
-  onChargeAccountList,
+  onChargeAccountList, onEmployeeReview,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
-    onChargeAccountList,
+    onChargeAccountList, onEmployeeReview,
   };
 
   return (
