@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { loadGithubFile, saveGithubFile, getGithubToken } from '../utils/github';
+import React, { useState, useEffect, useRef } from 'react';
+import { loadGithubFile, saveGithubFile } from '../utils/github';
 import { generateReviewReport, getOpenAIKey } from '../utils/openai';
 
 const section = { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '20px 24px', marginBottom: 20 };
@@ -9,6 +9,64 @@ const lbl = { display: 'block', fontSize: 11, fontWeight: 700, color: '#94a3b8',
 
 function btn(bg, border, color, extra = {}) {
   return { background: bg, border: `1px solid ${border}`, color, borderRadius: 10, padding: '9px 20px', cursor: 'pointer', fontWeight: 800, fontSize: 13, ...extra };
+}
+
+// ── Extract text from a PDF file using pdf.js ──────────────────────────────
+async function extractPDFText(file) {
+  const { getDocument, GlobalWorkerOptions } = await import('pdfjs-dist');
+  // Use the bundled worker via CDN to avoid Vite worker config issues
+  GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${(await import('pdfjs-dist/package.json')).version}/build/pdf.worker.min.mjs`;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const lines = content.items.map(item => item.str).join(' ');
+    fullText += lines + '\n';
+  }
+  return fullText;
+}
+
+// ── Parse questions from raw PDF text ─────────────────────────────────────
+function parseQuestionsFromText(text) {
+  const lines = text.split(/\n|\r/).map(l => l.trim()).filter(Boolean);
+  const questions = [];
+
+  // Match patterns like:
+  //   1. Question text
+  //   1) Question text
+  //   Q1: Question text
+  //   Q1. Question text
+  //   • Question text  (bullets)
+  //   Any line ending with ?
+  const numberedPattern = /^(?:Q\s*\.?\s*)?(\d+)[.):\-]\s*(.+)/i;
+  const bulletPattern   = /^[•\-\*▪◦]\s*(.+)/;
+
+  for (const line of lines) {
+    // Skip very short lines or lines that look like headers / page numbers
+    if (line.length < 10) continue;
+
+    const numMatch = line.match(numberedPattern);
+    if (numMatch) {
+      const q = numMatch[2].trim();
+      if (q.length > 5) { questions.push(q); continue; }
+    }
+
+    const bulletMatch = line.match(bulletPattern);
+    if (bulletMatch) {
+      const q = bulletMatch[1].trim();
+      if (q.length > 10) { questions.push(q); continue; }
+    }
+
+    // Any line that ends with a question mark and is reasonably long
+    if (line.endsWith('?') && line.length > 15) {
+      questions.push(line);
+    }
+  }
+
+  return [...new Set(questions)]; // deduplicate
 }
 
 export default function TechReview({ onBack, techList, currentUser }) {
@@ -21,11 +79,19 @@ export default function TechReview({ onBack, techList, currentUser }) {
   const [newQ, setNewQ]             = useState('');
   const [savingQ, setSavingQ]       = useState(false);
 
+  // PDF upload state
+  const [pdfUploading, setPdfUploading]         = useState(false);
+  const [pdfPreview, setPdfPreview]             = useState(null);  // extracted questions before confirm
+  const [pdfPreviewEdits, setPdfPreviewEdits]   = useState([]);
+  const [showPdfPreview, setShowPdfPreview]     = useState(false);
+  const [pdfError, setPdfError]                 = useState('');
+  const fileRef = useRef(null);
+
   // Pending / submissions
-  const [pending,      setPending]      = useState(null);  // pending review sent to this tech
-  const [submission,   setSubmission]   = useState(null);  // tech's self-review
-  const [mgrReview,    setMgrReview]    = useState(null);  // manager's review
-  const [aiReport,     setAiReport]     = useState(null);  // AI report
+  const [pending,      setPending]      = useState(null);
+  const [submission,   setSubmission]   = useState(null);
+  const [mgrReview,    setMgrReview]    = useState(null);
+  const [aiReport,     setAiReport]     = useState(null);
   const [loadingTech,  setLoadingTech]  = useState(false);
 
   // Manager review answers
@@ -106,6 +172,49 @@ export default function TechReview({ onBack, techList, currentUser }) {
     saveQuestions(qs);
   }
 
+  // ── PDF Upload Handler ────────────────────────────────────────────────────
+  async function handlePDFUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (fileRef.current) fileRef.current.value = '';
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      setPdfError('Please upload a PDF file.');
+      return;
+    }
+    setPdfError('');
+    setPdfUploading(true);
+    try {
+      const text = await extractPDFText(file);
+      const extracted = parseQuestionsFromText(text);
+      if (extracted.length === 0) {
+        setPdfError('No questions could be found in this PDF. Try a PDF with numbered questions (1. Question text) or questions ending with ?');
+        setPdfUploading(false);
+        return;
+      }
+      // Show preview for confirmation / editing
+      setPdfPreview(extracted);
+      setPdfPreviewEdits(extracted.map(q => q));
+      setShowPdfPreview(true);
+    } catch (err) {
+      setPdfError(`Failed to read PDF: ${err.message}`);
+    } finally {
+      setPdfUploading(false);
+    }
+  }
+
+  async function confirmPDFQuestions() {
+    const qs = pdfPreviewEdits
+      .map(q => q.trim())
+      .filter(Boolean)
+      .map(q => ({ question: q, type: 'text' }));
+    if (qs.length === 0) { setPdfError('No questions to save.'); return; }
+    setShowPdfPreview(false);
+    setPdfPreview(null);
+    await saveQuestions(qs);
+    setStatus(`✅ ${qs.length} questions imported from PDF and saved!`);
+  }
+
+  // ── Send / Recall ─────────────────────────────────────────────────────────
   async function sendReview() {
     if (!selectedTech) return;
     if (questions.length === 0) { setStatus('❌ Add at least one question first.'); return; }
@@ -173,7 +282,87 @@ export default function TechReview({ onBack, techList, currentUser }) {
     finally { setGeneratingAI(false); }
   }
 
-  // ── RENDER: Tech List ──
+  // ── PDF Preview Modal ─────────────────────────────────────────────────────
+  if (showPdfPreview) {
+    return (
+      <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="adv-topbar">
+          <div>
+            <div className="adv-title">📄 Review Extracted Questions</div>
+            <div className="adv-sub">Edit or remove questions before saving</div>
+          </div>
+          <button className="secondary" onClick={() => { setShowPdfPreview(false); setPdfPreview(null); }}>✕ Cancel</button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+          <div style={{ maxWidth: 800, margin: '0 auto' }}>
+
+            <div style={{ background: 'linear-gradient(135deg,rgba(99,102,241,.12),rgba(79,70,229,.07))', border: '1px solid rgba(99,102,241,.3)', borderRadius: 14, padding: '16px 20px', marginBottom: 24 }}>
+              <div style={{ fontWeight: 900, color: '#a5b4fc', fontSize: 15, marginBottom: 4 }}>📄 {pdfPreviewEdits.length} Question{pdfPreviewEdits.length !== 1 ? 's' : ''} Found</div>
+              <div style={{ fontSize: 13, color: '#64748b' }}>Review and edit the extracted questions below. Remove any that are not actual review questions. Click Save when ready.</div>
+            </div>
+
+            {pdfPreviewEdits.map((q, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 12, background: 'rgba(255,255,255,.04)', borderRadius: 10, padding: '12px 14px' }}>
+                <span style={{ fontWeight: 900, color: '#fbbf24', fontSize: 12, minWidth: 28, marginTop: 3 }}>Q{i + 1}</span>
+                <input
+                  value={q}
+                  onChange={e => {
+                    const edits = [...pdfPreviewEdits];
+                    edits[i] = e.target.value;
+                    setPdfPreviewEdits(edits);
+                  }}
+                  style={{ ...inp, flex: 1 }}
+                />
+                <button
+                  onClick={() => setPdfPreviewEdits(pdfPreviewEdits.filter((_, idx) => idx !== i))}
+                  style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.3)', color: '#f87171', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                  ✕ Remove
+                </button>
+              </div>
+            ))}
+
+            {/* Add manual question in preview */}
+            <div style={{ display: 'flex', gap: 10, marginTop: 8, marginBottom: 24 }}>
+              <input
+                placeholder="Add another question…"
+                id="pdfAddQ"
+                style={{ ...inp, flex: 1 }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && e.target.value.trim()) {
+                    setPdfPreviewEdits([...pdfPreviewEdits, e.target.value.trim()]);
+                    e.target.value = '';
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  const el = document.getElementById('pdfAddQ');
+                  if (el?.value.trim()) { setPdfPreviewEdits([...pdfPreviewEdits, el.value.trim()]); el.value = ''; }
+                }}
+                style={btn('rgba(251,191,36,.2)', 'rgba(251,191,36,.5)', '#fbbf24')}>
+                + Add
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                onClick={confirmPDFQuestions}
+                disabled={savingQ}
+                style={{ ...btn('rgba(74,222,128,.2)', 'rgba(74,222,128,.5)', '#4ade80'), flex: 1, padding: '13px 20px', fontSize: 15 }}>
+                {savingQ ? '⏳ Saving…' : `✅ Save ${pdfPreviewEdits.filter(q => q.trim()).length} Questions`}
+              </button>
+              <button onClick={() => { setShowPdfPreview(false); setPdfPreview(null); }} style={btn('rgba(255,255,255,.06)', 'rgba(255,255,255,.12)', '#94a3b8')}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── RENDER: Tech List ──────────────────────────────────────────────────────
   if (view === 'list') {
     return (
       <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -191,14 +380,44 @@ export default function TechReview({ onBack, techList, currentUser }) {
           <div style={section}>
             <div style={sectionTitle}>📋 Review Questions</div>
             <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>
-              Build the questions that will be sent to technicians for their self-review. These questions will appear on their review form.
+              Upload a PDF review form and the questions will be extracted automatically — or add questions manually below.
             </p>
+
+            {/* PDF Upload */}
+            <div style={{ background: 'linear-gradient(135deg,rgba(99,102,241,.1),rgba(79,70,229,.06))', border: '2px dashed rgba(99,102,241,.4)', borderRadius: 12, padding: '20px 24px', marginBottom: 20, textAlign: 'center' }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>📄</div>
+              <div style={{ fontWeight: 900, color: '#a5b4fc', fontSize: 15, marginBottom: 6 }}>Upload Review PDF</div>
+              <div style={{ fontSize: 13, color: '#64748b', marginBottom: 14 }}>
+                Upload any PDF with numbered questions and they'll be extracted automatically.<br />
+                <span style={{ fontSize: 12, color: '#475569' }}>Supports: numbered lists (1. 2. 3.), Q1/Q2 format, bullet points, lines ending with ?</span>
+              </div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handlePDFUpload}
+                style={{ display: 'none' }}
+                id="review-pdf-upload"
+              />
+              <label
+                htmlFor="review-pdf-upload"
+                style={{ display: 'inline-block', background: 'rgba(99,102,241,.2)', border: '1px solid rgba(99,102,241,.5)', color: '#a5b4fc', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+                {pdfUploading ? '⏳ Reading PDF…' : '📤 Choose PDF File'}
+              </label>
+              {questions.length > 0 && (
+                <div style={{ fontSize: 12, color: '#64748b', marginTop: 10 }}>
+                  Current: {questions.length} question{questions.length !== 1 ? 's' : ''} loaded — uploading a new PDF will replace them
+                </div>
+              )}
+              {pdfError && <div style={{ color: '#f87171', fontSize: 13, marginTop: 10, fontWeight: 700 }}>{pdfError}</div>}
+            </div>
+
             {loadingQ ? (
               <div style={{ color: '#64748b', fontSize: 13 }}>⏳ Loading questions…</div>
             ) : (
               <>
                 {questions.length === 0 && (
-                  <div style={{ color: '#475569', fontSize: 13, marginBottom: 12 }}>No questions yet. Add your first question below.</div>
+                  <div style={{ color: '#475569', fontSize: 13, marginBottom: 12 }}>No questions yet. Upload a PDF above or add questions manually below.</div>
                 )}
                 {questions.map((q, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, background: 'rgba(255,255,255,.04)', borderRadius: 8, padding: '8px 12px' }}>
@@ -214,7 +433,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                     value={newQ}
                     onChange={e => setNewQ(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && addQuestion()}
-                    placeholder="Type a new review question and press Enter or Add…"
+                    placeholder="Or type a question manually and press Enter…"
                     style={{ ...inp, flex: 1 }}
                   />
                   <button onClick={addQuestion} disabled={savingQ || !newQ.trim()}
@@ -229,7 +448,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
           {/* Tech List */}
           <div style={section}>
             <div style={sectionTitle}>👨‍🔧 Technicians</div>
-            {techList.length === 0 ? (
+            {!techList || techList.length === 0 ? (
               <div style={{ color: '#475569', fontSize: 14, textAlign: 'center', padding: 20 }}>No technicians found. Make sure users have the "technician" role set in Admin Settings.</div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
@@ -253,7 +472,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
     );
   }
 
-  // ── RENDER: Individual Tech ──
+  // ── RENDER: Individual Tech ────────────────────────────────────────────────
   const reviewQuestions = submission?.questions || pending?.questions || questions;
 
   return (
@@ -313,7 +532,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                     Sending will push {questions.length} question{questions.length !== 1 ? 's' : ''} to {selectedTech}'s Technician Resources page. They will see a "My Review" tab to complete.
                   </p>
                   {questions.length === 0 ? (
-                    <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Go back and add questions before sending.</div>
+                    <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Go back and add questions or upload a PDF before sending.</div>
                   ) : (
                     <button onClick={sendReview} disabled={sending}
                       style={btn('rgba(74,222,128,.2)', 'rgba(74,222,128,.5)', '#4ade80')}>
