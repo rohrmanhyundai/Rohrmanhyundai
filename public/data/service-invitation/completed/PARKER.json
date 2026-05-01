@@ -142,5 +142,21 @@
     "notes": "Did not let me leave a voicemail",
     "submittedAt": "2026-05-01T19:42:20.164Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "ANDREW PUCKA",
+    "repairOrder": "777083",
+    "vin": "KMHLM4DJ8SU158847",
+    "model": "ELANTRA HEV",
+    "serviceDate": "04/27/2026",
+    "invitationDate": "04/29/2026",
+    "status": "DELIVERED",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-476-3935",
+    "notes": "Talked to & was satisfied",
+    "submittedAt": "2026-05-01T19:44:21.088Z",
+    "submittedBy": "PARKER"
   }
 ]
