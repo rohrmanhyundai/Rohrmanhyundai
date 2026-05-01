@@ -34,6 +34,7 @@ import ATDiagWorksheet from './components/ATDiagWorksheet';
 import DCTMTMWorksheet from './components/DCTMTMWorksheet';
 import IVTWorksheet from './components/IVTWorksheet';
 import ATMWorksheet from './components/ATMWorksheet';
+import TechSelfReview from './components/TechSelfReview';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -304,6 +305,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
+        onMyReview={() => navTo('tech-self-review')}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -484,10 +486,20 @@ export default function App() {
     );
   }
 
+  if (page === 'tech-self-review') {
+    return (
+      <TechSelfReview
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => navTo('tech-resources')}
+      />
+    );
+  }
+
   if (page === 'tech-review') {
     return (
       <TechReview
         currentUser={currentUser.toUpperCase()}
+        techList={techList}
         onBack={() => navTo('employee-review')}
       />
     );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules } from '../utils/github';
+import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -102,6 +103,7 @@ const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.default
 
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
+  const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
@@ -403,6 +405,35 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
             </div>
             <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
+          </div>
+        </div>
+      </details>
+
+      {/* OpenAI Settings */}
+      <details className="edit-group" open={openSection === 'openai'} onToggle={e => e.target.open ? setOpenSection('openai') : setOpenSection(null)}>
+        <summary onClick={e => { e.preventDefault(); toggle('openai'); }}>OpenAI Settings</summary>
+        <div className="group-body">
+          <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+            <div className="small">Enter your OpenAI API key to enable AI-generated performance review reports in Employee Reviews. The key is stored locally on this device only.</div>
+            <div className="field" style={{ marginTop: 8 }}>
+              <label>OpenAI API Key</label>
+              <input
+                type="password"
+                value={openAIKey}
+                onChange={e => setOpenAIKeyState(e.target.value)}
+                placeholder="sk-..."
+              />
+            </div>
+            <div className="actions">
+              <button onClick={() => { setOpenAIKey(openAIKey); alert('OpenAI API key saved!'); }}>
+                Save OpenAI Key
+              </button>
+              {openAIKey && (
+                <button className="secondary" style={{ marginLeft: 8 }} onClick={() => { setOpenAIKeyState(''); setOpenAIKey(''); }}>
+                  Clear Key
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </details>
