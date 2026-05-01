@@ -1,0 +1,26 @@
+{
+  "title": "",
+  "salespeople": [],
+  "goals": {
+    "units_goal": 0,
+    "individual_goal": 0,
+    "gross_goal": 0,
+    "fi_goal": 0
+  },
+  "team": {
+    "units_today": 0,
+    "appointments": 0,
+    "pending_deliveries": 0,
+    "trade_ins": 0,
+    "test_drives": 0
+  },
+  "extras": {
+    "incentives": [
+      "$500 off new car 0%",
+      ""
+    ],
+    "hot_models": [],
+    "quote": "",
+    "quote_author": ""
+  }
+}
