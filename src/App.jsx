@@ -300,18 +300,19 @@ export default function App() {
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
-        onATDiagWorksheet={() => goTo('at-diag-worksheet', 'tech-resources')}
+        onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
         onBack={() => setPage('dashboard')}
       />
     );
   }
 
   if (page === 'at-diag-worksheet') {
+    const atBackDest  = prevPage === 'warranty-hub' ? 'warranty-hub' : 'tech-resources';
     const atBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Technician Resources';
     return (
       <ATDiagWorksheet
         backLabel={atBackLabel}
-        onBack={() => navTo(prevPage || 'tech-resources')}
+        onBack={() => navTo(atBackDest)}
         onDCTMTM={() => goTo('dct-mtm-worksheet', 'at-diag-worksheet')}
         onIVT={() => goTo('ivt-worksheet', 'at-diag-worksheet')}
         onATM={() => goTo('atm-worksheet', 'at-diag-worksheet')}
@@ -437,7 +438,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
-        onATDiagWorksheet={() => goTo('at-diag-worksheet', 'warranty-hub')}
+        onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
       />
     );
   }
