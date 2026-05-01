@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { loadGithubFile, saveGithubFile } from '../utils/github';
 import { generateReviewReport, getOpenAIKey, analyzeReviewForm } from '../utils/openai';
 import ReviewFormRenderer from './ReviewFormRenderer';
+import FormEditor from './FormEditor';
 
 const section = { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '22px 26px', marginBottom: 20 };
 const inp = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, color: '#e2e8f0', padding: '8px 11px', fontSize: 13, outline: 'none', width: '100%', boxSizing: 'border-box', fontFamily: 'inherit' };
@@ -84,7 +85,8 @@ function PreviewModal({ formDef, onClose }) {
 }
 
 export default function TechReview({ onBack, techList, currentUser }) {
-  const [view, setView] = useState('list');          // 'list' | 'tech'
+  const [view, setView] = useState('list');          // 'list' | 'tech' | 'edit'
+  const [savingForm, setSavingForm] = useState(false);
   const [techTab, setTechTab] = useState('tech');    // 'tech' | 'manager' | 'report'
   const [selectedTech, setSelectedTech] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -253,6 +255,32 @@ export default function TechReview({ onBack, techList, currentUser }) {
     setStatus(''); setAiError('');
   }
 
+  async function handleSaveForm(def) {
+    setSavingForm(true);
+    try {
+      await saveGithubFile('data/tech-reviews/form-definition.json', def, 'Update review form definition');
+      setFormDef(def);
+      setView('list');
+      setPdfStatus('✅ Form saved successfully!');
+    } catch(e) {
+      alert('Failed to save: ' + e.message);
+    } finally {
+      setSavingForm(false);
+    }
+  }
+
+  // ── EDIT VIEW ─────────────────────────────────────────────────────────────
+  if (view === 'edit') {
+    return (
+      <FormEditor
+        initialDef={formDef}
+        onSave={handleSaveForm}
+        onCancel={() => setView('list')}
+        saving={savingForm}
+      />
+    );
+  }
+
   // ── LIST VIEW ─────────────────────────────────────────────────────────────
   if (view === 'list') {
     return (
@@ -274,9 +302,14 @@ export default function TechReview({ onBack, techList, currentUser }) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 12 }}>
               <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: 1 }}>📄 Review Form</div>
               {formDef && (
-                <button onClick={() => setShowPreview(true)} style={btn('rgba(251,191,36,.15)', 'rgba(251,191,36,.4)', '#fbbf24', { display: 'flex', alignItems: 'center', gap: 6 })}>
-                  👁 Preview Tech's Form
-                </button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => setView('edit')} style={btn('rgba(99,102,241,.15)', 'rgba(99,102,241,.4)', '#a5b4fc', { display: 'flex', alignItems: 'center', gap: 6 })}>
+                    ✏️ Edit Form
+                  </button>
+                  <button onClick={() => setShowPreview(true)} style={btn('rgba(251,191,36,.15)', 'rgba(251,191,36,.4)', '#fbbf24', { display: 'flex', alignItems: 'center', gap: 6 })}>
+                    👁 Preview
+                  </button>
+                </div>
               )}
             </div>
 
