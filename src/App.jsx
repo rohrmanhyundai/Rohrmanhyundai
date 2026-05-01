@@ -12,6 +12,9 @@ import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
+import EmployeeReviewHub from './components/EmployeeReviewHub';
+import TechReview from './components/TechReview';
+import AdvisorReview from './components/AdvisorReview';
 import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 
@@ -460,6 +463,7 @@ export default function App() {
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'manager-hub')}
         onAdvisorRankBoard={openRankBoard}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
+        onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
       />
     );
   }
@@ -467,6 +471,35 @@ export default function App() {
   if (page === 'charge-account-list') {
     if (!canAccess('chargeAccountList')) { setPage('dashboard'); return null; }
     return <ChargeAccountList onBack={() => setPage(prevPage || 'manager-hub')} />;
+  }
+
+  if (page === 'employee-review') {
+    return (
+      <EmployeeReviewHub
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => navTo('manager-hub')}
+        onTechReview={() => goTo('tech-review', 'employee-review')}
+        onAdvisorReview={() => goTo('advisor-review', 'employee-review')}
+      />
+    );
+  }
+
+  if (page === 'tech-review') {
+    return (
+      <TechReview
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => navTo('employee-review')}
+      />
+    );
+  }
+
+  if (page === 'advisor-review') {
+    return (
+      <AdvisorReview
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => navTo('employee-review')}
+      />
+    );
   }
 
   // Advisor pages render full-screen outside the scaled stage
