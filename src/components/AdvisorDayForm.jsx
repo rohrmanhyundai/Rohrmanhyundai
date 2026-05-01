@@ -80,10 +80,10 @@ function statusInfo(status) {
   const s = (status || '').toUpperCase().trim();
   if (s === 'DELIVERED')                return { label: '✓ Delivered',       color: '#86efac', bg: 'rgba(34,197,94,.15)',   border: 'rgba(34,197,94,.35)',   col: 'delivered' };
   if (s === 'COMPLETE')                 return { label: '✓ Complete',         color: '#86efac', bg: 'rgba(34,197,94,.15)',   border: 'rgba(34,197,94,.35)',   col: 'delivered' };
-  if (s === 'APPLIED_BUSINESS_RULE')    return { label: '⏳ Business Rule',   color: '#fbbf24', bg: 'rgba(251,191,36,.15)', border: 'rgba(251,191,36,.35)', col: 'progress' };
-  if (s === 'READY_TO_PROCESS_INVITE')  return { label: '📬 Queued',          color: '#6ee7f9', bg: 'rgba(61,214,195,.12)', border: 'rgba(61,214,195,.3)',  col: 'progress' };
-  if (s === 'QUARANTINE_HISTORY')       return { label: '🔒 Quarantine',      color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)',col: 'progress' };
-  if (s === 'QUARANTINE_CURRENT')       return { label: '🔒 Quarantine',      color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)',col: 'progress' };
+  if (s === 'APPLIED_BUSINESS_RULE')    return { label: '⏳ Survey In Progress', color: '#fbbf24', bg: 'rgba(251,191,36,.15)', border: 'rgba(251,191,36,.35)', col: 'progress' };
+  if (s === 'READY_TO_PROCESS_INVITE')  return { label: '⏳ Survey In Progress', color: '#fbbf24', bg: 'rgba(251,191,36,.15)', border: 'rgba(251,191,36,.35)', col: 'progress' };
+  if (s === 'QUARANTINE_HISTORY')       return { label: '🔒 Quarantine',         color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)', col: 'quarantine' };
+  if (s === 'QUARANTINE_CURRENT')       return { label: '🔒 Quarantine',         color: '#94a3b8', bg: 'rgba(148,163,184,.1)', border: 'rgba(148,163,184,.25)', col: 'quarantine' };
   if (s === 'HARDBOUNCE')               return { label: '↩ Bounced',          color: '#fca5a5', bg: 'rgba(239,68,68,.12)',  border: 'rgba(239,68,68,.3)',   col: 'progress' };
   if (s === 'INVALID_EMAIL')            return { label: '⚠ Invalid Email',    color: '#fdba74', bg: 'rgba(251,146,60,.12)', border: 'rgba(251,146,60,.3)',  col: 'progress' };
   if (s === 'MISSING_EMAIL')            return { label: '⚠ Missing Email',    color: '#fdba74', bg: 'rgba(251,146,60,.12)', border: 'rgba(251,146,60,.3)',  col: 'progress' };
@@ -369,10 +369,13 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, currentR
   const completedROs  = new Set(completedReviews.map(r => r.repairOrder));
   const allDataRows   = siData.filter(r => !r.__meta);
 
-  const advisorSurveys = allDataRows.filter(row =>
-    matchesAdvisor(row.consultant, advisorName) &&
-    isWithin4Months(row.serviceDate || row.invitationDate)
-  );
+  const advisorSurveys = allDataRows.filter(row => {
+    if (!matchesAdvisor(row.consultant, advisorName)) return false;
+    if (!isWithin4Months(row.serviceDate || row.invitationDate)) return false;
+    const s = (row.status || '').toUpperCase();
+    if (s.startsWith('QUARANTINE')) return false;
+    return true;
+  });
 
   // Pending = not yet submitted (only DELIVERED/COMPLETE can actually be called on), sorted newest first
   const pendingSurveys = advisorSurveys
