@@ -114,7 +114,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserPages, setNewUserPages] = useState({ ...DEFAULT_PAGES });
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
-  const [openSection, setOpenSection] = useState('github');
+  const [openSection, setOpenSection] = useState(null);
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
   const [vacSyncStatus, setVacSyncStatus] = useState({}); // { idx: 'ok' | 'err:msg' | 'syncing' }
