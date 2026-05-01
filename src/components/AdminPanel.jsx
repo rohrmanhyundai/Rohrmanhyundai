@@ -1100,11 +1100,12 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users }) {
               const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
               const val = !isHoliday && schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
               const isCopied = copiedDay?.dateStr === dateStr;
-              const color = isCopied ? 'rgba(110,231,249,0.18)' : isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
-              const border = isCopied ? 'rgba(110,231,249,0.7)' : isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
+              const isActive = editing?.dateStr === dateStr;
+              const color = isActive ? 'rgba(59,130,246,0.28)' : isCopied ? 'rgba(110,231,249,0.18)' : isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : 'rgba(61,214,195,0.15)';
+              const border = isActive ? 'rgba(96,165,250,0.9)' : isCopied ? 'rgba(110,231,249,0.7)' : isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : 'rgba(61,214,195,0.5)';
               return (
-                <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `1px solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: isCopied ? '#6ee7f9' : isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
+                <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `${isActive ? '2px' : '1px'} solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? '#93c5fd' : isCopied ? '#6ee7f9' : isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
                   {isCopied && <span style={{ fontSize: 8, color: '#6ee7f9', fontWeight: 700, lineHeight: 1.2, marginTop: 1 }}>📋 copied</span>}
                   {isHoliday && <span style={{ fontSize: 9, color: '#ef4444', lineHeight: 1.2, marginTop: 2, fontWeight: 700 }}>Holiday</span>}
                   {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
