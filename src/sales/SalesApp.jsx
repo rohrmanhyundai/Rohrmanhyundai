@@ -21,7 +21,7 @@ export default function SalesApp() {
   useEffect(() => {
     const saved = sessionStorage.getItem('salesUser');
     if (saved) { try { setCurrentUser(JSON.parse(saved)); } catch {} }
-    loadUsers().then(u => setUsers(u || [])).catch(() => {});
+    loadUsers().then(u => setUsers(u?.users || [])).catch(() => {});
   }, []);
 
   function handleLogin(e) {
