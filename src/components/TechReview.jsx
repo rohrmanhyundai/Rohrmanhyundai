@@ -85,14 +85,16 @@ function PreviewModal({ formDef, onClose }) {
 }
 
 export default function TechReview({ onBack, techList, currentUser }) {
-  const [view, setView] = useState('list');          // 'list' | 'tech' | 'edit'
+  const [view, setView] = useState('list');          // 'list' | 'tech' | 'edit-tech' | 'edit-mgr'
   const [savingForm, setSavingForm] = useState(false);
   const [techTab, setTechTab] = useState('tech');    // 'tech' | 'manager' | 'report'
   const [selectedTech, setSelectedTech] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showMgrPreview, setShowMgrPreview] = useState(false);
 
-  // Form definition
-  const [formDef, setFormDef] = useState(null);
+  // Two separate form definitions
+  const [techFormDef, setTechFormDef] = useState(null);   // sent to / filled by tech
+  const [mgrFormDef,  setMgrFormDef]  = useState(null);   // filled by manager
   const [loadingForm, setLoadingForm] = useState(true);
 
   // PDF upload
@@ -118,12 +120,15 @@ export default function TechReview({ onBack, techList, currentUser }) {
   const [status,  setStatus]  = useState('');
   const [sending, setSending] = useState(false);
 
-  // Load form definition
+  // Load both form definitions
   useEffect(() => {
-    loadGithubFile('data/tech-reviews/form-definition.json')
-      .then(d => setFormDef(d && d.sections ? d : null))
-      .catch(() => setFormDef(null))
-      .finally(() => setLoadingForm(false));
+    Promise.all([
+      loadGithubFile('data/tech-reviews/tech-form-definition.json').catch(() => null),
+      loadGithubFile('data/tech-reviews/mgr-form-definition.json').catch(() => null),
+    ]).then(([td, md]) => {
+      setTechFormDef(td?.sections ? td : null);
+      setMgrFormDef(md?.sections ? md : null);
+    }).finally(() => setLoadingForm(false));
   }, []);
 
   // Load per-tech data
@@ -146,7 +151,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
     }).finally(() => setLoadingTech(false));
   }, [selectedTech]);
 
-  // ── PDF Upload + AI Analysis ──────────────────────────────────────────────
+  // ── PDF Upload + AI Analysis (creates BOTH forms from same PDF) ─────────────
   async function handlePDFUpload(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -159,10 +164,15 @@ export default function TechReview({ onBack, techList, currentUser }) {
       setPdfStatus('🤖 AI is analyzing the form structure…');
       const def = await analyzeReviewForm(text);
       if (!def?.sections?.length) throw new Error('No sections found in form.');
-      await saveGithubFile('data/tech-reviews/form-definition.json', def, 'Upload new review form definition');
-      setFormDef(def);
-      const fieldCount = def.sections.reduce((n, s) => n + s.fields.length, 0);
-      setPdfStatus(`✅ Form built — ${def.sections.length} sections, ${fieldCount} fields ready.`);
+      // Save same base form to both files — manager can edit each independently
+      await Promise.all([
+        saveGithubFile('data/tech-reviews/tech-form-definition.json', def, 'Upload tech review form'),
+        saveGithubFile('data/tech-reviews/mgr-form-definition.json',  def, 'Upload manager review form'),
+      ]);
+      setTechFormDef(def);
+      setMgrFormDef(def);
+      const fc = def.sections.reduce((n, s) => n + s.fields.length, 0);
+      setPdfStatus(`✅ Both forms built — ${def.sections.length} sections, ${fc} fields. Edit each form separately below.`);
     } catch (err) {
       setPdfStatus(`❌ ${err.message}`);
     } finally {
@@ -172,11 +182,11 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   // ── Send / Recall ─────────────────────────────────────────────────────────
   async function sendReview() {
-    if (!selectedTech || !formDef) return;
+    if (!selectedTech || !techFormDef) return;
     setSending(true); setStatus('⏳ Sending…');
     try {
       const key = selectedTech.toLowerCase();
-      const payload = { formDef, sentAt: new Date().toISOString(), sentBy: currentUser, techName: selectedTech };
+      const payload = { formDef: techFormDef, sentAt: new Date().toISOString(), sentBy: currentUser, techName: selectedTech };
       await saveGithubFile(`data/tech-reviews/pending/${key}.json`, payload, `Send review to ${selectedTech}`);
       setPending(payload);
       setStatus('✅ Review sent to technician.');
@@ -201,7 +211,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
     setSavingMgr(true); setStatus('⏳ Saving manager evaluation…');
     try {
       const key = selectedTech.toLowerCase();
-      const usedForm = submission?.formDef || pending?.formDef || formDef;
+      const usedForm = mgrReview?.formDef || mgrFormDef;
       const payload = { values: mgrValues, formDef: usedForm, savedBy: currentUser, savedAt: new Date().toISOString(), techName: selectedTech };
       await saveGithubFile(`data/tech-reviews/manager-reviews/${key}/latest.json`, payload, `Manager evaluation for ${selectedTech}`);
       setMgrReview(payload);
@@ -217,7 +227,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
     if (!getOpenAIKey()) { setAiError('No OpenAI API key — add it in Admin Settings.'); return; }
     setGeneratingAI(true); setAiError('');
     try {
-      const usedForm = submission.formDef || formDef;
+      const usedForm = submission.formDef || techFormDef;
       function flatten(def, vals) {
         if (!def) return [];
         return (def.sections || []).flatMap(s =>
@@ -255,26 +265,49 @@ export default function TechReview({ onBack, techList, currentUser }) {
     setStatus(''); setAiError('');
   }
 
-  async function handleSaveForm(def) {
+  async function handleSaveTechForm(def) {
     setSavingForm(true);
     try {
-      await saveGithubFile('data/tech-reviews/form-definition.json', def, 'Update review form definition');
-      setFormDef(def);
+      await saveGithubFile('data/tech-reviews/tech-form-definition.json', def, 'Update tech review form');
+      setTechFormDef(def);
       setView('list');
-      setPdfStatus('✅ Form saved successfully!');
-    } catch(e) {
-      alert('Failed to save: ' + e.message);
-    } finally {
-      setSavingForm(false);
-    }
+      setPdfStatus('✅ Tech form saved!');
+    } catch(e) { alert('Failed to save: ' + e.message); }
+    finally { setSavingForm(false); }
   }
 
-  // ── EDIT VIEW ─────────────────────────────────────────────────────────────
-  if (view === 'edit') {
+  async function handleSaveMgrForm(def) {
+    setSavingForm(true);
+    try {
+      await saveGithubFile('data/tech-reviews/mgr-form-definition.json', def, 'Update manager review form');
+      setMgrFormDef(def);
+      setView('list');
+      setPdfStatus('✅ Manager form saved!');
+    } catch(e) { alert('Failed to save: ' + e.message); }
+    finally { setSavingForm(false); }
+  }
+
+  // ── EDIT VIEWS ────────────────────────────────────────────────────────────
+  if (view === 'edit-tech') {
     return (
       <FormEditor
-        initialDef={formDef}
-        onSave={handleSaveForm}
+        initialDef={techFormDef}
+        title="✏️ Edit Tech Self-Evaluation Form"
+        subtitle="This is the form sent to the technician to fill out about themselves"
+        onSave={handleSaveTechForm}
+        onCancel={() => setView('list')}
+        saving={savingForm}
+      />
+    );
+  }
+
+  if (view === 'edit-mgr') {
+    return (
+      <FormEditor
+        initialDef={mgrFormDef}
+        title="✏️ Edit Manager Evaluation Form"
+        subtitle="This is the form you fill out about each technician — not seen by the tech"
+        onSave={handleSaveMgrForm}
         onCancel={() => setView('list')}
         saving={savingForm}
       />
@@ -285,7 +318,8 @@ export default function TechReview({ onBack, techList, currentUser }) {
   if (view === 'list') {
     return (
       <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-        {showPreview && formDef && <PreviewModal formDef={formDef} onClose={() => setShowPreview(false)} />}
+        {showPreview    && techFormDef && <PreviewModal formDef={techFormDef} onClose={() => setShowPreview(false)} />}
+        {showMgrPreview && mgrFormDef  && <PreviewModal formDef={mgrFormDef}  onClose={() => setShowMgrPreview(false)} />}
 
         <div className="adv-topbar">
           <div>
@@ -299,26 +333,14 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
           {/* PDF Upload */}
           <div style={section}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 12 }}>
-              <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: 1 }}>📄 Review Form</div>
-              {formDef && (
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => setView('edit')} style={btn('rgba(99,102,241,.15)', 'rgba(99,102,241,.4)', '#a5b4fc', { display: 'flex', alignItems: 'center', gap: 6 })}>
-                    ✏️ Edit Form
-                  </button>
-                  <button onClick={() => setShowPreview(true)} style={btn('rgba(251,191,36,.15)', 'rgba(251,191,36,.4)', '#fbbf24', { display: 'flex', alignItems: 'center', gap: 6 })}>
-                    👁 Preview
-                  </button>
-                </div>
-              )}
-            </div>
+            <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 12 }}>📄 Upload Review PDF</div>
 
-            <div style={{ background: 'linear-gradient(135deg,rgba(99,102,241,.1),rgba(79,70,229,.06))', border: `2px dashed ${pdfUploading ? 'rgba(99,102,241,.7)' : 'rgba(99,102,241,.4)'}`, borderRadius: 14, padding: '24px', marginBottom: formDef ? 14 : 0, textAlign: 'center' }}>
+            <div style={{ background: 'linear-gradient(135deg,rgba(99,102,241,.1),rgba(79,70,229,.06))', border: `2px dashed ${pdfUploading ? 'rgba(99,102,241,.7)' : 'rgba(99,102,241,.4)'}`, borderRadius: 14, padding: '24px', textAlign: 'center' }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📄</div>
               <div style={{ fontWeight: 900, color: '#a5b4fc', fontSize: 15, marginBottom: 6 }}>Upload Review PDF</div>
               <div style={{ fontSize: 13, color: '#64748b', marginBottom: 14, lineHeight: 1.6 }}>
-                AI reads your PDF and builds an interactive form with checkboxes, rating scales, and text fields.<br />
-                <span style={{ fontSize: 12, color: '#475569' }}>Both the tech self-evaluation and your manager evaluation use this same form.</span>
+                AI reads your PDF and creates <strong style={{ color: '#a5b4fc' }}>two separate editable forms</strong> — one for the tech and one for the manager.<br />
+                <span style={{ fontSize: 12, color: '#475569' }}>Customize each one independently after uploading.</span>
               </div>
               {!getOpenAIKey() && (
                 <div style={{ background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 9, padding: '8px 14px', marginBottom: 14, fontSize: 12, color: '#fbbf24' }}>
@@ -327,26 +349,68 @@ export default function TechReview({ onBack, techList, currentUser }) {
               )}
               <input ref={fileRef} type="file" accept="application/pdf" onChange={handlePDFUpload} style={{ display: 'none' }} id="review-pdf-upload" />
               <label htmlFor="review-pdf-upload" style={{ display: 'inline-block', background: pdfUploading ? 'rgba(99,102,241,.1)' : 'rgba(99,102,241,.2)', border: '1px solid rgba(99,102,241,.5)', color: '#a5b4fc', borderRadius: 10, padding: '10px 28px', cursor: pdfUploading ? 'default' : 'pointer', fontWeight: 800, fontSize: 14 }}>
-                {pdfUploading ? '⏳ Processing…' : formDef ? '🔄 Replace PDF' : '📤 Choose PDF File'}
+                {pdfUploading ? '⏳ Processing…' : (techFormDef || mgrFormDef) ? '🔄 Re-upload PDF (resets both forms)' : '📤 Choose PDF File'}
               </label>
               {pdfStatus && (
                 <div style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: pdfStatus.startsWith('✅') ? '#4ade80' : pdfStatus.startsWith('❌') ? '#f87171' : '#a5b4fc' }}>{pdfStatus}</div>
               )}
             </div>
-
-            {formDef && !loadingForm && (
-              <div style={{ background: 'rgba(74,222,128,.06)', border: '1px solid rgba(74,222,128,.2)', borderRadius: 10, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                <span style={{ fontSize: 24 }}>✅</span>
-                <div>
-                  <div style={{ fontWeight: 900, color: '#4ade80', fontSize: 14 }}>{formDef.title || 'Review Form Ready'}</div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-                    {formDef.sections.length} sections · {formDef.sections.reduce((n, s) => n + s.fields.length, 0)} fields · Used for both tech self-evaluation and manager evaluation
-                  </div>
-                </div>
-              </div>
-            )}
-            {loadingForm && !formDef && <div style={{ color: '#64748b', fontSize: 13 }}>⏳ Loading form…</div>}
           </div>
+
+          {/* Two form cards side by side */}
+          {!loadingForm && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 20 }}>
+
+              {/* Tech form card */}
+              <div style={{ background: 'rgba(255,255,255,.03)', border: `1px solid ${techFormDef ? 'rgba(96,165,250,.3)' : 'rgba(255,255,255,.08)'}`, borderRadius: 14, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <span style={{ fontSize: 22 }}>✍️</span>
+                  <div style={{ fontWeight: 900, fontSize: 14, color: '#60a5fa' }}>Tech Self-Evaluation Form</div>
+                </div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14, lineHeight: 1.6 }}>
+                  Sent to the technician. They fill it out about themselves. Edit the questions, skill level descriptions, and rating areas.
+                </div>
+                {techFormDef ? (
+                  <>
+                    <div style={{ fontSize: 12, color: '#4ade80', marginBottom: 14 }}>
+                      ✅ {techFormDef.sections?.length || 0} sections · {techFormDef.sections?.reduce((n, s) => n + s.fields.length, 0) || 0} fields loaded
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => setView('edit-tech')} style={btn('rgba(96,165,250,.15)', 'rgba(96,165,250,.4)', '#60a5fa')}>✏️ Edit</button>
+                      <button onClick={() => setShowPreview(true)} style={btn('rgba(251,191,36,.1)', 'rgba(251,191,36,.3)', '#fbbf24')}>👁 Preview</button>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 12, color: '#334155', fontStyle: 'italic' }}>Upload a PDF above to create this form.</div>
+                )}
+              </div>
+
+              {/* Manager form card */}
+              <div style={{ background: 'rgba(255,255,255,.03)', border: `1px solid ${mgrFormDef ? 'rgba(167,139,250,.3)' : 'rgba(255,255,255,.08)'}`, borderRadius: 14, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <span style={{ fontSize: 22 }}>📝</span>
+                  <div style={{ fontWeight: 900, fontSize: 14, color: '#a78bfa' }}>Manager Evaluation Form</div>
+                </div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14, lineHeight: 1.6 }}>
+                  Only you fill this out. Add manager-specific questions, rating categories, or notes that the tech never sees.
+                </div>
+                {mgrFormDef ? (
+                  <>
+                    <div style={{ fontSize: 12, color: '#4ade80', marginBottom: 14 }}>
+                      ✅ {mgrFormDef.sections?.length || 0} sections · {mgrFormDef.sections?.reduce((n, s) => n + s.fields.length, 0) || 0} fields loaded
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => setView('edit-mgr')} style={btn('rgba(167,139,250,.15)', 'rgba(167,139,250,.4)', '#a78bfa')}>✏️ Edit</button>
+                      <button onClick={() => setShowMgrPreview(true)} style={btn('rgba(251,191,36,.1)', 'rgba(251,191,36,.3)', '#fbbf24')}>👁 Preview</button>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 12, color: '#334155', fontStyle: 'italic' }}>Upload a PDF above to create this form.</div>
+                )}
+              </div>
+            </div>
+          )}
+          {loadingForm && <div style={{ color: '#64748b', fontSize: 13, marginBottom: 20 }}>⏳ Loading forms…</div>}
 
           {/* Tech grid */}
           <div style={section}>
@@ -374,7 +438,8 @@ export default function TechReview({ onBack, techList, currentUser }) {
   }
 
   // ── TECH VIEW ─────────────────────────────────────────────────────────────
-  const activeFormDef = submission?.formDef || pending?.formDef || formDef;
+  const activeTechForm = submission?.formDef || pending?.formDef || techFormDef;
+  const activeMgrForm  = mgrReview?.formDef  || mgrFormDef;
   const techDone = !!submission;
   const mgrDone  = !!mgrReview;
   const bothDone = techDone && mgrDone;
@@ -387,7 +452,8 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-      {showPreview && activeFormDef && <PreviewModal formDef={activeFormDef} onClose={() => setShowPreview(false)} />}
+      {showPreview    && activeTechForm && <PreviewModal formDef={activeTechForm} onClose={() => setShowPreview(false)} />}
+      {showMgrPreview && activeMgrForm  && <PreviewModal formDef={activeMgrForm}  onClose={() => setShowMgrPreview(false)} />}
 
       <div className="adv-topbar">
         <div>
@@ -395,7 +461,6 @@ export default function TechReview({ onBack, techList, currentUser }) {
           <div className="adv-sub">Performance Review</div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          {activeFormDef && <button onClick={() => setShowPreview(true)} style={btn('rgba(251,191,36,.15)', 'rgba(251,191,36,.4)', '#fbbf24')}>👁 Preview Form</button>}
           <button className="secondary" onClick={() => { setView('list'); setSelectedTech(null); setStatus(''); }}>← All Technicians</button>
         </div>
       </div>
@@ -450,7 +515,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                 {/* Send / Recall panel */}
                 <div style={section}>
                   <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', marginBottom: 14, textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1px solid rgba(255,255,255,.08)', paddingBottom: 10 }}>📤 Send Review to Technician</div>
-                  {!formDef && !pending ? (
+                  {!techFormDef && !pending ? (
                     <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Go back and upload a review PDF first.</div>
                   ) : pending && !submission ? (
                     <div>
@@ -479,7 +544,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                       <p style={{ fontSize: 13, color: '#64748b', marginBottom: 14 }}>
                         This sends the review form to <strong style={{ color: '#fdba74' }}>{selectedTech}</strong>'s Technician Resources page. They will see a "My Review" button to fill it out.
                       </p>
-                      {!formDef ? (
+                      {!techFormDef ? (
                         <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Upload a review PDF first.</div>
                       ) : (
                         <button onClick={sendReview} disabled={sending} style={btn('rgba(74,222,128,.2)', 'rgba(74,222,128,.5)', '#4ade80')}>
@@ -496,7 +561,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                     <div style={{ fontWeight: 900, fontSize: 14, color: '#e2e8f0', marginBottom: 14, textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1px solid rgba(255,255,255,.08)', paddingBottom: 10 }}>
                       ✍️ {selectedTech}'s Self-Evaluation Answers
                     </div>
-                    <ReviewFormRenderer formDef={submission.formDef || formDef} values={submission.values || {}} readOnly />
+                    <ReviewFormRenderer formDef={submission.formDef || techFormDef} values={submission.values || {}} readOnly />
                   </div>
                 )}
 
@@ -516,7 +581,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                   </div>
                 </div>
 
-                {!activeFormDef ? (
+                {!activeMgrForm ? (
                   <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Upload a review PDF first.</div>
                 ) : (
                   <>
@@ -528,7 +593,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
                     )}
 
                     <ReviewFormRenderer
-                      formDef={activeFormDef}
+                      formDef={activeMgrForm}
                       values={mgrValues}
                       onChange={setMgrValues}
                       readOnly={false}
