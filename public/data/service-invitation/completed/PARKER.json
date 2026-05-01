@@ -110,5 +110,21 @@
     "notes": "NUMBER WRONG // goes to a limousine company??",
     "submittedAt": "2026-04-28T19:39:07.129Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "BENJAMIN SCHOVILLE",
+    "repairOrder": "777110",
+    "vin": "KM8R7DHE0NU393794",
+    "model": "PALISADE",
+    "serviceDate": "04/28/2026",
+    "invitationDate": "04/30/2026",
+    "status": "DELIVERED",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "4235199675",
+    "notes": "Left Voicemail ",
+    "submittedAt": "2026-05-01T19:40:32.148Z",
+    "submittedBy": "PARKER"
   }
 ]
