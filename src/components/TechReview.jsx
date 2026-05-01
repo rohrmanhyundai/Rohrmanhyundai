@@ -119,6 +119,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   const [status,  setStatus]  = useState('');
   const [sending, setSending] = useState(false);
+  const [daysToComplete, setDaysToComplete] = useState(7);
 
   // Load both form definitions
   useEffect(() => {
@@ -184,7 +185,11 @@ export default function TechReview({ onBack, techList, currentUser }) {
     setSending(true); setStatus('⏳ Sending…');
     try {
       const key = selectedTech.toLowerCase();
-      const payload = { formDef: techFormDef, sentAt: new Date().toISOString(), sentBy: currentUser, techName: selectedTech };
+      const sentAt = new Date().toISOString();
+      const dueDate = daysToComplete > 0
+        ? new Date(Date.now() + daysToComplete * 86400000).toISOString()
+        : null;
+      const payload = { formDef: techFormDef, sentAt, sentBy: currentUser, techName: selectedTech, daysToComplete, dueDate };
       await saveGithubFile(`data/tech-reviews/pending/${key}.json`, payload, `Send review to ${selectedTech}`);
       setPending(payload);
       setStatus('✅ Review sent to technician.');
@@ -522,6 +527,16 @@ export default function TechReview({ onBack, techList, currentUser }) {
                         <div>
                           <div style={{ fontWeight: 800, color: '#4ade80', fontSize: 13 }}>Review sent — waiting for tech to complete</div>
                           <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Sent {new Date(pending.sentAt).toLocaleString()} by {pending.sentBy}</div>
+                          {pending.dueDate && (() => {
+                            const due = new Date(pending.dueDate);
+                            const daysLeft = Math.ceil((due - Date.now()) / 86400000);
+                            const overdue = daysLeft < 0;
+                            return (
+                              <div style={{ fontSize: 12, marginTop: 4, fontWeight: 700, color: overdue ? '#f87171' : daysLeft <= 2 ? '#fbbf24' : '#94a3b8' }}>
+                                {overdue ? `⚠️ Overdue by ${Math.abs(daysLeft)} day${Math.abs(daysLeft) !== 1 ? 's' : ''}` : `📅 Due ${due.toLocaleDateString()} (${daysLeft} day${daysLeft !== 1 ? 's' : ''} left)`}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                       <button onClick={recallReview} disabled={sending}
@@ -545,9 +560,22 @@ export default function TechReview({ onBack, techList, currentUser }) {
                       {!techFormDef ? (
                         <div style={{ color: '#f87171', fontSize: 13 }}>⚠️ Upload a review PDF first.</div>
                       ) : (
-                        <button onClick={sendReview} disabled={sending} style={btn('rgba(74,222,128,.2)', 'rgba(74,222,128,.5)', '#4ade80')}>
-                          {sending ? '⏳ Sending…' : `📤 Send Review to ${selectedTech}`}
-                        </button>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                            <label style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', whiteSpace: 'nowrap' }}>📅 Days to complete:</label>
+                            <input
+                              type="number" min={1} max={365} value={daysToComplete}
+                              onChange={e => setDaysToComplete(Math.max(1, parseInt(e.target.value) || 1))}
+                              style={{ width: 70, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', borderRadius: 8, color: '#e2e8f0', padding: '7px 10px', fontSize: 14, outline: 'none', textAlign: 'center' }}
+                            />
+                            <span style={{ fontSize: 12, color: '#64748b' }}>
+                              Due: {new Date(Date.now() + daysToComplete * 86400000).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <button onClick={sendReview} disabled={sending} style={btn('rgba(74,222,128,.2)', 'rgba(74,222,128,.5)', '#4ade80')}>
+                            {sending ? '⏳ Sending…' : `📤 Send Review to ${selectedTech}`}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}

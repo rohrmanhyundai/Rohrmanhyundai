@@ -10,6 +10,7 @@ export default function TechSelfReview({ currentUser, onBack }) {
   const [submittedData, setSubmittedData] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]         = useState('');
+  const [pendingDueDate, setPendingDueDate] = useState(null);
 
   const key = currentUser.toLowerCase();
 
@@ -28,6 +29,7 @@ export default function TechSelfReview({ currentUser, onBack }) {
       } else if (pending && pending.formDef) {
         setFormDef(pending.formDef);
         setValues({});
+        if (pending.dueDate) setPendingDueDate(pending.dueDate);
       } else {
         setFormDef(null);
       }
@@ -108,6 +110,32 @@ export default function TechSelfReview({ currentUser, onBack }) {
 
           ) : (
             <div>
+              {/* Due date banner */}
+              {pendingDueDate && (() => {
+                const due = new Date(pendingDueDate);
+                const daysLeft = Math.ceil((due - Date.now()) / 86400000);
+                const overdue = daysLeft < 0;
+                const urgent = !overdue && daysLeft <= 2;
+                const bg = overdue ? 'rgba(239,68,68,.1)' : urgent ? 'rgba(251,191,36,.1)' : 'rgba(59,130,246,.08)';
+                const border = overdue ? 'rgba(239,68,68,.4)' : urgent ? 'rgba(251,191,36,.35)' : 'rgba(59,130,246,.25)';
+                const color = overdue ? '#f87171' : urgent ? '#fbbf24' : '#60a5fa';
+                return (
+                  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: '14px 20px', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <span style={{ fontSize: 26 }}>{overdue ? '⚠️' : urgent ? '⏰' : '📅'}</span>
+                    <div>
+                      <div style={{ fontWeight: 900, fontSize: 14, color }}>
+                        {overdue
+                          ? `Review Overdue by ${Math.abs(daysLeft)} day${Math.abs(daysLeft) !== 1 ? 's' : ''}`
+                          : daysLeft === 0
+                          ? 'Review Due Today!'
+                          : `${daysLeft} Day${daysLeft !== 1 ? 's' : ''} Left to Complete`}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Due date: {due.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Instructions banner */}
               <div style={{ background: 'linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.06))', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '18px 22px', marginBottom: 26 }}>
                 <div style={{ fontWeight: 900, fontSize: 16, color: '#fbbf24', marginBottom: 5 }}>📋 Performance Self-Review</div>
