@@ -129,21 +129,6 @@
         "roh50_hrs_ro": 1.18
       },
       {
-        "name": "NEVEN",
-        "daily_avg": 7.936363636,
-        "mtd_hours": 119.5,
-        "hours_per_ro": 0.94,
-        "align": 0.0794,
-        "tires": 0.127,
-        "valvoline": 0.0794,
-        "csi": 923,
-        "asr": 0.1125,
-        "elr": 0.88,
-        "last_month_total": 204,
-        "roh50_hrs_ro": 0.63,
-        "hidden": true
-      },
-      {
         "name": "PARKER",
         "mtd_hours": 0,
         "daily_avg": 0,
@@ -170,12 +155,6 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
-      },
-      {
-        "name": "NEVEN",
-        "certified": "NO",
-        "trainings_due": "5",
-        "excel_training": "N/A"
       },
       {
         "name": "PARKER",
@@ -233,11 +212,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 119.5,
-      "align": 0.13699999999999998,
-      "tires": 0.230125,
-      "valvoline": 0.1842,
-      "csi": 935
+      "total_hours": 0,
+      "align": 0.15619999999999998,
+      "tires": 0.2645,
+      "valvoline": 0.21913333333333332,
+      "csi": 939
     },
     "techTotals": {
       "mon": 47.800000000000004,
