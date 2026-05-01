@@ -1,7 +1,7 @@
 {
   "id": "molv970vghbm",
   "createdAt": "2026-04-30T19:17:52.975Z",
-  "updatedAt": "2026-04-30T19:24:10.966Z",
+  "updatedAt": "2026-05-01T18:58:02.597Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Andrew Pucka",
   "customerPhone": "765) 464 - 4954",
@@ -14,7 +14,7 @@
   "warrantyCompany": "SMART DRIVER",
   "warrantyPhone": "8886849327",
   "claimNumber": "292-16519512",
-  "authNumber": "",
+  "authNumber": "3223356-8434286",
   "laborRate": "73.32",
   "laborTime": ".30",
   "diagnosisTime": "",
@@ -35,8 +35,8 @@
   "tireTax": "2.50",
   "tireDisposal": "3.00",
   "notes": "need photos of full tire, damage area, tire w/tire depth gage. customer should be in 05/01/2026 for the photos. get with jerry to get photos taken.",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-05-01",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -45,6 +45,6 @@
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-04-30"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
