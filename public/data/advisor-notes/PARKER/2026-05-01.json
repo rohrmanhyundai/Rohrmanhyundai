@@ -1,0 +1,53 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-05-01",
+  "rows": [
+    {
+      "customerName": "Jada Lee",
+      "appointmentTime": "10AM",
+      "criticalDeferredService": "reason for appt",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Helmuth Aberer",
+      "appointmentTime": "10:20AM",
+      "criticalDeferredService": "none",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-01T13:01:19.356Z"
+}
