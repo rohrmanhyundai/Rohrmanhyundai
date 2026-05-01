@@ -76,14 +76,14 @@
           "type": "textarea",
           "label": "Strongest technical areas:",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 2
         },
         {
           "id": "f5",
           "type": "textarea",
           "label": "Areas needing improvement:",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 2
         }
       ]
     },
@@ -250,7 +250,7 @@
     {
       "id": "s7",
       "title": "Training & Development",
-      "description": "Evaluate your commitment to training and development.",
+      "description": "Evaluate your training and development efforts.",
       "fields": [
         {
           "id": "f20",
@@ -313,7 +313,7 @@
     {
       "id": "s9",
       "title": "Goals & Career Path",
-      "description": "Reflect on your goals and career path.",
+      "description": "Reflect on your future goals and career path.",
       "fields": [
         {
           "id": "f29",
