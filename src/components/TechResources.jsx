@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { loadGithubFile } from '../utils/github';
 
 function canSee(pages, role, key) {
   if (role === 'admin' || (role || '').includes('manager')) return true;
@@ -57,9 +58,27 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onBack }) {
+export default function TechResources({ currentUser, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onMyReview, onBack }) {
   const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
+
+  // Check if this tech has a pending review (only for technician role)
+  const [hasPendingReview, setHasPendingReview] = useState(false);
+  const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
+
+  useEffect(() => {
+    if (!currentUser || currentRole !== 'technician') return;
+    const key = currentUser.toLowerCase();
+    Promise.all([
+      loadGithubFile(`data/tech-reviews/pending/${key}.json`).catch(() => null),
+      loadGithubFile(`data/tech-reviews/submissions/${key}/latest.json`).catch(() => null),
+    ]).then(([pending, sub]) => {
+      setHasPendingReview(!!pending && !sub);
+      setHasSubmittedReview(!!sub);
+    }).catch(() => {});
+  }, [currentUser, currentRole]);
+
+  const showMyReview = currentRole === 'technician' && (hasPendingReview || hasSubmittedReview);
 
   return (
     <div className="adv-page">
@@ -98,6 +117,37 @@ export default function TechResources({ currentUser, currentRole, userPages, onW
               </span>
             </button>
           ))}
+
+          {/* My Review — only shown when manager has sent a review or tech has submitted */}
+          {showMyReview && (
+            <button
+              onClick={onMyReview}
+              style={{
+                width: 220, minHeight: 140,
+                background: 'linear-gradient(135deg,rgba(236,72,153,.25),rgba(219,39,119,.18))',
+                border: `2px solid ${hasPendingReview ? 'rgba(236,72,153,.7)' : 'rgba(236,72,153,.4)'}`,
+                borderRadius: 18, cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
+                padding: 24, transition: 'transform .15s',
+                position: 'relative',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              {hasPendingReview && (
+                <div style={{ position: 'absolute', top: 10, right: 10, background: '#ec4899', color: 'white', borderRadius: 20, fontSize: 10, fontWeight: 900, padding: '2px 8px', letterSpacing: 0.5 }}>
+                  ACTION NEEDED
+                </div>
+              )}
+              <span style={{ fontSize: 36 }}>📋</span>
+              <span style={{ fontWeight: 800, fontSize: 16, color: '#f9a8d4', textAlign: 'center' }}>
+                My Review
+              </span>
+              <span style={{ fontSize: 11, color: hasSubmittedReview ? '#4ade80' : '#f9a8d4', fontWeight: 700 }}>
+                {hasSubmittedReview ? '✅ Submitted' : '⚠️ Needs your response'}
+              </span>
+            </button>
+          )}
         </div>
       </div>
     </div>
