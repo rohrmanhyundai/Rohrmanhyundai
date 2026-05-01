@@ -184,7 +184,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   async function recallReview() {
     if (!selectedTech) return;
-    if (!window.confirm('Recall this review? The technician will no longer see it.')) return;
+    if (!window.confirm('Withdraw this survey? The technician will no longer see it in their Technician Resources.')) return;
     setSending(true);
     try {
       await saveGithubFile(`data/tech-reviews/pending/${selectedTech.toLowerCase()}.json`, null, `Recall review for ${selectedTech}`);
@@ -428,8 +428,9 @@ export default function TechReview({ onBack, techList, currentUser }) {
                           <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Sent {new Date(pending.sentAt).toLocaleString()} by {pending.sentBy}</div>
                         </div>
                       </div>
-                      <button onClick={recallReview} disabled={sending} style={btn('rgba(239,68,68,.15)', 'rgba(239,68,68,.4)', '#f87171')}>
-                        {sending ? '⏳ Recalling…' : '↩ Recall Review'}
+                      <button onClick={recallReview} disabled={sending}
+                        style={btn('rgba(239,68,68,.15)', 'rgba(239,68,68,.4)', '#f87171')}>
+                        {sending ? '⏳ Withdrawing…' : '↩ Withdraw Survey'}
                       </button>
                     </div>
                   ) : submission ? (
