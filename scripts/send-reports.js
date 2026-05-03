@@ -166,8 +166,8 @@ function main() {
       last_month_total: a.last_month_total,
     };
 
-    // Replace same-day entry if it exists, otherwise prepend
-    const updated = [entry, ...existing.filter(e => e.date !== today)];
+    // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
+    const updated = [entry, ...existing.filter(e => e.date !== today && e.label !== advLabel)];
     updated.sort((a, b) => new Date(b.date) - new Date(a.date));
     writeJSON(filePath, updated);
     console.log(`  ✓ Advisor ${username}: saved ${today}`);
