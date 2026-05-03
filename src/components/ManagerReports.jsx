@@ -21,16 +21,16 @@ const ADVISOR_FIELDS = [
 ];
 
 const TECH_FIELDS = [
-  { key: 'total',    label: 'Week Total Hrs', type: 'number', decimals: 1 },
-  { key: 'goal',     label: 'Goal Hrs',       type: 'number', decimals: 1 },
-  { key: 'goal_pct', label: 'Goal %',         type: 'pct',    decimals: 4 },
-  { key: 'pacing',   label: 'Pacing',         type: 'number', decimals: 1 },
-  { key: 'mon',      label: 'Mon',            type: 'number', decimals: 1 },
-  { key: 'tue',      label: 'Tue',            type: 'number', decimals: 1 },
-  { key: 'wed',      label: 'Wed',            type: 'number', decimals: 1 },
-  { key: 'thu',      label: 'Thu',            type: 'number', decimals: 1 },
-  { key: 'fri',      label: 'Fri',            type: 'number', decimals: 1 },
-  { key: 'sat',      label: 'Sat',            type: 'number', decimals: 1 },
+  { key: 'total',    label: 'Total Hrs', type: 'number', decimals: 1 },
+  { key: 'goal',     label: 'Goal Hrs',  type: 'number', decimals: 1 },
+  { key: 'goal_pct', label: 'Goal %',    type: 'pct',    decimals: 4 },
+  { key: 'pacing',   label: 'Pacing',    type: 'number', decimals: 1 },
+  { key: 'sat',      label: 'SAT',       type: 'number', decimals: 1, isDay: true, offset: 0 },
+  { key: 'mon',      label: 'MON',       type: 'number', decimals: 1, isDay: true, offset: 2 },
+  { key: 'tue',      label: 'TUE',       type: 'number', decimals: 1, isDay: true, offset: 3 },
+  { key: 'wed',      label: 'WED',       type: 'number', decimals: 1, isDay: true, offset: 4 },
+  { key: 'thu',      label: 'THU',       type: 'number', decimals: 1, isDay: true, offset: 5 },
+  { key: 'fri',      label: 'FRI',       type: 'number', decimals: 1, isDay: true, offset: 6 },
 ];
 
 function displayVal(val, field) {
@@ -290,9 +290,9 @@ export default function ManagerReports({ users, onBack }) {
                 <thead>
                   <tr>
                     <th style={{ width: 160, minWidth: 160, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
-                    <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>
+                    <th style={{ minWidth: 140, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>
                     {fields.map(f => (
-                      <th key={f.key} style={{ whiteSpace: 'nowrap', minWidth: 72, padding: '10px 10px', textAlign: 'center' }}>
+                      <th key={f.key} style={{ minWidth: f.isDay ? 80 : 90, padding: '10px 10px', textAlign: 'center', lineHeight: 1.3 }}>
                         {f.label.toUpperCase()}
                       </th>
                     ))}
@@ -300,26 +300,41 @@ export default function ManagerReports({ users, onBack }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((e, idx) => (
-                    <tr key={idx}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', width: 160, minWidth: 160, overflow: 'visible' }}>
-                        {fmtDate(e.date)}
-                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
-                      </td>
-                      <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>
-                      {fields.map(f => (
-                        <td key={f.key} style={{ color: '#cbd5e1', whiteSpace: 'nowrap', textAlign: 'center', padding: '9px 10px' }}>{displayVal(e[f.key], f)}</td>
-                      ))}
-                      <td style={{ whiteSpace: 'nowrap', padding: '9px 12px', position: 'sticky', right: 0, zIndex: 1, background: '#0d1b2a' }}>
-                        <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 11px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
-                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
-                            {deletingIdx === idx ? '⏳' : '🗑 Del'}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {entries.map((e, idx) => {
+                    // Pre-compute day dates from weekStart for tech entries
+                    const dayDate = (offset) => {
+                      if (!e.weekStart) return null;
+                      const d = new Date(e.weekStart + 'T00:00:00');
+                      d.setDate(d.getDate() + offset);
+                      return d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+                    };
+                    return (
+                      <tr key={idx}>
+                        <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', width: 160, minWidth: 160, overflow: 'visible' }}>
+                          {fmtDate(e.date)}
+                          {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
+                        </td>
+                        <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>
+                        {fields.map(f => {
+                          const date = f.isDay ? dayDate(f.offset) : null;
+                          return (
+                            <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '7px 10px' }}>
+                              <div style={{ whiteSpace: 'nowrap' }}>{displayVal(e[f.key], f)}</div>
+                              {date && <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{date}</div>}
+                            </td>
+                          );
+                        })}
+                        <td style={{ whiteSpace: 'nowrap', padding: '9px 12px', position: 'sticky', right: 0, zIndex: 1, background: '#0d1b2a' }}>
+                          <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                            <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 11px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
+                            <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                              {deletingIdx === idx ? '⏳' : '🗑 Del'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
