@@ -202,7 +202,7 @@ export default function ManagerReports({ users, onBack }) {
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
 
           {/* Employee selector */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
@@ -284,31 +284,35 @@ export default function ManagerReports({ users, onBack }) {
               <div style={{ marginTop: 8, fontSize: 13, color: '#475569' }}>Click "+ Add Entry" or use "Send to Reports" in the Edit Dashboard.</div>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table className="adv-table" style={{ fontSize: 13 }}>
+            <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid rgba(255,255,255,.08)' }}>
+              <table className="adv-table" style={{ fontSize: 12, borderCollapse: 'separate', borderSpacing: 0, minWidth: '100%' }}>
                 <thead>
                   <tr>
-                    <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
-                    <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>LABEL</th>
-                    {fields.map(f => <th key={f.key} style={{ whiteSpace: 'nowrap', minWidth: 70 }}>{f.label.toUpperCase()}</th>)}
-                    <th style={{ minWidth: 120, whiteSpace: 'nowrap' }}>ACTIONS</th>
+                    <th style={{ minWidth: 100, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
+                    <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>
+                    {fields.map(f => (
+                      <th key={f.key} style={{ whiteSpace: 'nowrap', minWidth: 72, padding: '10px 10px', textAlign: 'center' }}>
+                        {f.label.toUpperCase()}
+                      </th>
+                    ))}
+                    <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', right: 0, zIndex: 2, background: '#0f172a', textAlign: 'center' }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {entries.map((e, idx) => (
                     <tr key={idx}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8' }}>
+                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a' }}>
                         {fmtDate(e.date)}
-                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase' }}>auto</span>}
+                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
                       </td>
-                      <td style={{ color: '#64748b', fontSize: 12, whiteSpace: 'nowrap' }}>{e.label || '—'}</td>
+                      <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>
                       {fields.map(f => (
-                        <td key={f.key} style={{ color: '#cbd5e1', whiteSpace: 'nowrap', textAlign: 'center' }}>{displayVal(e[f.key], f)}</td>
+                        <td key={f.key} style={{ color: '#cbd5e1', whiteSpace: 'nowrap', textAlign: 'center', padding: '9px 10px' }}>{displayVal(e[f.key], f)}</td>
                       ))}
-                      <td style={{ whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
-                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                      <td style={{ whiteSpace: 'nowrap', padding: '9px 12px', position: 'sticky', right: 0, zIndex: 1, background: '#0d1b2a' }}>
+                        <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 11px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
+                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
                             {deletingIdx === idx ? '⏳' : '🗑 Del'}
                           </button>
                         </div>
