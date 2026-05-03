@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken } from '../utils/github';
+import PerformanceReport from './PerformanceReport';
 
 function fmtDate(iso) {
   if (!iso) return '—';
@@ -92,6 +93,7 @@ export default function ManagerReports({ users, onBack }) {
   const allUsers = [...advisors, ...techs];
 
   const [selected, setSelected] = useState(allUsers[0] || '');
+  const [viewUser, setViewUser] = useState(null);
   const [entries, setEntries]   = useState([]);
   const [loading, setLoading]   = useState(false);
   const [saving, setSaving]     = useState(false);
@@ -208,6 +210,16 @@ export default function ManagerReports({ users, onBack }) {
     }
   }
 
+  if (viewUser) {
+    return (
+      <PerformanceReport
+        currentUser={viewUser}
+        role={advisors.includes(viewUser) ? 'advisor' : 'technician'}
+        onBack={() => setViewUser(null)}
+      />
+    );
+  }
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="adv-topbar">
@@ -224,7 +236,7 @@ export default function ManagerReports({ users, onBack }) {
           {/* Employee selector */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Select Employee</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Edit Entry</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {allUsers.map(u => (
                   <button key={u} onClick={() => setSelected(u)} style={{
@@ -244,6 +256,24 @@ export default function ManagerReports({ users, onBack }) {
               <button onClick={openNew} style={{ background: 'rgba(61,214,195,.15)', border: '1px solid rgba(61,214,195,.35)', color: '#3dd6c3', borderRadius: 10, padding: '9px 20px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
                 + Add Entry
               </button>
+            </div>
+          </div>
+
+          {/* View Reports selector */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>View Reports</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {allUsers.map(u => (
+                <button key={u} onClick={() => setViewUser(u)} style={{
+                  background: 'rgba(96,165,250,.12)',
+                  border: '1px solid rgba(96,165,250,.3)',
+                  color: '#93c5fd',
+                  borderRadius: 8, padding: '6px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer'
+                }}>
+                  {u}
+                  <span style={{ marginLeft: 6, fontSize: 10, opacity: .6 }}>{advisors.includes(u) ? 'ADV' : 'TECH'}</span>
+                </button>
+              ))}
             </div>
           </div>
 
