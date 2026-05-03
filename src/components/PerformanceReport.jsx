@@ -216,47 +216,45 @@ function TechReport({ entries }) {
       ) : (
         <div style={{ overflowX: 'auto' }}>
           <table className="adv-table" style={{ minWidth: 800 }}>
-            <thead>
-              <tr>
-                <th>WEEK</th>
-                <th>TOTAL HRS</th>
-                <th>GOAL</th>
-                <th>GOAL %</th>
-                <th>PACING</th>
-                <th>SAT</th>
-                <th>MON</th>
-                <th>TUE</th>
-                <th>WED</th>
-                <th>THU</th>
-                <th>FRI</th>
-              </tr>
-            </thead>
             <tbody>
               {filtered.map((e, i) => {
                 const prev = filtered[i + 1];
                 const gp   = parseFloat(e.goal_pct);
 
-                // Calculate the actual date for each day of the week (Sat=weekStart, Mon–Fri follow)
-                const dayDates = (() => {
-                  if (!e.weekStart) return {};
-                  const sat = new Date(e.weekStart + 'T00:00:00');
-                  const d = (offset) => {
-                    const dt = new Date(sat);
-                    dt.setDate(sat.getDate() + offset);
-                    return dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
-                  };
-                  return { sat: d(0), mon: d(2), tue: d(3), wed: d(4), thu: d(5), fri: d(6) };
-                })();
+                // Dates for each day column, derived from this row's weekStart
+                const dayD = (offset) => {
+                  if (!e.weekStart) return '';
+                  const d = new Date(e.weekStart + 'T00:00:00');
+                  d.setDate(d.getDate() + offset);
+                  return d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+                };
 
-                const DayCell = ({ val, dayKey }) => (
+                const DayCell = ({ val }) => (
                   <td style={{ color: '#94a3b8', textAlign: 'center', whiteSpace: 'nowrap' }}>
                     {num(val, 1)}
-                    {dayDates[dayKey] && <span style={{ fontSize: 10, color: '#475569', marginLeft: 5 }}>{dayDates[dayKey]}</span>}
                   </td>
                 );
 
+                // Header row showing day names + this row's dates
+                const headerRow = (
+                  <tr>
+                    <th style={{ whiteSpace: 'nowrap' }}>WEEK</th>
+                    <th>TOTAL HRS</th>
+                    <th>GOAL</th>
+                    <th>GOAL %</th>
+                    <th>PACING</th>
+                    {[['SAT',0],['MON',2],['TUE',3],['WED',4],['THU',5],['FRI',6]].map(([day, offset]) => (
+                      <th key={day} style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                        {day}{e.weekStart ? <span style={{ marginLeft: 5, fontWeight: 400, color: '#64748b', fontSize: 11 }}>{dayD(offset)}</span> : null}
+                      </th>
+                    ))}
+                  </tr>
+                );
+
                 return (
-                  <tr key={i} style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
+                  <React.Fragment key={i}>
+                  {headerRow}
+                  <tr style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
                     <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontSize: 12 }}>
                       {e.label || fmtDate(e.date)}
                       {i === 0 && <span style={{ marginLeft: 6, fontSize: 10, color: '#3dd6c3', fontWeight: 800 }}>LATEST</span>}
@@ -272,13 +270,14 @@ function TechReport({ entries }) {
                       {pct(e.goal_pct)}<TrendIcon curr={e.goal_pct} prev={prev?.goal_pct} />
                     </td>
                     <td style={{ color: '#c4b5fd' }}>{num(e.pacing, 1)}</td>
-                    <DayCell val={e.sat} dayKey="sat" />
-                    <DayCell val={e.mon} dayKey="mon" />
-                    <DayCell val={e.tue} dayKey="tue" />
-                    <DayCell val={e.wed} dayKey="wed" />
-                    <DayCell val={e.thu} dayKey="thu" />
-                    <DayCell val={e.fri} dayKey="fri" />
+                    <DayCell val={e.sat} />
+                    <DayCell val={e.mon} />
+                    <DayCell val={e.tue} />
+                    <DayCell val={e.wed} />
+                    <DayCell val={e.thu} />
+                    <DayCell val={e.fri} />
                   </tr>
+                  </React.Fragment>
                 );
               })}
             </tbody>
