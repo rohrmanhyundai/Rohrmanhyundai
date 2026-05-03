@@ -7,16 +7,16 @@ function fmtDate(iso) {
 }
 
 const ADVISOR_FIELDS = [
-  { key: 'csi',             label: 'CSI',           type: 'number', decimals: 0 },
-  { key: 'hours_per_ro',    label: 'Hours / RO',    type: 'number', decimals: 2 },
-  { key: 'mtd_hours',       label: 'MTD Hours',     type: 'number', decimals: 1 },
-  { key: 'daily_avg',       label: 'Daily Avg',     type: 'number', decimals: 2 },
-  { key: 'align',           label: 'Alignment %',   type: 'pct',    decimals: 3 },
-  { key: 'tires',           label: 'Tires %',       type: 'pct',    decimals: 4 },
-  { key: 'valvoline',       label: 'Valvoline %',   type: 'pct',    decimals: 4 },
-  { key: 'asr',             label: 'ASR %',         type: 'pct',    decimals: 4 },
-  { key: 'elr',             label: 'ELR',           type: 'number', decimals: 2 },
-  { key: 'last_month_total',label: 'Last Mo. Total',type: 'number', decimals: 1 },
+  { key: 'csi',             label: 'CSI',      type: 'number', decimals: 0 },
+  { key: 'hours_per_ro',    label: 'Hrs/RO',   type: 'number', decimals: 2 },
+  { key: 'mtd_hours',       label: 'MTD Hrs',  type: 'number', decimals: 1 },
+  { key: 'daily_avg',       label: 'Daily Avg',type: 'number', decimals: 2 },
+  { key: 'align',           label: 'Align',    type: 'pct',    decimals: 3 },
+  { key: 'tires',           label: 'Tires',    type: 'pct',    decimals: 4 },
+  { key: 'valvoline',       label: 'Valvoline',type: 'pct',    decimals: 4 },
+  { key: 'asr',             label: 'ASR',      type: 'pct',    decimals: 4 },
+  { key: 'elr',             label: 'ELR',      type: 'number', decimals: 2 },
+  { key: 'last_month_total',label: 'Last Mo.', type: 'number', decimals: 1 },
 ];
 
 const TECH_FIELDS = [
@@ -285,13 +285,13 @@ export default function ManagerReports({ users, onBack }) {
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table className="adv-table">
+              <table className="adv-table" style={{ fontSize: 13 }}>
                 <thead>
                   <tr>
-                    <th>DATE</th>
-                    <th>LABEL</th>
-                    {fields.map(f => <th key={f.key}>{f.label.toUpperCase()}</th>)}
-                    <th style={{ minWidth: 110 }}>ACTIONS</th>
+                    <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
+                    <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>LABEL</th>
+                    {fields.map(f => <th key={f.key} style={{ whiteSpace: 'nowrap', minWidth: 70 }}>{f.label.toUpperCase()}</th>)}
+                    <th style={{ minWidth: 120, whiteSpace: 'nowrap' }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -299,17 +299,17 @@ export default function ManagerReports({ users, onBack }) {
                     <tr key={idx}>
                       <td style={{ whiteSpace: 'nowrap', color: '#94a3b8' }}>
                         {fmtDate(e.date)}
-                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700 }}>AUTO</span>}
+                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase' }}>auto</span>}
                       </td>
-                      <td style={{ color: '#64748b', fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.label || '—'}</td>
+                      <td style={{ color: '#64748b', fontSize: 12, whiteSpace: 'nowrap' }}>{e.label || '—'}</td>
                       {fields.map(f => (
-                        <td key={f.key} style={{ color: '#cbd5e1' }}>{displayVal(e[f.key], f)}</td>
+                        <td key={f.key} style={{ color: '#cbd5e1', whiteSpace: 'nowrap', textAlign: 'center' }}>{displayVal(e[f.key], f)}</td>
                       ))}
                       <td style={{ whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>✏️ Edit</button>
-                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>
-                            {deletingIdx === idx ? '⏳' : '🗑'}
+                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
+                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                            {deletingIdx === idx ? '⏳' : '🗑 Del'}
                           </button>
                         </div>
                       </td>
