@@ -320,14 +320,28 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const BONUS_TYPES = new Set(['vacation', 'training', 'holiday']);
         const techSched   = (schedules || {})[username] || {};
         const globalHols  = (schedules || {})['__HOLIDAY__'] || {};
+        // Also build vacation date set from data.json vacations list (catches unsynced vacations)
+        const techVacDates = new Set();
+        for (const v of (vacations || [])) {
+          if (!v.name || v.name.toUpperCase() !== username) continue;
+          if (!v.dateStart || !v.dateEnd) continue;
+          const vs = new Date(v.dateStart + 'T00:00:00');
+          const ve = new Date(v.dateEnd   + 'T00:00:00');
+          for (let dv = new Date(vs); dv <= ve; dv.setDate(dv.getDate() + 1)) {
+            techVacDates.add(dv.toISOString().split('T')[0]);
+          }
+        }
         const bonus       = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
         const breakdown   = { vacation: 0, training: 0, holiday: 0 };
         const wStart = new Date(techWeek.weekStart + 'T00:00:00');
         const wEnd   = new Date(techWeek.weekEnd   + 'T00:00:00');
         for (let d = new Date(wStart); d <= wEnd; d.setDate(d.getDate() + 1)) {
           const iso = d.toISOString().split('T')[0];
-          const val = globalHols[iso] === 'holiday' ? 'holiday' : techSched[iso];
-          if (!BONUS_TYPES.has(val)) continue;
+          let val = null;
+          if (globalHols[iso] === 'holiday')         val = 'holiday';
+          else if (BONUS_TYPES.has(techSched[iso]))   val = techSched[iso];
+          else if (techVacDates.has(iso))             val = 'vacation';
+          if (!val) continue;
           const dow = d.getDay();
           let dk = null;
           if      (dow === 6) dk = 'sat';
