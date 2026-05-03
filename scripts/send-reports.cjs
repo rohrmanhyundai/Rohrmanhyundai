@@ -72,10 +72,18 @@ function main() {
   if (!raw || !raw.data) { console.error('Could not read data.json'); process.exit(1); }
 
   const { advisors = [], technicians = [] } = raw.data;
-  const today     = toISO(now);
-  const monthKey  = today.slice(0, 7);
-  const advLabel  = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
   const techWeek  = getTechWeekRange(now);
+
+  // Advisor reporting follows the same Sat/Sun/Mon → previous-completed-week rule
+  // as techs: snapshots stay dated to last Friday until Tuesday, so weekend runs
+  // don't roll into the next week and don't pile up duplicate rows.
+  const dowAdv     = now.getDay();
+  const advReportDate = (dowAdv === 6 || dowAdv === 0 || dowAdv === 1)
+    ? new Date(techWeek.weekEnd + 'T12:00:00')
+    : now;
+  const today     = toISO(advReportDate);
+  const monthKey  = today.slice(0, 7);
+  const advLabel  = advReportDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
 
   // Load schedules for vacation/training/holiday detection
   const schedules = readJSON(SCHEDULES_FILE) || {};
