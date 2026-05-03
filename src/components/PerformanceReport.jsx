@@ -214,7 +214,7 @@ function EfficiencyGauge({ label, pct, sub, accentA, accentB }) {
 
       <div style={{ fontSize: 10, fontWeight: 800, color: accentA, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10, zIndex: 1 }}>{label}</div>
 
-      <svg viewBox="0 0 220 120" style={{ width: '100%', maxWidth: 220, zIndex: 1 }}>
+      <svg viewBox="0 -14 220 134" style={{ width: '100%', maxWidth: 220, zIndex: 1 }}>
         <defs>
           <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor={accentA} />
