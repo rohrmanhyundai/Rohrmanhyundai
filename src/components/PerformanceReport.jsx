@@ -209,16 +209,16 @@ function AdvisorReport({ entries }) {
 // TRENDING REPORT — daily / weekly / month-over-month
 // ─────────────────────────────────────────────────────────────
 const TREND_METRICS = [
-  { key: 'csi',          label: 'CSI',          fmt: v => Math.round(v).toString(),     goal: 920 },
-  { key: 'hours_per_ro', label: 'Hrs/RO',       fmt: v => v.toFixed(2),                 goal: 1.4 },
-  { key: 'roh50_hrs_ro', label: 'Roh$50 Hrs/RO',fmt: v => v.toFixed(2),                 goal: 1.2 },
-  { key: 'mtd_hours',    label: 'MTD Hrs',      fmt: v => v.toFixed(1),                 goal: 300 },
-  { key: 'daily_avg',    label: 'Daily Avg',    fmt: v => v.toFixed(2),                 goal: null },
-  { key: 'align',        label: 'Alignment',    fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.10 },
-  { key: 'tires',        label: 'Tires',        fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.15 },
-  { key: 'valvoline',    label: 'Valvoline',    fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.25 },
-  { key: 'asr',          label: 'ASR',          fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.21 },
-  { key: 'elr',          label: 'ELR',          fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.88 },
+  { key: 'csi',          label: 'CSI',           fmt: v => Math.round(v).toString(),    fmtDelta: d => Math.abs(Math.round(d)).toString(),         goal: 920,  isPct: false },
+  { key: 'hours_per_ro', label: 'Hrs/RO',        fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.4,  isPct: false },
+  { key: 'roh50_hrs_ro', label: 'Roh$50 Hrs/RO', fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.2,  isPct: false },
+  { key: 'mtd_hours',    label: 'MTD Hrs',       fmt: v => v.toFixed(1),                fmtDelta: d => Math.abs(d).toFixed(1),                     goal: 300,  isPct: false },
+  { key: 'daily_avg',    label: 'Daily Avg',     fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: null, isPct: false },
+  { key: 'align',        label: 'Alignment',     fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.10, isPct: true  },
+  { key: 'tires',        label: 'Tires',         fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.15, isPct: true  },
+  { key: 'valvoline',    label: 'Valvoline',     fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.25, isPct: true  },
+  { key: 'asr',          label: 'ASR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.21, isPct: true  },
+  { key: 'elr',          label: 'ELR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.88, isPct: true  },
 ];
 
 function avgOf(entries, key) {
@@ -229,26 +229,51 @@ function avgOf(entries, key) {
 
 function TrendCell({ curr, prev, metric }) {
   if (curr === null || curr === undefined || isNaN(curr)) {
-    return <div style={{ color: '#475569', fontSize: 13 }}>—</div>;
+    return (
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <span style={{ fontSize: 18, fontWeight: 900, color: '#334155' }}>—</span>
+      </div>
+    );
   }
   const meetsGoal = metric.goal !== null ? curr >= metric.goal : true;
   const valColor  = meetsGoal ? '#e2e8f0' : '#f87171';
-  let delta = null, dir = null;
-  if (prev !== null && prev !== undefined && !isNaN(prev) && prev !== 0) {
+
+  let dir = null, delta = null, pctChange = null;
+  if (prev !== null && prev !== undefined && !isNaN(prev)) {
     const diff = curr - prev;
     if (Math.abs(diff) > 1e-9) {
-      dir = diff > 0 ? 'up' : 'down';
+      dir   = diff > 0 ? 'up' : 'down';
       delta = diff;
+      if (Math.abs(prev) > 1e-9) pctChange = (diff / prev) * 100;
     }
   }
-  const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '–';
-  const arrowColor = !dir ? '#475569' : (dir === 'up' ? '#4ade80' : '#f87171');
+
+  const pillBg = !dir
+    ? 'rgba(148,163,184,.10)'
+    : dir === 'up' ? 'rgba(74,222,128,.15)' : 'rgba(248,113,113,.15)';
+  const pillBorder = !dir
+    ? 'rgba(148,163,184,.25)'
+    : dir === 'up' ? 'rgba(74,222,128,.4)' : 'rgba(248,113,113,.4)';
+  const pillColor = !dir ? '#94a3b8' : dir === 'up' ? '#4ade80' : '#f87171';
+  const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '•';
+
   return (
-    <div>
-      <div style={{ fontWeight: 800, fontSize: 16, color: valColor }}>{metric.fmt(curr)}</div>
-      <div style={{ fontSize: 11, color: arrowColor, fontWeight: 700, marginTop: 2 }}>
-        {arrow} {delta !== null ? metric.fmt(Math.abs(delta)).replace(/%$/,'') + (metric.fmt(0).endsWith('%') ? '%' : '') : 'no change'}
-      </div>
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+      <span style={{ fontWeight: 900, fontSize: 20, color: valColor, lineHeight: 1, letterSpacing: -0.3 }}>
+        {metric.fmt(curr)}
+      </span>
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        fontSize: 10, fontWeight: 800, color: pillColor,
+        background: pillBg, border: `1px solid ${pillBorder}`,
+        padding: '3px 7px', borderRadius: 999, lineHeight: 1,
+        whiteSpace: 'nowrap',
+      }}>
+        <span style={{ fontSize: 9 }}>{arrow}</span>
+        {dir
+          ? `${metric.fmtDelta(delta)}${pctChange !== null ? ` · ${pctChange > 0 ? '+' : ''}${pctChange.toFixed(1)}%` : ''}`
+          : 'flat'}
+      </span>
     </div>
   );
 }
@@ -284,71 +309,77 @@ function TrendingReport({ entries, selectedMonth }) {
     return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`;
   };
 
-  const cardStyle = {
-    flex: 1, minWidth: 260,
-    background: 'rgba(255,255,255,.03)',
-    border: '1px solid rgba(255,255,255,.08)',
-    borderRadius: 14, padding: '16px 18px',
-  };
-  const headerStyle = {
-    fontSize: 11, fontWeight: 800, color: '#3dd6c3',
-    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12,
-  };
-  const subStyle = { fontSize: 10, color: '#64748b', fontWeight: 600, marginTop: 2 };
+  const renderCard = ({ accent, icon, title, sub, available, getCurr, getPrev }) => (
+    <div style={{
+      flex: 1, minWidth: 280,
+      background: `linear-gradient(160deg, rgba(15,23,42,.85), rgba(15,23,42,.6))`,
+      border: `1px solid ${accent}33`,
+      borderRadius: 16,
+      boxShadow: `0 0 24px ${accent}14, inset 0 1px 0 rgba(255,255,255,.04)`,
+      overflow: 'hidden', position: 'relative',
+    }}>
+      <div style={{ height: 3, background: `linear-gradient(90deg, ${accent}, ${accent}55, transparent)` }} />
+      <div style={{ padding: '14px 18px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <div style={{ fontSize: 11, fontWeight: 900, color: accent, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            {icon} {title}
+          </div>
+        </div>
+        <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, marginBottom: 14 }}>{sub}</div>
+        {available ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 12px' }}>
+            {TREND_METRICS.map(m => (
+              <div key={m.key}>
+                <div style={{ fontSize: 9, color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>{m.label}</div>
+                <TrendCell curr={getCurr(m)} prev={getPrev(m)} metric={m} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic', padding: '20px 0' }}>
+            No data yet — fills in as snapshots accumulate.
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ marginTop: 28 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-        📈 Trending Report
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: 8,
+          background: 'linear-gradient(135deg, rgba(61,214,195,.25), rgba(110,231,249,.15))',
+          border: '1px solid rgba(61,214,195,.4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+        }}>📈</div>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: '#e2e8f0', letterSpacing: .3 }}>Trending Report</div>
+          <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>How you're trending across periods</div>
+        </div>
       </div>
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-        {/* DAILY */}
-        <div style={cardStyle}>
-          <div style={headerStyle}>Daily</div>
-          <div style={subStyle}>
-            {dToday ? fmtDate(dToday.date) : '—'} vs {dPrev ? fmtDate(dPrev.date) : '—'}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
-            {dailyAvail ? TREND_METRICS.map(m => (
-              <div key={m.key}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
-                <TrendCell curr={dToday ? parseFloat(dToday[m.key]) : null} prev={dPrev ? parseFloat(dPrev[m.key]) : null} metric={m} />
-              </div>
-            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
-          </div>
-        </div>
-
-        {/* WEEKLY */}
-        <div style={cardStyle}>
-          <div style={headerStyle}>Weekly Average</div>
-          <div style={subStyle}>
-            Last {thisWeek.length} day{thisWeek.length !== 1 ? 's' : ''} vs prior {lastWeek.length} day{lastWeek.length !== 1 ? 's' : ''}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
-            {weeklyAvail ? TREND_METRICS.map(m => (
-              <div key={m.key}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
-                <TrendCell curr={avgOf(thisWeek, m.key)} prev={avgOf(lastWeek, m.key)} metric={m} />
-              </div>
-            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
-          </div>
-        </div>
-
-        {/* MONTHLY */}
-        <div style={cardStyle}>
-          <div style={headerStyle}>Month-Over-Month</div>
-          <div style={subStyle}>
-            {labelMonth(selectedMonth)} ({thisMonthEntries.length}) vs {labelMonth(prevMonthKey)} ({prevMonthEntries.length})
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
-            {monthlyAvail ? TREND_METRICS.map(m => (
-              <div key={m.key}>
-                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
-                <TrendCell curr={avgOf(thisMonthEntries, m.key)} prev={avgOf(prevMonthEntries, m.key)} metric={m} />
-              </div>
-            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
-          </div>
-        </div>
+        {renderCard({
+          accent: '#3dd6c3', icon: '⚡', title: 'Daily',
+          sub: `${dToday ? fmtDate(dToday.date) : '—'}  vs  ${dPrev ? fmtDate(dPrev.date) : '—'}`,
+          available: dailyAvail,
+          getCurr: m => dToday ? parseFloat(dToday[m.key]) : null,
+          getPrev: m => dPrev ? parseFloat(dPrev[m.key]) : null,
+        })}
+        {renderCard({
+          accent: '#a78bfa', icon: '📅', title: 'Weekly Average',
+          sub: `Last ${thisWeek.length} day${thisWeek.length !== 1 ? 's' : ''}  vs  prior ${lastWeek.length} day${lastWeek.length !== 1 ? 's' : ''}`,
+          available: weeklyAvail,
+          getCurr: m => avgOf(thisWeek, m.key),
+          getPrev: m => avgOf(lastWeek, m.key),
+        })}
+        {renderCard({
+          accent: '#fbbf24', icon: '🗓', title: 'Month-Over-Month',
+          sub: `${labelMonth(selectedMonth)} (${thisMonthEntries.length})  vs  ${labelMonth(prevMonthKey)} (${prevMonthEntries.length})`,
+          available: monthlyAvail,
+          getCurr: m => avgOf(thisMonthEntries, m.key),
+          getPrev: m => avgOf(prevMonthEntries, m.key),
+        })}
       </div>
     </div>
   );
