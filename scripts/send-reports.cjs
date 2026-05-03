@@ -213,6 +213,27 @@ function main() {
     const { bonus, breakdown } = getBonusHours(username, techWeek.weekStart, techWeek.weekEnd);
     const bonusTotal = bonus.mon + bonus.tue + bonus.wed + bonus.thu + bonus.fri + bonus.sat;
 
+    // Per-day totals after vacation/training/holiday bonus is added.
+    const dayTotals = {
+      mon: (parseFloat(t.mon) || 0) + bonus.mon,
+      tue: (parseFloat(t.tue) || 0) + bonus.tue,
+      wed: (parseFloat(t.wed) || 0) + bonus.wed,
+      thu: (parseFloat(t.thu) || 0) + bonus.thu,
+      fri: (parseFloat(t.fri) || 0) + bonus.fri,
+      sat: (parseFloat(t.sat) || 0) + bonus.sat,
+    };
+    const adjustedTotal = (parseFloat(t.total) || 0) + bonusTotal;
+    const goalNum       = parseFloat(t.goal) || 0;
+
+    // Recompute pacing using the same logic as the dashboard's recalcTech,
+    // so vacation/training/holiday days count toward the projection.
+    const workedSat       = dayTotals.sat > 0;
+    const totalWorkdays   = workedSat ? 6 : 5;
+    const daysWorked      = ['mon','tue','wed','thu','fri'].filter(d => dayTotals[d] > 0).length
+                          + (workedSat ? 1 : 0);
+    const adjustedPacing  = daysWorked > 0 ? (adjustedTotal / daysWorked) * totalWorkdays : 0;
+    const adjustedGoalPct = goalNum > 0 ? adjustedTotal / goalNum : 0;
+
     const entry = {
       date:      techWeek.weekStart,
       label:     techWeek.label,
@@ -221,16 +242,16 @@ function main() {
       type:      'tech',
       savedAt:   now.toISOString(),
       autoSaved: true,
-      total:     (parseFloat(t.total) || 0) + bonusTotal,
+      total:     adjustedTotal,
       goal:      t.goal,
-      goal_pct:  t.goal_pct,
-      pacing:    t.pacing,
-      mon:       (parseFloat(t.mon) || 0) + bonus.mon,
-      tue:       (parseFloat(t.tue) || 0) + bonus.tue,
-      wed:       (parseFloat(t.wed) || 0) + bonus.wed,
-      thu:       (parseFloat(t.thu) || 0) + bonus.thu,
-      fri:       (parseFloat(t.fri) || 0) + bonus.fri,
-      sat:       (parseFloat(t.sat) || 0) + bonus.sat,
+      goal_pct:  adjustedGoalPct,
+      pacing:    adjustedPacing,
+      mon:       dayTotals.mon,
+      tue:       dayTotals.tue,
+      wed:       dayTotals.wed,
+      thu:       dayTotals.thu,
+      fri:       dayTotals.fri,
+      sat:       dayTotals.sat,
     };
     if (bonusTotal > 0) {
       if (breakdown.vacation > 0) entry.vacationHours = breakdown.vacation;
