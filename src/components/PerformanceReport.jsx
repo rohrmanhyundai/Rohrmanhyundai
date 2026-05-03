@@ -196,8 +196,160 @@ function AdvisorReport({ entries }) {
               </tbody>
             </table>
           </div>
+
+          {/* Trending report */}
+          <TrendingReport entries={entries} selectedMonth={selectedMonth} />
         </>
       )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// TRENDING REPORT — daily / weekly / month-over-month
+// ─────────────────────────────────────────────────────────────
+const TREND_METRICS = [
+  { key: 'csi',          label: 'CSI',          fmt: v => Math.round(v).toString(),     goal: 920 },
+  { key: 'hours_per_ro', label: 'Hrs/RO',       fmt: v => v.toFixed(2),                 goal: 1.4 },
+  { key: 'roh50_hrs_ro', label: 'Roh$50 Hrs/RO',fmt: v => v.toFixed(2),                 goal: 1.2 },
+  { key: 'mtd_hours',    label: 'MTD Hrs',      fmt: v => v.toFixed(1),                 goal: 300 },
+  { key: 'daily_avg',    label: 'Daily Avg',    fmt: v => v.toFixed(2),                 goal: null },
+  { key: 'align',        label: 'Alignment',    fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.10 },
+  { key: 'tires',        label: 'Tires',        fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.15 },
+  { key: 'valvoline',    label: 'Valvoline',    fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.25 },
+  { key: 'asr',          label: 'ASR',          fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.21 },
+  { key: 'elr',          label: 'ELR',          fmt: v => (v * 100).toFixed(1) + '%',   goal: 0.88 },
+];
+
+function avgOf(entries, key) {
+  const vals = entries.map(e => parseFloat(e[key])).filter(v => !isNaN(v));
+  if (!vals.length) return null;
+  return vals.reduce((s, v) => s + v, 0) / vals.length;
+}
+
+function TrendCell({ curr, prev, metric }) {
+  if (curr === null || curr === undefined || isNaN(curr)) {
+    return <div style={{ color: '#475569', fontSize: 13 }}>—</div>;
+  }
+  const meetsGoal = metric.goal !== null ? curr >= metric.goal : true;
+  const valColor  = meetsGoal ? '#e2e8f0' : '#f87171';
+  let delta = null, dir = null;
+  if (prev !== null && prev !== undefined && !isNaN(prev) && prev !== 0) {
+    const diff = curr - prev;
+    if (Math.abs(diff) > 1e-9) {
+      dir = diff > 0 ? 'up' : 'down';
+      delta = diff;
+    }
+  }
+  const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '–';
+  const arrowColor = !dir ? '#475569' : (dir === 'up' ? '#4ade80' : '#f87171');
+  return (
+    <div>
+      <div style={{ fontWeight: 800, fontSize: 16, color: valColor }}>{metric.fmt(curr)}</div>
+      <div style={{ fontSize: 11, color: arrowColor, fontWeight: 700, marginTop: 2 }}>
+        {arrow} {delta !== null ? metric.fmt(Math.abs(delta)).replace(/%$/,'') + (metric.fmt(0).endsWith('%') ? '%' : '') : 'no change'}
+      </div>
+    </div>
+  );
+}
+
+function TrendingReport({ entries, selectedMonth }) {
+  if (!entries || entries.length === 0) return null;
+
+  const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  // Daily: latest vs day-before
+  const dToday = sorted[0] || null;
+  const dPrev  = sorted[1] || null;
+
+  // Weekly: most-recent 7 entries vs the 7 before
+  const thisWeek = sorted.slice(0, 7);
+  const lastWeek = sorted.slice(7, 14);
+
+  // Monthly: selected month avg vs previous month avg
+  const inMonth = (e, mk) => (e.month || (e.date || '').slice(0, 7)) === mk;
+  const allMonthKeys = [...new Set(sorted.map(e => e.month || (e.date || '').slice(0, 7)))].sort().reverse();
+  const curIdx       = allMonthKeys.indexOf(selectedMonth);
+  const prevMonthKey = curIdx >= 0 ? allMonthKeys[curIdx + 1] : null;
+  const thisMonthEntries = sorted.filter(e => inMonth(e, selectedMonth));
+  const prevMonthEntries = prevMonthKey ? sorted.filter(e => inMonth(e, prevMonthKey)) : [];
+
+  const dailyAvail   = !!dToday;
+  const weeklyAvail  = thisWeek.length > 0;
+  const monthlyAvail = thisMonthEntries.length > 0;
+
+  const labelMonth = (mk) => {
+    if (!mk) return '—';
+    const [y, m] = mk.split('-');
+    return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`;
+  };
+
+  const cardStyle = {
+    flex: 1, minWidth: 260,
+    background: 'rgba(255,255,255,.03)',
+    border: '1px solid rgba(255,255,255,.08)',
+    borderRadius: 14, padding: '16px 18px',
+  };
+  const headerStyle = {
+    fontSize: 11, fontWeight: 800, color: '#3dd6c3',
+    textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12,
+  };
+  const subStyle = { fontSize: 10, color: '#64748b', fontWeight: 600, marginTop: 2 };
+
+  return (
+    <div style={{ marginTop: 28 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+        📈 Trending Report
+      </div>
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        {/* DAILY */}
+        <div style={cardStyle}>
+          <div style={headerStyle}>Daily</div>
+          <div style={subStyle}>
+            {dToday ? fmtDate(dToday.date) : '—'} vs {dPrev ? fmtDate(dPrev.date) : '—'}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
+            {dailyAvail ? TREND_METRICS.map(m => (
+              <div key={m.key}>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
+                <TrendCell curr={dToday ? parseFloat(dToday[m.key]) : null} prev={dPrev ? parseFloat(dPrev[m.key]) : null} metric={m} />
+              </div>
+            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
+          </div>
+        </div>
+
+        {/* WEEKLY */}
+        <div style={cardStyle}>
+          <div style={headerStyle}>Weekly Average</div>
+          <div style={subStyle}>
+            Last {thisWeek.length} day{thisWeek.length !== 1 ? 's' : ''} vs prior {lastWeek.length} day{lastWeek.length !== 1 ? 's' : ''}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
+            {weeklyAvail ? TREND_METRICS.map(m => (
+              <div key={m.key}>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
+                <TrendCell curr={avgOf(thisWeek, m.key)} prev={avgOf(lastWeek, m.key)} metric={m} />
+              </div>
+            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
+          </div>
+        </div>
+
+        {/* MONTHLY */}
+        <div style={cardStyle}>
+          <div style={headerStyle}>Month-Over-Month</div>
+          <div style={subStyle}>
+            {labelMonth(selectedMonth)} ({thisMonthEntries.length}) vs {labelMonth(prevMonthKey)} ({prevMonthEntries.length})
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
+            {monthlyAvail ? TREND_METRICS.map(m => (
+              <div key={m.key}>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 3 }}>{m.label}</div>
+                <TrendCell curr={avgOf(thisMonthEntries, m.key)} prev={avgOf(prevMonthEntries, m.key)} metric={m} />
+              </div>
+            )) : <div style={{ color: '#64748b', fontSize: 13 }}>No data yet.</div>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
