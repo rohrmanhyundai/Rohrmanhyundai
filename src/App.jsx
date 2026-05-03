@@ -35,6 +35,7 @@ import DCTMTMWorksheet from './components/DCTMTMWorksheet';
 import IVTWorksheet from './components/IVTWorksheet';
 import ATMWorksheet from './components/ATMWorksheet';
 import TechSelfReview from './components/TechSelfReview';
+import PerformanceReport from './components/PerformanceReport';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -306,6 +307,7 @@ export default function App() {
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
         onMyReview={() => navTo('tech-self-review')}
+        onMyReports={() => goTo('performance-report', 'tech-resources')}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -495,6 +497,16 @@ export default function App() {
     );
   }
 
+  if (page === 'performance-report') {
+    return (
+      <PerformanceReport
+        currentUser={currentUser.toUpperCase()}
+        role={currentRole}
+        onBack={() => navTo(prevPage || (currentRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
+      />
+    );
+  }
+
   if (page === 'tech-review') {
     return (
       <TechReview
@@ -561,6 +573,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
+        onMyReports={() => goTo('performance-report', 'advisor-calendar')}
         onWorkInProgress={() => goTo('work-in-progress', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}

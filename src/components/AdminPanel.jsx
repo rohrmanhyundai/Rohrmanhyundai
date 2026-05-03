@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile } from '../utils/github';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
+import ManagerReports from './ManagerReports';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -249,6 +250,55 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   const [tokenSyncing, setTokenSyncing] = useState(false);
 
+  // ── Send to Reports ───────────────────────────────────────────────────────
+  const [sendingReports, setSendingReports] = useState(false);
+  const [reportStatus,   setReportStatus]   = useState('');
+
+  async function sendToReports() {
+    setSendingReports(true);
+    setReportStatus('⏳ Sending snapshots…');
+    const today = new Date().toISOString().split('T')[0];
+    const label = `Week of ${new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    try {
+      // Advisors
+      for (const a of (data.advisors || [])) {
+        const username = a.name.toUpperCase();
+        const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
+        const entries  = Array.isArray(existing) ? existing : [];
+        const entry = {
+          date: today, label, savedAt: new Date().toISOString(),
+          csi: a.csi, hours_per_ro: a.hours_per_ro, mtd_hours: a.mtd_hours,
+          daily_avg: a.daily_avg, align: a.align, tires: a.tires,
+          valvoline: a.valvoline, asr: a.asr, elr: a.elr,
+          last_month_total: a.last_month_total,
+        };
+        const updated = [entry, ...entries.filter(e => e.date !== today)];
+        updated.sort((a, b) => new Date(b.date) - new Date(a.date));
+        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Performance snapshot for ${username} on ${today}`);
+      }
+      // Technicians
+      for (const t of (data.technicians || [])) {
+        const username = t.name.toUpperCase();
+        const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
+        const entries  = Array.isArray(existing) ? existing : [];
+        const entry = {
+          date: today, label, savedAt: new Date().toISOString(),
+          total: t.total, goal: t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
+          mon: t.mon, tue: t.tue, wed: t.wed, thu: t.thu, fri: t.fri, sat: t.sat,
+        };
+        const updated = [entry, ...entries.filter(e => e.date !== today)];
+        updated.sort((a, b) => new Date(b.date) - new Date(a.date));
+        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Performance snapshot for ${username} on ${today}`);
+      }
+      setReportStatus(`✅ Snapshots sent for ${(data.advisors || []).length + (data.technicians || []).length} employees!`);
+      setTimeout(() => setReportStatus(''), 5000);
+    } catch (e) {
+      setReportStatus(`❌ ${e.message}`);
+    } finally {
+      setSendingReports(false);
+    }
+  }
+
   async function handleTokenSave() {
     if (!githubToken) { alert('Enter a token first.'); return; }
     setGithubToken(githubToken);
@@ -395,6 +445,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     ...(isAdminOrManager(currentRole) ? [
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
       { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
+      { id: 'mgr-reports', icon: '📊', label: 'Performance Reports', desc: 'View and manage employee performance history',       color: '#6ee7f9', bg: 'rgba(110,231,249,.1)',  border: 'rgba(110,231,249,.3)'  },
     ] : []),
   ];
 
@@ -484,7 +535,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               </div>
             </div>
           ))}
-          <div className="actions"><button onClick={addAdvisor}>Add Advisor</button></div>
+          <div className="actions" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button onClick={addAdvisor}>Add Advisor</button>
+            <button onClick={sendToReports} disabled={sendingReports} style={{ background: 'rgba(61,214,195,.18)', border: '1px solid rgba(61,214,195,.4)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+              {sendingReports ? '⏳ Sending…' : '📊 Send to Reports'}
+            </button>
+            {reportStatus && <span style={{ fontSize: 13, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{reportStatus}</span>}
+          </div>
         </div>
     );
 
@@ -527,7 +584,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
           </div>
         ))}
-        <div className="actions"><button onClick={addTechnician}>Add Technician</button></div>
+        <div className="actions" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button onClick={addTechnician}>Add Technician</button>
+          <button onClick={sendToReports} disabled={sendingReports} style={{ background: 'rgba(61,214,195,.18)', border: '1px solid rgba(61,214,195,.4)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+            {sendingReports ? '⏳ Sending…' : '📊 Send to Reports'}
+          </button>
+          {reportStatus && <span style={{ fontSize: 13, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{reportStatus}</span>}
+        </div>
       </div>
     );
 
@@ -751,6 +814,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (openSection === 'schedule') return (
       <div style={{ margin: '0 -8px' }}>
         <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} embedded={true} />
+      </div>
+    );
+
+    if (openSection === 'mgr-reports') return (
+      <div style={{ margin: '0 -8px' }}>
+        <ManagerReports users={users} onBack={() => setOpenSection(null)} />
       </div>
     );
 
