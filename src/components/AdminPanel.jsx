@@ -260,12 +260,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function getTechWeekRange(now = new Date()) {
     const dow = now.getDay(); // 0=Sun,1=Mon,...,6=Sat
     let weekStart, weekEnd;
-    if (dow === 1) {
-      // Monday → previous week: weekEnd = last Fri (3 days ago), weekStart = last Sat (9 days ago)
-      weekEnd   = new Date(now); weekEnd.setDate(now.getDate() - 3);
-      weekStart = new Date(now); weekStart.setDate(now.getDate() - 9);
+    if (dow === 6 || dow === 0 || dow === 1) {
+      // Sat/Sun/Mon → previous completed week (still finalizing numbers)
+      const daysSinceFri = (dow - 5 + 7) % 7 || 7;
+      weekEnd   = new Date(now); weekEnd.setDate(now.getDate() - daysSinceFri);   // last Fri
+      weekStart = new Date(weekEnd); weekStart.setDate(weekEnd.getDate() - 6);   // Sat before
     } else {
-      // Tue–Sun → current week: find most recent Sat
+      // Tue–Fri → current week in progress: find most recent Sat
       const daysSinceSat = (dow - 6 + 7) % 7;
       weekStart = new Date(now); weekStart.setDate(now.getDate() - daysSinceSat);
       weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
