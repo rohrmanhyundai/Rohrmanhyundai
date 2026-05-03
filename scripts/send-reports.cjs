@@ -74,10 +74,23 @@ function main() {
   const { advisors = [], technicians = [] } = raw.data;
   const techWeek  = getTechWeekRange(now);
 
-  // Advisors get a daily snapshot — one entry per calendar day, grouped by month.
-  const today     = toISO(now);
+  // Advisor numbers reflect the previous business day:
+  //   Tue–Fri 11pm → yesterday
+  //   Mon 11pm     → last Friday
+  //   Sat/Sun      → skip (no advisor activity to record)
+  const dowAdv = now.getDay(); // 0=Sun … 6=Sat
+  let advReportDate = null;
+  if (dowAdv >= 2 && dowAdv <= 5) {                  // Tue–Fri
+    advReportDate = new Date(now); advReportDate.setDate(now.getDate() - 1);
+  } else if (dowAdv === 1) {                         // Mon → last Fri
+    advReportDate = new Date(now); advReportDate.setDate(now.getDate() - 3);
+  }
+  const skipAdvisors = advReportDate === null;
+  const today     = skipAdvisors ? toISO(now) : toISO(advReportDate);
   const monthKey  = today.slice(0, 7);
-  const advLabel  = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
+  const advLabel  = skipAdvisors
+    ? ''
+    : advReportDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
 
   // Load schedules for vacation/training/holiday detection
   const schedules = readJSON(SCHEDULES_FILE) || {};
@@ -144,7 +157,10 @@ function main() {
   let saved = 0;
 
   // ── Advisors ──────────────────────────────────────────────────────────────
-  for (const a of advisors) {
+  if (skipAdvisors) {
+    console.log('Skipping advisor snapshots — no advisor reporting on Sat/Sun.');
+  }
+  for (const a of skipAdvisors ? [] : advisors) {
     if (!a.name) continue;
     const username  = a.name.toUpperCase();
     const filePath  = path.join(REPORTS_DIR, `${username}.json`);
