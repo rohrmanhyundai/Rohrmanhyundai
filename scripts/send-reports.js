@@ -210,8 +210,11 @@ function main() {
       console.log(`    🏖 ${username}: +${bonusTotal}h bonus (vac:${breakdown.vacation} train:${breakdown.training} hol:${breakdown.holiday})`);
     }
 
-    // Replace same-week entry (keyed by weekStart), otherwise prepend
-    const updated = [entry, ...existing.filter(e => e.date !== techWeek.weekStart)];
+    // Replace any existing entry whose week overlaps with this one (handles date key shifts)
+    const updated = [entry, ...existing.filter(e => {
+      if (!e.weekStart || !e.weekEnd) return e.date !== techWeek.weekStart;
+      return e.weekEnd < techWeek.weekStart || e.weekStart > techWeek.weekEnd;
+    })];
     updated.sort((a, b) => new Date(b.date) - new Date(a.date));
     writeJSON(filePath, updated);
     console.log(`  ✓ Tech ${username}: saved ${techWeek.label}`);
