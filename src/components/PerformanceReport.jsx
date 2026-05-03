@@ -113,16 +113,23 @@ function AdvisorReport({ entries }) {
               📌 {monthLabel} — Latest ({fmtDate(latest?.date)})
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              <StatBox label="CSI · Goal 920"             value={latest?.csi || '—'}            color="#4ade80" />
-              <StatBox label="Hrs/RO · Goal 1.4"          value={num(latest?.hours_per_ro, 2)}  color="#6ee7f9" />
-              <StatBox label="Roh$50 Hrs/RO · Goal 1.2"   value={num(latest?.roh50_hrs_ro, 2)}  color="#6ee7f9" />
-              <StatBox label="MTD Hrs · Goal 300"         value={num(latest?.mtd_hours, 1)}     color="#6ee7f9" />
-              <StatBox label="Daily Avg"                  value={num(latest?.daily_avg, 2)}     color="#c4b5fd" />
-              <StatBox label="Alignment · Goal 10%"       value={pct(latest?.align)}            color="#fbbf24" />
-              <StatBox label="Tires · Goal 15%"           value={pct(latest?.tires)}            color="#fbbf24" />
-              <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color="#fbbf24" />
-              <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color="#fdba74" />
-              <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color="#fdba74" />
+              {(() => {
+                const RED = '#f87171';
+                const ok = (v, goal) => v !== null && v !== undefined && v !== '' && !isNaN(parseFloat(v)) && parseFloat(v) >= goal;
+                const c = (v, goal, base) => ok(v, goal) ? base : RED;
+                return <>
+                  <StatBox label="CSI · Goal 920"             value={latest?.csi || '—'}            color={c(latest?.csi, 920, '#4ade80')} />
+                  <StatBox label="Hrs/RO · Goal 1.4"          value={num(latest?.hours_per_ro, 2)}  color={c(latest?.hours_per_ro, 1.4, '#6ee7f9')} />
+                  <StatBox label="Roh$50 Hrs/RO · Goal 1.2"   value={num(latest?.roh50_hrs_ro, 2)}  color={c(latest?.roh50_hrs_ro, 1.2, '#6ee7f9')} />
+                  <StatBox label="MTD Hrs · Goal 300"         value={num(latest?.mtd_hours, 1)}     color={c(latest?.mtd_hours, 300, '#6ee7f9')} />
+                  <StatBox label="Daily Avg"                  value={num(latest?.daily_avg, 2)}     color="#c4b5fd" />
+                  <StatBox label="Alignment · Goal 10%"       value={pct(latest?.align)}            color={c(latest?.align, 0.10, '#fbbf24')} />
+                  <StatBox label="Tires · Goal 15%"           value={pct(latest?.tires)}            color={c(latest?.tires, 0.15, '#fbbf24')} />
+                  <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color={c(latest?.valvoline, 0.25, '#fbbf24')} />
+                  <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color={c(latest?.asr, 0.21, '#fdba74')} />
+                  <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color={c(latest?.elr, 0.88, '#fdba74')} />
+                </>;
+              })()}
             </div>
           </div>
 
