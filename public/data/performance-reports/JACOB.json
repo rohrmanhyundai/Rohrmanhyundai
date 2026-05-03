@@ -1,11 +1,11 @@
 [
   {
-    "date": "2026-05-03",
+    "date": "2026-05-02",
     "label": "Week of May 2 – May 8",
-    "weekStart": "2026-05-03",
-    "weekEnd": "2026-05-09",
+    "weekStart": "2026-05-02",
+    "weekEnd": "2026-05-08",
     "type": "tech",
-    "savedAt": "2026-05-03T02:23:59.300Z",
+    "savedAt": "2026-05-03T02:40:56.885Z",
     "total": 81.3,
     "goal": 47.5,
     "goal_pct": 1.711578947368421,
