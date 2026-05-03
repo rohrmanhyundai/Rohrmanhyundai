@@ -131,13 +131,13 @@ function AdvisorReport({ entries }) {
             Daily Breakdown — {monthEntries.length} snapshot{monthEntries.length !== 1 ? 's' : ''} this month
           </div>
           <div style={{ overflowX: 'auto' }}>
-            <table className="adv-table" style={{ minWidth: 1100 }}>
+            <table className="adv-table" style={{ minWidth: 1200, tableLayout: 'auto' }}>
               <thead>
                 <tr>
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
-                  <th style={{ minWidth: 130, whiteSpace: 'nowrap' }}>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
+                  <th style={{ minWidth: 110 }}>ROH$50<br />HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
                   <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>DAILY AVG</th>
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>ALIGNMENT<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 10%</span></th>
