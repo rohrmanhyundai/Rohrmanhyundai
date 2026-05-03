@@ -85,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onMyReports, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -166,6 +166,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (
             <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
               📊 Survey Reports
+            </button>
+          )}
+          {onMyReports && (
+            <button onClick={onMyReports} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.25),rgba(110,231,249,.18))', borderColor: 'rgba(61,214,195,.35)' }}>
+              📈 My Reports
             </button>
           )}
           {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
