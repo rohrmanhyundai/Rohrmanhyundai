@@ -372,8 +372,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           ...(breakdown.training > 0 ? { trainingHours: breakdown.training } : {}),
           ...(breakdown.holiday  > 0 ? { holidayHours:  breakdown.holiday  } : {}),
         };
-        // Replace existing entry for same weekKey, otherwise prepend
-        const updated = [entry, ...entries.filter(e => e.date !== techWeek.weekStart)];
+        // Replace any existing entry whose week overlaps with this one (handles key shifts from timezone fixes)
+        const updated = [entry, ...entries.filter(e => {
+          if (!e.weekStart || !e.weekEnd) return e.date !== techWeek.weekStart; // legacy fallback
+          return e.weekEnd < techWeek.weekStart || e.weekStart > techWeek.weekEnd; // keep non-overlapping weeks only
+        })];
         updated.sort((a, b) => new Date(b.date) - new Date(a.date));
         await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Tech weekly snapshot for ${username} – ${techWeek.label}`);
       }
