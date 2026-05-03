@@ -144,8 +144,9 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           return (
             <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', marginTop: msg.isFirst ? 10 : 2, width: '100%' }}>
               {msg.isFirst && (
-                <div style={{ fontSize: 10, color: '#475569', marginBottom: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
-                  {`${msg.username} · ${fmtTime(msg.timestamp)}`}
+                <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0, letterSpacing: 0.3 }}>
+                  <span style={{ color: '#e2e8f0', fontWeight: 800 }}>{msg.username}</span>
+                  {` · ${fmtTime(msg.timestamp)}`}
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row', maxWidth: '100%' }}>
