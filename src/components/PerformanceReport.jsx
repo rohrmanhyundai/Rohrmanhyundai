@@ -173,36 +173,102 @@ function AdvisorReport({ entries }) {
 // ─────────────────────────────────────────────────────────────
 // EFFICIENCY GAUGE SVG
 // ─────────────────────────────────────────────────────────────
-function EfficiencyGauge({ label, pct, sub }) {
-  const p    = Math.max(0, Math.min(1.2, isNaN(pct) ? 0 : pct));
-  const angle = Math.PI * (1 - p / 1.2);
-  const x    = 110 + 78 * Math.cos(angle);
-  const y    = 98  - 78 * Math.sin(angle);
-  const color = p >= 1 ? '#22c55e' : p >= 0.8 ? '#f59e0b' : '#ef4444';
-  const total = Math.PI * 78;
-  const prog  = total * (p / 1.2);
-  const pctLabel = isNaN(pct) ? '—' : (pct * 100).toFixed(1) + '%';
+function EfficiencyGauge({ label, pct, sub, accentA, accentB }) {
+  const noData   = isNaN(pct) || pct === null || pct === undefined;
+  const p        = Math.max(0, Math.min(1.2, noData ? 0 : pct));
+  const angle    = Math.PI * (1 - p / 1.2);
+  const nx       = 110 + 72 * Math.cos(angle);
+  const ny       = 100 - 72 * Math.sin(angle);
+  const needleColor = noData ? '#334155' : p >= 1 ? '#4ade80' : p >= 0.8 ? '#fbbf24' : '#f87171';
+  const glowColor   = noData ? 'transparent' : p >= 1 ? 'rgba(74,222,128,.35)' : p >= 0.8 ? 'rgba(251,191,36,.35)' : 'rgba(248,113,113,.35)';
+  const total    = Math.PI * 78;
+  const prog     = total * (p / 1.2);
+  const pctLabel = noData ? '—' : (pct * 100).toFixed(1) + '%';
+  const gid      = `gg-${label.replace(/\s+/g,'')}`;
+
+  // Tick marks at 0, 25, 50, 75, 100, 120%
+  const ticks = [0, 0.25, 0.5, 0.75, 1.0, 1.2].map(v => {
+    const a = Math.PI * (1 - v / 1.2);
+    const r1 = 85, r2 = 92;
+    return {
+      x1: 110 + r1 * Math.cos(a), y1: 100 - r1 * Math.sin(a),
+      x2: 110 + r2 * Math.cos(a), y2: 100 - r2 * Math.sin(a),
+      label: (v * 100) + '%',
+      lx: 110 + 104 * Math.cos(a), ly: 100 - 104 * Math.sin(a),
+    };
+  });
 
   return (
-    <div style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 16, padding: '18px 16px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{label}</div>
-      <svg viewBox="0 0 220 110" style={{ width: '100%', maxWidth: 200 }}>
+    <div style={{
+      flex: 1, minWidth: 200,
+      background: `linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8))`,
+      border: `1px solid ${accentA}33`,
+      borderRadius: 20,
+      padding: '20px 16px 16px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      boxShadow: `0 0 32px ${accentA}18, inset 0 1px 0 rgba(255,255,255,.06)`,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Background glow blob */}
+      <div style={{ position: 'absolute', top: -30, left: '50%', transform: 'translateX(-50%)', width: 160, height: 160, borderRadius: '50%', background: `radial-gradient(circle, ${accentA}18 0%, transparent 70%)`, pointerEvents: 'none' }} />
+
+      <div style={{ fontSize: 10, fontWeight: 800, color: accentA, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10, zIndex: 1 }}>{label}</div>
+
+      <svg viewBox="0 0 220 120" style={{ width: '100%', maxWidth: 220, zIndex: 1 }}>
         <defs>
-          <linearGradient id={`gg-${label}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#3dd6c3" />
-            <stop offset="100%" stopColor="#6ee7f9" />
+          <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={accentA} />
+            <stop offset="100%" stopColor={accentB} />
           </linearGradient>
+          <filter id={`glow-${gid}`}>
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id={`nglow-${gid}`}>
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
         </defs>
-        <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="14" strokeLinecap="round" />
-        <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke={`url(#gg-${label})`} strokeWidth="14" strokeLinecap="round" strokeDasharray={`${prog} ${total}`} />
-        <line x1="110" y1="98" x2={x} y2={y} stroke={color} strokeWidth="6" strokeLinecap="round" />
-        <circle cx="110" cy="98" r="8" fill={color} />
-        <text x="32"  y="112" fill="#475569" fontSize="10" textAnchor="middle">0%</text>
-        <text x="110" y="16"  fill="#475569" fontSize="10" textAnchor="middle">60%</text>
-        <text x="188" y="112" fill="#475569" fontSize="10" textAnchor="middle">120%</text>
+
+        {/* Track background */}
+        <path d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="16" strokeLinecap="round" />
+        {/* Inner shadow track */}
+        <path d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke="rgba(0,0,0,.4)" strokeWidth="18" strokeLinecap="round" />
+        <path d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke="rgba(255,255,255,.04)" strokeWidth="14" strokeLinecap="round" />
+
+        {/* Progress arc */}
+        {!noData && (
+          <>
+            <path d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke={`url(#${gid})`} strokeWidth="14" strokeLinecap="round"
+              strokeDasharray={`${prog} ${total}`} filter={`url(#glow-${gid})`} opacity="0.5" />
+            <path d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke={`url(#${gid})`} strokeWidth="10" strokeLinecap="round"
+              strokeDasharray={`${prog} ${total}`} />
+          </>
+        )}
+
+        {/* Tick marks */}
+        {ticks.map((t, i) => (
+          <g key={i}>
+            <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="rgba(255,255,255,.2)" strokeWidth={i === 4 ? 2 : 1} />
+            <text x={t.lx} y={t.ly + 3} fill="rgba(255,255,255,.25)" fontSize="8" textAnchor="middle">{t.label}</text>
+          </g>
+        ))}
+
+        {/* Needle glow */}
+        {!noData && <line x1="110" y1="100" x2={nx} y2={ny} stroke={glowColor} strokeWidth="12" strokeLinecap="round" />}
+        {/* Needle */}
+        <line x1="110" y1="100" x2={nx} y2={ny} stroke={needleColor} strokeWidth="4" strokeLinecap="round" filter={!noData ? `url(#nglow-${gid})` : undefined} />
+        {/* Hub */}
+        <circle cx="110" cy="100" r="10" fill="#0f172a" stroke={noData ? '#334155' : accentA} strokeWidth="2" />
+        <circle cx="110" cy="100" r="5" fill={needleColor} />
       </svg>
-      <div style={{ fontSize: 28, fontWeight: 900, color, marginTop: 4 }}>{pctLabel}</div>
-      <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{sub}</div>
+
+      {/* Big number */}
+      <div style={{ fontSize: 32, fontWeight: 900, color: noData ? '#334155' : needleColor, marginTop: -4, lineHeight: 1,
+        textShadow: noData ? 'none' : `0 0 20px ${glowColor}` }}>
+        {pctLabel}
+      </div>
+      <div style={{ fontSize: 11, color: '#475569', marginTop: 6, textAlign: 'center', lineHeight: 1.4 }}>{sub}</div>
     </div>
   );
 }
@@ -249,16 +315,22 @@ function TechReport({ entries }) {
           label="Current Week"
           pct={weekPct}
           sub={latest ? (latest.label || fmtDate(latest.date)) : 'No data'}
+          accentA="#3dd6c3"
+          accentB="#6ee7f9"
         />
         <EfficiencyGauge
           label="This Month"
           pct={monthPct}
           sub={monthEntries.length ? `${monthEntries.length} week${monthEntries.length !== 1 ? 's' : ''} averaged` : 'No data this month'}
+          accentA="#a78bfa"
+          accentB="#c4b5fd"
         />
         <EfficiencyGauge
           label="Last 3 Months"
           pct={threeMonthPct}
           sub={threeMonthEntries.length ? `${threeMonthEntries.length} week${threeMonthEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
+          accentA="#f97316"
+          accentB="#fbbf24"
         />
       </div>
 
