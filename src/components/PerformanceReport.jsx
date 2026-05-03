@@ -68,10 +68,13 @@ function AdvisorReport({ entries }) {
   // Default to the current calendar month if we have data for it; otherwise the latest month available.
   const defaultMonth = monthKeys.includes(currentMonthKey) ? currentMonthKey : (monthKeys[0] || '');
   const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
+  const [showAllDays, setShowAllDays] = useState(false);
 
   useEffect(() => {
     if (monthKeys.length && !monthKeys.includes(selectedMonth)) setSelectedMonth(defaultMonth);
   }, [monthKeys.join(',')]);
+
+  useEffect(() => { setShowAllDays(false); }, [selectedMonth]);
 
   const monthEntries = entries
     .filter(e => (e.month || e.date?.slice(0, 7)) === selectedMonth)
@@ -134,8 +137,20 @@ function AdvisorReport({ entries }) {
           </div>
 
           {/* Daily breakdown table */}
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
-            Daily Breakdown — {monthEntries.length} snapshot{monthEntries.length !== 1 ? 's' : ''} this month
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap', gap: 10 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1 }}>
+              Daily Breakdown — {monthEntries.length} snapshot{monthEntries.length !== 1 ? 's' : ''} this month
+            </div>
+            {monthEntries.length > 1 && (
+              <button onClick={() => setShowAllDays(s => !s)} style={{
+                background: showAllDays ? 'rgba(61,214,195,.18)' : 'rgba(61,214,195,.08)',
+                border: '1px solid rgba(61,214,195,.35)',
+                color: '#3dd6c3', borderRadius: 8, padding: '6px 14px',
+                fontWeight: 800, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: .5,
+              }}>
+                {showAllDays ? '▲ Show Latest Only' : `▼ Show All ${monthEntries.length} Days`}
+              </button>
+            )}
           </div>
           <div style={{ overflowX: 'auto' }}>
             <table className="adv-table" style={{ minWidth: 1200, tableLayout: 'auto' }}>
@@ -155,7 +170,7 @@ function AdvisorReport({ entries }) {
                 </tr>
               </thead>
               <tbody>
-                {monthEntries.map((e, i) => {
+                {(showAllDays ? monthEntries : monthEntries.slice(0, 1)).map((e, i) => {
                   const prev = monthEntries[i + 1];
                   return (
                     <tr key={i} style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
