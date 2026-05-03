@@ -25,6 +25,7 @@ function weekOfYear(iso) {
 const ADVISOR_FIELDS = [
   { key: 'csi',             label: 'CSI',      type: 'number', decimals: 0 },
   { key: 'hours_per_ro',    label: 'Hrs/RO',   type: 'number', decimals: 2 },
+  { key: 'roh50_hrs_ro',    label: 'Roh$50 Hrs/RO', type: 'number', decimals: 2 },
   { key: 'mtd_hours',       label: 'MTD Hrs',  type: 'number', decimals: 1 },
   { key: 'daily_avg',       label: 'Daily Avg',type: 'number', decimals: 2 },
   { key: 'align',           label: 'Align',    type: 'pct',    decimals: 3 },

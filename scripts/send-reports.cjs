@@ -175,6 +175,7 @@ function main() {
       autoSaved:        true,
       csi:              a.csi,
       hours_per_ro:     a.hours_per_ro,
+      roh50_hrs_ro:     a.roh50_hrs_ro,
       mtd_hours:        a.mtd_hours,
       daily_avg:        a.daily_avg,
       align:            a.align,
