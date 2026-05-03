@@ -316,38 +316,47 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
         const entries  = Array.isArray(existing) ? existing : [];
 
-        // Calculate vacation bonus hours for this tech this week
-        const techSched = (schedules || {})[username] || {};
-        const vacBonus  = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
+        // Calculate bonus hours (vacation + training + holiday) for this tech this week
+        const BONUS_TYPES = new Set(['vacation', 'training', 'holiday']);
+        const techSched   = (schedules || {})[username] || {};
+        const globalHols  = (schedules || {})['__HOLIDAY__'] || {};
+        const bonus       = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
+        const breakdown   = { vacation: 0, training: 0, holiday: 0 };
         const wStart = new Date(techWeek.weekStart + 'T00:00:00');
         const wEnd   = new Date(techWeek.weekEnd   + 'T00:00:00');
         for (let d = new Date(wStart); d <= wEnd; d.setDate(d.getDate() + 1)) {
           const iso = d.toISOString().split('T')[0];
-          if (techSched[iso] === 'vacation') {
-            const dow = d.getDay();
-            if (dow === 6) vacBonus.sat += 8;
-            else if (dow === 1) vacBonus.mon += 8;
-            else if (dow === 2) vacBonus.tue += 8;
-            else if (dow === 3) vacBonus.wed += 8;
-            else if (dow === 4) vacBonus.thu += 8;
-            else if (dow === 5) vacBonus.fri += 8;
-          }
+          const val = globalHols[iso] === 'holiday' ? 'holiday' : techSched[iso];
+          if (!BONUS_TYPES.has(val)) continue;
+          const dow = d.getDay();
+          let dk = null;
+          if      (dow === 6) dk = 'sat';
+          else if (dow === 1) dk = 'mon';
+          else if (dow === 2) dk = 'tue';
+          else if (dow === 3) dk = 'wed';
+          else if (dow === 4) dk = 'thu';
+          else if (dow === 5) dk = 'fri';
+          if (!dk) continue;
+          bonus[dk]      += 8;
+          breakdown[val] += 8;
         }
-        const vacTotal = vacBonus.mon + vacBonus.tue + vacBonus.wed + vacBonus.thu + vacBonus.fri + vacBonus.sat;
+        const bonusTotal = bonus.mon + bonus.tue + bonus.wed + bonus.thu + bonus.fri + bonus.sat;
 
         const entry = {
           date: techWeek.weekStart, label: techWeek.label,
           weekStart: techWeek.weekStart, weekEnd: techWeek.weekEnd,
           type: 'tech', savedAt: new Date().toISOString(),
-          total:   (parseFloat(t.total) || 0) + vacTotal,
+          total:   (parseFloat(t.total) || 0) + bonusTotal,
           goal:    t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
-          mon:     (parseFloat(t.mon) || 0) + vacBonus.mon,
-          tue:     (parseFloat(t.tue) || 0) + vacBonus.tue,
-          wed:     (parseFloat(t.wed) || 0) + vacBonus.wed,
-          thu:     (parseFloat(t.thu) || 0) + vacBonus.thu,
-          fri:     (parseFloat(t.fri) || 0) + vacBonus.fri,
-          sat:     (parseFloat(t.sat) || 0) + vacBonus.sat,
-          ...(vacTotal > 0 ? { vacationHours: vacTotal } : {}),
+          mon:     (parseFloat(t.mon) || 0) + bonus.mon,
+          tue:     (parseFloat(t.tue) || 0) + bonus.tue,
+          wed:     (parseFloat(t.wed) || 0) + bonus.wed,
+          thu:     (parseFloat(t.thu) || 0) + bonus.thu,
+          fri:     (parseFloat(t.fri) || 0) + bonus.fri,
+          sat:     (parseFloat(t.sat) || 0) + bonus.sat,
+          ...(breakdown.vacation > 0 ? { vacationHours: breakdown.vacation } : {}),
+          ...(breakdown.training > 0 ? { trainingHours: breakdown.training } : {}),
+          ...(breakdown.holiday  > 0 ? { holidayHours:  breakdown.holiday  } : {}),
         };
         // Replace existing entry for same weekKey, otherwise prepend
         const updated = [entry, ...entries.filter(e => e.date !== techWeek.weekStart)];

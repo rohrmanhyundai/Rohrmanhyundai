@@ -241,6 +241,8 @@ function TechReport({ entries }) {
                       {e.label || fmtDate(e.date)}
                       {i === 0 && <span style={{ marginLeft: 6, fontSize: 10, color: '#3dd6c3', fontWeight: 800 }}>LATEST</span>}
                       {e.vacationHours > 0 && <span title={`Includes ${e.vacationHours}h vacation`} style={{ marginLeft: 6, fontSize: 10, color: '#60a5fa', fontWeight: 800 }}>🏖 +{e.vacationHours}h</span>}
+                      {e.trainingHours > 0 && <span title={`Includes ${e.trainingHours}h training`} style={{ marginLeft: 6, fontSize: 10, color: '#a78bfa', fontWeight: 800 }}>📚 +{e.trainingHours}h</span>}
+                      {e.holidayHours  > 0 && <span title={`Includes ${e.holidayHours}h holiday`}  style={{ marginLeft: 6, fontSize: 10, color: '#fbbf24', fontWeight: 800 }}>🎉 +{e.holidayHours}h</span>}
                     </td>
                     <td style={{ fontWeight: 700, color: '#4ade80' }}>
                       {num(e.total, 1)}<TrendIcon curr={e.total} prev={prev?.total} />
