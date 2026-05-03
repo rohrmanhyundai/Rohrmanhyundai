@@ -82,18 +82,27 @@ const NAV_BUTTONS = [
     color: '#f9a8d4',
     prop: 'onEmployeeReview',
   },
+  {
+    key: 'performanceReports',
+    label: '📊 Performance Reports',
+    desc: 'View and manage employee performance history',
+    bg: 'linear-gradient(135deg,rgba(20,184,166,.28),rgba(6,182,212,.18))',
+    border: 'rgba(20,184,166,.45)',
+    color: '#5eead4',
+    prop: 'onPerformanceReports',
+  },
 ];
 
 export default function ManagerHub({
   currentUser, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
-  onChargeAccountList, onEmployeeReview,
+  onChargeAccountList, onEmployeeReview, onPerformanceReports,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
-    onChargeAccountList, onEmployeeReview,
+    onChargeAccountList, onEmployeeReview, onPerformanceReports,
   };
 
   return (
