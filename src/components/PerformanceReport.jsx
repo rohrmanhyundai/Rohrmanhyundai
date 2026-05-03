@@ -128,7 +128,7 @@ function AdvisorReport({ entries }) {
             <table className="adv-table" style={{ minWidth: 860 }}>
               <thead>
                 <tr>
-                  <th>DATE</th>
+                  <th style={{ minWidth: 180, whiteSpace: 'nowrap' }}>DATE</th>
                   <th>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
                   <th>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
                   <th>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
