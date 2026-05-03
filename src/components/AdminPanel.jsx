@@ -304,8 +304,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
           last_month_total: a.last_month_total,
         };
-        // Replace existing entry for same date, otherwise prepend
-        const updated = [entry, ...entries.filter(e => e.date !== today)];
+        // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
+        const updated = [entry, ...entries.filter(e => e.date !== today && e.label !== advLabel)];
         updated.sort((a, b) => new Date(b.date) - new Date(a.date));
         await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Advisor daily snapshot for ${username} on ${today}`);
       }
