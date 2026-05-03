@@ -166,6 +166,15 @@ function main() {
     const filePath  = path.join(REPORTS_DIR, `${username}.json`);
     const existing  = readJSON(filePath) || [];
 
+    // If a snapshot for this report-date already exists (e.g. the user pushed
+    // the numbers manually in the morning), leave it alone — auto-run is just
+    // a safety net for forgotten days.
+    const alreadySaved = existing.some(e => e.date === today);
+    if (alreadySaved) {
+      console.log(`  • Advisor ${username}: snapshot for ${today} already exists — skipping auto-save.`);
+      continue;
+    }
+
     const entry = {
       date:             today,
       label:            advLabel,
