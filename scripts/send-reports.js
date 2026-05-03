@@ -76,15 +76,33 @@ function main() {
   const schedules = readJSON(SCHEDULES_FILE) || {};
   const holidays  = schedules['__HOLIDAY__'] || {}; // { "2026-05-25": "holiday", ... }
 
+  // Build a set of vacation dates per tech from data.json vacations list (fallback source)
+  // so that vacations entered in the Approved Vacation panel but not yet synced still count
+  const vacationDatesByTech = {}; // { "GAVEN": Set(["2026-05-04", ...]), ... }
+  for (const v of (raw.data.vacations || raw.vacations || [])) {
+    if (!v.name || !v.dateStart || !v.dateEnd) continue;
+    const name = v.name.toUpperCase();
+    if (!vacationDatesByTech[name]) vacationDatesByTech[name] = new Set();
+    const s = new Date(v.dateStart + 'T00:00:00');
+    const e = new Date(v.dateEnd   + 'T00:00:00');
+    for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      vacationDatesByTech[name].add(toISO(d));
+    }
+  }
+
   // Values in schedules.json that count as 8h for reporting
   const BONUS_TYPES = new Set(['vacation', 'training', 'holiday']);
 
   /**
    * Returns { bonus: { mon,tue,wed,thu,fri,sat }, breakdown: { vacation, training, holiday } }
-   * for a tech over a given week. Checks tech's own schedule + global holidays.
+   * for a tech over a given week. Checks:
+   *   1. Global __HOLIDAY__ dates
+   *   2. Tech's schedules.json entries ("vacation" / "training")
+   *   3. data.json vacations list (fallback — catches vacations not yet synced to calendar)
    */
   function getBonusHours(techName, weekStart, weekEnd) {
-    const techSchedule = schedules[techName.toUpperCase()] || schedules[techName] || {};
+    const techSchedule  = schedules[techName.toUpperCase()] || schedules[techName] || {};
+    const techVacDates  = vacationDatesByTech[techName.toUpperCase()] || new Set();
     const bonus     = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
     const breakdown = { vacation: 0, training: 0, holiday: 0 };
 
@@ -93,9 +111,12 @@ function main() {
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const iso = toISO(d);
-      // Holiday takes priority; then tech's own schedule
-      const val = holidays[iso] === 'holiday' ? 'holiday' : techSchedule[iso];
-      if (!BONUS_TYPES.has(val)) continue;
+      // Priority: global holiday → schedule entry → data.json vacation list
+      let val = null;
+      if (holidays[iso] === 'holiday')      val = 'holiday';
+      else if (BONUS_TYPES.has(techSchedule[iso])) val = techSchedule[iso];
+      else if (techVacDates.has(iso))       val = 'vacation';
+      if (!val) continue;
 
       const dow = d.getDay();
       let dayKey = null;
