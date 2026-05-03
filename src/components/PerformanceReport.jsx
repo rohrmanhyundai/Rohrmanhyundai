@@ -171,6 +171,43 @@ function AdvisorReport({ entries }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// EFFICIENCY GAUGE SVG
+// ─────────────────────────────────────────────────────────────
+function EfficiencyGauge({ label, pct, sub }) {
+  const p    = Math.max(0, Math.min(1.2, isNaN(pct) ? 0 : pct));
+  const angle = Math.PI * (1 - p / 1.2);
+  const x    = 110 + 78 * Math.cos(angle);
+  const y    = 98  - 78 * Math.sin(angle);
+  const color = p >= 1 ? '#22c55e' : p >= 0.8 ? '#f59e0b' : '#ef4444';
+  const total = Math.PI * 78;
+  const prog  = total * (p / 1.2);
+  const pctLabel = isNaN(pct) ? '—' : (pct * 100).toFixed(1) + '%';
+
+  return (
+    <div style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 16, padding: '18px 16px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{label}</div>
+      <svg viewBox="0 0 220 110" style={{ width: '100%', maxWidth: 200 }}>
+        <defs>
+          <linearGradient id={`gg-${label}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#3dd6c3" />
+            <stop offset="100%" stopColor="#6ee7f9" />
+          </linearGradient>
+        </defs>
+        <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="14" strokeLinecap="round" />
+        <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke={`url(#gg-${label})`} strokeWidth="14" strokeLinecap="round" strokeDasharray={`${prog} ${total}`} />
+        <line x1="110" y1="98" x2={x} y2={y} stroke={color} strokeWidth="6" strokeLinecap="round" />
+        <circle cx="110" cy="98" r="8" fill={color} />
+        <text x="32"  y="112" fill="#475569" fontSize="10" textAnchor="middle">0%</text>
+        <text x="110" y="16"  fill="#475569" fontSize="10" textAnchor="middle">60%</text>
+        <text x="188" y="112" fill="#475569" fontSize="10" textAnchor="middle">120%</text>
+      </svg>
+      <div style={{ fontSize: 28, fontWeight: 900, color, marginTop: 4 }}>{pctLabel}</div>
+      <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{sub}</div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
 // TECH VIEW — weekly snapshots (Sat–Fri)
 // ─────────────────────────────────────────────────────────────
 function TechReport({ entries }) {
@@ -184,8 +221,47 @@ function TechReport({ entries }) {
 
   const latest = filtered[0];
 
+  // ── Efficiency gauge calculations ──────────────────────────
+  const allSorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  // Current week: latest entry
+  const weekPct = latest ? parseFloat(latest.goal_pct) : NaN;
+
+  // Current month: average goal_pct of entries whose weekStart falls in the current month
+  const now = new Date();
+  const curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const monthEntries = allSorted.filter(e => (e.weekStart || e.date || '').startsWith(curMonthKey));
+  const monthPct = monthEntries.length
+    ? monthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / monthEntries.length
+    : NaN;
+
+  // 3-month rolling: entries from the last 13 weeks (~3 months)
+  const threeMonthEntries = allSorted.slice(0, 13);
+  const threeMonthPct = threeMonthEntries.length
+    ? threeMonthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / threeMonthEntries.length
+    : NaN;
+
   return (
     <div>
+      {/* Efficiency Gauges */}
+      <div style={{ display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+        <EfficiencyGauge
+          label="Current Week"
+          pct={weekPct}
+          sub={latest ? (latest.label || fmtDate(latest.date)) : 'No data'}
+        />
+        <EfficiencyGauge
+          label="This Month"
+          pct={monthPct}
+          sub={monthEntries.length ? `${monthEntries.length} week${monthEntries.length !== 1 ? 's' : ''} averaged` : 'No data this month'}
+        />
+        <EfficiencyGauge
+          label="Last 3 Months"
+          pct={threeMonthPct}
+          sub={threeMonthEntries.length ? `${threeMonthEntries.length} week${threeMonthEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
+        />
+      </div>
+
       {/* Year selector */}
       {years.length > 1 && (
         <div style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
