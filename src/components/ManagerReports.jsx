@@ -315,9 +315,8 @@ export default function ManagerReports({ users, onBack }) {
                     // Build per-row header row for tech entries (shows day + date in th)
                     const headerRow = idx === 0 ? (
                       <tr>
-                        <th style={{ minWidth: 180, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
-                        {isAdvisor && <th style={{ minWidth: 120, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>}
-                        {!isAdvisor && <th style={{ minWidth: 90, whiteSpace: 'nowrap', padding: '10px 10px', textAlign: 'center' }}>WEEK</th>}
+                        <th style={{ width: 210, minWidth: 210, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
+                        <th style={{ minWidth: 90, whiteSpace: 'nowrap', padding: '10px 10px', textAlign: 'center' }}>WEEK</th>
                         {fields.map(f => (
                           <th key={f.key} style={{ minWidth: f.isDay ? 90 : 90, padding: '10px 10px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                             {f.label}
@@ -331,7 +330,7 @@ export default function ManagerReports({ users, onBack }) {
                     ) : (
                       // Subsequent rows: re-render header with that row's dates
                       <tr>
-                        <th colSpan={2} style={{ padding: '6px 14px', background: '#0a1628', borderTop: '1px solid rgba(255,255,255,.06)' }} />
+                        <th colSpan={isAdvisor ? 2 : 2} style={{ padding: '6px 14px', background: '#0a1628', borderTop: '1px solid rgba(255,255,255,.06)' }} />
                         {fields.map(f => (
                           <th key={f.key} style={{ padding: '6px 10px', textAlign: 'center', whiteSpace: 'nowrap', background: '#0a1628', borderTop: '1px solid rgba(255,255,255,.06)', fontWeight: 400, color: '#475569', fontSize: 11 }}>
                             {f.isDay && e.weekStart ? dayDate(f.offset) : ''}
@@ -345,14 +344,15 @@ export default function ManagerReports({ users, onBack }) {
                       <React.Fragment key={idx}>
                         {headerRow}
                         <tr style={{ background: idx % 2 === 0 ? '' : 'rgba(255,255,255,.01)' }}>
-                          <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', minWidth: 180 }}>
+                          <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', width: 210, minWidth: 210 }}>
                             {e.weekStart && e.weekEnd
                               ? <>{fmtShort(e.weekStart)} – {fmtShort(e.weekEnd)}</>
                               : fmtDate(e.date)}
                             {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
                           </td>
-                          {isAdvisor && <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>}
-                          {!isAdvisor && <td style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>Wk {weekOfYear(e.weekStart)}</td>}
+                          <td style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>
+                            Wk {weekOfYear(isAdvisor ? e.date : e.weekStart)}
+                          </td>
                           {fields.map(f => (
                             <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>
                               {displayVal(e[f.key], f)}
