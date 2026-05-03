@@ -25,7 +25,11 @@ function writeJSON(filePath, data) {
 }
 
 function toISO(d) {
-  return d.toISOString().split('T')[0];
+  // Use local date components (not UTC) so 11pm ET doesn't roll into the next UTC day
+  const y  = d.getFullYear();
+  const m  = String(d.getMonth() + 1).padStart(2, '0');
+  const dy = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dy}`;
 }
 
 function fmtLabel(d) {

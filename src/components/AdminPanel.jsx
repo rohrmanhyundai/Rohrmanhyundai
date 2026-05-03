@@ -271,7 +271,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
     }
     const fmt = d => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    const isoDate = d => d.toISOString().split('T')[0];
+    const isoDate = d => { const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dy}`; };
     return {
       label:     `Week of ${fmt(weekStart)} – ${fmt(weekEnd)}`,
       weekKey:   isoDate(weekStart), // use Sat date as unique key for the week
@@ -283,7 +283,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   async function sendToReports() {
     setSendingReports(true);
     setReportStatus('⏳ Sending snapshots…');
-    const today    = new Date().toISOString().split('T')[0];
+    const _n = new Date(); const today = `${_n.getFullYear()}-${String(_n.getMonth()+1).padStart(2,'0')}-${String(_n.getDate()).padStart(2,'0')}`;
     const techWeek = getTechWeekRange();
     // Advisor label: "May 2026 · May 6"
     const now = new Date();
@@ -328,7 +328,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           const vs = new Date(v.dateStart + 'T00:00:00');
           const ve = new Date(v.dateEnd   + 'T00:00:00');
           for (let dv = new Date(vs); dv <= ve; dv.setDate(dv.getDate() + 1)) {
-            techVacDates.add(dv.toISOString().split('T')[0]);
+            techVacDates.add(`${dv.getFullYear()}-${String(dv.getMonth()+1).padStart(2,'0')}-${String(dv.getDate()).padStart(2,'0')}`);
           }
         }
         const bonus       = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
@@ -336,7 +336,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const wStart = new Date(techWeek.weekStart + 'T00:00:00');
         const wEnd   = new Date(techWeek.weekEnd   + 'T00:00:00');
         for (let d = new Date(wStart); d <= wEnd; d.setDate(d.getDate() + 1)) {
-          const iso = d.toISOString().split('T')[0];
+          const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
           let val = null;
           if (globalHols[iso] === 'holiday')         val = 'holiday';
           else if (BONUS_TYPES.has(techSched[iso]))   val = techSched[iso];
