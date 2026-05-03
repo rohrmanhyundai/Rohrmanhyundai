@@ -3,7 +3,8 @@ import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubTok
 
 function fmtDate(iso) {
   if (!iso) return '—';
-  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  const [y, m, d] = iso.split('-');
+  return new Date(+y, +m - 1, +d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 const ADVISOR_FIELDS = [
@@ -288,7 +289,7 @@ export default function ManagerReports({ users, onBack }) {
               <table className="adv-table" style={{ fontSize: 12, borderCollapse: 'separate', borderSpacing: 0, minWidth: '100%' }}>
                 <thead>
                   <tr>
-                    <th style={{ minWidth: 100, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
+                    <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
                     <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>
                     {fields.map(f => (
                       <th key={f.key} style={{ whiteSpace: 'nowrap', minWidth: 72, padding: '10px 10px', textAlign: 'center' }}>
@@ -301,7 +302,7 @@ export default function ManagerReports({ users, onBack }) {
                 <tbody>
                   {entries.map((e, idx) => (
                     <tr key={idx}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a' }}>
+                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', minWidth: 130 }}>
                         {fmtDate(e.date)}
                         {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
                       </td>
