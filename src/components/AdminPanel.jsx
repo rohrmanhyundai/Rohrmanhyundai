@@ -315,12 +315,39 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const username = t.name.toUpperCase();
         const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
         const entries  = Array.isArray(existing) ? existing : [];
+
+        // Calculate vacation bonus hours for this tech this week
+        const techSched = (schedules || {})[username] || {};
+        const vacBonus  = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
+        const wStart = new Date(techWeek.weekStart + 'T00:00:00');
+        const wEnd   = new Date(techWeek.weekEnd   + 'T00:00:00');
+        for (let d = new Date(wStart); d <= wEnd; d.setDate(d.getDate() + 1)) {
+          const iso = d.toISOString().split('T')[0];
+          if (techSched[iso] === 'vacation') {
+            const dow = d.getDay();
+            if (dow === 6) vacBonus.sat += 8;
+            else if (dow === 1) vacBonus.mon += 8;
+            else if (dow === 2) vacBonus.tue += 8;
+            else if (dow === 3) vacBonus.wed += 8;
+            else if (dow === 4) vacBonus.thu += 8;
+            else if (dow === 5) vacBonus.fri += 8;
+          }
+        }
+        const vacTotal = vacBonus.mon + vacBonus.tue + vacBonus.wed + vacBonus.thu + vacBonus.fri + vacBonus.sat;
+
         const entry = {
           date: techWeek.weekStart, label: techWeek.label,
           weekStart: techWeek.weekStart, weekEnd: techWeek.weekEnd,
           type: 'tech', savedAt: new Date().toISOString(),
-          total: t.total, goal: t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
-          mon: t.mon, tue: t.tue, wed: t.wed, thu: t.thu, fri: t.fri, sat: t.sat,
+          total:   (parseFloat(t.total) || 0) + vacTotal,
+          goal:    t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
+          mon:     (parseFloat(t.mon) || 0) + vacBonus.mon,
+          tue:     (parseFloat(t.tue) || 0) + vacBonus.tue,
+          wed:     (parseFloat(t.wed) || 0) + vacBonus.wed,
+          thu:     (parseFloat(t.thu) || 0) + vacBonus.thu,
+          fri:     (parseFloat(t.fri) || 0) + vacBonus.fri,
+          sat:     (parseFloat(t.sat) || 0) + vacBonus.sat,
+          ...(vacTotal > 0 ? { vacationHours: vacTotal } : {}),
         };
         // Replace existing entry for same weekKey, otherwise prepend
         const updated = [entry, ...entries.filter(e => e.date !== techWeek.weekStart)];
