@@ -14,7 +14,8 @@
     "valvoline": 0.2552,
     "asr": 0.1909,
     "elr": 0.92,
-    "last_month_total": 326.2
+    "last_month_total": 326.2,
+    "roh50_hrs_ro": 1.23
   },
   {
     "date": "2026-05-02",
@@ -31,6 +32,7 @@
     "valvoline": 0.2552,
     "asr": 0.1909,
     "elr": 0.92,
-    "last_month_total": 326.2
+    "last_month_total": 326.2,
+    "roh50_hrs_ro": 1.23
   }
 ]
