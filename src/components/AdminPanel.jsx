@@ -254,44 +254,83 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [sendingReports, setSendingReports] = useState(false);
   const [reportStatus,   setReportStatus]   = useState('');
 
+  // Week runs Sat–Fri. Numbers are entered a day behind:
+  // Monday click → finalizing PREVIOUS week (Sat–Fri that just ended)
+  // Tue–Sun click → current week in progress
+  function getTechWeekRange(now = new Date()) {
+    const dow = now.getDay(); // 0=Sun,1=Mon,...,6=Sat
+    let weekStart, weekEnd;
+    if (dow === 1) {
+      // Monday → previous week: weekEnd = last Fri (3 days ago), weekStart = last Sat (9 days ago)
+      weekEnd   = new Date(now); weekEnd.setDate(now.getDate() - 3);
+      weekStart = new Date(now); weekStart.setDate(now.getDate() - 9);
+    } else {
+      // Tue–Sun → current week: find most recent Sat
+      const daysSinceSat = (dow - 6 + 7) % 7;
+      weekStart = new Date(now); weekStart.setDate(now.getDate() - daysSinceSat);
+      weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+    }
+    const fmt = d => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const isoDate = d => d.toISOString().split('T')[0];
+    return {
+      label:     `Week of ${fmt(weekStart)} – ${fmt(weekEnd)}`,
+      weekKey:   isoDate(weekStart), // use Sat date as unique key for the week
+      weekStart: isoDate(weekStart),
+      weekEnd:   isoDate(weekEnd),
+    };
+  }
+
   async function sendToReports() {
     setSendingReports(true);
     setReportStatus('⏳ Sending snapshots…');
-    const today = new Date().toISOString().split('T')[0];
-    const label = `Week of ${new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    const today    = new Date().toISOString().split('T')[0];
+    const techWeek = getTechWeekRange();
+    // Advisor label: "May 2026 · May 6"
+    const now = new Date();
+    const advMonthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const advLabel    = now.toLocaleDateString(undefined, { month: 'long', year: 'numeric', day: 'numeric' });
+
     try {
-      // Advisors
+      // ── Advisors: daily snapshot per day, grouped by month ──────────────────
       for (const a of (data.advisors || [])) {
         const username = a.name.toUpperCase();
         const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
         const entries  = Array.isArray(existing) ? existing : [];
         const entry = {
-          date: today, label, savedAt: new Date().toISOString(),
+          date: today, label: advLabel, month: advMonthKey,
+          type: 'advisor', savedAt: new Date().toISOString(),
           csi: a.csi, hours_per_ro: a.hours_per_ro, mtd_hours: a.mtd_hours,
           daily_avg: a.daily_avg, align: a.align, tires: a.tires,
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
           last_month_total: a.last_month_total,
         };
+        // Replace existing entry for same date, otherwise prepend
         const updated = [entry, ...entries.filter(e => e.date !== today)];
         updated.sort((a, b) => new Date(b.date) - new Date(a.date));
-        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Performance snapshot for ${username} on ${today}`);
+        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Advisor daily snapshot for ${username} on ${today}`);
       }
-      // Technicians
+
+      // ── Technicians: one entry per week (keyed by week start date) ──────────
       for (const t of (data.technicians || [])) {
         const username = t.name.toUpperCase();
         const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
         const entries  = Array.isArray(existing) ? existing : [];
         const entry = {
-          date: today, label, savedAt: new Date().toISOString(),
+          date: techWeek.weekStart, label: techWeek.label,
+          weekStart: techWeek.weekStart, weekEnd: techWeek.weekEnd,
+          type: 'tech', savedAt: new Date().toISOString(),
           total: t.total, goal: t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
           mon: t.mon, tue: t.tue, wed: t.wed, thu: t.thu, fri: t.fri, sat: t.sat,
         };
-        const updated = [entry, ...entries.filter(e => e.date !== today)];
+        // Replace existing entry for same weekKey, otherwise prepend
+        const updated = [entry, ...entries.filter(e => e.date !== techWeek.weekStart)];
         updated.sort((a, b) => new Date(b.date) - new Date(a.date));
-        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Performance snapshot for ${username} on ${today}`);
+        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Tech weekly snapshot for ${username} – ${techWeek.label}`);
       }
-      setReportStatus(`✅ Snapshots sent for ${(data.advisors || []).length + (data.technicians || []).length} employees!`);
-      setTimeout(() => setReportStatus(''), 5000);
+
+      const total = (data.advisors || []).length + (data.technicians || []).length;
+      setReportStatus(`✅ Sent! ${(data.advisors||[]).length} advisors (${advLabel}) · ${(data.technicians||[]).length} techs (${techWeek.label})`);
+      setTimeout(() => setReportStatus(''), 7000);
     } catch (e) {
       setReportStatus(`❌ ${e.message}`);
     } finally {
@@ -847,7 +886,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             {activeCard && <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>{activeCard.desc}</div>}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          {reportStatus && (
+            <span style={{ fontSize: 12, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24', maxWidth: 420, textAlign: 'right' }}>
+              {reportStatus}
+            </span>
+          )}
+          <button
+            onClick={sendToReports}
+            disabled={sendingReports}
+            title={`Techs: ${getTechWeekRange().label} · Advisors: today's daily snapshot`}
+            style={{ background: 'rgba(61,214,195,.18)', border: '1px solid rgba(61,214,195,.4)', color: '#3dd6c3', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, whiteSpace: 'nowrap' }}>
+            {sendingReports ? '⏳ Sending…' : '📊 Send to Reports'}
+          </button>
           <button onClick={handleSave} disabled={saving} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.4)', color: '#60a5fa', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
             {saving ? 'Saving...' : 'Save Changes'}
           </button>

@@ -140,6 +140,13 @@ export default function ManagerReports({ users, onBack }) {
     try {
       // Build cleaned entry
       const entry = { date: form.date, label: form.label || '' };
+      // For advisors, tag the month so the report can group by month
+      if (isAdvisor && form.date) {
+        entry.month = form.date.slice(0, 7);
+        entry.type  = 'advisor';
+      } else {
+        entry.type = 'tech';
+      }
       fields.forEach(f => {
         entry[f.key] = inputToStored(form[f.key], f);
       });
