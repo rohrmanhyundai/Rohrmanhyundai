@@ -26,7 +26,7 @@ function weekOfYear(iso) {
 const ADVISOR_FIELDS = [
   { key: 'csi',             label: 'CSI',      type: 'number', decimals: 0 },
   { key: 'hours_per_ro',    label: 'Hrs/RO',   type: 'number', decimals: 2 },
-  { key: 'roh50_hrs_ro',    label: 'Roh$50 Hrs/RO', type: 'number', decimals: 2 },
+  { key: 'roh50_hrs_ro',    label: 'Roh$50/RO',type: 'number', decimals: 2 },
   { key: 'mtd_hours',       label: 'MTD Hrs',  type: 'number', decimals: 1 },
   { key: 'daily_avg',       label: 'Daily Avg',type: 'number', decimals: 2 },
   { key: 'align',           label: 'Align',    type: 'pct',    decimals: 3 },
@@ -349,7 +349,7 @@ export default function ManagerReports({ users, onBack }) {
                         <th style={{ width: 210, minWidth: 210, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
                         <th style={{ minWidth: 90, whiteSpace: 'nowrap', padding: '10px 10px', textAlign: 'center' }}>WEEK</th>
                         {fields.map(f => (
-                          <th key={f.key} style={{ minWidth: f.isDay ? 90 : 90, padding: '10px 10px', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                          <th key={f.key} style={{ minWidth: f.isDay ? 90 : 100, padding: '10px 14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                             {f.label}
                             {f.isDay && e.weekStart
                               ? <span style={{ marginLeft: 5, fontWeight: 400, color: '#64748b', fontSize: 11 }}>{dayDate(f.offset)}</span>
