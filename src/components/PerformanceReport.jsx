@@ -152,7 +152,7 @@ function AdvisorReport({ entries }) {
                   const prev = monthEntries[i + 1];
                   return (
                     <tr key={i} style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontWeight: i === 0 ? 700 : 400, minWidth: 230 }}>
+                      <td style={{ whiteSpace: 'nowrap', overflow: 'visible', textOverflow: 'clip', color: '#94a3b8', fontWeight: i === 0 ? 700 : 400, minWidth: 230, width: 230 }}>
                         {fmtDate(e.date)}{i === 0 && <span style={{ marginLeft: 6, fontSize: 10, color: '#3dd6c3', fontWeight: 800 }}>LATEST</span>}
                       </td>
                       <td style={{ color: '#4ade80', fontWeight: 700 }}>
