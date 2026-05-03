@@ -37,10 +37,13 @@ function num(val, decimals = 1) {
   return n.toFixed(decimals);
 }
 
-function StatBox({ label, value, color = '#6ee7f9' }) {
+function StatBox({ label, value, color = '#6ee7f9', compact = false }) {
+  const pad   = compact ? '10px 10px' : '14px 18px';
+  const min   = compact ? 72 : 100;
+  const valFs = compact ? 18 : 22;
   return (
-    <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: '14px 18px', minWidth: 100, textAlign: 'center' }}>
-      <div style={{ fontSize: 22, fontWeight: 900, color }}>{value}</div>
+    <div style={{ flex: compact ? '1 1 0' : '0 0 auto', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: pad, minWidth: min, textAlign: 'center' }}>
+      <div style={{ fontSize: valFs, fontWeight: 900, color }}>{value}</div>
       <div style={{ fontSize: 10, color: '#64748b', marginTop: 4, fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5 }}>{label}</div>
     </div>
   );
@@ -569,17 +572,17 @@ function TechReport({ entries }) {
           <div style={{ fontSize: 11, fontWeight: 700, color: '#3dd6c3', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
             📌 Latest — {latest.label || fmtDate(latest.date)}
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <StatBox label="Total Hrs"  value={num(latest.total, 1)}    color="#4ade80" />
-            <StatBox label="Goal"       value={num(latest.goal, 1)}     color="#6ee7f9" />
-            <StatBox label="Goal %"     value={pct(latest.goal_pct)}    color={parseFloat(latest.goal_pct) >= 1 ? '#4ade80' : parseFloat(latest.goal_pct) >= .8 ? '#fbbf24' : '#f87171'} />
-            <StatBox label="Pacing"     value={num(latest.pacing, 1)}   color="#c4b5fd" />
-            <StatBox label="Mon"        value={num(latest.mon, 1)}      color="#94a3b8" />
-            <StatBox label="Tue"        value={num(latest.tue, 1)}      color="#94a3b8" />
-            <StatBox label="Wed"        value={num(latest.wed, 1)}      color="#94a3b8" />
-            <StatBox label="Thu"        value={num(latest.thu, 1)}      color="#94a3b8" />
-            <StatBox label="Fri"        value={num(latest.fri, 1)}      color="#94a3b8" />
-            <StatBox label="Sat"        value={num(latest.sat, 1)}      color="#94a3b8" />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <StatBox compact label="Total Hrs"  value={num(latest.total, 1)}    color="#4ade80" />
+            <StatBox compact label="Goal"       value={num(latest.goal, 1)}     color="#6ee7f9" />
+            <StatBox compact label="Goal %"     value={pct(latest.goal_pct)}    color={parseFloat(latest.goal_pct) >= 1 ? '#4ade80' : parseFloat(latest.goal_pct) >= .8 ? '#fbbf24' : '#f87171'} />
+            <StatBox compact label="Pacing"     value={num(latest.pacing, 1)}   color="#c4b5fd" />
+            <StatBox compact label="Mon"        value={num(latest.mon, 1)}      color="#94a3b8" />
+            <StatBox compact label="Tue"        value={num(latest.tue, 1)}      color="#94a3b8" />
+            <StatBox compact label="Wed"        value={num(latest.wed, 1)}      color="#94a3b8" />
+            <StatBox compact label="Thu"        value={num(latest.thu, 1)}      color="#94a3b8" />
+            <StatBox compact label="Fri"        value={num(latest.fri, 1)}      color="#94a3b8" />
+            <StatBox compact label="Sat"        value={num(latest.sat, 1)}      color="#94a3b8" />
           </div>
         </div>
       )}
