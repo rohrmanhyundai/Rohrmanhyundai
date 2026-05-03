@@ -107,15 +107,16 @@ function AdvisorReport({ entries }) {
               📌 {monthLabel} — Latest ({fmtDate(latest?.date)})
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              <StatBox label="CSI"        value={latest?.csi || '—'}          color="#4ade80" />
-              <StatBox label="Hrs/RO"     value={num(latest?.hours_per_ro, 2)} color="#6ee7f9" />
-              <StatBox label="MTD Hrs"    value={num(latest?.mtd_hours, 1)}    color="#6ee7f9" />
-              <StatBox label="Daily Avg"  value={num(latest?.daily_avg, 2)}    color="#c4b5fd" />
-              <StatBox label="Alignment"  value={pct(latest?.align)}           color="#fbbf24" />
-              <StatBox label="Tires"      value={pct(latest?.tires)}           color="#fbbf24" />
-              <StatBox label="Valvoline"  value={pct(latest?.valvoline)}       color="#fbbf24" />
-              <StatBox label="ASR"        value={pct(latest?.asr)}             color="#fdba74" />
-              <StatBox label="ELR"        value={num(latest?.elr, 2)}          color="#fdba74" />
+              <StatBox label="CSI · Goal 920"             value={latest?.csi || '—'}            color="#4ade80" />
+              <StatBox label="Hrs/RO · Goal 1.4"          value={num(latest?.hours_per_ro, 2)}  color="#6ee7f9" />
+              <StatBox label="Roh$50 Hrs/RO · Goal 1.2"   value={num(latest?.roh50_hrs_ro, 2)}  color="#6ee7f9" />
+              <StatBox label="MTD Hrs · Goal 300"         value={num(latest?.mtd_hours, 1)}     color="#6ee7f9" />
+              <StatBox label="Daily Avg"                  value={num(latest?.daily_avg, 2)}     color="#c4b5fd" />
+              <StatBox label="Alignment · Goal 10%"       value={pct(latest?.align)}            color="#fbbf24" />
+              <StatBox label="Tires · Goal 15%"           value={pct(latest?.tires)}            color="#fbbf24" />
+              <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color="#fbbf24" />
+              <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color="#fdba74" />
+              <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color="#fdba74" />
             </div>
           </div>
 
@@ -128,15 +129,16 @@ function AdvisorReport({ entries }) {
               <thead>
                 <tr>
                   <th>DATE</th>
-                  <th>CSI</th>
-                  <th>HRS/RO</th>
-                  <th>MTD HRS</th>
+                  <th>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
+                  <th>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
+                  <th>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
+                  <th>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
                   <th>DAILY AVG</th>
-                  <th>ALIGNMENT</th>
-                  <th>TIRES</th>
-                  <th>VALVOLINE</th>
-                  <th>ASR</th>
-                  <th>ELR</th>
+                  <th>ALIGNMENT<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 10%</span></th>
+                  <th>TIRES<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 15%</span></th>
+                  <th>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
+                  <th>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
+                  <th>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -151,13 +153,14 @@ function AdvisorReport({ entries }) {
                         {e.csi || '—'}<TrendIcon curr={e.csi} prev={prev?.csi} />
                       </td>
                       <td>{num(e.hours_per_ro, 2)}<TrendIcon curr={e.hours_per_ro} prev={prev?.hours_per_ro} /></td>
+                      <td>{num(e.roh50_hrs_ro, 2)}<TrendIcon curr={e.roh50_hrs_ro} prev={prev?.roh50_hrs_ro} /></td>
                       <td style={{ color: '#6ee7f9' }}>{num(e.mtd_hours, 1)}<TrendIcon curr={e.mtd_hours} prev={prev?.mtd_hours} /></td>
                       <td>{num(e.daily_avg, 2)}<TrendIcon curr={e.daily_avg} prev={prev?.daily_avg} /></td>
                       <td>{pct(e.align)}<TrendIcon curr={e.align} prev={prev?.align} /></td>
                       <td>{pct(e.tires)}<TrendIcon curr={e.tires} prev={prev?.tires} /></td>
                       <td>{pct(e.valvoline)}<TrendIcon curr={e.valvoline} prev={prev?.valvoline} /></td>
                       <td>{pct(e.asr)}<TrendIcon curr={e.asr} prev={prev?.asr} /></td>
-                      <td>{num(e.elr, 2)}<TrendIcon curr={e.elr} prev={prev?.elr} /></td>
+                      <td>{pct(e.elr)}<TrendIcon curr={e.elr} prev={prev?.elr} /></td>
                     </tr>
                   );
                 })}
