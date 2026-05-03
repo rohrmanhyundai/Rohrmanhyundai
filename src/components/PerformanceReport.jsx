@@ -131,20 +131,20 @@ function AdvisorReport({ entries }) {
             Daily Breakdown — {monthEntries.length} snapshot{monthEntries.length !== 1 ? 's' : ''} this month
           </div>
           <div style={{ overflowX: 'auto' }}>
-            <table className="adv-table" style={{ minWidth: 860 }}>
+            <table className="adv-table" style={{ minWidth: 1100 }}>
               <thead>
                 <tr>
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
-                  <th>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
-                  <th>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
-                  <th>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
-                  <th>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
-                  <th>DAILY AVG</th>
-                  <th>ALIGNMENT<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 10%</span></th>
-                  <th>TIRES<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 15%</span></th>
-                  <th>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
-                  <th>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
-                  <th>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
+                  <th style={{ minWidth: 130, whiteSpace: 'nowrap' }}>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
+                  <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>DAILY AVG</th>
+                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>ALIGNMENT<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 10%</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>TIRES<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 15%</span></th>
+                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
                 </tr>
               </thead>
               <tbody>
