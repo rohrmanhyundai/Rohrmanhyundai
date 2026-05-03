@@ -15,5 +15,22 @@
     "asr": 0.19699999999999998,
     "elr": 0.95,
     "last_month_total": 321.2
+  },
+  {
+    "date": "2026-05-02",
+    "label": "May 2, 2026",
+    "month": "2026-05",
+    "type": "advisor",
+    "savedAt": "2026-05-03T02:40:53.396Z",
+    "csi": 923,
+    "hours_per_ro": 1.46,
+    "mtd_hours": 0,
+    "daily_avg": 11.15,
+    "align": 0.18030000000000002,
+    "tires": 0.2541,
+    "valvoline": 0.2623,
+    "asr": 0.19699999999999998,
+    "elr": 0.95,
+    "last_month_total": 321.2
   }
 ]
