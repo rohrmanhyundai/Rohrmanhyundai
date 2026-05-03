@@ -61,10 +61,16 @@ function TrendIcon({ curr, prev, higher = true }) {
 function AdvisorReport({ entries }) {
   // Collect unique months from entries
   const monthKeys = [...new Set(entries.map(e => e.month || e.date?.slice(0, 7)).filter(Boolean))].sort().reverse();
-  const [selectedMonth, setSelectedMonth] = useState(monthKeys[0] || '');
+  const currentMonthKey = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  })();
+  // Default to the current calendar month if we have data for it; otherwise the latest month available.
+  const defaultMonth = monthKeys.includes(currentMonthKey) ? currentMonthKey : (monthKeys[0] || '');
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
 
   useEffect(() => {
-    if (monthKeys.length && !monthKeys.includes(selectedMonth)) setSelectedMonth(monthKeys[0]);
+    if (monthKeys.length && !monthKeys.includes(selectedMonth)) setSelectedMonth(defaultMonth);
   }, [monthKeys.join(',')]);
 
   const monthEntries = entries
