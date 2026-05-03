@@ -72,35 +72,45 @@ function main() {
   const advLabel  = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
   const techWeek  = getTechWeekRange(now);
 
-  // Load schedules for vacation detection
+  // Load schedules for vacation/training/holiday detection
   const schedules = readJSON(SCHEDULES_FILE) || {};
+  const holidays  = schedules['__HOLIDAY__'] || {}; // { "2026-05-25": "holiday", ... }
+
+  // Values in schedules.json that count as 8h for reporting
+  const BONUS_TYPES = new Set(['vacation', 'training', 'holiday']);
 
   /**
-   * Returns an object { mon, tue, wed, thu, fri, sat } where each key
-   * holds the vacation bonus hours (8) for that day in the given week,
-   * based on schedules.json entries with value "vacation".
+   * Returns { bonus: { mon,tue,wed,thu,fri,sat }, breakdown: { vacation, training, holiday } }
+   * for a tech over a given week. Checks tech's own schedule + global holidays.
    */
-  function getVacationHours(techName, weekStart, weekEnd) {
+  function getBonusHours(techName, weekStart, weekEnd) {
     const techSchedule = schedules[techName.toUpperCase()] || schedules[techName] || {};
-    const DAY_KEYS = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri']; // 0=Sun offset below
-    const bonus = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
-    // Iterate each date in the week (Sat–Fri)
+    const bonus     = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
+    const breakdown = { vacation: 0, training: 0, holiday: 0 };
+
     const start = new Date(weekStart + 'T00:00:00');
     const end   = new Date(weekEnd   + 'T00:00:00');
+
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const iso = toISO(d);
-      if (techSchedule[iso] === 'vacation') {
-        const dow = d.getDay(); // 0=Sun,1=Mon,...,6=Sat
-        if (dow === 6) bonus.sat += 8;
-        else if (dow === 1) bonus.mon += 8;
-        else if (dow === 2) bonus.tue += 8;
-        else if (dow === 3) bonus.wed += 8;
-        else if (dow === 4) bonus.thu += 8;
-        else if (dow === 5) bonus.fri += 8;
-        // Sunday is not a typical work day — skip
-      }
+      // Holiday takes priority; then tech's own schedule
+      const val = holidays[iso] === 'holiday' ? 'holiday' : techSchedule[iso];
+      if (!BONUS_TYPES.has(val)) continue;
+
+      const dow = d.getDay();
+      let dayKey = null;
+      if      (dow === 6) dayKey = 'sat';
+      else if (dow === 1) dayKey = 'mon';
+      else if (dow === 2) dayKey = 'tue';
+      else if (dow === 3) dayKey = 'wed';
+      else if (dow === 4) dayKey = 'thu';
+      else if (dow === 5) dayKey = 'fri';
+      if (!dayKey) continue; // skip Sunday
+
+      bonus[dayKey]   += 8;
+      breakdown[val]  += 8;
     }
-    return bonus;
+    return { bonus, breakdown };
   }
 
   let saved = 0;
@@ -146,8 +156,8 @@ function main() {
     const filePath = path.join(REPORTS_DIR, `${username}.json`);
     const existing = readJSON(filePath) || [];
 
-    const vac = getVacationHours(username, techWeek.weekStart, techWeek.weekEnd);
-    const vacTotal = vac.mon + vac.tue + vac.wed + vac.thu + vac.fri + vac.sat;
+    const { bonus, breakdown } = getBonusHours(username, techWeek.weekStart, techWeek.weekEnd);
+    const bonusTotal = bonus.mon + bonus.tue + bonus.wed + bonus.thu + bonus.fri + bonus.sat;
 
     const entry = {
       date:      techWeek.weekStart,
@@ -157,20 +167,22 @@ function main() {
       type:      'tech',
       savedAt:   now.toISOString(),
       autoSaved: true,
-      total:     (parseFloat(t.total) || 0) + vacTotal,
+      total:     (parseFloat(t.total) || 0) + bonusTotal,
       goal:      t.goal,
       goal_pct:  t.goal_pct,
       pacing:    t.pacing,
-      mon:       (parseFloat(t.mon) || 0) + vac.mon,
-      tue:       (parseFloat(t.tue) || 0) + vac.tue,
-      wed:       (parseFloat(t.wed) || 0) + vac.wed,
-      thu:       (parseFloat(t.thu) || 0) + vac.thu,
-      fri:       (parseFloat(t.fri) || 0) + vac.fri,
-      sat:       (parseFloat(t.sat) || 0) + vac.sat,
+      mon:       (parseFloat(t.mon) || 0) + bonus.mon,
+      tue:       (parseFloat(t.tue) || 0) + bonus.tue,
+      wed:       (parseFloat(t.wed) || 0) + bonus.wed,
+      thu:       (parseFloat(t.thu) || 0) + bonus.thu,
+      fri:       (parseFloat(t.fri) || 0) + bonus.fri,
+      sat:       (parseFloat(t.sat) || 0) + bonus.sat,
     };
-    if (vacTotal > 0) {
-      entry.vacationHours = vacTotal;
-      console.log(`    🏖 ${username}: +${vacTotal}h vacation added (${JSON.stringify(vac)})`);
+    if (bonusTotal > 0) {
+      if (breakdown.vacation > 0) entry.vacationHours = breakdown.vacation;
+      if (breakdown.training > 0) entry.trainingHours = breakdown.training;
+      if (breakdown.holiday  > 0) entry.holidayHours  = breakdown.holiday;
+      console.log(`    🏖 ${username}: +${bonusTotal}h bonus (vac:${breakdown.vacation} train:${breakdown.training} hol:${breakdown.holiday})`);
     }
 
     // Replace same-week entry (keyed by weekStart), otherwise prepend
