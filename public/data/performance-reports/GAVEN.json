@@ -16,5 +16,24 @@
     "thu": 11.2,
     "fri": 0,
     "sat": 0
+  },
+  {
+    "date": "2026-04-25",
+    "label": "Week of Apr 25 – May 1",
+    "weekStart": "2026-04-25",
+    "weekEnd": "2026-05-01",
+    "type": "tech",
+    "savedAt": "2026-05-03T03:10:17.498Z",
+    "total": 47.599999999999994,
+    "goal": 47.5,
+    "goal_pct": 0.8336842105263157,
+    "pacing": 65.99999999999999,
+    "mon": 8,
+    "tue": 10.7,
+    "wed": 17.7,
+    "thu": 11.2,
+    "fri": 0,
+    "sat": 0,
+    "vacationHours": 8
   }
 ]
