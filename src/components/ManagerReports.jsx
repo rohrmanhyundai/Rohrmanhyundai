@@ -291,22 +291,25 @@ export default function ManagerReports({ users, onBack }) {
                     <th>DATE</th>
                     <th>LABEL</th>
                     {fields.map(f => <th key={f.key}>{f.label.toUpperCase()}</th>)}
-                    <th></th>
+                    <th style={{ minWidth: 110 }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {entries.map((e, idx) => (
                     <tr key={idx}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8' }}>{fmtDate(e.date)}</td>
-                      <td style={{ color: '#64748b', fontSize: 12 }}>{e.label || '—'}</td>
+                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8' }}>
+                        {fmtDate(e.date)}
+                        {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700 }}>AUTO</span>}
+                      </td>
+                      <td style={{ color: '#64748b', fontSize: 12, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.label || '—'}</td>
                       {fields.map(f => (
                         <td key={f.key} style={{ color: '#cbd5e1' }}>{displayVal(e[f.key], f)}</td>
                       ))}
-                      <td>
+                      <td style={{ whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.15)', border: '1px solid rgba(59,130,246,.3)', color: '#60a5fa', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>Edit</button>
-                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.3)', color: '#f87171', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
-                            {deletingIdx === idx ? '…' : '×'}
+                          <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>✏️ Edit</button>
+                          <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800 }}>
+                            {deletingIdx === idx ? '⏳' : '🗑'}
                           </button>
                         </div>
                       </td>
