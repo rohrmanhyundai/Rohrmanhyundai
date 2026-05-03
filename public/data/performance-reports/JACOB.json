@@ -16,23 +16,5 @@
     "thu": 24.9,
     "fri": 0,
     "sat": 0
-  },
-  {
-    "date": "2026-05-02",
-    "label": "Week of May 2 – May 8",
-    "weekStart": "2026-05-02",
-    "weekEnd": "2026-05-08",
-    "type": "tech",
-    "savedAt": "2026-05-03T02:28:49.612Z",
-    "total": 81.3,
-    "goal": 47.5,
-    "goal_pct": 1.711578947368421,
-    "pacing": 101.625,
-    "mon": 14.6,
-    "tue": 19.3,
-    "wed": 22.5,
-    "thu": 24.9,
-    "fri": 0,
-    "sat": 0
   }
 ]
