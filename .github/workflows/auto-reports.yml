@@ -30,7 +30,7 @@ jobs:
       - name: Run send-reports script
         env:
           TZ: America/New_York
-        run: node scripts/send-reports.js
+        run: node scripts/send-reports.cjs
 
       - name: Commit and push report snapshots
         run: |
