@@ -235,6 +235,26 @@ function TechReport({ entries }) {
               {filtered.map((e, i) => {
                 const prev = filtered[i + 1];
                 const gp   = parseFloat(e.goal_pct);
+
+                // Calculate the actual date for each day of the week (Sat=weekStart, Mon–Fri follow)
+                const dayDates = (() => {
+                  if (!e.weekStart) return {};
+                  const sat = new Date(e.weekStart + 'T00:00:00');
+                  const d = (offset) => {
+                    const dt = new Date(sat);
+                    dt.setDate(sat.getDate() + offset);
+                    return dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+                  };
+                  return { sat: d(0), mon: d(2), tue: d(3), wed: d(4), thu: d(5), fri: d(6) };
+                })();
+
+                const DayCell = ({ val, dayKey }) => (
+                  <td style={{ color: '#94a3b8', textAlign: 'center' }}>
+                    <div>{num(val, 1)}</div>
+                    {dayDates[dayKey] && <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{dayDates[dayKey]}</div>}
+                  </td>
+                );
+
                 return (
                   <tr key={i} style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
                     <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontSize: 12 }}>
@@ -252,12 +272,12 @@ function TechReport({ entries }) {
                       {pct(e.goal_pct)}<TrendIcon curr={e.goal_pct} prev={prev?.goal_pct} />
                     </td>
                     <td style={{ color: '#c4b5fd' }}>{num(e.pacing, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.sat, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.mon, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.tue, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.wed, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.thu, 1)}</td>
-                    <td style={{ color: '#94a3b8' }}>{num(e.fri, 1)}</td>
+                    <DayCell val={e.sat} dayKey="sat" />
+                    <DayCell val={e.mon} dayKey="mon" />
+                    <DayCell val={e.tue} dayKey="tue" />
+                    <DayCell val={e.wed} dayKey="wed" />
+                    <DayCell val={e.thu} dayKey="thu" />
+                    <DayCell val={e.fri} dayKey="fri" />
                   </tr>
                 );
               })}
