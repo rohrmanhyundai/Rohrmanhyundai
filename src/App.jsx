@@ -36,6 +36,7 @@ import IVTWorksheet from './components/IVTWorksheet';
 import ATMWorksheet from './components/ATMWorksheet';
 import TechSelfReview from './components/TechSelfReview';
 import PerformanceReport from './components/PerformanceReport';
+import ManagerReports from './components/ManagerReports';
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -468,6 +469,7 @@ export default function App() {
         onAdvisorRankBoard={openRankBoard}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
+        onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
       />
     );
   }
@@ -503,6 +505,15 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         role={currentRole}
         onBack={() => navTo(prevPage || (currentRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
+      />
+    );
+  }
+
+  if (page === 'mgr-performance-reports') {
+    return (
+      <ManagerReports
+        users={users}
+        onBack={() => navTo('manager-hub')}
       />
     );
   }
