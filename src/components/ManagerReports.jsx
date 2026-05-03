@@ -318,9 +318,9 @@ export default function ManagerReports({ users, onBack }) {
                         {fields.map(f => {
                           const date = f.isDay ? dayDate(f.offset) : null;
                           return (
-                            <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '7px 10px' }}>
-                              <div style={{ whiteSpace: 'nowrap' }}>{displayVal(e[f.key], f)}</div>
-                              {date && <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{date}</div>}
+                            <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '7px 10px', whiteSpace: 'nowrap' }}>
+                              {displayVal(e[f.key], f)}
+                              {date && <span style={{ fontSize: 10, color: '#475569', marginLeft: 5 }}>{date}</span>}
                             </td>
                           );
                         })}

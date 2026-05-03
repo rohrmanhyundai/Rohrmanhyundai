@@ -249,9 +249,9 @@ function TechReport({ entries }) {
                 })();
 
                 const DayCell = ({ val, dayKey }) => (
-                  <td style={{ color: '#94a3b8', textAlign: 'center' }}>
-                    <div>{num(val, 1)}</div>
-                    {dayDates[dayKey] && <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{dayDates[dayKey]}</div>}
+                  <td style={{ color: '#94a3b8', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    {num(val, 1)}
+                    {dayDates[dayKey] && <span style={{ fontSize: 10, color: '#475569', marginLeft: 5 }}>{dayDates[dayKey]}</span>}
                   </td>
                 );
 
