@@ -9,6 +9,20 @@ function fmtDate(iso) {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function fmtShort(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${+m}/${+d}/${String(+y).slice(2)}`;
+}
+
+function weekOfYear(iso) {
+  if (!iso) return null;
+  const [y, m, d] = iso.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const jan1 = new Date(y, 0, 1);
+  return Math.ceil((Math.floor((date - jan1) / 86400000) + 1) / 7);
+}
+
 function pct(val) {
   if (val === null || val === undefined || val === '') return '—';
   const n = parseFloat(val);
@@ -238,7 +252,8 @@ function TechReport({ entries }) {
                 // Header row showing day names + this row's dates
                 const headerRow = (
                   <tr>
-                    <th style={{ whiteSpace: 'nowrap' }}>WEEK</th>
+                    <th style={{ whiteSpace: 'nowrap' }}>DATE</th>
+                    <th style={{ whiteSpace: 'nowrap', textAlign: 'center' }}>WEEK</th>
                     <th>TOTAL HRS</th>
                     <th>GOAL</th>
                     <th>GOAL %</th>
@@ -256,11 +271,16 @@ function TechReport({ entries }) {
                   {headerRow}
                   <tr style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
                     <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontSize: 12 }}>
-                      {e.label || fmtDate(e.date)}
+                      {e.weekStart && e.weekEnd
+                        ? <>{fmtShort(e.weekStart)} – {fmtShort(e.weekEnd)}</>
+                        : fmtDate(e.date)}
                       {i === 0 && <span style={{ marginLeft: 6, fontSize: 10, color: '#3dd6c3', fontWeight: 800 }}>LATEST</span>}
-                      {e.vacationHours > 0 && <span title={`Includes ${e.vacationHours}h vacation`} style={{ marginLeft: 6, fontSize: 10, color: '#60a5fa', fontWeight: 800 }}>🏖 +{e.vacationHours}h</span>}
-                      {e.trainingHours > 0 && <span title={`Includes ${e.trainingHours}h training`} style={{ marginLeft: 6, fontSize: 10, color: '#a78bfa', fontWeight: 800 }}>📚 +{e.trainingHours}h</span>}
-                      {e.holidayHours  > 0 && <span title={`Includes ${e.holidayHours}h holiday`}  style={{ marginLeft: 6, fontSize: 10, color: '#fbbf24', fontWeight: 800 }}>🎉 +{e.holidayHours}h</span>}
+                    </td>
+                    <td style={{ textAlign: 'center', whiteSpace: 'nowrap', color: '#6ee7f9', fontWeight: 700, fontSize: 12 }}>
+                      Wk {weekOfYear(e.weekStart)}
+                      {e.vacationHours > 0 && <span title={`Includes ${e.vacationHours}h vacation`} style={{ marginLeft: 5, fontSize: 10, color: '#60a5fa' }}>🏖</span>}
+                      {e.trainingHours > 0 && <span title={`Includes ${e.trainingHours}h training`} style={{ marginLeft: 4, fontSize: 10, color: '#a78bfa' }}>📚</span>}
+                      {e.holidayHours  > 0 && <span title={`Includes ${e.holidayHours}h holiday`}  style={{ marginLeft: 4, fontSize: 10, color: '#fbbf24' }}>🎉</span>}
                     </td>
                     <td style={{ fontWeight: 700, color: '#4ade80' }}>
                       {num(e.total, 1)}<TrendIcon curr={e.total} prev={prev?.total} />

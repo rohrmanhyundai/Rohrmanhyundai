@@ -7,6 +7,21 @@ function fmtDate(iso) {
   return new Date(+y, +m - 1, +d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function fmtShort(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${+m}/${+d}/${String(+y).slice(2)}`;
+}
+
+function weekOfYear(iso) {
+  if (!iso) return null;
+  const [y, m, d] = iso.split('-').map(Number);
+  const date  = new Date(y, m - 1, d);
+  const jan1  = new Date(y, 0, 1);
+  const dayOfYear = Math.floor((date - jan1) / 86400000) + 1;
+  return Math.ceil(dayOfYear / 7);
+}
+
 const ADVISOR_FIELDS = [
   { key: 'csi',             label: 'CSI',      type: 'number', decimals: 0 },
   { key: 'hours_per_ro',    label: 'Hrs/RO',   type: 'number', decimals: 2 },
@@ -300,8 +315,9 @@ export default function ManagerReports({ users, onBack }) {
                     // Build per-row header row for tech entries (shows day + date in th)
                     const headerRow = idx === 0 ? (
                       <tr>
-                        <th style={{ width: 160, minWidth: 160, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
-                        <th style={{ minWidth: 140, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>
+                        <th style={{ minWidth: 180, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
+                        {isAdvisor && <th style={{ minWidth: 120, whiteSpace: 'nowrap', padding: '10px 14px' }}>LABEL</th>}
+                        {!isAdvisor && <th style={{ minWidth: 90, whiteSpace: 'nowrap', padding: '10px 10px', textAlign: 'center' }}>WEEK</th>}
                         {fields.map(f => (
                           <th key={f.key} style={{ minWidth: f.isDay ? 90 : 90, padding: '10px 10px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                             {f.label}
@@ -329,11 +345,14 @@ export default function ManagerReports({ users, onBack }) {
                       <React.Fragment key={idx}>
                         {headerRow}
                         <tr style={{ background: idx % 2 === 0 ? '' : 'rgba(255,255,255,.01)' }}>
-                          <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', width: 160, minWidth: 160 }}>
-                            {fmtDate(e.date)}
+                          <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', padding: '9px 14px', position: 'sticky', left: 0, zIndex: 1, background: '#0d1b2a', minWidth: 180 }}>
+                            {e.weekStart && e.weekEnd
+                              ? <>{fmtShort(e.weekStart)} – {fmtShort(e.weekEnd)}</>
+                              : fmtDate(e.date)}
                             {e.autoSaved && <span style={{ marginLeft: 5, fontSize: 9, color: '#475569', fontWeight: 700, textTransform: 'uppercase', verticalAlign: 'middle' }}>auto</span>}
                           </td>
-                          <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>
+                          {isAdvisor && <td style={{ color: '#64748b', fontSize: 11, whiteSpace: 'nowrap', padding: '9px 14px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.label || '—'}</td>}
+                          {!isAdvisor && <td style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>Wk {weekOfYear(e.weekStart)}</td>}
                           {fields.map(f => (
                             <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>
                               {displayVal(e[f.key], f)}
