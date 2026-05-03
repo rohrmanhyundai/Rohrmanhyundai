@@ -134,7 +134,7 @@ function AdvisorReport({ entries }) {
             <table className="adv-table" style={{ minWidth: 860 }}>
               <thead>
                 <tr>
-                  <th style={{ minWidth: 180, whiteSpace: 'nowrap' }}>DATE</th>
+                  <th style={{ minWidth: 230, whiteSpace: 'nowrap' }}>DATE</th>
                   <th>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
                   <th>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
                   <th>ROH$50 HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
@@ -152,7 +152,7 @@ function AdvisorReport({ entries }) {
                   const prev = monthEntries[i + 1];
                   return (
                     <tr key={i} style={{ background: i === 0 ? 'rgba(61,214,195,.04)' : '' }}>
-                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontWeight: i === 0 ? 700 : 400 }}>
+                      <td style={{ whiteSpace: 'nowrap', color: '#94a3b8', fontWeight: i === 0 ? 700 : 400, minWidth: 230 }}>
                         {fmtDate(e.date)}{i === 0 && <span style={{ marginLeft: 6, fontSize: 10, color: '#3dd6c3', fontWeight: 800 }}>LATEST</span>}
                       </td>
                       <td style={{ color: '#4ade80', fontWeight: 700 }}>
