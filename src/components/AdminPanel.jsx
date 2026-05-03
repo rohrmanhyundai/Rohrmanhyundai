@@ -538,7 +538,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     ...(isAdminOrManager(currentRole) ? [
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
       { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
-      { id: 'mgr-reports', icon: '📊', label: 'Performance Reports', desc: 'View and manage employee performance history',       color: '#6ee7f9', bg: 'rgba(110,231,249,.1)',  border: 'rgba(110,231,249,.3)'  },
     ] : []),
   ];
 
