@@ -174,7 +174,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row', maxWidth: '100%' }}>
                 <div style={{ position: 'relative' }}>
                 {(() => {
-                  const active = ['👍','❤️','❓'].filter(em => ((msg.reactions && msg.reactions[em]) || []).length > 0);
+                  const active = ['👍','❤️','❓','🚨'].filter(em => ((msg.reactions && msg.reactions[em]) || []).length > 0);
                   if (!active.length) return null;
                   return (
                     <div style={{
@@ -234,7 +234,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
               </div>
               {hasChatAccess && (
                 <div style={{ display: 'flex', gap: 4, marginTop: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
-                  {['👍','❤️','❓'].map(em => {
+                  {['👍','❤️','❓','🚨'].map(em => {
                     const list = (msg.reactions && msg.reactions[em]) || [];
                     const reacted = list.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
                     return (
