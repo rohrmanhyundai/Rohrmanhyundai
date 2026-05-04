@@ -509,39 +509,31 @@ function TechReport({ entries }) {
   // ── Efficiency gauge calculations ──────────────────────────
   const allSorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  // Current week: latest entry
-  const weekPct = latest ? parseFloat(latest.goal_pct) : NaN;
-
-  // Current month: average goal_pct of entries whose weekStart falls in the current month
-  const now = new Date();
-  const curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  // Last 5 weeks rolling average
-  const monthEntries = allSorted.slice(0, 5);
-  const monthPct = monthEntries.length
-    ? monthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / monthEntries.length
+  const avgPct = arr => arr.length
+    ? arr.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / arr.length
     : NaN;
-
-  // 3-month rolling: entries from the last 13 weeks (~3 months)
+  const threeWeekEntries  = allSorted.slice(0, 3);
+  const sixWeekEntries    = allSorted.slice(0, 6);
   const threeMonthEntries = allSorted.slice(0, 13);
-  const threeMonthPct = threeMonthEntries.length
-    ? threeMonthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / threeMonthEntries.length
-    : NaN;
+  const threeWeekPct  = avgPct(threeWeekEntries);
+  const sixWeekPct    = avgPct(sixWeekEntries);
+  const threeMonthPct = avgPct(threeMonthEntries);
 
   return (
     <div>
       {/* Efficiency Gauges */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
         <EfficiencyGauge
-          label="Current Week"
-          pct={weekPct}
-          sub={latest ? (latest.label || fmtDate(latest.date)) : 'No data'}
+          label="Last 3 Weeks"
+          pct={threeWeekPct}
+          sub={threeWeekEntries.length ? `${threeWeekEntries.length} week${threeWeekEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
           accentA="#3dd6c3"
           accentB="#6ee7f9"
         />
         <EfficiencyGauge
-          label="Last 5 Weeks"
-          pct={monthPct}
-          sub={monthEntries.length ? `${monthEntries.length} week${monthEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
+          label="Last 6 Weeks"
+          pct={sixWeekPct}
+          sub={sixWeekEntries.length ? `${sixWeekEntries.length} week${sixWeekEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
           accentA="#a78bfa"
           accentB="#c4b5fd"
         />
