@@ -300,7 +300,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const entry = {
           date: today, label: advLabel, month: advMonthKey,
           type: 'advisor', savedAt: new Date().toISOString(),
-          csi: a.csi, hours_per_ro: a.hours_per_ro, mtd_hours: a.mtd_hours,
+          csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro,
+          mtd_hours: a.mtd_hours,
           daily_avg: a.daily_avg, align: a.align, tires: a.tires,
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
           last_month_total: a.last_month_total,
