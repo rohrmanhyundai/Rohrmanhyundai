@@ -514,12 +514,8 @@ function TechReport({ entries }) {
   // Current month: average goal_pct of entries whose weekStart falls in the current month
   const now = new Date();
   const curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  // Include any week that overlaps the current month (weekStart OR weekEnd falls in it)
-  const monthEntries = allSorted.filter(e => {
-    const ws = (e.weekStart || e.date || '').slice(0, 7);
-    const we = (e.weekEnd   || e.date || '').slice(0, 7);
-    return ws === curMonthKey || we === curMonthKey;
-  });
+  // Last 5 weeks rolling average
+  const monthEntries = allSorted.slice(0, 5);
   const monthPct = monthEntries.length
     ? monthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / monthEntries.length
     : NaN;
@@ -542,9 +538,9 @@ function TechReport({ entries }) {
           accentB="#6ee7f9"
         />
         <EfficiencyGauge
-          label="This Month"
+          label="Last 5 Weeks"
           pct={monthPct}
-          sub={monthEntries.length ? `${monthEntries.length} week${monthEntries.length !== 1 ? 's' : ''} averaged` : 'No data this month'}
+          sub={monthEntries.length ? `${monthEntries.length} week${monthEntries.length !== 1 ? 's' : ''} averaged` : 'No data'}
           accentA="#a78bfa"
           accentB="#c4b5fd"
         />
