@@ -97,6 +97,22 @@
         "certified": "NO",
         "trainings_due": "3",
         "excel_training": "7"
+      },
+      {
+        "name": "WYATT",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 0,
+        "goal_pct": 0,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
@@ -227,7 +243,7 @@
       "fri": 56,
       "sat": 14.600000000000001,
       "week_total": 304.79999999999995,
-      "week_pct": 1.2647302904564313,
+      "week_pct": 1.0564991334488734,
       "shop_pacing": 320.325
     },
     "grossGoal": 154287,
