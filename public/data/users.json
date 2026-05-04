@@ -395,6 +395,29 @@
       },
       "chatAccess": true,
       "techChatAccess": true
+    },
+    {
+      "username": "Wyatt",
+      "password": "wyatt2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true
+      },
+      "chatAccess": false,
+      "techChatAccess": false
     }
   ],
   "sharedSaveCode": "sc1:LBpIDiNcZEMgCFFmGC1ITCc9ejs1YRNWCnclQjBJexkqNgscCxEyIg=="
