@@ -112,5 +112,23 @@
     "notes": "Was very satisfied with service",
     "submittedAt": "2026-05-04T21:00:26.539Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "ETHAN KINGERY",
+    "repairOrder": "777127",
+    "vin": "5NMP3DGL4SH107715",
+    "model": "SANTA FE",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(219) 781 - 9359",
+    "notes": "Line is dead",
+    "submittedAt": "2026-05-04T21:08:24.181Z",
+    "submittedBy": "DAVID"
   }
 ]
