@@ -6,8 +6,8 @@
     "jobDesc": "ITM",
     "etaParts": "5/2",
     "etaCompletion": "5/4",
-    "partsArrived": false,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/04/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": ""
