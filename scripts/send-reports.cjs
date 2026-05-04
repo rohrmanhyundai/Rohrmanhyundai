@@ -217,6 +217,17 @@ function main() {
     const filePath = path.join(REPORTS_DIR, `${username}.json`);
     const existing = readJSON(filePath) || [];
 
+    // Skip if a snapshot for this week was already saved today (manager already pushed it)
+    const todayISO = toISO(now);
+    const alreadySavedToday = existing.some(e =>
+      e.weekStart === techWeek.weekStart &&
+      e.savedAt && e.savedAt.slice(0, 10) === todayISO
+    );
+    if (alreadySavedToday) {
+      console.log(`  • Tech ${username}: snapshot for ${techWeek.label} already saved today — skipping auto-save.`);
+      continue;
+    }
+
     const { bonus, breakdown } = getBonusHours(username, techWeek.weekStart, techWeek.weekEnd);
     const bonusTotal = bonus.mon + bonus.tue + bonus.wed + bonus.thu + bonus.fri + bonus.sat;
 
