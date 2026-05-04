@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules } from '../utils/github';
 import PerformanceReport from './PerformanceReport';
 
 function fmtDate(iso) {
@@ -95,6 +95,8 @@ export default function ManagerReports({ users, onBack }) {
   const [selected, setSelected] = useState(allUsers[0] || '');
   const [viewUser, setViewUser] = useState(null);
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
+  const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
+  const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
 
   useEffect(() => {
     loadDashboardData()
@@ -104,9 +106,35 @@ export default function ManagerReports({ users, onBack }) {
           if (t.name) map[t.name.toUpperCase()] = parseFloat(t.goal) || 0;
         }
         setTechGoals(map);
+        // Build vacation date set per tech from data.vacations as a fallback
+        const vacMap = {};
+        for (const v of (d?.data?.vacations || [])) {
+          if (!v.name || !v.dateStart || !v.dateEnd) continue;
+          const name = v.name.toUpperCase();
+          if (!vacMap[name]) vacMap[name] = new Set();
+          const s = new Date(v.dateStart + 'T00:00:00');
+          const e = new Date(v.dateEnd   + 'T00:00:00');
+          for (let dv = new Date(s); dv <= e; dv.setDate(dv.getDate() + 1)) {
+            vacMap[name].add(isoLocal(dv));
+          }
+        }
+        setVacationDates(vacMap);
       })
       .catch(() => {});
+    loadSchedules().then(s => setSchedules(s || {})).catch(() => {});
   }, []);
+
+  // Returns 8 if the tech has vacation/training/holiday on `iso`, else 0
+  function bonusHoursFor(techName, iso) {
+    const BONUS = new Set(['vacation', 'training', 'holiday']);
+    const techSched = schedules[techName] || schedules[(techName || '').toUpperCase()] || {};
+    const holidays  = schedules['__HOLIDAY__'] || {};
+    const vacSet    = vacationDates[(techName || '').toUpperCase()] || new Set();
+    if (holidays[iso] === 'holiday') return 8;
+    if (BONUS.has(techSched[iso])) return 8;
+    if (vacSet.has(iso)) return 8;
+    return 0;
+  }
 
   // Find the Saturday (week start) for a given Wk number, using the same
   // numbering as weekOfYear: ceil(dayOfYear / 7).
@@ -374,11 +402,22 @@ export default function ManagerReports({ users, onBack }) {
                       const sat = saturdayForWeek(wkNum, year);
                       if (!sat) return;
                       const goal = techGoals[selected];
+                      // Pre-fill 8.0 for any vacation/training/holiday days that week
+                      const dayKeys = [
+                        { key: 'sat', off: 0 }, { key: 'mon', off: 2 }, { key: 'tue', off: 3 },
+                        { key: 'wed', off: 4 }, { key: 'thu', off: 5 }, { key: 'fri', off: 6 },
+                      ];
+                      const bonusByKey = {};
+                      for (const { key, off } of dayKeys) {
+                        const d = new Date(sat); d.setDate(sat.getDate() + off);
+                        if (bonusHoursFor(selected, isoLocal(d)) > 0) bonusByKey[key] = '8';
+                      }
                       setForm(prev => ({
                         ...prev,
                         date: isoLocal(sat),
                         label: `Wk ${wkNum}`,
                         goal: goal ? String(goal) : prev.goal,
+                        ...bonusByKey,
                       }));
                     };
                     return (
