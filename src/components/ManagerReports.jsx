@@ -318,9 +318,26 @@ export default function ManagerReports({ users, onBack }) {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14, marginBottom: 16 }}>
                 {/* Date */}
-                <div>
-                  <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>Date *</div>
-                  <input type="date" value={form.date} onChange={e => updateForm('date', e.target.value)} style={inp()} />
+                <div style={!isAdvisor ? { gridColumn: 'span 2' } : undefined}>
+                  <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>
+                    {isAdvisor ? 'Date *' : 'Week Range *'}
+                  </div>
+                  {isAdvisor ? (
+                    <input type="date" value={form.date} onChange={e => updateForm('date', e.target.value)} style={inp()} />
+                  ) : (() => {
+                    const fmt = d => `${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(-2)}`;
+                    let rangeText = '— use Label field to apply a week —';
+                    if (form.date) {
+                      const sat = new Date(form.date + 'T00:00:00');
+                      const fri = new Date(sat); fri.setDate(sat.getDate() + 6);
+                      rangeText = `${fmt(sat)} – ${fmt(fri)}`;
+                    }
+                    return (
+                      <div style={{ ...inp(), display: 'flex', alignItems: 'center', color: form.date ? '#e2e8f0' : '#475569', minHeight: 36 }}>
+                        {rangeText}
+                      </div>
+                    );
+                  })()}
                 </div>
                 {/* Label */}
                 <div style={{ gridColumn: 'span 2' }}>
@@ -339,7 +356,7 @@ export default function ManagerReports({ users, onBack }) {
                       setForm(prev => ({
                         ...prev,
                         date: isoLocal(sat),
-                        label: fmtRange(sat),
+                        label: `Wk ${wkNum}`,
                         goal: goal ? String(goal) : prev.goal,
                       }));
                     };
