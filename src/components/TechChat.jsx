@@ -172,6 +172,30 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row', maxWidth: '100%' }}>
+                <div style={{ position: 'relative' }}>
+                {(() => {
+                  const active = ['👍','❤️','❓'].filter(em => ((msg.reactions && msg.reactions[em]) || []).length > 0);
+                  if (!active.length) return null;
+                  return (
+                    <div style={{
+                      position: 'absolute', top: -10, [isMe ? 'right' : 'left']: -6,
+                      background: '#1e293b', border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: 12, padding: '2px 7px', display: 'flex', gap: 3,
+                      fontSize: 12, lineHeight: 1.2, zIndex: 2,
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                    }}>
+                      {active.map(em => {
+                        const cnt = msg.reactions[em].length;
+                        return (
+                          <span key={em} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                            <span>{em}</span>
+                            {cnt > 1 && <span style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>{cnt}</span>}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
                 <div
                   onClick={() => hasChatAccess && setReplyTo({ id: msg.id, username: msg.username, text: msg.text })}
                   title="Click to reply"
@@ -195,6 +219,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
                     </div>
                   )}
                   {msg.text}
+                </div>
                 </div>
                 {canDelete && (
                   <button
@@ -225,7 +250,6 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
                         }}
                       >
                         <span>{em}</span>
-                        {list.length > 0 && <span style={{ fontWeight: 700, fontSize: 10, color: reacted ? '#fbbf24' : '#94a3b8' }}>{list.length}</span>}
                       </button>
                     );
                   })}
