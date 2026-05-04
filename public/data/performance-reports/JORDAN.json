@@ -17,25 +17,6 @@
     "last_month_total": 326.2
   },
   {
-    "date": "2026-05-01",
-    "label": "May 1, 2026",
-    "month": "2026-05",
-    "type": "advisor",
-    "savedAt": "2026-05-04T05:53:54.263Z",
-    "autoSaved": true,
-    "csi": 979,
-    "hours_per_ro": 1.32,
-    "roh50_hrs_ro": 1.23,
-    "mtd_hours": 326.2,
-    "daily_avg": 12.58636364,
-    "align": 0.1793,
-    "tires": 0.48969999999999997,
-    "valvoline": 0.2552,
-    "asr": 0.1909,
-    "elr": 0.92,
-    "last_month_total": 326.2
-  },
-  {
     "date": "2026-04-30",
     "label": "April 30, 2026",
     "month": "2026-04",
