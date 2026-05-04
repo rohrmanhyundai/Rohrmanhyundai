@@ -110,7 +110,7 @@
         "valvoline": 0.2623,
         "csi": 923,
         "asr": 0.19699999999999998,
-        "elr": 0.95,
+        "elr": 0.93,
         "last_month_total": 321.2,
         "roh50_hrs_ro": 0.5,
         "hidden": false
@@ -125,7 +125,7 @@
         "valvoline": 0.2552,
         "csi": 979,
         "asr": 0.1909,
-        "elr": 0.92,
+        "elr": 0.89,
         "last_month_total": 326.2,
         "roh50_hrs_ro": 1.35
       },
@@ -140,7 +140,7 @@
         "roh50_hrs_ro": 0.7,
         "csi": 915,
         "asr": 0.1288,
-        "elr": 0.92,
+        "elr": 0.88,
         "last_month_total": 79.7
       }
     ],
