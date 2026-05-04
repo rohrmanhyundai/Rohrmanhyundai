@@ -130,5 +130,23 @@
     "notes": "Line is dead",
     "submittedAt": "2026-05-04T21:08:24.181Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "ERIC MEJIA-SOLANO",
+    "repairOrder": "776998",
+    "vin": "KM8JFCA17NU073437",
+    "model": "TUCSON HEV",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(484) 860 - 7321",
+    "notes": "Everything went great and cust is happy with service",
+    "submittedAt": "2026-05-04T21:11:07.635Z",
+    "submittedBy": "DAVID"
   }
 ]
