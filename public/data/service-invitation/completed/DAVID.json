@@ -94,5 +94,23 @@
     "notes": "left VM",
     "submittedAt": "2026-04-30T20:43:09.492Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "MICHAEL BROWN",
+    "repairOrder": "777133",
+    "vin": "KM8R44GE0SU814788",
+    "model": "PALISADE",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "1 - (765) 479 - 1881",
+    "notes": "Was very satisfied with service",
+    "submittedAt": "2026-05-04T21:00:26.539Z",
+    "submittedBy": "DAVID"
   }
 ]
