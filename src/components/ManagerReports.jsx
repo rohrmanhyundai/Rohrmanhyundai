@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData } from '../utils/github';
 import PerformanceReport from './PerformanceReport';
 
 function fmtDate(iso) {
@@ -94,6 +94,39 @@ export default function ManagerReports({ users, onBack }) {
 
   const [selected, setSelected] = useState(allUsers[0] || '');
   const [viewUser, setViewUser] = useState(null);
+  const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
+
+  useEffect(() => {
+    loadDashboardData()
+      .then(d => {
+        const map = {};
+        for (const t of (d?.data?.technicians || [])) {
+          if (t.name) map[t.name.toUpperCase()] = parseFloat(t.goal) || 0;
+        }
+        setTechGoals(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Find the Saturday (week start) for a given Wk number, using the same
+  // numbering as weekOfYear: ceil(dayOfYear / 7).
+  function saturdayForWeek(weekNum, year) {
+    for (let day = 7 * (weekNum - 1) + 1; day <= 7 * weekNum + 6; day++) {
+      const d = new Date(year, 0, day);
+      if (d.getFullYear() !== year && day > 7 * weekNum) break;
+      if (d.getDay() === 6) return d;
+    }
+    return null;
+  }
+  function fmtRange(sat) {
+    const fri = new Date(sat); fri.setDate(sat.getDate() + 6);
+    const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `Week of ${fmt(sat)} – ${fmt(fri)}`;
+  }
+  function isoLocal(d) {
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dy=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dy}`;
+  }
   const [entries, setEntries]   = useState([]);
   const [loading, setLoading]   = useState(false);
   const [saving, setSaving]     = useState(false);
@@ -291,8 +324,33 @@ export default function ManagerReports({ users, onBack }) {
                 </div>
                 {/* Label */}
                 <div style={{ gridColumn: 'span 2' }}>
-                  <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>Label (e.g. "Week of May 1" or "April Monthly")</div>
-                  <input value={form.label} onChange={e => updateForm('label', e.target.value)} placeholder="Optional label…" style={inp()} />
+                  <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>
+                    Label {!isAdvisor && <span style={{ color: '#475569', textTransform: 'none', fontWeight: 500 }}>— type "Wk 17" to auto-fill date &amp; goal</span>}
+                  </div>
+                  <input
+                    value={form.label}
+                    onChange={e => {
+                      const val = e.target.value;
+                      updateForm('label', val);
+                      if (isAdvisor) return;
+                      const m = val.match(/^\s*(?:wk|week)\s*0*(\d{1,2})\s*$/i);
+                      if (!m) return;
+                      const wk = parseInt(m[1], 10);
+                      if (wk < 1 || wk > 53) return;
+                      const year = form.date ? parseInt(form.date.slice(0, 4), 10) : new Date().getFullYear();
+                      const sat = saturdayForWeek(wk, year);
+                      if (!sat) return;
+                      const goal = techGoals[selected] || '';
+                      setForm(prev => ({
+                        ...prev,
+                        date: isoLocal(sat),
+                        label: fmtRange(sat),
+                        goal: prev.goal && parseFloat(prev.goal) > 0 ? prev.goal : (goal ? String(goal) : prev.goal),
+                      }));
+                    }}
+                    placeholder={isAdvisor ? 'Optional label…' : 'Type "Wk 17" or a custom label…'}
+                    style={inp()}
+                  />
                 </div>
                 {/* Metric fields */}
                 {fields.map(f => (
