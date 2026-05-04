@@ -190,6 +190,10 @@
     "username": "SHAWN",
     "text": "david, 777239 does corry have this RO?",
     "timestamp": 1777923118877,
-    "reactions": {}
+    "reactions": {
+      "❓": [
+        "SHAWN"
+      ]
+    }
   }
 ]
