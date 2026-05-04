@@ -5,17 +5,16 @@
     "weekStart": "2026-04-25",
     "weekEnd": "2026-05-01",
     "type": "tech",
-    "savedAt": "2026-05-04T06:37:22.439Z",
-    "autoSaved": true,
-    "total": 21.9,
+    "savedAt": "2026-05-04T11:29:42.350Z",
+    "total": 26.4,
     "goal": 47.5,
-    "goal_pct": 0.4610526315789473,
-    "pacing": 27.375,
+    "goal_pct": 0.5557894736842105,
+    "pacing": 26.4,
     "mon": 7.2,
     "tue": 2.8,
     "wed": 1,
     "thu": 10.9,
-    "fri": 0,
+    "fri": 4.5,
     "sat": 0
   }
 ]
