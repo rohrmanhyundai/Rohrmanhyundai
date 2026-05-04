@@ -97,10 +97,10 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
 
       {/* Tech Production */}
       <Card title="Tech Production — This Week">
-        <StatRow label="Week Total Hrs" value={`${techWeekTotal} hrs`} highlight />
+        <StatRow label="Week Total Hrs" value={`${Number(techWeekTotal).toFixed(1)} hrs`} highlight />
         <StatRow label="Goal %" value={`${techPct}%`} highlight />
         {techs.map(t => (
-          <StatRow key={t.name} label={t.name} value={`${t.total ?? 0} / ${t.goal ?? 0} hrs`} />
+          <StatRow key={t.name} label={t.name} value={`${Number(t.total ?? 0).toFixed(1)} / ${Number(t.goal ?? 0).toFixed(1)} hrs`} />
         ))}
       </Card>
 
