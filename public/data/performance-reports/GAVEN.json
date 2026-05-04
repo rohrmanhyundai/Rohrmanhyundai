@@ -17,5 +17,23 @@
     "fri": 22.5,
     "sat": 0,
     "vacationHours": 8
+  },
+  {
+    "date": "2026-04-18",
+    "label": "Wk 16",
+    "type": "tech",
+    "weekStart": "2026-04-18",
+    "weekEnd": "2026-04-24",
+    "total": 43.5,
+    "goal": 47.5,
+    "goal_pct": 0.9157894736842105,
+    "pacing": 65.25,
+    "sat": 6.6,
+    "mon": 7.3,
+    "tue": 7.6,
+    "wed": 23.5,
+    "thu": 0,
+    "fri": -1.5,
+    "savedAt": "2026-05-04T21:27:24.047Z"
   }
 ]
