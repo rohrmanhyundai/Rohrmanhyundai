@@ -198,10 +198,31 @@ export default function ManagerReports({ users, onBack }) {
         entry.type  = 'advisor';
       } else {
         entry.type = 'tech';
+        // Tech entries are weekly: derive weekStart/weekEnd from form.date (Saturday)
+        if (form.date) {
+          const sat = new Date(form.date + 'T00:00:00');
+          const fri = new Date(sat); fri.setDate(sat.getDate() + 6);
+          entry.weekStart = isoLocal(sat);
+          entry.weekEnd   = isoLocal(fri);
+        }
       }
       fields.forEach(f => {
         entry[f.key] = inputToStored(form[f.key], f);
       });
+      // For tech entries, auto-compute total/goal_pct/pacing from the day fields
+      if (!isAdvisor) {
+        const num = v => (v === '' || v === null || v === undefined || isNaN(parseFloat(v))) ? 0 : parseFloat(v);
+        const sat = num(entry.sat), mon = num(entry.mon), tue = num(entry.tue),
+              wed = num(entry.wed), thu = num(entry.thu), fri = num(entry.fri);
+        const total = sat + mon + tue + wed + thu + fri;
+        entry.total = total;
+        const goalNum = num(entry.goal);
+        entry.goal_pct = goalNum > 0 ? total / goalNum : 0;
+        const workedSat     = sat > 0;
+        const totalWorkdays = workedSat ? 6 : 5;
+        const daysWorked    = [mon, tue, wed, thu, fri].filter(v => v > 0).length + (workedSat ? 1 : 0);
+        entry.pacing = daysWorked > 0 ? (total / daysWorked) * totalWorkdays : 0;
+      }
       entry.savedAt = new Date().toISOString();
 
       let updated;
