@@ -502,7 +502,7 @@ export default function ManagerReports({ users, onBack }) {
                               : null}
                           </th>
                         ))}
-                        <th style={{ minWidth: 130, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', right: 0, zIndex: 2, background: '#0f172a', textAlign: 'center' }}>ACTIONS</th>
+                        <th style={{ minWidth: 80, whiteSpace: 'nowrap', padding: '10px 8px', position: 'sticky', right: 0, zIndex: 2, background: '#0f172a', textAlign: 'center', boxShadow: '-6px 0 8px -4px rgba(0,0,0,0.5)' }}>ACTIONS</th>
                       </tr>
                     ) : (
                       // Subsequent rows: re-render header with that row's dates
@@ -535,11 +535,11 @@ export default function ManagerReports({ users, onBack }) {
                               {displayVal(e[f.key], f)}
                             </td>
                           ))}
-                          <td style={{ whiteSpace: 'nowrap', padding: '9px 12px', position: 'sticky', right: 0, zIndex: 1, background: '#0d1b2a' }}>
-                            <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-                              <button onClick={() => openEdit(idx)} style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 11px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>✏️ Edit</button>
-                              <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
-                                {deletingIdx === idx ? '⏳' : '🗑 Del'}
+                          <td style={{ whiteSpace: 'nowrap', padding: '9px 8px', position: 'sticky', right: 0, zIndex: 1, background: '#0d1b2a', boxShadow: '-6px 0 8px -4px rgba(0,0,0,0.5)' }}>
+                            <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                              <button onClick={() => openEdit(idx)} title="Edit" style={{ background: 'rgba(59,130,246,.2)', border: '1px solid rgba(59,130,246,.4)', color: '#60a5fa', borderRadius: 7, padding: '5px 8px', cursor: 'pointer', fontSize: 13, fontWeight: 800, lineHeight: 1 }}>✏️</button>
+                              <button onClick={() => handleDelete(idx)} disabled={deletingIdx === idx} title="Delete" style={{ background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.4)', color: '#f87171', borderRadius: 7, padding: '5px 8px', cursor: 'pointer', fontSize: 13, fontWeight: 800, lineHeight: 1 }}>
+                                {deletingIdx === idx ? '⏳' : '🗑'}
                               </button>
                             </div>
                           </td>
