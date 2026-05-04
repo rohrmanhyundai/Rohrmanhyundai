@@ -325,32 +325,43 @@ export default function ManagerReports({ users, onBack }) {
                 {/* Label */}
                 <div style={{ gridColumn: 'span 2' }}>
                   <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>
-                    Label {!isAdvisor && <span style={{ color: '#475569', textTransform: 'none', fontWeight: 500 }}>— type "Wk 17" to auto-fill date &amp; goal</span>}
+                    Label {!isAdvisor && <span style={{ color: '#475569', textTransform: 'none', fontWeight: 500 }}>— type a week number (e.g. 16) and click Apply</span>}
                   </div>
-                  <input
-                    value={form.label}
-                    onChange={e => {
-                      const val = e.target.value;
-                      updateForm('label', val);
-                      if (isAdvisor) return;
-                      const m = val.match(/^\s*(?:wk|week)\s*0*(\d{1,2})\s*$/i);
-                      if (!m) return;
-                      const wk = parseInt(m[1], 10);
-                      if (wk < 1 || wk > 53) return;
+                  {(() => {
+                    const wkMatch = !isAdvisor && (form.label || '').match(/^\s*(?:wk|week)?\s*0*(\d{1,2})\s*$/i);
+                    const wkNum = wkMatch ? parseInt(wkMatch[1], 10) : null;
+                    const showApply = wkNum !== null && wkNum >= 1 && wkNum <= 53;
+                    const applyWeek = () => {
                       const year = form.date ? parseInt(form.date.slice(0, 4), 10) : new Date().getFullYear();
-                      const sat = saturdayForWeek(wk, year);
+                      const sat = saturdayForWeek(wkNum, year);
                       if (!sat) return;
-                      const goal = techGoals[selected] || '';
+                      const goal = techGoals[selected];
                       setForm(prev => ({
                         ...prev,
                         date: isoLocal(sat),
                         label: fmtRange(sat),
-                        goal: prev.goal && parseFloat(prev.goal) > 0 ? prev.goal : (goal ? String(goal) : prev.goal),
+                        goal: goal ? String(goal) : prev.goal,
                       }));
-                    }}
-                    placeholder={isAdvisor ? 'Optional label…' : 'Type "Wk 17" or a custom label…'}
-                    style={inp()}
-                  />
+                    };
+                    return (
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <input
+                          value={form.label}
+                          onChange={e => updateForm('label', e.target.value)}
+                          onKeyDown={e => { if (showApply && e.key === 'Enter') { e.preventDefault(); applyWeek(); } }}
+                          placeholder={isAdvisor ? 'Optional label…' : 'Type week # (e.g. 16) or custom label…'}
+                          style={{ ...inp(), flex: 1 }}
+                        />
+                        {showApply && (
+                          <button type="button" onClick={applyWeek} style={{
+                            background: 'rgba(61,214,195,.2)', border: '1px solid rgba(61,214,195,.4)',
+                            color: '#3dd6c3', borderRadius: 8, padding: '0 14px', fontWeight: 800, fontSize: 12,
+                            cursor: 'pointer', whiteSpace: 'nowrap',
+                          }}>Apply Wk {wkNum}</button>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
                 {/* Metric fields */}
                 {fields.map(f => (
