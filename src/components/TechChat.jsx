@@ -96,6 +96,29 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
     setTimeout(() => { el.selectionStart = el.selectionEnd = start + emoji.length; el.focus(); }, 0);
   }
 
+  async function toggleReaction(msgId, emoji) {
+    setError('');
+    try {
+      const latest = await loadTechChatMessages();
+      const updated = latest.map(m => {
+        if (m.id !== msgId) return m;
+        const reactions = { ...(m.reactions || {}) };
+        const list = reactions[emoji] || [];
+        const me = currentUser.toUpperCase();
+        const has = list.map(u => u.toUpperCase()).includes(me);
+        const next = has ? list.filter(u => u.toUpperCase() !== me) : [...list, currentUser];
+        if (next.length === 0) delete reactions[emoji];
+        else reactions[emoji] = next;
+        return { ...m, reactions };
+      });
+      const saved = await saveTechChatMessages(updated);
+      setMessages(saved);
+      triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   async function handleDelete(id) {
     setDeleting(id);
     setError('');
@@ -184,6 +207,30 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
                   >🗑</button>
                 )}
               </div>
+              {hasChatAccess && (
+                <div style={{ display: 'flex', gap: 4, marginTop: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
+                  {['👍','❤️','❓'].map(em => {
+                    const list = (msg.reactions && msg.reactions[em]) || [];
+                    const reacted = list.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
+                    return (
+                      <button
+                        key={em}
+                        onClick={(e) => { e.stopPropagation(); toggleReaction(msg.id, em); }}
+                        title={list.join(', ') || `React ${em}`}
+                        style={{
+                          background: reacted ? 'rgba(251,191,36,0.18)' : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${reacted ? 'rgba(251,191,36,0.45)' : 'rgba(255,255,255,0.08)'}`,
+                          borderRadius: 12, padding: '1px 7px', cursor: 'pointer', fontSize: 11,
+                          color: '#cbd5e1', lineHeight: 1.4, display: 'inline-flex', alignItems: 'center', gap: 3,
+                        }}
+                      >
+                        <span>{em}</span>
+                        {list.length > 0 && <span style={{ fontWeight: 700, fontSize: 10, color: reacted ? '#fbbf24' : '#94a3b8' }}>{list.length}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
