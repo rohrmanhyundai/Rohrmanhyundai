@@ -68,6 +68,13 @@ function main() {
   const now = new Date();
   console.log(`Running at ${now.toISOString()} (${now.toLocaleString('en-US', { timeZone: 'America/New_York' })} ET)`);
 
+  // Skip Saturday and Sunday (ET) — no auto-snapshots on weekends
+  const dow = now.getDay(); // 0=Sun, 6=Sat
+  if (dow === 0 || dow === 6) {
+    console.log(`Weekend in ET (dow=${dow}) — skipping auto-send.`);
+    return;
+  }
+
   const raw = readJSON(DATA_FILE);
   if (!raw || !raw.data) { console.error('Could not read data.json'); process.exit(1); }
 
