@@ -21,7 +21,7 @@
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": true,
+    "highPriority": false,
     "advisor": "JORDAN",
     "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. "
   },
