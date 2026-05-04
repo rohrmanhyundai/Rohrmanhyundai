@@ -17,44 +17,34 @@
     "roDate": "2026-04-20",
     "jobDesc": "BANK 1 O2 SENSOR UP STREAM ",
     "etaParts": "2 DAYS ",
-    "etaCompletion": "CAR NOT HERE",
+    "etaCompletion": "CAR NOT HERE/SCHEDULED FOR 5/4",
     "partsArrived": true,
     "advisor": "JORDAN"
   },
   {
-    "id": "mok9jmb2xfc",
-    "ro": "777123",
-    "roDate": "",
-    "jobDesc": "top engine inspection approved ",
-    "etaParts": "",
-    "etaCompletion": "end of day thursday",
-    "partsArrived": null,
-    "advisor": "JORDAN"
-  },
-  {
-    "id": "molng5j7bnj",
-    "ro": "777042",
-    "roDate": "2026-04-25",
-    "jobDesc": "CHECK ENGINE LIGHT CAR SHIFTING HARSH ",
+    "id": "momuo1f5ibe",
+    "ro": "776989",
+    "roDate": "2026-04-30",
+    "jobDesc": "ENGINE TEAR DOWN TO POINT OF FAILURE.",
     "etaParts": "",
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": true,
-    "advisor": "",
-    "notes": "GAVEN CALLING TECHLINE WILL BE A TRANMISSION"
+    "advisor": "JORDAN",
+    "notes": ""
   },
   {
-    "id": "mom12ia7jsc",
-    "ro": "776985",
-    "roDate": "2026-04-30",
-    "jobDesc": "SHIFTER SERVICE MALFUNCTION",
+    "id": "mon8qrasomb",
+    "ro": "777034",
+    "roDate": "",
+    "jobDesc": "TOW IN TIMING JOB ",
     "etaParts": "",
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
+    "highPriority": true,
+    "advisor": "DAVID",
     "notes": ""
   }
 ]
