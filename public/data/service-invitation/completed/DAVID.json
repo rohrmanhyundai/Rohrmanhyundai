@@ -148,5 +148,23 @@
     "notes": "Everything went great and cust is happy with service",
     "submittedAt": "2026-05-04T21:11:07.635Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "1722_BOB HYUNDAI GENES",
+    "repairOrder": "777063",
+    "vin": "5NMP2DGL7TH217968",
+    "model": "SANTA FE",
+    "serviceDate": "04/28/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": " (765) 701-6028",
+    "notes": "this is a lot car but im sure shawn loves it here",
+    "submittedAt": "2026-05-04T21:11:59.607Z",
+    "submittedBy": "DAVID"
   }
 ]
