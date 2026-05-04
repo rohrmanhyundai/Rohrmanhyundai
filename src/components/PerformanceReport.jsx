@@ -514,7 +514,12 @@ function TechReport({ entries }) {
   // Current month: average goal_pct of entries whose weekStart falls in the current month
   const now = new Date();
   const curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const monthEntries = allSorted.filter(e => (e.weekStart || e.date || '').startsWith(curMonthKey));
+  // Include any week that overlaps the current month (weekStart OR weekEnd falls in it)
+  const monthEntries = allSorted.filter(e => {
+    const ws = (e.weekStart || e.date || '').slice(0, 7);
+    const we = (e.weekEnd   || e.date || '').slice(0, 7);
+    return ws === curMonthKey || we === curMonthKey;
+  });
   const monthPct = monthEntries.length
     ? monthEntries.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / monthEntries.length
     : NaN;
