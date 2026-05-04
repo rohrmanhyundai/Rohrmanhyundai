@@ -498,6 +498,7 @@ function TechReport({ entries }) {
   // Group by year for filter
   const years = [...new Set(entries.map(e => e.date?.slice(0, 4)).filter(Boolean))].sort().reverse();
   const [selectedYear, setSelectedYear] = useState(years[0] || String(new Date().getFullYear()));
+  const [showHistory, setShowHistory] = useState(false);
 
   const filtered = entries
     .filter(e => e.date?.startsWith(selectedYear))
@@ -589,10 +590,21 @@ function TechReport({ entries }) {
       )}
 
       {/* Weekly history table */}
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
-        Weekly History — {filtered.length} week{filtered.length !== 1 ? 's' : ''} in {selectedYear}
-      </div>
-      {filtered.length === 0 ? (
+      <button
+        onClick={() => setShowHistory(s => !s)}
+        style={{
+          background: showHistory ? 'rgba(61,214,195,.15)' : 'rgba(255,255,255,.04)',
+          border: `1px solid ${showHistory ? 'rgba(61,214,195,.4)' : 'rgba(255,255,255,.1)'}`,
+          color: showHistory ? '#3dd6c3' : '#94a3b8',
+          borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
+          cursor: 'pointer', marginBottom: showHistory ? 12 : 0, display: 'flex',
+          alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+        }}
+      >
+        <span>{showHistory ? '▼' : '▶'}</span>
+        <span>Weekly History — {filtered.length} week{filtered.length !== 1 ? 's' : ''} in {selectedYear}</span>
+      </button>
+      {showHistory && (filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No entries for {selectedYear}.</div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
@@ -670,7 +682,7 @@ function TechReport({ entries }) {
             </tbody>
           </table>
         </div>
-      )}
+      ))}
     </div>
   );
 }
