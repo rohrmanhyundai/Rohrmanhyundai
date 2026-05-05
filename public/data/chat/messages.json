@@ -229,6 +229,11 @@
     "id": "mot6avetuuk",
     "username": "SHAWN",
     "text": "777239 DAVID RO does a tech have this ro?",
-    "timestamp": 1778018490245
+    "timestamp": 1778018490245,
+    "reactions": {
+      "🚨": [
+        "SHAWN"
+      ]
+    }
   }
 ]
