@@ -175,7 +175,22 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       }).catch(() => []),
       loadAwaitingData().then(rows => isManagerView ? (rows || []) : (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
     ]).then(([wip, awaiting]) => {
-      setAdvisorWip(wip);
+      // Defensive dedupe: a row should appear under at most one tech and at
+      // most once per tech. If the data files got into a bad state (rows
+      // copied across techs without removal), keep the first occurrence so
+      // the manager view doesn't show ghosts.
+      const seenIds = new Set();
+      const seenRos = new Set();
+      const cleanWip = [];
+      for (const r of wip) {
+        if (r.id && seenIds.has(r.id)) continue;
+        const ro = (r.ro || '').trim();
+        if (ro && seenRos.has(ro)) continue;
+        if (r.id) seenIds.add(r.id);
+        if (ro) seenRos.add(ro);
+        cleanWip.push(r);
+      }
+      setAdvisorWip(cleanWip);
       setAdvisorAwaiting(awaiting);
     }).finally(() => setWipLoading(false));
   }, [viewingAdvisor, refreshKey]);
