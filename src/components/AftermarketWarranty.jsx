@@ -37,6 +37,7 @@ const emptyForm = () => ({
   rental: null,
   towing: null,
   sublet: null,
+  tireRepair: null,
   tireTax: null,
   tireDisposal: null,
   notes: '',
@@ -65,12 +66,13 @@ function calcTotals(form) {
   const rental = num(form.rental);
   const towing = num(form.towing);
   const sublet = num(form.sublet);
+  const tireRepair = num(form.tireRepair);
   const tireTax = num(form.tireTax);
   const tireDisposal = num(form.tireDisposal);
   const tireFees = tireTax + tireDisposal;
-  const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet + tireFees - deductible;
+  const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet + tireRepair + tireFees - deductible;
   const totalDue = deductible;
-  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, tireFees, totalClaim, totalDue };
+  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue };
 }
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -382,6 +384,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                 { key: 'rental', label: 'RENTAL', color: '#a78bfa', bg: 'rgba(167,139,250,', border: 'rgba(167,139,250,' },
                 { key: 'towing', label: 'TOWING', color: '#fb923c', bg: 'rgba(251,146,60,', border: 'rgba(251,146,60,' },
                 { key: 'sublet', label: 'SUBLET', color: '#6ee7f9', bg: 'rgba(110,231,249,', border: 'rgba(110,231,249,' },
+                { key: 'tireRepair', label: 'TIRE REPAIR', color: '#f472b6', bg: 'rgba(244,114,182,', border: 'rgba(244,114,182,' },
               ].map(({ key, label, color, bg, border }) => {
                 const active = form[key] !== null && form[key] !== undefined && form[key] !== false;
                 return (
@@ -441,9 +444,9 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
                 );
               })()}
             </div>
-            {(num(form.rental) > 0 || num(form.towing) > 0 || num(form.sublet) > 0 || num(form.tireTax) + num(form.tireDisposal) > 0) && (
+            {(num(form.rental) > 0 || num(form.towing) > 0 || num(form.sublet) > 0 || num(form.tireRepair) > 0 || num(form.tireTax) + num(form.tireDisposal) > 0) && (
               <div style={{ marginTop: 8, fontSize: 12, color: '#64748b' }}>
-                Additional total: <span style={{ color: '#a78bfa', fontWeight: 700 }}>{fmtDol(num(form.rental) + num(form.towing) + num(form.sublet) + num(form.tireTax) + num(form.tireDisposal))}</span>
+                Additional total: <span style={{ color: '#a78bfa', fontWeight: 700 }}>{fmtDol(num(form.rental) + num(form.towing) + num(form.sublet) + num(form.tireRepair) + num(form.tireTax) + num(form.tireDisposal))}</span>
               </div>
             )}
           </div>
@@ -455,6 +458,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             {num(form.rental) > 0 && <TotalBox label="Rental" value={fmtDol(num(form.rental))} color="#a78bfa" />}
             {num(form.towing) > 0 && <TotalBox label="Towing" value={fmtDol(num(form.towing))} color="#fb923c" />}
             {num(form.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(num(form.sublet))} color="#6ee7f9" />}
+            {num(form.tireRepair) > 0 && <TotalBox label="Tire Repair" value={fmtDol(num(form.tireRepair))} color="#f472b6" />}
             {num(form.tireTax) > 0 && <TotalBox label="Tire Tax" value={fmtDol(num(form.tireTax))} color="#4ade80" />}
             {num(form.tireDisposal) > 0 && <TotalBox label="Tire Disposal" value={fmtDol(num(form.tireDisposal))} color="#4ade80" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
@@ -507,7 +511,7 @@ function PrintRow({ label, value, bold = false }) {
 }
 
 function ContractDetail({ contract, onEdit, onBack }) {
-  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
+  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
   const pdfRef = useRef(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -629,7 +633,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
 
       {/* Print-only document (also used for PDF capture via ref) */}
       <div className="amw-print-doc" ref={pdfRef}>
-        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} rental={rental} towing={towing} sublet={sublet} tireTax={tireTax} tireDisposal={tireDisposal} totalClaim={totalClaim} totalDue={totalDue} date={date} />
+        <PrintDocument contract={contract} laborTotal={laborTotal} partsTotal={partsTotal} taxAmt={taxAmt} rental={rental} towing={towing} sublet={sublet} tireRepair={tireRepair} tireTax={tireTax} tireDisposal={tireDisposal} totalClaim={totalClaim} totalDue={totalDue} date={date} />
       </div>
 
       {/* Screen preview (styled like the print doc but in dark theme) */}
@@ -716,6 +720,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
             {num(contract.rental) > 0 && <TotalBox label="Rental" value={fmtDol(rental)} color="#a78bfa" />}
             {num(contract.towing) > 0 && <TotalBox label="Towing" value={fmtDol(towing)} color="#fb923c" />}
             {num(contract.sublet) > 0 && <TotalBox label="Sublet" value={fmtDol(sublet)} color="#6ee7f9" />}
+            {tireRepair > 0 && <TotalBox label="Tire Repair" value={fmtDol(tireRepair)} color="#f472b6" />}
             {tireTax > 0 && <TotalBox label="Tire Tax" value={fmtDol(tireTax)} color="#4ade80" />}
             {tireDisposal > 0 && <TotalBox label="Tire Disposal" value={fmtDol(tireDisposal)} color="#4ade80" />}
             <TotalBox label="Total Warranty Claim" value={fmtDol(totalClaim)} color="#6ee7f9" big />
@@ -753,7 +758,7 @@ function InfoRow({ label, value, highlight = false, mono = false }) {
 }
 
 // ── Print document (white/light, for actual printing & PDF export) ────────────
-function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireTax, tireDisposal, totalClaim, totalDue, date }) {
+function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, totalClaim, totalDue, date }) {
   const isApproved      = !!(contract.approved ?? (contract.status === 'approved'));
   const isDenied        = !!contract.denied;
   const isWaiting       = !!(contract.waiting  ?? (contract.status === 'waiting'));
@@ -959,6 +964,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                   rental > 0 ? { label: 'Rental', value: fmtDol(rental) } : null,
                   towing > 0 ? { label: 'Towing', value: fmtDol(towing) } : null,
                   sublet > 0 ? { label: 'Sublet', value: fmtDol(sublet) } : null,
+                  tireRepair > 0 ? { label: 'Tire Repair', value: fmtDol(tireRepair) } : null,
                   tireTax > 0 ? { label: 'Tire Tax', value: fmtDol(tireTax) } : null,
                   tireDisposal > 0 ? { label: 'Tire Disposal', value: fmtDol(tireDisposal) } : null,
                   { label: `Deductible (customer)`, value: `− ${fmtDol(num(contract.deductible))}` },
