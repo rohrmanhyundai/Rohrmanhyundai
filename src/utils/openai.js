@@ -115,6 +115,86 @@ export function setOpenAIKey(key) {
   localStorage.setItem(OPENAI_KEY, key);
 }
 
+export async function generateTechCoaching({ techName, weeklyEntries, wip, awaiting, goalHrs }) {
+  const key = getOpenAIKey();
+  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
+
+  const fmt = (n, d = 1) => (n === null || n === undefined || n === '' ? '—' : Number(n).toFixed(d));
+  const pct = (v) => (v === null || v === undefined || v === '' ? '—' : (Number(v) * 100).toFixed(1) + '%');
+
+  // Build a compact recent-weeks table (most recent first, up to 13 weeks)
+  const recent = (weeklyEntries || []).slice(0, 13);
+  const weekTbl = recent.map(w => {
+    const range = w.weekStart && w.weekEnd ? `${w.weekStart}→${w.weekEnd}` : (w.label || w.date || '');
+    const ros   = w.total_ro != null ? `${w.total_ro} ROs` : '';
+    return `  ${range}  total=${fmt(w.total)}  goal=${fmt(w.goal)}  pct=${pct(w.goal_pct)}  pacing=${fmt(w.pacing)}  ${ros}  [Sat ${fmt(w.sat)}h/${w.sat_ro ?? '?'}ro · Mon ${fmt(w.mon)}h/${w.mon_ro ?? '?'}ro · Tue ${fmt(w.tue)}h/${w.tue_ro ?? '?'}ro · Wed ${fmt(w.wed)}h/${w.wed_ro ?? '?'}ro · Thu ${fmt(w.thu)}h/${w.thu_ro ?? '?'}ro · Fri ${fmt(w.fri)}h/${w.fri_ro ?? '?'}ro]`;
+  }).join('\n');
+
+  const wipLines = (wip || []).map(j => {
+    const age = j.roDate ? Math.floor((Date.now() - new Date(j.roDate + 'T00:00:00').getTime()) / 86400000) : '?';
+    const tags = [j.highPriority ? 'HIGH-PRIORITY' : '', j.partsArrived === true ? 'parts arrived' : (j.partsArrived === false ? 'parts pending' : ''), j.etaParts ? `parts ETA ${j.etaParts}` : ''].filter(Boolean).join(', ');
+    return `  RO ${j.ro || '?'} (${age}d old) — ${j.jobDesc || ''} ${tags ? `[${tags}]` : ''} ${j.notes ? `note: ${j.notes}` : ''}`;
+  }).join('\n');
+
+  const awaitingForTech = (awaiting || []).map(j => {
+    const age = j.roDate ? Math.floor((Date.now() - new Date(j.roDate + 'T00:00:00').getTime()) / 86400000) : '?';
+    return `  RO ${j.ro || '?'} (${age}d old) — ${j.jobDesc || ''}${j.highPriority ? ' [HIGH-PRIORITY]' : ''}`;
+  }).join('\n');
+
+  const prompt = `You are a seasoned automotive service-department manager coaching a technician at a Hyundai dealership. The tech's name is ${techName}.
+
+Your job: review their recent performance numbers and open work, then write a constructive weekly coaching report. Be **direct and metrics-focused, but also supportive** — when calling out a weak area, frame it with positive coaching and a clear, specific action they can take. Acknowledge improvements they have already made. Don't be vague — point to specific days, weeks, or open ROs from the data below.
+
+WEEKLY GOAL HOURS: ${goalHrs ?? 'unknown'}
+
+RECENT WEEKLY PERFORMANCE (most recent first; "h" = flagged hours, "ro" = repair orders billed):
+${weekTbl || '  (no data)'}
+
+CURRENT WORK IN PROGRESS (open ROs assigned to this tech):
+${wipLines || '  (none)'}
+
+JOBS AWAITING ASSIGNMENT (shared queue; tech may pick these up):
+${awaitingForTech || '  (none)'}
+
+Output the report in this Markdown structure exactly:
+
+## Summary
+A 2-3 sentence overview tying together how their last week, last 6 weeks, and last 3 months are trending. Lead with the strongest positive observation.
+
+## What's Working
+- 3-5 specific bullet points calling out strengths or improvements you can see in the numbers (cite week dates, days of week, or RO counts).
+
+## Where to Focus
+- 3-5 specific bullets on weak areas. For each one: what the data shows, why it matters, and a positive next step. Avoid generic advice — reference specific days, hours, or ROs.
+
+## Action Items for This Week
+1. Concrete action #1 (referencing specific WIP or scheduling)
+2. Concrete action #2
+3. Concrete action #3
+
+## WIP Watchlist
+- Brief callout of any WIP that's aging, parts-pending, or high-priority that the tech should push on this week. If nothing notable, write "Nothing critical — keep moving."
+
+Keep the entire report under 450 words. Use the tech's first name once or twice, but don't overdo it.`;
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 900,
+      temperature: 0.5,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `OpenAI error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
 export async function generateReviewReport({ techName, techAnswers, managerAnswers, questions }) {
   const key = getOpenAIKey();
   if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings > OpenAI Key.');

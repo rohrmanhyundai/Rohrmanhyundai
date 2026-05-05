@@ -517,6 +517,28 @@ export async function saveWipData(techName, rows) {
   return rows;
 }
 
+export async function loadCoaching(techName) {
+  const username = techName.toUpperCase();
+  const path = `public/data/coaching/${username}.json`;
+  try {
+    const data = await readGitHubFile(authHeaders(), path);
+    if (data && Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/coaching/${username}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveCoaching(techName, reports) {
+  const token = getGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const username = techName.toUpperCase();
+  await saveGitHubFile(authHeaders(), `public/data/coaching/${username}.json`, reports, `Coaching report update: ${username}`);
+  return reports;
+}
+
 export async function loadAwaitingData() {
   const path = 'public/data/wip/AWAITING.json';
   try {
