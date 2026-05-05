@@ -149,14 +149,18 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     if (!viewingAdvisor) return;
     setWipLoading(true);
     const advUpper = viewingAdvisor.toUpperCase();
+    const isManagerView = advUpper === 'SHAWN';
     Promise.all([
       loadDashboardData().then(d => {
         const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
         return Promise.all(techs.map(t =>
           loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
-        )).then(all => all.flat().filter(r => (r.advisor || '').toUpperCase() === advUpper));
+        )).then(all => {
+          const flat = all.flat();
+          return isManagerView ? flat : flat.filter(r => (r.advisor || '').toUpperCase() === advUpper);
+        });
       }).catch(() => []),
-      loadAwaitingData().then(rows => (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
+      loadAwaitingData().then(rows => isManagerView ? (rows || []) : (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
     ]).then(([wip, awaiting]) => {
       setAdvisorWip(wip);
       setAdvisorAwaiting(awaiting);
@@ -313,6 +317,18 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               </button>
             );
           })}
+          <button
+            key="SHAWN"
+            className={`adv-advisor-tab${viewingAdvisor === 'SHAWN' ? ' adv-advisor-tab--active' : ''}`}
+            onClick={() => onViewingChange('SHAWN')}
+            title="Manager view — see all WIP and all jobs awaiting tech"
+            style={{ background: viewingAdvisor === 'SHAWN' ? 'linear-gradient(180deg,rgba(244,114,182,.3),rgba(168,85,247,.2))' : undefined, borderColor: viewingAdvisor === 'SHAWN' ? 'rgba(244,114,182,.5)' : undefined }}
+          >
+            SHAWN
+            <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, background: 'rgba(244,114,182,.25)', color: '#f9a8d4', borderRadius: 4, padding: '1px 5px', verticalAlign: 'middle' }}>
+              MGR
+            </span>
+          </button>
         </div>
       )}
 
@@ -386,8 +402,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
           {/* Advisor WIP & Awaiting panels */}
           <AdvisorJobsPanel
-            title={`${viewingAdvisor}'s WIP`}
-            emptyText="No active WIPs assigned to this advisor."
+            title={viewingAdvisor === 'SHAWN' ? 'All WIP (Manager View)' : `${viewingAdvisor}'s WIP`}
+            emptyText={viewingAdvisor === 'SHAWN' ? 'No active WIPs in the shop.' : 'No active WIPs assigned to this advisor.'}
             jobs={advisorWip}
             showTech
             loading={wipLoading}
@@ -396,8 +412,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             border="rgba(61,214,195,.25)"
           />
           <AdvisorJobsPanel
-            title="Waiting on Tech"
-            emptyText="No jobs waiting on a tech for this advisor."
+            title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
+            emptyText={viewingAdvisor === 'SHAWN' ? 'No cars currently waiting on a tech.' : 'No jobs waiting on a tech for this advisor.'}
             jobs={advisorAwaiting}
             loading={wipLoading}
             color="#fbbf24"
