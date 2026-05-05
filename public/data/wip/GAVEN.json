@@ -63,18 +63,5 @@
     "highPriority": false,
     "advisor": "",
     "notes": "TIRE ON ORDER"
-  },
-  {
-    "id": "mot8xtvz1ag",
-    "ro": "777266",
-    "roDate": "2026-05-05",
-    "jobDesc": "CHECK ENGINE LIGHT ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "CAR DIED ON TEST DRIVE OFF THE LOT. JORDAN DID THIS CAR GET TOW BACK?"
   }
 ]
