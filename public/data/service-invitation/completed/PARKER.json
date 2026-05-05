@@ -192,5 +192,23 @@
     "notes": "Straight to Voicemail",
     "submittedAt": "2026-05-05T12:46:50.843Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "KAREN BOWSHER",
+    "repairOrder": "777135",
+    "vin": "5NMJBCDE3SH540161",
+    "model": "TUCSON",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "574-297-4004",
+    "notes": "Answered and right when I asked if it was \"Ms.Bowsher\" she hung up lol",
+    "submittedAt": "2026-05-05T12:48:21.381Z",
+    "submittedBy": "PARKER"
   }
 ]
