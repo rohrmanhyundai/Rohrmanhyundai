@@ -430,7 +430,27 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               type="text"
               value={roSearch}
               onChange={e => setRoSearch(e.target.value)}
-              placeholder={viewingAdvisor === 'SHAWN' ? '🔍 Search RO # across all WIP and awaiting…' : `🔍 Search RO # in ${viewingAdvisor}'s WIP and awaiting…`}
+              onKeyDown={e => {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                const q = roSearch.trim().toLowerCase();
+                if (!q) return;
+                const wipMatches = advisorWip.filter(j => (j.ro || '').toLowerCase().includes(q));
+                const awMatches  = advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(q));
+                if (wipMatches.length === 0 && awMatches.length === 0) {
+                  if (onWorkInProgress) onWorkInProgress(roSearch.trim());
+                  return;
+                }
+                // Prefer an exact RO match; otherwise take the first hit.
+                const all = [
+                  ...wipMatches.map(j => ({ j, source: 'wip' })),
+                  ...awMatches.map(j => ({ j, source: 'awaiting' })),
+                ];
+                const exact = all.find(({ j }) => (j.ro || '').toLowerCase() === q);
+                const hit = exact || all[0];
+                if (onWorkInProgress) onWorkInProgress({ ro: hit.j.ro || '', tech: hit.j.tech || '', source: hit.source });
+              }}
+              placeholder={viewingAdvisor === 'SHAWN' ? '🔍 Search RO # across all WIP and awaiting… (Enter to open)' : `🔍 Search RO # in ${viewingAdvisor}'s WIP and awaiting… (Enter to open)`}
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
