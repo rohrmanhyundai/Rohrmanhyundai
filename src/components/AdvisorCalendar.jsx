@@ -463,7 +463,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#3dd6c3"
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
-            onOpen={onWorkInProgress ? (j) => onWorkInProgress(j.ro || '') : undefined}
+            onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }) : undefined}
           />
           <AdvisorJobsPanel
             title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
@@ -473,7 +473,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
             border="rgba(251,191,36,.25)"
-            onOpen={onWorkInProgress ? (j) => onWorkInProgress(j.ro || '') : undefined}
+            onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }) : undefined}
           />
         </div>
         {/* Advisor Chat — right */}

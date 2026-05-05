@@ -1,5 +1,5 @@
 /* wip */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData } from '../utils/github';
 import TechChat from './TechChat';
 
@@ -39,7 +39,7 @@ const emptyAwaiting = () => ({
   ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
 });
 
-export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialRO = '', onInitialROConsumed }) {
+export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialJob = null, onInitialJobConsumed }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
   const isManager        = currentRole === 'admin' || (currentRole || '').includes('manager');
   const isTech           = currentRole === 'technician';
@@ -186,16 +186,46 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     loadAwaitingData().then(d => { setAwaiting(d); setAwaitingLoading(false); }).catch(() => setAwaitingLoading(false));
   }, []);
 
-  // If launched with a pre-filled RO (e.g. from Advisor Calendar "+ Add RO in WIP"),
-  // populate the search box and run the search once awaiting data is ready.
+  // Highlighted RO (set when user clicks "View / Edit" from Advisor Calendar)
+  const [highlightRO, setHighlightRO] = useState('');
+  const highlightedRowRef = useRef(null);
+
+  // If launched targeting a specific RO, jump straight to the right tab/section
+  // and highlight the row instead of going through the search results UI.
   useEffect(() => {
-    if (!initialRO) return;
-    if (awaitingLoading) return;
-    setSearchRO(initialRO);
-    handleSearch(initialRO);
-    onInitialROConsumed && onInitialROConsumed();
+    if (!initialJob || !initialJob.ro) return;
+    const ro = initialJob.ro;
+    if (initialJob.source === 'wip' && initialJob.tech && techList.includes(initialJob.tech)) {
+      setActiveTech(initialJob.tech);
+      setSearchResults(null);
+      setSearchRO('');
+    } else if (initialJob.source === 'awaiting') {
+      setSearchResults(null);
+      setSearchRO('');
+    } else {
+      // Fallback: prefill search and run it once awaiting data is ready.
+      if (awaitingLoading) return;
+      setSearchRO(ro);
+      handleSearch(ro);
+      onInitialJobConsumed && onInitialJobConsumed();
+      return;
+    }
+    setHighlightRO(ro);
+    onInitialJobConsumed && onInitialJobConsumed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialRO, awaitingLoading]);
+  }, [initialJob, awaitingLoading]);
+
+  // Scroll the highlighted row into view once it renders.
+  useEffect(() => {
+    if (!highlightRO) return;
+    const t = setTimeout(() => {
+      if (highlightedRowRef.current) {
+        highlightedRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 120);
+    const clear = setTimeout(() => setHighlightRO(''), 4000);
+    return () => { clearTimeout(t); clearTimeout(clear); };
+  }, [highlightRO, rows, awaiting]);
 
   function updateAwaiting(id, field, value) {
     setAwaiting(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
@@ -501,10 +531,13 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               <div style={{ color: '#475569', textAlign: 'center', padding: '40px 0', fontSize: 14 }}>No work in progress. Click "Add Row" to get started.</div>
             )}
 
-            {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => (
-              <div key={row.id} style={{
-                background: row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)',
-                border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)'}`,
+            {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => {
+              const isHighlighted = highlightRO && (row.ro || '').trim() === highlightRO.trim();
+              return (
+              <div key={row.id} ref={isHighlighted ? highlightedRowRef : null} style={{
+                background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)'),
+                border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)')}`,
+                boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none',
                 borderRadius: 14, padding: '16px 20px', marginBottom: 14, transition: 'all .2s',
               }}>
                 {row.highPriority && (
@@ -622,7 +655,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   >{savingRow === row.id ? '⏳ Saving…' : '💾 Save Row'}</button>
                 </div>
               </div>
-            ))}
+              );
+            })}
 
             <button
               onClick={addRow}
@@ -655,8 +689,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
                   // 3. Newest date first
                   return new Date(b.roDate || 0) - new Date(a.roDate || 0);
-                }).map(aw => (
-                <div key={aw.id} style={{ background: aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)'}`, borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
+                }).map(aw => {
+                const isHighlighted = highlightRO && (aw.ro || '').trim() === highlightRO.trim();
+                return (
+                <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)'), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)')}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
 
                   {/* High priority banner */}
                   {aw.highPriority && (
@@ -755,7 +791,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                     </>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

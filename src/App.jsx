@@ -90,7 +90,7 @@ export default function App() {
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [advisorUnread, setAdvisorUnread] = useState(0);
   const [techUnread, setTechUnread] = useState(0);
-  const [wipInitialRO, setWipInitialRO] = useState('');
+  const [wipInitialRO, setWipInitialRO] = useState(null);
   const pageRef = useRef(page);
   const stageRef = useRef(null);
   const adminOpenRef = useRef(false);
@@ -395,10 +395,10 @@ export default function App() {
         techList={techList}
         advisorList={advisorList}
         backLabel={wipBackLabel}
-        onBack={() => { setWipInitialRO(''); navTo(prevPage || 'tech-resources'); }}
+        onBack={() => { setWipInitialRO(null); navTo(prevPage || 'tech-resources'); }}
         chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
-        initialRO={wipInitialRO}
-        onInitialROConsumed={() => setWipInitialRO('')}
+        initialJob={wipInitialRO}
+        onInitialJobConsumed={() => setWipInitialRO(null)}
       />
     );
   }
@@ -588,7 +588,7 @@ export default function App() {
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
         onMyReports={() => goTo('performance-report', 'advisor-calendar')}
-        onWorkInProgress={(ro) => { setWipInitialRO(typeof ro === 'string' ? ro : ''); goTo('work-in-progress', 'advisor-calendar'); }}
+        onWorkInProgress={(arg) => { setWipInitialRO(arg && typeof arg === 'object' ? arg : (typeof arg === 'string' ? { ro: arg } : null)); goTo('work-in-progress', 'advisor-calendar'); }}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
