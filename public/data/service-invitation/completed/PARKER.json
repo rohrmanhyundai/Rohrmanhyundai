@@ -210,5 +210,23 @@
     "notes": "Answered and right when I asked if it was \"Ms.Bowsher\" she hung up lol",
     "submittedAt": "2026-05-05T12:48:21.381Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "GREG JONES",
+    "repairOrder": "777136",
+    "vin": "5NTJBDDE3TH159826",
+    "model": "SANTA CRUZ",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-366-0164",
+    "notes": "Said we did great & going to try to get the survey filled out when he has time",
+    "submittedAt": "2026-05-05T13:27:37.468Z",
+    "submittedBy": "PARKER"
   }
 ]
