@@ -156,7 +156,7 @@ ${wipLines || '  (none)'}
 JOBS AWAITING ASSIGNMENT (shared queue; tech may pick these up):
 ${awaitingForTech || '  (none)'}
 
-Output the report in this Markdown structure exactly:
+Output the report in this Markdown structure exactly. Sprinkle a tasteful emoji or two inside bullet points where it adds energy (e.g. ⚡ 🔥 💪 ⏱️ 🛠️ 📈 ✨ 👏 🚗 🧰), but do not overdo it — at most one emoji per bullet, and keep the headings exactly as written below.
 
 ## Summary
 A 2-3 sentence overview tying together how their last week, last 6 weeks, and last 3 months are trending. Lead with the strongest positive observation.
