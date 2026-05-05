@@ -244,24 +244,67 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   // and highlight the row instead of going through the search results UI.
   useEffect(() => {
     if (!initialJob || !initialJob.ro) return;
-    const ro = initialJob.ro;
+    const ro = initialJob.ro.trim();
+    const roLower = ro.toLowerCase();
+
     if (initialJob.source === 'wip' && initialJob.tech && techList.includes(initialJob.tech)) {
       setActiveTech(initialJob.tech);
       setSearchResults(null);
       setSearchRO('');
-    } else if (initialJob.source === 'awaiting') {
-      setSearchResults(null);
-      setSearchRO('');
-    } else {
-      // Fallback: prefill search and run it once awaiting data is ready.
-      if (awaitingLoading) return;
-      setSearchRO(ro);
-      handleSearch(ro);
+      setHighlightRO(ro);
       onInitialJobConsumed && onInitialJobConsumed();
       return;
     }
-    setHighlightRO(ro);
-    onInitialJobConsumed && onInitialJobConsumed();
+    if (initialJob.source === 'awaiting') {
+      setSearchResults(null);
+      setSearchRO('');
+      setHighlightRO(ro);
+      onInitialJobConsumed && onInitialJobConsumed();
+      return;
+    }
+
+    // Unknown source: discover where the RO actually lives by scanning every
+    // tech's WIP file plus the Cars Awaiting list, then jump to it directly.
+    let cancelled = false;
+    (async () => {
+      // Check Cars Awaiting first (already loaded in state)
+      if (!awaitingLoading) {
+        const inAwaiting = (awaiting || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
+        if (inAwaiting && !cancelled) {
+          setSearchResults(null);
+          setSearchRO('');
+          setHighlightRO(ro);
+          onInitialJobConsumed && onInitialJobConsumed();
+          return;
+        }
+      }
+      // Scan all techs in parallel for a WIP match
+      const results = await Promise.all(
+        (techList || []).map(async t => {
+          try {
+            const data = await loadWipData(t);
+            const hit = (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
+            return hit ? t : null;
+          } catch { return null; }
+        })
+      );
+      if (cancelled) return;
+      const matchTech = results.find(Boolean);
+      if (matchTech) {
+        setActiveTech(matchTech);
+        setSearchResults(null);
+        setSearchRO('');
+        setHighlightRO(ro);
+        onInitialJobConsumed && onInitialJobConsumed();
+        return;
+      }
+      // Nothing found anywhere — fall back to the search-results UI so the
+      // user can decide what to do (e.g. + Create on a tech).
+      setSearchRO(ro);
+      handleSearch(ro);
+      onInitialJobConsumed && onInitialJobConsumed();
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialJob, awaitingLoading]);
 
