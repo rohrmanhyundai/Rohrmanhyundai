@@ -39,7 +39,7 @@ const emptyAwaiting = () => ({
   ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
 });
 
-export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers }) {
+export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialRO = '', onInitialROConsumed }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
   const isManager        = currentRole === 'admin' || (currentRole || '').includes('manager');
   const isTech           = currentRole === 'technician';
@@ -154,8 +154,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     onBack();
   }
 
-  async function handleSearch() {
-    const q = searchRO.trim();
+  async function handleSearch(explicitQuery) {
+    const q = (typeof explicitQuery === 'string' ? explicitQuery : searchRO).trim();
     if (!q) { setSearchResults(null); return; }
     setSearching(true);
     setSearchResults(null);
@@ -185,6 +185,17 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   useEffect(() => {
     loadAwaitingData().then(d => { setAwaiting(d); setAwaitingLoading(false); }).catch(() => setAwaitingLoading(false));
   }, []);
+
+  // If launched with a pre-filled RO (e.g. from Advisor Calendar "+ Add RO in WIP"),
+  // populate the search box and run the search once awaiting data is ready.
+  useEffect(() => {
+    if (!initialRO) return;
+    if (awaitingLoading) return;
+    setSearchRO(initialRO);
+    handleSearch(initialRO);
+    onInitialROConsumed && onInitialROConsumed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRO, awaitingLoading]);
 
   function updateAwaiting(id, field, value) {
     setAwaiting(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));

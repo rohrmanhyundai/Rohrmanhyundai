@@ -1,0 +1,53 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-05-04",
+  "rows": [
+    {
+      "customerName": "Judy Bower",
+      "appointmentTime": "10AM",
+      "criticalDeferredService": "Alignment, Tire Rotation, Fuel Inection, AC Evap, Tune Up, Battery",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "YASH BHARDWAJ",
+      "appointmentTime": "8:40AM",
+      "criticalDeferredService": "NONE",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Harold Pollock",
+      "appointmentTime": "3PM",
+      "criticalDeferredService": "Alignment & Cabin Air Filter",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Tatiana Burgos Martinez",
+      "appointmentTime": "3PM",
+      "criticalDeferredService": "Front & Rear Wipers, Coolant Exchange, Fuel Injection, Brake Fluid Exchange, Replace Cabin Air Filter, AC Evap, Tune Up w/ Spark Plugs & Replace PCV, Trans Fluid Exchange, Replace Pads & Resurface Rotors all the way around, Tire Rotate, Trasnfer Case Service, Rear Diff Fluid",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-04T17:19:11.733Z"
+}

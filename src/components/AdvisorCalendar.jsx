@@ -433,7 +433,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   No matches for "{roSearch.trim()}". Open the WIP page to add this RO.
                 </div>
                 {onWorkInProgress && (
-                  <button onClick={onWorkInProgress} style={{ background: 'rgba(251,146,60,.25)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '8px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                  <button onClick={() => onWorkInProgress(roSearch.trim())} style={{ background: 'rgba(251,146,60,.25)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '8px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
                     + Add RO in WIP
                   </button>
                 )}
