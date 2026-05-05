@@ -145,7 +145,12 @@
     "id": "morsnnp4x8d",
     "username": "SHAWN",
     "text": "776993 ENGINE APPROVED DAVID/CORY",
-    "timestamp": 1777935105976
+    "timestamp": 1777935105976,
+    "reactions": {
+      "👍": [
+        "CORY"
+      ]
+    }
   },
   {
     "id": "mosk7vzmb5p",
