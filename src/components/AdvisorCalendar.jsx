@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
 
@@ -91,6 +91,32 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
   const [loading, setLoading] = useState(true);
+  const [scheduleEvents, setScheduleEvents] = useState({}); // { 'YYYY-MM-DD': [{name, type}] }
+
+  useEffect(() => {
+    loadSchedules().then(s => {
+      if (!s) return;
+      const events = {};
+      for (const [name, days] of Object.entries(s)) {
+        if (name === '__HOLIDAY__') {
+          for (const [date, val] of Object.entries(days || {})) {
+            if (val === 'holiday') {
+              if (!events[date]) events[date] = [];
+              events[date].push({ name: 'HOLIDAY', type: 'holiday' });
+            }
+          }
+          continue;
+        }
+        for (const [date, val] of Object.entries(days || {})) {
+          if (val === 'vacation' || val === 'training') {
+            if (!events[date]) events[date] = [];
+            events[date].push({ name, type: val });
+          }
+        }
+      }
+      setScheduleEvents(events);
+    }).catch(() => {});
+  }, [refreshKey]);
   const { ranks, total } = useRankBoard();
 
   useEffect(() => {
@@ -247,6 +273,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const isToday = dateStr === todayStr;
                 const hasNotes = noteDates.has(dateStr);
+                const events = scheduleEvents[dateStr] || [];
+                const styleFor = (type) => {
+                  if (type === 'holiday')  return { bg: 'rgba(244,114,182,.18)', border: 'rgba(244,114,182,.5)', color: '#f9a8d4', icon: '🎉' };
+                  if (type === 'vacation') return { bg: 'rgba(74,222,128,.16)',  border: 'rgba(74,222,128,.45)',  color: '#86efac', icon: '🌴' };
+                  if (type === 'training') return { bg: 'rgba(96,165,250,.16)', border: 'rgba(96,165,250,.45)',  color: '#93c5fd', icon: '📘' };
+                  return { bg: 'rgba(148,163,184,.15)', border: 'rgba(148,163,184,.4)', color: '#cbd5e1', icon: '•' };
+                };
                 return (
                   <div
                     key={dateStr}
@@ -255,6 +288,24 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   >
                     <span className="adv-day-num">{d}</span>
                     {hasNotes && <span className="adv-note-dot" title="Notes saved" />}
+                    {events.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, alignItems: 'flex-start' }}>
+                        {events.map((ev, j) => {
+                          const s = styleFor(ev.type);
+                          const label = ev.type === 'holiday'
+                            ? '🎉 Holiday'
+                            : `${s.icon} ${ev.name} ${ev.type === 'vacation' ? 'Vac' : 'Trng'}`;
+                          return (
+                            <span key={j} title={`${ev.name}: ${ev.type}`} style={{
+                              fontSize: 9.5, fontWeight: 700, color: s.color,
+                              background: s.bg, border: `1px solid ${s.border}`,
+                              borderRadius: 4, padding: '1px 5px', lineHeight: 1.3,
+                              maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                            }}>{label}</span>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 );
               })}
