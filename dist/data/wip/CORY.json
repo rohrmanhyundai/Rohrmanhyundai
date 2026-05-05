@@ -21,7 +21,7 @@
     "etaCompletion": "",
     "partsArrived": true,
     "partsArrivedDate": "04/30/2026",
-    "notes": "all parts here",
+    "notes": "all parts here. WE NEED TO GET STARTED ON THIS ",
     "advisor": "PARKER"
   },
   {
@@ -35,20 +35,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "All pics and paperwork submitted. failed bearing test p/a has been submitted for engine "
-  },
-  {
-    "id": "morex7cvlky",
-    "ro": "777199",
-    "roDate": "2026-05-04",
-    "jobDesc": "check engine flasing ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": ""
+    "notes": "All pics and paperwork submitted. failed bearing. ENGINE APPROVED "
   },
   {
     "id": "morlekjdix7",
@@ -61,6 +48,6 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "",
-    "notes": "failed bearing test. starting P/A \n"
+    "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE \n"
   }
 ]
