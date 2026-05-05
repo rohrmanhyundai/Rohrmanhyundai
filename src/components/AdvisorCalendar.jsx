@@ -144,6 +144,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [advisorWip, setAdvisorWip] = useState([]);
   const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
   const [wipLoading, setWipLoading] = useState(false);
+  const [roSearch, setRoSearch] = useState('');
 
   useEffect(() => {
     if (!viewingAdvisor) return;
@@ -400,11 +401,53 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {loading && <div className="adv-loading">Loading saved notes...</div>}
           </div>
 
+          {/* RO search — manager view */}
+          {viewingAdvisor === 'SHAWN' && (
+            <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+              <input
+                type="text"
+                value={roSearch}
+                onChange={e => setRoSearch(e.target.value)}
+                placeholder="🔍 Search RO # across all WIP and awaiting…"
+                style={{
+                  flex: 1, background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
+                  color: '#e2e8f0', padding: '10px 14px', fontSize: 13, outline: 'none',
+                }}
+              />
+              {roSearch && (
+                <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* No-match banner: offer to add RO via WIP page */}
+          {viewingAdvisor === 'SHAWN' && roSearch.trim() && !wipLoading && (() => {
+            const q = roSearch.trim().toLowerCase();
+            const wipHits = advisorWip.filter(j => (j.ro || '').toLowerCase().includes(q)).length;
+            const awHits  = advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(q)).length;
+            if (wipHits + awHits > 0) return null;
+            return (
+              <div style={{ marginTop: 10, background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                <div style={{ color: '#fbbf24', fontSize: 13, fontWeight: 700 }}>
+                  No matches for "{roSearch.trim()}". Open the WIP page to add this RO.
+                </div>
+                {onWorkInProgress && (
+                  <button onClick={onWorkInProgress} style={{ background: 'rgba(251,146,60,.25)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '8px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                    + Add RO in WIP
+                  </button>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Advisor WIP & Awaiting panels */}
           <AdvisorJobsPanel
             title={viewingAdvisor === 'SHAWN' ? 'All WIP (Manager View)' : `${viewingAdvisor}'s WIP`}
             emptyText={viewingAdvisor === 'SHAWN' ? 'No active WIPs in the shop.' : 'No active WIPs assigned to this advisor.'}
-            jobs={advisorWip}
+            jobs={roSearch.trim() ? advisorWip.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorWip}
             showTech
             loading={wipLoading}
             color="#3dd6c3"
@@ -414,7 +457,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           <AdvisorJobsPanel
             title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
             emptyText={viewingAdvisor === 'SHAWN' ? 'No cars currently waiting on a tech.' : 'No jobs waiting on a tech for this advisor.'}
-            jobs={advisorAwaiting}
+            jobs={roSearch.trim() ? advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorAwaiting}
             loading={wipLoading}
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
