@@ -85,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border }) {
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen }) {
   const dayAge = (iso) => {
     if (!iso) return null;
     const d = new Date(iso + 'T00:00:00');
@@ -125,6 +125,18 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg
                 {j.partsArrived === false && j.etaParts && <span style={{ fontSize: 10, color: '#fbbf24', whiteSpace: 'nowrap', alignSelf: 'center' }}>parts ETA {j.etaParts}</span>}
                 {j.partsArrived === true && <span style={{ fontSize: 10, color: '#4ade80', whiteSpace: 'nowrap', alignSelf: 'center' }}>✓ parts in</span>}
                 {age != null && <span style={{ fontSize: 11, color: ageColor, whiteSpace: 'nowrap', alignSelf: 'center', fontWeight: 700 }}>{age}d</span>}
+                {onOpen && (
+                  <button
+                    onClick={() => onOpen(j)}
+                    title="Open this RO in WIP"
+                    style={{
+                      alignSelf: 'center', whiteSpace: 'nowrap',
+                      background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.45)',
+                      color: '#93c5fd', borderRadius: 6, padding: '4px 10px',
+                      fontWeight: 800, fontSize: 11, cursor: 'pointer',
+                    }}
+                  >View / Edit</button>
+                )}
               </div>
             );
           })}
@@ -451,6 +463,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#3dd6c3"
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
+            onOpen={onWorkInProgress ? (j) => onWorkInProgress(j.ro || '') : undefined}
           />
           <AdvisorJobsPanel
             title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
@@ -460,6 +473,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
             border="rgba(251,191,36,.25)"
+            onOpen={onWorkInProgress ? (j) => onWorkInProgress(j.ro || '') : undefined}
           />
         </div>
         {/* Advisor Chat — right */}
