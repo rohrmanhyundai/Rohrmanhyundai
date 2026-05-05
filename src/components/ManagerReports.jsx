@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching } from '../utils/github';
+import { generateTechCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport from './PerformanceReport';
 
 function fmtDate(iso) {
@@ -100,6 +101,7 @@ export default function ManagerReports({ users, onBack }) {
 
   const [selected, setSelected] = useState(allUsers[0] || '');
   const [viewUser, setViewUser] = useState(null);
+  const [generatingAI, setGeneratingAI] = useState(false);
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -285,6 +287,64 @@ export default function ManagerReports({ users, onBack }) {
     }
   }
 
+  async function handleGenerateAI() {
+    if (!getOpenAIKey()) {
+      alert('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
+      return;
+    }
+    const techNames = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
+    if (techNames.length === 0) { alert('No technicians found.'); return; }
+    const ok = window.confirm(
+      `Generate AI coaching report for ${techNames.length} tech${techNames.length === 1 ? '' : 's'}?\n\n` +
+      techNames.join(', ') +
+      `\n\nThis will call OpenAI once per tech (a few cents total) and save each report to GitHub.\nContinue?`
+    );
+    if (!ok) return;
+    if (!await ensureToken()) return;
+
+    setGeneratingAI(true);
+    setStatus(`⏳ Generating AI reports… (0/${techNames.length})`);
+    let done = 0, failed = 0;
+    try {
+      // Need awaiting list once
+      const awaiting = await loadAwaitingData().catch(() => []);
+      for (const tech of techNames) {
+        try {
+          setStatus(`⏳ Generating AI reports… ${tech} (${done}/${techNames.length})`);
+          const [entries, wip] = await Promise.all([
+            loadGithubFile(`data/performance-reports/${tech}.json`).then(d => Array.isArray(d) ? d : []),
+            loadWipData(tech).catch(() => []),
+          ]);
+          const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+          const goalHrs = techGoals[tech] || sorted[0]?.goal || null;
+          const reportText = await generateTechCoaching({
+            techName: tech, weeklyEntries: sorted, wip, awaiting, goalHrs,
+          });
+          const existing = await loadCoaching(tech);
+          const now = new Date();
+          const entry = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+            generatedAt: now.toISOString(),
+            weekLabel: sorted[0]?.label || sorted[0]?.weekStart || '',
+            weekStart: sorted[0]?.weekStart || '',
+            weekEnd:   sorted[0]?.weekEnd   || '',
+            report:    reportText,
+          };
+          const updated = [entry, ...existing];
+          await saveCoaching(tech, updated);
+          done++;
+        } catch (err) {
+          failed++;
+          console.error(`Coaching failed for ${tech}:`, err);
+        }
+      }
+      setStatus(failed === 0 ? `✅ Generated ${done} report${done === 1 ? '' : 's'}!` : `⚠️ Done — ${done} ok, ${failed} failed`);
+      setTimeout(() => setStatus(''), 6000);
+    } finally {
+      setGeneratingAI(false);
+    }
+  }
+
   async function handleDelete(idx) {
     if (!window.confirm('Delete this entry? This cannot be undone.')) return;
     if (!await ensureToken()) return;
@@ -347,6 +407,13 @@ export default function ManagerReports({ users, onBack }) {
               {status && <span style={{ fontSize: 13, fontWeight: 700, color: status.startsWith('✅') ? '#4ade80' : status.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{status}</span>}
               <button onClick={openNew} style={{ background: 'rgba(61,214,195,.15)', border: '1px solid rgba(61,214,195,.35)', color: '#3dd6c3', borderRadius: 10, padding: '9px 20px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
                 + Add Entry
+              </button>
+              <button
+                onClick={handleGenerateAI}
+                disabled={generatingAI}
+                style={{ background: 'rgba(168,85,247,.18)', border: '1px solid rgba(168,85,247,.4)', color: '#c4b5fd', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer', opacity: generatingAI ? 0.6 : 1 }}
+              >
+                {generatingAI ? '⏳ Generating…' : '🤖 Generate Tech AI Report'}
               </button>
             </div>
           </div>

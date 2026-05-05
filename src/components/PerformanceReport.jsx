@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile } from '../utils/github';
+import { loadGithubFile, loadCoaching } from '../utils/github';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -494,11 +494,21 @@ function EfficiencyGauge({ label, pct, sub, accentA, accentB }) {
 // ─────────────────────────────────────────────────────────────
 // TECH VIEW — weekly snapshots (Sat–Fri)
 // ─────────────────────────────────────────────────────────────
-function TechReport({ entries }) {
+function TechReport({ entries, username }) {
   // Group by year for filter
   const years = [...new Set(entries.map(e => e.date?.slice(0, 4)).filter(Boolean))].sort().reverse();
   const [selectedYear, setSelectedYear] = useState(years[0] || String(new Date().getFullYear()));
   const [showHistory, setShowHistory] = useState(false);
+  const [showCoaching, setShowCoaching] = useState(false);
+  const [coachingReports, setCoachingReports] = useState([]);
+  const [coachingLoading, setCoachingLoading] = useState(false);
+  useEffect(() => {
+    if (!username) return;
+    setCoachingLoading(true);
+    loadCoaching(username)
+      .then(d => setCoachingReports(Array.isArray(d) ? d : []))
+      .finally(() => setCoachingLoading(false));
+  }, [username]);
 
   const filtered = entries
     .filter(e => e.date?.startsWith(selectedYear))
@@ -581,21 +591,63 @@ function TechReport({ entries }) {
         </div>
       )}
 
-      {/* Weekly history table */}
-      <button
-        onClick={() => setShowHistory(s => !s)}
-        style={{
-          background: showHistory ? 'rgba(61,214,195,.15)' : 'rgba(255,255,255,.04)',
-          border: `1px solid ${showHistory ? 'rgba(61,214,195,.4)' : 'rgba(255,255,255,.1)'}`,
-          color: showHistory ? '#3dd6c3' : '#94a3b8',
-          borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
-          cursor: 'pointer', marginBottom: showHistory ? 12 : 0, display: 'flex',
-          alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
-        }}
-      >
-        <span>{showHistory ? '▼' : '▶'}</span>
-        <span>Weekly History — {filtered.length} week{filtered.length !== 1 ? 's' : ''} in {selectedYear}</span>
-      </button>
+      {/* Toggle row: Weekly History + AI Coaching */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: (showHistory || showCoaching) ? 12 : 0, flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setShowHistory(s => !s)}
+          style={{
+            background: showHistory ? 'rgba(61,214,195,.15)' : 'rgba(255,255,255,.04)',
+            border: `1px solid ${showHistory ? 'rgba(61,214,195,.4)' : 'rgba(255,255,255,.1)'}`,
+            color: showHistory ? '#3dd6c3' : '#94a3b8',
+            borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
+            cursor: 'pointer', display: 'flex',
+            alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+          }}
+        >
+          <span>{showHistory ? '▼' : '▶'}</span>
+          <span>Weekly History — {filtered.length} week{filtered.length !== 1 ? 's' : ''} in {selectedYear}</span>
+        </button>
+        <button
+          onClick={() => setShowCoaching(s => !s)}
+          style={{
+            background: showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
+            border: `1px solid ${showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
+            color: showCoaching ? '#c4b5fd' : '#94a3b8',
+            borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
+            cursor: 'pointer', display: 'flex',
+            alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+          }}
+        >
+          <span>{showCoaching ? '▼' : '▶'}</span>
+          <span>🎯 AI Coaching {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
+        </button>
+      </div>
+
+      {showCoaching && (
+        <div style={{ background: 'rgba(168,85,247,.06)', border: '1px solid rgba(168,85,247,.2)', borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
+          {coachingLoading ? (
+            <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>⏳ Loading coaching reports…</div>
+          ) : coachingReports.length === 0 ? (
+            <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>
+              No coaching reports yet. Your manager will generate one soon.
+            </div>
+          ) : (
+            coachingReports.map((r, i) => (
+              <div key={r.id || i} style={{ marginBottom: i < coachingReports.length - 1 ? 24 : 0, paddingBottom: i < coachingReports.length - 1 ? 24 : 0, borderBottom: i < coachingReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>
+                    Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                <div style={{ color: '#cbd5e1', fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.report}</div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
       {showHistory && (filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No entries for {selectedYear}.</div>
       ) : (
@@ -729,7 +781,7 @@ export default function PerformanceReport({ currentUser, role, onBack }) {
           ) : isAdvisor ? (
             <AdvisorReport entries={entries} />
           ) : isTech ? (
-            <TechReport entries={entries} />
+            <TechReport entries={entries} username={username} />
           ) : (
             <div style={{ textAlign: 'center', padding: 60, color: '#64748b' }}>Role not recognized.</div>
           )}
