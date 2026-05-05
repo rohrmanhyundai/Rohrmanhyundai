@@ -90,15 +90,23 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const [advisorPickerId, setAdvisorPickerId] = useState(null);   // WIP row id
   const [awAdvisorPickerId, setAwAdvisorPickerId] = useState(null); // Awaiting row id
 
+  // Tracks which tech the current `rows` state was loaded for. Every save MUST
+  // verify rowsTechRef.current === target tech. If not, abort — the state is
+  // mid-transition and saving would write one tech's rows under another tech's
+  // filename (which is exactly how CORY.json kept getting clobbered).
+  const rowsTechRef = useRef(null);
+
   const load = useCallback(async (tech) => {
     setLoading(true);
     setError('');
-    // Clear rows immediately so any in-flight auto-save can't pick up the
-    // OUTGOING tech's rows and write them under the INCOMING tech's name.
+    // Mark rows as belonging to no tech and clear them, so any save fired
+    // during the load is short-circuited by the ref check.
+    rowsTechRef.current = null;
     setRows([]);
     try {
       const raw = await loadWipData(tech);
       const data = dedupeWip(raw);
+      rowsTechRef.current = tech;
       setRows(data);
       // If we found and removed duplicates, persist the cleaned list back so
       // every viewer stops seeing the dupes.
@@ -111,6 +119,17 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       setLoading(false);
     }
   }, []);
+
+  // Wraps any save targeted at `tech`. Aborts if rowsTechRef doesn't match,
+  // which means a tab switch is mid-flight and `rows` doesn't belong to `tech`.
+  function safeSaveWipData(tech, data) {
+    if (rowsTechRef.current !== tech) {
+      console.warn('[WIP] aborted cross-tech save', { target: tech, current: rowsTechRef.current });
+      return Promise.resolve();
+    }
+    if (!Array.isArray(data)) return Promise.resolve();
+    return saveWipData(tech, dedupeWip(data));
+  }
 
   useEffect(() => { load(activeTech); }, [activeTech, load]);
 
@@ -127,7 +146,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         partsArrived: value,
         partsArrivedDate: value === true ? today : '',
       } : r);
-      saveWipData(activeTech, updated).catch(e => setError(e.message));
+      safeSaveWipData(activeTech, updated).catch(e => setError(e.message));
       return updated;
     });
   }
@@ -136,7 +155,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   function updateRowAndSave(id, field, value) {
     setRows(prev => {
       const updated = prev.map(r => r.id === id ? { ...r, [field]: value } : r);
-      saveWipData(activeTech, updated).catch(e => setError(e.message));
+      safeSaveWipData(activeTech, updated).catch(e => setError(e.message));
       return updated;
     });
   }
@@ -153,20 +172,22 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     // Don't save if we're between tabs (prevents writing one tech's rows under
     // another tech's filename during a tab switch).
     if (loading) return;
+    if (rowsTechRef.current !== activeTech) return;
     setSavingRow(id);
     setError('');
     try {
-      await saveWipData(activeTech, dedupeWip(rows));
+      await safeSaveWipData(activeTech, rows);
     } catch (e) { setError(e.message); }
     finally { setSavingRow(null); }
   }
 
   async function deleteRow(id) {
+    if (rowsTechRef.current !== activeTech) return;
     setDeletingRow(id);
     setError('');
     try {
       const updated = rows.filter(r => r.id !== id);
-      await saveWipData(activeTech, updated);
+      await safeSaveWipData(activeTech, updated);
       setRows(updated);
     } catch (e) { setError(e.message); }
     finally { setDeletingRow(null); }
@@ -178,7 +199,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   async function handleBack() {
     setSaving(true);
-    try { await saveWipData(activeTech, rows); } catch {}
+    try { await safeSaveWipData(activeTech, rows); } catch {}
     setSaving(false);
     onBack();
   }
@@ -311,15 +332,17 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   // Reassign existing WIP row to different tech (managers only)
   async function reassignRow(wipRow, newTech) {
+    if (rowsTechRef.current !== activeTech) return;
     setMovingId(wipRow.id);
     try {
       // Remove from current tech (also strip any duplicates by id or RO)
       const current = dedupeWip(rows.filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || '')));
-      await saveWipData(activeTech, current);
+      await safeSaveWipData(activeTech, current);
       setRows(current);
       // Add to new tech (drop any pre-existing copies of this row by id or RO before appending)
       const existing = await loadWipData(newTech);
       const filteredExisting = existing.filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || ''));
+      // Direct save — newTech isn't the currently-loaded tech, so safeSave's ref check would block this.
       await saveWipData(newTech, dedupeWip([...filteredExisting, { ...wipRow }]));
       setReassignPickerId(null);
     } catch (e) { setError(e.message); }
