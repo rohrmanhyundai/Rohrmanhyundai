@@ -494,6 +494,121 @@ function EfficiencyGauge({ label, pct, sub, accentA, accentB }) {
 // ─────────────────────────────────────────────────────────────
 // TECH VIEW — weekly snapshots (Sat–Fri)
 // ─────────────────────────────────────────────────────────────
+// Render a coaching report (## sections, bullets, bold) as a colorful styled UI
+function CoachingReportBody({ text }) {
+  if (!text) return null;
+  const sections = [];
+  let current = { title: '', body: [] };
+  for (const raw of text.split('\n')) {
+    const line = raw.replace(/\r$/, '');
+    const m = line.match(/^##\s+(.+?)\s*$/);
+    if (m) {
+      if (current.title || current.body.length) sections.push(current);
+      current = { title: m[1].trim(), body: [] };
+    } else {
+      current.body.push(line);
+    }
+  }
+  if (current.title || current.body.length) sections.push(current);
+
+  // Style per section title
+  const themeFor = (title) => {
+    const t = title.toLowerCase();
+    if (t.includes('summary'))            return { emoji: '🌟', color: '#6ee7f9', bg: 'rgba(110,231,249,.08)',  border: 'rgba(110,231,249,.3)'  };
+    if (t.includes("what's working") || t.includes('strengths')) return { emoji: '✅', color: '#4ade80', bg: 'rgba(74,222,128,.08)',   border: 'rgba(74,222,128,.3)'   };
+    if (t.includes('focus') || t.includes('improve')) return { emoji: '🎯', color: '#fbbf24', bg: 'rgba(251,191,36,.08)',  border: 'rgba(251,191,36,.3)'  };
+    if (t.includes('action'))             return { emoji: '🚀', color: '#f472b6', bg: 'rgba(244,114,182,.08)', border: 'rgba(244,114,182,.3)' };
+    if (t.includes('wip') || t.includes('watch')) return { emoji: '🔧', color: '#60a5fa', bg: 'rgba(96,165,250,.08)',  border: 'rgba(96,165,250,.3)'  };
+    return { emoji: '💡', color: '#c4b5fd', bg: 'rgba(196,181,253,.08)', border: 'rgba(196,181,253,.3)' };
+  };
+
+  // Render bold inline (**foo**) → <strong>; rest as plain text
+  const renderInline = (s, theme) => {
+    const parts = s.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((p, i) => {
+      if (p.startsWith('**') && p.endsWith('**')) {
+        return <strong key={i} style={{ color: theme.color, fontWeight: 800 }}>{p.slice(2, -2)}</strong>;
+      }
+      return <span key={i}>{p}</span>;
+    });
+  };
+
+  const renderBody = (lines, theme) => {
+    const out = [];
+    let buf = [];
+    const flushPara = () => {
+      if (!buf.length) return;
+      out.push(<p key={`p${out.length}`} style={{ margin: '6px 0', color: '#cbd5e1', lineHeight: 1.6 }}>{renderInline(buf.join(' '), theme)}</p>);
+      buf = [];
+    };
+    let listType = null; // 'ul' | 'ol'
+    let listItems = [];
+    const flushList = () => {
+      if (!listItems.length) return;
+      const Tag = listType === 'ol' ? 'ol' : 'ul';
+      out.push(
+        <Tag key={`l${out.length}`} style={{ margin: '6px 0 6px 4px', paddingLeft: 22, color: '#cbd5e1', lineHeight: 1.65 }}>
+          {listItems.map((it, i) => (
+            <li key={i} style={{ marginBottom: 4, paddingLeft: 4 }}>{renderInline(it, theme)}</li>
+          ))}
+        </Tag>
+      );
+      listItems = [];
+      listType = null;
+    };
+
+    for (const line of lines) {
+      const t = line.trim();
+      if (!t) { flushPara(); flushList(); continue; }
+      const ul = t.match(/^[-•]\s+(.*)$/);
+      const ol = t.match(/^(\d+)\.\s+(.*)$/);
+      if (ul) {
+        flushPara();
+        if (listType !== 'ul') flushList();
+        listType = 'ul';
+        listItems.push(ul[1]);
+      } else if (ol) {
+        flushPara();
+        if (listType !== 'ol') flushList();
+        listType = 'ol';
+        listItems.push(ol[2]);
+      } else {
+        flushList();
+        buf.push(t);
+      }
+    }
+    flushPara();
+    flushList();
+    return out;
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {sections.map((s, i) => {
+        const th = themeFor(s.title);
+        return (
+          <div key={i} style={{
+            background: th.bg, border: `1px solid ${th.border}`, borderLeft: `4px solid ${th.color}`,
+            borderRadius: 12, padding: '14px 18px',
+          }}>
+            <div style={{
+              fontWeight: 900, fontSize: 13, color: th.color,
+              textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 8,
+              display: 'flex', alignItems: 'center', gap: 8,
+            }}>
+              <span style={{ fontSize: 18 }}>{th.emoji}</span>
+              <span>{s.title}</span>
+            </div>
+            <div style={{ fontSize: 13.5 }}>
+              {renderBody(s.body, th)}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function TechReport({ entries, username }) {
   // Group by year for filter
   const years = [...new Set(entries.map(e => e.date?.slice(0, 4)).filter(Boolean))].sort().reverse();
@@ -642,7 +757,7 @@ function TechReport({ entries, username }) {
                     Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
-                <div style={{ color: '#cbd5e1', fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.report}</div>
+                <CoachingReportBody text={r.report} />
               </div>
             ))
           )}
