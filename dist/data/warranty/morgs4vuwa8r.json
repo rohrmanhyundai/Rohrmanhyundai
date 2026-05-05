@@ -1,7 +1,7 @@
 {
   "id": "morgs4vuwa8r",
   "createdAt": "2026-05-04T17:19:19.482Z",
-  "updatedAt": "2026-05-04T18:20:08.447Z",
+  "updatedAt": "2026-05-05T16:49:04.917Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Michael Rivas",
   "customerPhone": "765-404-4495",
@@ -13,30 +13,30 @@
   "mileage": "37417",
   "warrantyCompany": "Driver Care",
   "warrantyPhone": "",
-  "claimNumber": "",
-  "authNumber": "",
-  "laborRate": "",
-  "laborTime": "",
+  "claimNumber": "292-16530007",
+  "authNumber": "3225305-8439336",
+  "laborRate": "73.32",
+  "laborTime": ".30",
   "diagnosisTime": "",
   "parts": [
     {
       "id": "morgs4vum2vk",
-      "partNumber": "",
-      "description": "",
+      "partNumber": "2175593",
+      "description": "KUMHO SOULASTA31",
       "qty": "1",
-      "price": ""
+      "price": "129.99"
     }
   ],
-  "taxPct": "",
+  "taxPct": "7",
   "deductible": "",
   "rental": null,
   "towing": null,
   "sublet": null,
-  "tireTax": null,
-  "tireDisposal": null,
+  "tireTax": "2.50",
+  "tireDisposal": "3.00",
   "notes": "",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-05-05",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -45,6 +45,6 @@
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-05-04"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
