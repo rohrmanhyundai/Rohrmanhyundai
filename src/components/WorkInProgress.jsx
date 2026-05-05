@@ -34,6 +34,23 @@ const inpSt = {
   outline: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
 };
 
+// Strip duplicate WIP rows. Keeps the FIRST occurrence of each row id, and also
+// dedupes by RO# (after id-dedupe) so the same RO can't appear twice on a tech.
+function dedupeWip(rows) {
+  const seenIds = new Set();
+  const seenRos = new Set();
+  const out = [];
+  for (const r of rows || []) {
+    if (r && r.id && seenIds.has(r.id)) continue;
+    const ro = (r && r.ro || '').trim();
+    if (ro && seenRos.has(ro)) continue;
+    if (r && r.id) seenIds.add(r.id);
+    if (ro) seenRos.add(ro);
+    out.push(r);
+  }
+  return out;
+}
+
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
   ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
@@ -76,9 +93,18 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const load = useCallback(async (tech) => {
     setLoading(true);
     setError('');
+    // Clear rows immediately so any in-flight auto-save can't pick up the
+    // OUTGOING tech's rows and write them under the INCOMING tech's name.
+    setRows([]);
     try {
-      const data = await loadWipData(tech);
+      const raw = await loadWipData(tech);
+      const data = dedupeWip(raw);
       setRows(data);
+      // If we found and removed duplicates, persist the cleaned list back so
+      // every viewer stops seeing the dupes.
+      if (Array.isArray(raw) && data.length !== raw.length) {
+        saveWipData(tech, data).catch(() => {});
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -124,10 +150,13 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }
 
   async function saveRow(id) {
+    // Don't save if we're between tabs (prevents writing one tech's rows under
+    // another tech's filename during a tab switch).
+    if (loading) return;
     setSavingRow(id);
     setError('');
     try {
-      await saveWipData(activeTech, rows);
+      await saveWipData(activeTech, dedupeWip(rows));
     } catch (e) { setError(e.message); }
     finally { setSavingRow(null); }
   }
@@ -267,7 +296,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     try {
       const existing = await loadWipData(tech);
       const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc, highPriority: !!awaitingRow.highPriority, advisor: awaitingRow.advisor || '' };
-      await saveWipData(tech, [...existing, newWipRow]);
+      const deduped = dedupeWip([...existing, newWipRow]);
+      await saveWipData(tech, deduped);
       const updatedAwaiting = awaiting.filter(r => r.id !== awaitingRow.id);
       setAwaiting(updatedAwaiting);
       await saveAwaitingData(updatedAwaiting);
@@ -283,13 +313,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   async function reassignRow(wipRow, newTech) {
     setMovingId(wipRow.id);
     try {
-      // Remove from current tech
-      const current = rows.filter(r => r.id !== wipRow.id);
+      // Remove from current tech (also strip any duplicates by id or RO)
+      const current = dedupeWip(rows.filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || '')));
       await saveWipData(activeTech, current);
       setRows(current);
-      // Add to new tech
+      // Add to new tech (drop any pre-existing copies of this row by id or RO before appending)
       const existing = await loadWipData(newTech);
-      await saveWipData(newTech, [...existing, { ...wipRow }]);
+      const filteredExisting = existing.filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || ''));
+      await saveWipData(newTech, dedupeWip([...filteredExisting, { ...wipRow }]));
       setReassignPickerId(null);
     } catch (e) { setError(e.message); }
     finally { setMovingId(null); }
@@ -299,8 +330,16 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setCreatingForTech(tech);
     try {
       const existing = await loadWipData(tech);
-      const newRow = { ...emptyRow(), ro: searchRO.trim() };
-      const updated = [...existing, newRow];
+      const ro = searchRO.trim();
+      // Don't create a second row for the same RO on the same tech
+      if (existing.some(r => (r.ro || '').trim() === ro)) {
+        setActiveTech(tech);
+        setRows(existing);
+        clearSearch();
+        return;
+      }
+      const newRow = { ...emptyRow(), ro };
+      const updated = dedupeWip([...existing, newRow]);
       await saveWipData(tech, updated);
       setActiveTech(tech);
       setRows(updated);
