@@ -401,30 +401,28 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {loading && <div className="adv-loading">Loading saved notes...</div>}
           </div>
 
-          {/* RO search — manager view */}
-          {viewingAdvisor === 'SHAWN' && (
-            <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input
-                type="text"
-                value={roSearch}
-                onChange={e => setRoSearch(e.target.value)}
-                placeholder="🔍 Search RO # across all WIP and awaiting…"
-                style={{
-                  flex: 1, background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
-                  color: '#e2e8f0', padding: '10px 14px', fontSize: 13, outline: 'none',
-                }}
-              />
-              {roSearch && (
-                <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
-                  Clear
-                </button>
-              )}
-            </div>
-          )}
+          {/* RO search */}
+          <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="text"
+              value={roSearch}
+              onChange={e => setRoSearch(e.target.value)}
+              placeholder={viewingAdvisor === 'SHAWN' ? '🔍 Search RO # across all WIP and awaiting…' : `🔍 Search RO # in ${viewingAdvisor}'s WIP and awaiting…`}
+              style={{
+                flex: 1, background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
+                color: '#e2e8f0', padding: '10px 14px', fontSize: 13, outline: 'none',
+              }}
+            />
+            {roSearch && (
+              <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                Clear
+              </button>
+            )}
+          </div>
 
           {/* No-match banner: offer to add RO via WIP page */}
-          {viewingAdvisor === 'SHAWN' && roSearch.trim() && !wipLoading && (() => {
+          {roSearch.trim() && !wipLoading && (() => {
             const q = roSearch.trim().toLowerCase();
             const wipHits = advisorWip.filter(j => (j.ro || '').toLowerCase().includes(q)).length;
             const awHits  = advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(q)).length;
