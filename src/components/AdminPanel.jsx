@@ -370,6 +370,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           thu:     (parseFloat(t.thu) || 0) + bonus.thu,
           fri:     (parseFloat(t.fri) || 0) + bonus.fri,
           sat:     (parseFloat(t.sat) || 0) + bonus.sat,
+          mon_ro:  parseFloat(t.mon_ro) || 0,
+          tue_ro:  parseFloat(t.tue_ro) || 0,
+          wed_ro:  parseFloat(t.wed_ro) || 0,
+          thu_ro:  parseFloat(t.thu_ro) || 0,
+          fri_ro:  parseFloat(t.fri_ro) || 0,
+          sat_ro:  parseFloat(t.sat_ro) || 0,
+          total_ro: (parseFloat(t.mon_ro)||0) + (parseFloat(t.tue_ro)||0) + (parseFloat(t.wed_ro)||0)
+                  + (parseFloat(t.thu_ro)||0) + (parseFloat(t.fri_ro)||0) + (parseFloat(t.sat_ro)||0),
           ...(breakdown.vacation > 0 ? { vacationHours: breakdown.vacation } : {}),
           ...(breakdown.training > 0 ? { trainingHours: breakdown.training } : {}),
           ...(breakdown.holiday  > 0 ? { holidayHours:  breakdown.holiday  } : {}),
@@ -672,8 +680,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="form-grid">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
-                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)}</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
+                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
               ))}
+            </div>
+            <div className="form-grid" style={{ marginTop: 8 }}>
+              {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => {
+                const roKey = `${day}_ro`;
+                return (
+                  <div className="field" key={roKey}>
+                    <label style={{ color: '#94a3b8' }}>{day.charAt(0).toUpperCase() + day.slice(1)} ROs</label>
+                    <input defaultValue={t[roKey] ?? ''} onBlur={e => updateField(`technicians.${idx}.${roKey}`, safe(e.target.value, 0))} />
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}
