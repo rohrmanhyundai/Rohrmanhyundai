@@ -48,6 +48,12 @@ const TECH_FIELDS = [
   { key: 'wed',      label: 'WED',       type: 'number', decimals: 1, isDay: true, offset: 4 },
   { key: 'thu',      label: 'THU',       type: 'number', decimals: 1, isDay: true, offset: 5 },
   { key: 'fri',      label: 'FRI',       type: 'number', decimals: 1, isDay: true, offset: 6 },
+  { key: 'sat_ro',   label: 'SAT ROs',   type: 'number', decimals: 0, hideInTable: true },
+  { key: 'mon_ro',   label: 'MON ROs',   type: 'number', decimals: 0, hideInTable: true },
+  { key: 'tue_ro',   label: 'TUE ROs',   type: 'number', decimals: 0, hideInTable: true },
+  { key: 'wed_ro',   label: 'WED ROs',   type: 'number', decimals: 0, hideInTable: true },
+  { key: 'thu_ro',   label: 'THU ROs',   type: 'number', decimals: 0, hideInTable: true },
+  { key: 'fri_ro',   label: 'FRI ROs',   type: 'number', decimals: 0, hideInTable: true },
 ];
 
 function displayVal(val, field) {
@@ -250,6 +256,10 @@ export default function ManagerReports({ users, onBack }) {
         const totalWorkdays = workedSat ? 6 : 5;
         const daysWorked    = [mon, tue, wed, thu, fri].filter(v => v > 0).length + (workedSat ? 1 : 0);
         entry.pacing = daysWorked > 0 ? (total / daysWorked) * totalWorkdays : 0;
+        // RO counts: keep what user entered (already handled by fields loop) and total
+        const sumROs = ['sat_ro','mon_ro','tue_ro','wed_ro','thu_ro','fri_ro']
+          .reduce((s, k) => s + num(entry[k]), 0);
+        entry.total_ro = sumROs;
       }
       entry.savedAt = new Date().toISOString();
 
@@ -494,7 +504,7 @@ export default function ManagerReports({ users, onBack }) {
                       <tr>
                         <th style={{ width: 210, minWidth: 210, whiteSpace: 'nowrap', padding: '10px 14px', position: 'sticky', left: 0, zIndex: 2, background: '#0f172a' }}>DATE</th>
                         <th style={{ minWidth: 90, whiteSpace: 'nowrap', padding: '10px 10px', textAlign: 'center' }}>WEEK</th>
-                        {fields.map(f => (
+                        {fields.filter(f => !f.hideInTable).map(f => (
                           <th key={f.key} style={{ minWidth: f.isDay ? 90 : 100, padding: '10px 14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                             {f.label}
                             {f.isDay && e.weekStart
@@ -508,7 +518,7 @@ export default function ManagerReports({ users, onBack }) {
                       // Subsequent rows: re-render header with that row's dates
                       <tr>
                         <th colSpan={isAdvisor ? 2 : 2} style={{ padding: '6px 14px', background: '#0a1628', borderTop: '1px solid rgba(255,255,255,.06)' }} />
-                        {fields.map(f => (
+                        {fields.filter(f => !f.hideInTable).map(f => (
                           <th key={f.key} style={{ padding: '6px 10px', textAlign: 'center', whiteSpace: 'nowrap', background: '#0a1628', borderTop: '1px solid rgba(255,255,255,.06)', fontWeight: 400, color: '#475569', fontSize: 11 }}>
                             {f.isDay && e.weekStart ? dayDate(f.offset) : ''}
                           </th>
@@ -530,7 +540,7 @@ export default function ManagerReports({ users, onBack }) {
                           <td style={{ color: '#6ee7f9', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>
                             Wk {weekOfYear(isAdvisor ? e.date : e.weekStart)}
                           </td>
-                          {fields.map(f => (
+                          {fields.filter(f => !f.hideInTable).map(f => (
                             <td key={f.key} style={{ color: '#cbd5e1', textAlign: 'center', padding: '9px 10px', whiteSpace: 'nowrap' }}>
                               {displayVal(e[f.key], f)}
                             </td>

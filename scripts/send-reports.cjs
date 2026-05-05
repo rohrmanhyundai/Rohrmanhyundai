@@ -270,6 +270,14 @@ function main() {
       thu:       dayTotals.thu,
       fri:       dayTotals.fri,
       sat:       dayTotals.sat,
+      mon_ro:    parseFloat(t.mon_ro) || 0,
+      tue_ro:    parseFloat(t.tue_ro) || 0,
+      wed_ro:    parseFloat(t.wed_ro) || 0,
+      thu_ro:    parseFloat(t.thu_ro) || 0,
+      fri_ro:    parseFloat(t.fri_ro) || 0,
+      sat_ro:    parseFloat(t.sat_ro) || 0,
+      total_ro:  (parseFloat(t.mon_ro)||0) + (parseFloat(t.tue_ro)||0) + (parseFloat(t.wed_ro)||0)
+              + (parseFloat(t.thu_ro)||0) + (parseFloat(t.fri_ro)||0) + (parseFloat(t.sat_ro)||0),
     };
     if (bonusTotal > 0) {
       if (breakdown.vacation > 0) entry.vacationHours = breakdown.vacation;
