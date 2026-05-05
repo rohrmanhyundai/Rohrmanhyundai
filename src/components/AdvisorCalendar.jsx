@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, loadAwaitingData, loadDashboardData } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
 
@@ -85,6 +85,55 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border }) {
+  const dayAge = (iso) => {
+    if (!iso) return null;
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return null;
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+  };
+  return (
+    <div style={{ marginTop: 16, background: bg, border: `1px solid ${border}`, borderLeft: `4px solid ${color}`, borderRadius: 12, padding: '14px 18px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ fontWeight: 900, fontSize: 13, color, textTransform: 'uppercase', letterSpacing: 1 }}>{title}</div>
+        <div style={{ fontSize: 11, color: '#64748b' }}>{loading ? '…' : `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`}</div>
+      </div>
+      {loading ? (
+        <div style={{ color: '#64748b', fontSize: 13, padding: '10px 0' }}>Loading…</div>
+      ) : jobs.length === 0 ? (
+        <div style={{ color: '#64748b', fontSize: 13, padding: '6px 0' }}>{emptyText}</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {jobs.map((j, i) => {
+            const age = dayAge(j.roDate);
+            const ageColor = age == null ? '#64748b' : age >= 14 ? '#f87171' : age >= 7 ? '#fbbf24' : '#94a3b8';
+            return (
+              <div key={j.id || `${j.ro}-${i}`} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)',
+                borderRadius: 8, padding: '8px 12px',
+              }}>
+                <div style={{ minWidth: 70, fontWeight: 800, color: '#e2e8f0', fontSize: 13 }}>{j.ro || '—'}</div>
+                {showTech && (
+                  <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{j.tech || ''}</div>
+                )}
+                <div style={{ flex: 1, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
+                  {j.jobDesc || '—'}
+                  {j.notes ? <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{j.notes}</div> : null}
+                </div>
+                {j.highPriority && <span style={{ fontSize: 10, fontWeight: 800, color: '#f87171', background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap', alignSelf: 'center' }}>HIGH</span>}
+                {j.partsArrived === false && j.etaParts && <span style={{ fontSize: 10, color: '#fbbf24', whiteSpace: 'nowrap', alignSelf: 'center' }}>parts ETA {j.etaParts}</span>}
+                {j.partsArrived === true && <span style={{ fontSize: 10, color: '#4ade80', whiteSpace: 'nowrap', alignSelf: 'center' }}>✓ parts in</span>}
+                {age != null && <span style={{ fontSize: 11, color: ageColor, whiteSpace: 'nowrap', alignSelf: 'center', fontWeight: 700 }}>{age}d</span>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onMyReports, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -92,6 +141,27 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [noteDates, setNoteDates] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [scheduleEvents, setScheduleEvents] = useState({}); // { 'YYYY-MM-DD': [{name, type}] }
+  const [advisorWip, setAdvisorWip] = useState([]);
+  const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
+  const [wipLoading, setWipLoading] = useState(false);
+
+  useEffect(() => {
+    if (!viewingAdvisor) return;
+    setWipLoading(true);
+    const advUpper = viewingAdvisor.toUpperCase();
+    Promise.all([
+      loadDashboardData().then(d => {
+        const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
+        return Promise.all(techs.map(t =>
+          loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
+        )).then(all => all.flat().filter(r => (r.advisor || '').toUpperCase() === advUpper));
+      }).catch(() => []),
+      loadAwaitingData().then(rows => (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
+    ]).then(([wip, awaiting]) => {
+      setAdvisorWip(wip);
+      setAdvisorAwaiting(awaiting);
+    }).finally(() => setWipLoading(false));
+  }, [viewingAdvisor, refreshKey]);
 
   useEffect(() => {
     loadSchedules().then(s => {
@@ -313,6 +383,27 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
             {loading && <div className="adv-loading">Loading saved notes...</div>}
           </div>
+
+          {/* Advisor WIP & Awaiting panels */}
+          <AdvisorJobsPanel
+            title={`${viewingAdvisor}'s WIP`}
+            emptyText="No active WIPs assigned to this advisor."
+            jobs={advisorWip}
+            showTech
+            loading={wipLoading}
+            color="#3dd6c3"
+            bg="rgba(61,214,195,.06)"
+            border="rgba(61,214,195,.25)"
+          />
+          <AdvisorJobsPanel
+            title="Waiting on Tech"
+            emptyText="No jobs waiting on a tech for this advisor."
+            jobs={advisorAwaiting}
+            loading={wipLoading}
+            color="#fbbf24"
+            bg="rgba(251,191,36,.06)"
+            border="rgba(251,191,36,.25)"
+          />
         </div>
         {/* Advisor Chat — right */}
         <div style={{ width: 300, flexShrink: 0 }}>
