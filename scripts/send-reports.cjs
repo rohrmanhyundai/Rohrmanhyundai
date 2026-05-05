@@ -200,6 +200,7 @@ function main() {
       asr:              a.asr,
       elr:              a.elr,
       last_month_total: a.last_month_total,
+      ro_count:         parseFloat(a.ro_count) || 0,
     };
 
     // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)

@@ -305,6 +305,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           daily_avg: a.daily_avg, align: a.align, tires: a.tires,
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
           last_month_total: a.last_month_total,
+          ro_count: parseFloat(a.ro_count) || 0,
         };
         // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
         const updated = [entry, ...entries.filter(e => e.date !== today && e.label !== advLabel)];
@@ -441,7 +442,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const newData = structuredClone(data);
     newData.advisors.push({
       name: name.toUpperCase(), mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
-      align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0,
+      align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0, ro_count: 0,
     });
     newData.advisorTraining.push({
       name: name.toUpperCase(), certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
@@ -633,6 +634,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
               <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label>RO Count</label><input defaultValue={a.ro_count ?? ''} onBlur={e => updateField(`advisors.${idx}.ro_count`, safe(e.target.value, 0))} /></div>
               </div>
             </div>
           ))}
