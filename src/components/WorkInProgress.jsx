@@ -635,7 +635,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <textarea
                     value={row.notes || ''}
                     onChange={e => updateRow(row.id, 'notes', e.target.value)}
-                    placeholder="Add notes here…"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                        saveRow(row.id);
+                      }
+                    }}
+                    placeholder="Add notes here… (Enter to save, Shift+Enter for new line)"
                     rows={2}
                     style={{ ...inpSt, resize: 'vertical', lineHeight: 1.5 }}
                   />
