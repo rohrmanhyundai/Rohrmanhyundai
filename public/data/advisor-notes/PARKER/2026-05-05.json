@@ -12,8 +12,8 @@
       "notes": []
     },
     {
-      "customerName": "Dan Savage",
-      "appointmentTime": "9:40AM",
+      "customerName": "",
+      "appointmentTime": "",
       "criticalDeferredService": "",
       "waiter": false,
       "dropOff": false,
@@ -49,5 +49,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-05-05T11:53:37.348Z"
+  "savedAt": "2026-05-05T13:56:56.917Z"
 }
