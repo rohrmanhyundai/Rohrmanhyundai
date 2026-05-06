@@ -96,12 +96,19 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   // filename (which is exactly how CORY.json kept getting clobbered).
   const rowsTechRef = useRef(null);
 
+  // Background-refresh bookkeeping. Polled refresh skips any row whose id is in
+  // these sets so a user who's typed-but-not-saved doesn't lose their input.
+  const dirtyRowsRef = useRef(new Set());
+  const dirtyAwaitingRef = useRef(new Set());
+  const rootRef = useRef(null);
+
   const load = useCallback(async (tech) => {
     setLoading(true);
     setError('');
     // Mark rows as belonging to no tech and clear them, so any save fired
     // during the load is short-circuited by the ref check.
     rowsTechRef.current = null;
+    dirtyRowsRef.current = new Set();
     setRows([]);
     try {
       const raw = await loadWipData(tech);
@@ -133,7 +140,70 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   useEffect(() => { load(activeTech); }, [activeTech, load]);
 
+  // ── Background refresh ─────────────────────────────────────────────────────
+  // Polls the WIP file for the active tech and the Cars Awaiting list every
+  // few seconds so changes from other users show up automatically. Skipped
+  // entirely while the user has a field focused or has unsaved typing in a row,
+  // so it never disrupts what the user is doing.
+  useEffect(() => {
+    function isUserTyping() {
+      const ae = document.activeElement;
+      if (!ae || !rootRef.current) return false;
+      if (!rootRef.current.contains(ae)) return false;
+      const tag = (ae.tagName || '').toUpperCase();
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || ae.isContentEditable;
+    }
+
+    const intervalId = setInterval(async () => {
+      // Skip if any blocking operation is running.
+      if (loading || saving || savingRow || deletingRow || awaitingSavingId || movingId) return;
+      if (isUserTyping()) return;
+      // Don't poll while a search-results screen is open.
+      if (searchResults !== null) return;
+
+      const targetTech = activeTech;
+
+      // Refresh WIP rows for the active tech
+      try {
+        const fresh = dedupeWip(await loadWipData(targetTech));
+        // Bail if user switched tabs or started typing while we waited
+        if (rowsTechRef.current !== targetTech) return;
+        if (isUserTyping()) return;
+        setRows(prev => {
+          const dirty = dirtyRowsRef.current;
+          if (dirty.size === 0) return fresh;
+          const localById = new Map(prev.map(r => [r.id, r]));
+          const merged = fresh.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
+          // Preserve any locally-added rows that aren't on the server yet
+          for (const r of prev) {
+            if (dirty.has(r.id) && !fresh.some(f => f.id === r.id)) merged.unshift(r);
+          }
+          return merged;
+        });
+      } catch {}
+
+      // Refresh Cars Awaiting
+      try {
+        const freshAw = await loadAwaitingData();
+        if (isUserTyping()) return;
+        setAwaiting(prev => {
+          const dirty = dirtyAwaitingRef.current;
+          if (dirty.size === 0) return freshAw;
+          const localById = new Map(prev.map(r => [r.id, r]));
+          const merged = freshAw.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
+          for (const r of prev) {
+            if (dirty.has(r.id) && !freshAw.some(f => f.id === r.id)) merged.unshift(r);
+          }
+          return merged;
+        });
+      } catch {}
+    }, 10000); // 10s — slow enough to be invisible
+
+    return () => clearInterval(intervalId);
+  }, [activeTech, loading, saving, savingRow, deletingRow, awaitingSavingId, movingId, searchResults]);
+
   function updateRow(id, field, value) {
+    dirtyRowsRef.current.add(id);
     setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
   }
 
@@ -177,6 +247,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setError('');
     try {
       await safeSaveWipData(activeTech, rows);
+      dirtyRowsRef.current.delete(id);
     } catch (e) { setError(e.message); }
     finally { setSavingRow(null); }
   }
@@ -189,12 +260,17 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       const updated = rows.filter(r => r.id !== id);
       await safeSaveWipData(activeTech, updated);
       setRows(updated);
+      dirtyRowsRef.current.delete(id);
     } catch (e) { setError(e.message); }
     finally { setDeletingRow(null); }
   }
 
   function addRow() {
-    setRows(prev => [emptyRow(), ...prev]);
+    const fresh = emptyRow();
+    // A brand-new row has no server copy yet — mark dirty so background refresh
+    // doesn't drop it.
+    dirtyRowsRef.current.add(fresh.id);
+    setRows(prev => [fresh, ...prev]);
   }
 
   async function handleBack() {
@@ -321,6 +397,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }, [highlightRO, rows, awaiting]);
 
   function updateAwaiting(id, field, value) {
+    dirtyAwaitingRef.current.add(id);
     setAwaiting(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
   }
 
@@ -329,7 +406,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }
 
   async function addAwaitingRow() {
-    const updated = [emptyAwaiting(), ...awaiting];
+    const fresh = emptyAwaiting();
+    dirtyAwaitingRef.current.add(fresh.id);
+    const updated = [fresh, ...awaiting];
     setAwaiting(updated);
     await saveAwaiting(updated);
   }
@@ -338,6 +417,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     const updated = awaiting.filter(r => r.id !== id);
     setAwaiting(updated);
     await saveAwaiting(updated);
+    dirtyAwaitingRef.current.delete(id);
   }
 
   async function saveAwaitingRow(id) {
@@ -347,6 +427,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       const committed = awaiting.map(r => r.id === id ? { ...r, isNew: false } : r);
       await saveAwaitingData(committed);
       setAwaiting(committed);
+      dirtyAwaitingRef.current.delete(id);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -445,7 +526,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const hasChatAccess = chatUsers && chatUsers.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
 
   return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {/* Topbar */}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
