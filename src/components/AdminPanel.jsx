@@ -98,6 +98,7 @@ const PAGE_ACCESS = [
   { key: 'partsHub',           label: '📦 Parts Hub',               group: 'Parts' },
   { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },
   { key: 'atDiagWorksheet',   label: '⚙️ AT Diag Worksheet',       group: 'Tech' },
+  { key: 'usedCarHub',         label: '🚗 Used Car Hub',            group: 'Used Cars' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
@@ -211,7 +212,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setOpenSection(prev => prev === name ? null : name);
   }
 
-  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager', 'warranty'];
+  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager', 'used car manager', 'warranty'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);

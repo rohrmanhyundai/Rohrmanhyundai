@@ -29,6 +29,7 @@ import WorkInProgress from './components/WorkInProgress';
 import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
+import UsedCarHub from './components/UsedCarHub';
 import SurveyReports from './components/SurveyReports';
 import ATDiagWorksheet from './components/ATDiagWorksheet';
 import DCTMTMWorksheet from './components/DCTMTMWorksheet';
@@ -439,6 +440,16 @@ export default function App() {
   }
 
   // Warranty Hub
+  if (page === 'used-car-hub') {
+    if (!canAccess('usedCarHub')) { setPage('dashboard'); return null; }
+    return (
+      <UsedCarHub
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage('dashboard')}
+      />
+    );
+  }
+
   if (page === 'warranty-hub') {
     return (
       <WarrantyHub
@@ -733,6 +744,7 @@ export default function App() {
             onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); navTo('tech-resources'); }}
             onParts={() => setPage('parts-hub')}
             onWarranty={() => setPage('warranty-hub')}
+            onUsedCar={() => setPage('used-car-hub')}
             onManager={() => setPage('manager-hub')}
             advisorUnread={advisorUnread}
             techUnread={techUnread}
