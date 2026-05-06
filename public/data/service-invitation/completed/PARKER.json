@@ -354,5 +354,23 @@
     "notes": "???",
     "submittedAt": "2026-05-06T16:15:36.976Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "SAI KUMAR KARANAM",
+    "repairOrder": "777073",
+    "vin": "KMHLS4DG4SU057248",
+    "model": "ELANTRA",
+    "serviceDate": "04/27/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-775-3849",
+    "notes": "Satisfied & said he would fill out Survey",
+    "submittedAt": "2026-05-06T16:18:00.551Z",
+    "submittedBy": "PARKER"
   }
 ]
