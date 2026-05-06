@@ -13,10 +13,10 @@
           "options": [
             "Entry Level (0-12 months)",
             "Entry Level (12+ months)",
-            "Level 1",
-            "Level 2",
-            "Level 3",
-            "Master Technician"
+            "Level 1 Skill Level: Beginner (LOF, basic, maintenance, tire install basic car repairs)",
+            "Level 2 Skill Level: Developing (Brakes, suspension, Basic diagnostics check engine lights, simple electrical)",
+            "Level 3 Skill Level: Advanced (Advanced diagnostics, CAN, drivability They don’t guess they diagnose)",
+            "Master Technician Skill Level: Elite (This tech can do it all without question or questions)"
           ]
         },
         {
