@@ -1,7 +1,7 @@
 {
   "id": "mot9d9v27aw2",
   "createdAt": "2026-05-05T23:27:21.134Z",
-  "updatedAt": "2026-05-06T19:00:35.524Z",
+  "updatedAt": "2026-05-06T19:02:17.811Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "David Owens",
   "customerPhone": "(412) 977 - 0880",
@@ -49,7 +49,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "will receive payment on parts statement pay.",
+  "notes": "will receive payment on parts statement pay. SENT FOR PAYMENT 05/06/2026 JERRY.",
   "approved": false,
   "approvedDate": "",
   "denied": false,
