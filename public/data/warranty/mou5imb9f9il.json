@@ -1,7 +1,7 @@
 {
   "id": "mou5imb9f9il",
   "createdAt": "2026-05-06T14:27:18.261Z",
-  "updatedAt": "2026-05-06T19:00:02.827Z",
+  "updatedAt": "2026-05-06T19:53:13.919Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Alexis Burge",
   "customerPhone": "(765) 376 - 1947",
@@ -35,7 +35,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "AAGI DOSE NOT PAY FOR TIRE TAX AND DISP FEE.",
+  "notes": "AAGI DOSE NOT PAY FOR TIRE TAX AND DISP FEE. This is a notification regarding payment for Repair Order 777303. Please click the following link to be directed to your virtual credit card: PAID SENT TO OFFICE 05/07/2026",
   "approved": false,
   "approvedDate": "",
   "denied": false,
