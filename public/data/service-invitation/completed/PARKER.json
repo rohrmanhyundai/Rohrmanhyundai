@@ -282,5 +282,23 @@
     "notes": "????",
     "submittedAt": "2026-05-06T16:12:37.324Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "WAYNE BRUNNER",
+    "repairOrder": "777105",
+    "vin": "5NMP5DG14SH025444",
+    "model": "SANTA FE HEV",
+    "serviceDate": "04/28/2026",
+    "invitationDate": "04/30/2026",
+    "status": "COMPLETE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "813-230-4918",
+    "notes": "",
+    "submittedAt": "2026-05-06T16:14:16.808Z",
+    "submittedBy": "PARKER"
   }
 ]
