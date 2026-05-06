@@ -337,30 +337,6 @@
           "rows": 4
         }
       ]
-    },
-    {
-      "id": "s10",
-      "title": "Manager Review Section",
-      "description": "Manager's evaluation of technician's self-classification.",
-      "fields": [
-        {
-          "id": "f32",
-          "type": "yes_no_sometimes",
-          "label": "Manager agrees with technician self-classification?"
-        },
-        {
-          "id": "f33",
-          "type": "text",
-          "label": "Manager recommended classification:"
-        },
-        {
-          "id": "f34",
-          "type": "textarea",
-          "label": "Manager comments / action plan:",
-          "placeholder": "Your answer here...",
-          "rows": 4
-        }
-      ]
     }
   ]
 }
