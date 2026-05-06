@@ -1,10 +1,10 @@
 {
   "id": "mou7dqszt5mj",
   "createdAt": "2026-05-06T15:19:30.035Z",
-  "updatedAt": "2026-05-06T15:21:55.785Z",
+  "updatedAt": "2026-05-06T15:40:47.710Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "George",
-  "customerPhone": "Jungjohan",
+  "customerPhone": "(219) 208 - 0282",
   "repairOrder": "777305",
   "vin": "KMHTC6AE3HU313707",
   "vehicleYear": "2017",
@@ -15,12 +15,40 @@
   "warrantyPhone": "888-442-2886 or 717-838-1353",
   "claimNumber": "",
   "authNumber": "",
-  "laborRate": "",
-  "laborTime": "",
-  "diagnosisTime": "",
+  "laborRate": "170",
+  "laborTime": "3.0",
+  "diagnosisTime": ".5",
   "parts": [
     {
       "id": "mou7dqszva0j",
+      "partNumber": "96560-2V711-4SDFL",
+      "description": "FLOAT HEAD UNIT ASSY-AVN",
+      "qty": "1",
+      "price": "3025.47"
+    },
+    {
+      "id": "mou7qcnzjs1n",
+      "partNumber": "00232-19061",
+      "description": "RTV SILICONE GRAY GASKET MAKER",
+      "qty": "1",
+      "price": "19.99"
+    },
+    {
+      "id": "mou7qq7nkpku",
+      "partNumber": "21510-2B700",
+      "description": "PAN ASSY-ENGINE OIL",
+      "qty": "1",
+      "price": "59.15"
+    },
+    {
+      "id": "mou7r8omppxo",
+      "partNumber": "oil",
+      "description": "oil",
+      "qty": "1",
+      "price": ""
+    },
+    {
+      "id": "mou7ris5xgnu",
       "partNumber": "",
       "description": "",
       "qty": "1",
