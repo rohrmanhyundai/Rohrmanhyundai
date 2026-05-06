@@ -110,6 +110,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [newUserName, setNewUserName] = useState('');
+  const [newUserLast, setNewUserLast] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
@@ -513,8 +514,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
-      : [...users, { username: newUserName, password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
+      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -529,7 +530,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const updated = users.filter(u => u.username !== selectedUser);
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
-      .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); })
+      .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
   }
@@ -843,7 +844,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -866,13 +867,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
           <div className="title" style={{ marginBottom: 8 }}>Add / Edit User</div>
           <div className="form-grid">
             <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
+            <div className="field"><label title="Used only for display — login is by username only.">Last Name <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(optional, only the first letter is shown)</span></label><input value={newUserLast} onChange={e => setNewUserLast(e.target.value)} placeholder="e.g. Laughner" /></div>
             <div className="field"><label>Password</label><input type="password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
             <div className="field">
               <label>Role</label>

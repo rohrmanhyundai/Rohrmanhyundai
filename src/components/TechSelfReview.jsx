@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loadGithubFile, saveGithubFile } from '../utils/github';
 import ReviewFormRenderer, { validateReviewForm } from './ReviewFormRenderer';
 
-export default function TechSelfReview({ currentUser, onBack }) {
+export default function TechSelfReview({ currentUser, currentUserDisplay, onBack }) {
   const [loading, setLoading]       = useState(true);
   const [formDef, setFormDef]       = useState(null);
   const [values, setValues]         = useState({});
@@ -82,7 +82,7 @@ export default function TechSelfReview({ currentUser, onBack }) {
       <div className="adv-topbar">
         <div>
           <div className="adv-title">📋 My Performance Review</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <button className="secondary" onClick={onBack}>← Technician Resources</button>
       </div>

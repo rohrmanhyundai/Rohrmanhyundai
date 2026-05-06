@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function EmployeeReviewHub({ onBack, onTechReview, onAdvisorReview, currentUser }) {
+export default function EmployeeReviewHub({ onBack, onTechReview, onAdvisorReview, currentUser, currentUserDisplay }) {
   const cards = [
     {
       onClick: onTechReview,
@@ -27,7 +27,7 @@ export default function EmployeeReviewHub({ onBack, onTechReview, onAdvisorRevie
       <div className="adv-topbar">
         <div>
           <div className="adv-title">⭐ Employee Review</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <button className="secondary" onClick={onBack}>← Manager Hub</button>
       </div>

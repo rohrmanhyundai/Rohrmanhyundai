@@ -94,7 +94,7 @@ const NAV_BUTTONS = [
 ];
 
 export default function ManagerHub({
-  currentUser, currentRole,
+  currentUser, currentUserDisplay, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
@@ -111,7 +111,7 @@ export default function ManagerHub({
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">Manager Hub</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>

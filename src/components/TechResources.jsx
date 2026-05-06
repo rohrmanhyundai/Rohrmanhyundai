@@ -58,7 +58,7 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onMyReview, onMyReports, onBack }) {
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onMyReview, onMyReports, onBack }) {
   const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
@@ -85,7 +85,7 @@ export default function TechResources({ currentUser, currentRole, userPages, onW
       <div className="adv-topbar">
         <div>
           <div className="adv-title">Technician Resources</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
