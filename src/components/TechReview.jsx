@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadGithubFile, saveGithubFile } from '../utils/github';
 import { generateReviewReport, getOpenAIKey, analyzeReviewForm } from '../utils/openai';
-import ReviewFormRenderer from './ReviewFormRenderer';
+import ReviewFormRenderer, { validateReviewForm } from './ReviewFormRenderer';
 import FormEditor from './FormEditor';
 
 const section = { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '22px 26px', marginBottom: 20 };
@@ -111,6 +111,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
 
   // Manager evaluation form values (in-progress)
   const [mgrValues,  setMgrValues]  = useState({});
+  const [showMgrErrors, setShowMgrErrors] = useState(false);
   const [savingMgr,  setSavingMgr]  = useState(false);
 
   // AI
@@ -211,6 +212,13 @@ export default function TechReview({ onBack, techList, currentUser }) {
   // ── Save manager evaluation ───────────────────────────────────────────────
   async function saveMgrReview() {
     if (!selectedTech) return;
+    const usedForm = mgrReview?.formDef || mgrFormDef || techFormDef;
+    const v = validateReviewForm(usedForm, mgrValues);
+    if (!v.valid) {
+      setShowMgrErrors(true);
+      setStatus(`❌ Please complete all ${v.summary.length} highlighted question${v.summary.length === 1 ? '' : 's'} before saving.`);
+      return;
+    }
     setSavingMgr(true); setStatus('⏳ Saving manager evaluation…');
     try {
       const key = selectedTech.toLowerCase();
@@ -618,17 +626,31 @@ export default function TechReview({ onBack, techList, currentUser }) {
                       </div>
                     )}
 
-                    <ReviewFormRenderer
-                      formDef={activeMgrForm}
-                      values={mgrValues}
-                      onChange={setMgrValues}
-                      readOnly={false}
-                    />
-
-                    <button onClick={saveMgrReview} disabled={savingMgr}
-                      style={{ ...btn('rgba(139,92,246,.2)', 'rgba(139,92,246,.5)', '#c4b5fd'), marginTop: 20, padding: '12px 32px', fontSize: 14 }}>
-                      {savingMgr ? '⏳ Saving…' : mgrReview ? '💾 Update Manager Evaluation' : '💾 Save Manager Evaluation'}
-                    </button>
+                    {(() => {
+                      const mgrValidation = validateReviewForm(activeMgrForm, mgrValues);
+                      return (
+                        <>
+                          <ReviewFormRenderer
+                            formDef={activeMgrForm}
+                            values={mgrValues}
+                            onChange={setMgrValues}
+                            readOnly={false}
+                            errorsById={mgrValidation.errorsById}
+                            showErrors={showMgrErrors}
+                          />
+                          {showMgrErrors && !mgrValidation.valid && (
+                            <div style={{ marginTop: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(248,113,113,.08)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', fontSize: 13, fontWeight: 700 }}>
+                              ⚠ {mgrValidation.summary.length} question{mgrValidation.summary.length === 1 ? '' : 's'} still need attention.
+                            </div>
+                          )}
+                          <button onClick={saveMgrReview} disabled={savingMgr || !mgrValidation.valid}
+                            title={!mgrValidation.valid ? 'Answer every question (and meet the minimum length on text answers) before saving.' : ''}
+                            style={{ ...btn(mgrValidation.valid ? 'rgba(139,92,246,.2)' : 'rgba(255,255,255,.04)', mgrValidation.valid ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.12)', mgrValidation.valid ? '#c4b5fd' : '#475569'), marginTop: 20, padding: '12px 32px', fontSize: 14, cursor: mgrValidation.valid && !savingMgr ? 'pointer' : 'not-allowed' }}>
+                            {savingMgr ? '⏳ Saving…' : mgrValidation.valid ? (mgrReview ? '💾 Update Manager Evaluation' : '💾 Save Manager Evaluation') : `🔒 Complete all ${mgrValidation.summary.length} remaining question${mgrValidation.summary.length === 1 ? '' : 's'}`}
+                          </button>
+                        </>
+                      );
+                    })()}
 
                     {!bothDone && (
                       <div style={{ fontSize: 12, color: '#475569', marginTop: 10 }}>

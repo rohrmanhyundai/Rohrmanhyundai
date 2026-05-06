@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadGithubFile, saveGithubFile } from '../utils/github';
-import ReviewFormRenderer from './ReviewFormRenderer';
+import ReviewFormRenderer, { validateReviewForm } from './ReviewFormRenderer';
 
 export default function TechSelfReview({ currentUser, onBack }) {
   const [loading, setLoading]       = useState(true);
@@ -11,6 +11,9 @@ export default function TechSelfReview({ currentUser, onBack }) {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]         = useState('');
   const [pendingDueDate, setPendingDueDate] = useState(null);
+  const [showErrors, setShowErrors]         = useState(false);
+
+  const validation = validateReviewForm(formDef, values);
 
   const key = currentUser.toLowerCase();
 
@@ -38,6 +41,11 @@ export default function TechSelfReview({ currentUser, onBack }) {
 
   async function handleSubmit() {
     if (!formDef) return;
+    if (!validation.valid) {
+      setShowErrors(true);
+      setStatus(`❌ Please complete all ${validation.summary.length} highlighted question${validation.summary.length === 1 ? '' : 's'} before submitting.`);
+      return;
+    }
     if (!window.confirm('Submit your review? You cannot make changes after submitting.')) return;
     setSubmitting(true);
     setStatus('⏳ Submitting…');
@@ -145,7 +153,7 @@ export default function TechSelfReview({ currentUser, onBack }) {
               </div>
 
               {/* Dynamic form */}
-              <ReviewFormRenderer formDef={formDef} values={values} onChange={setValues} readOnly={false} />
+              <ReviewFormRenderer formDef={formDef} values={values} onChange={setValues} readOnly={false} errorsById={validation.errorsById} showErrors={showErrors} />
 
               {/* Status */}
               {status && (
@@ -155,11 +163,25 @@ export default function TechSelfReview({ currentUser, onBack }) {
               )}
 
               {/* Submit */}
+              {showErrors && !validation.valid && (
+                <div style={{ marginTop: 12, marginBottom: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(248,113,113,.08)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', fontSize: 13, fontWeight: 700 }}>
+                  ⚠ {validation.summary.length} question{validation.summary.length === 1 ? '' : 's'} still need attention. Scroll up — they're highlighted in red.
+                </div>
+              )}
               <button
                 onClick={handleSubmit}
-                disabled={submitting}
-                style={{ background: 'linear-gradient(135deg,rgba(74,222,128,.25),rgba(34,197,94,.15))', border: '2px solid rgba(74,222,128,.5)', color: '#4ade80', borderRadius: 12, padding: '14px 32px', cursor: 'pointer', fontWeight: 900, fontSize: 15, width: '100%', marginTop: 12 }}>
-                {submitting ? '⏳ Submitting…' : '✅ Submit My Review'}
+                disabled={submitting || !validation.valid}
+                title={!validation.valid ? 'Answer every question (and meet the minimum length on text answers) before submitting.' : ''}
+                style={{
+                  background: validation.valid ? 'linear-gradient(135deg,rgba(74,222,128,.25),rgba(34,197,94,.15))' : 'rgba(255,255,255,.04)',
+                  border: `2px solid ${validation.valid ? 'rgba(74,222,128,.5)' : 'rgba(255,255,255,.12)'}`,
+                  color: validation.valid ? '#4ade80' : '#475569',
+                  borderRadius: 12, padding: '14px 32px',
+                  cursor: validation.valid && !submitting ? 'pointer' : 'not-allowed',
+                  fontWeight: 900, fontSize: 15, width: '100%', marginTop: 12,
+                  opacity: submitting ? 0.6 : 1,
+                }}>
+                {submitting ? '⏳ Submitting…' : validation.valid ? '✅ Submit My Review' : `🔒 Complete all ${validation.summary.length} remaining question${validation.summary.length === 1 ? '' : 's'} to submit`}
               </button>
               <div style={{ fontSize: 12, color: '#475569', textAlign: 'center', marginTop: 8 }}>Once submitted you cannot make changes.</div>
             </div>

@@ -13,10 +13,10 @@
           "options": [
             "Entry Level (0-12 months)",
             "Entry Level (12+ months)",
-            "Level 1",
-            "Level 2",
-            "Level 3",
-            "Master Technician"
+            "Level 1 Skill Level: Beginner (LOF, basic, maintenance, tire install basic car repairs)",
+            "Level 2 Skill Level: Developing (Brakes, suspension, Basic diagnostics check engine lights, simple electrical)",
+            "Level 3 Skill Level: Advanced (Advanced diagnostics, CAN, drivability They don’t guess they diagnose)",
+            "Master Technician Skill Level: Elite (This tech can do it all without question or questions)"
           ]
         },
         {
@@ -255,7 +255,7 @@
         {
           "id": "f20",
           "type": "yes_no_sometimes",
-          "label": "I actively pursue manufacturer training."
+          "label": "I actively pursue manufacturer training and assure my training is up to date."
         },
         {
           "id": "f21",
@@ -307,6 +307,11 @@
           "id": "f28",
           "type": "yes_no_sometimes",
           "label": "I follow shop policies, safety procedures, and company expectations."
+        },
+        {
+          "id": "lese3k0",
+          "type": "yes_no_sometimes",
+          "label": "How well do you keep your workspace clean and organized?"
         }
       ]
     },
@@ -333,30 +338,6 @@
           "id": "f31",
           "type": "textarea",
           "label": "What is one thing you will improve immediately?",
-          "placeholder": "Your answer here...",
-          "rows": 4
-        }
-      ]
-    },
-    {
-      "id": "s10",
-      "title": "Manager Review Section",
-      "description": "Manager's evaluation of technician's self-classification.",
-      "fields": [
-        {
-          "id": "f32",
-          "type": "yes_no_sometimes",
-          "label": "Manager agrees with technician self-classification?"
-        },
-        {
-          "id": "f33",
-          "type": "text",
-          "label": "Manager recommended classification:"
-        },
-        {
-          "id": "f34",
-          "type": "textarea",
-          "label": "Manager comments / action plan:",
           "placeholder": "Your answer here...",
           "rows": 4
         }

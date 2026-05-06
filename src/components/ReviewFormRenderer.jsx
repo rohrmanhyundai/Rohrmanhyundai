@@ -153,8 +153,50 @@ function RatingTableField({ field, value = {}, onChange, readOnly }) {
   );
 }
 
+// Validate a review form's values against its definition. Every field is
+// required. Text/textarea fields with `minLength > 0` must meet the threshold.
+// rating_table requires every item to have a rating.
+// Returns { valid, errorsById, summary } — `errorsById[fieldId]` is the per-field
+// message (or null), `summary` is a list of human-readable problems.
+export function validateReviewForm(formDef, values = {}) {
+  const errorsById = {};
+  const summary = [];
+  if (!formDef || !formDef.sections) return { valid: true, errorsById, summary };
+
+  for (const section of formDef.sections) {
+    for (const field of (section.fields || [])) {
+      const v = values[field.id];
+      let err = null;
+      if (field.type === 'textarea' || field.type === 'text') {
+        const text = (v || '').toString().trim();
+        if (!text) {
+          err = 'This field is required.';
+        } else if ((field.minLength || 0) > 0 && text.length < field.minLength) {
+          err = `Please write at least ${field.minLength} characters (currently ${text.length}).`;
+        }
+      } else if (field.type === 'rating_table') {
+        const obj = v || {};
+        const missing = (field.items || []).filter(item => !obj[item.id]);
+        if (missing.length > 0) {
+          err = `Rate all ${(field.items || []).length} items (${missing.length} remaining).`;
+        }
+      } else {
+        // radio, yes_no, yes_no_sometimes, rating
+        if (v === undefined || v === null || v === '') {
+          err = 'Please select an answer.';
+        }
+      }
+      if (err) {
+        errorsById[field.id] = err;
+        summary.push(`"${field.label || '(unlabeled question)'}" — ${err}`);
+      }
+    }
+  }
+  return { valid: summary.length === 0, errorsById, summary };
+}
+
 // ── Main renderer ─────────────────────────────────────────────────────────────
-export default function ReviewFormRenderer({ formDef, values = {}, onChange, readOnly = false }) {
+export default function ReviewFormRenderer({ formDef, values = {}, onChange, readOnly = false, errorsById = {}, showErrors = false }) {
   if (!formDef || !formDef.sections) {
     return <div style={{ color: '#475569', fontSize: 14, padding: 20, textAlign: 'center' }}>No form definition loaded.</div>;
   }
@@ -173,9 +215,17 @@ export default function ReviewFormRenderer({ formDef, values = {}, onChange, rea
             <div style={{ fontSize: 13, color: '#64748b', marginBottom: 16, lineHeight: 1.6, fontStyle: 'italic' }}>{section.description}</div>
           )}
 
-          {section.fields.map((field, fi) => (
+          {section.fields.map((field, fi) => {
+            const err = showErrors ? errorsById[field.id] : null;
+            const isText = field.type === 'textarea' || field.type === 'text';
+            const charCount = isText ? ((values[field.id] || '').toString().trim().length) : 0;
+            const minLen = isText ? (field.minLength || 0) : 0;
+            return (
             <div key={field.id} style={{ marginBottom: fi < section.fields.length - 1 ? 24 : 0, paddingBottom: fi < section.fields.length - 1 ? 22 : 0, borderBottom: fi < section.fields.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
-              <div style={fieldLabel}>{field.label}</div>
+              <div style={fieldLabel}>
+                {field.label}
+                {!readOnly && <span style={{ color: '#f87171', marginLeft: 4 }}>*</span>}
+              </div>
 
               {field.type === 'radio' && (
                 <RadioField field={field} value={values[field.id]} onChange={v => handleChange(field.id, v)} readOnly={readOnly} />
@@ -239,8 +289,22 @@ export default function ReviewFormRenderer({ formDef, values = {}, onChange, rea
                   style={{ ...inpStyle, resize: 'none' }}
                 />
               )}
+
+              {/* Min-length counter (text/textarea only, while editing) */}
+              {!readOnly && isText && minLen > 0 && (
+                <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: charCount >= minLen ? '#4ade80' : '#fbbf24' }}>
+                  {charCount} / {minLen} characters {charCount >= minLen ? '✓' : 'minimum'}
+                </div>
+              )}
+
+              {/* Validation error */}
+              {err && (
+                <div style={{ marginTop: 8, fontSize: 12, fontWeight: 700, color: '#f87171', background: 'rgba(248,113,113,.08)', border: '1px solid rgba(248,113,113,.3)', borderRadius: 6, padding: '6px 10px' }}>
+                  ⚠ {err}
+                </div>
+              )}
             </div>
-          ))}
+          );})}
         </div>
       ))}
     </div>
