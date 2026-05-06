@@ -169,10 +169,11 @@ export function validateReviewForm(formDef, values = {}) {
       let err = null;
       if (field.type === 'textarea' || field.type === 'text') {
         const text = (v || '').toString().trim();
+        const wordCount = text ? text.split(/\s+/).filter(Boolean).length : 0;
         if (!text) {
           err = 'This field is required.';
-        } else if ((field.minLength || 0) > 0 && text.length < field.minLength) {
-          err = `Please write at least ${field.minLength} characters (currently ${text.length}).`;
+        } else if ((field.minWords || 0) > 0 && wordCount < field.minWords) {
+          err = `Please write at least ${field.minWords} words (currently ${wordCount}).`;
         }
       } else if (field.type === 'rating_table') {
         const obj = v || {};
@@ -218,8 +219,9 @@ export default function ReviewFormRenderer({ formDef, values = {}, onChange, rea
           {section.fields.map((field, fi) => {
             const err = showErrors ? errorsById[field.id] : null;
             const isText = field.type === 'textarea' || field.type === 'text';
-            const charCount = isText ? ((values[field.id] || '').toString().trim().length) : 0;
-            const minLen = isText ? (field.minLength || 0) : 0;
+            const trimmed = isText ? (values[field.id] || '').toString().trim() : '';
+            const wordCount = trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+            const minWords = isText ? (field.minWords || 0) : 0;
             return (
             <div key={field.id} style={{ marginBottom: fi < section.fields.length - 1 ? 24 : 0, paddingBottom: fi < section.fields.length - 1 ? 22 : 0, borderBottom: fi < section.fields.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
               <div style={fieldLabel}>
@@ -290,10 +292,10 @@ export default function ReviewFormRenderer({ formDef, values = {}, onChange, rea
                 />
               )}
 
-              {/* Min-length counter (text/textarea only, while editing) */}
-              {!readOnly && isText && minLen > 0 && (
-                <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: charCount >= minLen ? '#4ade80' : '#fbbf24' }}>
-                  {charCount} / {minLen} characters {charCount >= minLen ? '✓' : 'minimum'}
+              {/* Min-words counter (text/textarea only, while editing) */}
+              {!readOnly && isText && minWords > 0 && (
+                <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: wordCount >= minWords ? '#4ade80' : '#fbbf24' }}>
+                  {wordCount} / {minWords} words {wordCount >= minWords ? '✓' : 'minimum'}
                 </div>
               )}
 
