@@ -10,7 +10,7 @@ const FIELD_TYPES = [
   { value: 'textarea',          label: '📝 Text Answer (long)' },
   { value: 'text',              label: '✏️ Text Answer (short)' },
   { value: 'radio',             label: '🔘 Single Choice (radio)' },
-  { value: 'yes_no_sometimes',  label: '✅ Yes / No / Sometimes' },
+  { value: 'yes_no_sometimes',  label: '✅ Yes / No / Acknowledge I can improve' },
   { value: 'yes_no',            label: '✅ Yes / No' },
   { value: 'rating_table',      label: '⭐ Rating Table (1–5)' },
   { value: 'rating',            label: '⭐ Single Rating (1–5)' },

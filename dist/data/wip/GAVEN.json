@@ -61,7 +61,20 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": false,
-    "advisor": "",
+    "advisor": "DAVID",
     "notes": "TIRE ON ORDER"
+  },
+  {
+    "id": "mot9k6s1whs",
+    "ro": "777291",
+    "roDate": "2026-05-05",
+    "jobDesc": "CHECK ENGINE LIGHT ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": "VALVE COVER APPROVED. OXYGEN SENSOR AND DIAG NOT APPROVED "
   }
 ]
