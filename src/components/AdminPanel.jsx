@@ -753,11 +753,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                             borderRadius: 6, padding: '6px 8px', fontSize: 13, width: '100%', cursor: 'pointer',
                           }}
                         >
-                          <option value="">\u2014 Select an employee \u2014</option>
+                          <option value="">Select an employee</option>
                           {unique.map(e => (
-                            <option key={e.name} value={e.name}>{e.name} \u00b7 {e.role}</option>
+                            <option key={e.name} value={e.name}>{`${e.name} ${e.role}`}</option>
                           ))}
-                          {isCustom && <option value={current}>{current} (custom)</option>}
+                          {isCustom && <option value={current}>{`${current} (custom)`}</option>}
                         </select>
                       );
                     })()}
