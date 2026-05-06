@@ -634,7 +634,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
               <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
-              <div className="field"><label>RO Count</label><input defaultValue={a.ro_count ?? ''} onBlur={e => updateField(`advisors.${idx}.ro_count`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input defaultValue={a.ro_count ?? ''} onBlur={e => updateField(`advisors.${idx}.ro_count`, safe(e.target.value, 0))} /></div>
               </div>
             </div>
           ))}
