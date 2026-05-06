@@ -246,5 +246,23 @@
     "notes": "Voicemail was for a different person?",
     "submittedAt": "2026-05-05T13:31:07.695Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "KIM SANG",
+    "repairOrder": "777118",
+    "vin": "KMHLW4DK0SU031383",
+    "model": "ELANTRA N",
+    "serviceDate": "04/29/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "831-521-9558",
+    "notes": "Very happy with Services / said everything feels great now & filling out  survey for me",
+    "submittedAt": "2026-05-06T16:12:25.265Z",
+    "submittedBy": "PARKER"
   }
 ]
