@@ -31,8 +31,8 @@
     "jobDesc": "ENGINE DECARB",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/06/2026",
     "highPriority": true,
     "advisor": "JORDAN",
     "notes": ""
