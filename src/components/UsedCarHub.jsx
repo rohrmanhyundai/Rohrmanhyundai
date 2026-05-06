@@ -1,12 +1,12 @@
 import React from 'react';
 
-export default function UsedCarHub({ currentUser, onBack }) {
+export default function UsedCarHub({ currentUser, currentUserDisplay, onBack }) {
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">🚗 Used Car Hub</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={onBack}>← Dashboard</button>

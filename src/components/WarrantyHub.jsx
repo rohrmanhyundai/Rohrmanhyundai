@@ -55,7 +55,7 @@ const NAV_BUTTONS = [
 ];
 
 export default function WarrantyHub({
-  currentUser, currentRole, userPages,
+  currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet,
 }) {
   const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet };
@@ -67,7 +67,7 @@ export default function WarrantyHub({
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">Warranty Hub</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>

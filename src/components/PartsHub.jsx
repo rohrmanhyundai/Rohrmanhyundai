@@ -84,7 +84,7 @@ const NAV_BUTTONS = [
 ];
 
 export default function PartsHub({
-  currentUser, currentRole, userPages,
+  currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
   onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress,
 }) {
@@ -97,7 +97,7 @@ export default function PartsHub({
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">Parts Hub</div>
-          <div className="adv-sub">{currentUser}</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>

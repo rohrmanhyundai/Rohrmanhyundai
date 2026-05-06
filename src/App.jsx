@@ -17,6 +17,7 @@ import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
 import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
+import { userDisplayName } from './utils/userDisplay';
 
 function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
@@ -294,6 +295,7 @@ export default function App() {
 
   const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
   const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
+  const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
@@ -302,6 +304,7 @@ export default function App() {
     return (
       <TechResources
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
         userPages={currentPages}
         onWorkSchedule={() => setPage('tech-work-schedule')}
@@ -425,6 +428,7 @@ export default function App() {
     return (
       <PartsHub
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
         userPages={currentPages}
         onBack={() => setPage('dashboard')}
@@ -445,6 +449,7 @@ export default function App() {
     return (
       <UsedCarHub
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -454,6 +459,7 @@ export default function App() {
     return (
       <WarrantyHub
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
         userPages={currentPages}
         onBack={() => setPage('dashboard')}
@@ -472,6 +478,7 @@ export default function App() {
     return (
       <ManagerHub
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
         onBack={() => setPage('dashboard')}
         onSurveyReports={() => { setViewingAdvisor(ownAdvisor || advisorList[0] || ''); goTo('survey-reports', 'manager-hub'); }}
@@ -497,6 +504,7 @@ export default function App() {
     return (
       <EmployeeReviewHub
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         onBack={() => navTo('manager-hub')}
         onTechReview={() => goTo('tech-review', 'employee-review')}
         onAdvisorReview={() => goTo('advisor-review', 'employee-review')}
@@ -508,6 +516,7 @@ export default function App() {
     return (
       <TechSelfReview
         currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
         onBack={() => navTo('tech-resources')}
       />
     );
@@ -734,6 +743,7 @@ export default function App() {
             data={data}
             isLoggedIn={isLoggedIn}
             currentUser={currentUser}
+            currentUserDisplay={userDisplayName(currentUser, users)}
             currentRole={currentRole}
             userPages={currentPages}
             canEditDashboard={canEditDashboard}

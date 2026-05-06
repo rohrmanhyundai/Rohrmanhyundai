@@ -1,0 +1,71 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-05-06",
+  "rows": [
+    {
+      "customerName": "Maddison Stout",
+      "appointmentTime": "8:40AM ",
+      "criticalDeferredService": "Brake / Coolant / Trans Fluid Exchange, AC EVAP Service, Tune Up with Spark Plugs (just was in last week)",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Alexis Burge",
+      "appointmentTime": "10:20AM",
+      "criticalDeferredService": "NONE",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "George Jungjohan",
+      "appointmentTime": "11AM",
+      "criticalDeferredService": "Been 2 years since he has been here",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Diana Bush",
+      "appointmentTime": "1PM ",
+      "criticalDeferredService": "Alignment",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Maxwell Walsh",
+      "appointmentTime": "1:40PM",
+      "criticalDeferredService": "Replace Tires, Alignment",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Isaac Seong",
+      "appointmentTime": "2PM",
+      "criticalDeferredService": "Cabin Air Filter",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Curtis or Craig Bone",
+      "appointmentTime": "3PM",
+      "criticalDeferredService": "Alignment",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-06T15:15:54.340Z"
+}

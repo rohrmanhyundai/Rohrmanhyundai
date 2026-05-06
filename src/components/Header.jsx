@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread }) {
+export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -103,7 +103,7 @@ export default function Header({ data, isLoggedIn, currentUser, currentRole, use
               <div className="date">
                 {clock.date}
                 {isLoggedIn && currentUser && (
-                  <span className="clock-user"> &nbsp;·&nbsp; {currentUser}</span>
+                  <span className="clock-user"> &nbsp;·&nbsp; {currentUserDisplay || currentUser}</span>
                 )}
               </div>
               <div className="time">{clock.time}</div>
