@@ -730,12 +730,37 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginBottom: 8 }}>
                   <div className="field" style={{ flex: 2 }}>
                     <label>Employee Name</label>
-                    <input
-                      value={v.name === '\u2014' ? '' : (v.name || '')}
-                      onChange={e => updateVacEdit(idx, 'name', e.target.value)}
-                      onBlur={e => commitVacEdit(idx, 'name', e.target.value)}
-                      placeholder="e.g. JORDAN"
-                    />
+                    {(() => {
+                      const employees = [
+                        ...((data.advisors || []).map(a => ({ name: (a.name || '').toUpperCase(), role: 'Advisor' }))),
+                        ...((data.technicians || []).map(t => ({ name: (t.name || '').toUpperCase(), role: 'Technician' }))),
+                      ].filter(e => e.name);
+                      // Sort alphabetically; remove duplicates by name
+                      const seen = new Set();
+                      const unique = employees
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .filter(e => { if (seen.has(e.name)) return false; seen.add(e.name); return true; });
+                      const current = (v.name === '\u2014' ? '' : (v.name || '')).toUpperCase();
+                      const isCustom = current && !unique.some(e => e.name === current);
+                      return (
+                        <select
+                          value={current}
+                          onChange={e => commitVacEdit(idx, 'name', e.target.value)}
+                          style={{
+                            background: '#0f172a',
+                            border: `1px solid ${current ? 'rgba(96,165,250,.4)' : 'rgba(255,255,255,.15)'}`,
+                            color: current ? '#e2e8f0' : '#94a3b8',
+                            borderRadius: 6, padding: '6px 8px', fontSize: 13, width: '100%', cursor: 'pointer',
+                          }}
+                        >
+                          <option value="">\u2014 Select an employee \u2014</option>
+                          {unique.map(e => (
+                            <option key={e.name} value={e.name}>{e.name} \u00b7 {e.role}</option>
+                          ))}
+                          {isCustom && <option value={current}>{current} (custom)</option>}
+                        </select>
+                      );
+                    })()}
                   </div>
                   <div className="field" style={{ flex: 1 }}>
                     <label>Status</label>
