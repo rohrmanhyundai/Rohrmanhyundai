@@ -127,10 +127,13 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "Laughner"
     },
     {
       "username": "Austin",
@@ -421,6 +424,31 @@
       },
       "chatAccess": false,
       "techChatAccess": false
+    },
+    {
+      "username": "Chapman",
+      "lastName": "Cory",
+      "password": "cory2026",
+      "role": "used car manager",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": false,
+        "techSchedule": false,
+        "documentLibrary": false,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": false,
+        "atDiagWorksheet": false,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDiNcZEMgCFFmGC1ITCc9ejs1YRNWCnclQjBJexkqNgscCxEyIg=="
