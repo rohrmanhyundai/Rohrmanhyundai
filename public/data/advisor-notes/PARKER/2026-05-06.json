@@ -6,7 +6,7 @@
       "customerName": "Maddison Stout",
       "appointmentTime": "8:40AM ",
       "criticalDeferredService": "Brake / Coolant / Trans Fluid Exchange, AC EVAP Service, Tune Up with Spark Plugs (just was in last week)",
-      "waiter": false,
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
@@ -15,7 +15,7 @@
       "customerName": "Alexis Burge",
       "appointmentTime": "10:20AM",
       "criticalDeferredService": "NONE",
-      "waiter": false,
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
@@ -24,7 +24,7 @@
       "customerName": "George Jungjohan",
       "appointmentTime": "11AM",
       "criticalDeferredService": "Been 2 years since he has been here",
-      "waiter": false,
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
@@ -67,5 +67,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-05-06T15:15:54.340Z"
+  "savedAt": "2026-05-06T18:33:54.457Z"
 }
