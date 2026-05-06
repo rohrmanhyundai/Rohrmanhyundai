@@ -4,7 +4,7 @@
     "label": "May 6, 2026",
     "month": "2026-05",
     "type": "advisor",
-    "savedAt": "2026-05-06T11:28:19.868Z",
+    "savedAt": "2026-05-06T11:31:54.956Z",
     "csi": 772,
     "hours_per_ro": 0.96,
     "roh50_hrs_ro": 0.49,
@@ -14,7 +14,7 @@
     "tires": 0.1,
     "valvoline": 0.15,
     "asr": 0.09570000000000001,
-    "elr": 0.84,
+    "elr": 0.86,
     "last_month_total": 79.7,
     "ro_count": 32
   },
