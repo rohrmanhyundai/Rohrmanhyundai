@@ -127,10 +127,13 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "Laughner"
     },
     {
       "username": "Austin",
