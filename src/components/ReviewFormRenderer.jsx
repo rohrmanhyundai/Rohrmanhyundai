@@ -71,6 +71,7 @@ function RadioField({ field, value, onChange, readOnly }) {
 function YesNoSometimesField({ field, value, onChange, readOnly, options }) {
   const opts = options || ['Yes', 'No', 'Sometimes'];
   const colors = { Yes: '#4ade80', No: '#f87171', Sometimes: '#fbbf24' };
+  const labels = { Sometimes: 'Acknowledge I can improve' };
   return (
     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
       {opts.map(opt => {
@@ -92,7 +93,7 @@ function YesNoSometimesField({ field, value, onChange, readOnly, options }) {
               cursor: readOnly ? 'default' : 'pointer',
               transition: 'all .15s',
             }}>
-            {opt}
+            {labels[opt] || opt}
           </button>
         );
       })}
