@@ -10,7 +10,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "GAVEN THIS RO IS FOR 5/6 PARTS ARE HERE \n"
+    "notes": ""
   },
   {
     "id": "moit2n9sggg",
@@ -22,21 +22,20 @@
     "partsArrived": true,
     "highPriority": true,
     "partsArrivedDate": "04/29/2026",
-    "advisor": "DAVID",
-    "notes": "GAVEN HAS THIS CAR IN THE STALL NOW "
+    "advisor": "DAVID"
   },
   {
     "id": "momuo1f5ibe",
     "ro": "776989",
     "roDate": "2026-04-30",
-    "jobDesc": "DECARB SERVICE ",
+    "jobDesc": "ENGINE TEAR DOWN TO POINT OF FAILURE.",
     "etaParts": "",
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": true,
     "advisor": "JORDAN",
-    "notes": "WE ARE NO LONGER DOING THE TEARDOWN. THIS IS A DECARB NOW "
+    "notes": ""
   },
   {
     "id": "mon8qrasomb",
@@ -49,32 +48,6 @@
     "partsArrivedDate": "",
     "highPriority": true,
     "advisor": "DAVID",
-    "notes": "INSPECTOR DID SHOW UP TODAY WAITING ON WARRANTY NOW FOR APPROVAL. COULD TAKE 24 HRS "
-  },
-  {
-    "id": "mot8unbdaal",
-    "ro": "777258",
-    "roDate": "2026-05-05",
-    "jobDesc": "TIRE REPLACEMENT",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "TIRE ON ORDER"
-  },
-  {
-    "id": "mot9k6s1whs",
-    "ro": "777291",
-    "roDate": "2026-05-05",
-    "jobDesc": "CHECK ENGINE LIGHT ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": "VALVE COVER APPROVED. OXYGEN SENSOR AND DIAG NOT APPROVED "
+    "notes": ""
   }
 ]
