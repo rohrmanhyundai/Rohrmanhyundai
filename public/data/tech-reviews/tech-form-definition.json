@@ -24,7 +24,8 @@
           "type": "textarea",
           "label": "Explain why you selected this level:",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     },
@@ -76,14 +77,16 @@
           "type": "textarea",
           "label": "Strongest technical areas:",
           "placeholder": "Your answer here...",
-          "rows": 2
+          "rows": 2,
+          "minWords": 10
         },
         {
           "id": "f5",
           "type": "textarea",
           "label": "Areas needing improvement:",
           "placeholder": "Your answer here...",
-          "rows": 2
+          "rows": 2,
+          "minWords": 10
         }
       ]
     },
@@ -115,7 +118,7 @@
         {
           "id": "f10",
           "type": "text",
-          "label": "What do you believe your average efficiency is?"
+          "label": "What do you believe your average efficiency is? (0%-150%)"
         }
       ]
     },
@@ -162,7 +165,8 @@
           "type": "textarea",
           "label": "How do you personally make sure every repair is completed correctly?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     },
@@ -196,7 +200,8 @@
           "type": "textarea",
           "label": "What can you improve with inspections, videos, or documentation?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     },
@@ -243,7 +248,8 @@
           "type": "textarea",
           "label": "How do you contribute to the team?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     },
@@ -272,14 +278,16 @@
           "type": "textarea",
           "label": "Current certifications or completed training:",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 1
         },
         {
           "id": "f24",
           "type": "textarea",
           "label": "Training goals for the next 6 months:",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     },
@@ -325,21 +333,24 @@
           "type": "textarea",
           "label": "Where do you see yourself in 6-12 months?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         },
         {
           "id": "f30",
           "type": "textarea",
           "label": "What support or training do you need from management?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         },
         {
           "id": "f31",
           "type": "textarea",
           "label": "What is one thing you will improve immediately?",
           "placeholder": "Your answer here...",
-          "rows": 4
+          "rows": 4,
+          "minWords": 10
         }
       ]
     }
