@@ -192,17 +192,17 @@ function FieldEditor({ field, sectionIdx, fieldIdx, total, dispatch }) {
             </div>
           )}
 
-          {/* Min length — text + textarea */}
+          {/* Min words — text + textarea */}
           {(field.type === 'textarea' || field.type === 'text') && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 12, color: '#64748b' }} title="The reviewer must type at least this many characters before they can submit. Set to 0 to disable.">
-                Minimum characters required:
+              <span style={{ fontSize: 12, color: '#64748b' }} title="The reviewer must type at least this many words before they can submit. Set to 0 to disable.">
+                Minimum words required:
               </span>
               <input
                 type="number"
                 min={0}
-                value={field.minLength ?? 0}
-                onChange={e => update({ minLength: Math.max(0, parseInt(e.target.value, 10) || 0) })}
+                value={field.minWords ?? 0}
+                onChange={e => update({ minWords: Math.max(0, parseInt(e.target.value, 10) || 0) })}
                 style={{ ...inp, width: 90, padding: '4px 8px' }}
               />
               <span style={{ fontSize: 11, color: '#475569' }}>(0 = no minimum)</span>
