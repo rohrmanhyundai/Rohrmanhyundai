@@ -300,5 +300,23 @@
     "notes": "",
     "submittedAt": "2026-05-06T16:14:16.808Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "ENTERPRISE",
+    "repairOrder": "777036",
+    "vin": "KM8R24GE6SU844772",
+    "model": "PALISADE",
+    "serviceDate": "04/27/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "1234",
+    "notes": "???",
+    "submittedAt": "2026-05-06T16:15:15.640Z",
+    "submittedBy": "PARKER"
   }
 ]
