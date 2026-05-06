@@ -307,6 +307,11 @@
           "id": "f28",
           "type": "yes_no_sometimes",
           "label": "I follow shop policies, safety procedures, and company expectations."
+        },
+        {
+          "id": "lese3k0",
+          "type": "yes_no_sometimes",
+          "label": "How well do you keep your workspace clean and organized?"
         }
       ]
     },
