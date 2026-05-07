@@ -49,5 +49,18 @@
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE.  Valve cover pic added. \n"
+  },
+  {
+    "id": "movg7opwcdt",
+    "ro": "777336",
+    "roDate": "2026-05-07",
+    "jobDesc": "CHECH ENGINE LIGHT IS ON",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": ""
   }
 ]
