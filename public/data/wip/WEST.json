@@ -6,8 +6,8 @@
     "jobDesc": "REPLACE ONE TIRE ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/07/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "TIRE ON ORDER "
