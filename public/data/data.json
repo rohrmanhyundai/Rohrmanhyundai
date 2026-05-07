@@ -119,14 +119,14 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 34.5,
-        "hours_per_ro": 0.78,
+        "mtd_hours": 38.3,
+        "hours_per_ro": 0.94,
         "align": 0.0625,
         "tires": 0,
         "valvoline": 0.25,
         "csi": 940,
         "asr": 0.0901,
-        "elr": 0.97,
+        "elr": 0.98,
         "last_month_total": 321.2,
         "roh50_hrs_ro": 0.88,
         "hidden": false,
@@ -136,7 +136,7 @@
         "name": "JORDAN",
         "daily_avg": 12.58636364,
         "mtd_hours": 40.7,
-        "hours_per_ro": 0.96,
+        "hours_per_ro": 0.89,
         "align": 0.2857,
         "tires": 0,
         "valvoline": 0.2552,
@@ -144,23 +144,23 @@
         "asr": 0.1696,
         "elr": 0.89,
         "last_month_total": 326.2,
-        "roh50_hrs_ro": 0.98,
-        "ro_count": 44
+        "roh50_hrs_ro": 0.93,
+        "ro_count": 45.3
       },
       {
         "name": "PARKER",
         "mtd_hours": 27.3,
         "daily_avg": 0,
-        "hours_per_ro": 0.96,
+        "hours_per_ro": 1.06,
         "align": 0.35,
         "tires": 0.1,
         "valvoline": 0.15,
-        "roh50_hrs_ro": 0.49,
+        "roh50_hrs_ro": 0.53,
         "csi": 772,
         "asr": 0.09570000000000001,
-        "elr": 0.86,
+        "elr": 0.88,
         "last_month_total": 79.7,
-        "ro_count": 32
+        "ro_count": 41.3
       }
     ],
     "advisorTraining": [
@@ -232,7 +232,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 102.5,
+      "total_hours": 106.3,
       "align": 0.23273333333333332,
       "tires": 0.03333333333333333,
       "valvoline": 0.2184,
