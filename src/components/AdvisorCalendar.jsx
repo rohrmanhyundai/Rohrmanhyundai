@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, loadAwaitingData, loadDashboardData } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
 
@@ -85,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen }) {
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen, onDelete, deletingId }) {
   const dayAge = (iso) => {
     if (!iso) return null;
     const d = new Date(iso + 'T00:00:00');
@@ -137,6 +137,24 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg
                     }}
                   >View / Edit</button>
                 )}
+                {onDelete && (
+                  <button
+                    onClick={() => {
+                      const label = j.ro ? `RO #${j.ro}` : 'this row';
+                      if (!window.confirm(`Are you sure you want to delete ${label}? This cannot be undone.`)) return;
+                      onDelete(j);
+                    }}
+                    disabled={deletingId === j.id}
+                    title="Delete this RO"
+                    style={{
+                      alignSelf: 'center', whiteSpace: 'nowrap',
+                      background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.45)',
+                      color: '#f87171', borderRadius: 6, padding: '4px 10px',
+                      fontWeight: 800, fontSize: 11, cursor: deletingId === j.id ? 'wait' : 'pointer',
+                      opacity: deletingId === j.id ? 0.6 : 1,
+                    }}
+                  >{deletingId === j.id ? '⏳' : '🗑 Delete'}</button>
+                )}
               </div>
             );
           })}
@@ -157,6 +175,37 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
   const [wipLoading, setWipLoading] = useState(false);
   const [roSearch, setRoSearch] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
+
+  async function deleteWipJob(job) {
+    if (!job || !job.tech || !job.id) return;
+    setDeletingId(job.id);
+    try {
+      const existing = await loadWipData(job.tech);
+      const updated = (existing || []).filter(r => r.id !== job.id);
+      await saveWipData(job.tech, updated);
+      setAdvisorWip(prev => prev.filter(r => r.id !== job.id));
+    } catch (e) {
+      alert('Failed to delete: ' + (e.message || e));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function deleteAwaitingJob(job) {
+    if (!job || !job.id) return;
+    setDeletingId(job.id);
+    try {
+      const existing = await loadAwaitingData();
+      const updated = (existing || []).filter(r => r.id !== job.id);
+      await saveAwaitingData(updated);
+      setAdvisorAwaiting(prev => prev.filter(r => r.id !== job.id));
+    } catch (e) {
+      alert('Failed to delete: ' + (e.message || e));
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   useEffect(() => {
     if (!viewingAdvisor) return;
@@ -495,6 +544,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
             onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }) : undefined}
+            onDelete={deleteWipJob}
+            deletingId={deletingId}
           />
           <AdvisorJobsPanel
             title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
@@ -505,6 +556,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             bg="rgba(251,191,36,.06)"
             border="rgba(251,191,36,.25)"
             onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }) : undefined}
+            onDelete={deleteAwaitingJob}
+            deletingId={deletingId}
           />
         </div>
         {/* Advisor Chat — right */}
