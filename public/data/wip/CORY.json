@@ -31,8 +31,8 @@
     "jobDesc": "FLASING 1326 ENGINE RO",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/07/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "All pics and paperwork submitted. failed bearing. ENGINE APPROVED "
