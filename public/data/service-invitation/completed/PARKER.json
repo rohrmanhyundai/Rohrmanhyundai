@@ -498,5 +498,23 @@
     "notes": "gave me a weird voicemail for a company that was NOT the customer",
     "submittedAt": "2026-05-08T19:58:57.092Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "TATIANA MARTINEZ",
+    "repairOrder": "777002",
+    "vin": "KM8K3CA53MU629869",
+    "model": "KONA",
+    "serviceDate": "04/24/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-404-0571",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T20:00:17.867Z",
+    "submittedBy": "PARKER"
   }
 ]
