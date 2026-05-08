@@ -4,19 +4,29 @@ import { getPusher, triggerEvent, ADVISOR_CHANNEL, NEW_MSG_EVENT } from '../util
 
 const TYPING_PAUSE_MS = 2000;
 
+// iMessage-inspired palette (advisor chat uses a teal accent for "me")
+const ME_GRADIENT = 'linear-gradient(180deg,#10b981,#059669)';
+const ME_TEXT     = '#ffffff';
+const THEM_BG     = 'rgba(255,255,255,0.08)';
+const THEM_TEXT   = '#e5e7eb';
+const PANEL_BG    = 'rgba(15,23,42,0.92)';
+const HEADER_BG   = 'rgba(15,23,42,0.96)';
+
 export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [error, setError] = useState('');
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [replyTo, setReplyTo] = useState(null);
+  const [activeMsgId, setActiveMsgId] = useState(null);
   const bottomRef = useRef(null);
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
-  const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const [showEmoji, setShowEmoji] = useState(false);
-  const [replyTo, setReplyTo] = useState(null);
   const textareaRef = useRef(null);
+
+  const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const EMOJIS = [
     '😀','😂','😍','🥰','😎','🤔','😅','🙏','👍','👎','🔥','💯',
@@ -40,7 +50,6 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     return () => { getPusher().unsubscribe(ADVISOR_CHANNEL); };
   }, [fetchMessages]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -51,7 +60,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     clearTimeout(typingTimerRef.current);
     typingTimerRef.current = setTimeout(() => {
       isTypingRef.current = false;
-      fetchMessages(); // refresh once typing stops
+      fetchMessages();
     }, TYPING_PAUSE_MS);
   }
 
@@ -61,7 +70,6 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     setSending(true);
     setError('');
     try {
-      // Fetch latest first to avoid overwriting concurrent messages
       const latest = await loadChatMessages();
       const newMsg = {
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
@@ -121,6 +129,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   }
 
   async function handleDelete(id) {
+    if (!window.confirm('Delete this message?')) return;
     setDeleting(id);
     setError('');
     try {
@@ -136,60 +145,147 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
 
   function fmtTime(ts) {
     const d = new Date(ts);
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
-      ' ' + d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    const today = new Date();
+    const sameDay = d.toDateString() === today.toDateString();
+    const yest = new Date(today); yest.setDate(today.getDate() - 1);
+    const sameYest = d.toDateString() === yest.toDateString();
+    const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    if (sameDay) return time;
+    if (sameYest) return `Yesterday ${time}`;
+    const date = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    return `${date} ${time}`;
   }
 
-  // Group consecutive messages from same user
   const grouped = messages.reduce((acc, msg, i) => {
     const prev = messages[i - 1];
+    const next = messages[i + 1];
     const isFirst = !prev || prev.username !== msg.username || msg.timestamp - prev.timestamp > 5 * 60 * 1000;
-    acc.push({ ...msg, isFirst });
+    const isLast  = !next || next.username !== msg.username || next.timestamp - msg.timestamp > 5 * 60 * 1000;
+    acc.push({ ...msg, isFirst, isLast });
     return acc;
   }, []);
 
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 16, overflow: 'hidden', height: '100%',
+      background: PANEL_BG,
+      border: '1px solid rgba(255,255,255,0.06)',
+      borderRadius: 18, overflow: 'hidden', height: '100%',
+      boxShadow: '0 4px 18px rgba(0,0,0,0.35)',
     }}>
       {/* Header */}
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)', flexShrink: 0 }}>
-        <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0' }}>💬 Advisor Chat</div>
-        <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>Advisor group — messages expire after 30 days</div>
+      <div style={{
+        padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: HEADER_BG, flexShrink: 0,
+        display: 'flex', alignItems: 'center', gap: 12,
+      }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'linear-gradient(135deg,#10b981,#047857)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 16, color: '#fff', fontWeight: 800,
+          boxShadow: '0 2px 8px rgba(16,185,129,.4)',
+        }}>💬</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: '#f1f5f9', letterSpacing: 0.1 }}>Advisor Chat</div>
+          <div style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>Group conversation · auto-clears after 30 days</div>
+        </div>
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
         {messages.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#334155', fontSize: 13, marginTop: 40 }}>No messages yet. Say hello!</div>
+          <div style={{ textAlign: 'center', color: '#475569', fontSize: 13, marginTop: 60 }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
+            No messages yet. Say hi!
+          </div>
         )}
         {grouped.map(msg => {
           const isMe = msg.username.toUpperCase() === currentUser.toUpperCase();
+          const isActive = activeMsgId === msg.id;
+          const reactions = msg.reactions || {};
+          const activeReactions = ['👍','❤️','❓','🚨'].filter(em => (reactions[em] || []).length > 0);
+          const r = 18;
+          const tail = 5;
+          const radius = isMe
+            ? `${r}px ${msg.isLast ? tail : r}px ${r}px ${r}px`
+            : `${r}px ${r}px ${r}px ${msg.isLast ? tail : r}px`;
           return (
-            <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', marginTop: msg.isFirst ? 10 : 2, width: '100%' }}>
+            <div key={msg.id} style={{
+              display: 'flex', flexDirection: 'column',
+              alignItems: isMe ? 'flex-end' : 'flex-start',
+              marginTop: msg.isFirst ? 14 : 2,
+              width: '100%',
+            }}>
               {msg.isFirst && (
-                <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0, letterSpacing: 0.3 }}>
-                  <span style={{ color: '#e2e8f0', fontWeight: 800 }}>{msg.username}</span>
-                  {` · ${fmtTime(msg.timestamp)}`}
+                <div style={{
+                  fontSize: 11, color: '#64748b',
+                  margin: isMe ? '0 6px 4px 0' : '0 0 4px 8px',
+                  display: 'flex', gap: 6, alignItems: 'baseline',
+                }}>
+                  <span style={{ color: '#cbd5e1', fontWeight: 700 }}>{msg.username}</span>
+                  <span>{fmtTime(msg.timestamp)}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexDirection: isMe ? 'row-reverse' : 'row', maxWidth: '100%' }}>
-                <div style={{ position: 'relative' }}>
-                {(() => {
-                  const active = ['👍','❤️','❓','🚨'].filter(em => ((msg.reactions && msg.reactions[em]) || []).length > 0);
-                  if (!active.length) return null;
-                  return (
+
+              <div style={{
+                display: 'flex', alignItems: 'flex-end', gap: 6,
+                flexDirection: isMe ? 'row-reverse' : 'row',
+                maxWidth: '85%',
+                position: 'relative',
+              }}>
+                <div
+                  onClick={() => setActiveMsgId(prev => prev === msg.id ? null : msg.id)}
+                  onDoubleClick={() => hasChatAccess && setReplyTo({ id: msg.id, username: msg.username, text: msg.text })}
+                  title={hasChatAccess ? 'Tap for actions, double-click to reply' : ''}
+                  style={{
+                    position: 'relative',
+                    padding: '8px 13px',
+                    borderRadius: radius,
+                    background: isMe ? ME_GRADIENT : THEM_BG,
+                    color: isMe ? ME_TEXT : THEM_TEXT,
+                    fontSize: 14, lineHeight: 1.4,
+                    wordBreak: 'break-word', whiteSpace: 'pre-wrap',
+                    boxShadow: isMe ? '0 1px 2px rgba(5,150,105,.4)' : '0 1px 2px rgba(0,0,0,.25)',
+                    cursor: hasChatAccess ? 'pointer' : 'default',
+                    transition: 'transform .12s ease',
+                    transform: isActive ? 'scale(1.02)' : 'scale(1)',
+                  }}
+                >
+                  {msg.replyTo && (
                     <div style={{
-                      position: 'absolute', top: -10, [isMe ? 'right' : 'left']: -6,
-                      background: '#1e293b', border: '1px solid rgba(255,255,255,0.15)',
-                      borderRadius: 12, padding: '2px 7px', display: 'flex', gap: 3,
-                      fontSize: 12, lineHeight: 1.2, zIndex: 2,
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                      borderLeft: `3px solid ${isMe ? 'rgba(255,255,255,0.6)' : 'rgba(110,231,249,0.7)'}`,
+                      paddingLeft: 8, marginBottom: 6,
+                      background: isMe ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
+                      borderRadius: 6, padding: '5px 8px',
+                      fontSize: 12, opacity: 0.92,
                     }}>
-                      {active.map(em => {
-                        const cnt = msg.reactions[em].length;
+                      <div style={{ fontWeight: 700, color: isMe ? '#d1fae5' : '#6ee7f9', fontSize: 11 }}>
+                        {msg.replyTo.username}
+                      </div>
+                      <div style={{
+                        color: isMe ? 'rgba(255,255,255,.85)' : '#94a3b8',
+                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                      }}>{msg.replyTo.text}</div>
+                    </div>
+                  )}
+                  {msg.text}
+
+                  {activeReactions.length > 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: -10,
+                      [isMe ? 'left' : 'right']: 8,
+                      background: '#1e293b',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      borderRadius: 999,
+                      padding: '2px 8px',
+                      display: 'flex', gap: 4, alignItems: 'center',
+                      fontSize: 12, lineHeight: 1, zIndex: 2,
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                    }}>
+                      {activeReactions.map(em => {
+                        const cnt = reactions[em].length;
                         return (
                           <span key={em} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
                             <span>{em}</span>
@@ -198,49 +294,18 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                         );
                       })}
                     </div>
-                  );
-                })()}
-                <div
-                  onClick={() => hasChatAccess && setReplyTo({ id: msg.id, username: msg.username, text: msg.text })}
-                  title="Click to reply"
-                  style={{
-                    maxWidth: 220, padding: '7px 12px', borderRadius: msg.isFirst ? (isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px') : (isMe ? '14px 4px 4px 14px' : '4px 14px 14px 14px'),
-                    background: isMe ? 'rgba(61,214,195,0.22)' : 'rgba(255,255,255,0.07)',
-                    border: isMe ? '1px solid rgba(61,214,195,0.3)' : '1px solid rgba(255,255,255,0.08)',
-                    color: isMe ? '#a7f3d0' : '#cbd5e1',
-                    fontSize: 13, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'normal',
-                    cursor: hasChatAccess ? 'pointer' : 'default',
-                  }}>
-                  {msg.replyTo && (
-                    <div style={{
-                      borderLeft: '3px solid rgba(110,231,249,0.6)', paddingLeft: 7, marginBottom: 5,
-                      background: 'rgba(255,255,255,0.04)', borderRadius: 4, padding: '4px 7px',
-                      fontSize: 11, opacity: 0.85,
-                    }}>
-                      <div style={{ fontWeight: 800, color: '#6ee7f9' }}>{msg.replyTo.username}</div>
-                      <div style={{ color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{msg.replyTo.text}</div>
-                    </div>
                   )}
-                  {msg.text}
                 </div>
-                </div>
-                {canDelete && (
-                  <button
-                    onClick={() => handleDelete(msg.id)}
-                    disabled={deleting === msg.id}
-                    title="Delete message"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', fontSize: 13, padding: '2px 4px', opacity: deleting === msg.id ? 0.4 : 1, lineHeight: 1 }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#475569'}
-                  >
-                    🗑
-                  </button>
-                )}
               </div>
-              {hasChatAccess && (
-                <div style={{ display: 'flex', gap: 4, marginTop: 3, paddingLeft: isMe ? 0 : 4, paddingRight: isMe ? 4 : 0 }}>
+
+              {hasChatAccess && isActive && (
+                <div style={{
+                  display: 'flex', gap: 6, marginTop: 8, alignItems: 'center',
+                  paddingLeft: isMe ? 0 : 6, paddingRight: isMe ? 6 : 0,
+                  flexDirection: isMe ? 'row-reverse' : 'row',
+                }}>
                   {['👍','❤️','❓','🚨'].map(em => {
-                    const list = (msg.reactions && msg.reactions[em]) || [];
+                    const list = reactions[em] || [];
                     const reacted = list.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
                     return (
                       <button
@@ -248,16 +313,35 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                         onClick={(e) => { e.stopPropagation(); toggleReaction(msg.id, em); }}
                         title={list.join(', ') || `React ${em}`}
                         style={{
-                          background: reacted ? 'rgba(110,231,249,0.18)' : 'rgba(255,255,255,0.04)',
-                          border: `1px solid ${reacted ? 'rgba(110,231,249,0.45)' : 'rgba(255,255,255,0.08)'}`,
-                          borderRadius: 12, padding: '1px 7px', cursor: 'pointer', fontSize: 11,
-                          color: '#cbd5e1', lineHeight: 1.4, display: 'inline-flex', alignItems: 'center', gap: 3,
+                          background: reacted ? 'rgba(16,185,129,0.22)' : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${reacted ? 'rgba(52,211,153,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                          borderRadius: 999, padding: '3px 9px',
+                          cursor: 'pointer', fontSize: 13, lineHeight: 1.2,
+                          color: '#cbd5e1',
                         }}
-                      >
-                        <span>{em}</span>
-                      </button>
+                      >{em}</button>
                     );
                   })}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setReplyTo({ id: msg.id, username: msg.username, text: msg.text }); setActiveMsgId(null); }}
+                    style={{
+                      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 999, padding: '3px 11px', cursor: 'pointer',
+                      fontSize: 12, fontWeight: 700, color: '#94a3b8',
+                    }}
+                  >↩ Reply</button>
+                  {canDelete && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(msg.id); setActiveMsgId(null); }}
+                      disabled={deleting === msg.id}
+                      style={{
+                        background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)',
+                        borderRadius: 999, padding: '3px 11px', cursor: 'pointer',
+                        fontSize: 12, fontWeight: 700, color: '#f87171',
+                        opacity: deleting === msg.id ? 0.5 : 1,
+                      }}
+                    >{deleting === msg.id ? '⏳' : '🗑 Delete'}</button>
+                  )}
                 </div>
               )}
             </div>
@@ -266,22 +350,25 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
+      {/* Composer */}
       {hasChatAccess ? (
-        <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, position: 'relative' }}>
-          {/* Emoji picker */}
+        <div style={{
+          padding: '10px 12px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          background: HEADER_BG,
+          flexShrink: 0, position: 'relative',
+        }}>
           {showEmoji && (
             <div style={{
-              position: 'absolute', bottom: '100%', left: 12, right: 12, marginBottom: 6,
+              position: 'absolute', bottom: '100%', left: 12, right: 12, marginBottom: 8,
               background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 12, padding: 10, display: 'flex', flexWrap: 'wrap', gap: 4, zIndex: 10,
-              boxShadow: '0 -4px 20px rgba(0,0,0,0.4)',
+              borderRadius: 14, padding: 10, display: 'flex', flexWrap: 'wrap', gap: 4, zIndex: 10,
+              boxShadow: '0 -6px 24px rgba(0,0,0,0.5)',
             }}>
               {EMOJIS.map(e => (
                 <button key={e} onClick={() => insertEmoji(e)} style={{
-                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 20,
-                  padding: '3px 4px', borderRadius: 6, lineHeight: 1,
-                  transition: 'background .1s',
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 22,
+                  padding: '4px 5px', borderRadius: 8, lineHeight: 1, transition: 'background .1s',
                 }}
                   onMouseEnter={el => el.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
                   onMouseLeave={el => el.currentTarget.style.background = 'none'}
@@ -291,26 +378,41 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           )}
           {replyTo && (
             <div style={{
-              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6,
-              background: 'rgba(110,231,249,0.08)', border: '1px solid rgba(110,231,249,0.25)',
-              borderLeft: '3px solid rgba(110,231,249,0.7)', borderRadius: 8, padding: '6px 10px',
+              display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8,
+              background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(52,211,153,0.3)',
+              borderLeft: '3px solid #10b981', borderRadius: 10, padding: '6px 10px',
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: 0.5 }}>Replying to {replyTo.username}</div>
-                <div style={{ fontSize: 12, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{replyTo.text}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+                  Replying to {replyTo.username}
+                </div>
+                <div style={{ fontSize: 12, color: '#cbd5e1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {replyTo.text}
+                </div>
               </div>
-              <button onClick={() => setReplyTo(null)} title="Cancel reply" style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 16, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}>✕</button>
+              <button onClick={() => setReplyTo(null)} title="Cancel reply" style={{
+                background: 'none', border: 'none', color: '#94a3b8', fontSize: 16,
+                cursor: 'pointer', padding: '0 4px', lineHeight: 1,
+              }}>✕</button>
             </div>
           )}
           {error && <div style={{ fontSize: 11, color: '#f87171', marginBottom: 6 }}>{error}</div>}
-          <div style={{ display: 'flex', gap: 6 }}>
+
+          <div style={{
+            display: 'flex', alignItems: 'flex-end', gap: 8,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 22,
+            padding: '4px 4px 4px 6px',
+          }}>
             <button
               onClick={() => setShowEmoji(s => !s)}
               title="Emoji"
               style={{
-                background: showEmoji ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
-                fontSize: 18, padding: '0 10px', cursor: 'pointer', alignSelf: 'stretch', lineHeight: 1,
+                background: 'transparent', border: 'none',
+                fontSize: 22, padding: '4px 6px',
+                cursor: 'pointer', lineHeight: 1, color: '#94a3b8',
+                borderRadius: 999,
               }}
             >😊</button>
             <textarea
@@ -318,32 +420,44 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message… (Enter to send)"
-              rows={2}
+              placeholder="iMessage"
+              rows={1}
               style={{
-                flex: 1, resize: 'none', background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
-                color: '#e2e8f0', padding: '8px 10px', fontSize: 13, outline: 'none',
-                fontFamily: 'inherit', lineHeight: 1.4,
+                flex: 1, resize: 'none', background: 'transparent',
+                border: 'none', outline: 'none',
+                color: '#f1f5f9', padding: '8px 4px', fontSize: 14,
+                fontFamily: 'inherit', lineHeight: 1.4, maxHeight: 120,
+                minHeight: 22,
               }}
             />
             <button
               onClick={handleSend}
               disabled={sending || !text.trim()}
+              title="Send"
               style={{
-                background: sending || !text.trim() ? 'rgba(61,214,195,0.1)' : 'rgba(61,214,195,0.25)',
-                border: '1px solid rgba(61,214,195,0.4)', borderRadius: 10,
-                color: '#6ee7b7', fontWeight: 800, fontSize: 13,
-                padding: '0 14px', cursor: sending || !text.trim() ? 'not-allowed' : 'pointer',
-                opacity: sending || !text.trim() ? 0.5 : 1, alignSelf: 'stretch',
+                width: 34, height: 34, borderRadius: '50%',
+                background: text.trim() && !sending ? ME_GRADIENT : 'rgba(255,255,255,0.08)',
+                border: 'none',
+                color: '#fff', fontWeight: 800, fontSize: 16,
+                cursor: text.trim() && !sending ? 'pointer' : 'not-allowed',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+                transition: 'background .15s, transform .1s',
+                transform: text.trim() && !sending ? 'scale(1)' : 'scale(0.92)',
+                boxShadow: text.trim() && !sending ? '0 2px 6px rgba(5,150,105,.45)' : 'none',
               }}
             >
-              {sending ? '⏳' : '➤'}
+              {sending ? '…' : '↑'}
             </button>
           </div>
         </div>
       ) : (
-        <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: 12, color: '#334155', textAlign: 'center' }}>
+        <div style={{
+          padding: '14px 16px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          background: HEADER_BG,
+          fontSize: 12, color: '#475569', textAlign: 'center',
+        }}>
           Chat access not enabled for your account
         </div>
       )}
