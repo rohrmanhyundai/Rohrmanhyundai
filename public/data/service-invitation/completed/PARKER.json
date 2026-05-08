@@ -408,5 +408,23 @@
     "notes": "very happy / said she will fill out a survey",
     "submittedAt": "2026-05-08T19:17:35.198Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JENNA FADNESS",
+    "repairOrder": "776962",
+    "vin": "KM8JCDD16SU335602",
+    "model": "TUCSON HEV",
+    "serviceDate": "04/26/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-366-0356",
+    "notes": "Filling out survey",
+    "submittedAt": "2026-05-08T19:41:33.512Z",
+    "submittedBy": "PARKER"
   }
 ]
