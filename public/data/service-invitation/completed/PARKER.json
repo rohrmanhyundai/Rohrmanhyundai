@@ -642,5 +642,23 @@
     "notes": "said she would fill out the survey",
     "submittedAt": "2026-05-08T20:22:04.276Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "ROBERT BRADFORD",
+    "repairOrder": "776848",
+    "vin": "5NMJECDE2SH458283",
+    "model": "TUCSON",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-586-6888",
+    "notes": "Church phone #",
+    "submittedAt": "2026-05-08T20:22:38.124Z",
+    "submittedBy": "PARKER"
   }
 ]
