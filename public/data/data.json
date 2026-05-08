@@ -130,7 +130,7 @@
         "last_month_total": 321.2,
         "roh50_hrs_ro": 0.88,
         "hidden": false,
-        "ro_count": 36
+        "ro_count": 42
       },
       {
         "name": "JORDAN",
@@ -145,7 +145,7 @@
         "elr": 0.91,
         "last_month_total": 326.2,
         "roh50_hrs_ro": 0.93,
-        "ro_count": 51
+        "ro_count": 59
       },
       {
         "name": "PARKER",
@@ -160,7 +160,7 @@
         "asr": 0.125,
         "elr": 0.88,
         "last_month_total": 79.7,
-        "ro_count": 51
+        "ro_count": 65
       }
     ],
     "advisorTraining": [
