@@ -534,5 +534,23 @@
     "notes": "voicemail",
     "submittedAt": "2026-05-08T20:01:42.802Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JANICE BATES",
+    "repairOrder": "776984",
+    "vin": "KM8RMESA4TU060693",
+    "model": "PALISADE HEV",
+    "serviceDate": "04/23/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "317-619-1175",
+    "notes": "gave me a companies voicemail / not customer's",
+    "submittedAt": "2026-05-08T20:03:49.401Z",
+    "submittedBy": "PARKER"
   }
 ]
