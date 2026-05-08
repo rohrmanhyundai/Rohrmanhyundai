@@ -660,5 +660,23 @@
     "notes": "Church phone #",
     "submittedAt": "2026-05-08T20:22:38.124Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "DEEPAK BENNY",
+    "repairOrder": "776858",
+    "vin": "KMHL24JA6NA240107",
+    "model": "SONATA",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-409-4994",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T20:23:54.212Z",
+    "submittedBy": "PARKER"
   }
 ]
