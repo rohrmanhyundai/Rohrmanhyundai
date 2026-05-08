@@ -570,5 +570,23 @@
     "notes": "voicemail",
     "submittedAt": "2026-05-08T20:05:45.033Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "SARA MEZA-SOTO",
+    "repairOrder": "776941",
+    "vin": "KM8K3CA36PU992329",
+    "model": "KONA",
+    "serviceDate": "04/22/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-479-6635",
+    "notes": "just said thank you, never said she would actually fill out the survey, but was satisfied with the visit",
+    "submittedAt": "2026-05-08T20:08:20.184Z",
+    "submittedBy": "PARKER"
   }
 ]
