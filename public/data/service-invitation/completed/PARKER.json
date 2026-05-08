@@ -696,5 +696,23 @@
     "notes": "said he would fill out a survey",
     "submittedAt": "2026-05-08T20:27:07.010Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "ALYSON STANIFER",
+    "repairOrder": "776726",
+    "vin": "KMHL64JA0TA540937",
+    "model": "SONATA",
+    "serviceDate": "04/14/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-491-9435",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T20:27:59.210Z",
+    "submittedBy": "PARKER"
   }
 ]
