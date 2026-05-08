@@ -426,5 +426,23 @@
     "notes": "Filling out survey",
     "submittedAt": "2026-05-08T19:41:33.512Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JANUARY LEWIS",
+    "repairOrder": "777027",
+    "vin": "KM8RJES27TU055277",
+    "model": "PALISADE",
+    "serviceDate": "04/26/2026",
+    "invitationDate": "04/28/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "773-766-9004",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T19:44:50.055Z",
+    "submittedBy": "PARKER"
   }
 ]
