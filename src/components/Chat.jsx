@@ -5,7 +5,7 @@ import { getPusher, triggerEvent, ADVISOR_CHANNEL, NEW_MSG_EVENT } from '../util
 const TYPING_PAUSE_MS = 2000;
 
 // iMessage-inspired palette (advisor chat uses a teal accent for "me")
-const ME_GRADIENT = 'linear-gradient(180deg,#10b981,#059669)';
+const ME_GRADIENT = 'linear-gradient(180deg,#3b82f6,#2563eb)';
 const ME_TEXT     = '#ffffff';
 const THEM_BG     = 'rgba(255,255,255,0.08)';
 const THEM_TEXT   = '#e5e7eb';
@@ -181,10 +181,10 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       }}>
         <div style={{
           width: 36, height: 36, borderRadius: '50%',
-          background: 'linear-gradient(135deg,#10b981,#047857)',
+          background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 16, color: '#fff', fontWeight: 800,
-          boxShadow: '0 2px 8px rgba(16,185,129,.4)',
+          boxShadow: '0 2px 8px rgba(59,130,246,.4)',
         }}>💬</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: 15, color: '#f1f5f9', letterSpacing: 0.1 }}>Advisor Chat</div>
@@ -246,7 +246,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                     color: isMe ? ME_TEXT : THEM_TEXT,
                     fontSize: 14, lineHeight: 1.4,
                     wordBreak: 'break-word', whiteSpace: 'pre-wrap',
-                    boxShadow: isMe ? '0 1px 2px rgba(5,150,105,.4)' : '0 1px 2px rgba(0,0,0,.25)',
+                    boxShadow: isMe ? '0 1px 2px rgba(37,99,235,.4)' : '0 1px 2px rgba(0,0,0,.25)',
                     cursor: hasChatAccess ? 'pointer' : 'default',
                     transition: 'transform .12s ease',
                     transform: isActive ? 'scale(1.02)' : 'scale(1)',
@@ -254,13 +254,13 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                 >
                   {msg.replyTo && (
                     <div style={{
-                      borderLeft: `3px solid ${isMe ? 'rgba(255,255,255,0.6)' : 'rgba(110,231,249,0.7)'}`,
+                      borderLeft: `3px solid ${isMe ? 'rgba(255,255,255,0.6)' : 'rgba(251,191,36,0.7)'}`,
                       paddingLeft: 8, marginBottom: 6,
                       background: isMe ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
                       borderRadius: 6, padding: '5px 8px',
                       fontSize: 12, opacity: 0.92,
                     }}>
-                      <div style={{ fontWeight: 700, color: isMe ? '#d1fae5' : '#6ee7f9', fontSize: 11 }}>
+                      <div style={{ fontWeight: 700, color: isMe ? '#fef3c7' : '#fbbf24', fontSize: 11 }}>
                         {msg.replyTo.username}
                       </div>
                       <div style={{
@@ -313,8 +313,8 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                         onClick={(e) => { e.stopPropagation(); toggleReaction(msg.id, em); }}
                         title={list.join(', ') || `React ${em}`}
                         style={{
-                          background: reacted ? 'rgba(16,185,129,0.22)' : 'rgba(255,255,255,0.05)',
-                          border: `1px solid ${reacted ? 'rgba(52,211,153,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                          background: reacted ? 'rgba(59,130,246,0.22)' : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${reacted ? 'rgba(96,165,250,0.5)' : 'rgba(255,255,255,0.08)'}`,
                           borderRadius: 999, padding: '3px 9px',
                           cursor: 'pointer', fontSize: 13, lineHeight: 1.2,
                           color: '#cbd5e1',
@@ -379,11 +379,11 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           {replyTo && (
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8,
-              background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(52,211,153,0.3)',
-              borderLeft: '3px solid #10b981', borderRadius: 10, padding: '6px 10px',
+              background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(96,165,250,0.3)',
+              borderLeft: '3px solid #3b82f6', borderRadius: 10, padding: '6px 10px',
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: 0.4 }}>
                   Replying to {replyTo.username}
                 </div>
                 <div style={{ fontSize: 12, color: '#cbd5e1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -444,7 +444,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                 flexShrink: 0,
                 transition: 'background .15s, transform .1s',
                 transform: text.trim() && !sending ? 'scale(1)' : 'scale(0.92)',
-                boxShadow: text.trim() && !sending ? '0 2px 6px rgba(5,150,105,.45)' : 'none',
+                boxShadow: text.trim() && !sending ? '0 2px 6px rgba(37,99,235,.45)' : 'none',
               }}
             >
               {sending ? '…' : '↑'}
