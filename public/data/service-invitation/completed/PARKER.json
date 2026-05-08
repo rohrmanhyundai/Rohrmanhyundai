@@ -462,5 +462,23 @@
     "notes": "voicemail",
     "submittedAt": "2026-05-08T19:56:21.620Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "THOMAS MOORE",
+    "repairOrder": "777018",
+    "vin": "KM8R24GE9SU899264",
+    "model": "PALISADE",
+    "serviceDate": "04/26/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-491-3206",
+    "notes": "opted out of texting & no email",
+    "submittedAt": "2026-05-08T19:57:37.108Z",
+    "submittedBy": "PARKER"
   }
 ]
