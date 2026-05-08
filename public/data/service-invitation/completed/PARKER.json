@@ -588,5 +588,23 @@
     "notes": "just said thank you, never said she would actually fill out the survey, but was satisfied with the visit",
     "submittedAt": "2026-05-08T20:08:20.184Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "CHRIS LADD",
+    "repairOrder": "776833",
+    "vin": "KMHL34J25NA236569",
+    "model": "SONATA",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "260-415-4944",
+    "notes": "said he would fill out survey",
+    "submittedAt": "2026-05-08T20:09:58.279Z",
+    "submittedBy": "PARKER"
   }
 ]
