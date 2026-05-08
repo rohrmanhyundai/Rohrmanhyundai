@@ -32,8 +32,8 @@
     "jobDesc": "OUTSIDE TAILGATE SWITCH ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/08/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "PARTS ARE ON ORDER "
