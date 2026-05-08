@@ -166,14 +166,14 @@
     "advisorTraining": [
       {
         "name": "DAVID",
-        "certified": "YES",
-        "trainings_due": "0",
+        "certified": "NO",
+        "trainings_due": "3",
         "excel_training": "N/A"
       },
       {
         "name": "JORDAN",
         "certified": "NO",
-        "trainings_due": "4",
+        "trainings_due": "3",
         "excel_training": "NA"
       },
       {
