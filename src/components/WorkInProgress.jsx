@@ -454,6 +454,43 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     finally { setMovingId(null); }
   }
 
+  // Move a WIP row back to Cars Awaiting Technician (the inverse of "Claim It").
+  // Removes the row from the current tech's WIP file and re-adds it as an
+  // awaiting entry with the same RO / date / job desc / advisor / priority.
+  async function moveToAwaiting(wipRow) {
+    if (rowsTechRef.current !== activeTech) return;
+    if (!window.confirm(`Move RO #${wipRow.ro || '(blank)'} back to Cars Awaiting Technician?`)) return;
+    setMovingId(wipRow.id);
+    try {
+      // 1. Remove from this tech's WIP
+      const remaining = dedupeWip(rows.filter(r => r.id !== wipRow.id));
+      await safeSaveWipData(activeTech, remaining);
+      setRows(remaining);
+      // 2. Add to awaiting (avoid duplicating an existing awaiting row by id or RO)
+      const existingAwaiting = await loadAwaitingData();
+      const filteredAwaiting = (existingAwaiting || []).filter(r =>
+        r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || '')
+      );
+      const awRow = {
+        ...emptyAwaiting(),
+        id: wipRow.id,
+        ro: wipRow.ro || '',
+        roDate: wipRow.roDate || todayISO(),
+        jobDesc: wipRow.jobDesc || '',
+        highPriority: !!wipRow.highPriority,
+        advisor: wipRow.advisor || '',
+        isNew: false,
+      };
+      const updatedAwaiting = [awRow, ...filteredAwaiting];
+      await saveAwaitingData(updatedAwaiting);
+      setAwaiting(updatedAwaiting);
+    } catch (e) {
+      setError(e.message || 'Failed to move row.');
+    } finally {
+      setMovingId(null);
+    }
+  }
+
   // Reassign existing WIP row to different tech (managers only)
   async function reassignRow(wipRow, newTech) {
     if (rowsTechRef.current !== activeTech) return;
@@ -739,6 +776,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                         onClick={() => updateRowAndSave(row.id, 'highPriority', !row.highPriority)}
                         style={{ background: row.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${row.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: row.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 11, transition: 'all .15s' }}
                       >{row.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
+                    )}
+                    {isManagerOrAdvisor && (
+                      <button
+                        onClick={() => moveToAwaiting(row)}
+                        disabled={movingId === row.id}
+                        title="Send this RO back to the Cars Awaiting Technician list"
+                        style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 7, padding: '4px 12px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
+                      >{movingId === row.id ? '⏳' : '↩ Move to Cars Awaiting'}</button>
                     )}
                     {isManager && (
                       <>
