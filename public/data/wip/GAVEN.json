@@ -11,18 +11,5 @@
     "highPriority": true,
     "advisor": "DAVID",
     "notes": "TIMING IS APPROVED AFTER MARKET WARRANTY. CUSTOMER NEEDS TO APPROVE BELT TENSOR. CALLED LEFT MESSAGE. "
-  },
-  {
-    "id": "moxdo82ixtm",
-    "ro": "777239",
-    "roDate": "2026-05-05",
-    "jobDesc": "CUSTOMER STATES- tow in, knock sensor just replaced. Engine is over heating and getting towed in",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": ""
   }
 ]
