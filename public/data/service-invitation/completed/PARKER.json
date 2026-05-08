@@ -480,5 +480,23 @@
     "notes": "opted out of texting & no email",
     "submittedAt": "2026-05-08T19:57:37.108Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "DAECHEOL JEONG",
+    "repairOrder": "777014",
+    "vin": "5NMJBCDE6RH360179",
+    "model": "TUCSON",
+    "serviceDate": "04/24/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "313-483-5846",
+    "notes": "gave me a weird voicemail for a company that was NOT the customer",
+    "submittedAt": "2026-05-08T19:58:57.092Z",
+    "submittedBy": "PARKER"
   }
 ]
