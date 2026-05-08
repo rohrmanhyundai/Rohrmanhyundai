@@ -678,5 +678,23 @@
     "notes": "voicemail",
     "submittedAt": "2026-05-08T20:23:54.212Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JASON LANGE",
+    "repairOrder": "776835",
+    "vin": "KM8R44GE6SU857337",
+    "model": "PALISADE",
+    "serviceDate": "04/20/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "812-249-8724",
+    "notes": "said he would fill out a survey",
+    "submittedAt": "2026-05-08T20:27:07.010Z",
+    "submittedBy": "PARKER"
   }
 ]
