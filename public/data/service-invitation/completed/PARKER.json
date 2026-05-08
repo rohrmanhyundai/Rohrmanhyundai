@@ -552,5 +552,23 @@
     "notes": "gave me a companies voicemail / not customer's",
     "submittedAt": "2026-05-08T20:03:49.401Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JON MILLER",
+    "repairOrder": "776945",
+    "vin": "KM8R7DGE4SU951532",
+    "model": "PALISADE",
+    "serviceDate": "04/22/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-414-7646",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T20:05:45.033Z",
+    "submittedBy": "PARKER"
   }
 ]
