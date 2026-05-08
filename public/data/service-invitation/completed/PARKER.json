@@ -372,5 +372,23 @@
     "notes": "Satisfied & said he would fill out Survey",
     "submittedAt": "2026-05-06T16:18:00.551Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JINEN SETTAN",
+    "repairOrder": "777055",
+    "vin": "KM8K33AG9PU169977",
+    "model": "KONA EV",
+    "serviceDate": "04/27/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654901435",
+    "notes": "cust was in for just a couple minutes",
+    "submittedAt": "2026-05-08T12:59:19.373Z",
+    "submittedBy": "PARKER"
   }
 ]
