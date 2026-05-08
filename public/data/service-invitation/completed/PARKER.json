@@ -606,5 +606,23 @@
     "notes": "said he would fill out survey",
     "submittedAt": "2026-05-08T20:09:58.279Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "CHUQING GAO",
+    "repairOrder": "776832",
+    "vin": "KM8HBCAB9SU227807",
+    "model": "KONA",
+    "serviceDate": "04/21/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-767-3592",
+    "notes": "said she would fill out the survey",
+    "submittedAt": "2026-05-08T20:19:38.317Z",
+    "submittedBy": "PARKER"
   }
 ]
