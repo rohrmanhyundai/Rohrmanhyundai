@@ -444,5 +444,23 @@
     "notes": "voicemail",
     "submittedAt": "2026-05-08T19:44:50.055Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "AARON BAKER",
+    "repairOrder": "777032",
+    "vin": "KM8R7DGE2SU890536",
+    "model": "PALISADE",
+    "serviceDate": "04/24/2026",
+    "invitationDate": "04/28/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-427-0414",
+    "notes": "voicemail",
+    "submittedAt": "2026-05-08T19:56:21.620Z",
+    "submittedBy": "PARKER"
   }
 ]
