@@ -14,7 +14,7 @@
         "total": 37.8,
         "goal_pct": 0.7957894736842105,
         "pacing": 47.25,
-        "certified": "YES",
+        "certified": "NO",
         "trainings_due": "4",
         "excel_training": "85"
       },
@@ -172,8 +172,8 @@
       },
       {
         "name": "JORDAN",
-        "certified": "YES",
-        "trainings_due": "0",
+        "certified": "NO",
+        "trainings_due": "4",
         "excel_training": "NA"
       },
       {
