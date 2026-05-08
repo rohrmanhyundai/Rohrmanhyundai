@@ -10,7 +10,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. CORY IS STILL IN DIAG ON THIS CAR "
+    "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. CORY IS STILL IN DIAG ON THIS CAR 5/6: Techline advised replacing PDC. Part ordered.ETA 5/8. "
   },
   {
     "id": "moiuw6klccs",
@@ -31,8 +31,8 @@
     "jobDesc": "FLASING 1326 ENGINE RO",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/07/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "All pics and paperwork submitted. failed bearing. ENGINE APPROVED "
@@ -48,6 +48,6 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "PARKER",
-    "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE \n"
+    "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE.  Valve cover pic added. \n"
   }
 ]
