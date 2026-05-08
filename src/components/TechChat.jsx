@@ -194,7 +194,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
+      <div className="chat-scroll" style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
         {messages.length === 0 && (
           <div style={{ textAlign: 'center', color: '#475569', fontSize: 13, marginTop: 60 }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
@@ -235,7 +235,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
               <div style={{
                 display: 'flex', alignItems: 'flex-end', gap: 6,
                 flexDirection: isMe ? 'row-reverse' : 'row',
-                maxWidth: '85%',
+                maxWidth: '94%',
                 position: 'relative',
               }}>
                 <div
