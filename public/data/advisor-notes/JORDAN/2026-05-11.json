@@ -3,51 +3,69 @@
   "date": "2026-05-11",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Max Ftizgerald",
+      "appointmentTime": "8:40 am",
+      "criticalDeferredService": "brake/trans fluid exchange",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Gaven",
+      "notes": []
+    },
+    {
+      "customerName": "Adriana Lopez Espino",
+      "appointmentTime": "10 am",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Nazanin Kianinejad",
+      "appointmentTime": "10:20 am",
+      "criticalDeferredService": "n/a",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Elizabeth Hovioussparks",
+      "appointmentTime": "12 pm",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
       "dropOff": false,
-      "technician": "",
+      "technician": "West",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Shaun Werth",
+      "appointmentTime": "3:40 pm",
+      "criticalDeferredService": "front pads",
+      "waiter": true,
       "dropOff": false,
-      "technician": "",
+      "technician": "Gaven",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Carlton Bledson",
+      "appointmentTime": "4:40 pm",
+      "criticalDeferredService": "front and rear pads",
+      "waiter": true,
       "dropOff": false,
-      "technician": "",
+      "technician": "Carter",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
+      "customerName": "Calvin/Toni Gebhardt",
+      "appointmentTime": "5 pm",
+      "criticalDeferredService": "less than 10k",
+      "waiter": true,
       "dropOff": false,
       "technician": "",
       "notes": []
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-05-11T17:39:52.564Z"
+  "savedAt": "2026-05-11T18:32:59.978Z"
 }
