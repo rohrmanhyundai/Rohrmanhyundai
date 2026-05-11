@@ -443,6 +443,11 @@
     "id": "mp1j240dne5",
     "username": "DAVID",
     "text": "responded to VM about oil change apt and got scheduled",
-    "timestamp": 1778523645901
+    "timestamp": 1778523645901,
+    "reactions": {
+      "👍": [
+        "SHAWN"
+      ]
+    }
   }
 ]
