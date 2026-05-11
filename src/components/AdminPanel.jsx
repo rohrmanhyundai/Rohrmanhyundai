@@ -60,7 +60,7 @@ function getWorkingDays(start, end) {
   const cur = new Date(start); cur.setHours(0, 0, 0, 0);
   const fin = new Date(end);   fin.setHours(23, 59, 59, 0);
   while (cur <= fin) {
-    if (cur.getDay() !== 6) { // skip Saturday
+    if (cur.getDay() !== 0) { // skip Sunday
       days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
     }
     cur.setDate(cur.getDate() + 1);
@@ -126,9 +126,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setVacEdit(vacations.map(v => ({ ...v })));
   }, [vacations]);
 
-  // Auto-remove expired vacations when the panel opens
+  // Auto-remove expired vacations AND reconcile stale schedule 'vacation' marks when the panel opens
   useEffect(() => {
-    if (!isOpen || !vacations.length) return;
+    if (!isOpen) return;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -151,24 +151,30 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       return true; // can't determine — keep it
     });
 
-    if (active.length < vacations.length) {
-      // Also strip schedule 'vacation' marks for any employees whose rows were removed
-      const removedRows = vacations.filter(v => !active.includes(v));
-      const empKeys = new Set();
-      for (const r of removedRows) {
-        const k = matchEmployeeName(r.name, users);
-        if (k) empKeys.add(k);
-      }
-      let newSchedules = schedules;
-      for (const k of empKeys) {
-        newSchedules = rebuildEmpSchedule(k, active, newSchedules);
-      }
-      onDataChange(data, active);
-      if (empKeys.size > 0) {
-        saveSchedules(newSchedules)
-          .then(() => onSchedulesChange(newSchedules))
-          .catch(() => {});
-      }
+    // Reconcile schedule against the (post-expire) vacation list for every employee
+    // who currently has any 'vacation' marks OR a vacation row. This wipes stale
+    // marks left over from old ranges that pre-date the sync fix.
+    const empKeys = new Set();
+    for (const [emp, days] of Object.entries(schedules || {})) {
+      if (emp === '__HOLIDAY__') continue;
+      if (days && Object.values(days).includes('vacation')) empKeys.add(emp);
+    }
+    for (const v of active) {
+      const k = matchEmployeeName(v.name, users);
+      if (k) empKeys.add(k);
+    }
+    let newSchedules = schedules;
+    for (const k of empKeys) {
+      newSchedules = rebuildEmpSchedule(k, active, newSchedules);
+    }
+    const scheduleChanged = JSON.stringify(newSchedules) !== JSON.stringify(schedules);
+    const vacChanged = active.length < vacations.length;
+
+    if (vacChanged) onDataChange(data, active);
+    if (scheduleChanged) {
+      saveSchedules(newSchedules)
+        .then(() => onSchedulesChange(newSchedules))
+        .catch(() => {});
     }
   }, [isOpen]);
 
