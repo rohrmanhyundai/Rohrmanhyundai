@@ -258,9 +258,9 @@
   "vacations": [
     {
       "name": "DAVID",
-      "dates": "May 26, 2026 – Jun 6, 2026",
+      "dates": "May 26, 2026 – Jun 3, 2026",
       "dateStart": "2026-05-26",
-      "dateEnd": "2026-06-06",
+      "dateEnd": "2026-06-03",
       "status": "APPROVED"
     },
     {
