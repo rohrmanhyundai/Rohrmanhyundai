@@ -49,5 +49,18 @@
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE.  Valve cover pic added. ENGINE APPROVED. READY FOR ASRS \n"
+  },
+  {
+    "id": "mp17ea8s6x9",
+    "ro": "777404",
+    "roDate": "2026-05-11",
+    "jobDesc": "CHECK ENGINE LIGHT ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
