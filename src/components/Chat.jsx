@@ -51,8 +51,17 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   }, [fetchMessages]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (activeMsgId) return;
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, activeMsgId]);
+
+  useEffect(() => {
+    if (!activeMsgId) return;
+    const el = document.querySelector(`[data-msg-id="${activeMsgId}"]`);
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [activeMsgId]);
 
   function handleTextChange(e) {
     setText(e.target.value);
@@ -211,7 +220,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
             ? `${r}px ${msg.isLast ? tail : r}px ${r}px ${r}px`
             : `${r}px ${r}px ${r}px ${msg.isLast ? tail : r}px`;
           return (
-            <div key={msg.id} style={{
+            <div key={msg.id} data-msg-id={msg.id} style={{
               display: 'flex', flexDirection: 'column',
               alignItems: isMe ? 'flex-end' : 'flex-start',
               marginTop: msg.isFirst ? 14 : 2,
