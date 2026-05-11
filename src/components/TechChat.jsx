@@ -51,8 +51,21 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
   }, [fetchMessages]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    // Don't yank the scroll if the user has a message selected — their action
+    // row would scroll out from under their finger.
+    if (activeMsgId) return;
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, activeMsgId]);
+
+  // When a message is tapped, scroll its action row fully into view so it
+  // doesn't get hidden behind the composer (most common on the newest msg).
+  useEffect(() => {
+    if (!activeMsgId) return;
+    const el = document.querySelector(`[data-msg-id="${activeMsgId}"]`);
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [activeMsgId]);
 
   function handleTextChange(e) {
     setText(e.target.value);
@@ -213,7 +226,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
             ? `${r}px ${msg.isLast ? tail : r}px ${r}px ${r}px`
             : `${r}px ${r}px ${r}px ${msg.isLast ? tail : r}px`;
           return (
-            <div key={msg.id} style={{
+            <div key={msg.id} data-msg-id={msg.id} style={{
               display: 'flex', flexDirection: 'column',
               alignItems: isMe ? 'flex-end' : 'flex-start',
               marginTop: msg.isFirst ? 14 : 2,
