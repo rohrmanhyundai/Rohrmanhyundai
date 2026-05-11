@@ -1,41 +1,15 @@
 [
   {
-    "id": "movxj8p2vct",
-    "ro": "777370",
-    "roDate": "2026-05-07",
-    "jobDesc": "Transmission programming",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "Trans installed at Becks Auto Center"
-  },
-  {
     "id": "mou9duhnqhd",
     "ro": "777305",
     "roDate": "2026-05-06",
     "jobDesc": "RADIO AND OIL PAN",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/08/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "AFTER MARKET WARRANTY WAITING ON PARTS TO COME IN. THIS CAR IS NOT HERE CALL WHEN PARTS ARE IN "
-  },
-  {
-    "id": "movq472w2vp",
-    "ro": "777335",
-    "roDate": "2026-05-07",
-    "jobDesc": "OUTSIDE TAILGATE SWITCH ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": "PARTS ARE ON ORDER "
   }
 ]

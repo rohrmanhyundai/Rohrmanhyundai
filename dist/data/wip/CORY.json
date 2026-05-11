@@ -10,7 +10,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. CORY IS STILL IN DIAG ON THIS CAR 5/6: Techline advised replacing PDC. Part ordered.ETA 5/8. "
+    "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. CORY IS STILL IN DIAG ON THIS CAR 5/6: Techline advised replacing PDC. Part ordered.ETA 5/8. ORDERED ANOTHER PART, BDC. PART ON BACK ORDER ETA BEGINNING OF JUNE"
   },
   {
     "id": "moiuw6klccs",
@@ -44,10 +44,23 @@
     "jobDesc": "knocking engine engine RO",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/08/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "failed bearing test. starting P/A  CORY NEED STUI VALVE COVER PICS PLEASE.  Valve cover pic added. ENGINE APPROVED. READY FOR ASRS \n"
+  },
+  {
+    "id": "mp17ea8s6x9",
+    "ro": "777404",
+    "roDate": "2026-05-11",
+    "jobDesc": "CHECK ENGINE LIGHT ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
