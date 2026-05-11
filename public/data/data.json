@@ -126,7 +126,7 @@
         "valvoline": 0.16,
         "csi": 942,
         "asr": 0.1012,
-        "elr": 0.98,
+        "elr": 0.97,
         "last_month_total": 321.2,
         "roh50_hrs_ro": 1.22,
         "hidden": false,
@@ -142,7 +142,7 @@
         "valvoline": 0.24239999999999998,
         "csi": 973,
         "asr": 0.1613,
-        "elr": 0.91,
+        "elr": 0.9,
         "last_month_total": 326.2,
         "roh50_hrs_ro": 0.98,
         "ro_count": 68
