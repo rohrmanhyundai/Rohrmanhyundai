@@ -60,7 +60,7 @@ function getWorkingDays(start, end) {
   const cur = new Date(start); cur.setHours(0, 0, 0, 0);
   const fin = new Date(end);   fin.setHours(23, 59, 59, 0);
   while (cur <= fin) {
-    if (cur.getDay() !== 0) { // skip Sunday
+    if (cur.getDay() !== 6) { // skip Saturday
       days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
     }
     cur.setDate(cur.getDate() + 1);
@@ -152,9 +152,55 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     });
 
     if (active.length < vacations.length) {
+      // Also strip schedule 'vacation' marks for any employees whose rows were removed
+      const removedRows = vacations.filter(v => !active.includes(v));
+      const empKeys = new Set();
+      for (const r of removedRows) {
+        const k = matchEmployeeName(r.name, users);
+        if (k) empKeys.add(k);
+      }
+      let newSchedules = schedules;
+      for (const k of empKeys) {
+        newSchedules = rebuildEmpSchedule(k, active, newSchedules);
+      }
       onDataChange(data, active);
+      if (empKeys.size > 0) {
+        saveSchedules(newSchedules)
+          .then(() => onSchedulesChange(newSchedules))
+          .catch(() => {});
+      }
     }
   }, [isOpen]);
+
+  // Collect the vacation days (working days only) for one employee across all approved vacation rows
+  function getEmpVacationDaysFromList(empKey, vacList) {
+    const days = new Set();
+    for (const v of (vacList || [])) {
+      if ((v.status || '').toUpperCase() !== 'APPROVED') continue;
+      if (matchEmployeeName(v.name, users) !== empKey) continue;
+      let range;
+      if (v.dateStart) {
+        const s = new Date(v.dateStart + 'T00:00:00');
+        const e = v.dateEnd ? new Date(v.dateEnd + 'T00:00:00') : s;
+        range = { start: s, end: e };
+      } else {
+        range = parseDateRange(v.dates);
+      }
+      if (!range) continue;
+      getWorkingDays(range.start, range.end).forEach(d => days.add(d));
+    }
+    return days;
+  }
+
+  // Strip all 'vacation' marks for an employee, then re-apply from current approved vacation rows
+  function rebuildEmpSchedule(empKey, vacList, schedulesIn) {
+    const emp = { ...(schedulesIn[empKey] || {}) };
+    for (const [date, val] of Object.entries(emp)) {
+      if (val === 'vacation') delete emp[date];
+    }
+    getEmpVacationDaysFromList(empKey, vacList).forEach(d => { emp[d] = 'vacation'; });
+    return { ...schedulesIn, [empKey]: emp };
+  }
 
   function updateVacEdit(idx, field, value) {
     setVacEdit(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
@@ -167,11 +213,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     // Auto-sync to work schedule whenever status is set to APPROVED
     if (field === 'status' && trimmed.toUpperCase() === 'APPROVED') {
       const vac = { ...vacEdit[idx], [field]: trimmed };
-      syncVacationToSchedule(idx, vac);
+      const newList = vacEdit.map((v, i) => i === idx ? vac : v);
+      syncVacationToSchedule(idx, vac, newList);
     }
   }
 
-  async function syncVacationToSchedule(idx, vac) {
+  async function syncVacationToSchedule(idx, vac, vacList) {
+    const list = vacList || vacations.map((v, i) => i === idx ? vac : v);
     const empKey = matchEmployeeName(vac.name, users);
     if (!empKey) {
       setVacSyncStatus(s => ({ ...s, [idx]: 'err:No matching employee found for "' + vac.name + '"' }));
@@ -197,9 +245,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
     setVacSyncStatus(s => ({ ...s, [idx]: 'syncing' }));
     try {
-      const empSchedule = { ...(schedules[empKey] || {}) };
-      days.forEach(d => { empSchedule[d] = 'vacation'; });
-      const updated = { ...schedules, [empKey]: empSchedule };
+      // Rebuild from the full vacation list so old/removed days are cleared
+      const updated = rebuildEmpSchedule(empKey, list, schedules);
       await saveSchedules(updated);
       onSchedulesChange(updated);
       setVacSyncStatus(s => ({ ...s, [idx]: `ok:${days.length} day${days.length !== 1 ? 's' : ''} marked vacation for ${empKey}` }));
@@ -494,7 +541,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, newVac);
     // Auto-sync if status is already APPROVED and we have both dates
     if ((updated.status || '').toUpperCase() === 'APPROVED' && updated.dateStart && updated.dateEnd) {
-      syncVacationToSchedule(idx, updated);
+      syncVacationToSchedule(idx, updated, newVac);
     }
   }
 
@@ -505,9 +552,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   function removeVacation(idx) {
+    const removed = vacations[idx];
     const newVac = structuredClone(vacations);
     newVac.splice(idx, 1);
     onDataChange(data, newVac);
+    // Strip the removed row's days from the work schedule
+    const empKey = removed ? matchEmployeeName(removed.name, users) : null;
+    if (empKey) {
+      const updated = rebuildEmpSchedule(empKey, newVac, schedules);
+      saveSchedules(updated)
+        .then(() => onSchedulesChange(updated))
+        .catch(() => {});
+    }
   }
 
   function handleSaveUser() {
