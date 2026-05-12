@@ -1,7 +1,7 @@
 {
   "id": "mp2w6yv68enu",
   "createdAt": "2026-05-12T17:16:13.698Z",
-  "updatedAt": "2026-05-12T17:23:36.735Z",
+  "updatedAt": "2026-05-12T20:03:28.159Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Cory Hammond",
   "customerPhone": "(574) 398 - 7139",
@@ -31,7 +31,7 @@
       "partNumber": "00232-19010",
       "description": "COOLANT/ANTI-FREEZE 1 GALLON",
       "qty": "1",
-      "price": "23.52"
+      "price": "24.85"
     },
     {
       "id": "mp2wa91z6937",
@@ -63,7 +63,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "",
+  "notes": "WAITING ON APPROVAL",
   "approved": false,
   "approvedDate": "",
   "denied": false,
