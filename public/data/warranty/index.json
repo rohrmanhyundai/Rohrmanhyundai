@@ -1,5 +1,84 @@
 [
   {
+    "id": "mp2w6yv68enu",
+    "createdAt": "2026-05-12T17:16:13.698Z",
+    "updatedAt": "2026-05-12T20:03:28.159Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Cory Hammond",
+    "customerPhone": "(574) 398 - 7139",
+    "repairOrder": "777034",
+    "vin": "5NPD84LF0LH501401",
+    "vehicleYear": "2020",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "74532",
+    "warrantyCompany": "AAGI",
+    "warrantyPhone": "18884428286",
+    "claimNumber": "591159",
+    "authNumber": "591159",
+    "laborRate": "170",
+    "laborTime": "14.6",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mp2w6yv6hp66",
+        "partNumber": "520V",
+        "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      },
+      {
+        "id": "mp2w9ldfzfq3",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "24.85"
+      },
+      {
+        "id": "mp2wa91z6937",
+        "partNumber": "24ZN1-2EX00",
+        "description": "ENGINE ASSY-SUB",
+        "qty": "1",
+        "price": "4838.71"
+      },
+      {
+        "id": "mp2wdxuqq7pu",
+        "partNumber": "28313-2EAA0",
+        "description": "GASKET-PORT",
+        "qty": "1",
+        "price": "13.81"
+      },
+      {
+        "id": "mp2wecev853t",
+        "partNumber": "28521-2E000",
+        "description": "GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "10.53"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "100",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "WAITING ON APPROVAL",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": true,
+    "readySubmissionDate": "2026-05-12"
+  },
+  {
     "id": "mosqd9p65npi",
     "createdAt": "2026-05-05T14:35:28.218Z",
     "updatedAt": "2026-05-12T18:34:59.427Z",
@@ -212,85 +291,6 @@
     "repairsFinishedDate": "",
     "readySubmission": false,
     "readySubmissionDate": ""
-  },
-  {
-    "id": "mp2w6yv68enu",
-    "createdAt": "2026-05-12T17:16:13.698Z",
-    "updatedAt": "2026-05-12T17:23:36.735Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Cory Hammond",
-    "customerPhone": "(574) 398 - 7139",
-    "repairOrder": "777034",
-    "vin": "5NPD84LF0LH501401",
-    "vehicleYear": "2020",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Elantra",
-    "mileage": "74532",
-    "warrantyCompany": "AAGI",
-    "warrantyPhone": "18884428286",
-    "claimNumber": "591159",
-    "authNumber": "591159",
-    "laborRate": "170",
-    "laborTime": "14.6",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mp2w6yv6hp66",
-        "partNumber": "520V",
-        "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
-        "qty": "5",
-        "price": "4.99"
-      },
-      {
-        "id": "mp2w9ldfzfq3",
-        "partNumber": "00232-19010",
-        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
-        "qty": "1",
-        "price": "23.52"
-      },
-      {
-        "id": "mp2wa91z6937",
-        "partNumber": "24ZN1-2EX00",
-        "description": "ENGINE ASSY-SUB",
-        "qty": "1",
-        "price": "4838.71"
-      },
-      {
-        "id": "mp2wdxuqq7pu",
-        "partNumber": "28313-2EAA0",
-        "description": "GASKET-PORT",
-        "qty": "1",
-        "price": "13.81"
-      },
-      {
-        "id": "mp2wecev853t",
-        "partNumber": "28521-2E000",
-        "description": "GASKET-EXHAUST MANIFOLD",
-        "qty": "1",
-        "price": "10.53"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "100",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "",
-    "approved": false,
-    "approvedDate": "",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": true,
-    "readySubmissionDate": "2026-05-12"
   },
   {
     "id": "mokbb1eiegmw",
