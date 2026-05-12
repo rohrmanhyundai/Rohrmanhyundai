@@ -258,9 +258,9 @@
   "vacations": [
     {
       "name": "DAVID",
-      "dates": "Jun 8–12, 2026",
-      "dateStart": "2026-06-08",
-      "dateEnd": "2026-06-12",
+      "dates": "May 26, 2026 – Jun 3, 2026",
+      "dateStart": "2026-05-26",
+      "dateEnd": "2026-06-03",
       "status": "APPROVED"
     },
     {
@@ -282,13 +282,6 @@
       "dates": "Aug 17–21, 2026",
       "dateStart": "2026-08-17",
       "dateEnd": "2026-08-21",
-      "status": "APPROVED"
-    },
-    {
-      "name": "SHAWN",
-      "dates": "May 18–22, 2026",
-      "dateStart": "2026-05-18",
-      "dateEnd": "2026-05-22",
       "status": "APPROVED"
     },
     {
