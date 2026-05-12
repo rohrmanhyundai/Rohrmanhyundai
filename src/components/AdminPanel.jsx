@@ -793,9 +793,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <div className="field" style={{ flex: 2 }}>
                     <label>Employee Name</label>
                     {(() => {
+                      const roleLabel = r => {
+                        const x = (r || '').toLowerCase();
+                        if (x === 'admin') return 'Admin';
+                        if (x === 'advisor') return 'Advisor';
+                        if (x === 'technician') return 'Technician';
+                        if (x === 'parts manager') return 'Parts Manager';
+                        if (x === 'parts') return 'Parts';
+                        if (x === 'service manager') return 'Service Manager';
+                        if (x === 'used car manager') return 'Used Car Manager';
+                        if (x === 'warranty') return 'Warranty';
+                        return r ? r.replace(/\b\w/g, c => c.toUpperCase()) : 'User';
+                      };
                       const employees = [
                         ...((data.advisors || []).map(a => ({ name: (a.name || '').toUpperCase(), role: 'Advisor' }))),
                         ...((data.technicians || []).map(t => ({ name: (t.name || '').toUpperCase(), role: 'Technician' }))),
+                        ...((users || []).map(u => ({ name: (u.username || '').toUpperCase(), role: roleLabel(u.role) }))),
                       ].filter(e => e.name);
                       // Sort alphabetically; remove duplicates by name
                       const seen = new Set();
