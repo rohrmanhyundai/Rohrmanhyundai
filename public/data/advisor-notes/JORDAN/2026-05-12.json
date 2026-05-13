@@ -1,0 +1,53 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-05-12",
+  "rows": [
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-13T11:53:02.854Z"
+}
