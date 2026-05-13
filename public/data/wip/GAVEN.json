@@ -32,8 +32,8 @@
     "jobDesc": "THERMOSTAT ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/13/2026",
     "highPriority": false,
     "advisor": "",
     "notes": "NO PARTS YET GRAVY ON THE RO TOO "
