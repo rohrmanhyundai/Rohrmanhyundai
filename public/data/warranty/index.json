@@ -2,7 +2,7 @@
   {
     "id": "mp2w6yv68enu",
     "createdAt": "2026-05-12T17:16:13.698Z",
-    "updatedAt": "2026-05-12T20:03:43.446Z",
+    "updatedAt": "2026-05-13T13:56:04.480Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Cory Hammond",
     "customerPhone": "(574) 398 - 7139",
@@ -65,8 +65,8 @@
     "tireTax": null,
     "tireDisposal": null,
     "notes": "WAITING ON APPROVAL",
-    "approved": false,
-    "approvedDate": "",
+    "approved": true,
+    "approvedDate": "2026-05-13",
     "denied": false,
     "deniedDate": "",
     "waiting": false,
@@ -75,8 +75,8 @@
     "paymentDate": "",
     "repairsFinished": false,
     "repairsFinishedDate": "",
-    "readySubmission": true,
-    "readySubmissionDate": "2026-05-12"
+    "readySubmission": false,
+    "readySubmissionDate": ""
   },
   {
     "id": "mosqd9p65npi",
