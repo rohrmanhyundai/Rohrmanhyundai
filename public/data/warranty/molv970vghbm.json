@@ -1,7 +1,7 @@
 {
   "id": "molv970vghbm",
   "createdAt": "2026-04-30T19:17:52.975Z",
-  "updatedAt": "2026-05-14T20:15:02.730Z",
+  "updatedAt": "2026-05-14T20:15:19.538Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Andrew Pucka",
   "customerPhone": "765) 464 - 4954",
@@ -45,6 +45,6 @@
   "paymentDate": "2026-05-14",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-04-30"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
