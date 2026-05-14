@@ -13,6 +13,35 @@ export function setGithubToken(token) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
+// Resolve a usable token. If localStorage is empty (fresh device / cleared
+// storage / race with App-level boot fetch), pull the shared save code from
+// users.json on demand and store it so the rest of the session works.
+export async function ensureGithubToken() {
+  let token = getGithubToken();
+  if (token) return token;
+  // Try GitHub API first
+  try {
+    const raw = await readGitHubFile(publicHeaders(), 'public/data/users.json');
+    const parsed = parseUsersPayload(raw);
+    if (parsed?.sharedSaveCode) {
+      setGithubToken(parsed.sharedSaveCode);
+      return parsed.sharedSaveCode;
+    }
+  } catch {}
+  // Fallback: GitHub Pages CDN copy
+  try {
+    const res = await fetch(`${BASE}data/users.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const parsed = parseUsersPayload(await res.json());
+      if (parsed?.sharedSaveCode) {
+        setGithubToken(parsed.sharedSaveCode);
+        return parsed.sharedSaveCode;
+      }
+    }
+  } catch {}
+  return '';
+}
+
 // Read dashboard data directly from the GitHub API — instant, bypasses GitHub Pages rebuild delay.
 // Falls back to null if the API is unavailable (caller should fall back to GitHub Pages CDN).
 export async function loadDashboardData() {
@@ -24,7 +53,7 @@ export async function loadDashboardData() {
 }
 
 export async function saveDashboardToGitHub(payload) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) {
     throw new Error('No GitHub token configured. Go to Admin > GitHub Settings and enter a Personal Access Token.');
   }
@@ -119,7 +148,7 @@ function authHeaders() {
 }
 
 export async function saveAdvisorNotes(advisorName, date, rows, afterCallRows) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
 
@@ -200,7 +229,7 @@ export async function loadUsers() {
 
 // Save users list, always preserving the sharedSaveCode field
 export async function saveUsers(users, sharedSaveCode) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
   await saveGitHubFile(headers, 'public/data/users.json', { users, sharedSaveCode: encodeSharedToken(sharedSaveCode ?? '') }, 'Update users');
@@ -268,7 +297,7 @@ export async function loadDocumentIndex() {
 }
 
 export async function uploadDocument(file, label, uploaderName, allowedRoles) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
 
@@ -315,7 +344,7 @@ export async function uploadDocument(file, label, uploaderName, allowedRoles) {
 }
 
 export async function updateDocumentPermissions(docId, allowedRoles) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   const currentIndex = await loadDocumentIndex();
@@ -327,7 +356,7 @@ export async function updateDocumentPermissions(docId, allowedRoles) {
 }
 
 export async function deleteDocument(doc) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
 
@@ -359,7 +388,7 @@ export async function loadCompletedReviews(advisorName) {
 }
 
 export async function saveCompletedReviews(advisorName, reviews) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   const path = `${COMPLETED_BASE}/${advisorName.toUpperCase()}.json`;
@@ -383,7 +412,7 @@ export async function loadServiceInvitations() {
 }
 
 export async function saveServiceInvitations(rows) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   await saveGitHubFile(headers, SI_PATH, rows, 'Update service invitation data');
@@ -425,7 +454,7 @@ export async function loadSchedules() {
 }
 
 export async function saveSchedules(schedules) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
   await saveGitHubFile(headers, SCHEDULE_PATH, schedules, `Update work schedules ${new Date().toISOString()}`);
@@ -448,7 +477,7 @@ export async function loadChatMessages() {
 }
 
 export async function saveChatMessages(messages) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   // Prune messages older than 30 days
@@ -487,7 +516,7 @@ export async function loadWarrantyContract(id) {
 }
 
 export async function saveWarrantyContract(contract, index) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   await saveGitHubFile(headers, warrantyContractPath(contract.id), contract,
@@ -510,7 +539,7 @@ export async function loadWipData(techName) {
 }
 
 export async function saveWipData(techName, rows) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   await saveGitHubFile(headers, `public/data/wip/${techName.toUpperCase()}.json`, rows, `WIP update: ${techName}`);
@@ -532,7 +561,7 @@ export async function loadCoaching(techName) {
 }
 
 export async function saveCoaching(techName, reports) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const username = techName.toUpperCase();
   await saveGitHubFile(authHeaders(), `public/data/coaching/${username}.json`, reports, `Coaching report update: ${username}`);
@@ -553,7 +582,7 @@ export async function loadAwaitingData() {
 }
 
 export async function saveAwaitingData(rows) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   await saveGitHubFile(authHeaders(), 'public/data/wip/AWAITING.json', rows, 'Update cars awaiting technician');
   return rows;
@@ -575,7 +604,7 @@ export async function loadChargeAccounts() {
 }
 
 export async function saveChargeAccounts(accounts, uploadedAt) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   await saveGitHubFile(headers, CHARGE_ACCOUNT_PATH, { accounts, uploadedAt, savedAt: new Date().toISOString() }, `Update charge account list ${new Date().toISOString()}`);
@@ -597,7 +626,7 @@ export async function loadTechChatMessages() {
 }
 
 export async function saveTechChatMessages(messages) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
   const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -621,7 +650,7 @@ export async function loadGithubFile(path) {
 }
 
 export async function saveGithubFile(path, data, message) {
-  const token = getGithubToken();
+  const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   await saveGitHubFile(authHeaders(), `public/${path}`, data, message || `Update ${path}`);
   return data;
