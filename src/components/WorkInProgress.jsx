@@ -819,7 +819,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
                     <div style={labelSt}>Job Description</div>
-                    <input style={inpSt} value={row.jobDesc} onChange={e => updateRow(row.id, 'jobDesc', e.target.value)} placeholder="Describe the job…" />
+                    <input style={inpSt} value={row.jobDesc} onChange={e => updateRow(row.id, 'jobDesc', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveRow(row.id); } }} placeholder="Describe the job…" />
                   </div>
                   <div>
                     <div style={labelSt}>ETA on Parts</div>
@@ -969,7 +969,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                         </div>
                         <div style={{ gridColumn: 'span 2' }}>
                           <div style={labelSt}>Job Description</div>
-                          <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} placeholder="Describe the job…" />
+                          <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveAwaitingRow(aw.id); } }} placeholder="Describe the job…" />
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
