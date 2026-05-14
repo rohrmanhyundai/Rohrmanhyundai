@@ -6,8 +6,8 @@
     "jobDesc": "OIL PAN CAR IS HERE ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/14/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": ""
