@@ -1,0 +1,53 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-05-12",
+  "rows": [
+    {
+      "customerName": "Duane Lord",
+      "appointmentTime": "9:20AM",
+      "criticalDeferredService": "Alignment, Engine Oil Cleaning, Fuel Injection, Hood Latch, Cabin Filter, AC EVAP, Spark Plugs, Battery, Lower Control Arm",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Nancy Cockrum",
+      "appointmentTime": "10:20AM",
+      "criticalDeferredService": "Fuel Injection Service",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-12T19:33:42.115Z"
+}
