@@ -1112,11 +1112,49 @@ function ContractLegend() {
 
 // ── Contract List ─────────────────────────────────────────────────────────────
 function ContractList({ contracts, loading, onNew, onView }) {
+  const [search, setSearch] = useState('');
+  const q = search.trim().toLowerCase();
+  const filteredContracts = q
+    ? contracts.filter(c =>
+        String(c.repairOrder || '').toLowerCase().includes(q) ||
+        String(c.customerName || '').toLowerCase().includes(q)
+      )
+    : contracts;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
       {/* Scrollable table area — minHeight:0 is required so flex doesn't prevent shrinking */}
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 32px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          {!loading && contracts.length > 0 && (
+            <div style={{ marginBottom: 16, position: 'relative' }}>
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search by RO # or customer name…"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 10,
+                  padding: '10px 14px 10px 38px',
+                  color: '#e2e8f0',
+                  fontSize: 14,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={e => e.target.style.border = '1px solid rgba(110,231,249,0.5)'}
+                onBlur={e => e.target.style.border = '1px solid rgba(255,255,255,0.1)'}
+              />
+              <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#64748b', pointerEvents: 'none' }}>🔍</span>
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 16, padding: '4px 8px' }}
+                >×</button>
+              )}
+            </div>
+          )}
           {loading ? (
             <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading contracts…</div>
           ) : contracts.length === 0 ? (
@@ -1138,7 +1176,9 @@ function ContractList({ contracts, loading, onNew, onView }) {
                 </tr>
               </thead>
               <tbody>
-                {contracts.map(c => {
+                {filteredContracts.length === 0 ? (
+                  <tr><td colSpan={8} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No contracts match "{search}"</td></tr>
+                ) : filteredContracts.map(c => {
                   const { totalClaim, totalDue } = calcTotals(c);
                   const dateStr = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—';
                   const isFinished  = !!c.repairsFinished;
