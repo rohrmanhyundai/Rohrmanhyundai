@@ -85,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor }) {
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor }) {
   const hl = (highlightAdvisor || '').toUpperCase();
   const isMine = (j) => hl && (j.advisor || '').toUpperCase() === hl;
   if (hl) {
@@ -126,6 +126,9 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg
                 borderRadius: 8, padding: '8px 12px',
               }}>
                 <div style={{ minWidth: 70, fontWeight: 800, color: '#e2e8f0', fontSize: 13 }}>{j.ro || '—'}</div>
+                {showAdvisor && (
+                  <div style={{ minWidth: 70, fontSize: 11, fontWeight: 700, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{j.advisor || ''}</div>
+                )}
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{j.tech || ''}</div>
                 )}
@@ -552,6 +555,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             title="All WIP (Manager View)"
             emptyText="No active WIPs in the shop."
             jobs={roSearch.trim() ? advisorWip.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorWip}
+            showAdvisor
             showTech
             loading={wipLoading}
             color="#3dd6c3"
@@ -567,6 +571,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             emptyText="No cars currently waiting on a tech."
             highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
             jobs={roSearch.trim() ? advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorAwaiting}
+            showAdvisor
             loading={wipLoading}
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
