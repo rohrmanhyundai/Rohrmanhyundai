@@ -144,7 +144,7 @@
         "asr": 0.149,
         "elr": 0.88,
         "last_month_total": 326.2,
-        "roh50_hrs_ro": 1,
+        "roh50_hrs_ro": 0.97,
         "ro_count": 119
       },
       {
@@ -155,7 +155,7 @@
         "align": 0.2321,
         "tires": 0.0536,
         "valvoline": 0.2321,
-        "roh50_hrs_ro": 0.64,
+        "roh50_hrs_ro": 0.83,
         "csi": 908,
         "asr": 0.1637,
         "elr": 0.9,
