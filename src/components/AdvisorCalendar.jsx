@@ -236,7 +236,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           return flat;
         });
       }).catch(() => []),
-      loadAwaitingData().then(rows => isManagerView ? (rows || []) : (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
+      loadAwaitingData().then(rows => rows || []).catch(() => []),
     ]).then(([wip, awaiting]) => {
       // Defensive dedupe by row id only. We INTENTIONALLY don't dedupe by RO#
       // here, because two techs legitimately working on related ROs should
@@ -563,8 +563,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             deletingId={deletingId}
           />
           <AdvisorJobsPanel
-            title={viewingAdvisor === 'SHAWN' ? 'All Cars Waiting on Tech' : 'Waiting on Tech'}
-            emptyText={viewingAdvisor === 'SHAWN' ? 'No cars currently waiting on a tech.' : 'No jobs waiting on a tech for this advisor.'}
+            title="All Cars Waiting on Tech"
+            emptyText="No cars currently waiting on a tech."
+            highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
             jobs={roSearch.trim() ? advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorAwaiting}
             loading={wipLoading}
             color="#fbbf24"
