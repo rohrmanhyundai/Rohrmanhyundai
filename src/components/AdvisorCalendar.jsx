@@ -85,7 +85,16 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen, onDelete, deletingId }) {
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor }) {
+  const hl = (highlightAdvisor || '').toUpperCase();
+  const isMine = (j) => hl && (j.advisor || '').toUpperCase() === hl;
+  if (hl) {
+    jobs = [...jobs].sort((a, b) => {
+      const am = isMine(a) ? 0 : 1;
+      const bm = isMine(b) ? 0 : 1;
+      return am - bm;
+    });
+  }
   const dayAge = (iso) => {
     if (!iso) return null;
     const d = new Date(iso + 'T00:00:00');
@@ -107,10 +116,13 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, loading, color, bg
           {jobs.map((j, i) => {
             const age = dayAge(j.roDate);
             const ageColor = age == null ? '#64748b' : age >= 14 ? '#f87171' : age >= 7 ? '#fbbf24' : '#94a3b8';
+            const mine = isMine(j);
             return (
               <div key={j.id || `${j.ro}-${i}`} style={{
                 display: 'flex', alignItems: 'flex-start', gap: 10,
-                background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)',
+                background: mine ? 'rgba(61,214,195,.10)' : 'rgba(255,255,255,.03)',
+                border: mine ? '1px solid rgba(61,214,195,.7)' : '1px solid rgba(255,255,255,.06)',
+                boxShadow: mine ? '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)' : 'none',
                 borderRadius: 8, padding: '8px 12px',
               }}>
                 <div style={{ minWidth: 70, fontWeight: 800, color: '#e2e8f0', fontSize: 13 }}>{j.ro || '—'}</div>
@@ -219,7 +231,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
         )).then(all => {
           const flat = all.flat();
-          return isManagerView ? flat : flat.filter(r => (r.advisor || '').toUpperCase() === advUpper);
+          // WIP panel is now a manager-style "All WIP" view for everyone;
+          // own rows get highlighted + sorted to the top in the panel.
+          return flat;
         });
       }).catch(() => []),
       loadAwaitingData().then(rows => isManagerView ? (rows || []) : (rows || []).filter(r => (r.advisor || '').toUpperCase() === advUpper)).catch(() => []),
@@ -499,7 +513,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 const hit = exact || all[0];
                 if (onWorkInProgress) onWorkInProgress({ ro: hit.j.ro || '', tech: hit.j.tech || '', source: hit.source });
               }}
-              placeholder={viewingAdvisor === 'SHAWN' ? '🔍 Search RO # across all WIP and awaiting… (Enter to open)' : `🔍 Search RO # in ${viewingAdvisor}'s WIP and awaiting… (Enter to open)`}
+              placeholder="🔍 Search RO # across all WIP and awaiting… (Enter to open)"
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
@@ -535,14 +549,15 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
           {/* Advisor WIP & Awaiting panels */}
           <AdvisorJobsPanel
-            title={viewingAdvisor === 'SHAWN' ? 'All WIP (Manager View)' : `${viewingAdvisor}'s WIP`}
-            emptyText={viewingAdvisor === 'SHAWN' ? 'No active WIPs in the shop.' : 'No active WIPs assigned to this advisor.'}
+            title="All WIP (Manager View)"
+            emptyText="No active WIPs in the shop."
             jobs={roSearch.trim() ? advisorWip.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorWip}
             showTech
             loading={wipLoading}
             color="#3dd6c3"
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
+            highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
             onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }) : undefined}
             onDelete={deleteWipJob}
             deletingId={deletingId}
