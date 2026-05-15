@@ -101,6 +101,20 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
     if (isNaN(d)) return null;
     return Math.floor((Date.now() - d.getTime()) / 86400000);
   };
+  const [copiedKey, setCopiedKey] = useState(null);
+  const copyRo = (ro, key, e) => {
+    e.stopPropagation();
+    if (!ro) return;
+    const done = () => { setCopiedKey(key); setTimeout(() => setCopiedKey(k => k === key ? null : k), 1200); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(ro).then(done).catch(() => {});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = ro; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch {}
+      document.body.removeChild(ta);
+    }
+  };
   return (
     <div style={{ marginTop: 16, background: bg, border: `1px solid ${border}`, borderLeft: `4px solid ${color}`, borderRadius: 12, padding: '14px 18px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -125,7 +139,11 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 boxShadow: mine ? '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)' : 'none',
                 borderRadius: 8, padding: '8px 12px',
               }}>
-                <div style={{ minWidth: 70, fontWeight: 800, color: '#e2e8f0', fontSize: 13 }}>{j.ro || '—'}</div>
+                <div
+                  onClick={(e) => copyRo(j.ro, j.id || `${j.ro}-${i}`, e)}
+                  title={j.ro ? 'Click to copy RO #' : ''}
+                  style={{ minWidth: 70, fontWeight: 800, color: copiedKey === (j.id || `${j.ro}-${i}`) ? '#4ade80' : '#e2e8f0', fontSize: 13, cursor: j.ro ? 'pointer' : 'default', userSelect: 'none' }}
+                >{copiedKey === (j.id || `${j.ro}-${i}`) ? '✓ Copied' : (j.ro || '—')}</div>
                 {showAdvisor && (
                   <div style={{ minWidth: 70, fontSize: 11, fontWeight: 700, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{j.advisor || ''}</div>
                 )}
