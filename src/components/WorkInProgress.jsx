@@ -89,6 +89,34 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const [claimConfirm, setClaimConfirm] = useState(null); // { aw, tech } pending confirmation
   const [advisorPickerId, setAdvisorPickerId] = useState(null);   // WIP row id
   const [awAdvisorPickerId, setAwAdvisorPickerId] = useState(null); // Awaiting row id
+  const [copiedKey, setCopiedKey] = useState(null);
+  const copyRoNum = (ro, key) => {
+    if (!ro) return;
+    const done = () => { setCopiedKey(key); setTimeout(() => setCopiedKey(k => k === key ? null : k), 1200); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(ro).then(done).catch(() => {});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = ro; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch {}
+      document.body.removeChild(ta);
+    }
+  };
+  const CopyRoBtn = ({ ro, k }) => (
+    <button
+      type="button"
+      onClick={() => copyRoNum(ro, k)}
+      title={ro ? 'Copy RO #' : ''}
+      disabled={!ro}
+      style={{
+        marginLeft: 6, fontSize: 10, fontWeight: 800, cursor: ro ? 'pointer' : 'default',
+        background: copiedKey === k ? 'rgba(74,222,128,.18)' : 'rgba(110,231,249,.12)',
+        border: `1px solid ${copiedKey === k ? 'rgba(74,222,128,.5)' : 'rgba(110,231,249,.35)'}`,
+        color: copiedKey === k ? '#4ade80' : '#6ee7f9',
+        borderRadius: 5, padding: '1px 7px',
+      }}
+    >{copiedKey === k ? '✓ Copied' : '📋 Copy'}</button>
+  );
 
   // Tracks which tech the current `rows` state was loaded for. Every save MUST
   // verify rowsTechRef.current === target tech. If not, abort — the state is
@@ -810,7 +838,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                 {/* Fields grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px 16px', marginBottom: 14 }}>
                   <div>
-                    <div style={labelSt}>Repair Order #</div>
+                    <div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={row.ro} k={`wip-${row.id}`} /></div>
                     <input style={inpSt} value={row.ro} onChange={e => updateRow(row.id, 'ro', e.target.value)} placeholder="RO#" />
                   </div>
                   <div>
@@ -944,7 +972,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                     /* ── TECH VIEW: read-only + Claim It only ── */
                     <>
                       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 14, alignItems: 'center' }}>
-                        <div><div style={labelSt}>Repair Order #</div><div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>{aw.ro || '—'}</div></div>
+                        <div><div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={aw.ro} k={`aw-${aw.id}`} /></div><div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>{aw.ro || '—'}</div></div>
                         <div><div style={labelSt}>RO Date</div><div style={{ fontSize: 14, color: '#94a3b8' }}>{aw.roDate || '—'}</div></div>
                         <div style={{ flex: 1 }}><div style={labelSt}>Job Description</div><div style={{ fontSize: 14, color: '#e2e8f0' }}>{aw.jobDesc || '—'}</div></div>
                         {aw.advisor && <div><div style={labelSt}>Advisor</div><div style={{ fontSize: 14, color: '#c4b5fd', fontWeight: 700 }}>👤 {aw.advisor}</div></div>}
@@ -960,7 +988,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                     <>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
                         <div>
-                          <div style={labelSt}>Repair Order #</div>
+                          <div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={aw.ro} k={`awe-${aw.id}`} /></div>
                           <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} placeholder="RO#" />
                         </div>
                         <div>
