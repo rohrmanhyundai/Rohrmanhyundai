@@ -3,27 +3,27 @@
   "date": "2026-05-18",
   "rows": [
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Elizabeth Moore",
+      "appointmentTime": "8:40AM",
+      "criticalDeferredService": "Injection Service, Cabin & Engine Air Filter",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Jennifer Nunn",
+      "appointmentTime": "9AM",
+      "criticalDeferredService": "NONE",
       "waiter": false,
       "dropOff": false,
       "technician": "",
       "notes": []
     },
     {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
-      "waiter": false,
-      "dropOff": false,
-      "technician": "",
-      "notes": []
-    },
-    {
-      "customerName": "",
-      "appointmentTime": "",
-      "criticalDeferredService": "",
+      "customerName": "Megan Lindsey",
+      "appointmentTime": "2PM",
+      "criticalDeferredService": "NONE (reason for this appt)",
       "waiter": false,
       "dropOff": false,
       "technician": "",
@@ -49,5 +49,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-05-18T12:14:29.825Z"
+  "savedAt": "2026-05-18T16:43:58.066Z"
 }
