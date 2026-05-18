@@ -242,37 +242,51 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
   useEffect(() => {
     if (!viewingAdvisor) return;
-    setWipLoading(true);
-    const advUpper = viewingAdvisor.toUpperCase();
-    const isManagerView = advUpper === 'SHAWN';
-    Promise.all([
-      loadDashboardData().then(d => {
-        const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
-        return Promise.all(techs.map(t =>
-          loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
-        )).then(all => {
-          const flat = all.flat();
-          // WIP panel is now a manager-style "All WIP" view for everyone;
-          // own rows get highlighted + sorted to the top in the panel.
-          return flat;
-        });
-      }).catch(() => []),
-      loadAwaitingData().then(rows => rows || []).catch(() => []),
-    ]).then(([wip, awaiting]) => {
-      // Defensive dedupe by row id only. We INTENTIONALLY don't dedupe by RO#
-      // here, because two techs legitimately working on related ROs should
-      // both show up. Only true duplicate rows (same id appearing in multiple
-      // tech files due to a sync bug) get collapsed.
-      const seenIds = new Set();
-      const cleanWip = [];
-      for (const r of wip) {
-        if (r.id && seenIds.has(r.id)) continue;
-        if (r.id) seenIds.add(r.id);
-        cleanWip.push(r);
-      }
-      setAdvisorWip(cleanWip);
-      setAdvisorAwaiting(awaiting);
-    }).finally(() => setWipLoading(false));
+    let cancelled = false;
+
+    // `silent` skips the loading spinner so background polls don't flicker
+    // the panels while a user is reading them.
+    const fetchJobs = (silent) => {
+      if (!silent) setWipLoading(true);
+      return Promise.all([
+        loadDashboardData().then(d => {
+          const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
+          return Promise.all(techs.map(t =>
+            loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
+          )).then(all => all.flat());
+        }).catch(() => []),
+        loadAwaitingData().then(rows => rows || []).catch(() => []),
+      ]).then(([wip, awaiting]) => {
+        if (cancelled) return;
+        // Defensive dedupe by row id only. We INTENTIONALLY don't dedupe by
+        // RO# here, because two techs legitimately working on related ROs
+        // should both show up. Only true duplicate rows (same id appearing
+        // in multiple tech files due to a sync bug) get collapsed.
+        const seenIds = new Set();
+        const cleanWip = [];
+        for (const r of wip) {
+          if (r.id && seenIds.has(r.id)) continue;
+          if (r.id) seenIds.add(r.id);
+          cleanWip.push(r);
+        }
+        setAdvisorWip(cleanWip);
+        setAdvisorAwaiting(awaiting);
+      }).finally(() => { if (!cancelled && !silent) setWipLoading(false); });
+    };
+
+    fetchJobs(false);
+    // Live updates: poll every 20s so edits by other users appear without a
+    // manual page refresh.
+    const poll = setInterval(() => fetchJobs(true), 20000);
+    // Also refresh immediately when the user returns to this tab.
+    const onVisible = () => { if (document.visibilityState === 'visible') fetchJobs(true); };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [viewingAdvisor, refreshKey]);
 
   useEffect(() => {
