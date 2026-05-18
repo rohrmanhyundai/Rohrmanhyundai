@@ -592,5 +592,16 @@
     "username": "SHAWN",
     "text": "who is doing brown elantra?",
     "timestamp": 1779122756426
+  },
+  {
+    "id": "mpbko6jfx4a",
+    "username": "JORDAN",
+    "text": "she is coming in this afternoon for it",
+    "timestamp": 1779131016987,
+    "replyTo": {
+      "id": "mpbf4cmkcxm",
+      "username": "SHAWN",
+      "text": "jordan did you get Lankin in a santa fe loaner?"
+    }
   }
 ]
