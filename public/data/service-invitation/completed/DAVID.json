@@ -166,5 +166,23 @@
     "notes": "this is a lot car but im sure shawn loves it here",
     "submittedAt": "2026-05-04T21:11:59.607Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "ROBERT ZENONI",
+    "repairOrder": "777580",
+    "vin": "KM8KNDAF9PU188777",
+    "model": "IONIQ 5",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(414) 573 - 7845",
+    "notes": "left VM",
+    "submittedAt": "2026-05-19T20:53:30.393Z",
+    "submittedBy": "DAVID"
   }
 ]
