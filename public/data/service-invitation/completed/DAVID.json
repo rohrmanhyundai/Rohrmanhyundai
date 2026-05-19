@@ -220,5 +220,23 @@
     "notes": "said everything was great and she enjoyed her time here",
     "submittedAt": "2026-05-19T20:58:12.030Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "DIANE PFEIFER",
+    "repairOrder": "777562",
+    "vin": "5NMJFCDE1RH313601",
+    "model": "TUCSON",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(765) 714 - 2529",
+    "notes": "Couldnt leave VM cust rejected my call\n",
+    "submittedAt": "2026-05-19T21:01:44.796Z",
+    "submittedBy": "DAVID"
   }
 ]
