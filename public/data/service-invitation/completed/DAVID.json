@@ -202,5 +202,23 @@
     "notes": "left VM",
     "submittedAt": "2026-05-19T20:54:57.786Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "KIMBERLY COFFEY",
+    "repairOrder": "777567",
+    "vin": "KM8R7DGE7SU816108",
+    "model": "PALISADE",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 426 - 8542",
+    "notes": "said everything was great and she enjoyed her time here",
+    "submittedAt": "2026-05-19T20:58:12.030Z",
+    "submittedBy": "DAVID"
   }
 ]
