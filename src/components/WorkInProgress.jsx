@@ -78,6 +78,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const [searching, setSearching] = useState(false);
   const [showTechPicker, setShowTechPicker] = useState(false);
   const [creatingForTech, setCreatingForTech] = useState(null);
+  const [techWizardAdvisor, setTechWizardAdvisor] = useState('');
 
   // Cars Awaiting Technician
   const [awaiting, setAwaiting] = useState([]);
@@ -333,7 +334,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     finally { setSearching(false); }
   }
 
-  function clearSearch() { setSearchRO(''); setSearchResults(null); setShowTechPicker(false); setCreatingForTech(null); }
+  function clearSearch() { setSearchRO(''); setSearchResults(null); setShowTechPicker(false); setCreatingForTech(null); setTechWizardAdvisor(''); }
 
   // Load awaiting on mount
   useEffect(() => {
@@ -550,7 +551,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         clearSearch();
         return;
       }
-      const newRow = { ...emptyRow(), ro };
+      const newRow = { ...emptyRow(), ro, advisor: techWizardAdvisor || '' };
       const updated = dedupeWip([...existing, newRow]);
       await saveWipData(tech, updated);
       setActiveTech(tech);
@@ -673,17 +674,38 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
                 {/* Assign to Tech */}
                 <div style={{ flex: 1, minWidth: 260, background: 'rgba(74,222,128,.07)', border: '1px solid rgba(74,222,128,.25)', borderRadius: 14, padding: '16px 20px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>Select Technician</div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {techList.map(tech => (
-                      <button
-                        key={tech}
-                        onClick={() => createForTech(tech)}
-                        disabled={!!creatingForTech}
-                        style={{ background: creatingForTech === tech ? 'rgba(74,222,128,.35)' : 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'all .15s' }}
-                      >{creatingForTech === tech ? '⏳ Adding…' : tech}</button>
-                    ))}
-                  </div>
+                  {!techWizardAdvisor ? (
+                    <>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>Step 1 of 2 — Select Advisor</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {advisorList.length === 0 && <span style={{ fontSize: 12, color: '#64748b' }}>No advisors found.</span>}
+                        {advisorList.map(adv => (
+                          <button key={adv}
+                            onClick={() => setTechWizardAdvisor(adv)}
+                            style={{ background: 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '7px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                          >{adv}</button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5 }}>Step 2 of 2 — Select Technician</div>
+                        <button onClick={() => setTechWizardAdvisor('')} disabled={!!creatingForTech} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>← Change advisor</button>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 12 }}>Advisor: <strong style={{ color: '#4ade80' }}>{techWizardAdvisor}</strong></div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {techList.map(tech => (
+                          <button
+                            key={tech}
+                            onClick={() => createForTech(tech)}
+                            disabled={!!creatingForTech}
+                            style={{ background: creatingForTech === tech ? 'rgba(74,222,128,.35)' : 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13, transition: 'all .15s' }}
+                          >{creatingForTech === tech ? '⏳ Adding…' : tech}</button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
                 {/* Cars Awaiting Technician wizard */}
                 <div style={{ flex: 1, minWidth: 260, background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 14, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
