@@ -128,7 +128,7 @@
         "asr": 0.1502,
         "elr": 0.92,
         "last_month_total": 321.2,
-        "roh50_hrs_ro": 1.12,
+        "roh50_hrs_ro": 1.04,
         "hidden": false,
         "ro_count": 112
       },
@@ -136,7 +136,7 @@
         "name": "JORDAN",
         "daily_avg": 12.58636364,
         "mtd_hours": 138,
-        "hours_per_ro": 1.01,
+        "hours_per_ro": 0.88,
         "align": 0.1268,
         "tires": 0.0704,
         "valvoline": 0.2254,
