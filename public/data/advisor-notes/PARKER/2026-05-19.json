@@ -1,0 +1,53 @@
+{
+  "advisorName": "PARKER",
+  "date": "2026-05-19",
+  "rows": [
+    {
+      "customerName": "Andres Valencia",
+      "appointmentTime": "10AM",
+      "criticalDeferredService": "Alignment, Wiper Blades, Transmission & Coolant Fluid Exchange, Fuel Injection, Air Filter, & Spark Plugs",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Kara Timmons",
+      "appointmentTime": "10:20AM",
+      "criticalDeferredService": "reason for this appt",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Joseph Schrum",
+      "appointmentTime": "10AM",
+      "criticalDeferredService": "reason for this appt",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Akshat Verma",
+      "appointmentTime": "4:40PM",
+      "criticalDeferredService": "Fuel Injection Service",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-19T17:20:35.388Z"
+}
