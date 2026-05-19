@@ -238,5 +238,23 @@
     "notes": "Couldnt leave VM cust rejected my call\n",
     "submittedAt": "2026-05-19T21:01:44.796Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "LACI PARCELL",
+    "repairOrder": "777561",
+    "vin": "5NMS4DAL3NH411171",
+    "model": "SANTA FE",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "05/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(812) 360 - 5076",
+    "notes": "left VM",
+    "submittedAt": "2026-05-19T21:03:21.402Z",
+    "submittedBy": "DAVID"
   }
 ]
