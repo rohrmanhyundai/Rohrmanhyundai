@@ -1,0 +1,98 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-05-19",
+  "rows": [
+    {
+      "customerName": "Patrick Gilliland",
+      "appointmentTime": "7:40am",
+      "criticalDeferredService": "has done all recommended services",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Wendy Collingwood ",
+      "appointmentTime": "8:20 am",
+      "criticalDeferredService": "tune up/fuel",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Kimberly Lanham",
+      "appointmentTime": "9 am",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Matthew Steadham",
+      "appointmentTime": "9 am",
+      "criticalDeferredService": "tune up",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Gaven",
+      "notes": []
+    },
+    {
+      "customerName": "Jagdish Patel",
+      "appointmentTime": "9:20 am",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Gary Simon",
+      "appointmentTime": "10 am",
+      "criticalDeferredService": "align/fuel",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Edgar",
+      "notes": []
+    },
+    {
+      "customerName": "Isiah Scales",
+      "appointmentTime": "10:20 am",
+      "criticalDeferredService": "4 tires/align",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "John Potter",
+      "appointmentTime": "12 pm",
+      "criticalDeferredService": "align",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Frankie",
+      "notes": []
+    },
+    {
+      "customerName": "Michael Carlson",
+      "appointmentTime": "1:20 pm",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Cheryl Laszynski",
+      "appointmentTime": "2:20 pm",
+      "criticalDeferredService": "front and rear pads/ tune up",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "Shawn",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-19T19:48:48.432Z"
+}
