@@ -184,5 +184,23 @@
     "notes": "left VM",
     "submittedAt": "2026-05-19T20:53:30.393Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "BRIDGET MCLEROY",
+    "repairOrder": "777577",
+    "vin": "5NPLM4AG4PH104007",
+    "model": "ELANTRA",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(219) 973 - 5297",
+    "notes": "left VM",
+    "submittedAt": "2026-05-19T20:54:57.786Z",
+    "submittedBy": "DAVID"
   }
 ]
