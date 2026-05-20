@@ -32,8 +32,8 @@
     "jobDesc": "tow in, cel flashing",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/20/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "TIMING IS APPROVED WAITING ON PARTS "
