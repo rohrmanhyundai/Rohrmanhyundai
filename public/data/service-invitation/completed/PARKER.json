@@ -858,5 +858,23 @@
     "notes": "",
     "submittedAt": "2026-05-20T18:47:31.672Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "KARA TIMMONS",
+    "repairOrder": "777538",
+    "vin": "KM8R5DGE7RU687500",
+    "model": "PALISADE",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "05/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "317-608-8046",
+    "notes": "",
+    "submittedAt": "2026-05-20T18:59:34.210Z",
+    "submittedBy": "PARKER"
   }
 ]
