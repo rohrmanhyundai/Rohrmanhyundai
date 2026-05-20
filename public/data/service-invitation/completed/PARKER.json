@@ -840,5 +840,23 @@
     "notes": "",
     "submittedAt": "2026-05-20T18:39:28.257Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "CLAIRE STEFANIAK",
+    "repairOrder": "777576",
+    "vin": "KM8JEDD17SU377819",
+    "model": "TUCSON HEV",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "05/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-404-9747",
+    "notes": "",
+    "submittedAt": "2026-05-20T18:47:31.672Z",
+    "submittedBy": "PARKER"
   }
 ]
