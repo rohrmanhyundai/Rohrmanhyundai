@@ -1,0 +1,80 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-05-20",
+  "rows": [
+    {
+      "customerName": "Mistee Saylor",
+      "appointmentTime": "8:40 am",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Edgar",
+      "notes": []
+    },
+    {
+      "customerName": "Karol Oakes",
+      "appointmentTime": "9 am",
+      "criticalDeferredService": "rotate",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Carter",
+      "notes": []
+    },
+    {
+      "customerName": "Ricky Coons",
+      "appointmentTime": "10 am",
+      "criticalDeferredService": "LTOC",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Anand Raghunathan",
+      "appointmentTime": "1 pm ",
+      "criticalDeferredService": "first service",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Richard Isabell",
+      "appointmentTime": "1:20 pm",
+      "criticalDeferredService": "fuel service",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Edgar",
+      "notes": []
+    },
+    {
+      "customerName": "Beth Carlson",
+      "appointmentTime": "2 pm",
+      "criticalDeferredService": "first service",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "Kaitlyn Collins",
+      "appointmentTime": "2:40 pm",
+      "criticalDeferredService": "does most recommended services",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "Gaven",
+      "notes": []
+    },
+    {
+      "customerName": "Dale Kunkel",
+      "appointmentTime": "3:40 pm",
+      "criticalDeferredService": "n/a",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-05-20T19:43:09.717Z"
+}
