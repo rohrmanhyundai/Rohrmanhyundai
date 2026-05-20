@@ -32,8 +32,8 @@
     "jobDesc": "AIR BAG LIGHT",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/14/2026",
+    "partsArrived": false,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "parts are here. AIR BAG CONTROL UNIT APPROVED "
