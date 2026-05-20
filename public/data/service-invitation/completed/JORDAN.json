@@ -196,5 +196,23 @@
     "notes": "hiuhgliuighilu",
     "submittedAt": "2026-05-08T19:09:49.452Z",
     "submittedBy": "SHAWN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ANNE PLUNKETT",
+    "repairOrder": "777592",
+    "vin": "5NMJFCDE3RH409360",
+    "model": "TUCSON",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "2606094789",
+    "notes": "contacted 5/17, returned 5/19 to get tires, appreciates our service",
+    "submittedAt": "2026-05-20T18:51:18.490Z",
+    "submittedBy": "JORDAN"
   }
 ]
