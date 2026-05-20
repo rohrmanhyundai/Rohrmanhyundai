@@ -822,5 +822,23 @@
     "notes": "",
     "submittedAt": "2026-05-20T18:37:45.794Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JACQUELINE SMITH",
+    "repairOrder": "777593",
+    "vin": "KMHLR4AF8PU550509",
+    "model": "ELANTRA",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "05/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654916190",
+    "notes": "",
+    "submittedAt": "2026-05-20T18:39:28.257Z",
+    "submittedBy": "PARKER"
   }
 ]
