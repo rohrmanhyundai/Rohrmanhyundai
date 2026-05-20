@@ -214,5 +214,23 @@
     "notes": "contacted 5/17, returned 5/19 to get tires, appreciates our service",
     "submittedAt": "2026-05-20T18:51:18.490Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "ANNAMARIA KRISIAK",
+    "repairOrder": "777552",
+    "vin": "5NMJECDE3RH325770",
+    "model": "TUCSON",
+    "serviceDate": "05/14/2026",
+    "invitationDate": "05/16/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654265738",
+    "notes": "left vm",
+    "submittedAt": "2026-05-20T19:13:29.621Z",
+    "submittedBy": "JORDAN"
   }
 ]
