@@ -1,7 +1,7 @@
 {
   "id": "mpea1n8qj9dp",
   "createdAt": "2026-05-20T16:29:27.914Z",
-  "updatedAt": "2026-05-20T16:33:34.489Z",
+  "updatedAt": "2026-05-20T16:33:56.937Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Matthew Steadham",
   "customerPhone": "317) 910 - 5203",
@@ -49,7 +49,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "",
+  "notes": "PAY TO PARTS STATEMENT.",
   "approved": true,
   "approvedDate": "2026-05-20",
   "denied": false,
