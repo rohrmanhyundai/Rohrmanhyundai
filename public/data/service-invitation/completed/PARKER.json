@@ -732,5 +732,23 @@
     "notes": "",
     "submittedAt": "2026-05-20T18:30:57.712Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "1722_BOB HYUNDAI GENES",
+    "repairOrder": "777489",
+    "vin": "KM8JEDD17TU491191",
+    "model": "TUCSON HEV",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "111",
+    "notes": "??? ",
+    "submittedAt": "2026-05-20T18:33:37.921Z",
+    "submittedBy": "PARKER"
   }
 ]
