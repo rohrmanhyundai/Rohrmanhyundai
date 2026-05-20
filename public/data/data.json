@@ -128,7 +128,7 @@
         "asr": 0.163,
         "elr": 0.93,
         "last_month_total": 321.2,
-        "roh50_hrs_ro": 1.04,
+        "roh50_hrs_ro": 0.98,
         "hidden": false,
         "ro_count": 121
       },
@@ -144,7 +144,7 @@
         "asr": 0.1637,
         "elr": 0.89,
         "last_month_total": 326.2,
-        "roh50_hrs_ro": 0.93,
+        "roh50_hrs_ro": 0.87,
         "ro_count": 136
       },
       {
@@ -155,7 +155,7 @@
         "align": 0.3478,
         "tires": 0.0435,
         "valvoline": 0.3529,
-        "roh50_hrs_ro": 0.84,
+        "roh50_hrs_ro": 0.89,
         "csi": 929,
         "asr": 0.1843,
         "elr": 0.9,
