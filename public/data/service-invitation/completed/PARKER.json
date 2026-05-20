@@ -750,5 +750,23 @@
     "notes": "??? ",
     "submittedAt": "2026-05-20T18:33:37.921Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "SANGYUB KIM",
+    "repairOrder": "777440",
+    "vin": "KMHLM4DGXRU690776",
+    "model": "ELANTRA",
+    "serviceDate": "05/11/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "111",
+    "notes": "Duplicate",
+    "submittedAt": "2026-05-20T18:34:06.708Z",
+    "submittedBy": "PARKER"
   }
 ]
