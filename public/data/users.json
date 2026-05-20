@@ -476,5 +476,7 @@
       "techChatAccess": true
     }
   ],
-  "sharedSaveCode": ""
+  "sharedSaveCode": "",
+  "awsAccessKeyId": "",
+  "awsSecretAccessKey": ""
 }
