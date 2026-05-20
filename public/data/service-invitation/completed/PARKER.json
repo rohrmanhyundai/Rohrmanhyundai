@@ -804,5 +804,23 @@
     "notes": "???",
     "submittedAt": "2026-05-20T18:34:57.028Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JENNIFER CRAIG",
+    "repairOrder": "777501",
+    "vin": "KM8JFCA1XNU050010",
+    "model": "TUCSON HEV",
+    "serviceDate": "05/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-491-4404",
+    "notes": "",
+    "submittedAt": "2026-05-20T18:37:45.794Z",
+    "submittedBy": "PARKER"
   }
 ]
