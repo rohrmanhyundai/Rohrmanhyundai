@@ -5,6 +5,8 @@ const GITHUB_PATH = 'public/data/data.json';
 const TOKEN_KEY = 'rohrmanGithubToken';
 const BASE = import.meta.env.BASE_URL;
 
+import { uploadFileToS3, deleteFileFromS3, ensureAwsCreds } from './s3.js';
+
 export function getGithubToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
 }
@@ -208,8 +210,13 @@ function decodeSharedToken(stored) {
 // Parse users.json — handles both old array format and new {users, sharedSaveCode} format
 function parseUsersPayload(raw) {
   if (!raw) return null;
-  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '' };
-  return { users: Array.isArray(raw.users) ? raw.users : [], sharedSaveCode: decodeSharedToken(raw.sharedSaveCode || '') };
+  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '', awsAccessKeyId: '', awsSecretAccessKey: '' };
+  return {
+    users: Array.isArray(raw.users) ? raw.users : [],
+    sharedSaveCode: decodeSharedToken(raw.sharedSaveCode || ''),
+    awsAccessKeyId: decodeSharedToken(raw.awsAccessKeyId || ''),
+    awsSecretAccessKey: decodeSharedToken(raw.awsSecretAccessKey || ''),
+  };
 }
 
 export async function loadUsers() {
@@ -227,12 +234,43 @@ export async function loadUsers() {
   } catch { return null; }
 }
 
-// Save users list, always preserving the sharedSaveCode field
+// Save users list, always preserving the sharedSaveCode field (and any AWS creds previously stored)
 export async function saveUsers(users, sharedSaveCode) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  await saveGitHubFile(headers, 'public/data/users.json', { users, sharedSaveCode: encodeSharedToken(sharedSaveCode ?? '') }, 'Update users');
+  // Preserve any existing AWS creds in the file so this save doesn't wipe them.
+  let existingAwsKeyId = '', existingAwsSecret = '';
+  try {
+    const raw = await readGitHubFile(headers, 'public/data/users.json');
+    const parsed = parseUsersPayload(raw);
+    if (parsed) { existingAwsKeyId = parsed.awsAccessKeyId || ''; existingAwsSecret = parsed.awsSecretAccessKey || ''; }
+  } catch {}
+  await saveGitHubFile(headers, 'public/data/users.json', {
+    users,
+    sharedSaveCode: encodeSharedToken(sharedSaveCode ?? ''),
+    awsAccessKeyId: encodeSharedToken(existingAwsKeyId),
+    awsSecretAccessKey: encodeSharedToken(existingAwsSecret),
+  }, 'Update users');
+}
+
+// Sync AWS credentials into users.json so ALL devices get them on next load
+export async function saveSharedAwsCreds(accessKeyId, secretAccessKey) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  let users = [], sharedSaveCode = '';
+  try {
+    const raw = await readGitHubFile(headers, 'public/data/users.json');
+    const parsed = parseUsersPayload(raw);
+    if (parsed) { users = parsed.users; sharedSaveCode = parsed.sharedSaveCode; }
+  } catch {}
+  await saveGitHubFile(headers, 'public/data/users.json', {
+    users,
+    sharedSaveCode: encodeSharedToken(sharedSaveCode),
+    awsAccessKeyId: encodeSharedToken(accessKeyId || ''),
+    awsSecretAccessKey: encodeSharedToken(secretAccessKey || ''),
+  }, 'Sync AWS credentials');
 }
 
 // Sync a new GitHub token into users.json so ALL devices get it automatically on next load
@@ -251,8 +289,12 @@ export async function saveSharedToken(newToken) {
 
 const DOCS_PATH  = 'public/data/documents';
 const DOCS_INDEX = 'public/data/documents/index.json';
-// Raw GitHub URL — instantly available after push, no Pages rebuild wait
-const RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/public/data/documents/`;
+// Document files now live in AWS S3. The index.json stays in the GitHub repo
+// (small, infrequent updates, keeps existing admin auth flow working).
+const S3_BUCKET = 'rohrman-hyundai-files';
+const S3_REGION = 'us-east-2';
+const S3_DOCS_PREFIX = 'pdf-reports/';
+const RAW_BASE = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${S3_DOCS_PREFIX}`;
 
 async function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -304,26 +346,15 @@ export async function uploadDocument(file, label, uploaderName, allowedRoles) {
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const ext = (file.name.split('.').pop() || '').toLowerCase();
   const safeFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-  const filePath = `${DOCS_PATH}/${safeFilename}`;
 
-  const base64Content = await fileToBase64(file);
-
-  // Upload the actual file (raw base64, not JSON-wrapped)
-  const putRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`,
-    {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: `Upload document: ${label}`,
-        content: base64Content,
-        branch: GITHUB_BRANCH,
-      }),
-    }
-  );
-  if (!putRes.ok) {
-    const j = await putRes.json();
-    throw new Error(j.message || 'File upload failed');
+  // Upload the file to S3 (bucket=rohrman-hyundai-files, prefix=pdf-reports/)
+  if (!(await ensureAwsCreds())) {
+    throw new Error('AWS credentials are required to upload documents.');
+  }
+  try {
+    await uploadFileToS3(safeFilename, file);
+  } catch (err) {
+    throw new Error('S3 upload failed: ' + (err.message || err));
   }
 
   // Update index
@@ -360,7 +391,17 @@ export async function deleteDocument(doc) {
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
 
-  // Delete the actual file
+  // Delete the actual file from S3
+  if (!(await ensureAwsCreds())) {
+    throw new Error('AWS credentials are required to delete documents.');
+  }
+  try {
+    await deleteFileFromS3(doc.filename);
+  } catch (err) {
+    // Don't block index update if S3 delete fails (e.g. file already missing)
+    console.warn('S3 delete warning:', err.message || err);
+  }
+  // Also remove the legacy copy from GitHub (no-op if it was never there)
   await deleteGitHubFile(headers, `${DOCS_PATH}/${doc.filename}`, `Delete document: ${doc.label}`);
 
   // Update index
