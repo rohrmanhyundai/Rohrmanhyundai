@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers } from '../utils/github';
+import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
 
@@ -106,6 +107,9 @@ const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.default
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
+  const [awsKeyId, setAwsKeyIdState] = useState(getAwsCreds().accessKeyId);
+  const [awsSecret, setAwsSecretState] = useState(getAwsCreds().secretAccessKey);
+  const [awsSaving, setAwsSaving] = useState(false);
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
@@ -602,6 +606,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // ── Card definitions ──────────────────────────────────────────────────────────
   const ADMIN_CARDS = [
     { id: 'github',     icon: '🔑', label: 'GitHub Settings',      desc: 'Sync your access token to all advisor devices',       color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
+    { id: 'aws',        icon: '☁️', label: 'AWS Settings',         desc: 'AWS keys for the Document Library (synced to all devices)', color: '#f59e0b', bg: 'rgba(245,158,11,.15)',  border: 'rgba(245,158,11,.35)'  },
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
     { id: 'gauges',     icon: '🎯', label: 'Goal Gauges',           desc: 'Set gross profit and customer pay targets',           color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  border: 'rgba(251,191,36,.35)'  },
@@ -628,6 +633,34 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
           </div>
           <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
+        </div>
+      </div>
+    );
+
+    if (openSection === 'aws') return (
+      <div className="group-body">
+        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+          <div className="small">Enter your AWS S3 credentials. Saving here syncs them to all devices so any user can upload/delete documents in the Document Library — they will never need to enter them manually.</div>
+          <div className="field" style={{ marginTop: 8 }}>
+            <label>AWS Access Key ID</label>
+            <input type="password" value={awsKeyId} onChange={e => setAwsKeyIdState(e.target.value)} placeholder="AKIA..." />
+          </div>
+          <div className="field" style={{ marginTop: 8 }}>
+            <label>AWS Secret Access Key</label>
+            <input type="password" value={awsSecret} onChange={e => setAwsSecretState(e.target.value)} />
+          </div>
+          <div className="actions">
+            <button onClick={async () => {
+              if (!awsKeyId.trim() || !awsSecret.trim()) { alert('Both Access Key ID and Secret Access Key are required.'); return; }
+              setAwsSaving(true);
+              try {
+                setAwsCreds(awsKeyId.trim(), awsSecret.trim());
+                await saveSharedAwsCreds(awsKeyId.trim(), awsSecret.trim());
+                alert('AWS credentials saved and synced to all devices.');
+              } catch (err) { alert('Save failed: ' + err.message); }
+              finally { setAwsSaving(false); }
+            }} disabled={awsSaving}>{awsSaving ? 'Syncing to all devices...' : 'Save AWS Keys & Sync to All Devices'}</button>
+          </div>
         </div>
       </div>
     );
