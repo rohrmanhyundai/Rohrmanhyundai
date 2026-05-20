@@ -232,5 +232,23 @@
     "notes": "left vm",
     "submittedAt": "2026-05-20T19:13:29.621Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "CARLTON BLEDSOE",
+    "repairOrder": "777496",
+    "vin": "5NPLM4AG2PH103938",
+    "model": "ELANTRA",
+    "serviceDate": "05/13/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7655172385",
+    "notes": "left vm",
+    "submittedAt": "2026-05-20T19:15:21.718Z",
+    "submittedBy": "JORDAN"
   }
 ]
