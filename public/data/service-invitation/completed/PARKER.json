@@ -768,5 +768,23 @@
     "notes": "Duplicate",
     "submittedAt": "2026-05-20T18:34:06.708Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "JENNIFER CRAIG",
+    "repairOrder": "777339",
+    "vin": "KM8JFCA1XNU050010",
+    "model": "TUCSON HEV",
+    "serviceDate": "05/07/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "111",
+    "notes": "duplicate",
+    "submittedAt": "2026-05-20T18:34:48.592Z",
+    "submittedBy": "PARKER"
   }
 ]
