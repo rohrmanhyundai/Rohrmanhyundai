@@ -786,5 +786,23 @@
     "notes": "duplicate",
     "submittedAt": "2026-05-20T18:34:48.592Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "1722_BOB HYUNDAI GENES",
+    "repairOrder": "777294",
+    "vin": "5NMS2DAJ2PH602331",
+    "model": "SANTA FE",
+    "serviceDate": "05/07/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "111",
+    "notes": "???",
+    "submittedAt": "2026-05-20T18:34:57.028Z",
+    "submittedBy": "PARKER"
   }
 ]
