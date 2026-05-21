@@ -229,7 +229,6 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
     treadDepth: 'Tire tread depth',
     dotNumber: 'DOT number',
     damageNotes: 'Explanation of why the tire is not repairable',
-    partNumberPhoto: 'Tire part number photo',
     damagePhoto: 'Unrepairable damage photo',
     sideViewPhoto: 'Complete side view photo of the tire',
     treadDepthPhoto: 'Tire tread depth photo',
@@ -309,18 +308,12 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
                 placeholder="e.g. 235/65R17"
                 style={{ ...inpSt, ...errStyle('tireSize') }} />
             </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Tire Part Number</label>
+              <input value={form.tirePartNumber} onChange={e => set('tirePartNumber', e.target.value)}
+                style={{ ...inpSt, ...errStyle('tirePartNumber') }} />
+            </div>
           </div>
-        </Section>
-
-        {/* Tire Part Number */}
-        <Section title="Tire Part Number">
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelSt}>Tire Part Number</label>
-            <input value={form.tirePartNumber} onChange={e => set('tirePartNumber', e.target.value)}
-              style={{ ...inpSt, ...errStyle('tirePartNumber') }} />
-          </div>
-          <PhotoBox label="Tire Part Number Photo" value={form.partNumberPhoto}
-            onChange={v => set('partNumberPhoto', v)} claimId={form.id} field="partnumber" />
         </Section>
 
         {/* Unrepairable Damage */}
@@ -445,7 +438,6 @@ function ClaimDetail({ claim, onEdit, onBack }) {
         </Section>
         <Section title="Photos & Documents">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 16 }}>
-            <PhotoView label="Tire Part Number" url={claim.partNumberPhoto} />
             <PhotoView label="Unrepairable Damage" url={claim.damagePhoto} />
             <PhotoView label="Complete Side View" url={claim.sideViewPhoto} />
             <PhotoView label="Tire Tread Depth" url={claim.treadDepthPhoto} />
