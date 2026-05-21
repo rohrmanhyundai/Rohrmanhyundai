@@ -343,6 +343,48 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
           </div>
         </Section>
 
+        {/* Cost Information — completed after the claim is started */}
+        <Section title="Cost Information">
+          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
+            Complete this section after the claim has been started.
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>A. Original Customer Price ($)</label>
+              <input type="number" step="0.01" value={form.origCustomerPrice}
+                onChange={e => set('origCustomerPrice', e.target.value)} placeholder="0.00" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>B. Dealer Cost ($)</label>
+              <input type="number" step="0.01" value={form.dealerCost}
+                onChange={e => set('dealerCost', e.target.value)} placeholder="0.00" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>C. New Tire Tread Depth (/32nds)</label>
+              <input type="number" value={form.newTreadDepth}
+                onChange={e => set('newTreadDepth', e.target.value)} placeholder="e.g. 10" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>D. Remaining Tread Depth (/32nds)</label>
+              <input type="number" value={form.remainingTreadDepth}
+                onChange={e => set('remainingTreadDepth', e.target.value)} placeholder="e.g. 6" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>E. Customer % of Tread Used</label>
+              <input value={form.customerPctTreadUsed}
+                onChange={e => set('customerPctTreadUsed', e.target.value)} placeholder="% (use chart)" style={inpSt} />
+              {(() => {
+                const c = parseFloat(form.newTreadDepth), d = parseFloat(form.remainingTreadDepth);
+                if (c > 0 && d >= 0 && d <= c) {
+                  const pct = Math.round(((c - d) / c) * 100);
+                  return <div style={{ fontSize: 12, color: accent, marginTop: 4 }}>Calculated: {pct}% — verify against the chart</div>;
+                }
+                return null;
+              })()}
+            </div>
+          </div>
+        </Section>
+
         {/* Unrepairable Damage */}
         <Section title="Unrepairable Damage to Tire">
           <div style={{ marginBottom: 12 }}>
@@ -384,48 +426,6 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
         <Section title="Original Repair Order / Proof of Purchase">
           <PhotoBox label="Upload Original Repair Order of Tire Purchase" value={form.repairOrderPhoto}
             onChange={v => set('repairOrderPhoto', v)} claimId={form.id} field="repairorder" allowPdf />
-        </Section>
-
-        {/* Cost Information — completed after the claim is started */}
-        <Section title="Cost Information">
-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
-            Complete this section after the claim has been started.
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>A. Original Customer Price ($)</label>
-              <input type="number" step="0.01" value={form.origCustomerPrice}
-                onChange={e => set('origCustomerPrice', e.target.value)} placeholder="0.00" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>B. Dealer Cost ($)</label>
-              <input type="number" step="0.01" value={form.dealerCost}
-                onChange={e => set('dealerCost', e.target.value)} placeholder="0.00" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>C. New Tire Tread Depth (/32nds)</label>
-              <input type="number" value={form.newTreadDepth}
-                onChange={e => set('newTreadDepth', e.target.value)} placeholder="e.g. 10" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>D. Remaining Tread Depth (/32nds)</label>
-              <input type="number" value={form.remainingTreadDepth}
-                onChange={e => set('remainingTreadDepth', e.target.value)} placeholder="e.g. 6" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>E. Customer % of Tread Used</label>
-              <input value={form.customerPctTreadUsed}
-                onChange={e => set('customerPctTreadUsed', e.target.value)} placeholder="% (use chart)" style={inpSt} />
-              {(() => {
-                const c = parseFloat(form.newTreadDepth), d = parseFloat(form.remainingTreadDepth);
-                if (c > 0 && d >= 0 && d <= c) {
-                  const pct = Math.round(((c - d) / c) * 100);
-                  return <div style={{ fontSize: 12, color: accent, marginTop: 4 }}>Calculated: {pct}% — verify against the chart</div>;
-                }
-                return null;
-              })()}
-            </div>
-          </div>
         </Section>
 
         {/* Validation summary + Start Claim */}
