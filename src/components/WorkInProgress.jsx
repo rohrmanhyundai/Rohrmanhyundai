@@ -1011,7 +1011,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
                         <div>
                           <div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={aw.ro} k={`awe-${aw.id}`} /></div>
-                          <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} placeholder="RO#" />
+                          <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveAwaitingRow(aw.id); } }} placeholder="RO#" />
                         </div>
                         <div>
                           <div style={labelSt}>RO Date</div>
