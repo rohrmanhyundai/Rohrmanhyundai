@@ -220,7 +220,6 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
   const required = {
     firstName: 'First name',
     lastName: 'Last name',
-    customerPhone: 'Phone number',
     vin: 'VIN',
     tireWarrantyName: 'Tire warranty name',
     tireBrand: 'Tire brand',
@@ -261,11 +260,6 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
               <label style={labelSt}>Last Name</label>
               <input value={form.lastName} onChange={e => set('lastName', e.target.value)}
                 style={{ ...inpSt, ...errStyle('lastName') }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Phone Number</label>
-              <input type="tel" value={form.customerPhone} onChange={e => set('customerPhone', e.target.value)}
-                style={{ ...inpSt, ...errStyle('customerPhone') }} />
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>VIN Number</label>
@@ -420,7 +414,6 @@ function ClaimDetail({ claim, onEdit, onBack }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
             <DetailRow label="First Name" value={claim.firstName} />
             <DetailRow label="Last Name" value={claim.lastName} />
-            <DetailRow label="Phone" value={claim.customerPhone} />
             <DetailRow label="VIN" value={claim.vin} mono />
             <DetailRow label="Vehicle" value={`${claim.vehicleYear} ${claim.vehicleMake} ${claim.vehicleModel}`.trim()} />
           </div>
