@@ -34,6 +34,8 @@ const emptyForm = () => ({
   tireModel: '',
   tireSize: '',
   tirePartNumber: '',
+  purchaseDate: '',
+  replacementDate: '',
   treadDepth: '',
   dotNumber: '',
   partNumberPhoto: '',
@@ -227,6 +229,8 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
     tireModel: 'Tire model',
     tireSize: 'Tire size',
     tirePartNumber: 'Tire part number',
+    purchaseDate: 'Original purchase date',
+    replacementDate: 'Replacement date',
     treadDepth: 'Tire tread depth',
     dotNumber: 'DOT number',
     damageNotes: 'Explanation of why the tire is not repairable',
@@ -319,6 +323,16 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
               <label style={labelSt}>Tire Part Number</label>
               <input value={form.tirePartNumber} onChange={e => set('tirePartNumber', e.target.value)}
                 style={{ ...inpSt, ...errStyle('tirePartNumber') }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Original Purchase Date</label>
+              <input type="date" value={form.purchaseDate} onChange={e => set('purchaseDate', e.target.value)}
+                style={{ ...inpSt, ...errStyle('purchaseDate'), colorScheme: 'dark' }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Replacement Date</label>
+              <input type="date" value={form.replacementDate} onChange={e => set('replacementDate', e.target.value)}
+                style={{ ...inpSt, ...errStyle('replacementDate'), colorScheme: 'dark' }} />
             </div>
           </div>
         </Section>
@@ -438,6 +452,8 @@ function ClaimDetail({ claim, onEdit, onBack }) {
             <DetailRow label="Tire Model" value={claim.tireModel} />
             <DetailRow label="Tire Size" value={claim.tireSize} />
             <DetailRow label="Tire Part Number" value={claim.tirePartNumber} mono />
+            <DetailRow label="Original Purchase Date" value={claim.purchaseDate} />
+            <DetailRow label="Replacement Date" value={claim.replacementDate} />
             <DetailRow label="Tread Depth" value={claim.treadDepth} />
             <DetailRow label="DOT Number" value={claim.dotNumber} mono />
           </div>
