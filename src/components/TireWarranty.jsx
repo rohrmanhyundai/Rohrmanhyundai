@@ -31,6 +31,7 @@ const emptyForm = () => ({
   vehicleModel: '',
   tireWarrantyName: '',
   tireBrand: '',
+  tireModel: '',
   tireSize: '',
   tirePartNumber: '',
   treadDepth: '',
@@ -223,6 +224,7 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
     vin: 'VIN',
     tireWarrantyName: 'Tire warranty name',
     tireBrand: 'Tire brand',
+    tireModel: 'Tire model',
     tireSize: 'Tire size',
     tirePartNumber: 'Tire part number',
     treadDepth: 'Tire tread depth',
@@ -296,6 +298,11 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
                 style={{ ...inpSt, ...errStyle('tireWarrantyName') }} />
             </div>
             <BrandField value={form.tireBrand} onChange={v => set('tireBrand', v)} />
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>Tire Model</label>
+              <input value={form.tireModel} onChange={e => set('tireModel', e.target.value)}
+                style={{ ...inpSt, ...errStyle('tireModel') }} />
+            </div>
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>Tire Size</label>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -428,6 +435,7 @@ function ClaimDetail({ claim, onEdit, onBack }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
             <DetailRow label="Tire Warranty Name" value={claim.tireWarrantyName} />
             <DetailRow label="Tire Brand" value={claim.tireBrand} />
+            <DetailRow label="Tire Model" value={claim.tireModel} />
             <DetailRow label="Tire Size" value={claim.tireSize} />
             <DetailRow label="Tire Part Number" value={claim.tirePartNumber} mono />
             <DetailRow label="Tread Depth" value={claim.treadDepth} />
