@@ -803,7 +803,8 @@
     "phone": "111",
     "notes": "???",
     "submittedAt": "2026-05-20T18:34:57.028Z",
-    "submittedBy": "PARKER"
+    "submittedBy": "PARKER",
+    "managerDeleted": true
   },
   {
     "consultant": "PARKER OVERMAN",
