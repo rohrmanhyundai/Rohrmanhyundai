@@ -39,6 +39,8 @@ const emptyForm = () => ({
   damagePhoto: '',
   treadDepthPhoto: '',
   dotNumberPhoto: '',
+  sideViewPhoto: '',
+  repairOrderPhoto: '',
   damageNotes: '',
 });
 
@@ -117,7 +119,7 @@ function BrandField({ value, onChange }) {
 }
 
 // ── Photo upload box ──────────────────────────────────────────────────────────
-function PhotoBox({ label, value, onChange, claimId, field }) {
+function PhotoBox({ label, value, onChange, claimId, field, allowPdf = false }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -125,7 +127,8 @@ function PhotoBox({ label, value, onChange, claimId, field }) {
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Please choose an image file.'); return; }
+    const ok = file.type.startsWith('image/') || (allowPdf && file.type === 'application/pdf');
+    if (!ok) { setError(allowPdf ? 'Please choose an image or PDF file.' : 'Please choose an image file.'); return; }
     setError('');
     setUploading(true);
     try {
@@ -145,13 +148,17 @@ function PhotoBox({ label, value, onChange, claimId, field }) {
   return (
     <div style={{ marginBottom: 12 }}>
       <label style={labelSt}>{label}</label>
-      <input ref={inputRef} type="file" accept="image/*" capture="environment"
+      <input ref={inputRef} type="file" accept={allowPdf ? 'image/*,application/pdf' : 'image/*'}
         onChange={handleFile} style={{ display: 'none' }} />
       {value ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <a href={value} target="_blank" rel="noopener noreferrer">
-            <img src={value} alt={label}
-              style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
+            {value.toLowerCase().endsWith('.pdf') ? (
+              <div style={{ width: 90, height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: `1px solid ${accent}55`, background: 'rgba(255,255,255,0.05)', fontSize: 32 }}>📄</div>
+            ) : (
+              <img src={value} alt={label}
+                style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
+            )}
           </a>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 700 }}>✓ Photo uploaded</span>
@@ -168,7 +175,7 @@ function PhotoBox({ label, value, onChange, claimId, field }) {
       ) : (
         <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
           style={{ width: '100%', background: 'rgba(251,191,36,0.08)', border: `1px dashed ${accent}66`, color: accent, borderRadius: 8, padding: '18px 12px', cursor: uploading ? 'wait' : 'pointer', fontSize: 13, fontWeight: 700 }}>
-          {uploading ? 'Uploading…' : '📷 Add Photo'}
+          {uploading ? 'Uploading…' : (allowPdf ? '📎 Add Photo or PDF' : '📷 Add Photo')}
         </button>
       )}
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 4 }}>{error}</div>}
@@ -221,10 +228,13 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
     tirePartNumber: 'Tire part number',
     treadDepth: 'Tire tread depth',
     dotNumber: 'DOT number',
+    damageNotes: 'Explanation of why the tire is not repairable',
     partNumberPhoto: 'Tire part number photo',
     damagePhoto: 'Unrepairable damage photo',
+    sideViewPhoto: 'Complete side view photo of the tire',
     treadDepthPhoto: 'Tire tread depth photo',
     dotNumberPhoto: 'DOT number photo',
+    repairOrderPhoto: 'Original repair order / proof of purchase',
   };
   const missing = Object.keys(required).filter(k => !String(form[k] || '').trim());
 
@@ -316,12 +326,15 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
         {/* Unrepairable Damage */}
         <Section title="Unrepairable Damage to Tire">
           <div style={{ marginBottom: 12 }}>
-            <label style={labelSt}>Damage Notes (optional)</label>
+            <label style={labelSt}>Explain why the tire is not repairable</label>
             <textarea value={form.damageNotes} onChange={e => set('damageNotes', e.target.value)}
-              rows={3} style={{ ...inpSt, resize: 'vertical' }} />
+              rows={3} placeholder="Describe the damage and why the tire cannot be repaired"
+              style={{ ...inpSt, resize: 'vertical', ...errStyle('damageNotes') }} />
           </div>
           <PhotoBox label="Unrepairable Damage Photo" value={form.damagePhoto}
             onChange={v => set('damagePhoto', v)} claimId={form.id} field="damage" />
+          <PhotoBox label="Complete Side View Photo of the Tire" value={form.sideViewPhoto}
+            onChange={v => set('sideViewPhoto', v)} claimId={form.id} field="sideview" />
         </Section>
 
         {/* Tread Depth */}
@@ -345,6 +358,12 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
           </div>
           <PhotoBox label="DOT Number Photo" value={form.dotNumberPhoto}
             onChange={v => set('dotNumberPhoto', v)} claimId={form.id} field="dot" />
+        </Section>
+
+        {/* Proof of Purchase */}
+        <Section title="Original Repair Order / Proof of Purchase">
+          <PhotoBox label="Upload Original Repair Order of Tire Purchase" value={form.repairOrderPhoto}
+            onChange={v => set('repairOrderPhoto', v)} claimId={form.id} field="repairorder" allowPdf />
         </Section>
 
         {/* Validation summary + Start Claim */}
@@ -388,10 +407,14 @@ function PhotoView({ label, url }) {
       <div style={labelSt}>{label}</div>
       {url ? (
         <a href={url} target="_blank" rel="noopener noreferrer">
-          <img src={url} alt={label}
-            style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
+          {url.toLowerCase().endsWith('.pdf') ? (
+            <div style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: `1px solid ${accent}55`, background: 'rgba(255,255,255,0.05)', fontSize: 44 }}>📄</div>
+          ) : (
+            <img src={url} alt={label}
+              style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
+          )}
         </a>
-      ) : <div style={{ color: '#64748b', fontSize: 13 }}>No photo</div>}
+      ) : <div style={{ color: '#64748b', fontSize: 13 }}>No file</div>}
     </div>
   );
 }
@@ -418,14 +441,16 @@ function ClaimDetail({ claim, onEdit, onBack }) {
             <DetailRow label="Tread Depth" value={claim.treadDepth} />
             <DetailRow label="DOT Number" value={claim.dotNumber} mono />
           </div>
-          {claim.damageNotes && <DetailRow label="Damage Notes" value={claim.damageNotes} />}
+          {claim.damageNotes && <DetailRow label="Why Not Repairable" value={claim.damageNotes} />}
         </Section>
-        <Section title="Photos">
+        <Section title="Photos & Documents">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 16 }}>
             <PhotoView label="Tire Part Number" url={claim.partNumberPhoto} />
             <PhotoView label="Unrepairable Damage" url={claim.damagePhoto} />
+            <PhotoView label="Complete Side View" url={claim.sideViewPhoto} />
             <PhotoView label="Tire Tread Depth" url={claim.treadDepthPhoto} />
             <PhotoView label="DOT Number" url={claim.dotNumberPhoto} />
+            <PhotoView label="Original Repair Order" url={claim.repairOrderPhoto} />
           </div>
         </Section>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
