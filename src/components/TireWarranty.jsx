@@ -343,11 +343,9 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
           </div>
         </Section>
 
-        {/* Cost Information — completed after the claim is started */}
+        {/* Cost Information — only shown when editing a claim that has been started */}
+        {initial && (
         <Section title="Cost Information">
-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
-            Complete this section after the claim has been started.
-          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>A. Original Customer Price ($)</label>
@@ -384,6 +382,7 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
             </div>
           </div>
         </Section>
+        )}
 
         {/* Unrepairable Damage */}
         <Section title="Unrepairable Damage to Tire">
