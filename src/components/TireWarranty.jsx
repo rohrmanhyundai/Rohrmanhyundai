@@ -298,9 +298,15 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
             <BrandField value={form.tireBrand} onChange={v => set('tireBrand', v)} />
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>Tire Size</label>
-              <input value={form.tireSize} onChange={e => set('tireSize', e.target.value)}
-                placeholder="e.g. 235/65R17"
-                style={{ ...inpSt, ...errStyle('tireSize') }} />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input value={form.tireSize} onChange={e => set('tireSize', e.target.value)}
+                  placeholder="e.g. 235/65R17"
+                  style={{ ...inpSt, ...errStyle('tireSize'), flex: 1 }} />
+                <a href="https://hyundaitirecenter.com/tires/tirebrand.jsp" target="_blank" rel="noopener noreferrer"
+                  style={{ flexShrink: 0, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', background: 'rgba(251,191,36,0.12)', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '0 14px', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                  🔎 Look Up Tires
+                </a>
+              </div>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>Tire Part Number</label>
