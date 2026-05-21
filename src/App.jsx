@@ -10,6 +10,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
+import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import EmployeeReviewHub from './components/EmployeeReviewHub';
@@ -464,6 +465,7 @@ export default function App() {
         userPages={currentPages}
         onBack={() => setPage('dashboard')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
+        onTireWarranty={() => goTo('tire-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
@@ -668,6 +670,18 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={awBackLabel}
+      />
+    );
+  }
+
+  if (page === 'tire-warranty') {
+    const twBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
+    return (
+      <TireWarranty
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={twBackLabel}
       />
     );
   }
