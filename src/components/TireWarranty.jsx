@@ -45,6 +45,12 @@ const emptyForm = () => ({
   sideViewPhoto: '',
   repairOrderPhoto: '',
   damageNotes: '',
+  // Cost information — filled in after the claim is started
+  origCustomerPrice: '',
+  dealerCost: '',
+  newTreadDepth: '',
+  remainingTreadDepth: '',
+  customerPctTreadUsed: '',
 });
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -380,6 +386,48 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
             onChange={v => set('repairOrderPhoto', v)} claimId={form.id} field="repairorder" allowPdf />
         </Section>
 
+        {/* Cost Information — completed after the claim is started */}
+        <Section title="Cost Information">
+          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
+            Complete this section after the claim has been started.
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>A. Original Customer Price ($)</label>
+              <input type="number" step="0.01" value={form.origCustomerPrice}
+                onChange={e => set('origCustomerPrice', e.target.value)} placeholder="0.00" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>B. Dealer Cost ($)</label>
+              <input type="number" step="0.01" value={form.dealerCost}
+                onChange={e => set('dealerCost', e.target.value)} placeholder="0.00" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>C. New Tire Tread Depth (/32nds)</label>
+              <input type="number" value={form.newTreadDepth}
+                onChange={e => set('newTreadDepth', e.target.value)} placeholder="e.g. 10" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>D. Remaining Tread Depth (/32nds)</label>
+              <input type="number" value={form.remainingTreadDepth}
+                onChange={e => set('remainingTreadDepth', e.target.value)} placeholder="e.g. 6" style={inpSt} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelSt}>E. Customer % of Tread Used</label>
+              <input value={form.customerPctTreadUsed}
+                onChange={e => set('customerPctTreadUsed', e.target.value)} placeholder="% (use chart)" style={inpSt} />
+              {(() => {
+                const c = parseFloat(form.newTreadDepth), d = parseFloat(form.remainingTreadDepth);
+                if (c > 0 && d >= 0 && d <= c) {
+                  const pct = Math.round(((c - d) / c) * 100);
+                  return <div style={{ fontSize: 12, color: accent, marginTop: 4 }}>Calculated: {pct}% — verify against the chart</div>;
+                }
+                return null;
+              })()}
+            </div>
+          </div>
+        </Section>
+
         {/* Validation summary + Start Claim */}
         {showErrors && missing.length > 0 && (
           <div style={{ marginBottom: 16, padding: '12px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.35)', borderRadius: 10 }}>
@@ -466,6 +514,15 @@ function ClaimDetail({ claim, onEdit, onBack }) {
             <PhotoView label="Tire Tread Depth" url={claim.treadDepthPhoto} />
             <PhotoView label="DOT Number" url={claim.dotNumberPhoto} />
             <PhotoView label="Original Repair Order" url={claim.repairOrderPhoto} />
+          </div>
+        </Section>
+        <Section title="Cost Information">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
+            <DetailRow label="A. Original Customer Price" value={claim.origCustomerPrice ? '$' + claim.origCustomerPrice : ''} />
+            <DetailRow label="B. Dealer Cost" value={claim.dealerCost ? '$' + claim.dealerCost : ''} />
+            <DetailRow label="C. New Tire Tread Depth" value={claim.newTreadDepth ? claim.newTreadDepth + ' /32nds' : ''} />
+            <DetailRow label="D. Remaining Tread Depth" value={claim.remainingTreadDepth ? claim.remainingTreadDepth + ' /32nds' : ''} />
+            <DetailRow label="E. Customer % of Tread Used" value={claim.customerPctTreadUsed} />
           </div>
         </Section>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
