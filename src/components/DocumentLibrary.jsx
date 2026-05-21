@@ -19,6 +19,69 @@ function fileIcon(type) {
   return '📎';
 }
 
+// ── PDF.js – loaded from CDN on first use ─────────────────────────────────────
+let pdfjsPromise = null;
+function loadPdfJs() {
+  if (pdfjsPromise) return pdfjsPromise;
+  pdfjsPromise = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('Failed to load PDF.js'));
+    document.head.appendChild(script);
+  });
+  return pdfjsPromise;
+}
+
+// Cache rendered thumbnails (data URLs) by document id so we only render once.
+const thumbCache = {};
+
+// Renders a small image of page 1 of a PDF; falls back to an icon otherwise.
+function DocThumb({ doc, rawUrl }) {
+  const [thumb, setThumb] = useState(() => thumbCache[doc.id] || null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (doc.fileType !== 'pdf' || thumb || failed) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const pdfjs = await loadPdfJs();
+        const res = await fetch(rawUrl);
+        const buf = await res.arrayBuffer();
+        const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1 });
+        const scale = 160 / viewport.width;
+        const scaled = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.width = scaled.width;
+        canvas.height = scaled.height;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
+        const url = canvas.toDataURL('image/png');
+        thumbCache[doc.id] = url;
+        if (!cancelled) setThumb(url);
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [doc.id, doc.fileType, rawUrl, thumb, failed]);
+
+  if (doc.fileType === 'pdf' && thumb) {
+    return (
+      <img src={thumb} alt={doc.label}
+        style={{ width: 46, height: 60, objectFit: 'cover', objectPosition: 'top', borderRadius: 4, border: '1px solid rgba(255,255,255,0.15)', background: '#fff' }} />
+    );
+  }
+  return <div className="doc-lib-item-icon">{fileIcon(doc.fileType)}</div>;
+}
+
 function formatSize(bytes) {
   if (bytes < 1024)        return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -427,7 +490,7 @@ export default function DocumentLibrary({ currentUser, currentRole, onBack, back
             <div className="doc-lib-list">
               {visibleDocs.map(doc => (
                 <div key={doc.id} className="doc-lib-item">
-                  <div className="doc-lib-item-icon">{fileIcon(doc.fileType)}</div>
+                  <DocThumb doc={doc} rawUrl={docRawUrl(doc.filename)} />
                   <div className="doc-lib-item-info">
                     <div className="doc-lib-item-label">{doc.label}</div>
                     <div className="doc-lib-item-meta">
