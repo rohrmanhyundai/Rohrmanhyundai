@@ -34,14 +34,5 @@
     "highPriority": false,
     "advisor": "PARKER",
     "isNew": false
-  },
-  {
-    "id": "mpbot7kkg7g",
-    "ro": "777653",
-    "roDate": "2026-05-18",
-    "jobDesc": "CEL for code: P2181 / Temp Gauge running cool / recalls",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "isNew": false
   }
 ]
