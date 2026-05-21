@@ -767,7 +767,8 @@
     "phone": "111",
     "notes": "Duplicate",
     "submittedAt": "2026-05-20T18:34:06.708Z",
-    "submittedBy": "PARKER"
+    "submittedBy": "PARKER",
+    "managerDeleted": true
   },
   {
     "consultant": "PARKER OVERMAN",
