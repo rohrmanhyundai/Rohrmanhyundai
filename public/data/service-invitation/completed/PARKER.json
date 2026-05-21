@@ -749,7 +749,8 @@
     "phone": "111",
     "notes": "??? ",
     "submittedAt": "2026-05-20T18:33:37.921Z",
-    "submittedBy": "PARKER"
+    "submittedBy": "PARKER",
+    "managerDeleted": true
   },
   {
     "consultant": "PARKER OVERMAN",
