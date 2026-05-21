@@ -202,7 +202,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       </div>
 
       {/* Messages */}
-      <div className="chat-scroll" style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
+      <div className="chat-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
         {messages.length === 0 && (
           <div style={{ textAlign: 'center', color: '#475569', fontSize: 13, marginTop: 60 }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
@@ -240,7 +240,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
               <div style={{
                 display: 'flex', alignItems: 'flex-end', gap: 6,
                 flexDirection: isMe ? 'row-reverse' : 'row',
-                maxWidth: '94%',
+                maxWidth: '94%', minWidth: 0,
                 position: 'relative',
               }}>
                 <div
@@ -254,7 +254,8 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                     background: isMe ? ME_GRADIENT : THEM_BG,
                     color: isMe ? ME_TEXT : THEM_TEXT,
                     fontSize: 14, lineHeight: 1.4,
-                    wordBreak: 'break-word', whiteSpace: 'pre-wrap',
+                    maxWidth: '100%', minWidth: 0,
+                    wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'pre-wrap',
                     boxShadow: isMe ? '0 1px 2px rgba(37,99,235,.4)' : '0 1px 2px rgba(0,0,0,.25)',
                     cursor: hasChatAccess ? 'pointer' : 'default',
                     transition: 'transform .12s ease',
