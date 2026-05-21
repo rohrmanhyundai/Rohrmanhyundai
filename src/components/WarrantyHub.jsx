@@ -35,6 +35,15 @@ const NAV_BUTTONS = [
     prop: 'onDocumentLibrary',
   },
   {
+    key: 'tireWarranty',
+    label: '🛞 Tire Warranty',
+    desc: 'Start and manage tire warranty claims',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
+    border: 'rgba(251,191,36,.45)',
+    color: '#fde68a',
+    prop: 'onTireWarranty',
+  },
+  {
     key: 'tireQuote',
     label: '🛞 Tire Quote',
     desc: 'Get a tire quote from Hyundai Tire Center',
@@ -56,9 +65,9 @@ const NAV_BUTTONS = [
 
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
-  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet,
+  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

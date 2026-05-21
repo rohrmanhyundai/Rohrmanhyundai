@@ -565,6 +565,31 @@ export async function saveWarrantyContract(contract, index) {
   await saveGitHubFile(headers, WARRANTY_INDEX_PATH, index, `Update warranty index ${new Date().toISOString()}`);
 }
 
+// ── Tire Warranty Claims ──────────────────────────────────────────────────────
+const TIRE_INDEX_PATH = 'public/data/tire-warranty/index.json';
+const tireClaimPath = id => `public/data/tire-warranty/${id}.json`;
+
+export async function loadTireWarrantyIndex() {
+  try {
+    const data = await readGitHubFile(authHeaders(), TIRE_INDEX_PATH);
+    if (data) return Array.isArray(data) ? data : [];
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/tire-warranty/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveTireWarrantyClaim(claim, index) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  await saveGitHubFile(headers, tireClaimPath(claim.id), claim,
+    `Tire warranty claim ${claim.id} - ${claim.customerName || 'unknown'}`);
+  await saveGitHubFile(headers, TIRE_INDEX_PATH, index, `Update tire warranty index ${new Date().toISOString()}`);
+}
+
 // ── Work In Progress ──────────────────────────────────────────────────────────
 export async function loadWipData(techName) {
   const path = `public/data/wip/${techName.toUpperCase()}.json`;
