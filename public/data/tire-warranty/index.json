@@ -2,7 +2,7 @@
   {
     "id": "mpfp3sb3qgje",
     "createdAt": "2026-05-21T16:18:48.207Z",
-    "updatedAt": "2026-05-21T17:48:02.669Z",
+    "updatedAt": "2026-05-21T18:05:57.997Z",
     "customerName": "Allyson Goodrich",
     "repairOrder": "777681",
     "customerPhone": "",
@@ -25,6 +25,10 @@
     "damageNotes": "SCREW IN SIDE TREAD ",
     "replacementDate": "2026-05-19",
     "purchaseDate": "2025-07-21",
-    "tireModel": "KUMHO MAJESTY"
+    "tireModel": "KUMHO MAJESTY",
+    "newTreadDepth": "10",
+    "remainingTreadDepth": "6",
+    "origCustomerPrice": "146.13",
+    "dealerCost": "131.74"
   }
 ]
