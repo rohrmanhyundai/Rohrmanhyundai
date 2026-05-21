@@ -2,7 +2,7 @@
   {
     "id": "mpfp3sb3qgje",
     "createdAt": "2026-05-21T16:18:48.207Z",
-    "updatedAt": "2026-05-21T16:26:10.381Z",
+    "updatedAt": "2026-05-21T17:39:35.368Z",
     "customerName": "Allyson Goodrich",
     "repairOrder": "777681",
     "customerPhone": "",
@@ -22,6 +22,9 @@
     "dotNumberPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mpfp3sb3qgje-dot-1779380516037.jpg",
     "sideViewPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mpfp3sb3qgje-sideview-1779380548146.jpg",
     "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mpfp3sb3qgje-repairorder-1779380670629.pdf",
-    "damageNotes": "SCREW IN SIDE TREAD "
+    "damageNotes": "SCREW IN SIDE TREAD ",
+    "replacementDate": "2026-05-19",
+    "purchaseDate": "2025-07-21",
+    "tireModel": "KUMHO MAJESTY"
   }
 ]
