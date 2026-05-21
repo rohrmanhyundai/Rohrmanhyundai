@@ -22,8 +22,8 @@ const emptyForm = () => ({
   id: genId(),
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  firstName: '',
-  lastName: '',
+  customerName: '',
+  repairOrder: '',
   customerPhone: '',
   vin: '',
   vehicleYear: '',
@@ -218,8 +218,8 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
 
   // Every field below must be filled before a claim can be started.
   const required = {
-    firstName: 'First name',
-    lastName: 'Last name',
+    customerName: 'First and last name',
+    repairOrder: 'Repair order number',
     vin: 'VIN',
     tireWarrantyName: 'Tire warranty name',
     tireBrand: 'Tire brand',
@@ -252,14 +252,14 @@ const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref
         <Section title="Customer & Vehicle Information">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
             <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>First Name</label>
-              <input value={form.firstName} onChange={e => set('firstName', e.target.value)}
-                style={{ ...inpSt, ...errStyle('firstName') }} />
+              <label style={labelSt}>First and Last Name</label>
+              <input value={form.customerName} onChange={e => set('customerName', e.target.value)}
+                style={{ ...inpSt, ...errStyle('customerName') }} />
             </div>
             <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Last Name</label>
-              <input value={form.lastName} onChange={e => set('lastName', e.target.value)}
-                style={{ ...inpSt, ...errStyle('lastName') }} />
+              <label style={labelSt}>Repair Order Number</label>
+              <input value={form.repairOrder} onChange={e => set('repairOrder', e.target.value)}
+                style={{ ...inpSt, ...errStyle('repairOrder') }} />
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={labelSt}>VIN Number</label>
@@ -418,8 +418,8 @@ function ClaimDetail({ claim, onEdit, onBack }) {
       <div style={{ maxWidth: 860, margin: '0 auto' }}>
         <Section title="Customer & Vehicle">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
-            <DetailRow label="First Name" value={claim.firstName} />
-            <DetailRow label="Last Name" value={claim.lastName} />
+            <DetailRow label="First and Last Name" value={claim.customerName} />
+            <DetailRow label="Repair Order Number" value={claim.repairOrder} />
             <DetailRow label="VIN" value={claim.vin} mono />
             <DetailRow label="Vehicle" value={`${claim.vehicleYear} ${claim.vehicleMake} ${claim.vehicleModel}`.trim()} />
           </div>
@@ -462,7 +462,8 @@ function ClaimList({ claims, loading, onNew, onView }) {
   const q = search.trim().toLowerCase();
   const filtered = q
     ? claims.filter(c =>
-        `${c.firstName} ${c.lastName}`.toLowerCase().includes(q) ||
+        String(c.customerName || '').toLowerCase().includes(q) ||
+        String(c.repairOrder || '').toLowerCase().includes(q) ||
         String(c.vin || '').toLowerCase().includes(q) ||
         String(c.tirePartNumber || '').toLowerCase().includes(q))
     : claims;
@@ -491,21 +492,22 @@ function ClaimList({ claims, loading, onNew, onView }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Date', 'Customer', 'Vehicle', 'Tire Brand', 'Part Number', ''].map(h => (
+                {['Date', 'Customer', 'RO #', 'Vehicle', 'Tire Brand', 'Part Number', ''].map(h => (
                   <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={6} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No claims match "{search}"</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No claims match "{search}"</td></tr>
               ) : filtered.map(c => (
                 <tr key={c.id} onClick={() => onView(c)}
                   style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
                   onMouseLeave={e => e.currentTarget.style.background = ''}>
                   <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{`${c.firstName || ''} ${c.lastName || ''}`.trim() || '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#94a3b8' }}>{c.repairOrder || '—'}</td>
                   <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{`${c.vehicleYear || ''} ${c.vehicleMake || ''} ${c.vehicleModel || ''}`.trim() || '—'}</td>
                   <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0' }}>{c.tireBrand || '—'}</td>
                   <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: accent }}>{c.tirePartNumber || '—'}</td>
