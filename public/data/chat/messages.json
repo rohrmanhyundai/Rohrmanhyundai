@@ -776,5 +776,16 @@
     "username": "DAVID",
     "text": "777092- do we have an ETA to get parts back from machine shop?",
     "timestamp": 1779384773164
+  },
+  {
+    "id": "mpfw8669fbd",
+    "username": "SHAWN",
+    "text": "Called machine shop it will be next week before the head is completed",
+    "timestamp": 1779392290113,
+    "replyTo": {
+      "id": "mpfrr2230xw",
+      "username": "DAVID",
+      "text": "777092- do we have an ETA to get parts back from machine shop?"
+    }
   }
 ]
