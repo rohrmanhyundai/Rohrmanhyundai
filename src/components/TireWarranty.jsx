@@ -573,7 +573,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
 
   useEffect(() => { loadClaims(); }, [loadClaims]);
 
-  async function handleSave(form) {
+  async function handleSave(form, targetView = 'detail') {
     setSaving(true); setSaveError('');
     try {
       const exists = claims.findIndex(c => c.id === form.id);
@@ -584,7 +584,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
       await saveTireWarrantyClaim(form, next);
       setClaims(next);
       setActiveClaim(form);
-      setView('detail');
+      setView(targetView);
     } catch (err) {
       setSaveError(err.message || 'Save failed');
     } finally {
@@ -592,16 +592,32 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
     }
   }
 
+  // Save whatever is currently in the form (even if incomplete), then navigate.
+  async function saveFormAndGo(targetView) {
+    if (formRef.current) {
+      await handleSave(formRef.current.getForm(), targetView);
+    } else {
+      setView(targetView);
+    }
+  }
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-        <button className="secondary" onClick={() => {
+        <button className="secondary" disabled={saving} onClick={() => {
           if (view === 'list') { onBack(); return; }
+          if (view === 'form') { saveFormAndGo('list'); return; }
           setView('list');
         }}>
           {view === 'list' ? (backLabel || '← Back') : '← Claims'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: accent, flex: 1 }}>🛞 Tire Warranty</span>
+        {view === 'form' && (
+          <button onClick={() => saveFormAndGo('detail')} disabled={saving}
+            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '8px 20px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
+            {saving ? 'Saving…' : '💾 Save'}
+          </button>
+        )}
         {view === 'list' && (
           <button onClick={() => { setEditingClaim(null); setView('form'); }}
             style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 700 }}>
