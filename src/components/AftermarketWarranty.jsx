@@ -603,10 +603,40 @@ function ContractDetail({ contract, onEdit, onBack }) {
       {/* Print CSS */}
       <style>{`
         @media print {
+          /* Hide everything except the printable document */
           .amw-no-print { display: none !important; }
-          .amw-print-doc { display: block !important; }
           .amw-screen-preview { display: none !important; }
-          @page { size: letter portrait; margin: 8mm 10mm; }
+          .amw-print-doc { display: block !important; }
+
+          /* Release height/overflow clamps so content can flow to new pages */
+          html, body, #root, .adv-page {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+            display: block !important;
+          }
+          .adv-page { padding: 0 !important; margin: 0 !important; }
+
+          /* The print document itself flows naturally across pages */
+          .amw-print-doc {
+            position: static !important;
+            height: auto !important;
+            overflow: visible !important;
+            width: 100% !important;
+          }
+
+          /* Avoid splitting key blocks awkwardly across a page break */
+          .amw-print-doc table { page-break-inside: auto; }
+          .amw-print-doc tr    { page-break-inside: avoid; page-break-after: auto; }
+          .amw-print-doc thead { display: table-header-group; }
+          .amw-pd-section { page-break-inside: avoid; }
+          .amw-pd-keep    { page-break-inside: avoid; }
+
+          /* Make sure backgrounds/colors actually print */
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+          @page { size: letter portrait; margin: 10mm; }
         }
         .amw-print-doc { display: none; }
       `}</style>
@@ -851,7 +881,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
       <div style={{ padding: '20px 32px 28px', background: '#fff' }}>
 
         {/* ── Row 1: Customer · Warranty Company · Vehicle ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.4fr', gap: 16, marginBottom: 16 }}>
+        <div className="amw-pd-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.4fr', gap: 16, marginBottom: 16 }}>
 
           {/* Customer */}
           <div style={{ border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '14px 14px 10px', background: PD_LIGHT }}>
@@ -886,7 +916,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
         </div>
 
         {/* ── Labor ── */}
-        <div style={{ marginBottom: 16 }}>
+        <div className="amw-pd-section" style={{ marginBottom: 16 }}>
           <SectionHead>Labor</SectionHead>
           <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${PD_BORDER}`, borderRadius: 6, overflow: 'hidden' }}>
             <thead>
@@ -944,7 +974,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
         </div>
 
         {/* ── Financial Summary ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start', marginBottom: 20 }}>
+        <div className="amw-pd-section" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start', marginBottom: 20 }}>
 
           {/* Left — charge breakdown */}
           <div>
@@ -1033,14 +1063,14 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
 
         {/* ── Notes ── */}
         {contract.notes && (
-          <div style={{ marginBottom: 20, border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '12px 14px', background: PD_LIGHT }}>
+          <div className="amw-pd-section" style={{ marginBottom: 20, border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '12px 14px', background: PD_LIGHT }}>
             <SectionHead>Notes</SectionHead>
             <div style={{ fontSize: 11, color: '#334155', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{contract.notes}</div>
           </div>
         )}
 
         {/* ── Signature Lines ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 28 }}>
+        <div className="amw-pd-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 28 }}>
           {['Service Advisor', 'Customer'].map(s => (
             <div key={s}>
               <div style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>Authorized {s} Signature</div>
