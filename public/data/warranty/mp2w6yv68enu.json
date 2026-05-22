@@ -1,7 +1,7 @@
 {
   "id": "mp2w6yv68enu",
   "createdAt": "2026-05-12T17:16:13.698Z",
-  "updatedAt": "2026-05-22T14:17:37.291Z",
+  "updatedAt": "2026-05-22T14:18:28.483Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Cory Hammond",
   "customerPhone": "(574) 398 - 7139",
@@ -91,7 +91,7 @@
     },
     {
       "id": "mph05syuksgb",
-      "partNumber": "",
+      "partNumber": "R713519",
       "description": "starter",
       "qty": "1",
       "price": "402.18"
