@@ -1,7 +1,7 @@
 {
   "id": "mp2w6yv68enu",
   "createdAt": "2026-05-12T17:16:13.698Z",
-  "updatedAt": "2026-05-22T14:16:36.173Z",
+  "updatedAt": "2026-05-22T14:17:37.291Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Cory Hammond",
   "customerPhone": "(574) 398 - 7139",
@@ -14,7 +14,7 @@
   "warrantyCompany": "AAGI",
   "warrantyPhone": "18884428286",
   "claimNumber": "591159",
-  "authNumber": "591159",
+  "authNumber": "591159IC",
   "laborRate": "170",
   "laborTime": "15.6",
   "diagnosisTime": "1.0",
@@ -57,35 +57,35 @@
     {
       "id": "mph0423c8hsw",
       "partNumber": "25623-2E000",
-      "description": "",
+      "description": "O-RING",
       "qty": "1",
       "price": "3.82"
     },
     {
       "id": "mph04a5xg0mj",
       "partNumber": "28491-2E900",
-      "description": "",
+      "description": "GASKET-EGR PIPE",
       "qty": "1",
       "price": "8.11"
     },
     {
       "id": "mph04g33j813",
       "partNumber": "28462-2E900",
-      "description": "",
+      "description": "PIPE-EGR IN \"B\"",
       "qty": "1",
       "price": "41.15"
     },
     {
       "id": "mph04lp0uyor",
       "partNumber": "28491-2E920",
-      "description": "",
+      "description": "GASKET-EGR PIPE",
       "qty": "1",
       "price": "25.11"
     },
     {
       "id": "mph04s05u6be",
       "partNumber": "28461-2E920",
-      "description": "",
+      "description": "PIPE-EGR IN \"A\"",
       "qty": "1",
       "price": "75.92"
     },
