@@ -321,7 +321,6 @@ export default function ManagerReports({ users, onBack }) {
           const reportText = await generateTechCoaching({
             techName: tech, weeklyEntries: sorted, wip, awaiting, goalHrs,
           });
-          const existing = await loadCoaching(tech);
           const now = new Date();
           const entry = {
             id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
@@ -331,8 +330,8 @@ export default function ManagerReports({ users, onBack }) {
             weekEnd:   sorted[0]?.weekEnd   || '',
             report:    reportText,
           };
-          const updated = [entry, ...existing];
-          await saveCoaching(tech, updated);
+          // Replace any previous AI reports for this tech with just the new one.
+          await saveCoaching(tech, [entry]);
           done++;
         } catch (err) {
           failed++;
