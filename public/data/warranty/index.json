@@ -1,5 +1,126 @@
 [
   {
+    "id": "mp2w6yv68enu",
+    "createdAt": "2026-05-12T17:16:13.698Z",
+    "updatedAt": "2026-05-22T12:17:28.676Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Cory Hammond",
+    "customerPhone": "(574) 398 - 7139",
+    "repairOrder": "777034",
+    "vin": "5NPD84LF0LH501401",
+    "vehicleYear": "2020",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "74532",
+    "warrantyCompany": "AAGI",
+    "warrantyPhone": "18884428286",
+    "claimNumber": "591159",
+    "authNumber": "591159",
+    "laborRate": "170",
+    "laborTime": "14.6",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mp2w6yv6hp66",
+        "partNumber": "520V",
+        "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      },
+      {
+        "id": "mp2w9ldfzfq3",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "24.85"
+      },
+      {
+        "id": "mp2wa91z6937",
+        "partNumber": "24ZN1-2EX00",
+        "description": "ENGINE ASSY-SUB",
+        "qty": "1",
+        "price": "4838.71"
+      },
+      {
+        "id": "mp2wdxuqq7pu",
+        "partNumber": "28313-2EAA0",
+        "description": "GASKET-PORT",
+        "qty": "1",
+        "price": "13.81"
+      },
+      {
+        "id": "mp2wecev853t",
+        "partNumber": "28521-2E000",
+        "description": "GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "10.53"
+      },
+      {
+        "id": "mpgvqn2mnia5",
+        "partNumber": "25623-2E000",
+        "description": "O-RING (pending approval)",
+        "qty": "1",
+        "price": "3.82"
+      },
+      {
+        "id": "mpgvr5ltiagn",
+        "partNumber": "28491-2E900",
+        "description": "GASKET-EGR PIPE (pending approval)",
+        "qty": "1",
+        "price": "8.11"
+      },
+      {
+        "id": "mpgvrowk18ff",
+        "partNumber": "28462-2E900",
+        "description": "PIPE-EGR IN \"B\" (pending approval)",
+        "qty": "1",
+        "price": "41.15"
+      },
+      {
+        "id": "mpgvsb18g7nl",
+        "partNumber": "28491-2E920",
+        "description": "GASKET-EGR PIPE (pending approval)",
+        "qty": "1",
+        "price": "25.11"
+      },
+      {
+        "id": "mpgvswhju10o",
+        "partNumber": "28461-2E920",
+        "description": " PIPE-EGR IN \"A\" (pending approval)",
+        "qty": "1",
+        "price": "75.39"
+      },
+      {
+        "id": "mpgvtzjr5t2w",
+        "partNumber": "R713519",
+        "description": "REMAN STARTER (pending approval)",
+        "qty": "1",
+        "price": "402.18"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "100",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "WAITING ON APPROVAL",
+    "approved": true,
+    "approvedDate": "2026-05-13",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": ""
+  },
+  {
     "id": "mpe8wy0qyfur",
     "createdAt": "2026-05-20T15:57:48.986Z",
     "updatedAt": "2026-05-21T20:22:53.959Z",
@@ -788,85 +909,6 @@
     "waitingDate": "",
     "paid": true,
     "paymentDate": "2026-05-13",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
-  },
-  {
-    "id": "mp2w6yv68enu",
-    "createdAt": "2026-05-12T17:16:13.698Z",
-    "updatedAt": "2026-05-13T13:56:04.480Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Cory Hammond",
-    "customerPhone": "(574) 398 - 7139",
-    "repairOrder": "777034",
-    "vin": "5NPD84LF0LH501401",
-    "vehicleYear": "2020",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Elantra",
-    "mileage": "74532",
-    "warrantyCompany": "AAGI",
-    "warrantyPhone": "18884428286",
-    "claimNumber": "591159",
-    "authNumber": "591159",
-    "laborRate": "170",
-    "laborTime": "14.6",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mp2w6yv6hp66",
-        "partNumber": "520V",
-        "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
-        "qty": "5",
-        "price": "4.99"
-      },
-      {
-        "id": "mp2w9ldfzfq3",
-        "partNumber": "00232-19010",
-        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
-        "qty": "1",
-        "price": "24.85"
-      },
-      {
-        "id": "mp2wa91z6937",
-        "partNumber": "24ZN1-2EX00",
-        "description": "ENGINE ASSY-SUB",
-        "qty": "1",
-        "price": "4838.71"
-      },
-      {
-        "id": "mp2wdxuqq7pu",
-        "partNumber": "28313-2EAA0",
-        "description": "GASKET-PORT",
-        "qty": "1",
-        "price": "13.81"
-      },
-      {
-        "id": "mp2wecev853t",
-        "partNumber": "28521-2E000",
-        "description": "GASKET-EXHAUST MANIFOLD",
-        "qty": "1",
-        "price": "10.53"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "100",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "WAITING ON APPROVAL",
-    "approved": true,
-    "approvedDate": "2026-05-13",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
     "repairsFinished": false,
     "repairsFinishedDate": "",
     "readySubmission": false,
