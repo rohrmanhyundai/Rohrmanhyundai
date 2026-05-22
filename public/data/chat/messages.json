@@ -832,5 +832,16 @@
       "username": "SHAWN",
       "text": "777766 is this car staying here?"
     }
+  },
+  {
+    "id": "mph4ik3fqyv",
+    "username": "SHAWN",
+    "text": "im working with DPSM on this. looks like engine has already been declined by HMA.",
+    "timestamp": 1779466677819,
+    "replyTo": {
+      "id": "mph3tiwiiai",
+      "username": "DAVID",
+      "text": "Engine is rattling like hell but I couldnt get the CEL back on. Imma try it again at the end of the day and if it doesnt return ill have him"
+    }
   }
 ]
