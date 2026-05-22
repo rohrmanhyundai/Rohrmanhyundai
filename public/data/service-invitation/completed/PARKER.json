@@ -916,5 +916,23 @@
     "notes": "",
     "submittedAt": "2026-05-22T20:18:46.898Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "MARK CHEN",
+    "repairOrder": "777584",
+    "vin": "KMHLP4DG3SU015400",
+    "model": "ELANTRA",
+    "serviceDate": "05/19/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-490-8420",
+    "notes": "Couldn't leave a voicemail because \"Voicemail Box has not been set up yet\"",
+    "submittedAt": "2026-05-22T20:20:28.474Z",
+    "submittedBy": "PARKER"
   }
 ]
