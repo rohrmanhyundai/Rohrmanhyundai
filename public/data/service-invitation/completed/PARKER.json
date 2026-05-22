@@ -880,5 +880,23 @@
     "notes": "",
     "submittedAt": "2026-05-20T18:59:34.210Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "CHARAN GANGADAR",
+    "repairOrder": "777679",
+    "vin": "KMHLP4DG1SU931301",
+    "model": "ELANTRA",
+    "serviceDate": "05/19/2026",
+    "invitationDate": "05/21/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "765-977-0190",
+    "notes": "DUPLICATE / ALREADY CONTACTED",
+    "submittedAt": "2026-05-22T20:17:51.547Z",
+    "submittedBy": "PARKER"
   }
 ]
