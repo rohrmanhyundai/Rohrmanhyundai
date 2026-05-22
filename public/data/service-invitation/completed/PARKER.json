@@ -934,5 +934,23 @@
     "notes": "Couldn't leave a voicemail because \"Voicemail Box has not been set up yet\"",
     "submittedAt": "2026-05-22T20:20:28.474Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "CAILIN WILSON",
+    "repairOrder": "777622",
+    "vin": "5NTJBDDE9RH125043",
+    "model": "SANTA CRUZ",
+    "serviceDate": "05/18/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "213-417-2007",
+    "notes": "",
+    "submittedAt": "2026-05-22T20:21:18.648Z",
+    "submittedBy": "PARKER"
   }
 ]
