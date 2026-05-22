@@ -71,8 +71,8 @@
     "jobDesc": "CAR IS DEAD ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/22/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "CAR HAS A BAD ICCU PARTS ARE ON ORDER "
