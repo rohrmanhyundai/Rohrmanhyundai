@@ -898,5 +898,23 @@
     "notes": "DUPLICATE / ALREADY CONTACTED",
     "submittedAt": "2026-05-22T20:17:51.547Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "BENJAMIN LOOP",
+    "repairOrder": "777659",
+    "vin": "KM8JCDD14TU417667",
+    "model": "TUCSON HEV",
+    "serviceDate": "05/19/2026",
+    "invitationDate": "05/21/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765-414-2710",
+    "notes": "",
+    "submittedAt": "2026-05-22T20:18:46.898Z",
+    "submittedBy": "PARKER"
   }
 ]
