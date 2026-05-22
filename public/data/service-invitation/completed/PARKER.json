@@ -970,5 +970,23 @@
     "notes": "DUPLICATE / ALREADY CONTACTED",
     "submittedAt": "2026-05-22T20:22:44.671Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "SANGYUB KIM",
+    "repairOrder": "777439",
+    "vin": "5NMJBCAE8PH187069",
+    "model": "TUCSON",
+    "serviceDate": "05/11/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 (831) 521 - 9558",
+    "notes": "DUPLICATE / ALREADY CONTACTED",
+    "submittedAt": "2026-05-22T20:47:51.877Z",
+    "submittedBy": "PARKER"
   }
 ]
