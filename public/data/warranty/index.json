@@ -2,7 +2,7 @@
   {
     "id": "mp2w6yv68enu",
     "createdAt": "2026-05-12T17:16:13.698Z",
-    "updatedAt": "2026-05-22T14:18:28.483Z",
+    "updatedAt": "2026-05-22T17:17:11.579Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Cory Hammond",
     "customerPhone": "(574) 398 - 7139",
@@ -88,7 +88,7 @@
         "partNumber": "28461-2E920",
         "description": "PIPE-EGR IN \"A\"",
         "qty": "1",
-        "price": "75.92"
+        "price": "75.39"
       },
       {
         "id": "mph05syuksgb",
