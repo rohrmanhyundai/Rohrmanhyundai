@@ -952,5 +952,23 @@
     "notes": "",
     "submittedAt": "2026-05-22T20:21:18.648Z",
     "submittedBy": "PARKER"
+  },
+  {
+    "consultant": "PARKER OVERMAN",
+    "customerName": "KIM SANG",
+    "repairOrder": "777591",
+    "vin": "KMHLW4DK0SU031383",
+    "model": "ELANTRA N",
+    "serviceDate": "05/18/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "831-521-9558",
+    "notes": "DUPLICATE / ALREADY CONTACTED",
+    "submittedAt": "2026-05-22T20:22:44.671Z",
+    "submittedBy": "PARKER"
   }
 ]
