@@ -1,55 +1,16 @@
 [
   {
-    "id": "mp4j1hqn8ti",
-    "ro": "777524",
-    "roDate": "2026-05-13",
-    "jobDesc": "Water Pump, Serp Belt, Timing Belt",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/13/2026",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "RO IN PARKERS DRAWER"
-  },
-  {
     "id": "mon8qrasomb",
     "ro": "777034",
     "roDate": "",
     "jobDesc": "TOW IN TIMING JOB ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/14/2026",
     "highPriority": true,
     "advisor": "DAVID",
-    "notes": "TIMING IS APPROVED AFTER MARKET WARRANTY. CUSTOMER NEEDS TO APPROVE BELT TENSOR. CALLED LEFT MESSAGE. WAITING ON ENGINE REPLACEMENT APROVAL "
-  },
-  {
-    "id": "mp17lzi4e2i",
-    "ro": "777385",
-    "roDate": "2026-05-08",
-    "jobDesc": "CEL FLASHING, Tow in",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "WHY WAS THIS CAR NOT LOOKED AT YESTERDAY "
-  },
-  {
-    "id": "mp33vwyvibm",
-    "ro": "777451",
-    "roDate": "2026-05-12",
-    "jobDesc": "THERMOSTAT ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/13/2026",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": "NO PARTS YET GRAVY ON THE RO TOO "
+    "notes": "TIMING IS APPROVED AFTER MARKET WARRANTY. CUSTOMER NEEDS TO APPROVE BELT TENSOR. CALLED LEFT MESSAGE. ENGINE IS APPROVED WAITING ON PARTS. CAR IS IN THE SHOP NOW WAITING ON STARTER APPROVAL AAGI"
   },
   {
     "id": "mp34iw41yo8",
@@ -58,10 +19,75 @@
     "jobDesc": "SUNROOF ",
     "etaParts": "",
     "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/15/2026",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "parts are here"
+  },
+  {
+    "id": "mp5f0asb2gn",
+    "ro": "777500",
+    "roDate": "2026-05-14",
+    "jobDesc": "AIR BAG LIGHT",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": false,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": "parts are here. AIR BAG CONTROL UNIT APPROVED. WAITING ON THE AIR BAG CONTROL UNIT"
+  },
+  {
+    "id": "mou41a0iex7",
+    "ro": "777092",
+    "roDate": "2026-04-30",
+    "jobDesc": "TIMNING ISSUE ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/15/2026",
+    "highPriority": true,
+    "advisor": "DAVID",
+    "notes": "parts are here. CLINDER HEAD IS AT THE MACHINE SHOP "
+  },
+  {
+    "id": "mp7du8d3kx0",
+    "ro": "777425",
+    "roDate": "2026-05-11",
+    "jobDesc": "Tow In/ HEV warning, vehicle died",
+    "etaParts": "backorder",
+    "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": false,
-    "advisor": "",
-    "notes": "APPROVED WAITING ON PARTS "
+    "advisor": "JORDAN",
+    "notes": "ENGINE WARRANTY EXTENSION (TXXM)  ENGINE IS KNOCKING JORDAN I HAVE FORMS THAT NEED TO BE SIGNED P/A APPROVED ENGINE "
+  },
+  {
+    "id": "mpefq2d2xxo",
+    "ro": "777590",
+    "roDate": "2026-05-20",
+    "jobDesc": "CAR IS DEAD ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/22/2026",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": "parts are here iccu and fuse replacement"
+  },
+  {
+    "id": "mpfxsb54gw3",
+    "ro": "777748",
+    "roDate": "2026-05-21",
+    "jobDesc": "EV POWERTRAIN ISSUE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "WILL NEED TO DO MORE BATTERY TESTING "
   }
 ]

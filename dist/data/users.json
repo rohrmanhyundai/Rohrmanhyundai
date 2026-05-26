@@ -290,28 +290,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Edgar",
-      "password": "Edgar3702.",
-      "role": "technician",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": false,
-        "advisorRankBoard": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": false,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": false,
-        "partsHub": true,
-        "tireQuote": true
-      },
-      "chatAccess": false,
-      "techChatAccess": true
-    },
-    {
       "username": "Derrick",
       "password": "Renails90",
       "role": "technician",
@@ -403,29 +381,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Wyatt",
-      "password": "wyatt2026",
-      "role": "technician",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": false,
-        "advisorRankBoard": false,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": false,
-        "originalOwner": false,
-        "workInProgress": true,
-        "chargeAccountList": false,
-        "partsHub": true,
-        "tireQuote": true,
-        "atDiagWorksheet": true
-      },
-      "chatAccess": false,
-      "techChatAccess": false
-    },
-    {
       "username": "Chapman",
       "lastName": "Cory",
       "password": "cory2026",
@@ -449,7 +404,84 @@
       },
       "chatAccess": false,
       "techChatAccess": true
+    },
+    {
+      "username": "John",
+      "lastName": "Farley",
+      "password": "Rohrman2026$",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
+    },
+    {
+      "username": "Chad",
+      "lastName": "",
+      "password": "Chad2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
+    },
+    {
+      "username": "Kaden",
+      "lastName": "",
+      "password": "Kaden2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": false,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     }
   ],
-  "sharedSaveCode": "sc1:LBpIDiNcZEMgCFFmGC1ITCc9ejs1YRNWCnclQjBJexkqNgscCxEyIg=="
+  "sharedSaveCode": "sc1:LBpIDiNcZEMgCFFmGC1ITCc9ejs1YRNWCnclQjBJexkqNgscCxEyIg==",
+  "awsAccessKeyId": "sc1:CjlxEDpsalVOATt1F0MLThI/cxY=",
+  "awsSecretAccessKey": "sc1:IQsOPyNlbzxLaxgbBCALF3oxVzoVGQZrHHQtWxJ6Bk9kBWAIJGwXJQ=="
 }
