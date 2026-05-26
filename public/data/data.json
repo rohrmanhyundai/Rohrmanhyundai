@@ -94,13 +94,13 @@
         "total": 21.299999999999997,
         "goal_pct": 0.4484210526315789,
         "pacing": 26.624999999999996,
-        "certified": "\u2014",
-        "trainings_due": "\u2014",
-        "excel_training": "\u2014"
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       },
       {
         "name": "CHAD",
-        "goal": 25.5,
+        "goal": 47.5,
         "mon": 0,
         "tue": 0,
         "wed": 0,
@@ -116,7 +116,7 @@
       },
       {
         "name": "KADEN",
-        "goal": 25.5,
+        "goal": 47.5,
         "mon": 0,
         "tue": 0,
         "wed": 0,
@@ -255,15 +255,15 @@
       "csi": 958.3333333333334
     },
     "techTotals": {
-      "mon": 44.1,
-      "tue": 53.50000000000001,
-      "wed": 47.6,
-      "thu": 52.199999999999996,
+      "mon": 40.2,
+      "tue": 48.800000000000004,
+      "wed": 45.9,
+      "thu": 49.9,
       "fri": 0,
       "sat": 6.800000000000001,
-      "week_total": 204.2,
-      "week_pct": 0.7077989601386482,
-      "shop_pacing": 252.26
+      "week_total": 191.59999999999997,
+      "week_pct": 0.5702380952380951,
+      "shop_pacing": 236.51
     },
     "grossGoal": 165198,
     "grossActual": 132663,
@@ -274,35 +274,28 @@
   "vacations": [
     {
       "name": "DAVID",
-      "dates": "May 26, 2026 \u2013 Jun 3, 2026",
+      "dates": "May 26, 2026 – Jun 3, 2026",
       "dateStart": "2026-05-26",
       "dateEnd": "2026-06-03",
       "status": "APPROVED"
     },
     {
-      "name": "JACOB",
-      "dates": "May 22, 2026",
-      "dateStart": "2026-05-22",
-      "dateEnd": "2026-05-22",
-      "status": "APPROVED"
-    },
-    {
       "name": "CARTER",
-      "dates": "Jul 6\u201310, 2026",
+      "dates": "Jul 6–10, 2026",
       "dateStart": "2026-07-06",
       "dateEnd": "2026-07-10",
       "status": "APPROVED"
     },
     {
       "name": "JACOB",
-      "dates": "Aug 17\u201321, 2026",
+      "dates": "Aug 17–21, 2026",
       "dateStart": "2026-08-17",
       "dateEnd": "2026-08-21",
       "status": "APPROVED"
     },
     {
       "name": "GAVEN",
-      "dates": "Jun 29, 2026 \u2013 Jul 3, 2026",
+      "dates": "Jun 29, 2026 – Jul 3, 2026",
       "dateStart": "2026-06-29",
       "dateEnd": "2026-07-03",
       "status": "APPROVED"
