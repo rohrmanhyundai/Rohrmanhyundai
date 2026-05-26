@@ -293,7 +293,7 @@
       "username": "Edgar",
       "password": "Edgar3702.",
       "role": "technician",
-      "canEditDashboard": true,
+      "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
         "advisorRankBoard": true,
