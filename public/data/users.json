@@ -384,7 +384,7 @@
       "username": "Wyatt",
       "password": "wyatt2026",
       "role": "technician",
-      "canEditDashboard": false,
+      "canEditDashboard": true,
       "pages": {
         "advisorCalendar": false,
         "advisorRankBoard": false,
