@@ -123,7 +123,7 @@
         "hours_per_ro": 1.22,
         "align": 0.0843,
         "tires": 0.041100000000000005,
-        "valvoline": 0.21899999999999997,
+        "valvoline": 0.2289,
         "csi": 959,
         "asr": 0.1483,
         "elr": 0.93,
@@ -137,7 +137,7 @@
         "daily_avg": 12.58636364,
         "mtd_hours": 202.9,
         "hours_per_ro": 0.98,
-        "align": 0.1371,
+        "align": 0.2177,
         "tires": 0.12279999999999999,
         "valvoline": 0.18,
         "csi": 973,
@@ -152,7 +152,7 @@
         "mtd_hours": 206.5,
         "daily_avg": 0,
         "hours_per_ro": 1.32,
-        "align": 0.23600000000000002,
+        "align": 0.3258,
         "tires": 0.092,
         "valvoline": 0.35,
         "roh50_hrs_ro": 0.84,
@@ -233,9 +233,9 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 587.2,
-      "align": 0.15246666666666667,
+      "align": 0.20926666666666663,
       "tires": 0.0853,
-      "valvoline": 0.24966666666666662,
+      "valvoline": 0.2529666666666666,
       "csi": 958.3333333333334
     },
     "techTotals": {
