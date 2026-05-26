@@ -37,7 +37,51 @@ export function advisorGoalPct(advisor, data) {
   return goal > 0 ? projected / goal : 0;
 }
 
-export function recalcTech(data) {
+// Returns ISO date strings (YYYY-MM-DD) for Mon..Sat of the current week (local time).
+function currentWeekDates() {
+  const out = {};
+  const now = new Date();
+  const dow = now.getDay(); // 0=Sun
+  // Monday of this week
+  const monday = new Date(now);
+  const diff = dow === 0 ? -6 : 1 - dow;
+  monday.setDate(now.getDate() + diff);
+  ['mon','tue','wed','thu','fri','sat'].forEach((k, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    out[k] = `${yyyy}-${mm}-${dd}`;
+  });
+  return out;
+}
+
+const OFF_STATUSES = ['holiday', 'vacation', 'training'];
+
+// If a tech's calendar marks a day as Holiday/Vacation/Training (or a shop-wide
+// __HOLIDAY__ is set for that date), inject 8.0 hours into that day on the
+// dashboard when no hours have been entered.
+export function applyScheduleHours(data, schedules) {
+  if (!schedules || !data?.technicians) return;
+  const dates = currentWeekDates();
+  const shopHolidays = schedules.__HOLIDAY__ || {};
+  data.technicians.forEach(t => {
+    const sched = schedules[(t.name || '').toUpperCase()] || {};
+    ['mon','tue','wed','thu','fri','sat'].forEach(day => {
+      const date = dates[day];
+      const raw = String(sched[date] || '').trim().toLowerCase();
+      const isShopHoliday = !!shopHolidays[date];
+      const isOff = isShopHoliday || OFF_STATUSES.includes(raw);
+      if (isOff && safe(t[day], 0) === 0) {
+        t[day] = 8;
+      }
+    });
+  });
+}
+
+export function recalcTech(data, schedules) {
+  applyScheduleHours(data, schedules);
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   let totalGoal = 0, weekTotal = 0;
   const totals = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 };
