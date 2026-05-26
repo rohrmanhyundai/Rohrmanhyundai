@@ -88,6 +88,8 @@ export default function App() {
   }
   function navTo(dest) { pageRef.current = dest; setPage(dest); }
   const [schedules, setSchedules] = useState({});
+  const schedulesRef = useRef({});
+  useEffect(() => { schedulesRef.current = schedules; }, [schedules]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
@@ -110,7 +112,7 @@ export default function App() {
       }
       if (payload && payload.data) {
         const d = payload.data;
-        recalcTech(d);
+        recalcTech(d, schedulesRef.current);
         recalcAdvisorSummary(d);
         setData(d);
         setVacations(Array.isArray(payload.vacations) ? payload.vacations : (d.vacations || []));
@@ -131,8 +133,14 @@ export default function App() {
   }, [loadDashboard]);
 
   useEffect(() => {
-    loadSchedules().then(s => setSchedules(s || {})).catch(() => {});
-  }, []);
+    loadSchedules().then(s => {
+      setSchedules(s || {});
+      schedulesRef.current = s || {};
+      // Re-apply schedule-driven hours (holiday/vacation/training → 8.0)
+      // now that schedules are available.
+      loadDashboard();
+    }).catch(() => {});
+  }, [loadDashboard]);
 
   // Chat notification polling — check for new messages every 5s
   useEffect(() => {
@@ -269,7 +277,7 @@ export default function App() {
   }
 
   function handleDataChange(newData, newVacations) {
-    recalcTech(newData);
+    recalcTech(newData, schedulesRef.current);
     recalcAdvisorSummary(newData);
     newData.advisors.forEach(a => {
       const p = newData.advisorMonthlyWorkdays || 27;
