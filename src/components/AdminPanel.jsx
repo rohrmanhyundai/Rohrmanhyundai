@@ -777,6 +777,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               {t.name}
               <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
             </div>
+            <div className="form-grid" style={{ marginBottom: 8 }}>
+              <div className="field"><label>Weekly Goal (hrs)</label><input defaultValue={t.goal ?? ''} onBlur={e => updateField(`technicians.${idx}.goal`, safe(e.target.value, t.goal))} /></div>
+            </div>
             <div className="form-grid">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
                 <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
