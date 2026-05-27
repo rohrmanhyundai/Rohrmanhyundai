@@ -305,6 +305,27 @@
       "dateStart": "2026-06-29",
       "dateEnd": "2026-07-03",
       "status": "APPROVED"
+    },
+    {
+      "name": "JERRY",
+      "dates": "Jun 26, 2026",
+      "dateStart": "2026-06-26",
+      "dateEnd": "2026-06-26",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CORY",
+      "dates": "Jul 21–24, 2026",
+      "dateStart": "2026-07-21",
+      "dateEnd": "2026-07-24",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CORY",
+      "dates": "Jul 27–29, 2026",
+      "dateStart": "2026-07-27",
+      "dateEnd": "2026-07-29",
+      "status": "APPROVED"
     }
   ]
 }
