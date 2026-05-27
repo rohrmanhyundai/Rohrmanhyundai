@@ -85,18 +85,21 @@
       {
         "name": "JOHN",
         "goal": 47.5,
-        "mon": 8,
+        "mon": 0,
         "tue": 5.2,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 13.2,
-        "goal_pct": 0.27789473684210525,
-        "pacing": 33,
+        "total": 5.2,
+        "goal_pct": 0.10947368421052632,
+        "pacing": 26,
         "certified": "—",
         "trainings_due": "—",
-        "excel_training": "—"
+        "excel_training": "—",
+        "hoursOverride": {
+          "2026-05-25": true
+        }
       },
       {
         "name": "CHAD",
@@ -117,18 +120,21 @@
       {
         "name": "KADEN",
         "goal": 47.5,
-        "mon": 8,
+        "mon": 0,
         "tue": 4.5,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 12.5,
-        "goal_pct": 0.2631578947368421,
-        "pacing": 31.25,
+        "total": 4.5,
+        "goal_pct": 0.09473684210526316,
+        "pacing": 22.5,
         "certified": "NO",
         "trainings_due": "0",
-        "excel_training": "NA"
+        "excel_training": "NA",
+        "hoursOverride": {
+          "2026-05-25": true
+        }
       }
     ],
     "advisors": [
@@ -255,15 +261,15 @@
       "csi": 958.3333333333334
     },
     "techTotals": {
-      "mon": 64,
+      "mon": 48,
       "tue": 45.7,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 0,
-      "week_total": 109.7,
-      "week_pct": 0.32648809523809524,
-      "shop_pacing": 274.25
+      "week_total": 93.7,
+      "week_pct": 0.2788690476190476,
+      "shop_pacing": 258.5
     },
     "grossGoal": 165198,
     "grossActual": 124084,
@@ -298,6 +304,27 @@
       "dates": "Jun 29, 2026 – Jul 3, 2026",
       "dateStart": "2026-06-29",
       "dateEnd": "2026-07-03",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JERRY",
+      "dates": "Jun 26, 2026",
+      "dateStart": "2026-06-26",
+      "dateEnd": "2026-06-26",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CORY",
+      "dates": "Jul 21–24, 2026",
+      "dateStart": "2026-07-21",
+      "dateEnd": "2026-07-24",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CORY",
+      "dates": "Jul 27–29, 2026",
+      "dateStart": "2026-07-27",
+      "dateEnd": "2026-07-29",
       "status": "APPROVED"
     }
   ]
