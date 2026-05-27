@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
-import { advisorDailyAverage } from '../utils/calculations';
+import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers } from '../utils/github';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -291,6 +291,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
     obj[keys[keys.length - 1]] = value;
     onDataChange(newData, newVacations);
+  }
+
+  // Sets a technician's day-hrs AND records a per-date override flag so the
+  // schedule-driven auto-fill (Holiday/Vacation/Training → 8.0) won't overwrite
+  // a manually entered value (e.g., 0 for a new employee with no PTO yet).
+  function overrideTechHours(idx, day, value) {
+    const newData = structuredClone(data);
+    const tech = newData.technicians[idx];
+    tech[day] = value;
+    const date = currentWeekDates()[day];
+    tech.hoursOverride = { ...(tech.hoursOverride || {}), [date]: true };
+    onDataChange(newData, structuredClone(vacations));
   }
 
   async function handleSave() {
@@ -782,7 +794,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="form-grid">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
-                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input defaultValue={t[day]} onBlur={e => updateField(`technicians.${idx}.${day}`, safe(e.target.value, t[day]))} /></div>
+                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input defaultValue={t[day]} onBlur={e => overrideTechHours(idx, day, safe(e.target.value, t[day]))} /></div>
               ))}
             </div>
             <div className="form-grid" style={{ marginTop: 8 }}>

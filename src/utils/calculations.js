@@ -38,7 +38,7 @@ export function advisorGoalPct(advisor, data) {
 }
 
 // Returns ISO date strings (YYYY-MM-DD) for Mon..Sat of the current week (local time).
-function currentWeekDates() {
+export function currentWeekDates() {
   const out = {};
   const now = new Date();
   const dow = now.getDay(); // 0=Sun
@@ -68,8 +68,10 @@ export function applyScheduleHours(data, schedules) {
   const shopHolidays = schedules.__HOLIDAY__ || {};
   data.technicians.forEach(t => {
     const sched = schedules[(t.name || '').toUpperCase()] || {};
+    const overrides = t.hoursOverride || {};
     ['mon','tue','wed','thu','fri','sat'].forEach(day => {
       const date = dates[day];
+      if (overrides[date]) return; // user manually entered a value for this date
       const raw = String(sched[date] || '').trim().toLowerCase();
       const isShopHoliday = !!shopHolidays[date];
       const isOff = isShopHoliday || OFF_STATUSES.includes(raw);
