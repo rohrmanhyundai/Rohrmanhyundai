@@ -788,7 +788,15 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   {r.jobDesc && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Job: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.jobDesc}</span></div>}
                   {r.etaParts && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>ETA Parts: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.etaParts}</span></div>}
                   {r.etaCompletion && <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>ETA Completion: </span><span style={{ fontSize: 13, color: '#e2e8f0' }}>{r.etaCompletion}</span></div>}
-                  <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Parts Arrived: </span><span style={{ fontSize: 13, color: r.partsArrived === true ? '#86efac' : r.partsArrived === false ? '#fca5a5' : '#475569' }}>{r.partsArrived === true ? '✓ Yes' : r.partsArrived === false ? '✗ No' : '—'}</span></div>
+                  {r.partsArrived === true ? (
+                    <div className="parts-here-badge" style={{ padding: '6px 10px', fontSize: 11 }}>
+                      <span className="pha-icon" style={{ fontSize: 16 }}>📦</span>
+                      <span>Parts Here</span>
+                      {r.partsArrivedDate && <span className="pha-date">📅 {r.partsArrivedDate}</span>}
+                    </div>
+                  ) : (
+                    <div><span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Parts Arrived: </span><span style={{ fontSize: 13, color: r.partsArrived === false ? '#fca5a5' : '#475569' }}>{r.partsArrived === false ? '✗ No' : '—'}</span></div>
+                  )}
                 </div>
               </div>
             );})}
@@ -881,12 +889,22 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   </div>
                   <div>
                     <div style={labelSt}>Parts Arrived</div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
-                      <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => togglePartsArrived(row.id, row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
-                      <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => togglePartsArrived(row.id, row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
-                    </div>
-                    {row.partsArrived === true && row.partsArrivedDate && (
-                      <div style={{ marginTop: 4, fontSize: 11, color: '#86efac', fontWeight: 700 }}>📅 {row.partsArrivedDate}</div>
+                    {row.partsArrived === true ? (
+                      <div className="parts-here-badge" style={{ marginTop: 2 }}>
+                        <span className="pha-icon">📦</span>
+                        <span>Parts Here</span>
+                        {row.partsArrivedDate && <span className="pha-date">📅 {row.partsArrivedDate}</span>}
+                        <button
+                          className="pha-undo"
+                          onClick={() => togglePartsArrived(row.id, null)}
+                          title="Mark parts as not arrived"
+                        >Undo</button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
+                        <ChipBtn active={row.partsArrived === true}  color="green" onClick={() => togglePartsArrived(row.id, row.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
+                        <ChipBtn active={row.partsArrived === false} color="red"   onClick={() => togglePartsArrived(row.id, row.partsArrived === false ? null : false)}>✗ No</ChipBtn>
+                      </div>
                     )}
                   </div>
                   <div>

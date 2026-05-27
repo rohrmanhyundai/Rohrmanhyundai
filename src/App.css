@@ -376,3 +376,70 @@ html, body {
 *::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* Eye-catching "Parts Arrived" badge — pulses to grab attention of tech/advisor */
+@keyframes partsHerePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.55), 0 0 18px 2px rgba(34,197,94,0.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(34,197,94,0),    0 0 28px 6px rgba(34,197,94,0.55); }
+}
+@keyframes partsHereShine {
+  0%   { background-position: -120% 0; }
+  100% { background-position: 220% 0; }
+}
+.parts-here-badge {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(34,197,94,0.28) 0%, rgba(16,185,129,0.22) 100%);
+  border: 1.5px solid rgba(34,197,94,0.65);
+  color: #bbf7d0;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 13px;
+  animation: partsHerePulse 2.2s ease-in-out infinite;
+}
+.parts-here-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: partsHereShine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.parts-here-badge .pha-icon {
+  font-size: 22px;
+  filter: drop-shadow(0 0 6px rgba(34,197,94,0.7));
+}
+.parts-here-badge .pha-date {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: #86efac;
+  background: rgba(0,0,0,0.25);
+  border-radius: 6px;
+  padding: 3px 8px;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+.parts-here-badge .pha-undo {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #d1fae5;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.parts-here-badge .pha-undo:hover {
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+}
