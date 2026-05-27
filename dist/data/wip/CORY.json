@@ -19,11 +19,11 @@
     "jobDesc": "tow in, cel flashing",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/20/2026",
+    "partsArrived": false,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "parts here, replaced timing components. Timing codes gone, engine now runs. Cylinder 3&4 misfire still present. Performed cylinder leak down test, cylinders 3 & 4 have 100% leak down. Inspected via boroscope. Found damage to cylinder 3 wall. Uploaded photo via STUI. Techline advised sending video of leak down test. Uploaded video. Techline advises replacing engine. PA APPROVED ENGINE "
+    "notes": "parts here, replaced timing components. Timing codes gone, engine now runs. Cylinder 3&4 misfire still present. Performed cylinder leak down test, cylinders 3 & 4 have 100% leak down. Inspected via boroscope. Found damage to cylinder 3 wall. Uploaded photo via STUI. Techline advised sending video of leak down test. Uploaded video. ENGINE IS APPROVED "
   },
   {
     "id": "mpd0tglf3ap",
@@ -36,7 +36,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "WAITING ON APPROVAL NEEDS RADIATOR, disassembled to find point of failure. POF found and noted. "
+    "notes": "WAITING ON APPROVAL NEEDS RADIATOR, disassembled to find point of failure. POF found and noted. called left another VM"
   },
   {
     "id": "mphfvyg5uav",
@@ -49,6 +49,6 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "P/A  IS SUBMITTED FOR ENGINE REPLACEMENT, Uploaded STUI photo of valvetrain. "
+    "notes": "P/A  IS SUBMITTED FOR ENGINE REPLACEMENT, Uploaded STUI photo of valvetrain. PA APPROVED ENGINE "
   }
 ]
