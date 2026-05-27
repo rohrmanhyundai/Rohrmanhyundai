@@ -896,7 +896,11 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                         {row.partsArrivedDate && <span className="pha-date">📅 {row.partsArrivedDate}</span>}
                         <button
                           className="pha-undo"
-                          onClick={() => togglePartsArrived(row.id, null)}
+                          onClick={() => {
+                            if (window.confirm('Undo "Parts Here"?\n\nThis will clear the parts-arrived status and remove the arrival date. Only do this if it was marked by mistake.')) {
+                              togglePartsArrived(row.id, null);
+                            }
+                          }}
                           title="Mark parts as not arrived"
                         >Undo</button>
                       </div>
