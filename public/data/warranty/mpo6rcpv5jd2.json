@@ -1,7 +1,7 @@
 {
   "id": "mpo6rcpv5jd2",
   "createdAt": "2026-05-27T14:55:10.627Z",
-  "updatedAt": "2026-05-27T15:00:34.354Z",
+  "updatedAt": "2026-05-27T15:19:33.931Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "S RIDER CONSTRUCTIO",
   "customerPhone": "765) 421 - 9729",
@@ -14,7 +14,7 @@
   "warrantyCompany": "smart driver",
   "warrantyPhone": "8886849327",
   "claimNumber": "292-16615408",
-  "authNumber": "3238028-8482520",
+  "authNumber": "3238028-8482627",
   "laborRate": "73.34",
   "laborTime": ".60",
   "diagnosisTime": "",
@@ -24,7 +24,7 @@
       "partNumber": "4120500",
       "description": "PIRELLI SCORPION MS",
       "qty": "2",
-      "price": "214.99"
+      "price": "411.99"
     }
   ],
   "taxPct": "7",
