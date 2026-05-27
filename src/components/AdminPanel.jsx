@@ -632,6 +632,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
       { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
     ] : []),
+    ...(currentRole === 'admin' ? [
+      { id: 'forceRefresh', icon: '🔄', label: 'Force Refresh All Users', desc: 'Push newly deployed features live by reloading every logged-in browser', color: '#f87171', bg: 'rgba(239,68,68,.12)', border: 'rgba(239,68,68,.4)' },
+    ] : []),
   ];
 
   const activeCard = ADMIN_CARDS.find(c => c.id === openSection);
@@ -1188,7 +1191,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 {ADMIN_CARDS.map(card => (
                   <button
                     key={card.id}
-                    onClick={() => setOpenSection(card.id)}
+                    onClick={async () => {
+                      if (card.id === 'forceRefresh') {
+                        if (forceRefreshState === 'sending') return;
+                        if (!window.confirm('Force refresh ALL logged-in users now?\n\nEvery open browser will reload within a few seconds. Any unsaved input on their screen could be lost.')) return;
+                        setForceRefreshState('sending');
+                        try {
+                          await triggerEvent(SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, { ts: Date.now(), by: currentUser || 'admin' });
+                          setForceRefreshState('sent');
+                          setTimeout(() => setForceRefreshState('idle'), 4000);
+                        } catch (e) {
+                          setForceRefreshState('idle');
+                          alert('Force refresh failed: ' + (e?.message || e));
+                        }
+                        return;
+                      }
+                      setOpenSection(card.id);
+                    }}
                     style={{
                       background: card.bg,
                       border: `1px solid ${card.border}`,
@@ -1206,7 +1225,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   >
                     <div style={{ fontSize: 36 }}>{card.icon}</div>
                     <div>
-                      <div style={{ fontWeight: 900, fontSize: 15, color: card.color, marginBottom: 5 }}>{card.label}</div>
+                      <div style={{ fontWeight: 900, fontSize: 15, color: card.id === 'forceRefresh' && forceRefreshState === 'sent' ? '#86efac' : card.color, marginBottom: 5 }}>
+                        {card.id === 'forceRefresh' && forceRefreshState === 'sending' ? '⏳ Sending refresh signal…'
+                          : card.id === 'forceRefresh' && forceRefreshState === 'sent' ? '✅ Refresh signal sent'
+                          : card.label}
+                      </div>
                       <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.55 }}>{card.desc}</div>
                     </div>
                   </button>
