@@ -8,7 +8,9 @@ const CLUSTER = 'us2';
 
 export const ADVISOR_CHANNEL = 'rohrman-advisor-chat';
 export const TECH_CHANNEL    = 'rohrman-tech-chat';
-export const NEW_MSG_EVENT   = 'new-message';
+export const SYSTEM_CHANNEL  = 'rohrman-system';
+export const NEW_MSG_EVENT       = 'new-message';
+export const FORCE_REFRESH_EVENT = 'force-refresh';
 
 let _pusher = null;
 export function getPusher() {
