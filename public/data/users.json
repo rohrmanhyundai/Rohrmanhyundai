@@ -8,7 +8,7 @@
     {
       "username": "Shawn",
       "password": "[REDACTED]",
-      "role": "service manager",
+      "role": "admin",
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
