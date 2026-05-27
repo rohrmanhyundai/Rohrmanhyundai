@@ -6,6 +6,7 @@ import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
+import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from './utils/pusher';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
@@ -143,6 +144,27 @@ export default function App() {
   }, [loadDashboard]);
 
   // Chat notification polling — check for new messages every 5s
+  // Admin-triggered force refresh — listens on a shared Pusher channel.
+  // When an admin pushes the "Force Refresh All Users" button, every logged-in
+  // browser reloads itself (cache-busted) so new features go live immediately.
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    try {
+      const ch = getPusher().subscribe(SYSTEM_CHANNEL);
+      const handler = (payload) => {
+        const ts = payload && payload.ts ? payload.ts : Date.now();
+        const lastSeen = parseInt(localStorage.getItem('forceRefreshSeen') || '0', 10);
+        if (ts <= lastSeen) return; // ignore stale / already-handled refreshes
+        localStorage.setItem('forceRefreshSeen', String(ts));
+        // Brief notice, then hard reload bypassing cache.
+        try { console.log('[force-refresh] reloading at', new Date(ts).toISOString()); } catch {}
+        setTimeout(() => { window.location.reload(true); }, 250);
+      };
+      ch.bind(FORCE_REFRESH_EVENT, handler);
+      return () => { try { ch.unbind(FORCE_REFRESH_EVENT, handler); getPusher().unsubscribe(SYSTEM_CHANNEL); } catch {} };
+    } catch (e) { console.warn('force-refresh subscribe failed:', e); }
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (!isLoggedIn || !currentUser) return;
     const me = currentUser.toUpperCase();

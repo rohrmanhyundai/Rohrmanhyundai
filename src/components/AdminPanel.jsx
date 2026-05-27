@@ -5,6 +5,7 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
+import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/pusher';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -113,6 +114,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [saving, setSaving] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
+  const [forceRefreshState, setForceRefreshState] = useState('idle'); // idle | sending | sent | error
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
@@ -699,6 +701,40 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <label>Dashboard Title</label>
           <input value={data.title || ''} onChange={e => updateField('title', e.target.value)} />
         </div>
+
+        {currentRole === 'admin' && (
+          <div style={{ marginTop: 20, padding: 14, background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.35)', borderRadius: 10 }}>
+            <div style={{ fontWeight: 800, color: '#fca5a5', fontSize: 13, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 6 }}>
+              🔄 Force Refresh All Users
+            </div>
+            <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
+              Pushes a signal to every logged-in browser to reload the page so newly-deployed features go live immediately. Admin only.
+            </div>
+            <button
+              disabled={forceRefreshState === 'sending'}
+              onClick={async () => {
+                if (!window.confirm('Force refresh ALL logged-in users now?\n\nEvery open browser will reload within a few seconds. Any unsaved input on their screen could be lost.')) return;
+                setForceRefreshState('sending');
+                try {
+                  await triggerEvent(SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, { ts: Date.now(), by: currentUser || 'admin' });
+                  setForceRefreshState('sent');
+                  setTimeout(() => setForceRefreshState('idle'), 4000);
+                } catch (e) {
+                  setForceRefreshState('error');
+                  alert('Force refresh failed: ' + (e?.message || e));
+                }
+              }}
+              style={{
+                background: forceRefreshState === 'sent' ? 'rgba(34,197,94,.2)' : 'rgba(239,68,68,.18)',
+                border: `1px solid ${forceRefreshState === 'sent' ? 'rgba(34,197,94,.5)' : 'rgba(239,68,68,.5)'}`,
+                color: forceRefreshState === 'sent' ? '#86efac' : '#fca5a5',
+                fontWeight: 800, padding: '8px 18px', borderRadius: 8, fontSize: 13, cursor: 'pointer',
+              }}
+            >
+              {forceRefreshState === 'sending' ? '⏳ Sending…' : forceRefreshState === 'sent' ? '✅ Refresh signal sent' : '🔄 Force Refresh All Users'}
+            </button>
+          </div>
+        )}
       </div>
     );
 
