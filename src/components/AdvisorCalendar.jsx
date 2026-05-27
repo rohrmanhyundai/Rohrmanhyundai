@@ -134,9 +134,10 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             return (
               <div key={j.id || `${j.ro}-${i}`} style={{
                 display: 'flex', alignItems: 'flex-start', gap: 10,
-                background: mine ? 'rgba(61,214,195,.10)' : 'rgba(255,255,255,.03)',
-                border: mine ? '1px solid rgba(61,214,195,.7)' : '1px solid rgba(255,255,255,.06)',
-                boxShadow: mine ? '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)' : 'none',
+                background: mine ? 'rgba(61,214,195,.10)' : j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
+                border: mine ? '1px solid rgba(61,214,195,.7)' : j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
+                borderLeft: j.partsArrived === true ? '4px solid rgba(34,197,94,.85)' : undefined,
+                boxShadow: mine ? '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)' : j.partsArrived === true ? '0 0 10px rgba(34,197,94,.25)' : 'none',
                 borderRadius: 8, padding: '8px 12px',
               }}>
                 <div
@@ -156,7 +157,11 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 </div>
                 {j.highPriority && <span style={{ fontSize: 10, fontWeight: 800, color: '#f87171', background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap', alignSelf: 'center' }}>HIGH</span>}
                 {j.partsArrived === false && j.etaParts && <span style={{ fontSize: 10, color: '#fbbf24', whiteSpace: 'nowrap', alignSelf: 'center' }}>parts ETA {j.etaParts}</span>}
-                {j.partsArrived === true && <span style={{ fontSize: 10, color: '#4ade80', whiteSpace: 'nowrap', alignSelf: 'center' }}>✓ parts in</span>}
+                {j.partsArrived === true && (
+                  <span className="parts-in-pill" style={{ alignSelf: 'center' }}>
+                    <span className="pip-icon">📦</span>Parts In{j.partsArrivedDate ? ` · ${j.partsArrivedDate}` : ''}
+                  </span>
+                )}
                 {age != null && <span style={{ fontSize: 11, color: ageColor, whiteSpace: 'nowrap', alignSelf: 'center', fontWeight: 700 }}>{age}d</span>}
                 {onOpen && (
                   <button
