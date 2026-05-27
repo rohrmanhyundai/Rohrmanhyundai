@@ -1,18 +1,5 @@
 [
   {
-    "id": "mon8qrasomb",
-    "ro": "777034",
-    "roDate": "",
-    "jobDesc": "TOW IN TIMING JOB ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/14/2026",
-    "highPriority": true,
-    "advisor": "DAVID",
-    "notes": "TIMING IS APPROVED AFTER MARKET WARRANTY. CUSTOMER NEEDS TO APPROVE BELT TENSOR. CALLED LEFT MESSAGE. ENGINE IS APPROVED WAITING ON PARTS. CAR IS IN THE SHOP NOW WAITING ON STARTER APPROVAL AAGI"
-  },
-  {
     "id": "mp34iw41yo8",
     "ro": "777476",
     "roDate": "2026-05-12",
@@ -20,10 +7,10 @@
     "etaParts": "",
     "etaCompletion": "",
     "partsArrived": true,
-    "partsArrivedDate": "05/15/2026",
+    "partsArrivedDate": "05/27/2026",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "parts are here"
+    "notes": "parts are here 5/27/26. CAR IS IN THE SHOP NOW "
   },
   {
     "id": "mp5f0asb2gn",
@@ -49,7 +36,7 @@
     "partsArrivedDate": "05/15/2026",
     "highPriority": true,
     "advisor": "DAVID",
-    "notes": "parts are here. CLINDER HEAD IS AT THE MACHINE SHOP "
+    "notes": "parts are here. CLINDER HEAD IS AT THE MACHINE SHOP READY FOR PICK UP"
   },
   {
     "id": "mp7du8d3kx0",
@@ -75,7 +62,7 @@
     "partsArrivedDate": "05/22/2026",
     "highPriority": false,
     "advisor": "PARKER",
-    "notes": "parts are here iccu and fuse replacement"
+    "notes": "parts are here iccu and fuse replacement. PARTS ARE HERE "
   },
   {
     "id": "mpfxsb54gw3",

@@ -1078,7 +1078,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'schedule') return (
       <div style={{ margin: '0 -8px' }}>
-        <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} embedded={true} />
+        <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} vacations={vacations} embedded={true} />
       </div>
     );
 
@@ -1271,7 +1271,31 @@ function parseShiftTime(val) {
   };
 }
 
-function ScheduleEditor({ schedules = {}, onSchedulesChange, users, embedded = false }) {
+function ScheduleEditor({ schedules = {}, onSchedulesChange, users, vacations = [], embedded = false }) {
+  // Build a quick lookup of approved / pending vacation date ranges per employee name (UPPERCASE).
+  const vacByEmployee = React.useMemo(() => {
+    const map = {};
+    (vacations || []).forEach(v => {
+      if (!v || !v.dateStart) return;
+      const key = (v.name || '').toUpperCase();
+      if (!key) return;
+      const status = (v.status || '').toUpperCase();
+      (map[key] = map[key] || []).push({
+        start: v.dateStart,
+        end: v.dateEnd || v.dateStart,
+        approved: status === 'APPROVED',
+      });
+    });
+    return map;
+  }, [vacations]);
+  function vacationFor(employeeName, dateStr) {
+    const list = vacByEmployee[(employeeName || '').toUpperCase()];
+    if (!list) return null;
+    for (const r of list) {
+      if (dateStr >= r.start && dateStr <= r.end) return r;
+    }
+    return null;
+  }
   const today = new Date();
   const [schedYear, setSchedYear] = React.useState(today.getFullYear());
   const [schedMonth, setSchedMonth] = React.useState(today.getMonth());
@@ -1497,10 +1521,13 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, embedded = f
               const dateStr = `${schedYear}-${String(schedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
               const isHoliday = schedules[HOLIDAY_KEY]?.[dateStr] === 'holiday';
               const val = !isHoliday && schedEmployee ? schedules[schedEmployee]?.[dateStr] : null;
+              const vacReq = !isHoliday && !val && schedEmployee ? vacationFor(schedEmployee, dateStr) : null;
               const isCopied = copiedDay?.dateStr === dateStr;
               const isActive = editing?.dateStr === dateStr;
-              const color = isActive ? 'rgba(59,130,246,0.28)' : isCopied ? 'rgba(110,231,249,0.18)' : isHoliday ? 'rgba(239,68,68,0.18)' : !val ? 'rgba(255,255,255,0.04)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : val === 'training' ? 'rgba(139,92,246,0.2)' : 'rgba(61,214,195,0.15)';
-              const border = isActive ? 'rgba(96,165,250,0.9)' : isCopied ? 'rgba(110,231,249,0.7)' : isHoliday ? 'rgba(239,68,68,0.55)' : !val ? 'rgba(255,255,255,0.08)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : val === 'training' ? 'rgba(139,92,246,0.5)' : 'rgba(61,214,195,0.5)';
+              const vacBg = vacReq ? (vacReq.approved ? 'rgba(245,158,11,0.16)' : 'rgba(245,158,11,0.08)') : null;
+              const vacBorder = vacReq ? (vacReq.approved ? 'rgba(245,158,11,0.45)' : 'rgba(245,158,11,0.3)') : null;
+              const color = isActive ? 'rgba(59,130,246,0.28)' : isCopied ? 'rgba(110,231,249,0.18)' : isHoliday ? 'rgba(239,68,68,0.18)' : val === 'vacation' ? 'rgba(245,158,11,0.2)' : val === 'off' ? 'rgba(100,116,139,0.2)' : val === 'training' ? 'rgba(139,92,246,0.2)' : val ? 'rgba(61,214,195,0.15)' : vacBg ? vacBg : 'rgba(255,255,255,0.04)';
+              const border = isActive ? 'rgba(96,165,250,0.9)' : isCopied ? 'rgba(110,231,249,0.7)' : isHoliday ? 'rgba(239,68,68,0.55)' : val === 'vacation' ? 'rgba(245,158,11,0.5)' : val === 'off' ? 'rgba(100,116,139,0.5)' : val === 'training' ? 'rgba(139,92,246,0.5)' : val ? 'rgba(61,214,195,0.5)' : vacBorder ? vacBorder : 'rgba(255,255,255,0.08)';
               return (
                 <div key={dateStr} onClick={() => openDay(dateStr)} style={{ minHeight: 44, background: color, border: `${isActive ? '2px' : '1px'} solid ${border}`, borderRadius: 6, padding: '3px 4px', cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? '#93c5fd' : isCopied ? '#6ee7f9' : isHoliday ? '#ef4444' : '#94a3b8' }}>{day}</span>
@@ -1509,6 +1536,11 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, embedded = f
                   {val && <span style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : val === 'training' ? '#a78bfa' : '#3dd6c3', lineHeight: 1.2, marginTop: 2 }}>
                     {val === 'vacation' ? 'Vac' : val === 'off' ? 'Off' : val === 'training' ? '🎓 Training' : val.split(' | ')[0].replace(' AM','a').replace(' PM','p')}
                   </span>}
+                  {vacReq && !val && !isHoliday && (
+                    <span style={{ fontSize: 9, color: '#f59e0b', lineHeight: 1.2, marginTop: 2, fontWeight: 700, fontStyle: vacReq.approved ? 'normal' : 'italic' }}>
+                      🌴 {vacReq.approved ? 'PTO' : 'PTO?'}
+                    </span>
+                  )}
                 </div>
               );
             })}
