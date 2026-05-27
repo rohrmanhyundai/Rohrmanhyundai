@@ -11,5 +11,18 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": ""
+  },
+  {
+    "id": "mpo9vqeoh4s",
+    "ro": "777863",
+    "roDate": "2026-05-26",
+    "jobDesc": "Vehicle Shuttering & CEL randomly going on and off / has codes",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": ""
   }
 ]
