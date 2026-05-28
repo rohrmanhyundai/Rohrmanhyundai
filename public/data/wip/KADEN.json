@@ -6,8 +6,8 @@
     "jobDesc": "WAITING ON TIRES ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/28/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "TIRES ARE ON ORDER "
