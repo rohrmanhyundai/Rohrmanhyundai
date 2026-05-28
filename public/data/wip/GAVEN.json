@@ -50,18 +50,5 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "WILL NEED TO DO MORE BATTERY TESTING "
-  },
-  {
-    "id": "mppxepynihm",
-    "ro": "777677",
-    "roDate": "2026-05-19",
-    "jobDesc": "Tow in, seized motor. Doesnt have belt on and battery is dead. UPDATE miles when car has power",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": ""
   }
 ]
