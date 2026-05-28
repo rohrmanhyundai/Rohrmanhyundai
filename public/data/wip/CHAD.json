@@ -37,5 +37,18 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "diag is completed. needs all timing related parts to fix car "
+  },
+  {
+    "id": "mppy4dvuuad",
+    "ro": "777735",
+    "roDate": "2026-05-21",
+    "jobDesc": "TOW IN: no crank / no start, but when jumped starts up",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": ""
   }
 ]
