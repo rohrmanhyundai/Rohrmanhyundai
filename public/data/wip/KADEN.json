@@ -19,8 +19,8 @@
     "jobDesc": "NO CRANK NO START. NEEDS STARTER INSTALLED. UNDER WARRANTY ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/28/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": ""
