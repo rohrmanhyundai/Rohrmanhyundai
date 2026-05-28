@@ -63,18 +63,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "FAILED BEARING CLEARANCE TEST P/A SUBMITTED FOR ENGINE "
-  },
-  {
-    "id": "mppxepynihm",
-    "ro": "777677",
-    "roDate": "2026-05-19",
-    "jobDesc": "Tow in, seized motor. Doesnt have belt on and battery is dead. UPDATE miles when car has power",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": ""
   }
 ]
