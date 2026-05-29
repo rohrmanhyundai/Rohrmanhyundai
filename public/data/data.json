@@ -8,17 +8,18 @@
         "mon": 8,
         "tue": 9,
         "wed": 17,
-        "thu": 0,
+        "thu": 9.4,
         "fri": 0,
         "sat": 0,
-        "total": 34,
-        "goal_pct": 0.7157894736842105,
-        "pacing": 56.66666666666667,
+        "total": 43.4,
+        "goal_pct": 0.9136842105263158,
+        "pacing": 54.25,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "12",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -27,17 +28,18 @@
         "mon": 8,
         "tue": 5.4,
         "wed": 5.6,
-        "thu": 0,
+        "thu": 5.6,
         "fri": 0,
         "sat": 0,
-        "total": 19,
-        "goal_pct": 0.7450980392156863,
-        "pacing": 31.666666666666664,
+        "total": 24.6,
+        "goal_pct": 0.9647058823529412,
+        "pacing": 30.75,
         "certified": "NO",
         "trainings_due": "3",
         "excel_training": "NA",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -46,17 +48,18 @@
         "mon": 8,
         "tue": 5.8,
         "wed": 4.6,
-        "thu": 0,
+        "thu": 6.5,
         "fri": 0,
         "sat": 0,
-        "total": 18.4,
-        "goal_pct": 0.7215686274509804,
-        "pacing": 30.666666666666664,
+        "total": 24.9,
+        "goal_pct": 0.9764705882352941,
+        "pacing": 31.125,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "NA",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -65,17 +68,18 @@
         "mon": 8,
         "tue": 6.8,
         "wed": 8,
-        "thu": 0,
+        "thu": 18.8,
         "fri": 0,
         "sat": 0,
-        "total": 22.8,
-        "goal_pct": 0.48000000000000004,
-        "pacing": 38,
+        "total": 41.6,
+        "goal_pct": 0.8757894736842106,
+        "pacing": 52,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "86",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -84,17 +88,18 @@
         "mon": 8,
         "tue": 6,
         "wed": 5.8,
-        "thu": 0,
+        "thu": 4.4,
         "fri": 0,
         "sat": 0,
-        "total": 19.8,
-        "goal_pct": 0.4168421052631579,
-        "pacing": 33,
+        "total": 24.200000000000003,
+        "goal_pct": 0.5094736842105264,
+        "pacing": 30.250000000000004,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "7127",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -114,7 +119,8 @@
         "excel_training": "—",
         "hoursOverride": {
           "2026-05-25": true,
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -123,17 +129,18 @@
         "mon": 8,
         "tue": 3,
         "wed": 7.3,
-        "thu": 0,
+        "thu": 7.7,
         "fri": 0,
         "sat": 0,
-        "total": 18.3,
-        "goal_pct": 0.38526315789473686,
-        "pacing": 30.500000000000004,
+        "total": 26,
+        "goal_pct": 0.5473684210526316,
+        "pacing": 32.5,
         "certified": "NO",
         "trainings_due": "0",
         "excel_training": "NA",
         "hoursOverride": {
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       },
       {
@@ -142,18 +149,19 @@
         "mon": 0,
         "tue": 4.5,
         "wed": 2,
-        "thu": 0,
+        "thu": 5.5,
         "fri": 0,
         "sat": 0,
-        "total": 6.5,
-        "goal_pct": 0.1368421052631579,
-        "pacing": 16.25,
+        "total": 12,
+        "goal_pct": 0.25263157894736843,
+        "pacing": 20,
         "certified": "NO",
         "trainings_due": "0",
         "excel_training": "NA",
         "hoursOverride": {
           "2026-05-25": true,
-          "2026-05-27": true
+          "2026-05-27": true,
+          "2026-05-28": true
         }
       }
     ],
@@ -284,12 +292,12 @@
       "mon": 48,
       "tue": 45.7,
       "wed": 54.8,
-      "thu": 0,
+      "thu": 57.9,
       "fri": 0,
       "sat": 0,
-      "week_total": 148.5,
-      "week_pct": 0.4419642857142857,
-      "shop_pacing": 261
+      "week_total": 206.39999999999998,
+      "week_pct": 0.6142857142857142,
+      "shop_pacing": 275.125
     },
     "grossGoal": 165198,
     "grossActual": 129992,
