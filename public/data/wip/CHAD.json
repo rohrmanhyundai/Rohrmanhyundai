@@ -6,8 +6,8 @@
     "jobDesc": "CEL Flashing, engine has loud rattle from bottom end. Reg photos already in media",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/29/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "ENGINE IS ON ORDER "
