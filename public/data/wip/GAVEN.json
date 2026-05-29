@@ -37,5 +37,18 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "WILL NEED TO DO MORE BATTERY TESTING "
+  },
+  {
+    "id": "mpreh50i0ot",
+    "ro": "777902",
+    "roDate": "2026-05-28",
+    "jobDesc": "CEL for Camshaft Sensor when Oil gets low",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": ""
   }
 ]
