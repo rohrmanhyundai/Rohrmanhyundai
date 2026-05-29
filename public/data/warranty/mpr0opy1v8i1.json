@@ -1,0 +1,79 @@
+{
+  "id": "mpr0opy1v8i1",
+  "createdAt": "2026-05-29T14:28:28.633Z",
+  "updatedAt": "2026-05-29T14:34:46.656Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Chelsea Snider",
+  "customerPhone": "765) 430 - 7859",
+  "repairOrder": "777717",
+  "vin": "5NPE24AFXHH484865",
+  "vehicleYear": "2017",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Sonata",
+  "mileage": "123127",
+  "warrantyCompany": "OMEGA",
+  "warrantyPhone": "8333422794",
+  "claimNumber": "",
+  "authNumber": "",
+  "laborRate": "170.00",
+  "laborTime": "14.70",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "mpr0opy1gf4h",
+      "partNumber": "21111-2GK51-QQH",
+      "description": "SERVICE KIT",
+      "qty": "1",
+      "price": "70.85"
+    },
+    {
+      "id": "mpr0qtuwc8s6",
+      "partNumber": "21111-2GK71-QQH",
+      "description": "SERVICE KIT",
+      "qty": "1",
+      "price": "78.47"
+    },
+    {
+      "id": "mpr0rhooiogo",
+      "partNumber": "21101-2GK34-QQHRM",
+      "description": "REMAN SUB ENGINE",
+      "qty": "1",
+      "price": "2071.43"
+    },
+    {
+      "id": "mpr0s60w0ekl",
+      "partNumber": "719005",
+      "description": " VALVOLINE MAX LIFE COOLANT",
+      "qty": "1",
+      "price": "16.99"
+    },
+    {
+      "id": "mpr0sqygpbxj",
+      "partNumber": "520V",
+      "description": "5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+      "qty": "5",
+      "price": "4.99"
+    }
+  ],
+  "taxPct": "7",
+  "deductible": "",
+  "rental": null,
+  "towing": null,
+  "sublet": null,
+  "tireRepair": null,
+  "tireTax": null,
+  "tireDisposal": null,
+  "notes": "SUBMITTED ALL DOC'S FROM HYUNDAI (P.A. AND WEDDCS) TO OMEGA WARRANTY COMPANY 05/29/2026 @ 10:25AM",
+  "approved": false,
+  "approvedDate": "",
+  "denied": false,
+  "deniedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": true,
+  "readySubmissionDate": "2026-05-29"
+}
