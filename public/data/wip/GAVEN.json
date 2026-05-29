@@ -58,8 +58,8 @@
     "jobDesc": "",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/29/2026",
     "highPriority": false,
     "advisor": "PARKER",
     "notes": ""
