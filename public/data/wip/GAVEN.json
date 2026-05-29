@@ -37,18 +37,5 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "WILL NEED TO DO MORE BATTERY TESTING "
-  },
-  {
-    "id": "mppygf9jpmn",
-    "ro": "777862",
-    "roDate": "2026-05-26",
-    "jobDesc": "Oil Change / CEL / TPMS Light on",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": "CUSTOMER APPROVED CAT/VVF/T-UP"
   }
 ]
