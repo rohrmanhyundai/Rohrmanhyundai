@@ -32,8 +32,8 @@
     "jobDesc": "ENGINE IS KNOCKING ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/29/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "P/A  IS SUBMITTED FOR ENGINE REPLACEMENT, Uploaded STUI photo of valvetrain. PA APPROVED ENGINE "
