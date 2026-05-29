@@ -7,7 +7,7 @@
     },
     {
       "username": "Shawn",
-      "password": "Hyundai2026",
+      "password": "shawn",
       "role": "admin",
       "canEditDashboard": true,
       "pages": {
