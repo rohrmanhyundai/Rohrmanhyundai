@@ -50,18 +50,5 @@
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "CUSTOMER APPROVED CAT/VVF/T-UP"
-  },
-  {
-    "id": "mpqvjhumt8s",
-    "ro": "777930",
-    "roDate": "2026-05-29",
-    "jobDesc": "",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "05/29/2026",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": "BELT REPLACEMENT "
   }
 ]
