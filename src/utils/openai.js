@@ -195,6 +195,81 @@ Keep the entire report under 450 words. Use the tech's first name once or twice,
   return data.choices?.[0]?.message?.content || '';
 }
 
+export async function generateAdvisorCoaching({ advisorName, dailyEntries, wipForAdvisor = [], goals = {} }) {
+  const key = getOpenAIKey();
+  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
+
+  const fmt = (n, d = 1) => (n === null || n === undefined || n === '' ? '—' : Number(n).toFixed(d));
+  const pct = (v) => (v === null || v === undefined || v === '' ? '—' : (Number(v) * 100).toFixed(1) + '%');
+
+  // Most recent first — keep last 60 daily snapshots so the model can see ~2 months.
+  const recent = [...(dailyEntries || [])].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 60);
+  const dayTbl = recent.map(d => (
+    `  ${d.date}  csi=${fmt(d.csi, 0)}  hrs/ro=${fmt(d.hours_per_ro, 2)}  roh50=${fmt(d.roh50_hrs_ro, 2)}  mtdHrs=${fmt(d.mtd_hours, 1)}  dailyAvg=${fmt(d.daily_avg, 2)}  ROs=${d.ro_count ?? '?'}  align=${pct(d.align)}  tires=${pct(d.tires)}  valv=${pct(d.valvoline)}  asr=${pct(d.asr)}  elr=${pct(d.elr)}  lastMoTotal=${fmt(d.last_month_total, 1)}`
+  )).join('\n');
+
+  const wipLines = (wipForAdvisor || []).slice(0, 25).map(j => {
+    const age = j.roDate ? Math.floor((Date.now() - new Date(j.roDate + 'T00:00:00').getTime()) / 86400000) : '?';
+    const tags = [j.highPriority ? 'HIGH-PRIORITY' : '', j.partsArrived === true ? 'parts arrived' : (j.partsArrived === false ? 'parts pending' : ''), j.etaParts ? `parts ETA ${j.etaParts}` : ''].filter(Boolean).join(', ');
+    return `  RO ${j.ro || '?'} (${age}d old, tech ${j.tech || '?'}) — ${j.jobDesc || ''} ${tags ? `[${tags}]` : ''} ${j.notes ? `note: ${j.notes}` : ''}`;
+  }).join('\n');
+
+  const goalLines = Object.keys(goals).length
+    ? Object.entries(goals).map(([k, v]) => `  ${k}: ${v}`).join('\n')
+    : '  (none provided — use industry-typical Hyundai targets)';
+
+  const prompt = `You are a seasoned automotive service-department manager coaching a service advisor at a Hyundai dealership. The advisor's name is ${advisorName}.
+
+Your job: review their recent daily snapshots and open work, then write a constructive coaching report. Be **direct and metrics-focused, but also supportive** — when calling out a weak area, frame it with positive coaching and a clear, specific action they can take. Acknowledge improvements they have already made. Don't be vague — cite specific dates, metrics, or open ROs from the data below.
+
+GOAL TARGETS:
+${goalLines}
+
+RECENT DAILY SNAPSHOTS (most recent first — each row is one end-of-day capture):
+${dayTbl || '  (no data)'}
+
+OPEN WORK FOR THIS ADVISOR (active WIP currently routed to ${advisorName}):
+${wipLines || '  (none currently routed to this advisor)'}
+
+Output the report in this Markdown structure exactly. Sprinkle a tasteful emoji or two inside bullet points where it adds energy (e.g. ⚡ 🔥 💪 📈 ✨ 👏 🚗 🤝 🛡️ 💬), but at most one emoji per bullet and keep the headings exactly as written below.
+
+## Summary
+A 2-3 sentence overview of how the advisor is trending day-over-day, week-over-week, and month-over-month. Lead with the strongest positive observation.
+
+## What's Working
+- 3-5 specific bullets calling out strengths or improvements you can see in the numbers (cite dates, CSI scores, RO counts, or specific upsell percentages like Alignment / Tires / Valvoline / ASR / ELR).
+
+## Where to Focus
+- 3-5 specific bullets on weak areas. For each one: what the data shows, why it matters for the dealership, and a positive, concrete next step. Avoid generic advice.
+
+## Action Items for This Week
+1. Concrete action #1 (referencing a specific metric or open RO if possible)
+2. Concrete action #2
+3. Concrete action #3
+
+## Open Work to Push
+- Brief callout of any open ROs that are aging or parts-ready and need a customer touch this week. If nothing notable, write "Nothing critical — keep the queue moving."
+
+Keep the entire report under 450 words. Use the advisor's first name once or twice, but don't overdo it.`;
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 900,
+      temperature: 0.5,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `OpenAI error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
 export async function generateReviewReport({ techName, techAnswers, managerAnswers, questions }) {
   const key = getOpenAIKey();
   if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings > OpenAI Key.');
