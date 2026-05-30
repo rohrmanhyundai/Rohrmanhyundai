@@ -352,8 +352,16 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     const ro = initialJob.ro.trim();
     const roLower = ro.toLowerCase();
 
-    if (initialJob.source === 'wip' && initialJob.tech && techList.includes(initialJob.tech)) {
-      setActiveTech(initialJob.tech);
+    // Case-insensitive tech-list lookup so e.g. "Jacob"/"JACOB"/"jacob" all match.
+    const matchListTech = (t) => {
+      if (!t) return null;
+      const tl = String(t).trim().toLowerCase();
+      return (techList || []).find(n => String(n).trim().toLowerCase() === tl) || null;
+    };
+
+    if (initialJob.source === 'wip' && initialJob.tech) {
+      const target = matchListTech(initialJob.tech) || initialJob.tech;
+      setActiveTech(target);
       setSearchResults(null);
       setSearchRO('');
       setHighlightRO(ro);
@@ -384,8 +392,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         }
       }
       // Scan all techs in parallel for a WIP match
+      // Include the supplied tech hint (if any) in the scan list so we still
+      // find ROs belonging to a tech who isn't in the live techList (renamed,
+      // removed, or different casing in the WIP file).
+      const hintTech = initialJob && initialJob.tech ? String(initialJob.tech).trim() : '';
+      const scanSet = new Set([...(techList || []), hintTech].filter(Boolean));
+      const scanList = Array.from(scanSet);
       const results = await Promise.all(
-        (techList || []).map(async t => {
+        scanList.map(async t => {
           try {
             const data = await loadWipData(t);
             const hit = (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
@@ -413,16 +427,31 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialJob, awaitingLoading]);
 
-  // Scroll the highlighted row into view once it renders.
+  // Scroll the highlighted row into view once it renders. The target row may not
+  // exist on the first effect run (rows for the active tech are fetched async
+  // after activeTech changes), so retry a few times before giving up. Only start
+  // the 10s clear timer once the row has actually been scrolled to.
   useEffect(() => {
     if (!highlightRO) return;
-    const t = setTimeout(() => {
+    let cancelled = false;
+    let clearTimer = null;
+    let attempts = 0;
+    function tryScroll() {
+      if (cancelled) return;
       if (highlightedRowRef.current) {
-        highlightedRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try { highlightedRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch {}
+        clearTimer = setTimeout(() => { if (!cancelled) setHighlightRO(''); }, 10000);
+        return;
       }
-    }, 120);
-    const clear = setTimeout(() => setHighlightRO(''), 4000);
-    return () => { clearTimeout(t); clearTimeout(clear); };
+      if (attempts++ < 30) {
+        setTimeout(tryScroll, 200); // retry for up to ~6s while data loads
+      } else {
+        // Give up scrolling but clear the highlight after a beat anyway.
+        clearTimer = setTimeout(() => { if (!cancelled) setHighlightRO(''); }, 6000);
+      }
+    }
+    const t = setTimeout(tryScroll, 100);
+    return () => { cancelled = true; clearTimeout(t); if (clearTimer) clearTimeout(clearTimer); };
   }, [highlightRO, rows, awaiting]);
 
   function updateAwaiting(id, field, value) {
