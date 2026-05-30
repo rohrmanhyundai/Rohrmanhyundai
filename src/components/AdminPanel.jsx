@@ -330,17 +330,24 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       if (headerIdx === -1) throw new Error('Could not find a header row containing "Advisor", "Bill", "RO Count", "ELR", or "Coupon Labor". Make sure the report has those column headings.');
 
       const headerCells = (rows[headerIdx] || []).map(norm);
+      // Look up a column by (1) exact header equality, then (2) whole-word match.
+      // Plain substring is intentionally avoided — it caused 'ros' to match
+      // 'gross' / 'gross sales', putting dollar totals into MTD ROs.
+      const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const wordRegex = (needle) => new RegExp(`(^|[^a-z0-9])${escapeRe(needle)}([^a-z0-9]|$)`);
       const findCol = (...needles) => {
         for (let i = 0; i < headerCells.length; i++) {
-          const h = headerCells[i];
-          if (needles.some(n => h.includes(n))) return i;
+          if (needles.some(n => headerCells[i] === n)) return i; // exact equality first
+        }
+        for (let i = 0; i < headerCells.length; i++) {
+          if (needles.some(n => wordRegex(n).test(headerCells[i]))) return i; // whole-word
         }
         return -1;
       };
       const colName    = findCol('advisor name', 'advisor', 'name');
-      const colHours   = findCol('bill hour', 'bill hr', 'billed hour');
-      const colROs     = findCol('ro count', 'ros', '# ros');
-      const colELR     = findCol('elr');
+      const colHours   = findCol('bill hours', 'bill hour', 'bill hrs', 'billed hours', 'billed hrs');
+      const colROs     = findCol('ro count', '# ros', "ro's", 'ros');
+      const colELR     = findCol('elr', 'elr(%)', 'elr %', 'elr%');
       const colCoupon  = findCol('coupon labor', 'coupon');
 
       if (colName === -1) throw new Error('Could not locate the Advisor Name column in the report header.');
@@ -381,7 +388,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         }
         if (colROs !== -1) {
           const v = num(row[colROs]);
-          if (v !== null) { adv.ro_count = v; touched = true; }
+          // RO counts are whole numbers — if the matched cell looks like a dollar
+          // total (decimal, or > 5000) we likely grabbed the wrong column. Skip
+          // it rather than overwriting MTD ROs with a bogus value.
+          if (v !== null && Number.isInteger(v) && v < 5000) { adv.ro_count = v; touched = true; }
         }
         if (colELR !== -1) {
           const v = num(row[colELR]);
