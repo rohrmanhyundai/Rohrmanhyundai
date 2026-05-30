@@ -134,7 +134,7 @@ function AdvisorReport({ entries }) {
                   <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color={c(latest?.valvoline, 0.25, '#fbbf24')} />
                   <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color={c(latest?.asr, 0.21, '#fdba74')} />
                   <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color={c(latest?.elr, 0.88, '#fdba74')} />
-                  <StatBox label="Coupon Labor"               value={latest?.coupon_labor != null && latest?.coupon_labor !== '' ? '$' + Number(latest.coupon_labor).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'} color="#fbbf24" />
+                  <StatBox label="Coupon Usage · Target 8-10%" value={pct(latest?.coupon_usage_pct)} color="#fbbf24" />
                 </>;
               })()}
             </div>
@@ -171,7 +171,7 @@ function AdvisorReport({ entries }) {
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
-                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>COUPON<br />LABOR</th>
+                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>COUPON<br />USAGE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Target 8-10%</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -196,10 +196,8 @@ function AdvisorReport({ entries }) {
                       <td>{pct(e.asr)}<TrendIcon curr={e.asr} prev={prev?.asr} /></td>
                       <td>{pct(e.elr)}<TrendIcon curr={e.elr} prev={prev?.elr} /></td>
                       <td style={{ color: '#fbbf24' }}>
-                        {e.coupon_labor != null && e.coupon_labor !== ''
-                          ? '$' + Number(e.coupon_labor).toLocaleString(undefined, { maximumFractionDigits: 0 })
-                          : '—'}
-                        <TrendIcon curr={e.coupon_labor} prev={prev?.coupon_labor} />
+                        {pct(e.coupon_usage_pct)}
+                        <TrendIcon curr={e.coupon_usage_pct} prev={prev?.coupon_usage_pct} />
                       </td>
                     </tr>
                   );
@@ -230,7 +228,7 @@ const TREND_METRICS = [
   { key: 'valvoline',    label: 'Valvoline',     fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.25, isPct: true  },
   { key: 'asr',          label: 'ASR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.21, isPct: true  },
   { key: 'elr',          label: 'ELR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.88, isPct: true  },
-  { key: 'coupon_labor', label: 'Coupon Labor',  fmt: v => '$' + v.toLocaleString(undefined, { maximumFractionDigits: 0 }), fmtDelta: d => '$' + Math.abs(d).toLocaleString(undefined, { maximumFractionDigits: 0 }), goal: null, isPct: false },
+  { key: 'coupon_usage_pct', label: 'Coupon Usage', fmt: v => (v * 100).toFixed(1) + '%', fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts', goal: null, isPct: true },
 ];
 
 function avgOf(entries, key) {
@@ -970,9 +968,16 @@ export default function PerformanceReport({ currentUser, role, onBack }) {
       const me = advisors.find(a => (a.name || '').toUpperCase() === username);
       const merged = [...saved];
       if (me && merged.length > 0) {
+        const liveCoupon = me.coupon_labor != null && me.coupon_labor !== '' ? parseFloat(me.coupon_labor) : null;
+        const liveSales  = me.total_sales  != null && me.total_sales  !== '' ? parseFloat(me.total_sales)  : null;
+        const liveUsage  = (liveCoupon != null && liveSales != null && liveSales > 0)
+          ? liveCoupon / liveSales
+          : (me.coupon_usage_pct != null && me.coupon_usage_pct !== '' ? parseFloat(me.coupon_usage_pct) : null);
         merged[0] = {
           ...merged[0],
-          coupon_labor: me.coupon_labor != null && me.coupon_labor !== '' ? parseFloat(me.coupon_labor) : merged[0].coupon_labor,
+          coupon_labor:      liveCoupon ?? merged[0].coupon_labor,
+          total_sales:       liveSales  ?? merged[0].total_sales,
+          coupon_usage_pct:  liveUsage  ?? merged[0].coupon_usage_pct,
         };
       }
       setEntries(merged);
