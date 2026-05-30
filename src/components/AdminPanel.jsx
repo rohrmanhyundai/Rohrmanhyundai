@@ -561,16 +561,20 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const colName    = findCol('advisor name', 'advisor', 'name');
       const colHours   = findCol('bill hours', 'bill hour', 'bill hrs', 'billed hours', 'billed hrs');
       const colROs     = findCol('ro count', '# ros', "ro's", 'ros');
-      // ELR: exact-match only. The whole-word fallback was picking up other
-      // columns (likely "Eff % After Discount") whose raw values are also
-      // big percentage numbers, producing wildly wrong ELRs like 157.3%.
-      const findColExactOnly = (...needles) => {
-        for (let i = 0; i < headerCells.length; i++) {
-          if (needles.some(n => headerCells[i] === n)) return i;
+      // ELR: tightly matched so the ELR ($) column (dollar value) doesn't
+      // accidentally land in the percentage field. The dealership's report
+      // ships "ELR (%)" with a space — compare with whitespace stripped so
+      // any of "ELR(%)", "ELR (%)", "ELR  (%)", "ELR%" all hit, but
+      // "ELR ($)" never does.
+      const stripWs = (s) => String(s || '').replace(/\s+/g, '');
+      const colELR = (() => {
+        const want = ['elr(%)', 'elr%'];
+        const stripped = headerCells.map(stripWs);
+        for (let i = 0; i < stripped.length; i++) {
+          if (want.includes(stripped[i])) return i;
         }
         return -1;
-      };
-      const colELR     = findColExactOnly('elr%', 'elr %', 'elr(%)', 'elr');
+      })();
       const colCoupon  = findCol('coupon labor', 'coupon');
       try { console.log('[advisor-xlsx] header columns:', headerCells); } catch {}
       try { console.log('[advisor-xlsx] picked col indices →', { colName, colHours, colROs, colELR, colCoupon, elrHeader: colELR >= 0 ? headerCells[colELR] : null }); } catch {}
