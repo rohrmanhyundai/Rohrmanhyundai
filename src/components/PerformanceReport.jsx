@@ -239,7 +239,7 @@ function avgOf(entries, key) {
 
 // One horizontal row per metric: direction icon · label · big value · delta %.
 // Designed to be scannable at a glance — color tells the story.
-function TrendRow({ curr, prev, metric }) {
+function TrendRow({ curr, prev, metric, sub, extra }) {
   const empty = curr === null || curr === undefined || isNaN(curr);
 
   let dir = null, pctChange = null;
@@ -280,6 +280,9 @@ function TrendRow({ curr, prev, metric }) {
       {/* Label + tiny "vs prev" */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 11, fontWeight: 800, color: '#cbd5e1', letterSpacing: .4, textTransform: 'uppercase' }}>{metric.label}</div>
+        {sub && (
+          <div style={{ fontSize: 9, color: '#64748b', fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase' }}>{sub}</div>
+        )}
         <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>
           {empty ? 'no data' : dir ? `vs ${metric.fmt(prev)}` : 'unchanged'}
         </div>
@@ -290,6 +293,9 @@ function TrendRow({ curr, prev, metric }) {
         <div style={{ fontWeight: 900, fontSize: 19, color: valColor, lineHeight: 1, letterSpacing: -0.3, whiteSpace: 'nowrap' }}>
           {empty ? '—' : metric.fmt(curr)}
         </div>
+        {extra && (
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', marginTop: 2, whiteSpace: 'nowrap' }}>{extra}</div>
+        )}
         {dir && pctChange !== null && (
           <div style={{ fontSize: 10, fontWeight: 800, color: dirColor, marginTop: 2, whiteSpace: 'nowrap' }}>
             {pctChange > 0 ? '+' : ''}{pctChange.toFixed(1)}%
@@ -336,7 +342,7 @@ function TrendingReport({ entries, selectedMonth }) {
     return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`;
   };
 
-  const renderCard = ({ accent, icon, title, sub, available, getCurr, getPrev }) => {
+  const renderCard = ({ accent, icon, title, sub, available, getCurr, getPrev, getExtra }) => {
     // Pre-compute direction tallies so the card header can show a quick
     // "wins vs losses" summary the advisor can read at a glance.
     let ups = 0, downs = 0, flats = 0;
@@ -394,9 +400,21 @@ function TrendingReport({ entries, selectedMonth }) {
           {/* Metric rows */}
           {available ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 12 }}>
-              {TREND_METRICS.map(m => (
-                <TrendRow key={m.key} curr={getCurr(m)} prev={getPrev(m)} metric={m} />
-              ))}
+              {TREND_METRICS.map(m => {
+                // Coupon Usage gets two extras: a small target band under the
+                // label, and the underlying $ Coupon Labor next to the value.
+                let rowSub, rowExtra;
+                if (m.key === 'coupon_usage_pct') {
+                  rowSub = 'Target 8–10%';
+                  const ex = getExtra ? getExtra(m) : null;
+                  if (ex != null && !isNaN(ex)) {
+                    rowExtra = '$' + Number(ex).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' labor';
+                  }
+                }
+                return (
+                  <TrendRow key={m.key} curr={getCurr(m)} prev={getPrev(m)} metric={m} sub={rowSub} extra={rowExtra} />
+                );
+              })}
             </div>
           ) : (
             <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic', padding: '24px 0' }}>
@@ -429,6 +447,7 @@ function TrendingReport({ entries, selectedMonth }) {
           available: dailyAvail,
           getCurr: m => dToday ? parseFloat(dToday[m.key]) : null,
           getPrev: m => dPrev ? parseFloat(dPrev[m.key]) : null,
+          getExtra: m => m.key === 'coupon_usage_pct' && dToday ? parseFloat(dToday.coupon_labor) : null,
         })}
         {renderCard({
           accent: '#a78bfa', icon: '📅', title: 'Weekly Average',
@@ -436,6 +455,7 @@ function TrendingReport({ entries, selectedMonth }) {
           available: weeklyAvail,
           getCurr: m => avgOf(thisWeek, m.key),
           getPrev: m => avgOf(lastWeek, m.key),
+          getExtra: m => m.key === 'coupon_usage_pct' ? avgOf(thisWeek, 'coupon_labor') : null,
         })}
         {renderCard({
           accent: '#fbbf24', icon: '🗓', title: 'Month-Over-Month',
@@ -443,6 +463,7 @@ function TrendingReport({ entries, selectedMonth }) {
           available: monthlyAvail,
           getCurr: m => avgOf(thisMonthEntries, m.key),
           getPrev: m => avgOf(prevMonthEntries, m.key),
+          getExtra: m => m.key === 'coupon_usage_pct' ? avgOf(thisMonthEntries, 'coupon_labor') : null,
         })}
       </div>
     </div>
