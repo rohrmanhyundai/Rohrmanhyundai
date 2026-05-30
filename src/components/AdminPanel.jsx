@@ -504,7 +504,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
       if (skipped.length)      parts.push(`· skipped: ${skipped.slice(0, 4).join(', ')}${skipped.length > 4 ? '…' : ''}`);
       setAdvisorXlsxStatus(parts.join(' '));
-      setTimeout(() => setAdvisorXlsxStatus(''), 12000);
+      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
     } finally {
@@ -642,9 +642,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       onDataChange(newData, structuredClone(vacations));
       const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'}`];
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      // Surface which column was matched for each field, so column-name
+      // mismatches surface without opening dev tools.
+      const colTag = (label, idx) => `${label}=${idx >= 0 ? `"${headerCells[idx]}"` : 'NOT FOUND'}`;
+      parts.push(`· Columns matched: ${colTag('MTD Hrs', colHours)}, ${colTag('MTD ROs', colROs)}, ${colTag('ELR', colELR)}, ${colTag('Coupon', colCoupon)}`);
       if (skipped.length)      parts.push(`· skipped ${skipped.length} not on dashboard: ${skipped.join(', ')}`);
       setAdvisorXlsxStatus(parts.join(' '));
-      setTimeout(() => setAdvisorXlsxStatus(''), 12000);
+      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
     } finally {
