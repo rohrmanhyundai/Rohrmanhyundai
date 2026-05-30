@@ -415,5 +415,24 @@
     "elr": 0.92,
     "last_month_total": 326.2,
     "roh50_hrs_ro": 1.23
+  },
+  {
+    "id": "mpsvwpyzf8w",
+    "date": "2026-03-31",
+    "label": "March 31, 2026",
+    "month": "2026-03",
+    "type": "advisor",
+    "savedAt": "2026-05-30T21:50:16.187Z",
+    "mtd_hours": 333.4,
+    "ro_count": 229,
+    "hours_per_ro": 1.46,
+    "align": 0.1983,
+    "tires": 0.1983,
+    "valvoline": 0.2479,
+    "asr": 0.1905,
+    "elr": 0.9392,
+    "coupon_labor": 2571.69,
+    "total_sales": 122004.55,
+    "coupon_usage_pct": 0.0211
   }
 ]
