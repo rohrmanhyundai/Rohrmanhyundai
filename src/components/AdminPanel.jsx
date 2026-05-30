@@ -576,8 +576,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         return -1;
       })();
       const colCoupon  = findCol('coupon labor', 'coupon');
+      const colTotalSales = findCol('total sales');
       try { console.log('[advisor-xlsx] header columns:', headerCells); } catch {}
-      try { console.log('[advisor-xlsx] picked col indices →', { colName, colHours, colROs, colELR, colCoupon, elrHeader: colELR >= 0 ? headerCells[colELR] : null }); } catch {}
+      try { console.log('[advisor-xlsx] picked col indices →', { colName, colHours, colROs, colELR, colCoupon, colTotalSales, elrHeader: colELR >= 0 ? headerCells[colELR] : null }); } catch {}
 
       if (colName === -1) throw new Error('Could not locate the Advisor Name column in the report header.');
 
@@ -633,10 +634,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           const v = num(row[colCoupon]);
           if (v !== null) { adv.coupon_labor = v; touched = true; }
         }
+        if (colTotalSales !== -1) {
+          const v = num(row[colTotalSales]);
+          if (v !== null) { adv.total_sales = v; touched = true; }
+        }
         // Re-derive Hrs/RO any time MTD Hrs or RO count changed (matches manual editor behavior).
         const hrs = parseFloat(adv.mtd_hours) || 0;
         const ros = parseFloat(adv.ro_count) || 0;
         if (ros > 0) adv.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+        // Coupon usage % = Coupon Labor ÷ Total Sales. Normal range 8-10%.
+        const sales = parseFloat(adv.total_sales) || 0;
+        const couponLabor = parseFloat(adv.coupon_labor) || 0;
+        if (sales > 0) adv.coupon_usage_pct = Math.round((couponLabor / sales) * 10000) / 10000;
 
         if (touched) { updated++; updatedNames.push(adv.name); }
       }
@@ -760,6 +769,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           last_month_total: a.last_month_total,
           ro_count: parseFloat(a.ro_count) || 0,
           coupon_labor: parseFloat(a.coupon_labor) || 0,
+          total_sales: parseFloat(a.total_sales) || 0,
+          coupon_usage_pct: (parseFloat(a.total_sales) || 0) > 0
+            ? (parseFloat(a.coupon_labor) || 0) / parseFloat(a.total_sales)
+            : (parseFloat(a.coupon_usage_pct) || 0),
         };
         // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
         const updated = [entry, ...entries.filter(e => e.date !== today && e.label !== advLabel)];
@@ -1203,6 +1216,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input key={`roc-${a._lastImport || 0}-${a.ro_count}`} defaultValue={a.ro_count ?? ''} onBlur={e => updateAdvisorWithDerived(idx, 'ro_count', safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Coupon Labor pulled from the advisor performance report.">Coupon Labor</label><input key={`cpl-${a._lastImport || 0}-${a.coupon_labor ?? ''}`} defaultValue={a.coupon_labor ?? ''} onBlur={e => updateField(`advisors.${idx}.coupon_labor`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Total Sales from the advisor performance report. Used to compute Coupon Usage % (Coupon Labor ÷ Total Sales).">Total Sales</label><input key={`tsl-${a._lastImport || 0}-${a.total_sales ?? ''}`} defaultValue={a.total_sales ?? ''} onBlur={e => updateField(`advisors.${idx}.total_sales`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Auto-calculated from Coupon Labor ÷ Total Sales. Healthy range is roughly 8–10%.">Coupon Usage % <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(auto)</span></label><input key={`cup-${a._lastImport || 0}-${a.coupon_usage_pct ?? ''}`} defaultValue={percentEditValue(a.coupon_usage_pct)} disabled /></div>
               </div>
             </div>
           ))}
