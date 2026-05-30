@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching } from '../utils/github';
-import { generateTechCoaching, getOpenAIKey } from '../utils/openai';
+import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport from './PerformanceReport';
 
 function fmtDate(iso) {
@@ -105,6 +105,7 @@ export default function ManagerReports({ users, onBack }) {
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiPickerOpen, setAiPickerOpen] = useState(false);
   const [aiPickerSelected, setAiPickerSelected] = useState(() => new Set());
+  const [aiPickerMode, setAiPickerMode] = useState('tech'); // 'tech' | 'advisor'
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -290,16 +291,58 @@ export default function ManagerReports({ users, onBack }) {
     }
   }
 
-  function openAiPicker() {
+  function openAiPicker(mode = 'tech') {
     if (!getOpenAIKey()) {
       alert('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
       return;
     }
-    const techNames = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
-    if (techNames.length === 0) { alert('No technicians found.'); return; }
-    // Default: all selected.
-    setAiPickerSelected(new Set(techNames));
+    const role = mode === 'advisor' ? 'advisor' : 'technician';
+    const names = (users || []).filter(u => u.role === role).map(u => u.username.toUpperCase());
+    if (names.length === 0) { alert(`No ${role}s found.`); return; }
+    setAiPickerMode(mode);
+    setAiPickerSelected(new Set(names));
     setAiPickerOpen(true);
+  }
+
+  async function handleGenerateAdvisorAI(advisorNamesIn) {
+    const advisorNames = Array.isArray(advisorNamesIn) ? advisorNamesIn : [];
+    if (advisorNames.length === 0) { alert('Pick at least one advisor.'); return; }
+    if (!await ensureToken()) return;
+
+    setGeneratingAI(true);
+    setStatus(`⏳ Generating coaching reports… (0/${advisorNames.length})`);
+    let done = 0, failed = 0;
+    try {
+      // Load shop-wide WIP once so we can slice it by advisor.
+      const allTechs = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
+      const wipByTech = await Promise.all(allTechs.map(t => loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t }))).catch(() => [])));
+      const allWip = wipByTech.flat();
+      for (const adv of advisorNames) {
+        try {
+          setStatus(`⏳ Generating coaching reports… ${adv} (${done}/${advisorNames.length})`);
+          const entries = await loadGithubFile(`data/performance-reports/${adv}.json`).then(d => Array.isArray(d) ? d : []);
+          const dailyEntries = entries.filter(e => (e.type || 'advisor') === 'advisor');
+          const wipForAdvisor = allWip.filter(j => (j.advisor || '').toUpperCase() === adv);
+          const reportText = await generateAdvisorCoaching({ advisorName: adv, dailyEntries, wipForAdvisor });
+          const now = new Date();
+          const entry = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+            generatedAt: now.toISOString(),
+            weekLabel: '',
+            report: reportText,
+          };
+          await saveCoaching(adv, [entry]);
+          done++;
+        } catch (err) {
+          failed++;
+          console.error(`Coaching failed for ${adv}:`, err);
+        }
+      }
+      setStatus(failed === 0 ? `✅ Generated ${done} report${done === 1 ? '' : 's'}!` : `⚠️ Done — ${done} ok, ${failed} failed`);
+      setTimeout(() => setStatus(''), 6000);
+    } finally {
+      setGeneratingAI(false);
+    }
   }
 
   async function handleGenerateAI(techNamesIn) {
@@ -413,11 +456,18 @@ export default function ManagerReports({ users, onBack }) {
                 + Add Entry
               </button>
               <button
-                onClick={openAiPicker}
+                onClick={() => openAiPicker('tech')}
                 disabled={generatingAI}
                 style={{ background: 'rgba(168,85,247,.18)', border: '1px solid rgba(168,85,247,.4)', color: '#c4b5fd', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer', opacity: generatingAI ? 0.6 : 1 }}
               >
-                {generatingAI ? '⏳ Generating…' : '🤖 Generate Tech AI Report'}
+                {generatingAI ? '⏳ Generating…' : '🤖 Tech Coaching Report'}
+              </button>
+              <button
+                onClick={() => openAiPicker('advisor')}
+                disabled={generatingAI}
+                style={{ background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.4)', color: '#93c5fd', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer', opacity: generatingAI ? 0.6 : 1 }}
+              >
+                {generatingAI ? '⏳ Generating…' : '🤖 Advisor Coaching Report'}
               </button>
             </div>
           </div>
@@ -637,13 +687,17 @@ export default function ManagerReports({ users, onBack }) {
       </div>
 
       {aiPickerOpen && (() => {
-        const allTechs = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).sort();
+        const role = aiPickerMode === 'advisor' ? 'advisor' : 'technician';
+        const roleLabelPlural = aiPickerMode === 'advisor' ? 'advisors' : 'techs';
+        const allTechs = (users || []).filter(u => u.role === role).map(u => u.username.toUpperCase()).sort();
         const allSelected = allTechs.length > 0 && allTechs.every(t => aiPickerSelected.has(t));
         const toggle = (t) => {
           const next = new Set(aiPickerSelected);
           if (next.has(t)) next.delete(t); else next.add(t);
           setAiPickerSelected(next);
         };
+        const accent = aiPickerMode === 'advisor' ? '#60a5fa' : '#a855f7';
+        const accentRgba = (a) => aiPickerMode === 'advisor' ? `rgba(96,165,250,${a})` : `rgba(168,85,247,${a})`;
         return (
           <div
             onClick={() => !generatingAI && setAiPickerOpen(false)}
@@ -656,15 +710,15 @@ export default function ManagerReports({ users, onBack }) {
               onClick={e => e.stopPropagation()}
               style={{
                 width: '100%', maxWidth: 520, background: 'linear-gradient(160deg, #0f172a, #0b1426)',
-                border: '1px solid rgba(168,85,247,.4)', borderRadius: 18,
-                boxShadow: '0 24px 80px rgba(168,85,247,.25)', overflow: 'hidden',
+                border: `1px solid ${accentRgba(.4)}`, borderRadius: 18,
+                boxShadow: `0 24px 80px ${accentRgba(.25)}`, overflow: 'hidden',
               }}
             >
-              <div style={{ height: 4, background: 'linear-gradient(90deg, #a855f7, rgba(168,85,247,.4), transparent)' }} />
+              <div style={{ height: 4, background: `linear-gradient(90deg, ${accent}, ${accentRgba(.4)}, transparent)` }} />
               <div style={{ padding: '18px 22px 16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
-                  <div style={{ fontWeight: 900, fontSize: 16, color: '#e9d5ff', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    🤖 Generate AI Reports
+                  <div style={{ fontWeight: 900, fontSize: 16, color: aiPickerMode === 'advisor' ? '#bfdbfe' : '#e9d5ff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    🤖 Generate {aiPickerMode === 'advisor' ? 'Advisor' : 'Tech'} Coaching Reports
                   </div>
                   <button
                     onClick={() => !generatingAI && setAiPickerOpen(false)}
@@ -673,7 +727,7 @@ export default function ManagerReports({ users, onBack }) {
                   >✕</button>
                 </div>
                 <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 14 }}>
-                  Pick which techs to generate a coaching report for. Each one calls OpenAI separately.
+                  Pick which {roleLabelPlural} to generate a coaching report for. Each one calls OpenAI separately.
                 </div>
 
                 <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
@@ -702,17 +756,17 @@ export default function ManagerReports({ users, onBack }) {
                         disabled={generatingAI}
                         style={{
                           display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left',
-                          background: checked ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.03)',
-                          border: `1px solid ${checked ? 'rgba(168,85,247,.55)' : 'rgba(255,255,255,.08)'}`,
-                          color: checked ? '#e9d5ff' : '#94a3b8',
+                          background: checked ? accentRgba(.18) : 'rgba(255,255,255,.03)',
+                          border: `1px solid ${checked ? accentRgba(.55) : 'rgba(255,255,255,.08)'}`,
+                          color: checked ? (aiPickerMode === 'advisor' ? '#bfdbfe' : '#e9d5ff') : '#94a3b8',
                           borderRadius: 8, padding: '8px 10px', fontWeight: 800, fontSize: 12,
                           cursor: generatingAI ? 'not-allowed' : 'pointer',
                         }}
                       >
                         <span style={{
                           width: 16, height: 16, borderRadius: 4, flexShrink: 0,
-                          background: checked ? '#a855f7' : 'transparent',
-                          border: `1.5px solid ${checked ? '#a855f7' : 'rgba(148,163,184,.4)'}`,
+                          background: checked ? accent : 'transparent',
+                          border: `1.5px solid ${checked ? accent : 'rgba(148,163,184,.4)'}`,
                           color: '#fff', fontSize: 11, fontWeight: 900, lineHeight: '14px', textAlign: 'center',
                         }}>{checked ? '✓' : ''}</span>
                         {t}
@@ -736,15 +790,18 @@ export default function ManagerReports({ users, onBack }) {
                   <button
                     onClick={async () => {
                       const list = Array.from(aiPickerSelected);
-                      await handleGenerateAI(list);
-                      // Close once everything wraps up (success or fail).
+                      if (aiPickerMode === 'advisor') {
+                        await handleGenerateAdvisorAI(list);
+                      } else {
+                        await handleGenerateAI(list);
+                      }
                       setAiPickerOpen(false);
                     }}
                     disabled={generatingAI || aiPickerSelected.size === 0}
                     style={{
-                      background: aiPickerSelected.size === 0 ? 'rgba(168,85,247,.08)' : 'rgba(168,85,247,.25)',
-                      border: '1px solid rgba(168,85,247,.55)',
-                      color: '#e9d5ff', borderRadius: 10, padding: '8px 20px', fontWeight: 800, fontSize: 13,
+                      background: aiPickerSelected.size === 0 ? accentRgba(.08) : accentRgba(.25),
+                      border: `1px solid ${accentRgba(.55)}`,
+                      color: aiPickerMode === 'advisor' ? '#bfdbfe' : '#e9d5ff', borderRadius: 10, padding: '8px 20px', fontWeight: 800, fontSize: 13,
                       cursor: (generatingAI || aiPickerSelected.size === 0) ? 'not-allowed' : 'pointer',
                       opacity: aiPickerSelected.size === 0 ? 0.5 : 1,
                     }}
