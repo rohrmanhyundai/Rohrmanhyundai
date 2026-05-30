@@ -6,24 +6,11 @@
     "jobDesc": "CEL Flashing, engine has loud rattle from bottom end. Reg photos already in media",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "05/29/2026",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": ""
-  },
-  {
-    "id": "mpo9vqeoh4s",
-    "ro": "777863",
-    "roDate": "2026-05-26",
-    "jobDesc": "Vehicle Shuttering & CEL randomly going on and off / has codes",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "PARKER",
-    "notes": ""
+    "notes": "ENGINE IS ON ORDER "
   },
   {
     "id": "mpoardmozhn",
@@ -36,6 +23,32 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "PARKER",
-    "notes": "CAT IS APPROVED CAR IS STAYING"
+    "notes": "CAT IS APPROVED CAR IS STAYING. CHAD IS STILL WORKING ON THIS CAR "
+  },
+  {
+    "id": "mpocs6d6x8u",
+    "ro": "777860",
+    "roDate": "2026-05-26",
+    "jobDesc": "CEL on with codes P0010 & P0011 / Recalls",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "diag is completed. needs all timing related parts to fix car "
+  },
+  {
+    "id": "mppy4dvuuad",
+    "ro": "777735",
+    "roDate": "2026-05-21",
+    "jobDesc": "TOW IN: no crank / no start, but when jumped starts up",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "PARKER",
+    "notes": "BATTERY OUT OF VEHICLE & IN SHOP. TESTING NOW @10:50AM. BATTERY BACK IN CAR & MILEAGE UPDATED @1:43PM."
   }
 ]

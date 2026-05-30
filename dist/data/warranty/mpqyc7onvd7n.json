@@ -1,0 +1,79 @@
+{
+  "id": "mpqyc7onvd7n",
+  "createdAt": "2026-05-29T13:22:45.863Z",
+  "updatedAt": "2026-05-29T16:17:18.227Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Frank Kang",
+  "customerPhone": "806) 470 - 9264",
+  "repairOrder": "777952",
+  "vin": "5NMJC3AE2NH014609",
+  "vehicleYear": "2022",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Tucson",
+  "mileage": "39271",
+  "warrantyCompany": "U.S.WARRANTY",
+  "warrantyPhone": "800-432-4566",
+  "claimNumber": "9303993MCY",
+  "authNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "parts": [
+    {
+      "id": "mpqyc7onhgqx",
+      "partNumber": "881494",
+      "description": "VALVOLINE FULL SYNTHETIC 0W-20 OIL",
+      "qty": "6",
+      "price": "5.55"
+    },
+    {
+      "id": "mpqyh8dq5i8a",
+      "partNumber": "26350-2S001",
+      "description": "SERVICE KIT-OIL FILTER",
+      "qty": "1",
+      "price": "16.70"
+    },
+    {
+      "id": "mpqyhxratbzo",
+      "partNumber": "",
+      "description": " ROTATE",
+      "qty": "1",
+      "price": "34.99"
+    },
+    {
+      "id": "mpqyiqwmbwfr",
+      "partNumber": "",
+      "description": "ALIGNMENT",
+      "qty": "1",
+      "price": "139.99"
+    },
+    {
+      "id": "mpqyiztyrbxv",
+      "partNumber": "",
+      "description": "CABIN FILTER",
+      "qty": "1",
+      "price": "54.99"
+    }
+  ],
+  "taxPct": "0",
+  "deductible": "",
+  "rental": null,
+  "towing": null,
+  "sublet": null,
+  "tireRepair": null,
+  "tireTax": null,
+  "tireDisposal": null,
+  "notes": "TAX $7.35. TOTAL $317.24 WITH TAX. SENT CREDIT CARD PAYMENT TO OFFICE 06/01/2026",
+  "approved": false,
+  "approvedDate": "",
+  "denied": false,
+  "deniedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": true,
+  "paymentDate": "2026-05-29",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": ""
+}

@@ -1,23 +1,5 @@
 [
   {
-    "id": "moiwxdqwvog",
-    "username": "SHAWN",
-    "text": "This chat is used for the techs on the work in progress page",
-    "timestamp": 1777398082520
-  },
-  {
-    "id": "mok0oml3lr9",
-    "username": "KAI",
-    "text": "776625 engine is here",
-    "timestamp": 1777464858711
-  },
-  {
-    "id": "mok2vprj3d4",
-    "username": "KAI",
-    "text": "Is this working for all the parts guys? Anyone that gets any error messages plaese send to me so i can fix",
-    "timestamp": 1777468548655
-  },
-  {
     "id": "mokkfnkpir1",
     "username": "SHAWN",
     "text": "Guys, We have already hit our record at the shop!! Great job guys!!!",
@@ -397,12 +379,86 @@
     "id": "mpo8hnoht0m",
     "username": "SHAWN",
     "text": "777522 CORY/JORDAN engine approved. ready for ASR",
-    "timestamp": 1779896617505
+    "timestamp": 1779896617505,
+    "reactions": {
+      "👍": [
+        "JORDAN"
+      ]
+    }
   },
   {
     "id": "mpo8ipxn3cd",
     "username": "SHAWN",
     "text": "Cory on 777522 make sure you take pictures of all the timing parts and turn them into parts for stamp. i dont see any stui for thoese parts",
     "timestamp": 1779896667083
+  },
+  {
+    "id": "mppfhtcee56",
+    "username": "SHAWN",
+    "text": "Cory 777717 line added for Valve cover STUI pics",
+    "timestamp": 1779968848334,
+    "reactions": {
+      "👍": [
+        "CORY"
+      ]
+    }
+  },
+  {
+    "id": "mppkwwxuk0f",
+    "username": "DEVIN",
+    "text": "Brendan James tire is in",
+    "timestamp": 1779977950914
+  },
+  {
+    "id": "mppl0h0n1in",
+    "username": "DEVIN",
+    "text": "tire for 777880 is in",
+    "timestamp": 1779978116903
+  },
+  {
+    "id": "mpplinde4qx",
+    "username": "CORY",
+    "text": "Photo uploaded.",
+    "timestamp": 1779978964946,
+    "replyTo": {
+      "id": "mppfhtcee56",
+      "username": "SHAWN",
+      "text": "Cory 777717 line added for Valve cover STUI pics"
+    }
+  },
+  {
+    "id": "mpprl19u2xm",
+    "username": "SHAWN",
+    "text": "DO NOT LOOK GOOD FOR A FREE ENGINE. REQUESTING MAINTANCE RECORDS",
+    "timestamp": 1779989153970,
+    "replyTo": {
+      "id": "mpplinde4qx",
+      "username": "CORY",
+      "text": "Photo uploaded."
+    }
+  },
+  {
+    "id": "mppw9y1g5n4",
+    "username": "SHAWN",
+    "text": "does Gaven know he has a drive belt sold on 777930?",
+    "timestamp": 1779997034644
+  },
+  {
+    "id": "mpqvdzzg8qw",
+    "username": "KAI",
+    "text": "777930, belt is here",
+    "timestamp": 1780056010348
+  },
+  {
+    "id": "mpqvey89ghu",
+    "username": "KAI",
+    "text": "777787, all parts here",
+    "timestamp": 1780056054729
+  },
+  {
+    "id": "mpqze64cq2p",
+    "username": "KAI",
+    "text": "777766, parts in",
+    "timestamp": 1780062736764
   }
 ]

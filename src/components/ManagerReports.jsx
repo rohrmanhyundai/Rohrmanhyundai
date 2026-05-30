@@ -103,6 +103,8 @@ export default function ManagerReports({ users, onBack }) {
   const [selected, setSelected] = useState(allUsers[0] || '');
   const [viewUser, setViewUser] = useState(null);
   const [generatingAI, setGeneratingAI] = useState(false);
+  const [aiPickerOpen, setAiPickerOpen] = useState(false);
+  const [aiPickerSelected, setAiPickerSelected] = useState(() => new Set());
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -288,19 +290,21 @@ export default function ManagerReports({ users, onBack }) {
     }
   }
 
-  async function handleGenerateAI() {
+  function openAiPicker() {
     if (!getOpenAIKey()) {
       alert('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
       return;
     }
     const techNames = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
     if (techNames.length === 0) { alert('No technicians found.'); return; }
-    const ok = window.confirm(
-      `Generate AI coaching report for ${techNames.length} tech${techNames.length === 1 ? '' : 's'}?\n\n` +
-      techNames.join(', ') +
-      `\n\nThis will call OpenAI once per tech (a few cents total) and save each report to GitHub.\nContinue?`
-    );
-    if (!ok) return;
+    // Default: all selected.
+    setAiPickerSelected(new Set(techNames));
+    setAiPickerOpen(true);
+  }
+
+  async function handleGenerateAI(techNamesIn) {
+    const techNames = Array.isArray(techNamesIn) ? techNamesIn : [];
+    if (techNames.length === 0) { alert('Pick at least one tech.'); return; }
     if (!await ensureToken()) return;
 
     setGeneratingAI(true);
@@ -409,7 +413,7 @@ export default function ManagerReports({ users, onBack }) {
                 + Add Entry
               </button>
               <button
-                onClick={handleGenerateAI}
+                onClick={openAiPicker}
                 disabled={generatingAI}
                 style={{ background: 'rgba(168,85,247,.18)', border: '1px solid rgba(168,85,247,.4)', color: '#c4b5fd', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer', opacity: generatingAI ? 0.6 : 1 }}
               >
@@ -631,6 +635,128 @@ export default function ManagerReports({ users, onBack }) {
 
         </div>
       </div>
+
+      {aiPickerOpen && (() => {
+        const allTechs = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).sort();
+        const allSelected = allTechs.length > 0 && allTechs.every(t => aiPickerSelected.has(t));
+        const toggle = (t) => {
+          const next = new Set(aiPickerSelected);
+          if (next.has(t)) next.delete(t); else next.add(t);
+          setAiPickerSelected(next);
+        };
+        return (
+          <div
+            onClick={() => !generatingAI && setAiPickerOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(2,6,23,0.72)', backdropFilter: 'blur(6px)',
+              zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                width: '100%', maxWidth: 520, background: 'linear-gradient(160deg, #0f172a, #0b1426)',
+                border: '1px solid rgba(168,85,247,.4)', borderRadius: 18,
+                boxShadow: '0 24px 80px rgba(168,85,247,.25)', overflow: 'hidden',
+              }}
+            >
+              <div style={{ height: 4, background: 'linear-gradient(90deg, #a855f7, rgba(168,85,247,.4), transparent)' }} />
+              <div style={{ padding: '18px 22px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
+                  <div style={{ fontWeight: 900, fontSize: 16, color: '#e9d5ff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    🤖 Generate AI Reports
+                  </div>
+                  <button
+                    onClick={() => !generatingAI && setAiPickerOpen(false)}
+                    disabled={generatingAI}
+                    style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 18, cursor: generatingAI ? 'not-allowed' : 'pointer' }}
+                  >✕</button>
+                </div>
+                <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 14 }}>
+                  Pick which techs to generate a coaching report for. Each one calls OpenAI separately.
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                  <button
+                    onClick={() => setAiPickerSelected(new Set(allTechs))}
+                    disabled={generatingAI}
+                    style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.12)', color: '#cbd5e1', borderRadius: 8, padding: '5px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+                  >Select All</button>
+                  <button
+                    onClick={() => setAiPickerSelected(new Set())}
+                    disabled={generatingAI}
+                    style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.12)', color: '#cbd5e1', borderRadius: 8, padding: '5px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+                  >Clear</button>
+                  <div style={{ marginLeft: 'auto', fontSize: 12, color: '#94a3b8', alignSelf: 'center', fontWeight: 700 }}>
+                    {aiPickerSelected.size} of {allTechs.length} selected
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 6, maxHeight: 320, overflowY: 'auto', padding: 4, background: 'rgba(0,0,0,.18)', border: '1px solid rgba(255,255,255,.05)', borderRadius: 10 }}>
+                  {allTechs.map(t => {
+                    const checked = aiPickerSelected.has(t);
+                    return (
+                      <button
+                        key={t}
+                        onClick={() => !generatingAI && toggle(t)}
+                        disabled={generatingAI}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left',
+                          background: checked ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.03)',
+                          border: `1px solid ${checked ? 'rgba(168,85,247,.55)' : 'rgba(255,255,255,.08)'}`,
+                          color: checked ? '#e9d5ff' : '#94a3b8',
+                          borderRadius: 8, padding: '8px 10px', fontWeight: 800, fontSize: 12,
+                          cursor: generatingAI ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        <span style={{
+                          width: 16, height: 16, borderRadius: 4, flexShrink: 0,
+                          background: checked ? '#a855f7' : 'transparent',
+                          border: `1.5px solid ${checked ? '#a855f7' : 'rgba(148,163,184,.4)'}`,
+                          color: '#fff', fontSize: 11, fontWeight: 900, lineHeight: '14px', textAlign: 'center',
+                        }}>{checked ? '✓' : ''}</span>
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {status && (
+                  <div style={{ marginTop: 12, fontSize: 12, color: status.startsWith('✅') ? '#4ade80' : status.startsWith('❌') ? '#f87171' : '#fbbf24', fontWeight: 700 }}>
+                    {status}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: 10, marginTop: 16, justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => setAiPickerOpen(false)}
+                    disabled={generatingAI}
+                    style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.12)', color: '#cbd5e1', borderRadius: 10, padding: '8px 16px', fontWeight: 700, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer' }}
+                  >Cancel</button>
+                  <button
+                    onClick={async () => {
+                      const list = Array.from(aiPickerSelected);
+                      await handleGenerateAI(list);
+                      // Close once everything wraps up (success or fail).
+                      setAiPickerOpen(false);
+                    }}
+                    disabled={generatingAI || aiPickerSelected.size === 0}
+                    style={{
+                      background: aiPickerSelected.size === 0 ? 'rgba(168,85,247,.08)' : 'rgba(168,85,247,.25)',
+                      border: '1px solid rgba(168,85,247,.55)',
+                      color: '#e9d5ff', borderRadius: 10, padding: '8px 20px', fontWeight: 800, fontSize: 13,
+                      cursor: (generatingAI || aiPickerSelected.size === 0) ? 'not-allowed' : 'pointer',
+                      opacity: aiPickerSelected.size === 0 ? 0.5 : 1,
+                    }}
+                  >
+                    {generatingAI ? '⏳ Generating…' : `Generate (${aiPickerSelected.size})`}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
