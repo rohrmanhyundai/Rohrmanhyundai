@@ -1,7 +1,182 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching } from '../utils/github';
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport from './PerformanceReport';
+
+// ── Shared helpers reused by the historical backfill uploader ────────────────
+const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+
+// Parses an advisor performance .xlsx and returns { firstName → fields }. The
+// fields cover MTD Hrs, MTD ROs, ELR %, Coupon Labor, Total Sales — same set
+// the live editor importer uses.
+async function parseAdvisorXlsxFile(file) {
+  const buf = await file.arrayBuffer();
+  const wb  = XLSX.read(buf, { type: 'array', cellDates: true });
+  const ws  = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
+  if (!rows.length) throw new Error('XLSX appears empty.');
+
+  const norm = (v) => String(v ?? '').trim().toLowerCase();
+  let headerIdx = -1;
+  for (let i = 0; i < Math.min(rows.length, 25); i++) {
+    const cells = (rows[i] || []).map(norm);
+    if (cells.some(c => c.includes('advisor') || c === 'name')
+        && cells.some(c => c.includes('bill') || c.includes('ro count') || c.includes('elr') || c.includes('coupon'))) {
+      headerIdx = i; break;
+    }
+  }
+  if (headerIdx === -1) throw new Error('Could not find header row in XLSX.');
+  const headerCells = (rows[headerIdx] || []).map(norm);
+
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const wordRegex = (n) => new RegExp(`(^|[^a-z0-9])${escapeRe(n)}([^a-z0-9]|$)`);
+  const findCol = (...needles) => {
+    for (let i = 0; i < headerCells.length; i++) if (needles.some(n => headerCells[i] === n)) return i;
+    for (let i = 0; i < headerCells.length; i++) if (needles.some(n => wordRegex(n).test(headerCells[i]))) return i;
+    return -1;
+  };
+  const stripWs = (s) => String(s || '').replace(/\s+/g, '');
+  const colELR = (() => {
+    const want = ['elr(%)', 'elr%'];
+    const stripped = headerCells.map(stripWs);
+    for (let i = 0; i < stripped.length; i++) if (want.includes(stripped[i])) return i;
+    return -1;
+  })();
+
+  const colName    = findCol('advisor name', 'advisor', 'name');
+  const colHours   = findCol('bill hours', 'bill hour', 'bill hrs', 'billed hours', 'billed hrs');
+  const colROs     = findCol('ro count', '# ros', "ro's", 'ros');
+  const colCoupon  = findCol('coupon labor', 'coupon');
+  const colTotalSales = findCol('total sales');
+
+  if (colName === -1) throw new Error('No Advisor Name column found in XLSX.');
+
+  const num = (cell) => {
+    const v = String(cell ?? '').replace(/[, $%]/g, '').trim();
+    if (!v) return null;
+    const f = parseFloat(v);
+    return isNaN(f) ? null : f;
+  };
+
+  const out = {};
+  for (let r = headerIdx + 1; r < rows.length; r++) {
+    const row = rows[r] || [];
+    const name = String(row[colName] ?? '').trim();
+    if (!name) continue;
+    if (/^(total|grand|average|avg|summary)/i.test(name)) continue;
+    const fn = firstWord(name);
+    if (!fn) continue;
+    const fields = out[fn] || (out[fn] = { reportName: name });
+    if (colHours !== -1) { const v = num(row[colHours]); if (v !== null) fields.mtd_hours = v; }
+    if (colROs !== -1)   { const v = num(row[colROs]);   if (v !== null && Number.isInteger(v) && v < 5000) fields.ro_count = v; }
+    if (colELR !== -1)   { const v = num(row[colELR]);   if (v !== null && v <= 200) fields.elr = Math.round((v / 100) * 10000) / 10000; }
+    if (colCoupon !== -1)     { const v = num(row[colCoupon]);     if (v !== null) fields.coupon_labor = v; }
+    if (colTotalSales !== -1) { const v = num(row[colTotalSales]); if (v !== null) fields.total_sales = v; }
+  }
+  // Derive coupon usage % per row.
+  for (const fn of Object.keys(out)) {
+    const f = out[fn];
+    const sales = parseFloat(f.total_sales) || 0;
+    const coupon = parseFloat(f.coupon_labor) || 0;
+    if (sales > 0) f.coupon_usage_pct = Math.round((coupon / sales) * 10000) / 10000;
+    const hrs = parseFloat(f.mtd_hours) || 0;
+    const ros = parseFloat(f.ro_count) || 0;
+    if (ros > 0) f.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+  }
+  return out;
+}
+
+// PDF.js lazy loader (same CDN pattern as everywhere else in the app).
+let pdfjsP = null;
+function loadPdfJs() {
+  if (pdfjsP) return pdfjsP;
+  pdfjsP = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    s.onerror = () => reject(new Error('Failed to load PDF.js from CDN'));
+    document.head.appendChild(s);
+  });
+  return pdfjsP;
+}
+
+// Parses an SA Totals advisor performance .pdf and returns { firstName → fields }.
+// Only Alignment / Tires / Valvoline / ASR penetration % land here.
+async function parseAdvisorPdfFile(file) {
+  const pdfjs = await loadPdfJs();
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+
+  const allLines = [];
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const byY = {};
+    for (const it of content.items) {
+      if (!it.str || !it.str.trim()) continue;
+      const y = Math.round(it.transform[5]);
+      (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str });
+    }
+    Object.entries(byY).sort(([a], [b]) => Number(b) - Number(a)).forEach(([, items]) => {
+      items.sort((a, b) => a.x - b.x);
+      const line = items.map(i => i.text).join(' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
+      if (line) allLines.push(line);
+    });
+  }
+  const headerLine = allLines.find(L => {
+    const u = L.toUpperCase();
+    return u.includes('ALIGNMENT PEN') && u.includes('VALVOLINE PEN') && u.includes('TIRE PEN') && u.includes('ASR SOLD');
+  });
+  if (!headerLine) throw new Error('PDF format unexpected — missing Alignment / Tire / Valvoline / ASR headers.');
+
+  // SA Totals layout positions (0-indexed within numerics after the advisor name).
+  const IDX_ASR = 9, IDX_ALIGNMENT = 11, IDX_TIRE = 13, IDX_VALVOLINE = 14;
+  const numRe = /(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?/g;
+  const parsePct = (raw) => {
+    const v = String(raw || '').replace(/[, $]/g, '').replace('%', '').trim();
+    if (!v) return null;
+    const f = parseFloat(v);
+    if (isNaN(f)) return null;
+    return f > 1 ? f / 100 : f;
+  };
+
+  // We don't have the dashboard advisor list here; instead pre-extract every
+  // row by spotting lines with >= 15 numerics and an uppercase name token, and
+  // identify name by the leftmost uppercase word group.
+  const out = {};
+  for (const line of allLines) {
+    if (line === headerLine) continue;
+    if (/\b(total|grand|average|all dealers|number of)\b/i.test(line)) continue;
+    const nums = (line.match(numRe) || []);
+    if (nums.length < IDX_VALVOLINE + 1) continue;
+    // Pull a likely advisor name: contiguous uppercase letters (length ≥ 3) on the line.
+    const nameMatch = line.match(/\b([A-Z][A-Z'\-]{2,})\b(?:\s+[A-Z][A-Z'\-]{1,})?/);
+    if (!nameMatch) continue;
+    const name = nameMatch[0].trim();
+    const fn = firstWord(name);
+    if (!fn) continue;
+    // Slice numerics after the matched name to keep header / date noise out.
+    const after = line.slice(line.indexOf(nameMatch[0]) + nameMatch[0].length);
+    const tailNums = (after.match(numRe) || []);
+    if (tailNums.length < IDX_VALVOLINE + 1) continue;
+    const fields = out[fn] || (out[fn] = { reportName: name });
+    const apply = (key, idx) => {
+      const v = parsePct(tailNums[idx]);
+      if (v !== null) fields[key] = Math.round(v * 10000) / 10000;
+    };
+    apply('asr', IDX_ASR);
+    apply('align', IDX_ALIGNMENT);
+    apply('tires', IDX_TIRE);
+    apply('valvoline', IDX_VALVOLINE);
+  }
+  return out;
+}
 
 function fmtDate(iso) {
   if (!iso) return '—';
@@ -106,6 +281,18 @@ export default function ManagerReports({ users, onBack }) {
   const [aiPickerOpen, setAiPickerOpen] = useState(false);
   const [aiPickerSelected, setAiPickerSelected] = useState(() => new Set());
   const [aiPickerMode, setAiPickerMode] = useState('tech'); // 'tech' | 'advisor'
+  // Historical-backfill upload modal state.
+  const [backfillOpen, setBackfillOpen] = useState(false);
+  const [backfillBusy, setBackfillBusy] = useState(false);
+  const [backfillStatus, setBackfillStatus] = useState('');
+  const [backfillDate, setBackfillDate] = useState(() => {
+    const d = new Date(); d.setDate(0); // last day of previous month
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  });
+  const [backfillXlsxFile, setBackfillXlsxFile] = useState(null);
+  const [backfillPdfFile, setBackfillPdfFile] = useState(null);
+  const backfillXlsxRef = useRef(null);
+  const backfillPdfRef = useRef(null);
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -304,6 +491,90 @@ export default function ManagerReports({ users, onBack }) {
     setAiPickerOpen(true);
   }
 
+  async function applyBackfill() {
+    if (!backfillXlsxFile && !backfillPdfFile) {
+      setBackfillStatus('❌ Pick at least one file (.xlsx and/or .pdf).');
+      return;
+    }
+    if (!backfillDate) { setBackfillStatus('❌ Pick the report date.'); return; }
+    if (!await ensureToken()) return;
+    setBackfillBusy(true);
+    setBackfillStatus('⏳ Parsing files…');
+    try {
+      const merged = {}; // firstName → { fields, reportName }
+      if (backfillXlsxFile) {
+        const x = await parseAdvisorXlsxFile(backfillXlsxFile);
+        for (const fn of Object.keys(x)) merged[fn] = { ...(merged[fn] || {}), ...x[fn] };
+      }
+      if (backfillPdfFile) {
+        const p = await parseAdvisorPdfFile(backfillPdfFile);
+        for (const fn of Object.keys(p)) merged[fn] = { ...(merged[fn] || {}), ...p[fn] };
+      }
+
+      // Resolve report first names to known advisor usernames.
+      const advisorFn = (advisors || []).map(a => ({ name: a, fn: firstWord(a) }));
+      const month = backfillDate.slice(0, 7);
+      const today = backfillDate;
+      const labelDate = (() => {
+        const [y, m, d] = backfillDate.split('-').map(n => parseInt(n, 10));
+        return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'long', year: 'numeric', day: 'numeric' });
+      })();
+
+      let updated = 0;
+      const skipped = [];
+      const updatedNames = [];
+
+      for (const fn of Object.keys(merged)) {
+        const match = advisorFn.find(a => a.fn === fn);
+        if (!match) { skipped.push(merged[fn].reportName || fn); continue; }
+        const username = match.name;
+        setBackfillStatus(`⏳ Writing snapshot for ${username}…`);
+        const existing = await loadGithubFile(`data/performance-reports/${username}.json`).then(d => Array.isArray(d) ? d : []).catch(() => []);
+        const f = merged[fn];
+        // Build an entry that mirrors the live Send-to-Reports payload shape.
+        const entry = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          date: today,
+          label: labelDate,
+          month,
+          type: 'advisor',
+          savedAt: new Date().toISOString(),
+          mtd_hours:        f.mtd_hours        ?? null,
+          ro_count:         f.ro_count         ?? null,
+          hours_per_ro:     f.hours_per_ro     ?? null,
+          align:            f.align            ?? null,
+          tires:            f.tires            ?? null,
+          valvoline:        f.valvoline        ?? null,
+          asr:              f.asr              ?? null,
+          elr:              f.elr              ?? null,
+          coupon_labor:     f.coupon_labor     ?? null,
+          total_sales:      f.total_sales      ?? null,
+          coupon_usage_pct: f.coupon_usage_pct ?? null,
+        };
+        // Replace any existing entry for the same date, then sort newest-first.
+        const next = [entry, ...existing.filter(e => e.date !== today)];
+        next.sort((a, b) => new Date(b.date) - new Date(a.date));
+        await saveGithubFile(`data/performance-reports/${username}.json`, next, `Backfill advisor snapshot for ${username} on ${today}`);
+        updated++;
+        updatedNames.push(username);
+      }
+
+      const parts = [`✅ Backfilled ${updated} advisor${updated === 1 ? '' : 's'} for ${labelDate}`];
+      if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      if (skipped.length)      parts.push(`· skipped (not on dashboard): ${skipped.join(', ')}`);
+      setBackfillStatus(parts.join(' '));
+      // Reset file refs but keep the modal open so the user can see the summary.
+      setBackfillXlsxFile(null);
+      setBackfillPdfFile(null);
+      if (backfillXlsxRef.current) backfillXlsxRef.current.value = '';
+      if (backfillPdfRef.current)  backfillPdfRef.current.value = '';
+    } catch (err) {
+      setBackfillStatus('❌ ' + (err.message || err));
+    } finally {
+      setBackfillBusy(false);
+    }
+  }
+
   async function handleGenerateAdvisorAI(advisorNamesIn) {
     const advisorNames = Array.isArray(advisorNamesIn) ? advisorNamesIn : [];
     if (advisorNames.length === 0) { alert('Pick at least one advisor.'); return; }
@@ -468,6 +739,12 @@ export default function ManagerReports({ users, onBack }) {
                 style={{ background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.4)', color: '#93c5fd', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: generatingAI ? 'not-allowed' : 'pointer', opacity: generatingAI ? 0.6 : 1 }}
               >
                 {generatingAI ? '⏳ Generating…' : '🤖 Advisor Coaching Report'}
+              </button>
+              <button
+                onClick={() => { setBackfillStatus(''); setBackfillOpen(true); }}
+                style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.45)', color: '#fbbf24', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}
+              >
+                📥 Upload Historical Report
               </button>
             </div>
           </div>
@@ -685,6 +962,102 @@ export default function ManagerReports({ users, onBack }) {
 
         </div>
       </div>
+
+      {backfillOpen && (
+        <div
+          onClick={() => !backfillBusy && setBackfillOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,0.72)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: 540, background: 'linear-gradient(160deg, #0f172a, #0b1426)', border: '1px solid rgba(251,191,36,.45)', borderRadius: 18, boxShadow: '0 24px 80px rgba(251,191,36,.2)', overflow: 'hidden' }}
+          >
+            <div style={{ height: 4, background: 'linear-gradient(90deg, #fbbf24, rgba(251,191,36,.4), transparent)' }} />
+            <div style={{ padding: '18px 22px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <div style={{ fontWeight: 900, fontSize: 16, color: '#fde68a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  📥 Upload Historical Report
+                </div>
+                <button
+                  onClick={() => !backfillBusy && setBackfillOpen(false)}
+                  disabled={backfillBusy}
+                  style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 18, cursor: backfillBusy ? 'not-allowed' : 'pointer' }}
+                >✕</button>
+              </div>
+              <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16, lineHeight: 1.5 }}>
+                Backfill historical advisor numbers from a past month's report. Pick the report date and one or both files — the importer writes a snapshot entry per advisor at that date so the Daily Breakdown and Trending Report fill in retroactively. Existing entry for the same date is replaced.
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>Report Date</label>
+                  <input
+                    type="date"
+                    value={backfillDate}
+                    onChange={e => setBackfillDate(e.target.value)}
+                    disabled={backfillBusy}
+                    style={{ background: 'rgba(0,0,0,.22)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '8px 12px', color: '#e2e8f0', fontSize: 13, width: '100%' }}
+                  />
+                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>Tip: pick the last day of the month the report covers.</div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>Advisor Performance Report (.xlsx)</label>
+                  <input
+                    ref={backfillXlsxRef}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    disabled={backfillBusy}
+                    onChange={e => setBackfillXlsxFile((e.target.files && e.target.files[0]) || null)}
+                    style={{ fontSize: 12, color: '#cbd5e1' }}
+                  />
+                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>Fills MTD Hrs, MTD ROs, ELR %, Coupon Labor, Total Sales.</div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>SA Totals Report (.pdf)</label>
+                  <input
+                    ref={backfillPdfRef}
+                    type="file"
+                    accept=".pdf"
+                    disabled={backfillBusy}
+                    onChange={e => setBackfillPdfFile((e.target.files && e.target.files[0]) || null)}
+                    style={{ fontSize: 12, color: '#cbd5e1' }}
+                  />
+                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>Fills Alignment %, Tires %, Valvoline %, ASR %.</div>
+                </div>
+
+                {backfillStatus && (
+                  <div style={{ fontSize: 12, fontWeight: 700, color: backfillStatus.startsWith('✅') ? '#4ade80' : backfillStatus.startsWith('❌') ? '#f87171' : '#fbbf24', lineHeight: 1.5 }}>
+                    {backfillStatus}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
+                  <button
+                    onClick={() => setBackfillOpen(false)}
+                    disabled={backfillBusy}
+                    style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.12)', color: '#cbd5e1', borderRadius: 10, padding: '8px 16px', fontWeight: 700, fontSize: 13, cursor: backfillBusy ? 'not-allowed' : 'pointer' }}
+                  >Close</button>
+                  <button
+                    onClick={applyBackfill}
+                    disabled={backfillBusy || (!backfillXlsxFile && !backfillPdfFile) || !backfillDate}
+                    style={{
+                      background: backfillBusy ? 'rgba(251,191,36,.08)' : 'rgba(251,191,36,.25)',
+                      border: '1px solid rgba(251,191,36,.55)',
+                      color: '#fde68a', borderRadius: 10, padding: '8px 20px', fontWeight: 800, fontSize: 13,
+                      cursor: (backfillBusy || (!backfillXlsxFile && !backfillPdfFile) || !backfillDate) ? 'not-allowed' : 'pointer',
+                      opacity: (!backfillXlsxFile && !backfillPdfFile) || !backfillDate ? .5 : 1,
+                    }}
+                  >
+                    {backfillBusy ? '⏳ Saving…' : 'Apply Backfill'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {aiPickerOpen && (() => {
         const role = aiPickerMode === 'advisor' ? 'advisor' : 'technician';
