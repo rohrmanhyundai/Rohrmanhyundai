@@ -686,6 +686,7 @@ export default function ManagerReports({ users, onBack }) {
         currentUser={viewUser}
         role={advisors.includes(viewUser) ? 'advisor' : 'technician'}
         onBack={() => setViewUser(null)}
+        canDelete={true}
       />
     );
   }
