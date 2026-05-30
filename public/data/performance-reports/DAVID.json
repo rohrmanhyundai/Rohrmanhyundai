@@ -472,5 +472,24 @@
     "coupon_labor": null,
     "total_sales": null,
     "coupon_usage_pct": null
+  },
+  {
+    "id": "mpsx8mor1ph",
+    "date": "2025-07-31",
+    "label": "July 31, 2025",
+    "month": "2025-07",
+    "type": "advisor",
+    "savedAt": "2026-05-30T22:27:31.419Z",
+    "mtd_hours": null,
+    "ro_count": null,
+    "hours_per_ro": null,
+    "align": 0,
+    "tires": 0,
+    "valvoline": 0,
+    "asr": 0,
+    "elr": null,
+    "coupon_labor": null,
+    "total_sales": null,
+    "coupon_usage_pct": null
   }
 ]
