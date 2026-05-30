@@ -605,5 +605,24 @@
     "coupon_labor": 2883.4,
     "total_sales": 102915.68,
     "coupon_usage_pct": 0.028
+  },
+  {
+    "id": "mpsxedaj81d",
+    "date": "2025-05-31",
+    "label": "May 31, 2025",
+    "month": "2025-05",
+    "type": "advisor",
+    "savedAt": "2026-05-30T22:31:59.179Z",
+    "mtd_hours": 263.5,
+    "ro_count": 207,
+    "hours_per_ro": 1.27,
+    "align": null,
+    "tires": null,
+    "valvoline": null,
+    "asr": null,
+    "elr": 0.8369,
+    "coupon_labor": 1625.53,
+    "total_sales": 87563.72,
+    "coupon_usage_pct": 0.0186
   }
 ]
