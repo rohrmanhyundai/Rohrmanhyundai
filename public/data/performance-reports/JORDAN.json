@@ -529,5 +529,24 @@
     "coupon_labor": 1360.11,
     "total_sales": 120378.83,
     "coupon_usage_pct": 0.0113
+  },
+  {
+    "id": "mpsx38noa40",
+    "date": "2025-09-30",
+    "label": "September 30, 2025",
+    "month": "2025-09",
+    "type": "advisor",
+    "savedAt": "2026-05-30T22:23:19.956Z",
+    "mtd_hours": 274,
+    "ro_count": 221,
+    "hours_per_ro": 1.24,
+    "align": 0.13,
+    "tires": 0.11,
+    "valvoline": 0.33,
+    "asr": 0.2122,
+    "elr": 0.9256,
+    "coupon_labor": 1437.9,
+    "total_sales": 89871.71,
+    "coupon_usage_pct": 0.016
   }
 ]
