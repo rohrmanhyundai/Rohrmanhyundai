@@ -230,53 +230,70 @@ function avgOf(entries, key) {
   return vals.reduce((s, v) => s + v, 0) / vals.length;
 }
 
-function TrendCell({ curr, prev, metric }) {
-  if (curr === null || curr === undefined || isNaN(curr)) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        <span style={{ fontSize: 18, fontWeight: 900, color: '#334155' }}>—</span>
-      </div>
-    );
-  }
-  const meetsGoal = metric.goal !== null ? curr >= metric.goal : true;
-  const valColor  = meetsGoal ? '#e2e8f0' : '#f87171';
+// One horizontal row per metric: direction icon · label · big value · delta %.
+// Designed to be scannable at a glance — color tells the story.
+function TrendRow({ curr, prev, metric }) {
+  const empty = curr === null || curr === undefined || isNaN(curr);
 
-  let dir = null, delta = null, pctChange = null;
-  if (prev !== null && prev !== undefined && !isNaN(prev)) {
+  let dir = null, pctChange = null;
+  if (!empty && prev !== null && prev !== undefined && !isNaN(prev)) {
     const diff = curr - prev;
     if (Math.abs(diff) > 1e-9) {
-      dir   = diff > 0 ? 'up' : 'down';
-      delta = diff;
+      dir = diff > 0 ? 'up' : 'down';
       if (Math.abs(prev) > 1e-9) pctChange = (diff / prev) * 100;
     }
   }
 
-  const pillBg = !dir
-    ? 'rgba(148,163,184,.10)'
-    : dir === 'up' ? 'rgba(74,222,128,.15)' : 'rgba(248,113,113,.15)';
-  const pillBorder = !dir
-    ? 'rgba(148,163,184,.25)'
-    : dir === 'up' ? 'rgba(74,222,128,.4)' : 'rgba(248,113,113,.4)';
-  const pillColor = !dir ? '#94a3b8' : dir === 'up' ? '#4ade80' : '#f87171';
-  const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '•';
+  // Direction styling — green for improving, red for worsening, gray for flat.
+  const dirColor = dir === 'up' ? '#4ade80' : dir === 'down' ? '#f87171' : '#64748b';
+  const dirBg    = dir === 'up' ? 'rgba(74,222,128,.14)' : dir === 'down' ? 'rgba(248,113,113,.14)' : 'rgba(100,116,139,.12)';
+  const arrow    = dir === 'up' ? '↑' : dir === 'down' ? '↓' : '–';
+
+  // Value color — neutral unless the goal exists AND is missed (kept subtle so it doesn't overpower direction).
+  const missGoal = !empty && metric.goal !== null && curr < metric.goal;
+  const valColor = empty ? '#475569' : missGoal ? '#fda4af' : '#f1f5f9';
 
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-      <span style={{ fontWeight: 900, fontSize: 20, color: valColor, lineHeight: 1, letterSpacing: -0.3 }}>
-        {metric.fmt(curr)}
-      </span>
-      <span style={{
-        display: 'inline-flex', alignItems: 'center', gap: 4,
-        fontSize: 10, fontWeight: 800, color: pillColor,
-        background: pillBg, border: `1px solid ${pillBorder}`,
-        padding: '3px 7px', borderRadius: 999, lineHeight: 1,
-        whiteSpace: 'nowrap',
-      }}>
-        <span style={{ fontSize: 9 }}>{arrow}</span>
-        {dir
-          ? `${metric.fmtDelta(delta)}${pctChange !== null ? ` · ${pctChange > 0 ? '+' : ''}${pctChange.toFixed(1)}%` : ''}`
-          : 'flat'}
-      </span>
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10,
+      padding: '8px 10px',
+      borderRadius: 10,
+      background: dir ? dirBg : 'rgba(255,255,255,.02)',
+      borderLeft: `3px solid ${dir ? dirColor : 'rgba(148,163,184,.25)'}`,
+    }}>
+      {/* Direction badge */}
+      <div style={{
+        width: 26, height: 26, borderRadius: 8,
+        background: dir ? `${dirColor}26` : 'rgba(100,116,139,.15)',
+        color: dirColor, fontWeight: 900, fontSize: 15, lineHeight: 1,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>{arrow}</div>
+
+      {/* Label + tiny "vs prev" */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: '#cbd5e1', letterSpacing: .4, textTransform: 'uppercase' }}>{metric.label}</div>
+        <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>
+          {empty ? 'no data' : dir ? `vs ${metric.fmt(prev)}` : 'unchanged'}
+        </div>
+      </div>
+
+      {/* Big current value */}
+      <div style={{ textAlign: 'right', minWidth: 0 }}>
+        <div style={{ fontWeight: 900, fontSize: 19, color: valColor, lineHeight: 1, letterSpacing: -0.3, whiteSpace: 'nowrap' }}>
+          {empty ? '—' : metric.fmt(curr)}
+        </div>
+        {dir && pctChange !== null && (
+          <div style={{ fontSize: 10, fontWeight: 800, color: dirColor, marginTop: 2, whiteSpace: 'nowrap' }}>
+            {pctChange > 0 ? '+' : ''}{pctChange.toFixed(1)}%
+          </div>
+        )}
+        {dir && pctChange === null && (
+          <div style={{ fontSize: 10, fontWeight: 800, color: dirColor, marginTop: 2, whiteSpace: 'nowrap' }}>
+            {arrow} new
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -312,40 +329,77 @@ function TrendingReport({ entries, selectedMonth }) {
     return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`;
   };
 
-  const renderCard = ({ accent, icon, title, sub, available, getCurr, getPrev }) => (
-    <div style={{
-      flex: 1, minWidth: 280,
-      background: `linear-gradient(160deg, rgba(15,23,42,.85), rgba(15,23,42,.6))`,
-      border: `1px solid ${accent}33`,
-      borderRadius: 16,
-      boxShadow: `0 0 24px ${accent}14, inset 0 1px 0 rgba(255,255,255,.04)`,
-      overflow: 'hidden', position: 'relative',
-    }}>
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${accent}, ${accent}55, transparent)` }} />
-      <div style={{ padding: '14px 18px 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-          <div style={{ fontSize: 11, fontWeight: 900, color: accent, textTransform: 'uppercase', letterSpacing: 1.5 }}>
-            {icon} {title}
-          </div>
-        </div>
-        <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, marginBottom: 14 }}>{sub}</div>
-        {available ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 12px' }}>
-            {TREND_METRICS.map(m => (
-              <div key={m.key}>
-                <div style={{ fontSize: 9, color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>{m.label}</div>
-                <TrendCell curr={getCurr(m)} prev={getPrev(m)} metric={m} />
+  const renderCard = ({ accent, icon, title, sub, available, getCurr, getPrev }) => {
+    // Pre-compute direction tallies so the card header can show a quick
+    // "wins vs losses" summary the advisor can read at a glance.
+    let ups = 0, downs = 0, flats = 0;
+    if (available) {
+      for (const m of TREND_METRICS) {
+        const c = getCurr(m), p = getPrev(m);
+        if (c === null || c === undefined || isNaN(c) || p === null || p === undefined || isNaN(p)) continue;
+        const d = c - p;
+        if (Math.abs(d) < 1e-9) flats++;
+        else if (d > 0) ups++;
+        else downs++;
+      }
+    }
+    const trendVerdict = ups > downs ? 'up' : downs > ups ? 'down' : 'flat';
+    const verdictColor = trendVerdict === 'up' ? '#4ade80' : trendVerdict === 'down' ? '#f87171' : '#94a3b8';
+
+    return (
+      <div style={{
+        flex: 1, minWidth: 300,
+        background: `linear-gradient(160deg, rgba(15,23,42,.92), rgba(15,23,42,.7))`,
+        border: `1px solid ${accent}33`,
+        borderRadius: 18,
+        boxShadow: `0 4px 24px ${accent}1f, inset 0 1px 0 rgba(255,255,255,.04)`,
+        overflow: 'hidden', position: 'relative',
+      }}>
+        <div style={{ height: 4, background: `linear-gradient(90deg, ${accent}, ${accent}55, transparent)` }} />
+        <div style={{ padding: '16px 16px 18px' }}>
+          {/* Card title */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 10,
+                background: `${accent}1f`, border: `1px solid ${accent}40`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17,
+              }}>{icon}</div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: '#e2e8f0', letterSpacing: .3 }}>{title}</div>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>{sub}</div>
               </div>
-            ))}
+            </div>
+            {available && (ups + downs + flats) > 0 && (
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2,
+                padding: '4px 10px', borderRadius: 10,
+                background: `${verdictColor}1a`, border: `1px solid ${verdictColor}55`,
+              }}>
+                <div style={{ fontSize: 9, color: '#94a3b8', fontWeight: 800, letterSpacing: .8, textTransform: 'uppercase' }}>Trend</div>
+                <div style={{ fontSize: 12, fontWeight: 900, color: verdictColor, lineHeight: 1 }}>
+                  {ups}↑ &nbsp;{downs}↓
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic', padding: '20px 0' }}>
-            No data yet — fills in as snapshots accumulate.
-          </div>
-        )}
+
+          {/* Metric rows */}
+          {available ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 12 }}>
+              {TREND_METRICS.map(m => (
+                <TrendRow key={m.key} curr={getCurr(m)} prev={getPrev(m)} metric={m} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic', padding: '24px 0' }}>
+              No data yet — fills in as snapshots accumulate.
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div style={{ marginTop: 28 }}>
