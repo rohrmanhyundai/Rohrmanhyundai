@@ -189,7 +189,9 @@
         "hidden": false,
         "ro_count": 177,
         "coupon_labor": 1931.18,
-        "_lastImport": 1780174469836
+        "_lastImport": 1780176054358,
+        "total_sales": 70037.08,
+        "coupon_usage_pct": 0.0276
       },
       {
         "name": "JORDAN",
@@ -206,7 +208,9 @@
         "roh50_hrs_ro": 0.86,
         "ro_count": 310,
         "coupon_labor": 4282.03,
-        "_lastImport": 1780174469836
+        "_lastImport": 1780176054358,
+        "total_sales": 92542.24,
+        "coupon_usage_pct": 0.0463
       },
       {
         "name": "PARKER",
@@ -223,7 +227,9 @@
         "last_month_total": 79.7,
         "ro_count": 224,
         "coupon_labor": 2571.26,
-        "_lastImport": 1780174469836
+        "_lastImport": 1780176054358,
+        "total_sales": 87303.59,
+        "coupon_usage_pct": 0.0295
       }
     ],
     "advisorTraining": [
