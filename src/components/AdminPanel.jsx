@@ -423,6 +423,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const skipped = [];
       const updatedNames = [];
 
+      // Diagnostic capture — first matched advisor's extracted numerics get
+      // dumped to console so we can audit if values come out wrong.
+      let firstDiagLogged = false;
+
       for (const line of allLines) {
         if (line === headerLine) continue;
         // Skip totals / summary rows.
@@ -445,6 +449,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const idx = newAdvisors.findIndex(a => firstWord(a.name) === matchedFn);
         if (idx === -1) { skipped.push(adv?.name || matchedFn); continue; }
         const target = newAdvisors[idx];
+
+        // Dump the first row's data so we can verify the column indices line up
+        // for this report. Open dev tools → console after upload to inspect.
+        if (!firstDiagLogged) {
+          try {
+            console.log(`[advisor-pdf] line for ${target.name}:`, line);
+            console.log(`[advisor-pdf] after-name slice:`, after);
+            console.log(`[advisor-pdf] extracted ${nums.length} numerics:`, nums);
+            console.log(`[advisor-pdf] index map → asr=${nums[IDX_ASR]} align=${nums[IDX_ALIGNMENT]} tire=${nums[IDX_TIRE]} valv=${nums[IDX_VALVOLINE]}`);
+          } catch {}
+          firstDiagLogged = true;
+        }
 
         let touched = false;
         const apply = (key, idxInNums) => {
