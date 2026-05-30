@@ -320,9 +320,27 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   // Parse a PDF advisor performance report and merge Alignment / Valvoline /
-  // Tires / ASR penetration % values onto matching advisors. Uses positional
-  // (x-coordinate) column matching — find the header item for each metric,
-  // then on each row pick the text item closest to that column's x.
+  // Tires / ASR penetration % values onto matching advisors.
+  //
+  // The dealership's report (Bob Rohrman Hyundai SA Totals) uses VERTICAL
+  // (rotated) column headers, which makes x-coordinate column matching
+  // unreliable. Instead this parser:
+  //
+  //   1. Extracts every page's text into y-grouped lines.
+  //   2. Validates the report format by locating a header line that mentions
+  //      all four target labels (Alignment PEN, Tire PEN, Valvoline PEN,
+  //      % of ASR sold).
+  //   3. For each remaining line, finds the LAST occurrence of any known
+  //      advisor first name (dealer name appears at the start of each row, so
+  //      "last" avoids accidental matches there), then extracts the trailing
+  //      list of numeric tokens.
+  //   4. Maps numeric token positions to metrics by fixed index — these are
+  //      the column positions in this DMS report format:
+  //         index 9  → % OF ASR SOLD
+  //         index 11 → ALIGNMENT PEN%
+  //         index 13 → TIRE PEN%
+  //         index 14 → VALVOLINE PEN %
+  //
   async function handleAdvisorPdf(file) {
     if (!file) return;
     setAdvisorXlsxBusy(true);
@@ -332,11 +350,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const buf = await file.arrayBuffer();
       const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
 
+      // Build a list of advisor first names (lowercased) from the dashboard so
+      // we can spot them in PDF text lines.
       const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
-      const advisorFirstNames = new Set((data.advisors || []).map(a => firstWord(a.name)).filter(Boolean));
+      const advisorMap = new Map(); // firstName → advisor object
+      for (const a of (data.advisors || [])) {
+        const fn = firstWord(a.name);
+        if (fn) advisorMap.set(fn, a);
+      }
+      if (advisorMap.size === 0) throw new Error('No advisors on the dashboard to match against.');
 
-      // Collect rows from every page: each row is { y, items: [{x, text}] }.
-      const allRows = [];
+      // Collect text lines from every page (y-grouped, items in left-to-right order).
+      const allLines = [];
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
         const content = await page.getTextContent();
@@ -344,97 +369,97 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         for (const it of content.items) {
           if (!it.str || !it.str.trim()) continue;
           const y = Math.round(it.transform[5]);
-          (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str.trim() });
+          (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str });
         }
         Object.entries(byY)
           .sort(([a], [b]) => Number(b) - Number(a))
-          .forEach(([y, items]) => {
+          .forEach(([, items]) => {
             items.sort((a, b) => a.x - b.x);
-            allRows.push({ y: Number(y), items });
+            const line = items.map(i => i.text).join(' ').trim();
+            if (line) allLines.push(line);
           });
       }
 
-      // Find the header row containing all four metric labels.
-      const labels = {
-        align:     /alignment/i,
-        valvoline: /valvoline/i,
-        tires:     /tires/i,
-        asr:       /asr/i,
-      };
-      let headerRow = null;
-      const headerX = {}; // label → x of its label text item
-      for (const row of allRows) {
-        const hit = {};
-        for (const it of row.items) {
-          for (const [k, re] of Object.entries(labels)) {
-            if (!hit[k] && re.test(it.text)) hit[k] = it.x;
-          }
-        }
-        if (hit.align && hit.valvoline && hit.tires && hit.asr) {
-          headerRow = row;
-          Object.assign(headerX, hit);
-          break;
-        }
+      // Validate format: find at least one line that names all four metrics.
+      const headerLine = allLines.find(L => {
+        const u = L.toUpperCase();
+        return u.includes('ALIGNMENT PEN')
+            && u.includes('VALVOLINE PEN')
+            && u.includes('TIRE PEN')
+            && u.includes('ASR SOLD');
+      });
+      if (!headerLine) {
+        throw new Error('This PDF doesn\'t look like the expected SA Totals report (missing Alignment PEN%, Tire PEN%, Valvoline PEN %, or % of ASR sold).');
       }
-      if (!headerRow) throw new Error('Could not find a row containing all four headers: Alignment, Valvoline, Tires, ASR.');
 
-      // For each data row below the header, find the advisor first name and
-      // grab the % token whose x is closest to each column's header x.
+      // Column indices in the data-row numeric sequence (0-indexed). These match
+      // the SA Totals layout: count, count, count, hours, %, ratio, ratio, %,
+      //                       EFF%, ASR%, INSP%, ALIGN%, BATTERY%, TIRE%, VALV%, TOP GUN, RANK
+      const IDX_ASR       = 9;
+      const IDX_ALIGNMENT = 11;
+      const IDX_TIRE      = 13;
+      const IDX_VALVOLINE = 14;
+
+      // Build one combined regex for all advisor first names so we can find the
+      // last occurrence on a row in one pass.
+      const firstNames = Array.from(advisorMap.keys());
+      const namesRe = new RegExp(`\\b(${firstNames.map(n => n.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')).join('|')})\\b`, 'gi');
+      // Numeric token: optional thousands commas, optional decimals, optional trailing %.
+      const numRe = /(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?/g;
+      const parsePct = (raw) => {
+        const v = String(raw || '').replace(/[, $]/g, '').replace('%', '').trim();
+        if (!v) return null;
+        const f = parseFloat(v);
+        if (isNaN(f)) return null;
+        return f > 1 ? f / 100 : f;
+      };
+
       const newData = structuredClone(data);
       const newAdvisors = newData.advisors;
       let updated = 0;
       const skipped = [];
       const updatedNames = [];
 
-      const dataRows = allRows.filter(r => r.y < headerRow.y);
-      const parsePct = (raw) => {
-        const v = String(raw || '').replace(/[, $]/g, '').replace('%', '').trim();
-        if (!v) return null;
-        const f = parseFloat(v);
-        if (isNaN(f)) return null;
-        // Reports use 8.9-style; convert to 0.089. Allow already-decimal values too.
-        return f > 1 ? f / 100 : f;
-      };
-      const closestPct = (items, targetX) => {
-        let best = null, bestDist = Infinity;
-        for (const it of items) {
-          if (!/\d/.test(it.text)) continue;
-          if (!/%/.test(it.text)) continue;
-          const d = Math.abs(it.x - targetX);
-          if (d < bestDist) { bestDist = d; best = it; }
-        }
-        return best ? parsePct(best.text) : null;
-      };
+      for (const line of allLines) {
+        if (line === headerLine) continue;
+        // Skip totals / summary rows.
+        if (/\b(total|grand|average|all dealers|number of)\b/i.test(line)) continue;
 
-      for (const row of dataRows) {
-        if (!row.items.length) continue;
-        // Advisor name is among the leftmost items. Look at the first ~3 items.
-        const leftItems = row.items.slice(0, 3);
-        let advisorFirst = null;
-        for (const it of leftItems) {
-          const fw = firstWord(it.text);
-          if (advisorFirstNames.has(fw)) { advisorFirst = fw; break; }
-        }
-        if (!advisorFirst) continue; // not an advisor row
+        // Find the LAST advisor first-name match on the line (dealer name appears
+        // at the start of each row — we want the actual advisor at the end).
+        let lastMatch = null;
+        let m;
+        namesRe.lastIndex = 0;
+        while ((m = namesRe.exec(line)) !== null) lastMatch = m;
+        if (!lastMatch) continue;
 
-        // Skip totals rows just in case.
-        const leftJoined = leftItems.map(i => i.text).join(' ');
-        if (/^(total|grand|average|avg|summary)/i.test(leftJoined)) continue;
+        const matchedFn = lastMatch[1].toLowerCase();
+        const after = line.slice(lastMatch.index + lastMatch[0].length);
+        const nums = after.match(numRe) || [];
+        if (nums.length < IDX_VALVOLINE + 1) continue; // not enough columns
 
-        const idx = newAdvisors.findIndex(a => firstWord(a.name) === advisorFirst);
-        if (idx === -1) { skipped.push(leftJoined); continue; }
-        const adv = newAdvisors[idx];
+        const adv = advisorMap.get(matchedFn);
+        const idx = newAdvisors.findIndex(a => firstWord(a.name) === matchedFn);
+        if (idx === -1) { skipped.push(adv?.name || matchedFn); continue; }
+        const target = newAdvisors[idx];
 
         let touched = false;
-        const valign = closestPct(row.items, headerX.align);
-        if (valign !== null) { adv.align = Math.round(valign * 10000) / 10000; touched = true; }
-        const vval = closestPct(row.items, headerX.valvoline);
-        if (vval !== null) { adv.valvoline = Math.round(vval * 10000) / 10000; touched = true; }
-        const vtir = closestPct(row.items, headerX.tires);
-        if (vtir !== null) { adv.tires = Math.round(vtir * 10000) / 10000; touched = true; }
-        const vasr = closestPct(row.items, headerX.asr);
-        if (vasr !== null) { adv.asr = Math.round(vasr * 10000) / 10000; touched = true; }
-        if (touched) { updated++; updatedNames.push(adv.name); }
+        const apply = (key, idxInNums) => {
+          const v = parsePct(nums[idxInNums]);
+          if (v === null) return;
+          target[key] = Math.round(v * 10000) / 10000;
+          touched = true;
+        };
+        apply('asr',       IDX_ASR);
+        apply('align',     IDX_ALIGNMENT);
+        apply('tires',     IDX_TIRE);
+        apply('valvoline', IDX_VALVOLINE);
+
+        if (touched) { updated++; updatedNames.push(target.name); }
+      }
+
+      if (updated === 0) {
+        throw new Error('Found the report but couldn\'t match any advisors. Check that the advisor first names on the dashboard match the report.');
       }
 
       onDataChange(newData, structuredClone(vacations));
