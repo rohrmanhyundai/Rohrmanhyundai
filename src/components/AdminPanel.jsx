@@ -423,44 +423,50 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const skipped = [];
       const updatedNames = [];
 
-      // Diagnostic capture — first matched advisor's extracted numerics get
-      // dumped to console so we can audit if values come out wrong.
-      let firstDiagLogged = false;
+      try { console.log('[advisor-pdf] header line:', headerLine); } catch {}
+      try { console.log('[advisor-pdf] firstNames known:', firstNames); } catch {}
+      try { console.log('[advisor-pdf] total lines extracted:', allLines.length); } catch {}
 
       for (const line of allLines) {
         if (line === headerLine) continue;
         // Skip totals / summary rows.
         if (/\b(total|grand|average|all dealers|number of)\b/i.test(line)) continue;
 
-        // Find the LAST advisor first-name match on the line (dealer name appears
-        // at the start of each row — we want the actual advisor at the end).
-        let lastMatch = null;
-        let m;
+        // Find every advisor first-name match on the line. We'll pick the one
+        // whose tail yields the most numerics — handles cases where the dealer
+        // name happens to contain a name token.
         namesRe.lastIndex = 0;
-        while ((m = namesRe.exec(line)) !== null) lastMatch = m;
-        if (!lastMatch) continue;
+        const matches = [];
+        let m;
+        while ((m = namesRe.exec(line)) !== null) {
+          matches.push({ name: m[1].toLowerCase(), end: m.index + m[0].length });
+        }
+        if (matches.length === 0) continue;
 
-        const matchedFn = lastMatch[1].toLowerCase();
-        const after = line.slice(lastMatch.index + lastMatch[0].length);
-        const nums = after.match(numRe) || [];
-        if (nums.length < IDX_VALVOLINE + 1) continue; // not enough columns
+        let bestMatch = null, bestNums = null;
+        for (const mm of matches) {
+          const after = line.slice(mm.end);
+          const nums = after.match(numRe) || [];
+          if (!bestMatch || nums.length > bestNums.length) {
+            bestMatch = mm; bestNums = nums;
+          }
+        }
+        if (!bestMatch || !bestNums || bestNums.length < IDX_VALVOLINE + 1) continue;
+
+        const matchedFn = bestMatch.name;
+        const nums = bestNums;
 
         const adv = advisorMap.get(matchedFn);
         const idx = newAdvisors.findIndex(a => firstWord(a.name) === matchedFn);
         if (idx === -1) { skipped.push(adv?.name || matchedFn); continue; }
         const target = newAdvisors[idx];
 
-        // Dump the first row's data so we can verify the column indices line up
-        // for this report. Open dev tools → console after upload to inspect.
-        if (!firstDiagLogged) {
-          try {
-            console.log(`[advisor-pdf] line for ${target.name}:`, line);
-            console.log(`[advisor-pdf] after-name slice:`, after);
-            console.log(`[advisor-pdf] extracted ${nums.length} numerics:`, nums);
-            console.log(`[advisor-pdf] index map → asr=${nums[IDX_ASR]} align=${nums[IDX_ALIGNMENT]} tire=${nums[IDX_TIRE]} valv=${nums[IDX_VALVOLINE]}`);
-          } catch {}
-          firstDiagLogged = true;
-        }
+        try {
+          console.log(`[advisor-pdf] ${target.name} line:`, line);
+          console.log(`[advisor-pdf] ${target.name} after-name:`, line.slice(bestMatch.end));
+          console.log(`[advisor-pdf] ${target.name} ${nums.length} numerics:`, nums);
+          console.log(`[advisor-pdf] ${target.name} → asr=${nums[IDX_ASR]} align=${nums[IDX_ALIGNMENT]} tire=${nums[IDX_TIRE]} valv=${nums[IDX_VALVOLINE]}`);
+        } catch {}
 
         let touched = false;
         const apply = (key, idxInNums) => {
