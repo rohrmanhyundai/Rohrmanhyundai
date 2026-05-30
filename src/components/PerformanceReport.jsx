@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, loadCoaching } from '../utils/github';
+import { loadGithubFile, loadCoaching, loadDashboardData } from '../utils/github';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -958,9 +958,25 @@ export default function PerformanceReport({ currentUser, role, onBack }) {
 
   useEffect(() => {
     setLoading(true);
-    loadGithubFile(`data/performance-reports/${username}.json`)
-      .then(d => setEntries(Array.isArray(d) ? d : []))
-      .finally(() => setLoading(false));
+    Promise.all([
+      loadGithubFile(`data/performance-reports/${username}.json`).then(d => Array.isArray(d) ? d : []),
+      loadDashboardData().then(d => d?.data?.advisors || []).catch(() => []),
+    ]).then(([saved, advisors]) => {
+      // Pull a few fields straight from the live Advisor Performance editor
+      // (where the manager edits them), so the latest snapshot in the report
+      // always reflects the current dashboard — not just what was captured at
+      // the last "Send to Reports" event. Coupon Labor specifically is
+      // entered/imported on the advisor card and should show here immediately.
+      const me = advisors.find(a => (a.name || '').toUpperCase() === username);
+      const merged = [...saved];
+      if (me && merged.length > 0) {
+        merged[0] = {
+          ...merged[0],
+          coupon_labor: me.coupon_labor != null && me.coupon_labor !== '' ? parseFloat(me.coupon_labor) : merged[0].coupon_labor,
+        };
+      }
+      setEntries(merged);
+    }).finally(() => setLoading(false));
   }, [username]);
 
   return (
