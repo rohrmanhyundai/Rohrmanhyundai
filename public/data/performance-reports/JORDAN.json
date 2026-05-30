@@ -493,6 +493,25 @@
     "coupon_usage_pct": 0.0117
   },
   {
+    "id": "mpswzyrocmp",
+    "date": "2025-11-30",
+    "label": "November 30, 2025",
+    "month": "2025-11",
+    "type": "advisor",
+    "savedAt": "2026-05-30T22:20:47.172Z",
+    "mtd_hours": 272.2,
+    "ro_count": 222,
+    "hours_per_ro": 1.23,
+    "align": 0.1869,
+    "tires": 0.1495,
+    "valvoline": 0.1869,
+    "asr": 0.197,
+    "elr": 0.9155,
+    "coupon_labor": 1219.16,
+    "total_sales": 104537.48,
+    "coupon_usage_pct": 0.0117
+  },
+  {
     "id": "mpswu66vh6m",
     "date": "2025-10-31",
     "label": "October 31, 2025",
