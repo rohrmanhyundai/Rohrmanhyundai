@@ -561,8 +561,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const colName    = findCol('advisor name', 'advisor', 'name');
       const colHours   = findCol('bill hours', 'bill hour', 'bill hrs', 'billed hours', 'billed hrs');
       const colROs     = findCol('ro count', '# ros', "ro's", 'ros');
-      const colELR     = findCol('elr', 'elr(%)', 'elr %', 'elr%');
+      // ELR: exact-match only. The whole-word fallback was picking up other
+      // columns (likely "Eff % After Discount") whose raw values are also
+      // big percentage numbers, producing wildly wrong ELRs like 157.3%.
+      const findColExactOnly = (...needles) => {
+        for (let i = 0; i < headerCells.length; i++) {
+          if (needles.some(n => headerCells[i] === n)) return i;
+        }
+        return -1;
+      };
+      const colELR     = findColExactOnly('elr%', 'elr %', 'elr(%)', 'elr');
       const colCoupon  = findCol('coupon labor', 'coupon');
+      try { console.log('[advisor-xlsx] header columns:', headerCells); } catch {}
+      try { console.log('[advisor-xlsx] picked col indices →', { colName, colHours, colROs, colELR, colCoupon, elrHeader: colELR >= 0 ? headerCells[colELR] : null }); } catch {}
 
       if (colName === -1) throw new Error('Could not locate the Advisor Name column in the report header.');
 
@@ -609,7 +620,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         }
         if (colELR !== -1) {
           const v = num(row[colELR]);
-          if (v !== null) { adv.elr = Math.round((v / 100) * 10000) / 10000; touched = true; }
+          // Sanity guard: real ELR % should sit roughly between 60-110. If we
+          // see a raw value above 200 we likely matched the wrong column —
+          // skip rather than write a nonsense 157.3%-style figure.
+          if (v !== null && v <= 200) { adv.elr = Math.round((v / 100) * 10000) / 10000; touched = true; }
         }
         if (colCoupon !== -1) {
           const v = num(row[colCoupon]);
