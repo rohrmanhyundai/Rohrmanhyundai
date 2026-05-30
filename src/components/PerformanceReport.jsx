@@ -124,7 +124,7 @@ function AdvisorReport({ entries }) {
                 const ok = (v, goal) => v !== null && v !== undefined && v !== '' && !isNaN(parseFloat(v)) && parseFloat(v) >= goal;
                 const c = (v, goal, base) => ok(v, goal) ? base : RED;
                 return <>
-                  <StatBox label="CSI · Goal 920"             value={latest?.csi || '—'}            color={c(latest?.csi, 920, '#4ade80')} />
+                  <StatBox label="CSI · Goal 910"             value={latest?.csi || '—'}            color={c(latest?.csi, 910, '#4ade80')} />
                   <StatBox label="Hrs/RO · Goal 1.4"          value={num(latest?.hours_per_ro, 2)}  color={c(latest?.hours_per_ro, 1.4, '#6ee7f9')} />
                   <StatBox label="Roh$50 Hrs/RO · Goal 1.2"   value={num(latest?.roh50_hrs_ro, 2)}  color={c(latest?.roh50_hrs_ro, 1.2, '#6ee7f9')} />
                   <StatBox label="MTD Hrs · Goal 300"         value={num(latest?.mtd_hours, 1)}     color={c(latest?.mtd_hours, 300, '#6ee7f9')} />
@@ -161,7 +161,7 @@ function AdvisorReport({ entries }) {
               <thead>
                 <tr>
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
-                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 920</span></th>
+                  <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 910</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
                   <th style={{ minWidth: 110 }}>ROH$50<br />HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
                   <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
@@ -218,7 +218,7 @@ function AdvisorReport({ entries }) {
 // TRENDING REPORT — daily / weekly / month-over-month
 // ─────────────────────────────────────────────────────────────
 const TREND_METRICS = [
-  { key: 'csi',          label: 'CSI',           fmt: v => Math.round(v).toString(),    fmtDelta: d => Math.abs(Math.round(d)).toString(),         goal: 920,  isPct: false },
+  { key: 'csi',          label: 'CSI',           fmt: v => Math.round(v).toString(),    fmtDelta: d => Math.abs(Math.round(d)).toString(),         goal: 910,  isPct: false },
   { key: 'hours_per_ro', label: 'Hrs/RO',        fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.4,  isPct: false },
   { key: 'roh50_hrs_ro', label: 'Roh$50 Hrs/RO', fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.2,  isPct: false },
   { key: 'mtd_hours',    label: 'MTD Hrs',       fmt: v => v.toFixed(1),                fmtDelta: d => Math.abs(d).toFixed(1),                     goal: 300,  isPct: false },

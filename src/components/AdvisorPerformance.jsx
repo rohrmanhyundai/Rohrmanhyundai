@@ -59,7 +59,7 @@ export default function AdvisorPerformance({ data }) {
               <th style={thStyle}>Tires %<br /><span style={goalStyle}>Goal 15%</span></th>
               <th style={thStyle}>Valvoline %<br /><span style={goalStyle}>Goal 25%</span></th>
               <th style={thStyle}>Roh$50 HRS/RO<br /><span style={goalStyle}>Goal 1.2</span></th>
-              <th style={thStyle}>CSI<br /><span style={goalStyle}>Goal 920</span></th>
+              <th style={thStyle}>CSI<br /><span style={goalStyle}>Goal 910</span></th>
               <th style={thStyle}>ASR %<br /><span style={goalStyle}>Goal 21%</span></th>
               <th style={thStyle}>ELR %<br /><span style={goalStyle}>Goal 88%</span></th>
               <th style={thStyle}>Last Month Total</th>
