@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers } from '../utils/github';
@@ -115,6 +116,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [forceRefreshState, setForceRefreshState] = useState('idle'); // idle | sending | sent | error
+  const advisorXlsxInputRef = useRef(null);
+  const [advisorXlsxStatus, setAdvisorXlsxStatus] = useState('');
+  const [advisorXlsxBusy, setAdvisorXlsxBusy] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
@@ -293,6 +297,120 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
     obj[keys[keys.length - 1]] = value;
     onDataChange(newData, newVacations);
+  }
+
+  // Parse an uploaded .xlsx Advisor Performance Report and merge its numbers
+  // into the on-screen advisor list. Columns we look for (header text matched
+  // case-insensitively, anywhere on the row):
+  //   Advisor Name → matched first-word against advisor.name on the dashboard.
+  //   Bill hours   → MTD Hrs (mtd_hours)
+  //   RO count     → MTD ROs (ro_count)
+  //   ELR(%)       → ELR % — value is a "92" style percent, so divided by 100.
+  //   Coupon Labor → coupon_labor (new field, editor-only)
+  async function handleAdvisorXlsx(file) {
+    if (!file) return;
+    setAdvisorXlsxBusy(true);
+    setAdvisorXlsxStatus('Reading file…');
+    try {
+      const buf = await file.arrayBuffer();
+      const wb  = XLSX.read(buf, { type: 'array', cellDates: true });
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
+      if (!rows || rows.length === 0) throw new Error('The file appears empty.');
+
+      // Find the header row — the first row that mentions an advisor name column.
+      const norm = (v) => String(v ?? '').trim().toLowerCase();
+      let headerIdx = -1;
+      for (let i = 0; i < Math.min(rows.length, 25); i++) {
+        const cells = (rows[i] || []).map(norm);
+        const hasName = cells.some(c => c.includes('advisor') || c === 'name');
+        const hasMetric = cells.some(c => c.includes('bill') || c.includes('ro count') || c.includes('elr') || c.includes('coupon'));
+        if (hasName && hasMetric) { headerIdx = i; break; }
+      }
+      if (headerIdx === -1) throw new Error('Could not find a header row containing "Advisor", "Bill", "RO Count", "ELR", or "Coupon Labor". Make sure the report has those column headings.');
+
+      const headerCells = (rows[headerIdx] || []).map(norm);
+      const findCol = (...needles) => {
+        for (let i = 0; i < headerCells.length; i++) {
+          const h = headerCells[i];
+          if (needles.some(n => h.includes(n))) return i;
+        }
+        return -1;
+      };
+      const colName    = findCol('advisor name', 'advisor', 'name');
+      const colHours   = findCol('bill hour', 'bill hr', 'billed hour');
+      const colROs     = findCol('ro count', 'ros', '# ros');
+      const colELR     = findCol('elr');
+      const colCoupon  = findCol('coupon labor', 'coupon');
+
+      if (colName === -1) throw new Error('Could not locate the Advisor Name column in the report header.');
+
+      const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+      const advisors = (data.advisors || []);
+      const newData = structuredClone(data);
+      const newAdvisors = newData.advisors;
+
+      let updated = 0;
+      const skipped = []; // names found in the report but no matching dashboard advisor
+      const updatedNames = [];
+
+      for (let r = headerIdx + 1; r < rows.length; r++) {
+        const row = rows[r] || [];
+        const reportName = String(row[colName] ?? '').trim();
+        if (!reportName) continue;
+        const firstReport = firstWord(reportName);
+        if (!firstReport) continue;
+        // Skip totals / footer rows that don't look like a person.
+        if (/^(total|grand|average|avg|summary)/i.test(reportName)) continue;
+
+        const matchIdx = newAdvisors.findIndex(a => firstWord(a.name) === firstReport);
+        if (matchIdx === -1) { skipped.push(reportName); continue; }
+        const adv = newAdvisors[matchIdx];
+
+        const num = (cell) => {
+          const v = String(cell ?? '').replace(/[, $%]/g, '').trim();
+          if (!v) return null;
+          const f = parseFloat(v);
+          return isNaN(f) ? null : f;
+        };
+
+        let touched = false;
+        if (colHours !== -1) {
+          const v = num(row[colHours]);
+          if (v !== null) { adv.mtd_hours = v; touched = true; }
+        }
+        if (colROs !== -1) {
+          const v = num(row[colROs]);
+          if (v !== null) { adv.ro_count = v; touched = true; }
+        }
+        if (colELR !== -1) {
+          const v = num(row[colELR]);
+          if (v !== null) { adv.elr = Math.round((v / 100) * 10000) / 10000; touched = true; }
+        }
+        if (colCoupon !== -1) {
+          const v = num(row[colCoupon]);
+          if (v !== null) { adv.coupon_labor = v; touched = true; }
+        }
+        // Re-derive Hrs/RO any time MTD Hrs or RO count changed (matches manual editor behavior).
+        const hrs = parseFloat(adv.mtd_hours) || 0;
+        const ros = parseFloat(adv.ro_count) || 0;
+        if (ros > 0) adv.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+
+        if (touched) { updated++; updatedNames.push(adv.name); }
+      }
+
+      onDataChange(newData, structuredClone(vacations));
+      const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'}`];
+      if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      if (skipped.length)      parts.push(`· skipped ${skipped.length} not on dashboard: ${skipped.join(', ')}`);
+      setAdvisorXlsxStatus(parts.join(' '));
+      setTimeout(() => setAdvisorXlsxStatus(''), 12000);
+    } catch (err) {
+      setAdvisorXlsxStatus('❌ ' + (err.message || err));
+    } finally {
+      setAdvisorXlsxBusy(false);
+      if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = '';
+    }
   }
 
   // Update an advisor field and, when MTD Hrs or MTD ROs changes, auto-derive
@@ -769,6 +887,34 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'advisors') return (
       <div className="group-body">
+        {/* Bulk import from the dealership's Advisor Performance Report (.xlsx) */}
+        <div style={{ background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12, padding: '14px 16px', marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+            <div style={{ fontSize: 18 }}>📥</div>
+            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.xlsx)</div>
+          </div>
+          <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
+            Auto-fills <strong>MTD Hrs</strong> (from Bill Hours), <strong>MTD ROs</strong> (from RO Count), <strong>ELR&nbsp;%</strong>, and <strong>Coupon Labor</strong> by matching the report's advisor first name to the dashboard. Click <em>Save Changes</em> after to push it live.
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <input
+              ref={advisorXlsxInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              disabled={advisorXlsxBusy}
+              onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleAdvisorXlsx(f); }}
+              style={{ fontSize: 12, color: '#cbd5e1' }}
+            />
+            {advisorXlsxBusy && <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>⏳ Reading…</span>}
+            {advisorXlsxStatus && (
+              <span style={{
+                fontSize: 12, fontWeight: 700,
+                color: advisorXlsxStatus.startsWith('❌') ? '#f87171' : advisorXlsxStatus.startsWith('✅') ? '#4ade80' : '#fbbf24',
+              }}>{advisorXlsxStatus}</span>
+            )}
+          </div>
+        </div>
+
         <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
         {data.advisors.map((a, idx) => (
           <div className="form-section" key={a.name}>
@@ -797,6 +943,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input key={`roc-${a.ro_count}`} defaultValue={a.ro_count ?? ''} onBlur={e => updateAdvisorWithDerived(idx, 'ro_count', safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Coupon Labor pulled from the advisor performance report.">Coupon Labor</label><input key={`cpl-${a.coupon_labor ?? ''}`} defaultValue={a.coupon_labor ?? ''} onBlur={e => updateField(`advisors.${idx}.coupon_labor`, safe(e.target.value, 0))} /></div>
               </div>
             </div>
           ))}
