@@ -759,6 +759,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
           last_month_total: a.last_month_total,
           ro_count: parseFloat(a.ro_count) || 0,
+          coupon_labor: parseFloat(a.coupon_labor) || 0,
         };
         // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
         const updated = [entry, ...entries.filter(e => e.date !== today && e.label !== advLabel)];

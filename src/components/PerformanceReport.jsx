@@ -134,6 +134,7 @@ function AdvisorReport({ entries }) {
                   <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color={c(latest?.valvoline, 0.25, '#fbbf24')} />
                   <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color={c(latest?.asr, 0.21, '#fdba74')} />
                   <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color={c(latest?.elr, 0.88, '#fdba74')} />
+                  <StatBox label="Coupon Labor"               value={latest?.coupon_labor != null && latest?.coupon_labor !== '' ? '$' + Number(latest.coupon_labor).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'} color="#fbbf24" />
                 </>;
               })()}
             </div>
@@ -170,6 +171,7 @@ function AdvisorReport({ entries }) {
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
+                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>COUPON<br />LABOR</th>
                 </tr>
               </thead>
               <tbody>
@@ -193,6 +195,12 @@ function AdvisorReport({ entries }) {
                       <td>{pct(e.valvoline)}<TrendIcon curr={e.valvoline} prev={prev?.valvoline} /></td>
                       <td>{pct(e.asr)}<TrendIcon curr={e.asr} prev={prev?.asr} /></td>
                       <td>{pct(e.elr)}<TrendIcon curr={e.elr} prev={prev?.elr} /></td>
+                      <td style={{ color: '#fbbf24' }}>
+                        {e.coupon_labor != null && e.coupon_labor !== ''
+                          ? '$' + Number(e.coupon_labor).toLocaleString(undefined, { maximumFractionDigits: 0 })
+                          : '—'}
+                        <TrendIcon curr={e.coupon_labor} prev={prev?.coupon_labor} />
+                      </td>
                     </tr>
                   );
                 })}
@@ -222,6 +230,7 @@ const TREND_METRICS = [
   { key: 'valvoline',    label: 'Valvoline',     fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.25, isPct: true  },
   { key: 'asr',          label: 'ASR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.21, isPct: true  },
   { key: 'elr',          label: 'ELR',           fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.88, isPct: true  },
+  { key: 'coupon_labor', label: 'Coupon Labor',  fmt: v => '$' + v.toLocaleString(undefined, { maximumFractionDigits: 0 }), fmtDelta: d => '$' + Math.abs(d).toLocaleString(undefined, { maximumFractionDigits: 0 }), goal: null, isPct: false },
 ];
 
 function avgOf(entries, key) {
