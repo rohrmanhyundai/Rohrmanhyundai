@@ -134,7 +134,7 @@ function AdvisorReport({ entries }) {
                   <StatBox label="Valvoline · Goal 25%"       value={pct(latest?.valvoline)}        color={c(latest?.valvoline, 0.25, '#fbbf24')} />
                   <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color={c(latest?.asr, 0.21, '#fdba74')} />
                   <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color={c(latest?.elr, 0.88, '#fdba74')} />
-                  <StatBox label="Coupon Usage · Target 8-10%" value={pct(latest?.coupon_usage_pct)} color="#fbbf24" />
+                  <StatBox label="Coupon Usage · Target 5-7%" value={pct(latest?.coupon_usage_pct)} color="#fbbf24" />
                 </>;
               })()}
             </div>
@@ -171,7 +171,7 @@ function AdvisorReport({ entries }) {
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>VALVOLINE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 25%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ASR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 21%</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>ELR<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 88%</span></th>
-                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>COUPON<br />USAGE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Target 8-10%</span></th>
+                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>COUPON<br />USAGE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Target 5-7%</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -405,7 +405,7 @@ function TrendingReport({ entries, selectedMonth }) {
                 // label, and the underlying $ Coupon Labor next to the value.
                 let rowSub, rowExtra;
                 if (m.key === 'coupon_usage_pct') {
-                  rowSub = 'Target 8–10%';
+                  rowSub = 'Target 5–7%';
                   const ex = getExtra ? getExtra(m) : null;
                   if (ex != null && !isNaN(ex)) {
                     rowExtra = '$' + Number(ex).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' labor';
