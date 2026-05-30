@@ -177,7 +177,7 @@
         "name": "DAVID",
         "daily_avg": 11.15,
         "mtd_hours": 227.3,
-        "hours_per_ro": 1.29,
+        "hours_per_ro": 1.28,
         "align": 0.08900000000000001,
         "tires": 0.0556,
         "valvoline": 0.21109999999999998,
@@ -187,7 +187,7 @@
         "last_month_total": 321.2,
         "roh50_hrs_ro": 0.91,
         "hidden": false,
-        "ro_count": 176
+        "ro_count": 177
       },
       {
         "name": "JORDAN",
@@ -202,13 +202,13 @@
         "elr": 0.89,
         "last_month_total": 326.2,
         "roh50_hrs_ro": 0.8,
-        "ro_count": 283
+        "ro_count": 305
       },
       {
         "name": "PARKER",
         "mtd_hours": 278.6,
         "daily_avg": 0,
-        "hours_per_ro": 1.23,
+        "hours_per_ro": 1.25,
         "align": 0.20800000000000002,
         "tires": 0.136,
         "valvoline": 0.32799999999999996,
@@ -217,7 +217,7 @@
         "asr": 0.2025,
         "elr": 0.9,
         "last_month_total": 79.7,
-        "ro_count": 208
+        "ro_count": 223
       }
     ],
     "advisorTraining": [
