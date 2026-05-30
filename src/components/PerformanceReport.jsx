@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, loadCoaching, loadDashboardData } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadCoaching, loadDashboardData } from '../utils/github';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -61,7 +61,7 @@ function TrendIcon({ curr, prev, higher = true }) {
 // ─────────────────────────────────────────────────────────────
 // ADVISOR VIEW — daily snapshots grouped by month
 // ─────────────────────────────────────────────────────────────
-function AdvisorReport({ entries, username }) {
+function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }) {
   // Coaching reports — same source as the tech view.
   const [coachingReports, setCoachingReports] = useState([]);
   const [coachingLoading, setCoachingLoading] = useState(false);
@@ -124,7 +124,37 @@ function AdvisorReport({ entries, username }) {
     <div>
       {/* Month selector */}
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Select Month</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1 }}>Select Month</div>
+          {canDelete && selectedMonth && (
+            <button
+              onClick={async () => {
+                if (!username || !selectedMonth) return;
+                const [y, m] = selectedMonth.split('-');
+                const label = `${MONTHS[parseInt(m)-1]} ${y}`;
+                const count = entries.filter(e => (e.month || (e.date || '').slice(0, 7)) === selectedMonth).length;
+                if (!window.confirm(`Delete ${count} snapshot${count === 1 ? '' : 's'} for ${label}?\n\nThis permanently removes the month from ${username}'s performance history. It cannot be undone.`)) return;
+                try {
+                  const kept = entries.filter(e => (e.month || (e.date || '').slice(0, 7)) !== selectedMonth);
+                  await saveGithubFile(`data/performance-reports/${username}.json`, kept, `Delete ${selectedMonth} for ${username}`);
+                  onEntriesChange && onEntriesChange(kept);
+                } catch (err) {
+                  alert('Delete failed: ' + (err?.message || err));
+                }
+              }}
+              style={{
+                background: 'rgba(239,68,68,.18)',
+                border: '1px solid rgba(239,68,68,.5)',
+                color: '#f87171',
+                borderRadius: 8, padding: '5px 12px', fontWeight: 800, fontSize: 12,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+              }}
+              title="Permanently delete every snapshot in the selected month"
+            >
+              🗑 Delete {(() => { const [y, m] = selectedMonth.split('-'); return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`; })()}
+            </button>
+          )}
+        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {monthKeys.map(mk => {
             const [y, m] = mk.split('-');
@@ -1055,7 +1085,7 @@ function TechReport({ entries, username }) {
 // ─────────────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────
-export default function PerformanceReport({ currentUser, role, onBack }) {
+export default function PerformanceReport({ currentUser, role, onBack, canDelete = false }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -1123,7 +1153,7 @@ export default function PerformanceReport({ currentUser, role, onBack }) {
               </div>
             </div>
           ) : isAdvisor ? (
-            <AdvisorReport entries={entries} username={username} />
+            <AdvisorReport entries={entries} username={username} canDelete={canDelete} onEntriesChange={setEntries} />
           ) : isTech ? (
             <TechReport entries={entries} username={username} />
           ) : (

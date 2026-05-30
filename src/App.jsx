@@ -560,6 +560,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         role={currentRole}
         onBack={() => navTo(prevPage || (currentRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
+        canDelete={isAdminOrManager}
       />
     );
   }
