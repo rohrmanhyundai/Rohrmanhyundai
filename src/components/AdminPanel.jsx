@@ -299,6 +299,158 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, newVacations);
   }
 
+  // ── Advisor Performance Report .PDF parsing ───────────────────────────────
+  // Loads PDF.js from CDN on first use (same pattern as ChargeAccountList).
+  const advisorPdfJsRef = useRef(null);
+  function loadAdvisorPdfJs() {
+    if (advisorPdfJsRef.current) return advisorPdfJsRef.current;
+    advisorPdfJsRef.current = new Promise((resolve, reject) => {
+      if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = () => reject(new Error('Failed to load PDF.js from CDN'));
+      document.head.appendChild(script);
+    });
+    return advisorPdfJsRef.current;
+  }
+
+  // Parse a PDF advisor performance report and merge Alignment / Valvoline /
+  // Tires / ASR penetration % values onto matching advisors. Uses positional
+  // (x-coordinate) column matching — find the header item for each metric,
+  // then on each row pick the text item closest to that column's x.
+  async function handleAdvisorPdf(file) {
+    if (!file) return;
+    setAdvisorXlsxBusy(true);
+    setAdvisorXlsxStatus('Reading PDF…');
+    try {
+      const pdfjs = await loadAdvisorPdfJs();
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+
+      const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+      const advisorFirstNames = new Set((data.advisors || []).map(a => firstWord(a.name)).filter(Boolean));
+
+      // Collect rows from every page: each row is { y, items: [{x, text}] }.
+      const allRows = [];
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const content = await page.getTextContent();
+        const byY = {};
+        for (const it of content.items) {
+          if (!it.str || !it.str.trim()) continue;
+          const y = Math.round(it.transform[5]);
+          (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str.trim() });
+        }
+        Object.entries(byY)
+          .sort(([a], [b]) => Number(b) - Number(a))
+          .forEach(([y, items]) => {
+            items.sort((a, b) => a.x - b.x);
+            allRows.push({ y: Number(y), items });
+          });
+      }
+
+      // Find the header row containing all four metric labels.
+      const labels = {
+        align:     /alignment/i,
+        valvoline: /valvoline/i,
+        tires:     /tires/i,
+        asr:       /asr/i,
+      };
+      let headerRow = null;
+      const headerX = {}; // label → x of its label text item
+      for (const row of allRows) {
+        const hit = {};
+        for (const it of row.items) {
+          for (const [k, re] of Object.entries(labels)) {
+            if (!hit[k] && re.test(it.text)) hit[k] = it.x;
+          }
+        }
+        if (hit.align && hit.valvoline && hit.tires && hit.asr) {
+          headerRow = row;
+          Object.assign(headerX, hit);
+          break;
+        }
+      }
+      if (!headerRow) throw new Error('Could not find a row containing all four headers: Alignment, Valvoline, Tires, ASR.');
+
+      // For each data row below the header, find the advisor first name and
+      // grab the % token whose x is closest to each column's header x.
+      const newData = structuredClone(data);
+      const newAdvisors = newData.advisors;
+      let updated = 0;
+      const skipped = [];
+      const updatedNames = [];
+
+      const dataRows = allRows.filter(r => r.y < headerRow.y);
+      const parsePct = (raw) => {
+        const v = String(raw || '').replace(/[, $]/g, '').replace('%', '').trim();
+        if (!v) return null;
+        const f = parseFloat(v);
+        if (isNaN(f)) return null;
+        // Reports use 8.9-style; convert to 0.089. Allow already-decimal values too.
+        return f > 1 ? f / 100 : f;
+      };
+      const closestPct = (items, targetX) => {
+        let best = null, bestDist = Infinity;
+        for (const it of items) {
+          if (!/\d/.test(it.text)) continue;
+          if (!/%/.test(it.text)) continue;
+          const d = Math.abs(it.x - targetX);
+          if (d < bestDist) { bestDist = d; best = it; }
+        }
+        return best ? parsePct(best.text) : null;
+      };
+
+      for (const row of dataRows) {
+        if (!row.items.length) continue;
+        // Advisor name is among the leftmost items. Look at the first ~3 items.
+        const leftItems = row.items.slice(0, 3);
+        let advisorFirst = null;
+        for (const it of leftItems) {
+          const fw = firstWord(it.text);
+          if (advisorFirstNames.has(fw)) { advisorFirst = fw; break; }
+        }
+        if (!advisorFirst) continue; // not an advisor row
+
+        // Skip totals rows just in case.
+        const leftJoined = leftItems.map(i => i.text).join(' ');
+        if (/^(total|grand|average|avg|summary)/i.test(leftJoined)) continue;
+
+        const idx = newAdvisors.findIndex(a => firstWord(a.name) === advisorFirst);
+        if (idx === -1) { skipped.push(leftJoined); continue; }
+        const adv = newAdvisors[idx];
+
+        let touched = false;
+        const valign = closestPct(row.items, headerX.align);
+        if (valign !== null) { adv.align = Math.round(valign * 10000) / 10000; touched = true; }
+        const vval = closestPct(row.items, headerX.valvoline);
+        if (vval !== null) { adv.valvoline = Math.round(vval * 10000) / 10000; touched = true; }
+        const vtir = closestPct(row.items, headerX.tires);
+        if (vtir !== null) { adv.tires = Math.round(vtir * 10000) / 10000; touched = true; }
+        const vasr = closestPct(row.items, headerX.asr);
+        if (vasr !== null) { adv.asr = Math.round(vasr * 10000) / 10000; touched = true; }
+        if (touched) { updated++; updatedNames.push(adv.name); }
+      }
+
+      onDataChange(newData, structuredClone(vacations));
+      const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'} from PDF`];
+      if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      if (skipped.length)      parts.push(`· skipped: ${skipped.slice(0, 4).join(', ')}${skipped.length > 4 ? '…' : ''}`);
+      setAdvisorXlsxStatus(parts.join(' '));
+      setTimeout(() => setAdvisorXlsxStatus(''), 12000);
+    } catch (err) {
+      setAdvisorXlsxStatus('❌ ' + (err.message || err));
+    } finally {
+      setAdvisorXlsxBusy(false);
+      if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = '';
+    }
+  }
+
   // Parse an uploaded .xlsx Advisor Performance Report and merge its numbers
   // into the on-screen advisor list. Columns we look for (header text matched
   // case-insensitively, anywhere on the row):
@@ -897,22 +1049,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'advisors') return (
       <div className="group-body">
-        {/* Bulk import from the dealership's Advisor Performance Report (.xlsx) */}
+        {/* Bulk import from the dealership's Advisor Performance Report (.xlsx or .pdf) */}
         <div style={{ background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12, padding: '14px 16px', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
             <div style={{ fontSize: 18 }}>📥</div>
-            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.xlsx)</div>
+            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.xlsx or .pdf)</div>
           </div>
           <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
-            Auto-fills <strong>MTD Hrs</strong> (from Bill Hours), <strong>MTD ROs</strong> (from RO Count), <strong>ELR&nbsp;%</strong>, and <strong>Coupon Labor</strong> by matching the report's advisor first name to the dashboard. Click <em>Save Changes</em> after to push it live.
+            <strong>XLSX</strong> fills MTD Hrs (Bill Hours), MTD ROs (RO Count), ELR %, Coupon Labor.
+            &nbsp;·&nbsp;
+            <strong>PDF</strong> fills Alignment % (Alignment PEN %), Valvoline % (Valvoline PEN %), Tires % (Tires PEN %), ASR % (% of ASR sold).
+            <br />Both match by the report's advisor first name. Click <em>Save Changes</em> after to push it live.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <input
               ref={advisorXlsxInputRef}
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx,.xls,.pdf"
               disabled={advisorXlsxBusy}
-              onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleAdvisorXlsx(f); }}
+              onChange={e => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                const ext = (f.name || '').toLowerCase().split('.').pop();
+                if (ext === 'pdf')        handleAdvisorPdf(f);
+                else if (ext === 'xlsx' || ext === 'xls') handleAdvisorXlsx(f);
+                else { setAdvisorXlsxStatus('❌ Unsupported file type. Use .xlsx or .pdf.'); if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = ''; }
+              }}
               style={{ fontSize: 12, color: '#cbd5e1' }}
             />
             {advisorXlsxBusy && <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>⏳ Reading…</span>}
