@@ -679,6 +679,30 @@ function TechReport({ entries, username }) {
       .finally(() => setCoachingLoading(false));
   }, [username]);
 
+  // Has there been a coaching report generated since this user last viewed
+  // the section? If so, glow the toggle button to draw attention.
+  const latestCoachingTs = coachingReports[0]?.generatedAt
+    ? new Date(coachingReports[0].generatedAt).getTime()
+    : 0;
+  const seenKey = username ? `coachingSeen:${username}` : null;
+  const [coachingSeenTs, setCoachingSeenTs] = useState(() => {
+    if (!seenKey) return 0;
+    return parseInt(localStorage.getItem(seenKey) || '0', 10) || 0;
+  });
+  useEffect(() => {
+    if (!seenKey) return;
+    setCoachingSeenTs(parseInt(localStorage.getItem(seenKey) || '0', 10) || 0);
+  }, [seenKey]);
+  const coachingUnseen = latestCoachingTs > 0 && latestCoachingTs > coachingSeenTs;
+  // Mark seen when the user opens the section.
+  useEffect(() => {
+    if (!showCoaching || !seenKey || !latestCoachingTs) return;
+    if (latestCoachingTs > coachingSeenTs) {
+      localStorage.setItem(seenKey, String(latestCoachingTs));
+      setCoachingSeenTs(latestCoachingTs);
+    }
+  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs]);
+
   const filtered = entries
     .filter(e => e.date?.startsWith(selectedYear))
     .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -778,17 +802,29 @@ function TechReport({ entries, username }) {
         </button>
         <button
           onClick={() => setShowCoaching(s => !s)}
+          className={coachingUnseen ? 'coaching-glow' : ''}
           style={{
-            background: showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
-            border: `1px solid ${showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
-            color: showCoaching ? '#c4b5fd' : '#94a3b8',
+            background: coachingUnseen
+              ? 'rgba(168,85,247,.28)'
+              : showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
+            border: `1px solid ${coachingUnseen ? 'rgba(168,85,247,.85)' : showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
+            color: coachingUnseen ? '#e9d5ff' : showCoaching ? '#c4b5fd' : '#94a3b8',
             borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
             cursor: 'pointer', display: 'flex',
             alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+            position: 'relative',
           }}
         >
           <span>{showCoaching ? '▼' : '▶'}</span>
-          <span>🎯 AI Coaching {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
+          <span>🎯 Coaching Report {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
+          {coachingUnseen && (
+            <span style={{
+              fontSize: 9, fontWeight: 900, color: '#fff',
+              background: '#a855f7', borderRadius: 999,
+              padding: '2px 8px', letterSpacing: .5,
+              boxShadow: '0 0 12px rgba(168,85,247,.85)',
+            }}>NEW</span>
+          )}
         </button>
       </div>
 
