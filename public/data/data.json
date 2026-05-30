@@ -367,6 +367,13 @@
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
       "status": "APPROVED"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "Jun 8–12, 2026",
+      "dateStart": "2026-06-08",
+      "dateEnd": "2026-06-12",
+      "status": "APPROVED"
     }
   ]
 }
