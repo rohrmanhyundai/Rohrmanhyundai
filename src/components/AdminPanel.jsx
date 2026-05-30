@@ -295,6 +295,20 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, newVacations);
   }
 
+  // Update an advisor field and, when MTD Hrs or MTD ROs changes, auto-derive
+  // Hrs/RO = MTD Hrs / MTD ROs so the user doesn't have to do the math.
+  function updateAdvisorWithDerived(idx, field, value) {
+    const newData = structuredClone(data);
+    const adv = newData.advisors[idx];
+    adv[field] = value;
+    if (field === 'mtd_hours' || field === 'ro_count') {
+      const hrs = parseFloat(adv.mtd_hours) || 0;
+      const ros = parseFloat(adv.ro_count) || 0;
+      if (ros > 0) adv.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+    }
+    onDataChange(newData, structuredClone(vacations));
+  }
+
   // Sets a technician's day-hrs AND records a per-date override flag so the
   // schedule-driven auto-fill (Holiday/Vacation/Training → 8.0) won't overwrite
   // a manually entered value (e.g., 0 for a new employee with no PTO yet).
@@ -772,8 +786,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="form-grid">
               <div className="field"><label>Daily Avg</label><input value={n(advisorDailyAverage(a, data), 2)} disabled /></div>
-              <div className="field"><label>MTD Hrs</label><input defaultValue={a.mtd_hours} onBlur={e => updateField(`advisors.${idx}.mtd_hours`, safe(e.target.value, a.mtd_hours))} /></div>
-              <div className="field"><label>Hrs/RO</label><input defaultValue={a.hours_per_ro} onBlur={e => updateField(`advisors.${idx}.hours_per_ro`, safe(e.target.value, a.hours_per_ro))} /></div>
+              <div className="field"><label>MTD Hrs</label><input key={`mtdh-${a.mtd_hours}`} defaultValue={a.mtd_hours} onBlur={e => updateAdvisorWithDerived(idx, 'mtd_hours', safe(e.target.value, a.mtd_hours))} /></div>
+              <div className="field"><label title="Auto-calculated from MTD Hrs ÷ MTD ROs. You can still override it manually.">Hrs/RO <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(auto)</span></label><input key={`hpr-${a.hours_per_ro}`} defaultValue={a.hours_per_ro} onBlur={e => updateField(`advisors.${idx}.hours_per_ro`, safe(e.target.value, a.hours_per_ro))} /></div>
               <div className="field"><label>Alignment %</label><input defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
               <div className="field"><label>Tires %</label><input defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
               <div className="field"><label>Valvoline %</label><input defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
@@ -782,7 +796,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
               <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
-              <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input defaultValue={a.ro_count ?? ''} onBlur={e => updateField(`advisors.${idx}.ro_count`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input key={`roc-${a.ro_count}`} defaultValue={a.ro_count ?? ''} onBlur={e => updateAdvisorWithDerived(idx, 'ro_count', safe(e.target.value, 0))} /></div>
               </div>
             </div>
           ))}
