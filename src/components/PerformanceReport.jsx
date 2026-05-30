@@ -61,7 +61,39 @@ function TrendIcon({ curr, prev, higher = true }) {
 // ─────────────────────────────────────────────────────────────
 // ADVISOR VIEW — daily snapshots grouped by month
 // ─────────────────────────────────────────────────────────────
-function AdvisorReport({ entries }) {
+function AdvisorReport({ entries, username }) {
+  // Coaching reports — same source as the tech view.
+  const [coachingReports, setCoachingReports] = useState([]);
+  const [coachingLoading, setCoachingLoading] = useState(false);
+  const [showCoaching, setShowCoaching] = useState(false);
+  useEffect(() => {
+    if (!username) return;
+    setCoachingLoading(true);
+    loadCoaching(username)
+      .then(d => setCoachingReports(Array.isArray(d) ? d : []))
+      .finally(() => setCoachingLoading(false));
+  }, [username]);
+  const latestCoachingTs = coachingReports[0]?.generatedAt
+    ? new Date(coachingReports[0].generatedAt).getTime()
+    : 0;
+  const seenKey = username ? `coachingSeen:${username}` : null;
+  const [coachingSeenTs, setCoachingSeenTs] = useState(() => {
+    if (!seenKey) return 0;
+    return parseInt(localStorage.getItem(seenKey) || '0', 10) || 0;
+  });
+  useEffect(() => {
+    if (!seenKey) return;
+    setCoachingSeenTs(parseInt(localStorage.getItem(seenKey) || '0', 10) || 0);
+  }, [seenKey]);
+  const coachingUnseen = latestCoachingTs > 0 && latestCoachingTs > coachingSeenTs;
+  useEffect(() => {
+    if (!showCoaching || !seenKey || !latestCoachingTs) return;
+    if (latestCoachingTs > coachingSeenTs) {
+      localStorage.setItem(seenKey, String(latestCoachingTs));
+      setCoachingSeenTs(latestCoachingTs);
+    }
+  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs]);
+
   // Collect unique months from entries
   const monthKeys = [...new Set(entries.map(e => e.month || e.date?.slice(0, 7)).filter(Boolean))].sort().reverse();
   const currentMonthKey = (() => {
@@ -208,6 +240,62 @@ function AdvisorReport({ entries }) {
 
           {/* Trending report */}
           <TrendingReport entries={entries} selectedMonth={selectedMonth} />
+
+          {/* Coaching Report toggle */}
+          <div style={{ display: 'flex', gap: 10, marginTop: 20, marginBottom: showCoaching ? 12 : 0, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setShowCoaching(s => !s)}
+              className={coachingUnseen ? 'coaching-glow' : ''}
+              style={{
+                background: coachingUnseen
+                  ? 'rgba(168,85,247,.28)'
+                  : showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
+                border: `1px solid ${coachingUnseen ? 'rgba(168,85,247,.85)' : showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
+                color: coachingUnseen ? '#e9d5ff' : showCoaching ? '#c4b5fd' : '#94a3b8',
+                borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
+                cursor: 'pointer', display: 'flex',
+                alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+                position: 'relative',
+              }}
+            >
+              <span>{showCoaching ? '▼' : '▶'}</span>
+              <span>🎯 Coaching Report {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
+              {coachingUnseen && (
+                <span style={{
+                  fontSize: 9, fontWeight: 900, color: '#fff',
+                  background: '#a855f7', borderRadius: 999,
+                  padding: '2px 8px', letterSpacing: .5,
+                  boxShadow: '0 0 12px rgba(168,85,247,.85)',
+                }}>NEW</span>
+              )}
+            </button>
+          </div>
+
+          {showCoaching && (
+            <div style={{ background: 'rgba(168,85,247,.06)', border: '1px solid rgba(168,85,247,.2)', borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
+              {coachingLoading ? (
+                <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>⏳ Loading coaching reports…</div>
+              ) : coachingReports.length === 0 ? (
+                <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>
+                  No coaching reports yet. Your manager will generate one soon.
+                </div>
+              ) : (
+                coachingReports.map((r, i) => (
+                  <div key={r.id || i} style={{ marginBottom: i < coachingReports.length - 1 ? 24 : 0, paddingBottom: i < coachingReports.length - 1 ? 24 : 0, borderBottom: i < coachingReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                      <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
+                        {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#64748b' }}>
+                        Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                    <CoachingReportBody text={r.report} />
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </>
       )}
     </div>
@@ -1035,7 +1123,7 @@ export default function PerformanceReport({ currentUser, role, onBack }) {
               </div>
             </div>
           ) : isAdvisor ? (
-            <AdvisorReport entries={entries} />
+            <AdvisorReport entries={entries} username={username} />
           ) : isTech ? (
             <TechReport entries={entries} username={username} />
           ) : (
