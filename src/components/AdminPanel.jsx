@@ -375,7 +375,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           .sort(([a], [b]) => Number(b) - Number(a))
           .forEach(([, items]) => {
             items.sort((a, b) => a.x - b.x);
-            const line = items.map(i => i.text).join(' ').trim();
+            // Insert a space at every lowercase→uppercase transition because
+            // the SA Totals report runs "GenesisDAVID RILEY" together with no
+            // separator; without this fix \bDAVID\b wouldn't match.
+            const line = items.map(i => i.text).join(' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
             if (line) allLines.push(line);
           });
       }
@@ -1131,13 +1134,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>Daily Avg</label><input value={n(advisorDailyAverage(a, data), 2)} disabled /></div>
               <div className="field"><label>MTD Hrs</label><input key={`mtdh-${a.mtd_hours}`} defaultValue={a.mtd_hours} onBlur={e => updateAdvisorWithDerived(idx, 'mtd_hours', safe(e.target.value, a.mtd_hours))} /></div>
               <div className="field"><label title="Auto-calculated from MTD Hrs ÷ MTD ROs. You can still override it manually.">Hrs/RO <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(auto)</span></label><input key={`hpr-${a.hours_per_ro}`} defaultValue={a.hours_per_ro} onBlur={e => updateField(`advisors.${idx}.hours_per_ro`, safe(e.target.value, a.hours_per_ro))} /></div>
-              <div className="field"><label>Alignment %</label><input defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
-              <div className="field"><label>Tires %</label><input defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
-              <div className="field"><label>Valvoline %</label><input defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
+              <div className="field"><label>Alignment %</label><input key={`aln-${a.align}`} defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
+              <div className="field"><label>Tires %</label><input key={`tir-${a.tires}`} defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
+              <div className="field"><label>Valvoline %</label><input key={`vlv-${a.valvoline}`} defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
               <div className="field"><label>Roh$50 HRS/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
-              <div className="field"><label>ASR %</label><input defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
-              <div className="field"><label>ELR %</label><input defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
+              <div className="field"><label>ASR %</label><input key={`asr-${a.asr}`} defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
+              <div className="field"><label>ELR %</label><input key={`elr-${a.elr}`} defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input key={`roc-${a.ro_count}`} defaultValue={a.ro_count ?? ''} onBlur={e => updateAdvisorWithDerived(idx, 'ro_count', safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Coupon Labor pulled from the advisor performance report.">Coupon Labor</label><input key={`cpl-${a.coupon_labor ?? ''}`} defaultValue={a.coupon_labor ?? ''} onBlur={e => updateField(`advisors.${idx}.coupon_labor`, safe(e.target.value, 0))} /></div>
