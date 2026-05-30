@@ -453,5 +453,24 @@
     "coupon_labor": 924.79,
     "total_sales": 101015.43,
     "coupon_usage_pct": 0.0092
+  },
+  {
+    "id": "mpsw5t3li6q",
+    "date": "2026-01-31",
+    "label": "January 31, 2026",
+    "month": "2026-01",
+    "type": "advisor",
+    "savedAt": "2026-05-30T21:57:20.145Z",
+    "mtd_hours": 285,
+    "ro_count": 218,
+    "hours_per_ro": 1.31,
+    "align": 0.1456,
+    "tires": 0.068,
+    "valvoline": 0.2621,
+    "asr": 0.2081,
+    "elr": 0.9755,
+    "coupon_labor": 1089.81,
+    "total_sales": 81998.33,
+    "coupon_usage_pct": 0.0133
   }
 ]
