@@ -213,6 +213,27 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
   const [wipLoading, setWipLoading] = useState(false);
   const [roSearch, setRoSearch] = useState('');
+
+  // Open the WIP page for the first job whose RO# matches the query. Called by
+  // both the Enter key in the search box and the "Open" button.
+  function openRoSearch(rawValue) {
+    const raw = String(rawValue ?? '').trim();
+    if (!raw) return;
+    const q = raw.toLowerCase();
+    const wipMatches = (advisorWip || []).filter(j => (j.ro || '').toLowerCase().includes(q));
+    const awMatches  = (advisorAwaiting || []).filter(j => (j.ro || '').toLowerCase().includes(q));
+    if (wipMatches.length === 0 && awMatches.length === 0) {
+      if (onWorkInProgress) onWorkInProgress(raw);
+      return;
+    }
+    const all = [
+      ...wipMatches.map(j => ({ j, source: 'wip' })),
+      ...awMatches.map(j => ({ j, source: 'awaiting' })),
+    ];
+    const exact = all.find(({ j }) => (j.ro || '').toLowerCase() === q);
+    const hit = exact || all[0];
+    if (onWorkInProgress) onWorkInProgress({ ro: hit.j.ro || raw, tech: hit.j.tech || '', source: hit.source });
+  }
   const [deletingId, setDeletingId] = useState(null);
 
   async function deleteWipJob(job) {
@@ -536,30 +557,30 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               onKeyDown={e => {
                 if (e.key !== 'Enter') return;
                 e.preventDefault();
-                const q = roSearch.trim().toLowerCase();
-                if (!q) return;
-                const wipMatches = advisorWip.filter(j => (j.ro || '').toLowerCase().includes(q));
-                const awMatches  = advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(q));
-                if (wipMatches.length === 0 && awMatches.length === 0) {
-                  if (onWorkInProgress) onWorkInProgress(roSearch.trim());
-                  return;
-                }
-                // Prefer an exact RO match; otherwise take the first hit.
-                const all = [
-                  ...wipMatches.map(j => ({ j, source: 'wip' })),
-                  ...awMatches.map(j => ({ j, source: 'awaiting' })),
-                ];
-                const exact = all.find(({ j }) => (j.ro || '').toLowerCase() === q);
-                const hit = exact || all[0];
-                if (onWorkInProgress) onWorkInProgress({ ro: hit.j.ro || '', tech: hit.j.tech || '', source: hit.source });
+                // Read straight from the DOM so browser-autofilled values that
+                // haven't yet flushed through onChange still navigate correctly.
+                openRoSearch(e.currentTarget.value);
               }}
-              placeholder="🔍 Search RO # across all WIP and awaiting… (Enter to open)"
+              placeholder="🔍 Search RO # across all WIP and awaiting… (Enter or click Open)"
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10,
                 color: '#e2e8f0', padding: '10px 14px', fontSize: 13, outline: 'none',
               }}
             />
+            <button
+              onClick={() => openRoSearch(roSearch)}
+              disabled={!roSearch.trim()}
+              style={{
+                background: roSearch.trim() ? 'rgba(96,165,250,.2)' : 'rgba(255,255,255,.04)',
+                border: `1px solid ${roSearch.trim() ? 'rgba(96,165,250,.5)' : 'rgba(255,255,255,.1)'}`,
+                color: roSearch.trim() ? '#93c5fd' : '#475569',
+                borderRadius: 10, padding: '8px 16px', fontWeight: 800, fontSize: 13,
+                cursor: roSearch.trim() ? 'pointer' : 'default',
+              }}
+            >
+              Open
+            </button>
             {roSearch && (
               <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
                 Clear
