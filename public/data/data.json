@@ -176,19 +176,20 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 1,
+        "mtd_hours": 227.3,
         "hours_per_ro": 1.28,
-        "align": 0.01,
-        "tires": 0.01,
-        "valvoline": 0.01,
+        "align": 0.0889,
+        "tires": 0.0556,
+        "valvoline": 0.2111,
         "csi": 959,
-        "asr": 0.01,
-        "elr": 0.01,
+        "asr": 0.146,
+        "elr": 0.9251,
         "last_month_total": 321.2,
         "roh50_hrs_ro": 0.91,
         "hidden": false,
-        "ro_count": 0,
-        "coupon_labor": 1
+        "ro_count": 177,
+        "coupon_labor": 1931.18,
+        "_lastImport": 1780174361273
       },
       {
         "name": "JORDAN",
@@ -200,11 +201,12 @@
         "valvoline": 0.2321,
         "csi": 975,
         "asr": 0.1599,
-        "elr": 1.5277,
+        "elr": 0.8986,
         "last_month_total": 326.2,
         "roh50_hrs_ro": 0.86,
         "ro_count": 310,
-        "coupon_labor": 4282.03
+        "coupon_labor": 4282.03,
+        "_lastImport": 1780174361273
       },
       {
         "name": "PARKER",
@@ -217,10 +219,11 @@
         "roh50_hrs_ro": 0.99,
         "csi": 943,
         "asr": 0.208,
-        "elr": 1.54,
+        "elr": 0.9059,
         "last_month_total": 79.7,
         "ro_count": 224,
-        "coupon_labor": 2501.26
+        "coupon_labor": 2501.26,
+        "_lastImport": 1780174361273
       }
     ],
     "advisorTraining": [
@@ -292,10 +295,10 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 594.6,
-      "align": 0.09233333333333334,
-      "tires": 0.10926666666666666,
-      "valvoline": 0.3873666666666667,
+      "total_hours": 820.9000000000001,
+      "align": 0.11863333333333333,
+      "tires": 0.12446666666666667,
+      "valvoline": 0.45439999999999997,
       "csi": 959
     },
     "techTotals": {
