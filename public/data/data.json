@@ -189,7 +189,7 @@
         "hidden": false,
         "ro_count": 177,
         "coupon_labor": 1931.18,
-        "_lastImport": 1780176054358,
+        "_lastImport": 1780188975249,
         "total_sales": 70037.08,
         "coupon_usage_pct": 0.0276
       },
@@ -208,7 +208,7 @@
         "roh50_hrs_ro": 0.86,
         "ro_count": 310,
         "coupon_labor": 4282.03,
-        "_lastImport": 1780176054358,
+        "_lastImport": 1780188975249,
         "total_sales": 92542.24,
         "coupon_usage_pct": 0.0463
       },
@@ -217,17 +217,17 @@
         "mtd_hours": 286.8,
         "daily_avg": 0,
         "hours_per_ro": 1.28,
-        "align": 0.136,
-        "tires": 0.2107,
-        "valvoline": 0.92,
+        "align": 0.208,
+        "tires": 0.136,
+        "valvoline": 0.328,
         "roh50_hrs_ro": 0.99,
         "csi": 943,
-        "asr": 0.208,
+        "asr": 0.2025,
         "elr": 0.9088,
         "last_month_total": 79.7,
         "ro_count": 224,
         "coupon_labor": 2571.26,
-        "_lastImport": 1780176054358,
+        "_lastImport": 1780188975249,
         "total_sales": 87303.59,
         "coupon_usage_pct": 0.0295
       }
@@ -302,9 +302,9 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 825.9000000000001,
-      "align": 0.11863333333333333,
-      "tires": 0.12446666666666667,
-      "valvoline": 0.45439999999999997,
+      "align": 0.14263333333333333,
+      "tires": 0.09956666666666668,
+      "valvoline": 0.2570666666666667,
       "csi": 959
     },
     "techTotals": {
