@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching } from '../utils/github';
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
-import PerformanceReport from './PerformanceReport';
+import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
 
 // ── Shared helpers reused by the historical backfill uploader ────────────────
 const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
@@ -293,6 +293,12 @@ export default function ManagerReports({ users, onBack }) {
   const [backfillPdfFile, setBackfillPdfFile] = useState(null);
   const backfillXlsxRef = useRef(null);
   const backfillPdfRef = useRef(null);
+  // Coaching reports viewer modal — lets the manager browse every AI report
+  // they've generated, grouped by user, without opening each report screen.
+  const [coachingViewerOpen, setCoachingViewerOpen] = useState(false);
+  const [coachingViewerLoading, setCoachingViewerLoading] = useState(false);
+  const [coachingViewerData, setCoachingViewerData] = useState({}); // username → reports[]
+  const [coachingViewerSelected, setCoachingViewerSelected] = useState(null); // username currently expanded
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -489,6 +495,38 @@ export default function ManagerReports({ users, onBack }) {
     setAiPickerMode(mode);
     setAiPickerSelected(new Set(names));
     setAiPickerOpen(true);
+  }
+
+  async function openCoachingViewer() {
+    setCoachingViewerOpen(true);
+    setCoachingViewerSelected(null);
+    setCoachingViewerLoading(true);
+    setCoachingViewerData({});
+    try {
+      const everyone = [...advisors, ...techs];
+      const results = await Promise.all(
+        everyone.map(async u => {
+          const reports = await loadCoaching(u).catch(() => []);
+          return [u, Array.isArray(reports) ? reports : []];
+        })
+      );
+      const map = {};
+      for (const [u, reports] of results) {
+        if (reports.length > 0) map[u] = reports;
+      }
+      setCoachingViewerData(map);
+      // Auto-select the most recently generated report.
+      let newestUser = null, newestTs = 0;
+      for (const [u, reports] of Object.entries(map)) {
+        for (const r of reports) {
+          const t = r.generatedAt ? new Date(r.generatedAt).getTime() : 0;
+          if (t > newestTs) { newestTs = t; newestUser = u; }
+        }
+      }
+      if (newestUser) setCoachingViewerSelected(newestUser);
+    } finally {
+      setCoachingViewerLoading(false);
+    }
   }
 
   async function applyBackfill() {
@@ -747,6 +785,12 @@ export default function ManagerReports({ users, onBack }) {
               >
                 📥 Upload Historical Report
               </button>
+              <button
+                onClick={openCoachingViewer}
+                style={{ background: 'rgba(45,212,191,.18)', border: '1px solid rgba(45,212,191,.45)', color: '#5eead4', borderRadius: 10, padding: '9px 18px', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}
+              >
+                📂 View AI Reports
+              </button>
             </div>
           </div>
 
@@ -963,6 +1007,126 @@ export default function ManagerReports({ users, onBack }) {
 
         </div>
       </div>
+
+      {coachingViewerOpen && (() => {
+        const entries = Object.entries(coachingViewerData);
+        const advisorList = entries.filter(([u]) => advisors.includes(u)).sort();
+        const techList    = entries.filter(([u]) => techs.includes(u)).sort();
+        const selectedReports = coachingViewerSelected ? (coachingViewerData[coachingViewerSelected] || []) : [];
+        return (
+          <div
+            onClick={() => setCoachingViewerOpen(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,0.78)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{ width: '100%', maxWidth: 1100, height: '85vh', display: 'flex', flexDirection: 'column', background: 'linear-gradient(160deg, #0f172a, #0b1426)', border: '1px solid rgba(45,212,191,.4)', borderRadius: 18, boxShadow: '0 24px 80px rgba(45,212,191,.18)', overflow: 'hidden' }}
+            >
+              <div style={{ height: 4, background: 'linear-gradient(90deg, #5eead4, rgba(45,212,191,.4), transparent)', flexShrink: 0 }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px 8px', flexShrink: 0 }}>
+                <div style={{ fontWeight: 900, fontSize: 16, color: '#a7f3d0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  📂 AI Coaching Reports
+                </div>
+                <button
+                  onClick={() => setCoachingViewerOpen(false)}
+                  style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 18, cursor: 'pointer' }}
+                >✕</button>
+              </div>
+
+              {coachingViewerLoading ? (
+                <div style={{ color: '#64748b', textAlign: 'center', padding: 60, flex: 1 }}>⏳ Loading coaching reports…</div>
+              ) : entries.length === 0 ? (
+                <div style={{ color: '#64748b', textAlign: 'center', padding: 60, flex: 1 }}>
+                  No coaching reports generated yet. Use the Tech or Advisor Coaching Report buttons above to create some.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+                  {/* Left sidebar — user list */}
+                  <div style={{ width: 240, borderRight: '1px solid rgba(255,255,255,.06)', overflowY: 'auto', padding: '8px 0', flexShrink: 0 }}>
+                    {advisorList.length > 0 && (
+                      <div style={{ padding: '8px 14px 4px', fontSize: 10, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: 1 }}>Advisors</div>
+                    )}
+                    {advisorList.map(([u, reports]) => {
+                      const newest = reports[0]?.generatedAt ? new Date(reports[0].generatedAt).toLocaleDateString() : '';
+                      const isSel = coachingViewerSelected === u;
+                      return (
+                        <button
+                          key={u}
+                          onClick={() => setCoachingViewerSelected(u)}
+                          style={{
+                            display: 'block', width: '100%', textAlign: 'left',
+                            background: isSel ? 'rgba(45,212,191,.16)' : 'transparent',
+                            border: 'none', borderLeft: `3px solid ${isSel ? '#5eead4' : 'transparent'}`,
+                            color: isSel ? '#a7f3d0' : '#cbd5e1',
+                            padding: '8px 14px', fontWeight: 800, fontSize: 12,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <div>{u} <span style={{ fontSize: 9, color: '#64748b', marginLeft: 4 }}>{reports.length}</span></div>
+                          {newest && <div style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{newest}</div>}
+                        </button>
+                      );
+                    })}
+                    {techList.length > 0 && (
+                      <div style={{ padding: '12px 14px 4px', fontSize: 10, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: 1 }}>Technicians</div>
+                    )}
+                    {techList.map(([u, reports]) => {
+                      const newest = reports[0]?.generatedAt ? new Date(reports[0].generatedAt).toLocaleDateString() : '';
+                      const isSel = coachingViewerSelected === u;
+                      return (
+                        <button
+                          key={u}
+                          onClick={() => setCoachingViewerSelected(u)}
+                          style={{
+                            display: 'block', width: '100%', textAlign: 'left',
+                            background: isSel ? 'rgba(45,212,191,.16)' : 'transparent',
+                            border: 'none', borderLeft: `3px solid ${isSel ? '#5eead4' : 'transparent'}`,
+                            color: isSel ? '#a7f3d0' : '#cbd5e1',
+                            padding: '8px 14px', fontWeight: 800, fontSize: 12,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <div>{u} <span style={{ fontSize: 9, color: '#64748b', marginLeft: 4 }}>{reports.length}</span></div>
+                          {newest && <div style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{newest}</div>}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Right pane — report content */}
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '14px 24px 24px' }}>
+                    {!coachingViewerSelected ? (
+                      <div style={{ color: '#64748b', textAlign: 'center', paddingTop: 80 }}>Select someone on the left to view their reports.</div>
+                    ) : selectedReports.length === 0 ? (
+                      <div style={{ color: '#64748b', textAlign: 'center', paddingTop: 80 }}>No reports for {coachingViewerSelected}.</div>
+                    ) : (
+                      <>
+                        <div style={{ fontWeight: 900, fontSize: 18, color: '#e2e8f0', marginBottom: 4 }}>{coachingViewerSelected}</div>
+                        <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 18 }}>
+                          {selectedReports.length} report{selectedReports.length === 1 ? '' : 's'}
+                        </div>
+                        {selectedReports.map((r, i) => (
+                          <div key={r.id || i} style={{ marginBottom: i < selectedReports.length - 1 ? 24 : 0, paddingBottom: i < selectedReports.length - 1 ? 24 : 0, borderBottom: i < selectedReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                              <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
+                                {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b' }}>
+                                Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            </div>
+                            <CoachingReportBody text={r.report} />
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {backfillOpen && (
         <div

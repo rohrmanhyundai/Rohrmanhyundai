@@ -695,7 +695,7 @@ function EfficiencyGauge({ label, pct, sub, accentA, accentB }) {
 // TECH VIEW — weekly snapshots (Sat–Fri)
 // ─────────────────────────────────────────────────────────────
 // Render a coaching report (## sections, bullets, bold) as a colorful styled UI
-function CoachingReportBody({ text }) {
+export function CoachingReportBody({ text }) {
   if (!text) return null;
   const sections = [];
   let current = { title: '', body: [] };
