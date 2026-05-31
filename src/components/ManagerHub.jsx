@@ -91,6 +91,15 @@ const NAV_BUTTONS = [
     color: '#5eead4',
     prop: 'onPerformanceReports',
   },
+  {
+    key: 'repairOrderDatabase',
+    label: '🗂 Repair Order Database',
+    desc: 'Search every RO deleted from WIP or Cars Awaiting; restore or purge',
+    bg: 'linear-gradient(135deg,rgba(248,113,113,.28),rgba(239,68,68,.18))',
+    border: 'rgba(239,68,68,.45)',
+    color: '#fca5a5',
+    prop: 'onRepairOrderDatabase',
+  },
 ];
 
 export default function ManagerHub({
@@ -98,11 +107,13 @@ export default function ManagerHub({
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
+  onRepairOrderDatabase,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
+    onRepairOrderDatabase,
   };
 
   return (

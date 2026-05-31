@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
 
@@ -241,9 +241,20 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     setDeletingId(job.id);
     try {
       const existing = await loadWipData(job.tech);
+      const victim = (existing || []).find(r => r.id === job.id) || job;
       const updated = (existing || []).filter(r => r.id !== job.id);
       await saveWipData(job.tech, updated);
       setAdvisorWip(prev => prev.filter(r => r.id !== job.id));
+      try {
+        await appendRoArchive({
+          ...victim,
+          _archiveId: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          _archivedAt: new Date().toISOString(),
+          _archivedBy: (currentUser || '').toUpperCase(),
+          _source: 'wip',
+          _sourceTech: job.tech,
+        });
+      } catch (archErr) { console.warn('RO archive append failed:', archErr); }
     } catch (e) {
       alert('Failed to delete: ' + (e.message || e));
     } finally {
@@ -256,9 +267,20 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     setDeletingId(job.id);
     try {
       const existing = await loadAwaitingData();
+      const victim = (existing || []).find(r => r.id === job.id) || job;
       const updated = (existing || []).filter(r => r.id !== job.id);
       await saveAwaitingData(updated);
       setAdvisorAwaiting(prev => prev.filter(r => r.id !== job.id));
+      try {
+        await appendRoArchive({
+          ...victim,
+          _archiveId: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          _archivedAt: new Date().toISOString(),
+          _archivedBy: (currentUser || '').toUpperCase(),
+          _source: 'awaiting',
+          _sourceTech: '',
+        });
+      } catch (archErr) { console.warn('RO archive append failed:', archErr); }
     } catch (e) {
       alert('Failed to delete: ' + (e.message || e));
     } finally {
