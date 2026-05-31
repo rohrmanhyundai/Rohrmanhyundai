@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGithubFile, saveGithubFile, loadCoaching, loadDashboardData } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadCoaching, loadDashboardData, recordCoachingView } from '../utils/github';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -92,7 +92,11 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
       localStorage.setItem(seenKey, String(latestCoachingTs));
       setCoachingSeenTs(latestCoachingTs);
     }
-  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs]);
+    // Also record the view on the server so the manager can see when the
+    // recipient actually opened their report. Best-effort; errors swallowed.
+    const ids = (coachingReports || []).map(r => r.id).filter(Boolean);
+    if (ids.length > 0) recordCoachingView(username, ids);
+  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs, username, coachingReports]);
 
   // Collect unique months from entries
   const monthKeys = [...new Set(entries.map(e => e.month || e.date?.slice(0, 7)).filter(Boolean))].sort().reverse();
@@ -847,7 +851,9 @@ function TechReport({ entries, username }) {
       localStorage.setItem(seenKey, String(latestCoachingTs));
       setCoachingSeenTs(latestCoachingTs);
     }
-  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs]);
+    const ids = (coachingReports || []).map(r => r.id).filter(Boolean);
+    if (ids.length > 0) recordCoachingView(username, ids);
+  }, [showCoaching, latestCoachingTs, seenKey, coachingSeenTs, username, coachingReports]);
 
   const filtered = entries
     .filter(e => e.date?.startsWith(selectedYear))
