@@ -395,13 +395,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         throw new Error('This PDF doesn\'t look like the expected SA Totals report (missing Alignment PEN%, Tire PEN%, Valvoline PEN %, or % of ASR sold).');
       }
 
-      // Column indices in the data-row numeric sequence (0-indexed). These match
-      // the SA Totals layout: count, count, count, hours, %, ratio, ratio, %,
-      //                       EFF%, ASR%, INSP%, ALIGN%, BATTERY%, TIRE%, VALV%, TOP GUN, RANK
-      const IDX_ASR       = 9;
-      const IDX_ALIGNMENT = 11;
-      const IDX_TIRE      = 13;
-      const IDX_VALVOLINE = 14;
+      // Right-indexed (from the END of the row) so a PDF.js token split inside
+      // earlier counts/percentages doesn't shift the upsell columns. SA Totals
+      // tail layout is:
+      //   ...  ASR% INSP% ALIGN% BATTERY% TIRE% VALV% TOP-GUN RANK
+      //         ↑8    ↑7    ↑6      ↑5    ↑4    ↑3     ↑2    ↑1
+      const FROM_END_ASR       = 8;
+      const FROM_END_ALIGNMENT = 6;
+      const FROM_END_TIRE      = 4;
+      const FROM_END_VALVOLINE = 3;
+      const fromEnd = (arr, n) => (arr.length >= n ? arr[arr.length - n] : undefined);
 
       // Build one combined regex for all advisor first names so we can find the
       // last occurrence on a row in one pass.
@@ -451,7 +454,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             bestMatch = mm; bestNums = nums;
           }
         }
-        if (!bestMatch || !bestNums || bestNums.length < IDX_VALVOLINE + 1) continue;
+        if (!bestMatch || !bestNums || bestNums.length < FROM_END_ASR) continue;
 
         const matchedFn = bestMatch.name;
         const nums = bestNums;
@@ -465,20 +468,20 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           console.log(`[advisor-pdf] ${target.name} line:`, line);
           console.log(`[advisor-pdf] ${target.name} after-name:`, line.slice(bestMatch.end));
           console.log(`[advisor-pdf] ${target.name} ${nums.length} numerics:`, nums);
-          console.log(`[advisor-pdf] ${target.name} → asr=${nums[IDX_ASR]} align=${nums[IDX_ALIGNMENT]} tire=${nums[IDX_TIRE]} valv=${nums[IDX_VALVOLINE]}`);
+          console.log(`[advisor-pdf] ${target.name} → asr=${fromEnd(nums, FROM_END_ASR)} align=${fromEnd(nums, FROM_END_ALIGNMENT)} tire=${fromEnd(nums, FROM_END_TIRE)} valv=${fromEnd(nums, FROM_END_VALVOLINE)}`);
         } catch {}
 
         let touched = false;
-        const apply = (key, idxInNums) => {
-          const v = parsePct(nums[idxInNums]);
+        const apply = (key, fromEndN) => {
+          const v = parsePct(fromEnd(nums, fromEndN));
           if (v === null) return;
           target[key] = Math.round(v * 10000) / 10000;
           touched = true;
         };
-        apply('asr',       IDX_ASR);
-        apply('align',     IDX_ALIGNMENT);
-        apply('tires',     IDX_TIRE);
-        apply('valvoline', IDX_VALVOLINE);
+        apply('asr',       FROM_END_ASR);
+        apply('align',     FROM_END_ALIGNMENT);
+        apply('tires',     FROM_END_TIRE);
+        apply('valvoline', FROM_END_VALVOLINE);
 
         if (touched) { updated++; updatedNames.push(target.name); }
       }

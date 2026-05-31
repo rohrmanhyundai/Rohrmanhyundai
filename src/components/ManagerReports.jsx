@@ -135,8 +135,13 @@ async function parseAdvisorPdfFile(file) {
   });
   if (!headerLine) throw new Error('PDF format unexpected — missing Alignment / Tire / Valvoline / ASR headers.');
 
-  // SA Totals layout positions (0-indexed within numerics after the advisor name).
-  const IDX_ASR = 9, IDX_ALIGNMENT = 11, IDX_TIRE = 13, IDX_VALVOLINE = 14;
+  // Right-indexed positions (from the end of the numeric sequence): the
+  // SA Totals tail is ... ASR% INSP% ALIGN% BATTERY% TIRE% VALV% TOP-GUN RANK
+  // A leading-cell split by PDF.js (e.g. "13.60%" → "13" + "60%") would
+  // shift left-indexed positions; counting from the end keeps the upsell
+  // columns stable as long as the final cells are intact.
+  const FROM_END_ASR = 8, FROM_END_ALIGNMENT = 6, FROM_END_TIRE = 4, FROM_END_VALVOLINE = 3;
+  const fromEnd = (arr, n) => (arr.length >= n ? arr[arr.length - n] : undefined);
   const numRe = /(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?/g;
   const parsePct = (raw) => {
     const v = String(raw || '').replace(/[, $]/g, '').replace('%', '').trim();
@@ -146,15 +151,12 @@ async function parseAdvisorPdfFile(file) {
     return f > 1 ? f / 100 : f;
   };
 
-  // We don't have the dashboard advisor list here; instead pre-extract every
-  // row by spotting lines with >= 15 numerics and an uppercase name token, and
-  // identify name by the leftmost uppercase word group.
   const out = {};
   for (const line of allLines) {
     if (line === headerLine) continue;
     if (/\b(total|grand|average|all dealers|number of)\b/i.test(line)) continue;
     const nums = (line.match(numRe) || []);
-    if (nums.length < IDX_VALVOLINE + 1) continue;
+    if (nums.length < FROM_END_ASR) continue;
     // Pull a likely advisor name: contiguous uppercase letters (length ≥ 3) on the line.
     const nameMatch = line.match(/\b([A-Z][A-Z'\-]{2,})\b(?:\s+[A-Z][A-Z'\-]{1,})?/);
     if (!nameMatch) continue;
@@ -164,16 +166,16 @@ async function parseAdvisorPdfFile(file) {
     // Slice numerics after the matched name to keep header / date noise out.
     const after = line.slice(line.indexOf(nameMatch[0]) + nameMatch[0].length);
     const tailNums = (after.match(numRe) || []);
-    if (tailNums.length < IDX_VALVOLINE + 1) continue;
+    if (tailNums.length < FROM_END_ASR) continue;
     const fields = out[fn] || (out[fn] = { reportName: name });
-    const apply = (key, idx) => {
-      const v = parsePct(tailNums[idx]);
+    const apply = (key, n) => {
+      const v = parsePct(fromEnd(tailNums, n));
       if (v !== null) fields[key] = Math.round(v * 10000) / 10000;
     };
-    apply('asr', IDX_ASR);
-    apply('align', IDX_ALIGNMENT);
-    apply('tires', IDX_TIRE);
-    apply('valvoline', IDX_VALVOLINE);
+    apply('asr',       FROM_END_ASR);
+    apply('align',     FROM_END_ALIGNMENT);
+    apply('tires',     FROM_END_TIRE);
+    apply('valvoline', FROM_END_VALVOLINE);
   }
   return out;
 }
