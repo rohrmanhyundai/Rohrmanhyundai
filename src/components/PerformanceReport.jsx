@@ -171,6 +171,62 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
         </div>
       </div>
 
+      {/* Coaching Report toggle — sits up top so the advisor sees it immediately */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: showCoaching ? 12 : 20, flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setShowCoaching(s => !s)}
+          className={coachingUnseen ? 'coaching-glow' : ''}
+          style={{
+            background: coachingUnseen
+              ? 'rgba(168,85,247,.28)'
+              : showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
+            border: `1px solid ${coachingUnseen ? 'rgba(168,85,247,.85)' : showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
+            color: coachingUnseen ? '#e9d5ff' : showCoaching ? '#c4b5fd' : '#94a3b8',
+            borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
+            cursor: 'pointer', display: 'flex',
+            alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
+            position: 'relative',
+          }}
+        >
+          <span>{showCoaching ? '▼' : '▶'}</span>
+          <span>🎯 Coaching Report {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
+          {coachingUnseen && (
+            <span style={{
+              fontSize: 9, fontWeight: 900, color: '#fff',
+              background: '#a855f7', borderRadius: 999,
+              padding: '2px 8px', letterSpacing: .5,
+              boxShadow: '0 0 12px rgba(168,85,247,.85)',
+            }}>NEW</span>
+          )}
+        </button>
+      </div>
+
+      {showCoaching && (
+        <div style={{ background: 'rgba(168,85,247,.06)', border: '1px solid rgba(168,85,247,.2)', borderRadius: 14, padding: '20px 24px', marginBottom: 20 }}>
+          {coachingLoading ? (
+            <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>⏳ Loading coaching reports…</div>
+          ) : coachingReports.length === 0 ? (
+            <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>
+              No coaching reports yet. Your manager will generate one soon.
+            </div>
+          ) : (
+            coachingReports.map((r, i) => (
+              <div key={r.id || i} style={{ marginBottom: i < coachingReports.length - 1 ? 24 : 0, paddingBottom: i < coachingReports.length - 1 ? 24 : 0, borderBottom: i < coachingReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>
+                    Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                <CoachingReportBody text={r.report} />
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
       {!selectedMonth || monthEntries.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: '#64748b' }}>No entries for this month.</div>
       ) : (
@@ -270,62 +326,6 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
 
           {/* Trending report */}
           <TrendingReport entries={entries} selectedMonth={selectedMonth} />
-
-          {/* Coaching Report toggle */}
-          <div style={{ display: 'flex', gap: 10, marginTop: 20, marginBottom: showCoaching ? 12 : 0, flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setShowCoaching(s => !s)}
-              className={coachingUnseen ? 'coaching-glow' : ''}
-              style={{
-                background: coachingUnseen
-                  ? 'rgba(168,85,247,.28)'
-                  : showCoaching ? 'rgba(168,85,247,.18)' : 'rgba(255,255,255,.04)',
-                border: `1px solid ${coachingUnseen ? 'rgba(168,85,247,.85)' : showCoaching ? 'rgba(168,85,247,.4)' : 'rgba(255,255,255,.1)'}`,
-                color: coachingUnseen ? '#e9d5ff' : showCoaching ? '#c4b5fd' : '#94a3b8',
-                borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13,
-                cursor: 'pointer', display: 'flex',
-                alignItems: 'center', gap: 8, textTransform: 'uppercase', letterSpacing: 1,
-                position: 'relative',
-              }}
-            >
-              <span>{showCoaching ? '▼' : '▶'}</span>
-              <span>🎯 Coaching Report {coachingReports.length > 0 && `(${coachingReports.length})`}</span>
-              {coachingUnseen && (
-                <span style={{
-                  fontSize: 9, fontWeight: 900, color: '#fff',
-                  background: '#a855f7', borderRadius: 999,
-                  padding: '2px 8px', letterSpacing: .5,
-                  boxShadow: '0 0 12px rgba(168,85,247,.85)',
-                }}>NEW</span>
-              )}
-            </button>
-          </div>
-
-          {showCoaching && (
-            <div style={{ background: 'rgba(168,85,247,.06)', border: '1px solid rgba(168,85,247,.2)', borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
-              {coachingLoading ? (
-                <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>⏳ Loading coaching reports…</div>
-              ) : coachingReports.length === 0 ? (
-                <div style={{ color: '#64748b', textAlign: 'center', padding: 30 }}>
-                  No coaching reports yet. Your manager will generate one soon.
-                </div>
-              ) : (
-                coachingReports.map((r, i) => (
-                  <div key={r.id || i} style={{ marginBottom: i < coachingReports.length - 1 ? 24 : 0, paddingBottom: i < coachingReports.length - 1 ? 24 : 0, borderBottom: i < coachingReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
-                      <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
-                        {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
-                      </div>
-                      <div style={{ fontSize: 11, color: '#64748b' }}>
-                        Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
-                    <CoachingReportBody text={r.report} />
-                  </div>
-                ))
-              )}
-            </div>
-          )}
         </>
       )}
     </div>
