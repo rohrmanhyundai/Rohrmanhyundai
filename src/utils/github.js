@@ -654,6 +654,37 @@ export async function saveAwaitingData(rows) {
   return rows;
 }
 
+// ── Repair Order Archive — every RO deleted from WIP / Awaiting lands here ───
+const RO_ARCHIVE_PATH = 'public/data/repair-order-archive.json';
+
+export async function loadRoArchive() {
+  try {
+    const data = await readGitHubFile(authHeaders(), RO_ARCHIVE_PATH);
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/repair-order-archive.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+export async function saveRoArchive(entries) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  await saveGitHubFile(authHeaders(), RO_ARCHIVE_PATH, entries, 'Update repair order archive');
+  return entries;
+}
+
+// Convenience: append-only helper that loads, prepends, and saves. Returns the
+// new full archive array.
+export async function appendRoArchive(entry) {
+  const existing = await loadRoArchive();
+  const next = [entry, ...existing];
+  await saveRoArchive(next);
+  return next;
+}
+
 // ── Charge Account List ───────────────────────────────────────────────────────
 const CHARGE_ACCOUNT_PATH = 'public/data/charge-accounts.json';
 

@@ -14,6 +14,7 @@ import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
+import RepairOrderDatabase from './components/RepairOrderDatabase';
 import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
@@ -523,6 +524,18 @@ export default function App() {
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
+        onRepairOrderDatabase={() => goTo('repair-order-database', 'manager-hub')}
+      />
+    );
+  }
+
+  if (page === 'repair-order-database') {
+    const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return (
+      <RepairOrderDatabase
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => navTo(prevPage || 'manager-hub')}
       />
     );
   }

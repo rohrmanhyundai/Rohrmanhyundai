@@ -1,6 +1,6 @@
 /* wip */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData } from '../utils/github';
+import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive } from '../utils/github';
 import TechChat from './TechChat';
 
 function ChipBtn({ active, color, onClick, children }) {
@@ -286,10 +286,24 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setDeletingRow(id);
     setError('');
     try {
+      const victim = rows.find(r => r.id === id);
       const updated = rows.filter(r => r.id !== id);
       await safeSaveWipData(activeTech, updated);
       setRows(updated);
       dirtyRowsRef.current.delete(id);
+      // Fire-and-forget archive append — never block the UI on the archive.
+      if (victim) {
+        try {
+          await appendRoArchive({
+            ...victim,
+            _archiveId: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+            _archivedAt: new Date().toISOString(),
+            _archivedBy: (currentUser || '').toUpperCase(),
+            _source: 'wip',
+            _sourceTech: activeTech,
+          });
+        } catch (archErr) { console.warn('RO archive append failed:', archErr); }
+      }
     } catch (e) { setError(e.message); }
     finally { setDeletingRow(null); }
   }
@@ -472,10 +486,23 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   }
 
   async function deleteAwaitingRow(id) {
+    const victim = awaiting.find(r => r.id === id);
     const updated = awaiting.filter(r => r.id !== id);
     setAwaiting(updated);
     await saveAwaiting(updated);
     dirtyAwaitingRef.current.delete(id);
+    if (victim) {
+      try {
+        await appendRoArchive({
+          ...victim,
+          _archiveId: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          _archivedAt: new Date().toISOString(),
+          _archivedBy: (currentUser || '').toUpperCase(),
+          _source: 'awaiting',
+          _sourceTech: '',
+        });
+      } catch (archErr) { console.warn('RO archive append failed:', archErr); }
+    }
   }
 
   async function saveAwaitingRow(id) {
