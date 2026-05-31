@@ -1,6 +1,7 @@
 /* wip */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive } from '../utils/github';
+import { trackAction } from '../utils/activityTracker';
 import TechChat from './TechChat';
 
 function ChipBtn({ active, color, onClick, children }) {
@@ -246,6 +247,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         partsArrivedDate: value === true ? today : '',
       } : r);
       safeSaveWipData(activeTech, updated).catch(e => setError(e.message));
+      const victim = prev.find(r => r.id === id);
+      trackAction(value === true ? 'mark-parts-arrived' : value === false ? 'mark-parts-pending' : 'undo-parts-arrived', `RO ${victim?.ro || '?'}`);
       return updated;
     });
   }
@@ -287,6 +290,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setError('');
     try {
       const victim = rows.find(r => r.id === id);
+      trackAction('delete-wip-row', `RO ${victim?.ro || '?'} tech ${activeTech || '?'}`);
       const updated = rows.filter(r => r.id !== id);
       await safeSaveWipData(activeTech, updated);
       setRows(updated);
@@ -487,6 +491,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   async function deleteAwaitingRow(id) {
     const victim = awaiting.find(r => r.id === id);
+    trackAction('delete-awaiting-row', `RO ${victim?.ro || '?'}`);
     const updated = awaiting.filter(r => r.id !== id);
     setAwaiting(updated);
     await saveAwaiting(updated);

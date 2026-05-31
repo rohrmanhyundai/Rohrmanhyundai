@@ -100,6 +100,15 @@ const NAV_BUTTONS = [
     color: '#fca5a5',
     prop: 'onRepairOrderDatabase',
   },
+  {
+    key: 'userDataTracker',
+    label: '📡 User Data Tracker',
+    desc: 'Last 30 days of page views and key actions per user',
+    bg: 'linear-gradient(135deg,rgba(96,165,250,.28),rgba(59,130,246,.18))',
+    border: 'rgba(96,165,250,.45)',
+    color: '#bfdbfe',
+    prop: 'onUserDataTracker',
+  },
 ];
 
 export default function ManagerHub({
@@ -107,13 +116,13 @@ export default function ManagerHub({
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
-  onRepairOrderDatabase,
+  onRepairOrderDatabase, onUserDataTracker,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
-    onRepairOrderDatabase,
+    onRepairOrderDatabase, onUserDataTracker,
   };
 
   return (
