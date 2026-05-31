@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
-import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching, loadCoachingViews } from '../utils/github';
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
 
@@ -301,6 +301,7 @@ export default function ManagerReports({ users, onBack }) {
   const [coachingViewerLoading, setCoachingViewerLoading] = useState(false);
   const [coachingViewerData, setCoachingViewerData] = useState({}); // username → reports[]
   const [coachingViewerSelected, setCoachingViewerSelected] = useState(null); // username currently expanded
+  const [coachingViewsMap, setCoachingViewsMap] = useState({}); // username → { reportId: ISOTimestamp }
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
@@ -504,19 +505,24 @@ export default function ManagerReports({ users, onBack }) {
     setCoachingViewerSelected(null);
     setCoachingViewerLoading(true);
     setCoachingViewerData({});
+    setCoachingViewsMap({});
     try {
       const everyone = [...advisors, ...techs];
-      const results = await Promise.all(
-        everyone.map(async u => {
-          const reports = await loadCoaching(u).catch(() => []);
-          return [u, Array.isArray(reports) ? reports : []];
-        })
-      );
+      const [results, views] = await Promise.all([
+        Promise.all(
+          everyone.map(async u => {
+            const reports = await loadCoaching(u).catch(() => []);
+            return [u, Array.isArray(reports) ? reports : []];
+          })
+        ),
+        loadCoachingViews().catch(() => ({})),
+      ]);
       const map = {};
       for (const [u, reports] of results) {
         if (reports.length > 0) map[u] = reports;
       }
       setCoachingViewerData(map);
+      setCoachingViewsMap(views || {});
       // Auto-select the most recently generated report.
       let newestUser = null, newestTs = 0;
       for (const [u, reports] of Object.entries(map)) {
@@ -1048,51 +1054,48 @@ export default function ManagerReports({ users, onBack }) {
                     {advisorList.length > 0 && (
                       <div style={{ padding: '8px 14px 4px', fontSize: 10, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: 1 }}>Advisors</div>
                     )}
-                    {advisorList.map(([u, reports]) => {
-                      const newest = reports[0]?.generatedAt ? new Date(reports[0].generatedAt).toLocaleDateString() : '';
-                      const isSel = coachingViewerSelected === u;
+                    {(() => {
+                      const renderRow = ([u, reports]) => {
+                        const newest = reports[0]?.generatedAt ? new Date(reports[0].generatedAt).toLocaleDateString() : '';
+                        const isSel = coachingViewerSelected === u;
+                        const userViews = coachingViewsMap[u] || {};
+                        const unread = reports.filter(r => !r.id || !userViews[r.id]).length;
+                        return (
+                          <button
+                            key={u}
+                            onClick={() => setCoachingViewerSelected(u)}
+                            style={{
+                              display: 'block', width: '100%', textAlign: 'left',
+                              background: isSel ? 'rgba(45,212,191,.16)' : 'transparent',
+                              border: 'none', borderLeft: `3px solid ${isSel ? '#5eead4' : 'transparent'}`,
+                              color: isSel ? '#a7f3d0' : '#cbd5e1',
+                              padding: '8px 14px', fontWeight: 800, fontSize: 12,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span>{u}</span>
+                              <span style={{ fontSize: 9, color: '#64748b' }}>{reports.length}</span>
+                              {unread > 0 && (
+                                <span title={`${unread} report${unread === 1 ? '' : 's'} not yet viewed by ${u}`} style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.45)', color: '#fbbf24', borderRadius: 999, padding: '1px 7px', fontSize: 9, fontWeight: 900 }}>
+                                  {unread} UNREAD
+                                </span>
+                              )}
+                            </div>
+                            {newest && <div style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{newest}</div>}
+                          </button>
+                        );
+                      };
                       return (
-                        <button
-                          key={u}
-                          onClick={() => setCoachingViewerSelected(u)}
-                          style={{
-                            display: 'block', width: '100%', textAlign: 'left',
-                            background: isSel ? 'rgba(45,212,191,.16)' : 'transparent',
-                            border: 'none', borderLeft: `3px solid ${isSel ? '#5eead4' : 'transparent'}`,
-                            color: isSel ? '#a7f3d0' : '#cbd5e1',
-                            padding: '8px 14px', fontWeight: 800, fontSize: 12,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <div>{u} <span style={{ fontSize: 9, color: '#64748b', marginLeft: 4 }}>{reports.length}</span></div>
-                          {newest && <div style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{newest}</div>}
-                        </button>
+                        <>
+                          {advisorList.map(renderRow)}
+                          {techList.length > 0 && (
+                            <div style={{ padding: '12px 14px 4px', fontSize: 10, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: 1 }}>Technicians</div>
+                          )}
+                          {techList.map(renderRow)}
+                        </>
                       );
-                    })}
-                    {techList.length > 0 && (
-                      <div style={{ padding: '12px 14px 4px', fontSize: 10, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: 1 }}>Technicians</div>
-                    )}
-                    {techList.map(([u, reports]) => {
-                      const newest = reports[0]?.generatedAt ? new Date(reports[0].generatedAt).toLocaleDateString() : '';
-                      const isSel = coachingViewerSelected === u;
-                      return (
-                        <button
-                          key={u}
-                          onClick={() => setCoachingViewerSelected(u)}
-                          style={{
-                            display: 'block', width: '100%', textAlign: 'left',
-                            background: isSel ? 'rgba(45,212,191,.16)' : 'transparent',
-                            border: 'none', borderLeft: `3px solid ${isSel ? '#5eead4' : 'transparent'}`,
-                            color: isSel ? '#a7f3d0' : '#cbd5e1',
-                            padding: '8px 14px', fontWeight: 800, fontSize: 12,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <div>{u} <span style={{ fontSize: 9, color: '#64748b', marginLeft: 4 }}>{reports.length}</span></div>
-                          {newest && <div style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{newest}</div>}
-                        </button>
-                      );
-                    })}
+                    })()}
                   </div>
 
                   {/* Right pane — report content */}
@@ -1107,19 +1110,47 @@ export default function ManagerReports({ users, onBack }) {
                         <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 18 }}>
                           {selectedReports.length} report{selectedReports.length === 1 ? '' : 's'}
                         </div>
-                        {selectedReports.map((r, i) => (
-                          <div key={r.id || i} style={{ marginBottom: i < selectedReports.length - 1 ? 24 : 0, paddingBottom: i < selectedReports.length - 1 ? 24 : 0, borderBottom: i < selectedReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
-                              <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
-                                {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                        {selectedReports.map((r, i) => {
+                          const userViews = coachingViewsMap[coachingViewerSelected] || {};
+                          const viewedAt = r.id ? userViews[r.id] : null;
+                          return (
+                            <div key={r.id || i} style={{ marginBottom: i < selectedReports.length - 1 ? 24 : 0, paddingBottom: i < selectedReports.length - 1 ? 24 : 0, borderBottom: i < selectedReports.length - 1 ? '1px solid rgba(168,85,247,.18)' : 'none' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
+                                <div style={{ fontWeight: 900, fontSize: 13, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: 1 }}>
+                                  {r.weekLabel || (r.weekStart && r.weekEnd ? `Week of ${r.weekStart} – ${r.weekEnd}` : 'Latest report')}
+                                </div>
+                                <div style={{ fontSize: 11, color: '#64748b' }}>
+                                  Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                </div>
                               </div>
-                              <div style={{ fontSize: 11, color: '#64748b' }}>
-                                Generated {new Date(r.generatedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+
+                              {/* Read receipt — surfaces when the recipient actually opened the report */}
+                              <div style={{ marginBottom: 12 }}>
+                                {viewedAt ? (
+                                  <div style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                                    background: 'rgba(34,197,94,.14)', border: '1px solid rgba(34,197,94,.45)',
+                                    color: '#86efac', borderRadius: 999, padding: '3px 10px',
+                                    fontWeight: 800, fontSize: 11, letterSpacing: .3,
+                                  }}>
+                                    ✓ Viewed by {coachingViewerSelected} · {new Date(viewedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                  </div>
+                                ) : (
+                                  <div style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                                    background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.4)',
+                                    color: '#fbbf24', borderRadius: 999, padding: '3px 10px',
+                                    fontWeight: 800, fontSize: 11, letterSpacing: .3,
+                                  }}>
+                                    ⏳ Not viewed yet
+                                  </div>
+                                )}
                               </div>
+
+                              <CoachingReportBody text={r.report} />
                             </div>
-                            <CoachingReportBody text={r.report} />
-                          </div>
-                        ))}
+                          );
+                        })}
                       </>
                     )}
                   </div>

@@ -654,6 +654,44 @@ export async function saveAwaitingData(rows) {
   return rows;
 }
 
+// ── Coaching Report Views — track when each recipient opens their report ────
+const COACHING_VIEWS_PATH = 'public/data/coaching-views.json';
+
+export async function loadCoachingViews() {
+  try {
+    const data = await readGitHubFile(authHeaders(), COACHING_VIEWS_PATH);
+    if (data && typeof data === 'object') return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/coaching-views.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return {};
+}
+
+// Record that `username` (the recipient) has viewed the given reportIds on
+// their own coaching report. Stamps every one with the current timestamp.
+// Latest-write-wins; we treat this as best-effort and swallow errors.
+export async function recordCoachingView(username, reportIds) {
+  if (!username || !Array.isArray(reportIds) || reportIds.length === 0) return;
+  try {
+    const all = await loadCoachingViews();
+    const u = (username || '').toUpperCase();
+    const me = all[u] || {};
+    const now = new Date().toISOString();
+    for (const id of reportIds) {
+      if (id) me[id] = now;
+    }
+    all[u] = me;
+    const token = await ensureGithubToken();
+    if (!token) return;
+    await saveGitHubFile(authHeaders(), COACHING_VIEWS_PATH, all, `Record coaching view for ${u}`);
+  } catch (err) {
+    // Swallow — this is best-effort observability, not a critical path.
+    try { console.warn('recordCoachingView failed:', err); } catch {}
+  }
+}
+
 // ── Repair Order Archive — every RO deleted from WIP / Awaiting lands here ───
 const RO_ARCHIVE_PATH = 'public/data/repair-order-archive.json';
 
