@@ -654,6 +654,65 @@ export async function saveAwaitingData(rows) {
   return rows;
 }
 
+// ── User Activity Tracker — last 30 days of page views + key actions ────────
+const ACTIVITY_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+
+export async function loadUserActivity(username) {
+  const u = (username || '').toUpperCase();
+  if (!u) return [];
+  const path = `public/data/activity/${u}.json`;
+  try {
+    const data = await readGitHubFile(authHeaders(), path);
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/activity/${u}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+// Append a batch of new events to the user's activity log, then prune anything
+// older than the 30-day retention window. Best-effort — swallows errors.
+export async function appendUserActivity(username, newEvents) {
+  if (!username || !Array.isArray(newEvents) || newEvents.length === 0) return;
+  const u = username.toUpperCase();
+  try {
+    const token = await ensureGithubToken();
+    if (!token) return;
+    const existing = await loadUserActivity(u);
+    const cutoff = Date.now() - ACTIVITY_RETENTION_MS;
+    const merged = [...newEvents, ...existing]
+      .filter(e => {
+        if (!e || !e.at) return false;
+        const t = new Date(e.at).getTime();
+        return Number.isFinite(t) && t >= cutoff;
+      })
+      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+    await saveGitHubFile(authHeaders(), `public/data/activity/${u}.json`, merged, `Activity log: ${u}`);
+  } catch (err) {
+    try { console.warn('appendUserActivity failed:', err); } catch {}
+  }
+}
+
+// List every username with an activity file by scanning the activity
+// directory via the GitHub contents API. Used by the manager-side User Data
+// Tracker so the sidebar covers everyone who has ever had activity recorded.
+export async function listActivityUsernames() {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/public/data/activity?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      { headers: authHeaders(), cache: 'no-store' }
+    );
+    if (!res.ok) return [];
+    const list = await res.json();
+    if (!Array.isArray(list)) return [];
+    return list
+      .filter(f => f && f.type === 'file' && f.name && f.name.toLowerCase().endsWith('.json'))
+      .map(f => f.name.replace(/\.json$/i, '').toUpperCase());
+  } catch { return []; }
+}
+
 // ── Coaching Report Views — track when each recipient opens their report ────
 const COACHING_VIEWS_PATH = 'public/data/coaching-views.json';
 

@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching, loadCoachingViews } from '../utils/github';
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
+import { trackAction } from '../utils/activityTracker';
 
 // ── Shared helpers reused by the historical backfill uploader ────────────────
 const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
@@ -501,6 +502,7 @@ export default function ManagerReports({ users, onBack }) {
   }
 
   async function openCoachingViewer() {
+    trackAction('view-ai-reports');
     setCoachingViewerOpen(true);
     setCoachingViewerSelected(null);
     setCoachingViewerLoading(true);
@@ -625,6 +627,7 @@ export default function ManagerReports({ users, onBack }) {
     const advisorNames = Array.isArray(advisorNamesIn) ? advisorNamesIn : [];
     if (advisorNames.length === 0) { alert('Pick at least one advisor.'); return; }
     if (!await ensureToken()) return;
+    trackAction('generate-advisor-ai-report', advisorNames.join(','));
 
     setGeneratingAI(true);
     setStatus(`⏳ Generating coaching reports… (0/${advisorNames.length})`);
@@ -666,6 +669,7 @@ export default function ManagerReports({ users, onBack }) {
     const techNames = Array.isArray(techNamesIn) ? techNamesIn : [];
     if (techNames.length === 0) { alert('Pick at least one tech.'); return; }
     if (!await ensureToken()) return;
+    trackAction('generate-tech-ai-report', techNames.join(','));
 
     setGeneratingAI(true);
     setStatus(`⏳ Generating AI reports… (0/${techNames.length})`);

@@ -7,6 +7,7 @@ import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
 import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from './utils/pusher';
+import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
@@ -15,6 +16,7 @@ import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
+import UserDataTracker from './components/UserDataTracker';
 import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
@@ -87,8 +89,9 @@ export default function App() {
     if (from !== undefined) setPrevPage(from);
     pageRef.current = dest;
     setPage(dest);
+    trackPage(dest);
   }
-  function navTo(dest) { pageRef.current = dest; setPage(dest); }
+  function navTo(dest) { pageRef.current = dest; setPage(dest); trackPage(dest); }
   const [schedules, setSchedules] = useState({});
   const schedulesRef = useRef({});
   useEffect(() => { schedulesRef.current = schedules; }, [schedules]);
@@ -145,6 +148,16 @@ export default function App() {
   }, [loadDashboard]);
 
   // Chat notification polling — check for new messages every 5s
+  // Bring the activity tracker up on hard refresh / resume from cached login,
+  // and tear it down on logout. Tracker is a no-op for admins by design.
+  useEffect(() => {
+    if (isLoggedIn && currentUser) {
+      initActivityTracker(currentUser, currentRole);
+    } else {
+      shutdownActivityTracker();
+    }
+  }, [isLoggedIn, currentUser, currentRole]);
+
   // Admin-triggered force refresh — listens on a shared Pusher channel.
   // When an admin pushes the "Force Refresh All Users" button, every logged-in
   // browser reloads itself (cache-busted) so new features go live immediately.
@@ -278,12 +291,16 @@ export default function App() {
       setCurrentRole(match.role || '');
       setCanEditDashboard(canEdit);
       setCurrentPages(pages);
+      initActivityTracker(match.username, match.role || '');
+      trackAction('login');
     } else {
       alert('Login failed.');
     }
   }
 
   function handleLogout() {
+    trackAction('logout');
+    shutdownActivityTracker();
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
@@ -525,8 +542,15 @@ export default function App() {
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
         onRepairOrderDatabase={() => goTo('repair-order-database', 'manager-hub')}
+        onUserDataTracker={() => goTo('user-data-tracker', 'manager-hub')}
       />
     );
+  }
+
+  if (page === 'user-data-tracker') {
+    const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return <UserDataTracker onBack={() => navTo(prevPage || 'manager-hub')} />;
   }
 
   if (page === 'repair-order-database') {

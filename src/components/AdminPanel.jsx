@@ -343,6 +343,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   //
   async function handleAdvisorPdf(file) {
     if (!file) return;
+    trackAction('upload-advisor-pdf', file.name);
     setAdvisorXlsxBusy(true);
     setAdvisorXlsxStatus('Reading PDF…');
     try {
@@ -526,6 +527,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   //   Coupon Labor → coupon_labor (new field, editor-only)
   async function handleAdvisorXlsx(file) {
     if (!file) return;
+    trackAction('upload-advisor-xlsx', file.name);
     setAdvisorXlsxBusy(true);
     setAdvisorXlsxStatus('Reading file…');
     try {
@@ -700,6 +702,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   async function handleSave() {
+    trackAction('save-dashboard');
     setSaving(true);
     try {
       const payload = { data, vacations };
@@ -747,6 +750,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   async function sendToReports() {
+    trackAction('send-to-reports');
     setSendingReports(true);
     setReportStatus('⏳ Sending snapshots…');
     const _n = new Date(); const today = `${_n.getFullYear()}-${String(_n.getMonth()+1).padStart(2,'0')}-${String(_n.getDate()).padStart(2,'0')}`;
