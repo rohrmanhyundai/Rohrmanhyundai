@@ -1,5 +1,24 @@
 [
   {
+    "id": "mpv40bqjk1p",
+    "date": "2026-05-31",
+    "label": "May 31, 2026",
+    "month": "2026-05",
+    "type": "advisor",
+    "savedAt": "2026-06-01T11:12:33.643Z",
+    "mtd_hours": 288.1,
+    "ro_count": 228,
+    "hours_per_ro": 1.26,
+    "align": 0.2031,
+    "tires": 0.1328,
+    "valvoline": 0.3203,
+    "asr": 0.2008,
+    "elr": 0.909,
+    "coupon_labor": 2571.26,
+    "total_sales": 87516.49,
+    "coupon_usage_pct": 0.0294
+  },
+  {
     "date": "2026-05-30",
     "label": "May 30, 2026",
     "month": "2026-05",
