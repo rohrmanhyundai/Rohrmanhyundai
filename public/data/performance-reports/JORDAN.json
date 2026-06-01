@@ -1,5 +1,24 @@
 [
   {
+    "id": "mpv40atve8w",
+    "date": "2026-05-31",
+    "label": "May 31, 2026",
+    "month": "2026-05",
+    "type": "advisor",
+    "savedAt": "2026-06-01T11:12:32.467Z",
+    "mtd_hours": 316.2,
+    "ro_count": 313,
+    "hours_per_ro": 1.01,
+    "align": 0.1302,
+    "tires": 0.1065,
+    "valvoline": 0.2308,
+    "asr": 0.157,
+    "elr": 0.8995,
+    "coupon_labor": 4282.03,
+    "total_sales": 93368.95,
+    "coupon_usage_pct": 0.0459
+  },
+  {
     "date": "2026-05-30",
     "label": "May 30, 2026",
     "month": "2026-05",
