@@ -7,6 +7,7 @@ import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
 import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/pusher';
+import { trackAction } from '../utils/activityTracker';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
