@@ -91,11 +91,17 @@ export default function UserDataTracker({ onBack }) {
     (async () => {
       setLoadingUsers(true);
       try {
-        const [allUsers, activityList] = await Promise.all([
-          loadUsers().catch(() => []),
+        const [usersResult, activityList] = await Promise.all([
+          loadUsers().catch(() => null),
           listActivityUsernames().catch(() => []),
         ]);
         if (cancelled) return;
+        // loadUsers() returns { users, sharedSaveCode, ... } (or, for the legacy
+        // array format, a bare array). Normalize to a plain users array so the
+        // loops below don't choke on a non-iterable object.
+        const allUsers = Array.isArray(usersResult)
+          ? usersResult
+          : (usersResult && Array.isArray(usersResult.users) ? usersResult.users : []);
         // Hide admins (per the tracking policy — admins are never tracked).
         const usernameToRole = {};
         for (const u of (allUsers || [])) {
