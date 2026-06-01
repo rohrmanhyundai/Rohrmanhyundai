@@ -50,5 +50,18 @@
     "highPriority": false,
     "advisor": "PARKER",
     "notes": "BATTERY OUT OF VEHICLE & IN SHOP. TESTING NOW @10:50AM. BATTERY BACK IN CAR & MILEAGE UPDATED @1:43PM."
+  },
+  {
+    "id": "mpvnohdxecy",
+    "ro": "778014",
+    "roDate": "2026-06-01",
+    "jobDesc": "",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": ""
   }
 ]
