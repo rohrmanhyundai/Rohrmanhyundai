@@ -74,26 +74,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Parker",
-      "password": "[REDACTED]",
-      "role": "advisor",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": true,
-        "advisorRankBoard": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true
-      },
-      "chatAccess": true,
-      "techChatAccess": true
-    },
-    {
       "username": "Jason",
       "password": "[REDACTED]",
       "role": "admin",
@@ -487,5 +467,7 @@
       "techChatAccess": true
     }
   ],
-  "sharedSaveCode": ""
+  "sharedSaveCode": "",
+  "awsAccessKeyId": "",
+  "awsSecretAccessKey": ""
 }
