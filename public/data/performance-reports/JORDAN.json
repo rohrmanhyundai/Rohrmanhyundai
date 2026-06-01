@@ -38,7 +38,10 @@
     "elr": 0.8995,
     "coupon_labor": 4282.03,
     "total_sales": 93368.95,
-    "coupon_usage_pct": 0.0459
+    "coupon_usage_pct": 0.0459,
+    "csi": 975,
+    "roh50_hrs_ro": 0.86,
+    "daily_avg": 12.58636364
   },
   {
     "date": "2026-05-30",
