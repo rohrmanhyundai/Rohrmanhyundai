@@ -1,7 +1,7 @@
 {
   "id": "mpx2f8ayp7dr",
   "createdAt": "2026-06-02T20:03:42.154Z",
-  "updatedAt": "2026-06-02T20:08:41.025Z",
+  "updatedAt": "2026-06-02T20:09:17.113Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Travis Bruner",
   "customerPhone": "260) 418 - 2361",
@@ -35,7 +35,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "",
+  "notes": "INCLUDS EVAP/RECHARGE @1.4 HRS.",
   "approved": true,
   "approvedDate": "2026-06-02",
   "denied": false,
