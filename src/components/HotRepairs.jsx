@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -164,15 +164,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [editId, setEditId]           = useState(null);
   const [editLabel, setEditLabel]     = useState('');
   const [savingEdit, setSavingEdit]   = useState(false);
+  const [reordering, setReordering]   = useState(false);
 
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     trackPage('hotRepairs');
     loadHotRepairs().then(idx => {
-      // newest first (index is already prepended, but sort to be safe)
-      const sorted = [...(idx || [])].sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-      setItems(sorted);
+      // Display follows the stored order (newest uploads prepend; managers can reorder).
+      setItems(idx || []);
       setLoading(false);
     });
   }, []);
@@ -219,8 +219,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setUploadStatus(file.size > 5 * 1024 * 1024 ? 'Uploading large file — please wait...' : 'Uploading...');
     try {
       const newItems = await uploadHotRepair(file, label.trim(), currentUserDisplay || currentUser);
-      const sorted = [...newItems].sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-      setItems(sorted);
+      setItems(newItems); // new upload is prepended → appears on top
       setFile(null); setLabel(''); setFileError('');
       if (fileInputRef.current) fileInputRef.current.value = '';
       setUploadStatus('');
@@ -245,8 +244,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setSavingEdit(true);
     try {
       const newItems = await renameHotRepair(item.id, trimmed);
-      const sorted = [...newItems].sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-      setItems(sorted);
+      setItems(newItems);
       setEditId(null);
     } catch (err) {
       setActionError('Rename failed: ' + err.message);
@@ -255,13 +253,33 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     }
   }
 
+  // Move an item to a new position; optimistic UI then persist order.
+  async function move(index, toIndex) {
+    if (toIndex < 0 || toIndex >= items.length || toIndex === index) return;
+    const next = [...items];
+    const [moved] = next.splice(index, 1);
+    next.splice(toIndex, 0, moved);
+    setItems(next); // optimistic
+    setReordering(true);
+    setActionError('');
+    try {
+      if (!await ensureToken()) { setItems(items); setReordering(false); return; }
+      const saved = await reorderHotRepairs(next.map(i => i.id));
+      setItems(saved);
+    } catch (err) {
+      setItems(items); // revert
+      setActionError('Reorder failed: ' + err.message);
+    } finally {
+      setReordering(false);
+    }
+  }
+
   async function handleDelete(item) {
     if (!window.confirm(`Delete "${item.label}"?\n\nThis cannot be undone.`)) return;
     setActionError('');
     try {
       const newItems = await deleteHotRepair(item);
-      const sorted = [...newItems].sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-      setItems(sorted);
+      setItems(newItems);
     } catch (err) {
       setActionError('Delete failed: ' + err.message);
     }
@@ -323,7 +341,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
-              {items.map(item => (
+              {items.map((item, idx) => (
                 <div key={item.id} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   {/* Large preview — click to open full view */}
                   <div
@@ -364,6 +382,22 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
                     </div>
+                    {canManage && editId !== item.id && (
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
+                          style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === 0 ? 0.4 : 1 }}>
+                          ⤒ Top
+                        </button>
+                        <button onClick={() => move(idx, idx - 1)} disabled={reordering || idx === 0} title="Move up"
+                          style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === 0 ? 0.4 : 1 }}>
+                          ↑ Up
+                        </button>
+                        <button onClick={() => move(idx, idx + 1)} disabled={reordering || idx === items.length - 1} title="Move down"
+                          style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === items.length - 1 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === items.length - 1 ? 0.4 : 1 }}>
+                          ↓ Down
+                        </button>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
                       <button onClick={() => setPreviewItem(item)} style={{ flex: 1 }}>👁 View</button>
                       {canManage && editId !== item.id && (
