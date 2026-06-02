@@ -85,7 +85,7 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
-function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor }) {
+function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor, canFlag, onFlag, flaggingId }) {
   const hl = (highlightAdvisor || '').toUpperCase();
   const isMine = (j) => hl && (j.advisor || '').toUpperCase() === hl;
   if (hl) {
@@ -132,7 +132,13 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             const ageColor = age == null ? '#64748b' : age >= 14 ? '#f87171' : age >= 7 ? '#fbbf24' : '#94a3b8';
             const mine = isMine(j);
             return (
-              <div key={j.id || `${j.ro}-${i}`} style={{
+              <div key={j.id || `${j.ro}-${i}`} className={j.flagged ? 'attn-flag-row' : undefined} style={j.flagged ? {
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
+                border: '2px solid rgba(236,72,153,.95)',
+                borderLeft: '5px solid rgba(236,72,153,1)',
+                borderRadius: 8, padding: '8px 12px',
+              } : {
                 display: 'flex', alignItems: 'flex-start', gap: 10,
                 background: mine ? 'rgba(61,214,195,.10)' : j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
                 border: mine ? '1px solid rgba(61,214,195,.7)' : j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
@@ -162,7 +168,21 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                     <span className="pip-icon">📦</span>Parts In{j.partsArrivedDate ? ` · ${j.partsArrivedDate}` : ''}
                   </span>
                 )}
+                {j.flagged && (
+                  <span className="attn-flag-pill" style={{ alignSelf: 'center' }}>
+                    <span className="aff-icon">🚩</span>Needs Attention
+                  </span>
+                )}
                 {age != null && <span style={{ fontSize: 11, color: ageColor, whiteSpace: 'nowrap', alignSelf: 'center', fontWeight: 700 }}>{age}d</span>}
+                {canFlag && onFlag && (
+                  <button
+                    onClick={() => onFlag(j)}
+                    disabled={flaggingId === j.id}
+                    title={j.flagged ? 'Remove attention flag' : 'Flag this RO for the advisor'}
+                    className={`attn-flag-btn ${j.flagged ? 'attn-flag-btn--on' : 'attn-flag-btn--off'}`}
+                    style={{ cursor: flaggingId === j.id ? 'wait' : 'pointer', opacity: flaggingId === j.id ? 0.6 : 1 }}
+                  >{flaggingId === j.id ? '⏳' : (j.flagged ? '🚩 Unflag' : '🚩 Flag')}</button>
+                )}
                 {onOpen && (
                   <button
                     onClick={() => onOpen(j)}
@@ -235,6 +255,44 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     if (onWorkInProgress) onWorkInProgress({ ro: hit.j.ro || raw, tech: hit.j.tech || '', source: hit.source });
   }
   const [deletingId, setDeletingId] = useState(null);
+  const [flaggingId, setFlaggingId] = useState(null);
+
+  // Only managers/admins raise the attention flag. Advisors (and other
+  // non-managers) clear it automatically when they open the row.
+  const canManageWip = currentRole === 'admin' || (currentRole || '').includes('manager');
+
+  // Raise/lower the attention flag on a WIP row (persists to the tech's file).
+  async function setWipFlag(job, flagged) {
+    if (!job || !job.tech || !job.id) return;
+    setFlaggingId(job.id);
+    // Optimistic UI so the flag appears/disappears instantly.
+    setAdvisorWip(prev => prev.map(r => r.id === job.id ? { ...r, flagged } : r));
+    try {
+      const existing = await loadWipData(job.tech);
+      const updated = (existing || []).map(r => r.id === job.id ? { ...r, flagged } : r);
+      await saveWipData(job.tech, updated);
+    } catch (e) {
+      console.warn('WIP flag update failed:', e);
+    } finally {
+      setFlaggingId(null);
+    }
+  }
+
+  // Raise/lower the attention flag on a Cars-Awaiting row (persists to AWAITING).
+  async function setAwaitingFlag(job, flagged) {
+    if (!job || !job.id) return;
+    setFlaggingId(job.id);
+    setAdvisorAwaiting(prev => prev.map(r => r.id === job.id ? { ...r, flagged } : r));
+    try {
+      const existing = await loadAwaitingData();
+      const updated = (existing || []).map(r => r.id === job.id ? { ...r, flagged } : r);
+      await saveAwaitingData(updated);
+    } catch (e) {
+      console.warn('Awaiting flag update failed:', e);
+    } finally {
+      setFlaggingId(null);
+    }
+  }
 
   async function deleteWipJob(job) {
     if (!job || !job.tech || !job.id) return;
@@ -642,7 +700,10 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
             highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
-            onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }) : undefined}
+            onOpen={onWorkInProgress ? (j) => { if (j.flagged && !canManageWip) setWipFlag(j, false); onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }); } : undefined}
+            canFlag={canManageWip}
+            onFlag={(j) => setWipFlag(j, !j.flagged)}
+            flaggingId={flaggingId}
             onDelete={deleteWipJob}
             deletingId={deletingId}
           />
@@ -656,7 +717,10 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
             border="rgba(251,191,36,.25)"
-            onOpen={onWorkInProgress ? (j) => onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }) : undefined}
+            onOpen={onWorkInProgress ? (j) => { if (j.flagged && !canManageWip) setAwaitingFlag(j, false); onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }); } : undefined}
+            canFlag={canManageWip}
+            onFlag={(j) => setAwaitingFlag(j, !j.flagged)}
+            flaggingId={flaggingId}
             onDelete={deleteAwaitingJob}
             deletingId={deletingId}
           />
