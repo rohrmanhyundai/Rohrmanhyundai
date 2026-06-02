@@ -490,6 +490,18 @@ export async function setHotRepairWarranty(id, warranty, kind = 'hot-repairs') {
   return newIndex;
 }
 
+// Set searchable tags / bulletin numbers on an item (free text, searchable).
+export async function setHotRepairTags(id, tags, kind = 'hot-repairs') {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
+  const newIndex = currentIndex.map(d => d.id === id ? { ...d, tags: tags || '' } : d);
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: update tags`);
+  return newIndex;
+}
+
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
 export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
