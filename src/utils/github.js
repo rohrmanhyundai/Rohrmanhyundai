@@ -470,6 +470,20 @@ export async function renameHotRepair(id, newLabel) {
   return newIndex;
 }
 
+// Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
+export async function reorderHotRepairs(orderedIds) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const currentIndex = await loadHotRepairs();
+  const byId = new Map(currentIndex.map(d => [d.id, d]));
+  const ordered = orderedIds.map(id => byId.get(id)).filter(Boolean);
+  // Append any items not present in orderedIds (safety), keeping their order.
+  for (const d of currentIndex) if (!orderedIds.includes(d.id)) ordered.push(d);
+  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, ordered, `Hot repairs: reorder`);
+  return ordered;
+}
+
 export async function deleteHotRepair(item) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
