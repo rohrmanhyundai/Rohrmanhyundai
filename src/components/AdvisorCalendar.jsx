@@ -149,10 +149,10 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 <div
                   onClick={(e) => copyRo(j.ro, j.id || `${j.ro}-${i}`, e)}
                   title={j.ro ? 'Click to copy RO #' : ''}
-                  style={{ minWidth: 70, fontWeight: 800, color: copiedKey === (j.id || `${j.ro}-${i}`) ? '#4ade80' : '#e2e8f0', fontSize: 13, cursor: j.ro ? 'pointer' : 'default', userSelect: 'none' }}
+                  style={{ minWidth: 78, fontWeight: 800, color: copiedKey === (j.id || `${j.ro}-${i}`) ? '#4ade80' : '#e2e8f0', fontSize: 16, cursor: j.ro ? 'pointer' : 'default', userSelect: 'none' }}
                 >{copiedKey === (j.id || `${j.ro}-${i}`) ? '✓ Copied' : (j.ro || '—')}</div>
                 {showAdvisor && (
-                  <div style={{ minWidth: 70, fontSize: 11, fontWeight: 700, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{j.advisor || ''}</div>
+                  <div style={{ minWidth: 76, fontSize: 14, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{j.advisor || ''}</div>
                 )}
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{j.tech || ''}</div>
