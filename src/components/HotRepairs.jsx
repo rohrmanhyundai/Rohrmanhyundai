@@ -160,7 +160,8 @@ function PreviewModal({ item, onClose }) {
     <div className="doc-preview-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="doc-preview-modal">
         <div className="doc-preview-header">
-          <div className="doc-preview-title">
+          <div className="doc-preview-title" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button className="secondary" onClick={onClose}>← Back</button>
             <span className="doc-preview-icon">🔧</span>
             <span>{item.label}</span>
           </div>
