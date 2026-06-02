@@ -43,6 +43,43 @@ function loadPdfJs() {
 // Cache rendered previews (data URLs) by item id so we only render once.
 const previewCache = {};
 
+// Cache extracted first-page text (for search) by item id.
+const textCache = {};
+
+// Normalize a string for forgiving search: lowercase, strip everything but
+// letters/digits. So "26-01-045H" and "2601045h" and "26 01 045 h" all match.
+function norm(s) {
+  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Extract the first page's text from a PDF (cached). Used only for search.
+async function extractFirstPageText(item, rawUrl) {
+  if (textCache[item.id] != null) return textCache[item.id];
+  try {
+    const pdfjs = await loadPdfJs();
+    const res = await fetch(rawUrl);
+    const buf = await res.arrayBuffer();
+    const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+    const page = await pdf.getPage(1);
+    const content = await page.getTextContent();
+    const text = content.items.map(i => i.str).join(' ');
+    textCache[item.id] = text;
+    return text;
+  } catch {
+    textCache[item.id] = '';
+    return '';
+  }
+}
+
+// Does an item match the query? Each whitespace-separated token must appear
+// (normalized) in the title or the extracted first-page text.
+function itemMatches(item, query) {
+  const haystack = norm(item.label) + ' ' + norm(textCache[item.id] || '');
+  const tokens = query.trim().split(/\s+/).filter(Boolean).map(norm).filter(Boolean);
+  if (tokens.length === 0) return true;
+  return tokens.every(tok => haystack.includes(tok));
+}
+
 // Renders a large image of page 1 of the PDF; falls back to a wrench icon.
 function PdfPreview({ item, rawUrl }) {
   const [thumb, setThumb] = useState(() => previewCache[item.id] || null);
@@ -166,6 +203,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [savingEdit, setSavingEdit]   = useState(false);
   const [reordering, setReordering]   = useState(false);
   const [tab, setTab]                 = useState('hot-repairs'); // 'hot-repairs' | 'recalls'
+  const [search, setSearch]           = useState('');
+  const [textVer, setTextVer]         = useState(0); // bumps as PDF text finishes extracting
+  const [indexing, setIndexing]       = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -175,15 +215,47 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   useEffect(() => {
     trackPage(isRecalls ? 'recalls' : 'hotRepairs');
     setLoading(true);
-    setEditId(null); setPreviewItem(null);
+    setEditId(null); setPreviewItem(null); setSearch('');
     setFile(null); setLabel(''); setFileError(''); setActionError('');
     if (fileInputRef.current) fileInputRef.current.value = '';
+    let cancelled = false;
     loadHotRepairs(tab).then(idx => {
+      if (cancelled) return;
+      const list = idx || [];
       // Display follows the stored order (newest uploads prepend; managers can reorder).
-      setItems(idx || []);
+      setItems(list);
       setLoading(false);
+      // Pre-extract first-page text in the background so search is ready & fast.
+      if (list.length) {
+        setIndexing(true);
+        Promise.allSettled(list.map(it => extractFirstPageText(it, docRawUrl(it.filename))))
+          .then(() => { if (!cancelled) { setIndexing(false); setTextVer(v => v + 1); } });
+      }
     });
+    return () => { cancelled = true; };
   }, [tab]);
+
+  // Items to display, filtered by the live search query.
+  const filteredItems = search.trim() ? items.filter(it => itemMatches(it, search)) : items;
+  // eslint-disable-next-line no-unused-expressions
+  textVer; // referenced so filtering recomputes as extraction completes
+
+  function runSearchOpen() {
+    const matches = items.filter(it => itemMatches(it, search));
+    if (matches.length >= 1) setPreviewItem(matches[0]);
+  }
+
+  // Auto-open when the search narrows to exactly one PDF (won't reopen the same
+  // one after you close it unless the query changes).
+  const autoOpenedRef = useRef(null);
+  useEffect(() => {
+    if (!search.trim()) { autoOpenedRef.current = null; return; }
+    const matches = items.filter(it => itemMatches(it, search));
+    if (matches.length === 1 && autoOpenedRef.current !== matches[0].id) {
+      autoOpenedRef.current = matches[0].id;
+      setPreviewItem(matches[0]);
+    }
+  }, [search, textVer, items]);
 
   function handleFileChange(e) {
     const f = e.target.files[0];
@@ -342,6 +414,37 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         ))}
       </div>
 
+      {/* Search bar */}
+      <div style={{ padding: '16px 24px 0', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 760, position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16, opacity: 0.7 }}>🔍</span>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') runSearchOpen(); if (e.key === 'Escape') setSearch(''); }}
+            placeholder={isRecalls
+              ? 'Search recalls — title, recall/bulletin number, keyword (e.g. "299" or "26-01-045H")'
+              : 'Search hot repairs — title, bulletin number, keyword (e.g. "299" or "26-TC-001H")'}
+            style={{
+              width: '100%', boxSizing: 'border-box', padding: '12px 40px 12px 40px',
+              background: 'rgba(255,255,255,.05)', border: '1px solid rgba(110,231,249,.3)',
+              borderRadius: 12, color: '#e2e8f0', fontSize: 15, outline: 'none',
+            }}
+          />
+          {search && (
+            <button onClick={() => setSearch('')} title="Clear"
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>×</button>
+          )}
+          <div style={{ fontSize: 12, color: '#64748b', marginTop: 6, paddingLeft: 4 }}>
+            {indexing
+              ? '⏳ Scanning PDF contents for search…'
+              : search.trim()
+                ? `${filteredItems.length} match${filteredItems.length === 1 ? '' : 'es'} — press Enter to open the top result`
+                : 'Searches the title and the first page of every uploaded PDF.'}
+          </div>
+        </div>
+      </div>
+
       <div className="doc-lib-wrap">
 
         {/* Upload Panel — managers/admins only */}
@@ -377,7 +480,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         {/* List */}
         <div className="doc-lib-list-section">
           <div className="doc-lib-panel-title">
-            {isRecalls ? 'Recalls' : 'Hot Repairs'}{!loading && <span className="doc-lib-count"> ({items.length})</span>}
+            {isRecalls ? 'Recalls' : 'Hot Repairs'}{!loading && <span className="doc-lib-count"> ({search.trim() ? `${filteredItems.length} of ${items.length}` : items.length})</span>}
           </div>
 
           {loading ? (
@@ -388,9 +491,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                 ? `No ${isRecalls ? 'recalls' : 'hot repairs'} posted yet. Use the panel above to add one.`
                 : `No ${isRecalls ? 'recalls' : 'hot repairs'} have been posted yet.`}
             </div>
+          ) : filteredItems.length === 0 ? (
+            <div className="doc-lib-empty">
+              No matches for “{search.trim()}”. Try a different number or keyword.
+            </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
-              {items.map((item, idx) => (
+              {filteredItems.map((item) => {
+                const idx = items.indexOf(item);
+                return (
                 <div key={item.id} style={{
                   background: item.warranty ? 'rgba(251,191,36,.06)' : 'rgba(255,255,255,.03)',
                   border: item.warranty ? '2px solid rgba(251,191,36,.85)' : '1px solid rgba(255,255,255,.08)',
@@ -456,7 +565,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : (item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair')}
                       </button>
                     )}
-                    {canManage && editId !== item.id && (
+                    {canManage && editId !== item.id && !search.trim() && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
                           style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === 0 ? 0.4 : 1 }}>
@@ -486,7 +595,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
