@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -59,7 +59,7 @@ function PdfPreview({ item, rawUrl }) {
         const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
         const page = await pdf.getPage(1);
         const viewport = page.getViewport({ scale: 1 });
-        const scale = 600 / viewport.width; // render at high resolution
+        const scale = 1000 / viewport.width; // render at high resolution for large cards
         const scaled = page.getViewport({ scale });
         const canvas = document.createElement('canvas');
         canvas.width = scaled.width;
@@ -161,6 +161,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [fileError, setFileError]     = useState('');
   const [actionError, setActionError] = useState('');
   const [previewItem, setPreviewItem] = useState(null);
+  const [editId, setEditId]           = useState(null);
+  const [editLabel, setEditLabel]     = useState('');
+  const [savingEdit, setSavingEdit]   = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -226,6 +229,29 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       setUploadStatus('');
     } finally {
       setUploading(false);
+    }
+  }
+
+  function startEdit(item) {
+    setEditId(item.id);
+    setEditLabel(item.label);
+  }
+
+  async function saveEdit(item) {
+    const trimmed = editLabel.trim();
+    if (!trimmed || trimmed === item.label) { setEditId(null); return; }
+    setActionError('');
+    if (!await ensureToken()) return;
+    setSavingEdit(true);
+    try {
+      const newItems = await renameHotRepair(item.id, trimmed);
+      const sorted = [...newItems].sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+      setItems(sorted);
+      setEditId(null);
+    } catch (err) {
+      setActionError('Rename failed: ' + err.message);
+    } finally {
+      setSavingEdit(false);
     }
   }
 
@@ -296,34 +322,56 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
               {canManage ? 'No hot repairs posted yet. Use the panel above to add one.' : 'No hot repairs have been posted yet.'}
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 22 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
               {items.map(item => (
-                <div key={item.id} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 14, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div key={item.id} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   {/* Large preview — click to open full view */}
                   <div
                     onClick={() => setPreviewItem(item)}
                     title="Click to view full PDF"
-                    style={{ position: 'relative', cursor: 'pointer', maxHeight: 360, overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,.08)' }}
+                    style={{ position: 'relative', cursor: 'pointer', maxHeight: 720, overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,.08)' }}
                   >
                     <PdfPreview item={item} rawUrl={docRawUrl(item.filename)} />
                     {isNew(item.uploadedAt) && (
-                      <span style={{ position: 'absolute', top: 10, left: 10, background: '#ef4444', color: '#fff', borderRadius: 20, fontSize: 11, fontWeight: 900, padding: '3px 10px', letterSpacing: 0.5, boxShadow: '0 2px 8px rgba(0,0,0,.4)' }}>NEW</span>
+                      <span style={{ position: 'absolute', top: 12, left: 12, background: '#ef4444', color: '#fff', borderRadius: 20, fontSize: 12, fontWeight: 900, padding: '4px 12px', letterSpacing: 0.5, boxShadow: '0 2px 8px rgba(0,0,0,.4)' }}>NEW</span>
                     )}
                     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,.55)', opacity: 0, transition: 'opacity .15s' }}
                       onMouseEnter={e => e.currentTarget.style.opacity = 1}
                       onMouseLeave={e => e.currentTarget.style.opacity = 0}>
-                      <span style={{ background: 'rgba(61,214,195,.9)', color: '#04201d', fontWeight: 800, fontSize: 14, padding: '8px 18px', borderRadius: 10 }}>👁 View Full</span>
+                      <span style={{ background: 'rgba(61,214,195,.9)', color: '#04201d', fontWeight: 800, fontSize: 16, padding: '10px 22px', borderRadius: 10 }}>👁 View Full</span>
                     </div>
                   </div>
 
                   {/* Info + actions */}
-                  <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
-                    <div style={{ fontWeight: 800, fontSize: 15, color: '#e2e8f0', lineHeight: 1.3 }}>{item.label}</div>
+                  <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+                    {editId === item.id ? (
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <input
+                          className="doc-lib-label-input"
+                          autoFocus
+                          value={editLabel}
+                          maxLength={80}
+                          onChange={e => setEditLabel(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') saveEdit(item); if (e.key === 'Escape') setEditId(null); }}
+                          style={{ flex: 1, fontSize: 16, fontWeight: 700 }}
+                        />
+                        <button onClick={() => saveEdit(item)} disabled={savingEdit}>{savingEdit ? '…' : 'Save'}</button>
+                        <button className="secondary" onClick={() => setEditId(null)} disabled={savingEdit}>Cancel</button>
+                      </div>
+                    ) : (
+                      <div style={{ fontWeight: 800, fontSize: 17, color: '#e2e8f0', lineHeight: 1.3 }}>{item.label}</div>
+                    )}
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
                     </div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
                       <button onClick={() => setPreviewItem(item)} style={{ flex: 1 }}>👁 View</button>
+                      {canManage && editId !== item.id && (
+                        <button onClick={() => startEdit(item)} title="Rename"
+                          style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                          ✏️ Rename
+                        </button>
+                      )}
                       {canManage && (
                         <button className="secondary adv-del-btn" onClick={() => handleDelete(item)} title="Delete">×</button>
                       )}

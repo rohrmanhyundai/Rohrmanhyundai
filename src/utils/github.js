@@ -460,6 +460,16 @@ export async function uploadHotRepair(file, label, uploaderName) {
   return newIndex;
 }
 
+export async function renameHotRepair(id, newLabel) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const currentIndex = await loadHotRepairs();
+  const newIndex = currentIndex.map(d => d.id === id ? { ...d, label: newLabel } : d);
+  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: rename to ${newLabel}`);
+  return newIndex;
+}
+
 export async function deleteHotRepair(item) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
