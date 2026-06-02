@@ -378,13 +378,43 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     };
 
     if (initialJob.source === 'wip' && initialJob.tech) {
+      // Jump to the hinted tech immediately for a snappy response…
       const target = matchListTech(initialJob.tech) || initialJob.tech;
       setActiveTech(target);
       setSearchResults(null);
       setSearchRO('');
       setHighlightRO(ro);
       onInitialJobConsumed && onInitialJobConsumed();
-      return;
+      // …but verify the RO actually lives in that tech's file. If it was
+      // reassigned/moved since the manager list loaded (or the tech label
+      // doesn't match the file it's stored in), find the real owner and switch
+      // so the highlight always lands on the right tab.
+      let cancelledVerify = false;
+      (async () => {
+        try {
+          const hintRows = await loadWipData(target);
+          if (cancelledVerify) return;
+          const inHinted = (hintRows || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
+          if (inHinted) return; // hint was correct, nothing to do
+          // Scan every tech (plus the hint) to locate the RO's true owner.
+          const scanSet = new Set([...(techList || []), String(initialJob.tech).trim()].filter(Boolean));
+          const results = await Promise.all(
+            Array.from(scanSet).map(async t => {
+              try {
+                const data = await loadWipData(t);
+                return (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower)) ? t : null;
+              } catch { return null; }
+            })
+          );
+          if (cancelledVerify) return;
+          const realTech = results.find(Boolean);
+          if (realTech && realTech !== target) {
+            setActiveTech(realTech);
+            setHighlightRO(ro);
+          }
+        } catch {}
+      })();
+      return () => { cancelledVerify = true; };
     }
     if (initialJob.source === 'awaiting') {
       setSearchResults(null);
@@ -874,7 +904,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
             )}
 
             {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => {
-              const isHighlighted = highlightRO && (row.ro || '').trim() === highlightRO.trim();
+              const isHighlighted = highlightRO && (row.ro || '').trim().toLowerCase() === highlightRO.trim().toLowerCase();
               return (
               <div key={row.id} ref={isHighlighted ? highlightedRowRef : null} style={{
                 background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)'),
@@ -1061,7 +1091,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   // 3. Newest date first
                   return new Date(b.roDate || 0) - new Date(a.roDate || 0);
                 }).map(aw => {
-                const isHighlighted = highlightRO && (aw.ro || '').trim() === highlightRO.trim();
+                const isHighlighted = highlightRO && (aw.ro || '').trim().toLowerCase() === highlightRO.trim().toLowerCase();
                 return (
                 <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)'), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)')}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
 
