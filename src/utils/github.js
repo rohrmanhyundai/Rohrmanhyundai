@@ -470,6 +470,17 @@ export async function renameHotRepair(id, newLabel) {
   return newIndex;
 }
 
+// Flag/unflag an item as a "Warranty Hot Repair" (highlighted for viewers).
+export async function setHotRepairWarranty(id, warranty) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const currentIndex = await loadHotRepairs();
+  const newIndex = currentIndex.map(d => d.id === id ? { ...d, warranty: !!warranty } : d);
+  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: warranty flag ${warranty ? 'on' : 'off'}`);
+  return newIndex;
+}
+
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
 export async function reorderHotRepairs(orderedIds) {
   const token = await ensureGithubToken();

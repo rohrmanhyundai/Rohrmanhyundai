@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -253,6 +253,21 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     }
   }
 
+  async function toggleWarranty(item) {
+    setActionError('');
+    if (!await ensureToken()) return;
+    // optimistic
+    const next = items.map(i => i.id === item.id ? { ...i, warranty: !i.warranty } : i);
+    setItems(next);
+    try {
+      const saved = await setHotRepairWarranty(item.id, !item.warranty);
+      setItems(saved);
+    } catch (err) {
+      setItems(items); // revert
+      setActionError('Update failed: ' + err.message);
+    }
+  }
+
   // Move an item to a new position; optimistic UI then persist order.
   async function move(index, toIndex) {
     if (toIndex < 0 || toIndex >= items.length || toIndex === index) return;
@@ -287,6 +302,12 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
   return (
     <div className="adv-page doc-lib-page">
+      <style>{`
+        @keyframes hrWarrantyPulse {
+          0%, 100% { box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
+          50%      { box-shadow: 0 0 0 7px rgba(251,191,36,.28); }
+        }
+      `}</style>
       {/* Top bar */}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -342,7 +363,19 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
               {items.map((item, idx) => (
-                <div key={item.id} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div key={item.id} style={{
+                  background: item.warranty ? 'rgba(251,191,36,.06)' : 'rgba(255,255,255,.03)',
+                  border: item.warranty ? '2px solid rgba(251,191,36,.85)' : '1px solid rgba(255,255,255,.08)',
+                  borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column',
+                  boxShadow: item.warranty ? '0 0 0 4px rgba(251,191,36,.15)' : 'none',
+                  animation: item.warranty ? 'hrWarrantyPulse 1.8s ease-in-out infinite' : 'none',
+                }}>
+                  {/* Warranty banner */}
+                  {item.warranty && (
+                    <div style={{ background: 'linear-gradient(90deg,#f59e0b,#fbbf24)', color: '#3a2400', fontWeight: 900, fontSize: 14, letterSpacing: 0.6, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      ⚠️ WARRANTY HOT REPAIR — REVIEW BEFORE PERFORMING
+                    </div>
+                  )}
                   {/* Large preview — click to open full view */}
                   <div
                     onClick={() => setPreviewItem(item)}
@@ -382,6 +415,17 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
                     </div>
+                    {canManage && editId !== item.id && (
+                      <button onClick={() => toggleWarranty(item)} title="Toggle Warranty Hot Repair highlight"
+                        style={{
+                          background: item.warranty ? 'linear-gradient(135deg,#f59e0b,#fbbf24)' : 'rgba(251,191,36,.12)',
+                          border: '1px solid rgba(251,191,36,.5)',
+                          color: item.warranty ? '#3a2400' : '#fbbf24',
+                          borderRadius: 8, padding: '7px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
+                        }}>
+                        {item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair'}
+                      </button>
+                    )}
                     {canManage && editId !== item.id && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
