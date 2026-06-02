@@ -780,6 +780,18 @@ export async function saveAwaitingData(rows) {
   return rows;
 }
 
+// List every tech that has a WIP file on disk (the file owner names), regardless
+// of whether they're still an active technician user. Used to authoritatively
+// locate which file an RO actually lives in when opening from a manager list —
+// the tech "hint" can be stale (reassigned RO) or point at a name that isn't in
+// the live technician roster. Excludes the shared AWAITING queue file.
+export async function listWipTechs() {
+  const files = await listDirFiles('public/data/wip');
+  return files
+    .filter(n => /\.json$/i.test(n) && n.toUpperCase() !== 'AWAITING.JSON')
+    .map(n => n.replace(/\.json$/i, '').toUpperCase());
+}
+
 // ── User Activity Tracker — last 30 days of page views + key actions ────────
 const ACTIVITY_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 

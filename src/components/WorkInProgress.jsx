@@ -1,6 +1,6 @@
 /* wip */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive } from '../utils/github';
+import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive, listWipTechs } from '../utils/github';
 import { trackAction } from '../utils/activityTracker';
 import TechChat from './TechChat';
 
@@ -362,11 +362,18 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   // Highlighted RO (set when user clicks "View / Edit" from Advisor Calendar)
   const [highlightRO, setHighlightRO] = useState('');
   const highlightedRowRef = useRef(null);
+  // Tracks the job we're currently navigating to. The async owner-scan checks
+  // this after each await so a NEW job (or unmount) supersedes an in-flight
+  // scan — but the scan is NOT cancelled merely because the parent clears
+  // initialJob (the "consume"), which would otherwise abort it prematurely.
+  const activeJobKeyRef = useRef('');
 
   // If launched targeting a specific RO, jump straight to the right tab/section
   // and highlight the row instead of going through the search results UI.
   useEffect(() => {
-    if (!initialJob || !initialJob.ro) return;
+    // When the parent clears the job (consume), reset the per-job guard so the
+    // very next click — even on the same RO — navigates again.
+    if (!initialJob || !initialJob.ro) { activeJobKeyRef.current = ''; return; }
     const ro = initialJob.ro.trim();
     const roLower = ro.toLowerCase();
 
@@ -377,101 +384,83 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       return (techList || []).find(n => String(n).trim().toLowerCase() === tl) || null;
     };
 
-    if (initialJob.source === 'wip' && initialJob.tech) {
-      // Jump to the hinted tech immediately for a snappy response…
-      const target = matchListTech(initialJob.tech) || initialJob.tech;
-      setActiveTech(target);
-      setSearchResults(null);
-      setSearchRO('');
-      setHighlightRO(ro);
-      onInitialJobConsumed && onInitialJobConsumed();
-      // …but verify the RO actually lives in that tech's file. If it was
-      // reassigned/moved since the manager list loaded (or the tech label
-      // doesn't match the file it's stored in), find the real owner and switch
-      // so the highlight always lands on the right tab.
-      let cancelledVerify = false;
-      (async () => {
-        try {
-          const hintRows = await loadWipData(target);
-          if (cancelledVerify) return;
-          const inHinted = (hintRows || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
-          if (inHinted) return; // hint was correct, nothing to do
-          // Scan every tech (plus the hint) to locate the RO's true owner.
-          const scanSet = new Set([...(techList || []), String(initialJob.tech).trim()].filter(Boolean));
-          const results = await Promise.all(
-            Array.from(scanSet).map(async t => {
-              try {
-                const data = await loadWipData(t);
-                return (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower)) ? t : null;
-              } catch { return null; }
-            })
-          );
-          if (cancelledVerify) return;
-          const realTech = results.find(Boolean);
-          if (realTech && realTech !== target) {
-            setActiveTech(realTech);
-            setHighlightRO(ro);
-          }
-        } catch {}
-      })();
-      return () => { cancelledVerify = true; };
-    }
+    // Process each distinct job exactly once. This guard (rather than tying
+    // cancellation to the effect's initialJob dependency) is what lets the
+    // async owner-scan below survive the parent clearing initialJob via
+    // onInitialJobConsumed — that "consume" re-renders us with initialJob=null
+    // and previously aborted the scan before it could correct the tab.
+    const jobKey = `${initialJob.source || ''}|${initialJob.tech || ''}|${ro}`;
+    if (activeJobKeyRef.current === jobKey) return;
+    activeJobKeyRef.current = jobKey;
+
+    const stillCurrent = () => activeJobKeyRef.current === jobKey;
+    const consume = () => { onInitialJobConsumed && onInitialJobConsumed(); };
+
     if (initialJob.source === 'awaiting') {
       setSearchResults(null);
       setSearchRO('');
       setHighlightRO(ro);
-      onInitialJobConsumed && onInitialJobConsumed();
+      consume();
       return;
     }
 
-    // Unknown source: discover where the RO actually lives by scanning every
-    // tech's WIP file plus the Cars Awaiting list, then jump to it directly.
-    let cancelled = false;
+    // WIP (or unknown source). Optimistically jump to the hinted tech for a
+    // snappy response, then AUTHORITATIVELY scan every WIP file on disk to find
+    // the RO's real owner and switch the tab if the hint was wrong/stale. The
+    // scan covers all wip files (not just the live technician roster), so an RO
+    // in a file owned by a renamed/reassigned/non-roster name is still found.
+    const hint = initialJob.tech ? (matchListTech(initialJob.tech) || String(initialJob.tech).trim()) : '';
+    if (hint) setActiveTech(hint);
+    setSearchResults(null);
+    setSearchRO('');
+    setHighlightRO(ro);
+
     (async () => {
-      // Check Cars Awaiting first (already loaded in state)
+      // Cars Awaiting may hold the RO if it was bounced back to the queue.
       if (!awaitingLoading) {
         const inAwaiting = (awaiting || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
-        if (inAwaiting && !cancelled) {
-          setSearchResults(null);
-          setSearchRO('');
-          setHighlightRO(ro);
-          onInitialJobConsumed && onInitialJobConsumed();
-          return;
-        }
+        if (inAwaiting) { if (stillCurrent()) { setHighlightRO(ro); consume(); } return; }
       }
-      // Scan all techs in parallel for a WIP match
-      // Include the supplied tech hint (if any) in the scan list so we still
-      // find ROs belonging to a tech who isn't in the live techList (renamed,
-      // removed, or different casing in the WIP file).
-      const hintTech = initialJob && initialJob.tech ? String(initialJob.tech).trim() : '';
-      const scanSet = new Set([...(techList || []), hintTech].filter(Boolean));
-      const scanList = Array.from(scanSet);
+
+      // Build the widest reasonable scan set: every wip file on disk, plus the
+      // live roster and the supplied hint as fallbacks if the listing fails.
+      let owners = [];
+      try { owners = await listWipTechs(); } catch { owners = []; }
+      if (!stillCurrent()) return;
+      const scanSet = new Set([
+        ...owners,
+        ...(techList || []),
+        String(initialJob.tech || '').trim(),
+      ].filter(Boolean).map(t => t.toUpperCase()));
+
       const results = await Promise.all(
-        scanList.map(async t => {
+        Array.from(scanSet).map(async t => {
           try {
             const data = await loadWipData(t);
-            const hit = (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
-            return hit ? t : null;
+            return (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower)) ? t : null;
           } catch { return null; }
         })
       );
-      if (cancelled) return;
-      const matchTech = results.find(Boolean);
-      if (matchTech) {
-        setActiveTech(matchTech);
-        setSearchResults(null);
-        setSearchRO('');
+      if (!stillCurrent()) return;
+
+      const realTech = results.find(Boolean);
+      if (realTech) {
+        // Prefer the exact roster casing if available so the tab highlights.
+        const display = matchListTech(realTech) || realTech;
+        setActiveTech(prev => (prev && prev.toUpperCase() === display.toUpperCase()) ? prev : display);
         setHighlightRO(ro);
-        onInitialJobConsumed && onInitialJobConsumed();
+        consume();
         return;
       }
-      // Nothing found anywhere — fall back to the search-results UI so the
-      // user can decide what to do (e.g. + Create on a tech).
-      setSearchRO(ro);
-      handleSearch(ro);
-      onInitialJobConsumed && onInitialJobConsumed();
+
+      // Not found anywhere. If we had no hint to jump to, drop into the search
+      // UI so the user can decide what to do; otherwise leave the optimistic
+      // jump in place.
+      if (!hint) { setSearchRO(ro); handleSearch(ro); }
+      consume();
     })();
-    return () => { cancelled = true; };
+
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialJob, awaitingLoading]);
 
