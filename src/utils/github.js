@@ -751,6 +751,103 @@ export async function recordCoachingView(username, reportIds) {
   }
 }
 
+// ── Former Employees — registry of deleted users whose performance reports we
+// keep for management history. The Manager Performance Reports screen surfaces
+// these under a "Previous Employees" tab. We DELETE all other per-user data on
+// removal (see deleteUserData below), but never the performance-reports file.
+const FORMER_EMPLOYEES_PATH = 'public/data/former-employees.json';
+
+export async function loadFormerEmployees() {
+  try {
+    const data = await readGitHubFile(authHeaders(), FORMER_EMPLOYEES_PATH);
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/former-employees.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return [];
+}
+
+async function saveFormerEmployees(list) {
+  await saveGitHubFile(authHeaders(), FORMER_EMPLOYEES_PATH, list, 'Update former employees');
+  return list;
+}
+
+// List the file names inside a repo directory via the contents API. Returns []
+// if the directory does not exist. Used to wipe the advisor-notes/{NAME}/ dir.
+async function listDirFiles(dirPath) {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dirPath}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      { headers: authHeaders(), cache: 'no-store' }
+    );
+    if (!res.ok) return [];
+    const list = await res.json();
+    if (!Array.isArray(list)) return [];
+    return list.filter(f => f && f.type === 'file' && f.name).map(f => f.name);
+  } catch { return []; }
+}
+
+// Remove EVERYTHING for a deleted user EXCEPT their performance reports (kept
+// for the Previous Employees tab) and the group chat (kept for viewing). The
+// user is added to the former-employees registry so a manager can still pull up
+// their performance history. Best-effort per file — a single failure does not
+// abort the rest.
+export async function deleteUserData(username, role) {
+  const u = (username || '').toUpperCase();
+  if (!u || u === 'ADMIN') return;
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+
+  // 1. Record them as a former employee (keep their performance reports alive).
+  try {
+    const list = await loadFormerEmployees();
+    if (!list.some(f => (f.username || '').toUpperCase() === u)) {
+      list.push({ username: u, role: role || '', deletedAt: new Date().toISOString() });
+      await saveFormerEmployees(list);
+    }
+  } catch (err) { try { console.warn('former-employees update failed:', err); } catch {} }
+
+  // 2. Delete per-user files (NOT performance-reports, NOT chat).
+  const perUserFiles = [
+    `public/data/activity/${u}.json`,
+    `public/data/wip/${u}.json`,
+    `public/data/coaching/${u}.json`,
+    `public/data/service-invitation/completed/${u}.json`,
+  ];
+  for (const path of perUserFiles) {
+    try { await deleteGitHubFile(authHeaders(), path, `Delete ${path} (user removed)`); }
+    catch (err) { try { console.warn('delete failed:', path, err); } catch {} }
+  }
+
+  // 3. Wipe the advisor-notes/{NAME}/ directory (index.json + every date file).
+  try {
+    const noteFiles = await listDirFiles(`public/data/advisor-notes/${u}`);
+    for (const name of noteFiles) {
+      try { await deleteGitHubFile(authHeaders(), `public/data/advisor-notes/${u}/${name}`, `Delete advisor note ${u}/${name} (user removed)`); }
+      catch (err) { try { console.warn('delete note failed:', name, err); } catch {} }
+    }
+  } catch (err) { try { console.warn('advisor-notes wipe failed:', err); } catch {} }
+
+  // 4. Scrub the user's key out of shared keyed files.
+  try {
+    const schedules = await loadSchedules();
+    if (schedules && Object.prototype.hasOwnProperty.call(schedules, u)) {
+      delete schedules[u];
+      await saveSchedules(schedules);
+    }
+  } catch (err) { try { console.warn('schedule scrub failed:', err); } catch {} }
+
+  try {
+    const views = await loadCoachingViews();
+    if (views && Object.prototype.hasOwnProperty.call(views, u)) {
+      delete views[u];
+      await saveGitHubFile(authHeaders(), COACHING_VIEWS_PATH, views, `Remove coaching views for ${u} (user removed)`);
+    }
+  } catch (err) { try { console.warn('coaching-views scrub failed:', err); } catch {} }
+}
+
 // ── Repair Order Archive — every RO deleted from WIP / Awaiting lands here ───
 const RO_ARCHIVE_PATH = 'public/data/repair-order-archive.json';
 

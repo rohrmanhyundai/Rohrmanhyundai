@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData } from '../utils/github';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
@@ -1009,9 +1009,25 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!selectedUser) { alert('Select a user to delete.'); return; }
     if (selectedUser === 'admin') { alert('Admin cannot be deleted.'); return; }
+    const deletedUser = users.find(u => u.username === selectedUser);
+    const deletedRole = deletedUser?.role || '';
+    if (!window.confirm(
+      `Remove ${selectedUser}?\n\n` +
+      `This deletes their activity, advisor notes, work-in-progress, schedule, ` +
+      `coaching reports, and survey reviews.\n\n` +
+      `Their PERFORMANCE REPORTS are kept and moved to the "Previous Employees" ` +
+      `tab in Manager → Performance Reports. Group chat history is also kept.\n\n` +
+      `This cannot be undone.`
+    )) return;
     const updated = users.filter(u => u.username !== selectedUser);
     setUserSaving(true);
+    // Remove from the user list first, then purge their per-user data (keeping
+    // performance reports + chat). If the data purge fails the user is still
+    // removed — we surface the error but don't roll back the user-list change.
     saveUsers(updated, sharedSaveCode || getGithubToken())
+      .then(() => deleteUserData(selectedUser, deletedRole).catch(err => {
+        alert('User removed, but some of their data could not be cleaned up: ' + err.message);
+      }))
       .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
