@@ -1020,15 +1020,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       `This cannot be undone.`
     )) return;
     const updated = users.filter(u => u.username !== selectedUser);
+
+    // Also drop them from the dashboard roster (data.json) + vacations, matched
+    // by first name (the dashboard stores names like "PARKER", users store the
+    // login username). Otherwise they keep showing on the dashboard / edit view.
+    const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+    const delFirst = firstWord(selectedUser);
+    const newData = structuredClone(data);
+    newData.advisors    = (newData.advisors    || []).filter(a => firstWord(a.name) !== delFirst);
+    newData.technicians = (newData.technicians || []).filter(t => firstWord(t.name) !== delFirst);
+    const newVacations  = (vacations || []).filter(v => firstWord(v.name) !== delFirst);
+
     setUserSaving(true);
     // Remove from the user list first, then purge their per-user data (keeping
-    // performance reports + chat). If the data purge fails the user is still
-    // removed — we surface the error but don't roll back the user-list change.
+    // performance reports + chat), then drop them from the dashboard data. If a
+    // later step fails the user is still removed — we surface the error but
+    // don't roll back the user-list change.
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => deleteUserData(selectedUser, deletedRole).catch(err => {
         alert('User removed, but some of their data could not be cleaned up: ' + err.message);
       }))
-      .then(() => { onUsersChange(updated); setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); })
+      .then(() => saveDashboardToGitHub({ data: newData, vacations: newVacations }))
+      .then(() => {
+        onDataChange(newData, newVacations);
+        onUsersChange(updated);
+        setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor');
+      })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
   }
