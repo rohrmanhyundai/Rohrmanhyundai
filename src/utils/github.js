@@ -411,33 +411,40 @@ export async function deleteDocument(doc) {
   return newIndex;
 }
 
-// ── Hot Repairs New Releases ───────────────────────────────────────────────────
-// Tech-facing PDF library. Reuses the same S3 bucket/prefix as documents (files
-// are uniquely named), but keeps its own index so it stays separate.
-const HOT_REPAIRS_INDEX = 'public/data/hot-repairs/index.json';
+// ── Hot Repairs / Recalls Bulletin Boards ──────────────────────────────────────
+// Tech-facing PDF libraries. Reuses the same S3 bucket/prefix as documents (files
+// are uniquely named), but each board keeps its own index so they stay separate.
+// `kind` is the folder name: 'hot-repairs' or 'recalls'.
+const BULLETIN_KINDS = { 'hot-repairs': 'Hot repairs', 'recalls': 'Recalls' };
+function bulletinIndexPath(kind) {
+  if (!BULLETIN_KINDS[kind]) throw new Error('Unknown bulletin kind: ' + kind);
+  return `public/data/${kind}/index.json`;
+}
 
-export async function loadHotRepairs() {
+export async function loadHotRepairs(kind = 'hot-repairs') {
+  const indexPath = bulletinIndexPath(kind);
   try {
-    const data = await readGitHubFile(authHeaders(), HOT_REPAIRS_INDEX);
+    const data = await readGitHubFile(authHeaders(), indexPath);
     if (data) return Array.isArray(data) ? data : [];
   } catch {}
   try {
-    const res = await fetch(`${BASE}data/hot-repairs/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetch(`${BASE}data/${kind}/index.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
 }
 
-export async function uploadHotRepair(file, label, uploaderName) {
+export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
+  const indexPath = bulletinIndexPath(kind);
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const safeFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
   if (!(await ensureAwsCreds())) {
-    throw new Error('AWS credentials are required to upload hot repairs.');
+    throw new Error('AWS credentials are required to upload.');
   }
   try {
     await uploadFileToS3(safeFilename, file);
@@ -445,7 +452,7 @@ export async function uploadHotRepair(file, label, uploaderName) {
     throw new Error('S3 upload failed: ' + (err.message || err));
   }
 
-  const currentIndex = await loadHotRepairs();
+  const currentIndex = await loadHotRepairs(kind);
   const newEntry = {
     id,
     label,
@@ -456,49 +463,53 @@ export async function uploadHotRepair(file, label, uploaderName) {
     uploadedAt: new Date().toISOString(),
   };
   const newIndex = [newEntry, ...currentIndex];
-  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: add ${label}`);
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: add ${label}`);
   return newIndex;
 }
 
-export async function renameHotRepair(id, newLabel) {
+export async function renameHotRepair(id, newLabel, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
-  const currentIndex = await loadHotRepairs();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
   const newIndex = currentIndex.map(d => d.id === id ? { ...d, label: newLabel } : d);
-  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: rename to ${newLabel}`);
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: rename to ${newLabel}`);
   return newIndex;
 }
 
 // Flag/unflag an item as a "Warranty Hot Repair" (highlighted for viewers).
-export async function setHotRepairWarranty(id, warranty) {
+export async function setHotRepairWarranty(id, warranty, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
-  const currentIndex = await loadHotRepairs();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
   const newIndex = currentIndex.map(d => d.id === id ? { ...d, warranty: !!warranty } : d);
-  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: warranty flag ${warranty ? 'on' : 'off'}`);
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: warranty flag ${warranty ? 'on' : 'off'}`);
   return newIndex;
 }
 
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
-export async function reorderHotRepairs(orderedIds) {
+export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
-  const currentIndex = await loadHotRepairs();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
   const byId = new Map(currentIndex.map(d => [d.id, d]));
   const ordered = orderedIds.map(id => byId.get(id)).filter(Boolean);
   // Append any items not present in orderedIds (safety), keeping their order.
   for (const d of currentIndex) if (!orderedIds.includes(d.id)) ordered.push(d);
-  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, ordered, `Hot repairs: reorder`);
+  await saveGitHubFile(headers, indexPath, ordered, `${BULLETIN_KINDS[kind]}: reorder`);
   return ordered;
 }
 
-export async function deleteHotRepair(item) {
+export async function deleteHotRepair(item, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
+  const indexPath = bulletinIndexPath(kind);
 
   if (await ensureAwsCreds()) {
     try {
@@ -508,9 +519,9 @@ export async function deleteHotRepair(item) {
     }
   }
 
-  const currentIndex = await loadHotRepairs();
+  const currentIndex = await loadHotRepairs(kind);
   const newIndex = currentIndex.filter(d => d.id !== item.id);
-  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: remove ${item.label}`);
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: remove ${item.label}`);
   return newIndex;
 }
 
