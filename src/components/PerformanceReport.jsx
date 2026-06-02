@@ -359,6 +359,25 @@ function avgOf(entries, key) {
   return vals.reduce((s, v) => s + v, 0) / vals.length;
 }
 
+// Coupon figures (coupon_labor / total_sales / coupon_usage_pct) are
+// month-to-date cumulative and RESET at the start of each month. Averaging
+// daily snapshots would drag in pre-reset / prior-month values, so for these
+// we want the LATEST snapshot within the period instead of an average.
+// `entries` is expected to be sorted newest-first, so the first valid value
+// for the key is the most recent one.
+const COUPON_KEYS = new Set(['coupon_usage_pct', 'coupon_labor', 'total_sales']);
+function latestOf(entries, key) {
+  for (const e of entries) {
+    const v = parseFloat(e[key]);
+    if (!isNaN(v)) return v;
+  }
+  return null;
+}
+// Use latest-in-period for monthly-reset coupon metrics, average for the rest.
+function periodVal(entries, key) {
+  return COUPON_KEYS.has(key) ? latestOf(entries, key) : avgOf(entries, key);
+}
+
 // One horizontal row per metric: direction icon · label · big value · delta %.
 // Designed to be scannable at a glance — color tells the story.
 function TrendRow({ curr, prev, metric, sub, extra }) {
@@ -575,17 +594,17 @@ function TrendingReport({ entries, selectedMonth }) {
           accent: '#a78bfa', icon: '📅', title: 'Weekly Average',
           sub: `Last ${thisWeek.length} day${thisWeek.length !== 1 ? 's' : ''}  vs  prior ${lastWeek.length} day${lastWeek.length !== 1 ? 's' : ''}`,
           available: weeklyAvail,
-          getCurr: m => avgOf(thisWeek, m.key),
-          getPrev: m => avgOf(lastWeek, m.key),
-          getExtra: m => m.key === 'coupon_usage_pct' ? avgOf(thisWeek, 'coupon_labor') : null,
+          getCurr: m => periodVal(thisWeek, m.key),
+          getPrev: m => periodVal(lastWeek, m.key),
+          getExtra: m => m.key === 'coupon_usage_pct' ? latestOf(thisWeek, 'coupon_labor') : null,
         })}
         {renderCard({
           accent: '#fbbf24', icon: '🗓', title: 'Month-Over-Month',
           sub: `${labelMonth(selectedMonth)} (${thisMonthEntries.length})  vs  ${labelMonth(prevMonthKey)} (${prevMonthEntries.length})`,
           available: monthlyAvail,
-          getCurr: m => avgOf(thisMonthEntries, m.key),
-          getPrev: m => avgOf(prevMonthEntries, m.key),
-          getExtra: m => m.key === 'coupon_usage_pct' ? avgOf(thisMonthEntries, 'coupon_labor') : null,
+          getCurr: m => periodVal(thisMonthEntries, m.key),
+          getPrev: m => periodVal(prevMonthEntries, m.key),
+          getExtra: m => m.key === 'coupon_usage_pct' ? latestOf(thisMonthEntries, 'coupon_labor') : null,
         })}
       </div>
     </div>
