@@ -411,6 +411,74 @@ export async function deleteDocument(doc) {
   return newIndex;
 }
 
+// ── Hot Repairs New Releases ───────────────────────────────────────────────────
+// Tech-facing PDF library. Reuses the same S3 bucket/prefix as documents (files
+// are uniquely named), but keeps its own index so it stays separate.
+const HOT_REPAIRS_INDEX = 'public/data/hot-repairs/index.json';
+
+export async function loadHotRepairs() {
+  try {
+    const data = await readGitHubFile(authHeaders(), HOT_REPAIRS_INDEX);
+    if (data) return Array.isArray(data) ? data : [];
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/hot-repairs/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function uploadHotRepair(file, label, uploaderName) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const safeFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+
+  if (!(await ensureAwsCreds())) {
+    throw new Error('AWS credentials are required to upload hot repairs.');
+  }
+  try {
+    await uploadFileToS3(safeFilename, file);
+  } catch (err) {
+    throw new Error('S3 upload failed: ' + (err.message || err));
+  }
+
+  const currentIndex = await loadHotRepairs();
+  const newEntry = {
+    id,
+    label,
+    filename: safeFilename,
+    fileType: 'pdf',
+    size: file.size,
+    uploadedBy: uploaderName,
+    uploadedAt: new Date().toISOString(),
+  };
+  const newIndex = [newEntry, ...currentIndex];
+  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: add ${label}`);
+  return newIndex;
+}
+
+export async function deleteHotRepair(item) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+
+  if (await ensureAwsCreds()) {
+    try {
+      await deleteFileFromS3(item.filename);
+    } catch (err) {
+      console.warn('S3 delete warning:', err.message || err);
+    }
+  }
+
+  const currentIndex = await loadHotRepairs();
+  const newIndex = currentIndex.filter(d => d.id !== item.id);
+  await saveGitHubFile(headers, HOT_REPAIRS_INDEX, newIndex, `Hot repairs: remove ${item.label}`);
+  return newIndex;
+}
+
 // ── Service Invitation Completed Reviews ───────────────────────────────────────
 const COMPLETED_BASE = 'public/data/service-invitation/completed';
 

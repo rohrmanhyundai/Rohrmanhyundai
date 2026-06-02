@@ -9,6 +9,14 @@ function canSee(pages, role, key) {
 
 const NAV_BUTTONS = [
   {
+    key: 'hotRepairs',
+    label: '🔧 Hot Repairs New Releases',
+    bg: 'linear-gradient(135deg,rgba(248,113,113,.25),rgba(239,68,68,.18))',
+    border: 'rgba(248,113,113,.45)',
+    color: '#fca5a5',
+    prop: 'onHotRepairs',
+  },
+  {
     key: 'techSchedule',
     label: '📅 Technician Work Schedule',
     bg: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))',
@@ -58,8 +66,8 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onMyReview, onMyReports, onBack }) {
-  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet };
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onBack }) {
+  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   // Check if this tech has a pending review (only for technician role)

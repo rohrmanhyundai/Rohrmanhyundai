@@ -31,6 +31,7 @@ function openRankBoard() {
 import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
+import HotRepairs from './components/HotRepairs';
 import WorkInProgress from './components/WorkInProgress';
 import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
@@ -361,6 +362,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
+        onHotRepairs={() => goTo('hot-repairs', 'tech-resources')}
         onMyReview={() => navTo('tech-self-review')}
         onMyReports={() => goTo('performance-report', 'tech-resources')}
         onBack={() => setPage('dashboard')}
@@ -725,6 +727,22 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={dlBackLabel}
+      />
+    );
+  }
+
+  if (page === 'hot-repairs') {
+    const hrBackLabels = {
+      'tech-resources': '← Tech Resources',
+      'manager-hub':    '← Manager Hub',
+    };
+    return (
+      <HotRepairs
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'tech-resources')}
+        backLabel={hrBackLabels[prevPage] || '← Back'}
       />
     );
   }
