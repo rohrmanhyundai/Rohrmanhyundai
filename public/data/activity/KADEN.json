@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-06-02T19:52:18.185Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-06-02T19:52:18.184Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-06-02T19:52:00.136Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-06-02T19:51:19.760Z",
     "type": "page",
     "label": "performance-report"
