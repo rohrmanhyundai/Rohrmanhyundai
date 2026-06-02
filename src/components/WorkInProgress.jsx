@@ -54,7 +54,7 @@ function dedupeWip(rows) {
 
 const emptyAwaiting = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', isNew: true,
+  ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', notes: '', partsArrived: null, partsArrivedDate: '', isNew: true,
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialJob = null, onInitialJobConsumed }) {
@@ -266,6 +266,23 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setAwaiting(prev => {
       const updated = prev.map(r => r.id === id ? { ...r, [field]: value } : r);
       saveAwaitingData(updated).catch(e => setError(e.message));
+      return updated;
+    });
+  }
+
+  // Toggle Parts Arrived on a Cars-Awaiting row with an auto date stamp, mirroring
+  // the WIP behavior so the parts dept can mark parts in before a tech claims it.
+  function toggleAwaitingPartsArrived(id, value) {
+    const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    setAwaiting(prev => {
+      const updated = prev.map(r => r.id === id ? {
+        ...r,
+        partsArrived: value,
+        partsArrivedDate: value === true ? today : '',
+      } : r);
+      saveAwaitingData(updated).catch(e => setError(e.message));
+      const victim = prev.find(r => r.id === id);
+      trackAction(value === true ? 'awaiting-mark-parts-arrived' : value === false ? 'awaiting-mark-parts-pending' : 'awaiting-undo-parts-arrived', `RO ${victim?.ro || '?'}`);
       return updated;
     });
   }
@@ -549,7 +566,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setMovingId(awaitingRow.id);
     try {
       const existing = await loadWipData(tech);
-      const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc, highPriority: !!awaitingRow.highPriority, advisor: awaitingRow.advisor || '' };
+      const newWipRow = { ...emptyRow(), ro: awaitingRow.ro, roDate: awaitingRow.roDate, jobDesc: awaitingRow.jobDesc, highPriority: !!awaitingRow.highPriority, advisor: awaitingRow.advisor || '', notes: awaitingRow.notes || '', partsArrived: awaitingRow.partsArrived ?? null, partsArrivedDate: awaitingRow.partsArrivedDate || '' };
       const deduped = dedupeWip([...existing, newWipRow]);
       await saveWipData(tech, deduped);
       const updatedAwaiting = awaiting.filter(r => r.id !== awaitingRow.id);
@@ -588,6 +605,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         jobDesc: wipRow.jobDesc || '',
         highPriority: !!wipRow.highPriority,
         advisor: wipRow.advisor || '',
+        notes: wipRow.notes || '',
+        partsArrived: wipRow.partsArrived ?? null,
+        partsArrivedDate: wipRow.partsArrivedDate || '',
         isNew: false,
       };
       const updatedAwaiting = [awRow, ...filteredAwaiting];
@@ -1100,7 +1120,20 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                         <div><div style={labelSt}>RO Date</div><div style={{ fontSize: 14, color: '#94a3b8' }}>{aw.roDate || '—'}</div></div>
                         <div style={{ flex: 1 }}><div style={labelSt}>Job Description</div><div style={{ fontSize: 14, color: '#e2e8f0' }}>{aw.jobDesc || '—'}</div></div>
                         {aw.advisor && <div><div style={labelSt}>Advisor</div><div style={{ fontSize: 14, color: '#c4b5fd', fontWeight: 700 }}>👤 {aw.advisor}</div></div>}
+                        {aw.partsArrived === true && (
+                          <div className="parts-here-badge" style={{ marginTop: 2 }}>
+                            <span className="pha-icon">📦</span>
+                            <span>Parts Here</span>
+                            {aw.partsArrivedDate && <span className="pha-date">📅 {aw.partsArrivedDate}</span>}
+                          </div>
+                        )}
                       </div>
+                      {aw.notes && (
+                        <div style={{ marginBottom: 14 }}>
+                          <div style={labelSt}>Notes</div>
+                          <div style={{ fontSize: 14, color: '#e2e8f0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{aw.notes}</div>
+                        </div>
+                      )}
                       <button
                         onClick={() => setClaimConfirm({ aw, tech: currentUser })}
                         disabled={movingId === aw.id}
@@ -1123,6 +1156,48 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                           <div style={labelSt}>Job Description</div>
                           <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveAwaitingRow(aw.id); } }} placeholder="Describe the job…" />
                         </div>
+                        <div>
+                          <div style={labelSt}>Parts Arrived</div>
+                          {aw.partsArrived === true ? (
+                            <div className="parts-here-badge" style={{ marginTop: 2 }}>
+                              <span className="pha-icon">📦</span>
+                              <span>Parts Here</span>
+                              {aw.partsArrivedDate && <span className="pha-date">📅 {aw.partsArrivedDate}</span>}
+                              <button
+                                className="pha-undo"
+                                onClick={() => {
+                                  if (window.confirm('Undo "Parts Here"?\n\nThis will clear the parts-arrived status and remove the arrival date. Only do this if it was marked by mistake.')) {
+                                    toggleAwaitingPartsArrived(aw.id, null);
+                                  }
+                                }}
+                                title="Mark parts as not arrived"
+                              >Undo</button>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
+                              <ChipBtn active={aw.partsArrived === true}  color="green" onClick={() => toggleAwaitingPartsArrived(aw.id, aw.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
+                              <ChipBtn active={aw.partsArrived === false} color="red"   onClick={() => toggleAwaitingPartsArrived(aw.id, aw.partsArrived === false ? null : false)}>✗ No</ChipBtn>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {/* Notes */}
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={labelSt}>Notes</div>
+                        <textarea
+                          value={aw.notes || ''}
+                          onChange={e => updateAwaiting(aw.id, 'notes', e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              e.currentTarget.blur();
+                              saveAwaitingRow(aw.id);
+                            }
+                          }}
+                          placeholder="Add notes here… (Enter to save, Shift+Enter for new line)"
+                          rows={2}
+                          style={{ ...inpSt, resize: 'vertical', lineHeight: 1.5 }}
+                        />
                       </div>
                       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                         <button
