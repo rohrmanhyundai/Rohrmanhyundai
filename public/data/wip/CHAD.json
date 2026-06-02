@@ -76,18 +76,5 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "REPAIRS ARE APPROVED WAITING ON PARTS. "
-  },
-  {
-    "id": "mpwo8w0mfic",
-    "ro": "778030",
-    "roDate": "2026-06-01",
-    "jobDesc": "RECALLS",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": ""
   }
 ]
