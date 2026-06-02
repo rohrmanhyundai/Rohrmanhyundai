@@ -75,14 +75,45 @@ async function extractPdfText(item, rawUrl) {
   }
 }
 
-// Does an item match the query? Each whitespace-separated token must appear
-// (normalized) in the title, the manager tags, the filename, or the PDF text.
-function itemMatches(item, query) {
-  const haystack = norm(item.label) + ' ' + norm(item.tags || '') + ' ' +
-    norm(item.filename || '') + ' ' + norm(textCache[item.id] || '');
+// Relevance score for an item against the query. Every token must appear
+// somewhere (title, manager tags, filename, or PDF text) or the item doesn't
+// match at all (score -1). When it does match, where each token is found is
+// weighted: a hit in the TITLE or TAGS (e.g. the recall/bulletin number a
+// manager typed) counts far more than an incidental hit buried in the PDF body
+// text — so searching "298" opens the bulletin titled "(RECALL 298)" rather
+// than some other PDF that merely mentions 298 in a date or table.
+function scoreItem(item, query) {
   const tokens = query.trim().split(/\s+/).filter(Boolean).map(norm).filter(Boolean);
-  if (tokens.length === 0) return true;
-  return tokens.every(tok => haystack.includes(tok));
+  if (tokens.length === 0) return 0;
+  const label = norm(item.label);
+  const tags = norm(item.tags || '');
+  const filename = norm(item.filename || '');
+  const text = norm(textCache[item.id] || '');
+  let total = 0;
+  for (const tok of tokens) {
+    let best;
+    if (label.includes(tok)) best = 100;
+    else if (tags.includes(tok)) best = 80;
+    else if (filename.includes(tok)) best = 40;
+    else if (text.includes(tok)) best = 10;
+    else return -1; // token not found anywhere → not a match
+    total += best;
+  }
+  return total;
+}
+
+// Boolean match wrapper (kept for readability at call sites).
+function itemMatches(item, query) {
+  return scoreItem(item, query) >= 0;
+}
+
+// All matching items, sorted best-match first (ties keep original/newest order).
+function rankedMatches(items, query) {
+  return items
+    .map((it, i) => ({ it, i, s: scoreItem(it, query) }))
+    .filter(m => m.s >= 0)
+    .sort((a, b) => (b.s - a.s) || (a.i - b.i))
+    .map(m => m.it);
 }
 
 // Renders a large image of page 1 of the PDF; falls back to a wrench icon.
@@ -244,25 +275,37 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     return () => { cancelled = true; };
   }, [tab]);
 
-  // Items to display, filtered by the live search query.
-  const filteredItems = search.trim() ? items.filter(it => itemMatches(it, search)) : items;
+  // Items to display, filtered AND ranked by the live search query (best match
+  // first), so the bulletin whose title/number matches floats to the top.
+  const filteredItems = search.trim() ? rankedMatches(items, search) : items;
   // eslint-disable-next-line no-unused-expressions
   textVer; // referenced so filtering recomputes as extraction completes
 
   function runSearchOpen() {
-    const matches = items.filter(it => itemMatches(it, search));
+    const matches = rankedMatches(items, search);
     if (matches.length >= 1) setPreviewItem(matches[0]);
   }
 
-  // Auto-open when the search narrows to exactly one PDF (won't reopen the same
-  // one after you close it unless the query changes).
+  // Auto-open the best match when the search clearly points at one bulletin:
+  // either it's the only match, or the top match scores strictly higher than
+  // the next (e.g. a title/number hit beats incidental body-text mentions).
+  // Won't reopen the same one after you close it unless the query changes.
   const autoOpenedRef = useRef(null);
   useEffect(() => {
     if (!search.trim()) { autoOpenedRef.current = null; return; }
-    const matches = items.filter(it => itemMatches(it, search));
-    if (matches.length === 1 && autoOpenedRef.current !== matches[0].id) {
-      autoOpenedRef.current = matches[0].id;
-      setPreviewItem(matches[0]);
+    const scored = items
+      .map(it => ({ it, s: scoreItem(it, search) }))
+      .filter(m => m.s >= 0)
+      .sort((a, b) => b.s - a.s);
+    if (scored.length === 0) return;
+    // Only auto-pop when there's an unambiguous winner: a single match, or a
+    // strong title/tag hit (≥80) that outscores everything else. This opens the
+    // right bulletin for "298" while not popping up mid-typing on partial/ambiguous
+    // queries (e.g. "29" matching both RECALL 298 and 299 equally).
+    const isClearWinner = scored.length === 1 || (scored[0].s >= 80 && scored[0].s > scored[1].s);
+    if (isClearWinner && autoOpenedRef.current !== scored[0].it.id) {
+      autoOpenedRef.current = scored[0].it.id;
+      setPreviewItem(scored[0].it);
     }
   }, [search, textVer, items]);
 
