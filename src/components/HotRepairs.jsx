@@ -165,7 +165,33 @@ function PdfPreview({ item, rawUrl }) {
 function PreviewModal({ item, onClose }) {
   const rawUrl = docRawUrl(item.filename);
   const [loading, setLoading] = useState(true);
+  // We prefer the browser's NATIVE PDF viewer (loaded from a blob URL) because
+  // it renders a real text layer — so users can select, copy, and Ctrl+F the
+  // text. Google Docs Viewer only rasterizes pages to images, which can't be
+  // copied. If fetching the blob fails (CORS/offline), fall back to gview.
+  const [blobUrl, setBlobUrl] = useState(null);
+  const [useGview, setUseGview] = useState(false);
   const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawUrl)}&embedded=true`;
+
+  useEffect(() => {
+    let cancelled = false;
+    let createdUrl = null;
+    (async () => {
+      try {
+        const res = await fetch(rawUrl);
+        if (!res.ok) throw new Error('fetch failed');
+        let blob = await res.blob();
+        if (blob.type !== 'application/pdf') blob = new Blob([blob], { type: 'application/pdf' });
+        createdUrl = URL.createObjectURL(blob);
+        if (!cancelled) { setBlobUrl(createdUrl + '#toolbar=1&navpanes=0'); setLoading(false); }
+      } catch {
+        if (!cancelled) setUseGview(true); // loading cleared by the iframe's onLoad
+      }
+    })();
+    return () => { cancelled = true; if (createdUrl) URL.revokeObjectURL(createdUrl); };
+  }, [rawUrl]);
+
+  const iframeSrc = useGview ? viewerUrl : (blobUrl || '');
 
   async function handleDownload() {
     try {
@@ -209,13 +235,15 @@ function PreviewModal({ item, onClose }) {
         </div>
         <div className="doc-preview-body">
           {loading && <div className="doc-preview-loading">Loading preview…</div>}
-          <iframe
-            src={viewerUrl}
-            className="doc-preview-iframe"
-            style={{ display: loading ? 'none' : 'block' }}
-            title={item.label}
-            onLoad={() => setLoading(false)}
-          />
+          {iframeSrc && (
+            <iframe
+              src={iframeSrc}
+              className="doc-preview-iframe"
+              style={{ display: loading ? 'none' : 'block' }}
+              title={item.label}
+              onLoad={() => setLoading(false)}
+            />
+          )}
         </div>
       </div>
     </div>
