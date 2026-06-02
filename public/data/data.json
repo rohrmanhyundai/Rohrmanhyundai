@@ -121,9 +121,9 @@
         "total": 9.7,
         "goal_pct": 0.20421052631578945,
         "pacing": 24.25,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—",
+        "certified": "\u2014",
+        "trainings_due": "\u2014",
+        "excel_training": "\u2014",
         "hoursOverride": {
           "2026-05-25": true,
           "2026-05-27": true,
@@ -213,25 +213,6 @@
         "_lastImport": 1780188975249,
         "total_sales": 92542.24,
         "coupon_usage_pct": 0.0463
-      },
-      {
-        "name": "PARKER",
-        "mtd_hours": 0,
-        "daily_avg": 0,
-        "hours_per_ro": 0,
-        "align": 0.208,
-        "tires": 0.136,
-        "valvoline": 0.328,
-        "roh50_hrs_ro": 0.99,
-        "csi": 943,
-        "asr": 0.2025,
-        "elr": 0.9088,
-        "last_month_total": 286.8,
-        "ro_count": 224,
-        "coupon_labor": 2571.26,
-        "_lastImport": 1780188975249,
-        "total_sales": 87303.59,
-        "coupon_usage_pct": 0.0295
       }
     ],
     "advisorTraining": [
@@ -329,28 +310,28 @@
   "vacations": [
     {
       "name": "DAVID",
-      "dates": "May 26, 2026 – Jun 3, 2026",
+      "dates": "May 26, 2026 \u2013 Jun 3, 2026",
       "dateStart": "2026-05-26",
       "dateEnd": "2026-06-03",
       "status": "APPROVED"
     },
     {
       "name": "CARTER",
-      "dates": "Jul 6–10, 2026",
+      "dates": "Jul 6\u201310, 2026",
       "dateStart": "2026-07-06",
       "dateEnd": "2026-07-10",
       "status": "APPROVED"
     },
     {
       "name": "JACOB",
-      "dates": "Aug 17–21, 2026",
+      "dates": "Aug 17\u201321, 2026",
       "dateStart": "2026-08-17",
       "dateEnd": "2026-08-21",
       "status": "APPROVED"
     },
     {
       "name": "GAVEN",
-      "dates": "Jun 29, 2026 – Jul 3, 2026",
+      "dates": "Jun 29, 2026 \u2013 Jul 3, 2026",
       "dateStart": "2026-06-29",
       "dateEnd": "2026-07-03",
       "status": "APPROVED"
@@ -364,21 +345,21 @@
     },
     {
       "name": "CORY",
-      "dates": "Jul 21–24, 2026",
+      "dates": "Jul 21\u201324, 2026",
       "dateStart": "2026-07-21",
       "dateEnd": "2026-07-24",
       "status": "APPROVED"
     },
     {
       "name": "CORY",
-      "dates": "Jul 27–29, 2026",
+      "dates": "Jul 27\u201329, 2026",
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
       "status": "APPROVED"
     },
     {
       "name": "SHAWN",
-      "dates": "Jun 8–12, 2026",
+      "dates": "Jun 8\u201312, 2026",
       "dateStart": "2026-06-08",
       "dateEnd": "2026-06-12",
       "status": "APPROVED"
