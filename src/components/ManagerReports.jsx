@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
-import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching, loadCoachingViews } from '../utils/github';
+import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubToken, loadDashboardData, loadSchedules, loadWipData, loadAwaitingData, loadCoaching, saveCoaching, loadCoachingViews, loadFormerEmployees } from '../utils/github';
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
 import { trackAction } from '../utils/activityTracker';
@@ -280,6 +280,17 @@ export default function ManagerReports({ users, onBack }) {
 
   const [selected, setSelected] = useState(allUsers[0] || '');
   const [viewUser, setViewUser] = useState(null);
+  // Former employees (deleted users whose performance reports we keep). Shown
+  // under the "Previous Employees" tab so managers can still pull their history.
+  const [formerEmployees, setFormerEmployees] = useState([]); // [{ username, role, deletedAt }]
+
+  // Resolve a user's role whether they're current (advisors/techs) or former.
+  const roleOf = (u) => {
+    if (advisors.includes(u)) return 'advisor';
+    if (techs.includes(u)) return 'technician';
+    const f = formerEmployees.find(fe => (fe.username || '').toUpperCase() === u);
+    return (f && (f.role || '').includes('tech')) ? 'technician' : 'advisor';
+  };
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiPickerOpen, setAiPickerOpen] = useState(false);
   const [aiPickerSelected, setAiPickerSelected] = useState(() => new Set());
@@ -306,6 +317,12 @@ export default function ManagerReports({ users, onBack }) {
   const [techGoals, setTechGoals] = useState({}); // { TECHNAME: weeklyGoalHrs }
   const [schedules, setSchedules] = useState({}); // { TECHNAME: { "2026-05-04": "vacation" }, __HOLIDAY__: {...} }
   const [vacationDates, setVacationDates] = useState({}); // { TECHNAME: Set("2026-05-04") }
+
+  useEffect(() => {
+    loadFormerEmployees()
+      .then(list => setFormerEmployees(Array.isArray(list) ? list : []))
+      .catch(() => setFormerEmployees([]));
+  }, []);
 
   useEffect(() => {
     loadDashboardData()
@@ -734,7 +751,7 @@ export default function ManagerReports({ users, onBack }) {
     return (
       <PerformanceReport
         currentUser={viewUser}
-        role={advisors.includes(viewUser) ? 'advisor' : 'technician'}
+        role={roleOf(viewUser)}
         onBack={() => setViewUser(null)}
         canDelete={true}
       />
@@ -823,6 +840,34 @@ export default function ManagerReports({ users, onBack }) {
               ))}
             </div>
           </div>
+
+          {/* Previous Employees — deleted users whose performance reports we kept.
+              Managers/admins only (this whole screen is already manager-gated). */}
+          {formerEmployees.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
+                Previous Employees <span style={{ opacity: .6, fontWeight: 600, textTransform: 'none', letterSpacing: 0 }}>· performance history kept after removal</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {formerEmployees.map(f => {
+                  const u = (f.username || '').toUpperCase();
+                  const gone = f.deletedAt ? new Date(f.deletedAt).toLocaleDateString() : '';
+                  return (
+                    <button key={u} onClick={() => setViewUser(u)} style={{
+                      background: 'rgba(148,163,184,.10)',
+                      border: '1px solid rgba(148,163,184,.3)',
+                      color: '#cbd5e1',
+                      borderRadius: 8, padding: '6px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer'
+                    }}>
+                      {u}
+                      <span style={{ marginLeft: 6, fontSize: 10, opacity: .6 }}>{roleOf(u) === 'advisor' ? 'ADV' : 'TECH'}</span>
+                      {gone && <span style={{ marginLeft: 6, fontSize: 9, opacity: .5 }}>removed {gone}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Add / Edit form */}
           {showForm && form && (
