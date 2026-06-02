@@ -165,17 +165,25 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [editLabel, setEditLabel]     = useState('');
   const [savingEdit, setSavingEdit]   = useState(false);
   const [reordering, setReordering]   = useState(false);
+  const [tab, setTab]                 = useState('hot-repairs'); // 'hot-repairs' | 'recalls'
 
   const fileInputRef = useRef(null);
 
+  const isRecalls = tab === 'recalls';
+  const tabNoun = isRecalls ? 'Recall' : 'Hot Repair';
+
   useEffect(() => {
-    trackPage('hotRepairs');
-    loadHotRepairs().then(idx => {
+    trackPage(isRecalls ? 'recalls' : 'hotRepairs');
+    setLoading(true);
+    setEditId(null); setPreviewItem(null);
+    setFile(null); setLabel(''); setFileError(''); setActionError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    loadHotRepairs(tab).then(idx => {
       // Display follows the stored order (newest uploads prepend; managers can reorder).
       setItems(idx || []);
       setLoading(false);
     });
-  }, []);
+  }, [tab]);
 
   function handleFileChange(e) {
     const f = e.target.files[0];
@@ -218,7 +226,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setUploading(true);
     setUploadStatus(file.size > 5 * 1024 * 1024 ? 'Uploading large file — please wait...' : 'Uploading...');
     try {
-      const newItems = await uploadHotRepair(file, label.trim(), currentUserDisplay || currentUser);
+      const newItems = await uploadHotRepair(file, label.trim(), currentUserDisplay || currentUser, tab);
       setItems(newItems); // new upload is prepended → appears on top
       setFile(null); setLabel(''); setFileError('');
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -243,7 +251,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     if (!await ensureToken()) return;
     setSavingEdit(true);
     try {
-      const newItems = await renameHotRepair(item.id, trimmed);
+      const newItems = await renameHotRepair(item.id, trimmed, tab);
       setItems(newItems);
       setEditId(null);
     } catch (err) {
@@ -260,7 +268,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     const next = items.map(i => i.id === item.id ? { ...i, warranty: !i.warranty } : i);
     setItems(next);
     try {
-      const saved = await setHotRepairWarranty(item.id, !item.warranty);
+      const saved = await setHotRepairWarranty(item.id, !item.warranty, tab);
       setItems(saved);
     } catch (err) {
       setItems(items); // revert
@@ -279,7 +287,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setActionError('');
     try {
       if (!await ensureToken()) { setItems(items); setReordering(false); return; }
-      const saved = await reorderHotRepairs(next.map(i => i.id));
+      const saved = await reorderHotRepairs(next.map(i => i.id), tab);
       setItems(saved);
     } catch (err) {
       setItems(items); // revert
@@ -293,7 +301,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     if (!window.confirm(`Delete "${item.label}"?\n\nThis cannot be undone.`)) return;
     setActionError('');
     try {
-      const newItems = await deleteHotRepair(item);
+      const newItems = await deleteHotRepair(item, tab);
       setItems(newItems);
     } catch (err) {
       setActionError('Delete failed: ' + err.message);
@@ -312,8 +320,26 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <button className="secondary" onClick={onBack}>{backLabel || '← Back'}</button>
-          <span className="doc-lib-topbar-title">🔧 Hot Repairs — New Releases</span>
+          <span className="doc-lib-topbar-title">{isRecalls ? '📢 Recalls' : '🔧 Hot Repairs — New Releases'}</span>
         </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 8, padding: '14px 24px 0', justifyContent: 'center' }}>
+        {[
+          { key: 'hot-repairs', label: '🔧 Hot Repairs' },
+          { key: 'recalls',     label: '📢 Recalls' },
+        ].map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)}
+            style={{
+              background: tab === t.key ? 'linear-gradient(135deg,rgba(61,214,195,.28),rgba(110,231,249,.18))' : 'rgba(255,255,255,.04)',
+              border: tab === t.key ? '2px solid rgba(61,214,195,.6)' : '1px solid rgba(255,255,255,.1)',
+              color: tab === t.key ? '#6ee7f9' : '#94a3b8',
+              borderRadius: 12, padding: '10px 28px', cursor: 'pointer', fontWeight: 800, fontSize: 15,
+            }}>
+            {t.label}
+          </button>
+        ))}
       </div>
 
       <div className="doc-lib-wrap">
@@ -321,7 +347,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         {/* Upload Panel — managers/admins only */}
         {canManage && (
           <div className="doc-lib-upload-panel">
-            <div className="doc-lib-panel-title">Upload New Hot Repair</div>
+            <div className="doc-lib-panel-title">{isRecalls ? 'Upload New Recall Bulletin' : 'Upload New Hot Repair'}</div>
             <div className="doc-lib-upload-row">
               <input ref={fileInputRef} type="file" accept=".pdf"
                 onChange={handleFileChange} style={{ display: 'none' }} id="hot-repair-file-input" />
@@ -351,14 +377,16 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         {/* List */}
         <div className="doc-lib-list-section">
           <div className="doc-lib-panel-title">
-            Hot Repairs{!loading && <span className="doc-lib-count"> ({items.length})</span>}
+            {isRecalls ? 'Recalls' : 'Hot Repairs'}{!loading && <span className="doc-lib-count"> ({items.length})</span>}
           </div>
 
           {loading ? (
             <div className="doc-lib-empty">Loading…</div>
           ) : items.length === 0 ? (
             <div className="doc-lib-empty">
-              {canManage ? 'No hot repairs posted yet. Use the panel above to add one.' : 'No hot repairs have been posted yet.'}
+              {canManage
+                ? `No ${isRecalls ? 'recalls' : 'hot repairs'} posted yet. Use the panel above to add one.`
+                : `No ${isRecalls ? 'recalls' : 'hot repairs'} have been posted yet.`}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
@@ -370,10 +398,10 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                   boxShadow: item.warranty ? '0 0 0 4px rgba(251,191,36,.15)' : 'none',
                   animation: item.warranty ? 'hrWarrantyPulse 1.8s ease-in-out infinite' : 'none',
                 }}>
-                  {/* Warranty banner */}
+                  {/* Highlight banner */}
                   {item.warranty && (
                     <div style={{ background: 'linear-gradient(90deg,#f59e0b,#fbbf24)', color: '#3a2400', fontWeight: 900, fontSize: 14, letterSpacing: 0.6, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      ⚠️ WARRANTY HOT REPAIR — REVIEW BEFORE PERFORMING
+                      {isRecalls ? '⚠️ URGENT RECALL — ACTION REQUIRED' : '⚠️ WARRANTY HOT REPAIR — REVIEW BEFORE PERFORMING'}
                     </div>
                   )}
                   {/* Large preview — click to open full view */}
@@ -423,7 +451,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           color: item.warranty ? '#3a2400' : '#fbbf24',
                           borderRadius: 8, padding: '7px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
                         }}>
-                        {item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair'}
+                        {isRecalls
+                          ? (item.warranty ? '⚠️ Urgent Recall: ON' : '🛡 Mark as Urgent Recall')
+                          : (item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair')}
                       </button>
                     )}
                     {canManage && editId !== item.id && (
