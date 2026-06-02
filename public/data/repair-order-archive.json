@@ -1,5 +1,23 @@
 [
   {
+    "id": "mor5en136o2",
+    "ro": "777209",
+    "roDate": "2026-05-04",
+    "jobDesc": "Vehicle dead after battery replacement",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "Battery tested deeply discharged. Recharging and will test for parasitic draw. CORY IS STILL IN DIAG ON THIS CAR 5/6: Techline advised replacing PDC. Part ordered.ETA 5/8. ORDERED ANOTHER PART, BDC. PART ON BACK ORDER ETA BEGINNING OF JUNE. PARTS HAVE PUT THIS PART ON XVOR STATUS. PART IS STILL ON BACK ORDER ",
+    "_archiveId": "mpx4mgmztow",
+    "_archivedAt": "2026-06-02T21:05:18.779Z",
+    "_archivedBy": "SHAWN",
+    "_source": "wip",
+    "_sourceTech": "CORY"
+  },
+  {
     "id": "mpvn9c055s7",
     "ro": "778027",
     "roDate": "2026-06-01",
