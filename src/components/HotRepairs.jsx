@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -52,17 +52,21 @@ function norm(s) {
   return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Extract the first page's text from a PDF (cached). Used only for search.
-async function extractFirstPageText(item, rawUrl) {
+// Extract text from EVERY page of a PDF (cached). Used only for search.
+async function extractPdfText(item, rawUrl) {
   if (textCache[item.id] != null) return textCache[item.id];
   try {
     const pdfjs = await loadPdfJs();
     const res = await fetch(rawUrl);
     const buf = await res.arrayBuffer();
     const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
-    const page = await pdf.getPage(1);
-    const content = await page.getTextContent();
-    const text = content.items.map(i => i.str).join(' ');
+    let text = '';
+    const maxPages = Math.min(pdf.numPages, 15); // cap for very long bulletins
+    for (let p = 1; p <= maxPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      text += ' ' + content.items.map(i => i.str).join(' ');
+    }
     textCache[item.id] = text;
     return text;
   } catch {
@@ -72,9 +76,10 @@ async function extractFirstPageText(item, rawUrl) {
 }
 
 // Does an item match the query? Each whitespace-separated token must appear
-// (normalized) in the title or the extracted first-page text.
+// (normalized) in the title, the manager tags, the filename, or the PDF text.
 function itemMatches(item, query) {
-  const haystack = norm(item.label) + ' ' + norm(textCache[item.id] || '');
+  const haystack = norm(item.label) + ' ' + norm(item.tags || '') + ' ' +
+    norm(item.filename || '') + ' ' + norm(textCache[item.id] || '');
   const tokens = query.trim().split(/\s+/).filter(Boolean).map(norm).filter(Boolean);
   if (tokens.length === 0) return true;
   return tokens.every(tok => haystack.includes(tok));
@@ -202,6 +207,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [editId, setEditId]           = useState(null);
   const [editLabel, setEditLabel]     = useState('');
   const [savingEdit, setSavingEdit]   = useState(false);
+  const [tagsId, setTagsId]           = useState(null);
+  const [tagsText, setTagsText]       = useState('');
+  const [savingTags, setSavingTags]   = useState(false);
   const [reordering, setReordering]   = useState(false);
   const [tab, setTab]                 = useState('hot-repairs'); // 'hot-repairs' | 'recalls'
   const [search, setSearch]           = useState('');
@@ -216,7 +224,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   useEffect(() => {
     trackPage(isRecalls ? 'recalls' : 'hotRepairs');
     setLoading(true);
-    setEditId(null); setPreviewItem(null); setSearch('');
+    setEditId(null); setTagsId(null); setPreviewItem(null); setSearch('');
     setFile(null); setLabel(''); setFileError(''); setActionError('');
     if (fileInputRef.current) fileInputRef.current.value = '';
     let cancelled = false;
@@ -229,7 +237,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       // Pre-extract first-page text in the background so search is ready & fast.
       if (list.length) {
         setIndexing(true);
-        Promise.allSettled(list.map(it => extractFirstPageText(it, docRawUrl(it.filename))))
+        Promise.allSettled(list.map(it => extractPdfText(it, docRawUrl(it.filename))))
           .then(() => { if (!cancelled) { setIndexing(false); setTextVer(v => v + 1); } });
       }
     });
@@ -331,6 +339,26 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       setActionError('Rename failed: ' + err.message);
     } finally {
       setSavingEdit(false);
+    }
+  }
+
+  function startTags(item) {
+    setTagsId(item.id);
+    setTagsText(item.tags || '');
+  }
+
+  async function saveTags(item) {
+    setActionError('');
+    if (!await ensureToken()) return;
+    setSavingTags(true);
+    try {
+      const newItems = await setHotRepairTags(item.id, tagsText.trim(), tab);
+      setItems(newItems);
+      setTagsId(null);
+    } catch (err) {
+      setActionError('Save failed: ' + err.message);
+    } finally {
+      setSavingTags(false);
     }
   }
 
@@ -441,7 +469,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
               ? '⏳ Scanning PDF contents for search…'
               : search.trim()
                 ? `${filteredItems.length} match${filteredItems.length === 1 ? '' : 'es'} — press Enter to open the top result`
-                : 'Searches the title and the first page of every uploaded PDF.'}
+                : 'Searches the title, tags, and the full text of every uploaded PDF. Tip: add a 🏷 # tag if a bulletin number is part of an image and isn’t found.'}
           </div>
         </div>
       </div>
@@ -553,7 +581,31 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
                     </div>
-                    {canManage && editId !== item.id && (
+
+                    {/* Searchable tags / bulletin number */}
+                    {tagsId === item.id ? (
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <input
+                          className="doc-lib-label-input"
+                          autoFocus
+                          value={tagsText}
+                          placeholder="Bulletin/recall # & keywords (e.g. 26-01-042H, recall 298, seat belt)"
+                          onChange={e => setTagsText(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') saveTags(item); if (e.key === 'Escape') setTagsId(null); }}
+                          style={{ flex: 1, fontSize: 13 }}
+                        />
+                        <button onClick={() => saveTags(item)} disabled={savingTags}>{savingTags ? '…' : 'Save'}</button>
+                        <button className="secondary" onClick={() => setTagsId(null)} disabled={savingTags}>Cancel</button>
+                      </div>
+                    ) : item.tags ? (
+                      <div style={{ fontSize: 12, color: '#6ee7f9', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {item.tags.split(',').map((t, i) => t.trim() && (
+                          <span key={i} style={{ background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.25)', borderRadius: 6, padding: '2px 8px' }}>🏷 {t.trim()}</span>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {canManage && editId !== item.id && tagsId !== item.id && (
                       <button onClick={() => toggleWarranty(item)} title="Toggle Warranty Hot Repair highlight"
                         style={{
                           background: item.warranty ? 'linear-gradient(135deg,#f59e0b,#fbbf24)' : 'rgba(251,191,36,.12)',
@@ -566,7 +618,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : (item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair')}
                       </button>
                     )}
-                    {canManage && editId !== item.id && !search.trim() && (
+                    {canManage && editId !== item.id && tagsId !== item.id && !search.trim() && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
                           style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === 0 ? 0.4 : 1 }}>
@@ -582,9 +634,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                         </button>
                       </div>
                     )}
-                    <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 'auto', flexWrap: 'wrap' }}>
                       <button onClick={() => setPreviewItem(item)} style={{ flex: 1 }}>👁 View</button>
-                      {canManage && editId !== item.id && (
+                      {canManage && editId !== item.id && tagsId !== item.id && (
+                        <button onClick={() => startTags(item)} title="Add searchable bulletin # / keywords"
+                          style={{ background: 'rgba(74,222,128,.12)', border: '1px solid rgba(74,222,128,.3)', color: '#4ade80', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                          🏷 {item.tags ? 'Edit #' : 'Add #'}
+                        </button>
+                      )}
+                      {canManage && editId !== item.id && tagsId !== item.id && (
                         <button onClick={() => startEdit(item)} title="Rename"
                           style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           ✏️ Rename
