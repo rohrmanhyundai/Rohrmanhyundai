@@ -58,8 +58,8 @@
     "jobDesc": "BATTERY DRAW CAR ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/02/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "ALL PARTS ARE IN NOW FOR THIS CAR "
