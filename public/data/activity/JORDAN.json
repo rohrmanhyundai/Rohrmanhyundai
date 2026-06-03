@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-06-03T20:26:33.756Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-06-03T20:26:21.797Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778085 tech GAVEN"
+  },
+  {
+    "at": "2026-06-03T20:26:05.649Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-06-03T15:45:55.869Z",
     "type": "page",
     "label": "advisor-calendar"
