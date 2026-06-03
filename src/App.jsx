@@ -42,6 +42,7 @@ import ATDiagWorksheet from './components/ATDiagWorksheet';
 import DCTMTMWorksheet from './components/DCTMTMWorksheet';
 import IVTWorksheet from './components/IVTWorksheet';
 import ATMWorksheet from './components/ATMWorksheet';
+import ATTNTTWorksheet from './components/ATTNTTWorksheet';
 import TechSelfReview from './components/TechSelfReview';
 import PerformanceReport from './components/PerformanceReport';
 import ManagerReports from './components/ManagerReports';
@@ -414,6 +415,16 @@ export default function App() {
     );
   }
 
+  if (page === 'ntt-att-worksheet') {
+    return (
+      <ATTNTTWorksheet
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => navTo('warranty-hub')}
+      />
+    );
+  }
+
   if (page === 'tech-work-schedule') {
     if (window.innerWidth < 600) return (
       <MobileSchedule schedules={schedules} employeeNames={techList}
@@ -519,6 +530,7 @@ export default function App() {
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
+        onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
       />
     );
   }
