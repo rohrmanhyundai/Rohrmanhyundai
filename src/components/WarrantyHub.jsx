@@ -61,13 +61,22 @@ const NAV_BUTTONS = [
     color: '#fbbf24',
     prop: 'onATDiagWorksheet',
   },
+  {
+    key: 'nttAttWorksheet',
+    label: '📝 NTT/ATT Worksheet',
+    desc: 'Fill out the NTT/ATT supplemental worksheet PDF',
+    bg: 'linear-gradient(135deg,rgba(167,139,250,.28),rgba(139,92,246,.18))',
+    border: 'rgba(167,139,250,.45)',
+    color: '#c4b5fd',
+    prop: 'onNttAttWorksheet',
+  },
 ];
 
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
-  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty,
+  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (
