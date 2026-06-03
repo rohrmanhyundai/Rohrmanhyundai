@@ -115,7 +115,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true,
@@ -204,7 +205,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -226,7 +228,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -248,7 +251,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -270,7 +274,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -292,7 +297,8 @@
         "workInProgress": false,
         "chargeAccountList": false,
         "partsHub": false,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -411,7 +417,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -436,7 +443,8 @@
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -461,7 +469,8 @@
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
