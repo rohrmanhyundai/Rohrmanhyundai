@@ -2,7 +2,7 @@
   {
     "id": "mpygkuu1peno",
     "createdAt": "2026-06-03T19:27:45.433Z",
-    "updatedAt": "2026-06-03T19:32:19.662Z",
+    "updatedAt": "2026-06-03T19:32:27.503Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "MEREDITH YUILL",
     "customerPhone": "(765) 490 - 2454",
@@ -82,8 +82,8 @@
     "paymentDate": "",
     "repairsFinished": false,
     "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
+    "readySubmission": true,
+    "readySubmissionDate": "2026-06-03"
   },
   {
     "id": "mppoy98ghj34",
