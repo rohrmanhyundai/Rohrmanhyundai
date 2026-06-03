@@ -9,7 +9,8 @@
     "notes": "HAS A TECH LOOK AT THIS?",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": false
+    "isNew": false,
+    "flagged": true
   },
   {
     "id": "mpyakumqvaa",
