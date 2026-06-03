@@ -174,8 +174,11 @@ export default function ATTNTTWorksheet({ onBack, currentUser, currentRole }) {
       setTxt(`TechNote${box}`, chunk, 9);
       box++;
     }
-    // Service Manager line in the next available box after the notes.
-    if (box <= NOTE_LAST) setTxt(`TechNote${box}`, SERVICE_MANAGER, 9);
+    // Service Manager line (with the date this PDF was generated) in the next
+    // box after the notes, then an "X ____" signature line in the box below.
+    const madeDate = fmtDate(new Date().toISOString().slice(0, 10));
+    if (box <= NOTE_LAST) { setTxt(`TechNote${box}`, `${SERVICE_MANAGER}          Date: ${madeDate}`, 9); box++; }
+    if (box <= NOTE_LAST) setTxt(`TechNote${box}`, 'X ______________________________', 9);
 
     return pdfDoc.save();
   }
