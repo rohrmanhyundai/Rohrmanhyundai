@@ -373,6 +373,25 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   async function handleUpload() {
     if (!file || !label.trim()) { setFileError('Please select a PDF and enter a title.'); return; }
     setActionError('');
+
+    // Warn if this looks like a duplicate of something already uploaded.
+    // Match on either the same original PDF filename + size, or the same title.
+    const newName  = (file.name || '').replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ').trim().toLowerCase();
+    const newTitle = label.trim().toLowerCase();
+    const dup = items.find(it => {
+      const itName  = (it.filename || '').replace(/^[a-z0-9]+-/, '').replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ').trim().toLowerCase();
+      const itTitle = (it.label || '').trim().toLowerCase();
+      const sameTitle = itTitle && itTitle === newTitle;
+      const sameFile  = itName && itName === newName && Number(it.size) === Number(file.size);
+      return sameTitle || sameFile;
+    });
+    if (dup) {
+      const ok = window.confirm(
+        `⚠ Possible duplicate\n\nThis looks like it's already uploaded:\n"${dup.label}" (${formatSize(dup.size)}, posted ${formatDate(dup.uploadedAt)}).\n\nUpload it again anyway?`
+      );
+      if (!ok) return;
+    }
+
     if (!await ensureToken()) return;
 
     setUploading(true);
