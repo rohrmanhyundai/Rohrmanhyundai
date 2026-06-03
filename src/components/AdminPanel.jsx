@@ -777,6 +777,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           last_month_total: a.last_month_total,
           ro_count: parseFloat(a.ro_count) || 0,
           coupon_labor: parseFloat(a.coupon_labor) || 0,
+          coupon_amount: parseFloat(a.coupon_amount) || 0,
           total_sales: parseFloat(a.total_sales) || 0,
           coupon_usage_pct: (parseFloat(a.total_sales) || 0) > 0
             ? (parseFloat(a.coupon_labor) || 0) / parseFloat(a.total_sales)
@@ -1257,6 +1258,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Running month-to-date total. Overwrite this with the new monthly total each day — do not add daily counts.">MTD ROs<span style={{ color: '#64748b', fontWeight: 500, marginLeft: 4 }}>(month-to-date)</span></label><input key={`roc-${a._lastImport || 0}-${a.ro_count}`} defaultValue={a.ro_count ?? ''} onBlur={e => updateAdvisorWithDerived(idx, 'ro_count', safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Coupon Labor pulled from the advisor performance report.">Coupon Labor</label><input key={`cpl-${a._lastImport || 0}-${a.coupon_labor ?? ''}`} defaultValue={a.coupon_labor ?? ''} onBlur={e => updateField(`advisors.${idx}.coupon_labor`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Coupon Amount — dollar value of coupons used by this advisor.">Coupon Amount</label><input key={`cpa-${a._lastImport || 0}-${a.coupon_amount ?? ''}`} defaultValue={a.coupon_amount ?? ''} onBlur={e => updateField(`advisors.${idx}.coupon_amount`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Total Sales from the advisor performance report. Used to compute Coupon Usage % (Coupon Labor ÷ Total Sales).">Total Sales</label><input key={`tsl-${a._lastImport || 0}-${a.total_sales ?? ''}`} defaultValue={a.total_sales ?? ''} onBlur={e => updateField(`advisors.${idx}.total_sales`, safe(e.target.value, 0))} /></div>
               <div className="field"><label title="Auto-calculated from Coupon Labor ÷ Total Sales. Healthy range is roughly 5–7%.">Coupon Usage % <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(auto)</span></label><input key={`cup-${a._lastImport || 0}-${a.coupon_usage_pct ?? ''}`} defaultValue={percentEditValue(a.coupon_usage_pct)} disabled /></div>
               </div>
