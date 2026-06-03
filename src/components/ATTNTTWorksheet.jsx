@@ -131,6 +131,15 @@ export default function ATTNTTWorksheet({ onBack, currentUser, currentRole }) {
       if (value === undefined || value === null || value === '') return;
       try {
         const f = form.getTextField(name);
+        // Some widgets (the multiline note boxes) have an inverted rectangle
+        // (negative height). pdf-lib draws multiline text top-down using the
+        // raw rect, so an inverted rect pushes the text off the visible box.
+        // Normalize to a positive-height rect (same visual region) first.
+        try {
+          const w = f.acroField.getWidgets()[0];
+          const r = w.getRectangle();
+          if (r.height < 0) w.setRectangle({ x: r.x, y: r.y + r.height, width: r.width, height: -r.height });
+        } catch {}
         if (size) { try { f.setFontSize(size); } catch {} }
         f.setText(String(value));
       } catch {}
