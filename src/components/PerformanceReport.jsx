@@ -257,7 +257,6 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
                   <StatBox label="ASR · Goal 21%"             value={pct(latest?.asr)}              color={c(latest?.asr, 0.21, '#fdba74')} />
                   <StatBox label="ELR · Goal 88%"             value={pct(latest?.elr)}              color={c(latest?.elr, 0.88, '#fdba74')} />
                   <StatBox label="Coupon Usage · Target 5-7%" value={pct(latest?.coupon_usage_pct)} color="#fbbf24" />
-                  <StatBox label="Coupon Amount" value={latest?.coupon_labor != null && latest?.coupon_labor !== '' && !isNaN(parseFloat(latest?.coupon_labor)) ? '$' + Number(latest.coupon_labor).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'} color="#fbbf24" />
                 </>;
               })()}
             </div>
