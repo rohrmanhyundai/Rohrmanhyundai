@@ -51,5 +51,18 @@
     "advisor": "JORDAN",
     "notes": "CAR NEEDS ALTERNATOR REPLACEMENT WITH BATTERY. PRICED OUT FACTORY AND AFTERMARKET. CUSTOMER WILL CALL FOR APPROVAL ON 6/2. customer declined work ",
     "flagged": true
+  },
+  {
+    "id": "mpygvm0iizw",
+    "ro": "778085",
+    "roDate": "2026-06-03",
+    "jobDesc": "",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": ""
   }
 ]
