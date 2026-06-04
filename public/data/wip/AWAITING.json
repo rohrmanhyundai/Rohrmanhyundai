@@ -56,8 +56,8 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "isNew": false,
-    "partsArrived": true,
-    "partsArrivedDate": "06/02/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "notes": "TIRE IS HERE",
     "flagged": false
   },
