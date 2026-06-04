@@ -906,6 +906,11 @@
     "id": "mpzy6gvqeko",
     "username": "DAVID",
     "text": "David did you call 777766 to let them know car is completed?",
-    "timestamp": 1780604893430
+    "timestamp": 1780604893430,
+    "reactions": {
+      "🚨": [
+        "DAVID"
+      ]
+    }
   }
 ]
