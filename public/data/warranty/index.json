@@ -2,7 +2,7 @@
   {
     "id": "mppz2kybx312",
     "createdAt": "2026-05-28T20:55:29.939Z",
-    "updatedAt": "2026-06-04T17:16:25.522Z",
+    "updatedAt": "2026-06-04T17:16:41.586Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "David Clark",
     "customerPhone": "(765) 412 - 3094",
@@ -61,8 +61,8 @@
     "paymentDate": "2026-06-04",
     "repairsFinished": false,
     "repairsFinishedDate": "",
-    "readySubmission": true,
-    "readySubmissionDate": "2026-06-03"
+    "readySubmission": false,
+    "readySubmissionDate": ""
   },
   {
     "id": "mpo6rcpv5jd2",
