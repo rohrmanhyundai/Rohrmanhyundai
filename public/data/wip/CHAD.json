@@ -59,8 +59,8 @@
     "jobDesc": "ac compressor replacement ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/04/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "waiting on aftermarket warranty for approval. APPROVED BY AFTERMARKET WARRANTY"
