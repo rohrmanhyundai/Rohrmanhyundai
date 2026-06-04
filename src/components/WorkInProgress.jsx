@@ -508,6 +508,39 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     return () => { cancelled = true; clearTimeout(t); if (clearTimer) clearTimeout(clearTimer); };
   }, [highlightRO, rows, awaiting]);
 
+  // When a non-manager (advisor) opens a flagged RO, lower the "Needs Attention"
+  // flag right here in the WIP page — not just in the calendar. Clearing it in
+  // the calendar alone is racy: the advisor's later edit/save of the row writes
+  // the (still-loaded) row back to disk with flagged:true, resurrecting it. By
+  // clearing it in this component's own state, any subsequent save keeps it down.
+  const clearedFlagRoRef = useRef('');
+  useEffect(() => {
+    if (!highlightRO || isManager) return;
+    const roLower = highlightRO.trim().toLowerCase();
+    if (!roLower) return;
+    if (clearedFlagRoRef.current === roLower) return;
+
+    // WIP row for the active tech.
+    const wipRow = rows.find(r => (r.ro || '').toLowerCase().includes(roLower) && r.flagged);
+    if (wipRow) {
+      clearedFlagRoRef.current = roLower;
+      const updated = rows.map(r => r.id === wipRow.id ? { ...r, flagged: false } : r);
+      setRows(updated);
+      safeSaveWipData(activeTech, updated);
+      return;
+    }
+
+    // Otherwise it may live in Cars Awaiting.
+    const awRow = awaiting.find(r => (r.ro || '').toLowerCase().includes(roLower) && r.flagged);
+    if (awRow) {
+      clearedFlagRoRef.current = roLower;
+      const updated = awaiting.map(r => r.id === awRow.id ? { ...r, flagged: false } : r);
+      setAwaiting(updated);
+      saveAwaitingData(updated).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightRO, rows, awaiting, isManager, activeTech]);
+
   function updateAwaiting(id, field, value) {
     dirtyAwaitingRef.current.add(id);
     setAwaiting(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
