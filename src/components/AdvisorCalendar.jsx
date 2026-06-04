@@ -700,7 +700,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             bg="rgba(61,214,195,.06)"
             border="rgba(61,214,195,.25)"
             highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
-            onOpen={onWorkInProgress ? (j) => { onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }); } : undefined}
+            onOpen={onWorkInProgress ? (j) => { if (j.flagged && !canManageWip) setWipFlag(j, false); onWorkInProgress({ ro: j.ro || '', tech: j.tech || '', source: 'wip' }); } : undefined}
             canFlag={canManageWip}
             onFlag={(j) => setWipFlag(j, !j.flagged)}
             flaggingId={flaggingId}
@@ -717,7 +717,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             color="#fbbf24"
             bg="rgba(251,191,36,.06)"
             border="rgba(251,191,36,.25)"
-            onOpen={onWorkInProgress ? (j) => { onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }); } : undefined}
+            onOpen={onWorkInProgress ? (j) => { if (j.flagged && !canManageWip) setAwaitingFlag(j, false); onWorkInProgress({ ro: j.ro || '', tech: '', source: 'awaiting' }); } : undefined}
             canFlag={canManageWip}
             onFlag={(j) => setAwaitingFlag(j, !j.flagged)}
             flaggingId={flaggingId}
