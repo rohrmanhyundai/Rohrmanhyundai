@@ -10,6 +10,15 @@ function canSee(pages, role, key) {
 // href: opens external URL directly (no prop needed)
 const NAV_BUTTONS = [
   {
+    key: 'hotRepairs',
+    label: '🔧 Recalls/TSB Bulletins',
+    desc: 'View recall and TSB bulletin releases',
+    bg: 'linear-gradient(135deg,rgba(248,113,113,.25),rgba(239,68,68,.18))',
+    border: 'rgba(248,113,113,.45)',
+    color: '#fca5a5',
+    prop: 'onHotRepairs',
+  },
+  {
     key: 'aftermarketWarranty',
     label: '🛡 After Market Warranty',
     desc: 'View and manage warranty claims',
@@ -86,9 +95,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress,
+  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

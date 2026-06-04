@@ -501,6 +501,7 @@ export default function App() {
         onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
         onAdvisorRankBoard={openRankBoard}
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
+        onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
       />
     );
   }
@@ -531,6 +532,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
+        onHotRepairs={() => goTo('hot-repairs', 'warranty-hub')}
       />
     );
   }
@@ -693,6 +695,7 @@ export default function App() {
         onSurveyReports={() => setPage('survey-reports')}
         onMyReports={() => goTo('performance-report', 'advisor-calendar')}
         onWorkInProgress={(arg) => { setWipInitialRO(arg && typeof arg === 'object' ? arg : (typeof arg === 'string' ? { ro: arg } : null)); goTo('work-in-progress', 'advisor-calendar'); }}
+        onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
@@ -745,8 +748,11 @@ export default function App() {
 
   if (page === 'hot-repairs') {
     const hrBackLabels = {
-      'tech-resources': '← Tech Resources',
-      'manager-hub':    '← Manager Hub',
+      'tech-resources':  '← Tech Resources',
+      'manager-hub':     '← Manager Hub',
+      'advisor-calendar':'← Advisor Calendar',
+      'warranty-hub':    '← Warranty Hub',
+      'parts-hub':       '← Parts Hub',
     };
     return (
       <HotRepairs
