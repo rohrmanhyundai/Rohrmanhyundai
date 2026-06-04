@@ -218,41 +218,41 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 4.4,
-        "hours_per_ro": 0.73,
+        "mtd_hours": 5.7,
+        "hours_per_ro": 0.71,
         "align": 0.0889,
         "tires": 0.0556,
         "valvoline": 0.2111,
         "csi": 980,
         "asr": 0.146,
-        "elr": 0.8625,
+        "elr": 0.8855,
         "last_month_total": 227.3,
         "roh50_hrs_ro": 0.91,
         "hidden": false,
-        "ro_count": 6,
+        "ro_count": 8,
         "coupon_labor": 114,
-        "_lastImport": 1780487292522,
-        "total_sales": 786.12,
-        "coupon_usage_pct": 0.145
+        "_lastImport": 1780571840168,
+        "total_sales": 1250.47,
+        "coupon_usage_pct": 0.0912
       },
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 47,
-        "hours_per_ro": 0.8,
+        "mtd_hours": 68.9,
+        "hours_per_ro": 0.82,
         "align": 0.131,
         "tires": 0.1071,
         "valvoline": 0.2321,
-        "csi": 981,
+        "csi": 983,
         "asr": 0.1599,
-        "elr": 0.832,
+        "elr": 0.8693,
         "last_month_total": 311.8,
-        "roh50_hrs_ro": 0.46,
-        "ro_count": 59,
-        "coupon_labor": 697,
-        "_lastImport": 1780487292522,
-        "total_sales": 10835.34,
-        "coupon_usage_pct": 0.0643
+        "roh50_hrs_ro": 0.52,
+        "ro_count": 84,
+        "coupon_labor": 976.08,
+        "_lastImport": 1780571840168,
+        "total_sales": 20428.4,
+        "coupon_usage_pct": 0.0478
       }
     ],
     "advisorTraining": [
@@ -324,11 +324,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 51.4,
+      "total_hours": 74.60000000000001,
       "align": 0.10995,
       "tires": 0.08135,
       "valvoline": 0.22160000000000002,
-      "csi": 980.5
+      "csi": 981.5
     },
     "techTotals": {
       "mon": 32.6,
@@ -348,13 +348,6 @@
     "advisorMonthlyWorkdays": 27
   },
   "vacations": [
-    {
-      "name": "DAVID",
-      "dates": "May 26, 2026 – Jun 3, 2026",
-      "dateStart": "2026-05-26",
-      "dateEnd": "2026-06-03",
-      "status": "APPROVED"
-    },
     {
       "name": "CARTER",
       "dates": "Jul 6–10, 2026",
