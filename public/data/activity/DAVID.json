@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-06-04T20:16:02.225Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-06-04T20:15:58.561Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-06-04T20:15:56.306Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-06-04T20:15:55.368Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-06-04T16:53:25.120Z",
     "type": "page",
     "label": "advisor-calendar"
