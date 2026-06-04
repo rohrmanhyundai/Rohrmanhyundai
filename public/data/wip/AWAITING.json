@@ -68,7 +68,9 @@
     "jobDesc": "WARNING LIGHTS. LOT CAR",
     "highPriority": false,
     "advisor": "JORDAN",
-    "isNew": false
+    "isNew": false,
+    "partsArrived": true,
+    "partsArrivedDate": "06/04/2026"
   },
   {
     "id": "mphdzt2qw77",
