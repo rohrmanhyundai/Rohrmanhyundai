@@ -1,7 +1,7 @@
 {
   "id": "mpznopbdhi83",
   "createdAt": "2026-06-04T15:34:28.393Z",
-  "updatedAt": "2026-06-04T17:25:26.002Z",
+  "updatedAt": "2026-06-04T17:36:34.978Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Zeke Leuck",
   "customerPhone": "(765) 586 - 1957",
@@ -36,16 +36,16 @@
   "tireTax": null,
   "tireDisposal": null,
   "notes": "",
-  "approved": true,
-  "approvedDate": "2026-06-04",
+  "approved": false,
+  "approvedDate": "",
   "denied": false,
   "deniedDate": "",
-  "waiting": true,
-  "waitingDate": "2026-06-04",
+  "waiting": false,
+  "waitingDate": "",
   "paid": false,
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": false,
-  "readySubmissionDate": ""
+  "readySubmission": true,
+  "readySubmissionDate": "2026-06-04"
 }
