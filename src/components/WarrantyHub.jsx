@@ -8,6 +8,15 @@ function canSee(pages, role, key) {
 
 const NAV_BUTTONS = [
   {
+    key: 'hotRepairs',
+    label: '🔧 Recalls/TSB Bulletins',
+    desc: 'View recall and TSB bulletin releases',
+    bg: 'linear-gradient(135deg,rgba(248,113,113,.25),rgba(239,68,68,.18))',
+    border: 'rgba(248,113,113,.45)',
+    color: '#fca5a5',
+    prop: 'onHotRepairs',
+  },
+  {
     key: 'aftermarketWarranty',
     label: '🛡 After Market Warranty',
     desc: 'View and manage warranty claims',
@@ -74,9 +83,9 @@ const NAV_BUTTONS = [
 
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
-  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet,
+  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet, onHotRepairs,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet, onHotRepairs };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

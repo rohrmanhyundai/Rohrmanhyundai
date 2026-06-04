@@ -222,7 +222,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   );
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onMyReports, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onMyReports, onHotRepairs, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -458,6 +458,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && (
+            <button onClick={onHotRepairs} style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.25),rgba(239,68,68,.18))', borderColor: 'rgba(248,113,113,.35)' }}>
+              🔧 Recalls/TSB Bulletins
+            </button>
+          )}
           {canSee(userPages, currentRole, 'documentLibrary') && (
             <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
               📁 Document Library

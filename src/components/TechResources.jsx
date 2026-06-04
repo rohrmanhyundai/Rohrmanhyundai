@@ -10,7 +10,7 @@ function canSee(pages, role, key) {
 const NAV_BUTTONS = [
   {
     key: 'hotRepairs',
-    label: '🔧 Hot Repairs New Releases',
+    label: '🔧 Recalls/TSB Bulletins',
     bg: 'linear-gradient(135deg,rgba(248,113,113,.25),rgba(239,68,68,.18))',
     border: 'rgba(248,113,113,.45)',
     color: '#fca5a5',
