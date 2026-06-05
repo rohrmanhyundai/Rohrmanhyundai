@@ -123,28 +123,82 @@ export function extractWarrantyDraft(fullText) {
     return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? compact : run;
   });
 
-  // A complete warranty row, in column order. Op code = 6–10 char alnum with at
-  // least one letter and one digit, no dash. Causal part may use a hyphen or an
-  // en/em dash, with or without surrounding spaces (e.g. "26345-3LAA1" or
-  // "91920 – BE000").
-  const rowRe = /([A-Za-z][\w().,/&'\- –—]{1,60}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([\w(][\w().,/&+'\- –—]{2,120}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{3,7}\s*[-–—]\s*[0-9A-Z]{3,9})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
+  // Normalize causal-part dashes ("940C3 – P9060" → "940C3-P9060") and join op
+  // times ("0.6 M/H" → "0.6M/H") so each becomes a single token.
+  body = body
+    .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')
+    .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');
 
-  const entries = [];
-  let m2;
-  while ((m2 = rowRe.exec(body)) !== null) {
-    entries.push({
-      ...emptyEntry(),
-      model: m2[1].replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim(),
-      opCode: m2[2].trim(),
-      operation: m2[3].replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim(),
-      opTime: m2[4].replace(/\s+/g, ' ').trim(),
-      causalPart: m2[5].replace(/\s*[-–—]\s*/, '-').trim(),
-      natureCode: m2[6].trim(),
-      causeCode: m2[7].trim(),
+  // ── Table parser ─────────────────────────────────────────────────────────────
+  // Warranty tables list one op code per model, with Operation / Op Time / Causal
+  // Part / Nature / Cause often MERGED across several model rows. We pair each
+  // model with its op code, read whatever typed fields sit in the gap after that
+  // op code, then carry the merged values forward to rows that share them.
+  const tidy = s => s.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
+  const toks = body.split(/\s+/).filter(Boolean);
+  const isOp     = t => /^[A-Z0-9]{6,10}$/.test(t) && /[A-Z]/.test(t) && /^\d\d/.test(t) && !/M\/H/i.test(t);
+  const isTime   = t => /^\d+(?:\.\d+)?M\/H$/i.test(t);
+  const isCausal = t => /^[0-9A-Z]{3,7}-[0-9A-Z]{3,9}$/.test(t) && !isOp(t);
+  const isNature = t => /^[A-Z]\d{2}$/.test(t);
+  const isCause  = t => /^ZZ\d$/i.test(t);
+  const isTyped  = t => isOp(t) || isTime(t) || isCausal(t) || isNature(t) || isCause(t);
+
+  const opIdx = [];
+  toks.forEach((t, i) => { if (isOp(t)) opIdx.push(i); });
+
+  const modelBefore = oi => {
+    const w = [];
+    let j = oi - 1;
+    while (j >= 0 && !isTyped(toks[j])) { w.unshift(toks[j]); j--; }
+    return tidy(w.join(' '));
+  };
+
+  const recs = [];
+  for (let k = 0; k < opIdx.length; k++) {
+    const oi = opIdx[k];
+    const next = k + 1 < opIdx.length ? opIdx[k + 1] : toks.length;
+    const gap = toks.slice(oi + 1, next);
+    let lastTyped = -1;
+    gap.forEach((t, gi) => { if (isTyped(t)) lastTyped = gi; });
+    let seenTyped = false, time = '', causal = '', nature = '', cause = '';
+    const opWords = [], trailing = [];
+    gap.forEach((t, gi) => {
+      if (isTime(t))        { time = time || t.replace(/M\/H/i, ' M/H'); seenTyped = true; }
+      else if (isCausal(t)) { causal = causal || t; seenTyped = true; }
+      else if (isNature(t)) { nature = nature || t; seenTyped = true; }
+      else if (isCause(t))  { cause = cause || t; seenTyped = true; }
+      else if (isOp(t))     { seenTyped = true; }
+      else if (!seenTyped)  { opWords.push(t); }
+      else if (gi > lastTyped) { trailing.push(t); }
     });
+    const operation = seenTyped ? tidy(opWords.join(' ')) : '';
+    recs.push({ ...emptyEntry(), model: modelBefore(oi), opCode: toks[oi], operation, opTime: time.trim(), causalPart: causal, natureCode: nature, causeCode: cause });
+    // A model trailing the LAST op code (with no op code of its own) shares it.
+    if (k === opIdx.length - 1 && trailing.length) {
+      recs.push({ ...emptyEntry(), model: tidy(trailing.join(' ')), opCode: toks[oi], operation, opTime: time.trim(), causalPart: causal, natureCode: nature, causeCode: cause });
+    }
   }
 
-  return { entries, rawText };
+  // Carry merged values forward to rows that left them blank.
+  let lo = '', lt = '', lc = '', ln = '', lcc = '';
+  for (const r of recs) {
+    if (r.operation)  lo = r.operation;  else r.operation  = lo;
+    if (r.opTime)     lt = r.opTime;     else r.opTime     = lt;
+    if (r.causalPart) lc = r.causalPart; else r.causalPart = lc;
+    if (r.natureCode) ln = r.natureCode; else r.natureCode = ln;
+    if (r.causeCode)  lcc = r.causeCode; else r.causeCode  = lcc;
+  }
+
+  // If more than one model, build a "Model" question so the lookup asks which
+  // model before showing the op code.
+  const distinctModels = Array.from(new Set(recs.map(r => r.model).filter(Boolean)));
+  let questions = [];
+  if (recs.length > 1 && distinctModels.length > 1) {
+    questions = [{ id: 'model', label: 'Model' }];
+    recs.forEach(r => { r.answers = { model: r.model }; });
+  }
+
+  return { entries: recs, questions, rawText };
 }
 
 // ── Guided lookup engine ──────────────────────────────────────────────────────
@@ -200,8 +254,8 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
     setAutoLoading(true);
     try {
       const text = await fetchPdfText(item);
-      const { entries, rawText } = extractWarrantyDraft(text);
-      setResolved({ source: 'auto', opData: { questions: [], entries }, rawText });
+      const { entries, questions, rawText } = extractWarrantyDraft(text);
+      setResolved({ source: 'auto', opData: { questions: questions || [], entries }, rawText });
     } catch {
       setResolved({ source: 'auto', opData: { questions: [], entries: [] }, rawText: '' });
     } finally {
@@ -432,9 +486,10 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
   function setAnswer(id, qid, val) { setEntries(es => es.map(e => e.id === id ? { ...e, answers: { ...e.answers, [qid]: val } } : e)); }
 
   function runAutoDraft() {
-    const { entries: drafted, rawText: raw } = extractWarrantyDraft(item.searchText || '');
+    const { entries: drafted, questions: q, rawText: raw } = extractWarrantyDraft(item.searchText || '');
     setRawText(raw);
-    if (drafted.length) setEntries(drafted);
+    if (q && q.length) setQuestions(q.map(x => ({ ...x })));
+    if (drafted.length) setEntries(drafted.map(e => ({ ...e, answers: { ...(e.answers || {}) } })));
   }
 
   async function save() {
