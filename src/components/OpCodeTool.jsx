@@ -114,10 +114,11 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   const q = query.trim().toLowerCase();
   const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const nq = norm(query);
+  // Nothing is listed until the user actually searches.
   const matches = q
     ? searchable.filter(it =>
         norm(it.label).includes(nq) || norm(it.tags).includes(nq) || norm(it.filename).includes(nq))
-    : searchable;
+    : [];
 
   function pick(item) { setSelected(item); setAnswers({}); }
   function reset() { setSelected(null); setAnswers({}); }
@@ -154,7 +155,7 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
               style={input}
             />
             <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {matches.length === 0 ? (
+              {!q ? null : matches.length === 0 ? (
                 <div style={{ color: '#64748b', fontSize: 13, padding: '12px 4px' }}>
                   {searchable.length === 0
                     ? 'No bulletins have op codes set up yet. A manager can add them with the "⚙️ Op Codes" button on a bulletin.'
