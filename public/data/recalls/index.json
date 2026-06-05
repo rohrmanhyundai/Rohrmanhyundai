@@ -661,9 +661,9 @@
         {
           "id": "mq0emd954wq5",
           "answers": {
-            "model": "M 73 Z Z 3 Santa Fe Sport (AN)"
+            "model": "M 73 Santa Fe Sport (AN)"
           },
-          "model": "M 73 Z Z 3 Santa Fe Sport (AN)",
+          "model": "Santa Fe Sport (AN)",
           "opCode": "50D115R1",
           "operation": "Theta II EC U Software Update + Emissions Label Application",
           "opTime": "0.4 M/H",
@@ -674,9 +674,9 @@
         {
           "id": "mq0emd95anm6",
           "answers": {
-            "model": "5 5 Santa Fe (TMA)"
+            "model": "Santa Fe (TMA)"
           },
-          "model": "5 5 Santa Fe (TMA)",
+          "model": "Santa Fe (TMA)",
           "opCode": "50D115R2",
           "operation": "Theta II EC U Software Update + Emissions Label Application",
           "opTime": "0.4 M/H",
