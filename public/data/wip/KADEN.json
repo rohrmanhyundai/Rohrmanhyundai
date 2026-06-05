@@ -20,8 +20,8 @@
     "jobDesc": "CHECK ENGINE LIGHT",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/05/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "WARRANTY INGNITION COIL REPLACEMENT. WAITING ON PARTS. COIL WILL BE HERE 6/3"
