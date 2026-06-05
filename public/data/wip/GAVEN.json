@@ -33,8 +33,8 @@
     "jobDesc": "EV POWERTRAIN ISSUE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/05/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "WILL NEED TO DO MORE BATTERY TESTING. DIAG IS GOOD WAITING ON RECALL PARTS "
