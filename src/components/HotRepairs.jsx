@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
-import { OpCodeGenerator, OpCodeEditor } from './OpCodeTool';
+import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher } from './OpCodeTool';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -276,6 +276,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [reindexing, setReindexing]   = useState(false);
   const [reindexStatus, setReindexStatus] = useState('');
   const [showOpGen, setShowOpGen]     = useState(false);
+  const [showOpEditSearch, setShowOpEditSearch] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
   const [label, setLabel]             = useState('');
   const [file, setFile]               = useState(null);
@@ -606,12 +607,18 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         ))}
       </div>
 
-      {/* Op Code Generator launcher */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 24px 0' }}>
+      {/* Op Code Generator / Editor launchers */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 10, padding: '12px 24px 0', flexWrap: 'wrap' }}>
         <button onClick={() => setShowOpGen(true)}
           style={{ background: 'linear-gradient(135deg,rgba(96,165,250,.25),rgba(59,130,246,.18))', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
           ⚙️ Op Code Generator
         </button>
+        {canManage && (
+          <button onClick={() => setShowOpEditSearch(true)}
+            style={{ background: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', border: '1px solid rgba(167,139,250,.5)', color: '#c4b5fd', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+            ⚙️ Op Code Editor
+          </button>
+        )}
       </div>
 
       {/* Search bar */}
@@ -879,6 +886,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           kind={tab}
           onSaved={(newItems) => setItems(newItems)}
           onClose={() => setOpEditItem(null)}
+        />
+      )}
+      {showOpEditSearch && (
+        <OpCodeEditorLauncher
+          items={items}
+          kind={tab}
+          kindLabel={isRecalls ? 'recall' : 'TSB'}
+          onSaved={(newItems) => setItems(newItems)}
+          onClose={() => setShowOpEditSearch(false)}
         />
       )}
     </div>
