@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-06-05T11:30:57.272Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-06-05T11:30:48.221Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-06-05T11:30:48.217Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-06-05T11:30:27.990Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-06-04T19:08:07.123Z",
     "type": "page",
     "label": "aftermarket-warranty"
