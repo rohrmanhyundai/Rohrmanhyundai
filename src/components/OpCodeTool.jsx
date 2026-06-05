@@ -107,27 +107,26 @@ export function extractWarrantyDraft(fullText) {
   }
 
   // Many PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "50D00 5 R0",
-  // "0. 9 M/H"). Repair the two that break row matching:
-  //  1) op times — collapse spaces around the decimal and the M/H.
-  //  2) op codes — Hyundai op codes are 8 alphanumeric chars that start with two
-  //     digits and contain at least one letter (e.g. 50D116R0, 954A0F02). Rebuild
-  //     any 8-char run that got split by stray spaces, wherever the spaces fell.
-  body = body.replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H');
-  body = body.replace(/\b\d(?:\s*[A-Z0-9]){7}/g, run => {
-    if (!/\s/.test(run)) return run;                         // already contiguous — leave it
-    // Only rebuild if it was genuinely split (a stray space leaves a 1–2 char
-    // fragment). Two normal-length tokens (e.g. causal "18FA0" + nature "Q55")
-    // must NOT be merged.
-    if (!run.split(/\s+/).some(f => f.length <= 2)) return run;
-    const compact = run.replace(/\s+/g, '');
-    return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? compact : run;
-  });
-
-  // Normalize causal-part dashes ("940C3 – P9060" → "940C3-P9060") and join op
-  // times ("0.6 M/H" → "0.6M/H") so each becomes a single token.
+  // "60DV 03I0", "0. 9 M/H"). Repair them so each column is one solid token.
+  // ORDER MATTERS: collapse op times and causal parts FIRST (so a causal suffix
+  // like "18FA0" gets absorbed into "44000-18FA0"), THEN rebuild op codes. That
+  // way the op-code rebuild can't accidentally glue two real fields together.
   body = body
-    .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')
-    .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');
+    .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                    // "0. 9 M/H" → "0.9 M/H"
+    .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')             // "940C3 – P9060" → "940C3-P9060"
+    .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');                        // "0.6 M/H" → "0.6M/H"
+
+  // Op codes are 8 alphanumeric chars starting with two digits and containing at
+  // least one letter (50D116R0, 954A0F02, 60DV03I0). Rebuild any that got split
+  // by stray spaces — wherever the spaces fell, including clean 4+4 splits. The
+  // leading "(^|[^-A-Za-z0-9])" guard (instead of a lookbehind, for older-browser
+  // safety) stops a rebuild from STARTING in the middle of a hyphenated causal
+  // part — e.g. it must not pull "18FA0" out of "44000-18FA0" and glue on "Q55".
+  body = body.replace(/(^|[^-A-Za-z0-9])(\d(?:\s*[A-Z0-9]){7})/g, (full, pre, run) => {
+    if (!/\s/.test(run)) return full;                        // already contiguous — leave it
+    const compact = run.replace(/\s+/g, '');
+    return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? pre + compact : full;
+  });
 
   // ── Table parser ─────────────────────────────────────────────────────────────
   // Warranty tables list one op code per model, with Operation / Op Time / Causal
@@ -582,6 +581,7 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
   const [excluded, setExcluded] = useState(!!item.opExcluded);
   const [rawText, setRawText] = useState('');
   const [saving, setSaving] = useState(false);
+  const [drafting, setDrafting] = useState(false);
   const [error, setError] = useState('');
 
   function addQuestion() { setQuestions(qs => [...qs, { id: uid(), label: '' }]); }
@@ -596,11 +596,19 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
   function setField(id, key, val) { setEntries(es => es.map(e => e.id === id ? { ...e, [key]: val } : e)); }
   function setAnswer(id, qid, val) { setEntries(es => es.map(e => e.id === id ? { ...e, answers: { ...e.answers, [qid]: val } } : e)); }
 
-  function runAutoDraft() {
-    const { entries: drafted, questions: q, rawText: raw } = extractWarrantyDraft(item.searchText || '');
-    setRawText(raw);
-    if (q && q.length) setQuestions(q.map(x => ({ ...x })));
-    if (drafted.length) setEntries(drafted.map(e => ({ ...e, answers: { ...(e.answers || {}) } })));
+  async function runAutoDraft() {
+    setDrafting(true);
+    try {
+      // Use stored text if present, otherwise read the PDF live (same as the
+      // generator) so un-indexed bulletins still draft.
+      const text = await fetchPdfText(item);
+      const { entries: drafted, questions: q, rawText: raw } = extractWarrantyDraft(text);
+      setRawText(raw);
+      if (q && q.length) setQuestions(q.map(x => ({ ...x })));
+      if (drafted.length) setEntries(drafted.map(e => ({ ...e, answers: { ...(e.answers || {}) } })));
+    } finally {
+      setDrafting(false);
+    }
   }
 
   async function save() {
@@ -636,7 +644,7 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
         </div>
 
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
-          <button onClick={runAutoDraft} style={draftBtn}>✨ Auto-draft from PDF text</button>
+          <button onClick={runAutoDraft} disabled={drafting} style={{ ...draftBtn, opacity: drafting ? 0.6 : 1 }}>{drafting ? '⏳ Reading PDF…' : '✨ Auto-draft from PDF text'}</button>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#cbd5e1', cursor: 'pointer' }}>
             <input type="checkbox" checked={excluded} onChange={e => setExcluded(e.target.checked)} />
             Exclude this bulletin from the Op Code search
