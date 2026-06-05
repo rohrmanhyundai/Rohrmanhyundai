@@ -350,13 +350,30 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setSearching(true);
     setSearchResults(null);
     try {
-      // Search all tech WIP lists
+      // Search EVERY WIP file on disk — not just the live technician roster — so
+      // ROs owned by a renamed/reassigned/off-roster tech are still found. This
+      // is the same authoritative scan set the direct-open navigation uses.
+      let owners = [];
+      try { owners = await listWipTechs(); } catch { owners = []; }
+      const seenTech = new Set();
+      const scanSet = [];
+      for (const t of [...owners, ...(techList || [])]) {
+        const name = String(t || '').trim();
+        if (!name) continue;
+        const key = name.toUpperCase();
+        if (seenTech.has(key)) continue;
+        seenTech.add(key);
+        scanSet.push(name);
+      }
+
       const wipResults = await Promise.all(
-        techList.map(async tech => {
-          const data = await loadWipData(tech);
-          return data
-            .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
-            .map(r => ({ ...r, techName: tech, _source: 'wip' }));
+        scanSet.map(async tech => {
+          try {
+            const data = await loadWipData(tech);
+            return (data || [])
+              .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+              .map(r => ({ ...r, techName: tech, _source: 'wip' }));
+          } catch { return []; }
         })
       );
       // Also search Cars Awaiting
@@ -903,7 +920,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               return (
               <div
                 key={r.id + idx}
-                onClick={() => { if (!isAwaiting) setActiveTech(r.techName); clearSearch(); }}
+                onClick={() => { if (!isAwaiting) setActiveTech(r.techName); setHighlightRO(r.ro || ''); clearSearch(); }}
                 style={{ background: isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)', border: `1px solid ${isAwaiting ? 'rgba(251,191,36,.3)' : 'rgba(61,214,195,.25)'}`, borderRadius: 14, padding: '14px 18px', marginBottom: 10, cursor: 'pointer', transition: 'background .15s, border-color .15s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.15)' : 'rgba(61,214,195,.15)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)'; }}
@@ -946,7 +963,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
             )}
 
             {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => {
-              const isHighlighted = highlightRO && (row.ro || '').trim().toLowerCase() === highlightRO.trim().toLowerCase();
+              const isHighlighted = !!highlightRO && (row.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
               return (
               <div key={row.id} ref={isHighlighted ? highlightedRowRef : null} style={{
                 background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)'),
@@ -1133,7 +1150,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   // 3. Newest date first
                   return new Date(b.roDate || 0) - new Date(a.roDate || 0);
                 }).map(aw => {
-                const isHighlighted = highlightRO && (aw.ro || '').trim().toLowerCase() === highlightRO.trim().toLowerCase();
+                const isHighlighted = !!highlightRO && (aw.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
                 return (
                 <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)'), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)')}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
 
