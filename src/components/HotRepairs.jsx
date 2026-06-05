@@ -367,7 +367,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       setFile(null); e.target.value = ''; return;
     }
     setFile(f);
-    if (!label) setLabel(f.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' '));
+    if (!label) setLabel(f.name.replace(/\.[^.]+$/, '').replace(/_/g, ' '));
   }
 
   async function ensureToken() {
