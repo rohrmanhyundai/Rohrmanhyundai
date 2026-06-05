@@ -40,19 +40,6 @@
     "notes": "WILL NEED TO DO MORE BATTERY TESTING. DIAG IS GOOD WAITING ON RECALL PARTS "
   },
   {
-    "id": "mpyi4470a6l",
-    "ro": "778097",
-    "roDate": "2026-06-03",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON AND FLASHING",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "ECM UPDATE. ASR'S "
-  },
-  {
     "id": "mpzni24syp2",
     "ro": "778103",
     "roDate": "2026-06-04",
