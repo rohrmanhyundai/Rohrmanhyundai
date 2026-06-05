@@ -106,6 +106,12 @@ export function extractWarrantyDraft(fullText) {
     body = section.replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
   }
 
+  // Some PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "0. 9 M/H").
+  // Repair the two that break row matching: op times and op-code-shaped tokens.
+  body = body
+    .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                               // "0. 9 M/H" → "0.9 M/H"
+    .replace(/\b(\d)\s*(\d)\s*([A-Z][A-Z]?)\s*(\d{2,3})\s*([A-Z])\s*(\d)\b/g, '$1$2$3$4$5$6'); // "5 0 D116 R 3" → "50D116R3"
+
   // A complete warranty row, in column order. Op code = 6–10 char alnum with at
   // least one letter and one digit, no dash. Causal part may use a hyphen or an
   // en/em dash, with or without surrounding spaces (e.g. "26345-3LAA1" or
