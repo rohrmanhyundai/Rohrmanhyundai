@@ -434,7 +434,11 @@ export async function loadHotRepairs(kind = 'hot-repairs') {
   } catch { return []; }
 }
 
-export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-repairs') {
+// Cap stored per-PDF search text so the index.json stays a reasonable size.
+// A long TSB extracts to ~10KB of text; 200KB is a generous ceiling.
+const MAX_SEARCH_TEXT = 200000;
+
+export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-repairs', searchText = '') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
@@ -461,9 +465,34 @@ export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-rep
     size: file.size,
     uploadedBy: uploaderName,
     uploadedAt: new Date().toISOString(),
+    searchText: (searchText || '').slice(0, MAX_SEARCH_TEXT),
   };
   const newIndex = [newEntry, ...currentIndex];
   await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: add ${label}`);
+  return newIndex;
+}
+
+// Backfill/refresh stored full-text for search. `textById` is a map of
+// { itemId: extractedText }. Writes the whole index in ONE commit so re-indexing
+// the library doesn't spam dozens of commits. Only entries present in the map
+// are updated; everything else is left untouched.
+export async function backfillHotRepairSearchText(textById, kind = 'hot-repairs') {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
+  let changed = 0;
+  const newIndex = currentIndex.map(d => {
+    if (textById[d.id] != null) {
+      changed++;
+      return { ...d, searchText: String(textById[d.id] || '').slice(0, MAX_SEARCH_TEXT) };
+    }
+    return d;
+  });
+  if (changed > 0) {
+    await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: index ${changed} PDF(s) for search`);
+  }
   return newIndex;
 }
 
