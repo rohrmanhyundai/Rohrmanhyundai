@@ -577,14 +577,14 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <button className="secondary" onClick={onBack}>{backLabel || '← Back'}</button>
-          <span className="doc-lib-topbar-title">{isRecalls ? '📢 Recalls' : '🔧 Hot Repairs — New Releases'}</span>
+          <span className="doc-lib-topbar-title">{isRecalls ? '📢 Recalls' : "🔧 TSB'S — New Releases"}</span>
         </div>
       </div>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, padding: '14px 24px 0', justifyContent: 'center' }}>
         {[
-          { key: 'hot-repairs', label: '🔧 Hot Repairs' },
+          { key: 'hot-repairs', label: "🔧 TSB'S" },
           { key: 'recalls',     label: '📢 Recalls' },
         ].map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
@@ -682,7 +682,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         {/* List */}
         <div className="doc-lib-list-section">
           <div className="doc-lib-panel-title">
-            {isRecalls ? 'Recalls' : 'Hot Repairs'}{!loading && <span className="doc-lib-count"> ({search.trim() ? `${filteredItems.length} of ${items.length}` : items.length})</span>}
+            {isRecalls ? 'Recalls' : "TSB'S"}{!loading && <span className="doc-lib-count"> ({search.trim() ? `${filteredItems.length} of ${items.length}` : items.length})</span>}
           </div>
 
           {loading ? (
