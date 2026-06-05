@@ -278,6 +278,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [showOpGen, setShowOpGen]     = useState(false);
   const [showOpEditSearch, setShowOpEditSearch] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
+  const [visibleCount, setVisibleCount] = useState(20);
+  const loadMoreRef = useRef(null);
   const [label, setLabel]             = useState('');
   const [file, setFile]               = useState(null);
   const [fileError, setFileError]     = useState('');
@@ -332,6 +334,23 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     .sort((a, b) => (b.warranty ? 1 : 0) - (a.warranty ? 1 : 0));
   // eslint-disable-next-line no-unused-expressions
   textVer; // referenced so filtering recomputes as extraction completes
+
+  // ── Lazy paging: render 20 cards at a time, load 20 more on scroll. Keeps the
+  // initial render of large libraries (recalls especially) fast. ──────────────
+  const PAGE = 20;
+  const visibleItems = filteredItems.slice(0, visibleCount);
+  // Reset the window whenever the tab or search changes.
+  useEffect(() => { setVisibleCount(PAGE); }, [tab, search]);
+  // Auto-extend when the sentinel scrolls into view.
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) setVisibleCount(c => Math.min(c + PAGE, filteredItems.length));
+    }, { rootMargin: '600px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [filteredItems.length, visibleCount]);
 
   function runSearchOpen() {
     const matches = rankedMatches(items, search);
@@ -721,7 +740,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
-              {filteredItems.map((item) => {
+              {visibleItems.map((item) => {
                 const idx = items.indexOf(item);
                 return (
                 <div key={item.id} style={{
@@ -863,6 +882,20 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                 </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Lazy-load sentinel + count */}
+          {visibleCount < filteredItems.length && (
+            <div ref={loadMoreRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '24px 0' }}>
+              <div style={{ color: '#64748b', fontSize: 12 }}>
+                Showing {visibleItems.length} of {filteredItems.length}
+              </div>
+              <button
+                onClick={() => setVisibleCount(c => Math.min(c + PAGE, filteredItems.length))}
+                style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.35)', color: '#6ee7f9', borderRadius: 8, padding: '8px 18px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                Load more
+              </button>
             </div>
           )}
 
