@@ -161,10 +161,14 @@ export function extractWarrantyDraft(fullText) {
   const opIdx = [];
   toks.forEach((t, i) => { if (isOp(t)) opIdx.push(i); });
 
+  // Global indices of tokens absorbed into a causal-part suffix (e.g. the "NN B"
+  // in "88085-DO000 NN B" → "88085-DO000NNB"). modelBefore must skip these so the
+  // suffix can't leak in as a phantom model on the next row.
+  const consumed = new Set();
   const modelBefore = oi => {
     const w = [];
     let j = oi - 1;
-    while (j >= 0 && !isTyped(toks[j])) { w.unshift(toks[j]); j--; }
+    while (j >= 0 && !isTyped(toks[j]) && !consumed.has(j)) { w.unshift(toks[j]); j--; }
     return tidy(w.join(' '));
   };
 
@@ -177,14 +181,24 @@ export function extractWarrantyDraft(fullText) {
     gap.forEach((t, gi) => { if (isTyped(t)) lastTyped = gi; });
     let seenTyped = false, time = '', causal = '', nature = '', cause = '';
     const opWords = [], trailing = [];
-    gap.forEach((t, gi) => {
+    for (let gi = 0; gi < gap.length; gi++) {
+      const t = gap[gi];
       if (isTime(t))        { time = time || t.replace(/M\/H/i, ' M/H'); seenTyped = true; }
-      else if (isCausal(t)) { causal = causal || t; seenTyped = true; }
+      else if (isCausal(t)) {
+        if (!causal) {
+          causal = t;
+          // Absorb a fragmented pure-letter suffix ("DO000 NN B" → "DO000NNB").
+          while (gi + 1 < gap.length && /^[A-Z]{1,4}$/.test(gap[gi + 1]) && !isCause(gap[gi + 1])) {
+            causal += gap[gi + 1]; consumed.add(oi + 1 + gi + 1); gi++;
+          }
+        }
+        seenTyped = true;
+      }
       else if (isCause(t))  { cause = cause || t; seenTyped = true; const prev = gap[gi - 1]; if (prev && looksNature(prev)) nature = nature || prev; }
       else if (isOp(t))     { seenTyped = true; }
       else if (!seenTyped)  { opWords.push(t); }
       else if (gi > lastTyped) { trailing.push(t); }
-    });
+    }
     const operation = seenTyped ? tidy(opWords.join(' ')) : '';
     recs.push({ ...emptyEntry(), model: modelBefore(oi), opCode: toks[oi], operation, opTime: time.trim(), causalPart: causal, natureCode: nature, causeCode: cause });
     // A model trailing the LAST op code (with no op code of its own) shares it.
