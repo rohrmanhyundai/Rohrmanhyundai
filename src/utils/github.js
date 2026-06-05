@@ -551,6 +551,25 @@ export async function setHotRepairOpData(id, { opData, opExcluded } = {}, kind =
   return newIndex;
 }
 
+// Move a bulletin between kinds (e.g. 'recalls' → 'hot-repairs'). The PDF lives
+// in shared S3 storage, so only the index entries change. Returns the updated
+// SOURCE index (what the current tab should now show).
+export async function moveHotRepair(item, fromKind, toKind) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const fromIndex = await loadHotRepairs(fromKind);
+  const victim = fromIndex.find(d => d.id === item.id) || item;
+  const newFrom = fromIndex.filter(d => d.id !== item.id);
+  const toIndex = await loadHotRepairs(toKind);
+  const newTo = [victim, ...toIndex.filter(d => d.id !== item.id)];
+  // Save the destination FIRST so a partial failure leaves a recoverable
+  // duplicate rather than losing the bulletin entirely.
+  await saveGitHubFile(headers, bulletinIndexPath(toKind), newTo, `${BULLETIN_KINDS[toKind]}: move in ${victim.label}`);
+  await saveGitHubFile(headers, bulletinIndexPath(fromKind), newFrom, `${BULLETIN_KINDS[fromKind]}: move out ${victim.label}`);
+  return newFrom;
+}
+
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
 export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
