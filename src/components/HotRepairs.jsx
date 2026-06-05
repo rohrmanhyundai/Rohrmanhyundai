@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
-import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher } from './OpCodeTool';
+import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal } from './OpCodeTool';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -278,6 +278,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [showOpGen, setShowOpGen]     = useState(false);
   const [showOpEditSearch, setShowOpEditSearch] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
+  const [digDocItem, setDigDocItem]   = useState(null);
   const [visibleCount, setVisibleCount] = useState(20);
   const loadMoreRef = useRef(null);
   const [label, setLabel]             = useState('');
@@ -844,6 +845,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : '⚙️ Add Op Codes'}
                       </button>
                     )}
+                    {canManage && editId !== item.id && tagsId !== item.id && (
+                      <button onClick={() => setDigDocItem(item)} title="View the photo / digital documentation requirements"
+                        style={{
+                          background: 'rgba(251,146,60,.12)', border: '1px solid rgba(251,146,60,.45)', color: '#fb923c',
+                          borderRadius: 8, padding: '7px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
+                        }}>
+                        📸 Digital Documentation
+                      </button>
+                    )}
                     {canManage && editId !== item.id && tagsId !== item.id && !search.trim() && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
@@ -929,6 +939,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           onSaved={(newItems) => setItems(newItems)}
           onClose={() => setShowOpEditSearch(false)}
         />
+      )}
+      {digDocItem && (
+        <DigitalDocModal item={digDocItem} onClose={() => setDigDocItem(null)} />
       )}
     </div>
   );
