@@ -384,6 +384,10 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
           <button onClick={onClose} style={xBtn}>✕</button>
         </div>
 
+        <div style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.5)', borderRadius: 8, padding: '8px 14px', marginBottom: 14, color: '#fca5a5', fontWeight: 800, fontSize: 13, textAlign: 'center', letterSpacing: 0.3 }}>
+          ⚠️ ALWAYS VIEW BULLETIN FOR PROPER INSTRUCTIONS
+        </div>
+
         {!selected ? (
           <>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
@@ -416,9 +420,10 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
           </>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
               <button onClick={reset} style={secBtn}>← Back</button>
-              <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{selected.label}</span>
+              <span style={{ fontWeight: 800, color: '#e2e8f0', flex: 1 }}>{selected.label}</span>
+              <button onClick={() => window.open(docRawUrl(selected.filename), '_blank')} style={viewBulletinBtn}>📄 View Bulletin</button>
             </div>
 
             {resolved?.source === 'auto' && (resolved.opData.entries || []).length > 0 && (
@@ -715,6 +720,7 @@ const copyBtn = { background: 'linear-gradient(135deg,#22c55e,#4ade80)', border:
 const secBtn = { background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.14)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' };
 const draftBtn = { background: 'rgba(167,139,250,.18)', border: '1px solid rgba(167,139,250,.5)', color: '#c4b5fd', borderRadius: 8, padding: '8px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
 const digDocBtn = { background: 'rgba(251,146,60,.18)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '9px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
+const viewBulletinBtn = { background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' };
 const xBtn = { background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 };
 const delBtn = { background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 6, padding: '4px 8px', fontSize: 12, cursor: 'pointer' };
 const th = { textAlign: 'left', color: '#94a3b8', fontWeight: 700, padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,.12)', whiteSpace: 'nowrap' };
