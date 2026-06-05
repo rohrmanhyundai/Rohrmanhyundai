@@ -1,5 +1,48 @@
 import React, { useMemo, useState } from 'react';
-import { setHotRepairOpData } from '../utils/github';
+import { setHotRepairOpData, docRawUrl } from '../utils/github';
+
+// ── PDF.js (CDN, shared singleton) ────────────────────────────────────────────
+let pdfjsPromise = null;
+function loadPdfJs() {
+  if (pdfjsPromise) return pdfjsPromise;
+  pdfjsPromise = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('Failed to load PDF.js'));
+    document.head.appendChild(script);
+  });
+  return pdfjsPromise;
+}
+
+const pdfTextCache = {};
+async function fetchPdfText(item) {
+  if (item.searchText) return item.searchText;
+  if (pdfTextCache[item.id] != null) return pdfTextCache[item.id];
+  try {
+    const pdfjs = await loadPdfJs();
+    const res = await fetch(docRawUrl(item.filename));
+    const buf = await res.arrayBuffer();
+    const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+    let text = '';
+    const maxPages = Math.min(pdf.numPages, 15);
+    for (let p = 1; p <= maxPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      text += ' ' + content.items.map(i => i.str).join(' ');
+    }
+    pdfTextCache[item.id] = text;
+    return text;
+  } catch {
+    pdfTextCache[item.id] = '';
+    return '';
+  }
+}
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -31,10 +74,13 @@ function emptyEntry() {
   return { id: uid(), answers: {}, model: '', opCode: '', operation: '', opTime: '', causalPart: '', natureCode: '', causeCode: '' };
 }
 
-// ── Auto-draft: best-effort parse of the bulletin's Warranty Information ───────
-// These tables are irregular, so this only pre-fills what it can confidently
-// detect (op codes, op times, causal parts) and hands the manager a draft plus
-// the raw section text to finish from. NOT authoritative — manager confirms.
+// ── Auto-read the bulletin's Warranty Information table ────────────────────────
+// Best-effort, since these tables are irregular. It captures complete warranty
+// rows (Model · Op Code · Operation · Op Time · Causal Part · Nature · Cause)
+// where all columns sit together, which covers the common single-row and most
+// per-model tables. Anything it can't fully resolve is left for the manager to
+// finish in the editor (the raw section text is returned for reference).
+// NOT authoritative — always verify against the bulletin before submitting.
 export function extractWarrantyDraft(fullText) {
   const text = (fullText || '').replace(/\s+/g, ' ').trim();
   if (!text) return { entries: [], rawText: '' };
@@ -45,39 +91,36 @@ export function extractWarrantyDraft(fullText) {
   let section = text;
   if (m) {
     section = text.slice(m.index);
-    const endRe = /\bNOTE\s*1\b/i;
+    const endRe = /\bNOTE\s*1\b|\bService\s+Procedure\b/i;
     const e = endRe.exec(section);
     if (e && e.index > 40) section = section.slice(0, e.index);
   }
   const rawText = section.slice(0, 4000);
 
-  // Op codes: 6–10 char alphanumeric tokens containing BOTH letters and digits,
-  // no dash (causal parts contain a dash). e.g. 60D089R1, 954A0F02, 10D223IA.
-  const codeRe = /\b(?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10}\b/g;
-  // Causal parts: like 26345-3LAA1 or 954A1-2N250.
-  const partRe = /\b[0-9A-Z]{4,6}-[0-9A-Z]{4,7}\b/g;
-  const timeRe = /\b\d+\.\d+\s*M\/H\b/gi;
-  const ncRe   = /\b[A-Z][0-9]{2}\b/g;   // Nature code e.g. B31, S21
-  const ccRe   = /\bZZ[0-9]\b/g;          // Cause code e.g. ZZ4, ZZ3
+  // Drop the column-header row so it isn't mistaken for data.
+  let body = section
+    .replace(/warranty\s+information\s*:?/i, ' ')
+    .replace(/Model\s+Op\.?\s*Code\s+Operation\s+Op\.?\s*Time\s+Causal\s+Part\s+Nature\s+Code\s+Cause\s+Code/i, ' ')
+    .replace(/\s+/g, ' ').trim();
 
-  const codes = Array.from(new Set((section.match(codeRe) || []).filter(c => !/M\/H/i.test(c))));
-  const parts = section.match(partRe) || [];
-  const times = section.match(timeRe) || [];
-  const ncs   = section.match(ncRe) || [];
-  const ccs   = section.match(ccRe) || [];
+  // A complete warranty row, in column order. Op code = 6–10 char alnum with at
+  // least one letter and one digit, no dash. Causal part contains a dash.
+  const rowRe = /([A-Za-z][\w().,/&\-' ]{1,55}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([A-Za-z][\w().,/&\-+' ]{2,90}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{4,6}-[0-9A-Z]{3,7})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
 
-  // Remove any "codes" that are actually causal parts split oddly — keep distinct.
-  const partSet = new Set(parts.map(p => p.replace('-', '')));
-  const opCodes = codes.filter(c => !partSet.has(c));
-
-  const entries = (opCodes.length ? opCodes : ['']).map((code, i) => ({
-    ...emptyEntry(),
-    opCode: code,
-    opTime: times[i] || times[0] || '',
-    causalPart: parts[i] || '',
-    natureCode: ncs[i] || ncs[0] || '',
-    causeCode: ccs[i] || ccs[0] || '',
-  }));
+  const entries = [];
+  let m2;
+  while ((m2 = rowRe.exec(body)) !== null) {
+    entries.push({
+      ...emptyEntry(),
+      model: m2[1].trim(),
+      opCode: m2[2].trim(),
+      operation: m2[3].trim(),
+      opTime: m2[4].replace(/\s+/g, ' ').trim(),
+      causalPart: m2[5].trim(),
+      natureCode: m2[6].trim(),
+      causeCode: m2[7].trim(),
+    });
+  }
 
   return { entries, rawText };
 }
@@ -105,10 +148,14 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState({});
   const [copiedKey, setCopiedKey] = useState(null);
+  // Resolved op data for the selected bulletin: { source:'manual'|'auto', opData, rawText }.
+  const [resolved, setResolved] = useState(null);
+  const [autoLoading, setAutoLoading] = useState(false);
 
-  // Only bulletins that have op-code data and aren't excluded.
+  // Any bulletin that isn't excluded is searchable — if it has no manual op data
+  // we read it straight from the PDF on the fly.
   const searchable = useMemo(
-    () => (items || []).filter(it => !it.opExcluded && it.opData && (it.opData.entries || []).length > 0),
+    () => (items || []).filter(it => !it.opExcluded),
     [items]
   );
   const q = query.trim().toLowerCase();
@@ -120,8 +167,25 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
         norm(it.label).includes(nq) || norm(it.tags).includes(nq) || norm(it.filename).includes(nq))
     : [];
 
-  function pick(item) { setSelected(item); setAnswers({}); }
-  function reset() { setSelected(null); setAnswers({}); }
+  async function pick(item) {
+    setSelected(item); setAnswers({}); setResolved(null);
+    if (item.opData && (item.opData.entries || []).length > 0) {
+      setResolved({ source: 'manual', opData: item.opData, rawText: '' });
+      return;
+    }
+    // No manual data — auto-read the warranty table from the PDF text.
+    setAutoLoading(true);
+    try {
+      const text = await fetchPdfText(item);
+      const { entries, rawText } = extractWarrantyDraft(text);
+      setResolved({ source: 'auto', opData: { questions: [], entries }, rawText });
+    } catch {
+      setResolved({ source: 'auto', opData: { questions: [], entries: [] }, rawText: '' });
+    } finally {
+      setAutoLoading(false);
+    }
+  }
+  function reset() { setSelected(null); setAnswers({}); setResolved(null); }
 
   function copyLine(entry, key) {
     const line = formatOpLine(entry);
@@ -134,7 +198,7 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
     }
   }
 
-  const step = selected ? resolveStep(selected.opData.questions || [], selected.opData.entries || [], answers) : null;
+  const step = resolved ? resolveStep(resolved.opData.questions || [], resolved.opData.entries || [], answers) : null;
 
   return (
     <div onClick={onClose} style={overlay}>
@@ -165,7 +229,9 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
                 <button key={it.id} onClick={() => pick(it)} style={rowBtn}>
                   <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{it.label}</span>
                   {it.tags && <span style={{ fontSize: 11, color: '#6ee7f9', marginLeft: 8 }}>{it.tags}</span>}
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>{(it.opData.entries || []).length} op code(s) →</span>
+                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>
+                    {(it.opData && (it.opData.entries || []).length) ? `${it.opData.entries.length} op code(s) →` : 'look up →'}
+                  </span>
                 </button>
               ))}
             </div>
@@ -177,7 +243,28 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
               <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{selected.label}</span>
             </div>
 
-            {!step.done ? (
+            {resolved?.source === 'auto' && (resolved.opData.entries || []).length > 0 && (
+              <div style={{ background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.4)', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#fbbf24' }}>
+                ⚠️ Auto-read from the PDF — please verify against the bulletin before submitting a claim.
+              </div>
+            )}
+
+            {autoLoading || !resolved ? (
+              <div style={{ color: '#94a3b8', fontSize: 14, padding: '16px 4px' }}>⏳ Reading the bulletin's warranty table…</div>
+            ) : (resolved.opData.entries || []).length === 0 ? (
+              <div>
+                <div style={{ color: '#fca5a5', fontSize: 14, fontWeight: 700, marginBottom: 8 }}>
+                  Couldn't automatically read an op code from this bulletin.
+                </div>
+                <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 10 }}>
+                  It may be a scanned image, or the table is laid out unusually. A manager can enter it by hand
+                  with the “⚙️ Op Codes” button on the bulletin card.
+                </div>
+                {resolved.rawText && (
+                  <textarea readOnly value={resolved.rawText} style={{ width: '100%', minHeight: 110, background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, color: '#cbd5e1', fontSize: 12, padding: 10, boxSizing: 'border-box' }} />
+                )}
+              </div>
+            ) : !step.done ? (
               <div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: '#fbbf24', marginBottom: 10 }}>
                   {step.question.label}
