@@ -320,6 +320,65 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   );
 }
 
+// ── Op Code Editor Launcher (manager) ─────────────────────────────────────────
+// Search any bulletin and jump straight into its op-code editor.
+export function OpCodeEditorLauncher({ items, kind, kindLabel, onSaved, onClose }) {
+  const [query, setQuery] = useState('');
+  const [picked, setPicked] = useState(null);
+
+  const q = query.trim().toLowerCase();
+  const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const nq = norm(query);
+  const matches = q
+    ? (items || []).filter(it => norm(it.label).includes(nq) || norm(it.tags).includes(nq) || norm(it.filename).includes(nq))
+    : [];
+
+  if (picked) {
+    // Re-resolve the picked item from the latest items so it reflects saves.
+    const fresh = (items || []).find(it => it.id === picked.id) || picked;
+    return (
+      <OpCodeEditor
+        item={fresh}
+        kind={kind}
+        onSaved={onSaved}
+        onClose={() => setPicked(null)}
+      />
+    );
+  }
+
+  return (
+    <div onClick={onClose} style={overlay}>
+      <div onClick={e => e.stopPropagation()} style={{ ...modal, maxWidth: 720 }}>
+        <div style={modalHeader}>
+          <span style={{ fontWeight: 900, fontSize: 18, color: '#bfdbfe' }}>⚙️ Op Code Editor</span>
+          <button onClick={onClose} style={xBtn}>✕</button>
+        </div>
+        <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
+          Search a {kindLabel} to edit its op codes.
+        </div>
+        <input
+          autoFocus value={query} onChange={e => setQuery(e.target.value)}
+          placeholder='Search bulletin number or keyword'
+          style={input}
+        />
+        <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {!q ? null : matches.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13, padding: '12px 4px' }}>No matching bulletins.</div>
+          ) : matches.map(it => (
+            <button key={it.id} onClick={() => setPicked(it)} style={rowBtn}>
+              <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{it.label}</span>
+              {it.tags && <span style={{ fontSize: 11, color: '#6ee7f9', marginLeft: 8 }}>{it.tags}</span>}
+              <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>
+                {(it.opData && (it.opData.entries || []).length) ? `⚙️ ${it.opData.entries.length} op code(s) — edit →` : 'add op codes →'}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Op Code Editor (manager) ──────────────────────────────────────────────────
 export function OpCodeEditor({ item, kind, onSaved, onClose }) {
   const [questions, setQuestions] = useState(item.opData?.questions ? item.opData.questions.map(q => ({ ...q })) : []);
