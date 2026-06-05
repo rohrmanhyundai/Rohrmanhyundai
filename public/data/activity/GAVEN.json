@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-06-05T12:06:23.251Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778106 tech GAVEN"
+  },
+  {
     "at": "2026-06-05T12:05:51.721Z",
     "type": "action",
     "label": "delete-wip-row",
