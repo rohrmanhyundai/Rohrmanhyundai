@@ -500,7 +500,57 @@
     "size": 542597,
     "uploadedBy": "SHAWN",
     "uploadedAt": "2026-06-04T19:01:20.576Z",
-    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   2 5 - 01 - 050 H - 1  DATE   MODEL (S)  OCTOBER   20 2 5   IONIQ 9 (ME1A EV)  SUBJECT:   WALK - IN SWITCH INSPECTION & REPLACEMENT  ( SERVICE CAMPAIGN   TEC )  This TSB supersedes 25 - 01 - 050H to   revise   the   se rvice procedure   with a new inspection method .  Description:   Certain   IONIQ 9 (ME1A EV)   vehicles   may   have   w alk - in switches that   are not fully  secured .   This bulletin provides instructions to inspect and, if necessary, replace the   w alk - in switch .  Applicable Vehicles   (Certain) :  Model Year   Model   Production Dates  2026   IONIQ 9 (ME1A EV)   03/03/2025   –   06/24/2025  Dealers must perform this service campaign on all affected vehicles prior to customer retail delivery  and whenever an affected vehicle is in the shop for any maintenance or repair.  Access the “Vehicle Information” screen via W eb DCS to identify open campaigns.     IMPORTANT  To avoid   any   potential damage to   IONIQ vehicles ,   this service campaign   can only be performed  at IONIQ certified dealers.  NOTICE WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   2   of   4  SUBJECT:  Parts   Information:  Model   Part Name   Part Number   Figure   Remarks  IONIQ 9  (ME1A EV)  Switch Assembl y  –   Walk in ,   RH  88085 - DO000YGN  Verify the  correct part  number   for   the  VIN   in the  parts   catalog  88085 - DO000 NNB  88085 - DO000VKE  Warranty Information:  Model   Op. Code   Operation   Op.  Time   Causal   Part   Nature  Code  C ause  Code  IONIQ 9  (ME1A EV)  50DV24 I 0   Walk - in Switch Assembly  Inspection  0.2  M/H   88085 - DO000 NN B  B31   ZZ4  50DV24 R1  Walk - in Switch Assembly  Inspection &  Replacement  0.3  M/H  88085 - DO000 NNB  50DV24R2   88085 - DO000 YGN  50DV24R 3   88085 - DO000 VKE  NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  N OTE 2:   If a part is found in need of replacement while performing this   campaign   and the affected  part is still under warranty, submit a separate claim using the same repair order. If the affected part is  out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the  work.  NOTE 3:   This TSB includes   r epair validation photos. Op times include VIN,   mileage ,   and   repair  validation photo ( s )   as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center  (WTC) parts return process.   Claim is subject to debit if the part is not returned. WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   3   of   4  SUBJECT:  Service Procedure:  Walk - in Switch   Inspection  1.   Use a plastic trim removal tool to pry off the  w alk - in switch   assembly   from the bottom and  disconnect the connector (A).  2 .   Inspect   both   locking tabs for   cracks (B) ,  damage d / missing tabs   (C) ,   or  deformation   (D) :  •   PASS:   If   any   tabs are   NO T   crack ed ,  missing   pieces ,   damag e d ,   or deform ed ,  r einstall the walk - in switch. Proceed to the  Walk - in Switch   Assembly   I nstallation  procedure .  •   FAIL:   If   the switch   is cracked,   damaged ,  missing pieces, and/or has any deformed  tabs,   proceed to the   Walk - in Switch  Assembly Installation   procedure   to  install a new walk - in switch   assembly .  This TSB includes   r epair validation photos. Refer to the latest Warranty Digital Documentation  Policy for requirements.  DIGITAL DOCUMENTATION  Use a plastic trim removal tool to prevent  damage to parts.  NOTICE  A  B  C  D WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   4   of   4  SUBJECT:  Walk - in Switch   Assembly   I nstallation  1 .   Install the   w alk - in   switch assembly and firmly  pres s   until   both   locking tabs   are engaged .  2 .   P ull on the   w alk - in switch assembly to confirm  the switch   is   securely installed.  3 .  4.   Verify   the switch functions as designed.  5 .   The service procedure is now complete.  Using the STUI camera function, take a  photo of the   installed   walk - in switch   after  pulling on it to confirm it is secure .  Upload the photo to STUI.  NOTE:   If the STUI camera function is  NOT   used, write the last 6 digits of the  VIN and date of repair on a piece of  paper to include in the photo.  DIGITAL  DOCUMENTATION"
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   2 5 - 01 - 050 H - 1  DATE   MODEL (S)  OCTOBER   20 2 5   IONIQ 9 (ME1A EV)  SUBJECT:   WALK - IN SWITCH INSPECTION & REPLACEMENT  ( SERVICE CAMPAIGN   TEC )  This TSB supersedes 25 - 01 - 050H to   revise   the   se rvice procedure   with a new inspection method .  Description:   Certain   IONIQ 9 (ME1A EV)   vehicles   may   have   w alk - in switches that   are not fully  secured .   This bulletin provides instructions to inspect and, if necessary, replace the   w alk - in switch .  Applicable Vehicles   (Certain) :  Model Year   Model   Production Dates  2026   IONIQ 9 (ME1A EV)   03/03/2025   –   06/24/2025  Dealers must perform this service campaign on all affected vehicles prior to customer retail delivery  and whenever an affected vehicle is in the shop for any maintenance or repair.  Access the “Vehicle Information” screen via W eb DCS to identify open campaigns.     IMPORTANT  To avoid   any   potential damage to   IONIQ vehicles ,   this service campaign   can only be performed  at IONIQ certified dealers.  NOTICE WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   2   of   4  SUBJECT:  Parts   Information:  Model   Part Name   Part Number   Figure   Remarks  IONIQ 9  (ME1A EV)  Switch Assembl y  –   Walk in ,   RH  88085 - DO000YGN  Verify the  correct part  number   for   the  VIN   in the  parts   catalog  88085 - DO000 NNB  88085 - DO000VKE  Warranty Information:  Model   Op. Code   Operation   Op.  Time   Causal   Part   Nature  Code  C ause  Code  IONIQ 9  (ME1A EV)  50DV24 I 0   Walk - in Switch Assembly  Inspection  0.2  M/H   88085 - DO000 NN B  B31   ZZ4  50DV24 R1  Walk - in Switch Assembly  Inspection &  Replacement  0.3  M/H  88085 - DO000 NNB  50DV24R2   88085 - DO000 YGN  50DV24R 3   88085 - DO000 VKE  NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  N OTE 2:   If a part is found in need of replacement while performing this   campaign   and the affected  part is still under warranty, submit a separate claim using the same repair order. If the affected part is  out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the  work.  NOTE 3:   This TSB includes   r epair validation photos. Op times include VIN,   mileage ,   and   repair  validation photo ( s )   as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center  (WTC) parts return process.   Claim is subject to debit if the part is not returned. WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   3   of   4  SUBJECT:  Service Procedure:  Walk - in Switch   Inspection  1.   Use a plastic trim removal tool to pry off the  w alk - in switch   assembly   from the bottom and  disconnect the connector (A).  2 .   Inspect   both   locking tabs for   cracks (B) ,  damage d / missing tabs   (C) ,   or  deformation   (D) :  •   PASS:   If   any   tabs are   NO T   crack ed ,  missing   pieces ,   damag e d ,   or deform ed ,  r einstall the walk - in switch. Proceed to the  Walk - in Switch   Assembly   I nstallation  procedure .  •   FAIL:   If   the switch   is cracked,   damaged ,  missing pieces, and/or has any deformed  tabs,   proceed to the   Walk - in Switch  Assembly Installation   procedure   to  install a new walk - in switch   assembly .  This TSB includes   r epair validation photos. Refer to the latest Warranty Digital Documentation  Policy for requirements.  DIGITAL DOCUMENTATION  Use a plastic trim removal tool to prevent  damage to parts.  NOTICE  A  B  C  D WALK - IN SWITCH INSPECTION & REPLACEMENT (SERVICE CAMPAIGN   TEC )  TSB #:   2 5 - 01 - 050 H - 1   Page   4   of   4  SUBJECT:  Walk - in Switch   Assembly   I nstallation  1 .   Install the   w alk - in   switch assembly and firmly  pres s   until   both   locking tabs   are engaged .  2 .   P ull on the   w alk - in switch assembly to confirm  the switch   is   securely installed.  3 .  4.   Verify   the switch functions as designed.  5 .   The service procedure is now complete.  Using the STUI camera function, take a  photo of the   installed   walk - in switch   after  pulling on it to confirm it is secure .  Upload the photo to STUI.  NOTE:   If the STUI camera function is  NOT   used, write the last 6 digits of the  VIN and date of repair on a piece of  paper to include in the photo.  DIGITAL  DOCUMENTATION",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mq0htpa27msl",
+          "answers": {},
+          "model": "IONIQ 9 (ME1A EV)",
+          "opCode": "50DV24I0",
+          "operation": "Walk - in Switch Assembly Inspection",
+          "opTime": "0.2 M/H",
+          "causalPart": "88085-DO000NNB",
+          "natureCode": "B31",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mq0htpa2x2ot",
+          "answers": {},
+          "model": "IONIQ 9 (ME1A EV)",
+          "opCode": "50DV24R1",
+          "operation": "Walk - in Switch Assembly Inspection & Replacement",
+          "opTime": "0.3 M/H",
+          "causalPart": "88085-DO000NNB",
+          "natureCode": "B31",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mq0htpa2kjgv",
+          "answers": {},
+          "model": "IONIQ 9 (ME1A EV)",
+          "opCode": "50DV24R2",
+          "operation": "Walk - in Switch Assembly Inspection & Replacement",
+          "opTime": "0.3 M/H",
+          "causalPart": "88085-DO000YGN",
+          "natureCode": "B31",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mq0htpa27v2e",
+          "answers": {},
+          "model": "IONIQ 9 (ME1A EV)",
+          "opCode": "50DV24R3",
+          "operation": "Walk - in Switch Assembly Inspection & Replacement",
+          "opTime": "0.3 M/H",
+          "causalPart": "88085-DO000VKE",
+          "natureCode": "B31",
+          "causeCode": "ZZ4"
+        }
+      ]
+    },
+    "opExcluded": false
   },
   {
     "id": "mpzv1nhj8a5i",
