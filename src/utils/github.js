@@ -531,6 +531,26 @@ export async function setHotRepairTags(id, tags, kind = 'hot-repairs') {
   return newIndex;
 }
 
+// Save the Op Code Generator data for a bulletin (and/or its exclude flag).
+// opData shape: { questions: [{id,label}], entries: [{id, answers:{qid:val}, model,
+// opCode, operation, opTime, causalPart, natureCode, causeCode}] }.
+export async function setHotRepairOpData(id, { opData, opExcluded } = {}, kind = 'hot-repairs') {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const indexPath = bulletinIndexPath(kind);
+  const currentIndex = await loadHotRepairs(kind);
+  const newIndex = currentIndex.map(d => {
+    if (d.id !== id) return d;
+    const next = { ...d };
+    if (opData !== undefined) next.opData = opData;
+    if (opExcluded !== undefined) next.opExcluded = !!opExcluded;
+    return next;
+  });
+  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: update op codes`);
+  return newIndex;
+}
+
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
 export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
   const token = await ensureGithubToken();

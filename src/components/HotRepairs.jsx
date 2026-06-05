@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
+import { OpCodeGenerator, OpCodeEditor } from './OpCodeTool';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -274,6 +275,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [uploadStatus, setUploadStatus] = useState('');
   const [reindexing, setReindexing]   = useState(false);
   const [reindexStatus, setReindexStatus] = useState('');
+  const [showOpGen, setShowOpGen]     = useState(false);
+  const [opEditItem, setOpEditItem]   = useState(null);
   const [label, setLabel]             = useState('');
   const [file, setFile]               = useState(null);
   const [fileError, setFileError]     = useState('');
@@ -603,6 +606,14 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         ))}
       </div>
 
+      {/* Op Code Generator launcher */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 24px 0' }}>
+        <button onClick={() => setShowOpGen(true)}
+          style={{ background: 'linear-gradient(135deg,rgba(96,165,250,.25),rgba(59,130,246,.18))', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+          ⚙️ Op Code Generator
+        </button>
+      </div>
+
       {/* Search bar */}
       <div style={{ padding: '16px 24px 0', display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: '100%', maxWidth: 760, position: 'relative' }}>
@@ -795,6 +806,18 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : (item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair')}
                       </button>
                     )}
+                    {canManage && editId !== item.id && tagsId !== item.id && (
+                      <button onClick={() => setOpEditItem(item)} title="Edit op codes for the Op Code Generator"
+                        style={{
+                          background: (item.opData && (item.opData.entries || []).length) ? 'rgba(96,165,250,.22)' : 'rgba(96,165,250,.1)',
+                          border: '1px solid rgba(96,165,250,.45)', color: '#bfdbfe',
+                          borderRadius: 8, padding: '7px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
+                        }}>
+                        {(item.opData && (item.opData.entries || []).length)
+                          ? `⚙️ Op Codes (${item.opData.entries.length})${item.opExcluded ? ' · excluded' : ''}`
+                          : '⚙️ Add Op Codes'}
+                      </button>
+                    )}
                     {canManage && editId !== item.id && tagsId !== item.id && !search.trim() && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
@@ -842,6 +865,22 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       </div>
 
       {previewItem && <PreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />}
+
+      {showOpGen && (
+        <OpCodeGenerator
+          items={items}
+          kindLabel={isRecalls ? 'recall' : 'TSB'}
+          onClose={() => setShowOpGen(false)}
+        />
+      )}
+      {opEditItem && (
+        <OpCodeEditor
+          item={opEditItem}
+          kind={tab}
+          onSaved={(newItems) => setItems(newItems)}
+          onClose={() => setOpEditItem(null)}
+        />
+      )}
     </div>
   );
 }
