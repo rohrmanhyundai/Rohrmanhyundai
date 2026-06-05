@@ -110,7 +110,7 @@ export function extractWarrantyDraft(fullText) {
   // least one letter and one digit, no dash. Causal part may use a hyphen or an
   // en/em dash, with or without surrounding spaces (e.g. "26345-3LAA1" or
   // "91920 – BE000").
-  const rowRe = /([A-Za-z][\w().,/&\-' ]{1,55}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([A-Za-z][\w().,/&\-+' ]{2,90}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{4,6}\s*[-–—]\s*[0-9A-Z]{3,7})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
+  const rowRe = /([A-Za-z][\w().,/&'\- –—]{1,60}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([\w(][\w().,/&+'\- –—]{2,120}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{3,7}\s*[-–—]\s*[0-9A-Z]{3,9})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
 
   const entries = [];
   let m2;
