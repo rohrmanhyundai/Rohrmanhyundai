@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -52,13 +52,11 @@ function norm(s) {
   return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Extract text from EVERY page of a PDF (cached). Used only for search.
-async function extractPdfText(item, rawUrl) {
-  if (textCache[item.id] != null) return textCache[item.id];
+// Extract text from EVERY page of a PDF given its raw bytes. Returns '' on any
+// failure (e.g. an image-only/scanned PDF with no text layer).
+async function extractPdfTextFromBuffer(buf) {
   try {
     const pdfjs = await loadPdfJs();
-    const res = await fetch(rawUrl);
-    const buf = await res.arrayBuffer();
     const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
     let text = '';
     const maxPages = Math.min(pdf.numPages, 15); // cap for very long bulletins
@@ -67,6 +65,22 @@ async function extractPdfText(item, rawUrl) {
       const content = await page.getTextContent();
       text += ' ' + content.items.map(i => i.str).join(' ');
     }
+    return text;
+  } catch {
+    return '';
+  }
+}
+
+// Extract text from a PDF by URL (cached by item id). Used only for search.
+async function extractPdfText(item, rawUrl) {
+  // Prefer text already stored in the index (extracted at upload / re-index) —
+  // no network needed and always available.
+  if (item.searchText) { textCache[item.id] = item.searchText; return item.searchText; }
+  if (textCache[item.id] != null) return textCache[item.id];
+  try {
+    const res = await fetch(rawUrl);
+    const buf = await res.arrayBuffer();
+    const text = await extractPdfTextFromBuffer(buf);
     textCache[item.id] = text;
     return text;
   } catch {
@@ -88,7 +102,7 @@ function scoreItem(item, query) {
   const label = norm(item.label);
   const tags = norm(item.tags || '');
   const filename = norm(item.filename || '');
-  const text = norm(textCache[item.id] || '');
+  const text = norm(item.searchText || textCache[item.id] || '');
   let total = 0;
   for (const tok of tokens) {
     let best;
@@ -258,6 +272,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [loading, setLoading]         = useState(true);
   const [uploading, setUploading]     = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [reindexing, setReindexing]   = useState(false);
+  const [reindexStatus, setReindexStatus] = useState('');
   const [label, setLabel]             = useState('');
   const [file, setFile]               = useState(null);
   const [fileError, setFileError]     = useState('');
@@ -397,7 +413,16 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setUploading(true);
     setUploadStatus(file.size > 5 * 1024 * 1024 ? 'Uploading large file — please wait...' : 'Uploading...');
     try {
-      const newItems = await uploadHotRepair(file, label.trim(), currentUserDisplay || currentUser, tab);
+      // Extract the PDF's full text from the local file BEFORE upload (no network
+      // needed) so it's stored in the index and searchable immediately.
+      let searchText = '';
+      try {
+        setUploadStatus('Reading PDF text for search…');
+        const buf = await file.arrayBuffer();
+        searchText = await extractPdfTextFromBuffer(buf);
+      } catch { searchText = ''; }
+      setUploadStatus(file.size > 5 * 1024 * 1024 ? 'Uploading large file — please wait...' : 'Uploading...');
+      const newItems = await uploadHotRepair(file, label.trim(), currentUserDisplay || currentUser, tab, searchText);
       setItems(newItems); // new upload is prepended → appears on top
       setFile(null); setLabel(''); setFileError('');
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -407,6 +432,47 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       setUploadStatus('');
     } finally {
       setUploading(false);
+    }
+  }
+
+  // Backfill stored search text for every bulletin that doesn't have it yet
+  // (i.e. uploaded before full-text indexing existed). Fetches each PDF, extracts
+  // its text, and saves the whole index in one commit. One-time, manager-only.
+  async function reindexAll() {
+    if (!await ensureToken()) return;
+    const todo = items.filter(it => !it.searchText);
+    if (todo.length === 0) { setReindexStatus('✓ All bulletins already indexed.'); return; }
+    setReindexing(true);
+    setActionError('');
+    try {
+      const textById = {};
+      let done = 0;
+      // Extract in small parallel batches so a big library finishes quickly
+      // without hammering the network with hundreds of simultaneous fetches.
+      const BATCH = 4;
+      for (let i = 0; i < todo.length; i += BATCH) {
+        const batch = todo.slice(i, i + BATCH);
+        await Promise.all(batch.map(async it => {
+          try {
+            const res = await fetch(docRawUrl(it.filename));
+            const buf = await res.arrayBuffer();
+            textById[it.id] = await extractPdfTextFromBuffer(buf);
+          } catch { textById[it.id] = ''; }
+          textCache[it.id] = textById[it.id];
+        }));
+        done = Math.min(i + BATCH, todo.length);
+        setReindexStatus(`Indexing ${done}/${todo.length}…`);
+      }
+      const newItems = await backfillHotRepairSearchText(textById, tab);
+      setItems(newItems);
+      setTextVer(v => v + 1);
+      const withText = Object.values(textById).filter(t => t && t.trim()).length;
+      const noText = todo.length - withText;
+      setReindexStatus(`✓ Indexed ${todo.length} PDF(s).${noText > 0 ? ` ${noText} had no readable text (likely scanned images — add a # tag).` : ''}`);
+    } catch (e) {
+      setReindexStatus('Failed: ' + (e.message || e));
+    } finally {
+      setReindexing(false);
     }
   }
 
@@ -561,6 +627,23 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                 ? `${filteredItems.length} match${filteredItems.length === 1 ? '' : 'es'} — press Enter to open the top result`
                 : 'Searches the title, tags, and the full text of every uploaded PDF. Tip: add a 🏷 # tag if a bulletin number is part of an image and isn’t found.'}
           </div>
+          {/* Manager-only: backfill full-text search for older bulletins. */}
+          {canManage && (() => {
+            const unindexed = items.filter(it => !it.searchText).length;
+            if (unindexed === 0 && !reindexStatus) return null;
+            return (
+              <div style={{ marginTop: 8, paddingLeft: 4, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {unindexed > 0 && (
+                  <button
+                    onClick={reindexAll}
+                    disabled={reindexing}
+                    style={{ background: 'rgba(110,231,249,.15)', border: '1px solid rgba(110,231,249,.4)', color: '#6ee7f9', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12, cursor: reindexing ? 'wait' : 'pointer', opacity: reindexing ? 0.6 : 1 }}
+                  >{reindexing ? '⏳ Indexing…' : `🔍 Index ${unindexed} PDF${unindexed === 1 ? '' : 's'} for full-text search`}</button>
+                )}
+                {reindexStatus && <span style={{ fontSize: 12, color: '#94a3b8' }}>{reindexStatus}</span>}
+              </div>
+            );
+          })()}
         </div>
       </div>
 
