@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-06-05T20:51:13.926Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 777787 tech CORY"
+  },
+  {
     "at": "2026-06-05T15:20:08.898Z",
     "type": "page",
     "label": "work-in-progress"
