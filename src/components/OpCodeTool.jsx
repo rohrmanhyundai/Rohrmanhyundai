@@ -97,26 +97,31 @@ export function extractWarrantyDraft(fullText) {
   }
   const rawText = section.slice(0, 4000);
 
-  // Drop the column-header row so it isn't mistaken for data.
-  let body = section
-    .replace(/warranty\s+information\s*:?/i, ' ')
-    .replace(/Model\s+Op\.?\s*Code\s+Operation\s+Op\.?\s*Time\s+Causal\s+Part\s+Nature\s+Code\s+Cause\s+Code/i, ' ')
-    .replace(/\s+/g, ' ').trim();
+  // Drop everything up to and including the column-header row (the header ends
+  // with "Cause Code" — tolerate the common "C ause Code" extraction spacing)
+  // so the header text isn't captured as a model.
+  let body = section.replace(/^[\s\S]*?C\s*ause\s+Code/i, '').replace(/\s+/g, ' ').trim();
+  if (!/C\s*ause\s+Code/i.test(section)) {
+    // Fallback if no recognizable header: just strip the section label.
+    body = section.replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
+  }
 
   // A complete warranty row, in column order. Op code = 6–10 char alnum with at
-  // least one letter and one digit, no dash. Causal part contains a dash.
-  const rowRe = /([A-Za-z][\w().,/&\-' ]{1,55}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([A-Za-z][\w().,/&\-+' ]{2,90}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{4,6}-[0-9A-Z]{3,7})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
+  // least one letter and one digit, no dash. Causal part may use a hyphen or an
+  // en/em dash, with or without surrounding spaces (e.g. "26345-3LAA1" or
+  // "91920 – BE000").
+  const rowRe = /([A-Za-z][\w().,/&\-' ]{1,55}?)\s+((?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*[0-9])[A-Z0-9]{6,10})\s+([A-Za-z][\w().,/&\-+' ]{2,90}?)\s+(\d+(?:\.\d+)?\s*M\/H)\s+([0-9A-Z]{4,6}\s*[-–—]\s*[0-9A-Z]{3,7})\s+([A-Z]\d{2})\s+(ZZ\d)/g;
 
   const entries = [];
   let m2;
   while ((m2 = rowRe.exec(body)) !== null) {
     entries.push({
       ...emptyEntry(),
-      model: m2[1].trim(),
+      model: m2[1].replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim(),
       opCode: m2[2].trim(),
-      operation: m2[3].trim(),
+      operation: m2[3].replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim(),
       opTime: m2[4].replace(/\s+/g, ' ').trim(),
-      causalPart: m2[5].trim(),
+      causalPart: m2[5].replace(/\s*[-–—]\s*/, '-').trim(),
       natureCode: m2[6].trim(),
       causeCode: m2[7].trim(),
     });
