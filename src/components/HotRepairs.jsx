@@ -321,7 +321,11 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
   // Items to display, filtered AND ranked by the live search query (best match
   // first), so the bulletin whose title/number matches floats to the top.
-  const filteredItems = search.trim() ? rankedMatches(items, search) : items;
+  // Warranty Hot Repairs are always pinned to the top (stable sort keeps the
+  // existing relative order within each group).
+  const filteredItems = (search.trim() ? rankedMatches(items, search) : items)
+    .slice()
+    .sort((a, b) => (b.warranty ? 1 : 0) - (a.warranty ? 1 : 0));
   // eslint-disable-next-line no-unused-expressions
   textVer; // referenced so filtering recomputes as extraction completes
 
@@ -712,7 +716,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                   {/* Highlight banner */}
                   {item.warranty && (
                     <div style={{ background: 'linear-gradient(90deg,#f59e0b,#fbbf24)', color: '#3a2400', fontWeight: 900, fontSize: 14, letterSpacing: 0.6, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {isRecalls ? '⚠️ URGENT RECALL — ACTION REQUIRED' : '⚠️ WARRANTY HOT REPAIR — REVIEW BEFORE PERFORMING'}
+                      {isRecalls ? '⚠️ URGENT RECALL — ACTION REQUIRED' : '⚠️ WARRANTY HOT REPAIR — PLEASE REVIEW'}
                     </div>
                   )}
                   {/* Large preview — click to open full view */}
