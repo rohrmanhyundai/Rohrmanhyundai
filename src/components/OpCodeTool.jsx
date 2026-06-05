@@ -106,11 +106,22 @@ export function extractWarrantyDraft(fullText) {
     body = section.replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
   }
 
-  // Some PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "0. 9 M/H").
-  // Repair the two that break row matching: op times and op-code-shaped tokens.
-  body = body
-    .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                               // "0. 9 M/H" → "0.9 M/H"
-    .replace(/\b(\d)\s*(\d)\s*([A-Z][A-Z]?)\s*(\d{2,3})\s*([A-Z])\s*(\d)\b/g, '$1$2$3$4$5$6'); // "5 0 D116 R 3" → "50D116R3"
+  // Many PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "50D00 5 R0",
+  // "0. 9 M/H"). Repair the two that break row matching:
+  //  1) op times — collapse spaces around the decimal and the M/H.
+  //  2) op codes — Hyundai op codes are 8 alphanumeric chars that start with two
+  //     digits and contain at least one letter (e.g. 50D116R0, 954A0F02). Rebuild
+  //     any 8-char run that got split by stray spaces, wherever the spaces fell.
+  body = body.replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H');
+  body = body.replace(/\b\d(?:\s*[A-Z0-9]){7}/g, run => {
+    if (!/\s/.test(run)) return run;                         // already contiguous — leave it
+    // Only rebuild if it was genuinely split (a stray space leaves a 1–2 char
+    // fragment). Two normal-length tokens (e.g. causal "18FA0" + nature "Q55")
+    // must NOT be merged.
+    if (!run.split(/\s+/).some(f => f.length <= 2)) return run;
+    const compact = run.replace(/\s+/g, '');
+    return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? compact : run;
+  });
 
   // A complete warranty row, in column order. Op code = 6–10 char alnum with at
   // least one letter and one digit, no dash. Causal part may use a hyphen or an
