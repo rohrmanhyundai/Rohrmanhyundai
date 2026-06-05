@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
 
@@ -594,6 +594,20 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     }
   }
 
+  async function handleMove(item) {
+    const toKind = isRecalls ? 'hot-repairs' : 'recalls';
+    const toLabel = isRecalls ? "TSB'S" : 'Recalls';
+    const fromLabel = isRecalls ? 'Recalls' : "TSB'S";
+    if (!window.confirm(`Move "${item.label}" from ${fromLabel} to ${toLabel}?\n\nIt will appear under ${toLabel} instead.`)) return;
+    setActionError('');
+    try {
+      const newItems = await moveHotRepair(item, tab, toKind);
+      setItems(newItems);
+    } catch (err) {
+      setActionError('Move failed: ' + err.message);
+    }
+  }
+
   return (
     <div className="adv-page doc-lib-page">
       <style>{`
@@ -889,6 +903,12 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                         <button onClick={() => startEdit(item)} title="Rename"
                           style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           ✏️ Rename
+                        </button>
+                      )}
+                      {canManage && editId !== item.id && tagsId !== item.id && (
+                        <button onClick={() => handleMove(item)} title={`Move this bulletin to ${isRecalls ? "TSB'S" : 'Recalls'}`}
+                          style={{ background: 'rgba(251,146,60,.12)', border: '1px solid rgba(251,146,60,.35)', color: '#fb923c', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                          ↔ Move to {isRecalls ? "TSB'S" : 'Recalls'}
                         </button>
                       )}
                       {canManage && (
