@@ -515,6 +515,86 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   );
 }
 
+// ── Missing Op Codes scanner (manager) ────────────────────────────────────────
+// Scans every bulletin on the tab and lists the ones the generator can't produce
+// an op code for (not excluded, no manual op data, and auto-read finds nothing),
+// each with a one-click button to open its editor and fix it.
+export function MissingOpCodesModal({ items, onFix, onClose }) {
+  const [scanning, setScanning] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [missing, setMissing] = useState([]);
+  const [counts, setCounts] = useState({ set: 0, auto: 0, missing: 0, excluded: 0 });
+  const total = (items || []).length;
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const list = items || [];
+      const miss = [];
+      const c = { set: 0, auto: 0, missing: 0, excluded: 0 };
+      const BATCH = 4;
+      for (let i = 0; i < list.length; i += BATCH) {
+        const batch = list.slice(i, i + BATCH);
+        await Promise.all(batch.map(async it => {
+          if (it.opExcluded) { c.excluded++; return; }
+          if (it.opData && (it.opData.entries || []).length) { c.set++; return; }
+          let text = it.searchText;
+          if (!text) { try { text = await fetchPdfText(it); } catch { text = ''; } }
+          const { entries } = extractWarrantyDraft(text || '');
+          if (entries.length) { c.auto++; } else { c.missing++; miss.push(it); }
+        }));
+        if (cancelled) return;
+        setProgress(Math.min(i + BATCH, list.length));
+        setCounts({ ...c });
+        setMissing([...miss]);
+      }
+      if (!cancelled) setScanning(false);
+    })();
+    return () => { cancelled = true; };
+  }, [items]);
+
+  return (
+    <div onClick={onClose} style={overlay}>
+      <div onClick={e => e.stopPropagation()} style={{ ...modal, maxWidth: 760 }}>
+        <div style={modalHeader}>
+          <span style={{ fontWeight: 900, fontSize: 18, color: '#fbbf24' }}>🔎 Missing Op Codes</span>
+          <button onClick={onClose} style={xBtn}>✕</button>
+        </div>
+
+        <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
+          {scanning ? `Scanning bulletins… ${progress}/${total}` : `Scan complete — checked ${total} bulletin(s).`}
+        </div>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12, color: '#cbd5e1', marginBottom: 14 }}>
+          <span>✅ Auto-readable: <b style={{ color: '#4ade80' }}>{counts.auto}</b></span>
+          <span>⚙️ Manually set: <b style={{ color: '#6ee7f9' }}>{counts.set}</b></span>
+          <span>🚫 Excluded: <b style={{ color: '#94a3b8' }}>{counts.excluded}</b></span>
+          <span>⚠️ Missing: <b style={{ color: '#fca5a5' }}>{counts.missing}</b></span>
+        </div>
+
+        {!scanning && missing.length === 0 ? (
+          <div style={{ color: '#4ade80', fontSize: 14, fontWeight: 700, padding: '12px 4px' }}>
+            🎉 No missing op codes — every bulletin either has op codes or can be auto-read.
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize: 12, fontWeight: 800, color: '#fca5a5', marginBottom: 8 }}>
+              Bulletins with no op code {scanning ? 'so far' : ''} (click Fix to add):
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 420, overflowY: 'auto' }}>
+              {missing.map(it => (
+                <div key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(248,113,113,.06)', border: '1px solid rgba(248,113,113,.3)', borderRadius: 10, padding: '10px 14px' }}>
+                  <span style={{ flex: 1, fontWeight: 700, color: '#e2e8f0', fontSize: 13 }}>{it.label}</span>
+                  <button onClick={() => onFix(it)} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '6px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>⚙️ Fix</button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Op Code Editor Launcher (manager) ─────────────────────────────────────────
 // Search any bulletin and jump straight into its op-code editor.
 export function OpCodeEditorLauncher({ items, kind, kindLabel, onSaved, onClose }) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
-import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal } from './OpCodeTool';
+import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -277,6 +277,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [reindexStatus, setReindexStatus] = useState('');
   const [showOpGen, setShowOpGen]     = useState(false);
   const [showOpEditSearch, setShowOpEditSearch] = useState(false);
+  const [showMissingOps, setShowMissingOps] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
   const [digDocItem, setDigDocItem]   = useState(null);
   const [visibleCount, setVisibleCount] = useState(20);
@@ -639,6 +640,12 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
             ⚙️ Op Code Editor
           </button>
         )}
+        {canManage && (
+          <button onClick={() => setShowMissingOps(true)}
+            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+            🔎 Search Missing Op Codes
+          </button>
+        )}
       </div>
 
       {/* Search bar */}
@@ -942,6 +949,13 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       )}
       {digDocItem && (
         <DigitalDocModal item={digDocItem} onClose={() => setDigDocItem(null)} />
+      )}
+      {showMissingOps && (
+        <MissingOpCodesModal
+          items={items}
+          onFix={(it) => { setShowMissingOps(false); setOpEditItem(it); }}
+          onClose={() => setShowMissingOps(false)}
+        />
       )}
     </div>
   );
