@@ -85,25 +85,30 @@ export function extractWarrantyDraft(fullText) {
   const text = (fullText || '').replace(/\s+/g, ' ').trim();
   if (!text) return { entries: [], rawText: '' };
 
-  // Isolate the warranty section (from "Warranty Information" to the next NOTE/section).
-  const startRe = /warranty\s+information/i;
-  const m = startRe.exec(text);
-  let section = text;
-  if (m) {
-    section = text.slice(m.index);
-    const endRe = /\bNOTE\s*1\b|\bService\s+Procedure\b/i;
-    const e = endRe.exec(section);
-    if (e && e.index > 40) section = section.slice(0, e.index);
+  // Anchor on the actual warranty TABLE, identified by its column header
+  // ("Model … Op. Code … Operation …"). This avoids early "see the Warranty
+  // Information section" references elsewhere in the bulletin that would
+  // otherwise hijack the parse. Fall back to the "Warranty Information" label.
+  const headerRe = /Model\s+Op\.?\s*Code\s+Operation/i;
+  let section;
+  const hm = headerRe.exec(text);
+  if (hm) {
+    section = text.slice(hm.index);
+  } else {
+    const m = /warranty\s+information/i.exec(text);
+    section = m ? text.slice(m.index) : text;
   }
+  const endRe = /\bNOTE\s*1\b|\bService\s+Procedure\b/i;
+  const e = endRe.exec(section);
+  if (e && e.index > 40) section = section.slice(0, e.index);
   const rawText = section.slice(0, 4000);
 
-  // Drop everything up to and including the column-header row (the header ends
-  // with "Cause Code" — tolerate the common "C ause Code" extraction spacing)
-  // so the header text isn't captured as a model.
+  // Drop the column-header row (it ends with "Cause Code" — tolerate the common
+  // "C ause Code" extraction spacing) so the header text isn't read as a model.
   let body = section.replace(/^[\s\S]*?C\s*ause\s+Code/i, '').replace(/\s+/g, ' ').trim();
   if (!/C\s*ause\s+Code/i.test(section)) {
-    // Fallback if no recognizable header: just strip the section label.
-    body = section.replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
+    // Fallback: strip whatever header label we anchored on.
+    body = section.replace(headerRe, ' ').replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
   }
 
   // Many PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "50D00 5 R0",
@@ -178,9 +183,12 @@ export function extractWarrantyDraft(fullText) {
     }
   }
 
-  // Carry merged values forward to rows that left them blank.
-  let lo = '', lt = '', lc = '', ln = '', lcc = '';
+  // Carry merged values forward to rows that left them blank. Includes the model,
+  // so a single-model table with many op codes (one model cell spanning all rows,
+  // op codes differing by inspection result) fills the model on every row.
+  let lm = '', lo = '', lt = '', lc = '', ln = '', lcc = '';
   for (const r of recs) {
+    if (r.model)      lm = r.model;      else r.model      = lm;
     if (r.operation)  lo = r.operation;  else r.operation  = lo;
     if (r.opTime)     lt = r.opTime;     else r.opTime     = lt;
     if (r.causalPart) lc = r.causalPart; else r.causalPart = lc;
