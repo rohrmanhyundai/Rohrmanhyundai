@@ -167,19 +167,6 @@
           "causalPart": "",
           "natureCode": "B33",
           "causeCode": "ZZ1"
-        },
-        {
-          "id": "mq0i2o5zddpx",
-          "answers": {
-            "model": "Tucson Plug - in Hybrid (NX4 PHEV) Santa Fe Hybrid (TM HEV) Santa Fe Plug - in Hybrid (TM PHEV) Santa Fe Hybrid (TMA HEV)"
-          },
-          "model": "Tucson Plug - in Hybrid (NX4 PHEV) Santa Fe Hybrid (TM HEV) Santa Fe Plug - in Hybrid (TM PHEV) Santa Fe Hybrid (TMA HEV)",
-          "opCode": "22443F01",
-          "operation": "CVVD Actuator Oil Seal Replacement",
-          "opTime": "0.7 M/H",
-          "causalPart": "",
-          "natureCode": "B33",
-          "causeCode": "ZZ1"
         }
       ]
     },
