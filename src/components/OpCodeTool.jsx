@@ -145,11 +145,13 @@ export function extractWarrantyDraft(fullText) {
   // op code, then carry the merged values forward to rows that share them.
   const tidy = s => s.replace(/\b([A-Z]) ([a-z])/g, '$1$2').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
   const toks = body.split(/\s+/).filter(Boolean);
-  // Op code: 8 base chars (2 digits + 6 alnum), optionally a "-SUFFIX" range.
-  const isOp     = t => /^\d{2}[A-Z0-9]{6}(-[A-Z0-9]{1,3})?$/.test(t) && /[A-Z]/.test(t) && !/M\/H/i.test(t);
+  const isCause  = t => /^ZZ\d$/i.test(t);
+  // Op code: 8 base alphanumeric chars with at least one letter AND one digit
+  // (so digit-leading "50D116R0" AND letter-leading "REC290I0" both qualify),
+  // optionally a "-SUFFIX" range. Excludes causes and op-time tokens.
+  const isOp     = t => { const m = /^([A-Z0-9]{8})(-[A-Z0-9]{1,3})?$/.exec(t); return !!m && /[A-Z]/.test(m[1]) && /\d/.test(m[1]) && !isCause(t) && !/M\/H/i.test(t); };
   const isTime   = t => /^\d+(?:\.\d+)?M\/H$/i.test(t);
   const isCausal = t => /^[0-9A-Z]{3,7}-[0-9A-Z]{3,9}$/.test(t) && !isOp(t);
-  const isCause  = t => /^ZZ\d$/i.test(t);
   // Nature is detected POSITIONALLY (the token right before the cause code), since
   // by pattern alone a 3-char code like "B1E" is indistinguishable from an
   // operation word like "AAF". This is only used as a sanity check on that token.
