@@ -112,40 +112,49 @@ export function extractWarrantyDraft(fullText) {
   }
 
   // Many PDFs extract with stray spaces inside tokens ("5 0 D116 R0", "50D00 5 R0",
-  // "60DV 03I0", "0. 9 M/H"). Repair them so each column is one solid token.
-  // ORDER MATTERS: collapse op times and causal parts FIRST (so a causal suffix
-  // like "18FA0" gets absorbed into "44000-18FA0"), THEN rebuild op codes. That
-  // way the op-code rebuild can't accidentally glue two real fields together.
+  // "60DV 03I0", "0. 9 M/H", "ZZ 3", "B1 E"). Repair them so each column is one
+  // solid token. ORDER MATTERS: de-fragment cause/nature and collapse op times &
+  // causal parts FIRST (so a causal suffix like "18FA0" is absorbed and a stray
+  // cause digit can't be eaten by an op code), THEN rebuild op codes.
   body = body
     .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                    // "0. 9 M/H" → "0.9 M/H"
-    .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')             // "940C3 – P9060" → "940C3-P9060"
+    .replace(/\bZZ\s+(\d)\b/gi, 'ZZ$1')                                        // cause "ZZ 3" → "ZZ3"
+    .replace(/\b([A-Z]\d?)\s*([A-Z0-9])\s+(ZZ\d)\b/g, '$1$2 $3')               // nature "B1 E ZZ3" → "B1E ZZ3"
+    .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')            // causal "940C3 – P9060" → "940C3-P9060"
     .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');                        // "0.6 M/H" → "0.6M/H"
 
   // Op codes are 8 alphanumeric chars starting with two digits and containing at
-  // least one letter (50D116R0, 954A0F02, 60DV03I0). Rebuild any that got split
-  // by stray spaces — wherever the spaces fell, including clean 4+4 splits. The
-  // leading "(^|[^-A-Za-z0-9])" guard (instead of a lookbehind, for older-browser
-  // safety) stops a rebuild from STARTING in the middle of a hyphenated causal
-  // part — e.g. it must not pull "18FA0" out of "44000-18FA0" and glue on "Q55".
+  // least one letter (50D116R0, 954A0F02, 60DV03I0). Rebuild any split by stray
+  // spaces. The leading "(^|[^-A-Za-z0-9])" guard (vs a lookbehind, for older-
+  // browser safety) stops a rebuild from STARTING inside a hyphenated causal part
+  // (no pulling "18FA0" out of "44000-18FA0" to glue on "Q55").
   body = body.replace(/(^|[^-A-Za-z0-9])(\d(?:\s*[A-Z0-9]){7})/g, (full, pre, run) => {
     if (!/\s/.test(run)) return full;                        // already contiguous — leave it
     const compact = run.replace(/\s+/g, '');
     return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? pre + compact : full;
   });
+  // Op-code RANGES ("50D310R2 - R5*" → "50D310R2-R5"): one entry covering several
+  // codes whose exact value depends on a sub-condition in the bulletin.
+  body = body.replace(/\b(\d{2}[A-Z0-9]{6})\s*[-–—]\s*([A-Z0-9]{1,3})\*?/g, '$1-$2');
+  body = body.replace(/\*/g, ' ').replace(/\s+/g, ' ').trim();                  // drop footnote asterisks
 
   // ── Table parser ─────────────────────────────────────────────────────────────
   // Warranty tables list one op code per model, with Operation / Op Time / Causal
   // Part / Nature / Cause often MERGED across several model rows. We pair each
   // model with its op code, read whatever typed fields sit in the gap after that
   // op code, then carry the merged values forward to rows that share them.
-  const tidy = s => s.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
+  const tidy = s => s.replace(/\b([A-Z]) ([a-z])/g, '$1$2').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
   const toks = body.split(/\s+/).filter(Boolean);
-  const isOp     = t => /^[A-Z0-9]{6,10}$/.test(t) && /[A-Z]/.test(t) && /^\d\d/.test(t) && !/M\/H/i.test(t);
+  // Op code: 8 base chars (2 digits + 6 alnum), optionally a "-SUFFIX" range.
+  const isOp     = t => /^\d{2}[A-Z0-9]{6}(-[A-Z0-9]{1,3})?$/.test(t) && /[A-Z]/.test(t) && !/M\/H/i.test(t);
   const isTime   = t => /^\d+(?:\.\d+)?M\/H$/i.test(t);
   const isCausal = t => /^[0-9A-Z]{3,7}-[0-9A-Z]{3,9}$/.test(t) && !isOp(t);
-  const isNature = t => /^[A-Z]\d{2}$/.test(t);
   const isCause  = t => /^ZZ\d$/i.test(t);
-  const isTyped  = t => isOp(t) || isTime(t) || isCausal(t) || isNature(t) || isCause(t);
+  // Nature is detected POSITIONALLY (the token right before the cause code), since
+  // by pattern alone a 3-char code like "B1E" is indistinguishable from an
+  // operation word like "AAF". This is only used as a sanity check on that token.
+  const looksNature = t => /^[A-Z][A-Z0-9]{2}$/.test(t) && !isCause(t) && !isOp(t);
+  const isTyped  = t => isOp(t) || isTime(t) || isCausal(t) || isCause(t);
 
   const opIdx = [];
   toks.forEach((t, i) => { if (isOp(t)) opIdx.push(i); });
@@ -169,8 +178,7 @@ export function extractWarrantyDraft(fullText) {
     gap.forEach((t, gi) => {
       if (isTime(t))        { time = time || t.replace(/M\/H/i, ' M/H'); seenTyped = true; }
       else if (isCausal(t)) { causal = causal || t; seenTyped = true; }
-      else if (isNature(t)) { nature = nature || t; seenTyped = true; }
-      else if (isCause(t))  { cause = cause || t; seenTyped = true; }
+      else if (isCause(t))  { cause = cause || t; seenTyped = true; const prev = gap[gi - 1]; if (prev && looksNature(prev)) nature = nature || prev; }
       else if (isOp(t))     { seenTyped = true; }
       else if (!seenTyped)  { opWords.push(t); }
       else if (gi > lastTyped) { trailing.push(t); }
