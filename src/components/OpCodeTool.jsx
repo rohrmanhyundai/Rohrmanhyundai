@@ -218,6 +218,104 @@ function resolveStep(questions, entries, answers) {
   return { done: true, matching };
 }
 
+// ── Digital Documentation viewer ──────────────────────────────────────────────
+// Finds the bulletin pages that hold the photo/claim-submission requirements and
+// renders them, plus a quick checklist of each required photo.
+export function DigitalDocModal({ item, onClose }) {
+  const [loading, setLoading] = useState(true);
+  const [pages, setPages] = useState([]);       // [{ num, img }]
+  const [checklist, setChecklist] = useState([]);
+  const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const pdfjs = await loadPdfJs();
+        const res = await fetch(docRawUrl(item.filename));
+        const buf = await res.arrayBuffer();
+        const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+        const qualifying = [];
+        const checks = new Set();
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          const t = content.items.map(i => i.str).join(' ');
+          // A real photo-requirement page (not just a passing "Digital
+          // Documentation Policy" mention in a NOTE).
+          const qualifies = /picture requirement/i.test(t) ||
+            (/digital\s+documentation/i.test(t) && /(take a photo|take photos|stui|photo of the|photos of)/i.test(t));
+          if (qualifies) {
+            qualifying.push(p);
+            (t.match(/tak\w* (?:a )?photos?[^.]*\./gi) || []).forEach(s => checks.add(s.replace(/\s+/g, ' ').trim()));
+          }
+          if (cancelled) return;
+        }
+        if (cancelled) return;
+        setChecklist(Array.from(checks));
+        const imgs = [];
+        for (const p of qualifying) {
+          const page = await pdf.getPage(p);
+          const vp = page.getViewport({ scale: 1 });
+          const sv = page.getViewport({ scale: 1400 / vp.width });
+          const canvas = document.createElement('canvas');
+          canvas.width = sv.width; canvas.height = sv.height;
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: sv }).promise;
+          imgs.push({ num: p, img: canvas.toDataURL('image/jpeg', 0.85) });
+          if (cancelled) return;
+        }
+        if (!cancelled) setPages(imgs);
+      } catch (e) {
+        if (!cancelled) setError(e.message || String(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [item]);
+
+  return (
+    <div onClick={onClose} style={{ ...overlay, zIndex: 1100 }}>
+      <div onClick={e => e.stopPropagation()} style={{ ...modal, maxWidth: 900 }}>
+        <div style={modalHeader}>
+          <span style={{ fontWeight: 900, fontSize: 17, color: '#fb923c' }}>📸 Digital Documentation — {item.label}</span>
+          <button onClick={onClose} style={xBtn}>✕</button>
+        </div>
+
+        {loading ? (
+          <div style={{ color: '#94a3b8', fontSize: 14, padding: '16px 4px' }}>⏳ Finding the photo requirements in the bulletin…</div>
+        ) : error ? (
+          <div style={{ color: '#fca5a5', fontSize: 14 }}>Couldn't load the bulletin: {error}</div>
+        ) : pages.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+            <div style={{ color: '#cbd5e1', fontSize: 14 }}>No digital-documentation / picture-requirement section was found in this bulletin.</div>
+            <button onClick={() => window.open(docRawUrl(item.filename), '_blank')} style={copyBtn}>📄 Open full bulletin</button>
+          </div>
+        ) : (
+          <>
+            {checklist.length > 0 && (
+              <div style={{ background: 'rgba(251,146,60,.08)', border: '1px solid rgba(251,146,60,.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 14 }}>
+                <div style={{ fontWeight: 800, color: '#fb923c', fontSize: 13, marginBottom: 8 }}>Required photos</div>
+                <ul style={{ margin: 0, paddingLeft: 20, color: '#e2e8f0', fontSize: 13, lineHeight: 1.6 }}>
+                  {checklist.map((c, i) => <li key={i}>{c.charAt(0).toUpperCase() + c.slice(1)}</li>)}
+                </ul>
+              </div>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {pages.map(pg => (
+                <div key={pg.num}>
+                  <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>Page {pg.num}</div>
+                  <img src={pg.img} alt={`Page ${pg.num}`} style={{ width: '100%', borderRadius: 8, background: '#fff' }} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Op Code Generator (lookup UI) ─────────────────────────────────────────────
 export function OpCodeGenerator({ items, kindLabel, onClose }) {
   const [query, setQuery] = useState('');
@@ -227,6 +325,7 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   // Resolved op data for the selected bulletin: { source:'manual'|'auto', opData, rawText }.
   const [resolved, setResolved] = useState(null);
   const [autoLoading, setAutoLoading] = useState(false);
+  const [showDigDoc, setShowDigDoc] = useState(false);
 
   // Every bulletin is searchable. Excluded ones still show up, but instead of an
   // op code they offer a link to open the bulletin and read the codes there.
@@ -393,14 +492,21 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
                     </div>
                   </div>
                 ))}
-                {Object.keys(answers).length > 0 && (
-                  <button onClick={() => setAnswers({})} style={secBtn}>↺ Change selection</button>
-                )}
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <button onClick={() => setShowDigDoc(true)} style={digDocBtn}>📸 View Digital Documentation</button>
+                  {Object.keys(answers).length > 0 && (
+                    <button onClick={() => setAnswers({})} style={secBtn}>↺ Change selection</button>
+                  )}
+                </div>
               </div>
             )}
           </>
         )}
       </div>
+
+      {showDigDoc && selected && (
+        <DigitalDocModal item={selected} onClose={() => setShowDigDoc(false)} />
+      )}
     </div>
   );
 }
@@ -608,6 +714,7 @@ const resultCard = { background: 'rgba(74,222,128,.06)', border: '1px solid rgba
 const copyBtn = { background: 'linear-gradient(135deg,#22c55e,#4ade80)', border: 'none', color: '#06280f', borderRadius: 8, padding: '8px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' };
 const secBtn = { background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.14)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' };
 const draftBtn = { background: 'rgba(167,139,250,.18)', border: '1px solid rgba(167,139,250,.5)', color: '#c4b5fd', borderRadius: 8, padding: '8px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
+const digDocBtn = { background: 'rgba(251,146,60,.18)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '9px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
 const xBtn = { background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 };
 const delBtn = { background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 6, padding: '4px 8px', fontSize: 12, cursor: 'pointer' };
 const th = { textAlign: 'left', color: '#94a3b8', fontWeight: 700, padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,.12)', whiteSpace: 'nowrap' };
