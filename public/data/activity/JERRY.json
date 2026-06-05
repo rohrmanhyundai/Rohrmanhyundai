@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-06-05T13:27:55.683Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
     "at": "2026-06-05T12:20:50.515Z",
     "type": "action",
     "label": "logout"
