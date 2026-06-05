@@ -157,12 +157,9 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
   const [resolved, setResolved] = useState(null);
   const [autoLoading, setAutoLoading] = useState(false);
 
-  // Any bulletin that isn't excluded is searchable — if it has no manual op data
-  // we read it straight from the PDF on the fly.
-  const searchable = useMemo(
-    () => (items || []).filter(it => !it.opExcluded),
-    [items]
-  );
+  // Every bulletin is searchable. Excluded ones still show up, but instead of an
+  // op code they offer a link to open the bulletin and read the codes there.
+  const searchable = useMemo(() => (items || []), [items]);
   const q = query.trim().toLowerCase();
   const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const nq = norm(query);
@@ -174,6 +171,10 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
 
   async function pick(item) {
     setSelected(item); setAnswers({}); setResolved(null);
+    if (item.opExcluded) {
+      setResolved({ source: 'excluded', opData: { questions: [], entries: [] }, rawText: '' });
+      return;
+    }
     if (item.opData && (item.opData.entries || []).length > 0) {
       setResolved({ source: 'manual', opData: item.opData, rawText: '' });
       return;
@@ -235,7 +236,9 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
                   <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{it.label}</span>
                   {it.tags && <span style={{ fontSize: 11, color: '#6ee7f9', marginLeft: 8 }}>{it.tags}</span>}
                   <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>
-                    {(it.opData && (it.opData.entries || []).length) ? `${it.opData.entries.length} op code(s) →` : 'look up →'}
+                    {it.opExcluded ? 'view bulletin →'
+                      : (it.opData && (it.opData.entries || []).length) ? `${it.opData.entries.length} op code(s) →`
+                      : 'look up →'}
                   </span>
                 </button>
               ))}
@@ -254,7 +257,18 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
               </div>
             )}
 
-            {autoLoading || !resolved ? (
+            {resolved?.source === 'excluded' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ color: '#cbd5e1', fontSize: 14 }}>
+                  This bulletin is excluded from the op-code generator.
+                </div>
+                <button
+                  onClick={() => window.open(docRawUrl(selected.filename), '_blank')}
+                  style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+                  📄 View bulletin for operation codes
+                </button>
+              </div>
+            ) : autoLoading || !resolved ? (
               <div style={{ color: '#94a3b8', fontSize: 14, padding: '16px 4px' }}>⏳ Reading the bulletin's warranty table…</div>
             ) : (resolved.opData.entries || []).length === 0 ? (
               <div>
