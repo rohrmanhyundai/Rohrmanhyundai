@@ -1,7 +1,7 @@
 {
   "id": "mpygkuu1peno",
   "createdAt": "2026-06-03T19:27:45.433Z",
-  "updatedAt": "2026-06-04T17:58:40.090Z",
+  "updatedAt": "2026-06-05T13:29:56.387Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "MEREDITH GOODEN",
   "customerPhone": "(765) 490 - 2454",
@@ -15,7 +15,7 @@
   "warrantyPhone": "18664106748",
   "claimNumber": "",
   "authNumber": "",
-  "laborRate": "180.00",
+  "laborRate": "190",
   "laborTime": "14.6",
   "diagnosisTime": "1",
   "parts": [
@@ -24,14 +24,14 @@
       "partNumber": "28751-3S100",
       "description": "GASKET-EXHAUST PIPE",
       "qty": "1",
-      "price": "23.10"
+      "price": "37.66"
     },
     {
       "id": "mpygn70yy8pm",
       "partNumber": "28521-2E000",
       "description": " GASKET-EXHAUST MANIFOLD",
       "qty": "1",
-      "price": "10.53"
+      "price": "18.61"
     },
     {
       "id": "mpygna9cl6io",
@@ -45,21 +45,21 @@
       "partNumber": "28313-2EAA0 ",
       "description": "GASKET-PORT",
       "qty": "1",
-      "price": "13.81"
+      "price": "24.40"
     },
     {
       "id": "mpygnbj1keem",
       "partNumber": "00232-19010",
       "description": "COOLANT/ANTI-FREEZE 1 GALLON",
       "qty": "1",
-      "price": "23.52"
+      "price": "29.99"
     },
     {
       "id": "mpygnc3em9z8",
       "partNumber": "15ZN1-2EX00",
       "description": "ENGINE ASSY-SUB",
       "qty": "1",
-      "price": "4838.71"
+      "price": "6150.00"
     }
   ],
   "taxPct": "7",
@@ -70,7 +70,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "CALLED 06/04/2026 @ 1:40PM WILL NEED TEAR DOWN TO POINT OF FAILURE. ONCE TEAR DOWN DONE CALL BACK AND WARRANTY WILL SEND INSPECTOR.",
+  "notes": "SUPERIOR PROTECTION 18664106748. NEEDS TEAR DOWN TO POINT OF FAILURE. 06/04/2026. THEN CALL BACK TO HAVE THEM SEND INSPECTOR.",
   "approved": false,
   "approvedDate": "",
   "denied": false,
