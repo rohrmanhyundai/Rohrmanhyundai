@@ -1,7 +1,7 @@
 {
   "id": "mpx53u3fyjf3",
   "createdAt": "2026-06-02T21:18:49.371Z",
-  "updatedAt": "2026-06-08T13:21:25.004Z",
+  "updatedAt": "2026-06-08T13:21:41.315Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Kyle Kellogg",
   "customerPhone": "(765) 586 - 8651",
@@ -35,7 +35,7 @@
   "tireRepair": null,
   "tireTax": ".25",
   "tireDisposal": "3.00",
-  "notes": "",
+  "notes": "PAID 06/08/2026",
   "approved": false,
   "approvedDate": "",
   "denied": false,
