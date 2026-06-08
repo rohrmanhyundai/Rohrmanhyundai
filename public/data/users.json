@@ -491,7 +491,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": false,
+        "chargeAccountList": true,
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": false,
