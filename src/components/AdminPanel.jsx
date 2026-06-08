@@ -1179,11 +1179,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (openSection === 'gauges') return (
       <div className="group-body">
         <div className="form-grid">
-          <div className="field"><label>Gross Profit Goal</label><input value={data.grossGoal ?? 0} onChange={e => updateField('grossGoal', safe(e.target.value, data.grossGoal))} /></div>
-          <div className="field"><label>Gross Profit Actual</label><input value={data.grossActual ?? 0} onChange={e => updateField('grossActual', safe(e.target.value, data.grossActual))} /></div>
-          <div className="field"><label>Customer Pay Goal</label><input value={data.cpGoal ?? 0} onChange={e => updateField('cpGoal', safe(e.target.value, data.cpGoal))} /></div>
-          <div className="field"><label>Customer Pay Actual</label><input value={data.cpActual ?? 0} onChange={e => updateField('cpActual', safe(e.target.value, data.cpActual))} /></div>
-          <div className="field"><label>Advisor Monthly Workdays</label><input value={data.advisorMonthlyWorkdays ?? 27} onChange={e => updateField('advisorMonthlyWorkdays', safe(e.target.value, 27))} /></div>
+          <div className="field"><label>Gross Profit Goal</label><input value={data.grossGoal ?? 0} onChange={e => updateField('grossGoal', e.target.value)} onBlur={e => updateField('grossGoal', safe(e.target.value, 0))} /></div>
+          <div className="field"><label>Gross Profit Actual</label><input value={data.grossActual ?? 0} onChange={e => updateField('grossActual', e.target.value)} onBlur={e => updateField('grossActual', safe(e.target.value, 0))} /></div>
+          <div className="field"><label>Customer Pay Goal</label><input value={data.cpGoal ?? 0} onChange={e => updateField('cpGoal', e.target.value)} onBlur={e => updateField('cpGoal', safe(e.target.value, 0))} /></div>
+          <div className="field"><label>Customer Pay Actual</label><input value={data.cpActual ?? 0} onChange={e => updateField('cpActual', e.target.value)} onBlur={e => updateField('cpActual', safe(e.target.value, 0))} /></div>
+          <div className="field"><label>Advisor Monthly Workdays</label><input value={data.advisorMonthlyWorkdays ?? 27} onChange={e => updateField('advisorMonthlyWorkdays', e.target.value)} onBlur={e => updateField('advisorMonthlyWorkdays', safe(e.target.value, 27))} /></div>
         </div>
       </div>
     );
