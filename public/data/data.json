@@ -261,21 +261,6 @@
         "_lastImport": 1780918072020,
         "total_sales": 32613.1,
         "coupon_usage_pct": 0.0459
-      },
-      {
-        "name": "DANIEL",
-        "mtd_hours": 0,
-        "daily_avg": 0,
-        "hours_per_ro": 0,
-        "align": 0,
-        "tires": 0,
-        "valvoline": 0,
-        "roh50_hrs_ro": 0,
-        "csi": 0,
-        "asr": 0,
-        "elr": 0,
-        "last_month_total": 0,
-        "ro_count": 0
       }
     ],
     "advisorTraining": [
@@ -290,12 +275,6 @@
         "certified": "NO",
         "trainings_due": "3",
         "excel_training": "NA"
-      },
-      {
-        "name": "PARKER",
-        "certified": "YES",
-        "trainings_due": "3",
-        "excel_training": "N/A"
       },
       {
         "name": "DANIEL",
@@ -354,10 +333,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 158.3,
-      "align": 0.07373333333333333,
-      "tires": 0.0053,
-      "valvoline": 0.14186666666666667,
-      "csi": 654.3333333333334
+      "align": 0.1106,
+      "tires": 0.00795,
+      "valvoline": 0.2128,
+      "csi": 981.5
     },
     "techTotals": {
       "mon": 32.6,
