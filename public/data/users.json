@@ -474,6 +474,31 @@
       },
       "chatAccess": false,
       "techChatAccess": true
+    },
+    {
+      "username": "Daniel",
+      "lastName": "",
+      "password": "Daniel2026",
+      "role": "advisor",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": false,
+        "usedCarHub": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDhlDbkRPNhduD3F6SBE6XxcJZDdxNgtXa2ZIRDM+OwghIGNtXw==",
