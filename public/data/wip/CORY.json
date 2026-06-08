@@ -46,8 +46,8 @@
     "jobDesc": "Tow in, seized motor. Doesnt have belt on and battery is dead. UPDATE miles when car has power",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/08/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Techline recommends engine replacement. All paperwork submitted. P/A IS SUBMITTED. LINE ADDED FOR VALVE COVER STUI, Photo added. HMA is buying the car nack Engine declined. CORY WE NEED TO REPLACE THE VALVE COVER GASKET AND HIGH PRESSURE FUEL LINE "
