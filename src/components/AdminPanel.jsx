@@ -114,6 +114,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [awsSecret, setAwsSecretState] = useState(getAwsCreds().secretAccessKey);
   const [awsSaving, setAwsSaving] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [addingAdvisor, setAddingAdvisor] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [forceRefreshState, setForceRefreshState] = useState('idle'); // idle | sending | sent | error
@@ -911,19 +912,28 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, vacations);
   }
 
-  function addAdvisor() {
-    const name = prompt('Advisor name:');
+  function addAdvisor() { setAddingAdvisor(true); }
+
+  function pickAdvisor(username) {
+    const name = (username || '').toUpperCase();
     if (!name) return;
+    if (data.advisors.some(a => (a.name || '').toUpperCase() === name)) { setAddingAdvisor(false); return; }
     const newData = structuredClone(data);
     newData.advisors.push({
-      name: name.toUpperCase(), mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
+      name, mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
       align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0, ro_count: 0,
     });
     newData.advisorTraining.push({
-      name: name.toUpperCase(), certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
+      name, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
     });
     onDataChange(newData, vacations);
+    setAddingAdvisor(false);
   }
+
+  // Users with the advisor role who aren't already in the advisor list.
+  const availableAdvisorUsers = (users || [])
+    .filter(u => (u.role || '').toLowerCase() === 'advisor')
+    .filter(u => !data.advisors.some(a => (a.name || '').toUpperCase() === (u.username || '').toUpperCase()));
 
   function removeAdvisor(idx) {
     if (!confirm(`Remove ${data.advisors[idx].name}?`)) return;
@@ -1269,6 +1279,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </button>
             {reportStatus && <span style={{ fontSize: 13, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{reportStatus}</span>}
           </div>
+
+          {addingAdvisor && (
+            <div onClick={() => setAddingAdvisor(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+              <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 440, background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 22, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Add Advisor</span>
+                  <button onClick={() => setAddingAdvisor(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer' }}>✕</button>
+                </div>
+                <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>Pick a user with the <strong>advisor</strong> role:</div>
+                {availableAdvisorUsers.length === 0 ? (
+                  <div style={{ color: '#fbbf24', fontSize: 13, padding: '8px 0' }}>
+                    No advisor-role users available. Add them under <strong>Users</strong> (set role to “advisor”) first.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 360, overflowY: 'auto' }}>
+                    {availableAdvisorUsers.map(u => (
+                      <button key={u.username} onClick={() => pickAdvisor(u.username)}
+                        style={{ textAlign: 'left', background: 'rgba(96,165,250,.12)', border: '1px solid rgba(96,165,250,.35)', color: '#e2e8f0', borderRadius: 10, padding: '10px 14px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+                        {u.username.toUpperCase()}{u.lastName ? <span style={{ color: '#94a3b8', fontWeight: 600 }}> {u.lastName}</span> : null}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
     );
 
