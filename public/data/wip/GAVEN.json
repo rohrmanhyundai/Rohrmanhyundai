@@ -40,20 +40,6 @@
     "notes": "WILL NEED TO DO MORE BATTERY TESTING. DIAG IS GOOD WAITING ON RECALL PARTS "
   },
   {
-    "id": "mpzni24syp2",
-    "ro": "778103",
-    "roDate": "2026-06-04",
-    "jobDesc": "CUSTOMER STATES BATTERY LIGHT ON",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/04/2026",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "WILL NEED ALTERNATOR REPLACEMENT. OUT OF WARRANTY. CUSTOMER APPROVED ALTANOTOR ",
-    "flagged": false
-  },
-  {
     "id": "mq0267jqel6",
     "ro": "778110",
     "roDate": "2026-06-04",
