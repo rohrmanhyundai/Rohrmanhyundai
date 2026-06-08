@@ -1,156 +1,5 @@
 [
   {
-    "id": "mou4gfdc2q4",
-    "username": "SHAWN",
-    "text": "Kai did parts come in for 777260? camera?",
-    "timestamp": 1778075856336
-  },
-  {
-    "id": "mou5cgs8qu5",
-    "username": "KAI",
-    "text": "look at the previous message @shawn",
-    "timestamp": 1778077351160
-  },
-  {
-    "id": "mou9ryjay7o",
-    "username": "SHAWN",
-    "text": "IM AN IDIOT HAH",
-    "timestamp": 1778084792470,
-    "replyTo": {
-      "id": "mou5cgs8qu5",
-      "username": "KAI",
-      "text": "look at the previous message @shawn"
-    }
-  },
-  {
-    "id": "mouaaihqysn",
-    "username": "SHAWN",
-    "text": "777297 she is having her mom or friend pick the car up",
-    "timestamp": 1778085658142
-  },
-  {
-    "id": "mouad7idz9x",
-    "username": "SHAWN",
-    "text": "Can one of you two call SOP please. schedule for next week if possible",
-    "timestamp": 1778085783877
-  },
-  {
-    "id": "mouah55hp5f",
-    "username": "SHAWN",
-    "text": "Kai, did the horns come in for 777273?",
-    "timestamp": 1778085967445
-  },
-  {
-    "id": "mouakiri129",
-    "username": "SHAWN",
-    "text": "Jordan are you handling 777260 for David? car is done",
-    "timestamp": 1778086125054
-  },
-  {
-    "id": "mouca0eetvd",
-    "username": "KAI",
-    "text": "Shawn, yes, they did. I messaged about it this morning lol",
-    "timestamp": 1778088993926
-  },
-  {
-    "id": "moudubn2ebo",
-    "username": "SHAWN",
-    "text": "Jordan make sure west gets those horns in today please",
-    "timestamp": 1778091621230,
-    "reactions": {
-      "👍": [
-        "JORDAN"
-      ]
-    }
-  },
-  {
-    "id": "moudym9e82j",
-    "username": "KAI",
-    "text": "line needs to be open to we can bill out the horns @shwan",
-    "timestamp": 1778091821618
-  },
-  {
-    "id": "moudyr5vb3f",
-    "username": "KAI",
-    "text": "*Shawn",
-    "timestamp": 1778091827971
-  },
-  {
-    "id": "moue28g0e0j",
-    "username": "SHAWN",
-    "text": "Line is open for the horns",
-    "timestamp": 1778091990336
-  },
-  {
-    "id": "movgwfep2c4",
-    "username": "KAI",
-    "text": "776993, engine and all parts are here",
-    "timestamp": 1778157224449
-  },
-  {
-    "id": "movhgeo8ih4",
-    "username": "KAI",
-    "text": "Parts are in for these closed repair orders  - Keith Bricker, wheel speed sensor -Gloria Corman, wiper blade  -Janice Bates, palisade actuator recall parts",
-    "timestamp": 1778158156616
-  },
-  {
-    "id": "movti5l9geb",
-    "username": "KAI",
-    "text": "777258, tire should be here tomorrow shipped via UPS in the afternoon.",
-    "timestamp": 1778178393549,
-    "reactions": {
-      "👍": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "movuwgyf9lc",
-    "username": "KAI",
-    "text": "tire is here for 777246",
-    "timestamp": 1778180741079,
-    "reactions": {
-      "👍": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mowvgqx0kdw",
-    "username": "SHAWN",
-    "text": "That car will be here monday for the tire",
-    "timestamp": 1778242153284,
-    "replyTo": {
-      "id": "movuwgyf9lc",
-      "username": "KAI",
-      "text": "tire is here for 777246"
-    }
-  },
-  {
-    "id": "mowyps4lk94",
-    "username": "JERRY",
-    "text": "777378 NEEDS CLAIM # FOR PPM86",
-    "timestamp": 1778247613605
-  },
-  {
-    "id": "mowzzpz5378",
-    "username": "JERRY",
-    "text": "THANK YOU",
-    "timestamp": 1778249756993
-  },
-  {
-    "id": "moxcavur376",
-    "username": "KAI",
-    "text": "head unit is here for 777305",
-    "timestamp": 1778270433219
-  },
-  {
-    "id": "moxev1mdpvk",
-    "username": "DAVID",
-    "text": "we will have 1 loaner in detail bay getting cleaned due to excessive use",
-    "timestamp": 1778274733045
-  },
-  {
     "id": "moyj9srcqds",
     "username": "SETH",
     "text": "TIRE HERE FOR AIMEE WESNER",
@@ -885,5 +734,11 @@
     "username": "KAI",
     "text": "if we can try to call SORs today, I sent text to everyone yesterday. Also parts are in for these not open tickets, John Gehm (11769), Kelli Scott (11756), Chole Lysiak (11703)",
     "timestamp": 1780663965423
+  },
+  {
+    "id": "mq5a1aojxvn",
+    "username": "SETH",
+    "text": "TIRE HERE FOR JENNIFER VINCENT",
+    "timestamp": 1780927138387
   }
 ]
