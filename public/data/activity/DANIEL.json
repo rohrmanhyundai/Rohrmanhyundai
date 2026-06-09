@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-06-09T12:09:17.879Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-06-09T12:09:12.167Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-06-09T12:09:12.163Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-06-09T12:06:09.843Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
