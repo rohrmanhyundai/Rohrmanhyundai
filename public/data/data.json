@@ -164,31 +164,6 @@
         }
       },
       {
-        "name": "JOHN",
-        "goal": 47.5,
-        "mon": 0,
-        "tue": 0,
-        "wed": 0,
-        "thu": 0,
-        "fri": 0,
-        "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—",
-        "hoursOverride": {
-          "2026-05-25": true,
-          "2026-05-27": true,
-          "2026-05-28": true,
-          "2026-06-03": true,
-          "2026-06-02": true,
-          "2026-06-01": true,
-          "2026-06-08": true
-        }
-      },
-      {
         "name": "CHAD",
         "goal": 47.5,
         "mon": 8.6,
