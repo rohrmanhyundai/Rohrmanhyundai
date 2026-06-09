@@ -1,7 +1,7 @@
 {
   "id": "mq76m82u065e",
   "createdAt": "2026-06-09T21:58:48.678Z",
-  "updatedAt": "2026-06-09T22:13:55.614Z",
+  "updatedAt": "2026-06-09T22:14:06.947Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Desiree Winter",
   "customerPhone": "(765) 714 - 1618",
@@ -67,6 +67,6 @@
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": false,
-  "readySubmissionDate": ""
+  "readySubmission": true,
+  "readySubmissionDate": "2026-06-09"
 }
