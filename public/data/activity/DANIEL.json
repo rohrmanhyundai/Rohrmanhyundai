@@ -1,0 +1,17 @@
+[
+  {
+    "at": "2026-06-09T12:04:02.222Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-06-09T12:03:45.463Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-06-09T12:03:32.041Z",
+    "type": "action",
+    "label": "login"
+  }
+]
