@@ -1,5 +1,77 @@
 [
   {
+    "id": "mq76m82u065e",
+    "createdAt": "2026-06-09T21:58:48.678Z",
+    "updatedAt": "2026-06-09T22:13:55.614Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Desiree Winter",
+    "customerPhone": "(765) 714 - 1618",
+    "repairOrder": "",
+    "vin": "KM8R3DHE8LU063958",
+    "vehicleYear": "2020",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Palisade",
+    "mileage": "91284",
+    "warrantyCompany": "AAGI",
+    "warrantyPhone": "18884422886",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "5.8",
+    "laborTime": "170",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "mq76m82u9jjb",
+        "partNumber": "97701-S8500",
+        "description": "COMPRESSOR ASSY",
+        "qty": "1",
+        "price": "494.27"
+      },
+      {
+        "id": "mq76qo5dl3ol",
+        "partNumber": "25310-S8700",
+        "description": "RADIATOR ASSY",
+        "qty": "1",
+        "price": "567.28"
+      },
+      {
+        "id": "mq76qom722al",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "23.52"
+      },
+      {
+        "id": "mq76ro2w8s29",
+        "partNumber": "134A",
+        "description": "134A FREON",
+        "qty": "3",
+        "price": "21.38"
+      }
+    ],
+    "taxPct": "",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "JERRY AAGI WAS CLOSED AT 6PM. PARTS NEEDS TO REMOVE THE RF134 ON THE AC COMPRESSOR LINE \n",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": ""
+  },
+  {
     "id": "mq5ne3svkamo",
     "createdAt": "2026-06-08T20:12:51.007Z",
     "updatedAt": "2026-06-09T20:20:22.305Z",
