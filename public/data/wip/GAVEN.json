@@ -33,8 +33,8 @@
     "jobDesc": "RADIATOR WITH UPPER AND LOWER HOSES ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/09/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "WAITING ON PARTS. (Parts Update 6/8/26)- 25414-J9700 coming from alt. location, eta 6-11 or sooner"
