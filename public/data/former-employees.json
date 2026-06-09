@@ -3,5 +3,10 @@
     "username": "PARKER",
     "role": "advisor",
     "deletedAt": "2026-06-01T12:00:00.000Z"
+  },
+  {
+    "username": "JOHN",
+    "role": "technician",
+    "deletedAt": "2026-06-09T11:38:17.557Z"
   }
 ]
