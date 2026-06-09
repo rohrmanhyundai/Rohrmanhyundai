@@ -478,7 +478,7 @@
       "username": "Emily",
       "lastName": "",
       "password": "[REDACTED]",
-      "role": "advisor",
+      "role": "warranty",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
