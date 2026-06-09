@@ -1,5 +1,23 @@
 [
   {
+    "id": "mpocp2sd56j",
+    "ro": "777717",
+    "roDate": "2026-05-20",
+    "jobDesc": "Tow in, Flashing CEL, sent from Becks for bearing clearance test TXXI warranty",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/08/2026",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": "FAILED BEARING CLEARANCE TEST P/A SUBMITTED FOR ENGINE. ENGINE WAS DECLINED BY HYUNDAI. CALLED AFTERMARKET WARRANTY IT IS STILL IN REVIEW. AFTER MARKET WARRANTY DECLINED. CUSTOMER IS TO CONTACT THE SELLING DEALERSHIP.LEWIS MOTORS WILL BE PAYING FOR THE ENGINE. CONTACT 765-652-5516\n",
+    "_archiveId": "mq74efacb60",
+    "_archivedAt": "2026-06-09T20:56:45.540Z",
+    "_archivedBy": "CORY",
+    "_source": "wip",
+    "_sourceTech": "CORY"
+  },
+  {
     "id": "mq5vmunag7p",
     "ro": "778094",
     "roDate": "2026-06-03",
