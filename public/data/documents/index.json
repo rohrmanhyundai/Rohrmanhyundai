@@ -7,7 +7,11 @@
     "size": 228917,
     "uploadedBy": "Shawn",
     "uploadedAt": "2026-06-09T15:07:43.133Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "service manager",
+      "general manager",
+      "parts manager"
+    ]
   },
   {
     "id": "mpwtsgex7qq1",
