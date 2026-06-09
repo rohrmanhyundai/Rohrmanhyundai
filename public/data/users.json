@@ -490,7 +490,7 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": false,
+        "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
