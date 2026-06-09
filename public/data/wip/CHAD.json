@@ -12,5 +12,18 @@
     "advisor": "JORDAN",
     "notes": "WAITING ON APPROVAL. JORDAN HAVE YOU TALKED TO ENTERPRISE ABOUT THIS REPAIR?, not yet",
     "flagged": false
+  },
+  {
+    "id": "mq73b56fnpg",
+    "ro": "778221",
+    "roDate": "2026-06-08",
+    "jobDesc": "Tow in CEL Flashing, no crank no start",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
