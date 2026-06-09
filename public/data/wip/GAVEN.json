@@ -33,50 +33,10 @@
     "jobDesc": "RADIATOR WITH UPPER AND LOWER HOSES ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/09/2026",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "WAITING ON PARTS. (Parts Update 6/8/26)- 25414-J9700 coming from alt. location, eta 6-11 or sooner"
-  },
-  {
-    "id": "mq5rfxen6jf",
-    "ro": "778079",
-    "roDate": "2026-06-03",
-    "jobDesc": "FLAT TIRE AND RECALL ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/08/2026",
-    "highPriority": true,
-    "advisor": "JORDAN",
-    "notes": "NEEDS PULLED INTO SHOP FOR SMART DRIVER PICS. TIRE APPROVED AND IN STOCK. "
-  },
-  {
-    "id": "mq5s360ptcn",
-    "ro": "778169",
-    "roDate": "2026-06-08",
-    "jobDesc": "TIRE REPLACEMNT? ",
-    "etaParts": "",
-    "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "TIRE SHOWS COMPLETED BUT NO TECH ON THE LINE? IS THE CAR DONE? ",
-    "flagged": true
-  },
-  {
-    "id": "mq5sofs2ehk",
-    "ro": "778228",
-    "roDate": "2026-06-08",
-    "jobDesc": "DRIVE BELT FELL OFF. ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/08/2026",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "DRIVE BELT SOLD CUSTOMER BROUGHT IN UNDER SHEILD TO PUT ON "
+    "notes": "WAITING ON PARTS. (Parts Update 6/8/26)- 25414-J9700 coming from alt. location, eta 6-11 or sooner"
   }
 ]
