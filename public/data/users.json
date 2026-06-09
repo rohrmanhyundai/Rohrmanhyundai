@@ -478,8 +478,8 @@
       "username": "Emily",
       "lastName": "",
       "password": "[REDACTED]",
-      "role": "warranty",
-      "canEditDashboard": false,
+      "role": "admin",
+      "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
         "advisorRankBoard": true,
