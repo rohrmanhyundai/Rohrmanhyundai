@@ -78,5 +78,18 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "DRIVE BELT SOLD CUSTOMER BROUGHT IN UNDER SHEILD TO PUT ON "
+  },
+  {
+    "id": "mq5vmunag7p",
+    "ro": "778094",
+    "roDate": "2026-06-03",
+    "jobDesc": "CUSTOMER STATES CAR HAS NO POWER AND SHUTTERS WHEN TAKING OFF. ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": true,
+    "advisor": "JORDAN",
+    "notes": ""
   }
 ]
