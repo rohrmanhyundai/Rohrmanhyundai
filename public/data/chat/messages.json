@@ -1,17 +1,5 @@
 [
   {
-    "id": "mp18qcmzyjf",
-    "username": "JERRY",
-    "text": "777413 NEVER MIND IT'S CLOSED.",
-    "timestamp": 1778506301051
-  },
-  {
-    "id": "mp1cch1u1cx",
-    "username": "KAI",
-    "text": "I NEVER GOT TO FINISH MY RECS ON 777433",
-    "timestamp": 1778512372050
-  },
-  {
     "id": "mp1j240dne5",
     "username": "DAVID",
     "text": "responded to VM about oil change apt and got scheduled",
@@ -781,5 +769,11 @@
     "username": "KAI",
     "text": "parts are in and customers have been texted for new SORS. 11796, 11803, 11805",
     "timestamp": 1781096678766
+  },
+  {
+    "id": "mq8dayah03h",
+    "username": "DAVID",
+    "text": "@Shawn, 778175. Can not remove tech as time has already been flagged. Ill close the ticket turning the time into ISH to make price 0",
+    "timestamp": 1781114026265
   }
 ]
