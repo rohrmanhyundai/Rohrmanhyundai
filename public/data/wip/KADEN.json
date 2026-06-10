@@ -27,20 +27,6 @@
     "notes": "AC COMPRESSOR AND SOLD GRAVY "
   },
   {
-    "id": "mq5slvsr8w5",
-    "ro": "778226",
-    "roDate": "2026-06-08",
-    "jobDesc": "WHEEL BEARING ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "WHEEL BEARING NEEDS TO GO TO MACHINE SHOP TO PRESS IN IN THE MORNING. DAVID REMING PORTER TO TAKE OVER ",
-    "flagged": true
-  },
-  {
     "id": "mq74gdl1srr",
     "ro": "778142",
     "roDate": "2026-06-09",
