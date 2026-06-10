@@ -1,11 +1,11 @@
 {
   "id": "mq76m82u065e",
   "createdAt": "2026-06-09T21:58:48.678Z",
-  "updatedAt": "2026-06-09T22:14:06.947Z",
+  "updatedAt": "2026-06-10T12:52:09.487Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Desiree Winter",
   "customerPhone": "(765) 714 - 1618",
-  "repairOrder": "",
+  "repairOrder": "778270",
   "vin": "KM8R3DHE8LU063958",
   "vehicleYear": "2020",
   "vehicleMake": "HYUNDAI",
@@ -13,7 +13,7 @@
   "mileage": "91284",
   "warrantyCompany": "AAGI",
   "warrantyPhone": "18884422886",
-  "claimNumber": "",
+  "claimNumber": "596421",
   "authNumber": "",
   "laborRate": "5.8",
   "laborTime": "170",
@@ -39,26 +39,19 @@
       "description": "COOLANT/ANTI-FREEZE 1 GALLON",
       "qty": "1",
       "price": "23.52"
-    },
-    {
-      "id": "mq76ro2w8s29",
-      "partNumber": "134A",
-      "description": "134A FREON",
-      "qty": "3",
-      "price": "21.38"
     }
   ],
-  "taxPct": "",
-  "deductible": "",
+  "taxPct": "7",
+  "deductible": "100.00",
   "rental": null,
   "towing": null,
   "sublet": null,
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "JERRY AAGI WAS CLOSED AT 6PM. PARTS NEEDS TO REMOVE THE RF134 ON THE AC COMPRESSOR LINE \n",
-  "approved": false,
-  "approvedDate": "",
+  "notes": "JERRY AAGI WAS CLOSED AT 6PM. PARTS NEEDS TO REMOVE THE RF134 ON THE AC COMPRESSOR LINE . called in 06/10/2026 will have to call back to adjust labor to $170.00 and check coolant price.\n",
+  "approved": true,
+  "approvedDate": "2026-06-10",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -67,6 +60,6 @@
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-06-09"
+  "readySubmission": false,
+  "readySubmissionDate": ""
 }
