@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-06-10T11:50:15.443Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-06-10T11:50:11.581Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-06-10T11:50:08.671Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-06-09T20:24:01.167Z",
     "type": "page",
     "label": "work-in-progress"
