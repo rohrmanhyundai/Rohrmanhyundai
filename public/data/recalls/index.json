@@ -30,19 +30,6 @@
           "causeCode": "ZZ4"
         },
         {
-          "id": "mq56a67wl2r4",
-          "answers": {
-            "model": "Palisade (LX2) None/ Single"
-          },
-          "model": "Palisade (LX2) None/ Single",
-          "opCode": "61D016R1",
-          "operation": "3 rd Row Quarter Window Glass Protective Film Application by Dealer",
-          "opTime": "0.4 M/H",
-          "causalPart": "87810-S8100",
-          "natureCode": "A31",
-          "causeCode": "ZZ4"
-        },
-        {
           "id": "mq56a67wnmri",
           "answers": {
             "model": "3 rd Row Quarter Window Glass Protective Film Application by 3 rd Party Dual"
@@ -64,19 +51,6 @@
           "opCode": "61D016R3",
           "operation": "3 rd Row Quarter Window Glass Protective Film Application by Dealer",
           "opTime": "0.4 M/H",
-          "causalPart": "87810-S8100",
-          "natureCode": "A31",
-          "causeCode": "ZZ4"
-        },
-        {
-          "id": "mq56a67w20ja",
-          "answers": {
-            "model": "3 rd Row Quarter Window Glass Protective Film Application by 3rd Party and Headliner Foam Removal by Dealer None/ Single"
-          },
-          "model": "3 rd Row Quarter Window Glass Protective Film Application by 3rd Party and Headliner Foam Removal by Dealer None/ Single",
-          "opCode": "61D016R4",
-          "operation": "3 rd Row Quarter Window Glass Aftermarket Tint Removal and Protective Film Application by 3 rd Party",
-          "opTime": "1.0 M/H",
           "causalPart": "87810-S8100",
           "natureCode": "A31",
           "causeCode": "ZZ4"
