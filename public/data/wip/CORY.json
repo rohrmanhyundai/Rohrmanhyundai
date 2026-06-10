@@ -51,18 +51,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "P0420 present. Recommend replacing cat. "
-  },
-  {
-    "id": "mq6pgggstah",
-    "ro": "778248",
-    "roDate": "2026-06-09",
-    "jobDesc": "R&R 3 door handles",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/10/2026",
-    "highPriority": true,
-    "advisor": "DAVID",
-    "notes": "return, parts were not covered under warranty, they are now paying out of pocket. parts are ordered. ETA 2 days"
   }
 ]
