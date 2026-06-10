@@ -21,6 +21,23 @@ function ChipBtn({ active, color, onClick, children }) {
   );
 }
 
+// Run `fn` over `items` with at most `limit` in flight at once. The RO search
+// loads one file per tech; firing them all simultaneously trips GitHub's API
+// rate limit, which silently drops matches (a found RO randomly "isn't found").
+// Throttling to a few at a time keeps every file's results reliable.
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i], i);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
 const todayISO = () => new Date().toISOString().slice(0, 10); // yyyy-mm-dd for date inputs
 const todayUS  = () => new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
 
@@ -366,22 +383,34 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         scanSet.push(name);
       }
 
-      const wipResults = await Promise.all(
-        scanSet.map(async tech => {
-          try {
-            const data = await loadWipData(tech);
-            return (data || [])
-              .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
-              .map(r => ({ ...r, techName: tech, _source: 'wip' }));
-          } catch { return []; }
-        })
-      );
+      // Throttle the per-tech loads (see mapLimit) so a wide roster doesn't trip
+      // the GitHub rate limit and silently drop matches.
+      const wipResults = await mapLimit(scanSet, 4, async tech => {
+        try {
+          const data = await loadWipData(tech);
+          return (data || [])
+            .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+            .map(r => ({ ...r, techName: tech, _source: 'wip' }));
+        } catch { return []; }
+      });
       // Also search Cars Awaiting
       const awaitingMatches = awaiting
         .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
         .map(r => ({ ...r, techName: 'Cars Awaiting', _source: 'awaiting' }));
 
-      setSearchResults([...wipResults.flat(), ...awaitingMatches]);
+      const allMatches = [...wipResults.flat(), ...awaitingMatches];
+
+      // A full RO# is almost always a single, unique match — jump straight to it
+      // instead of making the user click through a one-item results list.
+      if (allMatches.length === 1) {
+        const r = allMatches[0];
+        if (r._source !== 'awaiting') setActiveTech(r.techName);
+        setHighlightRO(r.ro || '');
+        clearSearch();
+        return;
+      }
+
+      setSearchResults(allMatches);
     } catch (e) { setError(e.message); }
     finally { setSearching(false); }
   }
@@ -514,8 +543,8 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         clearTimer = setTimeout(() => { if (!cancelled) setHighlightRO(''); }, 10000);
         return;
       }
-      if (attempts++ < 30) {
-        setTimeout(tryScroll, 200); // retry for up to ~6s while data loads
+      if (attempts++ < 60) {
+        setTimeout(tryScroll, 200); // retry for up to ~12s while a slow tab loads
       } else {
         // Give up scrolling but clear the highlight after a beat anyway.
         clearTimer = setTimeout(() => { if (!cancelled) setHighlightRO(''); }, 6000);
