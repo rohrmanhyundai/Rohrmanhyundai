@@ -771,8 +771,11 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
         )}
 
         {/* Questions */}
-        <div style={{ marginBottom: 8, fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>
+        <div style={{ marginBottom: 4, fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>
           Questions to ask (only needed if there are multiple op codes)
+        </div>
+        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>
+          Add a question (like “Model” or “Drivetrain”) when one bulletin has several op codes. The advisor's answer picks the matching row below. Leave empty if there's just one op code.
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
           {questions.map((qq, i) => (
@@ -785,37 +788,55 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
           <button onClick={addQuestion} style={{ ...secBtn, alignSelf: 'flex-start' }}>+ Add question</button>
         </div>
 
-        {/* Entries table */}
-        <div style={{ margin: '14px 0 8px', fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>Op code rows</div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 12 }}>
-            <thead>
-              <tr>
-                {questions.map(qq => <th key={qq.id} style={th}>{qq.label || 'Question'}</th>)}
-                {OP_FIELDS.map(f => <th key={f.key} style={th}>{f.label}</th>)}
-                <th style={th}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map(e => (
-                <tr key={e.id}>
-                  {questions.map(qq => (
-                    <td key={qq.id} style={td}>
-                      <input value={e.answers?.[qq.id] || ''} onChange={ev => setAnswer(e.id, qq.id, ev.target.value)} style={cellInput} />
-                    </td>
-                  ))}
-                  {OP_FIELDS.map(f => (
-                    <td key={f.key} style={td}>
-                      <input value={e[f.key] || ''} onChange={ev => setField(e.id, f.key, ev.target.value)} style={{ ...cellInput, minWidth: f.key === 'operation' ? 180 : 90 }} />
-                    </td>
-                  ))}
-                  <td style={td}><button onClick={() => removeEntry(e.id)} style={delBtn}>🗑</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Entries — one labeled card per op code (no cramped wide table) */}
+        <div style={{ margin: '18px 0 4px', fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>Op code rows</div>
+        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>
+          Each card is one op code. Fill in the values exactly as they appear in the bulletin's Warranty table.
         </div>
-        <button onClick={addEntry} style={{ ...secBtn, marginTop: 8 }}>+ Add op code row</button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {entries.map((e, idx) => (
+            <div key={e.id} style={entryCard}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: 0.6 }}>Row {idx + 1}</span>
+                <button onClick={() => removeEntry(e.id)} style={delBtn}>🗑 Remove row</button>
+              </div>
+
+              {questions.length > 0 && (
+                <div style={{ marginBottom: 14, padding: '10px 12px', background: 'rgba(251,191,36,.06)', border: '1px solid rgba(251,191,36,.22)', borderRadius: 10 }}>
+                  <div style={sectionLbl('#fbbf24')}>Pick this row when the advisor answers…</div>
+                  <div style={fieldGrid}>
+                    {questions.map(qq => (
+                      <label key={qq.id} style={fieldWrap}>
+                        <span style={fieldLbl}>{qq.label || 'Question'}</span>
+                        <input value={e.answers?.[qq.id] || ''} onChange={ev => setAnswer(e.id, qq.id, ev.target.value)} style={cellInput2} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={sectionLbl('#94a3b8')}>Op code details</div>
+              <div style={fieldGrid}>
+                {OP_FIELDS.map(f => (
+                  <label key={f.key} style={{ ...fieldWrap, gridColumn: f.key === 'operation' ? '1 / -1' : 'auto' }}>
+                    <span style={fieldLbl}>{f.label}</span>
+                    <input
+                      value={e[f.key] || ''}
+                      onChange={ev => setField(e.id, f.key, ev.target.value)}
+                      placeholder={OP_PLACEHOLDERS[f.key] || ''}
+                      style={cellInput2}
+                    />
+                  </label>
+                ))}
+              </div>
+
+              <div style={{ marginTop: 12, fontSize: 11, color: '#64748b' }}>
+                Copied line: <span style={{ color: formatOpLine(e) ? '#86efac' : '#475569', fontWeight: 600 }}>{formatOpLine(e) || '—'}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button onClick={addEntry} style={{ ...secBtn, marginTop: 12 }}>+ Add op code row</button>
 
         {error && <div style={{ color: '#fca5a5', fontSize: 13, marginTop: 12 }}>{error}</div>}
 
@@ -843,6 +864,21 @@ const digDocBtn = { background: 'rgba(251,146,60,.18)', border: '1px solid rgba(
 const viewBulletinBtn = { background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' };
 const xBtn = { background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 };
 const delBtn = { background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 6, padding: '4px 8px', fontSize: 12, cursor: 'pointer' };
-const th = { textAlign: 'left', color: '#94a3b8', fontWeight: 700, padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,.12)', whiteSpace: 'nowrap' };
-const td = { padding: '4px 6px', verticalAlign: 'top' };
-const cellInput = { width: '100%', boxSizing: 'border-box', padding: '6px 8px', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 6, color: '#e2e8f0', fontSize: 12, outline: 'none' };
+// ── Op code editor card layout ────────────────────────────────────────────────
+const entryCard = { background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 12, padding: '14px 16px' };
+const fieldGrid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 };
+const fieldWrap = { display: 'flex', flexDirection: 'column', gap: 4 };
+const fieldLbl = { fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.4 };
+const cellInput2 = { width: '100%', boxSizing: 'border-box', padding: '9px 11px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 8, color: '#e2e8f0', fontSize: 13, outline: 'none' };
+const sectionLbl = (color) => ({ fontSize: 11, fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: 0.4, marginBottom: 8 });
+
+// Example values shown as placeholders to guide what each field should contain.
+const OP_PLACEHOLDERS = {
+  model: 'Palisade (LX2)',
+  opCode: '61D016R0',
+  operation: '3rd Row Quarter Window Film',
+  opTime: '0.4 M/H',
+  causalPart: '87810-S8100',
+  natureCode: 'A31',
+  causeCode: 'ZZ4',
+};
