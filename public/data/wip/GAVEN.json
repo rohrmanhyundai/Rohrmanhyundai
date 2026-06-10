@@ -38,5 +38,18 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "WAITING ON PARTS. (Parts Update 6/8/26)- 25414-J9700 coming from alt. location, eta 6-11 or sooner"
+  },
+  {
+    "id": "mq8d7x52zij",
+    "ro": "777817",
+    "roDate": "2026-05-26",
+    "jobDesc": "WARNING LIGHTS. LOT CAR",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/04/2026",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": ""
   }
 ]
