@@ -73,8 +73,8 @@
     "jobDesc": "R&R 3 door handles",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/10/2026",
     "highPriority": true,
     "advisor": "DAVID",
     "notes": "return, parts were not covered under warranty, they are now paying out of pocket. parts are ordered. ETA 2 days"
