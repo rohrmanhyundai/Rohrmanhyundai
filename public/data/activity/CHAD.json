@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-06-11T12:05:43.959Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778175 tech CHAD"
+  },
+  {
     "at": "2026-06-11T12:04:21.962Z",
     "type": "page",
     "label": "work-in-progress"
