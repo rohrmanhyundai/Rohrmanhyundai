@@ -25,18 +25,5 @@
     "advisor": "JORDAN",
     "notes": "Replaced 4WD control module. Most DTCs clear. Several DTCs are still present. Continuing diag. DOES THE CUSTOMER WANT TO FIX THE CAMERA? REAR CAMERA IS ON ORDER ",
     "flagged": false
-  },
-  {
-    "id": "mq02ha47ys0",
-    "ro": "778134",
-    "roDate": "2026-06-04",
-    "jobDesc": "CHECK ENGINE LIGHT ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "P0420 present. Recommend replacing cat. "
   }
 ]
