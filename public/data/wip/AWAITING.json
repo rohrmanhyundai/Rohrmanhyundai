@@ -7,8 +7,8 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "JERRY HAS ALL THE PICS OF THE DAMAGE FOR WARRANTY CLAIM. ADDED LINE FOR RIM REPLACEMENT",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/12/2026",
     "isNew": false
   },
   {
