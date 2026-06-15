@@ -107,6 +107,69 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
     return { k, dt, dayNum, hasActual, actual, runActual, cumTarget, isToday, isPast };
   });
 
+  function printSheet() {
+    const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const stamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const sign = (n) => (n >= 0 ? '+' : '−') + money(Math.abs(n));
+
+    const rowHtml = rows.map(r => {
+      const diff = r.runActual - r.cumTarget;
+      const showDiff = r.hasActual || r.isPast;
+      const diffCls = !showDiff ? 'mut' : diff >= 0 ? 'pos' : 'neg';
+      return `<tr${r.isToday ? ' class="today"' : ''}>
+        <td class="c">${r.dayNum}</td>
+        <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${r.isToday ? ' <b>(Today)</b>' : ''}</td>
+        <td class="r">${money(dailyTarget)}</td>
+        <td class="r">${r.hasActual ? money(r.actual) : '<span class="mut">—</span>'}</td>
+        <td class="r">${r.hasActual || r.runActual > 0 ? money(r.runActual) : '<span class="mut">—</span>'}</td>
+        <td class="r ${diffCls}">${showDiff ? sign(diff) : '<span class="mut">—</span>'}</td>
+      </tr>`;
+    }).join('');
+
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Goal Forecast — ${esc(monthLabel)}</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 32px; }
+      h1 { font-size: 22px; margin: 0; }
+      .sub { color: #64748b; font-size: 13px; margin: 2px 0 20px; }
+      .cards { display: flex; gap: 12px; margin-bottom: 22px; }
+      .card { flex: 1; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; }
+      .card .lbl { font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: #64748b; font-weight: 700; }
+      .card .val { font-size: 20px; font-weight: 800; margin-top: 4px; }
+      .card .note { font-size: 11px; color: #64748b; margin-top: 3px; }
+      table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+      th { text-align: left; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #94a3b8; padding: 7px 10px; }
+      td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
+      th.r, td.r { text-align: right; } th.c, td.c { text-align: center; color: #94a3b8; }
+      tr.today td { background: #ecfdf5; font-weight: 700; }
+      .pos { color: #15803d; } .neg { color: #b91c1c; } .mut { color: #cbd5e1; }
+      .ftr { margin-top: 18px; font-size: 11px; color: #94a3b8; }
+      @media print { body { margin: 12px; } @page { margin: 14mm; } }
+    </style></head><body>
+      <h1>Goal Forecast — ${esc(monthLabel)}</h1>
+      <div class="sub">Bob Rohrman Hyundai &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
+      <div class="cards">
+        <div class="card"><div class="lbl">Forecast</div><div class="val">${money(forecast)}</div><div class="note">${totalDays} working days</div></div>
+        <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div></div>
+        <div class="card"><div class="lbl">Actual MTD</div><div class="val">${money(actualMTD)}</div><div class="note">${completedDays} days completed</div></div>
+        <div class="card"><div class="lbl">Expected MTD</div><div class="val">${money(expectedMTD)}</div></div>
+        <div class="card"><div class="lbl">${up ? 'Ahead of Pace' : 'Behind Pace'}</div><div class="val ${up ? 'pos' : 'neg'}">${sign(variance)}</div></div>
+        <div class="card"><div class="lbl">Projected Month-End</div><div class="val ${!hasActuals ? '' : projected >= forecast ? 'pos' : 'neg'}">${hasActuals ? money(projected) : '—'}</div><div class="note">${hasActuals && forecast > 0 ? sign(projected - forecast) + ' vs forecast' : ''}</div></div>
+      </div>
+      <table>
+        <thead><tr><th class="c">Day</th><th>Date</th><th class="r">Daily Target</th><th class="r">Actual Gross</th><th class="r">Cumulative</th><th class="r">+/-</th></tr></thead>
+        <tbody>${rowHtml}</tbody>
+      </table>
+      <div class="ftr">+/- compares cumulative actual against the cumulative daily target through each day.</div>
+      <script>window.onload = function(){ window.print(); }<\/script>
+    </body></html>`;
+
+    const w = window.open('', '_blank');
+    if (!w) { alert('Please allow pop-ups to print the forecast.'); return; }
+    w.document.write(html);
+    w.document.close();
+  }
+
   const cardStyle = {
     background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)',
     borderRadius: 16, padding: '20px 22px', flex: 1, minWidth: 180,
@@ -122,6 +185,7 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
           <div className="adv-sub">{monthLabel} · {currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
+        <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>
         <button className="secondary" onClick={onBack}>← Manager Hub</button>
       </div>
 
