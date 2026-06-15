@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-06-15T14:01:13.470Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-06-15T14:01:07.893Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-06-11T15:27:13.517Z",
     "type": "action",
     "label": "delete-wip-row",
