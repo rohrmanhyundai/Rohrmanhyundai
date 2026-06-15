@@ -5,9 +5,8 @@
     "weekStart": "2026-06-06",
     "weekEnd": "2026-06-12",
     "type": "tech",
-    "savedAt": "2026-06-15T08:45:55.177Z",
-    "autoSaved": true,
-    "total": 51.5,
+    "savedAt": "2026-06-15T11:06:43.633Z",
+    "total": 59.5,
     "goal": 47.5,
     "goal_pct": 1.0842105263157895,
     "pacing": 64.375,
@@ -15,7 +14,7 @@
     "tue": 20.4,
     "wed": 8.3,
     "thu": 22.5,
-    "fri": 0,
+    "fri": 8,
     "sat": 0,
     "mon_ro": 0,
     "tue_ro": 0,
@@ -23,7 +22,8 @@
     "thu_ro": 0,
     "fri_ro": 0,
     "sat_ro": 0,
-    "total_ro": 0
+    "total_ro": 0,
+    "vacationHours": 8
   },
   {
     "date": "2026-05-30",
