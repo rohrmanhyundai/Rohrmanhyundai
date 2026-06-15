@@ -101,6 +101,15 @@ const NAV_BUTTONS = [
     prop: 'onRepairOrderDatabase',
   },
   {
+    key: 'goalForecast',
+    label: '📈 Goal Forecast',
+    desc: 'Forecast monthly gross profit and track daily pace vs. goal',
+    bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(16,185,129,.18))',
+    border: 'rgba(52,211,153,.45)',
+    color: '#6ee7b7',
+    prop: 'onGoalForecast',
+  },
+  {
     key: 'userDataTracker',
     label: '📡 User Data Tracker',
     desc: 'Last 30 days of page views and key actions per user',
@@ -116,13 +125,13 @@ export default function ManagerHub({
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
-  onRepairOrderDatabase, onUserDataTracker,
+  onRepairOrderDatabase, onUserDataTracker, onGoalForecast,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
-    onRepairOrderDatabase, onUserDataTracker,
+    onRepairOrderDatabase, onUserDataTracker, onGoalForecast,
   };
 
   return (

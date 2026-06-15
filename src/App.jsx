@@ -17,6 +17,7 @@ import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
+import GoalForecast from './components/GoalForecast';
 import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
@@ -559,6 +560,20 @@ export default function App() {
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
         onRepairOrderDatabase={() => goTo('repair-order-database', 'manager-hub')}
         onUserDataTracker={() => goTo('user-data-tracker', 'manager-hub')}
+        onGoalForecast={() => goTo('goal-forecast', 'manager-hub')}
+      />
+    );
+  }
+
+  if (page === 'goal-forecast') {
+    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return (
+      <GoalForecast
+        data={data}
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => navTo(prevPage || 'manager-hub')}
       />
     );
   }

@@ -21,6 +21,7 @@ const PAGE_LABELS = {
   'performance-report': 'My Performance Report',
   'repair-order-database': 'Repair Order Database',
   'user-data-tracker': 'User Data Tracker',
+  'goal-forecast': 'Goal Forecast',
   'charge-account-list': 'Charge Account List',
   'employee-review': 'Employee Review',
   'tech-self-review': 'Tech Self-Review',
