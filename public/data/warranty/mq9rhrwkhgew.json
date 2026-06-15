@@ -1,7 +1,7 @@
 {
   "id": "mq9rhrwkhgew",
   "createdAt": "2026-06-11T17:18:45.380Z",
-  "updatedAt": "2026-06-15T17:54:05.000Z",
+  "updatedAt": "2026-06-15T17:54:24.952Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Maddison McQuern",
   "customerPhone": "317) 760 - 4096",
@@ -35,7 +35,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "REPLACE RIGHT FRONT WHEEL AND THEY HAVE DISPATCHED (ALLOY) FOR RIGHT REAR WHEEL. DISPATCH IS 24-48 HRS.",
+  "notes": "REPLACE RIGHT FRONT WHEEL AND THEY HAVE DISPATCHED (ALLOY) FOR RIGHT REAR WHEEL. DISPATCH IS 24-48 HRS.\n\npaid 06/15/2026",
   "approved": false,
   "approvedDate": "",
   "denied": false,
