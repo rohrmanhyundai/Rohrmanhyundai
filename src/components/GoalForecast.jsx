@@ -81,9 +81,10 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
   const variance = actualMTD - expectedMTD;
   const up = variance >= 0;
 
-  // Projected month-end: run-rate of entered actuals across completed days.
-  const daysWithEntries = Object.keys(actuals).length;
-  const runRate = daysWithEntries > 0 ? actualMTD / daysWithEntries : 0;
+  // Projected month-end: current daily pace (actual MTD ÷ completed working
+  // days) extended across the full month.
+  const hasActuals = actualMTD > 0;
+  const runRate = completedDays > 0 ? actualMTD / completedDays : 0;
   const projected = runRate * totalDays;
 
   const pctOfForecast = forecast > 0 ? (actualMTD / forecast) * 100 : 0;
@@ -173,9 +174,11 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
             </div>
             <div style={cardStyle}>
               <div style={labelStyle}>Projected Month-End</div>
-              <div style={valStyle}>{daysWithEntries > 0 ? money(projected) : '—'}</div>
+              <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : projected >= forecast ? '#6ee7b7' : '#fca5a5' }}>{hasActuals ? money(projected) : '—'}</div>
               <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                {forecast > 0 ? pctOfForecast.toFixed(1) + '% of forecast booked' : 'enter a forecast'}
+                {hasActuals && forecast > 0
+                  ? (projected >= forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - forecast)) + ' vs forecast'
+                  : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
               </div>
             </div>
           </div>
