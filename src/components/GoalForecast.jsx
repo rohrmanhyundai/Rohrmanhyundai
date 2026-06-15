@@ -213,13 +213,18 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
                   <div style={{ textAlign: 'right' }}>
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={r.hasActual ? r.actual : ''}
-                      placeholder="—"
+                      placeholder="$ enter"
                       onChange={e => updateActual(r.k, e.target.value)}
+                      onFocus={e => { e.target.style.borderColor = '#6ee7b7'; e.target.style.background = 'rgba(2,6,23,.7)'; }}
+                      onBlur={e => { e.target.style.borderColor = r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'; e.target.style.background = 'rgba(2,6,23,.55)'; }}
                       style={{
-                        background: 'rgba(2,6,23,.4)', border: '1px solid rgba(148,163,184,.2)',
-                        borderRadius: 8, padding: '5px 10px', fontSize: 14, fontWeight: 700,
-                        color: '#e2e8f0', width: 120, textAlign: 'right', outline: 'none',
+                        background: 'rgba(2,6,23,.55)',
+                        border: `1px solid ${r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'}`,
+                        borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700,
+                        color: r.hasActual ? '#6ee7b7' : '#e2e8f0', width: 120, textAlign: 'right',
+                        outline: 'none', cursor: 'text',
                       }}
                     />
                   </div>
