@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-06-15T20:12:22.184Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
+    "at": "2026-06-15T20:12:19.606Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-06-15T20:12:14.380Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
     "at": "2026-06-15T20:12:10.505Z",
     "type": "page",
     "label": "tech-resources"
