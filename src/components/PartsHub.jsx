@@ -82,6 +82,15 @@ const NAV_BUTTONS = [
     prop: 'onWorkInProgress',
   },
   {
+    key: 'partsGoalForecast',
+    label: '📈 Goal Forecast',
+    desc: 'Forecast monthly parts gross profit and track daily pace vs. goal',
+    bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(16,185,129,.18))',
+    border: 'rgba(52,211,153,.45)',
+    color: '#6ee7b7',
+    prop: 'onGoalForecast',
+  },
+  {
     key: 'tireQuote',
     label: '🛞 Tire Quote',
     desc: 'Get a tire quote from Hyundai Tire Center',
@@ -95,9 +104,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs,
+  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

@@ -22,6 +22,7 @@ const PAGE_LABELS = {
   'repair-order-database': 'Repair Order Database',
   'user-data-tracker': 'User Data Tracker',
   'goal-forecast': 'Goal Forecast',
+  'parts-goal-forecast': 'Parts Goal Forecast',
   'charge-account-list': 'Charge Account List',
   'employee-review': 'Employee Review',
   'tech-self-review': 'Tech Self-Review',
