@@ -9,7 +9,6 @@ const money1 = (n) => '$' + safe(n, 0).toLocaleString('en-US', { minimumFraction
 function monthKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
-function storageKey(mk) { return `goalForecast-${mk}`; }
 
 // Non-Sunday calendar dates for the given month (matches advisorMonthProgress's
 // "working day" definition: every day except Sunday).
@@ -25,9 +24,16 @@ function workingDates(year, month) {
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export default function GoalForecast({ data, currentUserDisplay, currentUser, onBack }) {
+export default function GoalForecast({
+  data, currentUserDisplay, currentUser, onBack,
+  title = 'Goal Forecast',
+  deptLabel = 'Service Department',
+  backLabel = '← Manager Hub',
+  storagePrefix = 'goalForecast',
+}) {
   const now = new Date();
   const mk = monthKey(now);
+  const storageKey = (m) => `${storagePrefix}-${m}`;
 
   // Total working days for the month — honors the Goal Gauges override exactly
   // like the dashboard gauges (advisorMonthProgress applies advisorMonthlyWorkdays).
@@ -126,7 +132,7 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
       </tr>`;
     }).join('');
 
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Goal Forecast — ${esc(monthLabel)}</title>
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} — ${esc(monthLabel)}</title>
     <style>
       * { box-sizing: border-box; }
       body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 32px; }
@@ -146,8 +152,8 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
       .ftr { margin-top: 18px; font-size: 11px; color: #94a3b8; }
       @media print { body { margin: 12px; } @page { margin: 14mm; } }
     </style></head><body>
-      <h1>Goal Forecast — ${esc(monthLabel)}</h1>
-      <div class="sub">Bob Rohrman Hyundai &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
+      <h1>${esc(title)} — ${esc(monthLabel)}</h1>
+      <div class="sub">Bob Rohrman Hyundai &middot; ${esc(deptLabel)} &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
       <div class="cards">
         <div class="card"><div class="lbl">Forecast</div><div class="val">${money(forecast)}</div><div class="note">${totalDays} working days</div></div>
         <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div></div>
@@ -181,12 +187,12 @@ export default function GoalForecast({ data, currentUserDisplay, currentUser, on
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
-          <div className="adv-title">Goal Forecast</div>
+          <div className="adv-title">{title}</div>
           <div className="adv-sub">{monthLabel} · {currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
         <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>
-        <button className="secondary" onClick={onBack}>← Manager Hub</button>
+        <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>

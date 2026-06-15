@@ -503,6 +503,22 @@ export default function App() {
         onAdvisorRankBoard={openRankBoard}
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
+        onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
+      />
+    );
+  }
+
+  if (page === 'parts-goal-forecast') {
+    return (
+      <GoalForecast
+        data={data}
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        title="Parts Goal Forecast"
+        deptLabel="Parts Department"
+        backLabel="← Parts Hub"
+        storagePrefix="partsGoalForecast"
+        onBack={() => navTo(prevPage || 'parts-hub')}
       />
     );
   }
