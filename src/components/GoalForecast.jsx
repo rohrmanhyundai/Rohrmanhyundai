@@ -43,8 +43,9 @@ export default function GoalForecast({
 
   const dates = useMemo(() => workingDates(now.getFullYear(), now.getMonth()), [mk]);
 
-  // Persisted state: monthly forecast + per-date actuals (keyed by 'YYYY-MM-DD').
+  // Persisted state: monthly forecast, last-year total, per-date actuals.
   const [forecast, setForecast] = useState(0);
+  const [lastYear, setLastYear] = useState(0);
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
 
   useEffect(() => {
@@ -53,21 +54,28 @@ export default function GoalForecast({
       if (raw) {
         const parsed = JSON.parse(raw);
         setForecast(safe(parsed.forecast, 0));
+        setLastYear(safe(parsed.lastYear, 0));
         setActuals(parsed.actuals || {});
       }
     } catch { /* ignore */ }
   }, [mk]);
 
-  function persist(nextForecast, nextActuals) {
+  function persist(next) {
     try {
-      localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: nextForecast, actuals: nextActuals }));
+      localStorage.setItem(storageKey(mk), JSON.stringify({ forecast, lastYear, actuals, ...next }));
     } catch { /* ignore */ }
   }
 
   function updateForecast(val) {
     const n = safe(val, 0);
     setForecast(n);
-    persist(n, actuals);
+    persist({ forecast: n });
+  }
+
+  function updateLastYear(val) {
+    const n = safe(val, 0);
+    setLastYear(n);
+    persist({ lastYear: n });
   }
 
   function updateActual(dayKey, val) {
@@ -75,7 +83,7 @@ export default function GoalForecast({
     if (val === '' || val == null) delete next[dayKey];
     else next[dayKey] = safe(val, 0);
     setActuals(next);
-    persist(forecast, next);
+    persist({ actuals: next });
   }
 
   const dailyTarget = totalDays > 0 ? forecast / totalDays : 0;
@@ -164,6 +172,7 @@ export default function GoalForecast({
       <div class="sub">Bob Rohrman Hyundai &middot; ${esc(deptLabel)} &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
       <div class="cards">
         <div class="card"><div class="lbl">Forecast</div><div class="val">${money(forecast)}</div><div class="note">${totalDays} working days</div></div>
+        ${lastYear > 0 ? `<div class="card"><div class="lbl">Last Year</div><div class="val">${money(lastYear)}</div><div class="note">${hasActuals ? 'proj ' + (projected >= lastYear ? '+' : '−') + money(Math.abs(projected - lastYear)) + ' vs LY' : ''}</div></div>` : ''}
         <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div></div>
         <div class="card"><div class="lbl">Actual MTD</div><div class="val">${money(actualMTD)}</div><div class="note">${completedDays} days completed</div></div>
         <div class="card"><div class="lbl">Expected MTD</div><div class="val">${money(expectedMTD)}</div><div class="note">where you should be (${completedDays} &times; target)</div></div>
@@ -226,6 +235,28 @@ export default function GoalForecast({
                 />
               </div>
             </div>
+            <div style={{ ...cardStyle, background: 'linear-gradient(135deg,rgba(148,163,184,.14),rgba(100,116,139,.06))', border: '1px solid rgba(148,163,184,.3)' }}>
+              <div style={labelStyle}>Last Year (This Month)</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 26, fontWeight: 900, color: '#cbd5e1' }}>$</span>
+                <input
+                  type="number"
+                  value={lastYear || ''}
+                  placeholder="0"
+                  onChange={e => updateLastYear(e.target.value)}
+                  style={{
+                    background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.3)',
+                    borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900,
+                    color: '#cbd5e1', width: 200, outline: 'none',
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                {forecast > 0 && lastYear > 0
+                  ? (forecast >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(forecast - lastYear)) + ' forecast vs LY'
+                  : 'last year’s final gross'}
+              </div>
+            </div>
             <div style={cardStyle}>
               <div style={labelStyle}>Daily Target</div>
               <div style={valStyle}>{money(dailyTarget)}</div>
@@ -270,6 +301,19 @@ export default function GoalForecast({
                   : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
               </div>
             </div>
+            {lastYear > 0 && (
+              <div style={cardStyle}>
+                <div style={labelStyle}>vs Last Year</div>
+                <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : projected >= lastYear ? '#6ee7b7' : '#fca5a5' }}>
+                  {hasActuals ? (projected >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - lastYear)) : '—'}
+                </div>
+                <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                  {hasActuals
+                    ? 'projected ' + (projected >= lastYear ? '+' : '−') + (lastYear > 0 ? Math.abs((projected / lastYear - 1) * 100).toFixed(1) : '0') + '% vs LY'
+                    : 'LY ' + money(lastYear)}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Daily grid */}
