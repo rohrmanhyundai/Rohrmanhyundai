@@ -467,7 +467,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       : '';
     if (hint) setActiveTech(hint);
     setSearchResults(null);
-    setSearchRO('');
+    // Keep the RO in the search field: if handleSearch finds no match it shows
+    // the "create this RO" wizard, whose createForTech() reads searchRO for the
+    // new row's number. (handleSearch clears it itself on a unique match.)
+    setSearchRO(ro);
     setHighlightRO(ro);
     handleSearch(ro);
     consume();
