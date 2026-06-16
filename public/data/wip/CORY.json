@@ -12,5 +12,18 @@
     "advisor": "JORDAN",
     "notes": "Replaced 4WD control module. Most DTCs clear. Several DTCs are still present. Continuing diag. DOES THE CUSTOMER WANT TO FIX THE CAMERA? REAR CAMERA IS ON ORDER. CAMERA IS 4 DAYS OUT ",
     "flagged": false
+  },
+  {
+    "id": "mqh7m3hbg7l",
+    "ro": "",
+    "roDate": "2026-06-16",
+    "jobDesc": "",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
