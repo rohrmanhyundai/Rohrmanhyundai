@@ -166,7 +166,8 @@ export default function GoalForecast({
         <div class="card"><div class="lbl">Forecast</div><div class="val">${money(forecast)}</div><div class="note">${totalDays} working days</div></div>
         <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div></div>
         <div class="card"><div class="lbl">Actual MTD</div><div class="val">${money(actualMTD)}</div><div class="note">${completedDays} days completed</div></div>
-        <div class="card"><div class="lbl">Expected MTD</div><div class="val">${money(expectedMTD)}</div></div>
+        <div class="card"><div class="lbl">Expected MTD</div><div class="val">${money(expectedMTD)}</div><div class="note">where you should be (${completedDays} &times; target)</div></div>
+        <div class="card"><div class="lbl">Daily Average</div><div class="val ${!hasActuals ? '' : runRate >= dailyTarget ? 'pos' : 'neg'}">${hasActuals ? money(runRate) : '—'}</div><div class="note">target ${money(dailyTarget)}/day</div></div>
         <div class="card"><div class="lbl">${up ? 'Ahead of Pace' : 'Behind Pace'}</div><div class="val ${up ? 'pos' : 'neg'}">${sign(variance)}</div></div>
         <div class="card"><div class="lbl">Projected Month-End</div><div class="val ${!hasActuals ? '' : projected >= forecast ? 'pos' : 'neg'}">${hasActuals ? money(projected) : '—'}</div><div class="note">${hasActuals && forecast > 0 ? sign(projected - forecast) + ' vs forecast' : ''}</div></div>
       </div>
@@ -243,6 +244,16 @@ export default function GoalForecast({
             <div style={cardStyle}>
               <div style={labelStyle}>Expected MTD</div>
               <div style={valStyle}>{money(expectedMTD)}</div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                where you should be ({completedDays} × daily target)
+              </div>
+            </div>
+            <div style={cardStyle}>
+              <div style={labelStyle}>Daily Average</div>
+              <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : runRate >= dailyTarget ? '#6ee7b7' : '#fca5a5' }}>{hasActuals ? money(runRate) : '—'}</div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                {hasActuals ? 'per working day · target ' + money(dailyTarget) : 'avg gross per working day'}
+              </div>
             </div>
             <div style={{ ...cardStyle, border: `1px solid ${up ? 'rgba(52,211,153,.45)' : 'rgba(248,113,113,.45)'}`, background: up ? 'rgba(16,185,129,.08)' : 'rgba(239,68,68,.08)' }}>
               <div style={labelStyle}>{up ? 'Ahead of Pace' : 'Behind Pace'}</div>
