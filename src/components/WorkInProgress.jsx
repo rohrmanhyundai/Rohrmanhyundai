@@ -438,7 +438,6 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     // very next click — even on the same RO — navigates again.
     if (!initialJob || !initialJob.ro) { activeJobKeyRef.current = ''; return; }
     const ro = initialJob.ro.trim();
-    const roLower = ro.toLowerCase();
 
     // Case-insensitive tech-list lookup so e.g. "Jacob"/"JACOB"/"jacob" all match.
     const matchListTech = (t) => {
@@ -447,81 +446,31 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       return (techList || []).find(n => String(n).trim().toLowerCase() === tl) || null;
     };
 
-    // Process each distinct job exactly once. This guard (rather than tying
-    // cancellation to the effect's initialJob dependency) is what lets the
-    // async owner-scan below survive the parent clearing initialJob via
-    // onInitialJobConsumed — that "consume" re-renders us with initialJob=null
-    // and previously aborted the scan before it could correct the tab.
+    // Process each distinct job exactly once so an awaitingLoading flip (the
+    // effect's other dependency) doesn't re-run the jump while it's in flight.
     const jobKey = `${initialJob.source || ''}|${initialJob.tech || ''}|${ro}`;
     if (activeJobKeyRef.current === jobKey) return;
     activeJobKeyRef.current = jobKey;
 
-    const stillCurrent = () => activeJobKeyRef.current === jobKey;
     const consume = () => { onInitialJobConsumed && onInitialJobConsumed(); };
 
-    if (initialJob.source === 'awaiting') {
-      setSearchResults(null);
-      setSearchRO('');
-      setHighlightRO(ro);
-      consume();
-      return;
-    }
-
-    // WIP (or unknown source). Optimistically jump to the hinted tech for a
-    // snappy response, then AUTHORITATIVELY scan every WIP file on disk to find
-    // the RO's real owner and switch the tab if the hint was wrong/stale. The
-    // scan covers all wip files (not just the live technician roster), so an RO
-    // in a file owned by a renamed/reassigned/non-roster name is still found.
-    const hint = initialJob.tech ? (matchListTech(initialJob.tech) || String(initialJob.tech).trim()) : '';
+    // Optimistically jump to the hinted tech (if any) for a snappy response,
+    // then hand off to the SAME authoritative resolver the WIP search box uses.
+    // handleSearch() scans every WIP file on disk plus Cars Awaiting and, for a
+    // unique RO match, switches to the owning tech and highlights the row — so a
+    // stale/wrong tech hint from the calendar self-corrects, and a not-found RO
+    // surfaces the search-results UI instead of silently stranding the user on
+    // the wrong tab. This replaced a bespoke scan whose only fallback was to
+    // leave the optimistic (often wrong) jump in place.
+    const hint = (initialJob.source !== 'awaiting' && initialJob.tech)
+      ? (matchListTech(initialJob.tech) || String(initialJob.tech).trim())
+      : '';
     if (hint) setActiveTech(hint);
     setSearchResults(null);
     setSearchRO('');
     setHighlightRO(ro);
-
-    (async () => {
-      // Cars Awaiting may hold the RO if it was bounced back to the queue.
-      if (!awaitingLoading) {
-        const inAwaiting = (awaiting || []).some(r => (r.ro || '').toLowerCase().includes(roLower));
-        if (inAwaiting) { if (stillCurrent()) { setHighlightRO(ro); consume(); } return; }
-      }
-
-      // Build the widest reasonable scan set: every wip file on disk, plus the
-      // live roster and the supplied hint as fallbacks if the listing fails.
-      let owners = [];
-      try { owners = await listWipTechs(); } catch { owners = []; }
-      if (!stillCurrent()) return;
-      const scanSet = new Set([
-        ...owners,
-        ...(techList || []),
-        String(initialJob.tech || '').trim(),
-      ].filter(Boolean).map(t => t.toUpperCase()));
-
-      const results = await Promise.all(
-        Array.from(scanSet).map(async t => {
-          try {
-            const data = await loadWipData(t);
-            return (data || []).some(r => (r.ro || '').toLowerCase().includes(roLower)) ? t : null;
-          } catch { return null; }
-        })
-      );
-      if (!stillCurrent()) return;
-
-      const realTech = results.find(Boolean);
-      if (realTech) {
-        // Prefer the exact roster casing if available so the tab highlights.
-        const display = matchListTech(realTech) || realTech;
-        setActiveTech(prev => (prev && prev.toUpperCase() === display.toUpperCase()) ? prev : display);
-        setHighlightRO(ro);
-        consume();
-        return;
-      }
-
-      // Not found anywhere. If we had no hint to jump to, drop into the search
-      // UI so the user can decide what to do; otherwise leave the optimistic
-      // jump in place.
-      if (!hint) { setSearchRO(ro); handleSearch(ro); }
-      consume();
-    })();
+    handleSearch(ro);
+    consume();
 
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
