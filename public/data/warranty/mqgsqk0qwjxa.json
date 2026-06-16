@@ -1,7 +1,7 @@
 {
   "id": "mqgsqk0qwjxa",
   "createdAt": "2026-06-16T15:27:57.914Z",
-  "updatedAt": "2026-06-16T16:23:39.297Z",
+  "updatedAt": "2026-06-16T16:24:03.889Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "DANIELLE STOKES",
   "customerPhone": "765) 720 - 8908",
@@ -17,7 +17,7 @@
   "authNumber": "",
   "laborRate": "190.00",
   "laborTime": "9.4",
-  "diagnosisTime": "0",
+  "diagnosisTime": "1.0",
   "parts": [
     {
       "id": "mqgsqk0qujg2",
