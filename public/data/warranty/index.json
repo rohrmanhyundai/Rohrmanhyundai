@@ -2,7 +2,7 @@
   {
     "id": "mqgsqk0qwjxa",
     "createdAt": "2026-06-16T15:27:57.914Z",
-    "updatedAt": "2026-06-16T15:42:33.801Z",
+    "updatedAt": "2026-06-16T16:23:39.297Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "DANIELLE STOKES",
     "customerPhone": "765) 720 - 8908",
@@ -16,16 +16,58 @@
     "warrantyPhone": "800-222-2721",
     "claimNumber": "",
     "authNumber": "",
-    "laborRate": "",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "laborRate": "190.00",
+    "laborTime": "9.4",
+    "diagnosisTime": "0",
     "parts": [
       {
         "id": "mqgsqk0qujg2",
-        "partNumber": "",
-        "description": "",
+        "partNumber": "24410-3CGA3",
+        "description": "TENSIONER ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "132.29"
+      },
+      {
+        "id": "mqguj6mylsq7",
+        "partNumber": "24810-3CGA3",
+        "description": "GUIDE ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "25.74"
+      },
+      {
+        "id": "mqguju294th1",
+        "partNumber": "24820-3CGA3",
+        "description": "TENSIONER ARM ASSY-TIMING",
+        "qty": "2",
+        "price": "48.44"
+      },
+      {
+        "id": "mqgukk4hfzrj",
+        "partNumber": "24350-3L100 ",
+        "description": "CVVT ASSY-INTAKE",
         "qty": "1",
-        "price": ""
+        "price": "287.16"
+      },
+      {
+        "id": "mqgul8qhxv6r",
+        "partNumber": "24355-3L100",
+        "description": " OCV & CENTER BOLT ASSY,IN",
+        "qty": "1",
+        "price": "65.18"
+      },
+      {
+        "id": "mqgulxjlskm5",
+        "partNumber": "24378-3L100",
+        "description": "SOLENOID ASSY-VARIABLE FORCE",
+        "qty": "1",
+        "price": "106.02"
+      },
+      {
+        "id": "mqgumigpdo94",
+        "partNumber": "24312-3L100",
+        "description": "CHAIN-TIMING",
+        "qty": "2",
+        "price": "141.23"
       }
     ],
     "taxPct": "7",
@@ -36,7 +78,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "",
+    "notes": "NEED TEAR DOWN TO POINT OF FAILURE AND CALL BACK TO HAVE INSP. SENT OUT. 06/16/2026 @ 11:30. NO CLAIM NUBMER YET USE LAST 8 OF VIN FOR REFER.",
     "approved": false,
     "approvedDate": "",
     "denied": false,
