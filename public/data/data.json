@@ -263,6 +263,22 @@
           "2026-06-18": true,
           "2026-06-17": true
         }
+      },
+      {
+        "name": "WEI",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 0,
+        "goal_pct": 0,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
@@ -395,7 +411,7 @@
       "fri": 6,
       "sat": 19.1,
       "week_total": 138.4,
-      "week_pct": 0.4457326892109501,
+      "week_pct": 0.38659217877094976,
       "shop_pacing": 305.34999999999997
     },
     "grossGoal": 153399,
