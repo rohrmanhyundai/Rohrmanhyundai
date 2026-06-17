@@ -1,0 +1,27 @@
+[
+  {
+    "date": "2026-06-13",
+    "label": "Week of Jun 13 – Jun 19",
+    "weekStart": "2026-06-13",
+    "weekEnd": "2026-06-19",
+    "type": "tech",
+    "savedAt": "2026-06-17T15:55:38.718Z",
+    "total": 1.6,
+    "goal": 47.5,
+    "goal_pct": 0.03368421052631579,
+    "pacing": 8,
+    "mon": 0,
+    "tue": 1.6,
+    "wed": 0,
+    "thu": 0,
+    "fri": 0,
+    "sat": 0,
+    "mon_ro": 0,
+    "tue_ro": 0,
+    "wed_ro": 0,
+    "thu_ro": 0,
+    "fri_ro": 0,
+    "sat_ro": 0,
+    "total_ro": 0
+  }
+]
