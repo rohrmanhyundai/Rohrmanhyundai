@@ -96,7 +96,8 @@
         }
       ]
     },
-    "opExcluded": false
+    "opExcluded": false,
+    "warranty": true
   },
   {
     "id": "mqiihgev0qi2",
