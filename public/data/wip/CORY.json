@@ -64,5 +64,18 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "SHOCKS ARE ON ORDER "
+  },
+  {
+    "id": "mqi1b61l5uq",
+    "ro": "778416",
+    "roDate": "2026-06-17",
+    "jobDesc": "",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
