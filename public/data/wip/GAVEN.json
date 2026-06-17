@@ -52,19 +52,6 @@
     "notes": "CAR IS WAITING ON TEARDOWN TO POINT OF FAILURE "
   },
   {
-    "id": "mqh89nejm8c",
-    "ro": "778455",
-    "roDate": "2026-06-16",
-    "jobDesc": "OIL LEAK AND GRAVY. ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/17/2026",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "CAR IS STAYING HERE TO GET COMPLETED "
-  },
-  {
     "id": "mqid71okhov",
     "ro": "778463",
     "roDate": "2026-06-17",
