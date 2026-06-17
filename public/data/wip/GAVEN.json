@@ -52,19 +52,6 @@
     "notes": "CAR IS WAITING ON TEARDOWN TO POINT OF FAILURE "
   },
   {
-    "id": "mqh873ftp8t",
-    "ro": "778449",
-    "roDate": "2026-06-16",
-    "jobDesc": "CUSTOMER STATES CEL ON. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "WAITING ON PARTS "
-  },
-  {
     "id": "mqh89nejm8c",
     "ro": "778455",
     "roDate": "2026-06-16",
