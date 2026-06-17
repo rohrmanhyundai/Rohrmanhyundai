@@ -115,6 +115,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [awsSaving, setAwsSaving] = useState(false);
   const [saving, setSaving] = useState(false);
   const [addingAdvisor, setAddingAdvisor] = useState(false);
+  const [addingTech, setAddingTech] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [forceRefreshState, setForceRefreshState] = useState('idle'); // idle | sending | sent | error
@@ -893,17 +894,25 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  function addTechnician() {
-    const name = prompt('Technician name:');
+  function addTechnician() { setAddingTech(true); }
+
+  function pickTechnician(username) {
+    const name = (username || '').toUpperCase();
     if (!name) return;
-    const goal = safe(prompt('Weekly goal:', '47.5'), 47.5);
+    if (data.technicians.some(t => (t.name || '').toUpperCase() === name)) { setAddingTech(false); return; }
     const newData = structuredClone(data);
     newData.technicians.push({
-      name: name.toUpperCase(), goal, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
+      name, goal: 47.5, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
       total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
     });
     onDataChange(newData, vacations);
+    setAddingTech(false);
   }
+
+  // Users with the technician role who aren't already in the technician list.
+  const availableTechUsers = (users || [])
+    .filter(u => (u.role || '').toLowerCase() === 'technician')
+    .filter(u => !data.technicians.some(t => (t.name || '').toUpperCase() === (u.username || '').toUpperCase()));
 
   function removeTechnician(idx) {
     if (!confirm(`Remove ${data.technicians[idx].name}?`)) return;
@@ -1368,6 +1377,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           </button>
           {reportStatus && <span style={{ fontSize: 13, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{reportStatus}</span>}
         </div>
+
+        {addingTech && (
+          <div onClick={() => setAddingTech(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 440, background: '#0f172a', border: '1px solid rgba(249,115,22,.3)', borderRadius: 14, padding: 22, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <span style={{ fontWeight: 900, fontSize: 16, color: '#fdba74' }}>Add Technician</span>
+                <button onClick={() => setAddingTech(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>Pick a user with the <strong>technician</strong> role:</div>
+              {availableTechUsers.length === 0 ? (
+                <div style={{ color: '#fbbf24', fontSize: 13, padding: '8px 0' }}>
+                  No technician-role users available. Add them under <strong>Users</strong> (set role to “technician”) first.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 360, overflowY: 'auto' }}>
+                  {availableTechUsers.map(u => (
+                    <button key={u.username} onClick={() => pickTechnician(u.username)}
+                      style={{ textAlign: 'left', background: 'rgba(249,115,22,.12)', border: '1px solid rgba(249,115,22,.35)', color: '#e2e8f0', borderRadius: 10, padding: '10px 14px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+                      {u.username.toUpperCase()}{u.lastName ? <span style={{ color: '#94a3b8', fontWeight: 600 }}> {u.lastName}</span> : null}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
 
