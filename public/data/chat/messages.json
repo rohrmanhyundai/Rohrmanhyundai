@@ -1,34 +1,5 @@
 [
   {
-    "id": "mpbf4cmkcxm",
-    "username": "SHAWN",
-    "text": "jordan did you get Lankin in a santa fe loaner?",
-    "timestamp": 1779121693676
-  },
-  {
-    "id": "mpbfcqs11xs",
-    "username": "SHAWN",
-    "text": "Other than the enterprise cars do we have all other cars written up? tow in?",
-    "timestamp": 1779122085265
-  },
-  {
-    "id": "mpbfr4neh9u",
-    "username": "SHAWN",
-    "text": "who is doing brown elantra?",
-    "timestamp": 1779122756426
-  },
-  {
-    "id": "mpbko6jfx4a",
-    "username": "JORDAN",
-    "text": "she is coming in this afternoon for it",
-    "timestamp": 1779131016987,
-    "replyTo": {
-      "id": "mpbf4cmkcxm",
-      "username": "SHAWN",
-      "text": "jordan did you get Lankin in a santa fe loaner?"
-    }
-  },
-  {
     "id": "mpbn038qu2r",
     "username": "DEVIN",
     "text": "tire for ravi is in",
@@ -663,5 +634,11 @@
     "username": "KAI",
     "text": "778430, 778416, 778455, 777817. all parts here for repair orders provided.",
     "timestamp": 1781698663715
+  },
+  {
+    "id": "mqigp7t3q43",
+    "username": "SHAWN",
+    "text": "David, 778453 Enterprise car? anything yet?",
+    "timestamp": 1781724392391
   }
 ]
