@@ -1,70 +1,5 @@
 [
   {
-    "id": "mp5upkt9pgc",
-    "username": "SHAWN",
-    "text": "on 777514 has the customer been advised car is completed?",
-    "timestamp": 1778785081245
-  },
-  {
-    "id": "mp5usveu3i6",
-    "username": "DAVID",
-    "text": "^@ Parker",
-    "timestamp": 1778785234950
-  },
-  {
-    "id": "mp5uzsh8jtl",
-    "username": "SHAWN",
-    "text": "777 451PARKER IS THE CAR HERE?",
-    "timestamp": 1778785557740
-  },
-  {
-    "id": "mp6v6cjx5ii",
-    "username": "KAI",
-    "text": "parts are in for 777476 parts are in for 777092",
-    "timestamp": 1778846329869
-  },
-  {
-    "id": "mp6wwkf0ron",
-    "username": "SHAWN",
-    "text": "Jordan, 777534 anything on this car?",
-    "timestamp": 1778849232732
-  },
-  {
-    "id": "mp6x2x0wrzq",
-    "username": "SHAWN",
-    "text": "Parts came in for susan baker, taking head to machine shop today",
-    "timestamp": 1778849529008
-  },
-  {
-    "id": "mp70cc7s0ps",
-    "username": "SHAWN",
-    "text": "Any takers want to call SOP please and thank you!",
-    "timestamp": 1778855007448
-  },
-  {
-    "id": "mp7dqyft3wz",
-    "username": "SHAWN",
-    "text": "777425 WILL NEED ENGINE. I HAVE FORM NEEDS SIGNED I HAVE THE REGISTRATION ALREADY.",
-    "timestamp": 1778877524441
-  },
-  {
-    "id": "mp7ehsc3zma",
-    "username": "SHAWN",
-    "text": "BEEN A FEW DAYS FOR AFTER CALLS. PLEASE LETS KEEP GOING",
-    "timestamp": 1778878776243
-  },
-  {
-    "id": "mp8a69n264q",
-    "username": "SETH",
-    "text": "PARTS RECIEVED WITH NO RO, SAMANTHA HAZZARD-CONSOLE TRAY COVER, ANDREW DAVIS-COMPRESSOR(APPT MONDAY)",
-    "timestamp": 1778931986510,
-    "reactions": {
-      "👍": [
-        "JORDAN"
-      ]
-    }
-  },
-  {
     "id": "mpbf4cmkcxm",
     "username": "SHAWN",
     "text": "jordan did you get Lankin in a santa fe loaner?",
@@ -722,5 +657,11 @@
     "username": "SETH",
     "text": "PARTS RECIEVED WITH OPEN RO;  778014,  777092",
     "timestamp": 1781349593268
+  },
+  {
+    "id": "mqi1drfn949",
+    "username": "KAI",
+    "text": "778430, 778416, 778455, 777817. all parts here for repair orders provided.",
+    "timestamp": 1781698663715
   }
 ]
