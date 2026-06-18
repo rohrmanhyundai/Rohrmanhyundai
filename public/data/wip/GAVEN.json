@@ -32,8 +32,8 @@
     "jobDesc": "CUSTOMER STATES MESSAGE SHIFTER SYSTEM MALFUNCTION THEN THE CAR WILL NOT SHUT OFF. CHECK AND ADVISE.",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/18/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "LOOKED AT WAITING ON PARTS "
