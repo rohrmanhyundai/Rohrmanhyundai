@@ -53,6 +53,8 @@ const emptyForm = () => ({
   repairsFinishedDate: '',
   readySubmission: false,
   readySubmissionDate: '',
+  inspectorDispatched: false,
+  inspectorDispatchedDate: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -131,6 +133,7 @@ function TotalBox({ label, value, color = '#3dd6c3', big = false }) {
 // exclusive: true means only one of these can be active at a time
 const STATUS_BTNS = [
   { key: 'readySubmission', dateKey: 'readySubmissionDate', label: '📋 Ready for Submission', exclusive: true, group: 'status', on: { bg: 'rgba(56,189,248,0.28)',  border: 'rgba(56,189,248,0.65)',  text: '#7dd3fc' }, off: { bg: 'rgba(56,189,248,0.07)',  border: 'rgba(56,189,248,0.28)',  text: '#38bdf8' } },
+  { key: 'inspectorDispatched', dateKey: 'inspectorDispatchedDate', label: '🕵 Inspector Dispatched', exclusive: true, group: 'status', on: { bg: 'rgba(168,85,247,0.28)', border: 'rgba(168,85,247,0.65)', text: '#d8b4fe' }, off: { bg: 'rgba(168,85,247,0.07)', border: 'rgba(168,85,247,0.28)', text: '#c084fc' } },
   { key: 'approved',        dateKey: 'approvedDate',        label: '✅ Approved Claim',        exclusive: true, group: 'status', on: { bg: 'rgba(74,222,128,0.25)',  border: 'rgba(74,222,128,0.6)',   text: '#4ade80' }, off: { bg: 'rgba(74,222,128,0.07)',  border: 'rgba(74,222,128,0.22)',  text: '#4ade80' } },
   { key: 'denied',          dateKey: 'deniedDate',          label: '❌ Claim Denied',           exclusive: true, group: 'status', on: { bg: 'rgba(251,113,133,0.25)', border: 'rgba(251,113,133,0.6)',  text: '#fb7185' }, off: { bg: 'rgba(251,113,133,0.07)', border: 'rgba(251,113,133,0.22)', text: '#fb7185' } },
   { key: 'repairsFinished', dateKey: 'repairsFinishedDate', label: '🔧 Repairs Finished',      exclusive: true, group: 'status', on: { bg: 'rgba(239,68,68,0.28)',   border: 'rgba(239,68,68,0.65)',   text: '#fca5a5' }, off: { bg: 'rgba(239,68,68,0.07)',   border: 'rgba(239,68,68,0.28)',   text: '#f87171' } },
@@ -819,12 +822,14 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
   const isPaid          = !!(contract.paid     ?? (contract.status === 'paid'));
   const isRepairsFinished = !!contract.repairsFinished;
   const isReadySubmission = !!contract.readySubmission;
+  const isInspectorDispatched = !!contract.inspectorDispatched;
 
   const statusBadges = [
     isPaid            && { label: 'CLAIM PAID',            bg: '#0369a1' },
     isWaiting         && { label: 'WAITING FOR PAYMENT',   bg: '#b45309' },
     isDenied          && { label: 'CLAIM DENIED',           bg: '#9f1239' },
     isApproved        && { label: 'APPROVED',               bg: '#15803d' },
+    isInspectorDispatched && { label: 'INSPECTOR DISPATCHED', bg: '#7c3aed' },
     isRepairsFinished && { label: 'REPAIRS FINISHED',       bg: '#b91c1c' },
     isReadySubmission && { label: 'READY FOR SUBMISSION',   bg: '#0e7490' },
   ].filter(Boolean);
@@ -1047,12 +1052,18 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                 <div style={{ fontSize: 20, fontWeight: 900, color: '#b45309' }}>{fmtDol(totalDue)}</div>
               </div>
               {/* Status dates */}
-              {(isRepairsFinished || isPaid || isApproved || isReadySubmission) && (
+              {(isRepairsFinished || isPaid || isApproved || isReadySubmission || isInspectorDispatched) && (
                 <div style={{ background: '#f8fafc', borderTop: `1px solid ${PD_BORDER}`, padding: '10px 14px' }}>
                   {isReadySubmission && contract.readySubmissionDate && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
                       <span style={{ color: '#0e7490', fontWeight: 700 }}>Ready for Submission</span>
                       <span style={{ color: PD_MID }}>{new Date(contract.readySubmissionDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isInspectorDispatched && contract.inspectorDispatchedDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#7c3aed', fontWeight: 700 }}>Inspector Dispatched</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.inspectorDispatchedDate + 'T12:00:00').toLocaleDateString()}</span>
                     </div>
                   )}
                   {isApproved && contract.approvedDate && (
@@ -1241,16 +1252,20 @@ function ContractList({ contracts, loading, onNew, onView }) {
                   const isWaiting   = !!(c.waiting  ?? (c.status === 'waiting'));
                   const isPaid      = !!(c.paid     ?? (c.status === 'paid'));
                   const isReady     = !!c.readySubmission;
+                  const isInspector = !!c.inspectorDispatched;
                   const rowBg = isDenied   ? 'rgba(251,113,133,0.18)'
                     : isApproved ? 'rgba(34,197,94,0.18)'
+                    : isInspector ? 'rgba(168,85,247,0.18)'
                     : isReady    ? 'rgba(56,189,248,0.15)'
                     : isFinished ? 'rgba(239,68,68,0.18)' : '';
                   const rowBgHover = isDenied   ? 'rgba(251,113,133,0.28)'
                     : isApproved ? 'rgba(34,197,94,0.28)'
+                    : isInspector ? 'rgba(168,85,247,0.28)'
                     : isReady    ? 'rgba(56,189,248,0.25)'
                     : isFinished ? 'rgba(239,68,68,0.28)' : 'rgba(255,255,255,0.04)';
                   const rowBorder = isDenied   ? '1px solid rgba(251,113,133,0.4)'
                     : isApproved ? '1px solid rgba(34,197,94,0.4)'
+                    : isInspector ? '1px solid rgba(168,85,247,0.4)'
                     : isReady    ? '1px solid rgba(56,189,248,0.4)'
                     : isFinished ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.05)';
                   const statusLabel = [
@@ -1258,6 +1273,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
                     isWaiting  && '⏳ Waiting',
                     isDenied   && '❌ Denied',
                     isApproved && '✅ Approved',
+                    isInspector && '🕵 Inspector Dispatched',
                     isReady    && '📋 Submission',
                     isFinished && '🔧 Ready',
                   ].filter(Boolean).join(' · ') || '';
@@ -1275,7 +1291,7 @@ function ContractList({ contracts, loading, onNew, onView }) {
                       <td style={{ padding: '12px 14px', textAlign: 'center' }}>
                         {statusLabel
                           ? statusLabel.split(' · ').map(s => (
-                              <div key={s} style={{ fontSize: 11, fontWeight: 700, color: s.includes('💳') ? '#6ee7f9' : s.includes('⏳') ? '#fbbf24' : s.includes('✅') ? '#4ade80' : s.includes('📋') ? '#7dd3fc' : '#fca5a5', whiteSpace: 'nowrap', lineHeight: 1.7 }}>{s}</div>
+                              <div key={s} style={{ fontSize: 11, fontWeight: 700, color: s.includes('💳') ? '#6ee7f9' : s.includes('⏳') ? '#fbbf24' : s.includes('✅') ? '#4ade80' : s.includes('🕵') ? '#c084fc' : s.includes('📋') ? '#7dd3fc' : '#fca5a5', whiteSpace: 'nowrap', lineHeight: 1.7 }}>{s}</div>
                             ))
                           : <span style={{ color: '#334155' }}>—</span>}
                       </td>
