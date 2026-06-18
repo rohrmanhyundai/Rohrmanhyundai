@@ -59,8 +59,8 @@
     "jobDesc": "CUSTOMER STATES REAR END OF VEHICLE VIBRATING AND MAKING NOISE. CHECK AND ADVISE. SOR",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/18/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "SHOCKS ARE ON ORDER "
