@@ -453,27 +453,48 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     activeJobKeyRef.current = jobKey;
 
     const consume = () => { onInitialJobConsumed && onInitialJobConsumed(); };
+    const stillCurrent = () => activeJobKeyRef.current === jobKey;
+    const roLower = ro.toLowerCase();
 
-    // Optimistically jump to the hinted tech (if any) for a snappy response,
-    // then hand off to the SAME authoritative resolver the WIP search box uses.
-    // handleSearch() scans every WIP file on disk plus Cars Awaiting and, for a
-    // unique RO match, switches to the owning tech and highlights the row — so a
-    // stale/wrong tech hint from the calendar self-corrects, and a not-found RO
-    // surfaces the search-results UI instead of silently stranding the user on
-    // the wrong tab. This replaced a bespoke scan whose only fallback was to
-    // leave the optimistic (often wrong) jump in place.
     const hint = (initialJob.source !== 'awaiting' && initialJob.tech)
       ? (matchListTech(initialJob.tech) || String(initialJob.tech).trim())
       : '';
-    if (hint) setActiveTech(hint);
     setSearchResults(null);
-    // Keep the RO in the search field: if handleSearch finds no match it shows
-    // the "create this RO" wizard, whose createForTech() reads searchRO for the
-    // new row's number. (handleSearch clears it itself on a unique match.)
+    // Keep the RO in the search field: if we fall back to handleSearch and it
+    // finds no match, it shows the "create this RO" wizard, whose createForTech()
+    // reads searchRO for the new row's number.
     setSearchRO(ro);
     setHighlightRO(ro);
-    handleSearch(ro);
-    consume();
+
+    if (!hint) {
+      // No tech hint (e.g. typing a brand-new RO to create) — use the
+      // authoritative resolver, which also surfaces the create wizard.
+      handleSearch(ro);
+      consume();
+      return;
+    }
+
+    // We have a tech hint and the RO almost certainly lives in that tech's file
+    // (the calendar built its result by loading that very file). TRUST it: jump
+    // to the tab and load that file DIRECTLY — no dependency on listWipTechs(),
+    // whose full-directory scan can rate-limit or lag and was making View/Edit
+    // intermittently fail to land on the RO. Only if the RO genuinely isn't in
+    // the hinted file do we fall back to the broad search.
+    setActiveTech(hint);
+    (async () => {
+      try {
+        const data = await loadWipData(hint);
+        if (!stillCurrent()) return;
+        if ((data || []).some(r => (r.ro || '').toLowerCase().includes(roLower))) {
+          // Already on the right tab; the highlight/scroll effect handles the rest.
+          consume();
+          return;
+        }
+      } catch { /* fall through to authoritative search */ }
+      if (!stillCurrent()) return;
+      handleSearch(ro);
+      consume();
+    })();
 
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
