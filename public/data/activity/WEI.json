@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-06-18T18:26:26.202Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-06-18T18:26:25.416Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-06-18T18:26:25.413Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-06-18T18:26:23.299Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-06-18T18:08:55.123Z",
     "type": "page",
     "label": "dct-mtm-worksheet"
