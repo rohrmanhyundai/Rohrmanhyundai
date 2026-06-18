@@ -2,7 +2,7 @@
   {
     "id": "mqjt7vvxdwxo",
     "createdAt": "2026-06-18T18:04:44.973Z",
-    "updatedAt": "2026-06-18T18:26:38.573Z",
+    "updatedAt": "2026-06-18T18:34:15.794Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Hannah Weissenburger",
     "customerPhone": "765) 413 - 6051",
@@ -83,7 +83,9 @@
     "repairsFinished": false,
     "repairsFinishedDate": "",
     "readySubmission": false,
-    "readySubmissionDate": ""
+    "readySubmissionDate": "",
+    "inspectorDispatched": true,
+    "inspectorDispatchedDate": "2026-06-18"
   },
   {
     "id": "mq76m82u065e",
