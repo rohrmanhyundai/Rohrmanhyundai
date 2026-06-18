@@ -39,19 +39,6 @@
     "notes": "LOOKED AT WAITING ON PARTS "
   },
   {
-    "id": "mqh81t3evyj",
-    "ro": "778436",
-    "roDate": "2026-06-16",
-    "jobDesc": "CUSTOMER STATES CEL IS ON STEADY. RUNNING WEIDED. HAS AFTERMARKET WARRANTY. BOUGHT VEHICLE FROM YORK.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "CAR IS WAITING ON TEARDOWN TO POINT OF FAILURE "
-  },
-  {
     "id": "mqid71okhov",
     "ro": "778463",
     "roDate": "2026-06-17",
