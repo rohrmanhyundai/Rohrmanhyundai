@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies } from '../utils/github';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
 
@@ -101,13 +101,19 @@ function Section({ title, children }) {
   );
 }
 
-function F({ label, value, onChange, type = 'text', placeholder = '', readOnly = false }) {
+function F({ label, value, onChange, type = 'text', placeholder = '', readOnly = false, suggestions = null }) {
+  const listId = suggestions ? `dl-${label.replace(/\W+/g, '-').toLowerCase()}` : undefined;
   return (
     <div style={{ marginBottom: 12 }}>
       <label style={labelSt}>{label}</label>
       <input type={type} value={value} onChange={e => onChange?.(e.target.value)}
-        placeholder={placeholder} readOnly={readOnly}
+        placeholder={placeholder} readOnly={readOnly} list={listId}
         style={readOnly ? roSt : inpSt} />
+      {suggestions && (
+        <datalist id={listId}>
+          {suggestions.map(s => <option key={s} value={s} />)}
+        </datalist>
+      )}
     </div>
   );
 }
@@ -228,7 +234,24 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
   const [vinLoading, setVinLoading] = useState(false);
   const [vinError, setVinError] = useState('');
 
+  // Shared warranty company directory (name → phone). Lets the user type a known
+  // company and have the phone auto-filled.
+  const [companies, setCompanies] = useState({});
+  useEffect(() => { loadWarrantyCompanies().then(c => setCompanies(c || {})).catch(() => {}); }, []);
+
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
+
+  // When the warranty company name matches a saved company, auto-fill the phone.
+  function setWarrantyCompany(name) {
+    const match = companies[(name || '').trim().toUpperCase()];
+    setForm(f => ({
+      ...f,
+      warrantyCompany: name,
+      // Only auto-fill when we have a match and the phone is empty, so we never
+      // clobber a phone the user is intentionally editing.
+      warrantyPhone: (match && match.phone && !((f.warrantyPhone || '').trim())) ? match.phone : f.warrantyPhone,
+    }));
+  }
 
   const decodeVin = useCallback(async (vin) => {
     const v = vin.trim().toUpperCase();
@@ -299,7 +322,8 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
         {/* Warranty Company */}
         <Section title="Warranty Company">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-            <F label="Warranty Company Name" value={form.warrantyCompany} onChange={v => set('warrantyCompany', v)} />
+            <F label="Warranty Company Name" value={form.warrantyCompany} onChange={setWarrantyCompany}
+               suggestions={Object.values(companies).map(c => c && c.name).filter(Boolean).sort()} />
             <F label="Warranty Company Phone" value={form.warrantyPhone} onChange={v => set('warrantyPhone', v)} type="tel" />
             <F label="Claim Number" value={form.claimNumber} onChange={v => set('claimNumber', v)} placeholder="WC-XXXXXXXX" />
             <F label="Authorization Number" value={form.authNumber} onChange={v => set('authNumber', v)} placeholder="" />
@@ -1299,6 +1323,23 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
 
   useEffect(() => { loadContracts(); }, [loadContracts]);
 
+  // Upsert a warranty company's name → phone into the shared directory so the
+  // next claim auto-fills the phone when the name is typed. Loads the latest
+  // directory first to avoid clobbering entries added by other users.
+  async function rememberWarrantyCompany(rawName, rawPhone) {
+    const name = (rawName || '').trim();
+    const phone = (rawPhone || '').trim();
+    if (!name || !phone) return;
+    try {
+      const dir = await loadWarrantyCompanies();
+      const key = name.toUpperCase();
+      const existing = dir[key];
+      if (existing && existing.name === name && existing.phone === phone) return; // no change
+      dir[key] = { name, phone };
+      await saveWarrantyCompanies(dir);
+    } catch { /* directory is a convenience; never surface its errors */ }
+  }
+
   async function handleSave(form) {
     setSaving(true); setSaveError('');
     try {
@@ -1315,6 +1356,9 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       setContracts(newContracts);
       setActiveContract(form);
       setView('detail');
+      // Remember this warranty company's name → phone so it auto-fills next time.
+      // Fire-and-forget: never block or fail the claim save on the directory.
+      rememberWarrantyCompany(form.warrantyCompany, form.warrantyPhone);
     } catch (err) {
       setSaveError(err.message || 'Save failed');
     } finally {
