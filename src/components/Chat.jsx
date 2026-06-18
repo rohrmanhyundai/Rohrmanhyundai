@@ -22,6 +22,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const [replyTo, setReplyTo] = useState(null);
   const [activeMsgId, setActiveMsgId] = useState(null);
   const bottomRef = useRef(null);
+  const scrollRef = useRef(null);
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
   const textareaRef = useRef(null);
@@ -52,7 +53,15 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
 
   useEffect(() => {
     if (activeMsgId) return;
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Scroll the container itself fully to the bottom (in a rAF so it runs after
+    // layout) — more reliable than scrollIntoView on a 0-height sentinel, which
+    // sometimes stopped short and left the newest message partly hidden behind
+    // the composer.
+    const el = scrollRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    });
   }, [messages, activeMsgId]);
 
   useEffect(() => {
@@ -165,12 +174,22 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     return `${date} ${time}`;
   }
 
+  function fmtDay(ts) {
+    const d = new Date(ts);
+    const today = new Date();
+    if (d.toDateString() === today.toDateString()) return 'Today';
+    const yest = new Date(today); yest.setDate(today.getDate() - 1);
+    if (d.toDateString() === yest.toDateString()) return 'Yesterday';
+    return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
   const grouped = messages.reduce((acc, msg, i) => {
     const prev = messages[i - 1];
     const next = messages[i + 1];
-    const isFirst = !prev || prev.username !== msg.username || msg.timestamp - prev.timestamp > 5 * 60 * 1000;
+    const newDay = !prev || new Date(prev.timestamp).toDateString() !== new Date(msg.timestamp).toDateString();
+    const isFirst = newDay || prev.username !== msg.username || msg.timestamp - prev.timestamp > 5 * 60 * 1000;
     const isLast  = !next || next.username !== msg.username || next.timestamp - msg.timestamp > 5 * 60 * 1000;
-    acc.push({ ...msg, isFirst, isLast });
+    acc.push({ ...msg, isFirst, isLast, newDay });
     return acc;
   }, []);
 
@@ -202,7 +221,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       </div>
 
       {/* Messages */}
-      <div className="chat-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '14px 14px 6px', display: 'flex', flexDirection: 'column' }}>
+      <div ref={scrollRef} className="chat-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '14px 14px 18px', display: 'flex', flexDirection: 'column' }}>
         {messages.length === 0 && (
           <div style={{ textAlign: 'center', color: '#475569', fontSize: 13, marginTop: 60 }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
@@ -220,7 +239,16 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
             ? `${r}px ${msg.isLast ? tail : r}px ${r}px ${r}px`
             : `${r}px ${r}px ${r}px ${msg.isLast ? tail : r}px`;
           return (
-            <div key={msg.id} data-msg-id={msg.id} style={{
+            <React.Fragment key={msg.id}>
+            {msg.newDay && (
+              <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0 8px' }}>
+                <span style={{
+                  fontSize: 11, fontWeight: 700, color: '#94a3b8',
+                  background: 'rgba(255,255,255,0.06)', padding: '3px 12px', borderRadius: 999,
+                }}>{fmtDay(msg.timestamp)}</span>
+              </div>
+            )}
+            <div data-msg-id={msg.id} style={{
               display: 'flex', flexDirection: 'column',
               alignItems: isMe ? 'flex-end' : 'flex-start',
               marginTop: msg.isFirst ? 14 : 2,
@@ -355,6 +383,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                 </div>
               )}
             </div>
+            </React.Fragment>
           );
         })}
         <div ref={bottomRef} />
