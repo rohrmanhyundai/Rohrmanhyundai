@@ -1123,7 +1123,7 @@
       "questions": [],
       "entries": [
         {
-          "id": "e_pal1",
+          "id": "mqjis9o9hnnl",
           "answers": {},
           "model": "Palisade (LX2)",
           "opCode": "60D089R1",
@@ -1134,7 +1134,8 @@
           "causeCode": "ZZ4"
         }
       ]
-    }
+    },
+    "opExcluded": false
   },
   {
     "id": "mpwndwbgc7sp",
