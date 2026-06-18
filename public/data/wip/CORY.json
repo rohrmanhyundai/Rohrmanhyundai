@@ -24,18 +24,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "ENTERPRISE CAR WAITING ON APPROVAL MAJOR WIRE DAMAGE. ALL WORK APPROVED "
-  },
-  {
-    "id": "mqh8bx4sj0k",
-    "ro": "778458",
-    "roDate": "2026-06-16",
-    "jobDesc": "CUSTOMER STATES REAR END OF VEHICLE VIBRATING AND MAKING NOISE. CHECK AND ADVISE. SOR",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/18/2026",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "SHOCKS ARE ON ORDER "
   }
 ]
