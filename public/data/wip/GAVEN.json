@@ -37,18 +37,5 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "LOOKED AT WAITING ON PARTS "
-  },
-  {
-    "id": "mqid71okhov",
-    "ro": "778463",
-    "roDate": "2026-06-17",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON ",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "WAITING ON PARTS. "
   }
 ]
