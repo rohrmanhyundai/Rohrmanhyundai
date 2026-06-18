@@ -759,6 +759,31 @@ export async function saveWarrantyContract(contract, index) {
   await saveGitHubFile(headers, WARRANTY_INDEX_PATH, index, `Update warranty index ${new Date().toISOString()}`);
 }
 
+// ── Warranty Company Directory ────────────────────────────────────────────────
+// A shared name → phone map so any user can type a known warranty company and
+// have the phone auto-filled. Stored as a single small JSON object on GitHub.
+const WARRANTY_COMPANIES_PATH = 'public/data/warranty/companies.json';
+
+export async function loadWarrantyCompanies() {
+  try {
+    const data = await readGitHubFile(authHeaders(), WARRANTY_COMPANIES_PATH);
+    if (data && typeof data === 'object') return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/warranty/companies.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch {}
+  return {};
+}
+
+export async function saveWarrantyCompanies(companies) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  await saveGitHubFile(authHeaders(), WARRANTY_COMPANIES_PATH, companies,
+    `Update warranty company directory ${new Date().toISOString()}`);
+  return companies;
+}
+
 // ── Tire Warranty Claims ──────────────────────────────────────────────────────
 const TIRE_INDEX_PATH = 'public/data/tire-warranty/index.json';
 const tireClaimPath = id => `public/data/tire-warranty/${id}.json`;
