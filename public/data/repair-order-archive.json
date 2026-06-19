@@ -87,25 +87,6 @@
     "_sourceTech": "CORY"
   },
   {
-    "id": "mq01odtdfg6",
-    "ro": "778105",
-    "roDate": "2026-06-04",
-    "jobDesc": "Replace 4WD Control Module",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/18/2026",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "Replaced 4WD control module. Most DTCs clear. Several DTCs are still present. Continuing diag. DOES THE CUSTOMER WANT TO FIX THE CAMERA? REAR CAMERA IS ON ORDER. CAMERA IS 4 DAYS OUT ",
-    "flagged": false,
-    "_archiveId": "mqjs2zguka7",
-    "_archivedAt": "2026-06-18T17:32:56.718Z",
-    "_archivedBy": "CORY",
-    "_source": "wip",
-    "_sourceTech": "CORY"
-  },
-  {
     "id": "mqi1b61l5uq",
     "ro": "778416",
     "roDate": "2026-06-17",
