@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-06-19T12:58:33.799Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778448 tech CORY"
+  },
+  {
+    "at": "2026-06-19T12:58:30.170Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-06-19T12:58:29.504Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-06-19T12:01:09.692Z",
     "type": "page",
     "label": "work-in-progress"
