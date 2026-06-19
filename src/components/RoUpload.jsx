@@ -43,7 +43,21 @@ function autoMap(headers) {
   return map;
 }
 
-export default function RoUpload({ onBack, currentUser }) {
+export default function RoUpload({ onBack, currentUser, techList = [] }) {
+  // Resolve a report's technician name (often a full "FIRST LAST") to the WIP
+  // tab username (usually just "FIRST"). Returns '' if no tech tab matches, in
+  // which case the RO goes to Cars Awaiting.
+  function resolveTech(name) {
+    const rn = roKey(name);
+    if (!rn) return '';
+    const first = rn.split(/\s+/)[0];
+    const cands = techList || [];
+    return cands.find(c => roKey(c) === rn)                        // exact full match
+        || cands.find(c => roKey(c) === first)                     // username == first name
+        || cands.find(c => rn.startsWith(roKey(c) + ' '))          // "JACOB KUNTZ" starts with "JACOB "
+        || cands.find(c => roKey(c).startsWith(first))             // username begins with first token
+        || '';
+  }
   const fileRef = useRef(null);
   const [fileName, setFileName] = useState('');
   const [headers, setHeaders] = useState([]);
@@ -140,17 +154,24 @@ export default function RoUpload({ onBack, currentUser }) {
     return out;
   }, [flagged]);
 
+  // A "valid place" is a real WIP tab (techList username) or Cars Awaiting.
+  // ROs sitting only in an orphan/mis-named file don't count as truly on-site,
+  // so they'll be re-added to the correct WIP.
+  const techSet = useMemo(() => new Set((techList || []).map(roKey)), [techList]);
+  const isValidPlace = (where) => where === 'Cars Awaiting' || techSet.has(roKey(where));
+
   // Categorize against the site.
   const { toAdd, dupList } = useMemo(() => {
-    const siteWhere = new Map((siteRos || []).map(s => [s.ro, s.where]));
+    const validWhere = new Map();
+    (siteRos || []).forEach(s => { if (isValidPlace(s.where) && !validWhere.has(s.ro)) validWhere.set(s.ro, s.where); });
     const add = [], dups = [];
     for (const o of flaggedUnique) {
       const k = roKey(o.ro);
-      if (siteWhere.has(k)) dups.push({ ...o, where: siteWhere.get(k) });
+      if (validWhere.has(k)) dups.push({ ...o, where: validWhere.get(k) });
       else if (!excluded[k]) add.push(o);
     }
     return { toAdd: add, dupList: dups };
-  }, [flaggedUnique, siteRos, excluded]);
+  }, [flaggedUnique, siteRos, excluded, techSet]);
   const dupCount = dupList.length;
 
   // The set of RO#s that SHOULD be on the site = the green/purple flagged ones.
@@ -225,22 +246,13 @@ export default function RoUpload({ onBack, currentUser }) {
     if (!window.confirm(`Save ${toAdd.length} new repair order${toAdd.length === 1 ? '' : 's'} to the website?`)) return;
     setBusy(true); setStatus('Saving…'); setError('');
     try {
-      // Resolve real WIP filenames so the Technician column matches existing tabs.
-      let techFiles = [];
-      try { techFiles = await listWipTechs(); } catch {}
-      const matchTech = (name) => {
-        const n = roKey(name);
-        if (!n) return '';
-        return (techFiles || []).find(t => roKey(t) === n) || name.trim();
-      };
-
-      const byTech = new Map(); // techFile -> [ro objects]
+      const byTech = new Map(); // tech username -> [ro objects]
       const awaiting = [];
       for (const o of toAdd) {
-        if (o.tech && o.tech.trim()) {
-          const tf = matchTech(o.tech);
-          if (!byTech.has(tf)) byTech.set(tf, []);
-          byTech.get(tf).push(o);
+        const tab = resolveTech(o.tech); // '' if the tech name doesn't match any WIP tab
+        if (tab) {
+          if (!byTech.has(tab)) byTech.set(tab, []);
+          byTech.get(tab).push(o);
         } else {
           awaiting.push(o);
         }
@@ -381,7 +393,7 @@ export default function RoUpload({ onBack, currentUser }) {
                             <td style={tdSt}>{o.advisor || '—'}</td>
                             <td style={tdSt}>{o.vehicle || '—'}</td>
                             <td style={tdSt}>{o.tech || '—'}</td>
-                            <td style={{ ...tdSt, color: o.tech ? '#c4b5fd' : '#fbbf24' }}>{o.tech ? `${o.tech}'s WIP` : 'Cars Awaiting'}</td>
+                            <td style={{ ...tdSt, color: resolveTech(o.tech) ? '#c4b5fd' : '#fbbf24' }}>{resolveTech(o.tech) ? `${resolveTech(o.tech)}'s WIP` : 'Cars Awaiting'}</td>
                             <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
                             <td style={tdSt}>
                               <input
