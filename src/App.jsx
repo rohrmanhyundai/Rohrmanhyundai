@@ -9,6 +9,7 @@ import AdminPanel from './components/AdminPanel';
 import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from './utils/pusher';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
+import RoUpload from './components/RoUpload';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import AftermarketWarranty from './components/AftermarketWarranty';
@@ -600,6 +601,12 @@ export default function App() {
     return <UserDataTracker onBack={() => navTo(prevPage || 'manager-hub')} />;
   }
 
+  if (page === 'ro-upload') {
+    const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return <RoUpload currentUser={currentUser.toUpperCase()} onBack={() => navTo(prevPage || 'advisor-calendar')} />;
+  }
+
   if (page === 'repair-order-database') {
     const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
     if (!isManager) { setPage('dashboard'); return null; }
@@ -726,6 +733,7 @@ export default function App() {
         onSurveyReports={() => setPage('survey-reports')}
         onMyReports={() => goTo('performance-report', 'advisor-calendar')}
         onWorkInProgress={(arg) => { setWipInitialRO(arg && typeof arg === 'object' ? arg : (typeof arg === 'string' ? { ro: arg } : null)); goTo('work-in-progress', 'advisor-calendar'); }}
+        onRoUpload={() => goTo('ro-upload', 'advisor-calendar')}
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
