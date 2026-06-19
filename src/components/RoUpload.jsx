@@ -123,13 +123,6 @@ export default function RoUpload({ onBack, currentUser }) {
     }
   }
 
-  // All RO#s present anywhere in the file (any flag) — used for the stale check.
-  const allFileRoSet = useMemo(() => {
-    const idx = mapping.ro;
-    if (idx == null || idx < 0) return new Set();
-    return new Set(dataRows.map(r => roKey(r[idx])).filter(Boolean));
-  }, [dataRows, mapping]);
-
   // Parsed rows that pass the purple/green flag filter.
   const flagged = useMemo(() => {
     if (mapping.ro == null || mapping.ro < 0) return [];
@@ -154,19 +147,25 @@ export default function RoUpload({ onBack, currentUser }) {
     return { toAdd: add, dupCount: dup };
   }, [flagged, siteRos, excluded]);
 
-  // ROs on the site but not anywhere in the uploaded file → candidates to remove.
+  // The set of RO#s that SHOULD be on the site = the green/purple flagged ones.
+  const flaggedRoSet = useMemo(() => new Set(flagged.map(o => roKey(o.ro))), [flagged]);
+
+  // ROs on the site that are NOT in the green/purple flagged set → candidates to
+  // remove. This covers both ROs missing from the report entirely AND ROs in the
+  // report whose User Flag isn't purple/green (those don't belong on the site).
   const stale = useMemo(() => {
-    if (!siteRos || allFileRoSet.size === 0) return [];
+    // Only meaningful once a file with a mapped User Flag has been read.
+    if (!siteRos || dataRows.length === 0 || (mapping.userFlag ?? -1) < 0 || (mapping.ro ?? -1) < 0) return [];
     const seen = new Set();
     const out = [];
     for (const s of siteRos) {
-      if (allFileRoSet.has(s.ro)) continue;
+      if (flaggedRoSet.has(s.ro)) continue;
       if (seen.has(s.ro)) continue;
       seen.add(s.ro);
       out.push(s);
     }
     return out;
-  }, [siteRos, allFileRoSet]);
+  }, [siteRos, flaggedRoSet, dataRows, mapping]);
 
   // Delete a single stale RO from wherever it lives on the site.
   async function removeStale(s) {
@@ -344,7 +343,7 @@ export default function RoUpload({ onBack, currentUser }) {
                   <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                     <Chip color="#6ee7b7" label="New to add" value={toAdd.length} />
                     <Chip color="#fbbf24" label="Duplicates (skipped)" value={dupCount} />
-                    <Chip color="#fca5a5" label="On site, not in file" value={siteRos ? stale.length : '…'} />
+                    <Chip color="#fca5a5" label="On site, not flagged" value={siteRos ? stale.length : '…'} />
                     <Chip color="#94a3b8" label="Flagged in file" value={flagged.length} />
                   </div>
                   {siteLoading && <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>Scanning the site for duplicates & stale ROs…</div>}
@@ -408,7 +407,7 @@ export default function RoUpload({ onBack, currentUser }) {
                   {siteRos && stale.length > 0 && (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0', flexWrap: 'wrap', gap: 10 }}>
-                        <div style={{ fontWeight: 800, color: '#fca5a5' }}>On the site but NOT in your file — review & remove ({stale.length})</div>
+                        <div style={{ fontWeight: 800, color: '#fca5a5' }}>On the site but NOT purple/green in your report — review & remove ({stale.length})</div>
                         <button onClick={removeAllStale} disabled={busy}
                           style={{ background: 'rgba(239,68,68,.16)', border: '1px solid rgba(239,68,68,.45)', color: '#fca5a5', borderRadius: 9, padding: '7px 16px', fontWeight: 800, fontSize: 13, cursor: busy ? 'default' : 'pointer' }}>
                           🗑 Remove all {stale.length}
@@ -435,7 +434,7 @@ export default function RoUpload({ onBack, currentUser }) {
                           </tbody>
                         </table>
                       </div>
-                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These aren't on your latest report — likely closed. Remove takes them off the site right away (WIP or Cars Awaiting).</div>
+                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These are on the site but aren't flagged purple/green in your report (closed, or no longer flagged), so they shouldn't be here. Remove takes them off the site right away (WIP or Cars Awaiting).</div>
                     </>
                   )}
                 </>
