@@ -55,6 +55,8 @@ export default function RoUpload({ onBack, currentUser }) {
   // Site state for comparison: [{ ro, where }]  where = tech name or 'Cars Awaiting'
   const [siteRos, setSiteRos] = useState(null); // null = not loaded yet
   const [siteLoading, setSiteLoading] = useState(false);
+  const [descs, setDescs] = useState({}); // RO# (upper) -> description typed before saving
+  const setDesc = (ro, v) => setDescs(d => ({ ...d, [roKey(ro)]: v }));
 
   async function handleFile(file) {
     if (!file) return;
@@ -156,7 +158,7 @@ export default function RoUpload({ onBack, currentUser }) {
   }, [siteRos, allFileRoSet]);
 
   function reset() {
-    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null);
+    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null); setDescs({});
     if (fileRef.current) fileRef.current.value = '';
   }
 
@@ -195,7 +197,7 @@ export default function RoUpload({ onBack, currentUser }) {
         const have = new Set((existing || []).map(r => roKey(r.ro)));
         const additions = list.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
-          jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
+          jobDesc: (descs[roKey(o.ro)] || '').trim(), etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
           highPriority: false, advisor: o.advisor || '', notes: '',
         }));
         if (additions.length) {
@@ -209,7 +211,7 @@ export default function RoUpload({ onBack, currentUser }) {
         const have = new Set((existing || []).map(r => roKey(r.ro)));
         const additions = awaiting.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
-          jobDesc: '', highPriority: false, advisor: o.advisor || '', notes: '',
+          jobDesc: (descs[roKey(o.ro)] || '').trim(), highPriority: false, advisor: o.advisor || '', notes: '',
           partsArrived: null, partsArrivedDate: '', isNew: true,
         }));
         if (additions.length) {
@@ -309,7 +311,7 @@ export default function RoUpload({ onBack, currentUser }) {
                   <div style={{ ...cardSt, padding: 0, overflow: 'auto', maxHeight: 420 }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
-                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th>
+                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th><th style={{ ...thSt, minWidth: 240 }}>Description</th>
                       </tr></thead>
                       <tbody>
                         {toAdd.map((o, i) => (
@@ -320,9 +322,17 @@ export default function RoUpload({ onBack, currentUser }) {
                             <td style={tdSt}>{o.tech || '—'}</td>
                             <td style={{ ...tdSt, color: o.tech ? '#c4b5fd' : '#fbbf24' }}>{o.tech ? `${o.tech}'s WIP` : 'Cars Awaiting'}</td>
                             <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
+                            <td style={tdSt}>
+                              <input
+                                value={descs[roKey(o.ro)] || ''}
+                                onChange={e => setDesc(o.ro, e.target.value)}
+                                placeholder="Add description…"
+                                style={{ ...inpSel, padding: '5px 8px', minWidth: 220 }}
+                              />
+                            </td>
                           </tr>
                         ))}
-                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={6}>Nothing new — all flagged ROs are already on the site.</td></tr>}
+                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={7}>Nothing new — all flagged ROs are already on the site.</td></tr>}
                       </tbody>
                     </table>
                   </div>
