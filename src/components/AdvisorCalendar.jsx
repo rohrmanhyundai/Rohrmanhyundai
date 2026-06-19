@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, listWipTechs, appendRoArchive } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
 
@@ -355,25 +355,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     const fetchJobs = (silent) => {
       if (!silent) setWipLoading(true);
       return Promise.all([
-        // Enumerate WIP from the actual files on disk (the authoritative source
-        // the WIP page itself uses) UNIONED with the dashboard roster — so an RO
-        // owned by a tech who has a WIP file but isn't on the roster (off-roster,
-        // renamed, reassigned) still shows up in the manager search. Reading the
-        // roster only was why some ROs never appeared here.
-        Promise.all([
-          listWipTechs().catch(() => []),
-          loadDashboardData().then(d => (d?.data?.technicians || []).map(t => t.name).filter(Boolean)).catch(() => []),
-        ]).then(([onDisk, roster]) => {
-          const seen = new Set();
-          const techs = [];
-          for (const name of [...(onDisk || []), ...(roster || [])]) {
-            const t = String(name || '').trim();
-            if (!t) continue;
-            const key = t.toUpperCase();
-            if (seen.has(key)) continue;
-            seen.add(key);
-            techs.push(t);
-          }
+        loadDashboardData().then(d => {
+          const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
           return Promise.all(techs.map(t =>
             loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
           )).then(all => all.flat());
