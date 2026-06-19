@@ -68,5 +68,19 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mqldfpmqbe3j",
+    "ro": "778552",
+    "roDate": "2026-06-19",
+    "vehicle": "2018 Ford Explorer",
+    "jobDesc": "USED CAR",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
