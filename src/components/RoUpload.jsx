@@ -60,6 +60,7 @@ export default function RoUpload({ onBack, currentUser }) {
   const [copiedRo, setCopiedRo] = useState('');
   const [excluded, setExcluded] = useState({}); // RO# (upper) -> true: dropped from the add list
   const [removingRo, setRemovingRo] = useState('');
+  const [modal, setModal] = useState(''); // '', 'new', 'dup', 'stale', 'flagged'
 
   function copyRo(ro) {
     const v = String(ro || '').trim();
@@ -132,20 +133,25 @@ export default function RoUpload({ onBack, currentUser }) {
     }).filter(o => o.ro && flagAllowed(o.userFlag));
   }, [dataRows, mapping]);
 
+  // Deduped list of all green/purple flagged ROs in the file.
+  const flaggedUnique = useMemo(() => {
+    const seen = new Set(), out = [];
+    for (const o of flagged) { const k = roKey(o.ro); if (seen.has(k)) continue; seen.add(k); out.push(o); }
+    return out;
+  }, [flagged]);
+
   // Categorize against the site.
-  const { toAdd, dupCount } = useMemo(() => {
-    const site = new Set((siteRos || []).map(s => s.ro));
-    const add = [], seen = new Set();
-    let dup = 0;
-    for (const o of flagged) {
+  const { toAdd, dupList } = useMemo(() => {
+    const siteWhere = new Map((siteRos || []).map(s => [s.ro, s.where]));
+    const add = [], dups = [];
+    for (const o of flaggedUnique) {
       const k = roKey(o.ro);
-      if (seen.has(k)) continue; // de-dupe within the file
-      seen.add(k);
-      if (site.has(k)) dup++;
+      if (siteWhere.has(k)) dups.push({ ...o, where: siteWhere.get(k) });
       else if (!excluded[k]) add.push(o);
     }
-    return { toAdd: add, dupCount: dup };
-  }, [flagged, siteRos, excluded]);
+    return { toAdd: add, dupList: dups };
+  }, [flaggedUnique, siteRos, excluded]);
+  const dupCount = dupList.length;
 
   // The set of RO#s that SHOULD be on the site = the green/purple flagged ones.
   const flaggedRoSet = useMemo(() => new Set(flagged.map(o => roKey(o.ro))), [flagged]);
@@ -341,10 +347,10 @@ export default function RoUpload({ onBack, currentUser }) {
                 <>
                   {/* Summary chips */}
                   <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-                    <Chip color="#6ee7b7" label="New to add" value={toAdd.length} />
-                    <Chip color="#fbbf24" label="Duplicates (skipped)" value={dupCount} />
-                    <Chip color="#fca5a5" label="On site, not flagged" value={siteRos ? stale.length : '…'} />
-                    <Chip color="#94a3b8" label="Flagged in file" value={flagged.length} />
+                    <Chip color="#6ee7b7" label="New to add" value={toAdd.length} onClick={() => setModal('new')} />
+                    <Chip color="#fbbf24" label="Duplicates (skipped)" value={dupCount} onClick={() => setModal('dup')} />
+                    <Chip color="#fca5a5" label="On site, not flagged" value={siteRos ? stale.length : '…'} onClick={() => setModal('stale')} />
+                    <Chip color="#94a3b8" label="Flagged in file" value={flaggedUnique.length} onClick={() => setModal('flagged')} />
                   </div>
                   {siteLoading && <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>Scanning the site for duplicates & stale ROs…</div>}
 
@@ -443,15 +449,71 @@ export default function RoUpload({ onBack, currentUser }) {
           )}
         </div>
       </div>
+
+      {modal && (() => {
+        const cfg = {
+          new:     { title: 'New repair orders to add', color: '#6ee7b7', rows: toAdd },
+          dup:     { title: 'Duplicates already on the site (skipped)', color: '#fbbf24', rows: dupList },
+          stale:   { title: 'On the site but not flagged purple/green', color: '#fca5a5', rows: stale },
+          flagged: { title: 'All purple/green flagged ROs in the file', color: '#94a3b8', rows: flaggedUnique },
+        }[modal];
+        if (!cfg) return null;
+        const isStale = modal === 'stale';
+        return (
+          <div onClick={() => setModal('')} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 24 }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, maxHeight: '82vh', display: 'flex', flexDirection: 'column', background: '#0f172a', border: `1px solid ${cfg.color}55`, borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+                <span style={{ fontWeight: 900, fontSize: 16, color: cfg.color }}>{cfg.title} ({cfg.rows.length})</span>
+                <button onClick={() => setModal('')} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 22, cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ overflow: 'auto', padding: '4px 0' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
+                    <th style={thSt}>RO #</th>
+                    {isStale ? <th style={thSt}>Where it lives</th> : <>
+                      <th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th>
+                      {modal === 'dup' && <th style={thSt}>On site at</th>}
+                      <th style={thSt}>Flag</th>
+                    </>}
+                  </tr></thead>
+                  <tbody>
+                    {cfg.rows.map((o, i) => (
+                      <tr key={i}>
+                        <td style={tdSt}>
+                          <span onClick={() => copyRo(o.ro)} title="Click to copy RO#" style={{ color: copiedRo === String(o.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                            {copiedRo === String(o.ro).trim() ? '✓ Copied' : `📋 ${o.ro}`}
+                          </span>
+                        </td>
+                        {isStale ? <td style={tdSt}>{o.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.where}'s WIP`}</td> : <>
+                          <td style={tdSt}>{o.advisor || '—'}</td>
+                          <td style={tdSt}>{o.vehicle || '—'}</td>
+                          <td style={tdSt}>{o.tech || '—'}</td>
+                          {modal === 'dup' && <td style={tdSt}>{o.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.where}'s WIP`}</td>}
+                          <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
+                        </>}
+                      </tr>
+                    ))}
+                    {cfg.rows.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={6}>None.</td></tr>}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
 
-function Chip({ color, label, value }) {
+function Chip({ color, label, value, onClick }) {
   return (
-    <div style={{ background: 'rgba(15,23,42,.55)', border: `1px solid ${color}55`, borderRadius: 12, padding: '12px 18px', minWidth: 130 }}>
+    <div onClick={onClick} title={onClick ? 'Click to view these ROs' : ''}
+      style={{ background: 'rgba(15,23,42,.55)', border: `1px solid ${color}55`, borderRadius: 12, padding: '12px 18px', minWidth: 130, cursor: onClick ? 'pointer' : 'default', transition: 'background .12s' }}
+      onMouseEnter={e => { if (onClick) e.currentTarget.style.background = 'rgba(30,41,59,.85)'; }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,.55)'; }}>
       <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em' }}>{label}</div>
       <div style={{ fontSize: 24, fontWeight: 900, color }}>{value}</div>
+      {onClick && <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>click to view</div>}
     </div>
   );
 }
