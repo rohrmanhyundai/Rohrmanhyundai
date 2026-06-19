@@ -37,5 +37,33 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "LOOKED AT WAITING ON PARTS "
+  },
+  {
+    "id": "mql86ij6xufp",
+    "ro": "778513",
+    "roDate": "2026-06-19",
+    "vehicle": "2013 Hyundai Sonata",
+    "jobDesc": "TIRE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mql86ij6ztz0",
+    "ro": "778436",
+    "roDate": "2026-06-19",
+    "vehicle": "2021 Hyundai Palisade",
+    "jobDesc": "TEAR DOWN",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
