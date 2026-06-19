@@ -1,39 +1,5 @@
 [
   {
-    "id": "mpcnvn5hzmm",
-    "username": "DAVID",
-    "text": "@shawn- Stuart Amick (RO775895) will be returning, car was a gallon low on coolant, Ive already spoke to Cory",
-    "timestamp": 1779196870133
-  },
-  {
-    "id": "mpd091dkt3a",
-    "username": "SHAWN",
-    "text": "Any takers for SOR today please and thank you!",
-    "timestamp": 1779217650488
-  },
-  {
-    "id": "mpd0aej3yfy",
-    "username": "SHAWN",
-    "text": "Parker have you called Neff 777668?",
-    "timestamp": 1779217714191
-  },
-  {
-    "id": "mpd1r1on02y",
-    "username": "JORDAN",
-    "text": "if they don't get done tn, i can do them in the morning",
-    "timestamp": 1779220170311,
-    "replyTo": {
-      "id": "mpd091dkt3a",
-      "username": "SHAWN",
-      "text": "Any takers for SOR today please and thank you!"
-    },
-    "reactions": {
-      "👍": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
     "id": "mpe86c7m2u9",
     "username": "SHAWN",
     "text": "PARKER John Lawley a open loaner agreement. is this car back?",
@@ -628,5 +594,11 @@
     "username": "KAI",
     "text": "PARTS ARE IN FOR KEVIN BREE AND MARISA BLACKWELL. BOTH OPEN SORS I HAVE TEXTED BOTH CUSTOMERS",
     "timestamp": 1781788316889
+  },
+  {
+    "id": "mqkyiudnfpv",
+    "username": "SETH",
+    "text": "PART HERE FOR BRIAN SUMMERS",
+    "timestamp": 1781875260491
   }
 ]
