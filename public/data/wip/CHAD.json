@@ -51,5 +51,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "HAVE ALL DOCS READY FOR P/A "
+  },
+  {
+    "id": "mqlecuf968i",
+    "ro": "778556",
+    "roDate": "2026-06-19",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- car dead. Will not take charge",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
