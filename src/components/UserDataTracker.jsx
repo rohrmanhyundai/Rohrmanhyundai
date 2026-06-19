@@ -23,6 +23,7 @@ const PAGE_LABELS = {
   'user-data-tracker': 'User Data Tracker',
   'goal-forecast': 'Goal Forecast',
   'parts-goal-forecast': 'Parts Goal Forecast',
+  'ro-upload': 'RO Upload',
   'charge-account-list': 'Charge Account List',
   'employee-review': 'Employee Review',
   'tech-self-review': 'Tech Self-Review',

@@ -222,7 +222,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   );
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onMyReports, onHotRepairs, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -683,6 +683,17 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             >
               Open
             </button>
+            {canManageWip && onRoUpload && (
+              <button
+                onClick={onRoUpload}
+                title="Bulk-add repair orders from an .xlsx open RO report (managers only)"
+                style={{
+                  background: 'rgba(52,211,153,.18)', border: '1px solid rgba(52,211,153,.5)',
+                  color: '#6ee7b7', borderRadius: 10, padding: '8px 16px', fontWeight: 800, fontSize: 13,
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >📤 RO Upload</button>
+            )}
             {roSearch && (
               <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
                 Clear
