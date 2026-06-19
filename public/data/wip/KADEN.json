@@ -20,8 +20,8 @@
     "jobDesc": "OIL PAN RESEAL",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/19/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "WAITING ON A AC BRACKET PARTS ARE ON ORDER "
