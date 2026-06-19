@@ -456,7 +456,20 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     const stillCurrent = () => activeJobKeyRef.current === jobKey;
     const roLower = ro.toLowerCase();
 
-    const hint = (initialJob.source !== 'awaiting' && initialJob.tech)
+    // Cars Awaiting: the RO lives in the awaiting list, not a tech tab. Just
+    // highlight it — the scroll effect (which depends on `awaiting`) scrolls to
+    // it once that list loads. Don't run handleSearch here: right after
+    // navigation the awaiting state often hasn't loaded yet, so it would find
+    // nothing and strand the user on an empty search-results screen.
+    if (initialJob.source === 'awaiting') {
+      setSearchResults(null);
+      setSearchRO('');
+      setHighlightRO(ro);
+      consume();
+      return;
+    }
+
+    const hint = initialJob.tech
       ? (matchListTech(initialJob.tech) || String(initialJob.tech).trim())
       : '';
     setSearchResults(null);
