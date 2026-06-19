@@ -604,7 +604,7 @@ export default function App() {
   if (page === 'ro-upload') {
     const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
     if (!isManager) { setPage('dashboard'); return null; }
-    return <RoUpload currentUser={currentUser.toUpperCase()} onBack={() => navTo(prevPage || 'advisor-calendar')} />;
+    return <RoUpload currentUser={currentUser.toUpperCase()} techList={techList} onBack={() => navTo(prevPage || 'advisor-calendar')} />;
   }
 
   if (page === 'repair-order-database') {
