@@ -57,6 +57,15 @@ export default function RoUpload({ onBack, currentUser }) {
   const [siteLoading, setSiteLoading] = useState(false);
   const [descs, setDescs] = useState({}); // RO# (upper) -> description typed before saving
   const setDesc = (ro, v) => setDescs(d => ({ ...d, [roKey(ro)]: v }));
+  const [copiedRo, setCopiedRo] = useState('');
+
+  function copyRo(ro) {
+    const v = String(ro || '').trim();
+    if (!v) return;
+    try { navigator.clipboard?.writeText(v); } catch {}
+    setCopiedRo(v);
+    setTimeout(() => setCopiedRo(c => (c === v ? '' : c)), 1200);
+  }
 
   async function handleFile(file) {
     if (!file) return;
@@ -316,7 +325,12 @@ export default function RoUpload({ onBack, currentUser }) {
                       <tbody>
                         {toAdd.map((o, i) => (
                           <tr key={i}>
-                            <td style={{ ...tdSt, color: '#6ee7f9', fontFamily: 'monospace' }}>{o.ro}</td>
+                            <td style={tdSt}>
+                              <span onClick={() => copyRo(o.ro)} title="Click to copy RO#"
+                                style={{ color: copiedRo === String(o.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                                {copiedRo === String(o.ro).trim() ? '✓ Copied' : `📋 ${o.ro}`}
+                              </span>
+                            </td>
                             <td style={tdSt}>{o.advisor || '—'}</td>
                             <td style={tdSt}>{o.vehicle || '—'}</td>
                             <td style={tdSt}>{o.tech || '—'}</td>
@@ -346,7 +360,12 @@ export default function RoUpload({ onBack, currentUser }) {
                           <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}><th style={thSt}>RO #</th><th style={thSt}>Where it lives</th></tr></thead>
                           <tbody>
                             {stale.map((s, i) => (
-                              <tr key={i}><td style={{ ...tdSt, color: '#6ee7f9', fontFamily: 'monospace' }}>{s.ro}</td><td style={tdSt}>{s.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${s.where}'s WIP`}</td></tr>
+                              <tr key={i}><td style={tdSt}>
+                                <span onClick={() => copyRo(s.ro)} title="Click to copy RO#"
+                                  style={{ color: copiedRo === String(s.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                                  {copiedRo === String(s.ro).trim() ? '✓ Copied' : `📋 ${s.ro}`}
+                                </span>
+                              </td><td style={tdSt}>{s.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${s.where}'s WIP`}</td></tr>
                             ))}
                           </tbody>
                         </table>
