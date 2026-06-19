@@ -38,5 +38,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "WILL NEED EGR"
+  },
+  {
+    "id": "mql86h9ywvd6",
+    "ro": "778540",
+    "roDate": "2026-06-19",
+    "vehicle": "2018 Hyundai Kona",
+    "jobDesc": "CHECK ENGINE LIGHT",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
