@@ -58,6 +58,8 @@ export default function RoUpload({ onBack, currentUser }) {
   const [descs, setDescs] = useState({}); // RO# (upper) -> description typed before saving
   const setDesc = (ro, v) => setDescs(d => ({ ...d, [roKey(ro)]: v }));
   const [copiedRo, setCopiedRo] = useState('');
+  const [excluded, setExcluded] = useState({}); // RO# (upper) -> true: dropped from the add list
+  const [removingRo, setRemovingRo] = useState('');
 
   function copyRo(ro) {
     const v = String(ro || '').trim();
@@ -147,10 +149,10 @@ export default function RoUpload({ onBack, currentUser }) {
       if (seen.has(k)) continue; // de-dupe within the file
       seen.add(k);
       if (site.has(k)) dup++;
-      else add.push(o);
+      else if (!excluded[k]) add.push(o);
     }
     return { toAdd: add, dupCount: dup };
-  }, [flagged, siteRos]);
+  }, [flagged, siteRos, excluded]);
 
   // ROs on the site but not anywhere in the uploaded file → candidates to remove.
   const stale = useMemo(() => {
@@ -166,8 +168,48 @@ export default function RoUpload({ onBack, currentUser }) {
     return out;
   }, [siteRos, allFileRoSet]);
 
+  // Delete a single stale RO from wherever it lives on the site.
+  async function removeStale(s) {
+    if (!window.confirm(`Remove RO ${s.ro} from ${s.where === 'Cars Awaiting' ? 'Cars Awaiting' : s.where + "'s WIP"}?`)) return;
+    setRemovingRo(s.ro); setError('');
+    try {
+      if (s.where === 'Cars Awaiting') {
+        const ex = await loadAwaitingData();
+        await saveAwaitingData((ex || []).filter(r => roKey(r.ro) !== s.ro));
+      } else {
+        const ex = await loadWipData(s.where);
+        await saveWipData(s.where, (ex || []).filter(r => roKey(r.ro) !== s.ro));
+      }
+      setSiteRos(prev => (prev || []).filter(x => !(x.ro === s.ro && x.where === s.where)));
+    } catch (e) { setError(e.message || 'Remove failed.'); }
+    finally { setRemovingRo(''); }
+  }
+
+  // Delete every stale RO (grouped by location so each file saves once).
+  async function removeAllStale() {
+    if (stale.length === 0) return;
+    if (!window.confirm(`Remove all ${stale.length} repair orders that aren't in your file?`)) return;
+    setBusy(true); setError(''); setStatus('Removing…');
+    try {
+      const byLoc = new Map();
+      stale.forEach(s => { if (!byLoc.has(s.where)) byLoc.set(s.where, new Set()); byLoc.get(s.where).add(s.ro); });
+      for (const [where, set] of byLoc.entries()) {
+        if (where === 'Cars Awaiting') {
+          const ex = await loadAwaitingData();
+          await saveAwaitingData((ex || []).filter(r => !set.has(roKey(r.ro))));
+        } else {
+          const ex = await loadWipData(where);
+          await saveWipData(where, (ex || []).filter(r => !set.has(roKey(r.ro))));
+        }
+      }
+      setStatus(`✅ Removed ${stale.length} repair order${stale.length === 1 ? '' : 's'} from the site.`);
+      await loadSiteRos();
+    } catch (e) { setError(e.message || 'Remove failed.'); setStatus(''); }
+    finally { setBusy(false); }
+  }
+
   function reset() {
-    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null); setDescs({});
+    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null); setDescs({}); setExcluded({});
     if (fileRef.current) fileRef.current.value = '';
   }
 
@@ -320,7 +362,7 @@ export default function RoUpload({ onBack, currentUser }) {
                   <div style={{ ...cardSt, padding: 0, overflow: 'auto', maxHeight: 420 }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
-                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th><th style={{ ...thSt, minWidth: 240 }}>Description</th>
+                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th><th style={{ ...thSt, minWidth: 240 }}>Description</th><th style={thSt}></th>
                       </tr></thead>
                       <tbody>
                         {toAdd.map((o, i) => (
@@ -344,20 +386,37 @@ export default function RoUpload({ onBack, currentUser }) {
                                 style={{ ...inpSel, padding: '5px 8px', minWidth: 220 }}
                               />
                             </td>
+                            <td style={{ ...tdSt, textAlign: 'center' }}>
+                              <button onClick={() => setExcluded(x => ({ ...x, [roKey(o.ro)]: true }))} title="Don't add this RO"
+                                style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#fca5a5', borderRadius: 7, padding: '3px 9px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>✕</button>
+                            </td>
                           </tr>
                         ))}
-                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={7}>Nothing new — all flagged ROs are already on the site.</td></tr>}
+                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={8}>Nothing new to add{Object.keys(excluded).length ? ' (some were removed below)' : ' — all flagged ROs are already on the site'}.</td></tr>}
                       </tbody>
                     </table>
                   </div>
 
+                  {Object.keys(excluded).length > 0 && (
+                    <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 18 }}>
+                      {Object.keys(excluded).length} RO{Object.keys(excluded).length === 1 ? '' : 's'} removed from the add list.{' '}
+                      <span onClick={() => setExcluded({})} style={{ color: '#6ee7b7', cursor: 'pointer', fontWeight: 700 }}>Restore all</span>
+                    </div>
+                  )}
+
                   {/* Stale */}
                   {siteRos && stale.length > 0 && (
                     <>
-                      <div style={{ fontWeight: 800, color: '#fca5a5', margin: '8px 0' }}>On the site but NOT in your file — review & remove ({stale.length})</div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0', flexWrap: 'wrap', gap: 10 }}>
+                        <div style={{ fontWeight: 800, color: '#fca5a5' }}>On the site but NOT in your file — review & remove ({stale.length})</div>
+                        <button onClick={removeAllStale} disabled={busy}
+                          style={{ background: 'rgba(239,68,68,.16)', border: '1px solid rgba(239,68,68,.45)', color: '#fca5a5', borderRadius: 9, padding: '7px 16px', fontWeight: 800, fontSize: 13, cursor: busy ? 'default' : 'pointer' }}>
+                          🗑 Remove all {stale.length}
+                        </button>
+                      </div>
                       <div style={{ ...cardSt, padding: 0, overflow: 'auto', maxHeight: 320 }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                          <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}><th style={thSt}>RO #</th><th style={thSt}>Where it lives</th></tr></thead>
+                          <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}><th style={thSt}>RO #</th><th style={thSt}>Where it lives</th><th style={thSt}></th></tr></thead>
                           <tbody>
                             {stale.map((s, i) => (
                               <tr key={i}><td style={tdSt}>
@@ -365,12 +424,18 @@ export default function RoUpload({ onBack, currentUser }) {
                                   style={{ color: copiedRo === String(s.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
                                   {copiedRo === String(s.ro).trim() ? '✓ Copied' : `📋 ${s.ro}`}
                                 </span>
-                              </td><td style={tdSt}>{s.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${s.where}'s WIP`}</td></tr>
+                              </td><td style={tdSt}>{s.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${s.where}'s WIP`}</td>
+                              <td style={{ ...tdSt, textAlign: 'center' }}>
+                                <button onClick={() => removeStale(s)} disabled={removingRo === s.ro}
+                                  style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#fca5a5', borderRadius: 7, padding: '3px 12px', fontSize: 12, fontWeight: 700, cursor: removingRo === s.ro ? 'wait' : 'pointer' }}>
+                                  {removingRo === s.ro ? '⏳' : '🗑 Remove'}
+                                </button>
+                              </td></tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
-                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These aren't on your latest report — likely closed. Open each in Work in Progress and delete it if it should come off.</div>
+                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These aren't on your latest report — likely closed. Remove takes them off the site right away (WIP or Cars Awaiting).</div>
                     </>
                   )}
                 </>
