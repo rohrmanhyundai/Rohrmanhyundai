@@ -1,7 +1,7 @@
 {
   "id": "mqjt7vvxdwxo",
   "createdAt": "2026-06-18T18:04:44.973Z",
-  "updatedAt": "2026-06-18T18:34:15.794Z",
+  "updatedAt": "2026-06-19T19:23:40.938Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Hannah Weissenburger",
   "customerPhone": "765) 413 - 6051",
@@ -70,7 +70,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "CALLED IN 06/18/2026 @ 2PM. SENDING INSP. 24-48HRS.",
+  "notes": "CALLED IN 06/18/2026 @ 2PM. SENDING INSP. 24-48HRS.\n\n06/19/2026 inspector came at 3:20pm",
   "approved": false,
   "approvedDate": "",
   "denied": false,
