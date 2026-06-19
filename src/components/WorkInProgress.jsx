@@ -43,7 +43,7 @@ const todayUS  = () => new Date().toLocaleDateString('en-US', { month: '2-digit'
 
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: todayISO(), jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
+  ro: '', roDate: todayISO(), vehicle: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
 });
 
 const inpSt = {
@@ -1026,6 +1026,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   <div>
                     <div style={labelSt}>RO Date</div>
                     <input style={inpSt} type="date" value={row.roDate} onChange={e => updateRow(row.id, 'roDate', e.target.value)} />
+                  </div>
+                  <div>
+                    <div style={labelSt}>Vehicle</div>
+                    <input style={inpSt} value={row.vehicle || ''} onChange={e => updateRow(row.id, 'vehicle', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveRow(row.id); } }} placeholder="Year Make Model" />
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
                     <div style={labelSt}>Job Description</div>
