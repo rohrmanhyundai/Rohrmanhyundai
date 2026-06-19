@@ -133,13 +133,13 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             const mine = isMine(j);
             return (
               <div key={j.id || `${j.ro}-${i}`} className={j.flagged ? 'attn-flag-row' : undefined} style={j.flagged ? {
-                display: 'flex', alignItems: 'flex-start', gap: 10,
+                display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap',
                 background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
                 border: '2px solid rgba(236,72,153,.95)',
                 borderLeft: '5px solid rgba(236,72,153,1)',
                 borderRadius: 8, padding: '8px 12px',
               } : {
-                display: 'flex', alignItems: 'flex-start', gap: 10,
+                display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap',
                 background: mine ? 'rgba(61,214,195,.10)' : j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
                 border: mine ? '1px solid rgba(61,214,195,.7)' : j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
                 borderLeft: j.partsArrived === true ? '4px solid rgba(34,197,94,.85)' : undefined,
@@ -157,7 +157,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
                 )}
-                <div style={{ flex: 1, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
+                <div style={{ flex: 1, minWidth: 240, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
                   {j.jobDesc || '—'}
                   {j.notes ? <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{j.notes}</div> : null}
                 </div>
