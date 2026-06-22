@@ -346,12 +346,19 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     finally { setDeletingRow(null); }
   }
 
-  function addRow() {
+  async function addRow() {
+    // Guard against adding to the wrong tech mid tab-switch.
+    if (rowsTechRef.current !== activeTech) return;
     const fresh = emptyRow();
-    // A brand-new row has no server copy yet — mark dirty so background refresh
-    // doesn't drop it.
+    // Persist the new row to disk immediately (mirrors addAwaitingRow). Marking it
+    // dirty alone is not enough: switching tabs resets dirtyRowsRef and a refresh
+    // discards in-memory rows, so an unsaved add silently disappears. Writing now
+    // means the row survives tab switches, polls, and reloads before the user fills
+    // it in and clicks Save.
     dirtyRowsRef.current.add(fresh.id);
-    setRows(prev => [fresh, ...prev]);
+    const updated = [fresh, ...rows];
+    setRows(updated);
+    try { await safeSaveWipData(activeTech, updated); } catch (e) { setError(e.message); }
   }
 
   async function handleBack() {
@@ -360,6 +367,18 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setSaving(false);
     onBack();
   }
+
+  // Map a tech name to the exact casing used in the tab roster (techList) so a
+  // jump always lands on a real, selected tab. WIP files are stored uppercase
+  // (listWipTechs returns UPPERCASE) while techList may be mixed-case; without
+  // this, setActiveTech('JACOB') leaves the 'Jacob' tab unselected and the row
+  // can fail to surface. Falls back to the trimmed name for off-roster techs.
+  const canonTech = useCallback((name) => {
+    const nm = String(name || '').trim();
+    if (!nm) return nm;
+    const lower = nm.toLowerCase();
+    return (techList || []).find(t => String(t).trim().toLowerCase() === lower) || nm;
+  }, [techList]);
 
   async function handleSearch(explicitQuery) {
     const q = (typeof explicitQuery === 'string' ? explicitQuery : searchRO).trim();
@@ -404,7 +423,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       // instead of making the user click through a one-item results list.
       if (allMatches.length === 1) {
         const r = allMatches[0];
-        if (r._source !== 'awaiting') setActiveTech(r.techName);
+        if (r._source !== 'awaiting') setActiveTech(canonTech(r.techName));
         setHighlightRO(r.ro || '');
         clearSearch();
         return;
@@ -935,7 +954,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               return (
               <div
                 key={r.id + idx}
-                onClick={() => { if (!isAwaiting) setActiveTech(r.techName); setHighlightRO(r.ro || ''); clearSearch(); }}
+                onClick={() => { if (!isAwaiting) setActiveTech(canonTech(r.techName)); setHighlightRO(r.ro || ''); clearSearch(); }}
                 style={{ background: isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)', border: `1px solid ${isAwaiting ? 'rgba(251,191,36,.3)' : 'rgba(61,214,195,.25)'}`, borderRadius: 14, padding: '14px 18px', marginBottom: 10, cursor: 'pointer', transition: 'background .15s, border-color .15s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.15)' : 'rgba(61,214,195,.15)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = isAwaiting ? 'rgba(251,191,36,.07)' : 'rgba(61,214,195,.07)'; }}
