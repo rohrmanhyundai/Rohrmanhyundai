@@ -9,11 +9,11 @@
         "tue": 16,
         "wed": 8.2,
         "thu": 12.9,
-        "fri": 0,
+        "fri": 8.2,
         "sat": 0,
-        "total": 47.6,
-        "goal_pct": 1.0021052631578948,
-        "pacing": 59.5,
+        "total": 55.8,
+        "goal_pct": 1.174736842105263,
+        "pacing": 55.8,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "12",
@@ -36,7 +36,8 @@
           "2026-06-15": true,
           "2026-06-16": true,
           "2026-06-18": true,
-          "2026-06-17": true
+          "2026-06-17": true,
+          "2026-06-26": true
         }
       },
       {
@@ -46,11 +47,11 @@
         "tue": 4.7,
         "wed": 3.8,
         "thu": 1.9,
-        "fri": 0,
+        "fri": 6.4,
         "sat": 4,
-        "total": 18,
-        "goal_pct": 0.7058823529411765,
-        "pacing": 21.6,
+        "total": 24.400000000000002,
+        "goal_pct": 0.9568627450980393,
+        "pacing": 24.400000000000006,
         "certified": "NO",
         "trainings_due": "3",
         "excel_training": "NA",
@@ -75,7 +76,8 @@
           "2026-06-15": true,
           "2026-06-18": true,
           "2026-06-17": true,
-          "2026-06-16": true
+          "2026-06-16": true,
+          "2026-06-26": true
         }
       },
       {
@@ -85,11 +87,11 @@
         "tue": 3.9,
         "wed": 3.7,
         "thu": 5.5,
-        "fri": 0,
+        "fri": 5.2,
         "sat": 0,
-        "total": 21.2,
-        "goal_pct": 0.4463157894736842,
-        "pacing": 26.5,
+        "total": 26.4,
+        "goal_pct": 0.5557894736842105,
+        "pacing": 26.4,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "NA",
@@ -113,7 +115,8 @@
           "2026-06-15": true,
           "2026-06-16": true,
           "2026-06-18": true,
-          "2026-06-17": true
+          "2026-06-17": true,
+          "2026-06-26": true
         }
       },
       {
@@ -123,11 +126,11 @@
         "tue": 17.9,
         "wed": 6.5,
         "thu": 5.7,
-        "fri": 0,
+        "fri": 10.9,
         "sat": 0,
-        "total": 33.4,
-        "goal_pct": 0.7031578947368421,
-        "pacing": 41.75,
+        "total": 44.3,
+        "goal_pct": 0.9326315789473684,
+        "pacing": 44.3,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "86",
@@ -149,7 +152,8 @@
           "2026-06-15": true,
           "2026-06-16": true,
           "2026-06-18": true,
-          "2026-06-17": true
+          "2026-06-17": true,
+          "2026-06-26": true
         }
       },
       {
@@ -159,11 +163,11 @@
         "tue": 4.2,
         "wed": 9.4,
         "thu": 9.7,
-        "fri": 0,
+        "fri": 1.4,
         "sat": 11.1,
-        "total": 47.9,
-        "goal_pct": 1.0084210526315789,
-        "pacing": 57.480000000000004,
+        "total": 49.3,
+        "goal_pct": 1.0378947368421052,
+        "pacing": 49.3,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "7127",
@@ -187,7 +191,8 @@
           "2026-06-16": true,
           "2026-06-18": true,
           "2026-06-17": true,
-          "2026-06-20": true
+          "2026-06-20": true,
+          "2026-06-26": true
         }
       },
       {
@@ -195,13 +200,13 @@
         "goal": 47.5,
         "mon": 4.7,
         "tue": 5.4,
-        "wed": 4.7,
+        "wed": 6.6,
         "thu": 5,
-        "fri": 6,
+        "fri": 3.3,
         "sat": 4,
-        "total": 29.8,
-        "goal_pct": 0.6273684210526316,
-        "pacing": 29.8,
+        "total": 29.000000000000004,
+        "goal_pct": 0.6105263157894738,
+        "pacing": 29.000000000000004,
         "certified": "NO",
         "trainings_due": "0",
         "excel_training": "NA",
@@ -224,7 +229,9 @@
           "2026-06-15": true,
           "2026-06-17": true,
           "2026-06-18": true,
-          "2026-06-20": true
+          "2026-06-20": true,
+          "2026-06-26": true,
+          "2026-06-24": true
         }
       },
       {
@@ -234,11 +241,11 @@
         "tue": 7.4,
         "wed": 7.7,
         "thu": 4.6,
-        "fri": 0,
+        "fri": 5.5,
         "sat": 0,
-        "total": 29.799999999999997,
-        "goal_pct": 0.6273684210526315,
-        "pacing": 37.25,
+        "total": 35.3,
+        "goal_pct": 0.743157894736842,
+        "pacing": 35.3,
         "certified": "NO",
         "trainings_due": "0",
         "excel_training": "NA",
@@ -261,7 +268,8 @@
           "2026-06-15": true,
           "2026-06-16": true,
           "2026-06-18": true,
-          "2026-06-17": true
+          "2026-06-17": true,
+          "2026-06-26": true
         }
       },
       {
@@ -271,11 +279,11 @@
         "tue": 1.6,
         "wed": 1.4,
         "thu": 1.7,
-        "fri": 0,
+        "fri": 3.4,
         "sat": 0,
-        "total": 6.1000000000000005,
-        "goal_pct": 0.12842105263157896,
-        "pacing": 7.625000000000001,
+        "total": 9.5,
+        "goal_pct": 0.2,
+        "pacing": 9.5,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
@@ -283,7 +291,8 @@
           "2026-06-16": true,
           "2026-06-15": true,
           "2026-06-18": true,
-          "2026-06-17": true
+          "2026-06-17": true,
+          "2026-06-26": true
         }
       }
     ],
@@ -291,41 +300,41 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 277.3,
-        "hours_per_ro": 1.28,
-        "align": 0.0796,
-        "tires": 0.0354,
-        "valvoline": 0.2124,
+        "mtd_hours": 315.2,
+        "hours_per_ro": 1.31,
+        "align": 0.0853,
+        "tires": 0.0775,
+        "valvoline": 0.2481,
         "csi": 983,
-        "asr": 0.1571,
-        "elr": 0.9426,
+        "asr": 0.1594,
+        "elr": 0.9442,
         "last_month_total": 227.3,
-        "roh50_hrs_ro": 0.64,
+        "roh50_hrs_ro": 0.8,
         "hidden": false,
-        "ro_count": 216,
-        "coupon_labor": 2703.59,
-        "_lastImport": 1781867067271,
-        "total_sales": 95132.39,
-        "coupon_usage_pct": 0.0284
+        "ro_count": 241,
+        "coupon_labor": 3039.77,
+        "_lastImport": 1782127020147,
+        "total_sales": 109735.26,
+        "coupon_usage_pct": 0.0277
       },
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 286.7,
-        "hours_per_ro": 1.16,
-        "align": 0.1407,
-        "tires": 0.0667,
-        "valvoline": 0.2444,
-        "csi": 935,
-        "asr": 0.1782,
-        "elr": 0.9246,
+        "mtd_hours": 303.3,
+        "hours_per_ro": 1.17,
+        "align": 0.1399,
+        "tires": 0.0629,
+        "valvoline": 0.2448,
+        "csi": 914,
+        "asr": 0.1758,
+        "elr": 0.9231,
         "last_month_total": 311.8,
-        "roh50_hrs_ro": 0.76,
-        "ro_count": 247,
-        "coupon_labor": 3132.2,
-        "_lastImport": 1781867067271,
-        "total_sales": 87133.07,
-        "coupon_usage_pct": 0.0359
+        "roh50_hrs_ro": 0.63,
+        "ro_count": 260,
+        "coupon_labor": 3310.84,
+        "_lastImport": 1782127020147,
+        "total_sales": 92667.55,
+        "coupon_usage_pct": 0.0357
       }
     ],
     "advisorTraining": [
@@ -403,27 +412,27 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 564,
-      "align": 0.11015,
-      "tires": 0.05105,
-      "valvoline": 0.2284,
-      "csi": 959
+      "total_hours": 618.5,
+      "align": 0.1126,
+      "tires": 0.0702,
+      "valvoline": 0.24645,
+      "csi": 948.5
     },
     "techTotals": {
       "mon": 55.2,
       "tue": 61.1,
-      "wed": 45.400000000000006,
+      "wed": 47.300000000000004,
       "thu": 47.00000000000001,
-      "fri": 6,
+      "fri": 44.3,
       "sat": 19.1,
-      "week_total": 233.79999999999998,
-      "week_pct": 0.653072625698324,
-      "shop_pacing": 281.505
+      "week_total": 274,
+      "week_pct": 0.7653631284916201,
+      "shop_pacing": 274
     },
     "grossGoal": 153399,
-    "grossActual": 149330,
+    "grossActual": 144313,
     "cpGoal": 63890,
-    "cpActual": 66170,
+    "cpActual": 65264,
     "advisorMonthlyWorkdays": 27
   },
   "vacations": [
@@ -467,6 +476,13 @@
       "dates": "Jul 27–29, 2026",
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
+      "status": "APPROVED"
+    },
+    {
+      "name": "CARTER",
+      "dates": "Jun 22, 2026",
+      "dateStart": "2026-06-22",
+      "dateEnd": "2026-06-22",
       "status": "APPROVED"
     }
   ]

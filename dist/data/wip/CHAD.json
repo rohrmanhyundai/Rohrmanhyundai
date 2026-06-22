@@ -10,7 +10,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "CHAD DO NOT START ON THIS CAR UNTIL WE GET THE REGISTRATION CUSTOMER IS STILL WORKING ON GETTING THE REGISTRATION ",
+    "notes": "CHAD DO NOT START ON THIS CAR UNTIL WE GET THE REGISTRATION CUSTOMER IS STILL WORKING ON GETTING THE REGISTRATION. TALKED TO CUSTOMER WILL BE IN TOMORROW WITH REGISTRATION \n",
     "flagged": true
   },
   {
@@ -20,8 +20,8 @@
     "jobDesc": "CUSTOMER STATES- multiple warning lights on dash",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/20/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "CAR WILL NEED A ICCU AND FUSE. PARTS ARE ON ORDER "
@@ -50,6 +50,20 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
-    "notes": "HAVE ALL DOCS READY FOR P/A "
+    "notes": "HAVE ALL DOCS READY FOR P/A. P/A SUBMITTED NEED VALVE COVER PICS STUI. IMAGES UPLOADED 6/22 8:42AM."
+  },
+  {
+    "id": "mqlecuf968i",
+    "ro": "778556",
+    "roDate": "2026-06-19",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- car dead. Will not take charge",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "CHAD HAS THE CAR NOW"
   }
 ]
