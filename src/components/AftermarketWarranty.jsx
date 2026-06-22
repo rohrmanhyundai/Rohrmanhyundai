@@ -237,6 +237,20 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
   const [vinLoading, setVinLoading] = useState(false);
   const [vinError, setVinError] = useState('');
 
+  // Auto-grow the Notes textarea so all notes are visible without scrolling.
+  const notesRef = useRef(null);
+  const fitNotes = useCallback(() => {
+    const el = notesRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }, []);
+  // Fit after the DOM has the latest value (rAF avoids measuring stale content).
+  useEffect(() => {
+    const id = requestAnimationFrame(fitNotes);
+    return () => cancelAnimationFrame(id);
+  }, [form.notes, fitNotes]);
+
   // Shared warranty company directory (name → phone). Lets the user type a known
   // company and have the phone auto-filled.
   const [companies, setCompanies] = useState({});
@@ -495,9 +509,10 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
 
         {/* Notes */}
         <Section title="Notes">
-          <textarea value={form.notes} onChange={e => set('notes', e.target.value)}
-            placeholder="Additional notes…" rows={3}
-            style={{ ...inpSt, resize: 'vertical', fontFamily: 'inherit' }} />
+          <textarea ref={notesRef} value={form.notes}
+            onChange={e => { set('notes', e.target.value); fitNotes(); }}
+            onFocus={fitNotes} placeholder="Additional notes…" rows={3}
+            style={{ ...inpSt, resize: 'vertical', fontFamily: 'inherit', minHeight: 72, overflow: 'hidden' }} />
         </Section>
 
         {/* ── Action bar ── */}

@@ -74,26 +74,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Parker",
-      "password": "parker2026",
-      "role": "advisor",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": true,
-        "advisorRankBoard": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true
-      },
-      "chatAccess": true,
-      "techChatAccess": true
-    },
-    {
       "username": "Jason",
       "password": "jason2026",
       "role": "admin",
@@ -135,7 +115,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true,
@@ -224,7 +205,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -246,7 +228,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -268,7 +251,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -290,7 +274,8 @@
         "workInProgress": true,
         "chargeAccountList": false,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -312,7 +297,8 @@
         "workInProgress": false,
         "chargeAccountList": false,
         "partsHub": false,
-        "tireQuote": true
+        "tireQuote": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -412,31 +398,6 @@
       "techChatAccess": true
     },
     {
-      "username": "John",
-      "lastName": "Farley",
-      "password": "Rohrman2026$",
-      "role": "technician",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": true,
-        "advisorRankBoard": false,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": false,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": false,
-        "partsHub": true,
-        "tireQuote": true,
-        "atDiagWorksheet": true,
-        "usedCarHub": true
-      },
-      "chatAccess": false,
-      "techChatAccess": true
-    },
-    {
       "username": "Chad",
       "lastName": "",
       "password": "Chad2026",
@@ -456,7 +417,8 @@
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true
@@ -481,13 +443,64 @@
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
+        "usedCarHub": true,
+        "hotRepairs": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
+    },
+    {
+      "username": "Emily",
+      "lastName": "",
+      "password": "Emily2026",
+      "role": "admin",
+      "canEditDashboard": true,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": true,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
+    },
+    {
+      "username": "Wei",
+      "lastName": "",
+      "password": "Wei2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
         "usedCarHub": true
       },
       "chatAccess": false,
       "techChatAccess": true
     }
   ],
-  "sharedSaveCode": "sc1:LBpIDiNcZEMgCFFmGC1ITCc9ejs1YRNWCnclQjBJexkqNgscCxEyIg==",
-  "awsAccessKeyId": "sc1:CjlxEDpsalVOATt1F0MLThI/cxY=",
-  "awsSecretAccessKey": "sc1:IQsOPyNlbzxLaxgbBCALF3oxVzoVGQZrHHQtWxJ6Bk9kBWAIJGwXJQ=="
+  "sharedSaveCode": "sc1:LBpIDhlDbkRPNhduD3F6SBE6XxcJZDdxNgtXa2ZIRDM+OwghIGNtXw==",
+  "awsAccessKeyId": "",
+  "awsSecretAccessKey": ""
 }
