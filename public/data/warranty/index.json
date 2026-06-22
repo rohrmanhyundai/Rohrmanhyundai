@@ -2,7 +2,7 @@
   {
     "id": "mqgnjm4xigrs",
     "createdAt": "2026-06-16T13:02:35.985Z",
-    "updatedAt": "2026-06-22T12:55:44.267Z",
+    "updatedAt": "2026-06-22T13:06:37.651Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Brian Summers",
     "customerPhone": "334) 324 - 2081",
@@ -17,7 +17,7 @@
     "claimNumber": "696640",
     "authNumber": "",
     "laborRate": "170.00",
-    "laborTime": "1.10",
+    "laborTime": "1.5",
     "diagnosisTime": "1.00",
     "parts": [
       {
@@ -36,7 +36,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "approved 06/16/2026. SENT ALDATA LABOR TO billm@dowc.com 06/22/2026 2 8:50am, awaiting response.",
+    "notes": "approved 06/16/2026. SENT ALDATA LABOR TO billm@dowc.com 06/22/2026 2 8:50am, awaiting response. UPDATED 06/22/26 2 9:04AM.",
     "approved": true,
     "approvedDate": "2026-06-16",
     "denied": false,
