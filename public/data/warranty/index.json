@@ -1,5 +1,121 @@
 [
   {
+    "id": "mqgsqk0qwjxa",
+    "createdAt": "2026-06-16T15:27:57.914Z",
+    "updatedAt": "2026-06-22T14:26:51.572Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "DANIELLE STOKES",
+    "customerPhone": "765) 720 - 8908",
+    "repairOrder": "778436",
+    "vin": "KM8R5DHE3MU202356",
+    "vehicleYear": "2021",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Palisade",
+    "mileage": "94315",
+    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
+    "warrantyPhone": "800-222-2721",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "190.00",
+    "laborTime": "9.4",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mqgsqk0qujg2",
+        "partNumber": "24410-3CGA3",
+        "description": "TENSIONER ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "132.29"
+      },
+      {
+        "id": "mqguj6mylsq7",
+        "partNumber": "24810-3CGA3",
+        "description": "GUIDE ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "25.74"
+      },
+      {
+        "id": "mqguju294th1",
+        "partNumber": "24820-3CGA3",
+        "description": "TENSIONER ARM ASSY-TIMING",
+        "qty": "2",
+        "price": "48.44"
+      },
+      {
+        "id": "mqgukk4hfzrj",
+        "partNumber": "24350-3L100 ",
+        "description": "CVVT ASSY-INTAKE",
+        "qty": "1",
+        "price": "287.16"
+      },
+      {
+        "id": "mqgul8qhxv6r",
+        "partNumber": "24355-3L100",
+        "description": " OCV & CENTER BOLT ASSY,IN",
+        "qty": "1",
+        "price": "65.18"
+      },
+      {
+        "id": "mqgulxjlskm5",
+        "partNumber": "24378-3L100",
+        "description": "SOLENOID ASSY-VARIABLE FORCE",
+        "qty": "1",
+        "price": "106.02"
+      },
+      {
+        "id": "mqgumigpdo94",
+        "partNumber": "24312-3L100",
+        "description": "CHAIN-TIMING",
+        "qty": "2",
+        "price": "141.23"
+      },
+      {
+        "id": "mqjm1xzmzw6l",
+        "partNumber": "26345-3LAA1",
+        "description": "SEAL-OIL",
+        "qty": "1",
+        "price": "7.06"
+      },
+      {
+        "id": "mqjm2q2q6xxl",
+        "partNumber": "21355-3C530",
+        "description": "GASKET-WATER PUMP,LH",
+        "qty": "1",
+        "price": "31.76"
+      },
+      {
+        "id": "mqjm3g8q0duf",
+        "partNumber": "21355-3C550",
+        "description": "GASKET-WATER PUMP,RH",
+        "qty": "1",
+        "price": "5.24"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "NEED TEAR DOWN TO POINT OF FAILURE AND CALL BACK TO HAVE INSP. SENT OUT. 06/16/2026 @ 11:30. NO CLAIM NUBMER YET USE LAST 8 OF VIN FOR REFER. contract # FRP3 99900364415.\n\n inspector 24-48 hrs  06/18/2026. inspoector came 06/22/2026 @ 10am.",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": true,
+    "inspectorDispatchedDate": "2026-06-22"
+  },
+  {
     "id": "mqgnjm4xigrs",
     "createdAt": "2026-06-16T13:02:35.985Z",
     "updatedAt": "2026-06-22T13:06:37.651Z",
@@ -248,120 +364,6 @@
     "tireTax": null,
     "tireDisposal": null,
     "notes": "CAR HAS COVERAGE FOR THE REAR CAMERA. CUSTOMER NEEDS TO BRING BACK FOR NEW RO. PART IS ON BACK ORDER\n",
-    "approved": false,
-    "approvedDate": "",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
-  },
-  {
-    "id": "mqgsqk0qwjxa",
-    "createdAt": "2026-06-16T15:27:57.914Z",
-    "updatedAt": "2026-06-18T15:01:57.290Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "DANIELLE STOKES",
-    "customerPhone": "765) 720 - 8908",
-    "repairOrder": "778436",
-    "vin": "KM8R5DHE3MU202356",
-    "vehicleYear": "2021",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Palisade",
-    "mileage": "94315",
-    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
-    "warrantyPhone": "800-222-2721",
-    "claimNumber": "",
-    "authNumber": "",
-    "laborRate": "190.00",
-    "laborTime": "9.4",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mqgsqk0qujg2",
-        "partNumber": "24410-3CGA3",
-        "description": "TENSIONER ASSY-TIMING CHAIN",
-        "qty": "2",
-        "price": "132.29"
-      },
-      {
-        "id": "mqguj6mylsq7",
-        "partNumber": "24810-3CGA3",
-        "description": "GUIDE ASSY-TIMING CHAIN",
-        "qty": "2",
-        "price": "25.74"
-      },
-      {
-        "id": "mqguju294th1",
-        "partNumber": "24820-3CGA3",
-        "description": "TENSIONER ARM ASSY-TIMING",
-        "qty": "2",
-        "price": "48.44"
-      },
-      {
-        "id": "mqgukk4hfzrj",
-        "partNumber": "24350-3L100 ",
-        "description": "CVVT ASSY-INTAKE",
-        "qty": "1",
-        "price": "287.16"
-      },
-      {
-        "id": "mqgul8qhxv6r",
-        "partNumber": "24355-3L100",
-        "description": " OCV & CENTER BOLT ASSY,IN",
-        "qty": "1",
-        "price": "65.18"
-      },
-      {
-        "id": "mqgulxjlskm5",
-        "partNumber": "24378-3L100",
-        "description": "SOLENOID ASSY-VARIABLE FORCE",
-        "qty": "1",
-        "price": "106.02"
-      },
-      {
-        "id": "mqgumigpdo94",
-        "partNumber": "24312-3L100",
-        "description": "CHAIN-TIMING",
-        "qty": "2",
-        "price": "141.23"
-      },
-      {
-        "id": "mqjm1xzmzw6l",
-        "partNumber": "26345-3LAA1",
-        "description": "SEAL-OIL",
-        "qty": "1",
-        "price": "7.06"
-      },
-      {
-        "id": "mqjm2q2q6xxl",
-        "partNumber": "21355-3C530",
-        "description": "GASKET-WATER PUMP,LH",
-        "qty": "1",
-        "price": "31.76"
-      },
-      {
-        "id": "mqjm3g8q0duf",
-        "partNumber": "21355-3C550",
-        "description": "GASKET-WATER PUMP,RH",
-        "qty": "1",
-        "price": "5.24"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "NEED TEAR DOWN TO POINT OF FAILURE AND CALL BACK TO HAVE INSP. SENT OUT. 06/16/2026 @ 11:30. NO CLAIM NUBMER YET USE LAST 8 OF VIN FOR REFER. contract # FRP3 99900364415.\n\n inspector 24-48 hrs  06/18/2026",
     "approved": false,
     "approvedDate": "",
     "denied": false,
