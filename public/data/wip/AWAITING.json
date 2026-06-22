@@ -1,18 +1,5 @@
 [
   {
-    "id": "mql7esxsdv4m",
-    "ro": "778535",
-    "roDate": "2026-06-19",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "PDI",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mql7esxsnyfh",
     "ro": "778534",
     "roDate": "2026-06-19",
