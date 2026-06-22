@@ -477,6 +477,13 @@
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
       "status": "APPROVED"
+    },
+    {
+      "name": "CARTER",
+      "dates": "Jun 22, 2026",
+      "dateStart": "2026-06-22",
+      "dateEnd": "2026-06-22",
+      "status": "APPROVED"
     }
   ]
 }
