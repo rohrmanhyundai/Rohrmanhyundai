@@ -132,21 +132,36 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             const age = dayAge(j.roDate);
             const ageColor = age == null ? '#64748b' : age >= 14 ? '#f87171' : age >= 7 ? '#fbbf24' : '#94a3b8';
             const mine = isMine(j);
+            // When an advisor is viewing their board (hl set), their own rows
+            // glow green and every OTHER advisor's row glows blue. Flagged rows
+            // keep the pink "Needs Attention" look regardless. The manager view
+            // (no hl) falls through to the default parts-in/neutral styling.
+            const other = !!hl && !mine;
+            const rowBase = { display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderRadius: 8, padding: '8px 12px' };
+            const rowStyle = j.flagged ? {
+              ...rowBase,
+              background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
+              border: '2px solid rgba(236,72,153,.95)',
+              borderLeft: '5px solid rgba(236,72,153,1)',
+            } : mine ? {
+              ...rowBase,
+              background: 'rgba(61,214,195,.10)',
+              border: '1px solid rgba(61,214,195,.7)',
+              boxShadow: '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)',
+            } : other ? {
+              ...rowBase,
+              background: 'rgba(59,130,246,.10)',
+              border: '1px solid rgba(96,165,250,.7)',
+              boxShadow: '0 0 12px rgba(59,130,246,.45), inset 0 0 8px rgba(59,130,246,.15)',
+            } : {
+              ...rowBase,
+              background: j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
+              border: j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
+              borderLeft: j.partsArrived === true ? '4px solid rgba(34,197,94,.85)' : undefined,
+              boxShadow: j.partsArrived === true ? '0 0 10px rgba(34,197,94,.25)' : 'none',
+            };
             return (
-              <div key={j.id || `${j.ro}-${i}`} className={j.flagged ? 'attn-flag-row' : undefined} style={j.flagged ? {
-                display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap',
-                background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
-                border: '2px solid rgba(236,72,153,.95)',
-                borderLeft: '5px solid rgba(236,72,153,1)',
-                borderRadius: 8, padding: '8px 12px',
-              } : {
-                display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap',
-                background: mine ? 'rgba(61,214,195,.10)' : j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
-                border: mine ? '1px solid rgba(61,214,195,.7)' : j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
-                borderLeft: j.partsArrived === true ? '4px solid rgba(34,197,94,.85)' : undefined,
-                boxShadow: mine ? '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)' : j.partsArrived === true ? '0 0 10px rgba(34,197,94,.25)' : 'none',
-                borderRadius: 8, padding: '8px 12px',
-              }}>
+              <div key={j.id || `${j.ro}-${i}`} className={j.flagged ? 'attn-flag-row' : undefined} style={rowStyle}>
                 <div
                   onClick={(e) => copyRo(j.ro, j.id || `${j.ro}-${i}`, e)}
                   title={j.ro ? 'Click to copy RO #' : ''}
