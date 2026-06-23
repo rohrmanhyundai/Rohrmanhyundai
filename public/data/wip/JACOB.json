@@ -35,8 +35,8 @@
     "jobDesc": "UDED CAR",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/23/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
