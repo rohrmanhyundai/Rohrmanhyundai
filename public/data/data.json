@@ -300,41 +300,41 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 315.2,
-        "hours_per_ro": 1.31,
+        "mtd_hours": 330.1,
+        "hours_per_ro": 1.25,
         "align": 0.0853,
         "tires": 0.0775,
         "valvoline": 0.2481,
         "csi": 983,
         "asr": 0.1594,
-        "elr": 0.9442,
+        "elr": 0.9406,
         "last_month_total": 227.3,
-        "roh50_hrs_ro": 0.8,
+        "roh50_hrs_ro": 0.77,
         "hidden": false,
-        "ro_count": 241,
-        "coupon_labor": 3039.77,
-        "_lastImport": 1782127020147,
-        "total_sales": 109735.26,
-        "coupon_usage_pct": 0.0277
+        "ro_count": 264,
+        "coupon_labor": 3343.12,
+        "_lastImport": 1782213114988,
+        "total_sales": 114010.77,
+        "coupon_usage_pct": 0.0293
       },
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 303.3,
-        "hours_per_ro": 1.17,
+        "mtd_hours": 313.1,
+        "hours_per_ro": 1.16,
         "align": 0.1399,
         "tires": 0.0629,
         "valvoline": 0.2448,
         "csi": 914,
         "asr": 0.1758,
-        "elr": 0.9231,
+        "elr": 0.9199,
         "last_month_total": 311.8,
-        "roh50_hrs_ro": 0.63,
-        "ro_count": 260,
-        "coupon_labor": 3310.84,
-        "_lastImport": 1782127020147,
-        "total_sales": 92667.55,
-        "coupon_usage_pct": 0.0357
+        "roh50_hrs_ro": 0.61,
+        "ro_count": 270,
+        "coupon_labor": 3485.84,
+        "_lastImport": 1782213114988,
+        "total_sales": 100100.89,
+        "coupon_usage_pct": 0.0348
       }
     ],
     "advisorTraining": [
@@ -412,7 +412,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 618.5,
+      "total_hours": 643.2,
       "align": 0.1126,
       "tires": 0.0702,
       "valvoline": 0.24645,
@@ -476,13 +476,6 @@
       "dates": "Jul 27–29, 2026",
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
-      "status": "APPROVED"
-    },
-    {
-      "name": "CARTER",
-      "dates": "Jun 22, 2026",
-      "dateStart": "2026-06-22",
-      "dateEnd": "2026-06-22",
       "status": "APPROVED"
     }
   ]
