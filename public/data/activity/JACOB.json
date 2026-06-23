@@ -1,5 +1,22 @@
 [
   {
+    "at": "2026-06-23T19:59:00.775Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-06-23T19:58:29.909Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778613 tech JACOB"
+  },
+  {
+    "at": "2026-06-23T19:58:25.067Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 778627 tech JACOB"
+  },
+  {
     "at": "2026-06-23T16:54:29.536Z",
     "type": "action",
     "label": "undo-parts-arrived",
