@@ -52,5 +52,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "mqr3md5fmda",
+    "ro": "778632",
+    "roDate": "2026-06-23",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES WHEN FIRST STARTING THE VEHICLE JERKS. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
