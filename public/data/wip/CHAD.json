@@ -66,5 +66,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "mqqou5u34my",
+    "ro": "778595",
+    "roDate": "2026-06-22",
+    "vehicle": "",
+    "jobDesc": "PDI",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
