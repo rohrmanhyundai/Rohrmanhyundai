@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive } from '../utils/github';
 import Chat from './Chat';
 import TechChat from './TechChat';
+import PartsReceived, { canUsePartsReceived } from './PartsReceived';
 
 const RANK_BASE = 'https://dealerplateguy.github.io/Advisor-Rank-Board/data';
 const METRIC_KEYS = ['ro', 'openRo', 'cpHrs', 'warrHrs', 'rap', '_combined', 'alignCnt', 'tireCnt', 'valvCnt'];
@@ -233,6 +234,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
   const [wipLoading, setWipLoading] = useState(false);
   const [roSearch, setRoSearch] = useState('');
+  const [showPartsReceived, setShowPartsReceived] = useState(false);
 
   // Open the WIP page for the first job whose RO# matches the query. Called by
   // both the Enter key in the search box and the "Open" button.
@@ -450,6 +452,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {showPartsReceived && (
+        <PartsReceived currentUser={currentUser || ''} onClose={() => setShowPartsReceived(false)} />
+      )}
       <div className="adv-topbar">
         <div>
           <div className="adv-title">Appointment Prep Calendar</div>
@@ -666,6 +671,17 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             >
               Open
             </button>
+            {canUsePartsReceived(currentRole) && (
+              <button
+                onClick={() => setShowPartsReceived(true)}
+                title="Mark parts received for a repair order"
+                style={{
+                  background: 'rgba(110,231,183,.18)', border: '1px solid rgba(110,231,183,.45)',
+                  color: '#6ee7b7', borderRadius: 10, padding: '8px 16px', fontWeight: 800, fontSize: 13,
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >📦 Parts Received</button>
+            )}
             {canManageWip && onRoUpload && (
               <button
                 onClick={onRoUpload}

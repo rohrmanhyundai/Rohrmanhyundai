@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive, listWipTechs } from '../utils/github';
 import { trackAction } from '../utils/activityTracker';
 import TechChat from './TechChat';
+import PartsReceived, { canUsePartsReceived } from './PartsReceived';
 
 function ChipBtn({ active, color, onClick, children }) {
   const colors = {
@@ -94,6 +95,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const [searchRO, setSearchRO] = useState('');
   const [searchResults, setSearchResults] = useState(null); // null = not searching
   const [searching, setSearching] = useState(false);
+  const [showPartsReceived, setShowPartsReceived] = useState(false);
   const [showTechPicker, setShowTechPicker] = useState(false);
   const [creatingForTech, setCreatingForTech] = useState(null);
   const [techWizardAdvisor, setTechWizardAdvisor] = useState('');
@@ -777,6 +779,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
   return (
     <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      {showPartsReceived && (
+        <PartsReceived currentUser={currentUser} onClose={() => setShowPartsReceived(false)} />
+      )}
       {/* Topbar */}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
@@ -809,6 +814,12 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
             ))}
             {/* RO Search */}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+              {canUsePartsReceived(currentRole) && (
+                <button
+                  onClick={() => setShowPartsReceived(true)}
+                  style={{ background: 'rgba(110,231,183,.18)', border: '1px solid rgba(110,231,183,.45)', color: '#6ee7b7', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap' }}
+                >📦 Parts Received</button>
+              )}
               <input
                 value={searchRO}
                 onChange={e => setSearchRO(e.target.value)}
