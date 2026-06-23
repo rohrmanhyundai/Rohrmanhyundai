@@ -235,6 +235,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [wipLoading, setWipLoading] = useState(false);
   const [roSearch, setRoSearch] = useState('');
   const [showPartsReceived, setShowPartsReceived] = useState(false);
+  const [techChatRefresh, setTechChatRefresh] = useState(0);
 
   // Open the WIP page for the first job whose RO# matches the query. Called by
   // both the Enter key in the search box and the "Open" button.
@@ -453,7 +454,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {showPartsReceived && (
-        <PartsReceived currentUser={currentUser || ''} onClose={() => setShowPartsReceived(false)} />
+        <PartsReceived currentUser={currentUser || ''} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
       )}
       <div className="adv-topbar">
         <div>
@@ -577,6 +578,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             currentUser={currentUser || ''}
             currentRole={currentRole}
             hasChatAccess={techChatUsers && techChatUsers.map(u => u.toUpperCase()).includes((currentUser || '').toUpperCase())}
+            refreshKey={techChatRefresh}
           />
         </div>
         {/* Calendar — middle */}
