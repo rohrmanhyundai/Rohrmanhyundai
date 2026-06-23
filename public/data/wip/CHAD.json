@@ -52,5 +52,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CHAD HAS THE CAR NOW. NOT ANYMORE...😁"
+  },
+  {
+    "id": "mqqmws6jd2b",
+    "ro": "778596",
+    "roDate": "2026-06-22",
+    "vehicle": "",
+    "jobDesc": "PDI",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
