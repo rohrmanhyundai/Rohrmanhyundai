@@ -25,19 +25,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Tow In CAR HAS NOT BEEN IN YET "
-  },
-  {
-    "id": "mqpofshuwkt",
-    "ro": "778602",
-    "roDate": "2026-06-22",
-    "vehicle": "",
-    "jobDesc": "",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": ""
   }
 ]
