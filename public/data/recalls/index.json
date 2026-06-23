@@ -7,7 +7,226 @@
     "size": 7983755,
     "uploadedBy": "SHAWN",
     "uploadedAt": "2026-06-23T15:17:09.792Z",
-    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  RECALL   24-01-027H-9  DATE   MODEL(S)  SEPTEMBER 2024   SEE APPLICABLE MODEL LIST SUBJECT:   ANTI-LOCK BRAKING SYSTEM (ABS) FUSE REPLACEMENT (RECALL 251)  This TSB supersedes TSB#24-01-027H-8 to revise the starting production date ranges for Tucson (LM) and Veracruz (EN) models.  Description:   The applicable vehicles listed below may develop an electrical short in the Anti-Lock Brake System (ABS) module, increasing the risk of an engine compartment fire. Follow the procedures in the bulletin to replace the ABS multi-fuse, the two individual ABS single fuses, or the ABS multi-fuse and a single fuse depending on the model.  Applicable Vehicles (Certain):     2013MY Santa Fe Sport (AN) produced 7/12/2012 – 6/15/2013     2011-2015MY Sonata Hybrid (YF HEV) produced 12/02/2010 – 10/31/2014     2010-2012MY Veracruz (EN) produced 12/14/2009 – 10/08/2012     2014-2015MY Equus (VI) produced 4/12/2013 – 10/30/2014     2012-2015MY Accent (RB) produced 3/5/2011 – 10/31/2014     2013-2015MY Santa Fe (NC) produced 10/17/2012 – 10/31/2014     2012-2015MY Azera (HG) produced 11/29/2011 – 10/31/2014     2011-2015MY Elantra (MD) produced 11/12/2010 – 11/13/2014; VIN starts with ‘KMH’     2011-2015MY Elantra (UD) produced 10/29/2010 – 10/31/2014; VIN starts with ‘5NP’     2013-2014MY Elantra Coupe (JK) produced 3/16/2012 – 4/24/2014     2010-2013MY Tucson (LM) produced 10/20/2009 – 8/19/2013     2012-2015MY Veloster (FS) produced 07/02/2011 – 10/31/2014     2011-2015MY Genesis Coupe (BK) produced 09/01/2010 – 10/31/2014  Vehicle repairs related to safety recalls are critically important and must be performed properly in accordance with TSB procedures. Review this bulletin in its entirety prior to beginning any repair work. As required by federal law, dealers must not deliver new vehicles for sale or for lease to customers until all open recalls have been performed. Dealers must also perform all open recalls on used vehicles, demo, and rental vehicles prior to placing them into customer use and whenever an affected vehicle is in the shop for any maintenance or repair. Access the “Vehicle Information” screen via WebDCS to identify open recalls.     IMPORTANT A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 2 of 22  SUBJECT: SUBJECT: Parts Information:  Type   Model   Part Number   Figure Multi-fuse only Santa Fe Sport (AN) 91AN1-11200 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) 91NC1-11200 QQH Santa Fe Sport (AN) *Alternate Part 91AN1-11201 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) *Alternate Part 91NC1-11201 QQH Accent (RB) 91RB2-11021 QQH Multi-fuse, fuse labels Tucson (LM) 91LM1-11201 QQH Multi-fuse, upper cover, upper cover label Genesis Coupe (BK) 2011-12MY 91BK1-11021 QQH Multi-fuse, fuse label (small) Genesis Coupe (BK) 2013-15MY 91BK2-11021 QQH Multi-fuse, fuse label (small) Single fuses only Sonata Hybrid (YF HEV) 91YF1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Veracruz (EN) 91EN1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Equus (VI) 91VI1-11020 QQH A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 3 of 22  SUBJECT: SUBJECT:  Both multi-fuse and single fuse Azera (HG) 2012-14MY 91HG1-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Azera (HG) 2015MY 91HG2-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2011-13MY Elantra Coupe (JK) 2013MY 91MD1-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2014-15MY Elantra Coupe (JK) 2014MY 91MD2-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Veloster Turbo (FS) 91FS1-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) Veloster Non-Turbo (FS) 91FS2-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 4 of 22  SUBJECT: SUBJECT: Warranty Information:  Model   Op. Code   Operation   Op. Time   Casual Part   Nature Code Cause Code Sonata Hybrid (YF HEV)   41D013R0   ABS Single Fuse Installation   0.2 M/H   58920-4Z000 I11   ZZ3 Santa Fe Sport (AN)   41D013R1 ABS Multi-Fuse Installation (for P/N 91AN1- 11200QQH) 0.2 M/H   58920-4R000 Veracruz (EN)   41D013R2   ABS Single Fuse Installation   0.2 M/H   58910-3J806 Equus (VI)   41D013R3   ABS Single Fuse Installation   0.2 M/H   58910-3N590 Santa Fe (NC)   41D013R4 ABS Multi-Fuse Installation (for P/N 91NC1- 11200QQH) 0.2 M/H   58920-B8700 Accent (RB)   41D013R5   ABS Multi-Fuse Installation   0.2 M/H   58920-1R400 Elantra (UD)   41D013R6   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra (MD)   41D013R7   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra Coupe (JK)   41D013R8   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X660 Tucson (LM)   41D013R9   ABS Multi-Fuse Installation   0.2 M/H   58920-2S400 Azera (HG)   41D013RA   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3V300 Veloster (FS)   41D013RB   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-2V400 Genesis Coupe (BK)   41D013RD   ABS Multi-Fuse Installation   0.2 M/H   58920- 2M750 Santa Fe Sport (AN)   41D013RE ABS Multi-Fuse Installation (for P/N 91AN1- 11201QQH) 0.2 M/H   58920-4R000 Santa Fe (NC)   41D013RF ABS Multi-Fuse Installation (for P/N 91NC1- 11201QQH) 0.2 M/H   58920-B8700 A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 5 of 22  SUBJECT: SUBJECT: NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  NOTE 2:   If a part is found in need of replacement while performing this recall and the affected part is still under warranty, submit a separate claim using the same repair order. If the affected part is out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the work.  NOTE 3:   This TSB includes Repair validation photos. Op times include VIN, Mileage, and Repair validation photo(s) as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center (WTC) parts return process.   Claim is subject to debit if the part is not returned.  Service Procedures Table of Contents:  Replacement of Multi-fuse:   ................................................................................   6  Replacement of Two Single Fuses:   .................................................................   11  Replacement of Single Fuse & Multi-Fuse: .....................................................   16  This TSB includes Repair validation photos. Refer to the latest Warranty Digital Documentation Policy for requirements.  STUI  Refer to the QR code or link below for guided video information: Hyundai Service Learning – Recall 251 Service Procedure  Information i  If the “ABS”, “ESC”, or “Brake” indicator lights are illuminated, refer to the appropriate section in the shop manual for diagnosis   before   performing this Recall.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 6 of 22  SUBJECT: SUBJECT:  Replacement of Multi-fuse: Santa Fe Sport (AN), Santa Fe (NC), Accent (RB), Tucson (LM), Genesis Coupe (BK)  Multi-Fuse Table:  Model   Fuse Changes   Images Santa Fe Sport (AN) ABS1: 40A      30A   ABS2: 40A      30A Santa Fe (NC) ABS1: 40A      30A   ABS2: 40A      30A Accent (RB) ABS1: 40A      30A   ABS2: 40A      20A  30A 30A  20A 30A  30A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 7 of 22  SUBJECT: SUBJECT:  Tucson (LM) ABS1: 40A      30A   ABS2: 40A      20A Genesis Coupe (BK) ABS1: 40A      30A   ABS2: 40A      20A  Service Procedure:  Unless otherwise specified, fuse values and images shown are for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse locations and values.  Information i  30A 20A  30A 20A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 8 of 22  SUBJECT: SUBJECT:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  2.   Locate the junction box and remove the cover. 3a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Remove the multi-fuse nut and junction box cable. Release the locking tab and remove the multi-fuse.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  8.0 lb-ft  96 lb-in  11 N.m  Locking tab A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 9 of 22  SUBJECT: SUBJECT:  3b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Remove the two multi-fuse nuts and junction box cables. Release the locking tab and remove the multi-fuse.  Tightening Torque:  4.   Install the new multi-fuse, placing the junction box cable(s) over the junction box stud(s). Reinstall the nut(s).  8.0 lb-ft  96 lb-in  11 N.m  Locking tab  Multi-fuse shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model multi-fuse location.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 10 of 22  SUBJECT: SUBJECT:  5a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Clean the surface, then attach the supplied label to the new upper cover. 5b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Clean the surface, then attach the supplied label to the original upper cover.  Fuse label shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse value changes.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 11 of 22  SUBJECT: SUBJECT:  6. 7.   Install the new junction box upper cover. 8.   Reconnect the negative (-) battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Replacement of Two Single Fuses: Sonata Hybrid (YF HEV), Veracruz (EN), Equus (VI)  Single Fuse Table:  Model   Fuse Changes   Images Sonata Hybrid (YF HEV) ESC1: 40A      30A   ESC2: 30A      20A   30A 20A  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New multi-fuse installed in junction box     Junction box cover with newly applied label Upload the photo to STUI.  STUI  Example of STUI Photo A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 12 of 22  SUBJECT: SUBJECT:  Veracruz (EN) ABS1: 40A      30A   ABS2: 40A      20A Equus (VI) ESC1: 40A      30A   ESC2: 40A      20A  Service Procedure:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  30A   20A  Fuse values and images shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  20A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 13 of 22  SUBJECT: SUBJECT:  2.   From the engine compartment, locate the junction box and remove the cover. 3.   Locate the ABS1/ESC1 and ABS2/ESC2 fuses. Remove the two fuses.  40A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 14 of 22  SUBJECT: SUBJECT:  4.   Install the two new single fuses as shown. ESC1 position (40A fuse originally) Install new 30A fuse (pink). ESC2 position (30A fuse originally): Install 20A fuse (blue). 5.   Select the appropriately sized labels with the corresponding amperage values for the two fuses installed. Clean the surface, then attach the supplied labels to the junction box cover as shown.  20A 30A  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 15 of 22  SUBJECT: SUBJECT:  6. 7.   Reinstall the junction box cover. 8.   Reconnect negative battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New fuses installed in junction box     Junction box cover with newly applied labels Upload the photo to STUI.  STUI  Example of STUI Photo"
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  RECALL   24-01-027H-9  DATE   MODEL(S)  SEPTEMBER 2024   SEE APPLICABLE MODEL LIST SUBJECT:   ANTI-LOCK BRAKING SYSTEM (ABS) FUSE REPLACEMENT (RECALL 251)  This TSB supersedes TSB#24-01-027H-8 to revise the starting production date ranges for Tucson (LM) and Veracruz (EN) models.  Description:   The applicable vehicles listed below may develop an electrical short in the Anti-Lock Brake System (ABS) module, increasing the risk of an engine compartment fire. Follow the procedures in the bulletin to replace the ABS multi-fuse, the two individual ABS single fuses, or the ABS multi-fuse and a single fuse depending on the model.  Applicable Vehicles (Certain):     2013MY Santa Fe Sport (AN) produced 7/12/2012 – 6/15/2013     2011-2015MY Sonata Hybrid (YF HEV) produced 12/02/2010 – 10/31/2014     2010-2012MY Veracruz (EN) produced 12/14/2009 – 10/08/2012     2014-2015MY Equus (VI) produced 4/12/2013 – 10/30/2014     2012-2015MY Accent (RB) produced 3/5/2011 – 10/31/2014     2013-2015MY Santa Fe (NC) produced 10/17/2012 – 10/31/2014     2012-2015MY Azera (HG) produced 11/29/2011 – 10/31/2014     2011-2015MY Elantra (MD) produced 11/12/2010 – 11/13/2014; VIN starts with ‘KMH’     2011-2015MY Elantra (UD) produced 10/29/2010 – 10/31/2014; VIN starts with ‘5NP’     2013-2014MY Elantra Coupe (JK) produced 3/16/2012 – 4/24/2014     2010-2013MY Tucson (LM) produced 10/20/2009 – 8/19/2013     2012-2015MY Veloster (FS) produced 07/02/2011 – 10/31/2014     2011-2015MY Genesis Coupe (BK) produced 09/01/2010 – 10/31/2014  Vehicle repairs related to safety recalls are critically important and must be performed properly in accordance with TSB procedures. Review this bulletin in its entirety prior to beginning any repair work. As required by federal law, dealers must not deliver new vehicles for sale or for lease to customers until all open recalls have been performed. Dealers must also perform all open recalls on used vehicles, demo, and rental vehicles prior to placing them into customer use and whenever an affected vehicle is in the shop for any maintenance or repair. Access the “Vehicle Information” screen via WebDCS to identify open recalls.     IMPORTANT A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 2 of 22  SUBJECT: SUBJECT: Parts Information:  Type   Model   Part Number   Figure Multi-fuse only Santa Fe Sport (AN) 91AN1-11200 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) 91NC1-11200 QQH Santa Fe Sport (AN) *Alternate Part 91AN1-11201 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) *Alternate Part 91NC1-11201 QQH Accent (RB) 91RB2-11021 QQH Multi-fuse, fuse labels Tucson (LM) 91LM1-11201 QQH Multi-fuse, upper cover, upper cover label Genesis Coupe (BK) 2011-12MY 91BK1-11021 QQH Multi-fuse, fuse label (small) Genesis Coupe (BK) 2013-15MY 91BK2-11021 QQH Multi-fuse, fuse label (small) Single fuses only Sonata Hybrid (YF HEV) 91YF1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Veracruz (EN) 91EN1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Equus (VI) 91VI1-11020 QQH A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 3 of 22  SUBJECT: SUBJECT:  Both multi-fuse and single fuse Azera (HG) 2012-14MY 91HG1-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Azera (HG) 2015MY 91HG2-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2011-13MY Elantra Coupe (JK) 2013MY 91MD1-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2014-15MY Elantra Coupe (JK) 2014MY 91MD2-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Veloster Turbo (FS) 91FS1-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) Veloster Non-Turbo (FS) 91FS2-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 4 of 22  SUBJECT: SUBJECT: Warranty Information:  Model   Op. Code   Operation   Op. Time   Casual Part   Nature Code Cause Code Sonata Hybrid (YF HEV)   41D013R0   ABS Single Fuse Installation   0.2 M/H   58920-4Z000 I11   ZZ3 Santa Fe Sport (AN)   41D013R1 ABS Multi-Fuse Installation (for P/N 91AN1- 11200QQH) 0.2 M/H   58920-4R000 Veracruz (EN)   41D013R2   ABS Single Fuse Installation   0.2 M/H   58910-3J806 Equus (VI)   41D013R3   ABS Single Fuse Installation   0.2 M/H   58910-3N590 Santa Fe (NC)   41D013R4 ABS Multi-Fuse Installation (for P/N 91NC1- 11200QQH) 0.2 M/H   58920-B8700 Accent (RB)   41D013R5   ABS Multi-Fuse Installation   0.2 M/H   58920-1R400 Elantra (UD)   41D013R6   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra (MD)   41D013R7   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra Coupe (JK)   41D013R8   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X660 Tucson (LM)   41D013R9   ABS Multi-Fuse Installation   0.2 M/H   58920-2S400 Azera (HG)   41D013RA   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3V300 Veloster (FS)   41D013RB   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-2V400 Genesis Coupe (BK)   41D013RD   ABS Multi-Fuse Installation   0.2 M/H   58920- 2M750 Santa Fe Sport (AN)   41D013RE ABS Multi-Fuse Installation (for P/N 91AN1- 11201QQH) 0.2 M/H   58920-4R000 Santa Fe (NC)   41D013RF ABS Multi-Fuse Installation (for P/N 91NC1- 11201QQH) 0.2 M/H   58920-B8700 A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 5 of 22  SUBJECT: SUBJECT: NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  NOTE 2:   If a part is found in need of replacement while performing this recall and the affected part is still under warranty, submit a separate claim using the same repair order. If the affected part is out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the work.  NOTE 3:   This TSB includes Repair validation photos. Op times include VIN, Mileage, and Repair validation photo(s) as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center (WTC) parts return process.   Claim is subject to debit if the part is not returned.  Service Procedures Table of Contents:  Replacement of Multi-fuse:   ................................................................................   6  Replacement of Two Single Fuses:   .................................................................   11  Replacement of Single Fuse & Multi-Fuse: .....................................................   16  This TSB includes Repair validation photos. Refer to the latest Warranty Digital Documentation Policy for requirements.  STUI  Refer to the QR code or link below for guided video information: Hyundai Service Learning – Recall 251 Service Procedure  Information i  If the “ABS”, “ESC”, or “Brake” indicator lights are illuminated, refer to the appropriate section in the shop manual for diagnosis   before   performing this Recall.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 6 of 22  SUBJECT: SUBJECT:  Replacement of Multi-fuse: Santa Fe Sport (AN), Santa Fe (NC), Accent (RB), Tucson (LM), Genesis Coupe (BK)  Multi-Fuse Table:  Model   Fuse Changes   Images Santa Fe Sport (AN) ABS1: 40A      30A   ABS2: 40A      30A Santa Fe (NC) ABS1: 40A      30A   ABS2: 40A      30A Accent (RB) ABS1: 40A      30A   ABS2: 40A      20A  30A 30A  20A 30A  30A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 7 of 22  SUBJECT: SUBJECT:  Tucson (LM) ABS1: 40A      30A   ABS2: 40A      20A Genesis Coupe (BK) ABS1: 40A      30A   ABS2: 40A      20A  Service Procedure:  Unless otherwise specified, fuse values and images shown are for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse locations and values.  Information i  30A 20A  30A 20A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 8 of 22  SUBJECT: SUBJECT:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  2.   Locate the junction box and remove the cover. 3a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Remove the multi-fuse nut and junction box cable. Release the locking tab and remove the multi-fuse.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  8.0 lb-ft  96 lb-in  11 N.m  Locking tab A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 9 of 22  SUBJECT: SUBJECT:  3b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Remove the two multi-fuse nuts and junction box cables. Release the locking tab and remove the multi-fuse.  Tightening Torque:  4.   Install the new multi-fuse, placing the junction box cable(s) over the junction box stud(s). Reinstall the nut(s).  8.0 lb-ft  96 lb-in  11 N.m  Locking tab  Multi-fuse shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model multi-fuse location.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 10 of 22  SUBJECT: SUBJECT:  5a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Clean the surface, then attach the supplied label to the new upper cover. 5b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Clean the surface, then attach the supplied label to the original upper cover.  Fuse label shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse value changes.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 11 of 22  SUBJECT: SUBJECT:  6. 7.   Install the new junction box upper cover. 8.   Reconnect the negative (-) battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Replacement of Two Single Fuses: Sonata Hybrid (YF HEV), Veracruz (EN), Equus (VI)  Single Fuse Table:  Model   Fuse Changes   Images Sonata Hybrid (YF HEV) ESC1: 40A      30A   ESC2: 30A      20A   30A 20A  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New multi-fuse installed in junction box     Junction box cover with newly applied label Upload the photo to STUI.  STUI  Example of STUI Photo A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 12 of 22  SUBJECT: SUBJECT:  Veracruz (EN) ABS1: 40A      30A   ABS2: 40A      20A Equus (VI) ESC1: 40A      30A   ESC2: 40A      20A  Service Procedure:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  30A   20A  Fuse values and images shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  20A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 13 of 22  SUBJECT: SUBJECT:  2.   From the engine compartment, locate the junction box and remove the cover. 3.   Locate the ABS1/ESC1 and ABS2/ESC2 fuses. Remove the two fuses.  40A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 14 of 22  SUBJECT: SUBJECT:  4.   Install the two new single fuses as shown. ESC1 position (40A fuse originally) Install new 30A fuse (pink). ESC2 position (30A fuse originally): Install 20A fuse (blue). 5.   Select the appropriately sized labels with the corresponding amperage values for the two fuses installed. Clean the surface, then attach the supplied labels to the junction box cover as shown.  20A 30A  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 15 of 22  SUBJECT: SUBJECT:  6. 7.   Reinstall the junction box cover. 8.   Reconnect negative battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New fuses installed in junction box     Junction box cover with newly applied labels Upload the photo to STUI.  STUI  Example of STUI Photo",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqqsfx97sghk",
+          "answers": {
+            "model": "Sonata Hybrid (YF HEV)"
+          },
+          "model": "Sonata Hybrid (YF HEV)",
+          "opCode": "41D013R0",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4Z000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx9788fd",
+          "answers": {
+            "model": "Santa Fe Sport (AN)"
+          },
+          "model": "Santa Fe Sport (AN)",
+          "opCode": "41D013R1",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91AN1-11200QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4R000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx970qdg",
+          "answers": {
+            "model": "Veracruz (EN)"
+          },
+          "model": "Veracruz (EN)",
+          "opCode": "41D013R2",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58910-3J806",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx970egs",
+          "answers": {
+            "model": "Equus (VI)"
+          },
+          "model": "Equus (VI)",
+          "opCode": "41D013R3",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58910-3N590",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97but8",
+          "answers": {
+            "model": "Santa Fe (NC)"
+          },
+          "model": "Santa Fe (NC)",
+          "opCode": "41D013R4",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11200QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97mfo4",
+          "answers": {
+            "model": "Accent (RB)"
+          },
+          "model": "Accent (RB)",
+          "opCode": "41D013R5",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-1R400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx973zbv",
+          "answers": {
+            "model": "Elantra (UD)"
+          },
+          "model": "Elantra (UD)",
+          "opCode": "41D013R6",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97azfx",
+          "answers": {
+            "model": "Elantra (MD)"
+          },
+          "model": "Elantra (MD)",
+          "opCode": "41D013R7",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97w7z4",
+          "answers": {
+            "model": "Elantra Coupe (JK)"
+          },
+          "model": "Elantra Coupe (JK)",
+          "opCode": "41D013R8",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X660",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97zuff",
+          "answers": {
+            "model": "Tucson (LM)"
+          },
+          "model": "Tucson (LM)",
+          "opCode": "41D013R9",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2S400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97xgsi",
+          "answers": {
+            "model": "Azera (HG)"
+          },
+          "model": "Azera (HG)",
+          "opCode": "41D013RA",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3V300",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97qwnx",
+          "answers": {
+            "model": "Veloster (FS)"
+          },
+          "model": "Veloster (FS)",
+          "opCode": "41D013RB",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2V400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97jcir",
+          "answers": {
+            "model": "Genesis Coupe (BK)"
+          },
+          "model": "Genesis Coupe (BK)",
+          "opCode": "41D013RD",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2M750",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97mq9t",
+          "answers": {
+            "model": "Santa Fe Sport (AN)"
+          },
+          "model": "Santa Fe Sport (AN)",
+          "opCode": "41D013RE",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91AN1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4R000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx975usg",
+          "answers": {
+            "model": "Santa Fe (NC)"
+          },
+          "model": "Santa Fe (NC)",
+          "opCode": "41D013RF",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700ABSFUSE",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97zwj3",
+          "answers": {
+            "model": "REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9 Page 5 of 22SUBJECT: SUBJECT:"
+          },
+          "model": "REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9 Page 5 of 22SUBJECT: SUBJECT:",
+          "opCode": "41D013RF",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700ABSFUSE",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
   },
   {
     "id": "mqjrajbavha8",
