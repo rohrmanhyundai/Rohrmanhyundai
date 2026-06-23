@@ -12,7 +12,7 @@ const THEM_TEXT       = '#e5e7eb';
 const PANEL_BG        = 'rgba(15,23,42,0.92)';
 const HEADER_BG       = 'rgba(15,23,42,0.96)';
 
-export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
+export default function TechChat({ currentUser, currentRole, hasChatAccess, refreshKey }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -50,6 +50,13 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess }) {
     });
     return () => { getPusher().unsubscribe(TECH_CHANNEL); };
   }, [fetchMessages]);
+
+  // Refetch on demand when the parent bumps refreshKey (e.g. after the Parts
+  // Received tool posts a message — Pusher's echo to the same browser is
+  // unreliable, so we refresh explicitly).
+  useEffect(() => {
+    if (refreshKey) fetchMessages();
+  }, [refreshKey, fetchMessages]);
 
   useEffect(() => {
     // Don't yank the scroll if the user has a message selected — their action

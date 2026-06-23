@@ -56,7 +56,7 @@ const inpSt = {
   outline: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
 };
 
-export default function PartsReceived({ currentUser, onClose }) {
+export default function PartsReceived({ currentUser, onClose, onPosted }) {
   const [ro, setRo] = useState('');
   const [searching, setSearching] = useState(false);
   const [matches, setMatches] = useState(null); // null = not searched yet; [] = searched, none found
@@ -125,6 +125,7 @@ export default function PartsReceived({ currentUser, onClose }) {
       }
       // Auto-post to Tech Chat
       await postTechChat(currentUser, `RO ${match.ro} parts have been received`);
+      onPosted && onPosted();
       trackAction('parts-received-mark', `RO ${match.ro || '?'}`);
       setMatches(prev => (prev || []).map(m => m.id === match.id ? { ...m, partsArrived: true, partsArrivedDate: today } : m));
       setDone(`RO ${match.ro} marked Parts In and posted to Tech Chat.`);
@@ -142,6 +143,7 @@ export default function PartsReceived({ currentUser, onClose }) {
     setError('');
     try {
       await postTechChat(currentUser, t);
+      onPosted && onPosted();
       trackAction('parts-received-chat', t.slice(0, 60));
       setDone('Message sent to Tech Chat.');
       setChatText('');

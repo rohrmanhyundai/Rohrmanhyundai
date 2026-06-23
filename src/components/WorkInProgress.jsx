@@ -96,6 +96,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const [searchResults, setSearchResults] = useState(null); // null = not searching
   const [searching, setSearching] = useState(false);
   const [showPartsReceived, setShowPartsReceived] = useState(false);
+  const [techChatRefresh, setTechChatRefresh] = useState(0);
   const [showTechPicker, setShowTechPicker] = useState(false);
   const [creatingForTech, setCreatingForTech] = useState(null);
   const [techWizardAdvisor, setTechWizardAdvisor] = useState('');
@@ -780,7 +781,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   return (
     <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {showPartsReceived && (
-        <PartsReceived currentUser={currentUser} onClose={() => setShowPartsReceived(false)} />
+        <PartsReceived currentUser={currentUser} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
       )}
       {/* Topbar */}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
@@ -1363,7 +1364,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
       </div>
       {/* Tech Chat panel */}
       <div style={{ width: 320, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.06)', padding: 12, display: 'flex', flexDirection: 'column' }}>
-        <TechChat currentUser={currentUser} currentRole={currentRole} hasChatAccess={hasChatAccess} />
+        <TechChat currentUser={currentUser} currentRole={currentRole} hasChatAccess={hasChatAccess} refreshKey={techChatRefresh} />
       </div>
       </div>
       {/* Claim Confirmation Modal */}
