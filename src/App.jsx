@@ -349,6 +349,12 @@ export default function App() {
   const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
   const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
+  // Which Goal Forecast a user owns is decided by WHO they are, not which page
+  // they open — so a parts manager always sees parts and a service manager always
+  // sees service, even on different computers. Explicit per-user `goalDept` wins;
+  // otherwise infer from the role (parts → parts, everyone else → service).
+  const currentUserRecord = users.find(u => (u.username || '').toLowerCase() === (currentUser || '').toLowerCase()) || {};
+  const goalDept = currentUserRecord.goalDept || ((currentRole || '').includes('parts') ? 'parts' : 'service');
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
@@ -585,11 +591,15 @@ export default function App() {
   if (page === 'goal-forecast') {
     const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
     if (!isManager) { setPage('dashboard'); return null; }
+    const partsDept = goalDept === 'parts';
     return (
       <GoalForecast
         data={data}
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
+        title={partsDept ? 'Parts Goal Forecast' : 'Goal Forecast'}
+        deptLabel={partsDept ? 'Parts Department' : 'Service Department'}
+        storagePrefix={partsDept ? 'partsGoalForecast' : 'goalForecast'}
         onBack={() => navTo(prevPage || 'manager-hub')}
       />
     );
