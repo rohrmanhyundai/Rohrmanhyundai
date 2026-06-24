@@ -270,6 +270,10 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const canManage = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [items, setItems]             = useState([]);
+  // The OTHER kind's index (recalls when viewing TSBs and vice-versa), tagged
+  // with _kind, so the search box can find matches across both libraries no
+  // matter which tab is active. Only used while a search query is present.
+  const [otherItems, setOtherItems]   = useState([]);
   const [loading, setLoading]         = useState(true);
   const [uploading, setUploading]     = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
@@ -310,6 +314,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     setEditId(null); setTagsId(null); setPreviewItem(null); setSearch('');
     setFile(null); setLabel(''); setFileError(''); setActionError('');
     if (fileInputRef.current) fileInputRef.current.value = '';
+    setOtherItems([]);
     let cancelled = false;
     loadHotRepairs(tab).then(idx => {
       if (cancelled) return;
@@ -324,6 +329,17 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           .then(() => { if (!cancelled) { setIndexing(false); setTextVer(v => v + 1); } });
       }
     });
+    // Load the OTHER kind in the background so search spans both libraries.
+    const otherKind = tab === 'recalls' ? 'hot-repairs' : 'recalls';
+    loadHotRepairs(otherKind).then(idx => {
+      if (cancelled) return;
+      const list = (idx || []).map(it => ({ ...it, _kind: otherKind }));
+      setOtherItems(list);
+      if (list.length) {
+        Promise.allSettled(list.map(it => extractPdfText(it, docRawUrl(it.filename))))
+          .then(() => { if (!cancelled) setTextVer(v => v + 1); });
+      }
+    });
     return () => { cancelled = true; };
   }, [tab]);
 
@@ -331,7 +347,10 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   // first), so the bulletin whose title/number matches floats to the top.
   // Warranty Hot Repairs are always pinned to the top (stable sort keeps the
   // existing relative order within each group).
-  const filteredItems = (search.trim() ? rankedMatches(items, search) : items)
+  // While searching, pool BOTH libraries so a recall number is found from the
+  // TSB tab and vice-versa. Without a query, show only the current tab.
+  const searchPool = search.trim() ? [...items, ...otherItems] : items;
+  const filteredItems = (search.trim() ? rankedMatches(searchPool, search) : items)
     .slice()
     .sort((a, b) => (b.warranty ? 1 : 0) - (a.warranty ? 1 : 0));
   // eslint-disable-next-line no-unused-expressions
@@ -355,7 +374,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   }, [filteredItems.length, visibleCount]);
 
   function runSearchOpen() {
-    const matches = rankedMatches(items, search);
+    const matches = rankedMatches([...items, ...otherItems], search);
     if (matches.length >= 1) setPreviewItem(matches[0]);
   }
 
@@ -366,7 +385,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const autoOpenedRef = useRef(null);
   useEffect(() => {
     if (!search.trim()) { autoOpenedRef.current = null; return; }
-    const scored = items
+    const scored = [...items, ...otherItems]
       .map(it => ({ it, s: scoreItem(it, search) }))
       .filter(m => m.s >= 0)
       .sort((a, b) => b.s - a.s);
@@ -380,7 +399,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       autoOpenedRef.current = scored[0].it.id;
       setPreviewItem(scored[0].it);
     }
-  }, [search, textVer, items]);
+  }, [search, textVer, items, otherItems]);
 
   function handleFileChange(e) {
     const f = e.target.files[0];
@@ -750,7 +769,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
           {loading ? (
             <div className="doc-lib-empty">Loading…</div>
-          ) : items.length === 0 ? (
+          ) : (!search.trim() && items.length === 0) ? (
             <div className="doc-lib-empty">
               {canManage
                 ? `No ${isRecalls ? 'recalls' : 'hot repairs'} posted yet. Use the panel above to add one.`
@@ -764,6 +783,11 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 26 }}>
               {visibleItems.map((item) => {
                 const idx = items.indexOf(item);
+                // A search match from the OTHER library. It can be viewed inline,
+                // but management actions live under its own tab, so hide them here.
+                const crossKind = !!item._kind && item._kind !== tab;
+                const canManageItem = canManage && !crossKind;
+                const itemIsRecall = (item._kind || tab) === 'recalls';
                 return (
                 <div key={item.id} style={{
                   background: item.warranty ? 'rgba(251,191,36,.06)' : 'rgba(255,255,255,.03)',
@@ -775,7 +799,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                   {/* Highlight banner */}
                   {item.warranty && (
                     <div style={{ background: 'linear-gradient(90deg,#f59e0b,#fbbf24)', color: '#3a2400', fontWeight: 900, fontSize: 14, letterSpacing: 0.6, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {isRecalls ? '⚠️ URGENT RECALL — ACTION REQUIRED' : '⚠️ WARRANTY HOT REPAIR — PLEASE REVIEW'}
+                      {itemIsRecall ? '⚠️ URGENT RECALL — ACTION REQUIRED' : '⚠️ WARRANTY HOT REPAIR — PLEASE REVIEW'}
                     </div>
                   )}
                   {/* Large preview — click to open full view */}
@@ -812,7 +836,14 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                         <button className="secondary" onClick={() => setEditId(null)} disabled={savingEdit}>Cancel</button>
                       </div>
                     ) : (
-                      <div style={{ fontWeight: 800, fontSize: 17, color: '#e2e8f0', lineHeight: 1.3 }}>{item.label}</div>
+                      <div style={{ fontWeight: 800, fontSize: 17, color: '#e2e8f0', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        {crossKind && (
+                          <span style={{ fontSize: 11, fontWeight: 800, color: itemIsRecall ? '#fbbf24' : '#6ee7f9', background: itemIsRecall ? 'rgba(251,191,36,.12)' : 'rgba(110,231,249,.12)', border: `1px solid ${itemIsRecall ? 'rgba(251,191,36,.4)' : 'rgba(110,231,249,.35)'}`, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                            {itemIsRecall ? '📢 In Recalls' : "🔧 In TSB'S"}
+                          </span>
+                        )}
+                        <span>{item.label}</span>
+                      </div>
                     )}
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
@@ -841,7 +872,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                       </div>
                     ) : null}
 
-                    {canManage && editId !== item.id && tagsId !== item.id && (
+                    {canManageItem && editId !== item.id && tagsId !== item.id && (
                       <button onClick={() => toggleWarranty(item)} title="Toggle Warranty Hot Repair highlight"
                         style={{
                           background: item.warranty ? 'linear-gradient(135deg,#f59e0b,#fbbf24)' : 'rgba(251,191,36,.12)',
@@ -854,7 +885,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : (item.warranty ? '⚠️ Warranty Hot Repair: ON' : '🛡 Mark as Warranty Hot Repair')}
                       </button>
                     )}
-                    {canManage && editId !== item.id && tagsId !== item.id && (
+                    {canManageItem && editId !== item.id && tagsId !== item.id && (
                       <button onClick={() => setOpEditItem(item)} title="Edit op codes for the Op Code Generator"
                         style={{
                           background: (item.opData && (item.opData.entries || []).length) ? 'rgba(96,165,250,.22)' : 'rgba(96,165,250,.1)',
@@ -866,7 +897,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                           : '⚙️ Add Op Codes'}
                       </button>
                     )}
-                    {canManage && editId !== item.id && tagsId !== item.id && (
+                    {canManageItem && editId !== item.id && tagsId !== item.id && (
                       <button onClick={() => setDigDocItem(item)} title="View the photo / digital documentation requirements"
                         style={{
                           background: 'rgba(251,146,60,.12)', border: '1px solid rgba(251,146,60,.45)', color: '#fb923c',
@@ -875,7 +906,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                         📸 Digital Documentation
                       </button>
                     )}
-                    {canManage && editId !== item.id && tagsId !== item.id && !search.trim() && (
+                    {canManageItem && editId !== item.id && tagsId !== item.id && !search.trim() && (
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => move(idx, 0)} disabled={reordering || idx === 0} title="Move to top"
                           style={{ background: 'rgba(167,139,250,.12)', border: '1px solid rgba(167,139,250,.3)', color: '#c4b5fd', borderRadius: 8, padding: '5px 10px', cursor: idx === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 12, opacity: idx === 0 ? 0.4 : 1 }}>
@@ -893,19 +924,19 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     )}
                     <div style={{ display: 'flex', gap: 8, marginTop: 'auto', flexWrap: 'wrap' }}>
                       <button onClick={() => setPreviewItem(item)} style={{ flex: 1 }}>👁 View</button>
-                      {canManage && editId !== item.id && tagsId !== item.id && (
+                      {canManageItem && editId !== item.id && tagsId !== item.id && (
                         <button onClick={() => startTags(item)} title="Add searchable bulletin # / keywords"
                           style={{ background: 'rgba(74,222,128,.12)', border: '1px solid rgba(74,222,128,.3)', color: '#4ade80', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           🏷 {item.tags ? 'Edit #' : 'Add #'}
                         </button>
                       )}
-                      {canManage && editId !== item.id && tagsId !== item.id && (
+                      {canManageItem && editId !== item.id && tagsId !== item.id && (
                         <button onClick={() => startEdit(item)} title="Rename"
                           style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           ✏️ Rename
                         </button>
                       )}
-                      {canManage && editId !== item.id && tagsId !== item.id && (
+                      {canManageItem && editId !== item.id && tagsId !== item.id && (
                         <button onClick={() => handleMove(item)} title={`Move this bulletin to ${isRecalls ? "TSB'S" : 'Recalls'}`}
                           style={{ background: 'rgba(251,146,60,.12)', border: '1px solid rgba(251,146,60,.35)', color: '#fb923c', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           ↔ Move to {isRecalls ? "TSB'S" : 'Recalls'}
