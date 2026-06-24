@@ -25,5 +25,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Tow In CAR HAS NOT BEEN IN YET "
+  },
+  {
+    "id": "mqsc4cwxll82",
+    "ro": "778632",
+    "roDate": "2026-06-24",
+    "vehicle": "2017 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES WHEN FIRST STARTING THE VEHICLE JERKS. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
