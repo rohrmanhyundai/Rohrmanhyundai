@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { advisorMonthProgress } from '../utils/calculations';
 import { safe } from '../utils/formatters';
+import { loadGoalForecast, saveGoalForecastMonth } from '../utils/github';
 
 const money = (n) => '$' + Math.round(safe(n, 0)).toLocaleString('en-US');
 const money1 = (n) => '$' + safe(n, 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -128,6 +129,10 @@ export default function GoalForecast({
   const now = new Date();
   const mk = monthKey(now);
   const storageKey = (m) => `${storagePrefix}-${m}`;
+  // Department for the server-backed store. Service and parts live in separate
+  // files so one can never overwrite the other, and the numbers are the same on
+  // every device. localStorage is kept only as an instant-load cache.
+  const dept = storagePrefix === 'partsGoalForecast' ? 'parts' : 'service';
 
   // Total working days for the month — honors the Goal Gauges override exactly
   // like the dashboard gauges (advisorMonthProgress applies advisorMonthlyWorkdays).
@@ -143,7 +148,12 @@ export default function GoalForecast({
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
   const [gridOpen, setGridOpen] = useState(false); // daily entry grid collapsed by default
 
+  const saveTimer = useRef(null);
+  const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
+
   useEffect(() => {
+    let cancelled = false;
+    // 1) Instant paint from the local cache (if any) so the page isn't blank.
     try {
       const raw = localStorage.getItem(storageKey(mk));
       if (raw) {
@@ -151,14 +161,33 @@ export default function GoalForecast({
         setForecast(safe(parsed.forecast, 0));
         setLastYear(safe(parsed.lastYear, 0));
         setActuals(parsed.actuals || {});
+        latestRef.current = { forecast: safe(parsed.forecast, 0), lastYear: safe(parsed.lastYear, 0), actuals: parsed.actuals || {} };
       }
     } catch { /* ignore */ }
-  }, [mk]);
+    // 2) Authoritative load from the server (per-department file).
+    loadGoalForecast(dept).then(all => {
+      if (cancelled) return;
+      const bucket = (all && all[mk]) || null;
+      if (bucket) {
+        const f = safe(bucket.forecast, 0), ly = safe(bucket.lastYear, 0), ac = bucket.actuals || {};
+        setForecast(f); setLastYear(ly); setActuals(ac);
+        latestRef.current = { forecast: f, lastYear: ly, actuals: ac };
+        try { localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: f, lastYear: ly, actuals: ac })); } catch {}
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [mk, dept]);
 
+  // Persist locally immediately (cache) and to the server debounced, so rapid
+  // typing doesn't hammer the API. Only this department's file is touched.
   function persist(next) {
-    try {
-      localStorage.setItem(storageKey(mk), JSON.stringify({ forecast, lastYear, actuals, ...next }));
-    } catch { /* ignore */ }
+    const merged = { forecast, lastYear, actuals, ...next };
+    latestRef.current = merged;
+    try { localStorage.setItem(storageKey(mk), JSON.stringify(merged)); } catch { /* ignore */ }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      saveGoalForecastMonth(dept, mk, latestRef.current).catch(() => {});
+    }, 900);
   }
 
   function updateForecast(val) {

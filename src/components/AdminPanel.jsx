@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily } from '../utils/github';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
@@ -718,21 +718,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       // Local state is already correct from user edits — no re-fetch needed.
       // The TV will pick up the new data on its next 90-second poll via the GitHub API.
 
-      // If a "Daily Total Labor" amount was entered, drop it into today's Service
-      // Goal Forecast daily entry (reads goalForecast-YYYY-MM from this same
-      // browser's localStorage). Parts is separate and entered on its own page.
+      // If a "Daily Total Labor" amount was entered, drop it into today's SERVICE
+      // Goal Forecast daily entry on the server (the per-department file, so it
+      // shows on every device). Parts is separate and entered on its own page.
       if (String(dailyLabor).trim() !== '') {
         try {
           const today = new Date();
           const mk = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
           const dayKey = `${mk}-${String(today.getDate()).padStart(2, '0')}`;
-          const key = `goalForecast-${mk}`;
-          let saved = {};
-          try { saved = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch { saved = {}; }
-          const actuals = { ...(saved.actuals || {}) };
-          actuals[dayKey] = safe(dailyLabor, 0);
-          localStorage.setItem(key, JSON.stringify({ ...saved, actuals }));
-          setDailyLaborMsg(`Added ${'$' + Math.round(safe(dailyLabor, 0)).toLocaleString('en-US')} to today's Goal Forecast (${today.getMonth() + 1}/${today.getDate()}).`);
+          await setGoalForecastDaily('service', mk, dayKey, safe(dailyLabor, 0));
+          // Keep the local cache in sync so the page reflects it immediately.
+          try {
+            const key = `goalForecast-${mk}`;
+            const saved = JSON.parse(localStorage.getItem(key) || '{}') || {};
+            const actuals = { ...(saved.actuals || {}), [dayKey]: safe(dailyLabor, 0) };
+            localStorage.setItem(key, JSON.stringify({ ...saved, actuals }));
+          } catch {}
+          setDailyLaborMsg(`Added ${'$' + Math.round(safe(dailyLabor, 0)).toLocaleString('en-US')} to today's Service Goal Forecast (${today.getMonth() + 1}/${today.getDate()}).`);
           setDailyLabor('');
         } catch { /* ignore */ }
       }
