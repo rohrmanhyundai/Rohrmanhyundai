@@ -24,6 +24,100 @@ function workingDates(year, month) {
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// Clean cumulative year-over-year comparison chart. Plots three running lines
+// across the month's working days: This Year (actual entered), Where You Should
+// Be (forecast pace), and Last Year (LY total spread evenly). Pure SVG, scales
+// to the container width via viewBox.
+function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays, actualMTD, expectedMTD, projected, forecast }) {
+  const W = 1000, H = 380;
+  const padL = 74, padR = 26, padT = 24, padB = 54;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const n = Math.max(totalDays || rows.length || 1, 1);
+
+  const lyCumAt  = (dayNum) => (lastYear / n) * dayNum;
+  const tgtCumAt = (dayNum) => dailyTarget * dayNum;
+
+  const enteredRows = rows.filter(r => r.hasActual);
+  const maxActual = enteredRows.length ? Math.max(...enteredRows.map(r => r.cumActual)) : 0;
+  const maxVal = Math.max(forecast, lastYear, maxActual, dailyTarget * n, 1) * 1.08;
+
+  const x = (dayNum) => padL + (plotW * (dayNum - 1)) / Math.max(n - 1, 1);
+  const y = (val) => padT + plotH - (plotH * Math.max(val, 0)) / maxVal;
+
+  const tgtPts = rows.map(r => `${x(r.dayNum).toFixed(1)},${y(tgtCumAt(r.dayNum)).toFixed(1)}`).join(' ');
+  const lyPts  = rows.map(r => `${x(r.dayNum).toFixed(1)},${y(lyCumAt(r.dayNum)).toFixed(1)}`).join(' ');
+  const tyPts  = enteredRows.map(r => `${x(r.dayNum).toFixed(1)},${y(r.cumActual).toFixed(1)}`).join(' ');
+
+  const ticks = 5;
+  const tickVals = Array.from({ length: ticks + 1 }, (_, i) => (maxVal / ticks) * i);
+  const xLabelRows = rows.filter((r, i) => i % 5 === 0 || i === rows.length - 1);
+
+  const lastTy = enteredRows.length ? enteredRows[enteredRows.length - 1] : null;
+
+  const C = { ty: '#34d399', tgt: '#6ee7f9', ly: '#fbbf24' };
+  const Stat = ({ label, value, color, sub }) => (
+    <div style={{ flex: 1, minWidth: 150, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '12px 16px' }}>
+      <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color, marginTop: 3 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sub}</div>}
+    </div>
+  );
+
+  const LegendDot = ({ color, dashed, children }) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}>
+      <span style={{ width: 22, height: 0, borderTop: `3px ${dashed ? 'dashed' : 'solid'} ${color}`, display: 'inline-block' }} />
+      {children}
+    </span>
+  );
+
+  return (
+    <div style={{ marginTop: 28, background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '20px 24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
+        <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>Pace Comparison</div>
+        <div style={{ flex: 1 }} />
+        <LegendDot color={C.ty}>This Year</LegendDot>
+        <LegendDot color={C.tgt} dashed>Where You Should Be</LegendDot>
+        <LegendDot color={C.ly} dashed>Last Year</LegendDot>
+      </div>
+
+      {/* Summary stats */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '14px 0 18px' }}>
+        <Stat label="This Year (MTD)" value={money(actualMTD)} color={C.ty} sub={`projected ${money(projected)} month-end`} />
+        <Stat label="Where You Should Be" value={money(expectedMTD)} color={C.tgt} sub={`${completedDays} × ${money(dailyTarget)}/day`} />
+        <Stat label="Last Year (this month)" value={money(lastYear)} color={C.ly} sub={lastYear > 0 ? `projected ${projected >= lastYear ? '+' : '−'}${money(Math.abs(projected - lastYear))} vs LY` : '—'} />
+      </div>
+
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }} preserveAspectRatio="xMidYMid meet">
+        {/* y gridlines + labels */}
+        {tickVals.map((tv, i) => (
+          <g key={i}>
+            <line x1={padL} y1={y(tv)} x2={W - padR} y2={y(tv)} stroke="rgba(148,163,184,.14)" strokeWidth="1" />
+            <text x={padL - 10} y={y(tv) + 4} textAnchor="end" fontSize="11" fill="#64748b">{money(tv)}</text>
+          </g>
+        ))}
+        {/* x labels */}
+        {xLabelRows.map((r) => (
+          <text key={r.k} x={x(r.dayNum)} y={H - padB + 22} textAnchor="middle" fontSize="11" fill="#64748b">{r.dt.getMonth() + 1}/{r.dt.getDate()}</text>
+        ))}
+        {/* Last Year pace */}
+        {lastYear > 0 && <polyline points={lyPts} fill="none" stroke={C.ly} strokeWidth="2" strokeDasharray="6 5" opacity="0.9" />}
+        {/* Target pace */}
+        {forecast > 0 && <polyline points={tgtPts} fill="none" stroke={C.tgt} strokeWidth="2" strokeDasharray="6 5" opacity="0.95" />}
+        {/* This Year actual */}
+        {enteredRows.length > 0 && <polyline points={tyPts} fill="none" stroke={C.ty} strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" />}
+        {/* End dot + label for This Year */}
+        {lastTy && (
+          <g>
+            <circle cx={x(lastTy.dayNum)} cy={y(lastTy.cumActual)} r="5" fill={C.ty} stroke="#04201d" strokeWidth="2" />
+            <text x={x(lastTy.dayNum)} y={y(lastTy.cumActual) - 12} textAnchor="middle" fontSize="12" fontWeight="800" fill={C.ty}>{money(lastTy.cumActual)}</text>
+          </g>
+        )}
+      </svg>
+    </div>
+  );
+}
+
 export default function GoalForecast({
   data, currentUserDisplay, currentUser, onBack,
   title = 'Goal Forecast',
@@ -47,6 +141,7 @@ export default function GoalForecast({
   const [forecast, setForecast] = useState(0);
   const [lastYear, setLastYear] = useState(0);
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
+  const [gridOpen, setGridOpen] = useState(false); // daily entry grid collapsed by default
 
   useEffect(() => {
     try {
@@ -315,9 +410,26 @@ export default function GoalForecast({
             )}
           </div>
 
-          {/* Daily grid */}
+          {/* Daily grid (collapsible) */}
           <div style={{ background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+            {/* Toggle bar — click to expand/collapse the daily entry table */}
+            <div
+              onClick={() => setGridOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: gridOpen ? 'rgba(110,231,249,.06)' : 'transparent' }}
+            >
+              <span style={{ fontSize: 13, color: gridOpen ? '#6ee7f9' : '#94a3b8', transition: 'transform .15s', transform: gridOpen ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>Daily Entry — {monthLabel}</div>
+              <div style={{ flex: 1 }} />
+              <div style={{ fontSize: 12, color: '#64748b' }}>
+                MTD <strong style={{ color: '#6ee7b7' }}>{money(actualMTD)}</strong>
+                <span style={{ margin: '0 8px', color: '#334155' }}>·</span>
+                {gridOpen ? 'Click to hide' : 'Click to enter / view daily numbers'}
+              </div>
+            </div>
+
+            {gridOpen && (
+            <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
               <div>Day</div>
               <div>Date</div>
               <div style={{ textAlign: 'right' }}>Daily Target</div>
@@ -370,11 +482,25 @@ export default function GoalForecast({
                 </div>
               );
             })}
+            <div style={{ fontSize: 12, color: '#475569', padding: '14px 20px', textAlign: 'center' }}>
+              Enter each day's total labor dollars — the Month Total (MTD) and forecast are calculated automatically. Saved to this browser. Working days come from Goal Gauges (Edit Dashboard).
+            </div>
+            </div>
+            )}
           </div>
 
-          <div style={{ fontSize: 12, color: '#475569', marginTop: 16, textAlign: 'center' }}>
-            Enter each day's total labor dollars — the Month Total (MTD) and forecast are calculated automatically. Saved to this browser. Working days come from Goal Gauges (Edit Dashboard).
-          </div>
+          {/* Year-over-year comparison chart */}
+          <ComparisonChart
+            rows={rows}
+            dailyTarget={dailyTarget}
+            lastYear={lastYear}
+            totalDays={totalDays}
+            completedDays={completedDays}
+            actualMTD={actualMTD}
+            expectedMTD={expectedMTD}
+            projected={projected}
+            forecast={forecast}
+          />
 
         </div>
       </div>
