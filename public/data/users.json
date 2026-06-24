@@ -332,6 +332,7 @@
       "username": "Kai",
       "password": "kai2026",
       "role": "admin",
+      "goalDept": "parts",
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
