@@ -25,6 +25,90 @@ function workingDates(year, month) {
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// Compute every derived figure for a stored month ('YYYY-MM' + its data bucket).
+// Used by the History view to render completed months read-only.
+function computeMonthMetrics(mkStr, monthData) {
+  const [y, m] = String(mkStr).split('-').map(Number);
+  const year = y, monthIdx = (m || 1) - 1;
+  const dates = workingDates(year, monthIdx);
+  const forecast = safe(monthData && monthData.forecast, 0);
+  const lastYear = safe(monthData && monthData.lastYear, 0);
+  const actuals = (monthData && monthData.actuals) || {};
+  const totalDays = dates.length;
+  const dailyTarget = totalDays > 0 ? forecast / totalDays : 0;
+  let runningCum = 0, dayNum = 0;
+  const rows = dates.map(dt => {
+    dayNum += 1;
+    const k = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    const hasActual = Object.prototype.hasOwnProperty.call(actuals, k);
+    const entered = safe(actuals[k], 0);
+    const cumTarget = dailyTarget * dayNum;
+    let cumActual = null, dailyGross = 0;
+    if (hasActual) { dailyGross = entered; runningCum += entered; cumActual = runningCum; }
+    return { k, dt, dayNum, hasActual, entered, cumActual, dailyGross, cumTarget };
+  });
+  const actualTotal = runningCum;
+  const enteredDays = rows.filter(r => r.hasActual).length;
+  const completedDays = enteredDays || totalDays;
+  const runRate = completedDays > 0 ? actualTotal / completedDays : 0;
+  const label = new Date(year, monthIdx, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD: forecast, projected: actualTotal };
+}
+
+// Read-only detail for one completed/historical month.
+function MonthDetail({ mkStr, monthData }) {
+  const M = computeMonthMetrics(mkStr, monthData);
+  const vsForecast = M.actualTotal - M.forecast;
+  const vsLY = M.actualTotal - M.lastYear;
+  const card = (label, value, color, sub) => (
+    <div style={{ flex: 1, minWidth: 150, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '12px 16px' }}>
+      <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: color || '#e2e8f0', marginTop: 3 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sub}</div>}
+    </div>
+  );
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        {card('Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
+        {card('Forecast', money(M.forecast), '#6ee7f9', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
+        {card('Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
+        {card('Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#6ee7b7' : '#fca5a5', `target ${money(M.dailyTarget)}/day`)}
+      </div>
+
+      <ComparisonChart
+        rows={M.rows} dailyTarget={M.dailyTarget} lastYear={M.lastYear}
+        totalDays={M.totalDays} completedDays={M.completedDays}
+        actualMTD={M.actualTotal} expectedMTD={M.expectedMTD} projected={M.projected} forecast={M.forecast}
+      />
+
+      {/* Read-only daily table */}
+      <div style={{ marginTop: 18, background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+          <div>Day</div><div>Date</div>
+          <div style={{ textAlign: 'right' }}>Daily Target</div>
+          <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
+          <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
+          <div style={{ textAlign: 'right' }}>+/-</div>
+        </div>
+        {M.rows.map(r => {
+          const diff = r.cumActual - r.cumTarget;
+          return (
+            <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
+              <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
+              <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
+              <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(M.dailyTarget)}</div>
+              <div style={{ textAlign: 'right', color: r.hasActual ? '#6ee7b7' : '#475569', fontWeight: 700 }}>{r.hasActual ? money(r.dailyGross) : '—'}</div>
+              <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
+              <div style={{ textAlign: 'right', fontWeight: 700, color: !r.hasActual ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>{r.hasActual ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // Clean cumulative year-over-year comparison chart. Plots three running lines
 // across the month's working days: This Year (actual entered), Where You Should
 // Be (forecast pace), and Last Year (LY total spread evenly). Pure SVG, scales
@@ -147,6 +231,9 @@ export default function GoalForecast({
   const [lastYear, setLastYear] = useState(0);
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
   const [gridOpen, setGridOpen] = useState(false); // daily entry grid collapsed by default
+  const [allMonths, setAllMonths] = useState({});  // every saved month (for History)
+  const [view, setView] = useState('current');     // 'current' | 'history'
+  const [histSel, setHistSel] = useState(null);    // selected history month key
 
   const saveTimer = useRef(null);
   const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
@@ -167,6 +254,7 @@ export default function GoalForecast({
     // 2) Authoritative load from the server (per-department file).
     loadGoalForecast(dept).then(all => {
       if (cancelled) return;
+      setAllMonths(all || {});
       const bucket = (all && all[mk]) || null;
       if (bucket) {
         const f = safe(bucket.forecast, 0), ly = safe(bucket.lastYear, 0), ac = bucket.actuals || {};
@@ -332,12 +420,65 @@ export default function GoalForecast({
           <div className="adv-sub">{monthLabel} · {currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
-        <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>
+        {view === 'current' && <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>}
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>
+      {/* Tabs: current month vs history */}
+      <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0 }}>
+        {[{ k: 'current', label: monthLabel }, { k: 'history', label: '🗂 History' }].map(t => (
+          <button
+            key={t.k}
+            onClick={() => { setView(t.k); setHistSel(null); }}
+            style={{
+              background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)',
+              border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`,
+              color: view === t.k ? '#6ee7f9' : '#94a3b8',
+              borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
+            }}
+          >{t.label}</button>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 40px 32px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+
+         {view === 'history' ? (() => {
+            const pastKeys = Object.keys(allMonths || {}).filter(k => k < mk).sort().reverse();
+            if (histSel) {
+              return (
+                <div>
+                  <button className="secondary" onClick={() => setHistSel(null)} style={{ marginBottom: 16 }}>← All months</button>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 16 }}>{computeMonthMetrics(histSel, allMonths[histSel]).label}</div>
+                  <MonthDetail mkStr={histSel} monthData={allMonths[histSel]} />
+                </div>
+              );
+            }
+            if (pastKeys.length === 0) {
+              return <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>No completed months yet. When a month ends it will appear here automatically.</div>;
+            }
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {pastKeys.map(k => {
+                  const M = computeMonthMetrics(k, allMonths[k]);
+                  const vsF = M.actualTotal - M.forecast;
+                  const vsLY = M.actualTotal - M.lastYear;
+                  return (
+                    <div key={k} onClick={() => setHistSel(k)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '14px 20px' }}>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', minWidth: 150 }}>{M.label}</div>
+                      <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', flex: 1 }}>
+                        <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Final Total</div><div style={{ fontSize: 17, fontWeight: 800, color: '#34d399' }}>{money(M.actualTotal)}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Forecast</div><div style={{ fontSize: 17, fontWeight: 800, color: '#6ee7f9' }}>{money(M.forecast)}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>vs Forecast</div><div style={{ fontSize: 17, fontWeight: 800, color: vsF >= 0 ? '#6ee7b7' : '#fca5a5' }}>{vsF >= 0 ? '▲ ' : '▼ '}{money(Math.abs(vsF))}</div></div>
+                        <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>vs Last Year</div><div style={{ fontSize: 17, fontWeight: 800, color: vsLY >= 0 ? '#6ee7b7' : '#fca5a5' }}>{M.lastYear > 0 ? (vsLY >= 0 ? '▲ ' : '▼ ') + money(Math.abs(vsLY)) : '—'}</div></div>
+                      </div>
+                      <div style={{ color: '#6ee7f9', fontSize: 13, fontWeight: 700 }}>View →</div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })() : (<>
 
           {/* Forecast input + daily target */}
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 28 }}>
@@ -512,7 +653,7 @@ export default function GoalForecast({
               );
             })}
             <div style={{ fontSize: 12, color: '#475569', padding: '14px 20px', textAlign: 'center' }}>
-              Enter each day's total labor dollars — the Month Total (MTD) and forecast are calculated automatically. Saved to this browser. Working days come from Goal Gauges (Edit Dashboard).
+              Enter each day's total — the Month Total (MTD) and forecast are calculated automatically. Saved to {deptLabel} and synced across devices. Working days come from Goal Gauges (Edit Dashboard).
             </div>
             </div>
             )}
@@ -530,6 +671,8 @@ export default function GoalForecast({
             projected={projected}
             forecast={forecast}
           />
+
+          </>)}
 
         </div>
       </div>
