@@ -114,11 +114,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [awsSecret, setAwsSecretState] = useState(getAwsCreds().secretAccessKey);
   const [awsSaving, setAwsSaving] = useState(false);
   const [saving, setSaving] = useState(false);
-  // Daily totals typed in Goal Gauges; on Save each is written into today's
-  // Goal Forecast daily entry. Service labor → goalForecast, Parts sales →
-  // partsGoalForecast (the same localStorage each Goal Forecast page reads).
+  // "Daily Total Labor" — typed in the (service) Goal Gauges; on Save it's
+  // written into today's Service Goal Forecast daily entry. Parts is entirely
+  // separate and is entered on the Parts Goal Forecast page itself.
   const [dailyLabor, setDailyLabor] = useState('');
-  const [dailyParts, setDailyParts] = useState('');
   const [dailyLaborMsg, setDailyLaborMsg] = useState('');
   const [addingAdvisor, setAddingAdvisor] = useState(false);
   const [addingTech, setAddingTech] = useState(false);
@@ -719,25 +718,24 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       // Local state is already correct from user edits — no re-fetch needed.
       // The TV will pick up the new data on its next 90-second poll via the GitHub API.
 
-      // Any "Daily Total" amounts entered get dropped into today's Goal Forecast
-      // daily entry. Each forecast page reads <prefix>-YYYY-MM from this same
-      // browser's localStorage: service → goalForecast, parts → partsGoalForecast.
-      const today = new Date();
-      const mk = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-      const dayKey = `${mk}-${String(today.getDate()).padStart(2, '0')}`;
-      const fmt = (v) => '$' + Math.round(safe(v, 0)).toLocaleString('en-US');
-      const writeDaily = (prefix, val) => {
-        const key = `${prefix}-${mk}`;
-        let saved = {};
-        try { saved = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch { saved = {}; }
-        const actuals = { ...(saved.actuals || {}) };
-        actuals[dayKey] = safe(val, 0);
-        localStorage.setItem(key, JSON.stringify({ ...saved, actuals }));
-      };
-      const msgs = [];
-      if (String(dailyLabor).trim() !== '') { try { writeDaily('goalForecast', dailyLabor); msgs.push(`${fmt(dailyLabor)} → Service`); setDailyLabor(''); } catch {} }
-      if (String(dailyParts).trim() !== '') { try { writeDaily('partsGoalForecast', dailyParts); msgs.push(`${fmt(dailyParts)} → Parts`); setDailyParts(''); } catch {} }
-      if (msgs.length) setDailyLaborMsg(`Added to today's Goal Forecast (${today.getMonth() + 1}/${today.getDate()}): ${msgs.join(', ')}.`);
+      // If a "Daily Total Labor" amount was entered, drop it into today's Service
+      // Goal Forecast daily entry (reads goalForecast-YYYY-MM from this same
+      // browser's localStorage). Parts is separate and entered on its own page.
+      if (String(dailyLabor).trim() !== '') {
+        try {
+          const today = new Date();
+          const mk = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+          const dayKey = `${mk}-${String(today.getDate()).padStart(2, '0')}`;
+          const key = `goalForecast-${mk}`;
+          let saved = {};
+          try { saved = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch { saved = {}; }
+          const actuals = { ...(saved.actuals || {}) };
+          actuals[dayKey] = safe(dailyLabor, 0);
+          localStorage.setItem(key, JSON.stringify({ ...saved, actuals }));
+          setDailyLaborMsg(`Added ${'$' + Math.round(safe(dailyLabor, 0)).toLocaleString('en-US')} to today's Goal Forecast (${today.getMonth() + 1}/${today.getDate()}).`);
+          setDailyLabor('');
+        } catch { /* ignore */ }
+      }
     } catch (err) {
       alert('Save failed: ' + err.message);
     } finally {
@@ -1230,25 +1228,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="field"><label>Customer Pay Actual</label><input value={data.cpActual ?? 0} onChange={e => updateField('cpActual', e.target.value)} onBlur={e => updateField('cpActual', safe(e.target.value, 0))} /></div>
           <div className="field"><label>Advisor Monthly Workdays</label><input value={data.advisorMonthlyWorkdays ?? 27} onChange={e => updateField('advisorMonthlyWorkdays', e.target.value)} onBlur={e => updateField('advisorMonthlyWorkdays', safe(e.target.value, 27))} /></div>
           <div className="field">
-            <label>Daily Total Labor (Service Forecast)</label>
+            <label>Daily Total Labor</label>
             <input
               value={dailyLabor}
-              placeholder="Today's labor $ — adds to Service Goal Forecast"
+              placeholder="Today's labor $ — adds to Goal Forecast"
               onChange={e => { setDailyLabor(e.target.value); setDailyLaborMsg(''); }}
-            />
-          </div>
-          <div className="field">
-            <label>Daily Total Parts Sales (Parts Forecast)</label>
-            <input
-              value={dailyParts}
-              placeholder="Today's parts sales $ — adds to Parts Goal Forecast"
-              onChange={e => { setDailyParts(e.target.value); setDailyLaborMsg(''); }}
             />
           </div>
         </div>
         {dailyLaborMsg && <div style={{ marginTop: 10, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{dailyLaborMsg}</div>}
         <div style={{ marginTop: 8, fontSize: 11, color: '#64748b' }}>
-          Enter today's total(s), then click <em>Save Changes</em> — each is written straight into today's matching Goal Forecast daily entry. Fill only the one(s) you need.
+          Enter today's total labor dollars, then click <em>Save Changes</em> — it's written straight into today's Goal Forecast daily entry.
         </div>
       </div>
     );
