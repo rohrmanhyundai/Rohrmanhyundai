@@ -346,9 +346,9 @@
         "asr": 0.1533,
         "elr": 0.9388,
         "last_month_total": 227.3,
-        "roh50_hrs_ro": 0.77,
+        "roh50_hrs_ro": 0.79,
         "hidden": false,
-        "ro_count": 282,
+        "ro_count": 283,
         "coupon_labor": 3566.58,
         "_lastImport": 1782299283927,
         "total_sales": 119959.03,
@@ -362,7 +362,7 @@
         "align": 0.1304,
         "tires": 0.0783,
         "valvoline": 0.2609,
-        "csi": 914,
+        "csi": 912,
         "asr": 0.1701,
         "elr": 0.9181,
         "last_month_total": 311.8,
@@ -453,7 +453,7 @@
       "align": 0.07884999999999999,
       "tires": 0.07095,
       "valvoline": 0.22135,
-      "csi": 948.5
+      "csi": 947.5
     },
     "techTotals": {
       "mon": 39.5,
