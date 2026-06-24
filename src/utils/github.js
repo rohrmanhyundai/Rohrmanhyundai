@@ -1177,3 +1177,41 @@ export async function saveGithubFile(path, data, message) {
   await saveGitHubFile(authHeaders(), `public/${path}`, data, message || `Update ${path}`);
   return data;
 }
+
+// ── Goal Forecast (server-backed, per department) ────────────────────────────
+// Each department ('service' | 'parts') has ONE authoritative file holding every
+// month, e.g. { "2026-06": { forecast, lastYear, actuals: { "2026-06-24": 1234 } } }.
+// Service and parts are separate files, so one department can never overwrite the
+// other, and the data is the same on every device.
+function goalForecastPath(dept) {
+  return `data/goal-forecast/${dept === 'parts' ? 'parts' : 'service'}.json`;
+}
+
+export async function loadGoalForecast(dept) {
+  try {
+    const data = await loadGithubFile(goalForecastPath(dept));
+    return (data && typeof data === 'object') ? data : {};
+  } catch { return {}; }
+}
+
+// Merge one month's bucket into the department file and save. Re-reads the latest
+// file first so a concurrent edit to a DIFFERENT month isn't clobbered.
+export async function saveGoalForecastMonth(dept, monthKey, monthData) {
+  let all = {};
+  try { all = await loadGoalForecast(dept); } catch { all = {}; }
+  all = { ...(all || {}), [monthKey]: monthData };
+  await saveGithubFile(goalForecastPath(dept), all, `Goal forecast (${dept}) ${monthKey}`);
+  return all;
+}
+
+// Set a single day's actual in a department/month without disturbing anything
+// else. Used by the Goal Gauges "Daily Total Labor" quick entry.
+export async function setGoalForecastDaily(dept, monthKey, dayKey, value) {
+  let all = {};
+  try { all = await loadGoalForecast(dept); } catch { all = {}; }
+  const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[monthKey]) || {}) };
+  bucket.actuals = { ...(bucket.actuals || {}), [dayKey]: value };
+  all = { ...(all || {}), [monthKey]: bucket };
+  await saveGithubFile(goalForecastPath(dept), all, `Goal forecast (${dept}) daily ${dayKey}`);
+  return all;
+}
