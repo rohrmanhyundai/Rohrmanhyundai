@@ -92,31 +92,30 @@ export default function GoalForecast({
   const monthLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
   const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Each entry is the running MONTH-TO-DATE total gross as of that day (not the
-  // single day's amount). Daily gross is derived from the change vs the prior
-  // entry; Actual MTD is simply the most recent total entered.
-  let lastCum = 0;
+  // Each entry is that DAY's labor dollars (the single day's amount). The
+  // month-to-date total is summed automatically from every day entered so far.
+  let runningCum = 0;
   let dayNum = 0;
   const rows = dates.map((dt) => {
     dayNum += 1;
     const k = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
     const hasActual = Object.prototype.hasOwnProperty.call(actuals, k);
-    const entered = safe(actuals[k], 0);
+    const entered = safe(actuals[k], 0); // this day's labor $
     const cumTarget = dailyTarget * dayNum;
     const isToday = k === todayKey;
     const isPast = dt < todayDate;
     let cumActual = null;
     let dailyGross = 0;
     if (hasActual) {
-      cumActual = entered;
-      dailyGross = entered - lastCum;
-      lastCum = entered;
+      dailyGross = entered;
+      runningCum += entered;
+      cumActual = runningCum;
     }
     return { k, dt, dayNum, hasActual, entered, cumActual, dailyGross, cumTarget, isToday, isPast };
   });
 
-  // Actual MTD = most recent cumulative total entered.
-  const actualMTD = lastCum;
+  // Actual MTD = sum of every daily total entered this month.
+  const actualMTD = runningCum;
   // Expected-to-date paced automatically off the calendar.
   const expectedMTD = dailyTarget * completedDays;
   const variance = actualMTD - expectedMTD;
@@ -142,8 +141,8 @@ export default function GoalForecast({
         <td class="c">${r.dayNum}</td>
         <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${r.isToday ? ' <b>(Today)</b>' : ''}</td>
         <td class="r">${money(dailyTarget)}</td>
-        <td class="r">${r.hasActual ? money(r.cumActual) : '<span class="mut">—</span>'}</td>
         <td class="r">${r.hasActual ? money(r.dailyGross) : '<span class="mut">—</span>'}</td>
+        <td class="r">${r.hasActual ? money(r.cumActual) : '<span class="mut">—</span>'}</td>
         <td class="r ${diffCls}">${r.hasActual ? sign(diff) : '<span class="mut">—</span>'}</td>
       </tr>`;
     }).join('');
@@ -181,10 +180,10 @@ export default function GoalForecast({
         <div class="card"><div class="lbl">Projected Month-End</div><div class="val ${!hasActuals ? '' : projected >= forecast ? 'pos' : 'neg'}">${hasActuals ? money(projected) : '—'}</div><div class="note">${hasActuals && forecast > 0 ? sign(projected - forecast) + ' vs forecast' : ''}</div></div>
       </div>
       <table>
-        <thead><tr><th class="c">Day</th><th>Date</th><th class="r">Daily Target</th><th class="r">Month Total (MTD)</th><th class="r">Daily Gross</th><th class="r">+/-</th></tr></thead>
+        <thead><tr><th class="c">Day</th><th>Date</th><th class="r">Daily Target</th><th class="r">Daily Total ($)</th><th class="r">Month Total (MTD)</th><th class="r">+/-</th></tr></thead>
         <tbody>${rowHtml}</tbody>
       </table>
-      <div class="ftr">Month Total is the running month-to-date gross you entered. Daily Gross is the change from the prior entry. +/- compares the month total against the cumulative daily target through that day.</div>
+      <div class="ftr">Daily Total is the labor dollars you entered for each day. Month Total (MTD) is the running sum of those daily totals. +/- compares the month total against the cumulative daily target through that day.</div>
       <script>window.onload = function(){ window.print(); }<\/script>
     </body></html>`;
 
@@ -322,8 +321,8 @@ export default function GoalForecast({
               <div>Day</div>
               <div>Date</div>
               <div style={{ textAlign: 'right' }}>Daily Target</div>
+              <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
               <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
-              <div style={{ textAlign: 'right' }}>Daily Gross</div>
               <div style={{ textAlign: 'right' }}>+/-</div>
             </div>
             {rows.map((r) => {
@@ -351,7 +350,7 @@ export default function GoalForecast({
                       type="number"
                       inputMode="decimal"
                       value={r.hasActual ? r.entered : ''}
-                      placeholder="$ MTD total"
+                      placeholder="$ daily total"
                       onChange={e => updateActual(r.k, e.target.value)}
                       onFocus={e => { e.target.style.borderColor = '#6ee7b7'; e.target.style.background = 'rgba(2,6,23,.7)'; }}
                       onBlur={e => { e.target.style.borderColor = r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'; e.target.style.background = 'rgba(2,6,23,.55)'; }}
@@ -364,7 +363,7 @@ export default function GoalForecast({
                       }}
                     />
                   </div>
-                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.dailyGross) : '—'}</div>
+                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
                   <div style={{ textAlign: 'right', fontWeight: 700, color: !showDiff ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>
                     {showDiff ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}
                   </div>
@@ -374,7 +373,7 @@ export default function GoalForecast({
           </div>
 
           <div style={{ fontSize: 12, color: '#475569', marginTop: 16, textAlign: 'center' }}>
-            Enter your running month-to-date gross total each day — Daily Gross is calculated from the change. Saved to this browser. Working days come from Goal Gauges (Edit Dashboard).
+            Enter each day's total labor dollars — the Month Total (MTD) and forecast are calculated automatically. Saved to this browser. Working days come from Goal Gauges (Edit Dashboard).
           </div>
 
         </div>
