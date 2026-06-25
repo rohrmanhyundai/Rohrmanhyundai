@@ -362,7 +362,7 @@
         "align": 0.1304,
         "tires": 0.0783,
         "valvoline": 0.2609,
-        "csi": 912,
+        "csi": 910,
         "asr": 0.1701,
         "elr": 0.9181,
         "last_month_total": 311.8,
@@ -453,7 +453,7 @@
       "align": 0.07884999999999999,
       "tires": 0.07095,
       "valvoline": 0.22135,
-      "csi": 947.5
+      "csi": 946.5
     },
     "techTotals": {
       "mon": 39.5,
