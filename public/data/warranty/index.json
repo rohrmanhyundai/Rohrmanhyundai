@@ -2,17 +2,17 @@
   {
     "id": "mqtvm5z9edrx",
     "createdAt": "2026-06-25T19:09:32.229Z",
-    "updatedAt": "2026-06-25T19:13:18.912Z",
+    "updatedAt": "2026-06-25T19:36:05.265Z",
     "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "",
-    "customerPhone": "DONNA THOMPSON",
+    "customerName": "DONNA THOMPSON",
+    "customerPhone": " (765) 427 - 7867",
     "repairOrder": "778692",
     "vin": "KM8J3CA26HU472149",
     "vehicleYear": "2017",
     "vehicleMake": "HYUNDAI",
     "vehicleModel": "Tucson",
     "mileage": "122067",
-    "warrantyCompany": "WHEELZ",
+    "warrantyCompany": "WHEELZ/AAGI",
     "warrantyPhone": "800-858-6324",
     "claimNumber": "",
     "authNumber": "",
@@ -25,7 +25,7 @@
         "partNumber": "00232-19108",
         "description": "DCT FLUID, TGO-10, 70W GL-4",
         "qty": "4",
-        "price": "24.24"
+        "price": "19.30"
       },
       {
         "id": "mqtvoqmhrhew",
@@ -43,7 +43,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "",
+    "notes": "CALLED WHEELZ/AAGI 06/25/2026 @ 3:25PM.\n\nSENDING INSPETCOR 24-48 HRS. THE PERSON FROM WHEELZ SAID THE PRICE OF TRANSMISSION IS $5,774.85. WILL NEED TO CHECK THIS PRICE W/PARTS AFTER INSPECTOR COMES. ",
     "approved": false,
     "approvedDate": "",
     "denied": false,
@@ -56,8 +56,8 @@
     "repairsFinishedDate": "",
     "readySubmission": false,
     "readySubmissionDate": "",
-    "inspectorDispatched": false,
-    "inspectorDispatchedDate": ""
+    "inspectorDispatched": true,
+    "inspectorDispatchedDate": "2026-06-25"
   },
   {
     "id": "mpygkuu1peno",
