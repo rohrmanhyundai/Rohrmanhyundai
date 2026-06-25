@@ -234,6 +234,17 @@ export default function GoalForecast({
   const [allMonths, setAllMonths] = useState({});  // every saved month (for History)
   const [view, setView] = useState('current');     // 'current' | 'history'
   const [histSel, setHistSel] = useState(null);    // selected history month key
+  // Read-only cross-department viewer (service ↔ parts).
+  const otherDept = dept === 'parts' ? 'service' : 'parts';
+  const otherDeptLabel = otherDept === 'parts' ? 'Parts' : 'Service';
+  const [crossOpen, setCrossOpen] = useState(false);
+  const [crossMonths, setCrossMonths] = useState({});
+  const [crossView, setCrossView] = useState('current');
+  const [crossSel, setCrossSel] = useState(null);
+  function openCross() {
+    setCrossOpen(true); setCrossView('current'); setCrossSel(null);
+    loadGoalForecast(otherDept).then(all => setCrossMonths(all || {})).catch(() => setCrossMonths({}));
+  }
 
   const saveTimer = useRef(null);
   const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
@@ -420,10 +431,66 @@ export default function GoalForecast({
           <div className="adv-sub">{monthLabel} · {currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
-        {view === 'current' && <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>}
+        {!crossOpen && <button className="secondary" onClick={openCross} style={{ marginRight: 10 }}>👁 View {otherDeptLabel} Numbers</button>}
+        {view === 'current' && !crossOpen && <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>}
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
+      {crossOpen ? (
+        <>
+          {/* Read-only cross-department view (service ↔ parts) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap' }}>
+            <button className="secondary" onClick={() => setCrossOpen(false)}>← Back to my numbers</button>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>👁 Viewing {otherDeptLabel} Goal Forecast — read-only</div>
+            <div style={{ flex: 1 }} />
+            {[{ k: 'current', label: monthLabel }, { k: 'history', label: '🗂 History' }].map(t => (
+              <button key={t.k} onClick={() => { setCrossView(t.k); setCrossSel(null); }}
+                style={{ background: crossView === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${crossView === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: crossView === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+              >{t.label}</button>
+            ))}
+          </div>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 40px 32px' }}>
+            <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+              {crossView === 'history' ? (() => {
+                const pastKeys = Object.keys(crossMonths || {}).filter(k => k < mk).sort().reverse();
+                if (crossSel) {
+                  return (
+                    <div>
+                      <button className="secondary" onClick={() => setCrossSel(null)} style={{ marginBottom: 16 }}>← All months</button>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 16 }}>{computeMonthMetrics(crossSel, crossMonths[crossSel]).label}</div>
+                      <MonthDetail mkStr={crossSel} monthData={crossMonths[crossSel]} />
+                    </div>
+                  );
+                }
+                if (pastKeys.length === 0) return <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>No completed months yet.</div>;
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {pastKeys.map(k => {
+                      const M = computeMonthMetrics(k, crossMonths[k]);
+                      const vsF = M.actualTotal - M.forecast;
+                      return (
+                        <div key={k} onClick={() => setCrossSel(k)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '14px 20px' }}>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', minWidth: 150 }}>{M.label}</div>
+                          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', flex: 1 }}>
+                            <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Final Total</div><div style={{ fontSize: 17, fontWeight: 800, color: '#34d399' }}>{money(M.actualTotal)}</div></div>
+                            <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Forecast</div><div style={{ fontSize: 17, fontWeight: 800, color: '#6ee7f9' }}>{money(M.forecast)}</div></div>
+                            <div><div style={{ fontSize: 10, color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>vs Forecast</div><div style={{ fontSize: 17, fontWeight: 800, color: vsF >= 0 ? '#6ee7b7' : '#fca5a5' }}>{vsF >= 0 ? '▲ ' : '▼ '}{money(Math.abs(vsF))}</div></div>
+                          </div>
+                          <div style={{ color: '#6ee7f9', fontSize: 13, fontWeight: 700 }}>View →</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })() : (
+                (crossMonths && crossMonths[mk])
+                  ? <MonthDetail mkStr={mk} monthData={crossMonths[mk]} />
+                  : <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>No {otherDeptLabel.toLowerCase()} numbers entered for {monthLabel} yet.</div>
+              )}
+            </div>
+          </div>
+        </>
+      ) : (<>
       {/* Tabs: current month vs history */}
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0 }}>
         {[{ k: 'current', label: monthLabel }, { k: 'history', label: '🗂 History' }].map(t => (
@@ -676,6 +743,7 @@ export default function GoalForecast({
 
         </div>
       </div>
+      </>)}
     </div>
   );
 }
