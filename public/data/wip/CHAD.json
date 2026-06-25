@@ -25,5 +25,33 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "HAVE ALL DOCS READY FOR P/A. P/A SUBMITTED NEED VALVE COVER PICS STUI. IMAGES UPLOADED 6/22 8:42AM."
+  },
+  {
+    "id": "mqtycjbeyxj7",
+    "ro": "778692",
+    "roDate": "2026-06-25",
+    "vehicle": "2017 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES CAR IS NOT SHIFTING CORRECTLY. CHECK ADVISE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mqtycjbe3qcc",
+    "ro": "778684",
+    "roDate": "2026-06-25",
+    "vehicle": "2013 Hyundai Sonata Hybrid",
+    "jobDesc": "CONCERN - CUSTOMER STATES CHECK HYBRID WARNING MESSAGE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
