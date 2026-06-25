@@ -723,9 +723,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       // shows on every device). Parts is separate and entered on its own page.
       if (String(dailyLabor).trim() !== '') {
         try {
-          const today = new Date();
-          const mk = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-          const dayKey = `${mk}-${String(today.getDate()).padStart(2, '0')}`;
+          // Numbers entered today are for the PREVIOUS business day (reporting is
+          // a day behind). Step back one day, skipping Sunday (a non-working day).
+          const target = new Date();
+          target.setDate(target.getDate() - 1);
+          while (target.getDay() === 0) target.setDate(target.getDate() - 1);
+          const mk = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}`;
+          const dayKey = `${mk}-${String(target.getDate()).padStart(2, '0')}`;
           await setGoalForecastDaily('service', mk, dayKey, safe(dailyLabor, 0));
           // Keep the local cache in sync so the page reflects it immediately.
           try {
@@ -734,7 +738,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             const actuals = { ...(saved.actuals || {}), [dayKey]: safe(dailyLabor, 0) };
             localStorage.setItem(key, JSON.stringify({ ...saved, actuals }));
           } catch {}
-          setDailyLaborMsg(`Added ${'$' + Math.round(safe(dailyLabor, 0)).toLocaleString('en-US')} to today's Service Goal Forecast (${today.getMonth() + 1}/${today.getDate()}).`);
+          setDailyLaborMsg(`Added ${'$' + Math.round(safe(dailyLabor, 0)).toLocaleString('en-US')} to the Service Goal Forecast for ${target.getMonth() + 1}/${target.getDate()}.`);
           setDailyLabor('');
         } catch { /* ignore */ }
       }
@@ -1233,14 +1237,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <label>Daily Total Labor</label>
             <input
               value={dailyLabor}
-              placeholder="Today's labor $ — adds to Goal Forecast"
+              placeholder="Labor $ for yesterday — adds to Goal Forecast"
               onChange={e => { setDailyLabor(e.target.value); setDailyLaborMsg(''); }}
             />
           </div>
         </div>
         {dailyLaborMsg && <div style={{ marginTop: 10, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{dailyLaborMsg}</div>}
         <div style={{ marginTop: 8, fontSize: 11, color: '#64748b' }}>
-          Enter today's total labor dollars, then click <em>Save Changes</em> — it's written straight into today's Goal Forecast daily entry.
+          Enter the total labor dollars, then click <em>Save Changes</em> — it's written into the Goal Forecast for the <strong>previous business day</strong> (today's entry posts to yesterday).
         </div>
       </div>
     );
