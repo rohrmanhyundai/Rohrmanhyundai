@@ -151,8 +151,16 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const dirtyRowsRef = useRef(new Set());
   const dirtyAwaitingRef = useRef(new Set());
   const rootRef = useRef(null);
+  const loadSeqRef = useRef(0); // guards against out-of-order WIP file loads
 
   const load = useCallback(async (tech) => {
+    // Each load gets a sequence number. Two loads can be in flight at once (e.g.
+    // the initial tab's file is still loading when a View/Edit jump switches to
+    // another tech). Only the NEWEST load may apply its result — otherwise a
+    // slower earlier load can resolve last and overwrite the rows with the wrong
+    // tech's data, leaving the user on the right tab but the wrong list (which is
+    // exactly why View/Edit "wouldn't take you to the RO").
+    const seq = ++loadSeqRef.current;
     setLoading(true);
     setError('');
     // Mark rows as belonging to no tech and clear them, so any save fired
@@ -162,6 +170,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     setRows([]);
     try {
       const raw = await loadWipData(tech);
+      if (seq !== loadSeqRef.current) return; // superseded by a newer load
       const data = dedupeWip(raw);
       rowsTechRef.current = tech;
       setRows(data);
@@ -171,9 +180,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
         saveWipData(tech, data).catch(() => {});
       }
     } catch (e) {
-      setError(e.message);
+      if (seq === loadSeqRef.current) setError(e.message);
     } finally {
-      setLoading(false);
+      if (seq === loadSeqRef.current) setLoading(false);
     }
   }, []);
 
