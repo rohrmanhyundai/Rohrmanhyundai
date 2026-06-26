@@ -33,7 +33,7 @@
     {
       "username": "Jordan",
       "password": "jordanjordan",
-      "role": "advisor",
+      "role": "lead advisor",
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
@@ -48,10 +48,12 @@
         "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
-        "atDiagWorksheet": true
+        "atDiagWorksheet": true,
+        "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": ""
     },
     {
       "username": "David",
