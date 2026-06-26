@@ -336,28 +336,33 @@ export default function GoalForecast({
   // ── PDF report upload ──────────────────────────────────────────────────────
   // service → LABOR column, parts → PARTS column of TOTAL GROSS PROFIT.
   const pdfInputRef = useRef(null);
+  const crossPdfInputRef = useRef(null);
   const [parsing, setParsing] = useState(false);
   const [parsePreview, setParsePreview] = useState(null); // [{ dateKey, label, value }]
   const [parseErr, setParseErr] = useState('');
-  const colName = dept === 'parts' ? 'Parts' : 'Labor';
+  const [parseDept, setParseDept] = useState(dept); // which dept the preview applies to
+  const colName = parseDept === 'parts' ? 'Parts' : 'Labor';
 
-  async function handlePdf(file) {
+  // targetDept = which forecast to import into ('service'|'parts'). Defaults to
+  // the page's own dept; the cross-view passes the OTHER dept so you can import
+  // parts numbers from a service login and vice-versa.
+  async function handlePdf(file, targetDept = dept) {
     if (!file) return;
-    setParsing(true); setParseErr(''); setParsePreview(null);
+    setParsing(true); setParseErr(''); setParsePreview(null); setParseDept(targetDept);
+    const col = targetDept === 'parts' ? 'Parts' : 'Labor';
     try {
       const parsed = await parseGrossReport(file);
-      // Keep only dates in the month being viewed, map to the chosen column.
       const rowsOut = Object.keys(parsed)
         .filter(k => k.slice(0, 7) === mk)
         .sort()
         .map(k => {
           const d = new Date(k + 'T00:00:00');
-          const value = dept === 'parts' ? parsed[k].parts : parsed[k].labor;
+          const value = targetDept === 'parts' ? parsed[k].parts : parsed[k].labor;
           return { dateKey: k, label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`, value };
         })
         .filter(r => r.value != null);
       if (rowsOut.length === 0) {
-        setParseErr(`No ${monthLabel} rows with a ${colName} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
+        setParseErr(`No ${monthLabel} rows with a ${col} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
       } else {
         setParsePreview(rowsOut);
       }
@@ -366,17 +371,35 @@ export default function GoalForecast({
     } finally {
       setParsing(false);
       if (pdfInputRef.current) pdfInputRef.current.value = '';
+      if (crossPdfInputRef.current) crossPdfInputRef.current.value = '';
     }
   }
 
   function applyParsed() {
     if (!parsePreview) return;
-    const next = { ...actuals };
-    parsePreview.forEach(r => { next[r.dateKey] = safe(r.value, 0); });
-    setActuals(next);
-    persist({ actuals: next });
+    if (parseDept === dept) {
+      // Importing into my own forecast.
+      const next = { ...actuals };
+      parsePreview.forEach(r => { next[r.dateKey] = safe(r.value, 0); });
+      setActuals(next);
+      persist({ actuals: next });
+      setGridOpen(true);
+    } else {
+      // Importing into the OTHER department's file (from the cross-view).
+      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((crossMonths && crossMonths[mk]) || {}) };
+      const nextActuals = { ...(bucket.actuals || {}) };
+      parsePreview.forEach(r => { nextActuals[r.dateKey] = safe(r.value, 0); });
+      const nextBucket = { ...bucket, actuals: nextActuals };
+      saveGoalForecastMonth(parseDept, mk, nextBucket).catch(() => {});
+      setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));
+      try {
+        const prefix = parseDept === 'parts' ? 'partsGoalForecast' : 'goalForecast';
+        const key = `${prefix}-${mk}`;
+        const saved = JSON.parse(localStorage.getItem(key) || '{}') || {};
+        localStorage.setItem(key, JSON.stringify({ ...saved, actuals: nextActuals }));
+      } catch {}
+    }
     setParsePreview(null);
-    setGridOpen(true);
   }
 
   const saveTimer = useRef(null);
@@ -614,7 +637,9 @@ export default function GoalForecast({
           {/* Read-only cross-department view (service ↔ parts) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap' }}>
             <button className="secondary" onClick={() => setCrossOpen(false)}>← Back to my numbers</button>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>👁 Viewing {otherDeptLabel} Goal Forecast — read-only</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>👁 Viewing {otherDeptLabel} Goal Forecast</div>
+            <input ref={crossPdfInputRef} type="file" accept="application/pdf,.pdf" style={{ display: 'none' }} onChange={e => handlePdf(e.target.files && e.target.files[0], otherDept)} />
+            <button className="secondary" onClick={() => crossPdfInputRef.current && crossPdfInputRef.current.click()} disabled={parsing}>{parsing ? '⏳ Reading…' : `📤 Upload ${otherDeptLabel} Report PDF`}</button>
             <div style={{ flex: 1 }} />
             {[{ k: 'current', label: monthLabel }, { k: 'history', label: '🗂 History' }].map(t => (
               <button key={t.k} onClick={() => { setCrossView(t.k); setCrossSel(null); }}
