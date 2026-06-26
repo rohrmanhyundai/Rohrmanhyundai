@@ -25,6 +25,68 @@ function workingDates(year, month) {
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// ── PDF.js loader (CDN, shared promise) ──────────────────────────────────────
+let _pdfjsPromise = null;
+function loadPdfJs() {
+  if (_pdfjsPromise) return _pdfjsPromise;
+  _pdfjsPromise = new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; resolve(window.pdfjsLib); };
+    s.onerror = () => reject(new Error('Failed to load PDF.js'));
+    document.head.appendChild(s);
+  });
+  return _pdfjsPromise;
+}
+
+// Parse a number token like "2,973.18", "0.00", "(78.44)", "($1,423.60)".
+// Parentheses mean negative. Returns null if it isn't a currency value.
+function parseCurrency(tok) {
+  const t = String(tok).trim();
+  if (!/[0-9]/.test(t) || !/[.]/.test(t)) return null; // must have a decimal
+  const neg = /^\(.*\)$/.test(t);
+  const cleaned = t.replace(/[()$,]/g, '').trim();
+  if (!/^-?\d+(\.\d+)?$/.test(cleaned)) return null;
+  const n = parseFloat(cleaned);
+  if (isNaN(n)) return null;
+  return neg ? -n : n;
+}
+
+// Parse the gross report PDF. For each data row (one that starts with a MM/DD/YY
+// date) we read the TOTAL GROSS PROFIT columns at the far right: the LAST currency
+// value is PARTS, the SECOND-TO-LAST is LABOR. Returns { 'YYYY-MM-DD': {labor, parts} }.
+async function parseGrossReport(file) {
+  const pdfjs = await loadPdfJs();
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
+  const out = {};
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const byY = {};
+    for (const it of content.items) {
+      if (!it.str || !it.str.trim()) continue;
+      const y = Math.round(it.transform[5]);
+      (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str.trim() });
+    }
+    for (const items of Object.values(byY)) {
+      items.sort((a, b) => a.x - b.x);
+      const texts = items.map(i => i.text);
+      const dateTok = texts.find(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t));
+      if (!dateTok) continue;
+      const nums = texts.map(parseCurrency).filter(v => v !== null);
+      if (nums.length < 2) continue;
+      const parts = nums[nums.length - 1];
+      const labor = nums[nums.length - 2];
+      const [mm, dd, yy] = dateTok.split('/');
+      const key = `${2000 + Number(yy)}-${mm}-${dd}`;
+      out[key] = { labor, parts };
+    }
+  }
+  return out;
+}
+
 // Compute every derived figure for a stored month ('YYYY-MM' + its data bucket).
 // Used by the History view to render completed months read-only.
 function computeMonthMetrics(mkStr, monthData) {
@@ -246,6 +308,52 @@ export default function GoalForecast({
     loadGoalForecast(otherDept).then(all => setCrossMonths(all || {})).catch(() => setCrossMonths({}));
   }
 
+  // ── PDF report upload ──────────────────────────────────────────────────────
+  // service → LABOR column, parts → PARTS column of TOTAL GROSS PROFIT.
+  const pdfInputRef = useRef(null);
+  const [parsing, setParsing] = useState(false);
+  const [parsePreview, setParsePreview] = useState(null); // [{ dateKey, label, value }]
+  const [parseErr, setParseErr] = useState('');
+  const colName = dept === 'parts' ? 'Parts' : 'Labor';
+
+  async function handlePdf(file) {
+    if (!file) return;
+    setParsing(true); setParseErr(''); setParsePreview(null);
+    try {
+      const parsed = await parseGrossReport(file);
+      // Keep only dates in the month being viewed, map to the chosen column.
+      const rowsOut = Object.keys(parsed)
+        .filter(k => k.slice(0, 7) === mk)
+        .sort()
+        .map(k => {
+          const d = new Date(k + 'T00:00:00');
+          const value = dept === 'parts' ? parsed[k].parts : parsed[k].labor;
+          return { dateKey: k, label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`, value };
+        })
+        .filter(r => r.value != null);
+      if (rowsOut.length === 0) {
+        setParseErr(`No ${monthLabel} rows with a ${colName} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
+      } else {
+        setParsePreview(rowsOut);
+      }
+    } catch (e) {
+      setParseErr('Could not read the PDF: ' + (e.message || e));
+    } finally {
+      setParsing(false);
+      if (pdfInputRef.current) pdfInputRef.current.value = '';
+    }
+  }
+
+  function applyParsed() {
+    if (!parsePreview) return;
+    const next = { ...actuals };
+    parsePreview.forEach(r => { next[r.dateKey] = safe(r.value, 0); });
+    setActuals(next);
+    persist({ actuals: next });
+    setParsePreview(null);
+    setGridOpen(true);
+  }
+
   const saveTimer = useRef(null);
   const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
 
@@ -425,12 +533,52 @@ export default function GoalForecast({
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      {(parsePreview || parseErr) && (
+        <div onClick={() => { setParsePreview(null); setParseErr(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16, width: '100%', maxWidth: 520, maxHeight: '82vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 18px 60px rgba(0,0,0,.6)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#6ee7b7' }}>📤 Import {colName} Totals — {monthLabel}</div>
+              <div style={{ flex: 1 }} />
+              <button onClick={() => { setParsePreview(null); setParseErr(''); }} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ padding: 20, overflowY: 'auto' }}>
+              {parseErr ? (
+                <div style={{ color: '#fca5a5', fontSize: 13, lineHeight: 1.5 }}>{parseErr}</div>
+              ) : (
+                <>
+                  <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>
+                    Found <strong style={{ color: '#e2e8f0' }}>{parsePreview.length}</strong> day{parsePreview.length === 1 ? '' : 's'}. Review, then apply — this overwrites those days' entries.
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
+                    {parsePreview.map(r => (
+                      <div key={r.dateKey} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
+                        <span style={{ color: '#cbd5e1' }}>{r.label}</span>
+                        <span style={{ color: '#6ee7b7', fontWeight: 700 }}>{money(r.value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                    <button className="secondary" onClick={() => setParsePreview(null)}>Cancel</button>
+                    <button onClick={applyParsed} style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✓ Apply {parsePreview.length} day{parsePreview.length === 1 ? '' : 's'}</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">{title}</div>
           <div className="adv-sub">{monthLabel} · {currentUserDisplay || currentUser}</div>
         </div>
         <div style={{ flex: 1 }} />
+        {!crossOpen && (
+          <>
+            <input ref={pdfInputRef} type="file" accept="application/pdf,.pdf" style={{ display: 'none' }} onChange={e => handlePdf(e.target.files && e.target.files[0])} />
+            <button className="secondary" onClick={() => pdfInputRef.current && pdfInputRef.current.click()} disabled={parsing} style={{ marginRight: 10 }}>{parsing ? '⏳ Reading…' : '📤 Upload Report PDF'}</button>
+          </>
+        )}
         {!crossOpen && <button className="secondary" onClick={openCross} style={{ marginRight: 10 }}>👁 View {otherDeptLabel} Numbers</button>}
         {view === 'current' && !crossOpen && <button className="secondary" onClick={printSheet} style={{ marginRight: 10 }}>🖨 Print / PDF</button>}
         <button className="secondary" onClick={onBack}>{backLabel}</button>
