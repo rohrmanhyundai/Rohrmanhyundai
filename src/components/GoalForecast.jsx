@@ -53,9 +53,10 @@ function parseCurrency(tok) {
   return neg ? -n : n;
 }
 
-// Parse the gross report PDF. For each data row (one that starts with a MM/DD/YY
-// date) we read the TOTAL GROSS PROFIT columns at the far right: the LAST currency
-// value is PARTS, the SECOND-TO-LAST is LABOR. Returns { 'YYYY-MM-DD': {labor, parts} }.
+// Parse the gross report PDF. We locate the "TOTAL GROSS PROFIT" LABOR and PARTS
+// columns by their HEADER x-position, then for each dated row read the currency
+// value sitting under each header. Falls back to the last/second-to-last currency
+// value if the headers can't be found. Returns { 'YYYY-MM-DD': {labor, parts} }.
 async function parseGrossReport(file) {
   const pdfjs = await loadPdfJs();
   const buf = await file.arrayBuffer();
@@ -64,22 +65,48 @@ async function parseGrossReport(file) {
   for (let p = 1; p <= pdf.numPages; p++) {
     const page = await pdf.getPage(p);
     const content = await page.getTextContent();
+
+    // Collect items with positions.
+    const items = content.items
+      .filter(it => it.str && it.str.trim())
+      .map(it => ({ x: it.transform[4], y: it.transform[5], text: it.str.trim() }));
+
+    // Find the LABOR / PARTS total-column header x. The total columns use the
+    // full words "LABOR"/"PARTS"; other columns say "LBR GROSS"/"PTS GROSS".
+    // Take the right-most match so we land on TOTAL GROSS PROFIT, not a sub-col.
+    const headerX = (word) => {
+      const hits = items.filter(i => i.text.toUpperCase() === word);
+      if (!hits.length) return null;
+      return hits.sort((a, b) => b.x - a.x)[0].x;
+    };
+    const laborX = headerX('LABOR');
+    const partsX = headerX('PARTS');
+
+    // Group into rows by y.
     const byY = {};
-    for (const it of content.items) {
-      if (!it.str || !it.str.trim()) continue;
-      const y = Math.round(it.transform[5]);
-      (byY[y] = byY[y] || []).push({ x: it.transform[4], text: it.str.trim() });
+    for (const it of items) {
+      const y = Math.round(it.y);
+      (byY[y] = byY[y] || []).push(it);
     }
-    for (const items of Object.values(byY)) {
-      items.sort((a, b) => a.x - b.x);
-      const texts = items.map(i => i.text);
-      const dateTok = texts.find(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t));
+
+    for (const row of Object.values(byY)) {
+      row.sort((a, b) => a.x - b.x);
+      const dateTok = row.find(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text));
       if (!dateTok) continue;
-      const nums = texts.map(parseCurrency).filter(v => v !== null);
+      const nums = row.map(t => ({ x: t.x, v: parseCurrency(t.text) })).filter(n => n.v !== null);
       if (nums.length < 2) continue;
-      const parts = nums[nums.length - 1];
-      const labor = nums[nums.length - 2];
-      const [mm, dd, yy] = dateTok.split('/');
+
+      let labor, parts;
+      if (laborX != null && partsX != null) {
+        // Pick the currency token closest to each header column.
+        const nearest = (cx) => nums.reduce((best, n) => Math.abs(n.x - cx) < Math.abs(best.x - cx) ? n : best).v;
+        labor = nearest(laborX);
+        parts = nearest(partsX);
+      } else {
+        parts = nums[nums.length - 1].v;
+        labor = nums[nums.length - 2].v;
+      }
+      const [mm, dd, yy] = dateTok.text.split('/');
       const key = `${2000 + Number(yy)}-${mm}-${dd}`;
       out[key] = { labor, parts };
     }
