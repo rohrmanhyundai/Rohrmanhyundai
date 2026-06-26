@@ -28,19 +28,6 @@
           "causalPart": "39131-2ET",
           "natureCode": "I3T",
           "causeCode": "ZZ3"
-        },
-        {
-          "id": "mqvd7s0756ur",
-          "answers": {
-            "model": "UPDATE AND CATAL YST REPLACEMENT TSB #: 20-FL-010H Page 2 of 3 SUBJECT: SUBJECT : :"
-          },
-          "model": "UPDATE AND CATAL YST REPLACEMENT TSB #: 20-FL-010H Page 2 of 3 SUBJECT: SUBJECT : :",
-          "opCode": "39131F08",
-          "operation": "ECM UPGRADE & EXHAUST MANIFOLD CATALYST REPLACE",
-          "opTime": "1.1 M/H",
-          "causalPart": "39131-2ET",
-          "natureCode": "I3T",
-          "causeCode": "ZZ3"
         }
       ]
     },
