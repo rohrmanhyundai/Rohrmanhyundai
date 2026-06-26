@@ -1158,6 +1158,31 @@ export async function saveTechChatMessages(messages) {
 }
 
 
+// ── Advisor Goals / Forecasting (server-backed, per advisor) ─────────────────
+// One file per advisor holding every month:
+// { "2026-06": { hoursGoal, hrsRoGoal, days: { "2026-06-01": {hours, hrsRo} } } }
+function advisorGoalsPath(advisor) {
+  const safe = String(advisor || '').toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+  return `data/advisor-goals/${safe || 'UNKNOWN'}.json`;
+}
+
+export async function loadAdvisorGoals(advisor) {
+  try {
+    const data = await loadGithubFile(advisorGoalsPath(advisor));
+    return (data && typeof data === 'object') ? data : {};
+  } catch { return {}; }
+}
+
+// Merge a month bucket into the advisor's file and save. Re-reads first so a
+// concurrent edit to a different month isn't clobbered.
+export async function saveAdvisorGoalsMonth(advisor, monthKey, monthData) {
+  let all = {};
+  try { all = await loadAdvisorGoals(advisor); } catch { all = {}; }
+  all = { ...(all || {}), [monthKey]: monthData };
+  await saveGithubFile(advisorGoalsPath(advisor), all, `Advisor goals ${String(advisor).toUpperCase()} ${monthKey}`);
+  return all;
+}
+
 // ── Generic file helpers for DCT/MTM worksheets ──────────────────────────────
 export async function loadGithubFile(path) {
   try {

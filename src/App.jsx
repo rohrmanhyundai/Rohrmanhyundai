@@ -19,6 +19,7 @@ import ManagerHub from './components/ManagerHub';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
 import GoalForecast from './components/GoalForecast';
+import AdvisorGoals from './components/AdvisorGoals';
 import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
@@ -605,6 +606,21 @@ export default function App() {
     );
   }
 
+  if (page === 'advisor-goals') {
+    const goalsRoster = users
+      .filter(u => u.role === 'advisor' || u.role === 'lead advisor')
+      .map(u => u.username.toUpperCase());
+    return (
+      <AdvisorGoals
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        advisors={goalsRoster}
+        onBack={() => navTo(prevPage || 'advisor-calendar')}
+        backLabel="← Appointment Prep Calendar"
+      />
+    );
+  }
+
   if (page === 'user-data-tracker') {
     const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
     if (!isManager) { setPage('dashboard'); return null; }
@@ -745,6 +761,7 @@ export default function App() {
         onWorkInProgress={(arg) => { setWipInitialRO(arg && typeof arg === 'object' ? arg : (typeof arg === 'string' ? { ro: arg } : null)); goTo('work-in-progress', 'advisor-calendar'); }}
         onRoUpload={() => goTo('ro-upload', 'advisor-calendar')}
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
+        onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
