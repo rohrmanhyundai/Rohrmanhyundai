@@ -40,5 +40,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CAR NEEDS TRANMISSION. WAITING ON CUSTOMER "
+  },
+  {
+    "id": "mqvcid9baw5",
+    "ro": "778736",
+    "roDate": "2026-06-26",
+    "vehicle": "",
+    "jobDesc": "driver tie rod end broken, wheel moves free of car",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": ""
   }
 ]
