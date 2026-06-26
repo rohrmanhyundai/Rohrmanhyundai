@@ -167,11 +167,19 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         submittedAt: Date.now(),
       };
       const merged = { ...b, days };
-      await saveAdvisorGoalsMonth(me, tmk, merged);
+      const all2 = await saveAdvisorGoalsMonth(me, tmk, merged);
+      setAllMonths(all2 || {});
+      // Reflect immediately in the on-screen forecast (don't wait for a reload).
+      setSelected(me);
+      if (tmk === mk) {
+        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {} };
+        bucketRef.current = norm;
+        setBucket(norm);
+      }
       setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Hours ${num(safe(deHours, 0), 1)} and Hrs/RO ${num(safe(deHrsRo, 0), 2)} added to your forecast.`);
       setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
       setDayEndOpen(false);
-      setSelected(me); setView('current'); setRefresh(r => r + 1);
+      setView('current'); setGridOpen(true);
     } catch (e) {
       setDeMsg('Save failed: ' + (e.message || e));
     } finally {
