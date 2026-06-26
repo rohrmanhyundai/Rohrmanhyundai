@@ -40,40 +40,41 @@ function loadPdfJs() {
   return _pdfjsPromise;
 }
 
-// Parse a number token like "2,973.18", "0.00", "(78.44)", "($1,423.60)".
-// Parentheses mean negative. Returns null if it isn't a currency value.
+// Parse a currency string like "2,973.18", "0.00", "(78.44)", "($1,423.60)" or
+// fragments joined together. Parentheses or a leading "-" mean negative.
 function parseCurrency(tok) {
   const t = String(tok).trim();
-  if (!/[0-9]/.test(t) || !/[.]/.test(t)) return null; // must have a decimal
-  const neg = /^\(.*\)$/.test(t);
-  const cleaned = t.replace(/[()$,]/g, '').trim();
-  if (!/^-?\d+(\.\d+)?$/.test(cleaned)) return null;
+  if (!/\d/.test(t)) return null;
+  const neg = /^\(.*\)$/.test(t) || /^-/.test(t);
+  const cleaned = t.replace(/[()$,\s-]/g, '');
+  if (!/^\d+(\.\d+)?$/.test(cleaned)) return null;
   const n = parseFloat(cleaned);
   if (isNaN(n)) return null;
   return neg ? -n : n;
 }
 
-// Parse the gross report PDF. We locate the "TOTAL GROSS PROFIT" LABOR and PARTS
-// columns by their HEADER x-position, then for each dated row read the currency
-// value sitting under each header. Falls back to the last/second-to-last currency
-// value if the headers can't be found. Returns { 'YYYY-MM-DD': {labor, parts} }.
+// Parse the gross report PDF. We locate the TOTAL GROSS PROFIT "LABOR" and
+// "PARTS" column headers by x-position, then for each dated row CONCATENATE every
+// text fragment within each column's x-band before parsing — pdf.js can split
+// "$2,973.18" into several fragments, which is why reading single tokens grabbed
+// wrong/partial numbers. Returns { 'YYYY-MM-DD': {labor, parts} }.
 async function parseGrossReport(file) {
   const pdfjs = await loadPdfJs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
   const out = {};
-  for (let p = 1; p <= pdf.numPages; p++) {
+  // The daily LABOR/PARTS figures live on page 2 of the report (page 1 is a
+  // different summary). Parse page 2 only; fall back to page 1 if there's no p2.
+  const targetPages = pdf.numPages >= 2 ? [2] : [1];
+  for (const p of targetPages) {
     const page = await pdf.getPage(p);
     const content = await page.getTextContent();
-
-    // Collect items with positions.
     const items = content.items
       .filter(it => it.str && it.str.trim())
       .map(it => ({ x: it.transform[4], y: it.transform[5], text: it.str.trim() }));
 
-    // Find the LABOR / PARTS total-column header x. The total columns use the
-    // full words "LABOR"/"PARTS"; other columns say "LBR GROSS"/"PTS GROSS".
-    // Take the right-most match so we land on TOTAL GROSS PROFIT, not a sub-col.
+    // Right-most exact "LABOR"/"PARTS" tokens are the TOTAL GROSS PROFIT headers
+    // (other columns read "LBR GROSS"/"PTS GROSS").
     const headerX = (word) => {
       const hits = items.filter(i => i.text.toUpperCase() === word);
       if (!hits.length) return null;
@@ -81,34 +82,29 @@ async function parseGrossReport(file) {
     };
     const laborX = headerX('LABOR');
     const partsX = headerX('PARTS');
+    if (laborX == null || partsX == null) continue; // not a report page
 
-    // Group into rows by y.
+    // Column x-bands. Numbers sit slightly left of their header; the band stops
+    // short of the UNAPPLIED column on the left and splits LABOR vs PARTS at mid.
+    const gap = Math.abs(partsX - laborX) || 54;
+    const mid = (laborX + partsX) / 2;
+    const laborLo = laborX - gap * 0.6;
+    const partsHi = partsX + gap * 0.6;
+
     const byY = {};
     for (const it of items) {
       const y = Math.round(it.y);
       (byY[y] = byY[y] || []).push(it);
     }
-
     for (const row of Object.values(byY)) {
-      row.sort((a, b) => a.x - b.x);
       const dateTok = row.find(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text));
       if (!dateTok) continue;
-      const nums = row.map(t => ({ x: t.x, v: parseCurrency(t.text) })).filter(n => n.v !== null);
-      if (nums.length < 2) continue;
-
-      let labor, parts;
-      if (laborX != null && partsX != null) {
-        // Pick the currency token closest to each header column.
-        const nearest = (cx) => nums.reduce((best, n) => Math.abs(n.x - cx) < Math.abs(best.x - cx) ? n : best).v;
-        labor = nearest(laborX);
-        parts = nearest(partsX);
-      } else {
-        parts = nums[nums.length - 1].v;
-        labor = nums[nums.length - 2].v;
-      }
+      const band = (lo, hi) => row.filter(t => t.x >= lo && t.x < hi).sort((a, b) => a.x - b.x).map(t => t.text).join('');
+      const labor = parseCurrency(band(laborLo, mid));
+      const parts = parseCurrency(band(mid, partsHi));
       const [mm, dd, yy] = dateTok.text.split('/');
       const key = `${2000 + Number(yy)}-${mm}-${dd}`;
-      out[key] = { labor, parts };
+      out[key] = { labor: labor == null ? 0 : labor, parts: parts == null ? 0 : parts };
     }
   }
   return out;
