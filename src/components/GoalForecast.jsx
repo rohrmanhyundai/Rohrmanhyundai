@@ -3,8 +3,10 @@ import { advisorMonthProgress } from '../utils/calculations';
 import { safe } from '../utils/formatters';
 import { loadGoalForecast, saveGoalForecastMonth } from '../utils/github';
 
-const money = (n) => '$' + Math.round(safe(n, 0)).toLocaleString('en-US');
-const money1 = (n) => '$' + safe(n, 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+// Full-precision money (to the penny) — used for every actual figure on the report.
+const money = (n) => '$' + safe(n, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+// Compact rounded money — only for chart axis tick labels, to keep them short.
+const moneyAxis = (n) => '$' + Math.round(safe(n, 0)).toLocaleString('en-US');
 
 // localStorage key for the current month, e.g. goalForecast-2026-06
 function monthKey(d = new Date()) {
@@ -263,7 +265,7 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
         {tickVals.map((tv, i) => (
           <g key={i}>
             <line x1={padL} y1={y(tv)} x2={W - padR} y2={y(tv)} stroke="rgba(148,163,184,.14)" strokeWidth="1" />
-            <text x={padL - 10} y={y(tv) + 4} textAnchor="end" fontSize="11" fill="#64748b">{money(tv)}</text>
+            <text x={padL - 10} y={y(tv) + 4} textAnchor="end" fontSize="11" fill="#64748b">{moneyAxis(tv)}</text>
           </g>
         ))}
         {/* x labels */}
