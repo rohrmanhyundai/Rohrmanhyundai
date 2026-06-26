@@ -111,9 +111,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deMsg, setDeMsg] = useState('');
   const [dayEndOpen, setDayEndOpen] = useState(false);
   const [deStep, setDeStep] = useState(0);
+  const [deAgree, setDeAgree] = useState(false);
   function openDayEnd() {
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
-    setDeMsg(''); setDeStep(0); setDayEndOpen(true);
+    setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
   }
 
   const canEditDaysFor = (adv) => isAdmin || me === (adv || '').toUpperCase();
@@ -164,6 +165,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         invoiced: deInvoiced,
         customersUpdated: deCust,
         notesUpdated: deNotes,
+        agreed: deAgree,
+        agreedBy: me,
         submittedAt: Date.now(),
       };
       const merged = { ...b, days };
@@ -177,7 +180,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         setBucket(norm);
       }
       setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Hours ${num(safe(deHours, 0), 1)} and Hrs/RO ${num(safe(deHrsRo, 0), 2)} added to your forecast.`);
-      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
+      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false);
       setDayEndOpen(false);
       setView('current'); setGridOpen(true);
     } catch (e) {
@@ -372,13 +375,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', get: () => deNotes, set: setDeNotes },
     { key: 'hours', kind: 'num', q: 'End of Day Hours Sold', sub: 'Adds to your forecast for today', placeholder: 'e.g. 14.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
     { key: 'hrsro', kind: 'num', q: 'Hrs/RO', sub: 'Adds to your forecast for today', placeholder: 'e.g. 2.4', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
+    { key: 'agree', kind: 'agree', q: 'Confirm & Submit' },
   ];
+
+  // The attestation statement the advisor must agree to before submitting.
+  const AGREE_TEXT = `I certify that the information in this day-end report is accurate and complete to the best of my knowledge. I have reviewed all of my open repair orders, invoiced everything available, updated every customer on their status, and ensured each repair order has current notes as of the end of my business day.`;
 
   function renderDayEndModal() {
     if (!dayEndOpen) return null;
     const step = DE_STEPS[deStep];
-    const val = step.get();
-    const answered = step.kind === 'yn' ? !!val : String(val ?? '').trim() !== '';
+    const val = step.get ? step.get() : null;
+    const answered = step.kind === 'yn' ? !!val : step.kind === 'agree' ? deAgree : String(val ?? '').trim() !== '';
     const isLast = deStep === DE_STEPS.length - 1;
     const goNext = () => { if (answered && !isLast) setDeStep(s => s + 1); };
     return (
@@ -402,7 +409,16 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.35 }}>{step.q}</div>
             {step.sub && <div style={{ fontSize: 12, color: step.color || '#6ee7b7', fontWeight: 700, marginTop: 4 }}>→ {step.sub}</div>}
             <div style={{ marginTop: 20 }}>
-              {step.kind === 'yn' ? (
+              {step.kind === 'agree' ? (
+                <>
+                  <div style={{ fontSize: 14, lineHeight: 1.6, color: '#cbd5e1', background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 12, padding: '14px 16px' }}>{AGREE_TEXT}</div>
+                  <button type="button" onClick={() => setDeAgree(a => !a)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', marginTop: 14, background: deAgree ? 'rgba(74,222,128,.14)' : 'rgba(255,255,255,.04)', border: `1px solid ${deAgree ? 'rgba(74,222,128,.5)' : 'rgba(255,255,255,.14)'}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer', textAlign: 'left' }}>
+                    <span style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: deAgree ? '#4ade80' : 'transparent', border: `2px solid ${deAgree ? '#4ade80' : 'rgba(148,163,184,.6)'}`, color: '#04201d', fontWeight: 900, fontSize: 14 }}>{deAgree ? '✓' : ''}</span>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: deAgree ? '#4ade80' : '#cbd5e1' }}>I agree — {me}</span>
+                  </button>
+                </>
+              ) : step.kind === 'yn' ? (
                 <YesNo value={val} onChange={(v) => { step.set(v); setTimeout(() => setDeStep(s => Math.min(s + 1, DE_STEPS.length - 1)), 150); }} />
               ) : (
                 <input autoFocus type="number" inputMode="decimal" value={val}
