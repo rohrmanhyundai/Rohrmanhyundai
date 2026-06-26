@@ -98,6 +98,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [allMonths, setAllMonths] = useState({});
   const [gridOpen, setGridOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0);
+
+  // Day End Reporting form (always for the logged-in advisor, "me").
+  const [deOpenRo, setDeOpenRo] = useState('');
+  const [deInvoiced, setDeInvoiced] = useState(null);
+  const [deCust, setDeCust] = useState(null);
+  const [deNotes, setDeNotes] = useState(null);
+  const [deHours, setDeHours] = useState('');
+  const [deHrsRo, setDeHrsRo] = useState('');
+  const [deSaving, setDeSaving] = useState(false);
+  const [deMsg, setDeMsg] = useState('');
 
   const canEditDaysFor = (adv) => isAdmin || me === (adv || '').toUpperCase();
   const isMine = me === (selected || '').toUpperCase();
@@ -125,7 +136,41 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       setLoading(false);
     }).catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [selected, mk]);
+  }, [selected, mk, refresh]);
+
+  // Submit the Day End Report into MY own goals file for today (skips Sunday).
+  async function submitDayEnd() {
+    setDeSaving(true); setDeMsg('');
+    try {
+      const d = new Date();
+      while (d.getDay() === 0) d.setDate(d.getDate() - 1);
+      const tmk = monthKey(d);
+      const tkey = dKey(d);
+      let all = {};
+      try { all = await loadAdvisorGoals(me); } catch {}
+      const b = (all && all[tmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const days = { ...(b.days || {}) };
+      days[tkey] = {
+        ...(days[tkey] || {}),
+        hours: safe(deHours, 0),
+        hrsRo: safe(deHrsRo, 0),
+        openRoCount: safe(deOpenRo, 0),
+        invoiced: deInvoiced,
+        customersUpdated: deCust,
+        notesUpdated: deNotes,
+        submittedAt: Date.now(),
+      };
+      const merged = { ...b, days };
+      await saveAdvisorGoalsMonth(me, tmk, merged);
+      setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Hours ${num(safe(deHours, 0), 1)} and Hrs/RO ${num(safe(deHrsRo, 0), 2)} added to your forecast.`);
+      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
+      setSelected(me); setView('current'); setRefresh(r => r + 1);
+    } catch (e) {
+      setDeMsg('Save failed: ' + (e.message || e));
+    } finally {
+      setDeSaving(false);
+    }
+  }
 
   // Debounced, conflict-aware save: reload the latest bucket and only overwrite
   // the parts this user is allowed to change (goals for lead, days for owner).
@@ -295,6 +340,47 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     );
   };
 
+  // ── Day End Reporting form ────────────────────────────────────────────────
+  const YesNo = ({ value, onChange }) => (
+    <div style={{ display: 'flex', gap: 8 }}>
+      {[['yes', 'Yes', '#4ade80', 'rgba(74,222,128,'], ['no', 'No', '#f87171', 'rgba(248,113,113,']].map(([v, lbl, col, rgb]) => (
+        <button key={v} type="button" onClick={() => onChange(v)}
+          style={{ background: value === v ? `${rgb}.22)` : 'rgba(255,255,255,.05)', border: `1px solid ${value === v ? `${rgb}.6)` : 'rgba(255,255,255,.12)'}`, color: value === v ? col : '#94a3b8', borderRadius: 8, padding: '8px 22px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>{lbl}</button>
+      ))}
+    </div>
+  );
+  const qWrap = { background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '16px 18px', marginBottom: 12 };
+  const qLabel = { fontSize: 13, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.03em', marginBottom: 10 };
+  const renderDayEnd = () => {
+    const ready = String(deHours).trim() !== '' && String(deHrsRo).trim() !== '' && String(deOpenRo).trim() !== '' && deInvoiced && deCust && deNotes;
+    return (
+      <div style={{ maxWidth: 700, margin: '0 auto' }}>
+        <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 4 }}>Day End Reporting — {me}</div>
+        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 18 }}>Answer in order. Hours Sold and Hrs/RO post to your forecast for today.</div>
+        {deMsg && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: deMsg.startsWith('✓') ? '#4ade80' : '#f87171', background: deMsg.startsWith('✓') ? 'rgba(74,222,128,.1)' : 'rgba(248,113,113,.1)', border: `1px solid ${deMsg.startsWith('✓') ? 'rgba(74,222,128,.35)' : 'rgba(248,113,113,.35)'}` }}>{deMsg}</div>}
+
+        <div style={qWrap}><div style={qLabel}>1. Open Repair Order Count</div>
+          <input type="number" inputMode="numeric" style={{ ...inpSt, width: 160, textAlign: 'left' }} value={deOpenRo} placeholder="e.g. 12" onChange={e => setDeOpenRo(e.target.value)} /></div>
+
+        <div style={qWrap}><div style={qLabel}>2. Are all available repair orders invoiced?</div><YesNo value={deInvoiced} onChange={setDeInvoiced} /></div>
+        <div style={qWrap}><div style={qLabel}>3. Are all customers updated on status?</div><YesNo value={deCust} onChange={setDeCust} /></div>
+        <div style={qWrap}><div style={qLabel}>4. Do all repair orders have new and updated notes?</div><YesNo value={deNotes} onChange={setDeNotes} /></div>
+
+        <div style={qWrap}><div style={qLabel}>5. End of Day Hours Sold <span style={{ color: '#6ee7b7', fontWeight: 700, textTransform: 'none' }}>→ adds to forecast</span></div>
+          <input type="number" inputMode="decimal" style={{ ...inpSt, width: 160, textAlign: 'left', color: '#6ee7b7' }} value={deHours} placeholder="e.g. 14.5" onChange={e => setDeHours(e.target.value)} /></div>
+
+        <div style={qWrap}><div style={qLabel}>6. Hrs/RO <span style={{ color: '#93c5fd', fontWeight: 700, textTransform: 'none' }}>→ adds to forecast</span></div>
+          <input type="number" inputMode="decimal" style={{ ...inpSt, width: 160, textAlign: 'left', color: '#93c5fd' }} value={deHrsRo} placeholder="e.g. 2.4" onChange={e => setDeHrsRo(e.target.value)} /></div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+          <button onClick={submitDayEnd} disabled={deSaving || !ready}
+            style={{ background: ready && !deSaving ? 'rgba(74,222,128,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${ready && !deSaving ? 'rgba(74,222,128,.45)' : 'rgba(255,255,255,.12)'}`, color: ready && !deSaving ? '#4ade80' : '#64748b', borderRadius: 8, padding: '10px 24px', cursor: ready && !deSaving ? 'pointer' : 'default', fontWeight: 800, fontSize: 14 }}>
+            {deSaving ? '⏳ Saving…' : '✓ Submit Day-End Report'}</button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
@@ -318,7 +404,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
 
       {/* Month / History tabs */}
       <div style={{ display: 'flex', gap: 8, padding: '12px 20px 0', flexShrink: 0 }}>
-        {[{ k: 'current', label: M.label }, { k: 'history', label: '🗂 History' }].map(t => (
+        {[{ k: 'current', label: M.label }, { k: 'history', label: '🗂 History' }, ...((roster.includes(me) || isAdmin) ? [{ k: 'dayend', label: '📋 Day End Reporting' }] : [])].map(t => (
           <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); }}
             style={{ background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: view === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t.label}</button>
         ))}
@@ -327,7 +413,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 32px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
+          {view === 'dayend' ? renderDayEnd()
+            : loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
               : renderDetail(M, charts, { goals: canEditGoals, days: canEditDaysFor(selected) })}
         </div>
