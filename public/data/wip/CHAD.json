@@ -48,8 +48,8 @@
     "jobDesc": "CONCERN - CUSTOMER STATES CHECK HYBRID WARNING MESSAGE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/26/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CAR NEEDS TRANMISSION. WAITING ON CUSTOMER "
