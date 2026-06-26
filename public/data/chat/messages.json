@@ -442,5 +442,16 @@
     "username": "SHAWN",
     "text": "DAVID 778684 DID WE HEAR BACK FROM CUSTOMER?",
     "timestamp": 1782488902535
+  },
+  {
+    "id": "mqv4cx6motq",
+    "username": "DAVID",
+    "text": "need to try reach out again put brothers number in notes. Spoke with him yesterday morning",
+    "timestamp": 1782489723646,
+    "replyTo": {
+      "id": "mqv3049b0vb",
+      "username": "SHAWN",
+      "text": "DAVID 778680 WHAT ARE WE DOING WITH THIS CAR?"
+    }
   }
 ]
