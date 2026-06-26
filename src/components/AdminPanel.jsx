@@ -284,7 +284,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setOpenSection(prev => prev === name ? null : name);
   }
 
-  const ROLES = ['admin', 'advisor', 'technician', 'parts', 'parts manager', 'service manager', 'used car manager', 'warranty'];
+  const ROLES = ['admin', 'advisor', 'lead advisor', 'technician', 'parts', 'parts manager', 'service manager', 'used car manager', 'warranty'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);
@@ -1655,7 +1655,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <div className="field">
               <label>Role</label>
               <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
-                {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+                {ROLES.map(r => <option key={r} value={r}>{r.replace(/\b\w/g, c => c.toUpperCase())}</option>)}
               </select>
             </div>
           </div>
