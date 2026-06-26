@@ -109,6 +109,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deHrsRo, setDeHrsRo] = useState('');
   const [deSaving, setDeSaving] = useState(false);
   const [deMsg, setDeMsg] = useState('');
+  const [dayEndOpen, setDayEndOpen] = useState(false);
+  const [deStep, setDeStep] = useState(0);
+  function openDayEnd() {
+    setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
+    setDeMsg(''); setDeStep(0); setDayEndOpen(true);
+  }
 
   const canEditDaysFor = (adv) => isAdmin || me === (adv || '').toUpperCase();
   const isMine = me === (selected || '').toUpperCase();
@@ -164,6 +170,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       await saveAdvisorGoalsMonth(me, tmk, merged);
       setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Hours ${num(safe(deHours, 0), 1)} and Hrs/RO ${num(safe(deHrsRo, 0), 2)} added to your forecast.`);
       setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
+      setDayEndOpen(false);
       setSelected(me); setView('current'); setRefresh(r => r + 1);
     } catch (e) {
       setDeMsg('Save failed: ' + (e.message || e));
@@ -349,40 +356,78 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       ))}
     </div>
   );
-  const qWrap = { background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '16px 18px', marginBottom: 12 };
-  const qLabel = { fontSize: 13, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.03em', marginBottom: 10 };
-  const renderDayEnd = () => {
-    const ready = String(deHours).trim() !== '' && String(deHrsRo).trim() !== '' && String(deOpenRo).trim() !== '' && deInvoiced && deCust && deNotes;
+  // Day End Reporting popup — one question per step.
+  const DE_STEPS = [
+    { key: 'openRo', kind: 'num', q: 'Open Repair Order Count', placeholder: 'e.g. 12', get: () => deOpenRo, set: setDeOpenRo, color: '#e2e8f0' },
+    { key: 'invoiced', kind: 'yn', q: 'Are all available repair orders invoiced?', get: () => deInvoiced, set: setDeInvoiced },
+    { key: 'cust', kind: 'yn', q: 'Are all customers updated on status?', get: () => deCust, set: setDeCust },
+    { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', get: () => deNotes, set: setDeNotes },
+    { key: 'hours', kind: 'num', q: 'End of Day Hours Sold', sub: 'Adds to your forecast for today', placeholder: 'e.g. 14.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
+    { key: 'hrsro', kind: 'num', q: 'Hrs/RO', sub: 'Adds to your forecast for today', placeholder: 'e.g. 2.4', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
+  ];
+
+  function renderDayEndModal() {
+    if (!dayEndOpen) return null;
+    const step = DE_STEPS[deStep];
+    const val = step.get();
+    const answered = step.kind === 'yn' ? !!val : String(val ?? '').trim() !== '';
+    const isLast = deStep === DE_STEPS.length - 1;
+    const goNext = () => { if (answered && !isLast) setDeStep(s => s + 1); };
     return (
-      <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 4 }}>Day End Reporting — {me}</div>
-        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 18 }}>Answer in order. Hours Sold and Hrs/RO post to your forecast for today.</div>
-        {deMsg && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: deMsg.startsWith('✓') ? '#4ade80' : '#f87171', background: deMsg.startsWith('✓') ? 'rgba(74,222,128,.1)' : 'rgba(248,113,113,.1)', border: `1px solid ${deMsg.startsWith('✓') ? 'rgba(74,222,128,.35)' : 'rgba(248,113,113,.35)'}` }}>{deMsg}</div>}
+      <div onClick={() => setDayEndOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 18, width: '100%', maxWidth: 460, boxShadow: '0 18px 60px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          {/* Header + progress */}
+          <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#4ade80' }}>📋 Day End Reporting</div>
+              <div style={{ flex: 1 }} />
+              <div style={{ fontSize: 12, color: '#64748b' }}>{deStep + 1} of {DE_STEPS.length}</div>
+              <button onClick={() => setDayEndOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ marginTop: 10, height: 4, background: 'rgba(255,255,255,.08)', borderRadius: 999 }}>
+              <div style={{ width: `${((deStep + 1) / DE_STEPS.length) * 100}%`, height: '100%', background: 'linear-gradient(90deg,#34d399,#6ee7b7)', borderRadius: 999, transition: 'width .2s' }} />
+            </div>
+          </div>
 
-        <div style={qWrap}><div style={qLabel}>1. Open Repair Order Count</div>
-          <input type="number" inputMode="numeric" style={{ ...inpSt, width: 160, textAlign: 'left' }} value={deOpenRo} placeholder="e.g. 12" onChange={e => setDeOpenRo(e.target.value)} /></div>
+          {/* Question */}
+          <div style={{ padding: '26px 22px 8px', minHeight: 150 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.35 }}>{step.q}</div>
+            {step.sub && <div style={{ fontSize: 12, color: step.color || '#6ee7b7', fontWeight: 700, marginTop: 4 }}>→ {step.sub}</div>}
+            <div style={{ marginTop: 20 }}>
+              {step.kind === 'yn' ? (
+                <YesNo value={val} onChange={(v) => { step.set(v); setTimeout(() => setDeStep(s => Math.min(s + 1, DE_STEPS.length - 1)), 150); }} />
+              ) : (
+                <input autoFocus type="number" inputMode="decimal" value={val}
+                  placeholder={step.placeholder}
+                  onChange={e => step.set(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') goNext(); }}
+                  style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 10, padding: '12px 14px', fontSize: 20, fontWeight: 800, color: step.color || '#e2e8f0', width: '100%', boxSizing: 'border-box', outline: 'none' }} />
+              )}
+            </div>
+            {deMsg && deMsg.startsWith('Save failed') && <div style={{ marginTop: 14, fontSize: 13, color: '#f87171' }}>{deMsg}</div>}
+          </div>
 
-        <div style={qWrap}><div style={qLabel}>2. Are all available repair orders invoiced?</div><YesNo value={deInvoiced} onChange={setDeInvoiced} /></div>
-        <div style={qWrap}><div style={qLabel}>3. Are all customers updated on status?</div><YesNo value={deCust} onChange={setDeCust} /></div>
-        <div style={qWrap}><div style={qLabel}>4. Do all repair orders have new and updated notes?</div><YesNo value={deNotes} onChange={setDeNotes} /></div>
-
-        <div style={qWrap}><div style={qLabel}>5. End of Day Hours Sold <span style={{ color: '#6ee7b7', fontWeight: 700, textTransform: 'none' }}>→ adds to forecast</span></div>
-          <input type="number" inputMode="decimal" style={{ ...inpSt, width: 160, textAlign: 'left', color: '#6ee7b7' }} value={deHours} placeholder="e.g. 14.5" onChange={e => setDeHours(e.target.value)} /></div>
-
-        <div style={qWrap}><div style={qLabel}>6. Hrs/RO <span style={{ color: '#93c5fd', fontWeight: 700, textTransform: 'none' }}>→ adds to forecast</span></div>
-          <input type="number" inputMode="decimal" style={{ ...inpSt, width: 160, textAlign: 'left', color: '#93c5fd' }} value={deHrsRo} placeholder="e.g. 2.4" onChange={e => setDeHrsRo(e.target.value)} /></div>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-          <button onClick={submitDayEnd} disabled={deSaving || !ready}
-            style={{ background: ready && !deSaving ? 'rgba(74,222,128,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${ready && !deSaving ? 'rgba(74,222,128,.45)' : 'rgba(255,255,255,.12)'}`, color: ready && !deSaving ? '#4ade80' : '#64748b', borderRadius: 8, padding: '10px 24px', cursor: ready && !deSaving ? 'pointer' : 'default', fontWeight: 800, fontSize: 14 }}>
-            {deSaving ? '⏳ Saving…' : '✓ Submit Day-End Report'}</button>
+          {/* Footer nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px 18px' }}>
+            <button onClick={() => setDeStep(s => Math.max(s - 1, 0))} disabled={deStep === 0}
+              style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', color: deStep === 0 ? '#475569' : '#cbd5e1', borderRadius: 8, padding: '9px 16px', cursor: deStep === 0 ? 'default' : 'pointer', fontWeight: 700, fontSize: 13 }}>← Back</button>
+            <div style={{ flex: 1 }} />
+            {isLast ? (
+              <button onClick={submitDayEnd} disabled={deSaving || !answered}
+                style={{ background: answered && !deSaving ? 'rgba(74,222,128,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${answered && !deSaving ? 'rgba(74,222,128,.45)' : 'rgba(255,255,255,.12)'}`, color: answered && !deSaving ? '#4ade80' : '#64748b', borderRadius: 8, padding: '9px 22px', cursor: answered && !deSaving ? 'pointer' : 'default', fontWeight: 800, fontSize: 14 }}>{deSaving ? '⏳ Saving…' : '✓ Submit'}</button>
+            ) : (
+              <button onClick={goNext} disabled={!answered}
+                style={{ background: answered ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.06)', border: `1px solid ${answered ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.12)'}`, color: answered ? '#6ee7f9' : '#64748b', borderRadius: 8, padding: '9px 22px', cursor: answered ? 'pointer' : 'default', fontWeight: 800, fontSize: 14 }}>Next →</button>
+            )}
+          </div>
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      {renderDayEndModal()}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">🎯 Goals / Forecasting</div>
@@ -404,17 +449,23 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
 
       {/* Month / History tabs */}
       <div style={{ display: 'flex', gap: 8, padding: '12px 20px 0', flexShrink: 0 }}>
-        {[{ k: 'current', label: M.label }, { k: 'history', label: '🗂 History' }, ...((roster.includes(me) || isAdmin) ? [{ k: 'dayend', label: '📋 Day End Reporting' }] : [])].map(t => (
+        {[{ k: 'current', label: M.label }, { k: 'history', label: '🗂 History' }].map(t => (
           <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); }}
             style={{ background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: view === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t.label}</button>
         ))}
+        {(roster.includes(me) || isAdmin) && (
+          <button onClick={openDayEnd}
+            style={{ background: 'rgba(74,222,128,.16)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>📋 Day End Reporting</button>
+        )}
         {!isMine && view === 'current' && <div style={{ alignSelf: 'center', fontSize: 12, color: '#fbbf24', fontWeight: 700, marginLeft: 6 }}>👁 Viewing {selected} — {canEditGoals ? 'you can set goals' : 'read-only'}</div>}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 32px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          {view === 'dayend' ? renderDayEnd()
-            : loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
+          {deMsg && deMsg.startsWith('✓') && (
+            <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{deMsg}</div>
+          )}
+          {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
               : renderDetail(M, charts, { goals: canEditGoals, days: canEditDaysFor(selected) })}
         </div>
