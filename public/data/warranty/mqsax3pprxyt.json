@@ -1,7 +1,7 @@
 {
   "id": "mqsax3pprxyt",
   "createdAt": "2026-06-24T16:42:24.397Z",
-  "updatedAt": "2026-06-24T17:25:50.212Z",
+  "updatedAt": "2026-06-26T18:54:56.816Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brittany Rice",
   "customerPhone": "260) 443 - 1735",
@@ -24,7 +24,7 @@
       "partNumber": "00232-19010",
       "description": "COOLANT",
       "qty": "1",
-      "price": "23"
+      "price": "23.52"
     },
     {
       "id": "mqsb0c1o469p",
@@ -49,16 +49,16 @@
     }
   ],
   "taxPct": "7",
-  "deductible": "",
+  "deductible": "100",
   "rental": null,
   "towing": null,
   "sublet": null,
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "CALLED 06/24/2026 @ 12:35 PM SENDIND INSPECTOR 24-48 HRS.",
-  "approved": false,
-  "approvedDate": "",
+  "notes": "CALLED 06/24/2026 @ 12:35 PM SENDIND INSPECTOR 24-48 HRS.\nENGINE IS APPROVED READY FOR ASR",
+  "approved": true,
+  "approvedDate": "2026-06-26",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -69,6 +69,6 @@
   "repairsFinishedDate": "",
   "readySubmission": false,
   "readySubmissionDate": "",
-  "inspectorDispatched": true,
-  "inspectorDispatchedDate": "2026-06-24"
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
 }
