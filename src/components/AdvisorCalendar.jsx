@@ -238,7 +238,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   );
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -525,6 +525,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {onMyReports && (
             <button onClick={onMyReports} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.25),rgba(110,231,249,.18))', borderColor: 'rgba(61,214,195,.35)' }}>
               📈 My Reports
+            </button>
+          )}
+          {onGoalsForecasting && (
+            <button onClick={onGoalsForecasting} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+              🎯 Goals/Forecasting
             </button>
           )}
           {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
