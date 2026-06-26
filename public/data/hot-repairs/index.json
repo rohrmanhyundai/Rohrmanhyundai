@@ -7,7 +7,44 @@
     "size": 386275,
     "uploadedBy": "SHAWN",
     "uploadedAt": "2026-06-26T20:09:51.437Z",
-    "searchText": " Circulate To: Service Manager, Warranty Manager, Service Advisors, Technicians, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  FUEL SYSTEM   20 - FL - 010 H  DATE   MODEL(S)  OCTOBER   20 20   Tucson (TL) 2.0L  SUBJECT:   T UCSON   2.0L DTC P042 0   -   ECM   UPDATE   AND CATALYST REPLACE MENT  Description:  This bulletin provides information related to the repair of DTC P0420   “ Catalytic Converter System Bank 1 -   Efficiency Below Threshold”   found stored in the Engine Control Module (ECM).   The repair involves performing an ECM Update and replacement of the exhaust manifold catalyst.  Applicable Vehicle:     20 1 9   Tucson ( TL )   with 2.0 L   GDI engine .  ECU Update Event Information :  System Selection:   Engine (ECM)  Event   #   D escription  5 88 *   TL PE 2.0GDI - P0420 DTC IMPROVEMENT  *or any updated later event that is listed.  Parts Information:  Part Name   Part Number   Diagram  MANIFOLD CATALYTIC ASSY  28510-2EMN0 (2WD)  28510-2EPE0 (4WD)  Warranty Information:  Model   Op Code   Operation   Op Time   Causal  Part  Nature  Code  Causal  Code  Tucson (TL)   39131F08   ECM UPGRADE   &  EXHAUST MANIFOLD  CATALYST REPLACE  1.1   M/H   39131 - 2ET **  3913 3 - 2ET **   I3T   ZZ3  **Refer to applicable parts catalog for full ECM causal part numbers.  N ote :   Normal warranty applies. TUCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 2 of 3  SUBJECT:  SUBJECT :  :  Service Procedure:  1.   Scan for DTC in Engine System and confirm that DTC P0420 is found stored.  2.   Replace the exhaust manifold catalyst per the Shop Manual instructions.  3.   Perform the GDS software event update:     Refer to TSB   15 - GI - 001   for the detailed tablet - based Mobile GDS ECU update procedures.     Refer   to   TSB   15 - GI - 002   for   the   detailed   PC - based   GDS   ECU   update procedures.  4.   Check for Diagnostic Trouble Codes in the   ALL   menus and erase any DTC.  5.   Erase the DTC in the BlueLink system according to TSB 12 - BE - 005 - 2.  6.   Confirm normal vehicle operation.  You must initially perform the GDS ECU Update in Auto Mode.     If the ECU Update starts but then fails in Auto Mode, perform the update in Manual Mode to recover.  NOTICE T UCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 3 of 3  SUBJECT:  SUBJECT:  ROM ID Table:  VEHICLE   ENGINE   TRANS   IMMO   EMISSIONS   ECU P/No.   ROM   ID  OLD   NEW  Tucson  ( TL   PE )   2.0GDI   6AT  YES   ULEV   39131 - 2ETF0  GGTL - INUAQS00C00  GTL - 0NU0AQ000C00  GTL - 0NU0AQ100C00  NO   ULEV   39133 - 2ETF0   GGTL - INUAPS00C00   GTL - 0NU0AP100C00  YES   ULEV   39131 - 2ETF1   GGTL - INUAQS00D00   GTL - 0NU0AQ100F00  NO   ULEV   39133 - 2ETF1   GGTL - INUAPS00D00   GTL - 0NU0AP100F00  YES   SULEV   39131 - 2ETF2   GGTL - INSAQS00C00   GTL - 0NS0AQ100C00  NO   SULEV   39133 - 2ETF2   GGTL - INSAPS00C00   GTL - 0NS0AP100C00  Manual Mode Password:  MENU   PASSWORD  TL PE 2.0GDI   - IMMO   39133 - 2ETF0   3320  TL PE 2.0GDI   - IMMO 39133 - 2ETF1   3321  TL PE 2.0GDI   - IMMO 39133 - 2ETF2   3322  TL PE 2.0GDI +IMMO 39131 - 2ETF0   3326  TL PE 2.0GDI +IMMO 39131 - 2ETF1   3327  TL PE 2.0GDI +IMMO 39131 - 2ETF2   3328  GDS   Vehicle Battery Voltage Warning :  If voltage is below 12 volts as per the below GDS warning, then select   Back   and  operate the vehicle in Ready mode for at least 20 minutes to ensure an adequate battery state of charge for reliable update results. Turn ignition back on, and then retry the ECU update again.  WARNING !"
+    "searchText": " Circulate To: Service Manager, Warranty Manager, Service Advisors, Technicians, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  FUEL SYSTEM   20 - FL - 010 H  DATE   MODEL(S)  OCTOBER   20 20   Tucson (TL) 2.0L  SUBJECT:   T UCSON   2.0L DTC P042 0   -   ECM   UPDATE   AND CATALYST REPLACE MENT  Description:  This bulletin provides information related to the repair of DTC P0420   “ Catalytic Converter System Bank 1 -   Efficiency Below Threshold”   found stored in the Engine Control Module (ECM).   The repair involves performing an ECM Update and replacement of the exhaust manifold catalyst.  Applicable Vehicle:     20 1 9   Tucson ( TL )   with 2.0 L   GDI engine .  ECU Update Event Information :  System Selection:   Engine (ECM)  Event   #   D escription  5 88 *   TL PE 2.0GDI - P0420 DTC IMPROVEMENT  *or any updated later event that is listed.  Parts Information:  Part Name   Part Number   Diagram  MANIFOLD CATALYTIC ASSY  28510-2EMN0 (2WD)  28510-2EPE0 (4WD)  Warranty Information:  Model   Op Code   Operation   Op Time   Causal  Part  Nature  Code  Causal  Code  Tucson (TL)   39131F08   ECM UPGRADE   &  EXHAUST MANIFOLD  CATALYST REPLACE  1.1   M/H   39131 - 2ET **  3913 3 - 2ET **   I3T   ZZ3  **Refer to applicable parts catalog for full ECM causal part numbers.  N ote :   Normal warranty applies. TUCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 2 of 3  SUBJECT:  SUBJECT :  :  Service Procedure:  1.   Scan for DTC in Engine System and confirm that DTC P0420 is found stored.  2.   Replace the exhaust manifold catalyst per the Shop Manual instructions.  3.   Perform the GDS software event update:     Refer to TSB   15 - GI - 001   for the detailed tablet - based Mobile GDS ECU update procedures.     Refer   to   TSB   15 - GI - 002   for   the   detailed   PC - based   GDS   ECU   update procedures.  4.   Check for Diagnostic Trouble Codes in the   ALL   menus and erase any DTC.  5.   Erase the DTC in the BlueLink system according to TSB 12 - BE - 005 - 2.  6.   Confirm normal vehicle operation.  You must initially perform the GDS ECU Update in Auto Mode.     If the ECU Update starts but then fails in Auto Mode, perform the update in Manual Mode to recover.  NOTICE T UCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 3 of 3  SUBJECT:  SUBJECT:  ROM ID Table:  VEHICLE   ENGINE   TRANS   IMMO   EMISSIONS   ECU P/No.   ROM   ID  OLD   NEW  Tucson  ( TL   PE )   2.0GDI   6AT  YES   ULEV   39131 - 2ETF0  GGTL - INUAQS00C00  GTL - 0NU0AQ000C00  GTL - 0NU0AQ100C00  NO   ULEV   39133 - 2ETF0   GGTL - INUAPS00C00   GTL - 0NU0AP100C00  YES   ULEV   39131 - 2ETF1   GGTL - INUAQS00D00   GTL - 0NU0AQ100F00  NO   ULEV   39133 - 2ETF1   GGTL - INUAPS00D00   GTL - 0NU0AP100F00  YES   SULEV   39131 - 2ETF2   GGTL - INSAQS00C00   GTL - 0NS0AQ100C00  NO   SULEV   39133 - 2ETF2   GGTL - INSAPS00C00   GTL - 0NS0AP100C00  Manual Mode Password:  MENU   PASSWORD  TL PE 2.0GDI   - IMMO   39133 - 2ETF0   3320  TL PE 2.0GDI   - IMMO 39133 - 2ETF1   3321  TL PE 2.0GDI   - IMMO 39133 - 2ETF2   3322  TL PE 2.0GDI +IMMO 39131 - 2ETF0   3326  TL PE 2.0GDI +IMMO 39131 - 2ETF1   3327  TL PE 2.0GDI +IMMO 39131 - 2ETF2   3328  GDS   Vehicle Battery Voltage Warning :  If voltage is below 12 volts as per the below GDS warning, then select   Back   and  operate the vehicle in Ready mode for at least 20 minutes to ensure an adequate battery state of charge for reliable update results. Turn ignition back on, and then retry the ECU update again.  WARNING !",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqvd7s07o0iw",
+          "answers": {
+            "model": "Op Time Causal Part Nature Code Causal Code Tucson (TL)"
+          },
+          "model": "Op Time Causal Part Nature Code Causal Code Tucson (TL)",
+          "opCode": "39131F08",
+          "operation": "ECM UPGRADE & EXHAUST MANIFOLD CATALYST REPLACE",
+          "opTime": "1.1 M/H",
+          "causalPart": "39131-2ET",
+          "natureCode": "I3T",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqvd7s0756ur",
+          "answers": {
+            "model": "UPDATE AND CATAL YST REPLACEMENT TSB #: 20-FL-010H Page 2 of 3 SUBJECT: SUBJECT : :"
+          },
+          "model": "UPDATE AND CATAL YST REPLACEMENT TSB #: 20-FL-010H Page 2 of 3 SUBJECT: SUBJECT : :",
+          "opCode": "39131F08",
+          "operation": "ECM UPGRADE & EXHAUST MANIFOLD CATALYST REPLACE",
+          "opTime": "1.1 M/H",
+          "causalPart": "39131-2ET",
+          "natureCode": "I3T",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
   },
   {
     "id": "mqscasysup8r",
