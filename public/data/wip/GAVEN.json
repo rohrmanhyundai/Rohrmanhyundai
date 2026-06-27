@@ -6,8 +6,8 @@
     "jobDesc": "Tow In/ HEV warning, vehicle died",
     "etaParts": "backorder",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/27/2026",
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "ENGINE WARRANTY EXTENSION (TXXM)  ENGINE IS KNOCKING JORDAN I HAVE FORMS THAT NEED TO BE SIGNED P/A APPROVED ENGINE. ENGINE STILL ON BACKORDER AS OF 5/28/26"
