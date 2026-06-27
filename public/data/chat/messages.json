@@ -1,56 +1,5 @@
 [
   {
-    "id": "mpodjz1zban",
-    "username": "KAI",
-    "text": "tire is here for justin cason 777830",
-    "timestamp": 1779905123639
-  },
-  {
-    "id": "mpoekbifmfi",
-    "username": "PARKER",
-    "text": "DONE",
-    "timestamp": 1779906819399,
-    "replyTo": {
-      "id": "mpo87ai4s21",
-      "username": "SHAWN",
-      "text": "who is calling SOR today?"
-    },
-    "reactions": {
-      "❤️": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mpoeknqtx77",
-    "username": "PARKER",
-    "text": "And contacted all VM's",
-    "timestamp": 1779906835253
-  },
-  {
-    "id": "mpof62vypve",
-    "username": "SHAWN",
-    "text": "Thank you Parker!!",
-    "timestamp": 1779907834654,
-    "replyTo": {
-      "id": "mpoekbifmfi",
-      "username": "PARKER",
-      "text": "DONE"
-    }
-  },
-  {
-    "id": "mpoh57hx2o3",
-    "username": "KAI",
-    "text": "Lofthouse has called and left a voicemail. I sent him a text regarding his seatbelts. can someone return his call and get him in please",
-    "timestamp": 1779911153205
-  },
-  {
-    "id": "mpoigq80h5c",
-    "username": "SETH",
-    "text": "TIRES HERE FOR CHARLES BENDER",
-    "timestamp": 1779913370304
-  },
-  {
     "id": "mppfvkjf2re",
     "username": "SHAWN",
     "text": "jordan please make sure we keep track of the Enterprise RO and when they are done please",
@@ -464,5 +413,11 @@
       "username": "SHAWN",
       "text": "DAVID 778684 DID WE HEAR BACK FROM CUSTOMER?"
     }
+  },
+  {
+    "id": "mqw9spc62v1",
+    "username": "SETH",
+    "text": "PARTS RECEIVED FOR; ASHLEY MCCLOUD",
+    "timestamp": 1782559324230
   }
 ]
