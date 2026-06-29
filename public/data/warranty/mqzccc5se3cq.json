@@ -1,7 +1,7 @@
 {
   "id": "mqzccc5se3cq",
   "createdAt": "2026-06-29T14:56:38.032Z",
-  "updatedAt": "2026-06-29T14:58:41.782Z",
+  "updatedAt": "2026-06-29T15:02:07.678Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Alexis Burge",
   "customerPhone": "(765) 376 - 1947",
@@ -21,13 +21,13 @@
   "parts": [
     {
       "id": "mqzccc5ssspe",
-      "partNumber": "",
-      "description": "",
+      "partNumber": "19272NXK",
+      "description": " NEXEN N FERA SUPREME S BW 235/65R18",
       "qty": "1",
-      "price": ""
+      "price": "207.20"
     }
   ],
-  "taxPct": "",
+  "taxPct": "7.0",
   "deductible": "",
   "rental": null,
   "towing": null,
@@ -35,7 +35,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "",
+  "notes": "aagi dose not pay tire tx or disp fees.",
   "approved": false,
   "approvedDate": "",
   "denied": false,
