@@ -11,19 +11,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "INSPECTOR WILL BE COMING TO LOOK AT THE CAR. INSPECTOR WAS HERE AND OUT. WAITING NOW "
-  },
-  {
-    "id": "mqtycini73lw",
-    "ro": "778703",
-    "roDate": "2026-06-25",
-    "vehicle": "2023 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES WHEN TAKING OFF FROM A STOP LIGHT CAR IS SURGING CHECK AND ADVISE",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
   }
 ]
