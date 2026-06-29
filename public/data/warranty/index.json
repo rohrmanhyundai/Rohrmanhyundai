@@ -1,5 +1,91 @@
 [
   {
+    "id": "mpygkuu1peno",
+    "createdAt": "2026-06-03T19:27:45.433Z",
+    "updatedAt": "2026-06-29T15:39:01.143Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "MEREDITH GOODEN",
+    "customerPhone": "(765) 490 - 2454",
+    "repairOrder": "777947",
+    "vin": "5NPD84LF7KH481128",
+    "vehicleYear": "2019",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "78216",
+    "warrantyCompany": "SUPERIOR PROTECTION ",
+    "warrantyPhone": "18664106748",
+    "claimNumber": "25155908",
+    "authNumber": "25155908",
+    "laborRate": "180.00",
+    "laborTime": "12.4",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "mpygkuu1cq7q",
+        "partNumber": "28751-3S100",
+        "description": "GASKET-EXHAUST PIPE",
+        "qty": "1",
+        "price": "23.10"
+      },
+      {
+        "id": "mpygn70yy8pm",
+        "partNumber": "28521-2E000",
+        "description": " GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "10.53"
+      },
+      {
+        "id": "mpygna9cl6io",
+        "partNumber": "520V - 5W20",
+        "description": "VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      },
+      {
+        "id": "mpygnb0j51px",
+        "partNumber": "28313-2EAA0 ",
+        "description": "GASKET-PORT",
+        "qty": "1",
+        "price": "13.81"
+      },
+      {
+        "id": "mpygnbj1keem",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "23.52"
+      },
+      {
+        "id": "mqjjkpd6xi8p",
+        "partNumber": "457250353",
+        "description": "USED ENGINE",
+        "qty": "1",
+        "price": "4100.00"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "100.00",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "SUPERIOR PROTECTION 18664106748. NEEDS TEAR DOWN TO POINT OF FAILURE. 06/04/2026. THEN CALL BACK TO HAVE THEM SEND INSPECTOR.    \n\n SEND INSP 24-48 HOUR 6/11/2026.\n\nEMAIL PAYMENT: ccpayments@iaawg.com claim approved 06/19/2026 @ 9:40am\n\nJERRY WE WILL NEED 2.0 TEARDOWN HRS. \n",
+    "approved": true,
+    "approvedDate": "2026-06-18",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": true,
+    "waitingDate": "2026-06-29",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": ""
+  },
+  {
     "id": "mqjo1ie5jdt7",
     "createdAt": "2026-06-18T15:39:49.469Z",
     "updatedAt": "2026-06-29T15:36:05.224Z",
@@ -340,92 +426,6 @@
     "readySubmissionDate": "",
     "inspectorDispatched": true,
     "inspectorDispatchedDate": "2026-06-25"
-  },
-  {
-    "id": "mpygkuu1peno",
-    "createdAt": "2026-06-03T19:27:45.433Z",
-    "updatedAt": "2026-06-25T16:33:01.447Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "MEREDITH GOODEN",
-    "customerPhone": "(765) 490 - 2454",
-    "repairOrder": "777947",
-    "vin": "5NPD84LF7KH481128",
-    "vehicleYear": "2019",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Elantra",
-    "mileage": "78216",
-    "warrantyCompany": "SUPERIOR PROTECTION ",
-    "warrantyPhone": "18664106748",
-    "claimNumber": "25155908",
-    "authNumber": "25155908",
-    "laborRate": "180.00",
-    "laborTime": "12.4",
-    "diagnosisTime": "1",
-    "parts": [
-      {
-        "id": "mpygkuu1cq7q",
-        "partNumber": "28751-3S100",
-        "description": "GASKET-EXHAUST PIPE",
-        "qty": "1",
-        "price": "23.10"
-      },
-      {
-        "id": "mpygn70yy8pm",
-        "partNumber": "28521-2E000",
-        "description": " GASKET-EXHAUST MANIFOLD",
-        "qty": "1",
-        "price": "10.53"
-      },
-      {
-        "id": "mpygna9cl6io",
-        "partNumber": "520V - 5W20",
-        "description": "VALVOLINE SEMI-SYNTHETIC BLEND OIL",
-        "qty": "5",
-        "price": "4.99"
-      },
-      {
-        "id": "mpygnb0j51px",
-        "partNumber": "28313-2EAA0 ",
-        "description": "GASKET-PORT",
-        "qty": "1",
-        "price": "13.81"
-      },
-      {
-        "id": "mpygnbj1keem",
-        "partNumber": "00232-19010",
-        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
-        "qty": "1",
-        "price": "23.52"
-      },
-      {
-        "id": "mqjjkpd6xi8p",
-        "partNumber": "457250353",
-        "description": "USED ENGINE",
-        "qty": "1",
-        "price": "4100.00"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "100.00",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "SUPERIOR PROTECTION 18664106748. NEEDS TEAR DOWN TO POINT OF FAILURE. 06/04/2026. THEN CALL BACK TO HAVE THEM SEND INSPECTOR.    \n\n SEND INSP 24-48 HOUR 6/11/2026.\n\nEMAIL PAYMENT: ccpayments@iaawg.com claim approved 06/19/2026 @ 9:40am\n\nJERRY WE WILL NEED 2.0 TEARDOWN HRS. \n",
-    "approved": true,
-    "approvedDate": "2026-06-18",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": ""
   },
   {
     "id": "mqgsqk0qwjxa",
