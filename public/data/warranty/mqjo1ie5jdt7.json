@@ -1,7 +1,7 @@
 {
   "id": "mqjo1ie5jdt7",
   "createdAt": "2026-06-18T15:39:49.469Z",
-  "updatedAt": "2026-06-29T14:41:25.830Z",
+  "updatedAt": "2026-06-29T15:36:05.224Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Monte Rice",
   "customerPhone": "(765) 532 - 2394",
@@ -13,7 +13,7 @@
   "mileage": "92324",
   "warrantyCompany": "VERITAS",
   "warrantyPhone": "888-572-4310",
-  "claimNumber": "",
+  "claimNumber": "C000267686",
   "authNumber": "",
   "laborRate": "190",
   "laborTime": "1.1",
