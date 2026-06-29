@@ -512,57 +512,129 @@ export default function GoalForecast({
     const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const stamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
     const sign = (n) => (n >= 0 ? '+' : '−') + money(Math.abs(n));
+    const pctPace = expectedMTD > 0 ? Math.round((actualMTD / expectedMTD) * 100) : 0;
 
     const rowHtml = rows.map(r => {
       const diff = r.cumActual - r.cumTarget;
       const diffCls = !r.hasActual ? 'mut' : diff >= 0 ? 'pos' : 'neg';
       return `<tr${r.isToday ? ' class="today"' : ''}>
         <td class="c">${r.dayNum}</td>
-        <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${r.isToday ? ' <b>(Today)</b>' : ''}</td>
-        <td class="r">${money(dailyTarget)}</td>
+        <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${r.isToday ? ' <span class="badge">Today</span>' : ''}</td>
+        <td class="r mut2">${money(dailyTarget)}</td>
         <td class="r">${r.hasActual ? money(r.dailyGross) : '<span class="mut">—</span>'}</td>
-        <td class="r">${r.hasActual ? money(r.cumActual) : '<span class="mut">—</span>'}</td>
-        <td class="r ${diffCls}">${r.hasActual ? sign(diff) : '<span class="mut">—</span>'}</td>
+        <td class="r">${r.hasActual ? '<b>' + money(r.cumActual) + '</b>' : '<span class="mut">—</span>'}</td>
+        <td class="r ${diffCls}">${r.hasActual ? '<span class="pill">' + sign(diff) + '</span>' : '<span class="mut">—</span>'}</td>
       </tr>`;
     }).join('');
 
+    // ---- Pace comparison chart (light theme, mirrors on-screen ComparisonChart) ----
+    const W = 1040, H = 440, padL = 86, padR = 34, padT = 30, padB = 60;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const n = Math.max(totalDays || rows.length || 1, 1);
+    const lyCumAt = (d) => (lastYear / n) * d;
+    const tgtCumAt = (d) => dailyTarget * d;
+    const enteredRows = rows.filter(r => r.hasActual);
+    const maxActual = enteredRows.length ? Math.max(...enteredRows.map(r => r.cumActual)) : 0;
+    const maxVal = Math.max(forecast, lastYear, maxActual, dailyTarget * n, 1) * 1.08;
+    const cx = (d) => padL + (plotW * (d - 1)) / Math.max(n - 1, 1);
+    const cy = (v) => padT + plotH - (plotH * Math.max(v, 0)) / maxVal;
+    const tgtPts = rows.map(r => `${cx(r.dayNum).toFixed(1)},${cy(tgtCumAt(r.dayNum)).toFixed(1)}`).join(' ');
+    const lyPts = rows.map(r => `${cx(r.dayNum).toFixed(1)},${cy(lyCumAt(r.dayNum)).toFixed(1)}`).join(' ');
+    const tyPts = enteredRows.map(r => `${cx(r.dayNum).toFixed(1)},${cy(r.cumActual).toFixed(1)}`).join(' ');
+    const tyArea = enteredRows.length ? `${cx(enteredRows[0].dayNum).toFixed(1)},${cy(0).toFixed(1)} ${tyPts} ${cx(enteredRows[enteredRows.length - 1].dayNum).toFixed(1)},${cy(0).toFixed(1)}` : '';
+    const ticks = 5;
+    const tickVals = Array.from({ length: ticks + 1 }, (_, i) => (maxVal / ticks) * i);
+    const xLabelRows = rows.filter((r, i) => i % 5 === 0 || i === rows.length - 1);
+    const lastTy = enteredRows.length ? enteredRows[enteredRows.length - 1] : null;
+    const C = { ty: '#059669', tgt: '#0284c7', ly: '#d97706' };
+
+    const chartSvg = `<svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block">
+      <defs><linearGradient id="tyfill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${C.ty}" stop-opacity="0.16"/>
+        <stop offset="100%" stop-color="${C.ty}" stop-opacity="0"/>
+      </linearGradient></defs>
+      ${tickVals.map(tv => `<line x1="${padL}" y1="${cy(tv).toFixed(1)}" x2="${W - padR}" y2="${cy(tv).toFixed(1)}" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="${padL - 12}" y="${(cy(tv) + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="#94a3b8">${moneyAxis(tv)}</text>`).join('')}
+      ${xLabelRows.map(r => `<text x="${cx(r.dayNum).toFixed(1)}" y="${H - padB + 24}" text-anchor="middle" font-size="11" fill="#94a3b8">${r.dt.getMonth() + 1}/${r.dt.getDate()}</text>`).join('')}
+      ${tyArea ? `<polygon points="${tyArea}" fill="url(#tyfill)"/>` : ''}
+      ${lastYear > 0 ? `<polyline points="${lyPts}" fill="none" stroke="${C.ly}" stroke-width="2" stroke-dasharray="6 5"/>` : ''}
+      ${forecast > 0 ? `<polyline points="${tgtPts}" fill="none" stroke="${C.tgt}" stroke-width="2" stroke-dasharray="6 5"/>` : ''}
+      ${enteredRows.length ? `<polyline points="${tyPts}" fill="none" stroke="${C.ty}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
+      ${lastTy ? `<circle cx="${cx(lastTy.dayNum).toFixed(1)}" cy="${cy(lastTy.cumActual).toFixed(1)}" r="5" fill="${C.ty}" stroke="#fff" stroke-width="2"/>
+        <text x="${cx(lastTy.dayNum).toFixed(1)}" y="${(cy(lastTy.cumActual) - 13).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${C.ty}">${money(lastTy.cumActual)}</text>` : ''}
+    </svg>`;
+
     const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} — ${esc(monthLabel)}</title>
     <style>
-      * { box-sizing: border-box; }
-      body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 32px; }
-      h1 { font-size: 22px; margin: 0; }
-      .sub { color: #64748b; font-size: 13px; margin: 2px 0 20px; }
-      .cards { display: flex; gap: 12px; margin-bottom: 22px; }
-      .card { flex: 1; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; }
-      .card .lbl { font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: #64748b; font-weight: 700; }
-      .card .val { font-size: 20px; font-weight: 800; margin-top: 4px; }
-      .card .note { font-size: 11px; color: #64748b; margin-top: 3px; }
-      table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-      th { text-align: left; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #94a3b8; padding: 7px 10px; }
-      td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
-      th.r, td.r { text-align: right; } th.c, td.c { text-align: center; color: #94a3b8; }
-      tr.today td { background: #ecfdf5; font-weight: 700; }
-      .pos { color: #15803d; } .neg { color: #b91c1c; } .mut { color: #cbd5e1; }
-      .ftr { margin-top: 18px; font-size: 11px; color: #94a3b8; }
-      @media print { body { margin: 12px; } @page { margin: 14mm; } }
+      * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; margin: 40px; -webkit-font-smoothing: antialiased; }
+      .head { display: flex; align-items: flex-start; gap: 16px; padding-bottom: 18px; border-bottom: 2px solid #0f172a; margin-bottom: 26px; }
+      .head .accent { width: 5px; align-self: stretch; border-radius: 3px; background: linear-gradient(180deg, #059669, #0284c7); }
+      h1 { font-size: 25px; font-weight: 800; margin: 0; letter-spacing: -.01em; }
+      .sub { color: #64748b; font-size: 12.5px; margin-top: 5px; }
+      .sub b { color: #334155; font-weight: 700; }
+      .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+      .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; background: #fff; }
+      .card.hero { border-color: transparent; background: #f0fdf4; box-shadow: inset 0 0 0 1px #bbf7d0; }
+      .card.hero.down { background: #fef2f2; box-shadow: inset 0 0 0 1px #fecaca; }
+      .card .lbl { font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: #94a3b8; font-weight: 700; }
+      .card .val { font-size: 21px; font-weight: 800; margin-top: 5px; letter-spacing: -.01em; }
+      .card .note { font-size: 10.5px; color: #94a3b8; margin-top: 4px; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      th { text-align: left; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: #94a3b8; border-bottom: 1.5px solid #cbd5e1; padding: 9px 12px; font-weight: 700; }
+      td { padding: 7px 12px; border-bottom: 1px solid #f1f5f9; }
+      tbody tr:nth-child(even) td { background: #fafbfc; }
+      th.r, td.r { text-align: right; } th.c, td.c { text-align: center; }
+      td.c { color: #cbd5e1; font-variant-numeric: tabular-nums; }
+      td.r { font-variant-numeric: tabular-nums; }
+      tr.today td { background: #ecfdf5 !important; font-weight: 700; box-shadow: inset 3px 0 0 #059669; }
+      .badge { display: inline-block; background: #059669; color: #fff; font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+      .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px; }
+      .pos { color: #047857; } .pos .pill, td.r.pos .pill { background: #ecfdf5; }
+      .neg { color: #dc2626; } .neg .pill, td.r.neg .pill { background: #fef2f2; }
+      .mut { color: #cbd5e1; } .mut2 { color: #94a3b8; }
+      .sec { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #334155; margin: 0 0 4px; }
+      .legend { display: flex; gap: 22px; margin: 10px 0 6px; font-size: 12px; color: #475569; font-weight: 600; }
+      .legend span { display: inline-flex; align-items: center; gap: 8px; }
+      .legend i { width: 22px; height: 0; display: inline-block; }
+      .chart-wrap { border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 24px; margin-top: 12px; }
+      .chart-page { page-break-before: always; }
+      .ftr { margin-top: 20px; font-size: 10.5px; color: #94a3b8; line-height: 1.5; }
+      @media print { body { margin: 0; } @page { margin: 14mm; } }
     </style></head><body>
-      <h1>${esc(title)} — ${esc(monthLabel)}</h1>
-      <div class="sub">Bob Rohrman Hyundai &middot; ${esc(deptLabel)} &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
+      <div class="head">
+        <div class="accent"></div>
+        <div>
+          <h1>${esc(title)} — ${esc(monthLabel)}</h1>
+          <div class="sub">Bob Rohrman Hyundai &middot; <b>${esc(deptLabel)}</b> &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
+        </div>
+      </div>
       <div class="cards">
         <div class="card"><div class="lbl">Forecast</div><div class="val">${money(forecast)}</div><div class="note">${totalDays} working days</div></div>
         ${lastYear > 0 ? `<div class="card"><div class="lbl">Last Year</div><div class="val">${money(lastYear)}</div><div class="note">${hasActuals ? 'proj ' + (projected >= lastYear ? '+' : '−') + money(Math.abs(projected - lastYear)) + ' vs LY' : ''}</div></div>` : ''}
-        <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div></div>
+        <div class="card"><div class="lbl">Daily Target</div><div class="val">${money(dailyTarget)}</div><div class="note">to hit forecast</div></div>
         <div class="card"><div class="lbl">Actual MTD</div><div class="val">${money(actualMTD)}</div><div class="note">${completedDays} days completed</div></div>
         <div class="card"><div class="lbl">Expected MTD</div><div class="val">${money(expectedMTD)}</div><div class="note">where you should be (${completedDays} &times; target)</div></div>
         <div class="card"><div class="lbl">Daily Average</div><div class="val ${!hasActuals ? '' : runRate >= dailyTarget ? 'pos' : 'neg'}">${hasActuals ? money(runRate) : '—'}</div><div class="note">target ${money(dailyTarget)}/day</div></div>
-        <div class="card"><div class="lbl">${up ? 'Ahead of Pace' : 'Behind Pace'}</div><div class="val ${up ? 'pos' : 'neg'}">${sign(variance)}</div></div>
-        <div class="card"><div class="lbl">Projected Month-End</div><div class="val ${!hasActuals ? '' : projected >= forecast ? 'pos' : 'neg'}">${hasActuals ? money(projected) : '—'}</div><div class="note">${hasActuals && forecast > 0 ? sign(projected - forecast) + ' vs forecast' : ''}</div></div>
+        <div class="card hero ${up ? '' : 'down'}"><div class="lbl">${up ? 'Ahead of Pace' : 'Behind Pace'}</div><div class="val ${up ? 'pos' : 'neg'}">${sign(variance)}</div><div class="note">${hasActuals ? pctPace + '% of expected' : ''}</div></div>
+        <div class="card hero ${!hasActuals || projected >= forecast ? '' : 'down'}"><div class="lbl">Projected Month-End</div><div class="val ${!hasActuals ? '' : projected >= forecast ? 'pos' : 'neg'}">${hasActuals ? money(projected) : '—'}</div><div class="note">${hasActuals && forecast > 0 ? sign(projected - forecast) + ' vs forecast' : ''}</div></div>
       </div>
       <table>
         <thead><tr><th class="c">Day</th><th>Date</th><th class="r">Daily Target</th><th class="r">Daily Total ($)</th><th class="r">Month Total (MTD)</th><th class="r">+/-</th></tr></thead>
         <tbody>${rowHtml}</tbody>
       </table>
       <div class="ftr">Daily Total is the labor dollars you entered for each day. Month Total (MTD) is the running sum of those daily totals. +/- compares the month total against the cumulative daily target through that day.</div>
+
+      <div class="chart-page">
+        <div class="sec">Pace Comparison</div>
+        <div class="sub">Cumulative labor dollars through ${esc(monthLabel)} — actual vs. target vs. last year.</div>
+        <div class="legend">
+          <span><i style="border-top:3px solid ${C.ty}"></i>This Year</span>
+          <span><i style="border-top:3px dashed ${C.tgt}"></i>Where You Should Be</span>
+          ${lastYear > 0 ? `<span><i style="border-top:3px dashed ${C.ly}"></i>Last Year</span>` : ''}
+        </div>
+        <div class="chart-wrap">${chartSvg}</div>
+      </div>
       <script>window.onload = function(){ window.print(); }<\/script>
     </body></html>`;
 
