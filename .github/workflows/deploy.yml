@@ -3,6 +3,14 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    # Data is written to the repo constantly by the app and read live via the
+    # GitHub API at runtime — it does not need a Pages rebuild. Skipping deploys
+    # on data-only commits stops the queued-deploy thrash so code changes deploy
+    # reliably. (A commit that also touches code still deploys.)
+    paths-ignore:
+      - 'public/data/**'
+      - 'dist/data/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
