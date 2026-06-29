@@ -26,5 +26,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mqzqnesplpb5",
+    "ro": "778795",
+    "roDate": "2026-06-29",
+    "vehicle": "2024 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES HORN NOT WORKING. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
