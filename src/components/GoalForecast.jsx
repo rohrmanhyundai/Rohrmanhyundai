@@ -508,18 +508,28 @@ export default function GoalForecast({
 
   const pctOfForecast = forecast > 0 ? (actualMTD / forecast) * 100 : 0;
 
-  function printSheet() {
+  // Renders the print/PDF sheet for any department's forecast. P carries every
+  // figure so this works for the logged-in user's own numbers AND the read-only
+  // cross-department view (service ↔ parts).
+  function renderForecastPrint(P) {
+    const { monthLabel: ml, deptLabel: dl, userLabel,
+      forecast, lastYear, dailyTarget, actualMTD, expectedMTD,
+      completedDays, totalDays, runRate, projected, rows } = P;
+    const variance = actualMTD - expectedMTD;
+    const up = variance >= 0;
+    const hasActuals = actualMTD > 0;
     const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const stamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
     const sign = (n) => (n >= 0 ? '+' : '−') + money(Math.abs(n));
     const pctPace = expectedMTD > 0 ? Math.round((actualMTD / expectedMTD) * 100) : 0;
 
     const rowHtml = rows.map(r => {
+      const isToday = r.isToday != null ? r.isToday : (r.k === todayKey);
       const diff = r.cumActual - r.cumTarget;
       const diffCls = !r.hasActual ? 'mut' : diff >= 0 ? 'pos' : 'neg';
-      return `<tr${r.isToday ? ' class="today"' : ''}>
+      return `<tr${isToday ? ' class="today"' : ''}>
         <td class="c">${r.dayNum}</td>
-        <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${r.isToday ? ' <span class="badge">Today</span>' : ''}</td>
+        <td>${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}${isToday ? ' <span class="badge">Today</span>' : ''}</td>
         <td class="r mut2">${money(dailyTarget)}</td>
         <td class="r">${r.hasActual ? money(r.dailyGross) : '<span class="mut">—</span>'}</td>
         <td class="r">${r.hasActual ? '<b>' + money(r.cumActual) + '</b>' : '<span class="mut">—</span>'}</td>
@@ -564,7 +574,7 @@ export default function GoalForecast({
         <text x="${cx(lastTy.dayNum).toFixed(1)}" y="${(cy(lastTy.cumActual) - 13).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${C.ty}">${money(lastTy.cumActual)}</text>` : ''}
     </svg>`;
 
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} — ${esc(monthLabel)}</title>
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} — ${esc(ml)}</title>
     <style>
       * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; margin: 40px; -webkit-font-smoothing: antialiased; }
@@ -605,8 +615,8 @@ export default function GoalForecast({
       <div class="head">
         <div class="accent"></div>
         <div>
-          <h1>${esc(title)} — ${esc(monthLabel)}</h1>
-          <div class="sub">Bob Rohrman Hyundai &middot; <b>${esc(deptLabel)}</b> &middot; ${esc(currentUserDisplay || currentUser || '')} &middot; Generated ${esc(stamp)}</div>
+          <h1>${esc(title)} — ${esc(ml)}</h1>
+          <div class="sub">Bob Rohrman Hyundai &middot; <b>${esc(dl)}</b> &middot; ${esc(userLabel)} &middot; Generated ${esc(stamp)}</div>
         </div>
       </div>
       <div class="cards">
@@ -627,7 +637,7 @@ export default function GoalForecast({
 
       <div class="chart-page">
         <div class="sec">Pace Comparison</div>
-        <div class="sub">Cumulative labor dollars through ${esc(monthLabel)} — actual vs. target vs. last year.</div>
+        <div class="sub">Cumulative ${dl === 'Parts Department' ? 'parts' : 'labor'} dollars through ${esc(ml)} — actual vs. target vs. last year.</div>
         <div class="legend">
           <span><i style="border-top:3px solid ${C.ty}"></i>This Year</span>
           <span><i style="border-top:3px dashed ${C.tgt}"></i>Where You Should Be</span>
@@ -642,6 +652,32 @@ export default function GoalForecast({
     if (!w) { alert('Please allow pop-ups to print the forecast.'); return; }
     w.document.write(html);
     w.document.close();
+  }
+
+  // Print the logged-in user's own department forecast (current month).
+  function printSheet() {
+    renderForecastPrint({
+      monthLabel, deptLabel, userLabel: currentUserDisplay || currentUser || '',
+      forecast, lastYear, dailyTarget, actualMTD, expectedMTD,
+      completedDays, totalDays, runRate, projected, rows,
+    });
+  }
+
+  // Print the read-only cross-department forecast (current month) using the same
+  // live pacing math as the owner view — same calendar month ⇒ same completedDays.
+  function printCross() {
+    const M = crossMonths && crossMonths[mk] ? computeMonthMetrics(mk, crossMonths[mk]) : null;
+    if (!M) { alert(`No ${otherDeptLabel.toLowerCase()} numbers entered for ${monthLabel} yet.`); return; }
+    const xRunRate = completedDays > 0 ? M.actualTotal / completedDays : 0;
+    renderForecastPrint({
+      monthLabel,
+      deptLabel: otherDept === 'parts' ? 'Parts Department' : 'Service Department',
+      userLabel: currentUserDisplay || currentUser || '',
+      forecast: M.forecast, lastYear: M.lastYear, dailyTarget: M.dailyTarget,
+      actualMTD: M.actualTotal, expectedMTD: M.dailyTarget * completedDays,
+      completedDays, totalDays: M.totalDays, runRate: xRunRate,
+      projected: xRunRate * M.totalDays, rows: M.rows,
+    });
   }
 
   const cardStyle = {
@@ -712,6 +748,7 @@ export default function GoalForecast({
             <div style={{ fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>👁 Viewing {otherDeptLabel} Goal Forecast</div>
             <input ref={crossPdfInputRef} type="file" accept="application/pdf,.pdf" style={{ display: 'none' }} onChange={e => handlePdf(e.target.files && e.target.files[0], otherDept)} />
             <button className="secondary" onClick={() => crossPdfInputRef.current && crossPdfInputRef.current.click()} disabled={parsing}>{parsing ? '⏳ Reading…' : `📤 Upload ${otherDeptLabel} Report PDF`}</button>
+            {crossView === 'current' && <button className="secondary" onClick={printCross}>🖨 Print / PDF</button>}
             <div style={{ flex: 1 }} />
             {[{ k: 'current', label: monthLabel }, { k: 'history', label: '🗂 History' }].map(t => (
               <button key={t.k} onClick={() => { setCrossView(t.k); setCrossSel(null); }}
