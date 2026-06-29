@@ -25,5 +25,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Vehicle has no compression and coolant in the cylinders.Has signs of overheating. Recommended engine replacement. "
+  },
+  {
+    "id": "mqzqng4x1bq0",
+    "ro": "778778",
+    "roDate": "2026-06-29",
+    "vehicle": "2024 Hyundai Santa Fe",
+    "jobDesc": "￼ CUSTOMER STATES CAMERA IS NOT WORKING IN CAR.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
