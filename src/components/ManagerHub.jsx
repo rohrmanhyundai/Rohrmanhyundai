@@ -110,6 +110,15 @@ const NAV_BUTTONS = [
     prop: 'onGoalForecast',
   },
   {
+    key: 'advisorForecast',
+    label: '🎯 Advisor Forecast',
+    desc: 'Set advisor hours & HRS/RO goals and track daily pace vs. goal',
+    bg: 'linear-gradient(135deg,rgba(167,139,250,.30),rgba(236,72,153,.18))',
+    border: 'rgba(167,139,250,.5)',
+    color: '#d8b4fe',
+    prop: 'onAdvisorForecast',
+  },
+  {
     key: 'userDataTracker',
     label: '📡 User Data Tracker',
     desc: 'Last 30 days of page views and key actions per user',
@@ -125,13 +134,13 @@ export default function ManagerHub({
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
-  onRepairOrderDatabase, onUserDataTracker, onGoalForecast,
+  onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
-    onRepairOrderDatabase, onUserDataTracker, onGoalForecast,
+    onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
   };
 
   return (

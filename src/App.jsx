@@ -608,6 +608,7 @@ export default function App() {
         onRepairOrderDatabase={() => goTo('repair-order-database', 'manager-hub')}
         onUserDataTracker={() => goTo('user-data-tracker', 'manager-hub')}
         onGoalForecast={() => goTo('goal-forecast', 'manager-hub')}
+        onAdvisorForecast={() => goTo('advisor-goals', 'manager-hub')}
       />
     );
   }
@@ -639,7 +640,7 @@ export default function App() {
         currentRole={currentRole}
         advisors={goalsRoster}
         onBack={() => navTo(prevPage || 'advisor-calendar')}
-        backLabel="← Appointment Prep Calendar"
+        backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
       />
     );
   }
