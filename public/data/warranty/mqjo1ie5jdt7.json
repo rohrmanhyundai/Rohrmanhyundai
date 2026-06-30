@@ -1,9 +1,9 @@
 {
   "id": "mqjo1ie5jdt7",
   "createdAt": "2026-06-18T15:39:49.469Z",
-  "updatedAt": "2026-06-29T15:36:05.224Z",
+  "updatedAt": "2026-06-30T16:17:58.130Z",
   "dealershipName": "Bob Rohrman Hyundai",
-  "customerName": "Monte Rice",
+  "customerName": "Monte / SAUNDRA Rice",
   "customerPhone": "(765) 532 - 2394",
   "repairOrder": "77877",
   "vin": "5XYZUDLBXHG420323",
@@ -16,19 +16,19 @@
   "claimNumber": "C000267686",
   "authNumber": "",
   "laborRate": "190",
-  "laborTime": "1.1",
-  "diagnosisTime": "1.0",
+  "laborTime": ".50",
+  "diagnosisTime": ".30",
   "parts": [
     {
       "id": "mqjo1ie5q3pw",
       "partNumber": "95760-2W641",
       "description": "CAMERA ASSY-BACK VIEW",
       "qty": "1",
-      "price": "329.89"
+      "price": "264.46"
     }
   ],
   "taxPct": "7",
-  "deductible": "",
+  "deductible": "100.00",
   "rental": null,
   "towing": null,
   "sublet": null,
@@ -36,8 +36,8 @@
   "tireTax": null,
   "tireDisposal": null,
   "notes": "CAR HAS COVERAGE FOR THE REAR CAMERA. CUSTOMER NEEDS TO BRING BACK FOR NEW RO. PART IS ON BACK ORDER. car returned 06/29/2026. \ncontract number VGO900040500.\nEMAIL: INVOICES@VERITASGLOBAL.COM FOR PAYMENT.",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-06-30",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -47,5 +47,7 @@
   "repairsFinished": false,
   "repairsFinishedDate": "",
   "readySubmission": false,
-  "readySubmissionDate": ""
+  "readySubmissionDate": "",
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
 }
