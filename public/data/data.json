@@ -417,8 +417,6 @@
         "_lastImport": 1782818225514,
         "total_sales": 131313.3,
         "coupon_usage_pct": 0.0358
-<<<<<<< Updated upstream
-=======
       },
       {
         "name": "CAIDEN",
@@ -435,7 +433,6 @@
         "last_month_total": 0,
         "ro_count": 0,
         "hidden": false
->>>>>>> Stashed changes
       }
     ],
     "advisorTraining": [
