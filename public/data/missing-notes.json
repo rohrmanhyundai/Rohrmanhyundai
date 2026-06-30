@@ -1,5 +1,68 @@
 {
-  "updatedAt": null,
-  "by": "",
-  "advisors": {}
+  "updatedAt": "2026-06-30T19:55:49.227Z",
+  "by": "SHAWN",
+  "advisors": {
+    "DAVID": [
+      {
+        "ro": "778833",
+        "vehicle": "2025 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "778831",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "778826",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "778823",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "778812",
+        "vehicle": "2019 Hyundai Tucson"
+      },
+      {
+        "ro": "778803",
+        "vehicle": "2025 Hyundai Elantra"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "778832",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "778827",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "778795",
+        "vehicle": "2024 Hyundai Tucson"
+      }
+    ],
+    "CORY": [
+      {
+        "ro": "778822",
+        "vehicle": "2013 Hyundai Tucson"
+      },
+      {
+        "ro": "778821",
+        "vehicle": "2023 Hyundai Elantra"
+      },
+      {
+        "ro": "778815",
+        "vehicle": "2012 Ford Fiesta"
+      },
+      {
+        "ro": "778807",
+        "vehicle": "2018 Jeep Compass"
+      },
+      {
+        "ro": "778552",
+        "vehicle": "2018 Ford Explorer"
+      }
+    ]
+  }
 }
