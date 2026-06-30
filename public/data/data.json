@@ -110,10 +110,10 @@
         "wed": 0,
         "thu": 0,
         "fri": 0,
-        "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "sat": 6.6,
+        "total": 6.6,
+        "goal_pct": 0.13894736842105262,
+        "pacing": 39.599999999999994,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "NA",
@@ -147,7 +147,8 @@
           "2026-07-03": true,
           "2026-06-30": true,
           "2026-07-02": true,
-          "2026-07-01": true
+          "2026-07-01": true,
+          "2026-07-04": true
         }
       },
       {
@@ -253,10 +254,10 @@
         "wed": 0,
         "thu": 0,
         "fri": 0,
-        "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "sat": 1.8,
+        "total": 1.8,
+        "goal_pct": 0.037894736842105266,
+        "pacing": 10.8,
         "certified": "NO",
         "trainings_due": "0",
         "excel_training": "NA",
@@ -290,7 +291,8 @@
           "2026-06-29": true,
           "2026-06-30": true,
           "2026-07-02": true,
-          "2026-07-01": true
+          "2026-07-01": true,
+          "2026-07-04": true
         }
       },
       {
@@ -503,10 +505,10 @@
       "wed": 0,
       "thu": 0,
       "fri": 0,
-      "sat": 0,
-      "week_total": 0,
-      "week_pct": 0,
-      "shop_pacing": 0
+      "sat": 8.4,
+      "week_total": 8.4,
+      "week_pct": 0.02346368715083799,
+      "shop_pacing": 50.39999999999999
     },
     "grossGoal": 153399,
     "grossActual": 139869,
