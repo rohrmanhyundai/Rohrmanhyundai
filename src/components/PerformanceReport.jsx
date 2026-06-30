@@ -883,8 +883,20 @@ function TechReport({ entries, username }) {
   // ── Efficiency gauge calculations ──────────────────────────
   const allSorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
+  // Derive goal % live from total ÷ goal so it always matches the TOTAL HRS
+  // shown. The stored goal_pct can go stale when a week's daily hours change
+  // after the snapshot was taken (e.g. auto-filled days), which previously
+  // dragged the gauge averages off. Fall back to the stored value only if
+  // total/goal isn't usable.
+  const goalPctOf = (e) => {
+    const g = parseFloat(e?.goal);
+    const t = parseFloat(e?.total);
+    if (g > 0 && Number.isFinite(t)) return t / g;
+    return parseFloat(e?.goal_pct) || 0;
+  };
+
   const avgPct = arr => arr.length
-    ? arr.reduce((s, e) => s + (parseFloat(e.goal_pct) || 0), 0) / arr.length
+    ? arr.reduce((s, e) => s + goalPctOf(e), 0) / arr.length
     : NaN;
   const threeWeekEntries  = allSorted.slice(0, 3);
   const sixWeekEntries    = allSorted.slice(0, 6);
@@ -943,7 +955,7 @@ function TechReport({ entries, username }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <StatBox compact label="Total Hrs"  value={num(latest.total, 1)}    color="#4ade80" />
             <StatBox compact label="Goal"       value={num(latest.goal, 1)}     color="#6ee7f9" />
-            <StatBox compact label="Goal %"     value={pct(latest.goal_pct)}    color={parseFloat(latest.goal_pct) >= 1 ? '#4ade80' : parseFloat(latest.goal_pct) >= .8 ? '#fbbf24' : '#f87171'} />
+            <StatBox compact label="Goal %"     value={pct(goalPctOf(latest))}  color={goalPctOf(latest) >= 1 ? '#4ade80' : goalPctOf(latest) >= .8 ? '#fbbf24' : '#f87171'} />
             <StatBox compact label="Pacing"     value={num(latest.pacing, 1)}   color="#c4b5fd" />
             <StatBox compact label="Mon"        value={num(latest.mon, 1)}      color="#94a3b8" />
             <StatBox compact label="Tue"        value={num(latest.tue, 1)}      color="#94a3b8" />
@@ -1032,7 +1044,7 @@ function TechReport({ entries, username }) {
             <tbody>
               {filtered.map((e, i) => {
                 const prev = filtered[i + 1];
-                const gp   = parseFloat(e.goal_pct);
+                const gp   = goalPctOf(e);
 
                 // Dates for each day column, derived from this row's weekStart
                 const dayD = (offset) => {
@@ -1086,7 +1098,7 @@ function TechReport({ entries, username }) {
                     </td>
                     <td style={{ color: '#6ee7f9' }}>{num(e.goal, 1)}</td>
                     <td style={{ fontWeight: 700, color: gp >= 1 ? '#4ade80' : gp >= .8 ? '#fbbf24' : '#f87171' }}>
-                      {pct(e.goal_pct)}<TrendIcon curr={e.goal_pct} prev={prev?.goal_pct} />
+                      {pct(gp)}<TrendIcon curr={gp} prev={prev ? goalPctOf(prev) : undefined} />
                     </td>
                     <td style={{ color: '#c4b5fd' }}>{num(e.pacing, 1)}</td>
                     <DayCell val={e.sat} />

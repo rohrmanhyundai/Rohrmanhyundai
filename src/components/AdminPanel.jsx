@@ -889,12 +889,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         }
         const bonusTotal = bonus.mon + bonus.tue + bonus.wed + bonus.thu + bonus.fri + bonus.sat;
 
+        // total includes bonus (vacation/training/holiday) hours, so goal_pct
+        // must be recomputed off that same total — otherwise it stays stuck on
+        // the pre-bonus ratio and the gauges/averages read wrong.
+        const totalWithBonus = (parseFloat(t.total) || 0) + bonusTotal;
+        const goalNum = parseFloat(t.goal) || 0;
         const entry = {
           date: techWeek.weekStart, label: techWeek.label,
           weekStart: techWeek.weekStart, weekEnd: techWeek.weekEnd,
           type: 'tech', savedAt: new Date().toISOString(),
-          total:   (parseFloat(t.total) || 0) + bonusTotal,
-          goal:    t.goal, goal_pct: t.goal_pct, pacing: t.pacing,
+          total:   totalWithBonus,
+          goal:    t.goal,
+          goal_pct: goalNum > 0 ? totalWithBonus / goalNum : (parseFloat(t.goal_pct) || 0),
+          pacing:  t.pacing,
           mon:     (parseFloat(t.mon) || 0) + bonus.mon,
           tue:     (parseFloat(t.tue) || 0) + bonus.tue,
           wed:     (parseFloat(t.wed) || 0) + bonus.wed,
