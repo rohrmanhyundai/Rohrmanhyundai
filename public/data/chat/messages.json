@@ -1,112 +1,5 @@
 [
   {
-    "id": "mppfvkjf2re",
-    "username": "SHAWN",
-    "text": "jordan please make sure we keep track of the Enterprise RO and when they are done please",
-    "timestamp": 1779969490107
-  },
-  {
-    "id": "mpphqk2ll66",
-    "username": "KAI",
-    "text": "PARTS HERE FOR CLOSED REPAIR ORDERS CHARLES BENDER, C11668 PEGGY PRONTO, 11667 & 11665",
-    "timestamp": 1779972615453
-  },
-  {
-    "id": "mpphr5y0o57",
-    "username": "KAI",
-    "text": "I have sent text to customer SORS but please try to call so we can get rid of some of these. We currently have 34..starting to stack up",
-    "timestamp": 1779972643800
-  },
-  {
-    "id": "mpphtqs964j",
-    "username": "KAI",
-    "text": "also got shock tsb parts in for Ziegler Subaru and Joe Zachman",
-    "timestamp": 1779972764121
-  },
-  {
-    "id": "mppinl4le1g",
-    "username": "PARKER",
-    "text": "I called them all yesterday. \\",
-    "timestamp": 1779974156469
-  },
-  {
-    "id": "mppinz8ygmm",
-    "username": "PARKER",
-    "text": "and put notes in",
-    "timestamp": 1779974174770
-  },
-  {
-    "id": "mppj2es3xzt",
-    "username": "SHAWN",
-    "text": "777667 amick is declining radiator replacement. will somone book out his repair order he will be dropping off his loaner today. ty",
-    "timestamp": 1779974848083
-  },
-  {
-    "id": "mppkztjakwu",
-    "username": "DEVIN",
-    "text": "Brendan James tire is in",
-    "timestamp": 1779978086470
-  },
-  {
-    "id": "mppl15o1jkh",
-    "username": "DEVIN",
-    "text": "777880 tire is in",
-    "timestamp": 1779978148849
-  },
-  {
-    "id": "mppr8r9069w",
-    "username": "SHAWN",
-    "text": "ANY INFORMATION ON 777860 JORDAN TIMING JOB",
-    "timestamp": 1779988581108
-  },
-  {
-    "id": "mpqv20ii0hy",
-    "username": "SHAWN",
-    "text": "Jordan we need to call 777860 and see if he wants to fix",
-    "timestamp": 1780055451162
-  },
-  {
-    "id": "mpqv5r2did8",
-    "username": "SHAWN",
-    "text": "Parker please call 7777500 for PO they have a charge account. the car is done",
-    "timestamp": 1780055625541
-  },
-  {
-    "id": "mpqv9vxe8tq",
-    "username": "SHAWN",
-    "text": "Jordan 777676 when are they picking car up?",
-    "timestamp": 1780055818466
-  },
-  {
-    "id": "mpr0nqp2i3g",
-    "username": "SHAWN",
-    "text": "PARKER, HAVE WE CONTACTED CUSTOMER ABOUT ASR? 777885? CAR IS DONE WAITING ON ASR",
-    "timestamp": 1780064862950
-  },
-  {
-    "id": "mpr0siodxeb",
-    "username": "SHAWN",
-    "text": "KAI, 777209 IS THAT PART ON XVOR?",
-    "timestamp": 1780065085837
-  },
-  {
-    "id": "mpri4077r2j",
-    "username": "KAI",
-    "text": "yes",
-    "timestamp": 1780094175235,
-    "replyTo": {
-      "id": "mpr0siodxeb",
-      "username": "SHAWN",
-      "text": "KAI, 777209 IS THAT PART ON XVOR?"
-    }
-  },
-  {
-    "id": "mps9e5k9qtr",
-    "username": "SETH",
-    "text": "PARTS HERE FOR JOHN TOWNS",
-    "timestamp": 1780139998377
-  },
-  {
     "id": "mpvn6gp4jn7",
     "username": "DEVIN",
     "text": "tire for kelogg is here",
@@ -419,5 +312,11 @@
     "username": "SETH",
     "text": "PARTS RECEIVED FOR; ASHLEY MCCLOUD",
     "timestamp": 1782559324230
+  },
+  {
+    "id": "mr0pzmkrox0",
+    "username": "SETH",
+    "text": "TIRES HERE FOR BURTNER",
+    "timestamp": 1782828385803
   }
 ]
