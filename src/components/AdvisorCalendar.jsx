@@ -529,7 +529,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           )}
           {onGoalsForecasting && (
             <button onClick={onGoalsForecasting} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-              🎯 Goals/Forecasting
+              🎯 End of Day Reporting
             </button>
           )}
           {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
