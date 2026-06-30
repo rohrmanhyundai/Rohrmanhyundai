@@ -370,7 +370,9 @@ export default function App() {
     return currentPages[key] !== false;
   }
 
-  const advisorList = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
+  // Lead advisors are advisors too — include them so they appear in advisor
+  // pickers (WIP RO assignment, schedules, calendar, etc.).
+  const advisorList = users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
   const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
   // Which Goal Forecast a user owns is decided by WHO they are, not which page
