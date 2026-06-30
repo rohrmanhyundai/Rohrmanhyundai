@@ -1,5 +1,27 @@
 [
   {
+    "date": "2026-06-30",
+    "label": "June 30, 2026",
+    "month": "2026-06",
+    "type": "advisor",
+    "savedAt": "2026-06-30T13:05:47.471Z",
+    "csi": 910,
+    "hours_per_ro": 1.16,
+    "roh50_hrs_ro": 0.65,
+    "mtd_hours": 413,
+    "daily_avg": 12.58636364,
+    "align": 0.1311,
+    "tires": 0.0492,
+    "valvoline": 0.2295,
+    "asr": 0.1769,
+    "elr": 0.9202,
+    "last_month_total": 311.8,
+    "ro_count": 356,
+    "coupon_labor": 4698.3,
+    "total_sales": 131313.3,
+    "coupon_usage_pct": 0.0357793155758023
+  },
+  {
     "date": "2026-06-29",
     "label": "June 29, 2026",
     "month": "2026-06",
