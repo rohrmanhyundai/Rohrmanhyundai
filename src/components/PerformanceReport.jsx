@@ -898,9 +898,20 @@ function TechReport({ entries, username }) {
   const avgPct = arr => arr.length
     ? arr.reduce((s, e) => s + goalPctOf(e), 0) / arr.length
     : NaN;
-  const threeWeekEntries  = allSorted.slice(0, 3);
-  const sixWeekEntries    = allSorted.slice(0, 6);
-  const threeMonthEntries = allSorted.slice(0, 13);
+
+  // Only average COMPLETED weeks. The current in-progress week is usually just a
+  // day or two in (e.g. only Monday entered), so counting its partial ratio
+  // against full weeks unfairly tanks the gauges. A week counts once it has
+  // fully ended (weekEnd before today). Fall back to all entries if nothing has
+  // completed yet (e.g. a brand-new tech) so the gauges aren't blank.
+  const _now = new Date();
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, '0')}-${String(_now.getDate()).padStart(2, '0')}`;
+  const isCompletedWeek = (e) => { const end = e?.weekEnd || e?.date; return end ? end < todayStr : true; };
+  const completedSorted = allSorted.filter(isCompletedWeek);
+  const gaugeSource = completedSorted.length ? completedSorted : allSorted;
+  const threeWeekEntries  = gaugeSource.slice(0, 3);
+  const sixWeekEntries    = gaugeSource.slice(0, 6);
+  const threeMonthEntries = gaugeSource.slice(0, 13);
   const threeWeekPct  = avgPct(threeWeekEntries);
   const sixWeekPct    = avgPct(sixWeekEntries);
   const threeMonthPct = avgPct(threeMonthEntries);
