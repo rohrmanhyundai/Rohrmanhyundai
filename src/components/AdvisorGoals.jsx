@@ -52,30 +52,48 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride) {
   return { label, dates, totalDays, hoursGoal, hrsRoGoal, days, rows, enteredDays, completedDays, actualHours, dailyHoursTarget, expectedHours, projectedHours, avgHrsRo };
 }
 
-// ── Goal-vs-Actual line chart (dotted goal, solid actual) ────────────────────
-function GoalChart({ title, unit, goalPts, actualPts, maxVal, xLabels, x, y, lastLabel }) {
+// ── Goal-vs-Actual line chart (dotted goal, solid actual, gradient fill) ──────
+function GoalChart({ title, unit, goalPts, actualPts, areaPts, maxVal, xLabels, x, y, lastLabel, accent = '#34d399', accent2 = '#6ee7f9' }) {
+  const gid = (unit || 'c').replace(/\W/g, '');
   return (
-    <div style={{ marginTop: 18, background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 22px' }}>
+    <div style={{ marginTop: 18, background: `linear-gradient(160deg, ${accent}1f, rgba(15,23,42,.6) 55%)`, border: `1px solid ${accent}40`, borderRadius: 18, padding: '18px 22px', boxShadow: `0 12px 34px -16px ${accent}80` }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>{title}</div>
+        <div style={{ width: 4, height: 18, borderRadius: 3, background: `linear-gradient(${accent},${accent2})` }} />
+        <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>{title}</div>
         <div style={{ flex: 1 }} />
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}><span style={{ width: 22, borderTop: '3px solid #34d399', display: 'inline-block' }} />Actual</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}><span style={{ width: 22, borderTop: '3px dashed #6ee7f9', display: 'inline-block' }} />Goal</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#e2e8f0', fontWeight: 700 }}><span style={{ width: 22, borderTop: `3px solid ${accent}`, display: 'inline-block' }} />Actual</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}><span style={{ width: 22, borderTop: `3px dashed ${accent2}`, display: 'inline-block' }} />Goal</span>
       </div>
       <svg viewBox="0 0 1000 320" width="100%" style={{ display: 'block' }} preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id={`fill-${gid}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={accent} stopOpacity="0.38" />
+            <stop offset="100%" stopColor={accent} stopOpacity="0" />
+          </linearGradient>
+          <filter id={`glow-${gid}`} x="-20%" y="-40%" width="140%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor={accent} floodOpacity="0.55" />
+          </filter>
+        </defs>
         {[0, 1, 2, 3, 4].map(i => {
           const tv = (maxVal / 4) * i;
           return (
             <g key={i}>
-              <line x1={70} y1={y(tv)} x2={980} y2={y(tv)} stroke="rgba(148,163,184,.14)" />
+              <line x1={70} y1={y(tv)} x2={980} y2={y(tv)} stroke="rgba(148,163,184,.12)" />
               <text x={60} y={y(tv) + 4} textAnchor="end" fontSize="11" fill="#64748b">{num(tv, unit === 'hrs/ro' ? 2 : 0)}</text>
             </g>
           );
         })}
         {xLabels.map(r => <text key={r.k} x={x(r.dayNum)} y={296} textAnchor="middle" fontSize="11" fill="#64748b">{r.dt.getMonth() + 1}/{r.dt.getDate()}</text>)}
-        {goalPts && <polyline points={goalPts} fill="none" stroke="#6ee7f9" strokeWidth="2" strokeDasharray="6 5" opacity="0.95" />}
-        {actualPts && <polyline points={actualPts} fill="none" stroke="#34d399" strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" />}
-        {lastLabel && <text x={lastLabel.x} y={lastLabel.y - 12} textAnchor="middle" fontSize="12" fontWeight="800" fill="#34d399">{lastLabel.text}</text>}
+        {areaPts && <polygon points={areaPts} fill={`url(#fill-${gid})`} />}
+        {goalPts && <polyline points={goalPts} fill="none" stroke={accent2} strokeWidth="2.5" strokeDasharray="7 6" opacity="0.95" />}
+        {actualPts && <polyline points={actualPts} fill="none" stroke={accent} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round" filter={`url(#glow-${gid})`} />}
+        {lastLabel && (
+          <g>
+            <circle cx={lastLabel.x} cy={lastLabel.y} r="6" fill={accent} stroke="#04121a" strokeWidth="2.5" />
+            <rect x={lastLabel.x - 30} y={lastLabel.y - 34} width="60" height="20" rx="10" fill={accent} />
+            <text x={lastLabel.x} y={lastLabel.y - 20} textAnchor="middle" fontSize="12.5" fontWeight="900" fill="#04121a">{lastLabel.text}</text>
+          </g>
+        )}
       </svg>
     </div>
   );
@@ -84,6 +102,26 @@ function GoalChart({ title, unit, goalPts, actualPts, maxVal, xLabels, x, y, las
 const cardSt = { flex: 1, minWidth: 150, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '12px 16px' };
 const lblSt = { fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' };
 const inpSt = { background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 110, textAlign: 'right', outline: 'none' };
+
+// Vivid, themed summary card: gradient wash, colored border + glow, accent label.
+function StatCard({ accent, icon, label, sub, subColor, children }) {
+  return (
+    <div style={{
+      flex: 1, minWidth: 168, borderRadius: 16, padding: '15px 17px', position: 'relative', overflow: 'hidden',
+      background: `linear-gradient(150deg, ${accent}26, ${accent}0a 55%, rgba(2,6,23,.55))`,
+      border: `1px solid ${accent}55`, boxShadow: `0 10px 30px -14px ${accent}99, inset 0 1px 0 ${accent}26`,
+    }}>
+      <div style={{ position: 'absolute', top: -24, right: -24, width: 90, height: 90, borderRadius: '50%', background: `radial-gradient(circle, ${accent}3a, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, position: 'relative' }}>
+        <span style={{ fontSize: 14 }}>{icon}</span>
+        <div style={{ ...lblSt, color: accent }}>{label}</div>
+      </div>
+      <div style={{ position: 'relative' }}>{children}</div>
+      {sub != null && <div style={{ fontSize: 11, color: subColor || '#94a3b8', marginTop: 4, fontWeight: 600, position: 'relative' }}>{sub}</div>}
+    </div>
+  );
+}
+const bigVal = (color) => ({ fontSize: 25, fontWeight: 900, color, marginTop: 5, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
 
 export default function AdvisorGoals({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Appointment Prep Calendar' }) {
   const me = (currentUser || '').toUpperCase();
@@ -338,9 +376,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     const roActualPts = entered.map(r => `${x(r.dayNum).toFixed(1)},${yR(safe(r.hrsRo, 0)).toFixed(1)}`).join(' ');
     const lastR = entered.length ? entered[entered.length - 1] : null;
     const xLabels = metrics.rows.filter((r, i) => i % 5 === 0 || i === metrics.rows.length - 1);
+    const area = (pts, y0) => (entered.length ? `${x(entered[0].dayNum).toFixed(1)},${y0.toFixed(1)} ${pts} ${x(entered[entered.length - 1].dayNum).toFixed(1)},${y0.toFixed(1)}` : '');
+    const yH0 = padT + plotH, yR0 = padT + plotH;
     return {
-      hours: { goalPts: hoursGoalPts, actualPts: hoursActualPts, maxVal: maxH, x, y: yH, xLabels, lastLabel: lastH && { x: x(lastH.dayNum), y: yH(lastH.cumHours), text: num(lastH.cumHours, 1) } },
-      ro: { goalPts: roGoalPts, actualPts: roActualPts, maxVal: maxR, x, y: yR, xLabels, lastLabel: lastR && { x: x(lastR.dayNum), y: yR(safe(lastR.hrsRo, 0)), text: num(safe(lastR.hrsRo, 0), 2) } },
+      hours: { goalPts: hoursGoalPts, actualPts: hoursActualPts, areaPts: area(hoursActualPts, yH0), maxVal: maxH, x, y: yH, xLabels, lastLabel: lastH && { x: x(lastH.dayNum), y: yH(lastH.cumHours), text: num(lastH.cumHours, 1) } },
+      ro: { goalPts: roGoalPts, actualPts: roActualPts, areaPts: area(roActualPts, yR0), maxVal: maxR, x, y: yR, xLabels, lastLabel: lastR && { x: x(lastR.dayNum), y: yR(safe(lastR.hrsRo, 0)), text: num(safe(lastR.hrsRo, 0), 2) } },
     };
   }
 
@@ -349,43 +389,45 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const renderDetail = (metrics, ch, editable) => (
     <>
       {/* Goals + summary */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
-        <div style={cardSt}>
-          <div style={lblSt}>Hours Goal</div>
-          {editable.goals ? (
-            <input type="number" inputMode="decimal" style={{ ...inpSt, color: '#6ee7b7', width: 120, marginTop: 4 }} value={metrics.hoursGoal || ''} placeholder="0" onChange={e => setGoal('hoursGoal', e.target.value)} />
-          ) : <div style={{ fontSize: 22, fontWeight: 800, color: '#6ee7b7', marginTop: 3 }}>{num(metrics.hoursGoal, 1)}</div>}
-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{num(metrics.dailyHoursTarget, 1)}/day · {metrics.totalDays} days</div>
-        </div>
-        <div style={cardSt}>
-          <div style={lblSt}>Hrs/RO Goal</div>
-          {editable.goals ? (
-            <input type="number" inputMode="decimal" style={{ ...inpSt, color: '#93c5fd', width: 120, marginTop: 4 }} value={metrics.hrsRoGoal || ''} placeholder="0" onChange={e => setGoal('hrsRoGoal', e.target.value)} />
-          ) : <div style={{ fontSize: 22, fontWeight: 800, color: '#93c5fd', marginTop: 3 }}>{num(metrics.hrsRoGoal, 2)}</div>}
-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>target ratio</div>
-        </div>
-        <div style={cardSt}>
-          <div style={lblSt}>Hours Actual (MTD)</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#e2e8f0', marginTop: 3 }}>{num(metrics.actualHours, 1)}</div>
-          <div style={{ fontSize: 11, color: metrics.actualHours >= metrics.expectedHours ? '#6ee7b7' : '#fca5a5', marginTop: 4 }}>{metrics.actualHours >= metrics.expectedHours ? '▲' : '▼'} {num(Math.abs(metrics.actualHours - metrics.expectedHours), 1)} vs pace</div>
-        </div>
-        <div style={cardSt}>
-          <div style={lblSt}>Projected Hours</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: metrics.projectedHours >= metrics.hoursGoal ? '#6ee7b7' : '#fca5a5', marginTop: 3 }}>{num(metrics.projectedHours, 1)}</div>
-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{metrics.hoursGoal > 0 ? `${metrics.projectedHours >= metrics.hoursGoal ? '▲' : '▼'} ${num(Math.abs(metrics.projectedHours - metrics.hoursGoal), 1)} vs goal` : ''}</div>
-        </div>
-        <div style={cardSt}>
-          <div style={lblSt}>Avg Hrs/RO</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: metrics.avgHrsRo >= metrics.hrsRoGoal ? '#6ee7b7' : '#fca5a5', marginTop: 3 }}>{num(metrics.avgHrsRo, 2)}</div>
-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{metrics.hrsRoGoal > 0 ? `goal ${num(metrics.hrsRoGoal, 2)}` : ''}</div>
-        </div>
-      </div>
+      {(() => {
+        const aheadPace = metrics.actualHours >= metrics.expectedHours;
+        const aheadGoal = metrics.projectedHours >= metrics.hoursGoal;
+        const aheadRo = metrics.avgHrsRo >= metrics.hrsRoGoal;
+        const POS = '#34d399', NEG = '#fb7185';
+        return (
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
+            <StatCard accent="#34d399" icon="🎯" label="Hours Goal" sub={`${num(metrics.dailyHoursTarget, 1)}/day · ${metrics.totalDays} days`}>
+              {editable.goals
+                ? <input type="number" inputMode="decimal" style={{ ...inpSt, color: '#6ee7b7', width: 120, marginTop: 5, borderColor: '#34d39966' }} value={metrics.hoursGoal || ''} placeholder="0" onChange={e => setGoal('hoursGoal', e.target.value)} />
+                : <div style={bigVal('#6ee7b7')}>{num(metrics.hoursGoal, 1)}</div>}
+            </StatCard>
+            <StatCard accent="#38bdf8" icon="⚙️" label="Hrs/RO Goal" sub="target ratio">
+              {editable.goals
+                ? <input type="number" inputMode="decimal" style={{ ...inpSt, color: '#93c5fd', width: 120, marginTop: 5, borderColor: '#38bdf866' }} value={metrics.hrsRoGoal || ''} placeholder="0" onChange={e => setGoal('hrsRoGoal', e.target.value)} />
+                : <div style={bigVal('#7dd3fc')}>{num(metrics.hrsRoGoal, 2)}</div>}
+            </StatCard>
+            <StatCard accent="#a78bfa" icon="🔥" label="Hours Actual (MTD)"
+              sub={`${aheadPace ? '▲' : '▼'} ${num(Math.abs(metrics.actualHours - metrics.expectedHours), 1)} vs pace`} subColor={aheadPace ? POS : NEG}>
+              <div style={bigVal('#c4b5fd')}>{num(metrics.actualHours, 1)}</div>
+            </StatCard>
+            <StatCard accent="#fbbf24" icon="📈" label="Projected Hours"
+              sub={metrics.hoursGoal > 0 ? `${aheadGoal ? '▲' : '▼'} ${num(Math.abs(metrics.projectedHours - metrics.hoursGoal), 1)} vs goal` : ''} subColor={aheadGoal ? POS : NEG}>
+              <div style={bigVal(aheadGoal ? POS : NEG)}>{num(metrics.projectedHours, 1)}</div>
+            </StatCard>
+            <StatCard accent="#f472b6" icon="💎" label="Avg Hrs/RO"
+              sub={metrics.hrsRoGoal > 0 ? `goal ${num(metrics.hrsRoGoal, 2)}` : ''} subColor={aheadRo ? POS : NEG}>
+              <div style={bigVal(aheadRo ? POS : NEG)}>{num(metrics.avgHrsRo, 2)}</div>
+            </StatCard>
+          </div>
+        );
+      })()}
 
       {/* Daily entry */}
-      <div style={{ background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
+      <div style={{ background: 'linear-gradient(160deg, rgba(56,189,248,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(56,189,248,.28)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 30px -18px rgba(56,189,248,.7)' }}>
         <div onClick={() => setGridOpen(o => !o)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none' }}>
-          <span style={{ fontSize: 13, color: gridOpen ? '#6ee7f9' : '#94a3b8', transform: gridOpen ? 'rotate(90deg)' : 'none', display: 'inline-block', transition: 'transform .15s' }}>▶</span>
-          <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>Daily Entry — {metrics.label}</div>
+          <span style={{ fontSize: 13, color: gridOpen ? '#38bdf8' : '#94a3b8', transform: gridOpen ? 'rotate(90deg)' : 'none', display: 'inline-block', transition: 'transform .15s' }}>▶</span>
+          <span style={{ fontSize: 14 }}>📅</span>
+          <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Daily Entry — {metrics.label}</div>
           <div style={{ flex: 1 }} />
           <div style={{ fontSize: 12, color: '#64748b' }}>{editable.days ? (gridOpen ? 'Click to hide' : 'Click to add your hours') : (gridOpen ? 'Click to hide' : 'Click to view')}</div>
         </div>
@@ -416,8 +458,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         )}
       </div>
 
-      <GoalChart title={`Hours — ${metrics.label}`} unit="hours" {...ch.hours} />
-      <GoalChart title={`Hrs/RO — ${metrics.label}`} unit="hrs/ro" {...ch.ro} />
+      <GoalChart title={`Hours — ${metrics.label}`} unit="hours" accent="#34d399" accent2="#38bdf8" {...ch.hours} />
+      <GoalChart title={`Hrs/RO — ${metrics.label}`} unit="hrs/ro" accent="#f472b6" accent2="#a78bfa" {...ch.ro} />
     </>
   );
 
