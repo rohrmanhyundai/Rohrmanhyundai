@@ -1977,17 +1977,17 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, vacations = 
   // Build employee list with role info, grouped by role for display
   const allEmployees = users.map(u => u.username.toUpperCase()).filter(Boolean);
   const employeesByRole = [
-    { roleLabel: '📅 Advisors',     color: '#3dd6c3', borderColor: 'rgba(61,214,195,.5)',   bg: 'rgba(61,214,195,.08)',   emps: users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '📅 Advisors',     color: '#3dd6c3', borderColor: 'rgba(61,214,195,.5)',   bg: 'rgba(61,214,195,.08)',   emps: users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase()).filter(Boolean) },
     { roleLabel: '🔧 Technicians',  color: '#c4b5fd', borderColor: 'rgba(167,139,250,.5)',  bg: 'rgba(167,139,250,.08)', emps: users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).filter(Boolean) },
     { roleLabel: '📦 Parts',        color: '#fde68a', borderColor: 'rgba(251,191,36,.5)',   bg: 'rgba(251,191,36,.08)',   emps: users.filter(u => u.role === 'parts' || u.role === 'parts manager').map(u => u.username.toUpperCase()).filter(Boolean) },
-    { roleLabel: '👤 Other / Admin',color: '#94a3b8', borderColor: 'rgba(148,163,184,.5)', bg: 'rgba(148,163,184,.08)', emps: users.filter(u => !u.role || (u.role !== 'advisor' && u.role !== 'technician' && u.role !== 'parts' && u.role !== 'parts manager')).map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '👤 Other / Admin',color: '#94a3b8', borderColor: 'rgba(148,163,184,.5)', bg: 'rgba(148,163,184,.08)', emps: users.filter(u => !u.role || (u.role !== 'advisor' && u.role !== 'lead advisor' && u.role !== 'technician' && u.role !== 'parts' && u.role !== 'parts manager')).map(u => u.username.toUpperCase()).filter(Boolean) },
   ].filter(g => g.emps.length > 0);
   // Map employee name → role color for tab styling
   const empRoleColor = {};
   const empRoleBorder = {};
   users.forEach(u => {
     const nm = u.username.toUpperCase();
-    if (u.role === 'advisor')                               { empRoleColor[nm] = '#3dd6c3'; empRoleBorder[nm] = 'rgba(61,214,195,.6)'; }
+    if (u.role === 'advisor' || u.role === 'lead advisor')  { empRoleColor[nm] = '#3dd6c3'; empRoleBorder[nm] = 'rgba(61,214,195,.6)'; }
     else if (u.role === 'technician')                       { empRoleColor[nm] = '#c4b5fd'; empRoleBorder[nm] = 'rgba(167,139,250,.6)'; }
     else if (u.role === 'parts' || u.role === 'parts manager') { empRoleColor[nm] = '#fde68a'; empRoleBorder[nm] = 'rgba(251,191,36,.6)'; }
     else                                                     { empRoleColor[nm] = '#94a3b8'; empRoleBorder[nm] = 'rgba(148,163,184,.5)'; }
@@ -2312,7 +2312,7 @@ function fmtShiftShort(val) {
 }
 
 function ScheduleOverview({ schedules, users, year, month, activeEmployee, activeDate, onClickDay }) {
-  const advisors = users.filter(u => u.role === 'advisor').map(u => u.username.toUpperCase()).filter(Boolean);
+  const advisors = users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase()).filter(Boolean);
   const techs    = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).filter(Boolean);
 
   if (advisors.length === 0 && techs.length === 0) return null;
