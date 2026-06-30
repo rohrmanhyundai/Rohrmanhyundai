@@ -186,16 +186,29 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setXlsxBusy(true); setUploadErr('');
     const dmk = uploadDate.slice(0, 7);
     try {
+      let selectedAll = null;
       for (const r of toApply) {
         const all = await loadAdvisorGoals(r.advisor);
         const b = (all && all[dmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
         const days = { ...(b.days || {}), [uploadDate]: { hours: safe(r.hours, 0), hrsRo: safe(r.hrsRo, 0) } };
-        await saveAdvisorGoalsMonth(r.advisor, dmk, { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days });
+        // saveAdvisorGoalsMonth returns the full merged file it just wrote.
+        const written = await saveAdvisorGoalsMonth(r.advisor, dmk, { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days });
+        if ((r.advisor || '').toUpperCase() === (selected || '').toUpperCase()) selectedAll = written;
+      }
+      // Reflect the on-screen advisor's update from what we just wrote — don't
+      // re-read from GitHub, which can briefly serve a stale copy right after a
+      // write and leave the grid looking empty.
+      if (selectedAll) {
+        setAllMonths(selectedAll);
+        const nb = selectedAll[mk] || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+        const norm = { hoursGoal: safe(nb.hoursGoal, 0), hrsRoGoal: safe(nb.hrsRoGoal, 0), days: nb.days || {} };
+        bucketRef.current = norm;
+        setBucket(norm);
+        setGridOpen(true); // make sure the daily grid is visible so the fill shows
       }
       setUploadRows(null);
-      setUploadMsg(`✓ Updated ${toApply.length} advisor${toApply.length === 1 ? '' : 's'} for ${uploadDate}.`);
+      setUploadMsg(`✓ Updated ${toApply.length} advisor${toApply.length === 1 ? '' : 's'} for ${uploadDate}.${dmk !== mk ? ' (Switch to that month to see it.)' : ''}`);
       setTimeout(() => setUploadMsg(''), 6000);
-      setRefresh(x => x + 1); // reload the on-screen advisor's data
     } catch (e) {
       setUploadErr('Save failed: ' + (e.message || e));
     } finally {
