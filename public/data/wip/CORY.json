@@ -1,18 +1,5 @@
 [
   {
-    "id": "mqh889zvryq",
-    "ro": "778453",
-    "roDate": "2026-06-16",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON CAR WILL NOT START NOW",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "ENTERPRISE CAR WAITING ON APPROVAL MAJOR WIRE DAMAGE. ALL WORK APPROVED. Replaced ECM under warranty. LIN codes for alternator and fuel pressure sensor circuit codes still present. Verified integrity off all circuits. All ok. Recommend replacing FPS and alternator. ALTERNATOR AND FUEL SENSOR APPROVED. "
-  },
-  {
     "id": "mqphtr4djye",
     "ro": "778510",
     "roDate": "2026-06-18",
