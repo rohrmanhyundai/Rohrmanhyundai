@@ -242,6 +242,12 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
 
 export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
   const today = new Date();
+  // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
+  // advisor's attention. Ticks each minute so it flips on its own if left open.
+  const [nowTick, setNowTick] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
+  const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
+  const eodUrgent = easternHour >= 15;
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
@@ -532,9 +538,15 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </button>
           )}
           {onGoalsForecasting && (
-            <button onClick={onGoalsForecasting} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-              🎯 End of Day Reporting
-            </button>
+            <>
+              {eodUrgent && <style>{`@keyframes eodPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(239,68,68,.7);transform:scale(1.06)}}`}</style>}
+              <button onClick={onGoalsForecasting}
+                style={eodUrgent
+                  ? { background: 'linear-gradient(180deg,#f97316,#ef4444)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.3s ease-in-out infinite' }
+                  : { background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+                {eodUrgent ? '⏰ End of Day Reporting ‼️' : '🎯 End of Day Reporting'}
+              </button>
+            </>
           )}
           {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
             <button onClick={onWorkInProgress} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
