@@ -87,8 +87,10 @@ function canSee(pages, role, key) {
 }
 
 function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor, canFlag, onFlag, flaggingId }) {
-  const hl = (highlightAdvisor || '').toUpperCase();
-  const isMine = (j) => hl && (j.advisor || '').toUpperCase() === hl;
+  // Match by first name so an RO stored as "JORDAN TROXEL" (from an upload) still
+  // counts as JORDAN's and floats to the top for the logged-in advisor.
+  const hl = (highlightAdvisor || '').toUpperCase().split(/\s+/)[0];
+  const isMine = (j) => hl && (j.advisor || '').trim().toUpperCase().split(/\s+/)[0] === hl;
   if (hl) {
     jobs = [...jobs].sort((a, b) => {
       const am = isMine(a) ? 0 : 1;
