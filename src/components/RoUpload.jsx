@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import {
   loadAwaitingData, saveAwaitingData,
   loadWipData, saveWipData, listWipTechs, loadDashboardData,
+  saveMissingNotes,
 } from '../utils/github';
 
 // Columns we read from the dealership's open-RO report.
@@ -12,7 +13,11 @@ const FIELDS = [
   { key: 'vehicle',  label: 'Vehicle',         required: false, hints: ['vehicle', 'veh', 'year make model', 'unit'] },
   { key: 'tech',     label: 'Technician',      required: false, hints: ['technician', 'tech'] },
   { key: 'userFlag', label: 'User Flag',       required: true,  hints: ['user flag', 'flag', 'userflag'] },
+  { key: 'internalNotes', label: 'Internal Notes', required: false, hints: ['internal notes', 'internal note', 'internal'] },
 ];
+
+// "FIRST LAST" → "FIRST" (uppercased), to key the list by advisor first name.
+const firstNameKey = (name) => roKey(name).split(/\s+/)[0] || '';
 
 const norm = (v) => String(v ?? '').trim().toLowerCase();
 const roKey = (v) => String(v ?? '').trim().toUpperCase();
@@ -146,6 +151,43 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       return { ro: val('ro'), advisor: val('advisor'), vehicle: val('vehicle'), tech: val('tech'), userFlag: val('userFlag') };
     }).filter(o => o.ro && flagAllowed(o.userFlag));
   }, [dataRows, mapping]);
+
+  // ROs whose Internal Notes (col J) are blank, grouped by advisor first name.
+  // Needs the Internal Notes column mapped (otherwise we can't tell).
+  const notesMapped = mapping.internalNotes != null && mapping.internalNotes >= 0;
+  const missingByAdvisor = useMemo(() => {
+    if (!notesMapped || mapping.ro == null || mapping.ro < 0) return {};
+    const out = {}, seen = {};
+    for (const r of dataRows) {
+      const val = (k) => { const i = mapping[k]; return (i != null && i >= 0) ? String(r[i] ?? '').trim() : ''; };
+      const ro = val('ro');
+      if (!ro) continue;
+      if (val('internalNotes') !== '') continue; // has notes → not missing
+      const adv = firstNameKey(val('advisor')) || 'UNASSIGNED';
+      if (!seen[adv]) seen[adv] = new Set();
+      const k = roKey(ro);
+      if (seen[adv].has(k)) continue;
+      seen[adv].add(k);
+      (out[adv] = out[adv] || []).push({ ro: ro.trim(), vehicle: val('vehicle') });
+    }
+    return out;
+  }, [dataRows, mapping, notesMapped]);
+  const missingAdvKeys = useMemo(() => Object.keys(missingByAdvisor).sort(), [missingByAdvisor]);
+  const missingTotal = useMemo(() => missingAdvKeys.reduce((s, a) => s + missingByAdvisor[a].length, 0), [missingByAdvisor, missingAdvKeys]);
+
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSaved, setNotesSaved] = useState('');
+  async function saveMissingNotesList() {
+    setNotesSaving(true); setNotesSaved('');
+    try {
+      await saveMissingNotes({ updatedAt: new Date().toISOString(), by: currentUser || '', advisors: missingByAdvisor });
+      setNotesSaved(`✅ Saved ${missingTotal} RO${missingTotal === 1 ? '' : 's'} across ${missingAdvKeys.length} advisor${missingAdvKeys.length === 1 ? '' : 's'} for Day End Reporting.`);
+    } catch (e) {
+      setNotesSaved('Save failed: ' + (e.message || e));
+    } finally {
+      setNotesSaving(false);
+    }
+  }
 
   // Deduped list of all green/purple flagged ROs in the file.
   const flaggedUnique = useMemo(() => {
@@ -351,6 +393,40 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* ROs missing internal notes → surfaced in each advisor's Day End Reporting */}
+              <div style={{ ...cardSt, border: '1px solid rgba(167,139,250,.4)', background: 'linear-gradient(150deg,rgba(167,139,250,.12),rgba(2,6,23,.45))', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <div style={{ fontWeight: 800, color: '#c4b5fd' }}>📝 ROs missing internal notes</div>
+                  <div style={{ flex: 1 }} />
+                  {notesMapped && (
+                    <button onClick={saveMissingNotesList} disabled={notesSaving || missingTotal === 0}
+                      style={{ background: missingTotal ? 'rgba(167,139,250,.22)' : 'rgba(255,255,255,.05)', border: `1px solid ${missingTotal ? 'rgba(167,139,250,.55)' : 'rgba(255,255,255,.1)'}`, color: missingTotal ? '#c4b5fd' : '#475569', borderRadius: 10, padding: '8px 18px', fontWeight: 800, fontSize: 13, cursor: missingTotal ? 'pointer' : 'default' }}>
+                      {notesSaving ? '⏳ Saving…' : '💾 Save for Day End Reporting'}
+                    </button>
+                  )}
+                </div>
+                {!notesMapped ? (
+                  <div style={{ fontSize: 12.5, color: '#fbbf24' }}>Map the <strong>Internal Notes</strong> column above to detect ROs without notes.</div>
+                ) : missingTotal === 0 ? (
+                  <div style={{ fontSize: 12.5, color: '#64748b' }}>Every RO in this report has internal notes. 🎉</div>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10 }}>
+                      <strong style={{ color: '#e2e8f0' }}>{missingTotal}</strong> RO{missingTotal === 1 ? '' : 's'} with blank notes across <strong style={{ color: '#e2e8f0' }}>{missingAdvKeys.length}</strong> advisor{missingAdvKeys.length === 1 ? '' : 's'}. Save to show each advisor their list when they close the day.
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                      {missingAdvKeys.map(adv => (
+                        <div key={adv} style={{ background: 'rgba(2,6,23,.4)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 10, padding: '8px 14px', minWidth: 140 }}>
+                          <div style={{ fontSize: 12, fontWeight: 800, color: adv === 'UNASSIGNED' ? '#f59e0b' : '#c4b5fd' }}>{adv === 'UNASSIGNED' ? 'Unassigned' : adv}</div>
+                          <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0' }}>{missingByAdvisor[adv].length}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {notesSaved && <div style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: notesSaved.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{notesSaved}</div>}
+                  </>
+                )}
               </div>
 
               {!ready && <div style={{ color: '#fbbf24', fontSize: 13, marginBottom: 16 }}>Map both <strong>RO #</strong> and <strong>User Flag</strong> to continue.</div>}

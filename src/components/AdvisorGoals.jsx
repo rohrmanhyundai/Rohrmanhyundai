@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
 import { advisorMonthProgress } from '../utils/calculations';
-import { loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
+import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes } from '../utils/github';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -158,9 +158,26 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [dayEndOpen, setDayEndOpen] = useState(false);
   const [deStep, setDeStep] = useState(0);
   const [deAgree, setDeAgree] = useState(false);
+  const [deNoNotes, setDeNoNotes] = useState([]); // my ROs missing internal notes
+  const [deNoNotesAt, setDeNoNotesAt] = useState('');
+  const [deCopiedRo, setDeCopiedRo] = useState('');
+  function copyRo(ro) {
+    const v = String(ro || '').trim();
+    try { navigator.clipboard?.writeText(v); } catch {}
+    setDeCopiedRo(v);
+    setTimeout(() => setDeCopiedRo(c => (c === v ? '' : c)), 1200);
+  }
   function openDayEnd() {
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
+    setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
+    // This advisor's ROs missing internal notes (from the latest open-RO upload),
+    // shown at the "do all ROs have updated notes?" question.
+    loadMissingNotes().then(d => {
+      const list = (d && d.advisors && d.advisors[me]) || [];
+      setDeNoNotes(Array.isArray(list) ? list : []);
+      setDeNoNotesAt(d && d.updatedAt ? new Date(d.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
+    }).catch(() => {});
   }
 
   const canEditDaysFor = (adv) => isAdmin || me === (adv || '').toUpperCase();
@@ -566,6 +583,28 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           <div style={{ padding: '26px 22px 8px', minHeight: 150 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.35 }}>{step.q}</div>
             {step.sub && <div style={{ fontSize: 12, color: step.color || '#6ee7b7', fontWeight: 700, marginTop: 4 }}>→ {step.sub}</div>}
+            {step.key === 'notes' && deNoNotes.length > 0 && (
+              <div style={{ marginTop: 14, background: 'rgba(167,139,250,.08)', border: '1px solid rgba(167,139,250,.35)', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: '#c4b5fd', marginBottom: 8 }}>
+                  ⚠️ {deNoNotes.length} of your RO{deNoNotes.length === 1 ? '' : 's'} had no internal notes{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''} — click to copy:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, maxHeight: 150, overflowY: 'auto' }}>
+                  {deNoNotes.map((o, i) => {
+                    const v = String(o.ro || '').trim();
+                    const copied = deCopiedRo === v;
+                    return (
+                      <button key={i} type="button" onClick={() => copyRo(o.ro)} title={o.vehicle ? `${v} · ${o.vehicle}` : `Copy ${v}`}
+                        style={{ background: copied ? 'rgba(74,222,128,.2)' : 'rgba(2,6,23,.5)', border: `1px solid ${copied ? 'rgba(74,222,128,.5)' : 'rgba(148,163,184,.3)'}`, color: copied ? '#6ee7b7' : '#e2e8f0', borderRadius: 8, padding: '6px 12px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                        {copied ? '✓ Copied' : v}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {step.key === 'notes' && deNoNotes.length === 0 && (
+              <div style={{ marginTop: 14, fontSize: 12.5, color: '#64748b' }}>✓ No ROs flagged without notes for you{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''}.</div>
+            )}
             <div style={{ marginTop: 20 }}>
               {step.kind === 'agree' ? (
                 <>
