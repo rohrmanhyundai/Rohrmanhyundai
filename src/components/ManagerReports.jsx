@@ -274,7 +274,7 @@ function blankEntry(fields) {
 }
 
 export default function ManagerReports({ users, onBack }) {
-  const advisors = (users || []).filter(u => u.role === 'advisor').map(u => u.username.toUpperCase());
+  const advisors = (users || []).filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
   const techs    = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const allUsers = [...advisors, ...techs];
 

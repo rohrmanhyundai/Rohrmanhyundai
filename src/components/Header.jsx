@@ -52,7 +52,7 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                 </>
               ) : (
                 <>
-                  {(currentRole === 'advisor' || currentRole === 'admin' || (currentRole || '').includes('manager') || (currentRole === 'warranty' && userPages && userPages.advisorCalendar !== false)) && (
+                  {(currentRole === 'advisor' || currentRole === 'lead advisor' || currentRole === 'admin' || (currentRole || '').includes('manager') || (currentRole === 'warranty' && userPages && userPages.advisorCalendar !== false)) && (
                     <button onClick={onAdvisor} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.35),rgba(61,214,195,.22))', borderColor: 'rgba(61,214,195,.4)', position: 'relative' }}>
                       Advisor
                       {advisorUnread > 0 && (
