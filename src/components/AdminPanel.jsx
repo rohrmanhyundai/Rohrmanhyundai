@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh } from '../utils/github';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
@@ -124,6 +124,29 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [userSaving, setUserSaving] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [forceRefreshState, setForceRefreshState] = useState('idle'); // idle | sending | sent | error
+
+  // Fire a force-refresh: persist a timestamp (durable fallback that clients
+  // poll) AND broadcast the realtime Pusher event — both with the SAME ts so a
+  // healthy client reloads exactly once. The stored signal is what guarantees an
+  // always-on TV that missed the live event still reloads on its next check.
+  async function sendForceRefresh() {
+    if (forceRefreshState === 'sending') return;
+    if (!window.confirm('Force refresh ALL logged-in users now?\n\nEvery open browser will reload within a few seconds (a TV may take up to ~1 min). Any unsaved input on their screen could be lost.')) return;
+    setForceRefreshState('sending');
+    const ts = Date.now();
+    const by = currentUser || 'admin';
+    let durableOk = false;
+    try { await saveForceRefresh(ts, by); durableOk = true; } catch (e) { console.warn('force-refresh persist failed:', e); }
+    try { await triggerEvent(SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, { ts, by }); } catch (e) { console.warn('force-refresh broadcast failed:', e); }
+    if (durableOk) {
+      setForceRefreshState('sent');
+      setTimeout(() => setForceRefreshState('idle'), 4000);
+    } else {
+      setForceRefreshState('error');
+      alert('Force refresh could not be saved to the server. The live signal was attempted, but offline TVs may not catch up. Check the GitHub token in Admin > GitHub Settings.');
+      setTimeout(() => setForceRefreshState('idle'), 4000);
+    }
+  }
   const advisorXlsxInputRef = useRef(null);
   const [advisorXlsxStatus, setAdvisorXlsxStatus] = useState('');
   const [advisorXlsxBusy, setAdvisorXlsxBusy] = useState(false);
@@ -1199,18 +1222,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <button
               disabled={forceRefreshState === 'sending'}
-              onClick={async () => {
-                if (!window.confirm('Force refresh ALL logged-in users now?\n\nEvery open browser will reload within a few seconds. Any unsaved input on their screen could be lost.')) return;
-                setForceRefreshState('sending');
-                try {
-                  await triggerEvent(SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, { ts: Date.now(), by: currentUser || 'admin' });
-                  setForceRefreshState('sent');
-                  setTimeout(() => setForceRefreshState('idle'), 4000);
-                } catch (e) {
-                  setForceRefreshState('error');
-                  alert('Force refresh failed: ' + (e?.message || e));
-                }
-              }}
+              onClick={sendForceRefresh}
               style={{
                 background: forceRefreshState === 'sent' ? 'rgba(34,197,94,.2)' : 'rgba(239,68,68,.18)',
                 border: `1px solid ${forceRefreshState === 'sent' ? 'rgba(34,197,94,.5)' : 'rgba(239,68,68,.5)'}`,
@@ -1782,17 +1794,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     key={card.id}
                     onClick={async () => {
                       if (card.id === 'forceRefresh') {
-                        if (forceRefreshState === 'sending') return;
-                        if (!window.confirm('Force refresh ALL logged-in users now?\n\nEvery open browser will reload within a few seconds. Any unsaved input on their screen could be lost.')) return;
-                        setForceRefreshState('sending');
-                        try {
-                          await triggerEvent(SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, { ts: Date.now(), by: currentUser || 'admin' });
-                          setForceRefreshState('sent');
-                          setTimeout(() => setForceRefreshState('idle'), 4000);
-                        } catch (e) {
-                          setForceRefreshState('idle');
-                          alert('Force refresh failed: ' + (e?.message || e));
-                        }
+                        await sendForceRefresh();
                         return;
                       }
                       setOpenSection(card.id);

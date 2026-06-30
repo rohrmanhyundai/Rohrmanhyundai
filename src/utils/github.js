@@ -54,6 +54,34 @@ export async function loadDashboardData() {
   return null;
 }
 
+// ── Force-refresh signal ────────────────────────────────────────────────────
+// Durable fallback for the realtime Pusher "force-refresh" event. The admin
+// button bumps this timestamp; every client polls it (and re-checks on socket
+// reconnect) so even a client that missed the live event — e.g. an always-on TV
+// whose websocket slept — reloads on its next check. Read via the GitHub API so
+// it's instant and uses the shared token available to every logged-in client.
+const FORCE_REFRESH_PATH = 'public/data/force-refresh.json';
+
+export async function loadForceRefresh() {
+  try {
+    const data = await readGitHubFile(authHeaders(), FORCE_REFRESH_PATH);
+    if (data && typeof data.ts === 'number') return data;
+  } catch {}
+  // CDN fallback (may lag until next deploy; the API path above is primary).
+  try {
+    const res = await fetch(`${BASE}data/force-refresh.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) { const d = await res.json(); if (d && typeof d.ts === 'number') return d; }
+  } catch {}
+  return null;
+}
+
+export async function saveForceRefresh(ts, by) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token configured. Go to Admin > GitHub Settings and enter a Personal Access Token.');
+  await saveGitHubFile(authHeaders(), FORCE_REFRESH_PATH,
+    { ts, by: by || 'admin' }, `Force refresh signal ${new Date(ts).toISOString()}`);
+}
+
 export async function saveDashboardToGitHub(payload) {
   const token = await ensureGithubToken();
   if (!token) {

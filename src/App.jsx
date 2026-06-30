@@ -31,7 +31,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -163,25 +163,48 @@ export default function App() {
     }
   }, [isLoggedIn, currentUser, currentRole]);
 
-  // Admin-triggered force refresh — listens on a shared Pusher channel.
-  // When an admin pushes the "Force Refresh All Users" button, every logged-in
-  // browser reloads itself (cache-busted) so new features go live immediately.
+  // Admin-triggered force refresh. The "Force Refresh All Users" button does two
+  // things: fires a realtime Pusher event AND bumps a stored timestamp. Every
+  // logged-in browser reloads (cache-busted) when it sees a newer timestamp —
+  // instantly via Pusher, or within 60s via a poll/reconnect fallback so a
+  // client that missed the live event (e.g. a TV whose socket slept) still
+  // catches up. Both carry the SAME timestamp, so a healthy client reloads once.
   useEffect(() => {
     if (!isLoggedIn) return;
+
+    const applyRefresh = (ts, fromPoll) => {
+      if (!ts) return;
+      const stored = localStorage.getItem('forceRefreshSeen');
+      // First poll on a brand-new session: baseline silently, don't reload.
+      if (fromPoll && stored == null) { localStorage.setItem('forceRefreshSeen', String(ts)); return; }
+      const lastSeen = parseInt(stored || '0', 10);
+      if (ts <= lastSeen) return; // stale / already handled
+      localStorage.setItem('forceRefreshSeen', String(ts));
+      try { console.log('[force-refresh] reloading at', new Date(ts).toISOString()); } catch {}
+      setTimeout(() => { window.location.reload(true); }, 250);
+    };
+    const checkSignal = async () => {
+      try { const rec = await loadForceRefresh(); if (rec && rec.ts) applyRefresh(rec.ts, true); } catch {}
+    };
+
+    let ch;
     try {
-      const ch = getPusher().subscribe(SYSTEM_CHANNEL);
-      const handler = (payload) => {
-        const ts = payload && payload.ts ? payload.ts : Date.now();
-        const lastSeen = parseInt(localStorage.getItem('forceRefreshSeen') || '0', 10);
-        if (ts <= lastSeen) return; // ignore stale / already-handled refreshes
-        localStorage.setItem('forceRefreshSeen', String(ts));
-        // Brief notice, then hard reload bypassing cache.
-        try { console.log('[force-refresh] reloading at', new Date(ts).toISOString()); } catch {}
-        setTimeout(() => { window.location.reload(true); }, 250);
-      };
-      ch.bind(FORCE_REFRESH_EVENT, handler);
-      return () => { try { ch.unbind(FORCE_REFRESH_EVENT, handler); getPusher().unsubscribe(SYSTEM_CHANNEL); } catch {} };
+      ch = getPusher().subscribe(SYSTEM_CHANNEL);
+      ch.bind(FORCE_REFRESH_EVENT, (payload) => applyRefresh(payload && payload.ts ? payload.ts : Date.now(), false));
+      getPusher().connection.bind('connected', checkSignal); // re-check on (re)connect
     } catch (e) { console.warn('force-refresh subscribe failed:', e); }
+
+    checkSignal();                                  // initial catch-up on load
+    const poll = setInterval(checkSignal, 60000);   // durable 60s fallback
+
+    return () => {
+      clearInterval(poll);
+      try {
+        if (ch) ch.unbind(FORCE_REFRESH_EVENT);
+        getPusher().connection.unbind('connected', checkSignal);
+        getPusher().unsubscribe(SYSTEM_CHANNEL);
+      } catch {}
+    };
   }, [isLoggedIn]);
 
   useEffect(() => {
