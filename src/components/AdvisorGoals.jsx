@@ -130,9 +130,16 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const roster = advisors.length ? advisors : (me ? [me] : []);
   const now = new Date();
   const mk = monthKey(now);
+  const curLabel = new Date(now.getFullYear(), now.getMonth(), 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  // From the 25th onward, let advisors open NEXT month to prep its goals early.
+  const nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const nmk = monthKey(nextDate);
+  const nextLabel = nextDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const showNext = now.getDate() >= 25;
 
   const [selected, setSelected] = useState(roster.includes(me) ? me : (roster[0] || me));
-  const [view, setView] = useState('current'); // current | history
+  const [view, setView] = useState('current'); // current | next | history
   const [histSel, setHistSel] = useState(null);
   const [allMonths, setAllMonths] = useState({});
   const [gridOpen, setGridOpen] = useState(false);
@@ -259,25 +266,35 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const totalDays = progress.total || workingDates(now.getFullYear(), now.getMonth()).length;
   const completedDays = Math.min(progress.completed || 0, totalDays);
 
+  // Which month is being edited/viewed. From the 25th, "next" is selectable so
+  // next month's goals can be prepped early; it starts at 0 days completed.
+  const isNext = showNext && view === 'next';
+  const activeMk = isNext ? nmk : mk;
+  const activeTotalDays = isNext ? workingDates(nextDate.getFullYear(), nextDate.getMonth()).length : totalDays;
+  const activeCompletedDays = isNext ? 0 : completedDays;
+
   const saveTimer = useRef(null);
   const bucketRef = useRef({ hoursGoal: 0, hrsRoGoal: 0, days: {} });
   const [bucket, setBucket] = useState({ hoursGoal: 0, hrsRoGoal: 0, days: {} });
 
+  // Switching advisor resets back to the current month.
+  useEffect(() => { setView('current'); setHistSel(null); }, [selected]);
+
+  // Load the active month's bucket (current or, when prepping, next month).
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    setView('current'); setHistSel(null);
     loadAdvisorGoals(selected).then(all => {
       if (cancelled) return;
       setAllMonths(all || {});
-      const b = (all && all[mk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const b = (all && all[activeMk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
       const norm = { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days: b.days || {} };
       bucketRef.current = norm;
       setBucket(norm);
       setLoading(false);
     }).catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [selected, mk, refresh]);
+  }, [selected, activeMk, refresh]);
 
   // Submit the Day End Report into MY own goals file for today (skips Sunday).
   async function submitDayEnd() {
@@ -328,16 +345,19 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // the parts this user is allowed to change (goals for lead, days for owner).
   function scheduleSave() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
+    // Snapshot the bucket AND the month it belongs to now, so switching months
+    // before the debounce fires can't write one month's edits into another.
+    const mine = bucketRef.current;
+    const saveMk = activeMk;
     saveTimer.current = setTimeout(async () => {
-      const mine = bucketRef.current;
       let latest = {};
-      try { const all = await loadAdvisorGoals(selected); latest = (all && all[mk]) || {}; } catch {}
+      try { const all = await loadAdvisorGoals(selected); latest = (all && all[saveMk]) || {}; } catch {}
       const merged = {
         hoursGoal: canEditGoals ? safe(mine.hoursGoal, 0) : safe(latest.hoursGoal, 0),
         hrsRoGoal: canEditGoals ? safe(mine.hrsRoGoal, 0) : safe(latest.hrsRoGoal, 0),
         days: canEditDaysFor(selected) ? mine.days : (latest.days || {}),
       };
-      saveAdvisorGoalsMonth(selected, mk, merged).then(all => setAllMonths(all || {})).catch(() => {});
+      saveAdvisorGoalsMonth(selected, saveMk, merged).then(all => setAllMonths(all || {})).catch(() => {});
     }, 800);
   }
 
@@ -355,7 +375,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     bucketRef.current = next; setBucket(next); scheduleSave();
   }
 
-  const M = useMemo(() => computeMetrics(mk, bucket, totalDays, completedDays), [mk, bucket, totalDays, completedDays]);
+  const M = useMemo(() => computeMetrics(activeMk, bucket, activeTotalDays, activeCompletedDays), [activeMk, bucket, activeTotalDays, activeCompletedDays]);
 
   // Chart geometry helpers.
   function makeCharts(metrics) {
@@ -677,10 +697,16 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       </div>
 
       {/* Month / History tabs */}
-      <div style={{ display: 'flex', gap: 8, padding: '12px 20px 0', flexShrink: 0 }}>
-        {[{ k: 'current', label: M.label }, { k: 'history', label: '🗂 History' }].map(t => (
+      <div style={{ display: 'flex', gap: 8, padding: '12px 20px 0', flexShrink: 0, flexWrap: 'wrap' }}>
+        {[
+          { k: 'current', label: curLabel },
+          ...(showNext ? [{ k: 'next', label: `🗓 ${nextLabel} · Prep`, prep: true }] : []),
+          { k: 'history', label: '🗂 History' },
+        ].map(t => (
           <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); }}
-            style={{ background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: view === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t.label}</button>
+            style={t.prep
+              ? { background: view === t.k ? 'rgba(251,191,36,.22)' : 'rgba(251,191,36,.08)', border: `1px solid ${view === t.k ? 'rgba(251,191,36,.6)' : 'rgba(251,191,36,.3)'}`, color: view === t.k ? '#fcd34d' : '#fbbf24', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }
+              : { background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: view === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t.label}</button>
         ))}
         {(roster.includes(me) || isAdmin) && (
           <button onClick={openDayEnd}
@@ -696,6 +722,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           )}
           {uploadMsg && (
             <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{uploadMsg}</div>
+          )}
+          {isNext && (
+            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 12, fontSize: 13, fontWeight: 700, color: '#fcd34d', background: 'linear-gradient(150deg, rgba(251,191,36,.16), rgba(251,191,36,.05))', border: '1px solid rgba(251,191,36,.4)' }}>
+              🗓 Prepping <strong>{nextLabel}</strong> — set next month’s goals here ahead of time.{canEditGoals ? '' : ' (Read-only — a lead advisor or manager sets the goals.)'}
+            </div>
           )}
           {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
