@@ -200,6 +200,28 @@ function MonthDetail({ mkStr, monthData }) {
 // across the month's working days: This Year (actual entered), Where You Should
 // Be (forecast pace), and Last Year (LY total spread evenly). Pure SVG, scales
 // to the container width via viewBox.
+// Vivid, themed summary card (matches the advisor forecast look): gradient wash,
+// colored border + glow, accent label/icon, big glowing value.
+const gfLbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' };
+function MetricCard({ accent, icon, label, sub, subColor, children, minWidth = 175 }) {
+  return (
+    <div style={{
+      flex: 1, minWidth, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden',
+      background: `linear-gradient(150deg, ${accent}26, ${accent}0a 55%, rgba(2,6,23,.55))`,
+      border: `1px solid ${accent}55`, boxShadow: `0 10px 30px -14px ${accent}99, inset 0 1px 0 ${accent}26`,
+    }}>
+      <div style={{ position: 'absolute', top: -24, right: -24, width: 92, height: 92, borderRadius: '50%', background: `radial-gradient(circle, ${accent}3a, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, position: 'relative' }}>
+        <span style={{ fontSize: 15 }}>{icon}</span>
+        <div style={{ ...gfLbl, color: accent }}>{label}</div>
+      </div>
+      <div style={{ position: 'relative' }}>{children}</div>
+      {sub != null && <div style={{ fontSize: 11.5, color: subColor || '#94a3b8', marginTop: 5, fontWeight: 600, position: 'relative' }}>{sub}</div>}
+    </div>
+  );
+}
+const gfBig = (color) => ({ fontSize: 27, fontWeight: 900, color, marginTop: 6, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
+
 function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays, actualMTD, expectedMTD, projected, forecast }) {
   const W = 1000, H = 380;
   const padL = 74, padR = 26, padT = 24, padB = 54;
@@ -226,27 +248,27 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
   const xLabelRows = rows.filter((r, i) => i % 5 === 0 || i === rows.length - 1);
 
   const lastTy = enteredRows.length ? enteredRows[enteredRows.length - 1] : null;
+  const tyArea = enteredRows.length ? `${x(enteredRows[0].dayNum).toFixed(1)},${y(0).toFixed(1)} ${tyPts} ${x(lastTy.dayNum).toFixed(1)},${y(0).toFixed(1)}` : '';
 
-  const C = { ty: '#34d399', tgt: '#6ee7f9', ly: '#fbbf24' };
+  const C = { ty: '#34d399', tgt: '#38bdf8', ly: '#fbbf24' };
   const Stat = ({ label, value, color, sub }) => (
-    <div style={{ flex: 1, minWidth: 150, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '12px 16px' }}>
-      <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color, marginTop: 3 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sub}</div>}
-    </div>
+    <MetricCard accent={color} icon="" label={label} sub={sub} minWidth={150}>
+      <div style={gfBig(color)}>{value}</div>
+    </MetricCard>
   );
 
   const LegendDot = ({ color, dashed, children }) => (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: '#e2e8f0', fontWeight: 700 }}>
       <span style={{ width: 22, height: 0, borderTop: `3px ${dashed ? 'dashed' : 'solid'} ${color}`, display: 'inline-block' }} />
       {children}
     </span>
   );
 
   return (
-    <div style={{ marginTop: 28, background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '20px 24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>Pace Comparison</div>
+    <div style={{ marginTop: 28, background: `linear-gradient(160deg, ${C.ty}1c, rgba(15,23,42,.62) 55%)`, border: `1px solid ${C.ty}40`, borderRadius: 18, padding: '20px 24px', boxShadow: `0 14px 38px -18px ${C.ty}80` }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginBottom: 6 }}>
+        <div style={{ width: 4, height: 18, borderRadius: 3, background: `linear-gradient(${C.ty},${C.tgt})` }} />
+        <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Pace Comparison</div>
         <div style={{ flex: 1 }} />
         <LegendDot color={C.ty}>This Year</LegendDot>
         <LegendDot color={C.tgt} dashed>Where You Should Be</LegendDot>
@@ -261,6 +283,15 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
       </div>
 
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }} preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="gf-ty-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={C.ty} stopOpacity="0.38" />
+            <stop offset="100%" stopColor={C.ty} stopOpacity="0" />
+          </linearGradient>
+          <filter id="gf-ty-glow" x="-20%" y="-40%" width="140%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor={C.ty} floodOpacity="0.55" />
+          </filter>
+        </defs>
         {/* y gridlines + labels */}
         {tickVals.map((tv, i) => (
           <g key={i}>
@@ -272,17 +303,20 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
         {xLabelRows.map((r) => (
           <text key={r.k} x={x(r.dayNum)} y={H - padB + 22} textAnchor="middle" fontSize="11" fill="#64748b">{r.dt.getMonth() + 1}/{r.dt.getDate()}</text>
         ))}
+        {/* This Year gradient fill */}
+        {tyArea && <polygon points={tyArea} fill="url(#gf-ty-fill)" />}
         {/* Last Year pace */}
-        {lastYear > 0 && <polyline points={lyPts} fill="none" stroke={C.ly} strokeWidth="2" strokeDasharray="6 5" opacity="0.9" />}
+        {lastYear > 0 && <polyline points={lyPts} fill="none" stroke={C.ly} strokeWidth="2.5" strokeDasharray="7 6" opacity="0.9" />}
         {/* Target pace */}
-        {forecast > 0 && <polyline points={tgtPts} fill="none" stroke={C.tgt} strokeWidth="2" strokeDasharray="6 5" opacity="0.95" />}
+        {forecast > 0 && <polyline points={tgtPts} fill="none" stroke={C.tgt} strokeWidth="2.5" strokeDasharray="7 6" opacity="0.95" />}
         {/* This Year actual */}
-        {enteredRows.length > 0 && <polyline points={tyPts} fill="none" stroke={C.ty} strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" />}
-        {/* End dot + label for This Year */}
+        {enteredRows.length > 0 && <polyline points={tyPts} fill="none" stroke={C.ty} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round" filter="url(#gf-ty-glow)" />}
+        {/* End dot + value pill for This Year */}
         {lastTy && (
           <g>
-            <circle cx={x(lastTy.dayNum)} cy={y(lastTy.cumActual)} r="5" fill={C.ty} stroke="#04201d" strokeWidth="2" />
-            <text x={x(lastTy.dayNum)} y={y(lastTy.cumActual) - 12} textAnchor="middle" fontSize="12" fontWeight="800" fill={C.ty}>{money(lastTy.cumActual)}</text>
+            <circle cx={x(lastTy.dayNum)} cy={y(lastTy.cumActual)} r="6" fill={C.ty} stroke="#04201d" strokeWidth="2.5" />
+            <rect x={x(lastTy.dayNum) - 44} y={y(lastTy.cumActual) - 36} width="88" height="22" rx="11" fill={C.ty} />
+            <text x={x(lastTy.dayNum)} y={y(lastTy.cumActual) - 21} textAnchor="middle" fontSize="13" fontWeight="900" fill="#04201d">{money(lastTy.cumActual)}</text>
           </g>
         )}
       </svg>
@@ -680,13 +714,6 @@ export default function GoalForecast({
     });
   }
 
-  const cardStyle = {
-    background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)',
-    borderRadius: 16, padding: '20px 22px', flex: 1, minWidth: 180,
-  };
-  const labelStyle = { fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 8 };
-  const valStyle = { fontSize: 28, fontWeight: 900, color: '#e2e8f0' };
-
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {(parsePreview || parseErr) && (
@@ -855,114 +882,67 @@ export default function GoalForecast({
           })() : (<>
 
           {/* Forecast input + daily target */}
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 28 }}>
-            <div style={{ ...cardStyle, background: 'linear-gradient(135deg,rgba(52,211,153,.16),rgba(16,185,129,.08))', border: '1px solid rgba(52,211,153,.35)' }}>
-              <div style={labelStyle}>Month Forecast Gross Profit</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
+            <MetricCard accent="#34d399" icon="💰" label="Month Forecast Gross Profit" minWidth={250}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
                 <span style={{ fontSize: 26, fontWeight: 900, color: '#6ee7b7' }}>$</span>
-                <input
-                  type="number"
-                  value={forecast || ''}
-                  placeholder="0"
-                  onChange={e => updateForecast(e.target.value)}
-                  style={{
-                    background: 'rgba(2,6,23,.5)', border: '1px solid rgba(52,211,153,.35)',
-                    borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900,
-                    color: '#6ee7b7', width: 220, outline: 'none',
-                  }}
-                />
+                <input type="number" value={forecast || ''} placeholder="0" onChange={e => updateForecast(e.target.value)}
+                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(52,211,153,.45)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#6ee7b7', width: 200, outline: 'none' }} />
               </div>
-            </div>
-            <div style={{ ...cardStyle, background: 'linear-gradient(135deg,rgba(148,163,184,.14),rgba(100,116,139,.06))', border: '1px solid rgba(148,163,184,.3)' }}>
-              <div style={labelStyle}>Last Year (This Month)</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 26, fontWeight: 900, color: '#cbd5e1' }}>$</span>
-                <input
-                  type="number"
-                  value={lastYear || ''}
-                  placeholder="0"
-                  onChange={e => updateLastYear(e.target.value)}
-                  style={{
-                    background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.3)',
-                    borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900,
-                    color: '#cbd5e1', width: 200, outline: 'none',
-                  }}
-                />
+            </MetricCard>
+            <MetricCard accent="#38bdf8" icon="📆" label="Last Year (This Month)" minWidth={240}
+              sub={forecast > 0 && lastYear > 0 ? (forecast >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(forecast - lastYear)) + ' forecast vs LY' : 'last year’s final gross'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <span style={{ fontSize: 26, fontWeight: 900, color: '#7dd3fc' }}>$</span>
+                <input type="number" value={lastYear || ''} placeholder="0" onChange={e => updateLastYear(e.target.value)}
+                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(56,189,248,.4)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#7dd3fc', width: 190, outline: 'none' }} />
               </div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                {forecast > 0 && lastYear > 0
-                  ? (forecast >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(forecast - lastYear)) + ' forecast vs LY'
-                  : 'last year’s final gross'}
-              </div>
-            </div>
-            <div style={cardStyle}>
-              <div style={labelStyle}>Daily Target</div>
-              <div style={valStyle}>{money(dailyTarget)}</div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                {totalDays} working days · {completedDays} completed
-              </div>
-            </div>
+            </MetricCard>
+            <MetricCard accent="#22d3ee" icon="🎯" label="Daily Target" sub={`${totalDays} working days · ${completedDays} completed`}>
+              <div style={gfBig('#67e8f9')}>{money(dailyTarget)}</div>
+            </MetricCard>
           </div>
 
           {/* Summary cards */}
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
-            <div style={cardStyle}>
-              <div style={labelStyle}>Actual MTD</div>
-              <div style={valStyle}>{money(actualMTD)}</div>
-            </div>
-            <div style={cardStyle}>
-              <div style={labelStyle}>Expected MTD</div>
-              <div style={valStyle}>{money(expectedMTD)}</div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                where you should be ({completedDays} × daily target)
-              </div>
-            </div>
-            <div style={cardStyle}>
-              <div style={labelStyle}>Daily Average</div>
-              <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : runRate >= dailyTarget ? '#6ee7b7' : '#fca5a5' }}>{hasActuals ? money(runRate) : '—'}</div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                {hasActuals ? 'per working day · target ' + money(dailyTarget) : 'avg gross per working day'}
-              </div>
-            </div>
-            <div style={{ ...cardStyle, border: `1px solid ${up ? 'rgba(52,211,153,.45)' : 'rgba(248,113,113,.45)'}`, background: up ? 'rgba(16,185,129,.08)' : 'rgba(239,68,68,.08)' }}>
-              <div style={labelStyle}>{up ? 'Ahead of Pace' : 'Behind Pace'}</div>
-              <div style={{ ...valStyle, color: up ? '#6ee7b7' : '#fca5a5' }}>
-                {up ? '▲ ' : '▼ '}{money(Math.abs(variance))}
-              </div>
-            </div>
-            <div style={cardStyle}>
-              <div style={labelStyle}>Projected Month-End</div>
-              <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : projected >= forecast ? '#6ee7b7' : '#fca5a5' }}>{hasActuals ? money(projected) : '—'}</div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                {hasActuals && forecast > 0
-                  ? (projected >= forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - forecast)) + ' vs forecast'
-                  : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
-              </div>
-            </div>
+            <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD">
+              <div style={gfBig('#c4b5fd')}>{money(actualMTD)}</div>
+            </MetricCard>
+            <MetricCard accent="#38bdf8" icon="📊" label="Expected MTD" sub={`where you should be (${completedDays} × daily target)`}>
+              <div style={gfBig('#7dd3fc')}>{money(expectedMTD)}</div>
+            </MetricCard>
+            <MetricCard accent="#34d399" icon="📈" label="Daily Average"
+              sub={hasActuals ? 'per working day · target ' + money(dailyTarget) : 'avg gross per working day'}
+              subColor={!hasActuals ? undefined : runRate >= dailyTarget ? '#34d399' : '#fb7185'}>
+              <div style={gfBig(!hasActuals ? '#e2e8f0' : runRate >= dailyTarget ? '#34d399' : '#fb7185')}>{hasActuals ? money(runRate) : '—'}</div>
+            </MetricCard>
+            <MetricCard accent={up ? '#34d399' : '#fb7185'} icon="⚡" label={up ? 'Ahead of Pace' : 'Behind Pace'}>
+              <div style={gfBig(up ? '#34d399' : '#fb7185')}>{up ? '▲ ' : '▼ '}{money(Math.abs(variance))}</div>
+            </MetricCard>
+            <MetricCard accent="#fbbf24" icon="🏁" label="Projected Month-End"
+              sub={hasActuals && forecast > 0 ? (projected >= forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - forecast)) + ' vs forecast' : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
+              subColor={!hasActuals ? undefined : projected >= forecast ? '#34d399' : '#fb7185'}>
+              <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= forecast ? '#fbbf24' : '#fb7185')}>{hasActuals ? money(projected) : '—'}</div>
+            </MetricCard>
             {lastYear > 0 && (
-              <div style={cardStyle}>
-                <div style={labelStyle}>vs Last Year</div>
-                <div style={{ ...valStyle, color: !hasActuals ? '#e2e8f0' : projected >= lastYear ? '#6ee7b7' : '#fca5a5' }}>
-                  {hasActuals ? (projected >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - lastYear)) : '—'}
-                </div>
-                <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                  {hasActuals
-                    ? 'projected ' + (projected >= lastYear ? '+' : '−') + (lastYear > 0 ? Math.abs((projected / lastYear - 1) * 100).toFixed(1) : '0') + '% vs LY'
-                    : 'LY ' + money(lastYear)}
-                </div>
-              </div>
+              <MetricCard accent="#f472b6" icon="📉" label="vs Last Year"
+                sub={hasActuals ? 'projected ' + (projected >= lastYear ? '+' : '−') + (lastYear > 0 ? Math.abs((projected / lastYear - 1) * 100).toFixed(1) : '0') + '% vs LY' : 'LY ' + money(lastYear)}
+                subColor={!hasActuals ? undefined : projected >= lastYear ? '#34d399' : '#fb7185'}>
+                <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= lastYear ? '#34d399' : '#fb7185')}>{hasActuals ? (projected >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - lastYear)) : '—'}</div>
+              </MetricCard>
             )}
           </div>
 
           {/* Daily grid (collapsible) */}
-          <div style={{ background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
+          <div style={{ background: 'linear-gradient(160deg, rgba(56,189,248,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(56,189,248,.28)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 30px -18px rgba(56,189,248,.7)' }}>
             {/* Toggle bar — click to expand/collapse the daily entry table */}
             <div
               onClick={() => setGridOpen(o => !o)}
-              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: gridOpen ? 'rgba(110,231,249,.06)' : 'transparent' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: gridOpen ? 'rgba(56,189,248,.08)' : 'transparent' }}
             >
-              <span style={{ fontSize: 13, color: gridOpen ? '#6ee7f9' : '#94a3b8', transition: 'transform .15s', transform: gridOpen ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>Daily Entry — {monthLabel}</div>
+              <span style={{ fontSize: 13, color: gridOpen ? '#38bdf8' : '#94a3b8', transition: 'transform .15s', transform: gridOpen ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
+              <span style={{ fontSize: 14 }}>📅</span>
+              <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Daily Entry — {monthLabel}</div>
               <div style={{ flex: 1 }} />
               <div style={{ fontSize: 12, color: '#64748b' }}>
                 MTD <strong style={{ color: '#6ee7b7' }}>{money(actualMTD)}</strong>
