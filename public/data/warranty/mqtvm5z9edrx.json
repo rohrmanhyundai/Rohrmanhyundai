@@ -1,7 +1,7 @@
 {
   "id": "mqtvm5z9edrx",
   "createdAt": "2026-06-25T19:09:32.229Z",
-  "updatedAt": "2026-06-30T12:46:49.436Z",
+  "updatedAt": "2026-06-30T17:00:19.044Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "DONNA THOMPSON",
   "customerPhone": " (765) 427 - 7867",
@@ -14,9 +14,9 @@
   "warrantyCompany": "WHEELZ/AAGI",
   "warrantyPhone": "800-858-6324",
   "claimNumber": "",
-  "authNumber": "",
+  "authNumber": "598779",
   "laborRate": "170",
-  "laborTime": "5.7",
+  "laborTime": "7.1",
   "diagnosisTime": "1.0",
   "parts": [
     {
@@ -35,7 +35,7 @@
     }
   ],
   "taxPct": "7",
-  "deductible": "",
+  "deductible": "250",
   "rental": null,
   "towing": null,
   "sublet": null,
@@ -43,8 +43,8 @@
   "tireTax": null,
   "tireDisposal": null,
   "notes": "CALLED WHEELZ/AAGI 06/25/2026 @ 3:25PM.\n\nSENDING INSPETCOR 24-48 HRS. THE PERSON FROM WHEELZ SAID THE PRICE OF TRANSMISSION IS $5,774.85. WILL NEED TO CHECK THIS PRICE W/PARTS AFTER INSPECTOR COMES. \n\ninsp. came 06/29/2026 @4pm.",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-06-30",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -55,6 +55,6 @@
   "repairsFinishedDate": "",
   "readySubmission": false,
   "readySubmissionDate": "",
-  "inspectorDispatched": true,
-  "inspectorDispatchedDate": "2026-06-25"
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
 }
