@@ -20,8 +20,8 @@
     "jobDesc": "OIL LEAK TIMING COVER",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "06/30/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
