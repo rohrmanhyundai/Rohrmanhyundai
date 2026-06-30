@@ -158,8 +158,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [dayEndOpen, setDayEndOpen] = useState(false);
   const [deStep, setDeStep] = useState(0);
   const [deAgree, setDeAgree] = useState(false);
-  const [deNoNotes, setDeNoNotes] = useState([]); // my ROs missing internal notes
+  const [deNoNotes, setDeNoNotes] = useState([]); // ROs missing internal notes
   const [deNoNotesAt, setDeNoNotesAt] = useState('');
+  const [deNoNotesFor, setDeNoNotesFor] = useState(''); // advisor the list is for
   const [deCopiedRo, setDeCopiedRo] = useState('');
   function copyRo(ro) {
     const v = String(ro || '').trim();
@@ -171,10 +172,13 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
-    // This advisor's ROs missing internal notes (from the latest open-RO upload),
-    // shown at the "do all ROs have updated notes?" question.
+    // ROs missing internal notes (from the latest open-RO upload) for the advisor
+    // being viewed — so an advisor sees their own and a manager previewing an
+    // advisor sees that advisor's. Shown at the "updated notes?" question.
+    const who = (selected || me || '').toUpperCase();
+    setDeNoNotesFor(who);
     loadMissingNotes().then(d => {
-      const list = (d && d.advisors && d.advisors[me]) || [];
+      const list = (d && d.advisors && d.advisors[who]) || [];
       setDeNoNotes(Array.isArray(list) ? list : []);
       setDeNoNotesAt(d && d.updatedAt ? new Date(d.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
     }).catch(() => {});
@@ -586,7 +590,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             {step.key === 'notes' && deNoNotes.length > 0 && (
               <div style={{ marginTop: 14, background: 'rgba(167,139,250,.08)', border: '1px solid rgba(167,139,250,.35)', borderRadius: 12, padding: '12px 14px' }}>
                 <div style={{ fontSize: 12.5, fontWeight: 800, color: '#c4b5fd', marginBottom: 8 }}>
-                  ⚠️ {deNoNotes.length} of your RO{deNoNotes.length === 1 ? '' : 's'} had no internal notes{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''} — click to copy:
+                  ⚠️ {deNoNotes.length} {deNoNotesFor === me ? 'of your' : `of ${deNoNotesFor}’s`} RO{deNoNotes.length === 1 ? '' : 's'} had no internal notes{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''} — click to copy:
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, maxHeight: 150, overflowY: 'auto' }}>
                   {deNoNotes.map((o, i) => {
@@ -603,7 +607,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
               </div>
             )}
             {step.key === 'notes' && deNoNotes.length === 0 && (
-              <div style={{ marginTop: 14, fontSize: 12.5, color: '#64748b' }}>✓ No ROs flagged without notes for you{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''}.</div>
+              <div style={{ marginTop: 14, fontSize: 12.5, color: '#64748b' }}>✓ No ROs flagged without notes for {deNoNotesFor === me ? 'you' : deNoNotesFor}{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''}.</div>
             )}
             <div style={{ marginTop: 20 }}>
               {step.kind === 'agree' ? (
