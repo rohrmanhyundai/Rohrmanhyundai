@@ -1211,6 +1211,18 @@ export async function saveAdvisorGoalsMonth(advisor, monthKey, monthData) {
   return all;
 }
 
+// ── Open-RO "missing internal notes" list (per advisor, for Day End Reporting) ─
+// { updatedAt, by, advisors: { JORDAN: [{ ro, vehicle }], ... } }
+const MISSING_NOTES_PATH = 'data/missing-notes.json';
+export async function loadMissingNotes() {
+  const d = await loadGithubFile(MISSING_NOTES_PATH);
+  return (d && typeof d === 'object') ? d : { updatedAt: null, by: '', advisors: {} };
+}
+export async function saveMissingNotes(data) {
+  await saveGithubFile(MISSING_NOTES_PATH, data, `Missing-notes RO list ${new Date().toISOString()}`);
+  return data;
+}
+
 // ── Generic file helpers for DCT/MTM worksheets ──────────────────────────────
 export async function loadGithubFile(path) {
   try {
