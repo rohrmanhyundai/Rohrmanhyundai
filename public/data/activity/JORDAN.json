@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-06-30T22:25:26.568Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-06-30T22:21:12.096Z",
     "type": "page",
     "label": "advisor-calendar"
