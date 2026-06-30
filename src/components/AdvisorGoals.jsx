@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
 import { advisorMonthProgress } from '../utils/calculations';
 import { loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
@@ -119,6 +120,88 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
 
   const canEditDaysFor = (adv) => isAdmin || me === (adv || '').toUpperCase();
   const isMine = me === (selected || '').toUpperCase();
+
+  // ── Manager-only: upload an Advisor Performance Report (.xlsx) to fill a day's
+  // Hours (Bill Hrs) and HRS/RO (Hrs / RO) for every advisor in the report. ────
+  const uploadInputRef = useRef(null);
+  const [xlsxBusy, setXlsxBusy] = useState(false);
+  const [uploadRows, setUploadRows] = useState(null); // [{ name, firstName, hours, hrsRo, advisor }]
+  const [uploadDate, setUploadDate] = useState('');
+  const [uploadErr, setUploadErr] = useState('');
+  const [uploadMsg, setUploadMsg] = useState('');
+
+  async function handleXlsx(file) {
+    if (!file) return;
+    setXlsxBusy(true); setUploadErr(''); setUploadRows(null); setUploadMsg('');
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array' });
+      const norm = (s) => String(s == null ? '' : s).trim().toLowerCase().replace(/\s+/g, ' ');
+      // Read the per-advisor "All" totals out of one sheet (prefer "Summary").
+      const parseSheet = (name) => {
+        const ws = wb.Sheets[name];
+        if (!ws) return null;
+        const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
+        if (!aoa.length) return null;
+        const hdr = (aoa[0] || []).map(norm);
+        const ci = (label) => hdr.indexOf(norm(label));
+        const iName = ci('Name'), iPay = ci('Pay Type'), iHrs = ci('Bill Hrs'), iRo = ci('Hrs / RO');
+        if (iName < 0 || iHrs < 0) return null;
+        const out = [];
+        for (let r = 1; r < aoa.length; r++) {
+          const row = aoa[r] || [];
+          const nm = String(row[iName] == null ? '' : row[iName]).trim();
+          if (!nm || norm(nm) === 'total') continue;       // skip blanks + shop "Total" rows
+          if (iPay >= 0 && norm(row[iPay]) !== 'all') continue; // only the per-advisor "All" total
+          const hours = parseFloat(row[iHrs]);
+          const hrsRo = iRo >= 0 ? parseFloat(row[iRo]) : NaN;
+          out.push({ name: nm, hours: isNaN(hours) ? 0 : hours, hrsRo: isNaN(hrsRo) ? 0 : hrsRo });
+        }
+        return out.length ? out : null;
+      };
+      let parsed = parseSheet('Summary');
+      if (!parsed) { for (const n of wb.SheetNames) { parsed = parseSheet(n); if (parsed) break; } }
+      if (!parsed) { setUploadErr('Couldn’t find a sheet with Name, Bill Hrs and Hrs / RO columns. Make sure this is the Advisor Performance Report export.'); return; }
+      // Match each report name to a roster advisor by first name.
+      const matched = parsed.map(r => {
+        const firstName = r.name.trim().split(/\s+/)[0].toUpperCase();
+        const advisor = roster.find(a => (a || '').toUpperCase() === firstName) || null;
+        return { ...r, firstName, advisor };
+      });
+      setUploadRows(matched);
+      const t = new Date();
+      setUploadDate(`${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`);
+    } catch (e) {
+      setUploadErr('Could not read the file: ' + (e.message || e));
+    } finally {
+      setXlsxBusy(false);
+      if (uploadInputRef.current) uploadInputRef.current.value = '';
+    }
+  }
+
+  async function applyUpload() {
+    const toApply = (uploadRows || []).filter(r => r.advisor);
+    if (!uploadDate) { setUploadErr('Pick the date this report is for.'); return; }
+    if (!toApply.length) { setUploadErr('None of the report’s advisors matched the roster on this page.'); return; }
+    setXlsxBusy(true); setUploadErr('');
+    const dmk = uploadDate.slice(0, 7);
+    try {
+      for (const r of toApply) {
+        const all = await loadAdvisorGoals(r.advisor);
+        const b = (all && all[dmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+        const days = { ...(b.days || {}), [uploadDate]: { hours: safe(r.hours, 0), hrsRo: safe(r.hrsRo, 0) } };
+        await saveAdvisorGoalsMonth(r.advisor, dmk, { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days });
+      }
+      setUploadRows(null);
+      setUploadMsg(`✓ Updated ${toApply.length} advisor${toApply.length === 1 ? '' : 's'} for ${uploadDate}.`);
+      setTimeout(() => setUploadMsg(''), 6000);
+      setRefresh(x => x + 1); // reload the on-screen advisor's data
+    } catch (e) {
+      setUploadErr('Save failed: ' + (e.message || e));
+    } finally {
+      setXlsxBusy(false);
+    }
+  }
 
   // Working-day calendar (shared dashboard setting, like the manager forecast).
   const progress = advisorMonthProgress({});
@@ -449,15 +532,82 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     );
   }
 
+  // ── Upload preview + date picker modal ───────────────────────────────────
+  const renderUploadModal = () => {
+    if (!uploadRows && !uploadErr) return null;
+    const matched = (uploadRows || []).filter(r => r.advisor);
+    const unmatched = (uploadRows || []).filter(r => !r.advisor);
+    return (
+      <div onClick={() => { setUploadRows(null); setUploadErr(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16, width: '100%', maxWidth: 560, maxHeight: '82vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 18px 60px rgba(0,0,0,.6)' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#6ee7b7' }}>📊 Upload Advisor Report</div>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => { setUploadRows(null); setUploadErr(''); }} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+          </div>
+          <div style={{ padding: 20, overflowY: 'auto' }}>
+            {uploadErr ? (
+              <div style={{ color: '#fca5a5', fontSize: 13, lineHeight: 1.5 }}>{uploadErr}</div>
+            ) : (
+              <>
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ ...lblSt, marginBottom: 6 }}>Date this report is for</div>
+                  <input type="date" value={uploadDate} onChange={e => setUploadDate(e.target.value)}
+                    style={{ ...inpSt, width: 190, textAlign: 'left', colorScheme: 'dark' }} />
+                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>Hours &amp; HRS/RO below are written to this date for each advisor (overwrites that day).</div>
+                </div>
+                <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 8 }}>
+                  Matched <strong style={{ color: '#e2e8f0' }}>{matched.length}</strong> advisor{matched.length === 1 ? '' : 's'}{unmatched.length ? ` · ${unmatched.length} not on this roster` : ''}.
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
+                  {matched.map(r => (
+                    <div key={r.name} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, padding: '6px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
+                      <span style={{ color: '#cbd5e1', flex: 1 }}>{r.advisor} <span style={{ color: '#64748b', fontSize: 11 }}>({r.name})</span></span>
+                      <span style={{ color: '#6ee7b7', fontWeight: 700, minWidth: 84, textAlign: 'right' }}>{num(r.hours, 1)} hrs</span>
+                      <span style={{ color: '#93c5fd', fontWeight: 700, minWidth: 84, textAlign: 'right' }}>{num(r.hrsRo, 2)} hrs/RO</span>
+                    </div>
+                  ))}
+                  {unmatched.map(r => (
+                    <div key={r.name} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, padding: '6px 10px', background: 'rgba(255,255,255,.02)', borderRadius: 6, opacity: .6 }}>
+                      <span style={{ color: '#94a3b8', flex: 1 }}>{r.name} <span style={{ color: '#f59e0b', fontSize: 11 }}>— no match, skipped</span></span>
+                      <span style={{ color: '#64748b', fontWeight: 700, minWidth: 84, textAlign: 'right' }}>{num(r.hours, 1)} hrs</span>
+                      <span style={{ color: '#64748b', fontWeight: 700, minWidth: 84, textAlign: 'right' }}>{num(r.hrsRo, 2)} hrs/RO</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                  <button className="secondary" onClick={() => setUploadRows(null)}>Cancel</button>
+                  <button onClick={applyUpload} disabled={xlsxBusy || !matched.length || !uploadDate}
+                    style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: (xlsxBusy || !matched.length || !uploadDate) ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 13, opacity: (xlsxBusy || !matched.length || !uploadDate) ? .5 : 1 }}>
+                    {xlsxBusy ? '⏳ Saving…' : `✓ Apply to ${matched.length} advisor${matched.length === 1 ? '' : 's'}`}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {renderDayEndModal()}
+      {renderUploadModal()}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">🎯 Goals / Forecasting</div>
           <div className="adv-sub">{selected}{isMine ? ' (Mine)' : ''} · {M.label}</div>
         </div>
         <div style={{ flex: 1 }} />
+        {isAdmin && (
+          <>
+            <input ref={uploadInputRef} type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={e => handleXlsx(e.target.files && e.target.files[0])} />
+            <button className="secondary" onClick={() => uploadInputRef.current && uploadInputRef.current.click()} disabled={xlsxBusy} style={{ marginRight: 10 }}>
+              {xlsxBusy ? '⏳ Reading…' : '📊 Upload Advisor Report'}
+            </button>
+          </>
+        )}
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
@@ -488,6 +638,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           {deMsg && deMsg.startsWith('✓') && (
             <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{deMsg}</div>
+          )}
+          {uploadMsg && (
+            <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{uploadMsg}</div>
           )}
           {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
