@@ -2,7 +2,7 @@
   {
     "id": "mqsax3pprxyt",
     "createdAt": "2026-06-24T16:42:24.397Z",
-    "updatedAt": "2026-06-30T12:48:28.916Z",
+    "updatedAt": "2026-06-30T13:39:19.608Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Brittany Rice",
     "customerPhone": "260) 443 - 1735",
@@ -51,7 +51,7 @@
     ],
     "taxPct": "7",
     "deductible": "100",
-    "rental": "45",
+    "rental": "450.00",
     "towing": null,
     "sublet": null,
     "tireRepair": null,
