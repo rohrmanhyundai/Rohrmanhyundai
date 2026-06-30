@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-06-30T22:26:16.557Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-06-30T22:25:26.568Z",
     "type": "action",
     "label": "logout"
