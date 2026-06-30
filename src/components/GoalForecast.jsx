@@ -147,20 +147,19 @@ function MonthDetail({ mkStr, monthData }) {
   const M = computeMonthMetrics(mkStr, monthData);
   const vsForecast = M.actualTotal - M.forecast;
   const vsLY = M.actualTotal - M.lastYear;
-  const card = (label, value, color, sub) => (
-    <div style={{ flex: 1, minWidth: 150, background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '12px 16px' }}>
-      <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: color || '#e2e8f0', marginTop: 3 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sub}</div>}
-    </div>
+  const [open, setOpen] = useState(false); // daily table collapsed until clicked
+  const card = (icon, label, value, color, sub) => (
+    <MetricCard accent={color} icon={icon} label={label} sub={sub} minWidth={160}>
+      <div style={gfBig(color)}>{value}</div>
+    </MetricCard>
   );
   return (
     <div>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-        {card('Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
-        {card('Forecast', money(M.forecast), '#6ee7f9', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
-        {card('Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
-        {card('Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#6ee7b7' : '#fca5a5', `target ${money(M.dailyTarget)}/day`)}
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
+        {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
+        {card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
+        {card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
+        {card('📈', 'Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185', `target ${money(M.dailyTarget)}/day`)}
       </div>
 
       <ComparisonChart
@@ -169,28 +168,39 @@ function MonthDetail({ mkStr, monthData }) {
         actualMTD={M.actualTotal} expectedMTD={M.expectedMTD} projected={M.projected} forecast={M.forecast}
       />
 
-      {/* Read-only daily table */}
-      <div style={{ marginTop: 18, background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
-          <div>Day</div><div>Date</div>
-          <div style={{ textAlign: 'right' }}>Daily Target</div>
-          <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
-          <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
-          <div style={{ textAlign: 'right' }}>+/-</div>
+      {/* Read-only daily table (collapsed until clicked) */}
+      <div style={{ marginTop: 18, background: 'linear-gradient(160deg, rgba(56,189,248,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(56,189,248,.28)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 30px -18px rgba(56,189,248,.7)' }}>
+        <div onClick={() => setOpen(o => !o)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: open ? 'rgba(56,189,248,.08)' : 'transparent' }}>
+          <span style={{ fontSize: 13, color: open ? '#38bdf8' : '#94a3b8', transition: 'transform .15s', transform: open ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
+          <span style={{ fontSize: 14 }}>📅</span>
+          <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Daily Entry — {M.label}</div>
+          <div style={{ flex: 1 }} />
+          <div style={{ fontSize: 12, color: '#64748b' }}>{open ? 'Click to hide' : 'Click to view daily numbers'}</div>
         </div>
-        {M.rows.map(r => {
-          const diff = r.cumActual - r.cumTarget;
-          return (
-            <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
-              <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
-              <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
-              <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(M.dailyTarget)}</div>
-              <div style={{ textAlign: 'right', color: r.hasActual ? '#6ee7b7' : '#475569', fontWeight: 700 }}>{r.hasActual ? money(r.dailyGross) : '—'}</div>
-              <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
-              <div style={{ textAlign: 'right', fontWeight: 700, color: !r.hasActual ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>{r.hasActual ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}</div>
+        {open && (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+              <div>Day</div><div>Date</div>
+              <div style={{ textAlign: 'right' }}>Daily Target</div>
+              <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
+              <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
+              <div style={{ textAlign: 'right' }}>+/-</div>
             </div>
-          );
-        })}
+            {M.rows.map(r => {
+              const diff = r.cumActual - r.cumTarget;
+              return (
+                <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
+                  <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
+                  <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
+                  <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(M.dailyTarget)}</div>
+                  <div style={{ textAlign: 'right', color: r.hasActual ? '#6ee7b7' : '#475569', fontWeight: 700 }}>{r.hasActual ? money(r.dailyGross) : '—'}</div>
+                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
+                  <div style={{ textAlign: 'right', fontWeight: 700, color: !r.hasActual ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>{r.hasActual ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}</div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );
