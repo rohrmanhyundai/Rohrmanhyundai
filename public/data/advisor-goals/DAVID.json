@@ -82,6 +82,17 @@
       "2026-06-29": {
         "hours": 21.3,
         "hrsRo": 1.25
+      },
+      "2026-06-30": {
+        "hours": 3.8,
+        "hrsRo": 3.8,
+        "openRoCount": 19,
+        "invoiced": "no",
+        "customersUpdated": "no",
+        "notesUpdated": "yes",
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1782857452038
       }
     }
   }
