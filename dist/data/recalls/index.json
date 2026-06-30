@@ -1,5 +1,600 @@
 [
   {
+    "id": "mqs5l1c2zaj1",
+    "label": "23-01-094H HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)",
+    "filename": "mqs5l1c2zaj1-23-01-094H.pdf",
+    "fileType": "pdf",
+    "size": 2129344,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T14:13:04.267Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   23-01-094H  DATE   MODEL (S)  DECEMBER 2023   ELANTRA (AD/ADA)  SUBJECT:   HEAD LAMP HIGH BEAM REPAIR   ( SERVICE CAMPAIGN   T5G )  This TSB supersedes 21-01-004H by adding an op code 00D034R5 for inspection if aftermarket head lamp parts are installed and including a repair flowchart on page 7.  Description:   This bulletin describes the procedure to repair a head lamp that has an inoperable high beam function.  Applicable Vehicles   (Certain) :  •   2019 – 2020MY Elantra (AD/ADa) vehicles  Parts   Information:  Head Lamp Replacement – Elantra (AD)  Part Name   Part Number   Figure   Remarks  Head Lamp Assembly, Std #1  92101-F2540QQH  LH  92102-F2540QQH  RH  NOTE 1:   Verify the lot code information of the replacement head lamp assembly before installation.  If the lot code is between DA01 – DI31, DO NOT use the replacement part. The lot code must be  after EI09.   (Refer to Lot Code Information on page 3.)  Dealers must perform this service campaign on all affected vehicles prior to customer retail delivery and whenever an affected vehicle is in the shop for any maintenance or repair.  Access the “Vehicle Information” screen via WEBDCS to identify open campaigns.     IMPORTANT HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 2 of 16  SUBJECT:  SUBJECT:  Head Lamp Replacement – Elantra (AD) (continued)  Part Name   Part Number   Figure   Remarks  Head Lamp Assembly, Std #2  92101-F2640QQH  LH  92102-F2640QQH  RH  NOTE 1:   STD #2 is included for reference only for Elantra (AD).  NOTE 2:   Verify the lot code information of the replacement head lamp assembly before installation.  If the lot code is between DA01 – DI31, DO NOT use the replacement part. The lot code must be  after EI09.   (Refer to Lot Code Information on page 3.)  Head Lamp Replacement – Elantra (ADa)  Part Name   Part Number   Figure   Remarks  Head Lamp Assembly, Std #1  92101-F3500QQH  LH  92102-F3500QQH  RH  NOTE 1:   Verify the lot code information of the replacement head lamp assembly before installation. If the lot code is between DA01 – DI31,   DO NOT   use the replacement part. The lot code must be  after EI09. (Refer to Lot Code Information on page 3.) HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 3 of 16  SUBJECT:  SUBJECT:  Head Lamp Replacement – Elantra (ADa)  Part Name   Part Number   Figure   Remarks  Head Lamp Assembly, Std #2  92101-F3510QQH  LH  92102-F3510QQH  RH  NOTE 1:   Verify the lot code information of the replacement head lamp assembly before installation. If the lot code is between DA01 – DI31,   DO NOT   use the replacement part. The lot code must be  after EI09.  Lot   Code Information:  YEAR  (1st digit)  MONTH  (2nd digit)  DAY  (3~4th digit)  D   18   A   1   01   1   17   17  E   19   B   2   02   2   18   18  F   20   C   3   03   3   19   19  D   4   04   4   20   20  E   5   05   5   21   21  F   6   06   6   22   22  G   7   07   7   23   23  H   8   08   8   24   24  I   9   09   9   25   25  J   10   10   10   26   26  K   11   11   11   27   27  L   12   12   12   28   28  13   13   29   29  14   14   30   30  15   15   31   31  16   16 HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 4 of 16  SUBJECT:  SUBJECT:  Head Lamp Service Kit  Part Number   Part Name   Figure   Qty  92100-F2510QQH  Foil tape   4  Heat-resistant tape   4  Black tape   4  Clip   4  NOTE:   The head lamp service kit is applicable for both AD and ADa vehicles.  Head Lamp   Tool   Kit   –   Elantra (AD)  Part Number   Part Name   Figure   Qty   Remarks  92100-F2500QQH  Drill bit (5 mm)   1   –  Drill bit (20 mm)   1   –  Clip installation tool   3   –  AD STD #1 jig   5  For head lamp assemblies marked ‘AD F/L STD 1’ or ‘AD F/L STD 2’  AD STD #2   jig   5 HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 5 of 16  SUBJECT:  SUBJECT:  Head Lamp GuidePlate Kit – Elantra (ADa)  Part Number   Part Name   Figure   Qty   Remarks  92100-F3510QQH  ADa STD #1 jig   1  For head lamp assemblies marked ‘ADA F/L STD 1’ or ‘ADA F/L STD 2’  ADa STD #2   jig   1  NOTE:   The jigs for the AD and ADa vehicles may appear similar, but are NOT interchangeable. Separate the ADa jigs from the AD jigs to prevent confusion.  Head Lamp   Tool Kit   –   Elantra (AD a )  Part   Number   Part   Name   Figure   Qty   Remarks  92100-F3500QQH  Drill bit (5 mm)   1   –  Drill bit (20 mm)   1   –  Clip installation tool   3   –  ADa STD #1 jig   5  For head lamp assemblies marked ‘ADA F/L STD 1’ or ‘ADA F/L STD 2’  ADa STD #2   jig   5 HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 6 of 16  SUBJECT:  SUBJECT:  Warranty Information:  Model   Op. Code   Operation   Op.  Time   Casual Part   Nature  Code  Cause  Code  Elantra (AD/ADa)  00D034R0   Head Lamp Inspection and Rework (2 each)  1.1 M/H  92101-F3500QQH   B19   ZZ4  00D034R1  Head Lamp Inspection and Rework (1 each), Lamp Replacement (1 each)  0.9 M/H  00D034R2  Head Lamp Inspection and Lamp Replacement (2 each)  0.8 M/H  00D034R5   Head Lamp Inspection Only – Aftermarket Parts  0.1 M/H  NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  NOTE 2:   If a part is found in need of replacement while performing this campaign and the affected part is still under warranty, submit a separate claim using the same repair order. If the affected part is out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the work.  NOTE 3:   Dealer will be reimbursed in sublet for use of head lamp service kit in labor ops 00D034R0 and 00D034R1.  NOTE 4:   Each dealer has been sent one (1) AD head lamp tool kit, one (1) ADa head lamp guide plate kit, and three (3) head lamp service kits for the start of this campaign.  NOTE 5:   This TSB includes Repair validation photos. Op times include VIN, Mileage and Repair validation photos as outlined in the Digital Documentation Policy.  NOTE 6:   The incident parts are subject to callback through the normal Warranty Technical Center (WTC) parts return process.   Claim is subject to debit if the part is not returned. HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 7 of 16  SUBJECT:  SUBJECT:  Service Procedure:  Repair Flowchart:  Head Lamp Removal  1.   Loosen the front upper bumper mounting  screws and clips (A).  2.   Remove the front lower bumper mounting clips (B).  Remove headlamps  Drill inspection holes   Inspect levers  Lever moves   Install clip(s)  Lever does not move  Replace headlamp(s)  This TSB includes Repair validation photos. Refer to the latest Digital Documentation Policy for requirements.  STUI  A  B  If aftermarket head lamps are installed on the vehicle, this procedure does not apply. Submit op code 00D034R5.  Information i HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 8 of 16  SUBJECT:  SUBJECT:  3.   Loosen the front bumper LH/RH side mounting screws and clips (C).  4.   Disconnect the front bumper LH/RH connector (D).  5.   Remove the front bumper cover (E).  Do not damage the bumper side hook.  NOTICE  C  D  E HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 9 of 16  SUBJECT:  SUBJECT:  6.   Measure and mark a 3 meter (9.8 feet) distance from an unobstructed wall.  Park the vehicle facing the wall with front wheels centered over the marking.  7.   Turn on the head lamps.  Mark the height of the head lamp illumination.  8.   Turn off the head lamps.  9.   Loosen the head lamp mounting bolts (F).  Perform this action for both LH and RH sides.  10.   Remove the affected head lamp(s) (G).  F  G HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 10 of 16  SUBJECT:  SUBJECT:  Head Lamp Inspection  1.   Wipe the head lamp production label (A) and surrounding area using a clean towel.  2.   Remove the label.  3.   Identify if the head lamp is STD #1 or STD #2, based on the markings shown in the example photos at right (B).  •   AD F/L STD 1  •   AD F/L STD 2  •   ADA F/L STD 1  •   ADA F/L STD 2  A  STD #1 marking  STD #2 marking  B  B HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 11 of 16  SUBJECT:  SUBJECT:  4.   Install the corresponding jig (C) onto the head lamp assembly, based on the markings from the previous step.  •   AD F/L STD 1 or STD 2 marking:  Install the   AD STD #1 or STD #2   jig.  •   ADA F/L STD 1 or STD 2 marking: Install the   ADa STD #1 or STD #2   jig.  The jig shows the location to drill a pilot hole in the head lamp assembly.  5.   Slowly drill a pilot hole using the smaller drill bit 5 mm (13/64 inch).  6.   Remove the jig, and slowly drill into the pilot hole using the larger drill bit 20 mm (25/32 inch).  7.   Remove the remaining debris around the hole to ensure a smooth surface.  C  Do not drill past a depth of 15 mm (9/16 inch).  Hold the head lamp firmly while drilling to prevent movement.  CAUTION !  Do not drill past a depth of 15 mm  (9/16 inch).  Hold the head lamp firmly while drilling to prevent movement.  CAUTION ! HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 12 of 16  SUBJECT:  SUBJECT:  8.   Remove the head lamp dust cover (D).  9.   Shake the head lamp to remove the debris through the dust cover opening.  10.   Insert a flat-head screwdriver into the hole to inspect the head lamp high beam function.  11.   Move the lever (E) in the direction shown, towards the rear of the head lamp assembly.  •   If the lever (E) moves in the same direction, proceed to the   Head Lamp Rework (Clip Installation)   section   on the next page.  •   If the shaft (E) does not move in the same direction, stop this procedure and replace  the head lamp assembly instead.  D  Rear of head lamp assembly  E HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 13 of 16  SUBJECT:  SUBJECT:  Head Lamp   Rework (Clip Installation)  12.   Install the clip (G) onto the clip installation tool (H).  13.   Insert the clip installation tool into the drilled hole.  Refer to the example shown for the correct orientation of the clip installation tool.  Verify that the clip is fully seated and held in place by the magnets on the clip installation tool.  NOTICE  G  H  The RH side head lamp is shown as an example.  The LH side installation is in the opposite direction.  Information i  Clip Center  Shaft Center  The clip center (I) must be aligned with the shaft center (J).  Information i  J  I HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 14 of 16  SUBJECT:  SUBJECT:  14.   Install the clip onto the center of the shaft.  A flat-head screwdriver can be used to push the clip into the correct position.  15.   Apply the foil tape (K) over the drilled hole, approximately 5 mm (3/16 inch) from the groove in the head lamp. Ensure the surface is clean before applying the tape.  The clip must be installed correctly, or else the high beam will not function and the head lamp assembly will need to be replaced.  NOTICE  Incorrect Installation  Correct Installation  5 mm  K  Evenly distribute the foil tape and ensure there are no air bubbles or gaps.  Do not tear or puncture the tape.  NOTICE HEAD LAMP HIGH BEAM REPAIR (SERVICE CAMPAIGN T5G)  TSB #: 23-01-094H   Page 15 of 16  SUBJECT:  SUBJECT:  16.   Apply the heat-resistant tape (L) over the foil tape, extending approximately 3 mm (1/8 inch) beyond the edges of the tape underneath.  17.   Apply the black tape (M) over the heat- resistant tape. Align the black tape to the edge as shown by the red line in the reference picture.  18.  19.   Repeat steps 4 - 18 for the head lamp assembly on the opposite side if it also requires the head lamp rework (clip installation).  Evenly distribute the heat-resistant tape and ensure there are no air bubbles or gaps.  Do not tear or puncture the tape.  NOTICE   L  3 mm  M  The black tape can be cut and pressed down onto any uneven edges that are not fully covered.  Information i  Using STUI, take a photo of the completedtape application with the last 6 digits of the VIN and the date of repair on a piece of paper.  Upload the photo to STUI.  STUI",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mqs5l5ltle4k",
+          "answers": {},
+          "model": "Elantra (AD/ADa)",
+          "opCode": "00D034R0",
+          "operation": "Head Lamp Inspection and Rework (2 each)",
+          "opTime": "1.1 M/H",
+          "causalPart": "92101-F3500QQH",
+          "natureCode": "B19",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mqs5l5lt5kyk",
+          "answers": {},
+          "model": "Elantra (AD/ADa)",
+          "opCode": "00D034R1",
+          "operation": "Head Lamp Inspection and Rework (1 each), Lamp Replacement (1 each)",
+          "opTime": "0.9 M/H",
+          "causalPart": "92101-F3500QQH",
+          "natureCode": "B19",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mqs5l5lta6c3",
+          "answers": {},
+          "model": "Elantra (AD/ADa)",
+          "opCode": "00D034R2",
+          "operation": "Head Lamp Inspection and Lamp Replacement (2 each)",
+          "opTime": "0.8 M/H",
+          "causalPart": "92101-F3500QQH",
+          "natureCode": "B19",
+          "causeCode": "ZZ4"
+        },
+        {
+          "id": "mqs5l5ltk3o8",
+          "answers": {},
+          "model": "Elantra (AD/ADa)",
+          "opCode": "00D034R5",
+          "operation": "Head Lamp Inspection Only – Aftermarket Parts",
+          "opTime": "0.1 M/H",
+          "causalPart": "92101-F3500QQH",
+          "natureCode": "B19",
+          "causeCode": "ZZ4"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs5d69axtut",
+    "label": "19-01-012H TUCSON 2.4L ENGINE INSPECTION /  OIL PRESSURE SWITCH AND OIL PAN 181)",
+    "filename": "mqs5d69axtut-19-01-012H.pdf",
+    "fileType": "pdf",
+    "size": 560933,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T14:06:57.255Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   19-01-012H  DATE   MODEL(S)  JULY 2019   TUCSON (LM) SUBJECT:  TUCSON 2.4L ENGINE INSPECTION / OIL PRESSURE SWITCH AND OIL PAN INSTALLATION (RECALL CAMPAIGN 181)  Description:   Certain 2011-2013 MY Tucson vehicles equipped with 2.4L engines may have an engine oil leak from the seal between the oil pan and engine block which, if left unrepaired and operated over time, could eventually lead to engine damage. A damaged engine could lead to a high- speed stall and, in limited cases, a vehicle fire. This bulletin describes the procedure to install an updated oil pressure switch and, if necessary based on vehicle inspection, an oil pan. The updated oil pressure switch is designed to detect low oil volume and prevent potential engine damage or failure due to an engine oil leak. If the oil pressure light comes on after the updated oil pressure switch is installed, verify the engine oil level and quality, check for oil leaks, and change the engine oil if needed.  Applicable Vehicles:  Certain 2011-2013 MY Tucson (LM) vehicles equipped with 2.4L engines  SST Information: Part Name   Part Number / Figure   Note  OIL PAN REMOVER 09215-3C000 Place orders through Bosch at 1-866-539-4248.  *** Retail Vehicles ***  Dealers must perform this Campaign on all affected vehicles whenever an affected vehicle is in the shop for any maintenance or repair. When a vehicle arrives at the Service Department, access Hyundai Motor America's \"Warranty Vehicle Information\" screen via WEBDCS to identify open Campaigns.     IMPORTANT TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 2 of 7  SUBJECT: SUBJECT: Part Information:  Part Name   Part Number / Figure   Qty   Note  OIL PRESSURE SWITCH 94750-37200QQH 1 OIL PAN KIT 21510-2G500QQH 1 Only required based on vehicle inspection. Kit includes bolts for installation. SEALANT   00232-19061   1   For oil pan replacement: 1 tube of sealant is required per vehicle Existing shop tools CAULKING GUN   00232-19064   1  Warranty Information: MODEL   OP CODE   OPERATION   OP TIME CAUSAL PART NO. NATURE CODE CAUSE CODE  11-13MY TUCSON (LM) 91C012R0 OIL PAN INSPECTION AND OIL PRESSURE SWITCH REPLACEMENT 0.6 M/H 94750- 37200 QQH E74   ZZ3 91C012R1 OIL PAN INSPECTION AND OIL PRESSURE SWITCH AND OIL PAN REPLACEMENT 1.3 M/H 91C012R2 OIL PAN INSPECTION AND OIL PAN REPLACEMENT  (SEE NOTE #4 BELOW)  1.1 M/H  NOTE 1:   Submit Claim on Campaign Claim Entry Screen  NOTE 2:   If a part is found in need of replacement while performing this campaign and the affected part is still under warranty, submit a separate claim using the same Repair Order. If the affected part(s) are out of warranty, submit a Prior Approval (PA) request for goodwill consideration prior to completing the Campaign.  NOTE 3 : OP CODES 91C012R1 and 91C012R2 include reimbursement for 5 quarts of oil.  NOTE 4 : OP CODE 91C012R2 can only be used if the vehicle returns with an oil pan leak after OP CODE 91C012R0 was completed. TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 3 of 7  SUBJECT: SUBJECT: Service Procedure: OIL PAN INSPECTION:  1. Lift the vehicle and remove the undercover (A). 2. Inspect for engine oil leakage from the engine oil pan.  If there is evidence of oil leakage (past or present):  Replace the oil pressure switch and oil pan according to the following service procedure.  If there is NO evidence of oil leakage:  Replace the oil pressure switch according to the following service procedure.  NOTE: If the oil pressure switch was previously replaced using OP Code 91C012R0 for this campaign and the oil pan is now leaking, replace the oil pan only using OP CODE : 91C012R2.  A TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 4 of 7  SUBJECT: SUBJECT: OIL PRESSURE SWITCH REPLACEMENT:  1. Loosen the the intake manifold stay bolts and remove the intake manifold stay (A).  Tightening torque: 18.6 ~ 23.5N.m (1.9 ~ 2.4kgf.m, 13.7 ~ 17.4lb-ft)  2. Replace the oil pressure switch (B) with a new one and reinstall the removed parts in reverse order of removal. The oil pressure switch is located near the back of the starter (C).  Tightening torque: 7.8 ~ 11.8N.m (0.8 ~ 1.2kgf.m, 5.8 ~ 8.7lb-ft)  3. Check for DTCs and perform the appropriate diagnostic service. Ensure no warning lights are present to complete the procedure.  A  B  C TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 5 of 7  SUBJECT: SUBJECT: OIL PAN REPLACEMENT: (Only if necessary based on oil pan inspection)  1. Remove the oil filler cap and oil drain plug and drain the engine oil. 2. Loosen the A/C compressor lower mounting bolts (A).  3. Loosen the bolts and remove the A/C compressor bracket (B). 4. Remove the oil pan bolts. Then insert the SST (09215-3C000) between the ladder frame and oil pan (C) and gently remove the oil pan.  Insert the SST between the oil pan and the ladder frame by tapping it with a plastic hammer in the direction of (1). Tap the SST with a plastic hammer around the perimeter of the oil pan in the direction of (2) to remove it. Do not move the SST without tapping (SST could be damaged).  NOTICE  A  B  C  1 2 TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 6 of 7  SUBJECT: SUBJECT:  5. Remove ALL the old sealant from the engine. The mating surface with the oil pan should be completely free of any old sealant or debris.  6. Apply sealant at the two mating sections of the ladder frame and chain cover as shown.  Bead width : 2.5 mm  7. Apply sealant to the new oil pan flange surface as shown in the diagram.  Bead width : 2.5 ~ 3.0mm  Tighten the oil pan bolts within 5 minutes of applying the sealant. Sealant should not protrude into the inside of the oil pan. To prevent leakage of oil, apply sealant on the inner threads of the bolt holes.  NOTICE  10 mm 5 mm 10 mm 8 mm The distance from the center of the bead to the inside wall of the oil pan is 5 mm. For the three specific areas shown, this distance is 8 or 10 mm.  The new oil pan could leak if the old sealant is not completely removed.  NOTICE TUCSON 2.4L ENGINE INSPECTION / OPS AND OIL PAN INSTALL (RECALL CAMPAIGN 181) TSB #: 19-01-012H   Page 7 of 7  SUBJECT: SUBJECT:  8. Install the new oil pan and tighten the bolts evenly on the perimeter of the oil pan in several passes until torque specification is reached.  NOTE: Do not install bolt (E). Tightening torque for oil pan M12 bolts (D):  26.5 ~ 30.4N.m (2.7 ~ 3.1 Kgf.m, 19.5~22.   4 lb-ft)  Tightening torque for oil pan M10 bolts: 9.8 ~ 11.8N.m (1.0 ~ 1.2 Kgf.m, 7.2~8.7 lb-ft)  9. Install the A/C compressor bracket and tighten the bolts.  Tightening torque: 19.6 ~ 23.5N.m (2.0 ~ 2.4 Kgf.m,   14.5~17.   4 lb-ft)  10. Reinstall the removed parts in reverse order of removal. Wait at least 30 minutes after assembling the oil pan before refilling the engine oil.  11. Refill the engine oil referring to the applicable vehicle shop manual. 12. Check for DTCs and perform the appropriate diagnostic service. Ensure no warning lights are present to complete the procedure.  D  E",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mqs5dmspx55o",
+          "answers": {},
+          "model": "11-13MY TUCSON (LM)",
+          "opCode": "91C012R0",
+          "operation": "OIL PAN INSPECTION AND OIL PRESSURE SWITCH REPLACEMENT",
+          "opTime": "0.6 M/H",
+          "causalPart": "94750-37200QQH",
+          "natureCode": "E74",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs5dmsp5oqp",
+          "answers": {},
+          "model": "11-13MY TUCSON (LM)",
+          "opCode": "91C012R1",
+          "operation": "OIL PAN INSPECTION AND OIL PRESSURE SWITCH AND OIL PAN REPLACEMENT",
+          "opTime": "1.3 M/H",
+          "causalPart": "94750-37200QQH",
+          "natureCode": "E74",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs5dmspkgv0",
+          "answers": {},
+          "model": "11-13MY TUCSON (LM)",
+          "opCode": "91C012R2",
+          "operation": "OIL PAN INSPECTION AND OIL PAN REPLACEMENT (SEE NOTE #4 BELOW)",
+          "opTime": "1.1 M/H",
+          "causalPart": "94750-37200QQH",
+          "natureCode": "E74",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs5bdwj2bnh",
+    "label": "20-01-012H CANISTER INSPECTION AND AUXILIARY CANISTER KIT SERVICE CAMPAIGN 958)",
+    "filename": "mqs5bdwj2bnh-20-01-012H.pdf",
+    "fileType": "pdf",
+    "size": 782478,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T14:05:34.030Z",
+    "searchText": " Circulate To: Service Manager, Warranty Manager, Service Advisors, Technicians, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   20 - 01 - 012 H  DATE   MODEL  MARCH , 20 20   TUCSON   ( LM )  SUBJECT :   CANISTER   INSPECTION AND   AUXILIARY CANISTER K IT INSTALLATION   -  (VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958 )  Description:  This bulletin provides   the   procedure   to   inspect the   evap orative   system ’s   existing   canister for   loose  charcoal ,   and if confirmed the   new   Auxiliary   Canister Kit   of this bulletin   will be installed   to   improve  evap orative   system   performance .   The   existing   canister   will   not be   replaced.  APPLICABLE VEHICLES :   All   2010 - 2015   Tucson   ( LM )   2.4L Engine   with   ULEV emissions .  Parts   I nformation :  MODEL   PART NUMBER   DESCRIPTION   PHOTO   REMARK  Tucson(LM)  31410-2S510QQH   AUXILIARY  CANISTER KIT  Canister 1EA  Hose 1EA  Clamp 1EA  00305-SC958   Campaign Sticker  Apply to all vehicles  regardless of State  NP050-09006  Vehicle Emission Recall-Proof of Correction Card  Order only  for States:  CA, CT, DE, MA, MD, ME, NJ, NY, OR, PA, RI, VT, WA.  *** Retail Vehicles ***  Dealers must perform this Service Campaign on all affected vehicles whenever an affected vehicle is in the shop for any maintenance or repair.  When a vehicle arrives at the Service Department, access Hyundai Motor America's \"Warranty Vehicle Information\" screen via WEBDCS to identify open Campaigns.  958  00305 - SC958 CA NISTER INSPECTION AN D AUXILIARY CANISTER   KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958 )  TSB #:   20 - 01 - 012 H   Page 2 of 7  SUBJECT:  Warranty Information :  MODEL   OP CODE   OPERATION   OP  TIME  CAUSAL  P/N  NATURE  CODE  CAUSE  CODE  Tucson ( LM )  90C071R0   CANISTER  INSPECTION   0.3   31420 - 2S500   I11   ZZ7  90C071R1  CANISTER  INSPECTION AND  AUXILIARY CANISTER  KIT INSTALLATION  0. 5   31420 - 2S500   I11   ZZ7  NOTE   1 :   Submit claim on Campaign Claim Entry Screen .  NOTE 2:   If a part is found in need of replacement while performing   this   Service Campaign and the affected  part is still under warranty, submit a separate claim using the same Repair Order Number and the same Causal  Part Number as the Campaign Claim. If the affect ed part is out of warranty, submit a Prior Approval Request  for goodwill consideration prior to performing the work.  Service Procedure :  1.   Confirm the vehicle’s emission underhood  label includes “ULEV”.  2 .   Lift up the vehicle and   locate   the position of the  canister. CANISTER INSPECTION   AND AUXILIARY CANIST ER KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958)  TSB #:   20 - 01 - 012 H   Page 3 of 7  SUBJECT:  3.   Canister   I nspection   S tep :  Place the handle end of a rubber hammer to the canister right edge as shown in the picture.  Tap the hammer head rapidly at an approximate rate of 10 times over 2 seconds and inspect for noise inside the canister.  PASS :     Only rubber hammer hitting noise and canister body vibration is heard.     Service Procedure is   complete   with  Inspection only performed .  NO   PASS :     Loose charcoal shaking noise is heard from inside the canister. (NOTE: It may sound similar to sand shaking around)     Proceed to   additional steps   below   to  install the   Auxiliary   Canister Kit .  4.   Check the position of the Canister Close Valve (CCV).  5.   Remove the CCV extension wire clip. CA NISTER INSPECTION AN D AUXILIARY CANISTER   KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958 )  TSB #:   20 - 01 - 012 H   Page 4 of 7  SUBJECT:  6.   Disconnect the vapor hose from the CCV using needle nose pliers.  7.   Insert the supplied hose from the Auxiliary Canister Kit to the CCV and secure the clamp in place. CANISTER INSPECTION   AND AUXILIARY CANIST ER KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958)  TSB #:   20 - 01 - 012 H   Page 5 of 7  SUBJECT:  8.   Install the supplied auxiliary canister to the left hand fuel tank band and temporary tighten the bolts.  9.   Connect the existing vapor hose to the auxiliary canister nipple.  NOTE:   Remove the existing clamp and install the supplied clamp.  10.   Connect the supplied hose to the bottom nipple of the auxiliary canister.  11.   Tighten the auxiliary canister mounting bolts.  Tightening torque :  3 . 9   ~   5 . 9 N.m ( 0 . 4   ~   0 . 6 kgf.m,   2 . 9   ~   4 . 3 lb - ft) CA NISTER INSPECTION AN D AUXILIARY CANISTER   KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958 )  TSB #:   20 - 01 - 012 H   Page 6 of 7  SUBJECT:  12.   Install the CCV extension wire clip.  13.   GDS Evap Leak age   Test :  Perform GDS Evap Leakage Test according to the GDS instructions.  This will confirm that the installation of parts and hoses are secure without a system vacuum leak.  14.   Fill in the information on the 00305 - SC 958  Campaign Sticker and apply onto the hood in  the area below the Emission Label as shown.  Be sure to clean the mounting surface to  ensure proper label adhesion. CANISTER INSPECTION   AND AUXILIARY CANIST ER KIT INSTALLATION  ( VOLUNTARY EMISSIONS   SERVICE CAMPAIGN   958)  TSB #:   20 - 01 - 012 H   Page 7 of 7  SUBJECT:  15.   NOTE: This step is only f or   vehicles registered in   California, Connecticut,   Delaware,  Maine, Maryland, Massachusetts, New Jersey,   New York,   Oregon, Pennsylvania, Rhode  Island, Vermont and Washington:  Complete the campaign card per the below instructions:  VEHICLE EMISSION RECALL   -   PROOF OF CORRECTION CARD  A Vehicle Emission Recall - Proof of Correction card must be filled out for all vehicles registered in California, Connecticut, Delaware, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Pennsylvania, Rhode Island, Vermont and Washington. Residents of these states, who own an affected vehicle, will be required to possess a Vehicle Emission Recall - Proof of Correction card as evidence of voluntary service campaign completion, when they apply for vehicle registration renewal.  WHAT TO DO WITH THE CARD:  The Vehicle Emission Recall - Proof of Correction card must   be completed by the Dealership’s  Service Manager using a permanent ink pen. A fine point pen is recommended. When filling in the information, copy the information directly from the vehicle, not from the repair order. ALL INFORMATION MUST BE PRINTED AND NEAT.  The copy of the card shown below indicates all the areas to be filled in.  The completely filled out Vehicle Emission Recall   -   Proof of Correction   card should be  given to the owner of   the vehicle upon completion of the Campaign.  1. Enter  Vehicle’s  License Number  2. Enter “Hyundai”   3. Enter Model Year   4. Enter “TUCSON”   5. Enter the  vehicle’s VIN  Number  6. Enter “9 58 ”  7. Enter  Dealership  Name  8. Enter Dealership’s Address.  NOTE: Enter the physical   address, not  the mailing address (not a P.O. Box)  9 . Enter  Date of  Repair  10. Service  Manager  Sign Here",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mqs5bi6ki214",
+          "answers": {},
+          "model": "Tucson (LM)",
+          "opCode": "90C071R0",
+          "operation": "CANISTER INSPECTION 0.3",
+          "opTime": "",
+          "causalPart": "31420-2S500",
+          "natureCode": "I11",
+          "causeCode": "ZZ7"
+        },
+        {
+          "id": "mqs5bi6k7agx",
+          "answers": {},
+          "model": "Tucson (LM)",
+          "opCode": "90C071R1",
+          "operation": "CANISTER INSPECTION AND AUXILIARY CANISTER KIT INSTALLATION 0. 5",
+          "opTime": "",
+          "causalPart": "31420-2S500",
+          "natureCode": "I11",
+          "causeCode": "ZZ7"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs58ldwnbak",
+    "label": "24-01-068H(1) ENGINE MONITORING LOGIC (SERVICE CAMPAIGN 966)",
+    "filename": "mqs58ldwnbak-24-01-068H_1_.pdf",
+    "fileType": "pdf",
+    "size": 469752,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T14:03:23.582Z",
+    "searchText": " Circulate To:   Service Manager,   Warranty Manager,   Service Advisors ,   Technicians ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   2 4 - 01 - 068 H  DATE   MODEL(S)  A UGUST   202 4   APPLICABLE  VEHICLES BELOW  SUBJECT:   ENGINE MONITORING LOGIC   (SERVICE   CAMPAIGN 966 )  This TSB supersedes TSB#   22 - 01 - 028H - 1   to   correct a discrepancy   in   the   ROM ID Information  Table   for the   20 1 0 MY   Santa F e 2.4L   ( CM ) .  Description:  Hyundai is c onducting a   campaign to enhance the knock sensor   software to detect abnormal engine  bearing noise before potentially severe engine damage occurs. If abnormal engine bearing noise is  detected, the Malfunction Indicator Lamp (MIL) will blink continuously ,   and the vehicle will be placed  in Engine Protection Mode allowing the customer to drive to the nearest Hyundai d ealer for diagnosis  and repair.   In addition, DTC P132600 will be recorded in the ECM. The vehicle can continue to be  operated for a limited time in Engine Protection Mode, but it will accelerate   slower and have a  reduced maximum speed. Engine RPMs will be limited to approximately 1800 - 2000 RPM.  Applicable Vehicle s :  •   Certain   201 0 - 2012 MY Santa Fe (CM) vehicles with Theta II 2.4L MPI engines  •   Certain   201 0 - 2013 MY   Tucson (LM) vehicles with   Theta II 2.4L MPI engines  •   Certain 2014 - 2015 MY Tucson (LM) vehicles with Nu 2.0L GDI engines  •   Certain 2016 - 20 21   MY Tucson (TL) vehicles with Nu 2.0L GDI engines  •   Certain 2011 - 2015 MY Sonata Hybrid (YF HEV) vehicles with   Theta II 2.4L MPI Atkinson engines  •   Certain 2016 - 2019 MY Sonata Hybrid/Plug - In (LF HEV/PHEV) vehicles with Nu 2.0L GDI engines  •   Certain 2012 - 2017 MY Veloster (FS) vehicles with Gamma 1.6L GDI engines  •   Certain 2014MY Elantra Coupe (JK) vehicles with Nu   2.0L GDI engines  •   Certain 2014 - 201 6   MY Elantra   ( MD ) vehicles with Nu 2.0L GDI engines  •   Certain 2014 - 2017 MY Elantra GT (GD) vehicles with Nu 2.0L GDI engines  •   Certain 2018 - 20 20   MY Elantra GT (PD) vehicles with Nu 2.0L GDI engines  ***   Retail Vehicles ***  Dealers must perform this Service Campaign   whenever an affected vehicle is in the shop for any  maintenance or repair.  When a   vehicle arrives at the Service Department, access Hyundai Motor America's \"Warranty  Vehicle Information Screen (VIS)\" via WEBDCS to identify open campaigns.     IMPORTANT ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   2   of   21  SUBJECT:  SUBJECT:  GDS Information:  Event #   Description  644   CMA 2.4MPI   -   IMPROVED KSDS LOGIC APPLICATION  690   LM 2.4MPI   -   IMPROVED KSDS LOGIC APPLICATION  806   LM 2.0GDI   -   IMPROVED KSDS LOGIC APPLICATION   (BASE)  739   TL Nu 2.0 GDI (16 - 17MY)   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  756   TL 2.0GDI (18MY)   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  810   TL Nu 2.0 GDI (1 9 - 21 MY)   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  713   YF HEV 2.4 MPI   -   IMPROVED KSDS LOGIC APPLICATION  733   LF   HEV/PHEV 2.0GDI (16MY)   -   IMPROVED KSDS LOGIC APPLICATION  7 97   LF HEV /PHEV   2.0GDI   (17 - 19MY)   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  663   FS 1.6 GDI   -   IMPROVED KSDS LOGIC APPLICATION  717   JK Nu 2.0 GDI   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  715   MD Nu   2.0 GDI   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  730   GD Nu 2.0 GDI   -   IMPROVED KSDS LOGIC APPLICATION (BASE)  754   PD 2.0GDI ( 18 - 19MY)   -   IMPROVED KSDS LOGIC APPLICATION   ( BASE)  804   PD 2.0GDI ( 20MY)   -   IMPROVED KSDS LOGIC APPLICATION   ( BASE)  NOTE S :  •   Refer to   TSB   24 - GI - 012H   for additional   tablet - based Mobile GDS ECU update   information .  •   After the ECU Upgrade process shows 100% complete,   cycle the ignition key to OFF for at  least 30 seconds to reset the   control unit . This step is important for establishing normal  powertrain communication and to prevent system errors.  •   Clear DTC(s) present after the EC U   update.  •   Start engine to confirm   proper operation of the vehicle.  WARNING !  GDS   Vehicle Battery Voltage Warning :  If voltage is   below 12 volts as per the   GDS warning, then  select   Back   and run the engine at least   15   minutes to  reach an adequate battery state of charge   to prevent   ECU  Update failure. Cycle the ignition   OFF/ON   before retrying  ECU update again . ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   3   of   21  SUBJECT:  SUBJECT:  Warranty Information:  MY /   Engine /   Model   Op Code   Operation   Op Time   Causal P /N   Nature   Cause  10 - 12MY Theta II 2.4L MPI  Santa Fe (CM)   10D021R0  ECM UPGRADE   0. 3   M/H  39104 - 2G341  E13   ZZ 3  12 - 17MY Gamma 1.6L GDI  Veloster (FS)   10D021R1   39110 - 2BBH3  10 - 13MY Theta II 2.4L MPI  Tucson (LM)   10D021R2   39106 - 2G800  11 - 15MY Theta II 2.4L MPI  Sonata Hybrid (YF HEV)   10D021R3   39105 - 2G910  14MY Nu 2.0L GDI  Elantra Coupe (JK)   10D021R4   39137 - 2EJA0  14 - 16MY Nu 2.0L GDI  Elantra (MD)   10D021R5   39135 - 2EMA0  14 - 15MY Nu 2.0L GDI  Tucson (LM)   10D021R D   3913 7 - 2ELC0  14 - 17MY   Nu 2.0L GDI  Elantra GT (GD)   10D021R7   39137 - 2EGB0  16MY Nu 2.0L GDI  Sonata   Hybrid/Plug - In  ( LF HEV / PHEV )  1 0 D021R 8   39161 - 2EEB0  1 7 - 1 9 MY Nu 2.0L GDI  Sonata   Hybrid/Plug - In  ( LF HEV / PHEV )  1 0 D021R B   39161 - 2EEB1  1 6 - 21 MY Nu 2.0L GDI  Tucson (TL)   10D021R9   39133 - 2ETA0  18 - 20 MY   Nu 2.0L   GDI  Elantra GT ( PD )   10D021RA   39131 - 2EPE0  NOTE 1:   Submit claim on Campaign Claim Entry Screen  NOTE 2:   If a part   that is not covered by this campaign   is found in need of replacem ent while  performing this campaign   and the affected part is still under warranty, submit a separate claim using  the Same Repair Order. If the affected part is out of warranty, submit a Prior Approval Request for  goodwill consideration prior to performing the work.  You must initially perform all GDS ECU Updates in Auto Mode.  If the ECU Update starts but then fails in Auto Mode, perform the update in Manual Mode to recover.  NOTICE ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   4   of   21  SUBJECT:  SUBJECT:  ROM ID Information Table:  •   Perform   the   ECM Update .  •   Verify the ECM ROM ID before   updating the software. Refer to the table below.  •   IMMO   (O) = Start Stop Button  •   NON IMMO   (X)   = Key Start  MODEL   TM   IMMO   ECM P/N   ECM ROM   ID  OLD   NEW (EVENT #644)  Santa Fe (CM)  2.4L MPI  ( 10MY )  AT  O   39104 - 2G330  FAC4RK4A  FAC4RK5A  FAC4RL0A  FAC4RL0B  FAC4RLKA  X   39104 - 2G340  FAC4MK4A  FAC4MK5A  FAC4ML0A  FAC4ML0B  FAC4MLKA  MT  O   39114 - 2G330  FAC4RK4A  FAC4RK5A  FAC4RL0A  FAC4RL0B  FAC4RL1K  X   39114 - 2G340  FAC4MK4A  FAC4MK5A  FAC4ML0A  FAC4ML0B  FAC4ML1K  Santa Fe (CM)  2.4L MPI  ( 11MY )  AT  O   39104 - 2G331  FBC4RM2A  FBC4RM2B  FBC4RQ0A  FBC4RQKA  X   39104 - 2G341  FBC4MM2A  FBC4MM2B  FBC4MQ0A  FBC4MQKA  MT  O   39114 - 2G331  FBC4RM2A  FBC4RM2B  FBC4RQ0A  FBC4RQ1K  X   39114 - 2G341  FBC4MM2A  FBC4MM2B  FBC4MQ0A  FBC4MQ1K  Santa Fe (CM)  2.4L MPI  ( 12MY )  AT  O   39104 - 2G332   FCC4RQ0A  FCC4RR1A   FCC4RRKA  X   39104 - 2G342   FCC4MQ0A  FCC4MR1A   FCC4MRKA  MT  O   39114 - 2G332   FCC4RQ0A  FCC4RR1A   FCC4RR1K  X   39114 - 2G342   FCC4MQ0A  FCC4MR1A   FCC4MR1K ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   5   of   21  SUBJECT:  SUBJECT:  MODEL   TM   IMMO   ECM P/N   ECM ROM   ID  OLD   NEW (EVENT #663)  Veloster  (FS)  1.6L GDI  DCT  X  39110 - 2BBH3  39110 - 2BBC7  39110 - 2BBR3  GGFS - BFU6ES00H00  GGFS - BFU6ES01H00  GGFS - BFU6ES02H00  GGFS - BFU6ES03H00  GGFS - BFU6ES04H00  GGFS - BFU6ES05H00  GGFS - BFU6ES06H00  GGFS - BFU6EF00H00  GGFS - DFU6ES00H00  GGFS - DFU6ES01H00  GGFS - DFU6ES02H00  GGFS - DFU6ES03H00  GGFS - DFU6ES04H00  GGFS - DFU6ES05H00  GGFS - EFU6ES00H00  GGFS - EFU6ES01H00  GGFS - EFU6EF01H00  GGFS - EFU6EF02H00  GGFS - EFU6EF03H00  GGFS - EFU6EK33H00  O  39110 - 2BBH0  39110 - 2BBB7  39110 - 2BBR0  GGFS - BFU6FS00H00  GGFS - BFU6FS01H00  GGFS - BFU6FS02H00  GGFS - BFU6FS03H00  GGFS - BFU6FS04H00  GGFS - BFU6FS05H00  GGFS - BFU6FS06H00  GGFS - BFU6FF00H00  GGFS - DFU6FS00H00  GGFS - DFU6FS01H00  GGFS - DFU6FS02H00  GGFS - DFU6FS03H00  GGFS - DFU6FS04H00  GGFS - DFU6FS05H00  GGFS - EFU6FS00H00  GGFS - EFU6FS01H00  GGFS - EFU6FF01H00  GGFS - EFU6FF02H00  GGFS - EFU6FF03H00  GGFS - EFU6FK33H00  MT   X  39110 - 2BBF3  39110 - 2BBN9  39110 - 2BBR9  GGFS - BFU6ES00600  GGFS - BFU6ES01600  GGFS - BFU6ES02600  GGFS - BFU6ES03600  GGFS - BFU6ES04600  GGFS - BFU6ES05600  GGFS - DFU6ES00600  GGFS - DFU6ES01600  GGFS - DFU6ES02600  GGFS - DFU6ES03600  GGFS - EFU6EK33600 ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   6   of   21  SUBJECT:  SUBJECT:  Veloster  (FS)  1.6L GDI  Veloster  (FS)  1.6L GDI  GGFS - EFU6ES01600  GGFS - EFU6EF01600  GGFS - EFU6EF02600  GGFS - EFU6EF03600  O  39110 - 2BBF0  39110 - 2BBN6  39110 - 2BBR6  GGFS - BFU6FS00600  GGFS - BFU6FS01600  GGFS - BFU6FS02600  GGFS - BFU6FS03600  GGFS - BFU6FS04600  GGFS - BFU6FS05600  GGFS - DFU6FS00600  GGFS - DFU6FS01600  GGFS - DFU6FS02600  GGFS - DFU6FS03600  GGFS - EFU6FS01600  GGFS - EFU6FF01600  GGFS - EFU6FF02600  GGFS - EFU6FF03600  GGFS - EFU6FK33600  DCT  X   39110 - 2BBR4  GGFS - FFU6ES00H00  GGFS - FFU6ES01H00  GGFS - FFU6EF01H00  GGFS - FFU6EF02H00  GGFS - FFU6EK32H00  O   39110 - 2BBR1  GGFS - FFU6FS00H00  GGFS - FFU6FS01H00  GGFS - FFU6FF01H00  GGFS - FFU6FF02H00  GGFS - FFU6FK32H00  MT  X   39110 - 2BBR8  GGFS - FFU6ES00600  GGFS - FFU6ES01600  GGFS - FFU6ES02600  GGFS - FFU6EF02600  GGFS - FFU6EF03600  GGFS - FFU6EK33600  O   39110 - 2BBR5  GGFS - FFU6FS00600  GGFS - FFU6FS01600  GGFS - FFU6FS02600  GGFS - FFU6FF02600  GGFS - FFU6FF03600  GGFS - FFU6FK33600  DCT  X   39125 - 2BFK5  GGFS - GFU6ES00H00  GGFS - GFU6ES01H00  GGFS - GFU6ES02H00  GGFS - GFU6EK32H00  O   39125 - 2BFK0  GGFS - GFU6FS00H00  GGFS - GFU6FS01H00  GGFS - GFU6FS02H00  GGFS - GFU6FK32H00  MT  X   39121 - 2BFK5  GGFS - GFU6ES00600  GGFS - GFU6ES01600  GGFS - GFU6ES02600  GGFS - GFU6EK32600  O   39121 - 2BFK0  GGFS - GFU6FS00600  GGFS - GFU6FS01600  GGFS - GFU6FS02600  GGFS - GFU6FK32600 ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   7   of   21  SUBJECT:  SUBJECT:  MODEL   IMMO   ECU P/N   OLD   NEW  ROM ID   ROM ID (Event #690)  Tucson (LM)  2.4L MPI  (10MY)  AT  ULEV  - IMMO   39106 - 2G800  LAC4MK3A  LAC4MQ K A LAC4MK3B  LAC4MQ0B  +IMMO   39106 - 2G810  LAC4RK3A  LAC4RQ K A LAC4RK3B  LAC4RQ0B  SULEV  - IMMO   39106 - 2G820  LAS4MK3A  LAS4MQ K A LAS4MK3B  LAS4MQ0B  +IMMO   39106 - 2G880  LAS4RK3A  LAS4RQ K A LAS4RK3B  LAS4RQ0B  MT   ULEV  - IMMO   39116 - 2G800  LAC4MK3A  LAC4MQ1 K LAC4MK3B  LAC4MQ0B  +IMMO   39116 - 2G810  LAC4RK3A  LAC4RQ1 K LAC4RK3B  LAC4RQ0B  Tucson (LM)  2.4L MPI  (11MY)  Tucson (LM)  2.4L MPI  (11MY)  AT  ULEV  - IMMO   39106 - 2G801  LAC4ML0A  LBC4MQ K A  LBC4MM2A  LBC4MQ0A  LBC4MQ0B  LBC4MQ0C  +IMMO   39106 - 2G811  LAC4RL0A  LBC4RQ K A  LBC4RM2A  LBC4RM2B  LBC4RQ0A  LBC4RQ0B  LBC4RQ0C  SULEV  - IMMO   39106 - 2G821  LAS4ML0A  LBS4MQ K A  LBS4MM2A  LBS4MQ0A  LBS4MQ0B  LBS4MQ0C  +IMMO   39106 - 2G881  LAS4RL0A  LBS4RQ K A LBS4RM2A  LBS4RQ0A ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   8   of   21  SUBJECT:  SUBJECT:  LBS4RQ0B  LBS4RQ0C  MT   ULEV  - IMMO   39116 - 2G801  LAC4ML0A  LBC4MQ1 K  LBC4MM2A  LBC4MQ0A  LBC4MQ0B  LBC4MQ0C  +IMMO   39116 - 2G811  LAC4RL0A  LBC4RQ1 K  LBC4RM2A  LBC4RM2B  LBC4RQ0A  LBC4RQ0B  LBC4RQ0C  Tucson (LM)  2.4L MPI  (12MY)  Tucson (LM)  2.4L MPI  (12MY)  AT  ULEV  - IMMO   39106 - 2G802  LCC4MP4A  LCC4MR K A  LCC4MQ0A  LCC4MQ0B  LCC4MR1A  LCC4MR1B  +IMMO   39106 - 2G812  LCC4RP4A  LCC4RR K A  LCC4RQ0A  LCC4RR1A  LCC4RR1B  LCC4RR1C  SULEV  - IMMO   39106 - 2G822  LCS4MP4A  LCS4MR K A  LCS4MQ0A  LCS4MQ0B  LCS4MR1A  LCS4MR1B  +IMMO   39106 - 2G882  LCS4RP4A  LCS4RR K A  LCS4RQ0A  LCS4RQ0B  LCS4RR1A  LCS4RR1B  MT   ULEV  - IMMO   39116 - 2G802  LCC4MP4A  LCC4MR 1K  LCC4MQ0A  LCC4MQ0B  LCC4MR1A  LCC4MR1B  +IMMO   39116 - 2G812   LCC4RP4A   LCC4RR 1K  LCC4RQ0A ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   9   of   21  SUBJECT:  SUBJECT:  LCC4RR1A  LCC4RR1B  LCC4RR1C  Tucson (LM)  2.4L MPI  (13MY)  AT  ULEV  - IMMO   39106 - 2G803  LDC4MS0A  LDC4MT K C  LDC4MT0A  LDC4MT0B  LDC4MT1B  +IMMO   39106 - 2G813  LDC4RS0A  LDC4RT K C  LDC4RT0A  LDC4RT0B  LDC4RT1B  LDC4RT1C  SULEV  - IMMO   39106 - 2G823  LDS4MS0A  LDS4MT K C  LDS4MT0A  LDS4MT0B  LDS4MT1B  +IMMO   39106 - 2G883  LDS4RS0A  LDS4RT K C  LDS4RT0A  LDS4RT0B  LDS4RT1B  MT   ULEV  - IMMO   39116 - 2G803  LDC4MS0A  LDC4MT 3K  LDC4MT0A  LDC4MT0B  LDC4MT1B  +IMMO   39116 - 2G813  LDC4RS0A  LDC4RT 3K  LDC4RT0A  LDC4RT0B  LDC4RT1B  LDC4RT1C  MODEL   MY   IMMO   ECU P/N   ROM ID  OLD   NEW   (Event #713)  Sonta Hybrid  (YF HEV)  2.4L MPI  11MY   IMMO   39105 - 2G910  YBY4RAAC  YBY4RABA  YBY4RC0A  YBY4RG2A  YBY4RGKA  12MY   IMMO   39105 - 2G911   YCY4RC1A  YCY4RG2A   YCY4RGKA  13MY   IMMO   39105 - 2G912  39105 - 2G915  YDY4RE1A  YDY4RF3A  YDY4RG1A  YDY4RGKA ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   10   of   21  SUBJECT:  SUBJECT:  YDY4RG2A  14MY   IMMO   39105 - 2G913   YEY4RG2A   YEY4RGKA  15MY   IMMO   39105 - 2G916  39105 - 2G917   YFY4RG3A   YFY4RGKA  MODEL   MY /  EMISSION   TM   IMMO   ECU P/N   ROM ID  OLD   NEW (Event #717)  Elantra  Coupe (JK)  2.0L GDI  14MY  ULEV  MT   O   39135 - 2EJA0   GGJK - ENUAFS00600   GGJK - ENUAFK00600  X   39137 - 2EJA0   GGJK - ENUAES00600   GGJK - ENUAEK00600  AT   O   39131 - 2EJA0   GGJK - ENUAQS00C00   GGJK - ENUAQK00C00  X   39133 - 2EJA0   GGJK - ENUAPS00C00   GGJK - ENUAPK00C00  14MY  SULEV   AT   O   39131 - 2EJC0   GGJK - ENSAQS00C00   GGJK - ENSAQK00C00  X   39133 - 2EJC0   GGJK - ENSAPS00C00   GGJK - ENSAPK00C00  MODEL   MY /  EMISSION   TM   IMMO   ECU P/N   ROM ID  OLD   NEW (Event #715)  Elantra  (MD)  2.0L GDI  14MY  ULEV  MT   O   39135 - 2EMA0   GGMD - ENUAFS00600   GGMD - ENUAFK00600  X   39137 - 2EMA0   GGMD - ENUAES00600   GGMD - ENUAEK00600  AT   O   39131 - 2EMA0   GGMD - ENUAQS00C00   GGMD - ENUAQK00C00  X   39133 - 2EMA0   GGMD - ENUAPS00C00   GGMD - ENUAPK00C00  14MY  SULEV   AT   O   39131 - 2EMB0   GGMD - ENSAQS00C00   GGMD - ENSAQK00C00  X   39133 - 2EMB0   GGMD - ENSAPS00C00   GGMD - ENSAPK00C00  15MY  ULEV  MT   O   39135 - 2EMA1   GGMD - FNUAFS00600  GGMD - FNUAFS02600   GGMD - FNUAFK02600  X   39137 - 2EMA1   GGMD - FNUAES00600  GGMD - FNUAES02600   GGMD - FNUAEK02600  AT  O   39131 - 2EMA1  39131 - 2EMA2  GGMD - FNUAQS00C00  GGMD - FNUAQS02C00   GGMD - FNUAQK02C00  X   39133 - 2EMA1  39133 - 2EMA2  GGMD - FNUAPS00C00  GGMD - FNUAPS02C00   GGMD - FNUAPK02C00  15MY  SULEV   AT  O   39131 - 2EMB1  39131 - 2EMB2  GGMD - FNSAQS00C00  GGMD - FNSAQS02C00   GGMD - FNSAQK02C00  X   39133 - 2EMB1  39133 - 2EMB2  GGMD - FNSAPS00C00  GGMD - FNSAPS02C00   GGMD - FNSAPK02C00  16MY  ULEV  MT   O   39135 - 2EMA2   GGMD - GNUAFS00600  GGMD - GNUAFS01600   GGMD - GNUAFK01600  X   39137 - 2EMA2   GGMD - GNUAES00600  GGMD - GNUAES01600   GGMD - GNUAEK01600  AT   O   39131 - 2EMA3   GGMD - GNUAQS00C00  GGMD - GNUAQS01C00   GGMD - GNUAQK01C00  X   39133 - 2EMA3   GGMD - GNUAPS00C00  GGMD - GNUAPS01C00   GGMD - GNUAPK01C00  16MY  SULEV   AT   O   39131 - 2EMB3   GGMD - GNSAQS00C00  GGMD - GNSAQS01C00   GGMD - GNSAQK01C00  X   39133 - 2EMB3   GGMD - GNSAPS00C00  GGMD - GNSAPS01C00   GGMD - GNSAPK01C00 ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   11   of   21  SUBJECT:  SUBJECT:  MODEL   MY   TM   I MMO   ECU P/N   ROM ID  OLD   NEW   (Event #806)  Tucson (LM)  2.0L GDI  14MY  MT  (2WD)  O   39135 - 2ELC0  GGLM - ENUAFS00600  GGLM - ENUAF K3 3600  GGLM - ENUAFS01600  GGLM - ENUAFS02600  GGLM - ENUAFS03600  GGLM - ENUAFK13600  X   39137 - 2ELC0  GGLM - ENUAES00600  GGLM - ENUAE K3 3600  GGLM - ENUAES01600  GGLM - ENUAES02600  GGLM - ENUAES03600  GGLM - ENUAEK13600  AT  (2WD)  O   39131 - 2ELC0  GGLM - ENUAQS00C00  GGLM - ENUAQ K3 3C00  GGLM - ENUAQS01C00  GGLM - ENUAQS02C00  GGLM - ENUAQS03C00  GGLM - ENUAQK13C00  X   39133 - 2ELC0  GGLM - ENUAPS00C00  GGLM - ENUAP K3 3C00  GGLM - ENUAPS01C00  GGLM - ENUAPS02C00  GGLM - ENUAPS03C00  GGLM - ENUAPK13C00  AT  (4WD)  O   39131 - 2ELC1  GGLM - ENUAQS00D00  GGLM - ENUAQ K3 3D00  GGLM - ENUAQS01D00  GGLM - ENUAQS02D00  GGLM - ENUAQS03D00  GGLM - ENUAQK13D00  X   39133 - 2ELC1  GGLM - ENUAPS00D00  GGLM - ENUAP K3 3D00  GGLM - ENUAPS01D00  GGLM - ENUAPS02D00  GGLM - ENUAPS03D00  GGLM - ENUAPK13D00  15MY  MT  (2WD)  O   39135 - 2ELC4  GGLM - FNUAFS00600  GGLM - FNUAF K3 1600 GGLM - FNUAFS01600  GGLM - FNUAFK11600  X   39137 - 2ELC4  GGLM - FNUAES00600  GGLM - FNUAE K3 1600 GGLM - FNUAES01600  GGLM - FNUAEK11600  AT  (2WD)  O   39131 - 2ELC4  GGLM - FNUAQS00C00  GGLM - FNUAQ K3 1C00 GGLM - FNUAQS01C00  GGLM - FNUAQK11C00  X   39132 - 2ELC4  GGLM - FNUAPS00C00  GGLM - FNUAP K3 1C00 GGLM - FNUAPS01C00  GGLM - FNUAPK11C00  AT  (4WD)   O   39131 - 2ELC5   GGLM - FNUAQS00D00   GGLM - FNUAQ K3 1D00  GGLM - FNUAQS01D00 ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   12   of   21  SUBJECT:  SUBJECT:  GGLM - FNUAQK11D00  X   39133 - 2ELC5  GGLM - FNUAPS00D00  GGLM - FNUAP K3 1D00 GGLM - FNUAPS01D00  GGLM - FNUAPK11D00  MODEL   MY   TM   IMMO   ECU P/N   ROM ID  OLD   NEW   (Event #730)  Elantra GT ( GD )  2.0L GDI  14MY  MT   O   39135 - 2EGB0   GGGD - DNUAFS01600   GGGD - DNUAFK01600  X   39137 - 2EGB0   GGGD - DNUAES01600   GGGD - DNUAEK01600  AT  O   39131 - 2EGB0  39131 - 2EGB2   GGGD - DNUAQS01C00   GGGD - DNUAQK01C00  X   39133 - 2EGB0  39133 - 2EGB2   GGGD - DNUAPS01C00   GGGD - DNUAPK01C00  15MY  MT   O   39135 - 2EGE0   GGGD - FNUAFS01600   GGGD - FNUAFK01600  X   39137 - 2EGE0   GGGD - FNUAES01600   GGGD - FNUAEK01600  AT   O   39131 - 2EGE0   GGGD - FNUAQS01C00   GGGD - FNUAQK01C00  X   39133 - 2EGE0   GGGD - FNUAPS01C00   GGGD - FNUAPK01C00  16MY  17MY  MT   O   39135 - 2EGB1   GGGD - ENUAFS01600   GGGD - ENUAFK01600  X   39137 - 2EGB1   GGGD - ENUAES01600   GGGD - ENUAEK01600  AT   O   39131 - 2EGB1   GGGD - ENUAQS01C00   GGGD - ENUAQK01C00  X   39133 - 2EGB1   GGGD - ENUAPS01C00   GGGD - ENUAPK01C00  MODEL   MY   ENG   ECU P/N   ROM ID  OLD   NEW   (Event #733)  Sonata H ybrid/Plug - In  (LF HEV / PHEV)  Nu   2.0L   GDI  16MY  HEV   39161 - 2EEB0  LF6UPHMS65BA  LF6UPHMS65CA  LF6UPHMS66AA  LF6UPHMS673A  LF6UPHMF750K  PHEV   39161 - 2EEG0   LF6SPPMS670A  LF6SPPMS673A   LF6SPPMF750K  MODEL   MY   ENG   ECU P/ N   ROM ID  OLD   NEW   (Event #797)  Sonata H ybrid/Plug - In  (LF HEV / PHEV)  Nu   2.0L   GDI  17 MY  HEV   39161 - 2EEB1   LF7UPHMS690A  LF7UPHMF6A0K   LF7UPHMF6A2K  PHEV   39161 - 2EEG1   LF7SPPMS690A  LF7SPPMF6A0K   LF7SPPMF6A2K  HEV   39161 - 2EEB2   LF7UPHMS6A0A  LF7UPHMF6A1K   LF7UPHMF6A3K  PHEV   39161 - 2EEG2   LF7SPPMS6A0A  LF7SPPMF6A1K   LF7SPPMF6A3K ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   13   of   21  SUBJECT:  SUBJECT:  Sonata H ybrid/Plug - In  (LF HEV / PHEV)  Nu   2.0L   GDI  18MY  HEV   39161 - 2ELF0  LF8SPHMS6D1A  LF8SPHMS6D1B  LF8SPHMS6D1C  LF8SPHMF6D4K  LF8SPHMF6D5K  PHEV   39161 - 2ELH0  LF8SPPMS6D1A  LF8SPPMS6D1B  LF8SPPMF6D4K  LF8SPPMF6D5K  Sonata H ybrid/Plug - In  (LF HEV / PHEV)  Nu   2.0L   GDI  19MY  HEV   39161 - 2ELF1  39161 - 2ELF2  LF9SPHMS6F2A  LF9SPHMS6F2B  LF9SPHMS6F4A  LF9SPHMS6F4B  LF9SPHMF6FAK  LF9SPHMF6FBK  PHEV   39161 - 2ELH1  39161 - 2ELH2  LF9SPPMS6F2A  LF9SPPMS6F4A  LF9SPPMS6F4B  LF9SPPMF6FAK  LF9SPPMF6FBK  MODEL /  ENG INE   MY   2WD /  4WD   IMMO   ECU P/NO   ROM ID  OLD   NEW   (Event #739)  Tucson  ( TL )  2.0L GDI  16MY  2WD  O   39131 - 2ETA0  GGTL - FNUAQS00C00  GGTL - FNUAQS01C00  GGTL - FNUAQS02C00  GGTL - FNUAQK02C00  X   39133 - 2ETA0  GGTL - FNUAPS00C00  GGTL - FNUAPS01C00  GGTL - FNUAPS02C00  GGTL - FNUAPK02C00  4WD  O   39131 - 2ETA2  GGTL - FNUAQS00D00  GGTL - FNUAQS01D00  GGTL - FNUAQS02D00  GGTL - FNUAQS03D00  GGTL - FNUAQK03D00  X   39133 - 2ETA2  GGTL - FNUAPS00D00  GGTL - FNUAPS01D00  GGTL - FNUAPS02D00  GGTL - FNUAPS03D00  GGTL - FNUAPK03D00  17MY  2WD  O   39131 - 2ETA4  39131 - 2ETA6  GGTL - GNUAQS00C00  GGTL - GNUAQS01C00   GGTL - GNUAQK01C00  X   39133 - 2ETA4  39133 - 2ETA6  GGTL - GNUAPS00C00  GGTL - GNUAPS01C00   GGTL - GNUAPK01C00  4WD  O   39131 - 2ETA5  39131 - 2ETA7  GGTL - GNUAQS00D00  GGTL - GNUAQS01D00   GGTL - GNUAQK01D00  X   39133 - 2ETA5  39133 - 2ETA7  GGTL - GNUAPS00D00  GGTL - GNUAPS01D00   GGTL - GNUAPK01D00 ENGINE MONI TORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   14   of   21  SUBJECT:  SUBJECT:  MODEL /  ENG INE   MY   2WD /   4WD   ECU P/NO   ROM ID  OLD   NEW   (Event #756)  Tucson (TL)  2.0L GDI   18MY  2WD  39131 - 2ETA8  GGTL - HNUAQS00C00  GGTL - HNUAQS01C00  GGTL - HNUAQF01C00  GGTL - HNUAQK01C00  39133 - 2ETA8  GGTL - HNUAPS00C00  GGTL - HNUAPS01C00  GGTL - HNUAPF01C00  GGTL - HNUAPK01C00  4WD  39131 - 2ETA9  GGTL - HNUAQS00D00  GGTL - HNUAQS01D00  GGTL - HNUAQF01D00  GGTL - HNUAQK01D00  39133 - 2ETA9  GGTL - HNUAPS00D00  GGTL - HNUAPS01D00  GGTL - HNUAPF01D00  GGTL - HNUAPK01D00  MODEL   MY   2WD / 4WD   ECU P/N   ROM ID  OLD   NEW (Event #810)  Tucson (TL)  2.0L GDI  19MY  2WD   39131 - 2ETF0   GGTL - INUAQS00C00   GGTL - INUAQK00C00  39133 - 2ETF0   GGTL - INUAPS00C00   GGTL - INUAPK00C00  4WD   39131 - 2ETF1   GGTL - INUAQS00D00   GGTL - INUAQK00D00  39133 - 2ETF1   GGTL - INUAPS00D00   GGTL - INUAPK00D00  2WD   39131 - 2ETG0   GGTL - INUAQS00C01   GGTL - INUAQK00C01  39133 - 2ETG0   GGTL - INUAPS00C01   GGTL - INUAPK00C01  4WD   39131 - 2ETG1   GGTL - INUAQS00D01   GGTL - INUAQK00D01  39133 - 2ETG1   GGTL - INUAPS00D01   GGTL - INUAPK00D01  2WD   39131 - 2ETF2   GGTL - INSAQS00C00   GGTL - INSAQK00C00  39133 - 2ETF2   GGTL - INSAPS00C00   GGTL - INSAPK00C00  2WD   39131 - 2ETG2   GGTL - INSAQS00C01   GGTL - INSAQK00C01  39133 - 2ETG2   GGTL - INSAPS00C01   GGTL - INSAPK00C01  20MY  2WD  39131 - 2E321   GTL - 0NU0AQ000C00  GTL - 0NU0AQ100C00   GTL - 0NU0AQK00C00  39131 - 2E322   GTL - 0NU0AP000C00  GTL - 0NU0AP100C00   GTL - 0NU0APK00C00  4WD  39131 - 2E323   GTL - 0NU0AQ000F00  GTL - 0NU0AQ100F00   GTL - 0NU0AQK00F00  39131 - 2E324   GTL - 0NU0AP000F00  GTL - 0NU0AP100F00   GTL - 0NU0APK00F00  2WD  39131 - 2E327   GTL - 0NU1AQ000C00  GTL - 0NU1AQ100C00   GTL - 0NU1AQK00C00  39131 - 2E328   GTL - 0NU1AP000C00  GTL - 0NU1AP100C00   GTL - 0NU1APK00C00  4WD  39131 - 2E329   GTL - 0NU1AQ000F00  GTL - 0NU1AQ100F00   GTL - 0NU1AQK00F00  39131 - 2E330   GTL - 0NU1AP000F00  GTL - 0NU1AP100F00   GTL - 0NU1APK00F00 ENGINE MONITORING LOGIC   (SERVICE CAMPAIGN 966 )  TSB #:   24 - 01 - 068 H   Page   15   of   21  SUBJECT:  SUBJECT:  2WD  39131 - 2E325   GTL - 0NS0AQ000C00  GTL - 0NS0AQ100C00   GTL - 0NS0AQK00C00  39131 - 2E326   GTL - 0NS0AP000C00  GTL - 0NS0AP100C00   GTL - 0NS0APK00C00  2WD  39131 - 2E331   GTL - 0NS1AQ000C00  GTL - 0NS1AQ100C00   GTL - 0NS1AQK00C00  39131 - 2E332   GTL - 0NS1AP000C00  GTL - 0NS1AP100C00   GTL - 0NS1APK00C00  21MY  2WD   39131 - 2E901   GTL - 1NU0AQ001C00   GTL - 1NU0AQK01C00  39131 - 2E902   GTL - 1NU0AP001C00   GTL - 1NU0APK01C00  4WD   39131 - 2E903   GTL - 1NU0AQ001F00   GTL - 1NU0AQK01F00  39131 - 2E904   GTL - 1NU0AP001F00   GTL - 1NU0APK01F00  2WD   39131 - 2E907   GTL - 1NU1AQ001C00   GTL - 1NU1AQK01C00  39131 - 2E908   GTL - 1NU1AP001C00   GTL - 1NU1APK01C00  4WD   39131 - 2E909   GTL - 1NU1AQ001F00   GTL - 1NU1AQK01F00  39131 - 2E910   GTL - 1NU1AP001F00   GTL - 1NU1APK01F00  2WD   39131 - 2E905   GTL - 1NS0AQ001C00   GTL - 1NS0AQK01C00  39131 - 2E906   GTL - 1NS0AP001C00   GTL - 1NS0APK01C00  2WD   39131 - 2E911   GTL - 1NS1AQ001C00   GTL - 1NS1AQK01C00  39131 - 2E912   GTL - 1NS1AP001C00   GTL - 1NS1APK01C00  MODEL   MY   TM   ECU P/NO   ECU ROM ID  OLD   NEW (Event #754   / 804 )  Elantra GT  (PD)  2.0L GDI  18MY  AT  39131 - 2EPE0  GGPD - HNUAQS00C00  GGPD - HNUAQK02C00 GGPD - HNUAQS01C00  GGPD - HNUAQS02C00  39133 - 2EPE0  GGPD - HNUAPS00C00  GGPD - HNUAPK02C00 GGPD - HNUAPS01C00  GGPD - HNUAPS02C00  39131 - 2EPE1   GGPD - HNUAQS03C00   GGPD - HNUAQK03C00  39133 - 2EPE1   GGPD - HNUAPS03C00   GGPD - HNUAPK03C00  MT  39135 - 2EPE0  GGPD - HNUAFS00600  GGPD - HNUAFK02600 GGPD - HNUAFS01600  GGPD - HNUAFS02600  39137 - 2EPE0  GGPD - HNUAES00600  GGPD - HNUAEK02600 GGPD - HNUAES01600  GGPD - HNUAES02600  19MY   AT  39131 - 2EPE2   GGPD - INUAQS00C00   GGPD - INUAQK01C00  GGPD - INUAQS01C00  39133 - 2EPE2   GGPD - INUAPS00C00   GGPD - INUAPK01C00  GGPD - INUAPS01C00  39131 - 2EPE3   GGPD - INUAQS00C01   GGPD - INUAQK01C01",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqs59nbyltgs",
+          "answers": {
+            "model": "Op Time Causal P /N Nature Cause 10 - 12MY Theta II 2.4L MPI Santa Fe (CM)"
+          },
+          "model": "Op Time Causal P /N Nature Cause 10 - 12MY Theta II 2.4L MPI Santa Fe (CM)",
+          "opCode": "10D021R0",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39104-2G341",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbyrk1k",
+          "answers": {
+            "model": "12 - 17MY Gamma 1.6L GDI Veloster (FS)"
+          },
+          "model": "12 - 17MY Gamma 1.6L GDI Veloster (FS)",
+          "opCode": "10D021R1",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39110-2BBH3",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nby8azr",
+          "answers": {
+            "model": "10 - 13MY Theta II 2.4L MPI Tucson (LM)"
+          },
+          "model": "10 - 13MY Theta II 2.4L MPI Tucson (LM)",
+          "opCode": "10D021R2",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39106-2G800",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nby40n9",
+          "answers": {
+            "model": "11 - 15MY Theta II 2.4L MPI Sonata Hybrid (YF HEV)"
+          },
+          "model": "11 - 15MY Theta II 2.4L MPI Sonata Hybrid (YF HEV)",
+          "opCode": "10D021R3",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39105-2G910",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbyroj3",
+          "answers": {
+            "model": "14MY Nu 2.0L GDI Elantra Coupe (JK)"
+          },
+          "model": "14MY Nu 2.0L GDI Elantra Coupe (JK)",
+          "opCode": "10D021R4",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39137-2EJA0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nby30hl",
+          "answers": {
+            "model": "14 - 16MY Nu 2.0L GDI Elantra (MD)"
+          },
+          "model": "14 - 16MY Nu 2.0L GDI Elantra (MD)",
+          "opCode": "10D021R5",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39135-2EMA0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbyn2z7",
+          "answers": {
+            "model": "14 - 15MY Nu 2.0L GDI Tucson (LM)"
+          },
+          "model": "14 - 15MY Nu 2.0L GDI Tucson (LM)",
+          "opCode": "10D021RD",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39135-2EMA0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbzkcod",
+          "answers": {
+            "model": "3913 7 - 2ELC0 14 - 17MY Nu 2.0L GDI Elantra GT (GD)"
+          },
+          "model": "3913 7 - 2ELC0 14 - 17MY Nu 2.0L GDI Elantra GT (GD)",
+          "opCode": "10D021R7",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39137-2EGB0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbz8ecr",
+          "answers": {
+            "model": "16MY Nu 2.0L GDI Sonata Hybrid/Plug - In (LF HEV / PHEV)"
+          },
+          "model": "16MY Nu 2.0L GDI Sonata Hybrid/Plug - In (LF HEV / PHEV)",
+          "opCode": "10D021R8",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39161-2EEB0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbznzep",
+          "answers": {
+            "model": "1 7 - 1 9 MY Nu 2.0L GDI Sonata Hybrid/Plug - In (LF HEV / PHEV)"
+          },
+          "model": "1 7 - 1 9 MY Nu 2.0L GDI Sonata Hybrid/Plug - In (LF HEV / PHEV)",
+          "opCode": "10D021RB",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39161-2EEB1",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbz5xad",
+          "answers": {
+            "model": "1 6 - 21 MY Nu 2.0L GDI Tucson (TL)"
+          },
+          "model": "1 6 - 21 MY Nu 2.0L GDI Tucson (TL)",
+          "opCode": "10D021R9",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39133-2ETA0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqs59nbz4ey3",
+          "answers": {
+            "model": "18 - 20 MY Nu 2.0L GDI Elantra GT (PD)"
+          },
+          "model": "18 - 20 MY Nu 2.0L GDI Elantra GT (PD)",
+          "opCode": "10D021RA",
+          "operation": "ECM UPGRADE",
+          "opTime": "0.3 M/H",
+          "causalPart": "39131-2EPE0",
+          "natureCode": "E13",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs57ke41u8a",
+    "label": "24-01-012H UNDERBODY CORROSION PREVENTATIVE SERVICE (SERVICE CAMPAIGN 9A3",
+    "filename": "mqs57ke41u8a-24-01-012H.pdf",
+    "fileType": "pdf",
+    "size": 2824368,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T14:02:36.033Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   2 4 - 01 - 012 H  DATE   MODEL (S)  FEBRUARY   2024   Tucson (LM)  SUBJECT:   UNDERBODY   CORROSION PREVENTATIVE SERVICE  ( SERVICE   CAMPAIGN   9A3 )  Description:   In some areas, a vehicle’s underbody may exhibit corrosion due to road salt usage.   As  a   preventative   measure,   cavity   wax   coating   is   applied   to   the   internal   surfaces   of   underbody  components, and an undercoating spray is applied to the bottom exterior surfaces of specified  underbody components. This bulletin describes the procedure to perform this preventative service on  certain   Tucson (LM)   vehicles.  Applicable Vehicles   (Certain) :  •   201 0 - 1 2 MY   Tucson (LM )   F WD   vehicles   currently or ever registered in a Salt Belt State produced   10 / 20 /20 09  to 0 6 /1 2 /201 2 .  •   20 13 - 15MY Tucson (LM) FWD & AWD vehicles currently or ever registered in a Salt Belt State produced  0 5 /1 6 /2012 to 05/1 5 /201 5 .  Salt Belt Areas include:  Connecticut, Delaware, Illinois, Indiana, Iowa, Kentucky, Maine, Maryland, Massachusetts, Michigan, Minnesota,  Missouri, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, West  Virginia, Wisconsin, and the District of   Columbia.  Please note all dealers must perform this service campaign if vehicle comes in with an open campaign, even if  vehicle is no longer located in the listed states above.  Dealers must perform this service campaign on all   affected vehicles prior to customer retail delivery  and whenever an affected vehicle is in the shop for any maintenance or repair.  Access the “Vehicle Information\" screen via W eb DCS to identify open Campaigns.     IMPORTANT  Allow the vehicle to cool at least four hours before performing the procedures in this TSB.   Parking  the vehicle at the stall overnight is highly recommended to avoid a need for   a   cool down period  and improve work efficiency.  Information i UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   2   of   27  SUBJECT:  SUBJECT:  Table of Contents  Parts Information:   ................................ ................................ ................................ ..   3  Recommended Tools and Equipment:   ................................ ................................ ..   4  Warranty Information:   ................................ ................................ ...........................   5  Service Procedures:   ................................ ................................ ..............................   5  Wax Gun Preparation:   ................................ ................................ .......................   5  Remove Debris:   ................................ ................................ ................................ .   7  Vehicle Preparation:   ................................ ................................ ........................   16  Applying Cavity Wax: ................................ ................................ .......................   17  Applying Undercoating:   ................................ ................................ ...................   22  There are circumstances under which vehicles that are not currently registered or have never been  registered in a “salt belt” state may be   eligible for this service campaign. These circumstances  include:  •   Vehicles that were relocated into a “salt belt” area and/or  •   V ehicles registered in a “non - salt belt” state and driven in a “salt belt” area  If it is determined that an owner of a vehicle within the affected VIN production date range  relocates or has operated their vehicle in a “salt belt” area, the   dealer should perform this  procedure at no cost to the customer.   The dealer must submit a Prior Approval request before  starting repairs.     IMPORTANT UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   3   of   27  SUBJECT:  SUBJECT:  Parts Information:  Part Name   Image / Part Number   Remark  Cavity Wax   Use about half a can per   vehicle.  00232 - 19034  Undercoat Spray  Use about 1 can per vehicle.  00232 - 19035  Wax Spray Gun  Set   air pressure to 70 psi.  If wax output is slow , prime the  gun by blocking the nozzle with a  rag, and spraying the gun until the  flow of wax   increases.  00232 - 19036  “Inside”   Nozzle  This is a newly developed nozzle  that has   an   improved wax  application spray pattern.  The pink tubing is to signal the user  to stop spraying when pulling the  nozzle out.  This nozzle must be used for   this  service procedure. 09624 - 2H101 - QQH  •   This procedure must be performed in a well - ventilated area.  •   Must wear safety go g gles, face protection, and gloves. Rinse eyes with water or skin  with soap and water. D o not   inhale spray. Seek medical attention if needed.  •   Flammable & pressurized. Do not spray near flames, sparks, or heated areas. Do not  pierce can.  DANGER ! UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   4   of   27  SUBJECT:  SUBJECT:  “Outside” Nozzle  This nozzle is supplied with the wax  gun.  Required Supplies :  Tool   Name   Image   Remark  Air Nozzle  Safety Goggles  Face   Mask  Gloves  Rubb er/Plastic   Mallet  Wire Brush  Plastic bags  B ags large enough to cover   the   tires  and wheels.  Tape  *Above are standard shop supply. UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   5   of   27  SUBJECT:  SUBJECT:  Warranty Information:  Model   Op Code   Description   Op Time   Causal Part   Nature   Cause  Tucson (LM)   30D0 62 R0  UNDER BODY RUST  INSPECTION AND  PREVENTIVE SERVICE  0.8   M/H   62405 - 2S600   A12   ZZ6  NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  NOTE 2:   Each labor operation will reimburse 1 can of undercoat spray and cavity wax.  NOTE 3:   If a part that is not covered by this campaign is found in need of replacement while  performing the service campaign and the affected part is still under warranty, submit a separate claim  using the same repair order. If the affected part is out of warrant y, submit a Prior Approval request for  goodwill consideration prior to the repair.  NOTE 4:   This TSB includes Repair validation photos. Op times include VIN,   Mileage and Repair  validation photos as outlined in the Digital Documentation Policy.  Service Procedure s :  Wax Gun   Preparation:  1.   Unscrew the nut to remove the compression  fitting from the nozzle assembly   that  originally comes with the wax gun.  •   This procedure must be performed in a well - ventilated area.  •   Must wear safety go g gles, face protection, and gloves. Rinse eyes with water or skin  with soap and water. D o not   inhale spray. Seek medical attention if needed.  •   Flammable & pressurized. Do not spray near flames, sparks, or heated areas. Do not  pierce can.  DANGER !  This TSB includes Repair validation photos.   Refer to the latest Warranty Digital Documentation  Policy for requirements.  STUI UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   6   of   27  SUBJECT:  SUBJECT:  2.   Attach the compression fitting to the tubing  on the new nozzle assembly.  3.   Fill wax gun reservoir with cavity wax.  Prime the wax gun by spraying the wax into  a trash bag (or similar)   until a light mist is  visibly coming out of the nozzle.  Set air supply pressure   to   70 psi.  Prime the wax spray gun to increase the flow  when the mist is no longer   visible.  To optimize the priming process, cover the  nozzle with a rag and spray until the flow has  increased.  Information i UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   7   of   27  SUBJECT:  SUBJECT:  R emove Debris :  1.   Lift the vehicle on a hoist.  Apply a plastic vinyl sheet on the floor.  If equipped, remove plastic undercovers to  gain access to the front sub - frame, brake,  and fuel tubes.  2.   Lightly tap the vehicle   underbody  components   with   a rubber or   plastic mallet  to loosen   and remove   debris .  Front   Underbody   (FWD/AWD)  •   Front sub - frame   ( A )  •   Front lower control arm s   ( B )  A  Must wear safety go g gles and a face mask during this procedure to protect eyes and prevent  debris from being inhaled.  WARNING ! UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   8   of   27  SUBJECT:  SUBJECT:  Rear Underbody (FWD)  •   Rear member ( C )  •   Rear lower arms ( D )  •   Rear upper arms ( E )  •   Assist arms ( F )  •   Trailing arms ( G )  B  ●  C  ●  D UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   9   of   27  SUBJECT:  SUBJECT:  ●  E  ●  F  ●  G UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   10   of   27  SUBJECT:  SUBJECT:  Rear Underbody (AWD)  •   Rear member ( H )  •   Rear lower arms ( I )  •   Rear upper arms ( J )  •   Assist arms ( K )  •   Trailing arms ( L )  ●  H  ●  J  ●  I UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   11   of   27  SUBJECT:  SUBJECT:  3.   Use a wire brush to remove debris from :  •   F ront sub - frame  •   R ear sub - frame  •   Front lower arms  •   R ear upper   arms  •   R ear lower arms  •   Rear assist arms  •   Rear trailing arms  ●  L  ●  K UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   12   of   27  SUBJECT:  SUBJECT:  4 .   Clean the brake banjo bolt surfaces at all  four calipers and brake tube fast e ners using  a wire brush.  5 .   Remove the remaining debris by inserting  an air nozzle   in to the   interior cavit ies   of the  sub - frames   and   control arms.   Then b low air  in multiple directions .  Blow   air over   the exterior surfaces of  components as well.  U se the marked areas as a guideline   to  insert the nozzle .   Additional access might  be possi ble   to remove more debris.  Front Underbody (FWD/AWD)  •   Front sub - frame  •   Front lower control arms UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   13   of   27  SUBJECT:  SUBJECT:  Rear Underbody (FWD)  •   Rear sub - frame  •   Rear lower arms  •   Rear upper arms  •   Rear assist arms   (exterior)  •   Rear   trailing arms   (exterior) UNDERBODY CORROSION   PREVENTATIVE   SERVICE   (SERVICE CAMPAIGN   9A3 )  TSB   #: 2 4 - 01 - 012 H   Page   14   of   27  SUBJECT:  SUBJECT:  Rear Underbody (AWD)  •   Rear sub - frame  •   Rear lower arms  •   Rear upper arms  •   Rear assist arms (external)  •   Rear trailing arms (external) UNDERBODY CORROSION   PREVENTATIVE   SERVICE   ( SERVICE CAMPAIGN   9A3 )  TSB #:   2 4 - 01 - 012 H   Page   15   of   27  SUBJECT:  SUBJECT:",
+    "opData": {
+      "questions": [],
+      "entries": []
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqqsh9599a5m",
+    "label": "17-01-012 AZERA (HG) UNDERBODY CORROSION PREVENTATIVE SERVICE (SERVICE CAMPAIGN",
+    "filename": "mqqsh9599a5m-17-01-012.pdf",
+    "fileType": "pdf",
+    "size": 1980658,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-23T15:18:26.585Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  CAMPAIGN   17 - 01 - 012  DATE   MODEL(S)  FEBRUARY   2017   Azera (HG)  SUBJECT:   AZERA (HG) UNDERBODY   CORROSION PREVENTATI VE SERVICE  ( SERVICE   CAMPAIGN   939 )  This bu lletin supersedes TSB 15 - 01 - 044 to specify cavity wax application directions and  duration.  Description:   In some areas,   a vehicle’s under body may exhibit corrosion due to road salt usage. As a   precautionary measure,   cavity   wax coating   is applied   to   the   internal   surfaces of underbody components, and an undercoating spray is applied to the bottom exterior surfaces of specified underbody components. This bulletin describes the procedure to perform this preventative service on certain Azera (HG) vehicles.  Applicable Vehicles:  VERIFY THAT THE VEHICLE IS IDENTIFIED AS AFFECTED BY THE   SERVICE   CAMPAIGN VIA  WEBDCS.  1.   Models :   2012 - 2014 MY   Azera (HG)  2.   Production Date Range:   From SOP to September 4, 2014.  3.   Areas :   Connecticut, Delaware, Illinois, Indiana, Iowa, Maine, Maryland, Massachusetts,  Michigan, Minnesota, Missouri, New Hampshire, New Jersey, New York, Ohio, Pennsylvania,  Rhode Island, Ve rmont, West Virginia, Wisconsin, and the District of Columbia  *** Retail Vehicles   Only   ***  Dealers must perform this Service Campaign whenever an affected vehicle is in the shop for any maintenance or repair.  When a vehicle arrives at the Service Department, access Hyundai Motor America's \"Warranty  Vehicle Information\" screen via WEBDCS to identify open Campaigns.     IMPORTANT AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 2 of 20  SUBJECT:  SUBJECT:  Parts   Information:  Part Name   Image / Part Number   Remark  Cavity Wax  Use about half a can per vehicle.  00232-19034  Undercoat Spray  Use about 1 can per vehicle.  00232-19035  Wax Spray Gun  Regulate air pressure to 70 psi.  If wax output is slow , prime the gun by blocking the nozzle with a rag, and spraying the gun until the flow of wax increases. 00232-19036  There are circumstances under which vehicles that are not currently registered or have never been  registered in a “salt belt” state may be eligible for this   Campaign. These circumstances include:  Vehicles that have relocated into a “salt belt” area and/o r vehicles registered in a “non -salt  belt” state and driven in a “salt belt” area. If it is determined that an owner of a vehicle  within the affected VIN production date range relocates or has operated their vehicle in a  “salt belt” area, the dealer should perform the campaign procedure. The dealer should  perform this procedure at no cost to the customer, and the Hyundai Warranty PA Center must be contacted prior to repair and submission of Warranty Claim.     IMPORTANT  If the owner of a vehicle within the affected VIN production date range requests an undercarriage  inspection of their vehicle, the inspection should be   performed at no charge to the customer.     NOTE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 3 of 20  SUBJECT:  SUBJECT:  “Inside”   Nozzle  This is a newly developed nozzle that has an improved wax application spray pattern.  The pink tubing is to signal the user to stop spraying when pulling the nozzle out.  This nozzle must be used for this service procedure.  09624-2H101-QQH  “Outside” Nozzle  This nozzle is supplied with the wax gun.  Tools & Equipment Required:  Tool   Name   Image   Remark  Air Nozzle  Goggles  Mask  Wear protective goggles and respiratory protection  when performing the  procedures in this bulletin.  This procedure should be performed in a well- ventilated area.  NOTICE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 4 of 20  SUBJECT:  SUBJECT:  Mallet  Wire Brush  Plastic bags  Trash bags large enough to cover wheel/tire assemblies.  Warranty Information:  Model   Op. Code   Operation   Op. Time   Causal Part   Nature   Cause  HG   50C068R0   APPLYING CAVITY WAX & BLACK UNDER COAT TO THE UNDERBODY   0.7 M/H   55405-3V150   A12   ZZ2  NOTE   1 : Submit   Claim on Campaign Claim Entry Screen .  NOTE 2: Each labor operation will reimburse applicable undercoating and cavity wax in sublet.  NOTE   3:   If a part i s found in need of replacement   while   performing   this TSB   and the affected  part is still under warranty, please submit a separate claim using the same Repair  Order.  If the affected part is out of warranty, submit a Prior Approval Request for goodwill  consideration prior to performing the work .  Wear protective goggles and respiratory protection when performing the procedures in this  bulletin. The vehicle should be in a well - ventilated area.  CAUTION ! AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 5 of 20  SUBJECT:  SUBJECT:  Service Procedure   Notes:  1.   When applying the cavity wax, the floor might be contaminated due to the cavity wax. It is recommended to put a plastic vinyl sheet on the floor before applying wax.  Wax gun preparation:  2a.   Remove the compression fitting from the nozzle assembly that originally comes with the wax gun by unscrewing the nut, then removing the fitting from the tube. AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 6 of 20  SUBJECT:  SUBJECT:  2b.   Attach the compression fitting to the tubing on the new nozzle assembly. AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 7 of 20  SUBJECT:  SUBJECT:  2c.   Fill wax gun reservoir with cavity wax.  Prime the wax gun by spraying into a trash bag (or similar) until a light mist is visibly coming out of the nozzle.  Air supply pressure must be set to 70  psi.  NOTICE  If volume of wax coming out of the nozzle slows significantly (so that a light mist is no longer visible), prime  the gun again.  It may speed the priming process to block the nozzle with a rag while spraying the gun until the flow of wax increases.  NOTICE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 8 of 20  SUBJECT:  SUBJECT:  Service Procedure # 1 :   Hammering and   Air Blowing to Remove   Debris  1.   Lift the vehicle on a hoist.  2.   There are two types of front cross members, A-type and B-type. The area for hammering , debris removal, applying the cavity wax and black undercoat is different for each type.  A-type   B-type  3.   Lightly tap the vehicle underbody with a 16 oz. hammer to loosen debris and the PVC coating in the following locations:  Cross member (A-type)  Wear protective goggles and respiratory protection when performing the procedures  in this bulletin. The vehicle should be in a well - ventilated area.  CAUTION ! AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 9 of 20  SUBJECT:  SUBJECT:  4.   Cross member (B-type)  5.   Front lower control arms  6.   Rear cross member and lower control arms  If the vehicle has front lower control  arms made of aluminum, no service  procedure is required on the front lower control arms.  NOTICE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 10 of 20  SUBJECT:  SUBJECT:  7.   Remove the remaining debris by inserting an air nozzle into the locations shown, then blowing air in multiple directions.  Front cross member and lower control arms (A-type) AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 11 of 20  SUBJECT:  SUBJECT:  8.   Front cross member and lower control arms (B-type)  9.   Rear cross member AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 12 of 20  SUBJECT:  SUBJECT:  10.   Rear lower control arms  11.   Rear upper control arms  Service Procedure   # 2 : Preparation for   Cavity Wax   and Undercoating Spray  1.   Clean the brake banjo bolt surfaces at all 4 calipers using a wire brush.  2.   Wrap the brake assemblies with plastic bags to protect them from overspray. Use tape to secure the plastic in place. Leave the banjo fitting area exposed, as shown.  If the vehicle has rear lower control  arms made of aluminum, no service procedure is required on the rear lower control arms.  NOTICE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 13 of 20  SUBJECT:  SUBJECT:  3.   Wrap large plastic bags around the wheel/tire/brake assemblies to protect them from overspray. Use tape to secure the plastic in place.  4.   Wrap the exhaust areas adjacent to the front and rear cross members with plastic bags to protect them from overspray. Use tape to secure the plastic in place.  Exhaust near front cross member   Exhaust near rear cross member  The exhaust must be sufficiently cooled before it is wrapped.  NOTICE AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 14 of 20  SUBJECT:  SUBJECT:  Service Procedure # 3 : Applying the Cavity Wax  1.   Apply the cavity wax at each of the locations noted in the following steps.  Generally for coating interior surfaces, insert the “inside” nozzle as deeply as   possible at each point of entry. Spray the cavity wax while simultaneously rotating the nozzle, and slowly pulling the nozzle out. Continue this rotating/pulling motion until the pink tubing is seen coming out of the opening. The pink tubing indicates there is about 50mm of tubing left until the end of the nozzle. Stop spraying when the pink tubing is seen.  Insert the nozzle through the marked location in multiple directions and for the  prescribed duration indicated in each step. The duration is for th e total time for each  marked location.  Generally for coating exterior surfaces, use the “outside” nozzle, provided with the wax gun.  2a.   Refer to the photos on the right for the marked locations.  Front cross member (A-type)   –   Interior surfaces (using   “inside” nozzle )  -   Four (4) locations  -   15 seconds each  Wear protective goggles and respiratory protection when performing the procedures  in this bulletin. The vehicle should be in a   well - ventilated area.  CAUTION ! AZERA ( HG )   UNDERBODY CORROSION   PREVENTATIVE   ( SERVICE CAMPAIGN 939 )  TSB #: 17-01-012   Page 15 of 20  SUBJECT:  SUBJECT:  2b.   Front cross member (A-type)   –   Interior surfaces ( using “outside” nozzle )  -   Four (4) locations  -   15 seconds each  2c.   Front lower control arms (A-type)   –   Interior surfaces ( using “inside”   nozzle)  -   One (1) location each arm  -   7 seconds each  3a.   Front cross member (B-type)   –   Interior surfaces (using   “inside” nozzle )  -   Four (4) locations  -   10 seconds each  If the vehicle has front lower control arms made of aluminum, no service procedure is required on the front lower control arms.  NOTICE",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mqqshgkdjo8x",
+          "answers": {},
+          "model": "Op. Time Causal Part Nature Cause HG",
+          "opCode": "50C068R0",
+          "operation": "APPLYING CAVITY WAX & BLACK UNDER COAT TO THE UNDERBODY",
+          "opTime": "0.7 M/H",
+          "causalPart": "55405-3V150",
+          "natureCode": "A12",
+          "causeCode": "ZZ2"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqqsfll57yo4",
+    "label": "24-01-027H-9 ANTI-LOCK BRAKING SYSTEM (ABS) FUSE REPLACEMENT  (RECALL 251)",
+    "filename": "mqqsfll57yo4-24-01-027H-9.pdf",
+    "fileType": "pdf",
+    "size": 7983755,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-23T15:17:09.792Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  RECALL   24-01-027H-9  DATE   MODEL(S)  SEPTEMBER 2024   SEE APPLICABLE MODEL LIST SUBJECT:   ANTI-LOCK BRAKING SYSTEM (ABS) FUSE REPLACEMENT (RECALL 251)  This TSB supersedes TSB#24-01-027H-8 to revise the starting production date ranges for Tucson (LM) and Veracruz (EN) models.  Description:   The applicable vehicles listed below may develop an electrical short in the Anti-Lock Brake System (ABS) module, increasing the risk of an engine compartment fire. Follow the procedures in the bulletin to replace the ABS multi-fuse, the two individual ABS single fuses, or the ABS multi-fuse and a single fuse depending on the model.  Applicable Vehicles (Certain):     2013MY Santa Fe Sport (AN) produced 7/12/2012 – 6/15/2013     2011-2015MY Sonata Hybrid (YF HEV) produced 12/02/2010 – 10/31/2014     2010-2012MY Veracruz (EN) produced 12/14/2009 – 10/08/2012     2014-2015MY Equus (VI) produced 4/12/2013 – 10/30/2014     2012-2015MY Accent (RB) produced 3/5/2011 – 10/31/2014     2013-2015MY Santa Fe (NC) produced 10/17/2012 – 10/31/2014     2012-2015MY Azera (HG) produced 11/29/2011 – 10/31/2014     2011-2015MY Elantra (MD) produced 11/12/2010 – 11/13/2014; VIN starts with ‘KMH’     2011-2015MY Elantra (UD) produced 10/29/2010 – 10/31/2014; VIN starts with ‘5NP’     2013-2014MY Elantra Coupe (JK) produced 3/16/2012 – 4/24/2014     2010-2013MY Tucson (LM) produced 10/20/2009 – 8/19/2013     2012-2015MY Veloster (FS) produced 07/02/2011 – 10/31/2014     2011-2015MY Genesis Coupe (BK) produced 09/01/2010 – 10/31/2014  Vehicle repairs related to safety recalls are critically important and must be performed properly in accordance with TSB procedures. Review this bulletin in its entirety prior to beginning any repair work. As required by federal law, dealers must not deliver new vehicles for sale or for lease to customers until all open recalls have been performed. Dealers must also perform all open recalls on used vehicles, demo, and rental vehicles prior to placing them into customer use and whenever an affected vehicle is in the shop for any maintenance or repair. Access the “Vehicle Information” screen via WebDCS to identify open recalls.     IMPORTANT A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 2 of 22  SUBJECT: SUBJECT: Parts Information:  Type   Model   Part Number   Figure Multi-fuse only Santa Fe Sport (AN) 91AN1-11200 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) 91NC1-11200 QQH Santa Fe Sport (AN) *Alternate Part 91AN1-11201 QQH Multi-fuse, upper cover, upper cover label Santa Fe (NC) *Alternate Part 91NC1-11201 QQH Accent (RB) 91RB2-11021 QQH Multi-fuse, fuse labels Tucson (LM) 91LM1-11201 QQH Multi-fuse, upper cover, upper cover label Genesis Coupe (BK) 2011-12MY 91BK1-11021 QQH Multi-fuse, fuse label (small) Genesis Coupe (BK) 2013-15MY 91BK2-11021 QQH Multi-fuse, fuse label (small) Single fuses only Sonata Hybrid (YF HEV) 91YF1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Veracruz (EN) 91EN1-11020 QQH 2 single fuses (30A, 20A), fuse labels (small) Equus (VI) 91VI1-11020 QQH A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 3 of 22  SUBJECT: SUBJECT:  Both multi-fuse and single fuse Azera (HG) 2012-14MY 91HG1-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Azera (HG) 2015MY 91HG2-11201 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2011-13MY Elantra Coupe (JK) 2013MY 91MD1-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Elantra (MD/UD) 2014-15MY Elantra Coupe (JK) 2014MY 91MD2-11200 QQH Multi-fuse, 1 single fuse (20A), upper cover, upper cover label Veloster Turbo (FS) 91FS1-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) Veloster Non-Turbo (FS) 91FS2-11020 QQH Multi-fuse, 1 single-fuse (30A), fuse labels (small) A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 4 of 22  SUBJECT: SUBJECT: Warranty Information:  Model   Op. Code   Operation   Op. Time   Casual Part   Nature Code Cause Code Sonata Hybrid (YF HEV)   41D013R0   ABS Single Fuse Installation   0.2 M/H   58920-4Z000 I11   ZZ3 Santa Fe Sport (AN)   41D013R1 ABS Multi-Fuse Installation (for P/N 91AN1- 11200QQH) 0.2 M/H   58920-4R000 Veracruz (EN)   41D013R2   ABS Single Fuse Installation   0.2 M/H   58910-3J806 Equus (VI)   41D013R3   ABS Single Fuse Installation   0.2 M/H   58910-3N590 Santa Fe (NC)   41D013R4 ABS Multi-Fuse Installation (for P/N 91NC1- 11200QQH) 0.2 M/H   58920-B8700 Accent (RB)   41D013R5   ABS Multi-Fuse Installation   0.2 M/H   58920-1R400 Elantra (UD)   41D013R6   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra (MD)   41D013R7   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X700 Elantra Coupe (JK)   41D013R8   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3X660 Tucson (LM)   41D013R9   ABS Multi-Fuse Installation   0.2 M/H   58920-2S400 Azera (HG)   41D013RA   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-3V300 Veloster (FS)   41D013RB   ABS Single & Multi-Fuse Installation   0.2 M/H   58920-2V400 Genesis Coupe (BK)   41D013RD   ABS Multi-Fuse Installation   0.2 M/H   58920- 2M750 Santa Fe Sport (AN)   41D013RE ABS Multi-Fuse Installation (for P/N 91AN1- 11201QQH) 0.2 M/H   58920-4R000 Santa Fe (NC)   41D013RF ABS Multi-Fuse Installation (for P/N 91NC1- 11201QQH) 0.2 M/H   58920-B8700 A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 5 of 22  SUBJECT: SUBJECT: NOTE 1:   Submit claim on Claim Entry Screen as “Campaign” type.  NOTE 2:   If a part is found in need of replacement while performing this recall and the affected part is still under warranty, submit a separate claim using the same repair order. If the affected part is out of warranty, submit a Prior Approval request for goodwill consideration prior to performing the work.  NOTE 3:   This TSB includes Repair validation photos. Op times include VIN, Mileage, and Repair validation photo(s) as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center (WTC) parts return process.   Claim is subject to debit if the part is not returned.  Service Procedures Table of Contents:  Replacement of Multi-fuse:   ................................................................................   6  Replacement of Two Single Fuses:   .................................................................   11  Replacement of Single Fuse & Multi-Fuse: .....................................................   16  This TSB includes Repair validation photos. Refer to the latest Warranty Digital Documentation Policy for requirements.  STUI  Refer to the QR code or link below for guided video information: Hyundai Service Learning – Recall 251 Service Procedure  Information i  If the “ABS”, “ESC”, or “Brake” indicator lights are illuminated, refer to the appropriate section in the shop manual for diagnosis   before   performing this Recall.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 6 of 22  SUBJECT: SUBJECT:  Replacement of Multi-fuse: Santa Fe Sport (AN), Santa Fe (NC), Accent (RB), Tucson (LM), Genesis Coupe (BK)  Multi-Fuse Table:  Model   Fuse Changes   Images Santa Fe Sport (AN) ABS1: 40A      30A   ABS2: 40A      30A Santa Fe (NC) ABS1: 40A      30A   ABS2: 40A      30A Accent (RB) ABS1: 40A      30A   ABS2: 40A      20A  30A 30A  20A 30A  30A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 7 of 22  SUBJECT: SUBJECT:  Tucson (LM) ABS1: 40A      30A   ABS2: 40A      20A Genesis Coupe (BK) ABS1: 40A      30A   ABS2: 40A      20A  Service Procedure:  Unless otherwise specified, fuse values and images shown are for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse locations and values.  Information i  30A 20A  30A 20A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 8 of 22  SUBJECT: SUBJECT:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  2.   Locate the junction box and remove the cover. 3a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Remove the multi-fuse nut and junction box cable. Release the locking tab and remove the multi-fuse.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  8.0 lb-ft  96 lb-in  11 N.m  Locking tab A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 9 of 22  SUBJECT: SUBJECT:  3b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Remove the two multi-fuse nuts and junction box cables. Release the locking tab and remove the multi-fuse.  Tightening Torque:  4.   Install the new multi-fuse, placing the junction box cable(s) over the junction box stud(s). Reinstall the nut(s).  8.0 lb-ft  96 lb-in  11 N.m  Locking tab  Multi-fuse shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model multi-fuse location.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 10 of 22  SUBJECT: SUBJECT:  5a.   For Santa Fe Sport (AN), Santa Fe (NC), and Tucson (LM) vehicles:  Clean the surface, then attach the supplied label to the new upper cover. 5b.   For Accent (RB) and Genesis Coupe (BK) vehicles:  Clean the surface, then attach the supplied label to the original upper cover.  Fuse label shown is for Santa Fe Sport (AN). Refer to the Multi-Fuse Table for the specific model fuse value changes.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 11 of 22  SUBJECT: SUBJECT:  6. 7.   Install the new junction box upper cover. 8.   Reconnect the negative (-) battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Replacement of Two Single Fuses: Sonata Hybrid (YF HEV), Veracruz (EN), Equus (VI)  Single Fuse Table:  Model   Fuse Changes   Images Sonata Hybrid (YF HEV) ESC1: 40A      30A   ESC2: 30A      20A   30A 20A  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New multi-fuse installed in junction box     Junction box cover with newly applied label Upload the photo to STUI.  STUI  Example of STUI Photo A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 12 of 22  SUBJECT: SUBJECT:  Veracruz (EN) ABS1: 40A      30A   ABS2: 40A      20A Equus (VI) ESC1: 40A      30A   ESC2: 40A      20A  Service Procedure:  1.   Record customer’s radio presets, then disconnect the negative (–) battery terminal.  Tightening Torque:  3.7 lb-ft  44 lb-in  5 N.m  30A   20A  Fuse values and images shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  20A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 13 of 22  SUBJECT: SUBJECT:  2.   From the engine compartment, locate the junction box and remove the cover. 3.   Locate the ABS1/ESC1 and ABS2/ESC2 fuses. Remove the two fuses.  40A 30A A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 14 of 22  SUBJECT: SUBJECT:  4.   Install the two new single fuses as shown. ESC1 position (40A fuse originally) Install new 30A fuse (pink). ESC2 position (30A fuse originally): Install 20A fuse (blue). 5.   Select the appropriately sized labels with the corresponding amperage values for the two fuses installed. Clean the surface, then attach the supplied labels to the junction box cover as shown.  20A 30A  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i  Fuse values shown are for Sonata Hybrid (YF HEV). Refer to the Single Fuse Table for the specific model fuse locations and values.  Information i A BS FUSE REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9   Page 15 of 22  SUBJECT: SUBJECT:  6. 7.   Reinstall the junction box cover. 8.   Reconnect negative battery terminal. 9.   Reset customer’s radio presets. 10.   Start the engine to confirm proper operation. 11.   Service procedure is now complete.  Using STUI, take one photo with the last 6 digits of the VIN and the date of repair on a piece of paper. Photo must show:     New fuses installed in junction box     Junction box cover with newly applied labels Upload the photo to STUI.  STUI  Example of STUI Photo",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqqsfx97sghk",
+          "answers": {
+            "model": "Sonata Hybrid (YF HEV)"
+          },
+          "model": "Sonata Hybrid (YF HEV)",
+          "opCode": "41D013R0",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4Z000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx9788fd",
+          "answers": {
+            "model": "Santa Fe Sport (AN)"
+          },
+          "model": "Santa Fe Sport (AN)",
+          "opCode": "41D013R1",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91AN1-11200QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4R000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx970qdg",
+          "answers": {
+            "model": "Veracruz (EN)"
+          },
+          "model": "Veracruz (EN)",
+          "opCode": "41D013R2",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58910-3J806",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx970egs",
+          "answers": {
+            "model": "Equus (VI)"
+          },
+          "model": "Equus (VI)",
+          "opCode": "41D013R3",
+          "operation": "ABS Single Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58910-3N590",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97but8",
+          "answers": {
+            "model": "Santa Fe (NC)"
+          },
+          "model": "Santa Fe (NC)",
+          "opCode": "41D013R4",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11200QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97mfo4",
+          "answers": {
+            "model": "Accent (RB)"
+          },
+          "model": "Accent (RB)",
+          "opCode": "41D013R5",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-1R400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx973zbv",
+          "answers": {
+            "model": "Elantra (UD)"
+          },
+          "model": "Elantra (UD)",
+          "opCode": "41D013R6",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97azfx",
+          "answers": {
+            "model": "Elantra (MD)"
+          },
+          "model": "Elantra (MD)",
+          "opCode": "41D013R7",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X700",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97w7z4",
+          "answers": {
+            "model": "Elantra Coupe (JK)"
+          },
+          "model": "Elantra Coupe (JK)",
+          "opCode": "41D013R8",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3X660",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97zuff",
+          "answers": {
+            "model": "Tucson (LM)"
+          },
+          "model": "Tucson (LM)",
+          "opCode": "41D013R9",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2S400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97xgsi",
+          "answers": {
+            "model": "Azera (HG)"
+          },
+          "model": "Azera (HG)",
+          "opCode": "41D013RA",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-3V300",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97qwnx",
+          "answers": {
+            "model": "Veloster (FS)"
+          },
+          "model": "Veloster (FS)",
+          "opCode": "41D013RB",
+          "operation": "ABS Single & Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2V400",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97jcir",
+          "answers": {
+            "model": "Genesis Coupe (BK)"
+          },
+          "model": "Genesis Coupe (BK)",
+          "opCode": "41D013RD",
+          "operation": "ABS Multi-Fuse Installation",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-2M750",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97mq9t",
+          "answers": {
+            "model": "Santa Fe Sport (AN)"
+          },
+          "model": "Santa Fe Sport (AN)",
+          "opCode": "41D013RE",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91AN1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-4R000",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx975usg",
+          "answers": {
+            "model": "Santa Fe (NC)"
+          },
+          "model": "Santa Fe (NC)",
+          "opCode": "41D013RF",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700ABSFUSE",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqqsfx97zwj3",
+          "answers": {
+            "model": "REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9 Page 5 of 22SUBJECT: SUBJECT:"
+          },
+          "model": "REPLACEMENT (RECALL 251) TSB #: 24-01-027H-9 Page 5 of 22SUBJECT: SUBJECT:",
+          "opCode": "41D013RF",
+          "operation": "ABS Multi-Fuse Installation (for P/N 91NC1-11201QQH)",
+          "opTime": "0.2 M/H",
+          "causalPart": "58920-B8700ABSFUSE",
+          "natureCode": "I11",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
     "id": "mqjrajbavha8",
     "label": "26-01-046H VCU SOFTWARE LOGIC IMPROVEMENT (LIMITED COVERAGE CAMPAIGN LA25)",
     "filename": "mqjrajbavha8-26-01-046H.pdf",

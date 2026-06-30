@@ -11,6 +11,20 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY",
-    "notes": "P/A IS SUBMITTED FOR ENGINE REPLACEMENT "
+    "notes": "P/A IS SUBMITTED FOR ENGINE REPLACEMENT WAITING ON ENGINE "
+  },
+  {
+    "id": "mqzc6xfwq1i",
+    "ro": "778782",
+    "roDate": "2026-06-29",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES check engine light is on",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]

@@ -1,5 +1,283 @@
 [
   {
+    "id": "mqvd7ko1txkb",
+    "label": "20-FL-010H TUCSON 2.0L DTC P0420 - ECM UPDATE AND CATALYST REPLACEMENT",
+    "filename": "mqvd7ko1txkb-20-FL-010H.pdf",
+    "fileType": "pdf",
+    "size": 386275,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-26T20:09:51.437Z",
+    "searchText": " Circulate To: Service Manager, Warranty Manager, Service Advisors, Technicians, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  FUEL SYSTEM   20 - FL - 010 H  DATE   MODEL(S)  OCTOBER   20 20   Tucson (TL) 2.0L  SUBJECT:   T UCSON   2.0L DTC P042 0   -   ECM   UPDATE   AND CATALYST REPLACE MENT  Description:  This bulletin provides information related to the repair of DTC P0420   “ Catalytic Converter System Bank 1 -   Efficiency Below Threshold”   found stored in the Engine Control Module (ECM).   The repair involves performing an ECM Update and replacement of the exhaust manifold catalyst.  Applicable Vehicle:     20 1 9   Tucson ( TL )   with 2.0 L   GDI engine .  ECU Update Event Information :  System Selection:   Engine (ECM)  Event   #   D escription  5 88 *   TL PE 2.0GDI - P0420 DTC IMPROVEMENT  *or any updated later event that is listed.  Parts Information:  Part Name   Part Number   Diagram  MANIFOLD CATALYTIC ASSY  28510-2EMN0 (2WD)  28510-2EPE0 (4WD)  Warranty Information:  Model   Op Code   Operation   Op Time   Causal  Part  Nature  Code  Causal  Code  Tucson (TL)   39131F08   ECM UPGRADE   &  EXHAUST MANIFOLD  CATALYST REPLACE  1.1   M/H   39131 - 2ET **  3913 3 - 2ET **   I3T   ZZ3  **Refer to applicable parts catalog for full ECM causal part numbers.  N ote :   Normal warranty applies. TUCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 2 of 3  SUBJECT:  SUBJECT :  :  Service Procedure:  1.   Scan for DTC in Engine System and confirm that DTC P0420 is found stored.  2.   Replace the exhaust manifold catalyst per the Shop Manual instructions.  3.   Perform the GDS software event update:     Refer to TSB   15 - GI - 001   for the detailed tablet - based Mobile GDS ECU update procedures.     Refer   to   TSB   15 - GI - 002   for   the   detailed   PC - based   GDS   ECU   update procedures.  4.   Check for Diagnostic Trouble Codes in the   ALL   menus and erase any DTC.  5.   Erase the DTC in the BlueLink system according to TSB 12 - BE - 005 - 2.  6.   Confirm normal vehicle operation.  You must initially perform the GDS ECU Update in Auto Mode.     If the ECU Update starts but then fails in Auto Mode, perform the update in Manual Mode to recover.  NOTICE T UCSON   2.0L DTC P0420   -   ECM UPDATE AND CATAL YST REPLACEMENT  TSB #: 20-FL-010H   Page 3 of 3  SUBJECT:  SUBJECT:  ROM ID Table:  VEHICLE   ENGINE   TRANS   IMMO   EMISSIONS   ECU P/No.   ROM   ID  OLD   NEW  Tucson  ( TL   PE )   2.0GDI   6AT  YES   ULEV   39131 - 2ETF0  GGTL - INUAQS00C00  GTL - 0NU0AQ000C00  GTL - 0NU0AQ100C00  NO   ULEV   39133 - 2ETF0   GGTL - INUAPS00C00   GTL - 0NU0AP100C00  YES   ULEV   39131 - 2ETF1   GGTL - INUAQS00D00   GTL - 0NU0AQ100F00  NO   ULEV   39133 - 2ETF1   GGTL - INUAPS00D00   GTL - 0NU0AP100F00  YES   SULEV   39131 - 2ETF2   GGTL - INSAQS00C00   GTL - 0NS0AQ100C00  NO   SULEV   39133 - 2ETF2   GGTL - INSAPS00C00   GTL - 0NS0AP100C00  Manual Mode Password:  MENU   PASSWORD  TL PE 2.0GDI   - IMMO   39133 - 2ETF0   3320  TL PE 2.0GDI   - IMMO 39133 - 2ETF1   3321  TL PE 2.0GDI   - IMMO 39133 - 2ETF2   3322  TL PE 2.0GDI +IMMO 39131 - 2ETF0   3326  TL PE 2.0GDI +IMMO 39131 - 2ETF1   3327  TL PE 2.0GDI +IMMO 39131 - 2ETF2   3328  GDS   Vehicle Battery Voltage Warning :  If voltage is below 12 volts as per the below GDS warning, then select   Back   and  operate the vehicle in Ready mode for at least 20 minutes to ensure an adequate battery state of charge for reliable update results. Turn ignition back on, and then retry the ECU update again.  WARNING !",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqvd7s07o0iw",
+          "answers": {
+            "model": "Op Time Causal Part Nature Code Causal Code Tucson (TL)"
+          },
+          "model": "Op Time Causal Part Nature Code Causal Code Tucson (TL)",
+          "opCode": "39131F08",
+          "operation": "ECM UPGRADE & EXHAUST MANIFOLD CATALYST REPLACE",
+          "opTime": "1.1 M/H",
+          "causalPart": "39131-2ET",
+          "natureCode": "I3T",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqscasysup8r",
+    "label": "21-BE-003H-1 CLOCK SPRING WARRANTY EXTENSION (TXXJ)",
+    "filename": "mqscasysup8r-21-BE-003H-1.pdf",
+    "fileType": "pdf",
+    "size": 96252,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T17:21:03.646Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager, Warranty Manager, Service Advisors, Technicians, Body Shop Manager, Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  Body Electrical   21 - BE - 003 H - 1  DATE   MODEL(S)  May , 2021  Azera (HG)  Elantra GT (GD)  Veloster (FS)  Veracruz (EN)  Santa Fe ( CM/ CMa)  Genesis (BH)  Equus (VI)  SUBJECT:   CLOCK   SPRING WARRANTY EXTE NSION (TXXJ )  This TSB supersedes TSB# 21 - BE - 0 03H   to provide clarification of warranty coverage in the  description   and add additional models   i ncluding Genesis (BH), Equus (VI), Santa Fe (CM/ CMa),  and Veracruz (EN).  Description:   The warranty coverage for the clock spring has been extended to 15 years with unlimited mileage from the date of original retail delivery or date of first use, whichever occurs first. This warranty coverage applies to both the original and subsequent owners. Refer to the warranty and service parts information outlined in this bulletin whenever clock spring replacement is required.  Applicable Vehicles:  Model:  2012 - 2014   Azera (HG)  2013 - 2014   Elantra GT   (GD)  2012 - 2014 Veloster (FS)  2007 - 2012   Veracruz (EN)  2007 - 2012   Santa Fe ( CM/ CMa)  2009 - 2014   Genesis (BH)  2011 - 2013   Equus (VI)  Production Date:  NOV.   29 , 2011 To APR. 01, 2014  MAY   02, 2012 To APR. 28, 2014  JUL. 02, 2011 To MAY   12, 2014  DE C. 26, 2006 To JUL.   24, 2012  APR. 19, 2006 To JUL.   03, 2012  APR. 30 , 2008 To JAN. 17, 2014  JUL.   13, 2010 to NOV. 24, 2012 CLOCK   SPRING WARRANTY EXTE NSION (TXXJ )  TSB #: 21-BE-003H-1   Page 2 of 3  SUBJECT:  SUBJECT:  Parts   Information:  PART NAME   PART IMAGE   MODEL   PREVIOUS   AFTER   QTY  Clock Spring  Elantra GT (GD)   93490-1W120   93490-A4120FFF   1  Azera (HG)   93490-3V120   93490-A4120FFF   1  93490-3V125   93490-A4120FFF   1  Veloster (FS)   93490-3V110   93490-B2110FFF   1  Veracruz (EN)   93490-3J100   93490-3J100FFF   1  Santa Fe (CM/CMa)   93490-2B300   93490-2B300FFF   1  Genesis (BH)   93490-3M000   93490-3M000FFF   1  93490-3M500   93490-3M500FFF   1  Equus (VI)   93490-3N000   93490-3N000FFF   1  Steering Lock Nut  EN, BH, VI, HG, GD, FS   N/A   56195-2F000   1 per vehicle  CM/CMa   13467-14001  Warranty Information:  MODEL   OP CODE   OPERATION   OP TIME   CAUSAL PART   NATURE  CODE  CAUSE  CODE  All   10D008R0  CLOCK SPRING DIAGNOSIS ONLY  0.3M/H  Please see causal  part listed in  below  replacement op  code for your  applicable model .  I3R   ZZ3  Genesis (BH)   10D008R1  CLOCK SPRING DIAGNOSIS AND  REPLACEMENT  0.7M/H   93490-3M000FFF   I3R   ZZ3  Veloster (FS)   10D008R2   0.7M/H   93490-B2110FFF   I3R   ZZ3  Santa Fe (CM/CMa)   10D008R3   0.6M/H   93490-2B300FFF   I3R   ZZ3  Veracruz (EN)   10D008R4   0.6M/H   93490-3J100FFF   I3R   ZZ3  Azera (HG)   10D008R5   0.6M/H   93490-A4120FFF   I3R   ZZ3  Elantra GT (GD)   10D008R6   0.5M/H   93490-A4120FFF   I3R   ZZ3  Equus (VI)   10D008R7   0.5M/H   93490-3N000FFF   I3R   ZZ3 CLOCK SPRING WARRANT Y EXTENSION (TXXJ)  TSB #: 21-BE-003H-1   Page 3 of 3  SUBJECT:  SUBJECT:  NOTE 1:   Submit Claim on Campaign Claim Entry Screen  NOTE 2:   If a part that is not covered by this TSB is found in need of replacement while performing TXXJ, and the affected part is still under warranty, submit a separate claim using the same Repair Order. If the affected part is out of warranty, submit a Prior Approval Request for goodwill consideration prior to performing the work.",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqscbkhpn9iq",
+          "answers": {
+            "model": "All"
+          },
+          "model": "All",
+          "opCode": "10D008R0",
+          "operation": "CLOCK SPRING DIAGNOSIS ONLY",
+          "opTime": "0.3 M/H",
+          "causalPart": "",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhppkqj",
+          "answers": {
+            "model": "Genesis (BH)"
+          },
+          "model": "Genesis (BH)",
+          "opCode": "10D008R1",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.7 M/H",
+          "causalPart": "93490-3M000FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhpigql",
+          "answers": {
+            "model": "Veloster (FS)"
+          },
+          "model": "Veloster (FS)",
+          "opCode": "10D008R2",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.7 M/H",
+          "causalPart": "93490-B2110FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhpqyl0",
+          "answers": {
+            "model": "Santa Fe (CM/CMa)"
+          },
+          "model": "Santa Fe (CM/CMa)",
+          "opCode": "10D008R3",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.6 M/H",
+          "causalPart": "93490-2B300FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhpku66",
+          "answers": {
+            "model": "Veracruz (EN)"
+          },
+          "model": "Veracruz (EN)",
+          "opCode": "10D008R4",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.6 M/H",
+          "causalPart": "93490-3J100FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhpvvr8",
+          "answers": {
+            "model": "Azera (HG)"
+          },
+          "model": "Azera (HG)",
+          "opCode": "10D008R5",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.6 M/H",
+          "causalPart": "93490-A4120FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhp2l7c",
+          "answers": {
+            "model": "Elantra GT (GD)"
+          },
+          "model": "Elantra GT (GD)",
+          "opCode": "10D008R6",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.5 M/H",
+          "causalPart": "93490-A4120FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhptv16",
+          "answers": {
+            "model": "Equus (VI)"
+          },
+          "model": "Equus (VI)",
+          "opCode": "10D008R7",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.5 M/H",
+          "causalPart": "93490-3N000FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqscbkhpppdk",
+          "answers": {
+            "model": "CLOCK SPRING WARRANT Y EXTENSION (TXXJ) TSB #: 21-BE-003H-1 Page 3 of 3 SUBJECT: SUBJECT:"
+          },
+          "model": "CLOCK SPRING WARRANT Y EXTENSION (TXXJ) TSB #: 21-BE-003H-1 Page 3 of 3 SUBJECT: SUBJECT:",
+          "opCode": "10D008R7",
+          "operation": "CLOCK SPRING DIAGNOSIS AND REPLACEMENT",
+          "opTime": "0.5 M/H",
+          "causalPart": "93490-3N000FFF",
+          "natureCode": "I3R",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqsbvue2c3nk",
+    "label": "26-EV-004H DTC VERIFICATION (ICCU) REPLACEMENT (WARRANTY EXTENSION Z14)",
+    "filename": "mqsbvue2c3nk-26-EV-004H.pdf",
+    "fileType": "pdf",
+    "size": 348211,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T17:09:25.919Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  ELECTRIC VEHICLE  SYSTEM   2 6 - EV - 004 H  DATE   MODEL (S)  MAY   20 2 6   SEE BELOW  SUBJECT:   DTC VERIFICATION   –   INTEGRATED CHARGING CONTROL UNIT  (ICCU) REPLACEMENT   (WARRANTY EXTENSION   Z14 )  Description:   Hyundai is extending the warranty coverage for the   Integrated Charging Control Unit  ( ICCU )   and ICCU fuse to 15 years/180,000 miles from the date of original retail delivery or date of first  use (whichever occurs first) and is valid for original and subsequent owners.  Follow the   flowchart   in this bulletin to   check for   an active or stored occurrence of any D iagnostic Trouble  Code (DTC)   that requires replacement of the ICCU   and   replace the ICCU   and   ICCU fuse   if necessary.  Some vehicles may have an active DTC that requires ICCU replacement.  Applicable Vehicles:  Model Year   Model   Production Dates  202 2   –   2024   IONIQ 5 (NE EV)   10 / 04 /202 1   –   1 1 / 0 1 /2024  2024   IONIQ 5 ROBOTAXI (NER)   10/09/2023   –   10/29/2024  2023   –   2025   IONIQ 6 (CE EV)   12/14/2022   –   10/10/2024  To avoid   any   potential damage to   IONIQ vehicles ,   IONIQ repairs   can only be performed   at IONIQ  certified dealers .  NOTICE DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   2   of   7  SUBJECT:  DTC Information :  DTC   Description  P1A9096   DC/DC Converter Input Voltage   Sensor Fault  P1E011C   PFC Voltage Sensor Reliability and Initial Offset Value Check  P1E0211   PFC Voltage Sensor Circuit Low  P1E1300   Inverter Charging Relay Fault  P1E1417   PFC Output Voltage Too High  P1E0C73   Input Relay   Stuck Closed Check  P0D5C00   Battery Charger Hybrid/EV Battery Output Power Performance  Parts   Information:  Model   Part Name   Part Number   Remarks  IONIQ 5  (NE EV)  ICCU Assy  (Integrated Charging  Control Unit)  3640 0 - 1XAA 0 A QQH  IONIQ 5  ROBOTAXI  (NER)  3640 0 - 1X MA0AQQH  IONIQ 6  (CE EV)   3640 0 - 1XEA0 A QQH  All  Fuse   –   High Voltage   375F2 - GI040 QQH  Order High - Voltage Fuse in  Conjunction with the ICCU for  DTC P1A9096   ONLY  Pink Antifreeze/  Coolant   00232 - 19098   3.8L (1 gallon)  Do   NOT   install the fuse alone without ICCU replacement.   If vehicle is placed in   Ready Mode  after replacing only the fuse and not the ICCU, there is a possibility of   DTC   P1B77 , Battery PRA  damage occurring.   Refer to   the   shop manual   to determine   if fuse replacement is required for the  specific DTC.  NOTICE DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   3   of   7  SUBJECT:  SST   Information :  Tool Name   Tool   Number   Figure   Ordering Information  VCI 3   G0VHNNN06   Website:  https://hyundaiessentialtools.com/  Email:  Hyundaitools@snapon.com  Phone: 1 - 855 - 763 - 9199  Hours: 7 AM   –   7 PM CST  VCI 2   G1XDDMN001  NOTE:   VCI 2 can   NO   longer be ordered but can be used for the updates in this TSB.  Warranty Information:  Model   Op. Code   Operation   Op.  Time   Causal Part   Nature  Code  C ause  Code  IONIQ 5  (NE EV)  IONIQ 5  ROBOTAXI  (NER)  IONIQ 6  (CE EV)  60D097R0  D TC   Check (L DC ),   a nd I CCU  and   Fuse Replacement  (P1A9096)  2.1  M/H   36400 - 1XAA0  (IONIQ 5)  36400 - 1XMA0  (IONIQ 5  ROBOTAXI)  36400 - 1XEA0  (IONIQ 6)  W11   ZZ3  60D097R1  DTC C heck   ( OBC )   and   ICCU  R eplacement  (P1E011C, P1E0211, P1E1300,  P1E1417, P1E0C73, P0D5C00)  2.0  M/H  60D097R2   DTC C heck   ( O thers )   and   ICCU  R eplacement  2.0  M/H  NOTE 1:   If the affected parts are within the warranty period of 15 years/180,000 miles, then submit as  campaign claim type. Please note that any vehicles under 15 years/180,000 miles are covered by this  TSB, even if vehicle is within High Voltage Warranty of 10 ye ars/120,000 miles.  NOTE   2 :   This TSB includes repair justification in the form of automatically uploaded DTC(s) via GDS  e - report at the time of diagnosis. To ensure adherence to the Digital Documentation Policy before  claim submission, DTC history can be reviewed via the e - Report fun ction within the GDS.  NOTE   3 :   The incident parts are subject to callback through the normal Warranty Technical Center  (WTC) parts return process.   Claim is subject to debit if the part is not returned.  NOTE   4 :   If any part(s) not subject to this TSB are found in need of replacement while performing the  repair procedure, and the affected part(s) are still under warranty, the dealer may submit a separate  claim using the same repair order. If the part(s) not subject   to this TSB are out of warranty coverage,  the dealer has the option to submit a PA Request for goodwill consideration on a case - by - case basis. DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   4   of   7  SUBJECT:  Service Procedure:  Be sure to read the   Safety and Precautions   and   High Voltage Shut - off Procedures   sections  of the shop manual before performing any work related to high - voltage systems. Failure to do so  may result in serious electrical injuries.  Be sure to follow your country’s/region’s regulations when performing work on or around high  voltage components.  WARNING !  Applying the recommended torque to all fasteners is essential to reduce potential issues from  occurring after the service procedure.  NOTICE  This TSB includes repair justification in the form of automatically uploaded DTC(s) via GDS e -  report at the time of diagnosis. To ensure adherence to the Digital Documentation Policy before  claim submission, DTC history can be reviewed via the e - Report fun ction within the GDS.  DIGITAL DOCUMENTATION DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   5   of   7  SUBJECT:  Flowchart Vehicle In  Check for open  Recall 272  Vehicle Out  Perform Recall 272  Fault Code Searching  No open Recall 272  Open Recall 272  ICCU and Fuse  Replacement  DTC P1A9096  (60D097R0)  ICCU Replacement   Follow Normal  Diagnostic Process  No DTCs  DTCs P1E011C,  P1E0211,P1E1300,  P1E1417, P1E0C73,  P0D5C00  (60D097R1)  Other DTCs that  require ICCU  Replacement  (60D097R2)  1) If there is a LDC   (Low - voltage DC - DC Converter)   related DTC   (P1A9096) , replace the ICCU   AND   ICCU  fuse   following the shop manual   and proceed with the claim using the warranty extension OP code   (60D097R0).  2) If there are OBC   (On   Board Charger)   related DTCs   (P1E011C, P1E0211, P1E1300, P1E1417, P1E0C73,  P0D5C00) , replace the ICCU   ONLY   following the shop manual and   proceed with the claim using the warranty  extension OP code   (60D097R1).  3) If there are other DTCs   that require ICCU replacement , replace the ICCU   ONLY   following the sh o p manual  and proceed with the claim using the warranty extension OP code   (60D097R2). DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   6   of   7  SUBJECT:  1.   Confirm that Recall 272 has already been  performed on the vehicle:  •   If Recall 272 has   NOT   been performed,  refer to   TSB #26 - 01 - 025H   to perform  the recall. This service procedure is  now complete.  •   If Recall 272 has been performed,  proceed to   step 2 .  2.   Use the GDS to perform   Fault Code  Searching   for any DTC that requires ICCU  replacement:  •   If the DTC does   NOT   require ICCU  replacement, or   NO   DTC is   stored , then  proceed with the normal diagnostic  process. This service procedure is now  complete.  •   If the DTC requires ICCU replacement,  proceed to   step 3 .  3 .   Shut   OFF   the high - voltage circuit (A) by  referring to the shop manual:  •   Battery Control System >High  Voltage Shut - off Procedures  If DTC   P1A9096   is   stored ,   it is necessary  to replace the ICCU fuse   after   replacing  the ICCU.  Information i  Wait for more than   5 minutes   so that the  capacitor in the high voltage system will  be fully discharged.  CAUTION !  A DTC VERIFICATION   -   INTEGRATED CHARGING CONTROL UNIT (ICCU)  REPLACEMENT (WARRANTY EXTENSION   Z14 )  TSB #:   2 6 - EV - 004 H   Page   7   of   7  SUBJECT:  4 .   Remove   the   ICCU   by referring to the shop  manual:  •   Battery Control System > High  Voltage Charging System >  Integrated Charge Control Unit  (ICCU) > Removal  5 .   Install the   new   ICCU   in   the   reverse   order of the  removal process.  6 .  7 .  8 .  If   DTC   P 1A9096   was stored, replace the ICCU  fuse   by referring to the shop manual :  •   Battery Control System > High  Voltage Charging System >  Integrated Charge Control Unit  (ICCU) > Removal  Confirm   the proper operation of the vehicle .  The service procedure is now complete.",
+    "opData": {
+      "questions": [],
+      "entries": [
+        {
+          "id": "mqsbw23ifqq7",
+          "answers": {},
+          "model": "IONIQ 5 (NE EV) IONIQ 5 ROBOTAXI (NER) IONIQ 6 (CE EV)",
+          "opCode": "60D097R0",
+          "operation": "D TC Check (L DC), a nd I CCU and Fuse Replacement (P1A9096)",
+          "opTime": "2.1 M/H",
+          "causalPart": "36400-1XAA0",
+          "natureCode": "W11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqsbw23ifub7",
+          "answers": {},
+          "model": "IONIQ 5 (NE EV) IONIQ 5 ROBOTAXI (NER) IONIQ 6 (CE EV)",
+          "opCode": "60D097R1",
+          "operation": "DTC Check (OBC) and ICCU Replacement (P1E011C, P1E0211, P1E1300, P1E1417, P1E0C73, P0D5C00)",
+          "opTime": "2.0 M/H",
+          "causalPart": "36400-1XAA0",
+          "natureCode": "W11",
+          "causeCode": "ZZ3"
+        },
+        {
+          "id": "mqsbw23i734n",
+          "answers": {},
+          "model": "IONIQ 5 (NE EV) IONIQ 5 ROBOTAXI (NER) IONIQ 6 (CE EV)",
+          "opCode": "60D097R2",
+          "operation": "DTC Check (Others) and ICCU Replacement",
+          "opTime": "2.0 M/H",
+          "causalPart": "36400-1XAA0",
+          "natureCode": "W11",
+          "causeCode": "ZZ3"
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs8p1op74hb",
+    "label": "22-BD-001H FRONT BUMPER MOLDING REPLACEMENT",
+    "filename": "mqs8p1op74hb-22-BD-001H.pdf",
+    "fileType": "pdf",
+    "size": 1476791,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T15:40:10.085Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  BODY   2 2 - BD - 001 H  DATE   MODEL(S)  JANUARY , 20 2 2  ELANTRA   ( CN7 )  ELANTRA HYBRID  (CN7 HEV)  SUBJECT:   FRONT BUMPER MOLDING REPLACEMENT  Description:   Certain 2021MY   Elantra   vehicles   may   exhibit   paint delamination   on   the   left, right and  lower moldings   of the front bumper .   Follow the   procedure outlined   in this   b ulletin to   remove   and  replace   the   dark chrome   front bumper mold ings .  Applicable Vehicles:   Certain 202 1 MY   Elantra   ( CN7 )   and   Elantra H ybrid   (CN7 HEV)   vehicles   (VINs  starting with “KMH”)   produced   between   3 / 2 /20 2 1   –   4 / 29 /202 1   and equipped with dark chrome front  bumper moldings.  Parts   Information:  PART NAME   PART NUMBER   FIGURE  FRONT BUMPER   LH   MOLDING   8 6595 - AA010QQH  FRONT BUMPER   RH   MOLDING   8 6596 - A A010QQH  FRONT BUMPER LOWER MOLDING   8 6569 - AA010QQH  Warranty Information:  MODEL   OP CODE   OPERATION   OP TIME   CAUSAL  PART  NATURE  CODE  CAUSE  CODE  Elantra (CN7)   10D188R0   FRONT BUMPER  MOLDING  REPLACEMENT  0.9 M/H   865 95 - A A 0 1 0   A26   ZZ2  Elantra Hybrid  (CN7 HEV)   10D188R1  Note 1:   Submit claim on Campaign Claim Entry Screen.  Note 2:   If a part   that is not covered by this TSB is found in need of replacement while performing this  TSB , submit a separate claim using the same   Repair Order. If the affected part is out of warranty,  submit a Prior Approval Request for goodwill consideration prior to the repair. FRONT BUMPER MOLDING REPLACEMENT  TSB #:   2 2 - BD - 001 H   Page   2   of   6  SUBJECT:  SUBJECT:  Service   Procedure:  1.   Open the vehicle hood.  2.   Remove   the upper clips (A) of the front bumper.  3.   Remove   the   lower   clips (B)   securing   the   bottom  of the front bumper   to   the under cover.  A  B FRONT BUMPER MOLDING REPLACEMENT  TSB #:   2 2 - BD - 001 H   Page   3   of   6  SUBJECT:  SUBJECT:  4.   Remove   the screw (C) and clips   (D)   securing  the side of the front bumper   to   the wheel guard.  Repeat   on   the opposite side of the vehicle.  5.   Remove the   front   bumper   (E) from   the   side  bracket   by   holding   the bottom   (1)   and the side  (2)   of the bumper   and   pulling out wards . Repeat  on   the opposite side of the vehicle .  6.   Disconnect   the front bumper main connector  (F).  Be careful not to damage the  locking jaw on the side s   of the  front bumper.  CAUTION ! FRONT BUMPER MOLDING REPLACEMENT  TSB #:   2 2 - BD - 001 H   Page   4   of   6  SUBJECT:  SUBJECT:  7.   Remove the front bumper assembly (G).  8.   Place the   front   bumper face down for   access to  the bumper moldings.  9.   Remove   the front bumper side molding screws  (H) .  Place the   front   bumper on a soft  surface that will   not scratch or  damage the paint.  NOTICE FRONT BUMPER MOLDING REPLACEMENT  TSB #:   2 2 - BD - 001 H   Page   5   of   6  SUBJECT:  SUBJECT:  10.   Remove   the   front bumper lower molding  screws ( I ) .  1 1 .   Using cutting plier s ,   cut off   the   locking tabs (J)  on the   side molding s   and lower molding .  New locking tabs are present on  the replacement moldings.  NOTICE FRONT BUMPER MOLDING REPLACEMENT  TSB #:   2 2 - BD - 001 H   Page   6   of   6  SUBJECT:  SUBJECT:  1 2 .   Press   on the locking tabs   (K)   to   remove   the  molding s .  1 3 .   Remove both front bumper side moldings   ( L).  1 4 .   Remove the front bumper lower molding (M).  1 5 .   Install the   new   moldings and the   front   bumper  in reverse   order of removal.  1 6 .   The service procedure is now complete.  Install the side moldings first  before installing the lower molding.  Ensure that all locking tabs are  firmly in place.  NOTICE",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mqs8p7z1wibr",
+          "answers": {
+            "model": "Elantra (CN7)"
+          },
+          "model": "Elantra (CN7)",
+          "opCode": "10D188R0",
+          "operation": "FRONT BUMPER MOLDING REPLACEMENT",
+          "opTime": "0.9 M/H",
+          "causalPart": "",
+          "natureCode": "",
+          "causeCode": ""
+        },
+        {
+          "id": "mqs8p7z11jtj",
+          "answers": {
+            "model": "865 95 - A A 010A26ZZ2 Elantra Hybrid (CN7 HEV)"
+          },
+          "model": "865 95 - A A 010A26ZZ2 Elantra Hybrid (CN7 HEV)",
+          "opCode": "10D188R1",
+          "operation": "FRONT BUMPER MOLDING REPLACEMENT",
+          "opTime": "0.9 M/H",
+          "causalPart": "",
+          "natureCode": "",
+          "causeCode": ""
+        }
+      ]
+    },
+    "opExcluded": false
+  },
+  {
+    "id": "mqs3nk10pdpx",
+    "label": "25-BD-008H SERVICE GUIDE FOR STEERING WHEEL INSPECTION  AND REPLACEMENT",
+    "filename": "mqs3nk10pdpx-25-BD-008H.pdf",
+    "fileType": "pdf",
+    "size": 787810,
+    "uploadedBy": "SHAWN",
+    "uploadedAt": "2026-06-24T13:19:02.439Z",
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  BODY   2 5 - BD - 008 H  DATE   MODEL (S)  JUNE   20 2 5   ALL  SUBJECT:   SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION  AND   REPLACEMENT  This TSB supersedes   19 - BD - 005H   to add   sections   explaining natural   and external factors that  can   cause certain   imperfections on   steering wheel leather, more details on   steering wheel  quality   concern s   and warranty repair information ,   and   a section on   driver’s airbag   cover  imperfections .  Description:   This bulletin   provides information on the inspection of steering wheel   exterior quality  concern s and warranty coverage on steering wheel   replacement , if applicable,   for all Hyundai models .  Applicable Vehicles :  •   All Hyundai models  To avoid   any   potential damage to   IONIQ vehicles ,   IONIQ repairs   can only be performed   at IONIQ  certified dealers .  NOTICE SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   2   of   8  SUBJECT:  Warranty Information:  NOTE 1:   Normal warranty applies.  NOTE 2:   Refer to WebDCS   for applicable labor Op Codes.  NOTE 3:   Take a picture of the warrantable defect. Op times include VIN,   mileage, and repair  validation photo(s) as outlined in the Digital Documentation Policy.  NOTE 4:   The incident parts are subject to callback through the normal Warranty Technical Center  (WTC) parts return process.   Claim is subject to debit if the part is not returned.  Service Procedure:  Table of   Contents  •   Natural Imperfections of Steering Wheel Leather   ................................ ................................ .....   3  •   Imperfections of Steering Wheel Leather Caused by External Influences   ................................   3  •   Warranty Repair Information for Steering Wheel Imperfections   ................................ ...............   4  •   Warranty Repair Information for Driver’s Airbag Cover Imperfections   ................................ ......   6  •   Other Steering Wheel Quality   Concern s & Warranty Repair Information   ................................ .   7  Follow the   information in this TSB as a guide for repairing quality   concern s with steering wheels  and for determining if the repair is warrantable.  NOTICE  Applying the recommended torque to all fasteners is essential to reduce potential issues from  occurring after the service procedure.  NOTICE  This TSB includes   r epair   justification   photos. Refer to the latest Warranty Digital Documentation  Policy for requirements.  DIGITAL DOCUMENTATION SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   3   of   8  SUBJECT:  Natural   Imperfections   of Steering Wheel Leather  The leather used for wrapping the steering wheel is made from specially treated cowhide ,   which has  flexibility due to the material characteristics and the manufacturing process.  This leather may have naturally occurring   marks such as the ones shown below . These   marks   are  NOT   considered defects   as they are characteristics of the leather obtained from the   original   cow hide .  Example Photo s   Remarks  Hair Pore   Vein Mark   Cause :  The examples shown  are natural marks in the  original cowhide that  may be seen on the  steering wheel.  These are   NOT  considered  manufacturing   defects.  Natural   Scar   Growth Wrinkle  Imperfections   of   Steering Wheel Leather   Caused by External Influences  The steering wheel is the part of   the   car which has the most contact with the driver. Exterior  imperfections   caused by the manufacturing process are covered   under normal warranty . However,  concern s caused by the driver’s carelessness and /or   frequent use are   NOT   covered under warranty .  Two types of   common   external influences   are   physical abrasions and   exposure to   certain   chemical  products .  Physical   Abrasion :  The   steering wheel   surface may be worn out by the accumulated physical/chemical friction between  the user’s hand s   and   the   steering wheel . T he abrasion area   and length of time   until abrasion   is  evident   may vary depending on the usage conditions.   F rictional abrasion may occur by the   user’s  driving habit s   ( for example,   the type and strength of grip). Like other ordinary leather products (sofa,  handbags, etc.), frequent use accelerates the   abrasion.   Also,   if the driver   wear s   gloves to improve  grip and /or   protect   their   hand s ,   the   steering wheel surface   may   be more   vulnerable to peeling   due to  the increased frictio n   from   the gloves .  Exposure   to Chemical Products :  L eather is vulnerable to alcohol ,   and chemical products containing alcohol are the major cause of  leather peeling   on the steering wheel.   T he   amount   of leather peeling may vary depending on the  frequency   and   quantity   of chemical products   that   were in contact with the steering   wheel .   Examples of  chemical products   containing alcohol   or alcohol derivatives (ethanol,   glycerol/ glycerin   or   glycol)  include   skin lotion, sunscreen, hand cream, hand   sanitizer ,   cosmetics   and perfume /cologne . SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   4   of   8  SUBJECT:  Warranty Repair Information   for   Steering Wheel   Imperfections  Symptom   Example Photos   Remarks  Physical  Abrasion  Gripping   Steering   Wheel   Accumulated Friction   Cause:   Repeated gripping of steering  wheel in   the   same location .  Conclusion :   W arranty repair is   NOT  ACCEPTABLE .  Discoloration/  Contamination  Discoloration/  Contamination  : Before removing  : After removing  Cause:   Sunscreen, hand cream, skin lotion,  cosmetics, food, grease, etc.  Conclusion:   Warranty repair is   NOT  ACCEPTABLE . Refer to   TSB 14 - BD - 001 - 1  for   detailed cleaning procedures.  Peeling  Case 1:  Physical Peeling  Case 2:  Chemical Peeling  C ause :  •   Case 1:   Physical peeling  •   Case 2:   Chemical peeling  (smooth surface)  Remove any contamination by cleaning with  a leather cleaner or a wet   cloth .  Refer to   TSB# 14 - BD - 001   for detailed  cleaning procedures.  If the surface is smooth, this is a chemical  peel.  Conclusion :  •   Case 1:   Warranty repair is   NOT  ACCEPTABLE .  •   Case 2:   If   peeling was caused by an  external influence (chemical products,  cosmetics, etc.), w arranty repair is   NOT  ACCEPTABLE .  If peeling was   NOT   caused by an external  influence, warranty repair is   ACCEPTABLE . SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   5   of   8  SUBJECT:  Symptom   Example Photo s   Remarks  Scratch/  Press Mark s  Cause :   External damage from r ing, nail,  watch,   tool,   bag,   etc.  Conclusion:   W arranty repair is   NOT  ACCEPTABLE .  Marks from  Accessory  Attachment  Attachment Mark   o f  Power Handle Ball   Attachment Mark   o f  Handle   Cover  Cause:   Attachment mark/damage   from  aftermarket accessories.  Conclusion:   Warranty repair is   NOT  ACCEPTABLE .  Attachment of Paddle  Extension Kit  Paint Peeling at  Attachment Location  Cosmetic  Blemish on  Bezel  Cause:   External damage from r ing, nail,  watch, tool,   bag, etc.  Conclusion:   W arranty repair is   NOT  ACCEPTABLE . SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   6   of   8  SUBJECT:  Warranty Repair Information for Driver’s Airbag   Cover   Imperfections  Symptom   Example Photos   Remarks  Chafing/  Scratch  Marks  Chafed   Scratched  Cause:   External damage  from ring, nail, watch, tool,  bag, etc.  Conclusion :  •   Warranty repair is   NOT  ACCEPTABLE .  Cut/  Poke  Marks  Cause:   External damage  from ring, nail, watch, tool,  bag, etc.  Conclusion :  •   Warranty repair is   NOT  ACCEPTABLE .  Dent/  Press  Marks  Direct Damage  Indirect Damage  (writing on paper  on top of   cover )  Cause:   External damage  from ring, nail, watch, tool,  bag, etc.  Conclusion :  Warranty repair is   NOT  ACCEPTABLE . SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   7   of   8  SUBJECT:  Other Steering Wheel Quality   Concern s   & Warranty Repair Information  Steering Wheel Thread :  Symptom   Example Photo s   Remarks  Breakage  Case 1 :  (Loose /  broken  thread)  Case 2 :  (Singed,  reduced  length)  Case 3 :  (Damaged  thread end/  normal  length)  Inspection method:  Check the shape/length of thread end.  Shape   Length   Cause  ①  Loose  thread  Normal/  reduced  Damage by   external influence  (Nail, knife ,etc. )  ②  Singed   Reduced   Thermal damage (Lighter)  ③  Singed   Normal  Thermal damage during the  manufacturing process  (H eat )  Conclusion :  ① , ② : Warranty repair is   NOT   ACCEPTABLE .  ③ : Warranty repair is   ACCEPTABLE .  Steering Wheel   Switches :  Symptom   Example Photo s   Remarks  Malfunction  Inspection method:   Refer to applicable model  shop manual for detailed service procedures.  •   Check the open/short circuit of wire.  •   Check the connector assembly status.  •   Check the switch   function .  Conclusion :  •   Normal : Warranty repair is   NOT   ACCEPTABLE .  •   Inoperable : Warranty repair is   ACCEPTABLE .  Provide detailed inspection results on R.O.  Cosmetic  Cause:   External damage from ring, nail, watch,  tool, bag, etc.  Conclusion :   Warranty repair is   NOT  ACCEPTABLE . SERVICE GUIDE FOR   STEERING WHEEL   INSPECTION   AND   REPLACEMENT  TSB #:   2 5 - BD - 008 H   Page   8   of   8  SUBJECT:  Steering Wheel Heater :  Symptom   Example Photo s   Remarks  Malfunction  Inspection method:   Refer to applicable model  shop manual for detailed service procedures.  •   Check the connector assembly status.  •   Measure the resistance of heating wire/NTC.  •   Inspect the BCM/controller.  •   Check for short circuits of clock spring.  •   Check for coil damage from external   damage   to  steering wheel.  Conclusion :  •   Normal : Warranty repair is   NOT   ACCEPTABLE .  •   Inoperable : Warranty repair is   ACCEPTABLE .  Provide detailed inspection/measurement  results on R.O.  Poor  Heating  Inspection method:  Measure the resistance of heating wire/NTC.  After measuring the connector resistance,  compare it with the specified resistance in   the  applicable shop manual.  Conclusion :  •   Normal : Warranty repair is   NOT   ACCEPTABLE .  •   Inoperable : Warranty repair is   ACCEPTABLE .  Provide detailed inspection/measurement  results on R.O.  Steering Wheel Horn :  Symptom   Example Photo s   Remarks  Horn  Malfunction  Inspection method:  Check   for any obstruction of wiring.  Cause :  Wiring obstruction with copper contact point  Conclusion :   Warranty repair is   ACCEPTABLE .  Rearrange wiring.  Heavy  Steering  Effort  Inspection method:  Check   for any obstruction of wiring.  Cause :  Spring wiring   obstruction  Conclusion :   Warranty repair is   ACCEPTABLE .  Rearrange wiring."
+  },
+  {
     "id": "mqpl631fviw6",
     "label": "TSB 26-BE-012H CHECK FORWARD SAFETY SYSTEMS WARNING – FRONT VIEW CAMERA REPLACEM",
     "filename": "mqpl631fviw6-TSB_26-BE-012H.pdf",

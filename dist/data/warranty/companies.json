@@ -4,8 +4,8 @@
     "phone": "888-572-4310"
   },
   "AAGI": {
-    "name": "AAGI",
-    "phone": "18884422886"
+    "name": "aagi",
+    "phone": "8884422886"
   },
   "HIGHLINE": {
     "name": "HIGHLINE",
@@ -18,5 +18,21 @@
   "SUPERIOR PROTECTION": {
     "name": "SUPERIOR PROTECTION",
     "phone": "18664106748"
+  },
+  "SMART DRIVER": {
+    "name": "SMART DRIVER",
+    "phone": "8886849327"
+  },
+  "SILVER ROCK": {
+    "name": "SILVER ROCK",
+    "phone": "8666283905"
+  },
+  "WHEELZ": {
+    "name": "WHEELZ",
+    "phone": "800-858-6324"
+  },
+  "WHEELZ/AAGI": {
+    "name": "WHEELZ/AAGI",
+    "phone": "800-858-6324"
   }
 }
