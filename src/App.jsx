@@ -654,8 +654,9 @@ export default function App() {
   }
 
   if (page === 'ro-upload') {
-    const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
-    if (!isManager) { setPage('dashboard'); return null; }
+    // Managers + lead advisors can bulk-upload ROs.
+    const canUpload = currentRole === 'admin' || (currentRole || '').includes('manager') || currentRole === 'lead advisor';
+    if (!canUpload) { setPage('dashboard'); return null; }
     return <RoUpload currentUser={currentUser.toUpperCase()} techList={techList} onBack={() => navTo(prevPage || 'advisor-calendar')} />;
   }
 
