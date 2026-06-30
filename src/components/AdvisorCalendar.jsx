@@ -280,6 +280,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // Only managers/admins raise the attention flag. Advisors (and other
   // non-managers) clear it automatically when they open the row.
   const canManageWip = currentRole === 'admin' || (currentRole || '').includes('manager');
+  // Lead advisors can also bulk-upload ROs (not full WIP flag management).
+  const canRoUpload = canManageWip || currentRole === 'lead advisor';
 
   // Raise/lower the attention flag on a WIP row (persists to the tech's file).
   async function setWipFlag(job, flagged) {
@@ -706,7 +708,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 }}
               >📦 Parts Received</button>
             )}
-            {canManageWip && onRoUpload && (
+            {canRoUpload && onRoUpload && (
               <button
                 onClick={onRoUpload}
                 title="Bulk-add repair orders from an .xlsx open RO report (managers only)"
