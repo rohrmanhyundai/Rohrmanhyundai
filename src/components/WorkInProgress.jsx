@@ -76,10 +76,10 @@ const emptyAwaiting = () => ({
 });
 
 export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialJob = null, onInitialJobConsumed }) {
-  const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
+  const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'lead advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
   const isManager        = currentRole === 'admin' || (currentRole || '').includes('manager');
   const isTech           = currentRole === 'technician';
-  const isManagerOrAdvisor = isManager || currentRole === 'advisor';
+  const isManagerOrAdvisor = isManager || currentRole === 'advisor' || currentRole === 'lead advisor';
   const canDeleteAwaiting  = isManagerOrAdvisor;
   const canAssignAwaiting  = isManagerOrAdvisor;
   const [activeTech, setActiveTech] = useState(
