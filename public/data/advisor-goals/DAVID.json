@@ -95,5 +95,22 @@
         "submittedAt": 1782857452038
       }
     }
+  },
+  "2026-07": {
+    "hoursGoal": 0,
+    "hrsRoGoal": 0,
+    "days": {
+      "2026-07-01": {
+        "hours": 6.3,
+        "hrsRo": 6.3,
+        "openRoCount": 20,
+        "invoiced": "no",
+        "customersUpdated": "no",
+        "notesUpdated": "yes",
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1782943587219
+      }
+    }
   }
 }
