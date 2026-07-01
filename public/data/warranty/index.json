@@ -1,5 +1,93 @@
 [
   {
+    "id": "mqjt7vvxdwxo",
+    "createdAt": "2026-06-18T18:04:44.973Z",
+    "updatedAt": "2026-07-01T21:47:32.625Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Hannah Weissenburger",
+    "customerPhone": "765) 413 - 6051",
+    "repairOrder": "778506",
+    "vin": "5NPD84LF8JH217768",
+    "vehicleYear": "2018",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "117225",
+    "warrantyCompany": "HIGHLINE",
+    "warrantyPhone": "2017771000",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "170.00",
+    "laborTime": "11.60",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mqjt7vvx2qjm",
+        "partNumber": "15ZN1-2EX00",
+        "description": " ENGINE ASSY-SUB",
+        "qty": "1",
+        "price": "4838.71"
+      },
+      {
+        "id": "mqjtb1n0292e",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "23.52"
+      },
+      {
+        "id": "mqjtcnt8iqoj",
+        "partNumber": "28313-2EAA0",
+        "description": "GASKET-PORT",
+        "qty": "1",
+        "price": "13.81"
+      },
+      {
+        "id": "mqjtdvmz6rk2",
+        "partNumber": "28521-2E000",
+        "description": " GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "10.53"
+      },
+      {
+        "id": "mqjtetyc17p5",
+        "partNumber": "28751-3S100",
+        "description": "GASKET-EXHAUST PIPE",
+        "qty": "1",
+        "price": "23.10"
+      },
+      {
+        "id": "mqjtj31gi7eh",
+        "partNumber": "530V",
+        "description": " 5W30 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "CALLED IN 06/18/2026 @ 2PM. SENDING INSP. 24-48HRS.\n\n06/19/2026 inspector came at 3:20pm\n\nCALLED STILL WAITING ON APPROVAL \n\n06/30/2026 still need maintance records.",
+    "approved": false,
+    "approvedDate": "",
+    "denied": true,
+    "deniedDate": "2026-07-01",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
+  },
+  {
     "id": "mr23fwo0sxp6",
     "createdAt": "2026-07-01T13:10:46.560Z",
     "updatedAt": "2026-07-01T13:13:17.455Z",
@@ -312,94 +400,6 @@
     "readySubmissionDate": "",
     "inspectorDispatched": false,
     "inspectorDispatchedDate": ""
-  },
-  {
-    "id": "mqjt7vvxdwxo",
-    "createdAt": "2026-06-18T18:04:44.973Z",
-    "updatedAt": "2026-06-30T12:47:26.308Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Hannah Weissenburger",
-    "customerPhone": "765) 413 - 6051",
-    "repairOrder": "778506",
-    "vin": "5NPD84LF8JH217768",
-    "vehicleYear": "2018",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Elantra",
-    "mileage": "117225",
-    "warrantyCompany": "HIGHLINE",
-    "warrantyPhone": "2017771000",
-    "claimNumber": "",
-    "authNumber": "",
-    "laborRate": "170.00",
-    "laborTime": "11.60",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mqjt7vvx2qjm",
-        "partNumber": "15ZN1-2EX00",
-        "description": " ENGINE ASSY-SUB",
-        "qty": "1",
-        "price": "4838.71"
-      },
-      {
-        "id": "mqjtb1n0292e",
-        "partNumber": "00232-19010",
-        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
-        "qty": "1",
-        "price": "23.52"
-      },
-      {
-        "id": "mqjtcnt8iqoj",
-        "partNumber": "28313-2EAA0",
-        "description": "GASKET-PORT",
-        "qty": "1",
-        "price": "13.81"
-      },
-      {
-        "id": "mqjtdvmz6rk2",
-        "partNumber": "28521-2E000",
-        "description": " GASKET-EXHAUST MANIFOLD",
-        "qty": "1",
-        "price": "10.53"
-      },
-      {
-        "id": "mqjtetyc17p5",
-        "partNumber": "28751-3S100",
-        "description": "GASKET-EXHAUST PIPE",
-        "qty": "1",
-        "price": "23.10"
-      },
-      {
-        "id": "mqjtj31gi7eh",
-        "partNumber": "530V",
-        "description": " 5W30 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
-        "qty": "5",
-        "price": "4.99"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "CALLED IN 06/18/2026 @ 2PM. SENDING INSP. 24-48HRS.\n\n06/19/2026 inspector came at 3:20pm\n\nCALLED STILL WAITING ON APPROVAL \n\n06/30/2026 still need maintance records.",
-    "approved": false,
-    "approvedDate": "",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": "",
-    "inspectorDispatched": true,
-    "inspectorDispatchedDate": "2026-06-19"
   },
   {
     "id": "mqzccc5se3cq",
