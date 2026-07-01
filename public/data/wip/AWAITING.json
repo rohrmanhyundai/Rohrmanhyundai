@@ -96,10 +96,10 @@
     "jobDesc": "PERFORM PRE-DELIVERY INSPECTION, PLACE OWNER'S MANUALS IN GLOVE BOX, REMOVE PLASTIC FROM SEATS. ROAD TEST AND ADD FUEL",
     "highPriority": false,
     "advisor": "DAVID RILEY",
-    "notes": "",
+    "notes": "cant do no keys yet. parts on order ",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": true
+    "isNew": false
   },
   {
     "id": "mr2f6b4cpta1",
