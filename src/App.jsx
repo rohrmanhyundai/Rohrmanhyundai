@@ -284,6 +284,17 @@ export default function App() {
         if (!hasAdmin) githubUsers.push({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD });
         setUsers(githubUsers);
         localStorage.setItem(USERS_KEY, JSON.stringify(githubUsers));
+        // Re-sync the logged-in user's role from the latest users list so role
+        // changes (e.g. promoted to lead advisor) take effect on refresh — not
+        // only on next login (currentRole is otherwise cached from login time).
+        const meNow = (localStorage.getItem('currentUser') || '').toUpperCase();
+        if (meNow) {
+          const rec = githubUsers.find(u => (u.username || '').toUpperCase() === meNow);
+          if (rec && (rec.role || '') !== (localStorage.getItem('currentRole') || '')) {
+            localStorage.setItem('currentRole', rec.role || '');
+            setCurrentRole(rec.role || '');
+          }
+        }
       }
     });
   }, []);
