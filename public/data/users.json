@@ -503,31 +503,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Caiden",
-      "lastName": "",
-      "password": "Caiden2026",
-      "role": "advisor",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": true,
-        "advisorRankBoard": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true,
-        "partsHub": true,
-        "tireQuote": true,
-        "atDiagWorksheet": true,
-        "usedCarHub": true
-      },
-      "chatAccess": true,
-      "techChatAccess": true
-    },
-    {
       "username": "Isaiah",
       "lastName": "",
       "password": "Hyundai2026",
