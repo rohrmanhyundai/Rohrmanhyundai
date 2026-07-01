@@ -1,55 +1,95 @@
 {
-  "updatedAt": "2026-06-30T19:55:49.227Z",
+  "updatedAt": "2026-07-01T18:36:50.004Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "778833",
-        "vehicle": "2025 Hyundai Elantra Hybrid"
+        "ro": "778871",
+        "vehicle": "2023 Hyundai Kona"
       },
       {
-        "ro": "778831",
-        "vehicle": "2020 Hyundai Tucson"
-      },
-      {
-        "ro": "778826",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "778823",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "778812",
-        "vehicle": "2019 Hyundai Tucson"
-      },
-      {
-        "ro": "778803",
+        "ro": "778870",
         "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "778860",
+        "vehicle": "2011 Hyundai Sonata"
+      },
+      {
+        "ro": "778853",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "778851",
+        "vehicle": "2012 Hyundai Elantra"
+      },
+      {
+        "ro": "778848",
+        "vehicle": "2013 Hyundai Elantra"
+      },
+      {
+        "ro": "778847",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "778846",
+        "vehicle": "2019 Hyundai Santa Fe"
+      },
+      {
+        "ro": "778836",
+        "vehicle": "2020 Hyundai Santa Fe"
       }
     ],
     "JORDAN": [
       {
-        "ro": "778832",
-        "vehicle": "2017 Hyundai Tucson"
+        "ro": "778869",
+        "vehicle": "2026 Hyundai Santa Cruz"
       },
       {
-        "ro": "778827",
+        "ro": "778868",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "778867",
         "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "778795",
-        "vehicle": "2024 Hyundai Tucson"
+        "ro": "778866",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "778865",
+        "vehicle": "2022 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "778864",
+        "vehicle": "2026 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "778861",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "778852",
+        "vehicle": "2015 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "778849",
+        "vehicle": "2017 Hyundai Sonata Hybrid"
       }
     ],
     "CORY": [
       {
-        "ro": "778822",
-        "vehicle": "2013 Hyundai Tucson"
+        "ro": "778845",
+        "vehicle": "2018 Chevrolet Silverado 1500"
       },
       {
-        "ro": "778821",
-        "vehicle": "2023 Hyundai Elantra"
+        "ro": "778844",
+        "vehicle": "2019 Honda Civic Sedan"
+      },
+      {
+        "ro": "778822",
+        "vehicle": "2013 Hyundai Tucson"
       },
       {
         "ro": "778815",
