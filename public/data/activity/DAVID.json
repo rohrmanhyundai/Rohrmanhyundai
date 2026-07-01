@@ -1,5 +1,40 @@
 [
   {
+    "at": "2026-07-01T13:18:33.577Z",
+    "type": "page",
+    "label": "document-library"
+  },
+  {
+    "at": "2026-07-01T13:18:25.104Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-01T13:18:20.643Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-07-01T13:18:09.047Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-01T13:18:09.045Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-07-01T13:17:42.989Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-01T13:17:38.773Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-06-30T22:08:18.326Z",
     "type": "page",
     "label": "advisor-goals"
