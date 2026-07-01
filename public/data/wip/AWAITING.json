@@ -74,5 +74,44 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
+  },
+  {
+    "id": "mr2f6b4ctdvv",
+    "ro": "778864",
+    "roDate": "2026-07-01",
+    "vehicle": "2026 Hyundai Sonata Hybrid",
+    "jobDesc": "PERFORM PRE-DELIVERY INSPECTION, PLACE OWNER'S MANUALS IN GLOVE BOX, REMOVE PLASTIC FROM SEATS. ROAD TEST AND ADD FUEL",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mr2f6b4csynh",
+    "ro": "778863",
+    "roDate": "2026-07-01",
+    "vehicle": "2026 Hyundai Sonata Hybrid",
+    "jobDesc": "PERFORM PRE-DELIVERY INSPECTION, PLACE OWNER'S MANUALS IN GLOVE BOX, REMOVE PLASTIC FROM SEATS. ROAD TEST AND ADD FUEL",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mr2f6b4cpta1",
+    "ro": "778861",
+    "roDate": "2026-07-01",
+    "vehicle": "2026 Hyundai Tucson",
+    "jobDesc": "recalls",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
