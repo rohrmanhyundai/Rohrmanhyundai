@@ -143,7 +143,7 @@ function computeMonthMetrics(mkStr, monthData) {
 }
 
 // Read-only detail for one completed/historical month.
-function MonthDetail({ mkStr, monthData }) {
+function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
   const M = computeMonthMetrics(mkStr, monthData);
   const vsForecast = M.actualTotal - M.forecast;
   const vsLY = M.actualTotal - M.lastYear;
@@ -193,7 +193,13 @@ function MonthDetail({ mkStr, monthData }) {
                   <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
                   <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
                   <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(M.dailyTarget)}</div>
-                  <div style={{ textAlign: 'right', color: r.hasActual ? '#6ee7b7' : '#475569', fontWeight: 700 }}>{r.hasActual ? money(r.dailyGross) : '—'}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    {editable
+                      ? <input type="number" inputMode="decimal" value={r.hasActual ? r.entered : ''} placeholder="$ daily total"
+                          onChange={e => onEditDay && onEditDay(r.k, e.target.value)}
+                          style={{ background: 'rgba(2,6,23,.55)', border: `1px solid ${r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'}`, borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: r.hasActual ? '#6ee7b7' : '#e2e8f0', width: 120, textAlign: 'right', outline: 'none' }} />
+                      : <span style={{ color: r.hasActual ? '#6ee7b7' : '#475569', fontWeight: 700 }}>{r.hasActual ? money(r.dailyGross) : '—'}</span>}
+                  </div>
                   <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
                   <div style={{ textAlign: 'right', fontWeight: 700, color: !r.hasActual ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>{r.hasActual ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}</div>
                 </div>
@@ -447,6 +453,7 @@ export default function GoalForecast({
   }
 
   const saveTimer = useRef(null);
+  const histSaveTimer = useRef(null);
   const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
 
   useEffect(() => {
@@ -507,6 +514,20 @@ export default function GoalForecast({
     else next[dayKey] = safe(val, 0);
     setActuals(next);
     persist({ actuals: next });
+  }
+
+  // Edit a PAST (history) month's daily total — updates that month's bucket in
+  // allMonths and saves it (debounced) to this department's file.
+  function updateHistActual(histMk, dayKey, val) {
+    const prev = allMonths || {};
+    const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...(prev[histMk] || {}) };
+    const nextActuals = { ...(bucket.actuals || {}) };
+    if (val === '' || val == null) delete nextActuals[dayKey];
+    else nextActuals[dayKey] = safe(val, 0);
+    const nextBucket = { ...bucket, actuals: nextActuals };
+    setAllMonths({ ...prev, [histMk]: nextBucket });
+    if (histSaveTimer.current) clearTimeout(histSaveTimer.current);
+    histSaveTimer.current = setTimeout(() => { saveGoalForecastMonth(dept, histMk, nextBucket).catch(() => {}); }, 900);
   }
 
   const dailyTarget = totalDays > 0 ? forecast / totalDays : 0;
@@ -861,7 +882,7 @@ export default function GoalForecast({
                 <div>
                   <button className="secondary" onClick={() => setHistSel(null)} style={{ marginBottom: 16 }}>← All months</button>
                   <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 16 }}>{computeMonthMetrics(histSel, allMonths[histSel]).label}</div>
-                  <MonthDetail mkStr={histSel} monthData={allMonths[histSel]} />
+                  <MonthDetail mkStr={histSel} monthData={allMonths[histSel]} editable onEditDay={(k, v) => updateHistActual(histSel, k, v)} />
                 </div>
               );
             }
