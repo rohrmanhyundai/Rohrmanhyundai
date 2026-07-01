@@ -235,7 +235,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         return { ...r, firstName, advisor };
       });
       setUploadRows(matched);
+      // Advisor numbers are reported a day behind, so default to the previous
+      // business day (yesterday, skipping Sunday). On the 1st this lands on the
+      // last day of the prior month, which is the intended report date.
       const t = new Date();
+      t.setDate(t.getDate() - 1);
+      while (t.getDay() === 0) t.setDate(t.getDate() - 1);
       setUploadDate(`${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`);
     } catch (e) {
       setUploadErr('Could not read the file: ' + (e.message || e));
@@ -669,7 +674,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             ) : (
               <>
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ ...lblSt, marginBottom: 6 }}>Date this report is for</div>
+                  <div style={{ ...lblSt, marginBottom: 6 }}>Date this report is for <span style={{ color: '#64748b', fontWeight: 600, textTransform: 'none', letterSpacing: 0 }}>(defaults to yesterday — you report a day behind)</span></div>
                   <input type="date" value={uploadDate} onChange={e => setUploadDate(e.target.value)}
                     style={{ ...inpSt, width: 190, textAlign: 'left', colorScheme: 'dark' }} />
                   <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>Hours &amp; HRS/RO below are written to this date for each advisor (overwrites that day).</div>
