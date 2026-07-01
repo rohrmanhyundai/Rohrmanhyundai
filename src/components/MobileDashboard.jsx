@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
-import { advisorProjectedHours } from '../utils/calculations';
+import { advisorProjectedHours, advisorsForDisplay } from '../utils/calculations';
 
 function StatRow({ label, value, highlight }) {
   return (
@@ -45,7 +45,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
 
-  const advisors = (data.advisors || []).filter(a => !a.hidden);
+  const advisors = advisorsForDisplay(data).filter(a => !a.hidden);
   const hiddenNames = new Set((data.advisors || []).filter(a => a.hidden).map(a => a.name.toUpperCase()));
   const techs = data.technicians || [];
   const vacs = (vacations || []);

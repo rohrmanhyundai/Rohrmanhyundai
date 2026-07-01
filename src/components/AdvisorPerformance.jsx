@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
-import { advisorDailyAverage } from '../utils/calculations';
+import { advisorDailyAverage, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
 
 const BASE_FONT = 15; // baseline td font size
 const BASE_ROWS = 3;  // baseline number of advisors
@@ -8,7 +8,11 @@ const BASE_ROWS = 3;  // baseline number of advisors
 export default function AdvisorPerformance({ data }) {
   const [fontSize, setFontSize] = useState(BASE_FONT);
 
-  const visibleAdvisors = data.advisors.filter(a => !a.hidden);
+  // Before the month has started (reported a day behind), read empty instead of
+  // carrying last month's totals.
+  const started = advisorMonthStarted();
+  const visibleAdvisors = advisorsForDisplay(data).filter(a => !a.hidden);
+  const sum = started ? (data.advisorSummary || {}) : {};
 
   useEffect(() => {
     const count = visibleAdvisors.length || BASE_ROWS;
@@ -17,17 +21,17 @@ export default function AdvisorPerformance({ data }) {
   }, [visibleAdvisors.length]);
 
   const chips = [
-    ['Snapshot', data.advisorSummary.date],
-    ['Align', pct(data.advisorSummary.align, 1)],
-    ['Tires', pct(data.advisorSummary.tires, 1)],
-    ['Valvoline', pct(data.advisorSummary.valvoline, 1)],
+    ['Snapshot', started ? data.advisorSummary.date : '—'],
+    ['Align', pct(sum.align, 1)],
+    ['Tires', pct(sum.tires, 1)],
+    ['Valvoline', pct(sum.valvoline, 1)],
   ];
 
   const kpis = [
-    ['Avg Alignments', pct(data.advisorSummary.align, 1)],
-    ['Avg Tires', pct(data.advisorSummary.tires, 1)],
-    ['Avg Valvoline', pct(data.advisorSummary.valvoline, 1)],
-    ['Avg CSI', Math.round(safe(data.advisorSummary.csi)).toString()],
+    ['Avg Alignments', pct(sum.align, 1)],
+    ['Avg Tires', pct(sum.tires, 1)],
+    ['Avg Valvoline', pct(sum.valvoline, 1)],
+    ['Avg CSI', Math.round(safe(sum.csi)).toString()],
   ];
 
   const thStyle = { fontSize: Math.round(fontSize * 0.85) };
