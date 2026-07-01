@@ -811,10 +811,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setReportStatus('⏳ Sending snapshots…');
     const _n = new Date(); const today = `${_n.getFullYear()}-${String(_n.getMonth()+1).padStart(2,'0')}-${String(_n.getDate()).padStart(2,'0')}`;
     const techWeek = getTechWeekRange();
-    // Advisor label: "May 2026 · May 6"
-    const now = new Date();
-    const advMonthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const advLabel    = now.toLocaleDateString(undefined, { month: 'long', year: 'numeric', day: 'numeric' });
+    // Advisor numbers are reported a day behind, so the daily snapshot dates to
+    // the previous business day (skip Sunday). On the 1st this lands on the last
+    // day of the prior month (e.g. July 1 send → June 30).
+    const _ad = new Date(); _ad.setDate(_ad.getDate() - 1);
+    while (_ad.getDay() === 0) _ad.setDate(_ad.getDate() - 1);
+    const advDate     = `${_ad.getFullYear()}-${String(_ad.getMonth()+1).padStart(2,'0')}-${String(_ad.getDate()).padStart(2,'0')}`;
+    const advMonthKey = `${_ad.getFullYear()}-${String(_ad.getMonth()+1).padStart(2,'0')}`;
+    const advLabel    = _ad.toLocaleDateString(undefined, { month: 'long', year: 'numeric', day: 'numeric' });
 
     try {
       // ── Advisors: daily snapshot per day, grouped by month ──────────────────
@@ -823,7 +827,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const existing = await loadGithubFile(`data/performance-reports/${username}.json`);
         const entries  = Array.isArray(existing) ? existing : [];
         const entry = {
-          date: today, label: advLabel, month: advMonthKey,
+          date: advDate, label: advLabel, month: advMonthKey,
           type: 'advisor', savedAt: new Date().toISOString(),
           csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro,
           mtd_hours: a.mtd_hours,
@@ -838,9 +842,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             : (parseFloat(a.coupon_usage_pct) || 0),
         };
         // Replace existing entry for same date OR same label (catches UTC-shifted duplicate dates)
-        const updated = [entry, ...entries.filter(e => e.date !== today && e.label !== advLabel)];
+        const updated = [entry, ...entries.filter(e => e.date !== advDate && e.label !== advLabel)];
         updated.sort((a, b) => new Date(b.date) - new Date(a.date));
-        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Advisor daily snapshot for ${username} on ${today}`);
+        await saveGithubFile(`data/performance-reports/${username}.json`, updated, `Advisor daily snapshot for ${username} on ${advDate}`);
       }
 
       // ── Technicians: one entry per week (keyed by week start date) ──────────
