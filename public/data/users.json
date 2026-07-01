@@ -33,7 +33,7 @@
     {
       "username": "Jordan",
       "password": "[REDACTED]",
-      "role": "advisor",
+      "role": "service manager",
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
