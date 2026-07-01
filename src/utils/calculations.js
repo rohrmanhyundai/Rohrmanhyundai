@@ -21,6 +21,31 @@ export function advisorMonthProgress(data) {
   return { completed: Math.max(1, completed), total: Math.max(1, total) };
 }
 
+// True once the current month has at least one completed (non-Sunday) workday
+// before today. Numbers are reported a day behind, so on the 1st this is false —
+// meaning any advisor MTD still on the dashboard is last month's, not this
+// month's, and should read as empty until the first day's numbers come in.
+export function advisorMonthStarted() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+  for (let d = 1; d < today; d++) {
+    if (new Date(y, m, d).getDay() !== 0) return true;
+  }
+  return false;
+}
+
+// Current-month cumulative fields that should read empty before the month starts.
+const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
+
+// Advisors for display: before the month has started, zero the current-month
+// metrics (keep name + last_month_total) so a new month reads empty instead of
+// carrying last month's totals. Self-corrects once the first day is entered.
+export function advisorsForDisplay(data) {
+  const advisors = (data && data.advisors) || [];
+  if (advisorMonthStarted()) return advisors;
+  return advisors.map(a => { const c = { ...a }; MONTH_METRIC_FIELDS.forEach(f => { c[f] = 0; }); return c; });
+}
+
 export function advisorDailyAverage(advisor, data) {
   const p = advisorMonthProgress(data);
   return p.completed > 0 ? safe(advisor.mtd_hours, 0) / p.completed : 0;
@@ -133,7 +158,7 @@ export function buildGaugeData(data) {
     { label: 'Pacing Customer Pay Goal', pct: cpPct, main: (cpPct * 100).toFixed(1) + '%', sub: '$' + safe(data.cpActual, 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' / $' + safe(data.cpGoal, 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) },
   ];
 
-  data.advisors.filter(a => !a.hidden).slice(0, 3).forEach(a => {
+  advisorsForDisplay(data).filter(a => !a.hidden).slice(0, 3).forEach(a => {
     const progress = advisorMonthProgress(data);
     const dailyAvg = advisorDailyAverage(a, data);
     const projected = advisorProjectedHours(a, data);
