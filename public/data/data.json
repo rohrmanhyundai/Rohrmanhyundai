@@ -398,7 +398,7 @@
         "hidden": false,
         "ro_count": 370,
         "coupon_labor": 4710.4,
-        "_lastImport": 1782906294532,
+        "_lastImport": 1782907026172,
         "total_sales": 151595.98,
         "coupon_usage_pct": 0.0311
       },
@@ -417,7 +417,7 @@
         "roh50_hrs_ro": 0.67,
         "ro_count": 373,
         "coupon_labor": 5174.52,
-        "_lastImport": 1782906294532,
+        "_lastImport": 1782907026172,
         "total_sales": 135970.45,
         "coupon_usage_pct": 0.0381
       },
@@ -436,7 +436,7 @@
         "last_month_total": 0,
         "ro_count": 0,
         "hidden": false,
-        "_lastImport": 1782906294532
+        "_lastImport": 1782907026172
       }
     ],
     "advisorTraining": [
