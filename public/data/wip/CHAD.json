@@ -40,5 +40,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "CHAD IS CURENTLY WORKING ON THIS CAR "
+  },
+  {
+    "id": "mr2f6979yvcp",
+    "ro": "778851",
+    "roDate": "2026-07-01",
+    "vehicle": "2012 Hyundai Elantra",
+    "jobDesc": "MDPS FLEXIBLE COUPLING",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
