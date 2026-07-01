@@ -34,8 +34,8 @@
     "jobDesc": "CUSTOMER STATES CHECK FOR A LEAK UNDER THE CAR. HAD ENGINE INSTALLED SOME WHERE ELSE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/01/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "ASR NEED APPROVED "
