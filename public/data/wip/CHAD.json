@@ -21,8 +21,8 @@
     "jobDesc": "CUSTOMER STATES CAR IS NOT SHIFTING CORRECTLY. CHECK ADVISE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/01/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "SUBMITTED AFTER MARKET CLAIM. INSPECTOR WILL BE HERE MONDAY TRANS APPROVED "
