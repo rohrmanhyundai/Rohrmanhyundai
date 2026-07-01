@@ -1,7 +1,7 @@
 {
   "id": "mqjt7vvxdwxo",
   "createdAt": "2026-06-18T18:04:44.973Z",
-  "updatedAt": "2026-06-30T12:47:26.308Z",
+  "updatedAt": "2026-07-01T21:47:32.625Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Hannah Weissenburger",
   "customerPhone": "765) 413 - 6051",
@@ -73,8 +73,8 @@
   "notes": "CALLED IN 06/18/2026 @ 2PM. SENDING INSP. 24-48HRS.\n\n06/19/2026 inspector came at 3:20pm\n\nCALLED STILL WAITING ON APPROVAL \n\n06/30/2026 still need maintance records.",
   "approved": false,
   "approvedDate": "",
-  "denied": false,
-  "deniedDate": "",
+  "denied": true,
+  "deniedDate": "2026-07-01",
   "waiting": false,
   "waitingDate": "",
   "paid": false,
@@ -83,6 +83,6 @@
   "repairsFinishedDate": "",
   "readySubmission": false,
   "readySubmissionDate": "",
-  "inspectorDispatched": true,
-  "inspectorDispatchedDate": "2026-06-19"
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
 }
