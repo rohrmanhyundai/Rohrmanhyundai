@@ -54,5 +54,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "mr3zvmijb67d",
+    "ro": "778908",
+    "roDate": "2026-07-02",
+    "vehicle": "2018 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES ENGINE DIAG. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
