@@ -74,5 +74,18 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mr3zvnaxt4bs",
+    "ro": "778910",
+    "roDate": "2026-07-02",
+    "vehicle": "2016 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES TRANSMISSION ISSUES, ONLY HAS REVERSE. CHECK AND ADVISE.",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
