@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-07-02T20:25:47.031Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-07-02T20:25:45.846Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-02T20:25:44.633Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-07-02T19:36:20.004Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -644,21 +659,6 @@
   },
   {
     "at": "2026-06-03T15:45:55.869Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-02T20:12:50.467Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-02T20:12:23.671Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-02T20:11:38.090Z",
     "type": "page",
     "label": "advisor-calendar"
   }
