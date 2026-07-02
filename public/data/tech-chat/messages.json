@@ -394,7 +394,12 @@
     "id": "mr3gk9owht2",
     "username": "KAI",
     "text": "RO 778837 parts have been received",
-    "timestamp": 1782993951248
+    "timestamp": 1782993951248,
+    "reactions": {
+      "👍": [
+        "JORDAN"
+      ]
+    }
   },
   {
     "id": "mr3gkshps54",
