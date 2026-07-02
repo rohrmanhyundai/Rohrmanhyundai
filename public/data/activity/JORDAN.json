@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-07-02T19:35:57.037Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-02T19:35:52.747Z",
+    "type": "action",
+    "label": "delete-awaiting-row",
+    "details": "RO 778837"
+  },
+  {
+    "at": "2026-07-02T19:35:23.261Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-07-02T19:27:56.801Z",
     "type": "page",
     "label": "advisor-calendar"
