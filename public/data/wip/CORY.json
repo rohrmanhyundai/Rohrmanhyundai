@@ -40,5 +40,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": ""
+  },
+  {
+    "id": "mr3wnhr1sj1",
+    "ro": "778899",
+    "roDate": "2026-07-02",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- replaced battery and issue isn't resolved, continue diag from prior ticket",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
