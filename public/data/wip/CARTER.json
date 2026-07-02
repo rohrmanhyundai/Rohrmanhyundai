@@ -7,8 +7,8 @@
     "jobDesc": "BRAKES LOTS OF SOLD WORK",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/02/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "CARTER IS WORKING ON CAR. CALIPER IS SEIZED ON LEFT REAR "
