@@ -74,18 +74,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mr3w1jxixn8n",
-    "ro": "778899",
-    "roDate": "2026-07-02",
-    "vehicle": "2023 Hyundai Kona Electric",
-    "jobDesc": "CUSTOMER STATES- replaced battery and issue isn't resolved, continue diag from prior ticket",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
