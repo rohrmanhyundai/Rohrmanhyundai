@@ -26,5 +26,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "Replaced rear camera. System still inop. Contacted Techline. Techline now advises replacing ADAS Parking module. ETA 7/1. Replaced ADAS Parking module according to techline instructions. Concern still present. "
+  },
+  {
+    "id": "mr3gfvpf2cu",
+    "ro": "778812",
+    "roDate": "2026-06-30",
+    "vehicle": "",
+    "jobDesc": "Tow in, engine locked had flashing CEL. Oil level good",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": ""
   }
 ]
