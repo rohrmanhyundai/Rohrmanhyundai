@@ -45,8 +45,8 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/02/2026",
     "isNew": true
   },
   {
