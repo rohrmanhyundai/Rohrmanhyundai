@@ -1,5 +1,24 @@
 [
   {
+    "id": "mr3wnhr1sj1",
+    "ro": "778899",
+    "roDate": "2026-07-02",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- replaced battery and issue isn't resolved, continue diag from prior ticket",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "DTC for charging system.Cleared code. Charged vehicle, no DTC. Test drove vehicle. No DTC. ",
+    "_archiveId": "mr5bsa7b1my",
+    "_archivedAt": "2026-07-03T19:27:39.431Z",
+    "_archivedBy": "CORY",
+    "_source": "wip",
+    "_sourceTech": "CORY"
+  },
+  {
     "id": "mr16wmi3ucbm",
     "ro": "778837",
     "roDate": "2026-06-30",
