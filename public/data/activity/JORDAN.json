@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-03T11:43:31.164Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-07-03T11:43:20.869Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-03T11:32:54.302Z",
     "type": "action",
     "label": "send-to-reports"
