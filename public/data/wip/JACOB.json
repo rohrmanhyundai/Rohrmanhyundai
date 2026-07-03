@@ -49,8 +49,8 @@
     "jobDesc": "USED CAR PERFORMANCE INSPECTION - INCLUDES TEST DRIVE AND MULTI-POINT INSPECTION WITH OIL AND FILTER CHANGE.",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/03/2026",
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
