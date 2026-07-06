@@ -25,5 +25,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "WAITING ON INSPECTOR. INSPECTOR HAS BEEN HERE. WAITING ON APPROVAL WARRANTY APPROVED "
+  },
+  {
+    "id": "mr9q6wvis7sp",
+    "ro": "778945",
+    "roDate": "2026-07-06",
+    "vehicle": "2019 Hyundai Sonata",
+    "jobDesc": "CUSTOMER STATES IN 2ND GEAR ITS STARTS TO SHAKE QUITE A BIT. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
