@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-07-06T18:14:36.134Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-06T18:14:35.198Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-06T18:14:34.178Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-06T18:14:23.056Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-06T18:14:09.284Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-07-06T16:46:45.690Z",
     "type": "page",
     "label": "original-owner"
