@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-06T11:52:30.012Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-03T15:47:20.840Z",
     "type": "page",
     "label": "hotRepairs"
@@ -1510,36 +1515,6 @@
   },
   {
     "at": "2026-06-08T12:00:29.253Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-05T19:32:07.164Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-05T19:32:05.041Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-06-05T12:00:33.664Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-05T11:59:58.086Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-05T11:59:58.083Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-05T11:59:55.188Z",
     "type": "page",
     "label": "tech-resources"
   }
