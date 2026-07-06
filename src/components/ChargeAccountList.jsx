@@ -302,11 +302,14 @@ export default function ChargeAccountList({ onBack }) {
           {accounts.length > 0 && (
             <>
               <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                {/* tableLayout auto (App.css forces `fixed` globally) so the
+                    Customer Name column can size to its content instead of being
+                    clipped to an equal share. */}
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, tableLayout: 'auto' }}>
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,.06)', borderBottom: '2px solid rgba(255,255,255,.08)' }}>
                       <th style={TH}>#</th>
-                      <th style={{ ...TH, textAlign: 'left' }}>Customer Name</th>
+                      <th style={{ ...TH, textAlign: 'left', whiteSpace: 'nowrap' }}>Customer Name</th>
                       <th style={{ ...TH, textAlign: 'left' }}>Customer ID</th>
                       <th style={{ ...TH, textAlign: 'center' }}>Charge Acct</th>
                       <th style={{ ...TH, textAlign: 'center' }}>Tax Exempt on File</th>
@@ -330,8 +333,9 @@ export default function ChargeAccountList({ onBack }) {
                         {/* Row number */}
                         <td style={{ padding: '10px 14px', color: '#334155', fontSize: 12, width: 48 }}>{i + 1}</td>
 
-                        {/* Customer Name */}
-                        <td style={{ padding: '10px 14px', color: '#e2e8f0', fontWeight: 600 }}>{a.name}</td>
+                        {/* Customer Name — override the global td ellipsis clip
+                            (App.css) so the full name always shows, wrapping if long. */}
+                        <td style={{ padding: '10px 14px', color: '#e2e8f0', fontWeight: 600, whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip', wordBreak: 'break-word', minWidth: 240 }}>{a.name}</td>
 
                         {/* Customer ID — click to copy */}
                         <td style={{ padding: '10px 14px' }}>
