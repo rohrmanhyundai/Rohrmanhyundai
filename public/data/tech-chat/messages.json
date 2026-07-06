@@ -1,105 +1,5 @@
 [
   {
-    "id": "mpy6bruzwke",
-    "username": "CORY",
-    "text": "Photo uploaded.",
-    "timestamp": 1780497645515,
-    "replyTo": {
-      "id": "mpwkcw6bszl",
-      "username": "SHAWN",
-      "text": "Cory, 777677 line added for valve cover stui"
-    }
-  },
-  {
-    "id": "mpyeklqabfc",
-    "username": "SHAWN",
-    "text": "Chad 777860 timing approved. would like cart done by friday",
-    "timestamp": 1780511494402
-  },
-  {
-    "id": "mpygvatvfgk",
-    "username": "SHAWN",
-    "text": "GAVEN 778085 sold gravey needs done",
-    "timestamp": 1780515352723
-  },
-  {
-    "id": "mpyj6ttj6ta",
-    "username": "DEVIN",
-    "text": "tire for Fowope is in",
-    "timestamp": 1780519249783
-  },
-  {
-    "id": "mpzirsqzvfv",
-    "username": "DEVIN",
-    "text": "belt for 778018 is in",
-    "timestamp": 1780579014731
-  },
-  {
-    "id": "mpzmjl4ta7d",
-    "username": "SHAWN",
-    "text": "Gaven 777092 stui of valve cover added",
-    "timestamp": 1780585350077
-  },
-  {
-    "id": "mpzp08odwvc",
-    "username": "DEVIN",
-    "text": "tire for 778085 is here",
-    "timestamp": 1780589486317
-  },
-  {
-    "id": "mpzqijj2ayy",
-    "username": "DAVID",
-    "text": "Cory- any update on 777787?",
-    "timestamp": 1780592019806
-  },
-  {
-    "id": "mpzrewmj153",
-    "username": "SETH",
-    "text": "TIRE HERE FOR LESTER DUNCAN",
-    "timestamp": 1780593529771
-  },
-  {
-    "id": "mpzx4he9ibz",
-    "username": "KAI",
-    "text": "tire here for 777990",
-    "timestamp": 1780603121169
-  },
-  {
-    "id": "mq012s5j7ug",
-    "username": "SHAWN",
-    "text": "Cory, RO 777677 please finish lines HMA is buying the car back",
-    "timestamp": 1780609760263,
-    "reactions": {
-      "🚨": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mq01ev2u30x",
-    "username": "SHAWN",
-    "text": "777947 Kaden line added to tear down engine to point of failure",
-    "timestamp": 1780610323926
-  },
-  {
-    "id": "mq11q1ijrqz",
-    "username": "GAVEN",
-    "text": "KAI- 778106 ETA ON TIRES?",
-    "timestamp": 1780671311659
-  },
-  {
-    "id": "mq19pvo9d4o",
-    "username": "GAVEN",
-    "text": "778106 UPDATE ON TIRES?",
-    "timestamp": 1780684741017
-  },
-  {
-    "id": "mq1h50c9h9x",
-    "username": "SHAWN",
-    "text": "Cory need some infomation on 778134 please",
-    "timestamp": 1780697204217
-  },
-  {
     "id": "mq5j2oi86oi",
     "username": "SHAWN",
     "text": "CORY 777677 REFER TO NOTES FOR THIS REPAIR TY",
@@ -439,5 +339,11 @@
     "username": "KAI",
     "text": "junction box is in for Joyce Rater",
     "timestamp": 1783082970671
+  },
+  {
+    "id": "mr9l6hu4my9",
+    "username": "JORDAN",
+    "text": "CORY DO YOU HAVE 778812 RO? HAVE YOU STARTED ON THE DIAG?",
+    "timestamp": 1783364503756
   }
 ]
