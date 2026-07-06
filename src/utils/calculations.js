@@ -82,7 +82,48 @@ export function currentWeekDates() {
   return out;
 }
 
-const OFF_STATUSES = ['holiday', 'vacation', 'training'];
+const OFF_STATUSES = ['holiday', 'vacation', 'training', 'off'];
+
+// Local YYYY-MM-DD (no UTC shift) so it matches the schedule/vacation keys.
+function isoLocal(dt) {
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+}
+
+// The set of dates (YYYY-MM-DD) a given advisor is NOT expected to produce in a
+// month, so the Goals / Day-End pace + projection never count time off as a miss.
+// A day is "off" when it's:
+//   • a company holiday (schedules.__HOLIDAY__),
+//   • marked off / vacation / training on the advisor's schedule,
+//   • inside an approved vacation range in `vacations`, or
+//   • a Saturday the advisor isn't scheduled to work (no shift that day) —
+//     Saturdays are a rotating day, so they only count when actually scheduled.
+// Sundays are never working days and are excluded upstream.
+export function advisorOffDates(name, year, month, schedules, vacations) {
+  const set = new Set();
+  const first = (name || '').toUpperCase().split(/\s+/)[0];
+  if (!first) return set;
+  const sched = (schedules && schedules[first]) || {};
+  const holidays = (schedules && schedules.__HOLIDAY__) || {};
+  const vacs = (vacations || []).filter(v =>
+    (v.name || '').toUpperCase().split(/\s+/)[0] === first &&
+    String(v.status || '').toLowerCase() !== 'denied' &&
+    v.dateStart && v.dateEnd);
+  const dim = new Date(year, month + 1, 0).getDate();
+  for (let d = 1; d <= dim; d++) {
+    const dt = new Date(year, month, d);
+    if (dt.getDay() === 0) continue; // Sundays aren't working days anyway
+    const k = isoLocal(dt);
+    const cell = String(sched[k] || '').trim().toLowerCase();
+    const isSchedOff = OFF_STATUSES.includes(cell);
+    const hasShift = cell !== '' && !isSchedOff; // an actual scheduled work shift
+    const isHoliday = !!holidays[k];
+    const inVacation = vacs.some(v => k >= v.dateStart && k <= v.dateEnd);
+    // Saturday only counts when the advisor is actually scheduled to work it.
+    const isUnscheduledSat = dt.getDay() === 6 && !hasShift;
+    if (isSchedOff || isHoliday || inVacation || isUnscheduledSat) set.add(k);
+  }
+  return set;
+}
 
 // If a tech's calendar marks a day as Holiday/Vacation/Training (or a shop-wide
 // __HOLIDAY__ is set for that date), inject 8.0 hours into that day on the

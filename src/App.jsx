@@ -680,6 +680,8 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         advisors={goalsRoster}
+        schedules={schedules}
+        vacations={vacations}
         onBack={() => navTo(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
       />
