@@ -25,19 +25,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "WAITING ON INSPECTOR. INSPECTOR HAS BEEN HERE. WAITING ON APPROVAL WARRANTY APPROVED "
-  },
-  {
-    "id": "mqtyck0mptq7",
-    "ro": "778680",
-    "roDate": "2026-06-25",
-    "vehicle": "2019 Hyundai Kona",
-    "jobDesc": "CUSTOMER STATES CHECK FOR A LEAK UNDER THE CAR. HAD ENGINE INSTALLED SOME WHERE ELSE",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/01/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "ASR NEED APPROVED "
   }
 ]
