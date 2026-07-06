@@ -155,6 +155,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
+  const [newUserManagementAccess, setNewUserManagementAccess] = useState(false);
   const [newUserPages, setNewUserPages] = useState({ ...DEFAULT_PAGES });
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
@@ -1079,8 +1080,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
     const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
+      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
@@ -1620,7 +1621,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           {users.map(u => {
             const isBuiltinAdmin = u.username === 'admin';
             const hasAdminRole = u.role === 'admin';
-            const hasEditAccess = u.canEditDashboard || isAdminOrManager(u.role);
+            const hasEditAccess = u.canEditDashboard || isAdminOrManager(u.role) || u.managementAccess;
 
             async function quickToggleAdmin(e) {
               e.stopPropagation();
@@ -1643,12 +1644,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
                   <div className="user-row-meta">
                     {isBuiltinAdmin ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
+                    {u.managementAccess && !isAdminOrManager(u.role) && <span className="user-edit-badge">🛠 Mgmt Access</span>}
                     {hasEditAccess && <span className="user-edit-badge">✎ Can Edit</span>}
                   </div>
                 </div>
@@ -1666,7 +1668,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
@@ -1686,6 +1688,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <input type="checkbox" checked={newUserCanEdit} onChange={e => setNewUserCanEdit(e.target.checked)} />
             <span>Can Edit Dashboard</span>
             <span className="user-edit-toggle-hint">Allows this user to open and save changes to the Edit Dashboard</span>
+          </label>
+          <label className="user-edit-toggle">
+            <input type="checkbox" checked={newUserManagementAccess} onChange={e => setNewUserManagementAccess(e.target.checked)} />
+            <span>Management Access</span>
+            <span className="user-edit-toggle-hint">Grants full manager access (Manager Hub + all manager features) on top of the user's role — for an advisor who also manages, e.g. a lead advisor. They keep appearing in all advisor areas.</span>
           </label>
           <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
