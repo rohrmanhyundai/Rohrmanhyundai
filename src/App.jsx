@@ -384,6 +384,12 @@ export default function App() {
   // Lead advisors are advisors too — include them so they appear in advisor
   // pickers (WIP RO assignment, schedules, calendar, etc.).
   const advisorList = users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
+  // The Advisor Schedule roster also includes the service manager, who works
+  // advisor shifts but isn't an advisor for survey/performance purposes — so this
+  // is kept separate from `advisorList` (which seeds advisor pickers/reports).
+  const advisorScheduleList = users
+    .filter(u => u.role === 'advisor' || u.role === 'lead advisor' || u.role === 'service manager')
+    .map(u => u.username.toUpperCase());
   const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
   // Which Goal Forecast a user owns is decided by WHO they are, not which page
@@ -485,12 +491,12 @@ export default function App() {
 
   if (page === 'tech-view-advisor-schedule') {
     if (window.innerWidth < 600) return (
-      <MobileSchedule schedules={schedules} employeeNames={advisorList}
+      <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
         onBack={() => setPage('tech-resources')} />
     );
     return (
-      <WorkSchedule schedules={schedules} employeeNames={advisorList}
+      <WorkSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} currentRole={currentRole} title="Advisor Schedule"
         onBack={() => setPage('tech-resources')} />
     );
@@ -767,12 +773,12 @@ export default function App() {
       );
     }
     if (window.innerWidth < 600) return (
-      <MobileSchedule schedules={schedules} employeeNames={advisorList}
+      <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
         onBack={() => setPage(backDest)} />
     );
     return (
-      <WorkSchedule schedules={schedules} employeeNames={advisorList}
+      <WorkSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} currentRole={currentRole}
         title="Advisor Schedule"
         onBack={() => setPage(backDest)}
@@ -911,7 +917,7 @@ export default function App() {
       return (
         <MobileSchedule
           schedules={schedules}
-          employeeNames={advisorList}
+          employeeNames={advisorScheduleList}
           currentUser={currentUser.toUpperCase()}
           title="Advisor Schedule"
           onBack={() => setPage('dashboard')}
