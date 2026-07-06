@@ -2,7 +2,7 @@
   {
     "id": "mqtvm5z9edrx",
     "createdAt": "2026-06-25T19:09:32.229Z",
-    "updatedAt": "2026-07-06T14:10:31.956Z",
+    "updatedAt": "2026-07-06T14:10:49.540Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "DONNA THOMPSON",
     "customerPhone": " (765) 427 - 7867",
@@ -54,8 +54,8 @@
     "paymentDate": "2026-07-06",
     "repairsFinished": false,
     "repairsFinishedDate": "",
-    "readySubmission": true,
-    "readySubmissionDate": "2026-07-03",
+    "readySubmission": false,
+    "readySubmissionDate": "",
     "inspectorDispatched": false,
     "inspectorDispatchedDate": ""
   },
