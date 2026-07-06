@@ -42,10 +42,11 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
     const isOff = dayIsOff(k);
     if (!isOff) workNum += 1;
     const has = Object.prototype.hasOwnProperty.call(days, k);
-    const hours = has ? safe(days[k].hours, 0) : null;
-    const hrsRo = has ? safe(days[k].hrsRo, 0) : null;
+    const rec = has ? days[k] : null;
+    const hours = has ? safe(rec.hours, 0) : null;
+    const hrsRo = has ? safe(rec.hrsRo, 0) : null;
     if (has) cumHours += safe(hours, 0);
-    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
+    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
   });
   const enteredDays = rows.filter(r => r.has).length;
   const completedDays = completedOverride != null ? completedOverride : enteredDays;
@@ -172,6 +173,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deNoNotesAt, setDeNoNotesAt] = useState('');
   const [deNoNotesFor, setDeNoNotesFor] = useState(''); // advisor the list is for
   const [deCopiedRo, setDeCopiedRo] = useState('');
+  // Mandatory backfill: unreported prior working days this month that must be
+  // completed (with a reason) before today's report can be submitted.
+  const [deMissed, setDeMissed] = useState([]); // [{ k, label, hours, hrsRo, reason }]
+  const [deMissedSaving, setDeMissedSaving] = useState(false);
+  const [deMissedErr, setDeMissedErr] = useState('');
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -182,6 +188,25 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
+    setDeMissed([]); setDeMissedErr('');
+    // Daily reporting is mandatory: find this advisor's unreported prior working
+    // days this month (excluding days off / holiday / vacation) so they must be
+    // completed before today's report. Only for advisors who own a forecast.
+    if (roster.includes(me)) {
+      loadAdvisorGoals(me).then(all => {
+        const days = ((all && all[mk]) || {}).days || {};
+        const off = advisorOffDates(me, now.getFullYear(), now.getMonth(), schedules, vacations);
+        const report = new Date(); while (report.getDay() === 0) report.setDate(report.getDate() - 1);
+        const reportKey = dKey(report);
+        const missed = workingDates(now.getFullYear(), now.getMonth())
+          .filter(d => {
+            const k = dKey(d);
+            return k < reportKey && !off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+          })
+          .map(d => ({ k: dKey(d), label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`, hours: '', hrsRo: '', reason: '' }));
+        setDeMissed(missed);
+      }).catch(() => {});
+    }
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
     // being viewed — so an advisor sees their own and a manager previewing an
     // advisor sees that advisor's. Shown at the "updated notes?" question.
@@ -391,6 +416,45 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     }
   }
 
+  // Save all missed prior days (hours + Hrs/RO + reason required) into MY goals
+  // for the current month, then clear the gate so today's report can proceed.
+  async function saveMissedDays() {
+    setDeMissedErr('');
+    const incomplete = deMissed.some(m =>
+      String(m.hours).trim() === '' || String(m.hrsRo).trim() === '' || String(m.reason).trim() === '');
+    if (incomplete) { setDeMissedErr('Enter hours, Hrs/RO, and a reason for every missed day.'); return; }
+    setDeMissedSaving(true);
+    try {
+      let all = {};
+      try { all = await loadAdvisorGoals(me); } catch {}
+      const b = (all && all[mk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const days = { ...(b.days || {}) };
+      for (const m of deMissed) {
+        days[m.k] = {
+          ...(days[m.k] || {}),
+          hours: safe(m.hours, 0),
+          hrsRo: safe(m.hrsRo, 0),
+          missedReason: String(m.reason).trim(),
+          late: true,
+          agreedBy: me,
+          submittedAt: Date.now(),
+        };
+      }
+      const merged = { ...b, days };
+      const all2 = await saveAdvisorGoalsMonth(me, mk, merged);
+      setAllMonths(all2 || {});
+      if (selected === me && mk === activeMk) {
+        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {} };
+        bucketRef.current = norm; setBucket(norm);
+      }
+      setDeMissed([]); // gate cleared → proceed to today's report
+    } catch (e) {
+      setDeMissedErr('Save failed: ' + (e.message || e));
+    } finally {
+      setDeMissedSaving(false);
+    }
+  }
+
   // Debounced, conflict-aware save: reload the latest bucket and only overwrite
   // the parts this user is allowed to change (goals for lead, days for owner).
   function scheduleSave() {
@@ -529,7 +593,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             ) : (
               <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
                 <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
-                <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
+                <div style={{ color: '#cbd5e1' }}>
+                  {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
+                  {r.late && <span title={r.missedReason ? `Reported late — reason: ${r.missedReason}` : 'Reported late'} style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fbbf24', background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠ LATE</span>}
+                </div>
                 <div style={{ textAlign: 'right' }}>
                   {editable.days
                     ? <input type="number" inputMode="decimal" style={{ ...inpSt, width: 120, color: r.has ? '#6ee7b7' : '#e2e8f0' }} value={r.has ? r.hours : ''} placeholder="—" onChange={e => setDay(r.k, 'hours', e.target.value)} />
@@ -609,8 +676,65 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // The attestation statement the advisor must agree to before submitting.
   const AGREE_TEXT = `I certify that the information in this day-end report is accurate and complete to the best of my knowledge. I have reviewed all of my open repair orders, invoiced everything available, updated every customer on their status, and ensured each repair order has current notes as of the end of my business day.`;
 
+  // Mandatory missed-day gate — shown before today's report when the advisor has
+  // unreported prior working days this month.
+  function renderMissedGate() {
+    return (
+      <div onClick={() => setDayEndOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 18, width: '100%', maxWidth: 520, maxHeight: '86vh', display: 'flex', flexDirection: 'column', boxShadow: '0 18px 60px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#4ade80' }}>📋 Day End Reporting</div>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => setDayEndOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+          </div>
+          <div style={{ padding: '16px 20px 0' }}>
+            <div style={{ background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 12, padding: '12px 14px', color: '#fca5a5', fontSize: 13.5, fontWeight: 700, lineHeight: 1.45 }}>
+              ⚠️ Daily reporting is mandatory. You must complete the {deMissed.length} day{deMissed.length === 1 ? '' : 's'} you missed before reporting today.
+            </div>
+          </div>
+          <div style={{ padding: '14px 20px', overflowY: 'auto' }}>
+            {deMissed.map((m, i) => (
+              <div key={m.k} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.09)', borderRadius: 12, padding: '12px 14px', marginBottom: 10 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0', marginBottom: 8 }}>{m.label}</div>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <label style={{ flex: '1 1 120px' }}>
+                    <div style={lblSt}>Hours</div>
+                    <input type="number" inputMode="decimal" value={m.hours} placeholder="e.g. 14.5"
+                      onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, hours: e.target.value } : x))}
+                      style={{ ...inpSt, width: '100%', color: '#6ee7b7', textAlign: 'left', boxSizing: 'border-box' }} />
+                  </label>
+                  <label style={{ flex: '1 1 120px' }}>
+                    <div style={lblSt}>Hrs/RO</div>
+                    <input type="number" inputMode="decimal" value={m.hrsRo} placeholder="e.g. 2.4"
+                      onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, hrsRo: e.target.value } : x))}
+                      style={{ ...inpSt, width: '100%', color: '#93c5fd', textAlign: 'left', boxSizing: 'border-box' }} />
+                  </label>
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <div style={lblSt}>Reason for missing this day <span style={{ color: '#f87171' }}>*</span></div>
+                  <input type="text" value={m.reason} placeholder="Why wasn't this day reported?"
+                    onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, reason: e.target.value } : x))}
+                    style={{ ...inpSt, width: '100%', color: '#e2e8f0', textAlign: 'left', boxSizing: 'border-box' }} />
+                </div>
+              </div>
+            ))}
+            {deMissedErr && <div style={{ fontSize: 13, color: '#f87171', marginTop: 4 }}>{deMissedErr}</div>}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px 18px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+            <div style={{ flex: 1 }} />
+            <button onClick={saveMissedDays} disabled={deMissedSaving}
+              style={{ background: deMissedSaving ? 'rgba(255,255,255,.06)' : 'rgba(74,222,128,.2)', border: `1px solid ${deMissedSaving ? 'rgba(255,255,255,.12)' : 'rgba(74,222,128,.45)'}`, color: deMissedSaving ? '#64748b' : '#4ade80', borderRadius: 8, padding: '9px 22px', cursor: deMissedSaving ? 'default' : 'pointer', fontWeight: 800, fontSize: 14 }}>
+              {deMissedSaving ? '⏳ Saving…' : 'Save missed days & continue →'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function renderDayEndModal() {
     if (!dayEndOpen) return null;
+    if (deMissed.length > 0) return renderMissedGate();
     const step = DE_STEPS[deStep];
     const val = step.get ? step.get() : null;
     const answered = step.kind === 'yn' ? !!val : step.kind === 'agree' ? deAgree : String(val ?? '').trim() !== '';
