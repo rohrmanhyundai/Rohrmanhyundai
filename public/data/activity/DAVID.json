@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-06T13:34:10.523Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-07-06T13:34:03.859Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-03T21:57:17.354Z",
     "type": "page",
     "label": "advisor-goals"
@@ -388,100 +398,5 @@
     "at": "2026-06-08T13:29:07.400Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T21:08:32.955Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-04T20:39:58.095Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:39:55.547Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T20:39:53.363Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:32:00.370Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:31:55.478Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T20:31:53.560Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:24:41.935Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:24:39.727Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T20:24:38.050Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:16:02.225Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:15:58.561Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T20:15:56.306Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T20:15:55.368Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-06-04T16:53:25.120Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T16:53:17.051Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T15:14:00.411Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-06-04T13:21:52.715Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T13:21:50.766Z",
-    "type": "action",
-    "label": "login"
   }
 ]
