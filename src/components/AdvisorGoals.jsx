@@ -441,9 +441,15 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     const entered = metrics.rows.filter(r => r.has);
     const hoursActualPts = entered.map(r => `${x(r.dayNum).toFixed(1)},${yH(r.cumHours).toFixed(1)}`).join(' ');
     const lastH = entered.length ? entered[entered.length - 1] : null;
-    // HRS/RO daily
-    const maxR = Math.max(metrics.hrsRoGoal, ...metrics.rows.filter(r => r.has).map(r => safe(r.hrsRo, 0)), 1) * 1.2;
-    const yR = (v) => padT + plotH - (plotH * Math.max(v, 0)) / maxR;
+    // HRS/RO daily. A hrs/RO ratio realistically sits within a few of the goal,
+    // so ignore data-entry outliers (e.g. a stray "84") when scaling — otherwise
+    // one bad number stretches the axis and flattens the goal line at the bottom.
+    // Outlier points are still plotted, just clamped to the top of the plot.
+    const roVals = metrics.rows.filter(r => r.has).map(r => safe(r.hrsRo, 0));
+    const roCap = Math.max((metrics.hrsRoGoal || 1.5) * 4, 5);
+    const roScale = roVals.filter(v => v <= roCap);
+    const maxR = Math.max(metrics.hrsRoGoal, ...(roScale.length ? roScale : roVals), 1) * 1.25;
+    const yR = (v) => padT + plotH - (plotH * Math.min(Math.max(v, 0), maxR)) / maxR;
     const roGoalPts = workRows.map(r => `${x(r.dayNum).toFixed(1)},${yR(metrics.hrsRoGoal).toFixed(1)}`).join(' ');
     const roActualPts = entered.map(r => `${x(r.dayNum).toFixed(1)},${yR(safe(r.hrsRo, 0)).toFixed(1)}`).join(' ');
     const lastR = entered.length ? entered[entered.length - 1] : null;
