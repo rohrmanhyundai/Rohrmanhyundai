@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
-import { advisorMonthProgress } from '../utils/calculations';
+import { advisorOffDates } from '../utils/calculations';
 import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes } from '../utils/github';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -20,24 +20,32 @@ function workingDates(year, month) {
 
 const dKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 
-// Derive everything for one month bucket.
-function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride) {
+// Derive everything for one month bucket. `offDates` is the set of YYYY-MM-DD
+// the advisor was scheduled off / on vacation / a holiday — those days are left
+// out of the working-day math so time off is never a negative reflection.
+function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, offDates) {
   const [y, m] = String(mkStr).split('-').map(Number);
-  const dates = workingDates(y, (m || 1) - 1);
-  const totalDays = totalDaysOverride || dates.length;
+  const off = offDates instanceof Set ? offDates : new Set(offDates || []);
+  const allDates = workingDates(y, (m || 1) - 1);
   const hoursGoal = safe(bucket && bucket.hoursGoal, 0);
   const hrsRoGoal = safe(bucket && bucket.hrsRoGoal, 0);
   const days = (bucket && bucket.days) || {};
+  // A day only counts as "off" if it's scheduled off AND has no logged hours —
+  // if the advisor actually produced that day, it counts like any working day.
+  const dayIsOff = (k) => off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+  const workDates = allDates.filter(dt => !dayIsOff(dKey(dt)));
+  const totalDays = totalDaysOverride || workDates.length;
   let cumHours = 0;
-  let dayNum = 0;
-  const rows = dates.map(dt => {
-    dayNum += 1;
+  let workNum = 0;
+  const rows = allDates.map(dt => {
     const k = dKey(dt);
+    const isOff = dayIsOff(k);
+    if (!isOff) workNum += 1;
     const has = Object.prototype.hasOwnProperty.call(days, k);
     const hours = has ? safe(days[k].hours, 0) : null;
     const hrsRo = has ? safe(days[k].hrsRo, 0) : null;
     if (has) cumHours += safe(hours, 0);
-    return { k, dt, dayNum, has, hours, hrsRo, cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * dayNum };
+    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
   });
   const enteredDays = rows.filter(r => r.has).length;
   const completedDays = completedOverride != null ? completedOverride : enteredDays;
@@ -48,8 +56,9 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride) {
   const projectedHours = runRate * totalDays;
   const hrsRoVals = rows.filter(r => r.has).map(r => safe(r.hrsRo, 0));
   const avgHrsRo = hrsRoVals.length ? hrsRoVals.reduce((a, b) => a + b, 0) / hrsRoVals.length : 0;
+  const offDaysCount = rows.filter(r => r.off).length;
   const label = new Date(y, (m || 1) - 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  return { label, dates, totalDays, hoursGoal, hrsRoGoal, days, rows, enteredDays, completedDays, actualHours, dailyHoursTarget, expectedHours, projectedHours, avgHrsRo };
+  return { label, dates: workDates, totalDays, hoursGoal, hrsRoGoal, days, rows, enteredDays, completedDays, actualHours, dailyHoursTarget, expectedHours, projectedHours, avgHrsRo, offDaysCount };
 }
 
 // ── Goal-vs-Actual line chart (dotted goal, solid actual, gradient fill) ──────
@@ -123,13 +132,14 @@ function StatCard({ accent, icon, label, sub, subColor, children }) {
 }
 const bigVal = (color) => ({ fontSize: 25, fontWeight: 900, color, marginTop: 5, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
 
-export default function AdvisorGoals({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Appointment Prep Calendar' }) {
+export default function AdvisorGoals({ currentUser, currentRole, advisors = [], schedules = {}, vacations = [], onBack, backLabel = '← Appointment Prep Calendar' }) {
   const me = (currentUser || '').toUpperCase();
   const isAdmin = currentRole === 'admin' || (currentRole || '').includes('manager');
   const canEditGoals = isAdmin || currentRole === 'lead advisor';
   const roster = advisors.length ? advisors : (me ? [me] : []);
   const now = new Date();
   const mk = monthKey(now);
+  const todayKey = dKey(now);
   const curLabel = new Date(now.getFullYear(), now.getMonth(), 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   // From the 25th onward, let advisors open NEXT month to prep its goals early.
@@ -287,21 +297,35 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     }
   }
 
-  // Working-day calendar (shared dashboard setting, like the manager forecast).
-  const progress = advisorMonthProgress({});
-  const totalDays = progress.total || workingDates(now.getFullYear(), now.getMonth()).length;
-  const completedDays = Math.min(progress.completed || 0, totalDays);
-
   // Which month is being edited/viewed. From the 25th, "next" is selectable so
   // next month's goals can be prepped early; it starts at 0 days completed.
   const isNext = showNext && view === 'next';
   const activeMk = isNext ? nmk : mk;
-  const activeTotalDays = isNext ? workingDates(nextDate.getFullYear(), nextDate.getMonth()).length : totalDays;
-  const activeCompletedDays = isNext ? 0 : completedDays;
 
   const saveTimer = useRef(null);
   const bucketRef = useRef({ hoursGoal: 0, hrsRoGoal: 0, days: {} });
   const [bucket, setBucket] = useState({ hoursGoal: 0, hrsRoGoal: 0, days: {} });
+
+  // Days the viewed advisor is off in the active month — company holidays, their
+  // scheduled days off, vacation, or training. Excluded from the pace/projection
+  // math so time off is never a negative reflection. A day they actually logged
+  // hours still counts as worked.
+  const activeOffDates = useMemo(() => {
+    const [yy, mm] = String(activeMk).split('-').map(Number);
+    return advisorOffDates(selected, yy, (mm || 1) - 1, schedules, vacations);
+  }, [selected, activeMk, schedules, vacations]);
+
+  // Elapsed working days so far (current month only; next month preps from zero).
+  // Days off that weren't worked are dropped from the pace base.
+  const activeCompletedDays = useMemo(() => {
+    if (isNext) return 0;
+    const [yy, mm] = String(activeMk).split('-').map(Number);
+    return workingDates(yy, (mm || 1) - 1).filter(dt => {
+      const k = dKey(dt);
+      if (k >= todayKey) return false; // not yet elapsed (numbers are reported a day behind)
+      return !(activeOffDates.has(k) && !(bucket.days && bucket.days[k]));
+    }).length;
+  }, [isNext, activeMk, activeOffDates, bucket, todayKey]);
 
   // Switching advisor resets back to the current month.
   useEffect(() => { setView('current'); setHistSel(null); }, [selected]);
@@ -401,7 +425,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     bucketRef.current = next; setBucket(next); scheduleSave();
   }
 
-  const M = useMemo(() => computeMetrics(activeMk, bucket, activeTotalDays, activeCompletedDays), [activeMk, bucket, activeTotalDays, activeCompletedDays]);
+  const M = useMemo(() => computeMetrics(activeMk, bucket, null, activeCompletedDays, activeOffDates), [activeMk, bucket, activeCompletedDays, activeOffDates]);
 
   // Chart geometry helpers.
   function makeCharts(metrics) {
@@ -411,17 +435,19 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     // HOURS cumulative
     const maxH = Math.max(metrics.hoursGoal, metrics.actualHours, metrics.dailyHoursTarget * n, 1) * 1.1;
     const yH = (v) => padT + plotH - (plotH * Math.max(v, 0)) / maxH;
-    const hoursGoalPts = metrics.rows.map(r => `${x(r.dayNum).toFixed(1)},${yH(r.goalCum).toFixed(1)}`).join(' ');
+    // Goal line + axis labels span working days only — off days aren't plotted.
+    const workRows = metrics.rows.filter(r => !r.off);
+    const hoursGoalPts = workRows.map(r => `${x(r.dayNum).toFixed(1)},${yH(r.goalCum).toFixed(1)}`).join(' ');
     const entered = metrics.rows.filter(r => r.has);
     const hoursActualPts = entered.map(r => `${x(r.dayNum).toFixed(1)},${yH(r.cumHours).toFixed(1)}`).join(' ');
     const lastH = entered.length ? entered[entered.length - 1] : null;
     // HRS/RO daily
     const maxR = Math.max(metrics.hrsRoGoal, ...metrics.rows.filter(r => r.has).map(r => safe(r.hrsRo, 0)), 1) * 1.2;
     const yR = (v) => padT + plotH - (plotH * Math.max(v, 0)) / maxR;
-    const roGoalPts = metrics.rows.map(r => `${x(r.dayNum).toFixed(1)},${yR(metrics.hrsRoGoal).toFixed(1)}`).join(' ');
+    const roGoalPts = workRows.map(r => `${x(r.dayNum).toFixed(1)},${yR(metrics.hrsRoGoal).toFixed(1)}`).join(' ');
     const roActualPts = entered.map(r => `${x(r.dayNum).toFixed(1)},${yR(safe(r.hrsRo, 0)).toFixed(1)}`).join(' ');
     const lastR = entered.length ? entered[entered.length - 1] : null;
-    const xLabels = metrics.rows.filter((r, i) => i % 5 === 0 || i === metrics.rows.length - 1);
+    const xLabels = workRows.filter((r, i) => i % 5 === 0 || i === workRows.length - 1);
     const area = (pts, y0) => (entered.length ? `${x(entered[0].dayNum).toFixed(1)},${y0.toFixed(1)} ${pts} ${x(entered[entered.length - 1].dayNum).toFixed(1)},${y0.toFixed(1)}` : '');
     const yH0 = padT + plotH, yR0 = padT + plotH;
     return {
@@ -442,7 +468,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         const POS = '#34d399', NEG = '#fb7185';
         return (
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
-            <StatCard accent="#34d399" icon="🎯" label="Hours Goal" sub={`${num(metrics.dailyHoursTarget, 1)}/day · ${metrics.totalDays} days`}>
+            <StatCard accent="#34d399" icon="🎯" label="Hours Goal" sub={`${num(metrics.dailyHoursTarget, 1)}/day · ${metrics.totalDays} days${metrics.offDaysCount ? ` · ${metrics.offDaysCount} off` : ''}`}>
               {editable.goals
                 ? <input type="number" inputMode="decimal" style={{ ...inpSt, color: '#6ee7b7', width: 120, marginTop: 5, borderColor: '#34d39966' }} value={metrics.hoursGoal || ''} placeholder="0" onChange={e => setGoal('hoursGoal', e.target.value)} />
                 : <div style={bigVal('#6ee7b7')}>{num(metrics.hoursGoal, 1)}</div>}
@@ -484,7 +510,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
               <div style={{ textAlign: 'right' }}>Hours</div>
               <div style={{ textAlign: 'right' }}>Hrs/RO</div>
             </div>
-            {metrics.rows.map(r => (
+            {metrics.rows.map(r => r.off ? (
+              // Scheduled off / holiday / vacation — shown for context but not
+              // counted toward pace, projection, or the goal line.
+              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)', background: 'rgba(148,163,184,.05)' }}>
+                <div style={{ color: '#475569', fontWeight: 700 }}>—</div>
+                <div style={{ color: '#64748b' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
+                <div style={{ gridColumn: 'span 2', textAlign: 'right' }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', color: '#94a3b8', background: 'rgba(148,163,184,.14)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 999, padding: '3px 12px' }}>OFF — NOT COUNTED</span>
+                </div>
+              </div>
+            ) : (
               <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
                 <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
                 <div style={{ color: '#cbd5e1' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
@@ -513,7 +549,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const renderHistory = () => {
     const pastKeys = Object.keys(allMonths || {}).filter(k => k < mk).sort().reverse();
     if (histSel) {
-      const hm = computeMetrics(histSel, allMonths[histSel]);
+      const [hy, hmo] = String(histSel).split('-').map(Number);
+      const hm = computeMetrics(histSel, allMonths[histSel], null, null, advisorOffDates(selected, hy, (hmo || 1) - 1, schedules, vacations));
       const hc = makeCharts(hm);
       return (
         <div>
@@ -527,7 +564,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {pastKeys.map(k => {
-          const hm = computeMetrics(k, allMonths[k]);
+          const [py, pmo] = String(k).split('-').map(Number);
+          const hm = computeMetrics(k, allMonths[k], null, null, advisorOffDates(selected, py, (pmo || 1) - 1, schedules, vacations));
           return (
             <div key={k} onClick={() => { setGridOpen(false); setHistSel(k); }} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap', background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '14px 20px' }}>
               <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', minWidth: 150 }}>{hm.label}</div>
