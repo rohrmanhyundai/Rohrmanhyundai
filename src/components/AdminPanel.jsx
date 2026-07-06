@@ -925,6 +925,26 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           ...(breakdown.training > 0 ? { trainingHours: breakdown.training } : {}),
           ...(breakdown.holiday  > 0 ? { holidayHours:  breakdown.holiday  } : {}),
         };
+        // Protect previously-captured PTO: an expired vacation is auto-removed
+        // from the schedule + calendar after its week ends, so re-sending would
+        // recompute 0 bonus and wipe it. If a prior snapshot for this same week
+        // recorded more PTO than we found now, carry the higher hours forward.
+        const overlap = entries.find(e => (e.weekStart && e.weekEnd)
+          ? !(e.weekEnd < techWeek.weekStart || e.weekStart > techWeek.weekEnd)
+          : e.date === techWeek.weekStart);
+        if (overlap) {
+          const ptoOf = (x) => (parseFloat(x.vacationHours)||0) + (parseFloat(x.trainingHours)||0) + (parseFloat(x.holidayHours)||0);
+          if (ptoOf(overlap) > ptoOf(entry)) {
+            for (const dk of ['mon','tue','wed','thu','fri','sat']) entry[dk] = Math.max(parseFloat(entry[dk])||0, parseFloat(overlap[dk])||0);
+            entry.total  = Math.max(parseFloat(entry.total)||0,  parseFloat(overlap.total)||0);
+            entry.pacing = Math.max(parseFloat(entry.pacing)||0, parseFloat(overlap.pacing)||0);
+            if (parseFloat(overlap.vacationHours) > 0) entry.vacationHours = parseFloat(overlap.vacationHours);
+            if (parseFloat(overlap.trainingHours) > 0) entry.trainingHours = parseFloat(overlap.trainingHours);
+            if (parseFloat(overlap.holidayHours)  > 0) entry.holidayHours  = parseFloat(overlap.holidayHours);
+            entry.goal_pct = goalNum > 0 ? entry.total / goalNum : entry.goal_pct;
+          }
+        }
+
         // Replace any existing entry whose week overlaps with this one (handles key shifts from timezone fixes)
         const updated = [entry, ...entries.filter(e => {
           if (!e.weekStart || !e.weekEnd) return e.date !== techWeek.weekStart; // legacy fallback

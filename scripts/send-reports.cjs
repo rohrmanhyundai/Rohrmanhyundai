@@ -287,6 +287,28 @@ function main() {
       console.log(`    🏖 ${username}: +${bonusTotal}h bonus (vac:${breakdown.vacation} train:${breakdown.training} hol:${breakdown.holiday})`);
     }
 
+    // Protect previously-captured PTO. A completed week's vacation/holiday/training
+    // can disappear from the schedule + calendar after it ends (expired rows are
+    // auto-removed), so a later re-run would recompute 0 bonus and wipe the hours.
+    // If a prior snapshot for this same week already recorded more PTO than we
+    // found now, carry the higher day/total credit + PTO breakdown forward.
+    const overlap = existing.find(e => (e.weekStart && e.weekEnd)
+      ? !(e.weekEnd < techWeek.weekStart || e.weekStart > techWeek.weekEnd)
+      : e.date === techWeek.weekStart);
+    if (overlap) {
+      const ptoOf = (x) => (parseFloat(x.vacationHours)||0) + (parseFloat(x.trainingHours)||0) + (parseFloat(x.holidayHours)||0);
+      if (ptoOf(overlap) > ptoOf(entry)) {
+        for (const dk of ['mon','tue','wed','thu','fri','sat']) entry[dk] = Math.max(parseFloat(entry[dk])||0, parseFloat(overlap[dk])||0);
+        entry.total  = Math.max(parseFloat(entry.total)||0,  parseFloat(overlap.total)||0);
+        entry.pacing = Math.max(parseFloat(entry.pacing)||0, parseFloat(overlap.pacing)||0);
+        if (parseFloat(overlap.vacationHours) > 0) entry.vacationHours = parseFloat(overlap.vacationHours);
+        if (parseFloat(overlap.trainingHours) > 0) entry.trainingHours = parseFloat(overlap.trainingHours);
+        if (parseFloat(overlap.holidayHours)  > 0) entry.holidayHours  = parseFloat(overlap.holidayHours);
+        entry.goal_pct = goalNum > 0 ? entry.total / goalNum : entry.goal_pct;
+        console.log(`    🛡 ${username}: preserved prior PTO for ${techWeek.label} (${ptoOf(overlap)}h) — re-run would have zeroed it`);
+      }
+    }
+
     // Replace any existing entry whose week overlaps with this one (handles date key shifts)
     const updated = [entry, ...existing.filter(e => {
       if (!e.weekStart || !e.weekEnd) return e.date !== techWeek.weekStart;
