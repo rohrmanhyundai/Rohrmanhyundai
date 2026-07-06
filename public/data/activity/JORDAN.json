@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-06T10:25:33.164Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-03T18:50:55.049Z",
     "type": "page",
     "label": "dashboard"
@@ -656,131 +661,5 @@
     "at": "2026-06-08T17:52:11.247Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-05T15:09:21.876Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-05T14:35:20.965Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-05T14:35:14.749Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-05T14:35:14.745Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-05T14:35:13.932Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-05T13:49:22.806Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-05T11:46:58.020Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-05T11:46:52.179Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-05T11:46:52.172Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-05T11:46:50.003Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T19:04:28.901Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T19:04:18.640Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T19:04:13.265Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T18:59:50.343Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T15:36:31.393Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T21:57:07.293Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T21:57:04.096Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-03T21:56:59.862Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T20:27:58.218Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T20:27:51.645Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-03T20:27:44.721Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T20:27:29.004Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-03T20:26:33.756Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T20:26:21.797Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778085 tech GAVEN"
-  },
-  {
-    "at": "2026-06-03T20:26:05.649Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
