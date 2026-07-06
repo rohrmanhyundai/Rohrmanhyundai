@@ -23,7 +23,7 @@ const dKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2
 // Derive everything for one month bucket. `offDates` is the set of YYYY-MM-DD
 // the advisor was scheduled off / on vacation / a holiday — those days are left
 // out of the working-day math so time off is never a negative reflection.
-function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, offDates) {
+function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, offDates, todayKey) {
   const [y, m] = String(mkStr).split('-').map(Number);
   const off = offDates instanceof Set ? offDates : new Set(offDates || []);
   const allDates = workingDates(y, (m || 1) - 1);
@@ -46,7 +46,10 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
     const hours = has ? safe(rec.hours, 0) : null;
     const hrsRo = has ? safe(rec.hrsRo, 0) : null;
     if (has) cumHours += safe(hours, 0);
-    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
+    // A past working day with no entry is a missed report; a backfilled one is
+    // corrected. Both persist in the month's grid.
+    const missed = !isOff && !has && !!todayKey && k < todayKey;
+    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, missed, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
   });
   const enteredDays = rows.filter(r => r.has).length;
   const completedDays = completedOverride != null ? completedOverride : enteredDays;
@@ -58,8 +61,10 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
   const hrsRoVals = rows.filter(r => r.has).map(r => safe(r.hrsRo, 0));
   const avgHrsRo = hrsRoVals.length ? hrsRoVals.reduce((a, b) => a + b, 0) / hrsRoVals.length : 0;
   const offDaysCount = rows.filter(r => r.off).length;
+  const missedDaysCount = rows.filter(r => r.missed).length;
+  const correctedDaysCount = rows.filter(r => r.late).length;
   const label = new Date(y, (m || 1) - 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  return { label, dates: workDates, totalDays, hoursGoal, hrsRoGoal, days, rows, enteredDays, completedDays, actualHours, dailyHoursTarget, expectedHours, projectedHours, avgHrsRo, offDaysCount };
+  return { label, dates: workDates, totalDays, hoursGoal, hrsRoGoal, days, rows, enteredDays, completedDays, actualHours, dailyHoursTarget, expectedHours, projectedHours, avgHrsRo, offDaysCount, missedDaysCount, correctedDaysCount };
 }
 
 // ── Goal-vs-Actual line chart (dotted goal, solid actual, gradient fill) ──────
@@ -489,7 +494,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     bucketRef.current = next; setBucket(next); scheduleSave();
   }
 
-  const M = useMemo(() => computeMetrics(activeMk, bucket, null, activeCompletedDays, activeOffDates), [activeMk, bucket, activeCompletedDays, activeOffDates]);
+  const M = useMemo(() => computeMetrics(activeMk, bucket, null, activeCompletedDays, activeOffDates, isNext ? null : todayKey), [activeMk, bucket, activeCompletedDays, activeOffDates, isNext, todayKey]);
 
   // Chart geometry helpers.
   function makeCharts(metrics) {
@@ -573,6 +578,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           <div style={{ flex: 1 }} />
           <div style={{ fontSize: 12, color: '#64748b' }}>{editable.days ? (gridOpen ? 'Click to hide' : 'Click to add your hours') : (gridOpen ? 'Click to hide' : 'Click to view')}</div>
         </div>
+        {/* Persistent monthly reporting-status banner: warns while any day is
+            still missed, then flips to a corrected note once all are backfilled. */}
+        {metrics.missedDaysCount > 0 ? (
+          <div style={{ margin: '0 20px 4px', background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 10, padding: '10px 14px', color: '#fca5a5', fontSize: 13, fontWeight: 700 }}>
+            ⚠️ {metrics.missedDaysCount} day{metrics.missedDaysCount === 1 ? '' : 's'} missed this month — daily reporting is mandatory. Complete {metrics.missedDaysCount === 1 ? 'it' : 'them'} in Day End Reporting.
+          </div>
+        ) : metrics.correctedDaysCount > 0 ? (
+          <div style={{ margin: '0 20px 4px', background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 10, padding: '10px 14px', color: '#fcd34d', fontSize: 13, fontWeight: 700 }}>
+            ⚠️ {metrics.correctedDaysCount} missed day{metrics.correctedDaysCount === 1 ? ' was' : 's were'} corrected this month.
+          </div>
+        ) : null}
         {gridOpen && (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '12px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
@@ -595,7 +611,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                 <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
                 <div style={{ color: '#cbd5e1' }}>
                   {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
-                  {r.late && <span title={r.missedReason ? `Reported late — reason: ${r.missedReason}` : 'Reported late'} style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fbbf24', background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠ LATE</span>}
+                  {r.missed && <span title="Reporting missed — must be completed in Day End Reporting" style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fca5a5', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠️ MISSED</span>}
+                  {r.late && <span title={r.missedReason ? `Day was corrected — reason: ${r.missedReason}` : 'Day was corrected'} style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fcd34d', background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠️ CORRECTED</span>}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   {editable.days
@@ -623,7 +640,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     const pastKeys = Object.keys(allMonths || {}).filter(k => k < mk).sort().reverse();
     if (histSel) {
       const [hy, hmo] = String(histSel).split('-').map(Number);
-      const hm = computeMetrics(histSel, allMonths[histSel], null, null, advisorOffDates(selected, hy, (hmo || 1) - 1, schedules, vacations));
+      // Past months: don't flag "missed" (mandatory reporting is forward-looking);
+      // corrected days still show via their stored flag.
+      const hm = computeMetrics(histSel, allMonths[histSel], null, null, advisorOffDates(selected, hy, (hmo || 1) - 1, schedules, vacations), null);
       const hc = makeCharts(hm);
       return (
         <div>
@@ -638,7 +657,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {pastKeys.map(k => {
           const [py, pmo] = String(k).split('-').map(Number);
-          const hm = computeMetrics(k, allMonths[k], null, null, advisorOffDates(selected, py, (pmo || 1) - 1, schedules, vacations));
+          const hm = computeMetrics(k, allMonths[k], null, null, advisorOffDates(selected, py, (pmo || 1) - 1, schedules, vacations), null);
           return (
             <div key={k} onClick={() => { setGridOpen(false); setHistSel(k); }} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap', background: 'rgba(15,23,42,.45)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '14px 20px' }}>
               <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', minWidth: 150 }}>{hm.label}</div>
