@@ -40,19 +40,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
-  },
-  {
-    "id": "mr5a9046kkgm",
-    "ro": "778934",
-    "roDate": "2026-07-03",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "recalls",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
