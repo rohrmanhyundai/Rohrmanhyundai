@@ -1,52 +1,5 @@
 [
   {
-    "id": "mpyj6w25p76",
-    "username": "DEVIN",
-    "text": "tire for Fowope is in",
-    "timestamp": 1780519252686
-  },
-  {
-    "id": "mpzirw7vz12",
-    "username": "DEVIN",
-    "text": "belt for 778018 is in",
-    "timestamp": 1780579019227
-  },
-  {
-    "id": "mpzp0b8vwxu",
-    "username": "DEVIN",
-    "text": "tire for 778085 is here",
-    "timestamp": 1780589489647
-  },
-  {
-    "id": "mpzrexu6dwy",
-    "username": "SETH",
-    "text": "TIRE HERE FOR LESTER DUNCAN",
-    "timestamp": 1780593531342
-  },
-  {
-    "id": "mpzy6gvqeko",
-    "username": "DAVID",
-    "text": "David did you call 777766 to let them know car is completed?",
-    "timestamp": 1780604893430,
-    "reactions": {
-      "🚨": [
-        "DAVID"
-      ]
-    }
-  },
-  {
-    "id": "mq0wmwp407h",
-    "username": "JORDAN",
-    "text": "778079 and 778099 need pictures taken for smart driver",
-    "timestamp": 1780662767368
-  },
-  {
-    "id": "mq0xcl4fm4n",
-    "username": "KAI",
-    "text": "if we can try to call SORs today, I sent text to everyone yesterday. Also parts are in for these not open tickets, John Gehm (11769), Kelli Scott (11756), Chole Lysiak (11703)",
-    "timestamp": 1780663965423
-  },
-  {
     "id": "mq5a1aojxvn",
     "username": "SETH",
     "text": "TIRE HERE FOR JENNIFER VINCENT",
@@ -317,5 +270,11 @@
     "username": "DAVID",
     "text": "Jerry, just want to make sure if you need to tie up 778692 before I call the cust",
     "timestamp": 1783099474904
+  },
+  {
+    "id": "mr9o8gbbv3u",
+    "username": "SHAWN",
+    "text": "Jordan 778772 when are they picking up?",
+    "timestamp": 1783369633943
   }
 ]
