@@ -88,5 +88,10 @@
         "hrsRo": 1.72
       }
     }
+  },
+  "2026-07": {
+    "hoursGoal": 1,
+    "hrsRoGoal": 0,
+    "days": {}
   }
 }
