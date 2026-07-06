@@ -53,7 +53,8 @@
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "lastName": ""
+      "lastName": "",
+      "managementAccess": true
     },
     {
       "username": "David",

@@ -57,6 +57,22 @@ const DEFAULT_PASSWORD = 'Hyundai2026';
 
 const BASE = import.meta.env.BASE_URL;
 
+// A user can be granted Management Access without their job title being a
+// "manager" role — e.g. a lead advisor who also manages the department. The
+// whole app gates manager features by testing whether the role string
+// `.includes('manager')`, so we fold that grant into the *effective* role used
+// for gating. The user's stored `role` is left untouched (so advisor rosters,
+// surveys, goals, schedules still list them as an advisor); only the logged-in
+// session's role string picks up a "manager" marker. `currentRole` is never
+// shown to the user, so this marker is invisible in the UI.
+function effectiveRole(record) {
+  const base = (record && record.role) || '';
+  if (record && record.managementAccess && base !== 'admin' && !base.includes('manager')) {
+    return `${base} manager`.trim();
+  }
+  return base;
+}
+
 const emptyData = {
   title: 'Bob Rohrman Hyundai Daily Summary',
   technicians: [],
@@ -285,14 +301,17 @@ export default function App() {
         setUsers(githubUsers);
         localStorage.setItem(USERS_KEY, JSON.stringify(githubUsers));
         // Re-sync the logged-in user's role from the latest users list so role
-        // changes (e.g. promoted to lead advisor) take effect on refresh — not
-        // only on next login (currentRole is otherwise cached from login time).
+        // changes (e.g. promoted to lead advisor, or granted Management Access)
+        // take effect on refresh — not only on next login (currentRole is
+        // otherwise cached from login time). Compare against the *effective*
+        // role so the manager marker survives refreshes.
         const meNow = (localStorage.getItem('currentUser') || '').toUpperCase();
         if (meNow) {
           const rec = githubUsers.find(u => (u.username || '').toUpperCase() === meNow);
-          if (rec && (rec.role || '') !== (localStorage.getItem('currentRole') || '')) {
-            localStorage.setItem('currentRole', rec.role || '');
-            setCurrentRole(rec.role || '');
+          const effRole = effectiveRole(rec);
+          if (rec && effRole !== (localStorage.getItem('currentRole') || '')) {
+            localStorage.setItem('currentRole', effRole);
+            setCurrentRole(effRole);
           }
         }
       }
@@ -318,19 +337,20 @@ export default function App() {
   function handleLogin(username, password) {
     const match = users.find(u => u.username === username && u.password === password);
     if (match) {
-      const canEdit = match.role === 'admin' || (match.role || '').includes('manager') || !!match.canEditDashboard;
+      const role = effectiveRole(match);
+      const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
       const pages = match.pages || null;
       localStorage.setItem(AUTH_KEY, 'true');
       localStorage.setItem('currentUser', match.username);
-      localStorage.setItem('currentRole', match.role || '');
+      localStorage.setItem('currentRole', role);
       localStorage.setItem('canEditDashboard', String(canEdit));
       localStorage.setItem('currentPages', JSON.stringify(pages));
       setIsLoggedIn(true);
       setCurrentUser(match.username);
-      setCurrentRole(match.role || '');
+      setCurrentRole(role);
       setCanEditDashboard(canEdit);
       setCurrentPages(pages);
-      initActivityTracker(match.username, match.role || '');
+      initActivityTracker(match.username, role);
       trackAction('login');
     } else {
       alert('Login failed.');
@@ -382,7 +402,9 @@ export default function App() {
   }
 
   // Lead advisors are advisors too — include them so they appear in advisor
-  // pickers (WIP RO assignment, schedules, calendar, etc.).
+  // pickers (WIP RO assignment, schedules, calendar, etc.). A user who manages
+  // the department but is still an advisor keeps their advisor role here and is
+  // granted manager access separately (see `managementAccess` / effectiveRole).
   const advisorList = users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
   // The Advisor Schedule roster also includes the service manager, who works
   // advisor shifts but isn't an advisor for survey/performance purposes — so this
