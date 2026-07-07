@@ -120,6 +120,7 @@ export default function App() {
   useEffect(() => { schedulesRef.current = schedules; }, [schedules]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
+  const [livePayFocus, setLivePayFocus] = useState(''); // advisor to open Live Pay on
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [advisorUnread, setAdvisorUnread] = useState(0);
   const [techUnread, setTechUnread] = useState(0);
@@ -686,7 +687,7 @@ export default function App() {
         vacations={vacations}
         onBack={() => navTo(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
-        onLivePay={() => goTo('live-pay', 'advisor-goals')}
+        onLivePay={(adv) => { setLivePayFocus(adv || ''); goTo('live-pay', 'advisor-goals'); }}
       />
     );
   }
@@ -910,6 +911,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         leadAdvisor={(users.find(u => (u.role || '').toLowerCase() === 'lead advisor') || {}).username || ''}
+        initialAdvisor={livePayFocus}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
       />
