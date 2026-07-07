@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-07T20:59:00.486Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-07T20:58:58.487Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-07T20:58:00.010Z",
     "type": "page",
     "label": "goal-forecast"
