@@ -87,6 +87,13 @@
           "price": "$182.99",
           "desc": "Full brake fluid flush",
           "opCode": "VVBFL"
+        },
+        {
+          "id": "svc-mraz7kfaxsiu",
+          "name": "Valvoline Ac Cleaning Service",
+          "price": "$106.98",
+          "desc": "Full Ac cleaning service",
+          "opCode": "VVACLEAN"
         }
       ]
     },
@@ -104,5 +111,5 @@
       ]
     }
   ],
-  "updatedAt": 1783448517585
+  "updatedAt": 1783448888771
 }
