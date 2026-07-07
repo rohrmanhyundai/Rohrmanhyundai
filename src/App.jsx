@@ -686,6 +686,7 @@ export default function App() {
         vacations={vacations}
         onBack={() => navTo(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
+        onLivePay={() => goTo('live-pay', 'advisor-goals')}
       />
     );
   }
@@ -833,7 +834,6 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
-        onLivePay={() => goTo('live-pay', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
@@ -910,7 +910,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
-        backLabel="← Appointment Prep Calendar"
+        backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
       />
     );
   }

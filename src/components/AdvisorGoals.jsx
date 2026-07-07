@@ -148,7 +148,7 @@ function StatCard({ accent, icon, label, sub, subColor, children }) {
 }
 const bigVal = (color) => ({ fontSize: 25, fontWeight: 900, color, marginTop: 5, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
 
-export default function AdvisorGoals({ currentUser, currentRole, advisors = [], schedules = {}, vacations = [], onBack, backLabel = '← Appointment Prep Calendar' }) {
+export default function AdvisorGoals({ currentUser, currentRole, advisors = [], schedules = {}, vacations = [], onBack, backLabel = '← Appointment Prep Calendar', onLivePay }) {
   const me = (currentUser || '').toUpperCase();
   const isAdmin = currentRole === 'admin' || (currentRole || '').includes('manager');
   const canEditGoals = isAdmin || currentRole === 'lead advisor';
@@ -1093,6 +1093,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         {(roster.includes(me) || isAdmin) && (
           <button onClick={openDayEnd}
             style={{ background: 'rgba(74,222,128,.16)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>📋 Day End Reporting</button>
+        )}
+        {onLivePay && (
+          <button onClick={onLivePay}
+            style={{ background: 'rgba(52,211,153,.16)', border: '1px solid rgba(52,211,153,.45)', color: '#6ee7b7', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>💵 Live Pay</button>
         )}
         {!isMine && view === 'current' && <div style={{ alignSelf: 'center', fontSize: 12, color: '#fbbf24', fontWeight: 700, marginLeft: 6 }}>👁 Viewing {selected} — {canEditGoals ? 'you can set goals' : 'read-only'}</div>}
       </div>
