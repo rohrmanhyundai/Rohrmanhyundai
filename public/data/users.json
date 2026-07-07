@@ -457,7 +457,7 @@
       "username": "Emily",
       "lastName": "",
       "password": "Emily2026",
-      "role": "advisor",
+      "role": "warranty",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
@@ -476,7 +476,8 @@
         "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "managementAccess": false
     },
     {
       "username": "Wei",
