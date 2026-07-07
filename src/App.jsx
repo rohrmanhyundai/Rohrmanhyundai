@@ -13,6 +13,7 @@ import RoUpload from './components/RoUpload';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
 import ServicePricingMenu from './components/ServicePricingMenu';
+import LivePay from './components/LivePay';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
@@ -832,6 +833,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
+        onLivePay={() => goTo('live-pay', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
@@ -897,6 +899,18 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={spBackLabels[prevPage] || '← Back'}
+      />
+    );
+  }
+
+  if (page === 'live-pay') {
+    return (
+      <LivePay
+        data={data}
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel="← Appointment Prep Calendar"
       />
     );
   }
