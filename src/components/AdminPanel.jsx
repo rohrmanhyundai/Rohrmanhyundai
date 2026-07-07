@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
-import { advisorDailyAverage, currentWeekDates } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh } from '../utils/github';
+import { advisorDailyAverage, currentWeekDates, advisorOffDates } from '../utils/calculations';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
+import { ensureMtd } from '../utils/advisorGoals';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
@@ -119,6 +120,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // separate and is entered on the Parts Goal Forecast page itself.
   const [dailyLabor, setDailyLabor] = useState('');
   const [dailyLaborMsg, setDailyLaborMsg] = useState('');
+  const [reconcileMsg, setReconcileMsg] = useState('');
   const [addingAdvisor, setAddingAdvisor] = useState(false);
   const [addingTech, setAddingTech] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
@@ -733,12 +735,64 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, structuredClone(vacations));
   }
 
+  // ── Morning cross-check ────────────────────────────────────────────────────
+  // The manager's MTD Hrs + HRS/RO on this page are authoritative and reported a
+  // day behind (numbers entered on the 8th are for the 7th). Push each advisor's
+  // figure into their Goals/Forecasting as the PREVIOUS working day's month-to-date
+  // total — silently overwriting whatever the advisor self-reported (they may have
+  // left early or typed it wrong). Runs on Save Changes.
+  async function reconcileAdvisorGoals() {
+    const dk = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const mkOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const corrected = [];
+    for (const a of (data.advisors || [])) {
+      const name = String(a.name || '').trim();
+      if (!name) continue;
+      const hrs = safe(a.mtd_hours, 0);
+      // Skip blanks/zero — never clobber an advisor's data with an unset 0.
+      if (a.mtd_hours === '' || a.mtd_hours == null || hrs <= 0) continue;
+      const key = name.split(/\s+/)[0].toUpperCase();     // goals file key = first name
+      const ros = parseFloat(a.ro_count) || 0;
+      const hrsRo = a.hours_per_ro != null && a.hours_per_ro !== ''
+        ? safe(a.hours_per_ro, 0)
+        : (ros > 0 ? Math.round((hrs / ros) * 100) / 100 : 0);
+      // Previous working day for THIS advisor: step back from today, skipping
+      // Sundays and their scheduled off / holiday / vacation days.
+      const target = new Date(); target.setDate(target.getDate() - 1);
+      for (let i = 0; i < 21; i++) {
+        const off = advisorOffDates(key, target.getFullYear(), target.getMonth(), schedules, vacations);
+        if (target.getDay() !== 0 && !off.has(dk(target))) break;
+        target.setDate(target.getDate() - 1);
+      }
+      const mk = mkOf(target), dayKey = dk(target);
+      try {
+        let all = {};
+        try { all = await loadAdvisorGoals(key); } catch {}
+        const bucket = ensureMtd((all && all[mk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
+        const days = { ...(bucket.days || {}) };
+        const before = days[dayKey] ? days[dayKey].hours : null;
+        // Silent overwrite — no "corrected" flag or reason surfaced to the advisor.
+        days[dayKey] = { ...(days[dayKey] || {}), hours: Math.round(hrs * 100) / 100, hrsRo: hrsRo };
+        await saveAdvisorGoalsMonth(key, mk, { ...bucket, hoursGoal: safe(bucket.hoursGoal, 0), hrsRoGoal: safe(bucket.hrsRoGoal, 0), days, entryMode: 'mtd' });
+        const changed = before == null || Math.abs(safe(before, 0) - hrs) > 0.01;
+        corrected.push(`${key} ${target.getMonth() + 1}/${target.getDate()} → ${Math.round(hrs * 100) / 100}${changed ? '' : ' (unchanged)'}`);
+      } catch (e) { console.warn('reconcile failed for', key, e); }
+    }
+    return corrected;
+  }
+
   async function handleSave() {
     trackAction('save-dashboard');
     setSaving(true);
+    setReconcileMsg('');
     try {
       const payload = { data, vacations };
       await saveDashboardToGitHub(payload);
+      // Cross-check: reconcile each advisor's previous working day to these numbers.
+      try {
+        const corrected = await reconcileAdvisorGoals();
+        if (corrected.length) setReconcileMsg(`✓ Synced previous-day hours to Goals/Forecasting: ${corrected.join(' · ')}`);
+      } catch (e) { console.warn('advisor goals reconcile failed', e); }
       // Local state is already correct from user edits — no re-fetch needed.
       // The TV will pick up the new data on its next 90-second poll via the GitHub API.
 
@@ -1334,6 +1388,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         </div>
 
         <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
+        <div className="small" style={{ color: '#7dd3fc', marginTop: 2 }}>On <em>Save Changes</em>, each advisor's MTD Hrs &amp; Hrs/RO are written to their Goals/Forecasting for the previous working day (a day behind), overwriting their entry.</div>
+        {reconcileMsg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#6ee7b7', fontWeight: 700, lineHeight: 1.4 }}>{reconcileMsg}</div>}
         {data.advisors.map((a, idx) => (
           <div className="form-section" key={a.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

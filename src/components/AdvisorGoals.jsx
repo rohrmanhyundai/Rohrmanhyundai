@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
 import { advisorOffDates } from '../utils/calculations';
 import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes } from '../utils/github';
+import { ensureMtd } from '../utils/advisorGoals';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -19,33 +20,6 @@ function workingDates(year, month) {
 }
 
 const dKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
-
-// The daily grid stores each day's MONTH-TO-DATE running totals — advisors type
-// their DMS month total each day, and the page derives "hours closed that day"
-// as the delta from the previous entered day. Older buckets stored each day's
-// OWN production; ensureMtd converts a legacy bucket to running totals exactly
-// ONCE and stamps entryMode:'mtd' so it's never converted again. Hours become a
-// cumulative sum (lossless — the daily deltas recover the original numbers);
-// hrs/RO becomes the running average of the entered daily ratios, which keeps
-// the month-average display identical to before. Idempotent and pure.
-function ensureMtd(bucket) {
-  const base = (bucket && typeof bucket === 'object') ? bucket : {};
-  if (base.entryMode === 'mtd') return base;
-  const days = base.days || {};
-  const keys = Object.keys(days)
-    .filter(k => days[k] && (days[k].hours != null || days[k].hrsRo != null))
-    .sort(); // 'YYYY-MM-DD' sorts chronologically
-  let cum = 0, roSum = 0, roCount = 0;
-  const newDays = { ...days };
-  for (const k of keys) {
-    const rec = days[k] || {};
-    cum = Math.round((cum + safe(rec.hours, 0)) * 100) / 100; // avoid float drift (80.39999…)
-    let mtdRo = safe(rec.hrsRo, 0);
-    if (rec.hrsRo != null && rec.hrsRo !== '') { roSum += safe(rec.hrsRo, 0); roCount += 1; mtdRo = Math.round((roSum / roCount) * 100) / 100; }
-    newDays[k] = { ...rec, hours: cum, hrsRo: mtdRo };
-  }
-  return { ...base, days: newDays, entryMode: 'mtd' };
-}
 
 // Derive everything for one month bucket. `offDates` is the set of YYYY-MM-DD
 // the advisor was scheduled off / on vacation / a holiday — those days are left
