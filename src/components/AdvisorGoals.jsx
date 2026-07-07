@@ -180,38 +180,61 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deCopiedRo, setDeCopiedRo] = useState('');
   // Mandatory backfill: unreported prior working days this month that must be
   // completed (with a reason) before today's report can be submitted.
-  const [deMissed, setDeMissed] = useState([]); // [{ k, label, hours, hrsRo, reason }]
+  const [deMissed, setDeMissed] = useState([]); // [{ k, label, full, hours, hrsRo, reason }]
   const [deMissedSaving, setDeMissedSaving] = useState(false);
   const [deMissedErr, setDeMissedErr] = useState('');
+  // Gate must be verified BEFORE today's form can show. While this is true the
+  // modal shows a "checking…" screen — never the current-day questions — so a
+  // slow/failed load can't let the advisor slip past the mandatory missed days.
+  const [deMissedLoading, setDeMissedLoading] = useState(false);
+  const [deMissedLoadErr, setDeMissedLoadErr] = useState('');
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
     setDeCopiedRo(v);
     setTimeout(() => setDeCopiedRo(c => (c === v ? '' : c)), 1200);
   }
+  // Daily reporting is mandatory: find this advisor's unreported prior working
+  // days this month (excluding days off / holiday / vacation) so they must be
+  // completed before today's report. Runs BEHIND a loading screen so the
+  // current-day form never shows until this resolves. On failure we surface a
+  // retry instead of falling through — a network blip can't skip the gate.
+  function loadMissedDays() {
+    // Managers only view other advisors; the mandatory gate is for the person
+    // logged in and reporting for themselves.
+    if (!roster.includes(me)) { setDeMissed([]); setDeMissedLoading(false); return; }
+    setDeMissedLoading(true);
+    setDeMissedLoadErr('');
+    loadAdvisorGoals(me).then(all => {
+      const days = ((all && all[mk]) || {}).days || {};
+      const off = advisorOffDates(me, now.getFullYear(), now.getMonth(), schedules, vacations);
+      const report = new Date(); while (report.getDay() === 0) report.setDate(report.getDate() - 1);
+      const reportKey = dKey(report);
+      const missed = workingDates(now.getFullYear(), now.getMonth())
+        .filter(d => {
+          const k = dKey(d);
+          return k < reportKey && !off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+        })
+        .map(d => ({
+          k: dKey(d),
+          label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`,
+          full: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+          hours: '', hrsRo: '', reason: '',
+        }));
+      setDeMissed(missed);
+      setDeMissedLoading(false);
+    }).catch(() => {
+      // Don't fall through to today's form — enforce the gate by requiring a retry.
+      setDeMissedLoadErr('Could not verify your reporting history. Check your connection and try again.');
+      setDeMissedLoading(false);
+    });
+  }
   function openDayEnd() {
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
     setDeMissed([]); setDeMissedErr('');
-    // Daily reporting is mandatory: find this advisor's unreported prior working
-    // days this month (excluding days off / holiday / vacation) so they must be
-    // completed before today's report. Only for advisors who own a forecast.
-    if (roster.includes(me)) {
-      loadAdvisorGoals(me).then(all => {
-        const days = ((all && all[mk]) || {}).days || {};
-        const off = advisorOffDates(me, now.getFullYear(), now.getMonth(), schedules, vacations);
-        const report = new Date(); while (report.getDay() === 0) report.setDate(report.getDate() - 1);
-        const reportKey = dKey(report);
-        const missed = workingDates(now.getFullYear(), now.getMonth())
-          .filter(d => {
-            const k = dKey(d);
-            return k < reportKey && !off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
-          })
-          .map(d => ({ k: dKey(d), label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`, hours: '', hrsRo: '', reason: '' }));
-        setDeMissed(missed);
-      }).catch(() => {});
-    }
+    loadMissedDays();
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
     // being viewed — so an advisor sees their own and a manager previewing an
     // advisor sees that advisor's. Shown at the "updated notes?" question.
@@ -695,6 +718,47 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // The attestation statement the advisor must agree to before submitting.
   const AGREE_TEXT = `I certify that the information in this day-end report is accurate and complete to the best of my knowledge. I have reviewed all of my open repair orders, invoiced everything available, updated every customer on their status, and ensured each repair order has current notes as of the end of my business day.`;
 
+  // Shared modal shell for the pre-report gate screens (loading / error).
+  function renderGateShell(children) {
+    return (
+      <div onClick={() => setDayEndOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 18, width: '100%', maxWidth: 460, boxShadow: '0 18px 60px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#4ade80' }}>📋 Day End Reporting</div>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => setDayEndOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  // Shown while we verify whether the advisor has unreported prior days. Blocks
+  // the current-day form until the check completes.
+  function renderMissedLoading() {
+    return renderGateShell(
+      <div style={{ padding: '40px 22px', textAlign: 'center' }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: '#e2e8f0' }}>⏳ Checking your reporting history…</div>
+        <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 8 }}>Making sure every prior day is reported before today.</div>
+      </div>
+    );
+  }
+
+  // Shown when the missed-day check fails. Requires a retry — never falls through
+  // to today's report, so a bad connection can't bypass the mandatory gate.
+  function renderMissedLoadError() {
+    return renderGateShell(
+      <div style={{ padding: '30px 22px', textAlign: 'center' }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: '#fca5a5' }}>⚠️ {deMissedLoadErr}</div>
+        <button onClick={loadMissedDays}
+          style={{ marginTop: 18, background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '9px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+          ↻ Try again
+        </button>
+      </div>
+    );
+  }
+
   // Mandatory missed-day gate — shown before today's report when the advisor has
   // unreported prior working days this month.
   function renderMissedGate() {
@@ -708,13 +772,16 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           </div>
           <div style={{ padding: '16px 20px 0' }}>
             <div style={{ background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 12, padding: '12px 14px', color: '#fca5a5', fontSize: 13.5, fontWeight: 700, lineHeight: 1.45 }}>
-              ⚠️ Daily reporting is mandatory. You must complete the {deMissed.length} day{deMissed.length === 1 ? '' : 's'} you missed before reporting today.
+              ⚠️ Daily reporting is mandatory. You missed {deMissed.length} day{deMissed.length === 1 ? '' : 's'} — <strong style={{ color: '#fecaca' }}>{deMissed.map(m => m.full || m.label).join(', ')}</strong>. You must complete {deMissed.length === 1 ? 'it' : 'them'} before you can report today.
             </div>
           </div>
           <div style={{ padding: '14px 20px', overflowY: 'auto' }}>
             {deMissed.map((m, i) => (
               <div key={m.k} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.09)', borderRadius: 12, padding: '12px 14px', marginBottom: 10 }}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0', marginBottom: 8 }}>{m.label}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#f87171', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 999, padding: '2px 9px' }}>Missed day {deMissed.length > 1 ? `${i + 1} of ${deMissed.length}` : ''}</span>
+                </div>
+                <div style={{ fontSize: 17, fontWeight: 900, color: '#f8fafc', marginBottom: 10, letterSpacing: '-.01em' }}>📅 {m.full || m.label}</div>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   <label style={{ flex: '1 1 120px' }}>
                     <div style={lblSt}>Hours</div>
@@ -729,11 +796,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                       style={{ ...inpSt, width: '100%', color: '#93c5fd', textAlign: 'left', boxSizing: 'border-box' }} />
                   </label>
                 </div>
-                <div style={{ marginTop: 8 }}>
-                  <div style={lblSt}>Reason for missing this day <span style={{ color: '#f87171' }}>*</span></div>
-                  <input type="text" value={m.reason} placeholder="Why wasn't this day reported?"
+                <div style={{ marginTop: 10 }}>
+                  <div style={lblSt}>Reason this day-end report was missed <span style={{ color: '#f87171' }}>*</span></div>
+                  <textarea value={m.reason} rows={2} placeholder="Required — explain why this day wasn't reported…"
                     onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, reason: e.target.value } : x))}
-                    style={{ ...inpSt, width: '100%', color: '#e2e8f0', textAlign: 'left', boxSizing: 'border-box' }} />
+                    style={{ ...inpSt, width: '100%', color: '#e2e8f0', textAlign: 'left', boxSizing: 'border-box', resize: 'vertical', fontWeight: 600, lineHeight: 1.4 }} />
                 </div>
               </div>
             ))}
@@ -753,6 +820,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
 
   function renderDayEndModal() {
     if (!dayEndOpen) return null;
+    // Verify the mandatory missed-day gate FIRST. The current-day questions must
+    // never appear until we've confirmed there are no unreported prior days.
+    if (deMissedLoading) return renderMissedLoading();
+    if (deMissedLoadErr) return renderMissedLoadError();
     if (deMissed.length > 0) return renderMissedGate();
     const step = DE_STEPS[deStep];
     const val = step.get ? step.get() : null;
