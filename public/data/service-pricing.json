@@ -48,16 +48,10 @@
       "name": "Valvoline Service Taxes and Fees not included",
       "services": [
         {
-          "id": "svc-front-pads",
-          "name": "Front Brake Pads",
-          "price": "$249.95",
-          "desc": "Replace front brake pads and inspect rotors and calipers."
-        },
-        {
-          "id": "svc-rear-pads",
-          "name": "Rear Brake Pads",
-          "price": "$249.95",
-          "desc": "Replace rear brake pads and inspect rotors and calipers."
+          "id": "svc-mrawz7qkgo3h",
+          "name": "Valvoline Fuel Service",
+          "price": "",
+          "desc": "Valvoline Fuel Service cleans fuel injectors and valves inproves fuel eco"
         }
       ]
     },
@@ -74,5 +68,5 @@
       ]
     }
   ],
-  "updatedAt": 1783444779335
+  "updatedAt": 1783444835975
 }
