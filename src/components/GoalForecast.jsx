@@ -139,7 +139,12 @@ function computeMonthMetrics(mkStr, monthData) {
   const completedDays = enteredDays || totalDays;
   const runRate = completedDays > 0 ? actualTotal / completedDays : 0;
   const label = new Date(year, monthIdx, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD: forecast, projected: actualTotal };
+  // "Where you should be" = the pace target for the days counted so far
+  // (dailyTarget × completedDays), NOT the full-month forecast. For a fully
+  // entered/completed month completedDays === totalDays, so this equals the
+  // forecast — but mid-month it correctly shows the to-date expectation.
+  const expectedMTD = dailyTarget * completedDays;
+  return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD, projected: actualTotal };
 }
 
 // Read-only detail for one completed/historical month.
