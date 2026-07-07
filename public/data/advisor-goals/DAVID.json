@@ -112,8 +112,8 @@
         "hrsRo": 0.64
       },
       "2026-07-02": {
-        "hours": 27.6,
-        "hrsRo": 1.51,
+        "hours": 37,
+        "hrsRo": 1.08,
         "openRoCount": 34,
         "invoiced": "no",
         "customersUpdated": "yes",
@@ -123,8 +123,8 @@
         "submittedAt": 1783029654321
       },
       "2026-07-03": {
-        "hours": 17.9,
-        "hrsRo": 1.18,
+        "hours": 54.9,
+        "hrsRo": 1.11,
         "openRoCount": 20,
         "invoiced": "no",
         "customersUpdated": "yes",
@@ -134,8 +134,8 @@
         "submittedAt": 1783115905271
       },
       "2026-07-06": {
-        "hours": 24.2,
-        "hrsRo": 1.24,
+        "hours": 79.1,
+        "hrsRo": 1.14,
         "openRoCount": 24,
         "invoiced": "no",
         "customersUpdated": "no",
@@ -145,8 +145,8 @@
         "submittedAt": 1783371129800
       },
       "2026-07-07": {
-        "hours": 1.3,
-        "hrsRo": 0.43,
+        "hours": 80.4,
+        "hrsRo": 1,
         "openRoCount": 24,
         "invoiced": "no",
         "customersUpdated": "yes",
@@ -155,6 +155,7 @@
         "agreedBy": "DAVID",
         "submittedAt": 1783457559213
       }
-    }
+    },
+    "entryMode": "mtd"
   }
 }
