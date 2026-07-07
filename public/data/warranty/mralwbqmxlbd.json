@@ -1,7 +1,7 @@
 {
   "id": "mralwbqmxlbd",
   "createdAt": "2026-07-07T12:09:35.086Z",
-  "updatedAt": "2026-07-07T14:44:01.980Z",
+  "updatedAt": "2026-07-07T19:27:02.978Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Alexandrea Povpin",
   "customerPhone": "(630) 528 - 8386",
@@ -126,7 +126,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "CALLED IN 07/07/2026 @9:30AM. NEED 4 MAINTANCE RECORDS SENT TO EMAIL: photos@assurant.com. THEN CALL BACK TO GO TO NEXT STEP. SUBJECT LINE LAST 8 VIN AND CUSTOMER NAME.",
+  "notes": "CALLED IN 07/07/2026 @9:30AM. NEED 4 MAINTANCE RECORDS SENT TO EMAIL: photos@assurant.com. THEN CALL BACK TO GO TO NEXT STEP. SUBJECT LINE LAST 8 VIN AND CUSTOMER NAME.\n\n07/07/2026 SENT 2 MAINTANCE RECORDS THAT CUSTOMER PROVIDED.",
   "approved": false,
   "approvedDate": "",
   "denied": false,
