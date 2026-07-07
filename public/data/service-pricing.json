@@ -141,17 +141,17 @@
     },
     {
       "id": "cat-batteries",
-      "name": "Front and Rear Brake Service *Taxes and Fees not included",
+      "name": "Front and Rear Brake Service *Taxes and Fees not included, *OEM Price is starting at some models are higher",
       "services": [
         {
-          "id": "svc-battery",
-          "name": "Battery Replacement",
-          "price": "$219.95",
-          "desc": "OEM battery, installation, and charging-system test.",
-          "opCode": ""
+          "id": "svc-mrb0gq3biu01",
+          "name": "Replace Front Pads and Resurface Rotors FACTORY",
+          "price": "$456.99",
+          "desc": "Replace Front Pads and Resurface Rotors FACTORY",
+          "opCode": "PADRESURF"
         }
       ]
     }
   ],
-  "updatedAt": 1783450621098
+  "updatedAt": 1783450905023
 }
