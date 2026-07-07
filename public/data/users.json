@@ -380,7 +380,7 @@
       "username": "Chapman",
       "lastName": "Cory",
       "password": "[REDACTED]",
-      "role": "admin",
+      "role": "advisor",
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": false,
