@@ -1,30 +1,66 @@
 {
-  "updatedAt": null,
-  "by": "",
+  "by": "SHAWN",
   "categories": [
     {
       "id": "cat-maintenance",
       "name": "Maintenance",
       "services": [
-        { "id": "svc-oil-synth", "name": "Synthetic Oil Change", "price": "$79.95", "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection." },
-        { "id": "svc-tire-rotate", "name": "Tire Rotation", "price": "$29.95", "desc": "Rotate and inspect all four tires and set pressures to spec." },
-        { "id": "svc-cabin-filter", "name": "Cabin Air Filter", "price": "$49.95", "desc": "Replace cabin air filter." }
+        {
+          "id": "svc-oil-synth",
+          "name": "Synthetic Oil Change ROH$",
+          "price": "$50.00",
+          "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection."
+        },
+        {
+          "id": "svc-tire-rotate",
+          "name": "Tire Rotation",
+          "price": "$34.95",
+          "desc": "Rotate and inspect all four tires and set pressures to spec."
+        },
+        {
+          "id": "svc-cabin-filter",
+          "name": "Cabin Air Filter",
+          "price": "$60.50",
+          "desc": "Replace cabin air filter."
+        },
+        {
+          "id": "svc-mrawpcukrk6j",
+          "name": "Cabin Air Filter NON-OEM",
+          "price": "$48.50",
+          "desc": "Replace cabin air filter. NON-OEM"
+        }
       ]
     },
     {
       "id": "cat-brakes",
       "name": "Brakes",
       "services": [
-        { "id": "svc-front-pads", "name": "Front Brake Pads", "price": "$249.95", "desc": "Replace front brake pads and inspect rotors and calipers." },
-        { "id": "svc-rear-pads", "name": "Rear Brake Pads", "price": "$249.95", "desc": "Replace rear brake pads and inspect rotors and calipers." }
+        {
+          "id": "svc-front-pads",
+          "name": "Front Brake Pads",
+          "price": "$249.95",
+          "desc": "Replace front brake pads and inspect rotors and calipers."
+        },
+        {
+          "id": "svc-rear-pads",
+          "name": "Rear Brake Pads",
+          "price": "$249.95",
+          "desc": "Replace rear brake pads and inspect rotors and calipers."
+        }
       ]
     },
     {
       "id": "cat-batteries",
       "name": "Batteries",
       "services": [
-        { "id": "svc-battery", "name": "Battery Replacement", "price": "$219.95", "desc": "OEM battery, installation, and charging-system test." }
+        {
+          "id": "svc-battery",
+          "name": "Battery Replacement",
+          "price": "$219.95",
+          "desc": "OEM battery, installation, and charging-system test."
+        }
       ]
     }
-  ]
+  ],
+  "updatedAt": 1783444435507
 }
