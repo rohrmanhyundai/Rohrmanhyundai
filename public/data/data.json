@@ -438,7 +438,8 @@
         "coupon_labor": 888.61,
         "_lastImport": 1783422195214,
         "total_sales": 22649.69,
-        "coupon_usage_pct": 0.0392
+        "coupon_usage_pct": 0.0392,
+        "min_csi": 915
       },
       {
         "name": "JORDAN",
@@ -457,7 +458,8 @@
         "coupon_labor": 592.3,
         "_lastImport": 1783422195214,
         "total_sales": 16071.42,
-        "coupon_usage_pct": 0.0369
+        "coupon_usage_pct": 0.0369,
+        "min_csi": 915
       },
       {
         "name": "ISAIAH",
@@ -474,7 +476,8 @@
         "last_month_total": 0,
         "ro_count": 0,
         "hidden": false,
-        "_lastImport": 1783422195214
+        "_lastImport": 1783422195214,
+        "min_csi": 915
       }
     ],
     "advisorTraining": [
