@@ -909,6 +909,7 @@ export default function App() {
         data={data}
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
+        leadAdvisor={(users.find(u => (u.role || '').toLowerCase() === 'lead advisor') || {}).username || ''}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
       />
