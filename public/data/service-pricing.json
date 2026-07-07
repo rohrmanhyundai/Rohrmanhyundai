@@ -101,6 +101,13 @@
           "price": "$270.00",
           "desc": "Full oil flush service includes oil change",
           "opCode": "VVEFL"
+        },
+        {
+          "id": "svc-mrazj1hwowxo",
+          "name": "Valvoline HEV/EV Inverter Cooling Service",
+          "price": "$249.97",
+          "desc": "Full inverter cooling service for Hybrid or EV",
+          "opCode": "VVICFL"
         }
       ]
     },
@@ -118,5 +125,5 @@
       ]
     }
   ],
-  "updatedAt": 1783448968337
+  "updatedAt": 1783449176663
 }
