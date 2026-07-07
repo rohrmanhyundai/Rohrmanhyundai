@@ -228,6 +228,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // current day now, or come back later (e.g. they fixed the miss mid-day and
   // the current day isn't over yet). Set true only right after a missed-day save.
   const [deChoice, setDeChoice] = useState(false);
+  // True when today already has a saved report — resubmitting overwrites that date.
+  const [deAlreadyReported, setDeAlreadyReported] = useState(false);
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -246,7 +248,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeMissedLoading(true);
     setDeMissedLoadErr('');
     loadAdvisorGoals(me).then(all => {
-      const days = ((all && all[mk]) || {}).days || {};
+      const days = ensureMtd((all && all[mk]) || {}).days || {};
       const off = advisorOffDates(me, now.getFullYear(), now.getMonth(), schedules, vacations);
       const report = new Date(); while (report.getDay() === 0) report.setDate(report.getDate() - 1);
       const reportKey = dKey(report);
@@ -263,6 +265,21 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         }));
       setDeMissed(missed);
       setDeMissedLoading(false);
+      // If today was already reported, prefill the popup with the saved values so a
+      // second report of the day is a quick edit that OVERWRITES the date (advisors
+      // can report as many times as they like — the latest numbers win).
+      const todayRec = days[reportKey];
+      if (todayRec) {
+        if (todayRec.hours != null) setDeHours(String(todayRec.hours));
+        if (todayRec.hrsRo != null) setDeHrsRo(String(todayRec.hrsRo));
+        if (todayRec.openRoCount != null) setDeOpenRo(String(todayRec.openRoCount));
+        if (todayRec.invoiced != null) setDeInvoiced(todayRec.invoiced);
+        if (todayRec.customersUpdated != null) setDeCust(todayRec.customersUpdated);
+        if (todayRec.notesUpdated != null) setDeNotes(todayRec.notesUpdated);
+        setDeAlreadyReported(true);
+      } else {
+        setDeAlreadyReported(false);
+      }
     }).catch(() => {
       // Don't fall through to today's form — enforce the gate by requiring a retry.
       setDeMissedLoadErr('Could not verify your reporting history. Check your connection and try again.');
@@ -273,7 +290,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
-    setDeMissed([]); setDeMissedErr(''); setDeChoice(false);
+    setDeMissed([]); setDeMissedErr(''); setDeChoice(false); setDeAlreadyReported(false);
     loadMissedDays();
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
     // being viewed — so an advisor sees their own and a manager previewing an
@@ -926,6 +943,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             </div>
           </div>
 
+          {deAlreadyReported && (
+            <div style={{ margin: '12px 20px 0', background: 'rgba(56,189,248,.1)', border: '1px solid rgba(56,189,248,.35)', borderRadius: 10, padding: '9px 13px', color: '#7dd3fc', fontSize: 12.5, fontWeight: 700, lineHeight: 1.4 }}>
+              ↻ You already reported today — your saved numbers are filled in below. Updating and submitting will overwrite today's totals.
+            </div>
+          )}
           {/* Question */}
           <div style={{ padding: '26px 22px 8px', minHeight: 150 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.35 }}>{step.q}</div>
