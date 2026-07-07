@@ -457,7 +457,7 @@
       "username": "Emily",
       "lastName": "",
       "password": "[REDACTED]",
-      "role": "admin",
+      "role": "advisor",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
