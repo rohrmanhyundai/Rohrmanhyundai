@@ -32,12 +32,14 @@ export function computeLivePay(a, hours, servicePolicy, numAdvisors, leadBonus) 
   const tier = TIERS[tierIdx];
   const basePay = tier.base * hours;
   const csiQualifies = minCsi > 0 ? csi >= minCsi : true; // no minimum set → no barrier
-  const csiBonus = csiQualifies ? tier.csi * hours : 0;
+  const csiPotential = tier.csi * hours;                   // CSI bonus if they qualified
+  const csiBonus = csiQualifies ? csiPotential : 0;
+  const csiMissed = (!csiQualifies && minCsi > 0) ? csiPotential : 0; // money left on the table
   const lead = safe(leadBonus, 0);
   const gross = basePay + csiBonus + lead;
   const adjustment = numAdvisors > 0 ? (safe(servicePolicy, 0) / numAdvisors) * 0.08 : 0;
   const net = gross - adjustment;
-  return { hours, elr, csi, minCsi, elrQualifies, naturalTier, tierIdx, tier, basePay, csiQualifies, csiBonus, leadBonus: lead, gross, adjustment, net };
+  return { hours, elr, csi, minCsi, elrQualifies, naturalTier, tierIdx, tier, basePay, csiQualifies, csiBonus, csiPotential, csiMissed, leadBonus: lead, gross, adjustment, net };
 }
 
 const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#94a3b8' };
@@ -130,11 +132,27 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
               Showing the <strong style={{ color: mode === 'pacing' ? '#6ee7b7' : '#7dd3fc' }}>{mode === 'pacing' ? 'PACING (projected full month)' : 'EARNED SO FAR (month-to-date)'}</strong> breakdown — tap a card above to switch.
             </div>
 
+            {/* CSI bonus is being missed — show exactly how much is on the table */}
+            {pay.csiMissed > 0 && (
+              <div style={{ margin: '0 0 18px', background: 'linear-gradient(120deg, rgba(251,146,60,.18), rgba(239,68,68,.12))', border: '1px solid rgba(251,146,60,.55)', borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                <div style={{ fontSize: 28 }}>💸</div>
+                <div style={{ flex: 1, minWidth: 220 }}>
+                  <div style={{ fontSize: 15, fontWeight: 900, color: '#fdba74' }}>
+                    Leaving {money(pay.csiMissed)} on the table {mode === 'pacing' ? 'on pace this month' : 'so far this month'}
+                  </div>
+                  <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 3, lineHeight: 1.45 }}>
+                    CSI is <strong>{pay.csi}</strong> — needs <strong>≥ {pay.minCsi}</strong> to unlock the CSI bonus (${pay.tier.csi}/hr). Hit CSI and this gets added to the pay.
+                  </div>
+                </div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: '#fb923c', whiteSpace: 'nowrap' }}>+{money(pay.csiMissed)}</div>
+              </div>
+            )}
+
             {/* Qualifiers for the active view */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 18 }}>
               <QualCard title={mode === 'pacing' ? 'Projected Hours' : 'CP + Warranty Hours'} value={hrs1(pay.hours)} note={pay.tier.label} good={null} />
               <QualCard title="ELR (needs ≥ 88%)" value={`${(pay.elr * 100).toFixed(1)}%`} note={pay.elrQualifies ? 'Qualifies for tier' : 'Below 88% — capped at $4 tier'} good={pay.elrQualifies} />
-              <QualCard title="CSI" value={pay.csi ? pay.csi.toLocaleString('en-US') : '—'} note={pay.minCsi > 0 ? (pay.csiQualifies ? `Meets min ${pay.minCsi}` : `Below min ${pay.minCsi} — no CSI bonus`) : 'No minimum set'} good={pay.minCsi > 0 ? pay.csiQualifies : null} />
+              <QualCard title="CSI" value={pay.csi ? pay.csi.toLocaleString('en-US') : '—'} note={pay.minCsi > 0 ? (pay.csiQualifies ? `Meets min ${pay.minCsi}` : `Below min ${pay.minCsi} — missing ${money(pay.csiMissed)}`) : 'No minimum set'} good={pay.minCsi > 0 ? pay.csiQualifies : null} />
             </div>
 
             {/* Breakdown */}
@@ -142,7 +160,7 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
               <div style={{ padding: '12px 18px', borderBottom: '1px solid rgba(148,163,184,.14)', fontSize: 12, fontWeight: 900, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.05em' }}>{mode === 'pacing' ? 'Pacing Commission Breakdown' : 'Earned-So-Far Breakdown'}</div>
               <Row label={`Tier ${pay.tierIdx + 1} — ${pay.tier.label}`} value={`$${pay.tier.total}/hr`} sub={pay.elrQualifies ? null : 'ELR below 88% — held at the $4 first tier'} />
               <Row label={`Base Commission ($${pay.tier.base}/hr × ${hrs1(pay.hours)} hrs)`} value={money(pay.basePay)} />
-              <Row label={`CSI Bonus ($${pay.tier.csi}/hr × ${hrs1(pay.hours)} hrs)`} value={pay.csiQualifies ? money(pay.csiBonus) : money(0)} sub={pay.csiQualifies ? null : 'CSI below minimum — bonus not earned'} muted={!pay.csiQualifies} />
+              <Row label={`CSI Bonus ($${pay.tier.csi}/hr × ${hrs1(pay.hours)} hrs)`} value={pay.csiQualifies ? money(pay.csiBonus) : `$0.00 (missing ${money(pay.csiMissed)})`} sub={pay.csiQualifies ? null : `CSI ${pay.csi} is below the ${pay.minCsi} minimum — ${money(pay.csiMissed)} not earned`} muted={!pay.csiQualifies} />
               {calc.isLead && (
                 <Row label={`Lead Advisor Bonus ($${LEAD_RATE.toFixed(2)}/hr × ${hrs1(leadHoursForMode)} team hrs)`} value={money(pay.leadBonus)} sub="Paid on the other advisors' hours (not your own)" accent />
               )}
