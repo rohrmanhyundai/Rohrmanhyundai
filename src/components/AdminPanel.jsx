@@ -1390,6 +1390,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
         <div className="small" style={{ color: '#7dd3fc', marginTop: 2 }}>On <em>Save Changes</em>, each advisor's MTD Hrs &amp; Hrs/RO are written to their Goals/Forecasting for the previous working day (a day behind), overwriting their entry.</div>
         {reconcileMsg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#6ee7b7', fontWeight: 700, lineHeight: 1.4 }}>{reconcileMsg}</div>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 0 4px', flexWrap: 'wrap' }}>
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Monthly Service Policy dollars. Live Pay subtracts (Service Policy ÷ # of advisors × 8%) from each advisor's commission as the Individual Commission Adjustment.">Service Policy $ (monthly)</label>
+          <input type="number" inputMode="decimal" defaultValue={data.service_policy ?? ''} placeholder="e.g. 4200"
+            onBlur={e => updateField('service_policy', safe(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 140, outline: 'none' }} />
+          <span style={{ fontSize: 11, color: '#64748b' }}>Live Pay adjustment = (this ÷ {(data.advisors || []).length || 1} advisors) × 8%</span>
+        </div>
         {data.advisors.map((a, idx) => (
           <div className="form-section" key={a.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1413,6 +1420,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>Valvoline %</label><input key={`vlv-${a._lastImport || 0}-${a.valvoline}`} defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
               <div className="field"><label>Roh$50 HRS/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
+              <div className="field"><label title="Live Pay CSI bonus qualifier. If the advisor's CSI is below this number they don't earn the CSI bonus portion of commission. Leave blank/0 for no minimum.">Min CSI <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(Live Pay)</span></label><input defaultValue={a.min_csi ?? ''} onBlur={e => updateField(`advisors.${idx}.min_csi`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>ASR %</label><input key={`asr-${a._lastImport || 0}-${a.asr}`} defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
               <div className="field"><label>ELR %</label><input key={`elr-${a._lastImport || 0}-${a.elr}`} defaultValue={percentEditValue(a.elr)} onBlur={e => updateField(`advisors.${idx}.elr`, parsePercentInput(e.target.value, a.elr))} /></div>
                 <div className="field"><label>Last Month Total</label><input defaultValue={a.last_month_total ?? 0} onBlur={e => updateField(`advisors.${idx}.last_month_total`, safe(e.target.value, 0))} /></div>
