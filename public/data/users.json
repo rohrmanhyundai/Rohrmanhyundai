@@ -380,8 +380,8 @@
       "username": "Chapman",
       "lastName": "Cory",
       "password": "cory2026",
-      "role": "used car manager",
-      "canEditDashboard": false,
+      "role": "admin",
+      "canEditDashboard": true,
       "pages": {
         "advisorCalendar": false,
         "advisorRankBoard": false,
