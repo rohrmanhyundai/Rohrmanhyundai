@@ -834,6 +834,8 @@ export default function App() {
         userPages={currentPages}
         currentRole={currentRole}
         currentUser={currentUser.toUpperCase()}
+        schedules={schedules}
+        vacations={vacations}
         chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
         techChatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
