@@ -609,6 +609,13 @@
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
       "status": "APPROVED"
+    },
+    {
+      "name": "JERRY",
+      "dates": "Jul 16–17, 2026",
+      "dateStart": "2026-07-16",
+      "dateEnd": "2026-07-17",
+      "status": "APPROVED"
     }
   ]
 }
