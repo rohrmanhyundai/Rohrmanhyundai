@@ -15,5 +15,23 @@
         "agreedBy": "SHAWN"
       }
     }
+  },
+  "2026-07": {
+    "hoursGoal": 0,
+    "hrsRoGoal": 0,
+    "days": {
+      "2026-07-07": {
+        "hours": 80.4,
+        "hrsRo": 1.13,
+        "openRoCount": 12,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "agreed": true,
+        "agreedBy": "SHAWN",
+        "submittedAt": 1783461019821
+      }
+    },
+    "entryMode": "mtd"
   }
 }
