@@ -380,8 +380,8 @@
       "username": "Chapman",
       "lastName": "Cory",
       "password": "cory2026",
-      "role": "advisor",
-      "canEditDashboard": true,
+      "role": "admin",
+      "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
         "advisorRankBoard": false,
@@ -399,7 +399,8 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "managementAccess": false
     },
     {
       "username": "Chad",
