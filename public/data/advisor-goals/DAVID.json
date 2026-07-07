@@ -102,14 +102,14 @@
     "days": {
       "2026-07-01": {
         "hours": 9.4,
-        "hrsRo": 6.3,
         "openRoCount": 20,
         "invoiced": "no",
         "customersUpdated": "no",
         "notesUpdated": "yes",
         "agreed": true,
         "agreedBy": "DAVID",
-        "submittedAt": 1782943587219
+        "submittedAt": 1782943587219,
+        "hrsRo": 64
       },
       "2026-07-02": {
         "hours": 13.8,
