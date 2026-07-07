@@ -184,7 +184,7 @@ function ReadView({ categories }) {
                   {s.opCode && (
                     <button
                       onClick={() => copyOp(s.opCode, s.id)}
-                      title={`Copy op code ${s.opCode}`}
+                      title="Copy op code"
                       style={{
                         display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
                         background: copiedId === s.id ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
@@ -192,7 +192,7 @@ function ReadView({ categories }) {
                         color: copiedId === s.id ? '#4ade80' : '#6ee7f9',
                         borderRadius: 8, padding: '5px 11px', cursor: 'pointer', fontWeight: 800, fontSize: 12,
                       }}
-                    >{copiedId === s.id ? '✓ Copied' : `⧉ ${s.opCode}`}</button>
+                    >{copiedId === s.id ? '✓ Copied' : '⧉ Copy Op Code'}</button>
                   )}
                   {s.price && (
                     <div style={{ fontSize: 17, fontWeight: 900, color: '#6ee7b7', letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{s.price}</div>
