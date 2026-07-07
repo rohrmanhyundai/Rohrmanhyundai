@@ -188,6 +188,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // slow/failed load can't let the advisor slip past the mandatory missed days.
   const [deMissedLoading, setDeMissedLoading] = useState(false);
   const [deMissedLoadErr, setDeMissedLoadErr] = useState('');
+  // After the advisor backfills their missed days, offer a choice: report the
+  // current day now, or come back later (e.g. they fixed the miss mid-day and
+  // the current day isn't over yet). Set true only right after a missed-day save.
+  const [deChoice, setDeChoice] = useState(false);
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -233,7 +237,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
-    setDeMissed([]); setDeMissedErr('');
+    setDeMissed([]); setDeMissedErr(''); setDeChoice(false);
     loadMissedDays();
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
     // being viewed — so an advisor sees their own and a manager previewing an
@@ -475,7 +479,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {} };
         bucketRef.current = norm; setBucket(norm);
       }
-      setDeMissed([]); // gate cleared → proceed to today's report
+      setDeMissed([]);       // gate cleared
+      setDeChoice(true);     // → offer "report today now" or "later"
     } catch (e) {
       setDeMissedErr('Save failed: ' + (e.message || e));
     } finally {
@@ -759,6 +764,31 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     );
   }
 
+  // Shown right after missed days are backfilled: let the advisor report the
+  // current day now, or come back later (their missed-day pin is already cleared,
+  // so closing here doesn't re-flag them).
+  function renderAfterMissedChoice() {
+    return renderGateShell(
+      <div style={{ padding: '26px 22px 24px', textAlign: 'center' }}>
+        <div style={{ fontSize: 34, marginBottom: 8 }}>✅</div>
+        <div style={{ fontSize: 17, fontWeight: 900, color: '#4ade80' }}>Missed days saved</div>
+        <div style={{ fontSize: 13.5, color: '#cbd5e1', marginTop: 8, lineHeight: 1.5 }}>
+          You're caught up. Do you want to complete <strong style={{ color: '#e2e8f0' }}>today's</strong> end-of-day report now, or come back later once your day is done?
+        </div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 22, flexWrap: 'wrap' }}>
+          <button onClick={() => { setDeChoice(false); setDeStep(0); }}
+            style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '10px 22px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+            📋 Report Current Day
+          </button>
+          <button onClick={() => { setDeChoice(false); setDayEndOpen(false); }}
+            style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.15)', color: '#cbd5e1', borderRadius: 8, padding: '10px 22px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+            ⏳ I'll Report Later
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Mandatory missed-day gate — shown before today's report when the advisor has
   // unreported prior working days this month.
   function renderMissedGate() {
@@ -825,6 +855,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     if (deMissedLoading) return renderMissedLoading();
     if (deMissedLoadErr) return renderMissedLoadError();
     if (deMissed.length > 0) return renderMissedGate();
+    if (deChoice) return renderAfterMissedChoice();
     const step = DE_STEPS[deStep];
     const val = step.get ? step.get() : null;
     const answered = step.kind === 'yn' ? !!val : step.kind === 'agree' ? deAgree : String(val ?? '').trim() !== '';

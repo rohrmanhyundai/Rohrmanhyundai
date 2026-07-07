@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals } from '../utils/github';
+import { advisorOffDates } from '../utils/calculations';
 import Chat from './Chat';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
@@ -240,7 +241,18 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   );
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers }) {
+// Non-Sunday working dates for a month, and YYYY-MM / YYYY-MM-DD keys — mirrors
+// the helpers in AdvisorGoals so the missed-day pin uses identical day math.
+function workingDatesCal(year, month) {
+  const dim = new Date(year, month + 1, 0).getDate();
+  const out = [];
+  for (let d = 1; d <= dim; d++) if (new Date(year, month, d).getDay() !== 0) out.push(new Date(year, month, d));
+  return out;
+}
+const dKeyCal = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+const monthKeyCal = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, schedules = {}, vacations = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -248,6 +260,36 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
   const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
   const eodUrgent = easternHour >= 15;
+
+  // Missed End-of-Day Reporting pin: count the logged-in advisor's own
+  // unreported prior working days this month. Drives an attention badge on the
+  // End of Day Reporting button; recomputes on mount and whenever refreshKey
+  // bumps (i.e. after they come back from reporting), so it clears once fixed.
+  const [missedEodCount, setMissedEodCount] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    const me = (currentUser || '').toUpperCase();
+    // Only advisors with a forecast are on the hook; managers just viewing others aren't pinned.
+    if (!me || !(advisorList || []).map(a => (a || '').toUpperCase()).includes(me)) {
+      setMissedEodCount(0);
+      return;
+    }
+    loadAdvisorGoals(me).then(all => {
+      if (cancelled) return;
+      const now = new Date();
+      const days = ((all && all[monthKeyCal(now)]) || {}).days || {};
+      const off = advisorOffDates(me, now.getFullYear(), now.getMonth(), schedules, vacations);
+      const report = new Date(); while (report.getDay() === 0) report.setDate(report.getDate() - 1);
+      const reportKey = dKeyCal(report);
+      const missed = workingDatesCal(now.getFullYear(), now.getMonth()).filter(d => {
+        const k = dKeyCal(d);
+        return k < reportKey && !off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+      }).length;
+      setMissedEodCount(missed);
+    }).catch(() => { if (!cancelled) setMissedEodCount(0); });
+    return () => { cancelled = true; };
+  }, [currentUser, advisorList, schedules, vacations, refreshKey]);
+  const eodMissed = missedEodCount > 0;
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
@@ -539,13 +581,32 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           )}
           {onGoalsForecasting && (
             <>
-              {eodUrgent && <style>{`@keyframes eodPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(239,68,68,.7);transform:scale(1.06)}}`}</style>}
-              <button onClick={onGoalsForecasting}
-                style={eodUrgent
-                  ? { background: 'linear-gradient(180deg,#f97316,#ef4444)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.3s ease-in-out infinite' }
-                  : { background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-                {eodUrgent ? '⏰ End of Day Reporting ‼️' : '🎯 End of Day Reporting'}
-              </button>
+              {(eodUrgent || eodMissed) && <style>{`@keyframes eodPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(239,68,68,.7);transform:scale(1.06)}}@keyframes eodPinBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
+              <span style={{ position: 'relative', display: 'inline-flex' }}>
+                <button onClick={onGoalsForecasting}
+                  style={eodMissed
+                    ? { background: 'linear-gradient(180deg,#dc2626,#991b1b)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.1s ease-in-out infinite' }
+                    : eodUrgent
+                    ? { background: 'linear-gradient(180deg,#f97316,#ef4444)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.3s ease-in-out infinite' }
+                    : { background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+                  {eodMissed
+                    ? `📌 Missed Reporting — Fix Now`
+                    : eodUrgent ? '⏰ End of Day Reporting ‼️' : '🎯 End of Day Reporting'}
+                </button>
+                {eodMissed && (
+                  <span
+                    title={`You have ${missedEodCount} missed day${missedEodCount === 1 ? '' : 's'} of End of Day Reporting to complete`}
+                    style={{
+                      position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
+                      background: '#fbbf24', color: '#7c2d12', fontWeight: 900, fontSize: 12,
+                      border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
+                      transformOrigin: 'center', animation: 'eodPinBob 1.1s ease-in-out infinite', pointerEvents: 'none',
+                    }}>
+                    {missedEodCount}
+                  </span>
+                )}
+              </span>
             </>
           )}
           {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
