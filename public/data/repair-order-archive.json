@@ -1,5 +1,24 @@
 [
   {
+    "id": "mqzc1d79n5u5",
+    "ro": "778758",
+    "roDate": "2026-06-29",
+    "vehicle": "2024 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES LOSS OF POWER AND CEL ON. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/01/2026",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "CHAD IS CURENTLY WORKING ON THIS CAR ",
+    "_archiveId": "mrb6jfgh6ze",
+    "_archivedAt": "2026-07-07T21:47:25.313Z",
+    "_archivedBy": "CHAD",
+    "_source": "wip",
+    "_sourceTech": "CHAD"
+  },
+  {
     "id": "mr9d4wb5heet",
     "ro": "778941",
     "roDate": "2026-07-06",
