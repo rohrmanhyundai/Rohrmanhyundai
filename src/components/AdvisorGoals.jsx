@@ -1095,7 +1095,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             style={{ background: 'rgba(74,222,128,.16)', border: '1px solid rgba(74,222,128,.4)', color: '#4ade80', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>📋 Day End Reporting</button>
         )}
         {onLivePay && (
-          <button onClick={onLivePay}
+          <button onClick={() => onLivePay(selected)}
             style={{ background: 'rgba(52,211,153,.16)', border: '1px solid rgba(52,211,153,.45)', color: '#6ee7b7', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>💵 Live Pay</button>
         )}
         {!isMine && view === 'current' && <div style={{ alignSelf: 'center', fontSize: 12, color: '#fbbf24', fontWeight: 700, marginLeft: 6 }}>👁 Viewing {selected} — {canEditGoals ? 'you can set goals' : 'read-only'}</div>}

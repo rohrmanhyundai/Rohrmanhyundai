@@ -42,7 +42,7 @@ export function computeLivePay(a, hours, servicePolicy, numAdvisors, leadBonus) 
 
 const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#94a3b8' };
 
-export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', onBack, backLabel = '← Back' }) {
+export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', initialAdvisor = '', onBack, backLabel = '← Back' }) {
   const advisors = (data && data.advisors) || [];
   const servicePolicy = safe(data && data.service_policy, 0);
   const numAdvisors = advisors.length || 1;
@@ -55,7 +55,14 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
   const myRecord = advisors.find(a => firstWord(a.name) === me);
 
   const selectable = canViewAll ? advisors : (myRecord ? [myRecord] : []);
-  const [selName, setSelName] = useState(() => (myRecord ? myRecord.name : (selectable[0] ? selectable[0].name : '')));
+  const [selName, setSelName] = useState(() => {
+    // Open on the advisor the manager was viewing (passed from the Goals page).
+    if (canViewAll && initialAdvisor) {
+      const focus = advisors.find(a => firstWord(a.name) === firstWord(initialAdvisor));
+      if (focus) return focus.name;
+    }
+    return myRecord ? myRecord.name : (selectable[0] ? selectable[0].name : '');
+  });
   const selected = selectable.find(a => a.name === selName) || selectable[0] || null;
   const [mode, setMode] = useState('pacing'); // 'sofar' | 'pacing'
 
