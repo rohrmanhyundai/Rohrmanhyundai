@@ -1,7 +1,7 @@
 {
   "id": "mralwbqmxlbd",
   "createdAt": "2026-07-07T12:09:35.086Z",
-  "updatedAt": "2026-07-07T12:18:55.298Z",
+  "updatedAt": "2026-07-07T14:03:47.775Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Alexandrea Povpin",
   "customerPhone": "(630) 528 - 8386",
@@ -10,9 +10,9 @@
   "vehicleYear": "2018",
   "vehicleMake": "HYUNDAI",
   "vehicleModel": "Tucson",
-  "mileage": "",
-  "warrantyCompany": "",
-  "warrantyPhone": "",
+  "mileage": "83648",
+  "warrantyCompany": "ASSURANT",
+  "warrantyPhone": "800-621-2130",
   "claimNumber": "",
   "authNumber": "",
   "laborRate": "190",
@@ -22,7 +22,7 @@
     {
       "id": "mralwbqmtgkq",
       "partNumber": "454853581",
-      "description": "USED ENGINE",
+      "description": "USED ENGINE MILES 66,527",
       "qty": "1",
       "price": "6258.32"
     },
@@ -118,7 +118,7 @@
       "price": "2.87"
     }
   ],
-  "taxPct": "",
+  "taxPct": "7",
   "deductible": "",
   "rental": null,
   "towing": null,
@@ -126,7 +126,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "",
+  "notes": "CALLED IN 07/07/2026 @9:30AM. ",
   "approved": false,
   "approvedDate": "",
   "denied": false,
