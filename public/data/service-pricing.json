@@ -149,9 +149,16 @@
           "price": "$456.99",
           "desc": "Replace Front Pads and Resurface Rotors FACTORY",
           "opCode": "PADRESURF"
+        },
+        {
+          "id": "svc-mrb0nu3zyd5p",
+          "name": "Replace Front Pads and Resurface Rotors [NON OEM]",
+          "price": "$421.99",
+          "desc": "Replace Front Pads and Resurface Rotors [NON OEM]",
+          "opCode": "PADRESURFNONOEM"
         }
       ]
     }
   ],
-  "updatedAt": 1783450905023
+  "updatedAt": 1783451040468
 }
