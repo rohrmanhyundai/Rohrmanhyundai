@@ -20,10 +20,38 @@ function workingDates(year, month) {
 
 const dKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 
+// The daily grid stores each day's MONTH-TO-DATE running totals — advisors type
+// their DMS month total each day, and the page derives "hours closed that day"
+// as the delta from the previous entered day. Older buckets stored each day's
+// OWN production; ensureMtd converts a legacy bucket to running totals exactly
+// ONCE and stamps entryMode:'mtd' so it's never converted again. Hours become a
+// cumulative sum (lossless — the daily deltas recover the original numbers);
+// hrs/RO becomes the running average of the entered daily ratios, which keeps
+// the month-average display identical to before. Idempotent and pure.
+function ensureMtd(bucket) {
+  const base = (bucket && typeof bucket === 'object') ? bucket : {};
+  if (base.entryMode === 'mtd') return base;
+  const days = base.days || {};
+  const keys = Object.keys(days)
+    .filter(k => days[k] && (days[k].hours != null || days[k].hrsRo != null))
+    .sort(); // 'YYYY-MM-DD' sorts chronologically
+  let cum = 0, roSum = 0, roCount = 0;
+  const newDays = { ...days };
+  for (const k of keys) {
+    const rec = days[k] || {};
+    cum = Math.round((cum + safe(rec.hours, 0)) * 100) / 100; // avoid float drift (80.39999…)
+    let mtdRo = safe(rec.hrsRo, 0);
+    if (rec.hrsRo != null && rec.hrsRo !== '') { roSum += safe(rec.hrsRo, 0); roCount += 1; mtdRo = Math.round((roSum / roCount) * 100) / 100; }
+    newDays[k] = { ...rec, hours: cum, hrsRo: mtdRo };
+  }
+  return { ...base, days: newDays, entryMode: 'mtd' };
+}
+
 // Derive everything for one month bucket. `offDates` is the set of YYYY-MM-DD
 // the advisor was scheduled off / on vacation / a holiday — those days are left
 // out of the working-day math so time off is never a negative reflection.
 function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, offDates, todayKey) {
+  bucket = ensureMtd(bucket); // stored hours/hrsRo are month-to-date running totals
   const [y, m] = String(mkStr).split('-').map(Number);
   const off = offDates instanceof Set ? offDates : new Set(offDates || []);
   const allDates = workingDates(y, (m || 1) - 1);
@@ -35,31 +63,39 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
   const dayIsOff = (k) => off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
   const workDates = allDates.filter(dt => !dayIsOff(dKey(dt)));
   const totalDays = totalDaysOverride || workDates.length;
-  let cumHours = 0;
   let workNum = 0;
+  // Walk days in date order tracking the previous entered day's MTD total so we
+  // can derive each day's own production (closed = today's MTD − prior MTD) and
+  // the latest MTD figure (the true month-to-date total / ratio).
+  let prevMtd = 0, lastMtd = 0, lastHrsRo = 0;
   const rows = allDates.map(dt => {
     const k = dKey(dt);
     const isOff = dayIsOff(k);
     if (!isOff) workNum += 1;
     const has = Object.prototype.hasOwnProperty.call(days, k);
     const rec = has ? days[k] : null;
-    const hours = has ? safe(rec.hours, 0) : null;
-    const hrsRo = has ? safe(rec.hrsRo, 0) : null;
-    if (has) cumHours += safe(hours, 0);
+    const hours = has ? safe(rec.hours, 0) : null;   // MTD total as of this day
+    const hrsRo = has ? safe(rec.hrsRo, 0) : null;   // MTD hrs/RO as of this day
+    let closed = null;                               // hours produced this day
+    if (has) {
+      closed = safe(hours, 0) - prevMtd;
+      prevMtd = safe(hours, 0);
+      lastMtd = safe(hours, 0);
+      lastHrsRo = safe(hrsRo, 0);
+    }
     // A past working day with no entry is a missed report; a backfilled one is
     // corrected. Both persist in the month's grid.
     const missed = !isOff && !has && !!todayKey && k < todayKey;
-    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, missed, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? cumHours : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
+    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, closed, missed, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? safe(hours, 0) : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
   });
   const enteredDays = rows.filter(r => r.has).length;
   const completedDays = completedOverride != null ? completedOverride : enteredDays;
-  const actualHours = cumHours;
+  const actualHours = lastMtd; // MTD total = the latest entered day's running total
   const dailyHoursTarget = hoursGoal / Math.max(totalDays, 1);
   const expectedHours = dailyHoursTarget * completedDays;
   const runRate = completedDays > 0 ? actualHours / completedDays : 0;
   const projectedHours = runRate * totalDays;
-  const hrsRoVals = rows.filter(r => r.has).map(r => safe(r.hrsRo, 0));
-  const avgHrsRo = hrsRoVals.length ? hrsRoVals.reduce((a, b) => a + b, 0) / hrsRoVals.length : 0;
+  const avgHrsRo = lastHrsRo; // latest entered MTD hrs/RO = the current month ratio
   const offDaysCount = rows.filter(r => r.off).length;
   const missedDaysCount = rows.filter(r => r.missed).length;
   const correctedDaysCount = rows.filter(r => r.late).length;
@@ -327,10 +363,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       let selectedAll = null;
       for (const r of toApply) {
         const all = await loadAdvisorGoals(r.advisor);
-        const b = (all && all[dmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
-        const days = { ...(b.days || {}), [uploadDate]: { hours: safe(r.hours, 0), hrsRo: safe(r.hrsRo, 0) } };
+        const b = ensureMtd((all && all[dmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
+        // The report's totals are the month-to-date figures for uploadDate.
+        const days = { ...(b.days || {}), [uploadDate]: { ...(b.days && b.days[uploadDate]), hours: safe(r.hours, 0), hrsRo: safe(r.hrsRo, 0) } };
         // saveAdvisorGoalsMonth returns the full merged file it just wrote.
-        const written = await saveAdvisorGoalsMonth(r.advisor, dmk, { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days });
+        const written = await saveAdvisorGoalsMonth(r.advisor, dmk, { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days, entryMode: 'mtd' });
         if ((r.advisor || '').toUpperCase() === (selected || '').toUpperCase()) selectedAll = written;
       }
       // Reflect the on-screen advisor's update from what we just wrote — don't
@@ -338,8 +375,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       // write and leave the grid looking empty.
       if (selectedAll) {
         setAllMonths(selectedAll);
-        const nb = selectedAll[mk] || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
-        const norm = { hoursGoal: safe(nb.hoursGoal, 0), hrsRoGoal: safe(nb.hrsRoGoal, 0), days: nb.days || {} };
+        const nb = ensureMtd(selectedAll[mk] || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
+        const norm = { hoursGoal: safe(nb.hoursGoal, 0), hrsRoGoal: safe(nb.hrsRoGoal, 0), days: nb.days || {}, entryMode: 'mtd' };
         bucketRef.current = norm;
         setBucket(norm);
         setGridOpen(true); // make sure the daily grid is visible so the fill shows
@@ -394,11 +431,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     loadAdvisorGoals(selected).then(all => {
       if (cancelled) return;
       setAllMonths(all || {});
-      const b = (all && all[activeMk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
-      const norm = { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days: b.days || {} };
+      const raw = (all && all[activeMk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const conv = ensureMtd(raw);
+      const norm = { hoursGoal: safe(conv.hoursGoal, 0), hrsRoGoal: safe(conv.hrsRoGoal, 0), days: conv.days || {}, entryMode: 'mtd' };
       bucketRef.current = norm;
       setBucket(norm);
       setLoading(false);
+      // One-time legacy→MTD conversion: persist it so every viewer/export sees the
+      // running totals. Idempotent (entryMode guard), only when there's data to convert.
+      if (raw.entryMode !== 'mtd' && Object.keys(raw.days || {}).length > 0) {
+        saveAdvisorGoalsMonth(selected, activeMk, norm).then(a => { if (!cancelled) setAllMonths(a || {}); }).catch(() => {});
+      }
     }).catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [selected, activeMk, refresh]);
@@ -413,12 +456,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       const tkey = dKey(d);
       let all = {};
       try { all = await loadAdvisorGoals(me); } catch {}
-      const b = (all && all[tmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const b = ensureMtd((all && all[tmk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
       const days = { ...(b.days || {}) };
       days[tkey] = {
         ...(days[tkey] || {}),
-        hours: safe(deHours, 0),
-        hrsRo: safe(deHrsRo, 0),
+        hours: safe(deHours, 0),  // month-to-date total the advisor entered today
+        hrsRo: safe(deHrsRo, 0),  // month-to-date hrs/RO
         openRoCount: safe(deOpenRo, 0),
         invoiced: deInvoiced,
         customersUpdated: deCust,
@@ -427,17 +470,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         agreedBy: me,
         submittedAt: Date.now(),
       };
-      const merged = { ...b, days };
+      const merged = { ...b, days, entryMode: 'mtd' };
       const all2 = await saveAdvisorGoalsMonth(me, tmk, merged);
       setAllMonths(all2 || {});
       // Reflect immediately in the on-screen forecast (don't wait for a reload).
       setSelected(me);
       if (tmk === mk) {
-        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {} };
+        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {}, entryMode: 'mtd' };
         bucketRef.current = norm;
         setBucket(norm);
       }
-      setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Hours ${num(safe(deHours, 0), 1)} and Hrs/RO ${num(safe(deHrsRo, 0), 2)} added to your forecast.`);
+      setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Month-to-date total set to ${num(safe(deHours, 0), 1)} hrs at ${num(safe(deHrsRo, 0), 2)} hrs/RO.`);
       setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false);
       setDayEndOpen(false);
       setView('current'); setGridOpen(true);
@@ -459,12 +502,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     try {
       let all = {};
       try { all = await loadAdvisorGoals(me); } catch {}
-      const b = (all && all[mk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} };
+      const b = ensureMtd((all && all[mk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
       const days = { ...(b.days || {}) };
       for (const m of deMissed) {
         days[m.k] = {
           ...(days[m.k] || {}),
-          hours: safe(m.hours, 0),
+          hours: safe(m.hours, 0),  // month-to-date total as of that missed day
           hrsRo: safe(m.hrsRo, 0),
           missedReason: String(m.reason).trim(),
           late: true,
@@ -472,11 +515,11 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           submittedAt: Date.now(),
         };
       }
-      const merged = { ...b, days };
+      const merged = { ...b, days, entryMode: 'mtd' };
       const all2 = await saveAdvisorGoalsMonth(me, mk, merged);
       setAllMonths(all2 || {});
       if (selected === me && mk === activeMk) {
-        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {} };
+        const norm = { hoursGoal: safe(merged.hoursGoal, 0), hrsRoGoal: safe(merged.hrsRoGoal, 0), days: merged.days || {}, entryMode: 'mtd' };
         bucketRef.current = norm; setBucket(norm);
       }
       setDeMissed([]);       // gate cleared
@@ -502,7 +545,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       const merged = {
         hoursGoal: canEditGoals ? safe(mine.hoursGoal, 0) : safe(latest.hoursGoal, 0),
         hrsRoGoal: canEditGoals ? safe(mine.hrsRoGoal, 0) : safe(latest.hrsRoGoal, 0),
-        days: canEditDaysFor(selected) ? mine.days : (latest.days || {}),
+        days: canEditDaysFor(selected) ? mine.days : ensureMtd(latest).days,
+        entryMode: 'mtd',
       };
       saveAdvisorGoalsMonth(selected, saveMk, merged).then(all => setAllMonths(all || {})).catch(() => {});
     }, 800);
@@ -619,23 +663,24 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         ) : null}
         {gridOpen && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '12px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '54px 1fr 150px 150px 150px', padding: '12px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
               <div>Day</div><div>Date</div>
-              <div style={{ textAlign: 'right' }}>Hours</div>
-              <div style={{ textAlign: 'right' }}>Hrs/RO</div>
+              <div style={{ textAlign: 'right' }}>MTD Hours</div>
+              <div style={{ textAlign: 'right' }}>MTD Hrs/RO</div>
+              <div style={{ textAlign: 'right' }}>Hours Closed</div>
             </div>
             {metrics.rows.map(r => r.off ? (
               // Scheduled off / holiday / vacation — shown for context but not
               // counted toward pace, projection, or the goal line.
-              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)', background: 'rgba(148,163,184,.05)' }}>
+              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '54px 1fr 150px 150px 150px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)', background: 'rgba(148,163,184,.05)' }}>
                 <div style={{ color: '#475569', fontWeight: 700 }}>—</div>
                 <div style={{ color: '#64748b' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
-                <div style={{ gridColumn: 'span 2', textAlign: 'right' }}>
+                <div style={{ gridColumn: 'span 3', textAlign: 'right' }}>
                   <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', color: '#94a3b8', background: 'rgba(148,163,184,.14)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 999, padding: '3px 12px' }}>OFF — NOT COUNTED</span>
                 </div>
               </div>
             ) : (
-              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '64px 1fr 160px 160px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
+              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '54px 1fr 150px 150px 150px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)' }}>
                 <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
                 <div style={{ color: '#cbd5e1' }}>
                   {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
@@ -651,6 +696,10 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                   {editable.days
                     ? <input type="number" inputMode="decimal" style={{ ...inpSt, width: 120, color: r.has ? '#93c5fd' : '#e2e8f0' }} value={r.has && r.hrsRo != null ? r.hrsRo : ''} placeholder="—" onChange={e => setDay(r.k, 'hrsRo', e.target.value)} />
                     : <span style={{ color: r.has ? '#93c5fd' : '#475569', fontWeight: 700 }}>{r.has && r.hrsRo != null ? num(r.hrsRo, 2) : '—'}</span>}
+                </div>
+                <div style={{ textAlign: 'right', fontWeight: 800, color: r.has ? (r.closed >= 0 ? '#34d399' : '#fb7185') : '#475569' }}
+                  title="Hours closed this day = today's month-to-date total − the previous entered day's total">
+                  {r.has ? `${r.closed >= 0 ? '' : '−'}${num(Math.abs(r.closed), 1)}` : '—'}
                 </div>
               </div>
             ))}
@@ -715,8 +764,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     { key: 'invoiced', kind: 'yn', q: 'Are all available repair orders invoiced?', get: () => deInvoiced, set: setDeInvoiced },
     { key: 'cust', kind: 'yn', q: 'Are all customers updated on status?', get: () => deCust, set: setDeCust },
     { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', get: () => deNotes, set: setDeNotes },
-    { key: 'hours', kind: 'num', q: 'End of Day Hours Sold', sub: 'Adds to your forecast for today', placeholder: 'e.g. 14.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
-    { key: 'hrsro', kind: 'num', q: 'Hrs/RO', sub: 'Adds to your forecast for today', placeholder: 'e.g. 2.4', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
+    { key: 'hours', kind: 'num', q: 'Total Hours for the Month (MTD)', sub: 'Your month-to-date total from the DMS — the page figures today’s hours', placeholder: 'e.g. 82.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
+    { key: 'hrsro', kind: 'num', q: 'Month Hrs/RO (MTD)', sub: 'Your month-to-date hrs/RO from the DMS', placeholder: 'e.g. 1.3', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
     { key: 'agree', kind: 'agree', q: 'Confirm & Submit' },
   ];
 
@@ -814,14 +863,14 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                 <div style={{ fontSize: 17, fontWeight: 900, color: '#f8fafc', marginBottom: 10, letterSpacing: '-.01em' }}>📅 {m.full || m.label}</div>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   <label style={{ flex: '1 1 120px' }}>
-                    <div style={lblSt}>Hours</div>
-                    <input type="number" inputMode="decimal" value={m.hours} placeholder="e.g. 14.5"
+                    <div style={lblSt}>Total Hours (MTD as of this day)</div>
+                    <input type="number" inputMode="decimal" value={m.hours} placeholder="e.g. 62.0"
                       onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, hours: e.target.value } : x))}
                       style={{ ...inpSt, width: '100%', color: '#6ee7b7', textAlign: 'left', boxSizing: 'border-box' }} />
                   </label>
                   <label style={{ flex: '1 1 120px' }}>
-                    <div style={lblSt}>Hrs/RO</div>
-                    <input type="number" inputMode="decimal" value={m.hrsRo} placeholder="e.g. 2.4"
+                    <div style={lblSt}>Month Hrs/RO</div>
+                    <input type="number" inputMode="decimal" value={m.hrsRo} placeholder="e.g. 1.3"
                       onChange={e => setDeMissed(list => list.map((x, ix) => ix === i ? { ...x, hrsRo: e.target.value } : x))}
                       style={{ ...inpSt, width: '100%', color: '#93c5fd', textAlign: 'left', boxSizing: 'border-box' }} />
                   </label>
