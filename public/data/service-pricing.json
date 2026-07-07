@@ -108,6 +108,13 @@
           "price": "$249.97",
           "desc": "Full inverter cooling service for Hybrid or EV",
           "opCode": "VVICFL"
+        },
+        {
+          "id": "svc-mrazlujvwg6l",
+          "name": "Valvoline Front Differential Fluid Service",
+          "price": "$139.99",
+          "desc": "Full front diff service",
+          "opCode": "VVFDFL"
         }
       ]
     },
@@ -125,5 +132,5 @@
       ]
     }
   ],
-  "updatedAt": 1783449176663
+  "updatedAt": 1783449469986
 }
