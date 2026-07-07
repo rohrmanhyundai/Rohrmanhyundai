@@ -3,7 +3,7 @@
   "categories": [
     {
       "id": "cat-maintenance",
-      "name": "Maintenance Taxes and Fees not included",
+      "name": "Maintenance *Taxes and Fees not included",
       "services": [
         {
           "id": "svc-oil-synth",
@@ -58,7 +58,7 @@
     },
     {
       "id": "cat-brakes",
-      "name": "Valvoline Service Taxes and Fees not included",
+      "name": "Valvoline Service *Taxes and Fees not included",
       "services": [
         {
           "id": "svc-mrawz7qkgo3h",
@@ -134,7 +134,7 @@
     },
     {
       "id": "cat-batteries",
-      "name": "Batteries",
+      "name": "Front and Rear Brake Service *Taxes and Fees not included",
       "services": [
         {
           "id": "svc-battery",
@@ -146,5 +146,5 @@
       ]
     }
   ],
-  "updatedAt": 1783449646234
+  "updatedAt": 1783449798758
 }
