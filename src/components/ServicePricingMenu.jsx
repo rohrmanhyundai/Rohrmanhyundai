@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadServicePricing, saveServicePricing } from '../utils/github';
 
 const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-const emptyService = () => ({ id: uid('svc'), name: '', price: '', desc: '' });
+const emptyService = () => ({ id: uid('svc'), name: '', price: '', desc: '', opCode: '' });
 const emptyCategory = () => ({ id: uid('cat'), name: '', services: [emptyService()] });
 
 // Shared input styling for the editor.
@@ -75,7 +75,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
     try {
       // Drop fully-blank service rows so a stray "add" doesn't leave empties.
       const clean = categories
-        .map(c => ({ ...c, name: (c.name || '').trim(), services: (c.services || []).map(s => ({ ...s, name: (s.name || '').trim(), price: (s.price || '').trim(), desc: (s.desc || '').trim() })).filter(s => s.name) }))
+        .map(c => ({ ...c, name: (c.name || '').trim(), services: (c.services || []).map(s => ({ ...s, name: (s.name || '').trim(), price: (s.price || '').trim(), desc: (s.desc || '').trim(), opCode: (s.opCode || '').trim() })).filter(s => s.name) }))
         .filter(c => c.name || c.services.length);
       const saved = await saveServicePricing({ by: (currentUser || '').toUpperCase(), categories: clean });
       setCategories(clean);
@@ -139,6 +139,20 @@ function pillTab(active) {
 
 // ── Modern read-only menu (all advisors) ─────────────────────────────────────
 function ReadView({ categories }) {
+  const [copiedId, setCopiedId] = useState('');
+  const copyOp = (code, id) => {
+    const v = String(code || '').trim();
+    if (!v) return;
+    const done = () => { setCopiedId(id); setTimeout(() => setCopiedId(c => c === id ? '' : c), 1400); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(v).then(done).catch(() => {});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = v; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch {}
+      document.body.removeChild(ta);
+    }
+  };
   const populated = categories.map(c => ({ ...c, services: (c.services || []).filter(s => s.name) })).filter(c => c.services.length || c.name);
   if (!populated.length) {
     return <div style={{ color: '#475569', textAlign: 'center', padding: '60px 0', fontSize: 15 }}>No services listed yet.</div>;
@@ -166,9 +180,24 @@ function ReadView({ categories }) {
                   <div style={{ fontSize: 15.5, fontWeight: 700, color: '#e2e8f0' }}>{s.name}</div>
                   {s.desc && <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 3, lineHeight: 1.45 }}>{s.desc}</div>}
                 </div>
-                {s.price && (
-                  <div style={{ flexShrink: 0, fontSize: 17, fontWeight: 900, color: '#6ee7b7', letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{s.price}</div>
-                )}
+                <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14 }}>
+                  {s.opCode && (
+                    <button
+                      onClick={() => copyOp(s.opCode, s.id)}
+                      title={`Copy op code ${s.opCode}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+                        background: copiedId === s.id ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
+                        border: `1px solid ${copiedId === s.id ? 'rgba(74,222,128,.55)' : 'rgba(110,231,249,.4)'}`,
+                        color: copiedId === s.id ? '#4ade80' : '#6ee7f9',
+                        borderRadius: 8, padding: '5px 11px', cursor: 'pointer', fontWeight: 800, fontSize: 12,
+                      }}
+                    >{copiedId === s.id ? '✓ Copied' : `⧉ ${s.opCode}`}</button>
+                  )}
+                  {s.price && (
+                    <div style={{ fontSize: 17, fontWeight: 900, color: '#6ee7b7', letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{s.price}</div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -204,20 +233,23 @@ function EditView({ categories, addCategory, renameCategory, deleteCategory, mov
 
           {/* Column headers */}
           <div style={{ display: 'flex', gap: 10, padding: '0 4px 6px', color: '#64748b', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-            <div style={{ flex: '2 1 220px' }}>Service</div>
-            <div style={{ flex: '0 0 130px' }}>Price</div>
-            <div style={{ flex: '3 1 300px' }}>Description (optional)</div>
+            <div style={{ flex: '2 1 190px' }}>Service</div>
+            <div style={{ flex: '0 0 110px' }}>Op Code</div>
+            <div style={{ flex: '0 0 110px' }}>Price</div>
+            <div style={{ flex: '3 1 240px' }}>Description (optional)</div>
             <div style={{ flex: '0 0 74px' }} />
           </div>
 
           {(cat.services || []).map((s, si) => (
             <div key={s.id} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
               <input value={s.name} onChange={e => updateService(ci, si, 'name', e.target.value)} placeholder="Service name"
-                style={{ ...editInp, flex: '2 1 220px' }} />
+                style={{ ...editInp, flex: '2 1 190px' }} />
+              <input value={s.opCode || ''} onChange={e => updateService(ci, si, 'opCode', e.target.value)} placeholder="Op code"
+                style={{ ...editInp, flex: '0 0 110px', color: '#6ee7f9', fontWeight: 700 }} />
               <input value={s.price} onChange={e => updateService(ci, si, 'price', e.target.value)} placeholder="$0.00"
-                style={{ ...editInp, flex: '0 0 130px', color: '#6ee7b7', fontWeight: 800 }} />
+                style={{ ...editInp, flex: '0 0 110px', color: '#6ee7b7', fontWeight: 800 }} />
               <input value={s.desc} onChange={e => updateService(ci, si, 'desc', e.target.value)} placeholder="Short description…"
-                style={{ ...editInp, flex: '3 1 300px' }} />
+                style={{ ...editInp, flex: '3 1 240px' }} />
               <div style={{ flex: '0 0 74px', display: 'flex', gap: 3 }}>
                 <button title="Move up" onClick={() => moveService(ci, si, -1)} disabled={si === 0} style={iconBtn(si === 0)}>↑</button>
                 <button title="Move down" onClick={() => moveService(ci, si, 1)} disabled={si === cat.services.length - 1} style={iconBtn(si === cat.services.length - 1)}>↓</button>
