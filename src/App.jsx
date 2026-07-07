@@ -12,6 +12,7 @@ import AdvisorCalendar from './components/AdvisorCalendar';
 import RoUpload from './components/RoUpload';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import DocumentLibrary from './components/DocumentLibrary';
+import ServicePricingMenu from './components/ServicePricingMenu';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
@@ -830,6 +831,7 @@ export default function App() {
         onRoUpload={() => goTo('ro-upload', 'advisor-calendar')}
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
+        onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
@@ -878,6 +880,23 @@ export default function App() {
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={dlBackLabel}
+      />
+    );
+  }
+
+  if (page === 'service-pricing') {
+    const spBackLabels = {
+      'parts-hub': '← Parts Hub',
+      'manager-hub': '← Manager Hub',
+      'tech-resources': '← Tech Resources',
+      'advisor-calendar': '← Appointment Prep Calendar',
+    };
+    return (
+      <ServicePricingMenu
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={spBackLabels[prevPage] || '← Back'}
       />
     );
   }
