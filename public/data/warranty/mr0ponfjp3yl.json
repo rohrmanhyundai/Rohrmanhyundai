@@ -1,7 +1,7 @@
 {
   "id": "mr0ponfjp3yl",
   "createdAt": "2026-06-30T13:57:53.695Z",
-  "updatedAt": "2026-06-30T14:19:55.980Z",
+  "updatedAt": "2026-07-07T20:18:36.046Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Kevin Peterson",
   "customerPhone": "219) 588 - 1693",
@@ -16,7 +16,7 @@
   "claimNumber": "PRO3080525",
   "authNumber": "",
   "laborRate": "190.00",
-  "laborTime": "8.5",
+  "laborTime": "11.0",
   "diagnosisTime": "1.0",
   "parts": [
     {
@@ -46,6 +46,20 @@
       "description": "EXTENSION WIRE",
       "qty": "1",
       "price": "218.61"
+    },
+    {
+      "id": "mrb2lmzs98cy",
+      "partNumber": "25600-2M810",
+      "description": " THERMAL MANAGEMENT MODULE",
+      "qty": "1",
+      "price": "627.44"
+    },
+    {
+      "id": "mrb2my3cwh9z",
+      "partNumber": "00232-19098",
+      "description": "PINK, ANTIFREEZE/COOLANT",
+      "qty": "1",
+      "price": "36.97"
     }
   ],
   "taxPct": "7",
@@ -56,7 +70,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "PARTRS NOT COVERED: 28422-2M800 - HOSE ASSY-EGR COOLER,OUT\n1 each\n-\nTomorrow\n$50.44\nQuoted\n28421-2M800 - HOSE-EGR COOLER \"A\"\n1 each\n-\nTomorrow\n$49.60\nQuoted\n\nLABOR 8.0 R&R EGR AND .50 HARNESS PLUS 1.0 DIAG.",
+  "notes": "PARTRS NOT COVERED: 28422-2M800 - HOSE ASSY-EGR COOLER,OUT\n1 each\n-\nTomorrow\n$50.44\nQuoted\n28421-2M800 - HOSE-EGR COOLER \"A\"\n1 each\n-\nTomorrow\n$49.60\nQuoted\n\nLABOR 8.0 R&R EGR AND .50 HARNESS PLUS 1.0 DIAG.\n\ncalled 07/07/2026 @ 3:55pm to add a  THERMAL MANAGEMENT MODULE. 2.5 R&R added to repair. APPROVED.",
   "approved": true,
   "approvedDate": "2026-06-30",
   "denied": false,
