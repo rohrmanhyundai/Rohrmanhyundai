@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-07T11:52:13.813Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-02T14:01:44.266Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -217,30 +222,5 @@
     "at": "2026-06-08T13:03:25.762Z",
     "type": "page",
     "label": "work-schedule"
-  },
-  {
-    "at": "2026-06-05T11:59:31.355Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-05T11:59:29.044Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-06-04T17:18:23.402Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T19:57:34.269Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-06-03T12:11:14.596Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
