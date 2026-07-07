@@ -112,6 +112,17 @@
         "late": true,
         "agreedBy": "JORDAN",
         "submittedAt": 1783453406711
+      },
+      "2026-07-07": {
+        "hours": 64.8,
+        "hrsRo": 0.88,
+        "openRoCount": 20,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1783460890971
       }
     },
     "entryMode": "mtd"
