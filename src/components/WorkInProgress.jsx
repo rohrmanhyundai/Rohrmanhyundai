@@ -380,6 +380,112 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     onBack();
   }
 
+  // Build and open a clean, modern printable sheet of the active tech's WIP list.
+  // Renders into a fresh window with its own light-theme stylesheet so the print
+  // never inherits the app's dark UI, then fires the browser print dialog.
+  function printWip() {
+    const esc = (s) => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // Match the on-screen order: high priority first, otherwise stable.
+    const ordered = [...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0));
+
+    const printedOn = new Date().toLocaleString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+    });
+
+    const partsCell = (r) => {
+      if (r.partsArrived === true) return `<span class="pill pill-green">Parts Here${r.partsArrivedDate ? ` &middot; ${esc(r.partsArrivedDate)}` : ''}</span>`;
+      if (r.partsArrived === false) return `<span class="pill pill-red">Not In</span>`;
+      return `<span class="muted">—</span>`;
+    };
+
+    const rowsHtml = ordered.map((r, i) => `
+      <div class="card${r.highPriority ? ' card-hi' : ''}">
+        <div class="card-head">
+          <div class="ro-block">
+            <span class="ro-num">RO# ${esc(r.ro || '—')}</span>
+            ${r.highPriority ? '<span class="pill pill-hi">HIGH PRIORITY</span>' : ''}
+          </div>
+          <div class="row-index">#${i + 1}</div>
+        </div>
+        <div class="grid">
+          <div class="field"><div class="flabel">RO Date</div><div class="fval">${esc(r.roDate || '—')}</div></div>
+          <div class="field"><div class="flabel">Vehicle</div><div class="fval">${esc(r.vehicle || '—')}</div></div>
+          <div class="field"><div class="flabel">Advisor</div><div class="fval">${esc(r.advisor || '—')}</div></div>
+          <div class="field"><div class="flabel">Parts Arrived</div><div class="fval">${partsCell(r)}</div></div>
+          <div class="field"><div class="flabel">ETA Parts</div><div class="fval">${esc(r.etaParts || '—')}</div></div>
+          <div class="field"><div class="flabel">ETA Completion</div><div class="fval">${esc(r.etaCompletion || '—')}</div></div>
+        </div>
+        <div class="field field-wide"><div class="flabel">Job Description</div><div class="fval">${esc(r.jobDesc || '—')}</div></div>
+        ${r.notes ? `<div class="field field-wide"><div class="flabel">Notes</div><div class="fval notes">${esc(r.notes)}</div></div>` : ''}
+      </div>
+    `).join('');
+
+    const html = `<!doctype html>
+<html><head><meta charset="utf-8"><title>WIP — ${esc(activeTech)}</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #0f172a; background: #fff; padding: 28px 32px; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 3px solid #0ea5b7; padding-bottom: 14px; margin-bottom: 22px; }
+  .head h1 { font-size: 22px; margin: 0; letter-spacing: -.01em; }
+  .head .sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+  .head .tech { font-size: 28px; font-weight: 800; color: #0ea5b7; letter-spacing: -.02em; }
+  .head .meta { text-align: right; font-size: 12px; color: #64748b; }
+  .count { font-size: 12px; color: #475569; margin-bottom: 16px; font-weight: 600; }
+  .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; page-break-inside: avoid; }
+  .card-hi { border-color: #fca5a5; background: #fff5f5; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .ro-block { display: flex; align-items: center; gap: 10px; }
+  .ro-num { font-size: 17px; font-weight: 800; color: #0f172a; }
+  .row-index { font-size: 12px; font-weight: 700; color: #94a3b8; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 20px; margin-bottom: 8px; }
+  .field { min-width: 0; }
+  .field-wide { margin-top: 6px; }
+  .flabel { font-size: 9px; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; font-weight: 700; margin-bottom: 2px; }
+  .fval { font-size: 13px; color: #1e293b; word-wrap: break-word; }
+  .fval.notes { white-space: pre-wrap; line-height: 1.5; }
+  .muted { color: #cbd5e1; }
+  .pill { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 999px; }
+  .pill-green { background: #dcfce7; color: #15803d; }
+  .pill-red { background: #fee2e2; color: #b91c1c; }
+  .pill-hi { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+  .empty { text-align: center; color: #94a3b8; padding: 60px 0; font-size: 15px; }
+  .foot { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center; }
+  @page { margin: 0.5in; }
+</style></head>
+<body>
+  <div class="head">
+    <div>
+      <h1>Work in Progress</h1>
+      <div class="sub">Rohrman Hyundai &middot; Service</div>
+    </div>
+    <div class="meta">
+      <div class="tech">${esc(activeTech)}</div>
+      <div>Printed ${esc(printedOn)}</div>
+    </div>
+  </div>
+  <div class="count">${ordered.length} open repair order${ordered.length === 1 ? '' : 's'}</div>
+  ${ordered.length ? rowsHtml : '<div class="empty">No work in progress for this technician.</div>'}
+  <div class="foot">Rohrman Hyundai Service — Work in Progress — ${esc(activeTech)}</div>
+</body></html>`;
+
+    const w = window.open('', '_blank');
+    if (!w) { setError('Pop-up blocked — allow pop-ups to print.'); return; }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    // Give the new document a tick to lay out before invoking print.
+    w.focus();
+    setTimeout(() => { try { w.print(); } catch {} }, 350);
+  }
+
   // Map a tech name to the exact casing used in the tab roster (techList) so a
   // jump always lands on a real, selected tab. WIP files are stored uppercase
   // (listWipTechs returns UPPERCASE) while techList may be mixed-case; without
@@ -799,6 +905,16 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
           <div className="adv-sub">{activeTech}</div>
         </div>
         <div style={{ flex: 1 }} />
+        <button
+          onClick={printWip}
+          disabled={loading || searchResults !== null}
+          title={`Print ${activeTech}'s Work in Progress`}
+          style={{
+            background: 'rgba(110,231,249,.14)', border: '1px solid rgba(110,231,249,.4)',
+            color: '#6ee7f9', borderRadius: 8, padding: '7px 16px', cursor: (loading || searchResults !== null) ? 'not-allowed' : 'pointer',
+            fontWeight: 800, fontSize: 13, whiteSpace: 'nowrap', opacity: (loading || searchResults !== null) ? 0.5 : 1,
+          }}
+        >🖨️ Print WIP</button>
         <button className="secondary" onClick={handleBack} disabled={saving}>
           {saving ? '⏳ Saving…' : backText}
         </button>
