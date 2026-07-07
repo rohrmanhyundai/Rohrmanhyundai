@@ -39,5 +39,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "mrb47nrh0nws",
+    "ro": "778982",
+    "roDate": "2026-07-07",
+    "vehicle": "2022 Hyundai Tucson Hybrid",
+    "jobDesc": "ENGINE SIDE COVER REMOVE RESEAL",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
