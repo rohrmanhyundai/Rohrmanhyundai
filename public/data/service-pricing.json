@@ -94,6 +94,13 @@
           "price": "$106.98",
           "desc": "Full Ac cleaning service",
           "opCode": "VVACLEAN"
+        },
+        {
+          "id": "svc-mrazf73m0kn0",
+          "name": "Valvoline Oil Flush Service",
+          "price": "$270.00",
+          "desc": "Full oil flush service includes oil change",
+          "opCode": "VVEFL"
         }
       ]
     },
@@ -111,5 +118,5 @@
       ]
     }
   ],
-  "updatedAt": 1783448888771
+  "updatedAt": 1783448968337
 }
