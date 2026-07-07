@@ -34,8 +34,8 @@
     "jobDesc": "CUSTOMER STATES IN 2ND GEAR ITS STARTS TO SHAKE QUITE A BIT. CHECK AND ADVISE.",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/07/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
