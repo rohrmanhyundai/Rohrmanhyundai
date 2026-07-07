@@ -9,43 +9,50 @@
           "id": "svc-oil-synth",
           "name": "Synthetic Oil Change ROH$",
           "price": "$50.00",
-          "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection."
+          "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection.",
+          "opCode": "ROHR50"
         },
         {
           "id": "svc-tire-rotate",
           "name": "Tire Rotation",
           "price": "$34.95",
-          "desc": "Rotate and inspect all four tires and set pressures to spec."
+          "desc": "Rotate and inspect all four tires and set pressures to spec.",
+          "opCode": ""
         },
         {
           "id": "svc-cabin-filter",
           "name": "Cabin Air Filter",
           "price": "$60.50",
-          "desc": "Replace cabin air filter."
+          "desc": "Replace cabin air filter.",
+          "opCode": ""
         },
         {
           "id": "svc-mrawpcukrk6j",
           "name": "Cabin Air Filter NON-OEM",
           "price": "$48.50",
-          "desc": "Replace cabin air filter. NON-OEM replacement"
+          "desc": "Replace cabin air filter. NON-OEM replacement",
+          "opCode": ""
         },
         {
           "id": "svc-mrawsxklwm7j",
           "name": "Air Filter",
           "price": "$60.50",
-          "desc": "Engine Air Filter Replacement"
+          "desc": "Engine Air Filter Replacement",
+          "opCode": ""
         },
         {
           "id": "svc-mrawtpr17398",
           "name": "Air Filter NON-OEM",
           "price": "$48.50",
-          "desc": "Air Filter NON-OEM replacement"
+          "desc": "Air Filter NON-OEM replacement",
+          "opCode": ""
         },
         {
           "id": "svc-mrax890sd4fl",
           "name": "4 WHEEL ALIGNMENT",
           "price": "$139.95",
-          "desc": "4 WHEEL ALIGNMENT"
+          "desc": "4 WHEEL ALIGNMENT",
+          "opCode": ""
         }
       ]
     },
@@ -57,7 +64,8 @@
           "id": "svc-mrawz7qkgo3h",
           "name": "Valvoline Fuel Service",
           "price": "$209.99",
-          "desc": "Valvoline Fuel Service cleans fuel injectors and valves inproves fuel eco"
+          "desc": "Valvoline Fuel Service cleans fuel injectors and valves inproves fuel eco",
+          "opCode": ""
         }
       ]
     },
@@ -69,10 +77,11 @@
           "id": "svc-battery",
           "name": "Battery Replacement",
           "price": "$219.95",
-          "desc": "OEM battery, installation, and charging-system test."
+          "desc": "OEM battery, installation, and charging-system test.",
+          "opCode": ""
         }
       ]
     }
   ],
-  "updatedAt": 1783445261746
+  "updatedAt": 1783447533939
 }
