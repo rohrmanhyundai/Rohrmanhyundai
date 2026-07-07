@@ -53,6 +53,13 @@
           "price": "$139.95",
           "desc": "4 WHEEL ALIGNMENT",
           "opCode": "ALIGNMENT"
+        },
+        {
+          "id": "svc-mrb0f85sour6",
+          "name": "4 Wheel Balance",
+          "price": "$99.99",
+          "desc": "Complete 4 wheel balance includes tire rotation",
+          "opCode": "BALANCE"
         }
       ]
     },
@@ -146,5 +153,5 @@
       ]
     }
   ],
-  "updatedAt": 1783449798758
+  "updatedAt": 1783450621098
 }
