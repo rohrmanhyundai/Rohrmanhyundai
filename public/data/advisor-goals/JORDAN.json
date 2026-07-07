@@ -98,21 +98,22 @@
         "hrsRo": 1.03
       },
       "2026-07-02": {
-        "hours": 16.7,
-        "hrsRo": 0.76
+        "hours": 31.6,
+        "hrsRo": 0.9
       },
       "2026-07-03": {
-        "hours": 11.1,
-        "hrsRo": 0.85
+        "hours": 42.7,
+        "hrsRo": 0.88
       },
       "2026-07-06": {
-        "hours": 12.7,
-        "hrsRo": 0.67,
+        "hours": 55.4,
+        "hrsRo": 0.83,
         "missedReason": "missed",
         "late": true,
         "agreedBy": "JORDAN",
         "submittedAt": 1783453406711
       }
-    }
+    },
+    "entryMode": "mtd"
   }
 }
