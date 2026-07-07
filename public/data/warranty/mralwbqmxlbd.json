@@ -1,7 +1,7 @@
 {
   "id": "mralwbqmxlbd",
   "createdAt": "2026-07-07T12:09:35.086Z",
-  "updatedAt": "2026-07-07T12:17:31.142Z",
+  "updatedAt": "2026-07-07T12:18:55.298Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Alexandrea Povpin",
   "customerPhone": "(630) 528 - 8386",
@@ -15,9 +15,9 @@
   "warrantyPhone": "",
   "claimNumber": "",
   "authNumber": "",
-  "laborRate": "",
-  "laborTime": "",
-  "diagnosisTime": "",
+  "laborRate": "190",
+  "laborTime": "16.7",
+  "diagnosisTime": "1",
   "parts": [
     {
       "id": "mralwbqmtgkq",
