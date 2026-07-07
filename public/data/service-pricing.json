@@ -113,8 +113,15 @@
           "id": "svc-mrazlujvwg6l",
           "name": "Valvoline Front Differential Fluid Service",
           "price": "$139.99",
-          "desc": "Full front diff service",
+          "desc": "Full front differential service",
           "opCode": "VVFDFL"
+        },
+        {
+          "id": "svc-mrazs69k5qxe",
+          "name": "Valvoline Rear Differential Fluid Service",
+          "price": "$139.99",
+          "desc": "Full rear differential service",
+          "opCode": "VVRDFL"
         }
       ]
     },
@@ -132,5 +139,5 @@
       ]
     }
   ],
-  "updatedAt": 1783449469986
+  "updatedAt": 1783449564227
 }
