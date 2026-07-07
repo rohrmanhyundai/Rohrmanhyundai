@@ -1223,6 +1223,22 @@ export async function saveMissingNotes(data) {
   return data;
 }
 
+// ── Service Pricing Menu ─────────────────────────────────────────────────────
+// A manager/admin-editable menu of services + prices that all advisors can view.
+// Stored as one JSON file: { updatedAt, by, categories: [{ id, name, services:
+// [{ id, name, price, desc }] }] }.
+const SERVICE_PRICING_PATH = 'data/service-pricing.json';
+export async function loadServicePricing() {
+  const d = await loadGithubFile(SERVICE_PRICING_PATH);
+  if (d && typeof d === 'object' && Array.isArray(d.categories)) return d;
+  return { updatedAt: null, by: '', categories: [] };
+}
+export async function saveServicePricing(data) {
+  const payload = { ...data, updatedAt: Date.now() };
+  await saveGithubFile(SERVICE_PRICING_PATH, payload, `Service pricing menu ${new Date().toISOString()}`);
+  return payload;
+}
+
 // ── Generic file helpers for DCT/MTM worksheets ──────────────────────────────
 export async function loadGithubFile(path) {
   try {
