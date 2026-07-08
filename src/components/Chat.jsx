@@ -26,6 +26,26 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
   const textareaRef = useRef(null);
+  // Tracks which message ids we've already seen, so we only fire a desktop
+  // notification for genuinely new messages (not reactions/deletes, which also
+  // re-fetch). null = not yet seeded (first load seeds silently).
+  const seenIdsRef = useRef(null);
+
+  const notifSupported = typeof window !== 'undefined' && 'Notification' in window;
+  const [notifPerm, setNotifPerm] = useState(() => (notifSupported ? Notification.permission : 'unsupported'));
+  const [notifDismissed, setNotifDismissed] = useState(() => {
+    try { return localStorage.getItem('advisorChatNotifDismissed') === '1'; } catch { return false; }
+  });
+  const showNotifBanner = hasChatAccess && notifSupported && notifPerm === 'default' && !notifDismissed;
+
+  function enableNotifications() {
+    if (!notifSupported) return;
+    Notification.requestPermission().then(p => setNotifPerm(p)).catch(() => {});
+  }
+  function dismissNotifBanner() {
+    setNotifDismissed(true);
+    try { localStorage.setItem('advisorChatNotifDismissed', '1'); } catch {}
+  }
 
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
 
@@ -38,9 +58,29 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   const fetchMessages = useCallback(async () => {
     try {
       const msgs = await loadChatMessages();
+      if (seenIdsRef.current === null) {
+        // First load — remember what's already there, notify for nothing.
+        seenIdsRef.current = new Set(msgs.map(m => m.id));
+      } else {
+        const fresh = msgs.filter(m => !seenIdsRef.current.has(m.id));
+        fresh.forEach(m => seenIdsRef.current.add(m.id));
+        const fromOthers = fresh.filter(m => (m.username || '').toUpperCase() !== (currentUser || '').toUpperCase());
+        const focused = document.visibilityState === 'visible' && document.hasFocus();
+        if (fromOthers.length && !focused && 'Notification' in window && Notification.permission === 'granted') {
+          try {
+            const last = fromOthers[fromOthers.length - 1];
+            const title = fromOthers.length === 1 ? `💬 ${last.username}` : '💬 Advisor Chat';
+            const body = fromOthers.length === 1
+              ? (last.text || '').slice(0, 140)
+              : `${fromOthers.length} new messages · latest from ${last.username}`;
+            const n = new Notification(title, { body, tag: 'rohrman-advisor-chat' });
+            n.onclick = () => { try { window.focus(); } catch {} n.close(); };
+          } catch {}
+        }
+      }
       setMessages(msgs);
     } catch {}
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     fetchMessages();
@@ -219,6 +259,30 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           <div style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>Group conversation · auto-clears after 30 days</div>
         </div>
       </div>
+
+      {/* Desktop-notification opt-in (first time only) */}
+      {showNotifBanner && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 14px', flexShrink: 0,
+          background: 'rgba(59,130,246,0.1)', borderBottom: '1px solid rgba(96,165,250,0.25)',
+        }}>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>🔔</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#dbeafe' }}>Turn on desktop alerts</div>
+            <div style={{ fontSize: 11, color: '#93c5fd' }}>Get a pop-up on your Mac when a new message arrives.</div>
+          </div>
+          <button onClick={enableNotifications} style={{
+            background: ME_GRADIENT, border: 'none', color: '#fff',
+            borderRadius: 999, padding: '6px 16px', fontWeight: 800, fontSize: 12, cursor: 'pointer',
+            boxShadow: '0 2px 6px rgba(37,99,235,.4)', flexShrink: 0,
+          }}>Enable</button>
+          <button onClick={dismissNotifBanner} title="Not now" style={{
+            background: 'none', border: 'none', color: '#64748b', fontSize: 16,
+            cursor: 'pointer', padding: '0 4px', lineHeight: 1, flexShrink: 0,
+          }}>✕</button>
+        </div>
+      )}
 
       {/* Messages */}
       <div ref={scrollRef} className="chat-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '14px 14px 18px', display: 'flex', flexDirection: 'column' }}>
