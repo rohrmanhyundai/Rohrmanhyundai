@@ -1,7 +1,7 @@
 {
   "id": "mrcf2c5jsfnr",
   "createdAt": "2026-07-08T18:33:50.599Z",
-  "updatedAt": "2026-07-08T18:36:09.863Z",
+  "updatedAt": "2026-07-08T18:36:49.695Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Tawana Williams",
   "customerPhone": "765) 437 - 9456",
@@ -15,8 +15,8 @@
   "warrantyPhone": "8886849327",
   "claimNumber": "292-16761592",
   "authNumber": "",
-  "laborRate": "100.00",
-  "laborTime": ".50",
+  "laborRate": "",
+  "laborTime": "",
   "diagnosisTime": "",
   "parts": [
     {
@@ -32,7 +32,7 @@
   "rental": null,
   "towing": null,
   "sublet": null,
-  "tireRepair": null,
+  "tireRepair": "50.00",
   "tireTax": null,
   "tireDisposal": null,
   "notes": "",
