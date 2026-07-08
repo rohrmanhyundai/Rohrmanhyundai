@@ -201,6 +201,7 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
   const [showConditionChart, setShowConditionChart] = useState(false);
   const [deletingId,  setDeletingId]  = useState(null);
   const [pdfLoading,  setPdfLoading]  = useState(null);
+  const [editingId,   setEditingId]   = useState(null);
 
   function refreshIndex() {
     setLoadingList(true);
@@ -458,9 +459,12 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
   async function handleSave() {
     if (!validate()) return;
     setSaving(true);
-    setStatus('⏳ Saving…');
+    setStatus(editingId ? '⏳ Updating…' : '⏳ Saving…');
     try {
-      const id = `${ro}_${Date.now().toString(36)}`;
+      const isEdit = !!editingId;
+      const id = isEdit ? editingId : `${ro}_${Date.now().toString(36)}`;
+      const existing = isEdit ? savedList.find(s => s.id === editingId) : null;
+      const savedAt = existing?.savedAt || new Date().toISOString();
       const data = {
         id, ro, dealerCode, techName, repairDate, mileage, vin, repairType,
         removedPN, removedSN, installedPN, installedSN, conditionCode,
@@ -471,15 +475,49 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
         gearResults, tcc1, tcc2,
         electricOk, movementElectric, movementGas,
         techlineCase, priorAuth, techSSN,
-        savedBy: currentUser, savedAt: new Date().toISOString(),
+        savedBy: existing ? undefined : currentUser, savedAt,
+        ...(isEdit ? { updatedBy: currentUser, updatedAt: new Date().toISOString() } : {}),
       };
-      await saveGithubFile(`data/atm-worksheets/${id}.json`, data);
-      const newIndex = [{ id, ro, vin, techName, repairDate, savedAt: data.savedAt }, ...savedList];
+      await saveGithubFile(`data/atm-worksheets/${id}.json`, data, isEdit ? `Update worksheet ${id}` : undefined);
+      const indexEntry = { id, ro, vin, techName, repairDate, savedAt };
+      const newIndex = isEdit
+        ? savedList.map(s => (s.id === editingId ? { ...s, ...indexEntry } : s))
+        : [indexEntry, ...savedList];
       await saveGithubFile('data/atm-worksheets/index.json', newIndex);
       setSavedList(newIndex);
-      setStatus('✅ Saved! Other users can now open this worksheet.');
+      setStatus(isEdit ? '✅ Updated! Changes saved for everyone.' : '✅ Saved! Other users can now open this worksheet.');
     } catch(e) { setStatus(`❌ ${e.message}`); }
     finally { setSaving(false); }
+  }
+
+  async function handleEditSaved(item) {
+    setShowUploads(false);
+    setEditingId(item.id);
+    await loadSaved(item);
+    setStatus(`✏️ Editing RO# ${item.ro || item.id} — make your changes, then press Update.`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setRo(''); setDealerCode(DEALER_CODE); setTechName(currentUser || '');
+    setRepairDate(today); setMileage(''); setVin('');
+    setRepairType(''); setRemovedPN(''); setRemovedSN('');
+    setInstalledPN(''); setInstalledSN('');
+    setConditionCode(''); setSpecificCondition('');
+    setHowLong(''); setHowOften(''); setWhenHotCold('');
+    setBeenInBefore(''); setCheckedTSB('');
+    setHowDuplicate(''); setTestDriveResults('');
+    setFluidLevel(''); setFluidSmell(''); setFluidColor('');
+    setLeakLocation(''); setAtfCold(''); setAtfHot('');
+    setGdsCode1(''); setGdsCode2('');
+    setGearD(''); setGearL(''); setGearR('');
+    setTpsIdle(''); setTpsWot('');
+    setGearResults(Object.fromEntries(GEARS.map(g => [g, ''])));
+    setTcc1(''); setTcc2('');
+    setElectricOk(''); setMovementElectric(''); setMovementGas('');
+    setTechlineCase(''); setPriorAuth(''); setTechSSN('');
+    setStatus('');
   }
 
   async function loadSaved(item) {
@@ -742,11 +780,20 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16, alignItems: 'center' }}>
           <button onClick={handleSave} disabled={saving}
-            style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
-            💾 {saving ? 'Uploading…' : 'Upload'}
+            style={{ background: editingId ? 'rgba(74,222,128,.2)' : 'rgba(251,191,36,.2)', border: `1px solid ${editingId ? 'rgba(74,222,128,.5)' : 'rgba(251,191,36,.5)'}`, color: editingId ? '#4ade80' : '#fbbf24', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, opacity: saving ? 0.6 : 1 }}>
+            {editingId ? '✅' : '💾'} {saving ? (editingId ? 'Updating…' : 'Uploading…') : (editingId ? 'Update Worksheet' : 'Upload')}
           </button>
+          {editingId && (
+            <button onClick={resetForm} disabled={saving}
+              style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.15)', color: '#94a3b8', borderRadius: 10, padding: '10px 20px', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}>
+              ✕ Cancel Edit
+            </button>
+          )}
+          {editingId && (
+            <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>Editing existing worksheet — Update saves changes in place.</span>
+          )}
         </div>
 
         {!getGithubToken() && (
@@ -791,6 +838,10 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
                         <button onClick={() => handleViewSaved(s)} disabled={pdfLoading === s.id + '_view'}
                           style={{ background: 'rgba(139,92,246,.25)', border: '1px solid rgba(139,92,246,.5)', color: '#c4b5fd', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13, opacity: pdfLoading === s.id + '_view' ? 0.6 : 1 }}>
                           {pdfLoading === s.id + '_view' ? '⏳ Opening…' : '🖨️ View / Print'}
+                        </button>
+                        <button onClick={() => handleEditSaved(s)}
+                          style={{ background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.5)', color: '#fbbf24', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+                          ✏️ Edit
                         </button>
                         <button onClick={() => handleDownloadSaved(s)} disabled={pdfLoading === s.id + '_dl'}
                           style={{ background: 'rgba(61,214,195,.2)', border: '1px solid rgba(61,214,195,.5)', color: '#6ee7f9', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13, opacity: pdfLoading === s.id + '_dl' ? 0.6 : 1 }}>
