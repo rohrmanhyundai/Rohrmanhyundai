@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
 import { advisorOffDates } from '../utils/calculations';
-import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes } from '../utils/github';
+import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes, loadCompletedReviews } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -177,6 +177,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deInvoiced, setDeInvoiced] = useState(null);
   const [deCust, setDeCust] = useState(null);
   const [deNotes, setDeNotes] = useState(null);
+  const [deAfterCall, setDeAfterCall] = useState(null); // "did you complete after call reviews?"
+  const [deReviews, setDeReviews] = useState({ total: 0, contacted: 0, voicemail: 0 }); // today's after-call review summary
   const [deHours, setDeHours] = useState('');
   const [deHrsRo, setDeHrsRo] = useState('');
   const [deSaving, setDeSaving] = useState(false);
@@ -250,6 +252,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         if (todayRec.invoiced != null) setDeInvoiced(todayRec.invoiced);
         if (todayRec.customersUpdated != null) setDeCust(todayRec.customersUpdated);
         if (todayRec.notesUpdated != null) setDeNotes(todayRec.notesUpdated);
+        if (todayRec.afterCallReviews != null) setDeAfterCall(todayRec.afterCallReviews);
         setDeAlreadyReported(true);
       } else {
         setDeAlreadyReported(false);
@@ -261,9 +264,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     });
   }
   function openDayEnd() {
-    setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo('');
+    setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeAfterCall(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
-    setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo('');
+    setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo(''); setDeReviews({ total: 0, contacted: 0, voicemail: 0 });
     setDeMissed([]); setDeMissedErr(''); setDeChoice(false); setDeAlreadyReported(false);
     loadMissedDays();
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
@@ -275,6 +278,18 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       const list = (d && d.advisors && d.advisors[who]) || [];
       setDeNoNotes(Array.isArray(list) ? list : []);
       setDeNoNotesAt(d && d.updatedAt ? new Date(d.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
+    }).catch(() => {});
+    // Today's completed after-call reviews for this advisor, so the "did you
+    // complete after call reviews?" question can show how many were contacted.
+    const todayKey = dKey(new Date());
+    loadCompletedReviews(who).then(list => {
+      const todays = (Array.isArray(list) ? list : [])
+        .filter(r => r && !r.managerDeleted && r.submittedAt && dKey(new Date(r.submittedAt)) === todayKey);
+      setDeReviews({
+        total: todays.length,
+        contacted: todays.filter(r => r.contacted === 'yes').length,
+        voicemail: todays.filter(r => r.contacted === 'voicemail').length,
+      });
     }).catch(() => {});
   }
 
@@ -457,6 +472,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         invoiced: deInvoiced,
         customersUpdated: deCust,
         notesUpdated: deNotes,
+        afterCallReviews: deAfterCall,
+        afterCallContacted: deReviews.contacted,
         agreed: deAgree,
         agreedBy: me,
         submittedAt: Date.now(),
@@ -472,7 +489,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         setBucket(norm);
       }
       setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Month-to-date total set to ${num(safe(deHours, 0), 1)} hrs at ${num(safe(deHrsRo, 0), 2)} hrs/RO.`);
-      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false);
+      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeAfterCall(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false);
       setDayEndOpen(false);
       setView('current'); setGridOpen(true);
     } catch (e) {
@@ -755,6 +772,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     { key: 'invoiced', kind: 'yn', q: 'Are all available repair orders invoiced?', get: () => deInvoiced, set: setDeInvoiced },
     { key: 'cust', kind: 'yn', q: 'Are all customers updated on status?', get: () => deCust, set: setDeCust },
     { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', get: () => deNotes, set: setDeNotes },
+    { key: 'afterCall', kind: 'yn', q: 'Did you complete after call reviews?', get: () => deAfterCall, set: setDeAfterCall },
     { key: 'hours', kind: 'num', q: 'Total Hours for the Month (MTD)', sub: 'Your month-to-date total from the DMS — the page figures today’s hours', placeholder: 'e.g. 82.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
     { key: 'hrsro', kind: 'num', q: 'Month Hrs/RO (MTD)', sub: 'Your month-to-date hrs/RO from the DMS', placeholder: 'e.g. 1.3', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
     { key: 'agree', kind: 'agree', q: 'Confirm & Submit' },
@@ -947,6 +965,20 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             )}
             {step.key === 'notes' && deNoNotes.length === 0 && (
               <div style={{ marginTop: 14, fontSize: 12.5, color: '#64748b' }}>✓ No ROs flagged without notes for {deNoNotesFor === me ? 'you' : deNoNotesFor}{deNoNotesAt ? ` (as of ${deNoNotesAt})` : ''}.</div>
+            )}
+            {step.key === 'afterCall' && (
+              deReviews.total > 0 ? (
+                <div style={{ marginTop: 14, background: 'rgba(74,222,128,.08)', border: '1px solid rgba(74,222,128,.35)', borderRadius: 12, padding: '12px 14px' }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 800, color: '#6ee7b7', marginBottom: 6 }}>
+                    📞 {deReviews.contacted} of {deReviews.total} customer{deReviews.total === 1 ? '' : 's'} contacted in {deNoNotesFor === me ? 'your' : `${deNoNotesFor}’s`} after-call reviews today
+                  </div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>
+                    {deReviews.contacted} contacted · {deReviews.voicemail} voicemail · {deReviews.total} review{deReviews.total === 1 ? '' : 's'} completed today
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 14, fontSize: 12.5, color: '#64748b' }}>No after-call reviews recorded today yet for {deNoNotesFor === me ? 'you' : deNoNotesFor}.</div>
+              )
             )}
             <div style={{ marginTop: 20 }}>
               {step.kind === 'agree' ? (
