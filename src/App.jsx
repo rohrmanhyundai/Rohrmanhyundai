@@ -914,7 +914,15 @@ export default function App() {
         currentRole={currentRole}
         leadAdvisor={(users.find(u => (u.role || '').toLowerCase() === 'lead advisor') || {}).username || ''}
         initialAdvisor={livePayFocus}
-        onFixCsi={canAccess('surveyReports') ? (adv) => { setSurveyFocus(adv || ''); goTo('survey-reports', 'live-pay'); } : undefined}
+        onFixCsi={(adv) => {
+          // Jump to the advisor's After Call Report (pending surveys to work), not the
+          // manager Survey Reports table. Preselect the advisor and use today's date.
+          if (adv) setViewingAdvisor(adv);
+          const t = new Date();
+          const todayStr = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+          setSelectedDay(todayStr);
+          goTo('advisor-day', 'live-pay');
+        }}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
       />
