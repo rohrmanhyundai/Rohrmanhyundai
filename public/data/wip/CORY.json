@@ -21,8 +21,8 @@
     "jobDesc": "￼ CUSTOMER STATES CAMERA IS NOT WORKING IN CAR.",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/08/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "Replaced rear camera. System still inop. Contacted Techline. Techline now advises replacing ADAS Parking module. ETA 7/1. Replaced ADAS Parking module according to techline instructions. Concern still present. "
