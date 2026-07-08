@@ -136,7 +136,7 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
 
   const [ro,            setRo]            = useState('');
   const [dealerCode,    setDealerCode]    = useState(DEALER_CODE);
-  const [techName,      setTechName]      = useState(currentUser || '');
+  const [techName,      setTechName]      = useState('');
   const [repairDate,    setRepairDate]    = useState(today);
   const [mileage,       setMileage]       = useState('');
   const [vin,           setVin]           = useState('');
@@ -500,7 +500,7 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
 
   function resetForm() {
     setEditingId(null);
-    setRo(''); setDealerCode(DEALER_CODE); setTechName(currentUser || '');
+    setRo(''); setDealerCode(DEALER_CODE); setTechName('');
     setRepairDate(today); setMileage(''); setVin('');
     setRepairType(''); setRemovedPN(''); setRemovedSN('');
     setInstalledPN(''); setInstalledSN('');
@@ -585,7 +585,7 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
             <Field label="Repair Order Number *" value={ro} onChange={setRo} placeholder="RO#" />
             <Field label="Dealer Code" value={dealerCode} onChange={setDealerCode} />
-            <Field label="Technician Name" value={techName} onChange={setTechName} />
+            <Field label="Customer Name" value={techName} onChange={setTechName} />
             <Field label="Repair Date" value={repairDate} onChange={setRepairDate} type="date" />
             <Field label="Mileage" value={mileage} onChange={setMileage} placeholder="e.g. 45000" />
           </div>
@@ -831,7 +831,7 @@ export default function ATMWorksheet({ onBack, currentUser, currentRole }) {
                       <div style={{ flex: 1, minWidth: 180 }}>
                         <div style={{ fontWeight: 900, fontSize: 15, color: '#c4b5fd', marginBottom: 4 }}>RO# {s.ro || '—'}</div>
                         <div style={{ fontSize: 12, color: '#94a3b8' }}>VIN: {s.vin || '—'}</div>
-                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Tech: {s.techName || '—'} &nbsp;|&nbsp; Date: {s.repairDate || '—'}</div>
+                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Customer: {s.techName || '—'} &nbsp;|&nbsp; Date: {s.repairDate || '—'}</div>
                         <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>Uploaded: {s.savedAt ? new Date(s.savedAt).toLocaleString() : '—'}</div>
                       </div>
                       <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
