@@ -2,7 +2,7 @@
   "id": "779030_mrc8y7i5",
   "ro": "779030",
   "dealerCode": "IN007",
-  "techName": "CHAD",
+  "techName": "Scott Crone",
   "repairDate": "2026-07-08",
   "mileage": "60619",
   "vin": "5NMS5DAL0MH318541",
@@ -51,6 +51,7 @@
   "techlineCase": "2026070801405",
   "priorAuth": "",
   "techSSN": "5895",
-  "savedBy": "SHAWN",
-  "savedAt": "2026-07-08T15:42:40.253Z"
+  "savedAt": "2026-07-08T15:42:40.253Z",
+  "updatedBy": "SHAWN",
+  "updatedAt": "2026-07-08T16:15:32.984Z"
 }
