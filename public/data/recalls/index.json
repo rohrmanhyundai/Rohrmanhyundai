@@ -172,59 +172,46 @@
       ],
       "entries": [
         {
-          "id": "mr2dzk79ygme",
+          "id": "mrc543jtbszo",
           "answers": {
             "model": "Tucson (NX4) Tucson Hybrid (NX4 HEV) Tucson Plug - in Hybrid (NX4 PHEV)"
           },
           "model": "Tucson (NX4) Tucson Hybrid (NX4 HEV) Tucson Plug - in Hybrid (NX4 PHEV)",
           "opCode": "61D196R1",
-          "operation": "",
-          "opTime": "",
-          "causalPart": "",
-          "natureCode": "",
-          "causeCode": ""
-        },
-        {
-          "id": "mr2dzk79fwx7",
-          "answers": {
-            "model": "Cluster Software Update (1477 &"
-          },
-          "model": "Cluster Software Update (1477 &",
-          "opCode": "1476ONLY",
-          "operation": ")",
+          "operation": "Cluster Software Update (1477 & 1476 ONLY)",
           "opTime": "0.7 M/H",
           "causalPart": "940C3-N9000",
           "natureCode": "I14",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mr2dzk79cjen",
+          "id": "mrc543jt9xrp",
           "answers": {
             "model": "Tucson (NX4A)"
           },
           "model": "Tucson (NX4A)",
           "opCode": "61D196R2",
-          "operation": ")",
+          "operation": "Cluster Software Update (1477 & 1476 ONLY)",
           "opTime": "0.7 M/H",
           "causalPart": "940C3-CW000",
           "natureCode": "I14",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mr2dzk792x2u",
+          "id": "mrc543jt4n61",
           "answers": {
             "model": "Tucson (NX4M)"
           },
           "model": "Tucson (NX4M)",
           "opCode": "61D196R3",
-          "operation": ")",
+          "operation": "Cluster Software Update (1477 & 1476 ONLY)",
           "opTime": "0.7 M/H",
           "causalPart": "940C3-HD000",
           "natureCode": "I14",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mr2dzk79jis2",
+          "id": "mrc543jtxiyu",
           "answers": {
             "model": "Tucson (NX4) Tucson Hybrid (NX4 HEV) Tucson Plug - in Hybrid (NX4 PHEV)"
           },
@@ -237,7 +224,7 @@
           "causeCode": "ZZ3"
         },
         {
-          "id": "mr2dzk79xz08",
+          "id": "mrc543jty200",
           "answers": {
             "model": "Tucson (NX4A)"
           },
@@ -250,7 +237,7 @@
           "causeCode": "ZZ3"
         },
         {
-          "id": "mr2dzk79kqqp",
+          "id": "mrc543jtrjr3",
           "answers": {
             "model": "Tucson (NX4M)"
           },
