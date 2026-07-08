@@ -45,7 +45,7 @@ export function computeLivePay(a, hours, servicePolicy, numAdvisors, leadBonus) 
 const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' };
 const CSS = `@keyframes lpPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,146,60,.35),0 12px 34px -14px rgba(249,115,22,.6)}50%{box-shadow:0 0 24px 5px rgba(251,146,60,.32),0 14px 40px -12px rgba(249,115,22,.8)}}`;
 
-export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', initialAdvisor = '', onBack, backLabel = '← Back' }) {
+export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', initialAdvisor = '', onFixCsi, onBack, backLabel = '← Back' }) {
   const advisors = (data && data.advisors) || [];
   const servicePolicy = safe(data && data.service_policy, 0);
   const numAdvisors = advisors.length || 1;
@@ -149,7 +149,15 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
                     CSI is <strong>{pay.csi}</strong> — needs <strong>≥ {pay.minCsi}</strong> to unlock the CSI bonus (${pay.tier.csi}/hr). Hit CSI and this gets added to the pay.
                   </div>
                 </div>
-                <div style={{ fontSize: 30, fontWeight: 900, color: '#fb923c', whiteSpace: 'nowrap', textShadow: '0 0 22px rgba(251,146,60,.6)' }}>+{money(pay.csiMissed)}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+                  <div style={{ fontSize: 30, fontWeight: 900, color: '#fb923c', whiteSpace: 'nowrap', textShadow: '0 0 22px rgba(251,146,60,.6)' }}>+{money(pay.csiMissed)}</div>
+                  {onFixCsi && (
+                    <button onClick={() => onFixCsi(selected.name)}
+                      style={{ background: 'linear-gradient(135deg,#f97316,#ef4444)', border: 'none', color: '#fff', borderRadius: 10, padding: '9px 18px', cursor: 'pointer', fontWeight: 900, fontSize: 13, whiteSpace: 'nowrap', boxShadow: '0 8px 22px -8px rgba(249,115,22,.9)' }}>
+                      🔧 Fix CSI Today →
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -157,7 +165,9 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 18 }}>
               <QualCard accent="#a78bfa" title={mode === 'pacing' ? 'Projected Hours' : 'CP + Warranty Hours'} value={hrs1(pay.hours)} note={pay.tier.label} />
               <QualCard accent={pay.elrQualifies ? '#34d399' : '#fb7185'} title="ELR (needs ≥ 88%)" value={`${(pay.elr * 100).toFixed(1)}%`} note={pay.elrQualifies ? '✓ Qualifies for tier' : '✗ Below 88% — capped at $4 tier'} />
-              <QualCard accent={pay.minCsi > 0 ? (pay.csiQualifies ? '#34d399' : '#fb7185') : '#38bdf8'} title="CSI" value={pay.csi ? pay.csi.toLocaleString('en-US') : '—'} note={pay.minCsi > 0 ? (pay.csiQualifies ? `✓ Meets min ${pay.minCsi}` : `✗ Below min ${pay.minCsi} — missing ${money(pay.csiMissed)}`) : 'No minimum set'} />
+              <QualCard accent={pay.minCsi > 0 ? (pay.csiQualifies ? '#34d399' : '#fb7185') : '#38bdf8'} title="CSI" value={pay.csi ? pay.csi.toLocaleString('en-US') : '—'} note={pay.minCsi > 0 ? (pay.csiQualifies ? `✓ Meets min ${pay.minCsi}` : `✗ Below min ${pay.minCsi} — missing ${money(pay.csiMissed)}`) : 'No minimum set'}
+                onClick={pay.csiMissed > 0 && onFixCsi ? () => onFixCsi(selected.name) : undefined}
+                cta={pay.csiMissed > 0 && onFixCsi ? '🔧 Fix CSI Today →' : null} />
             </div>
 
             {/* Breakdown */}
@@ -229,18 +239,20 @@ function HeroCard({ icon, title, value, sub, active, onClick, a1, a2 }) {
   );
 }
 
-function QualCard({ title, value, note, accent = '#38bdf8' }) {
+function QualCard({ title, value, note, accent = '#38bdf8', onClick, cta }) {
+  const clickable = !!onClick;
   return (
-    <div style={{
-      position: 'relative', overflow: 'hidden',
+    <div onClick={onClick} title={clickable ? 'View your surveys' : undefined} style={{
+      position: 'relative', overflow: 'hidden', cursor: clickable ? 'pointer' : 'default',
       background: `linear-gradient(150deg, ${accent}1f, rgba(2,6,23,.5) 60%)`,
-      border: `1px solid ${accent}55`, borderRadius: 14, padding: '13px 16px',
+      border: `1px solid ${accent}${clickable ? '99' : '55'}`, borderRadius: 14, padding: '13px 16px',
       boxShadow: `0 10px 28px -20px ${accent}, inset 0 1px 0 ${accent}22`,
     }}>
       <div style={{ position: 'absolute', top: -20, right: -20, width: 70, height: 70, borderRadius: '50%', background: `radial-gradient(circle, ${accent}33, transparent 70%)`, pointerEvents: 'none' }} />
       <div style={{ ...lbl, color: accent, fontSize: 10 }}>{title}</div>
       <div style={{ fontSize: 25, fontWeight: 900, color: accent, marginTop: 3, position: 'relative', textShadow: `0 0 20px ${accent}44` }}>{value}</div>
       <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 3, fontWeight: 600, position: 'relative' }}>{note}</div>
+      {cta && <div style={{ marginTop: 8, fontSize: 12, fontWeight: 900, color: accent, position: 'relative' }}>{cta}</div>}
     </div>
   );
 }
