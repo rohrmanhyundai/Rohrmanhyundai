@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-08T18:27:24.318Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-07-08T18:27:22.795Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-08T18:25:25.997Z",
     "type": "page",
     "label": "dashboard"
