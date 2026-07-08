@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-08T22:10:26.908Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-07-08T19:48:37.086Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -956,11 +961,6 @@
   },
   {
     "at": "2026-06-09T12:12:53.479Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-08T20:22:39.837Z",
     "type": "page",
     "label": "advisor-calendar"
   }
