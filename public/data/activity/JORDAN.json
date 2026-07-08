@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-07-08T15:15:42.716Z",
+    "type": "page",
+    "label": "advisor-day"
+  },
+  {
+    "at": "2026-07-08T15:15:35.924Z",
+    "type": "page",
+    "label": "live-pay"
+  },
+  {
+    "at": "2026-07-08T15:15:35.063Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-08T15:15:20.089Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-07T22:51:56.312Z",
     "type": "action",
     "label": "logout"
