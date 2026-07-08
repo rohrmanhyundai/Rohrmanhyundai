@@ -209,10 +209,14 @@
         "chargeAccountList": false,
         "partsHub": true,
         "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true,
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "managementAccess": false
     },
     {
       "username": "Cory",
