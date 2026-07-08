@@ -686,7 +686,7 @@ export default function App() {
         advisors={goalsRoster}
         schedules={schedules}
         vacations={vacations}
-        onBack={() => navTo(prevPage || 'advisor-calendar')}
+        onBack={() => navTo(prevPage === 'manager-hub' ? 'manager-hub' : 'advisor-calendar')}
         backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
         onLivePay={(adv) => { setLivePayFocus(adv || ''); goTo('live-pay', 'advisor-goals'); }}
       />
