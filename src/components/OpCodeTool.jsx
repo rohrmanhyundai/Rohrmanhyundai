@@ -127,11 +127,15 @@ export function extractWarrantyDraft(fullText) {
   // least one letter (50D116R0, 954A0F02, 60DV03I0). Rebuild any split by stray
   // spaces. The leading "(^|[^-A-Za-z0-9])" guard (vs a lookbehind, for older-
   // browser safety) stops a rebuild from STARTING inside a hyphenated causal part
-  // (no pulling "18FA0" out of "44000-18FA0" to glue on "Q55").
+  // (no pulling "18FA0" out of "44000-18FA0" to glue on "Q55"). The final
+  // "letter-then-digit" check keeps operation text out: a real op code always has
+  // a digit AFTER its first letter (the trailing revision digit — 61D196R1,
+  // 954A0F02), whereas a fragment like "1476 ONLY" (digits + a trailing word)
+  // does not, so we never glue "1476 ONLY" → "1476ONLY" and mistake it for a code.
   body = body.replace(/(^|[^-A-Za-z0-9])(\d(?:\s*[A-Z0-9]){7})/g, (full, pre, run) => {
     if (!/\s/.test(run)) return full;                        // already contiguous — leave it
     const compact = run.replace(/\s+/g, '');
-    return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z]/.test(compact)) ? pre + compact : full;
+    return (compact.length === 8 && /^\d{2}/.test(compact) && /[A-Z][A-Z0-9]*\d/.test(compact)) ? pre + compact : full;
   });
   // Op-code RANGES ("50D310R2 - R5*" → "50D310R2-R5"): one entry covering several
   // codes whose exact value depends on a sub-condition in the bulletin.
