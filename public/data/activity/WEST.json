@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-08T20:22:44.569Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-03T19:56:09.527Z",
     "type": "page",
     "label": "recalls"
