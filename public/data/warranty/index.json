@@ -1,5 +1,93 @@
 [
   {
+    "id": "mr0ponfjp3yl",
+    "createdAt": "2026-06-30T13:57:53.695Z",
+    "updatedAt": "2026-07-08T17:30:59.700Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Kevin Peterson",
+    "customerPhone": "219) 588 - 1693",
+    "repairOrder": "778758",
+    "vin": "KM8JBCD19RU195231",
+    "vehicleYear": "2024",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Tucson",
+    "mileage": "62103",
+    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
+    "warrantyPhone": "800-222-2721",
+    "claimNumber": "PRO3080525",
+    "authNumber": "",
+    "laborRate": "190.00",
+    "laborTime": "11.0",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mr0ponfjbnb9",
+        "partNumber": "28410-2M419",
+        "description": "VALVE ASSY-EGR",
+        "qty": "1",
+        "price": "125.76"
+      },
+      {
+        "id": "mr0q5xl1caov",
+        "partNumber": "28455-2M400",
+        "description": "GASKET-EGR ADAPTOR",
+        "qty": "1",
+        "price": "2.10"
+      },
+      {
+        "id": "mr0q6l6t9sza",
+        "partNumber": "28493-2M800",
+        "description": "FILTER GASKET-LP EGR",
+        "qty": "1",
+        "price": "6.32"
+      },
+      {
+        "id": "mr0qfarped2r",
+        "partNumber": "39412-2M601",
+        "description": "EXTENSION WIRE",
+        "qty": "1",
+        "price": "218.61"
+      },
+      {
+        "id": "mrb2lmzs98cy",
+        "partNumber": "25600-2M810",
+        "description": " THERMAL MANAGEMENT MODULE",
+        "qty": "1",
+        "price": "627.44"
+      },
+      {
+        "id": "mrb2my3cwh9z",
+        "partNumber": "00232-19098",
+        "description": "PINK, ANTIFREEZE/COOLANT",
+        "qty": "1",
+        "price": "36.97"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "100.00",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "PARTRS NOT COVERED: 28422-2M800 - HOSE ASSY-EGR COOLER,OUT\n1 each\n-\nTomorrow\n$50.44\nQuoted\n28421-2M800 - HOSE-EGR COOLER \"A\"\n1 each\n-\nTomorrow\n$49.60\nQuoted\n\nLABOR 8.0 R&R EGR AND .50 HARNESS PLUS 1.0 DIAG.\n\ncalled 07/07/2026 @ 3:55pm to add a  THERMAL MANAGEMENT MODULE. 2.5 R&R added to repair. APPROVED.",
+    "approved": true,
+    "approvedDate": "2026-06-30",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
+  },
+  {
     "id": "mralwbqmxlbd",
     "createdAt": "2026-07-07T12:09:35.086Z",
     "updatedAt": "2026-07-08T14:12:41.806Z",
@@ -142,94 +230,6 @@
     "readySubmissionDate": "",
     "inspectorDispatched": true,
     "inspectorDispatchedDate": "2026-07-08"
-  },
-  {
-    "id": "mr0ponfjp3yl",
-    "createdAt": "2026-06-30T13:57:53.695Z",
-    "updatedAt": "2026-07-07T20:18:36.046Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Kevin Peterson",
-    "customerPhone": "219) 588 - 1693",
-    "repairOrder": "778758",
-    "vin": "KM8JBCD19RU195231",
-    "vehicleYear": "2024",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Tucson",
-    "mileage": "62103",
-    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
-    "warrantyPhone": "800-222-2721",
-    "claimNumber": "PRO3080525",
-    "authNumber": "",
-    "laborRate": "190.00",
-    "laborTime": "11.0",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mr0ponfjbnb9",
-        "partNumber": "28410-2M419",
-        "description": "VALVE ASSY-EGR",
-        "qty": "1",
-        "price": "125.76"
-      },
-      {
-        "id": "mr0q5xl1caov",
-        "partNumber": "28455-2M400",
-        "description": "GASKET-EGR ADAPTOR",
-        "qty": "1",
-        "price": "2.10"
-      },
-      {
-        "id": "mr0q6l6t9sza",
-        "partNumber": "28493-2M800",
-        "description": "FILTER GASKET-LP EGR",
-        "qty": "1",
-        "price": "6.32"
-      },
-      {
-        "id": "mr0qfarped2r",
-        "partNumber": "39412-2M601",
-        "description": "EXTENSION WIRE",
-        "qty": "1",
-        "price": "218.61"
-      },
-      {
-        "id": "mrb2lmzs98cy",
-        "partNumber": "25600-2M810",
-        "description": " THERMAL MANAGEMENT MODULE",
-        "qty": "1",
-        "price": "627.44"
-      },
-      {
-        "id": "mrb2my3cwh9z",
-        "partNumber": "00232-19098",
-        "description": "PINK, ANTIFREEZE/COOLANT",
-        "qty": "1",
-        "price": "36.97"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "100.00",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "PARTRS NOT COVERED: 28422-2M800 - HOSE ASSY-EGR COOLER,OUT\n1 each\n-\nTomorrow\n$50.44\nQuoted\n28421-2M800 - HOSE-EGR COOLER \"A\"\n1 each\n-\nTomorrow\n$49.60\nQuoted\n\nLABOR 8.0 R&R EGR AND .50 HARNESS PLUS 1.0 DIAG.\n\ncalled 07/07/2026 @ 3:55pm to add a  THERMAL MANAGEMENT MODULE. 2.5 R&R added to repair. APPROVED.",
-    "approved": true,
-    "approvedDate": "2026-06-30",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": "",
-    "inspectorDispatched": false,
-    "inspectorDispatchedDate": ""
   },
   {
     "id": "mr3oomiak5p8",
