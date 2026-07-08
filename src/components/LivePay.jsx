@@ -152,7 +152,7 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                   <div style={{ fontSize: 30, fontWeight: 900, color: '#fb923c', whiteSpace: 'nowrap', textShadow: '0 0 22px rgba(251,146,60,.6)' }}>+{money(pay.csiMissed)}</div>
                   {onFixCsi && (
-                    <button onClick={() => onFixCsi(selected.name)}
+                    <button onClick={() => onFixCsi(firstWord(selected.name))}
                       style={{ background: 'linear-gradient(135deg,#f97316,#ef4444)', border: 'none', color: '#fff', borderRadius: 10, padding: '9px 18px', cursor: 'pointer', fontWeight: 900, fontSize: 13, whiteSpace: 'nowrap', boxShadow: '0 8px 22px -8px rgba(249,115,22,.9)' }}>
                       🔧 Fix CSI Today →
                     </button>
@@ -166,7 +166,7 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
               <QualCard accent="#a78bfa" title={mode === 'pacing' ? 'Projected Hours' : 'CP + Warranty Hours'} value={hrs1(pay.hours)} note={pay.tier.label} />
               <QualCard accent={pay.elrQualifies ? '#34d399' : '#fb7185'} title="ELR (needs ≥ 88%)" value={`${(pay.elr * 100).toFixed(1)}%`} note={pay.elrQualifies ? '✓ Qualifies for tier' : '✗ Below 88% — capped at $4 tier'} />
               <QualCard accent={pay.minCsi > 0 ? (pay.csiQualifies ? '#34d399' : '#fb7185') : '#38bdf8'} title="CSI" value={pay.csi ? pay.csi.toLocaleString('en-US') : '—'} note={pay.minCsi > 0 ? (pay.csiQualifies ? `✓ Meets min ${pay.minCsi}` : `✗ Below min ${pay.minCsi} — missing ${money(pay.csiMissed)}`) : 'No minimum set'}
-                onClick={pay.csiMissed > 0 && onFixCsi ? () => onFixCsi(selected.name) : undefined}
+                onClick={pay.csiMissed > 0 && onFixCsi ? () => onFixCsi(firstWord(selected.name)) : undefined}
                 cta={pay.csiMissed > 0 && onFixCsi ? '🔧 Fix CSI Today →' : null} />
             </div>
 
