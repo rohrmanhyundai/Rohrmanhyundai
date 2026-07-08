@@ -26,5 +26,47 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrck4lansupk",
+    "ro": "779047",
+    "roDate": "2026-07-08",
+    "vehicle": "2021 Hyundai Elantra",
+    "jobDesc": "PERFORM ROHRY'S BACKLOT INSPECTION - INCLUDES TEST DRIVE, LUBE OIL AND FILTER CHANGE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
+  },
+  {
+    "id": "mrck4lansji2",
+    "ro": "779045",
+    "roDate": "2026-07-08",
+    "vehicle": "2021 Hyundai Elantra",
+    "jobDesc": "PERFORM ROHRY'S BACKLOT INSPECTION - INCLUDES TEST DRIVE, LUBE OIL AND FILTER CHANGE",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
+  },
+  {
+    "id": "mrck4lankmo5",
+    "ro": "779031",
+    "roDate": "2026-07-08",
+    "vehicle": "2016 Ford Explorer",
+    "jobDesc": "CUSTOMER STATES STEERING WHEEL WOULDN'T CENTER AFTER TURNING. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
