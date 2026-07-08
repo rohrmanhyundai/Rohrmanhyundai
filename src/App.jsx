@@ -121,6 +121,7 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [livePayFocus, setLivePayFocus] = useState(''); // advisor to open Live Pay on
+  const [surveyFocus, setSurveyFocus] = useState('');   // advisor to preselect on Survey Reports
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [advisorUnread, setAdvisorUnread] = useState(0);
   const [techUnread, setTechUnread] = useState(0);
@@ -853,6 +854,7 @@ export default function App() {
       <SurveyReports
         advisorList={advisorList}
         canDelete={isAdminOrManager}
+        initialAdvisor={surveyFocus}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
@@ -912,6 +914,7 @@ export default function App() {
         currentRole={currentRole}
         leadAdvisor={(users.find(u => (u.role || '').toLowerCase() === 'lead advisor') || {}).username || ''}
         initialAdvisor={livePayFocus}
+        onFixCsi={canAccess('surveyReports') ? (adv) => { setSurveyFocus(adv || ''); goTo('survey-reports', 'live-pay'); } : undefined}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
         backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
       />

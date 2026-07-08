@@ -28,10 +28,15 @@ function Badge({ val, type }) {
   return null;
 }
 
-export default function SurveyReports({ advisorList, canDelete, onBack }) {
+export default function SurveyReports({ advisorList, canDelete, onBack, initialAdvisor = '' }) {
   const [allReviews, setAllReviews]     = useState([]);
   const [loading, setLoading]           = useState(true);
-  const [filterAdvisor, setFilterAdvisor]     = useState('ALL');
+  // Preselect an advisor when arriving from a deep link (e.g. Live Pay "Fix CSI").
+  const [filterAdvisor, setFilterAdvisor]     = useState(() => {
+    const want = String(initialAdvisor || '').trim().toUpperCase().split(/\s+/)[0];
+    const match = (advisorList || []).find(a => String(a).toUpperCase().split(/\s+/)[0] === want);
+    return match || 'ALL';
+  });
   const [filterSatisfied, setFilterSatisfied] = useState('ALL');
   const [filterContacted, setFilterContacted] = useState('ALL');
   const [deletingRO, setDeletingRO]     = useState(null);
