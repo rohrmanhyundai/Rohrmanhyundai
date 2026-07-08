@@ -22,7 +22,7 @@
         {
           "id": "svc-cabin-filter",
           "name": "Cabin Air Filter",
-          "price": "$60.50",
+          "price": "$70.49",
           "desc": "Replace cabin air filter.",
           "opCode": "CABIN"
         },
@@ -174,5 +174,5 @@
       ]
     }
   ],
-  "updatedAt": 1783451211187
+  "updatedAt": 1783517063356
 }
