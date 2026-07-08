@@ -193,7 +193,7 @@
     },
     {
       "username": "West",
-      "password": "west2026",
+      "password": "1385@Phoenix!",
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
@@ -209,10 +209,14 @@
         "chargeAccountList": false,
         "partsHub": true,
         "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true,
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "managementAccess": false
     },
     {
       "username": "Cory",
