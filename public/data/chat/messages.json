@@ -287,6 +287,11 @@
     "id": "mrcb8d1pk1z",
     "username": "SHAWN",
     "text": "778405 Jordan are we doing any ASR?",
-    "timestamp": 1783529193229
+    "timestamp": 1783529193229,
+    "reactions": {
+      "🚨": [
+        "SHAWN"
+      ]
+    }
   }
 ]
