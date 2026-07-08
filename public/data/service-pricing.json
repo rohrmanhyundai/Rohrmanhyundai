@@ -29,7 +29,7 @@
         {
           "id": "svc-mrawpcukrk6j",
           "name": "Cabin Air Filter NON-OEM",
-          "price": "$48.50",
+          "price": "$50.49",
           "desc": "Replace cabin air filter. NON-OEM replacement",
           "opCode": "CABINAFTERNONOEM"
         },
@@ -174,5 +174,5 @@
       ]
     }
   ],
-  "updatedAt": 1783521912524
+  "updatedAt": 1783521964456
 }
