@@ -27,11 +27,13 @@ export default function AdvisorPerformance({ data }) {
     ['Valvoline', pct(sum.valvoline, 1)],
   ];
 
+  // Same minimums as the per-advisor columns. Only flag once the month has
+  // started (before that `sum` is empty and everything reads 0).
   const kpis = [
-    ['Avg Alignments', pct(sum.align, 1)],
-    ['Avg Tires', pct(sum.tires, 1)],
-    ['Avg Valvoline', pct(sum.valvoline, 1)],
-    ['Avg CSI', Math.round(safe(sum.csi)).toString()],
+    ['Avg Alignments', pct(sum.align, 1),     started && safe(sum.align, 0)     < 0.10],
+    ['Avg Tires',      pct(sum.tires, 1),      started && safe(sum.tires, 0)     < 0.15],
+    ['Avg Valvoline',  pct(sum.valvoline, 1),  started && safe(sum.valvoline, 0) < 0.25],
+    ['Avg CSI',        Math.round(safe(sum.csi)).toString(), started && safe(sum.csi, 0) < 910],
   ];
 
   const thStyle = { fontSize: Math.round(fontSize * 0.85) };
@@ -96,8 +98,8 @@ export default function AdvisorPerformance({ data }) {
         </table>
       </div>
       <div className="kpi-row">
-        {kpis.map(([k, v]) => (
-          <div className="kpi" key={k}>
+        {kpis.map(([k, v, low]) => (
+          <div className={`kpi${low ? ' kpi-low' : ''}`} key={k}>
             <div className="k">{k}</div>
             <div className="v">{v}</div>
           </div>
