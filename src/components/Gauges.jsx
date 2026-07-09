@@ -42,10 +42,13 @@ function gaugeSvg(g) {
       <text x="32" y="116" fill="#8fa7c8" fontSize="10" textAnchor="middle">0%</text>
       <text x="110" y="16" fill="#8fa7c8" fontSize="10" textAnchor="middle">60%</text>
       <text x="188" y="116" fill="#8fa7c8" fontSize="10" textAnchor="middle">120%</text>
-      {/* needle + glowing hub */}
-      <line x1="110" y1="98" x2={x} y2={y} stroke={status} strokeWidth="5" strokeLinecap="round" filter={`url(#${uid}glow)`} />
+      {/* needle: status-colored glow halo + crisp white core so it stays
+          visible at any position — including pinned at the max, where the arc
+          tail is the same status color and would otherwise hide it. */}
+      <line x1="110" y1="98" x2={x} y2={y} stroke={status} strokeWidth="8" strokeLinecap="round" filter={`url(#${uid}glow)`} opacity=".9" />
+      <line x1="110" y1="98" x2={x} y2={y} stroke="#f8fafc" strokeWidth="3.2" strokeLinecap="round" />
       <circle cx="110" cy="98" r="9" fill={`url(#${uid}hub)`} />
-      <circle cx="110" cy="98" r="9" fill="none" stroke={status} strokeWidth="1.5" opacity=".9" />
+      <circle cx="110" cy="98" r="9" fill="none" stroke="#f8fafc" strokeWidth="1.6" opacity=".95" />
     </svg>
   );
 }
