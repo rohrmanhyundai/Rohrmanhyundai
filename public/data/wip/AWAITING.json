@@ -9,7 +9,8 @@
     "notes": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": false
+    "isNew": false,
+    "flagged": true
   },
   {
     "id": "mrdtu2n9f5o5",
