@@ -103,7 +103,7 @@ export default function IVTWorksheet({ onBack, currentUser, currentRole }) {
 
   const [ro,            setRo]            = useState('');
   const [dealerCode,    setDealerCode]    = useState(DEALER_CODE);
-  const [techName,      setTechName]      = useState(currentUser || '');
+  const [techName,      setTechName]      = useState(''); // Customer name — starts blank (not the logged-in employee)
   const [repairDate,    setRepairDate]    = useState(today);
   const [mileage,       setMileage]       = useState('');
   const [vin,           setVin]           = useState('');
@@ -480,7 +480,7 @@ export default function IVTWorksheet({ onBack, currentUser, currentRole }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
               <Field label="Repair Order Number *" value={ro} onChange={setRo} placeholder="RO#" />
               <Field label="Dealer Code" value={dealerCode} onChange={setDealerCode} />
-              <Field label="Technician Name" value={techName} onChange={setTechName} />
+              <Field label="Customer Name" value={techName} onChange={setTechName} />
               <Field label="Repair Date" value={repairDate} onChange={setRepairDate} type="date" />
               <Field label="Mileage" value={mileage} onChange={setMileage} placeholder="e.g. 45000" />
             </div>
