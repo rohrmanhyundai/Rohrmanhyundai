@@ -252,7 +252,7 @@ function workingDatesCal(year, month) {
 const dKeyCal = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 const monthKeyCal = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, schedules = {}, vacations = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -424,13 +424,18 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     // the panels while a user is reading them.
     const fetchJobs = (silent) => {
       if (!silent) setWipLoading(true);
+      // Tech names come from App (already in memory) so we skip a whole
+      // loadDashboardData() round-trip on the critical path. Fall back to the
+      // fetch only if the list wasn't provided.
+      const techsPromise = (techNames && techNames.length)
+        ? Promise.resolve(techNames)
+        : loadDashboardData().then(d => (d?.data?.technicians || []).map(t => t.name).filter(Boolean)).catch(() => []);
       return Promise.all([
-        loadDashboardData().then(d => {
-          const techs = (d?.data?.technicians || []).map(t => t.name).filter(Boolean);
-          return Promise.all(techs.map(t =>
+        techsPromise.then(techs =>
+          Promise.all(techs.map(t =>
             loadWipData(t).then(rows => (rows || []).map(r => ({ ...r, tech: t })))
-          )).then(all => all.flat());
-        }).catch(() => []),
+          )).then(all => all.flat())
+        ).catch(() => []),
         loadAwaitingData().then(rows => rows || []).catch(() => []),
       ]).then(([wip, awaiting]) => {
         if (cancelled) return;
@@ -463,7 +468,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       clearInterval(poll);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [viewingAdvisor, refreshKey]);
+  }, [viewingAdvisor, refreshKey, (techNames || []).join(',')]);
 
   useEffect(() => {
     loadSchedules().then(s => {

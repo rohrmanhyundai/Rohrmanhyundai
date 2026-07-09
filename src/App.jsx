@@ -863,6 +863,7 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
+        techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}
