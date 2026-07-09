@@ -1,40 +1,5 @@
 [
   {
-    "id": "mq5s27csigv",
-    "username": "SHAWN",
-    "text": "DAVID 778169 WHAT ARE WE DOING WITH RO? CAR DONE?",
-    "timestamp": 1780957413820
-  },
-  {
-    "id": "mq5vi4yeysr",
-    "username": "SHAWN",
-    "text": "DAVID. 778134 She is not doing anymore repairs. she is trading off or picking the car up",
-    "timestamp": 1780963196054,
-    "reactions": {
-      "🚨": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mq5vjyew921",
-    "username": "SHAWN",
-    "text": "jordan, 778014 aything on this repair?",
-    "timestamp": 1780963280888
-  },
-  {
-    "id": "mq6lppl145b",
-    "username": "KAI",
-    "text": "please see work in prgoress for parts that have arrived. engine is in for 777522 and parts are in for 777810",
-    "timestamp": 1781007219397
-  },
-  {
-    "id": "mq6lq9uy58k",
-    "username": "KAI",
-    "text": "not 777810 the correct ro is 778110",
-    "timestamp": 1781007245674
-  },
-  {
     "id": "mq77ye7i314",
     "username": "SHAWN",
     "text": "DAVID 778169 WHAT ARE WE DOING WITH THIS THIS RO?",
@@ -293,5 +258,11 @@
     "username": "SHAWN",
     "text": "Jordan 779007 did we get that back on the books so we can close this ro?",
     "timestamp": 1783543232423
+  },
+  {
+    "id": "mrdpize3hkr",
+    "username": "KAI",
+    "text": "part is in for sor 12076, joe pacheco",
+    "timestamp": 1783613669547
   }
 ]
