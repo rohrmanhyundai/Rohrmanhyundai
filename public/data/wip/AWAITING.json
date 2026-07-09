@@ -24,5 +24,31 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mrdyhtn9apkp",
+    "ro": "779085",
+    "roDate": "2026-07-09",
+    "vehicle": "2026 Hyundai IONIQ 5",
+    "jobDesc": "PDI DO FIRST",
+    "highPriority": false,
+    "advisor": "Jason Troxel",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mrdyhtn9vqaf",
+    "ro": "779084",
+    "roDate": "2026-07-09",
+    "vehicle": "2026 Hyundai IONIQ 5",
+    "jobDesc": "PDI",
+    "highPriority": false,
+    "advisor": "Jason Troxel",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
