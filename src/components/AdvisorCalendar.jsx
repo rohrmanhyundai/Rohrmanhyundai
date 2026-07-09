@@ -252,6 +252,21 @@ function workingDatesCal(year, month) {
 const dKeyCal = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 const monthKeyCal = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
+// Stale-while-revalidate cache for the WIP / awaiting lists so the page shows
+// the last-known jobs instantly instead of a "Loading…" while the (many) per-tech
+// GitHub reads complete in the background.
+const WIP_CACHE_KEY = 'apc_wip_cache_v1';
+function readWipCache() {
+  try {
+    const r = JSON.parse(localStorage.getItem(WIP_CACHE_KEY) || 'null');
+    if (r && Array.isArray(r.wip) && Array.isArray(r.awaiting)) return r;
+  } catch {}
+  return null;
+}
+function writeWipCache(wip, awaiting) {
+  try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
+}
+
 export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
@@ -295,8 +310,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const [noteDates, setNoteDates] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [scheduleEvents, setScheduleEvents] = useState({}); // { 'YYYY-MM-DD': [{name, type}] }
-  const [advisorWip, setAdvisorWip] = useState([]);
-  const [advisorAwaiting, setAdvisorAwaiting] = useState([]);
+  const [advisorWip, setAdvisorWip] = useState(() => readWipCache()?.wip || []);
+  const [advisorAwaiting, setAdvisorAwaiting] = useState(() => readWipCache()?.awaiting || []);
   const [wipLoading, setWipLoading] = useState(false);
   const [roSearch, setRoSearch] = useState('');
   const [showPartsReceived, setShowPartsReceived] = useState(false);
@@ -452,10 +467,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         }
         setAdvisorWip(cleanWip);
         setAdvisorAwaiting(awaiting);
+        writeWipCache(cleanWip, awaiting);
       }).finally(() => { if (!cancelled && !silent) setWipLoading(false); });
     };
 
-    fetchJobs(false);
+    // If we already have cached jobs on screen, refresh silently (no spinner)
+    // so the manager isn't shown "Loading…" over data that's already there.
+    fetchJobs(readWipCache() != null);
     // Live updates: poll every 20s so edits by other users appear without a
     // manual page refresh.
     const poll = setInterval(() => fetchJobs(true), 20000);
