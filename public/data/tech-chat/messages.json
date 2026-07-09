@@ -363,6 +363,11 @@
     "id": "mrdq134ayg5",
     "username": "SHAWN",
     "text": "TEKION IS DOWN",
-    "timestamp": 1783614514186
+    "timestamp": 1783614514186,
+    "reactions": {
+      "🚨": [
+        "SHAWN"
+      ]
+    }
   }
 ]
