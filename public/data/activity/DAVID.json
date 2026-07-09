@@ -1,5 +1,45 @@
 [
   {
+    "at": "2026-07-09T20:21:17.298Z",
+    "type": "page",
+    "label": "live-pay"
+  },
+  {
+    "at": "2026-07-09T20:21:15.962Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-09T20:21:01.777Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-09T20:21:01.772Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-07-09T20:20:47.326Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-09T20:20:41.809Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-09T20:20:37.881Z",
+    "type": "page",
+    "label": "original-owner"
+  },
+  {
+    "at": "2026-07-09T20:20:31.073Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
     "at": "2026-07-09T20:19:27.512Z",
     "type": "page",
     "label": "service-pricing"
