@@ -33,7 +33,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -390,6 +390,20 @@ export default function App() {
     setVacations([...newVacations]);
   }
 
+  // Applying a SERVICE gross report on the Goal Forecast page writes its MTD
+  // pacing figures straight into the dashboard Goal Gauges (grossActual /
+  // cpActual) and persists them, so the gauges update daily off the same upload.
+  async function handleGaugeActuals(patch) {
+    if (!patch || typeof patch !== 'object') return;
+    const merged = { ...data, ...patch };
+    setData(merged);
+    try {
+      await saveDashboardToGitHub({ data: merged, vacations });
+    } catch (e) {
+      console.warn('gauge actuals save failed', e);
+    }
+  }
+
   // Check if the current user can access a page key.
   // Admins and managers always have full access. Others use their saved pages map.
   const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -670,6 +684,7 @@ export default function App() {
         title={partsDept ? 'Parts Goal Forecast' : 'Goal Forecast'}
         deptLabel={partsDept ? 'Parts Department' : 'Service Department'}
         storagePrefix={partsDept ? 'partsGoalForecast' : 'goalForecast'}
+        onGaugeActuals={partsDept ? undefined : handleGaugeActuals}
         onBack={() => navTo(prevPage || 'manager-hub')}
       />
     );
