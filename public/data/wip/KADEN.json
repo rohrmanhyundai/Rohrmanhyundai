@@ -11,19 +11,5 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "INSPECTOR WILL BE COMING TO LOOK AT THE CAR. INSPECTOR WAS HERE AND OUT. WAITING NOW "
-  },
-  {
-    "id": "mqzc1bmgvs18",
-    "ro": "778776",
-    "roDate": "2026-06-29",
-    "vehicle": "2017 Hyundai Santa Fe",
-    "jobDesc": "OIL LEAK TIMING COVER",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "06/30/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
