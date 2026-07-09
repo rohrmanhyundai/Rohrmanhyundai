@@ -437,7 +437,7 @@
         "hidden": false,
         "ro_count": 87,
         "coupon_labor": 1152.46,
-        "_lastImport": 1783604099438,
+        "_lastImport": 1783606524790,
         "total_sales": 27600.38,
         "coupon_usage_pct": 0.0418,
         "min_csi": 915
@@ -457,28 +457,31 @@
         "roh50_hrs_ro": 0.6,
         "ro_count": 86,
         "coupon_labor": 1030.9,
-        "_lastImport": 1783604099438,
+        "_lastImport": 1783606524790,
         "total_sales": 25822.07,
         "coupon_usage_pct": 0.0399,
         "min_csi": 915
       },
       {
         "name": "ISAIAH",
-        "mtd_hours": 0,
+        "mtd_hours": 2.4,
         "daily_avg": 0,
-        "hours_per_ro": 0,
-        "align": 0,
-        "tires": 0,
+        "hours_per_ro": 2.4,
+        "align": 1,
+        "tires": 4,
         "valvoline": 0,
         "roh50_hrs_ro": 0,
-        "csi": 0,
+        "csi": 915,
         "asr": 0,
-        "elr": 0,
+        "elr": 0.6996,
         "last_month_total": 0,
-        "ro_count": 0,
+        "ro_count": 1,
         "hidden": false,
-        "_lastImport": 1783604099438,
-        "min_csi": 915
+        "_lastImport": 1783606524790,
+        "min_csi": 915,
+        "coupon_labor": 0,
+        "total_sales": 783.52,
+        "coupon_usage_pct": 0
       }
     ],
     "advisorTraining": [
@@ -562,11 +565,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 195.1,
-      "align": 0.05416666666666666,
-      "tires": 0.08949999999999998,
+      "total_hours": 197.5,
+      "align": 0.3875,
+      "tires": 1.4228333333333332,
       "valvoline": 0.2194,
-      "csi": 620.3333333333334
+      "csi": 925.3333333333334
     },
     "techTotals": {
       "mon": 49.1,
