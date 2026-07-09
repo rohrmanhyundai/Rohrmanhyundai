@@ -4,6 +4,7 @@ import { loadGithubFile, saveGithubFile, loadUsers, getGithubToken, setGithubTok
 import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../utils/openai';
 import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
 import { trackAction } from '../utils/activityTracker';
+import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 
 // ── Shared helpers reused by the historical backfill uploader ────────────────
 const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
@@ -590,7 +591,9 @@ export default function ManagerReports({ users, onBack }) {
       const updatedNames = [];
 
       for (const fn of Object.keys(merged)) {
-        const match = advisorFn.find(a => a.fn === fn);
+        // Map report aliases (e.g. "caiden" → "isaiah") before matching roster.
+        const canonFn = canonicalAdvisorFirst(fn).toLowerCase();
+        const match = advisorFn.find(a => a.fn === canonFn);
         if (!match) { skipped.push(merged[fn].reportName || fn); continue; }
         const username = match.name;
         setBackfillStatus(`⏳ Writing snapshot for ${username}…`);

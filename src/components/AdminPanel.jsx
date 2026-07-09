@@ -4,6 +4,7 @@ import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatter
 import { advisorDailyAverage, currentWeekDates, advisorOffDates } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
+import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
@@ -444,6 +445,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       // Build one combined regex for all advisor first names so we can find the
       // last occurrence on a row in one pass.
       const firstNames = Array.from(advisorMap.keys());
+      // Include any report aliases (e.g. Isaiah is printed as "CAIDEN") so the
+      // regex also finds the alias on the row; it's mapped back below.
+      for (const rosterFn of Array.from(advisorMap.keys())) {
+        for (const alias of reportNamesForAdvisor(rosterFn)) {
+          const al = alias.toLowerCase();
+          if (al !== rosterFn && !firstNames.includes(al)) firstNames.push(al);
+        }
+      }
       const namesRe = new RegExp(`\\b(${firstNames.map(n => n.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')).join('|')})\\b`, 'gi');
       // Numeric token: optional thousands commas, optional decimals, optional trailing %.
       const numRe = /(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?/g;
@@ -491,7 +500,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         }
         if (!bestMatch || !bestNums || bestNums.length < FROM_END_ASR) continue;
 
-        const matchedFn = bestMatch.name;
+        // Map a report alias (e.g. "caiden") back to the roster first name
+        // ("isaiah") before looking the advisor up.
+        const matchedFn = canonicalAdvisorFirst(bestMatch.name).toLowerCase();
         const nums = bestNums;
 
         const adv = advisorMap.get(matchedFn);
