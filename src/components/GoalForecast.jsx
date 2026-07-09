@@ -59,12 +59,19 @@ function parseCurrency(tok) {
 // "PARTS" column headers by x-position, then for each dated row CONCATENATE every
 // text fragment within each column's x-band before parsing — pdf.js can split
 // "$2,973.18" into several fragments, which is why reading single tokens grabbed
-// wrong/partial numbers. Returns { 'YYYY-MM-DD': {labor, parts} }.
+// wrong/partial numbers.
+//
+// Returns { daily: { 'YYYY-MM-DD': {labor, parts} }, summary: { cpActual, grossActual } | null }.
+// `summary` carries the month-to-date pacing figures used by the dashboard Goal
+// Gauges: cpActual = Customer Pay (customer-RO LBR GROSS), grossActual = TOTAL
+// GROSS PROFIT LABOR. Both are read off the MTD cumulative row — the summary row
+// directly above "L Y SALES" — so they update on the same upload as the daily grid.
 async function parseGrossReport(file) {
   const pdfjs = await loadPdfJs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
   const out = {};
+  let summary = null;
   // The daily LABOR/PARTS figures live on page 2 of the report (page 1 is a
   // different summary). Parse page 2 only; fall back to page 1 if there's no p2.
   const targetPages = pdf.numPages >= 2 ? [2] : [1];
@@ -98,18 +105,43 @@ async function parseGrossReport(file) {
       const y = Math.round(it.y);
       (byY[y] = byY[y] || []).push(it);
     }
+    const band = (row, lo, hi) => row.filter(t => t.x >= lo && t.x < hi).sort((a, b) => a.x - b.x).map(t => t.text).join('');
     for (const row of Object.values(byY)) {
       const dateTok = row.find(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text));
       if (!dateTok) continue;
-      const band = (lo, hi) => row.filter(t => t.x >= lo && t.x < hi).sort((a, b) => a.x - b.x).map(t => t.text).join('');
-      const labor = parseCurrency(band(laborLo, mid));
-      const parts = parseCurrency(band(mid, partsHi));
+      const labor = parseCurrency(band(row, laborLo, mid));
+      const parts = parseCurrency(band(row, mid, partsHi));
       const [mm, dd, yy] = dateTok.text.split('/');
       const key = `${2000 + Number(yy)}-${mm}-${dd}`;
       out[key] = { labor: labor == null ? 0 : labor, parts: parts == null ? 0 : parts };
     }
+
+    // MTD pacing row for the Goal Gauges. Anchor on the "L Y SALES" label, then
+    // take the summary row directly above it (no date token, has a LABOR total).
+    // On that row the first currency token is the Customer-RO LBR GROSS (Customer
+    // Pay); the LABOR-band value is TOTAL GROSS PROFIT LABOR (Gross Profit).
+    const norm = (s) => s.replace(/\s+/g, '').toUpperCase();
+    const lyRow = Object.entries(byY).find(([, row]) => row.some(t => norm(t.text) === 'LYSALES'));
+    if (lyRow) {
+      const lyY = Number(lyRow[0]);
+      let mtd = null;
+      for (const [y, row] of Object.entries(byY)) {
+        const yy = Number(y);
+        if (yy <= lyY) continue;
+        if (row.some(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text))) continue;
+        const grossActual = parseCurrency(band(row, laborLo, mid));
+        if (grossActual == null) continue;
+        if (mtd === null || yy < mtd.y) mtd = { y: yy, row, grossActual };
+      }
+      if (mtd) {
+        const sorted = [...mtd.row].sort((a, b) => a.x - b.x);
+        const firstCur = sorted.map(t => t.text).find(t => /\$/.test(t) && parseCurrency(t) != null);
+        const cpActual = parseCurrency(firstCur);
+        summary = { cpActual: cpActual == null ? null : cpActual, grossActual: mtd.grossActual };
+      }
+    }
   }
-  return out;
+  return { daily: out, summary };
 }
 
 // Compute every derived figure for a stored month ('YYYY-MM' + its data bucket).
@@ -351,6 +383,7 @@ export default function GoalForecast({
   deptLabel = 'Service Department',
   backLabel = '← Manager Hub',
   storagePrefix = 'goalForecast',
+  onGaugeActuals,
 }) {
   const now = new Date();
   const mk = monthKey(now);
@@ -394,6 +427,7 @@ export default function GoalForecast({
   const crossPdfInputRef = useRef(null);
   const [parsing, setParsing] = useState(false);
   const [parsePreview, setParsePreview] = useState(null); // [{ dateKey, label, value }]
+  const [parseSummary, setParseSummary] = useState(null); // { cpActual, grossActual } | null — MTD pacing for the gauges
   const [parseErr, setParseErr] = useState('');
   const [parseDept, setParseDept] = useState(dept); // which dept the preview applies to
   const colName = parseDept === 'parts' ? 'Parts' : 'Labor';
@@ -403,10 +437,10 @@ export default function GoalForecast({
   // parts numbers from a service login and vice-versa.
   async function handlePdf(file, targetDept = dept) {
     if (!file) return;
-    setParsing(true); setParseErr(''); setParsePreview(null); setParseDept(targetDept);
+    setParsing(true); setParseErr(''); setParsePreview(null); setParseSummary(null); setParseDept(targetDept);
     const col = targetDept === 'parts' ? 'Parts' : 'Labor';
     try {
-      const parsed = await parseGrossReport(file);
+      const { daily: parsed, summary } = await parseGrossReport(file);
       const rowsOut = Object.keys(parsed)
         .filter(k => k.slice(0, 7) === mk)
         .sort()
@@ -420,6 +454,9 @@ export default function GoalForecast({
         setParseErr(`No ${monthLabel} rows with a ${col} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
       } else {
         setParsePreview(rowsOut);
+        // Only the SERVICE report drives the dashboard Goal Gauges (grossActual /
+        // cpActual are service pacing numbers). Skip for parts imports.
+        setParseSummary(targetDept === 'service' ? summary : null);
       }
     } catch (e) {
       setParseErr('Could not read the PDF: ' + (e.message || e));
@@ -439,6 +476,13 @@ export default function GoalForecast({
       setActuals(next);
       persist({ actuals: next });
       setGridOpen(true);
+      // Push the MTD pacing figures to the dashboard Goal Gauges (service only).
+      if (parseSummary && onGaugeActuals) {
+        const patch = {};
+        if (parseSummary.grossActual != null) patch.grossActual = safe(parseSummary.grossActual, 0);
+        if (parseSummary.cpActual != null) patch.cpActual = safe(parseSummary.cpActual, 0);
+        if (Object.keys(patch).length) onGaugeActuals(patch);
+      }
     } else {
       // Importing into the OTHER department's file (from the cross-view).
       const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((crossMonths && crossMonths[mk]) || {}) };
@@ -455,6 +499,7 @@ export default function GoalForecast({
       } catch {}
     }
     setParsePreview(null);
+    setParseSummary(null);
   }
 
   const saveTimer = useRef(null);
@@ -776,6 +821,23 @@ export default function GoalForecast({
                       </div>
                     ))}
                   </div>
+                  {parseSummary && (parseSummary.grossActual != null || parseSummary.cpActual != null) && (
+                    <div style={{ marginBottom: 16, padding: '10px 12px', background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.25)', borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#93c5fd', marginBottom: 6 }}>Dashboard Goal Gauges — pacing (MTD)</div>
+                      {parseSummary.grossActual != null && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '3px 0' }}>
+                          <span style={{ color: '#cbd5e1' }}>Gross Profit Actual</span>
+                          <span style={{ color: '#93c5fd', fontWeight: 700 }}>{money(parseSummary.grossActual)}</span>
+                        </div>
+                      )}
+                      {parseSummary.cpActual != null && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '3px 0' }}>
+                          <span style={{ color: '#cbd5e1' }}>Customer Pay Actual</span>
+                          <span style={{ color: '#93c5fd', fontWeight: 700 }}>{money(parseSummary.cpActual)}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
                     <button className="secondary" onClick={() => setParsePreview(null)}>Cancel</button>
                     <button onClick={applyParsed} style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✓ Apply {parsePreview.length} day{parsePreview.length === 1 ? '' : 's'}</button>
