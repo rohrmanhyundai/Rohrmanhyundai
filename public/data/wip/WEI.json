@@ -40,5 +40,19 @@
     "highPriority": false,
     "advisor": "CAIDEN HENSON",
     "notes": "RADIATIOR IS ON ORDER "
+  },
+  {
+    "id": "mrdvchgpasd",
+    "ro": "779042",
+    "roDate": "2026-07-08",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES - warning lights on dash",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CAIDEN HENSON",
+    "notes": "LOANER CAR "
   }
 ]
