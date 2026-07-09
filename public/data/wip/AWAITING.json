@@ -11,5 +11,31 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
+  },
+  {
+    "id": "mrdtu2n9f5o5",
+    "ro": "779061",
+    "roDate": "2026-07-09",
+    "vehicle": "2026 Hyundai Sonata Hybrid",
+    "jobDesc": "PDI",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mrdtu2n94yjw",
+    "ro": "779055",
+    "roDate": "2026-07-09",
+    "vehicle": "2016 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES GEARS ARE NOT GOING INTO GEAR. AFTER WARMS UP WILL GO INTO GEAR. CHECK AND ADVISE.",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
