@@ -142,7 +142,12 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             // (no hl) falls through to the default parts-in/neutral styling.
             const other = !!hl && !mine;
             const rowBase = { display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderRadius: 8, padding: '8px 12px' };
-            const rowStyle = j.flagged ? {
+            const rowStyle = j.highPriority ? {
+              ...rowBase,
+              background: 'linear-gradient(135deg, rgba(239,68,68,.22) 0%, rgba(249,115,22,.12) 100%)',
+              border: '2px solid rgba(248,113,113,.95)',
+              borderLeft: '6px solid #ef4444',
+            } : j.flagged ? {
               ...rowBase,
               background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
               border: '2px solid rgba(236,72,153,.95)',
@@ -165,7 +170,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
               boxShadow: j.partsArrived === true ? '0 0 10px rgba(34,197,94,.25)' : 'none',
             };
             return (
-              <div key={j.id || `${j.ro}-${i}`} className={j.flagged ? 'attn-flag-row' : undefined} style={rowStyle}>
+              <div key={j.id || `${j.ro}-${i}`} className={j.highPriority ? 'attn-high-row' : j.flagged ? 'attn-flag-row' : undefined} style={rowStyle}>
                 <div
                   onClick={(e) => copyRo(j.ro, j.id || `${j.ro}-${i}`, e)}
                   title={j.ro ? 'Click to copy RO #' : ''}
@@ -181,7 +186,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                   {j.jobDesc || '—'}
                   {j.notes ? <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{j.notes}</div> : null}
                 </div>
-                {j.highPriority && <span style={{ fontSize: 10, fontWeight: 800, color: '#f87171', background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap', alignSelf: 'center' }}>HIGH</span>}
+                {j.highPriority && <span style={{ fontSize: 10, fontWeight: 900, color: '#fff', background: 'linear-gradient(135deg,#ef4444,#f97316)', border: '1px solid rgba(248,113,113,.6)', borderRadius: 999, padding: '3px 9px', whiteSpace: 'nowrap', alignSelf: 'center', letterSpacing: .6, textShadow: '0 0 6px rgba(239,68,68,.6)', boxShadow: '0 0 10px rgba(239,68,68,.5)' }}>⚠ HIGH</span>}
                 {j.partsArrived === false && j.etaParts && <span style={{ fontSize: 10, color: '#fbbf24', whiteSpace: 'nowrap', alignSelf: 'center' }}>parts ETA {j.etaParts}</span>}
                 {j.partsArrived === true && (
                   <span className="parts-in-pill" style={{ alignSelf: 'center' }}>
