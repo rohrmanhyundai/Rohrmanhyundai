@@ -2,7 +2,7 @@
   {
     "id": "mrdgye4y7y93",
     "createdAt": "2026-07-09T12:14:31.954Z",
-    "updatedAt": "2026-07-09T17:34:28.636Z",
+    "updatedAt": "2026-07-09T18:06:44.369Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Brian Summers",
     "customerPhone": "(334) 324 - 2081",
@@ -17,8 +17,8 @@
     "claimNumber": "",
     "authNumber": "",
     "laborRate": "170.00",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "laborTime": "3.10",
+    "diagnosisTime": "1.0",
     "parts": [
       {
         "id": "mrdgye4yrrdy",
@@ -26,17 +26,31 @@
         "description": "right rear caliper",
         "qty": "1",
         "price": "173.11"
+      },
+      {
+        "id": "mrdsen189tuv",
+        "partNumber": "84952578",
+        "description": "brake hose",
+        "qty": "1",
+        "price": "33.37"
+      },
+      {
+        "id": "mrdsf564ezj1",
+        "partNumber": "608334",
+        "description": "VALVOLINE BRAKE FLUID",
+        "qty": "1",
+        "price": "23.99"
       }
     ],
     "taxPct": "7",
-    "deductible": "",
+    "deductible": "200.00",
     "rental": null,
     "towing": null,
     "sublet": null,
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "",
+    "notes": "CALIPER BLEED IS INCLUDED IN R&R OF CALIPER.",
     "approved": false,
     "approvedDate": "",
     "denied": false,
