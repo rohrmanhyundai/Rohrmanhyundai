@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals } from '../utils/github';
+import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import Chat from './Chat';
 import TechChat from './TechChat';
@@ -91,7 +92,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   // Match by first name so an RO stored as "JORDAN TROXEL" (from an upload) still
   // counts as JORDAN's and floats to the top for the logged-in advisor.
   const hl = (highlightAdvisor || '').toUpperCase().split(/\s+/)[0];
-  const isMine = (j) => hl && (j.advisor || '').trim().toUpperCase().split(/\s+/)[0] === hl;
+  const isMine = (j) => hl && canonicalAdvisorFirst(j.advisor) === hl;
   if (hl) {
     jobs = [...jobs].sort((a, b) => {
       const am = isMine(a) ? 0 : 1;
@@ -171,7 +172,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                   style={{ minWidth: 78, fontWeight: 800, color: copiedKey === (j.id || `${j.ro}-${i}`) ? '#4ade80' : '#e2e8f0', fontSize: 16, cursor: j.ro ? 'pointer' : 'default', userSelect: 'none' }}
                 >{copiedKey === (j.id || `${j.ro}-${i}`) ? '✓ Copied' : (j.ro || '—')}</div>
                 {showAdvisor && (
-                  <div style={{ minWidth: 76, fontSize: 14, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.advisor || '').trim().split(/\s+/)[0]}</div>
+                  <div style={{ minWidth: 76, fontSize: 14, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{canonicalAdvisorFirst(j.advisor)}</div>
                 )}
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
