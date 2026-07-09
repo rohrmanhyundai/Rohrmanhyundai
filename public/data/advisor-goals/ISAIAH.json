@@ -2,6 +2,12 @@
   "2026-07": {
     "hoursGoal": 215,
     "hrsRoGoal": 1,
-    "days": {}
+    "days": {
+      "2026-07-08": {
+        "hours": 2.4,
+        "hrsRo": 2.4
+      }
+    },
+    "entryMode": "mtd"
   }
 }
