@@ -31,7 +31,7 @@
     "roDate": "2026-07-09",
     "vehicle": "2026 Hyundai IONIQ 5",
     "jobDesc": "PDI DO FIRST",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "Jason Troxel",
     "notes": "CAR IS SOLD NEED ASAP",
     "partsArrived": null,
