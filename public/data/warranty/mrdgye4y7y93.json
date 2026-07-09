@@ -1,7 +1,7 @@
 {
   "id": "mrdgye4y7y93",
   "createdAt": "2026-07-09T12:14:31.954Z",
-  "updatedAt": "2026-07-09T12:24:48.911Z",
+  "updatedAt": "2026-07-09T17:34:28.636Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brian Summers",
   "customerPhone": "(334) 324 - 2081",
@@ -15,7 +15,7 @@
   "warrantyPhone": "2017771000",
   "claimNumber": "",
   "authNumber": "",
-  "laborRate": "",
+  "laborRate": "170.00",
   "laborTime": "",
   "diagnosisTime": "",
   "parts": [
