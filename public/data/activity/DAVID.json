@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-07-09T11:57:07.799Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-09T11:57:01.919Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-09T11:56:59.563Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-08T15:50:14.851Z",
     "type": "page",
     "label": "live-pay"
@@ -541,16 +556,6 @@
   },
   {
     "at": "2026-06-09T13:48:35.462Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-08T18:06:26.563Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-08T18:04:42.353Z",
     "type": "page",
     "label": "advisor-calendar"
   }
