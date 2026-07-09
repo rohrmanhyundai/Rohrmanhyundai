@@ -38,6 +38,12 @@ export default function AdvisorPerformance({ data }) {
   const goalStyle = { color: '#95a9c6', fontSize: Math.round(fontSize * 0.7) };
   const tdStyle = { fontSize, padding: `${Math.max(3, fontSize * 0.35)}px 8px` };
 
+  // Column minimums (goals). A value under its goal gets the pulsing "perf-low"
+  // highlight to draw the eye on the TV. MTD Hrs is excluded on purpose — it's a
+  // cumulative monthly goal, so it's always "under" mid-month.
+  const G = { hpr: 1.4, align: 0.10, tires: 0.15, valv: 0.25, roh50: 1.2, csi: 910, asr: 0.21, elr: 0.88 };
+  const low = (val, goal) => (safe(val, 0) < goal ? 'perf-low' : undefined);
+
   return (
     <section className="card">
       <div className="panel-head">
@@ -75,14 +81,14 @@ export default function AdvisorPerformance({ data }) {
                 <td className="name" style={tdStyle}>{a.name}</td>
                 <td style={tdStyle}>{n(advisorDailyAverage(a, data), 2)}</td>
                 <td style={tdStyle}>{n(a.mtd_hours, 1)}</td>
-                <td style={tdStyle}>{n(a.hours_per_ro, 2)}</td>
-                <td style={tdStyle}>{pct(a.align, 1)}</td>
-                <td style={tdStyle}>{pct(a.tires, 1)}</td>
-                <td style={tdStyle}>{pct(a.valvoline, 1)}</td>
-                <td style={tdStyle}>{n(a.roh50_hrs_ro, 2)}</td>
-                <td style={tdStyle}>{Math.round(safe(a.csi)).toString()}</td>
-                <td style={tdStyle}>{pct(a.asr, 1)}</td>
-                <td style={tdStyle}>{pct(a.elr, 0)}</td>
+                <td className={low(a.hours_per_ro, G.hpr)} style={tdStyle}>{n(a.hours_per_ro, 2)}</td>
+                <td className={low(a.align, G.align)} style={tdStyle}>{pct(a.align, 1)}</td>
+                <td className={low(a.tires, G.tires)} style={tdStyle}>{pct(a.tires, 1)}</td>
+                <td className={low(a.valvoline, G.valv)} style={tdStyle}>{pct(a.valvoline, 1)}</td>
+                <td className={low(a.roh50_hrs_ro, G.roh50)} style={tdStyle}>{n(a.roh50_hrs_ro, 2)}</td>
+                <td className={low(a.csi, G.csi)} style={tdStyle}>{Math.round(safe(a.csi)).toString()}</td>
+                <td className={low(a.asr, G.asr)} style={tdStyle}>{pct(a.asr, 1)}</td>
+                <td className={low(a.elr, G.elr)} style={tdStyle}>{pct(a.elr, 0)}</td>
                 <td style={tdStyle}>{n(a.last_month_total, 1)}</td>
               </tr>
             ))}

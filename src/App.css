@@ -52,6 +52,13 @@ tr:last-child td{border-bottom:none}
 .tableArea th{color:#c2d4ef}
 .tableArea td{color:#ffffff;font-weight:600}
 .tableArea td.name{color:var(--cyan);font-weight:800;letter-spacing:.02em}
+/* Under-goal advisor metric: pulsing bright highlight to catch the eye. Only
+   color/glow animate — no size or transform — so the TV layout is unaffected. */
+@keyframes perfLowPulse{
+  0%,100%{color:#ffd24a;text-shadow:0 0 5px rgba(255,190,46,.45)}
+  50%{color:#fff2b8;text-shadow:0 0 15px rgba(255,210,74,.95)}
+}
+.tableArea td.perf-low{font-weight:800;animation:perfLowPulse 1.5s ease-in-out infinite}
 .center{text-align:center}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;border-radius:999px;padding:3px 8px;font-size:13px;font-weight:800;border:1px solid transparent}
 .good{color:#c2f8d2;background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.24)}
