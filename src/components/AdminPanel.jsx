@@ -842,12 +842,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!techUpload) return;
     const { day, rows, dateLabel } = techUpload;
     const date = currentWeekDates()[day];
+    const stamp = Date.now();
     const newData = structuredClone(data);
     for (const r of rows) {
       const tech = newData.technicians[r.idx];
       if (!tech) continue;
       tech[day] = r.hours;
       tech.hoursOverride = { ...(tech.hoursOverride || {}), [date]: true };
+      tech._hrsStamp = stamp; // bump so the uncontrolled inputs remount & repaint
     }
     onDataChange(newData, structuredClone(vacations));
     const filled = rows.filter(r => r.matched).length;
@@ -1637,7 +1639,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="form-grid">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
-                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input defaultValue={t[day]} onBlur={e => overrideTechHours(idx, day, safe(e.target.value, t[day]))} /></div>
+                <div className="field" key={day}><label>{day.charAt(0).toUpperCase() + day.slice(1)} Hrs</label><input key={`${day}-${t._hrsStamp || 0}-${t[day]}`} defaultValue={t[day]} onBlur={e => overrideTechHours(idx, day, safe(e.target.value, t[day]))} /></div>
               ))}
             </div>
             <div className="form-grid" style={{ marginTop: 8 }}>
