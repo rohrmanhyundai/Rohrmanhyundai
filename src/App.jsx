@@ -419,7 +419,7 @@ export default function App() {
   // Admins and managers always have full access. Others use their saved pages map.
   const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   // Keys that are OFF by default — must be explicitly granted in user pages settings
-  const DEFAULT_OFF_KEYS = new Set(['surveyReports', 'chargeAccountList']);
+  const DEFAULT_OFF_KEYS = new Set(['surveyReports']);
   function canAccess(key) {
     if (isAdminOrManager) return true;
     if (DEFAULT_OFF_KEYS.has(key)) {
@@ -862,6 +862,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'advisor-calendar')}
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
+        onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
         currentRole={currentRole}

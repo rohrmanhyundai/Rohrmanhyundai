@@ -252,7 +252,7 @@ function workingDatesCal(year, month) {
 const dKeyCal = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
 const monthKeyCal = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, schedules = {}, vacations = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, schedules = {}, vacations = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -539,6 +539,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {canSee(userPages, currentRole, 'documentLibrary') && (
             <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
               📁 Document Library
+            </button>
+          )}
+          {canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && (
+            <button onClick={onChargeList} style={{ background: 'linear-gradient(180deg,rgba(251,113,133,.25),rgba(244,63,94,.18))', borderColor: 'rgba(251,113,133,.35)' }}>
+              💳 Charge List
             </button>
           )}
           {canSee(userPages, currentRole, 'servicePricing') && onServicePricing && (
