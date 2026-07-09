@@ -437,7 +437,7 @@
         "hidden": false,
         "ro_count": 87,
         "coupon_labor": 1152.46,
-        "_lastImport": 1783595110596,
+        "_lastImport": 1783604099438,
         "total_sales": 27600.38,
         "coupon_usage_pct": 0.0418,
         "min_csi": 915
@@ -457,7 +457,7 @@
         "roh50_hrs_ro": 0.6,
         "ro_count": 86,
         "coupon_labor": 1030.9,
-        "_lastImport": 1783595110596,
+        "_lastImport": 1783604099438,
         "total_sales": 25822.07,
         "coupon_usage_pct": 0.0399,
         "min_csi": 915
@@ -477,7 +477,7 @@
         "last_month_total": 0,
         "ro_count": 0,
         "hidden": false,
-        "_lastImport": 1783595110596,
+        "_lastImport": 1783604099438,
         "min_csi": 915
       }
     ],
@@ -583,7 +583,8 @@
     "grossActual": 147283.41,
     "cpGoal": 65227,
     "cpActual": 65227.33,
-    "advisorMonthlyWorkdays": 27
+    "advisorMonthlyWorkdays": 27,
+    "service_policy": 498.82
   },
   "vacations": [
     {
