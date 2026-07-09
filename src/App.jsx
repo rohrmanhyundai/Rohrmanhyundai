@@ -201,7 +201,18 @@ export default function App() {
       if (ts <= lastSeen) return; // stale / already handled
       localStorage.setItem('forceRefreshSeen', String(ts));
       try { console.log('[force-refresh] reloading at', new Date(ts).toISOString()); } catch {}
-      setTimeout(() => { window.location.reload(true); }, 250);
+      // Plain reload() can be served the cached index.html (GitHub Pages sends
+      // Cache-Control: max-age=600 on it), which still points at the OLD hashed
+      // bundle — so a deploy wouldn't actually reach the client. Navigating with
+      // a fresh ?_v= makes the URL a cache miss, forcing a fresh index.html that
+      // references the newest bundle. replace() avoids a back-button trap.
+      setTimeout(() => {
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.set('_v', String(ts));
+          window.location.replace(u.toString());
+        } catch { window.location.reload(); }
+      }, 250);
     };
     const checkSignal = async () => {
       try { const rec = await loadForceRefresh(); if (rec && rec.ts) applyRefresh(rec.ts, true); } catch {}
