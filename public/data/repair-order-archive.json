@@ -1,5 +1,24 @@
 [
   {
+    "id": "mrc60n7pmqlx",
+    "ro": "778758",
+    "roDate": "2026-07-08",
+    "vehicle": "2024 Hyundai Tucson Hybrid",
+    "jobDesc": "Exhaust Gas Recirculation Valve Remove and Replace",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "_archiveId": "mrdk6pkiyc7",
+    "_archivedAt": "2026-07-09T13:44:58.866Z",
+    "_archivedBy": "CHAD",
+    "_source": "wip",
+    "_sourceTech": "CHAD"
+  },
+  {
     "id": "mqflbda5ily",
     "ro": "778405",
     "roDate": "2026-06-15",
