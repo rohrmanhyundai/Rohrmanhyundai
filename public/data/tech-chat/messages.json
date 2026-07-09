@@ -1,28 +1,5 @@
 [
   {
-    "id": "mq5j2oi86oi",
-    "username": "SHAWN",
-    "text": "CORY 777677 REFER TO NOTES FOR THIS REPAIR TY",
-    "timestamp": 1780942319505
-  },
-  {
-    "id": "mq5muosbxc4",
-    "username": "DAVID",
-    "text": "SHAWN- Chelsea Snyder would like you call her",
-    "timestamp": 1780948665083
-  },
-  {
-    "id": "mq5vdtp1z2s",
-    "username": "SHAWN",
-    "text": "CALLED AND LEFT VM",
-    "timestamp": 1780962994837,
-    "replyTo": {
-      "id": "mq5muosbxc4",
-      "username": "DAVID",
-      "text": "SHAWN- Chelsea Snyder would like you call her"
-    }
-  },
-  {
     "id": "mq6li0psjhf",
     "username": "KAI",
     "text": "778191 horns are here",
@@ -381,5 +358,11 @@
     "username": "SHAWN",
     "text": "Cory need STUI of valve cover 778812",
     "timestamp": 1783515808958
+  },
+  {
+    "id": "mrdfrpkgrq3",
+    "username": "KAI",
+    "text": "RO 779047 parts have been received",
+    "timestamp": 1783597280560
   }
 ]
