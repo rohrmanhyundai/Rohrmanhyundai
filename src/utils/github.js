@@ -95,59 +95,70 @@ export async function saveDashboardToGitHub(payload) {
   };
 
   const apiPath = GITHUB_PATH;
-  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}?ref=${GITHUB_BRANCH}&_=${Date.now()}`;
-  const getRes = await fetch(getUrl, { headers, cache: 'no-store' });
-
-  let sha = null;
-  if (getRes.ok) {
-    const existing = await getRes.json();
-    sha = existing.sha || null;
-  } else if (getRes.status !== 404) {
-    const text = await getRes.text();
-    throw new Error(`Failed to read existing file: ${text}`);
-  }
-
+  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}`;
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
-  const putRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}`,
-    {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: `Update dashboard data ${new Date().toISOString()}`,
-        content,
-        branch: GITHUB_BRANCH,
-        sha,
-      }),
+  // Retry on stale-sha/conflict so a concurrent save (another manager, the
+  // client poll, or GitHub replica lag) doesn't make Save Changes silently fail.
+  let lastErr = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let sha = null;
+    try {
+      const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
+      if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
+      else if (getRes.status !== 404) { lastErr = new Error(`Failed to read existing file (${getRes.status})`); }
+    } catch { /* network hiccup on GET — retry */ }
+    try {
+      const putRes = await fetch(putUrl, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Update dashboard data ${new Date().toISOString()}`, content, branch: GITHUB_BRANCH, sha }),
+      });
+      if (putRes.ok) return await putRes.json();
+      let putJson = {}; try { putJson = await putRes.json(); } catch {}
+      lastErr = new Error(putJson.message || `GitHub update failed (${putRes.status})`);
+      if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) throw lastErr;
+    } catch (e) {
+      lastErr = e;
     }
-  );
-
-  const putJson = await putRes.json();
-  if (!putRes.ok) {
-    throw new Error(putJson.message || 'GitHub update failed');
+    await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
   }
-
-  return putJson;
+  throw lastErr || new Error('GitHub update failed');
 }
 
 async function saveGitHubFile(headers, path, data, message) {
-  const getRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
-    { headers, cache: 'no-store' }
-  );
-  let sha = null;
-  if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const putRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-    {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, content, branch: GITHUB_BRANCH, sha }),
+  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  // Read-sha then write-with-sha is optimistic locking: if the file changed
+  // between the two (another client saving, the WIP poll on another device, or
+  // GitHub replica lag) the PUT returns 409/422. Re-read the sha and retry so a
+  // save never silently fails under concurrency.
+  let lastErr = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let sha = null;
+    try {
+      const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
+      if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
+    } catch { /* network hiccup on the GET — retry below */ }
+    try {
+      const putRes = await fetch(putUrl, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, content, branch: GITHUB_BRANCH, sha }),
+      });
+      if (putRes.ok) return;
+      let j = {}; try { j = await putRes.json(); } catch {}
+      lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
+      // Only retry conflicts / stale-sha / transient server errors.
+      if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) throw lastErr;
+    } catch (e) {
+      lastErr = e; // network error on the PUT — retry
     }
-  );
-  if (!putRes.ok) { const j = await putRes.json(); throw new Error(j.message || 'GitHub save failed'); }
+    await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+  }
+  throw lastErr || new Error('GitHub save failed');
 }
 
 // Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay).
