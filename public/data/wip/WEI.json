@@ -12,5 +12,33 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "P/A IS SUBMITTED FOR ENGINE REPLACEMENT WAITING ON ENGINE "
+  },
+  {
+    "id": "mrdv3iujzanb",
+    "ro": "779069",
+    "roDate": "2026-07-09",
+    "vehicle": "2022 Hyundai Palisade",
+    "jobDesc": "Radiator Remove and Replace",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
+  },
+  {
+    "id": "mrdv3iujv0a4",
+    "ro": "779053",
+    "roDate": "2026-07-09",
+    "vehicle": "2022 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CAIDEN HENSON",
+    "notes": ""
   }
 ]
