@@ -645,7 +645,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const row = rows[r] || [];
         const reportName = String(row[colName] ?? '').trim();
         if (!reportName) continue;
-        const firstReport = firstWord(reportName);
+        // Apply report aliases (e.g. "CAIDEN HENSON" → "ISAIAH") before matching.
+        const firstReport = canonicalAdvisorFirst(reportName).toLowerCase();
         if (!firstReport) continue;
         // Skip totals / footer rows that don't look like a person.
         if (/^(total|grand|average|avg|summary)/i.test(reportName)) continue;
