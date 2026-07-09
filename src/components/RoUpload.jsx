@@ -5,6 +5,7 @@ import {
   loadWipData, saveWipData, listWipTechs, loadDashboardData,
   saveMissingNotes,
 } from '../utils/github';
+import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 
 // Columns we read from the dealership's open-RO report.
 const FIELDS = [
@@ -163,7 +164,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       const ro = val('ro');
       if (!ro) continue;
       if (val('internalNotes') !== '') continue; // has notes → not missing
-      const adv = firstNameKey(val('advisor')) || 'UNASSIGNED';
+      const adv = canonicalAdvisorFirst(val('advisor')) || 'UNASSIGNED';
       if (!seen[adv]) seen[adv] = new Set();
       const k = roKey(ro);
       if (seen[adv].has(k)) continue;

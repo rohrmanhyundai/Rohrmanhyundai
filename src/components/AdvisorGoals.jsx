@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
+import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes, loadCompletedReviews } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
@@ -339,8 +340,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       if (!parsed) { setUploadErr('Couldn’t find a sheet with Name, Bill Hrs and Hrs / RO columns. Make sure this is the Advisor Performance Report export.'); return; }
       // Match each report name to a roster advisor by first name.
       const matched = parsed.map(r => {
-        const firstName = r.name.trim().split(/\s+/)[0].toUpperCase();
-        const advisor = roster.find(a => (a || '').toUpperCase() === firstName) || null;
+        // Apply report aliases (e.g. "CAIDEN" → "ISAIAH") before roster match.
+        const firstName = canonicalAdvisorFirst(r.name);
+        const advisor = roster.find(a => firstNameUpper(a) === firstName) || null;
         return { ...r, firstName, advisor };
       });
       setUploadRows(matched);
