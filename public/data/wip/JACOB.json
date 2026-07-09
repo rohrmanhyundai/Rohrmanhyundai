@@ -35,8 +35,8 @@
     "jobDesc": "PERFORM ROHRY'S BACKLOT INSPECTION - INCLUDES TEST DRIVE, LUBE OIL AND FILTER CHANGE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/09/2026",
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
