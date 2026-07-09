@@ -1,7 +1,7 @@
 {
   "id": "mrdgye4y7y93",
   "createdAt": "2026-07-09T12:14:31.954Z",
-  "updatedAt": "2026-07-09T18:06:44.369Z",
+  "updatedAt": "2026-07-09T18:08:55.353Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brian Summers",
   "customerPhone": "(334) 324 - 2081",
@@ -13,10 +13,10 @@
   "mileage": "139810",
   "warrantyCompany": "HIGHLINE",
   "warrantyPhone": "2017771000",
-  "claimNumber": "",
-  "authNumber": "",
+  "claimNumber": "707522",
+  "authNumber": "707522",
   "laborRate": "170.00",
-  "laborTime": "3.10",
+  "laborTime": "2.20",
   "diagnosisTime": "1.0",
   "parts": [
     {
@@ -50,8 +50,8 @@
   "tireTax": null,
   "tireDisposal": null,
   "notes": "CALIPER BLEED IS INCLUDED IN R&R OF CALIPER.",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-07-09",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
