@@ -26,5 +26,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrfd4nzan25y",
+    "ro": "779030",
+    "roDate": "2026-07-10",
+    "vehicle": "2021 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES- odd whining noise between 30/40 mph, cust is concerned it maybe transmission issues",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
