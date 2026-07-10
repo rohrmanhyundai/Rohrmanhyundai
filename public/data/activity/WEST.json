@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-07-10T19:21:33.723Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-07-10T19:21:32.626Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-10T19:21:32.624Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-07-10T19:21:29.360Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-07-10T19:21:22.008Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-10T12:55:32.685Z",
     "type": "page",
     "label": "hotRepairs"
