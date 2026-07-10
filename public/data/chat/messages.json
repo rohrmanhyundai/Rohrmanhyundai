@@ -1,11 +1,5 @@
 [
   {
-    "id": "mq8dayah03h",
-    "username": "DAVID",
-    "text": "@Shawn, 778175. Can not remove tech as time has already been flagged. Ill close the ticket turning the time into ISH to make price 0",
-    "timestamp": 1781114026265
-  },
-  {
     "id": "mqb8ak9zfcv",
     "username": "SHAWN",
     "text": "JORDAN 778342 IS DONT PARTS ARE ON ORDER",
@@ -264,5 +258,11 @@
     "username": "SHAWN",
     "text": "JORDAN 778834 THERE IS NOTES ABOUT PAYMENT FOR THIS REPAIR IN INTERNAL NOTES.",
     "timestamp": 1783702513731
+  },
+  {
+    "id": "mrff61kyn3d",
+    "username": "KAI",
+    "text": "IF YOU MAKE AN APPOITMENT FOR AN SOR CUSTOMER PLEASE CHANGE THE FLAG TO GREEN",
+    "timestamp": 1783717202050
   }
 ]
