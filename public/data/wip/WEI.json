@@ -35,8 +35,8 @@
     "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/10/2026",
     "highPriority": false,
     "advisor": "CAIDEN HENSON",
     "notes": "RADIATIOR IS ON ORDER "
