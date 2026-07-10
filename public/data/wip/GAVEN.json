@@ -34,8 +34,8 @@
     "jobDesc": "HIGH PRESSURE FUEL LINE WITH MOUNTING BRACKET ",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/10/2026",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "PARTS ON ORDER HIGH PRESSURE FUEL LINE "
