@@ -54,5 +54,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "Recommended transmission replacement. "
+  },
+  {
+    "id": "mrfd4n5hk57k",
+    "ro": "779093",
+    "roDate": "2026-07-10",
+    "vehicle": "2024 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES WARNING HYBIRD SYSTEM. CHECK AND ADVISE- no active issue",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
