@@ -129,6 +129,10 @@ export default function App() {
   const pageRef = useRef(page);
   const stageRef = useRef(null);
   const adminOpenRef = useRef(false);
+  // Freshly-uploaded gauge actuals (grossActual/cpActual). The 90s poll wholesale-
+  // replaces `data` from the server; for a short window after an upload we keep the
+  // just-applied values so a stale-replica read can't revert the gauges.
+  const gaugeActualsRef = useRef(null); // { grossActual?, cpActual?, ts }
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -142,6 +146,13 @@ export default function App() {
       }
       if (payload && payload.data) {
         const d = payload.data;
+        // Keep just-uploaded gauge actuals from being reverted by a stale-replica
+        // read during the save's propagation window (~30s).
+        const g = gaugeActualsRef.current;
+        if (g && Date.now() - g.ts < 30000) {
+          if (g.grossActual != null) d.grossActual = g.grossActual;
+          if (g.cpActual != null) d.cpActual = g.cpActual;
+        }
         recalcTech(d, schedulesRef.current);
         recalcAdvisorSummary(d);
         setData(d);
@@ -406,10 +417,14 @@ export default function App() {
   // cpActual) and persists them, so the gauges update daily off the same upload.
   async function handleGaugeActuals(patch) {
     if (!patch || typeof patch !== 'object') return;
+    // Remember these so the 90s poll can't revert them mid-propagation.
+    gaugeActualsRef.current = { ...patch, ts: Date.now() };
     const merged = { ...data, ...patch };
     setData(merged);
     try {
       await saveDashboardToGitHub({ data: merged, vacations });
+      // Refresh the ts so the guard window covers the full save latency.
+      gaugeActualsRef.current = { ...patch, ts: Date.now() };
     } catch (e) {
       console.warn('gauge actuals save failed', e);
     }
