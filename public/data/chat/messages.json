@@ -1,17 +1,5 @@
 [
   {
-    "id": "mq77ye7i314",
-    "username": "SHAWN",
-    "text": "DAVID 778169 WHAT ARE WE DOING WITH THIS THIS RO?",
-    "timestamp": 1781044576110
-  },
-  {
-    "id": "mq82z4vi3fg",
-    "username": "KAI",
-    "text": "parts are in and customers have been texted for new SORS. 11796, 11803, 11805",
-    "timestamp": 1781096678766
-  },
-  {
     "id": "mq8dayah03h",
     "username": "DAVID",
     "text": "@Shawn, 778175. Can not remove tech as time has already been flagged. Ill close the ticket turning the time into ISH to make price 0",
@@ -270,5 +258,11 @@
     "username": "KAI",
     "text": "tire is here for jillian mae stine, sor c12088",
     "timestamp": 1783613696590
+  },
+  {
+    "id": "mrf6f803o7t",
+    "username": "SHAWN",
+    "text": "JORDAN 778834 THERE IS NOTES ABOUT PAYMENT FOR THIS REPAIR IN INTERNAL NOTES.",
+    "timestamp": 1783702513731
   }
 ]
