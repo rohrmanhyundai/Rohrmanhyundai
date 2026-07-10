@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-10T14:11:58.009Z",
+    "type": "page",
+    "label": "advisor-view-tech-schedule"
+  },
+  {
     "at": "2026-07-09T16:39:42.507Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -220,11 +225,6 @@
   },
   {
     "at": "2026-06-11T11:51:24.114Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-09T20:03:45.240Z",
     "type": "page",
     "label": "advisor-calendar"
   }
