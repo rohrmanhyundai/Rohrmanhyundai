@@ -21,8 +21,8 @@
     "jobDesc": "Radiator Remove and Replace",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/10/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
