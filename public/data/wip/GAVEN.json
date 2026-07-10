@@ -26,5 +26,19 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "PARTS ON ORDER HIGH PRESSURE FUEL LINE "
+  },
+  {
+    "id": "mrfdis8cl4i",
+    "ro": "779055",
+    "roDate": "2026-07-09",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES GEARS ARE NOT GOING INTO GEAR. AFTER WARMS UP WILL GO INTO GEAR. CHECK AND ADVISE.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
