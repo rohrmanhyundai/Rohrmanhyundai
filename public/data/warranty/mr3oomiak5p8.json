@@ -1,7 +1,7 @@
 {
   "id": "mr3oomiak5p8",
   "createdAt": "2026-07-02T15:53:11.410Z",
-  "updatedAt": "2026-07-09T14:25:57.237Z",
+  "updatedAt": "2026-07-10T18:53:52.233Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Christoper Odell",
   "customerPhone": "765) 918 - 3941",
@@ -15,8 +15,8 @@
   "warrantyPhone": "800-346-6469",
   "claimNumber": "2569050",
   "authNumber": "TR131739-2569050",
-  "laborRate": "66.67",
-  "laborTime": "0.90",
+  "laborRate": "100",
+  "laborTime": "0.60",
   "diagnosisTime": "",
   "parts": [
     {
