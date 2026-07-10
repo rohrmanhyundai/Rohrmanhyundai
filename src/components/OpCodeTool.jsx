@@ -89,7 +89,7 @@ export function extractWarrantyDraft(fullText) {
   // ("Model … Op. Code … Operation …"). This avoids early "see the Warranty
   // Information section" references elsewhere in the bulletin that would
   // otherwise hijack the parse. Fall back to the "Warranty Information" label.
-  const headerRe = /Model\s+Op\.?\s*Code\s+Operation/i;
+  const headerRe = /Model\s+Op\.?\s*Code\s+(?:Operation|Description)/i;
   let section;
   const hm = headerRe.exec(text);
   if (hm) {
@@ -103,10 +103,16 @@ export function extractWarrantyDraft(fullText) {
   if (e && e.index > 40) section = section.slice(0, e.index);
   const rawText = section.slice(0, 4000);
 
-  // Drop the column-header row (it ends with "Cause Code" — tolerate the common
-  // "C ause Code" extraction spacing) so the header text isn't read as a model.
-  let body = section.replace(/^[\s\S]*?C\s*ause\s+Code/i, '').replace(/\s+/g, ' ').trim();
-  if (!/C\s*ause\s+Code/i.test(section)) {
+  // Drop everything up to and including the column-header row so its labels
+  // aren't read as a model. The header ends "… Nature Cause [Code]" (some
+  // bulletins print "Cause", others "Cause Code", and "Description" instead of
+  // "Operation"); tolerate the common "C ause" extraction spacing.
+  let body;
+  if (/Nature\s+C\s*ause/i.test(section)) {
+    body = section.replace(/^[\s\S]*?Nature\s+C\s*ause(?:\s+Code)?/i, '').replace(/\s+/g, ' ').trim();
+  } else if (/C\s*ause\s+Code/i.test(section)) {
+    body = section.replace(/^[\s\S]*?C\s*ause\s+Code/i, '').replace(/\s+/g, ' ').trim();
+  } else {
     // Fallback: strip whatever header label we anchored on.
     body = section.replace(headerRe, ' ').replace(/warranty\s+information\s*:?/i, ' ').replace(/\s+/g, ' ').trim();
   }
