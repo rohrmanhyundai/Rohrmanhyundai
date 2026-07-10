@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-07-10T19:00:44.860Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-10T19:00:40.638Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-10T19:00:40.523Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-10T18:37:57.669Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
