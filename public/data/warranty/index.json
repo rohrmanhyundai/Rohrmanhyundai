@@ -2,7 +2,7 @@
   {
     "id": "mrf117den6hw",
     "createdAt": "2026-07-10T14:24:21.650Z",
-    "updatedAt": "2026-07-10T14:29:30.296Z",
+    "updatedAt": "2026-07-10T14:38:42.576Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Haleigh Mccoy",
     "customerPhone": "(317) 910 - 0817",
@@ -36,7 +36,7 @@
     "tireRepair": null,
     "tireTax": ".25",
     "tireDisposal": "3.00",
-    "notes": "",
+    "notes": "tire ordered",
     "approved": true,
     "approvedDate": "2026-07-10",
     "denied": false,
