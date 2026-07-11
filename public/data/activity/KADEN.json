@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-11T15:46:34.718Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
     "at": "2026-07-11T14:06:14.463Z",
     "type": "page",
     "label": "hotRepairs"
@@ -660,26 +665,5 @@
     "at": "2026-06-15T14:01:07.893Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-11T15:27:13.517Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778251 tech KADEN"
-  },
-  {
-    "at": "2026-06-11T14:47:01.527Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-11T14:47:00.526Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-11T14:46:54.526Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
