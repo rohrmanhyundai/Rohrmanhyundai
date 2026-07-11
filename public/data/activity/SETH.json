@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-07-11T11:41:22.836Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-11T11:41:14.007Z",
+    "type": "action",
+    "label": "mark-parts-arrived",
+    "details": "RO 779030"
+  },
+  {
+    "at": "2026-07-11T11:41:07.123Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-07-11T11:36:48.123Z",
     "type": "page",
     "label": "advisor-calendar"
