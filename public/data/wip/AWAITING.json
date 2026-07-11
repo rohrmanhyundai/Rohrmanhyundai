@@ -37,18 +37,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "mrfd4oroqzs2",
-    "ro": "779129",
-    "roDate": "2026-07-10",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "ENTERPRISE RECALLS",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
