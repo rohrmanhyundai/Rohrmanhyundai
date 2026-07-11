@@ -35,8 +35,8 @@
     "jobDesc": "CUSTOMER STATES- odd whining noise between 30/40 mph, cust is concerned it maybe transmission issues",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/11/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
