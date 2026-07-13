@@ -14,6 +14,12 @@
       "2026-07-10": {
         "hours": 10,
         "hrsRo": 0.91
+      },
+      "2026-07-01": {
+        "overridden": true,
+        "overrideReason": "dont need",
+        "overrideBy": "SHAWN",
+        "overrideAt": 1783977586671
       }
     },
     "entryMode": "mtd"
