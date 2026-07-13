@@ -1,53 +1,15 @@
 {
-  "updatedAt": "2026-07-13T18:49:16.901Z",
+  "updatedAt": "2026-07-13T22:04:50.837Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "779179",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "779175",
-        "vehicle": "2024 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779171",
-        "vehicle": "2019 Hyundai Sonata"
-      },
-      {
-        "ro": "779169",
-        "vehicle": "2016 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779168",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779154",
-        "vehicle": "2025 Hyundai IONIQ 6"
-      },
-      {
-        "ro": "779152",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779139",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "779138",
-        "vehicle": "2024 Hyundai Tucson"
-      }
-    ],
     "DAVID": [
+      {
+        "ro": "779186",
+        "vehicle": "2021 Hyundai Kona"
+      },
       {
         "ro": "779178",
         "vehicle": "2025 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779174",
-        "vehicle": "2024 Hyundai Tucson"
       },
       {
         "ro": "779162",
@@ -78,10 +40,6 @@
         "vehicle": "2024 Hyundai Kona"
       },
       {
-        "ro": "779086",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
         "ro": "779084",
         "vehicle": "2026 Hyundai IONIQ 5"
       },
@@ -91,6 +49,10 @@
       }
     ],
     "ISAIAH": [
+      {
+        "ro": "779185",
+        "vehicle": "2025 Hyundai Tucson"
+      },
       {
         "ro": "779177",
         "vehicle": "2026 Hyundai Palisade Hybrid"
