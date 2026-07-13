@@ -26,5 +26,19 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "RADIATIOR IS ON ORDER "
+  },
+  {
+    "id": "mrj8g9smauxd",
+    "ro": "779094",
+    "roDate": "2026-07-13",
+    "vehicle": "2024 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES- return battery still dying",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
