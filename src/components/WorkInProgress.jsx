@@ -822,6 +822,42 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     }
   }
 
+  // Move a WIP row to the Used Cars tab: mark it a used car (green flag) and
+  // park it in Cars Awaiting, out of the normal WIP list.
+  async function moveToUsedCars(wipRow) {
+    if (rowsTechRef.current !== activeTech) return;
+    if (!window.confirm(`Move RO #${wipRow.ro || '(blank)'} to Used Cars?`)) return;
+    setMovingId(wipRow.id);
+    try {
+      const remaining = dedupeWip(rows.filter(r => r.id !== wipRow.id));
+      await safeSaveWipData(activeTech, remaining);
+      setRows(remaining);
+      const existingAwaiting = await loadAwaitingData();
+      const filteredAwaiting = (existingAwaiting || []).filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || ''));
+      const awRow = {
+        ...emptyAwaiting(),
+        id: wipRow.id,
+        ro: wipRow.ro || '',
+        roDate: wipRow.roDate || todayISO(),
+        jobDesc: wipRow.jobDesc || 'USED CAR INSPECTION',
+        usedCar: true, flag: 'green',
+        highPriority: !!wipRow.highPriority,
+        advisor: wipRow.advisor || '',
+        notes: wipRow.notes || '',
+        partsArrived: wipRow.partsArrived ?? null,
+        partsArrivedDate: wipRow.partsArrivedDate || '',
+        isNew: false,
+      };
+      const updatedAwaiting = [awRow, ...filteredAwaiting];
+      await saveAwaitingData(updatedAwaiting);
+      setAwaiting(updatedAwaiting);
+    } catch (e) {
+      setError(e.message || 'Failed to move row.');
+    } finally {
+      setMovingId(null);
+    }
+  }
+
   // Reassign existing WIP row to different tech (managers only)
   async function reassignRow(wipRow, newTech) {
     if (rowsTechRef.current !== activeTech) return;
@@ -1163,6 +1199,14 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                         title="Send this RO back to the Cars Awaiting Technician list"
                         style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 7, padding: '4px 12px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
                       >{movingId === row.id ? '⏳' : '↩ Move to Cars Awaiting'}</button>
+                    )}
+                    {isManagerOrAdvisor && (
+                      <button
+                        onClick={() => moveToUsedCars(row)}
+                        disabled={movingId === row.id}
+                        title="Mark this RO as a used car and move it to the Used Cars tab"
+                        style={{ background: 'rgba(52,211,153,.15)', border: '1px solid rgba(52,211,153,.4)', color: '#6ee7b7', borderRadius: 7, padding: '4px 12px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
+                      >{movingId === row.id ? '⏳' : '🚗 Move to Used Cars'}</button>
                     )}
                     {isManager && (
                       <>
