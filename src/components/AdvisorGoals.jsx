@@ -33,9 +33,15 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
   const hoursGoal = safe(bucket && bucket.hoursGoal, 0);
   const hrsRoGoal = safe(bucket && bucket.hrsRoGoal, 0);
   const days = (bucket && bucket.days) || {};
-  // A day only counts as "off" if it's scheduled off AND has no logged hours —
-  // if the advisor actually produced that day, it counts like any working day.
-  const dayIsOff = (k) => off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+  // A day counts as "off" (not counted toward pace/projection/goal) when it's
+  // scheduled off AND has no logged hours, OR when a manager has excused
+  // (overridden) the missed report for that day. If the advisor actually
+  // produced hours that day, it counts like any working day.
+  const dayIsOff = (k) => {
+    const rec = days[k];
+    if (rec && rec.overridden) return true;               // manager-excused missed day
+    return off.has(k) && !Object.prototype.hasOwnProperty.call(days, k);
+  };
   const workDates = allDates.filter(dt => !dayIsOff(dKey(dt)));
   const totalDays = totalDaysOverride || workDates.length;
   let workNum = 0;
@@ -47,8 +53,11 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
     const k = dKey(dt);
     const isOff = dayIsOff(k);
     if (!isOff) workNum += 1;
-    const has = Object.prototype.hasOwnProperty.call(days, k);
-    const rec = has ? days[k] : null;
+    const rawRec = Object.prototype.hasOwnProperty.call(days, k) ? days[k] : null;
+    const overridden = !!(rawRec && rawRec.overridden);   // manager-excused missed day
+    // A production entry is a real logged day — never an off/excused-only record.
+    const has = !!rawRec && !isOff;
+    const rec = has ? rawRec : null;
     const hours = has ? safe(rec.hours, 0) : null;   // MTD total as of this day
     const hrsRo = has ? safe(rec.hrsRo, 0) : null;   // MTD hrs/RO as of this day
     let closed = null;                               // hours produced this day
@@ -59,9 +68,9 @@ function computeMetrics(mkStr, bucket, totalDaysOverride, completedOverride, off
       lastHrsRo = safe(hrsRo, 0);
     }
     // A past working day with no entry is a missed report; a backfilled one is
-    // corrected. Both persist in the month's grid.
+    // corrected; a manager-excused one drops out (isOff). All persist in the grid.
     const missed = !isOff && !has && !!todayKey && k < todayKey;
-    return { k, dt, dayNum: workNum, off: isOff, has, hours, hrsRo, closed, missed, late: !!(rec && rec.late), missedReason: rec ? (rec.missedReason || '') : '', cumHours: has ? safe(hours, 0) : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
+    return { k, dt, dayNum: workNum, off: isOff, overridden, overrideReason: rawRec ? (rawRec.overrideReason || '') : '', overrideBy: rawRec ? (rawRec.overrideBy || '') : '', has, hours, hrsRo, closed, missed, late: !!(rawRec && rawRec.late), missedReason: rawRec ? (rawRec.missedReason || '') : '', cumHours: has ? safe(hours, 0) : null, goalCum: (hoursGoal / Math.max(totalDays, 1)) * workNum };
   });
   const enteredDays = rows.filter(r => r.has).length;
   const completedDays = completedOverride != null ? completedOverride : enteredDays;
@@ -207,6 +216,13 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [deChoice, setDeChoice] = useState(false);
   // True when today already has a saved report — resubmitting overwrites that date.
   const [deAlreadyReported, setDeAlreadyReported] = useState(false);
+  // Manager-only "override" of a missed day: excuses the missed report (with a
+  // required reason) so it no longer counts against the advisor or blocks their
+  // Day End Reporting. ovrDay = { k, label } of the day being excused.
+  const [ovrDay, setOvrDay] = useState(null);
+  const [ovrReason, setOvrReason] = useState('');
+  const [ovrSaving, setOvrSaving] = useState(false);
+  const [ovrErr, setOvrErr] = useState('');
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -425,7 +441,9 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     return workingDates(yy, (mm || 1) - 1).filter(dt => {
       const k = dKey(dt);
       if (k >= todayKey) return false; // not yet elapsed (numbers are reported a day behind)
-      return !(activeOffDates.has(k) && !(bucket.days && bucket.days[k]));
+      const rec = bucket.days && bucket.days[k];
+      if (rec && rec.overridden) return false; // manager-excused day: not a completed working day
+      return !(activeOffDates.has(k) && !rec);
     }).length;
   }, [isNext, activeMk, activeOffDates, bucket, todayKey]);
 
@@ -539,6 +557,51 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     } finally {
       setDeMissedSaving(false);
     }
+  }
+
+  // Reload the SELECTED advisor's active-month bucket, mutate its day map, and
+  // write it back — reflecting the result on screen immediately. Used for the
+  // manager missed-day override, which edits another advisor's file directly.
+  async function persistSelectedDays(mutate) {
+    let all = {};
+    try { all = await loadAdvisorGoals(selected); } catch {}
+    const b = ensureMtd((all && all[activeMk]) || { hoursGoal: 0, hrsRoGoal: 0, days: {} });
+    const days = { ...(b.days || {}) };
+    mutate(days);
+    const merged = { hoursGoal: safe(b.hoursGoal, 0), hrsRoGoal: safe(b.hrsRoGoal, 0), days, entryMode: 'mtd' };
+    const all2 = await saveAdvisorGoalsMonth(selected, activeMk, merged);
+    setAllMonths(all2 || {});
+    bucketRef.current = merged; setBucket(merged);
+  }
+
+  // Manager-only: excuse a missed day (records who/why). Requires a reason.
+  async function saveOverride() {
+    const k = ovrDay && ovrDay.k;
+    const reason = String(ovrReason).trim();
+    if (!k) return;
+    if (!reason) { setOvrErr('Enter a reason for excusing this day.'); return; }
+    setOvrSaving(true); setOvrErr('');
+    try {
+      await persistSelectedDays(days => {
+        days[k] = { ...(days[k] || {}), overridden: true, overrideReason: reason, overrideBy: me, overrideAt: Date.now() };
+      });
+      setOvrDay(null); setOvrReason('');
+    } catch (e) {
+      setOvrErr('Save failed: ' + (e.message || e));
+    } finally {
+      setOvrSaving(false);
+    }
+  }
+
+  // Manager-only: undo an excuse, restoring the day to its missed state.
+  async function clearOverride(k) {
+    try {
+      await persistSelectedDays(days => {
+        const cur = { ...(days[k] || {}) };
+        delete cur.overridden; delete cur.overrideReason; delete cur.overrideBy; delete cur.overrideAt;
+        if (Object.keys(cur).length === 0) delete days[k]; else days[k] = cur;
+      });
+    } catch {}
   }
 
   // Debounced, conflict-aware save: reload the latest bucket and only overwrite
@@ -680,13 +743,24 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
               <div style={{ textAlign: 'right' }}>Hours Closed</div>
             </div>
             {metrics.rows.map(r => r.off ? (
-              // Scheduled off / holiday / vacation — shown for context but not
-              // counted toward pace, projection, or the goal line.
-              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '54px 1fr 150px 150px 150px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)', background: 'rgba(148,163,184,.05)' }}>
+              // Scheduled off / holiday / vacation, OR a manager-excused missed
+              // day — shown for context but not counted toward pace, projection,
+              // or the goal line.
+              <div key={r.k} style={{ display: 'grid', gridTemplateColumns: '54px 1fr 150px 150px 150px', padding: '8px 20px', alignItems: 'center', fontSize: 14, borderBottom: '1px solid rgba(148,163,184,.06)', background: r.overridden ? 'rgba(52,211,153,.06)' : 'rgba(148,163,184,.05)' }}>
                 <div style={{ color: '#475569', fontWeight: 700 }}>—</div>
-                <div style={{ color: '#64748b' }}>{DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}</div>
-                <div style={{ gridColumn: 'span 3', textAlign: 'right' }}>
-                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', color: '#94a3b8', background: 'rgba(148,163,184,.14)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 999, padding: '3px 12px' }}>OFF — NOT COUNTED</span>
+                <div style={{ color: '#64748b' }}>
+                  {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
+                  {r.overridden && <span title={`Missed report excused by ${r.overrideBy || 'a manager'}${r.overrideReason ? ` — ${r.overrideReason}` : ''}`} style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#6ee7b7', background: 'rgba(52,211,153,.14)', border: '1px solid rgba(52,211,153,.4)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>✓ EXCUSED</span>}
+                </div>
+                <div style={{ gridColumn: 'span 3', textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
+                  {r.overridden ? (
+                    <>
+                      {r.overrideReason && <span title={r.overrideReason} style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>“{r.overrideReason}”</span>}
+                      {isAdmin && <button onClick={() => clearOverride(r.k)} title="Remove the excuse and restore this day to missed" style={{ background: 'rgba(148,163,184,.12)', border: '1px solid rgba(148,163,184,.35)', color: '#cbd5e1', borderRadius: 8, padding: '4px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', flexShrink: 0 }}>Undo</button>}
+                    </>
+                  ) : (
+                    <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', color: '#94a3b8', background: 'rgba(148,163,184,.14)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 999, padding: '3px 12px' }}>OFF — NOT COUNTED</span>
+                  )}
                 </div>
               </div>
             ) : (
@@ -695,6 +769,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                 <div style={{ color: '#cbd5e1' }}>
                   {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
                   {r.missed && <span title="Reporting missed — must be completed in Day End Reporting" style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fca5a5', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠️ MISSED</span>}
+                  {r.missed && isAdmin && <button onClick={() => { setOvrDay({ k: r.k, label: `${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}` }); setOvrReason(''); setOvrErr(''); }} title="Manager only: excuse this missed day" style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fbbf24', background: 'rgba(251,191,36,.14)', border: '1px solid rgba(251,191,36,.45)', borderRadius: 999, padding: '2px 10px', cursor: 'pointer' }}>Override</button>}
                   {r.late && <span title={r.missedReason ? `Day was corrected — reason: ${r.missedReason}` : 'Day was corrected'} style={{ marginLeft: 8, fontSize: 10, fontWeight: 800, color: '#fcd34d', background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 999, padding: '2px 8px', cursor: 'help' }}>⚠️ CORRECTED</span>}
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -908,6 +983,41 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     );
   }
 
+  // Manager-only modal: capture a reason and excuse a missed day for `selected`.
+  function renderOverrideModal() {
+    if (!ovrDay) return null;
+    return (
+      <div onClick={() => { if (!ovrSaving) setOvrDay(null); }} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 18, width: '100%', maxWidth: 440, boxShadow: '0 18px 60px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+            <span style={{ fontSize: 16 }}>🛡️</span>
+            <div style={{ fontSize: 15, fontWeight: 900, color: '#f1f5f9' }}>Override missed day</div>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => { if (!ovrSaving) setOvrDay(null); }} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+          </div>
+          <div style={{ padding: '18px 20px' }}>
+            <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 14, lineHeight: 1.5 }}>
+              Excuse the missed report for <strong style={{ color: '#f1f5f9' }}>{selected}</strong> on <strong style={{ color: '#fbbf24' }}>{ovrDay.label}</strong>. It won't count against them or block their Day End Reporting. Managers only.
+            </div>
+            <div style={lblSt}>Reason for excusing this day <span style={{ color: '#f87171' }}>*</span></div>
+            <textarea value={ovrReason} rows={3} autoFocus placeholder="Required — e.g. approved absence, system outage, covered by another advisor…"
+              onChange={e => { setOvrReason(e.target.value); if (ovrErr) setOvrErr(''); }}
+              style={{ ...inpSt, width: '100%', color: '#e2e8f0', textAlign: 'left', boxSizing: 'border-box', resize: 'vertical', fontWeight: 600, lineHeight: 1.4, marginTop: 6 }} />
+            {ovrErr && <div style={{ fontSize: 13, color: '#f87171', marginTop: 8 }}>{ovrErr}</div>}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px 18px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => { if (!ovrSaving) setOvrDay(null); }} className="secondary" disabled={ovrSaving}>Cancel</button>
+            <button onClick={saveOverride} disabled={ovrSaving}
+              style={{ background: ovrSaving ? 'rgba(255,255,255,.06)' : 'rgba(251,191,36,.2)', border: `1px solid ${ovrSaving ? 'rgba(255,255,255,.12)' : 'rgba(251,191,36,.5)'}`, color: ovrSaving ? '#64748b' : '#fbbf24', borderRadius: 8, padding: '9px 22px', cursor: ovrSaving ? 'default' : 'pointer', fontWeight: 800, fontSize: 14 }}>
+              {ovrSaving ? '⏳ Saving…' : '✓ Excuse this day'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function renderDayEndModal() {
     if (!dayEndOpen) return null;
     // Verify the mandatory missed-day gate FIRST. The current-day questions must
@@ -1084,6 +1194,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {renderDayEndModal()}
+      {renderOverrideModal()}
       {renderUploadModal()}
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
