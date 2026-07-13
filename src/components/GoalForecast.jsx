@@ -215,25 +215,53 @@ function computeMonthMetrics(mkStr, monthData) {
   return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD, projected };
 }
 
-// Read-only detail for one completed/historical month.
+// Read-only detail for a month. For the CURRENT month it renders the same full
+// card layout the owner sees (so a cross-department viewer gets an identical
+// report); for PAST months it shows the compact final-total summary.
 function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
   const M = computeMonthMetrics(mkStr, monthData);
+  const isCurrent = mkStr === monthKey();
   const vsForecast = M.actualTotal - M.forecast;
   const vsLY = M.actualTotal - M.lastYear;
+  const hasActuals = M.actualTotal > 0;
+  const variance = M.actualTotal - M.expectedMTD;
+  const up = variance >= 0;
+  const projected = M.projected;
+  const lb = monthData && monthData.laborBreakdown;
   const [open, setOpen] = useState(false); // daily table collapsed until clicked
-  const card = (icon, label, value, color, sub) => (
-    <MetricCard accent={color} icon={icon} label={label} sub={sub} minWidth={160}>
+  const [bkOpen, setBkOpen] = useState(false);
+  const card = (icon, label, value, color, sub, onClick, subColor) => (
+    <MetricCard accent={color} icon={icon} label={label} sub={sub} subColor={subColor} minWidth={160} onClick={onClick}>
       <div style={gfBig(color)}>{value}</div>
     </MetricCard>
   );
   return (
     <div>
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-        {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
-        {card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
-        {card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
-        {card('📈', 'Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185', `target ${money(M.dailyTarget)}/day`)}
-      </div>
+      {bkOpen && lb && (
+        <LaborBreakdownModal breakdown={lb} completedDays={M.completedDays} totalDays={M.totalDays} monthLabel={M.label} onClose={() => setBkOpen(false)} />
+      )}
+      {isCurrent ? (<>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
+          {card('💰', 'Month Forecast Gross Profit', money(M.forecast), '#34d399', M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'monthly gross-profit goal')}
+          {card('📆', 'Last Year (This Month)', money(M.lastYear), '#38bdf8', 'last year’s final gross')}
+          {card('🎯', 'Daily Target', money(M.dailyTarget), '#22d3ee', `${M.totalDays} working days · ${M.completedDays} completed`)}
+        </div>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
+          {card('🔥', 'Actual MTD', money(M.actualTotal), '#c4b5fd', lb ? '🔍 Click for labor breakdown' : undefined, lb ? () => setBkOpen(true) : undefined, lb ? '#c4b5fd' : undefined)}
+          {card('📊', 'Expected MTD', money(M.expectedMTD), '#7dd3fc', `where you should be (${M.completedDays} × daily target)`)}
+          {card('📈', 'Daily Average', hasActuals ? money(M.runRate) : '—', !hasActuals ? '#e2e8f0' : (M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185'), hasActuals ? 'per working day · target ' + money(M.dailyTarget) : 'avg gross per working day', undefined, !hasActuals ? undefined : (M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185'))}
+          {card('⚡', up ? 'Ahead of Pace' : 'Behind Pace', (up ? '▲ ' : '▼ ') + money(Math.abs(variance)), up ? '#34d399' : '#fb7185')}
+          {card('🏁', 'Projected Month-End', hasActuals ? money(projected) : '—', !hasActuals ? '#e2e8f0' : (projected >= M.forecast ? '#fbbf24' : '#fb7185'), hasActuals && M.forecast > 0 ? (projected >= M.forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - M.forecast)) + ' vs forecast' : 'current daily pace × ' + M.totalDays + ' days', undefined, !hasActuals ? undefined : (projected >= M.forecast ? '#34d399' : '#fb7185'))}
+          {M.lastYear > 0 && card('📉', 'vs Last Year', hasActuals ? (projected >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - M.lastYear)) : '—', !hasActuals ? '#e2e8f0' : (projected >= M.lastYear ? '#34d399' : '#fb7185'), hasActuals ? 'projected ' + (projected >= M.lastYear ? '+' : '−') + Math.abs((projected / M.lastYear - 1) * 100).toFixed(1) + '% vs LY' : 'LY ' + money(M.lastYear), undefined, !hasActuals ? undefined : (projected >= M.lastYear ? '#34d399' : '#fb7185'))}
+        </div>
+      </>) : (
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
+          {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
+          {card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
+          {card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
+          {card('📈', 'Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185', `target ${money(M.dailyTarget)}/day`)}
+        </div>
+      )}
 
       <ComparisonChart
         rows={M.rows} dailyTarget={M.dailyTarget} lastYear={M.lastYear}
