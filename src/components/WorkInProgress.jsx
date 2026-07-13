@@ -44,8 +44,18 @@ const todayUS  = () => new Date().toLocaleDateString('en-US', { month: '2-digit'
 
 const emptyRow = () => ({
   id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-  ro: '', roDate: todayISO(), vehicle: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '',
+  ro: '', roDate: todayISO(), vehicle: '', jobDesc: '', etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '', highPriority: false, advisor: '', notes: '', flag: 'purple',
 });
+
+// WIP flag taxonomy — a row's `flag` categorizes it on the tech's board.
+// Every row belongs to exactly one flag; missing/unknown flags fall back to WIP.
+const FLAGS = [
+  { key: 'purple', label: 'WIP',       icon: '💜', color: '#a78bfa', border: 'rgba(167,139,250,.4)',  headBorder: 'rgba(167,139,250,.3)',  bg: 'rgba(30,41,59,.85)',    sub: 'General work in progress' },
+  { key: 'pink',   label: 'PDI',       icon: '🩷', color: '#f472b6', border: 'rgba(244,114,182,.45)', headBorder: 'rgba(244,114,182,.35)', bg: 'rgba(244,114,182,.08)', sub: 'Pre-delivery inspection' },
+  { key: 'green',  label: 'Used Car',  icon: '🚗', color: '#6ee7b7', border: 'rgba(52,211,153,.45)',  headBorder: 'rgba(52,211,153,.3)',   bg: 'rgba(52,211,153,.08)',  sub: "Still on this tech's board" },
+];
+const FLAG_BY_KEY = Object.fromEntries(FLAGS.map(f => [f.key, f]));
+const flagOf = (r) => FLAG_BY_KEY[r && r.flag] ? r.flag : 'purple';
 
 const inpSt = {
   background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.18)',
@@ -823,21 +833,21 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     }
   }
 
-  // Flag/unflag a WIP row as a used car. The row STAYS on this tech's WIP (it's
-  // still their job) — it just moves into the "Used Cars" section of the tech's
-  // list. Kept out of the shared Cars Awaiting Technician pool entirely.
-  async function toggleUsedCar(wipRow, makeUsed) {
+  // Set a WIP row's flag (WIP / PDI / Used Car). The row STAYS on this tech's
+  // board — the flag just decides which section it sits in. `usedCar` is kept in
+  // sync with the green flag for the Cars Awaiting filter and any legacy checks.
+  async function setFlag(wipRow, flagKey) {
     if (rowsTechRef.current !== activeTech) return;
-    if (makeUsed && !window.confirm(`Move RO #${wipRow.ro || '(blank)'} to ${activeTech}'s Used Cars?`)) return;
+    if (flagOf(wipRow) === flagKey) return; // no-op if already that flag
     setMovingId(wipRow.id);
     try {
       const updated = dedupeWip(rows.map(r =>
-        r.id === wipRow.id ? { ...r, usedCar: makeUsed, flag: makeUsed ? 'green' : undefined } : r
+        r.id === wipRow.id ? { ...r, flag: flagKey, usedCar: flagKey === 'green' } : r
       ));
       await safeSaveWipData(activeTech, updated);
       setRows(updated);
     } catch (e) {
-      setError(e.message || 'Failed to move row.');
+      setError(e.message || 'Failed to update flag.');
     } finally {
       setMovingId(null);
     }
@@ -1160,26 +1170,28 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
             )}
 
             {(() => {
-              // Active WIP first, then a "Used Cars" section — both are this
-              // tech's rows; used cars are just categorized separately.
+              // Group this tech's rows into flag sections (WIP → PDI → Used
+              // Cars). Every row is one of the three; they all stay on the tech's
+              // board — the flag just decides which section it sits in.
               const byPriority = (a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0);
-              const activeRows = rows.filter(r => !r.usedCar).sort(byPriority);
-              const usedCarRows = rows.filter(r => r.usedCar).sort(byPriority);
-              const ordered = [...activeRows, ...usedCarRows];
-              return ordered.map((row, idx) => {
+              const ordered = FLAGS.flatMap(g => {
+                const gr = rows.filter(r => flagOf(r) === g.key).sort(byPriority);
+                return gr.map((row, i) => ({ row, group: g, groupIdx: i, groupCount: gr.length }));
+              });
+              return ordered.map(({ row, group, groupIdx }, idx) => {
               const isHighlighted = !!highlightRO && (row.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
-              const isFirstUsedCar = row.usedCar && (idx === 0 || !ordered[idx - 1].usedCar);
+              const isFirstOfGroup = groupIdx === 0;
               return (
               <React.Fragment key={row.id}>
-              {isFirstUsedCar && (
-                <div style={{ marginTop: 28, marginBottom: 14, paddingTop: 18, borderTop: '2px solid rgba(52,211,153,.3)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 14, fontWeight: 900, color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: 1 }}>🚗 Used Cars</span>
-                  <span style={{ fontSize: 11, color: '#64748b' }}>Still on {activeTech}'s board — categorized out of the active list</span>
+              {isFirstOfGroup && (
+                <div style={{ marginTop: idx === 0 ? 4 : 30, marginBottom: 14, paddingTop: idx === 0 ? 0 : 18, borderTop: idx === 0 ? 'none' : `2px solid ${group.headBorder}`, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 14, fontWeight: 900, color: group.color, textTransform: 'uppercase', letterSpacing: 1 }}>{group.icon} {group.label}</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{group.sub}</span>
                 </div>
               )}
               <div ref={isHighlighted ? highlightedRowRef : null} style={{
-                background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.usedCar ? 'rgba(52,211,153,.08)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)')),
-                border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (row.usedCar ? 'rgba(52,211,153,.4)' : (row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)'))}`,
+                background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.highPriority ? 'rgba(239,68,68,.08)' : group.bg),
+                border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (row.highPriority ? 'rgba(239,68,68,.5)' : group.border)}`,
                 boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none',
                 borderRadius: 14, padding: '16px 20px', marginBottom: 14, transition: 'all .2s',
               }}>
@@ -1189,7 +1201,7 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   </div>
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b' }}>ROW {idx + 1}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: group.color }}>{group.icon} {group.label} · ROW {groupIdx + 1}</span>
                   <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
                     {isManagerOrAdvisor && (
                       <button
@@ -1206,12 +1218,19 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                       >{movingId === row.id ? '⏳' : '↩ Move to Cars Awaiting'}</button>
                     )}
                     {isManagerOrAdvisor && (
-                      <button
-                        onClick={() => toggleUsedCar(row, !row.usedCar)}
-                        disabled={movingId === row.id}
-                        title={row.usedCar ? 'Move this RO back to the active WIP list' : "Mark this RO as a used car (stays on this tech's WIP)"}
-                        style={{ background: 'rgba(52,211,153,.15)', border: '1px solid rgba(52,211,153,.4)', color: '#6ee7b7', borderRadius: 7, padding: '4px 12px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
-                      >{movingId === row.id ? '⏳' : (row.usedCar ? '↩ Move to Active WIP' : '🚗 Move to Used Cars')}</button>
+                      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }} title="Flag this RO">
+                        {FLAGS.map(f => {
+                          const active = flagOf(row) === f.key;
+                          return (
+                            <button key={f.key}
+                              onClick={() => setFlag(row, f.key)}
+                              disabled={movingId === row.id}
+                              title={`Flag as ${f.label} — ${f.sub}`}
+                              style={{ background: active ? `${f.color}2b` : 'rgba(255,255,255,.05)', border: `1px solid ${active ? f.border : 'rgba(255,255,255,.12)'}`, color: active ? f.color : '#64748b', borderRadius: 7, padding: '4px 10px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: active ? 800 : 600, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
+                            >{f.icon} {f.label}</button>
+                          );
+                        })}
+                      </div>
                     )}
                     {isManager && (
                       <>
