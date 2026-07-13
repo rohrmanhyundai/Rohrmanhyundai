@@ -103,6 +103,20 @@ function Section({ title, children }) {
   );
 }
 
+// Normalize a warranty-company phone to XXX-XXX-XXXX. Formats any 10-digit
+// number (or 11-digit "1XXXXXXXXXX"), formats partial input as you type, and
+// leaves non-numeric entries (e.g. "ONLINE", blank) untouched.
+function formatWarrantyPhone(raw) {
+  const s = String(raw ?? '');
+  let d = s.replace(/\D/g, '');
+  if (!d) return s;
+  if (d.length === 11 && d[0] === '1') d = d.slice(1);
+  d = d.slice(0, 10);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}-${d.slice(3)}`;
+  return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+}
+
 function F({ label, value, onChange, type = 'text', placeholder = '', readOnly = false, suggestions = null }) {
   const listId = suggestions ? `dl-${label.replace(/\W+/g, '-').toLowerCase()}` : undefined;
   return (
@@ -266,7 +280,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
       warrantyCompany: name,
       // Only auto-fill when we have a match and the phone is empty, so we never
       // clobber a phone the user is intentionally editing.
-      warrantyPhone: (match && match.phone && !((f.warrantyPhone || '').trim())) ? match.phone : f.warrantyPhone,
+      warrantyPhone: (match && match.phone && !((f.warrantyPhone || '').trim())) ? formatWarrantyPhone(match.phone) : f.warrantyPhone,
     }));
   }
 
@@ -341,7 +355,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
             <F label="Warranty Company Name" value={form.warrantyCompany} onChange={setWarrantyCompany}
                suggestions={Object.values(companies).map(c => c && c.name).filter(Boolean).sort()} />
-            <F label="Warranty Company Phone" value={form.warrantyPhone} onChange={v => set('warrantyPhone', v)} type="tel" />
+            <F label="Warranty Company Phone" value={form.warrantyPhone} onChange={v => set('warrantyPhone', formatWarrantyPhone(v))} type="tel" />
             <F label="Claim Number" value={form.claimNumber} onChange={v => set('claimNumber', v)} placeholder="WC-XXXXXXXX" />
             <F label="Authorization Number" value={form.authNumber} onChange={v => set('authNumber', v)} placeholder="" />
           </div>
@@ -1359,7 +1373,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
   // directory first to avoid clobbering entries added by other users.
   async function rememberWarrantyCompany(rawName, rawPhone) {
     const name = (rawName || '').trim();
-    const phone = (rawPhone || '').trim();
+    const phone = formatWarrantyPhone((rawPhone || '').trim());
     if (!name || !phone) return;
     try {
       const dir = await loadWarrantyCompanies();
