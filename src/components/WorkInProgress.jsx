@@ -823,35 +823,19 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
     }
   }
 
-  // Move a WIP row to the Used Cars tab: mark it a used car (green flag) and
-  // park it in Cars Awaiting, out of the normal WIP list.
-  async function moveToUsedCars(wipRow) {
+  // Flag/unflag a WIP row as a used car. The row STAYS on this tech's WIP (it's
+  // still their job) — it just moves into the "Used Cars" section of the tech's
+  // list. Kept out of the shared Cars Awaiting Technician pool entirely.
+  async function toggleUsedCar(wipRow, makeUsed) {
     if (rowsTechRef.current !== activeTech) return;
-    if (!window.confirm(`Move RO #${wipRow.ro || '(blank)'} to Used Cars?`)) return;
+    if (makeUsed && !window.confirm(`Move RO #${wipRow.ro || '(blank)'} to ${activeTech}'s Used Cars?`)) return;
     setMovingId(wipRow.id);
     try {
-      const remaining = dedupeWip(rows.filter(r => r.id !== wipRow.id));
-      await safeSaveWipData(activeTech, remaining);
-      setRows(remaining);
-      const existingAwaiting = await loadAwaitingData();
-      const filteredAwaiting = (existingAwaiting || []).filter(r => r.id !== wipRow.id && (r.ro || '') !== (wipRow.ro || ''));
-      const awRow = {
-        ...emptyAwaiting(),
-        id: wipRow.id,
-        ro: wipRow.ro || '',
-        roDate: wipRow.roDate || todayISO(),
-        jobDesc: wipRow.jobDesc || 'USED CAR INSPECTION',
-        usedCar: true, flag: 'green',
-        highPriority: !!wipRow.highPriority,
-        advisor: wipRow.advisor || '',
-        notes: wipRow.notes || '',
-        partsArrived: wipRow.partsArrived ?? null,
-        partsArrivedDate: wipRow.partsArrivedDate || '',
-        isNew: false,
-      };
-      const updatedAwaiting = [awRow, ...filteredAwaiting];
-      await saveAwaitingData(updatedAwaiting);
-      setAwaiting(updatedAwaiting);
+      const updated = dedupeWip(rows.map(r =>
+        r.id === wipRow.id ? { ...r, usedCar: makeUsed, flag: makeUsed ? 'green' : undefined } : r
+      ));
+      await safeSaveWipData(activeTech, updated);
+      setRows(updated);
     } catch (e) {
       setError(e.message || 'Failed to move row.');
     } finally {
@@ -1175,12 +1159,27 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
               <div style={{ color: '#475569', textAlign: 'center', padding: '40px 0', fontSize: 14 }}>No work in progress. Click "Add Row" to get started.</div>
             )}
 
-            {[...rows].sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0)).map((row, idx) => {
+            {(() => {
+              // Active WIP first, then a "Used Cars" section — both are this
+              // tech's rows; used cars are just categorized separately.
+              const byPriority = (a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0);
+              const activeRows = rows.filter(r => !r.usedCar).sort(byPriority);
+              const usedCarRows = rows.filter(r => r.usedCar).sort(byPriority);
+              const ordered = [...activeRows, ...usedCarRows];
+              return ordered.map((row, idx) => {
               const isHighlighted = !!highlightRO && (row.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
+              const isFirstUsedCar = row.usedCar && (idx === 0 || !ordered[idx - 1].usedCar);
               return (
-              <div key={row.id} ref={isHighlighted ? highlightedRowRef : null} style={{
-                background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)'),
-                border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)')}`,
+              <React.Fragment key={row.id}>
+              {isFirstUsedCar && (
+                <div style={{ marginTop: 28, marginBottom: 14, paddingTop: 18, borderTop: '2px solid rgba(52,211,153,.3)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 14, fontWeight: 900, color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: 1 }}>🚗 Used Cars</span>
+                  <span style={{ fontSize: 11, color: '#64748b' }}>Still on {activeTech}'s board — categorized out of the active list</span>
+                </div>
+              )}
+              <div ref={isHighlighted ? highlightedRowRef : null} style={{
+                background: isHighlighted ? 'rgba(96,165,250,.14)' : (row.usedCar ? 'rgba(52,211,153,.08)' : (row.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(30,41,59,.85)')),
+                border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (row.usedCar ? 'rgba(52,211,153,.4)' : (row.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(99,132,165,.25)'))}`,
                 boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none',
                 borderRadius: 14, padding: '16px 20px', marginBottom: 14, transition: 'all .2s',
               }}>
@@ -1208,11 +1207,11 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                     )}
                     {isManagerOrAdvisor && (
                       <button
-                        onClick={() => moveToUsedCars(row)}
+                        onClick={() => toggleUsedCar(row, !row.usedCar)}
                         disabled={movingId === row.id}
-                        title="Mark this RO as a used car and move it to the Used Cars tab"
+                        title={row.usedCar ? 'Move this RO back to the active WIP list' : "Mark this RO as a used car (stays on this tech's WIP)"}
                         style={{ background: 'rgba(52,211,153,.15)', border: '1px solid rgba(52,211,153,.4)', color: '#6ee7b7', borderRadius: 7, padding: '4px 12px', cursor: movingId === row.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 11, opacity: movingId === row.id ? 0.6 : 1 }}
-                      >{movingId === row.id ? '⏳' : '🚗 Move to Used Cars'}</button>
+                      >{movingId === row.id ? '⏳' : (row.usedCar ? '↩ Move to Active WIP' : '🚗 Move to Used Cars')}</button>
                     )}
                     {isManager && (
                       <>
@@ -1340,8 +1339,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
                   >{savingRow === row.id ? '⏳ Saving…' : '💾 Save Row'}</button>
                 </div>
               </div>
+              </React.Fragment>
               );
-            })}
+              });
+            })()}
 
             <button
               onClick={addRow}
