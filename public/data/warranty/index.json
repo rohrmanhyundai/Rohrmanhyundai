@@ -2,7 +2,7 @@
   {
     "id": "mrcetum0jbum",
     "createdAt": "2026-07-08T18:27:14.617Z",
-    "updatedAt": "2026-07-13T15:27:43.322Z",
+    "updatedAt": "2026-07-13T15:28:00.794Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Rachel Galati",
     "customerPhone": " (765) 412 - 8935",
@@ -37,8 +37,8 @@
     "tireTax": null,
     "tireDisposal": null,
     "notes": "called 07/08/2026 @ 1pm will send inspector 24-48hrs. once inspector comes call next day for update on claim.\n\nNOTE: ALIGNMENT IS PART OF LABOR PRICE 99.95. THE TOTAL OF LABOR IS 531.95 W/ALIGNMENT. MAKE TOTAL PAYABLE 3,436.52",
-    "approved": false,
-    "approvedDate": "",
+    "approved": true,
+    "approvedDate": "2026-07-13",
     "denied": false,
     "deniedDate": "",
     "waiting": false,
@@ -49,8 +49,8 @@
     "repairsFinishedDate": "",
     "readySubmission": false,
     "readySubmissionDate": "",
-    "inspectorDispatched": true,
-    "inspectorDispatchedDate": "2026-07-08"
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
   },
   {
     "id": "mralwbqmxlbd",
