@@ -284,9 +284,9 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
 
   // SAVE: write the new ROs to the right destination. Tech present → that tech's
   // WIP; no tech → Cars Awaiting. Groups writes so each file is saved once.
-  async function handleSave() {
+  async function handleSave(skipConfirm) {
     if (toAdd.length === 0) return;
-    if (!window.confirm(`Save ${toAdd.length} new repair order${toAdd.length === 1 ? '' : 's'} to the website?`)) return;
+    if (!skipConfirm && !window.confirm(`Save ${toAdd.length} new repair order${toAdd.length === 1 ? '' : 's'} to the website?`)) return;
     setBusy(true); setStatus('Saving…'); setError('');
     try {
       const byTech = new Map(); // tech username -> [ro objects]
@@ -338,6 +338,20 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  // One button for the page: save flagged ROs to WIP AND the missing-notes list
+  // for Day End Reporting in a single click. Runs whichever has anything to save.
+  const hasNotesToSave = notesMapped && missingTotal > 0;
+  const canSaveAll = toAdd.length > 0 || hasNotesToSave;
+  async function handleSaveAll() {
+    if (!canSaveAll) return;
+    const parts = [];
+    if (toAdd.length > 0) parts.push(`${toAdd.length} new RO${toAdd.length === 1 ? '' : 's'} to WIP`);
+    if (hasNotesToSave) parts.push(`${missingTotal} missing-note RO${missingTotal === 1 ? '' : 's'} for Day End Reporting`);
+    if (!window.confirm(`Save ${parts.join(' and ')}?`)) return;
+    if (toAdd.length > 0) await handleSave(true);   // skip its own confirm
+    if (hasNotesToSave) await saveMissingNotesList();
   }
 
   const inpSel = { background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#e2e8f0', padding: '6px 10px', fontSize: 13, outline: 'none', width: '100%' };
@@ -401,12 +415,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
                   <div style={{ fontWeight: 800, color: '#c4b5fd' }}>📝 ROs missing internal notes</div>
                   <div style={{ flex: 1 }} />
-                  {notesMapped && (
-                    <button onClick={saveMissingNotesList} disabled={notesSaving || missingTotal === 0}
-                      style={{ background: missingTotal ? 'rgba(167,139,250,.22)' : 'rgba(255,255,255,.05)', border: `1px solid ${missingTotal ? 'rgba(167,139,250,.55)' : 'rgba(255,255,255,.1)'}`, color: missingTotal ? '#c4b5fd' : '#475569', borderRadius: 10, padding: '8px 18px', fontWeight: 800, fontSize: 13, cursor: missingTotal ? 'pointer' : 'default' }}>
-                      {notesSaving ? '⏳ Saving…' : '💾 Save for Day End Reporting'}
-                    </button>
-                  )}
+                  <span style={{ fontSize: 11, color: '#64748b' }}>Saved with the button below</span>
                 </div>
                 {!notesMapped ? (
                   <div style={{ fontSize: 12.5, color: '#fbbf24' }}>Map the <strong>Internal Notes</strong> column above to detect ROs without notes.</div>
@@ -425,7 +434,6 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                         </div>
                       ))}
                     </div>
-                    {notesSaved && <div style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: notesSaved.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{notesSaved}</div>}
                   </>
                 )}
               </div>
@@ -443,11 +451,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                   </div>
                   {siteLoading && <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>Scanning the site for duplicates & stale ROs…</div>}
 
-                  {/* Save */}
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-                    <button onClick={handleSave} disabled={busy || toAdd.length === 0}
-                      style={{ background: toAdd.length ? 'rgba(52,211,153,.22)' : 'rgba(255,255,255,.05)', border: `1px solid ${toAdd.length ? 'rgba(52,211,153,.55)' : 'rgba(255,255,255,.1)'}`, color: toAdd.length ? '#6ee7b7' : '#475569', borderRadius: 10, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: toAdd.length ? 'pointer' : 'default' }}>
-                      💾 Save {toAdd.length} to WIP
+                  {/* Save — one button: WIP + Day End Reporting */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    {notesSaved && <span style={{ fontSize: 13, fontWeight: 700, color: notesSaved.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{notesSaved}</span>}
+                    <button onClick={handleSaveAll} disabled={busy || notesSaving || !canSaveAll}
+                      style={{ background: canSaveAll ? 'rgba(52,211,153,.22)' : 'rgba(255,255,255,.05)', border: `1px solid ${canSaveAll ? 'rgba(52,211,153,.55)' : 'rgba(255,255,255,.1)'}`, color: canSaveAll ? '#6ee7b7' : '#475569', borderRadius: 10, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: canSaveAll ? 'pointer' : 'default' }}>
+                      {busy || notesSaving ? '⏳ Saving…' : `💾 Save to WIP${hasNotesToSave ? ` + ${missingTotal} for Day End` : ''}`}
                     </button>
                   </div>
 
