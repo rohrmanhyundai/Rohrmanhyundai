@@ -957,23 +957,44 @@ export default function GoalForecast({
                   <div style={{ fontSize: 12, color: '#7dd3fc', marginBottom: 12, fontWeight: 700 }}>
                     ⇄ One report, both departments: this fills <strong>Service (labor)</strong> and <strong>Parts (parts)</strong> forecasts at once.
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b', padding: '2px 10px' }}>
-                      <span>Day</span>
-                      <span style={{ textAlign: 'right' }}>Service (Labor)</span>
-                      <span style={{ textAlign: 'right' }}>Parts</span>
-                    </div>
-                    {parsePreview.map(r => {
-                      const d = (parsedDaily && parsedDaily[r.dateKey]) || {};
-                      return (
-                        <div key={r.dateKey} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
-                          <span style={{ color: '#cbd5e1' }}>{r.label}</span>
-                          <span style={{ color: '#6ee7b7', fontWeight: 700, textAlign: 'right' }}>{money(d.labor)}</span>
-                          <span style={{ color: '#c4b5fd', fontWeight: 700, textAlign: 'right' }}>{money(d.parts)}</span>
+                  {(() => {
+                    // Flag days whose report value differs from what's currently
+                    // entered for THIS page's department (a reporting adjustment).
+                    const pageKey = dept === 'parts' ? 'parts' : 'labor';
+                    const isAdj = (dateKey) => {
+                      const cur = actuals[dateKey];
+                      if (cur == null || cur === '') return false;
+                      const d = (parsedDaily && parsedDaily[dateKey]) || {};
+                      return Math.abs(safe(cur, 0) - safe(d[pageKey], 0)) > 0.005;
+                    };
+                    const adjCount = parsePreview.filter(r => isAdj(r.dateKey)).length;
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
+                        {adjCount > 0 && (
+                          <div style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700, marginBottom: 4 }}>
+                            ⚠ {adjCount} day{adjCount === 1 ? '' : 's'} differ{adjCount === 1 ? 's' : ''} from your current {dept === 'parts' ? 'Parts' : 'Service'} entries — applying will correct {adjCount === 1 ? 'it' : 'them'}.
+                          </div>
+                        )}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b', padding: '2px 10px' }}>
+                          <span>Day</span>
+                          <span style={{ textAlign: 'right' }}>Service (Labor)</span>
+                          <span style={{ textAlign: 'right' }}>Parts</span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        {parsePreview.map(r => {
+                          const d = (parsedDaily && parsedDaily[r.dateKey]) || {};
+                          const adj = isAdj(r.dateKey);
+                          const cur = actuals[r.dateKey];
+                          return (
+                            <div key={r.dateKey} style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: adj ? 'rgba(251,191,36,.10)' : 'rgba(255,255,255,.03)', border: adj ? '1px solid rgba(251,191,36,.35)' : '1px solid transparent', borderRadius: 6 }}>
+                              <span style={{ color: '#cbd5e1' }}>{r.label}{adj && <span style={{ color: '#fbbf24', fontSize: 10.5, marginLeft: 6 }}>was {money(cur)}</span>}</span>
+                              <span style={{ color: (adj && dept === 'service') ? '#fbbf24' : '#6ee7b7', fontWeight: 700, textAlign: 'right' }}>{money(d.labor)}</span>
+                              <span style={{ color: (adj && dept === 'parts') ? '#fbbf24' : '#c4b5fd', fontWeight: 700, textAlign: 'right' }}>{money(d.parts)}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                   {parseSummary && (parseSummary.grossActual != null || parseSummary.cpActual != null) && (
                     <div style={{ marginBottom: 16, padding: '10px 12px', background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.25)', borderRadius: 8 }}>
                       <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#93c5fd', marginBottom: 6 }}>Dashboard Goal Gauges — pacing (MTD)</div>
