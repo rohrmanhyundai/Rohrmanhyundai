@@ -137,7 +137,39 @@ async function parseGrossReport(file) {
         const sorted = [...mtd.row].sort((a, b) => a.x - b.x);
         const firstCur = sorted.map(t => t.text).find(t => /\$/.test(t) && parseCurrency(t) != null);
         const cpActual = parseCurrency(firstCur);
-        summary = { cpActual: cpActual == null ? null : cpActual, grossActual: mtd.grossActual };
+
+        // Per-category LABOR breakdown for the detailed report: the three
+        // "LBR GROSS" columns (Customer / Warranty / Internal), UNAPPLIED, and
+        // TOTAL LABOR. The MTD breakdown belongs to the grand-total-of-daily row
+        // (whose total labor equals the sum of the daily entries = the Goal
+        // Forecast's Actual MTD), NOT the bigger row above "L Y SALES" the gauges
+        // use. Match it by that sum; the LY breakdown is the "L Y SALES" row.
+        const lbrXs = items.filter(i => /^LBR\s*GROSS$/i.test(i.text)).map(i => i.x).sort((a, b) => a - b);
+        const unappHdr = items.find(i => /^UNAPPLIED$/i.test(i.text));
+        const readLabor = (row) => {
+          const [custX, warrX, intX] = lbrXs;
+          const v = (lo, hi) => parseCurrency(band(row, lo, hi));
+          return {
+            cp:        custX != null ? (v(custX - 15, custX + 40) || 0) : 0,
+            warranty:  warrX != null ? (v(warrX - 15, warrX + 35) || 0) : 0,
+            internal:  intX  != null ? (v(intX - 14, intX + 35) || 0) : 0,
+            unapplied: unappHdr ? (v(unappHdr.x - 8, unappHdr.x + 42) || 0) : 0,
+            total:     v(laborLo, mid) || 0,
+          };
+        };
+        const dailySum = Object.values(out).reduce((s, r) => s + (r.labor || 0), 0);
+        let mtdRow = null, best = Infinity;
+        for (const [, row] of Object.entries(byY)) {
+          if (row.some(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text))) continue;
+          const total = parseCurrency(band(row, laborLo, mid));
+          if (total == null) continue;
+          const diff = Math.abs(total - dailySum);
+          if (diff < best) { best = diff; mtdRow = row; }
+        }
+        const labor = (dailySum > 1 && mtdRow && best < 5)
+          ? { mtd: readLabor(mtdRow), ly: readLabor(lyRow[1]) }
+          : null;
+        summary = { cpActual: cpActual == null ? null : cpActual, grossActual: mtd.grossActual, labor };
       }
     }
   }
@@ -256,12 +288,13 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
 // Vivid, themed summary card (matches the advisor forecast look): gradient wash,
 // colored border + glow, accent label/icon, big glowing value.
 const gfLbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' };
-function MetricCard({ accent, icon, label, sub, subColor, children, minWidth = 175 }) {
+function MetricCard({ accent, icon, label, sub, subColor, children, minWidth = 175, onClick }) {
   return (
-    <div style={{
+    <div onClick={onClick} style={{
       flex: 1, minWidth, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden',
       background: `linear-gradient(150deg, ${accent}26, ${accent}0a 55%, rgba(2,6,23,.55))`,
       border: `1px solid ${accent}55`, boxShadow: `0 10px 30px -14px ${accent}99, inset 0 1px 0 ${accent}26`,
+      cursor: onClick ? 'pointer' : undefined,
     }}>
       <div style={{ position: 'absolute', top: -24, right: -24, width: 92, height: 92, borderRadius: '50%', background: `radial-gradient(circle, ${accent}3a, transparent 70%)`, pointerEvents: 'none' }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, position: 'relative' }}>
@@ -274,6 +307,86 @@ function MetricCard({ accent, icon, label, sub, subColor, children, minWidth = 1
   );
 }
 const gfBig = (color) => ({ fontSize: 27, fontWeight: 900, color, marginTop: 6, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
+
+// Detailed labor-gross breakdown, opened from the Actual MTD card. Shows each
+// labor category's MTD, projected month-end (MTD pace × workdays) and how that
+// projection paces vs last year — same look/colors as the Goal Forecast page.
+function LaborBreakdownModal({ breakdown, completedDays, totalDays, monthLabel, onClose }) {
+  const cats = [
+    { key: 'cp',        label: 'Customer Pay Labor', accent: '#38bdf8' },
+    { key: 'warranty',  label: 'Warranty Labor',     accent: '#a78bfa' },
+    { key: 'internal',  label: 'Internal Labor',     accent: '#fbbf24' },
+    { key: 'unapplied', label: 'Unapplied',          accent: '#94a3b8' },
+    { key: 'total',     label: 'Total Labor Gross',  accent: '#34d399' },
+  ];
+  const cd = Math.max(completedDays || 0, 1);
+  const td = Math.max(totalDays || cd, cd);
+  const rows = cats.map(c => {
+    const mtd = safe(breakdown?.mtd?.[c.key], 0);
+    const ly = safe(breakdown?.ly?.[c.key], 0);
+    const projected = (mtd / cd) * td;
+    const delta = projected - ly;
+    const pct = ly !== 0 ? (projected / ly - 1) * 100 : 0;
+    return { ...c, mtd, ly, projected, delta, pct };
+  });
+  const parts = rows.filter(r => r.key !== 'total');
+  const maxVal = Math.max(1, ...parts.flatMap(r => [Math.abs(r.projected), Math.abs(r.ly)]));
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', zIndex: 2000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '5vh 16px', overflowY: 'auto' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1040, background: 'linear-gradient(160deg,#0c1322,#0a0f1c)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 20, padding: 24, boxShadow: '0 30px 90px rgba(0,0,0,.65)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 900, background: 'linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>Labor Gross Breakdown</div>
+            <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>{monthLabel} · projected month-end paced vs last year · {cd} of {td} workdays</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 10, width: 40, height: 40, fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+        </div>
+
+        {/* Category cards */}
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', margin: '18px 0 22px' }}>
+          {rows.map(r => {
+            const up = r.delta >= 0;
+            const dColor = up ? '#34d399' : '#fb7185';
+            return (
+              <MetricCard key={r.key} accent={r.accent} icon={r.key === 'total' ? '🏁' : '🔧'} label={r.label}
+                minWidth={r.key === 'total' ? 220 : 175}
+                sub={<span>projected <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · <span style={{ color: dColor, fontWeight: 800 }}>{up ? '▲' : '▼'} {money(Math.abs(r.delta))}</span> vs LY{r.ly !== 0 ? ` (${r.pct >= 0 ? '+' : ''}${r.pct.toFixed(1)}%)` : ''}</span>}>
+                <div style={gfBig(r.accent)}>{money(r.mtd)}</div>
+              </MetricCard>
+            );
+          })}
+        </div>
+
+        {/* Projected vs Last Year — horizontal bars per category */}
+        <div style={{ borderRadius: 16, padding: '18px 20px', background: 'linear-gradient(150deg,rgba(56,189,248,.08),rgba(2,6,23,.4))', border: '1px solid rgba(148,163,184,.16)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Projected Month-End vs Last Year</div>
+            <div style={{ display: 'flex', gap: 14, fontSize: 11.5, color: '#94a3b8' }}>
+              <span><span style={{ display: 'inline-block', width: 22, height: 8, borderRadius: 4, background: '#38bdf8', verticalAlign: 'middle', marginRight: 5 }} />Projected</span>
+              <span><span style={{ display: 'inline-block', width: 22, height: 8, borderRadius: 4, background: 'rgba(148,163,184,.5)', verticalAlign: 'middle', marginRight: 5 }} />Last Year</span>
+            </div>
+          </div>
+          {parts.map(r => {
+            const up = r.delta >= 0;
+            return (
+              <div key={r.key} style={{ marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 5 }}>
+                  <span style={{ color: r.accent, fontWeight: 800 }}>{r.label}</span>
+                  <span style={{ color: '#94a3b8' }}>proj <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · LY {money(r.ly)}</span>
+                </div>
+                <div style={{ position: 'relative', height: 22 }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, height: 9, borderRadius: 5, width: `${Math.max(1.5, Math.abs(r.projected) / maxVal * 100)}%`, background: `linear-gradient(90deg, ${r.accent}, ${r.accent}bb)`, boxShadow: `0 0 12px ${r.accent}66` }} />
+                  <div style={{ position: 'absolute', top: 12, left: 0, height: 9, borderRadius: 5, width: `${Math.max(1.5, Math.abs(r.ly) / maxVal * 100)}%`, background: 'rgba(148,163,184,.45)' }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays, actualMTD, expectedMTD, projected, forecast }) {
   const W = 1000, H = 380;
@@ -405,6 +518,8 @@ export default function GoalForecast({
   const [forecast, setForecast] = useState(0);
   const [lastYear, setLastYear] = useState(0);
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
+  const [laborBreakdown, setLaborBreakdown] = useState(null); // { mtd:{cp,warranty,internal,unapplied,total}, ly:{...} } from the last gross-report upload
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [gridOpen, setGridOpen] = useState(false); // daily entry grid collapsed by default
   const [allMonths, setAllMonths] = useState({});  // every saved month (for History)
   const [view, setView] = useState('current');     // 'current' | 'history'
@@ -474,7 +589,10 @@ export default function GoalForecast({
       const next = { ...actuals };
       parsePreview.forEach(r => { next[r.dateKey] = safe(r.value, 0); });
       setActuals(next);
-      persist({ actuals: next });
+      // Capture the per-category labor breakdown from the same upload (service).
+      const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : laborBreakdown;
+      if (parseSummary && parseSummary.labor) setLaborBreakdown(parseSummary.labor);
+      persist({ actuals: next, laborBreakdown: lb });
       setGridOpen(true);
       // Push the MTD pacing figures to the dashboard Goal Gauges (service only).
       if (parseSummary && onGaugeActuals) {
@@ -516,7 +634,8 @@ export default function GoalForecast({
         setForecast(safe(parsed.forecast, 0));
         setLastYear(safe(parsed.lastYear, 0));
         setActuals(parsed.actuals || {});
-        latestRef.current = { forecast: safe(parsed.forecast, 0), lastYear: safe(parsed.lastYear, 0), actuals: parsed.actuals || {} };
+        setLaborBreakdown(parsed.laborBreakdown || null);
+        latestRef.current = { forecast: safe(parsed.forecast, 0), lastYear: safe(parsed.lastYear, 0), actuals: parsed.actuals || {}, laborBreakdown: parsed.laborBreakdown || null };
       }
     } catch { /* ignore */ }
     // 2) Authoritative load from the server (per-department file).
@@ -526,9 +645,10 @@ export default function GoalForecast({
       const bucket = (all && all[mk]) || null;
       if (bucket) {
         const f = safe(bucket.forecast, 0), ly = safe(bucket.lastYear, 0), ac = bucket.actuals || {};
-        setForecast(f); setLastYear(ly); setActuals(ac);
-        latestRef.current = { forecast: f, lastYear: ly, actuals: ac };
-        try { localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: f, lastYear: ly, actuals: ac })); } catch {}
+        const lb = bucket.laborBreakdown || null;
+        setForecast(f); setLastYear(ly); setActuals(ac); setLaborBreakdown(lb);
+        latestRef.current = { forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb };
+        try { localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb })); } catch {}
       }
     }).catch(() => {});
     return () => { cancelled = true; };
@@ -537,7 +657,7 @@ export default function GoalForecast({
   // Persist locally immediately (cache) and to the server debounced, so rapid
   // typing doesn't hammer the API. Only this department's file is touched.
   function persist(next) {
-    const merged = { forecast, lastYear, actuals, ...next };
+    const merged = { forecast, lastYear, actuals, laborBreakdown, ...next };
     latestRef.current = merged;
     try { localStorage.setItem(storageKey(mk), JSON.stringify(merged)); } catch { /* ignore */ }
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -797,6 +917,10 @@ export default function GoalForecast({
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      {breakdownOpen && laborBreakdown && (
+        <LaborBreakdownModal breakdown={laborBreakdown} completedDays={completedDays} totalDays={totalDays}
+          monthLabel={monthLabel} onClose={() => setBreakdownOpen(false)} />
+      )}
       {(parsePreview || parseErr) && (
         <div onClick={() => { setParsePreview(null); setParseErr(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16, width: '100%', maxWidth: 520, maxHeight: '82vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 18px 60px rgba(0,0,0,.6)' }}>
@@ -1003,7 +1127,9 @@ export default function GoalForecast({
 
           {/* Summary cards */}
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
-            <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD">
+            <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD"
+              onClick={laborBreakdown ? () => setBreakdownOpen(true) : undefined}
+              sub={laborBreakdown ? '🔍 Click for labor breakdown' : undefined} subColor="#c4b5fd">
               <div style={gfBig('#c4b5fd')}>{money(actualMTD)}</div>
             </MetricCard>
             <MetricCard accent="#38bdf8" icon="📊" label="Expected MTD" sub={`where you should be (${completedDays} × daily target)`}>
