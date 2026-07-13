@@ -530,9 +530,10 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
             .map(r => ({ ...r, techName: tech, _source: 'wip' }));
         } catch { return []; }
       });
-      // Also search Cars Awaiting
+      // Also search Cars Awaiting (excluding used-car rows — they're not in the
+      // awaiting list anymore, so a match would scroll to a hidden row).
       const awaitingMatches = awaiting
-        .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+        .filter(r => !r.usedCar && (r.ro || '').toLowerCase().includes(q.toLowerCase()))
         .map(r => ({ ...r, techName: 'Cars Awaiting', _source: 'awaiting' }));
 
       const allMatches = [...wipResults.flat(), ...awaitingMatches];
@@ -928,6 +929,11 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
   const backText = backLabel || '← Technician Resources';
 
   const hasChatAccess = chatUsers && chatUsers.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
+
+  // Cars moved to Used Cars are parked in the shared awaiting file tagged
+  // `usedCar`, but must NOT show in "Cars Awaiting Technician" — that list is the
+  // unassigned tech pool. They live in the Used Car Hub instead.
+  const visibleAwaiting = awaiting.filter(r => !r.usedCar);
 
   return (
     <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1359,9 +1365,9 @@ export default function WorkInProgress({ currentUser, currentRole, techList, adv
 
               {awaitingLoading ? (
                 <div style={{ color: '#475569', fontSize: 13, padding: '16px 0' }}>Loading…</div>
-              ) : awaiting.length === 0 ? (
+              ) : visibleAwaiting.length === 0 ? (
                 <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
-              ) : [...awaiting].sort((a, b) => {
+              ) : [...visibleAwaiting].sort((a, b) => {
                   // 1. Unsaved new rows always on top
                   if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
                   // 2. High priority next
