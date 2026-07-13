@@ -38,6 +38,12 @@
         "overrideReason": "dont need",
         "overrideBy": "SHAWN",
         "overrideAt": 1783977607729
+      },
+      "2026-07-07": {
+        "overridden": true,
+        "overrideReason": "dont need",
+        "overrideBy": "SHAWN",
+        "overrideAt": 1783977611631
       }
     },
     "entryMode": "mtd"
