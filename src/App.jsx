@@ -634,6 +634,7 @@ export default function App() {
         deptLabel="Parts Department"
         backLabel="← Parts Hub"
         storagePrefix="partsGoalForecast"
+        onGaugeActuals={handleGaugeActuals}
         onBack={() => navTo(prevPage || 'parts-hub')}
       />
     );
@@ -710,7 +711,7 @@ export default function App() {
         title={partsDept ? 'Parts Goal Forecast' : 'Goal Forecast'}
         deptLabel={partsDept ? 'Parts Department' : 'Service Department'}
         storagePrefix={partsDept ? 'partsGoalForecast' : 'goalForecast'}
-        onGaugeActuals={partsDept ? undefined : handleGaugeActuals}
+        onGaugeActuals={handleGaugeActuals}
         onBack={() => navTo(prevPage || 'manager-hub')}
       />
     );

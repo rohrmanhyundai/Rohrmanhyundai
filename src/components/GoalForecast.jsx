@@ -541,8 +541,9 @@ export default function GoalForecast({
   const pdfInputRef = useRef(null);
   const crossPdfInputRef = useRef(null);
   const [parsing, setParsing] = useState(false);
-  const [parsePreview, setParsePreview] = useState(null); // [{ dateKey, label, value }]
-  const [parseSummary, setParseSummary] = useState(null); // { cpActual, grossActual } | null — MTD pacing for the gauges
+  const [parsePreview, setParsePreview] = useState(null); // [{ dateKey, label, value }] — shown for the button's dept
+  const [parsedDaily, setParsedDaily] = useState(null); // { 'YYYY-MM-DD': {labor, parts} } — used to write BOTH depts
+  const [parseSummary, setParseSummary] = useState(null); // { cpActual, grossActual, labor } | null — service MTD pacing for the gauges/breakdown
   const [parseErr, setParseErr] = useState('');
   const [parseDept, setParseDept] = useState(dept); // which dept the preview applies to
   const colName = parseDept === 'parts' ? 'Parts' : 'Labor';
@@ -552,16 +553,19 @@ export default function GoalForecast({
   // parts numbers from a service login and vice-versa.
   async function handlePdf(file, targetDept = dept) {
     if (!file) return;
-    setParsing(true); setParseErr(''); setParsePreview(null); setParseSummary(null); setParseDept(targetDept);
+    setParsing(true); setParseErr(''); setParsePreview(null); setParsedDaily(null); setParseSummary(null); setParseDept(targetDept);
     const col = targetDept === 'parts' ? 'Parts' : 'Labor';
     try {
       const { daily: parsed, summary } = await parseGrossReport(file);
-      const rowsOut = Object.keys(parsed)
-        .filter(k => k.slice(0, 7) === mk)
+      const monthDaily = {};
+      Object.keys(parsed).filter(k => k.slice(0, 7) === mk).forEach(k => { monthDaily[k] = parsed[k]; });
+      // Preview shows the button's own column, but on Apply we fill BOTH the
+      // Service (labor) and Parts (parts) forecasts from this one report.
+      const rowsOut = Object.keys(monthDaily)
         .sort()
         .map(k => {
           const d = new Date(k + 'T00:00:00');
-          const value = targetDept === 'parts' ? parsed[k].parts : parsed[k].labor;
+          const value = targetDept === 'parts' ? monthDaily[k].parts : monthDaily[k].labor;
           return { dateKey: k, label: `${DOW[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`, value };
         })
         .filter(r => r.value != null);
@@ -569,9 +573,9 @@ export default function GoalForecast({
         setParseErr(`No ${monthLabel} rows with a ${col} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
       } else {
         setParsePreview(rowsOut);
-        // Only the SERVICE report drives the dashboard Goal Gauges (grossActual /
-        // cpActual are service pacing numbers). Skip for parts imports.
-        setParseSummary(targetDept === 'service' ? summary : null);
+        setParsedDaily(monthDaily);
+        // Service labor pacing (gauges + breakdown) always comes from the report.
+        setParseSummary(summary);
       }
     } catch (e) {
       setParseErr('Could not read the PDF: ' + (e.message || e));
@@ -582,41 +586,54 @@ export default function GoalForecast({
     }
   }
 
-  function applyParsed() {
-    if (!parsePreview) return;
-    if (parseDept === dept) {
-      // Importing into my own forecast.
-      const next = { ...actuals };
-      parsePreview.forEach(r => { next[r.dateKey] = safe(r.value, 0); });
+  // Write a department's daily actuals for this month, merging into its current
+  // bucket. The page's OWN dept updates live state; the OTHER dept is loaded,
+  // merged and saved to the server + cache so nothing it already has is lost.
+  async function writeDeptActuals(targetD, rowsByDate, extra) {
+    if (!rowsByDate || (!Object.keys(rowsByDate).length && !extra)) return;
+    if (targetD === dept) {
+      const next = { ...actuals, ...rowsByDate };
       setActuals(next);
-      // Capture the per-category labor breakdown from the same upload (service).
-      const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : laborBreakdown;
-      if (parseSummary && parseSummary.labor) setLaborBreakdown(parseSummary.labor);
-      persist({ actuals: next, laborBreakdown: lb });
+      if (extra && extra.laborBreakdown) setLaborBreakdown(extra.laborBreakdown);
+      persist({ actuals: next, ...(extra || {}) });
       setGridOpen(true);
-      // Push the MTD pacing figures to the dashboard Goal Gauges (service only).
-      if (parseSummary && onGaugeActuals) {
-        const patch = {};
-        if (parseSummary.grossActual != null) patch.grossActual = safe(parseSummary.grossActual, 0);
-        if (parseSummary.cpActual != null) patch.cpActual = safe(parseSummary.cpActual, 0);
-        if (Object.keys(patch).length) onGaugeActuals(patch);
-      }
     } else {
-      // Importing into the OTHER department's file (from the cross-view).
-      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((crossMonths && crossMonths[mk]) || {}) };
-      const nextActuals = { ...(bucket.actuals || {}) };
-      parsePreview.forEach(r => { nextActuals[r.dateKey] = safe(r.value, 0); });
-      const nextBucket = { ...bucket, actuals: nextActuals };
-      saveGoalForecastMonth(parseDept, mk, nextBucket).catch(() => {});
-      setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));
+      let all = {};
+      try { all = await loadGoalForecast(targetD); } catch { all = {}; }
+      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[mk]) || {}) };
+      const nextActuals = { ...(bucket.actuals || {}), ...rowsByDate };
+      const nextBucket = { ...bucket, actuals: nextActuals, ...(extra || {}) };
+      saveGoalForecastMonth(targetD, mk, nextBucket).catch(() => {});
+      if (targetD === otherDept) setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));
       try {
-        const prefix = parseDept === 'parts' ? 'partsGoalForecast' : 'goalForecast';
-        const key = `${prefix}-${mk}`;
-        const saved = JSON.parse(localStorage.getItem(key) || '{}') || {};
-        localStorage.setItem(key, JSON.stringify({ ...saved, actuals: nextActuals }));
+        const prefix = targetD === 'parts' ? 'partsGoalForecast' : 'goalForecast';
+        const saved = JSON.parse(localStorage.getItem(`${prefix}-${mk}`) || '{}') || {};
+        localStorage.setItem(`${prefix}-${mk}`, JSON.stringify({ ...saved, actuals: nextActuals, ...(extra || {}) }));
       } catch {}
     }
+  }
+
+  function applyParsed() {
+    if (!parsePreview || !parsedDaily) return;
+    // One report, both departments: LABOR → Service, PARTS → Parts.
+    const svcRows = {}, partsRows = {};
+    Object.entries(parsedDaily).forEach(([k, v]) => {
+      if (v.labor != null) svcRows[k] = safe(v.labor, 0);
+      if (v.parts != null) partsRows[k] = safe(v.parts, 0);
+    });
+    const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : null;
+    writeDeptActuals('service', svcRows, lb ? { laborBreakdown: lb } : null);
+    writeDeptActuals('parts', partsRows, null);
+
+    // Push the service MTD pacing figures to the dashboard Goal Gauges.
+    if (parseSummary && onGaugeActuals) {
+      const patch = {};
+      if (parseSummary.grossActual != null) patch.grossActual = safe(parseSummary.grossActual, 0);
+      if (parseSummary.cpActual != null) patch.cpActual = safe(parseSummary.cpActual, 0);
+      if (Object.keys(patch).length) onGaugeActuals(patch);
+    }
     setParsePreview(null);
+    setParsedDaily(null);
     setParseSummary(null);
   }
 
@@ -934,8 +951,11 @@ export default function GoalForecast({
                 <div style={{ color: '#fca5a5', fontSize: 13, lineHeight: 1.5 }}>{parseErr}</div>
               ) : (
                 <>
-                  <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 12 }}>
-                    Found <strong style={{ color: '#e2e8f0' }}>{parsePreview.length}</strong> day{parsePreview.length === 1 ? '' : 's'}. Review, then apply — this overwrites those days' entries.
+                  <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 8 }}>
+                    Found <strong style={{ color: '#e2e8f0' }}>{parsePreview.length}</strong> day{parsePreview.length === 1 ? '' : 's'} of {colName}. Review, then apply — this overwrites those days' entries.
+                  </div>
+                  <div style={{ fontSize: 12, color: '#7dd3fc', marginBottom: 12, fontWeight: 700 }}>
+                    ⇄ One report, both departments: this fills <strong>Service (labor)</strong> and <strong>Parts (parts)</strong> forecasts at once.
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
                     {parsePreview.map(r => (
