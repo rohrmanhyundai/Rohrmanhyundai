@@ -952,18 +952,27 @@ export default function GoalForecast({
               ) : (
                 <>
                   <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 8 }}>
-                    Found <strong style={{ color: '#e2e8f0' }}>{parsePreview.length}</strong> day{parsePreview.length === 1 ? '' : 's'} of {colName}. Review, then apply — this overwrites those days' entries.
+                    Found <strong style={{ color: '#e2e8f0' }}>{parsePreview.length}</strong> day{parsePreview.length === 1 ? '' : 's'}. Review both columns, then apply — this overwrites those days' entries.
                   </div>
                   <div style={{ fontSize: 12, color: '#7dd3fc', marginBottom: 12, fontWeight: 700 }}>
                     ⇄ One report, both departments: this fills <strong>Service (labor)</strong> and <strong>Parts (parts)</strong> forecasts at once.
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
-                    {parsePreview.map(r => (
-                      <div key={r.dateKey} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
-                        <span style={{ color: '#cbd5e1' }}>{r.label}</span>
-                        <span style={{ color: '#6ee7b7', fontWeight: 700 }}>{money(r.value)}</span>
-                      </div>
-                    ))}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b', padding: '2px 10px' }}>
+                      <span>Day</span>
+                      <span style={{ textAlign: 'right' }}>Service (Labor)</span>
+                      <span style={{ textAlign: 'right' }}>Parts</span>
+                    </div>
+                    {parsePreview.map(r => {
+                      const d = (parsedDaily && parsedDaily[r.dateKey]) || {};
+                      return (
+                        <div key={r.dateKey} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
+                          <span style={{ color: '#cbd5e1' }}>{r.label}</span>
+                          <span style={{ color: '#6ee7b7', fontWeight: 700, textAlign: 'right' }}>{money(d.labor)}</span>
+                          <span style={{ color: '#c4b5fd', fontWeight: 700, textAlign: 'right' }}>{money(d.parts)}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                   {parseSummary && (parseSummary.grossActual != null || parseSummary.cpActual != null) && (
                     <div style={{ marginBottom: 16, padding: '10px 12px', background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.25)', borderRadius: 8 }}>
