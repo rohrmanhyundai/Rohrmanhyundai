@@ -1,18 +1,5 @@
 [
   {
-    "id": "mrdtu2n9f5o5",
-    "ro": "779061",
-    "roDate": "2026-07-09",
-    "vehicle": "2026 Hyundai Sonata Hybrid",
-    "jobDesc": "PDI",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mrdyhtn9vqaf",
     "ro": "779084",
     "roDate": "2026-07-09",
