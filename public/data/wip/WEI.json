@@ -26,19 +26,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "RADIATIOR IS ON ORDER "
-  },
-  {
-    "id": "mrdv3iujv0a4",
-    "ro": "779053",
-    "roDate": "2026-07-09",
-    "vehicle": "2022 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/10/2026",
-    "highPriority": false,
-    "advisor": "CAIDEN HENSON",
-    "notes": ""
   }
 ]
