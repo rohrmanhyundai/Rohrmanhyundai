@@ -31,6 +31,19 @@ function flagAllowed(v) {
   return f.includes('purple') || f.includes('green');
 }
 
+// Flag color → '' | 'green' | 'purple'.
+function flagColor(v) {
+  const f = norm(v);
+  if (f.includes('green')) return 'green';
+  if (f.includes('purple')) return 'purple';
+  return '';
+}
+// Auto description by flag: green = Used Car Inspection, purple = PDI.
+function autoDescForFlag(v) {
+  const c = flagColor(v);
+  return c === 'green' ? 'USED CAR INSPECTION' : c === 'purple' ? 'PDI' : '';
+}
+
 function findHeaderRow(rows) {
   for (let i = 0; i < Math.min(rows.length, 25); i++) {
     const cells = (rows[i] || []).map(norm);
@@ -308,7 +321,9 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const have = new Set((existing || []).map(r => roKey(r.ro)));
         const additions = list.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
-          jobDesc: (descs[roKey(o.ro)] || '').trim(), etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
+          jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
+          flag: flagColor(o.userFlag), usedCar: flagColor(o.userFlag) === 'green',
+          etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
           highPriority: false, advisor: o.advisor || '', notes: '',
         }));
         if (additions.length) {
@@ -322,7 +337,9 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const have = new Set((existing || []).map(r => roKey(r.ro)));
         const additions = awaiting.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
-          jobDesc: (descs[roKey(o.ro)] || '').trim(), highPriority: false, advisor: o.advisor || '', notes: '',
+          jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
+          flag: flagColor(o.userFlag), usedCar: flagColor(o.userFlag) === 'green',
+          highPriority: false, advisor: o.advisor || '', notes: '',
           partsArrived: null, partsArrivedDate: '', isNew: true,
         }));
         if (additions.length) {
@@ -483,7 +500,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                             <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
                             <td style={tdSt}>
                               <input
-                                value={descs[roKey(o.ro)] || ''}
+                                value={descs[roKey(o.ro)] != null ? descs[roKey(o.ro)] : autoDescForFlag(o.userFlag)}
                                 onChange={e => setDesc(o.ro, e.target.value)}
                                 placeholder="Add description…"
                                 style={{ ...inpSel, padding: '5px 8px', minWidth: 220 }}
