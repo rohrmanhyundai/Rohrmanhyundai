@@ -334,50 +334,50 @@ function LaborBreakdownModal({ breakdown, completedDays, totalDays, monthLabel, 
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', zIndex: 2000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '5vh 16px', overflowY: 'auto' }}>
-      <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1040, background: 'linear-gradient(160deg,#0c1322,#0a0f1c)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 20, padding: 24, boxShadow: '0 30px 90px rgba(0,0,0,.65)' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1280, background: 'linear-gradient(160deg,#0c1322,#0a0f1c)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 22, padding: 32, boxShadow: '0 30px 90px rgba(0,0,0,.65)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 900, background: 'linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>Labor Gross Breakdown</div>
-            <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>{monthLabel} · projected month-end paced vs last year · {cd} of {td} workdays</div>
+            <div style={{ fontSize: 27, fontWeight: 900, background: 'linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>Labor Gross Breakdown</div>
+            <div style={{ fontSize: 14.5, color: '#94a3b8', marginTop: 4 }}>{monthLabel} · projected month-end paced vs last year · {cd} of {td} workdays</div>
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 10, width: 40, height: 40, fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 12, width: 46, height: 46, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>✕</button>
         </div>
 
         {/* Category cards */}
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', margin: '18px 0 22px' }}>
+        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', margin: '26px 0 28px' }}>
           {rows.map(r => {
             const up = r.delta >= 0;
             const dColor = up ? '#34d399' : '#fb7185';
             return (
               <MetricCard key={r.key} accent={r.accent} icon={r.key === 'total' ? '🏁' : '🔧'} label={r.label}
-                minWidth={r.key === 'total' ? 220 : 175}
-                sub={<span>projected <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · <span style={{ color: dColor, fontWeight: 800 }}>{up ? '▲' : '▼'} {money(Math.abs(r.delta))}</span> vs LY{r.ly !== 0 ? ` (${r.pct >= 0 ? '+' : ''}${r.pct.toFixed(1)}%)` : ''}</span>}>
-                <div style={gfBig(r.accent)}>{money(r.mtd)}</div>
+                minWidth={r.key === 'total' ? 260 : 210}
+                sub={<span style={{ fontSize: 13.5 }}>projected <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · <span style={{ color: dColor, fontWeight: 800 }}>{up ? '▲' : '▼'} {money(Math.abs(r.delta))}</span> vs LY{r.ly !== 0 ? ` (${r.pct >= 0 ? '+' : ''}${r.pct.toFixed(1)}%)` : ''}</span>}>
+                <div style={{ ...gfBig(r.accent), fontSize: 34 }}>{money(r.mtd)}</div>
               </MetricCard>
             );
           })}
         </div>
 
         {/* Projected vs Last Year — horizontal bars per category */}
-        <div style={{ borderRadius: 16, padding: '18px 20px', background: 'linear-gradient(150deg,rgba(56,189,248,.08),rgba(2,6,23,.4))', border: '1px solid rgba(148,163,184,.16)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
-            <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Projected Month-End vs Last Year</div>
-            <div style={{ display: 'flex', gap: 14, fontSize: 11.5, color: '#94a3b8' }}>
-              <span><span style={{ display: 'inline-block', width: 22, height: 8, borderRadius: 4, background: '#38bdf8', verticalAlign: 'middle', marginRight: 5 }} />Projected</span>
-              <span><span style={{ display: 'inline-block', width: 22, height: 8, borderRadius: 4, background: 'rgba(148,163,184,.5)', verticalAlign: 'middle', marginRight: 5 }} />Last Year</span>
+        <div style={{ borderRadius: 18, padding: '22px 26px', background: 'linear-gradient(150deg,rgba(56,189,248,.08),rgba(2,6,23,.4))', border: '1px solid rgba(148,163,184,.16)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 18, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Projected Month-End vs Last Year</div>
+            <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#94a3b8' }}>
+              <span><span style={{ display: 'inline-block', width: 24, height: 9, borderRadius: 4, background: '#38bdf8', verticalAlign: 'middle', marginRight: 6 }} />Projected</span>
+              <span><span style={{ display: 'inline-block', width: 24, height: 9, borderRadius: 4, background: 'rgba(148,163,184,.5)', verticalAlign: 'middle', marginRight: 6 }} />Last Year</span>
             </div>
           </div>
           {parts.map(r => {
             const up = r.delta >= 0;
             return (
-              <div key={r.key} style={{ marginBottom: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 5 }}>
+              <div key={r.key} style={{ marginBottom: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5, marginBottom: 6 }}>
                   <span style={{ color: r.accent, fontWeight: 800 }}>{r.label}</span>
                   <span style={{ color: '#94a3b8' }}>proj <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · LY {money(r.ly)}</span>
                 </div>
-                <div style={{ position: 'relative', height: 22 }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, height: 9, borderRadius: 5, width: `${Math.max(1.5, Math.abs(r.projected) / maxVal * 100)}%`, background: `linear-gradient(90deg, ${r.accent}, ${r.accent}bb)`, boxShadow: `0 0 12px ${r.accent}66` }} />
-                  <div style={{ position: 'absolute', top: 12, left: 0, height: 9, borderRadius: 5, width: `${Math.max(1.5, Math.abs(r.ly) / maxVal * 100)}%`, background: 'rgba(148,163,184,.45)' }} />
+                <div style={{ position: 'relative', height: 28 }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, height: 11, borderRadius: 6, width: `${Math.max(1.5, Math.abs(r.projected) / maxVal * 100)}%`, background: `linear-gradient(90deg, ${r.accent}, ${r.accent}bb)`, boxShadow: `0 0 12px ${r.accent}66` }} />
+                  <div style={{ position: 'absolute', top: 15, left: 0, height: 11, borderRadius: 6, width: `${Math.max(1.5, Math.abs(r.ly) / maxVal * 100)}%`, background: 'rgba(148,163,184,.45)' }} />
                 </div>
               </div>
             );
