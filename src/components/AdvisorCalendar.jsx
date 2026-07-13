@@ -352,6 +352,12 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // Lead advisors can also bulk-upload ROs (not full WIP flag management).
   const canRoUpload = canManageWip || currentRole === 'lead advisor';
 
+  // Green-flagged ROs are used cars — they live in their own "Used Cars" tab,
+  // out of the normal WIP / awaiting lists. Anyone on this page can view it.
+  const [showUsedCars, setShowUsedCars] = useState(false);
+  const isUsedCar = (j) => !!j && (j.usedCar === true || j.flag === 'green' || /used car inspection/i.test(j.jobDesc || ''));
+  const usedCarJobs = [...(advisorWip || []).map(j => ({ ...j, _src: 'wip' })), ...(advisorAwaiting || []).map(j => ({ ...j, _src: 'awaiting' }))].filter(isUsedCar);
+
   // Raise/lower the attention flag on a WIP row (persists to the tech's file).
   async function setWipFlag(job, flagged) {
     if (!job || !job.tech || !job.id) return;
@@ -809,6 +815,16 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             >
               Open
             </button>
+            <button
+              onClick={() => setShowUsedCars(v => !v)}
+              title="Green-flagged repair orders (used cars)"
+              style={{
+                background: showUsedCars ? 'rgba(52,211,153,.35)' : 'rgba(52,211,153,.14)',
+                border: `1px solid ${showUsedCars ? 'rgba(52,211,153,.75)' : 'rgba(52,211,153,.4)'}`,
+                color: '#6ee7b7', borderRadius: 10, padding: '8px 16px', fontWeight: 800, fontSize: 13,
+                cursor: 'pointer', whiteSpace: 'nowrap',
+              }}
+            >🚗 Used Cars{usedCarJobs.length ? ` (${usedCarJobs.length})` : ''}</button>
             {canUsePartsReceived(currentRole) && (
               <button
                 onClick={() => setShowPartsReceived(true)}
@@ -859,10 +875,30 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           })()}
 
           {/* Advisor WIP & Awaiting panels */}
+          {showUsedCars ? (
+            <AdvisorJobsPanel
+              title="🚗 Used Cars (Green-Flagged)"
+              emptyText="No used-car ROs right now. Green-flagged ROs from the RO upload show here."
+              jobs={roSearch.trim() ? usedCarJobs.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : usedCarJobs}
+              showAdvisor
+              showTech
+              loading={wipLoading}
+              color="#34d399"
+              bg="rgba(52,211,153,.07)"
+              border="rgba(52,211,153,.3)"
+              highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
+              onOpen={onWorkInProgress ? (j) => { if (j.flagged && !canManageWip) (j._src === 'wip' ? setWipFlag : setAwaitingFlag)(j, false); onWorkInProgress({ ro: j.ro || '', tech: j._src === 'wip' ? (j.tech || '') : '', source: j._src }); } : undefined}
+              canFlag={canManageWip}
+              onFlag={(j) => (j._src === 'wip' ? setWipFlag : setAwaitingFlag)(j, !j.flagged)}
+              flaggingId={flaggingId}
+              onDelete={(j) => (j._src === 'wip' ? deleteWipJob : deleteAwaitingJob)(j)}
+              deletingId={deletingId}
+            />
+          ) : (<>
           <AdvisorJobsPanel
             title="All WIP (Manager View)"
             emptyText="No active WIPs in the shop."
-            jobs={roSearch.trim() ? advisorWip.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorWip}
+            jobs={(roSearch.trim() ? advisorWip.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorWip).filter(j => !isUsedCar(j))}
             showAdvisor
             showTech
             loading={wipLoading}
@@ -881,7 +917,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             title="All Cars Waiting on Tech"
             emptyText="No cars currently waiting on a tech."
             highlightAdvisor={(ownAdvisor || '').toUpperCase() === 'SHAWN' ? '' : ownAdvisor}
-            jobs={roSearch.trim() ? advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorAwaiting}
+            jobs={(roSearch.trim() ? advisorAwaiting.filter(j => (j.ro || '').toLowerCase().includes(roSearch.trim().toLowerCase())) : advisorAwaiting).filter(j => !isUsedCar(j))}
             showAdvisor
             loading={wipLoading}
             color="#fbbf24"
@@ -894,6 +930,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             onDelete={deleteAwaitingJob}
             deletingId={deletingId}
           />
+          </>)}
         </div>
         {/* Advisor Chat — right */}
         <div style={{ width: 300, flexShrink: 0 }}>
