@@ -40,5 +40,37 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrjrswlbduzx",
+    "ro": "779182",
+    "roDate": "2026-07-13",
+    "vehicle": "2018 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES ENGINE DIAG. CHECK AND ADVISE. refer to ticket 778908 tow in engine replace under warranty",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mrjrswlb90ha",
+    "ro": "779180",
+    "roDate": "2026-07-13",
+    "vehicle": "2011 Hyundai Sonata",
+    "jobDesc": "TRANSMISSION FLUID EXCHANGE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
