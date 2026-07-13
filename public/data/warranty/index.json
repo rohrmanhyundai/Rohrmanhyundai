@@ -1,5 +1,149 @@
 [
   {
+    "id": "mralwbqmxlbd",
+    "createdAt": "2026-07-07T12:09:35.086Z",
+    "updatedAt": "2026-07-13T13:03:06.103Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Alexandrea Povpin",
+    "customerPhone": "(630) 528 - 8386",
+    "repairOrder": "778908",
+    "vin": "KM8J3CA25JU634567",
+    "vehicleYear": "2018",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Tucson",
+    "mileage": "83648",
+    "warrantyCompany": "ASSURANT",
+    "warrantyPhone": "800-621-2130",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "190",
+    "laborTime": "16.7",
+    "diagnosisTime": "1",
+    "parts": [
+      {
+        "id": "mralwbqmtgkq",
+        "partNumber": "454853581",
+        "description": "USED ENGINE MILES 66,527",
+        "qty": "1",
+        "price": "6258.32"
+      },
+      {
+        "id": "mraly9aoho3j",
+        "partNumber": "530V",
+        "description": "5W30 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      },
+      {
+        "id": "mraly9ug7pvv",
+        "partNumber": "00232-19010",
+        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
+        "qty": "1",
+        "price": "23.15"
+      },
+      {
+        "id": "mram0kfll5tl",
+        "partNumber": "28411-2B600",
+        "description": "GASKET-INTAKE MANIFOLD",
+        "qty": "1",
+        "price": "39.97"
+      },
+      {
+        "id": "mram0vyrnhhs",
+        "partNumber": "28521-2B700",
+        "description": "GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "27.11"
+      },
+      {
+        "id": "mram1cygvtz3",
+        "partNumber": "28247-2B700",
+        "description": "GASKET-T/C OIL DRAIN",
+        "qty": "1",
+        "price": "5.81"
+      },
+      {
+        "id": "mram1wrswtch",
+        "partNumber": "28246-2B710",
+        "description": "GASKET-OIL DRAIN",
+        "qty": "1",
+        "price": "7.61"
+      },
+      {
+        "id": "mram28892u2a",
+        "partNumber": "28241-2B710",
+        "description": "GASKET-T/C OIL FEED",
+        "qty": "1",
+        "price": "7.98"
+      },
+      {
+        "id": "mram2swpyx8v",
+        "partNumber": "58797-1R000",
+        "description": "GASKET(10)",
+        "qty": "2",
+        "price": "2.52"
+      },
+      {
+        "id": "mram3879sfat",
+        "partNumber": "17512-12000",
+        "description": "GASKET",
+        "qty": "4",
+        "price": "1.63"
+      },
+      {
+        "id": "mram3qcw4i9y",
+        "partNumber": "28751-3S100",
+        "description": "GASKET-EXHAUST PIPE",
+        "qty": "1",
+        "price": "23.10"
+      },
+      {
+        "id": "mram457ftknl",
+        "partNumber": "28282-2B700",
+        "description": "GSKET-TUBOCHARGER COUPLER",
+        "qty": "1",
+        "price": "26.23"
+      },
+      {
+        "id": "mram4khmpn96",
+        "partNumber": "26300-35505",
+        "description": "FILTER ASSY-ENGINE OIL",
+        "qty": "1",
+        "price": "8.15"
+      },
+      {
+        "id": "mram5awjqlaj",
+        "partNumber": "21513-23001",
+        "description": "GASKET-ENGINE OIL PLUG",
+        "qty": "1",
+        "price": "2.87"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "CALLED IN 07/07/2026 @9:30AM. NEED 4 MAINTANCE RECORDS SENT TO EMAIL: photos@assurant.com. THEN CALL BACK TO GO TO NEXT STEP. SUBJECT LINE LAST 8 VIN AND CUSTOMER NAME.\n\n07/07/2026 SENT 2 MAINTANCE RECORDS THAT CUSTOMER PROVIDED.\n07/08/2026 called @ 9:57am to check on claim. send inspector 24-48 hrs.\n\n07/13/0202 inspector came @ 9am.",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": true,
+    "inspectorDispatchedDate": "2026-07-08"
+  },
+  {
     "id": "mr3oomiak5p8",
     "createdAt": "2026-07-02T15:53:11.410Z",
     "updatedAt": "2026-07-10T18:53:52.233Z",
@@ -538,150 +682,6 @@
     "tireTax": null,
     "tireDisposal": null,
     "notes": "called 07/08/2026 @ 1pm will send inspector 24-48hrs. once inspector comes call next day for update on claim.",
-    "approved": false,
-    "approvedDate": "",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": "",
-    "inspectorDispatched": true,
-    "inspectorDispatchedDate": "2026-07-08"
-  },
-  {
-    "id": "mralwbqmxlbd",
-    "createdAt": "2026-07-07T12:09:35.086Z",
-    "updatedAt": "2026-07-08T14:12:41.806Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "Alexandrea Povpin",
-    "customerPhone": "(630) 528 - 8386",
-    "repairOrder": "778908",
-    "vin": "KM8J3CA25JU634567",
-    "vehicleYear": "2018",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Tucson",
-    "mileage": "83648",
-    "warrantyCompany": "ASSURANT",
-    "warrantyPhone": "800-621-2130",
-    "claimNumber": "",
-    "authNumber": "",
-    "laborRate": "190",
-    "laborTime": "16.7",
-    "diagnosisTime": "1",
-    "parts": [
-      {
-        "id": "mralwbqmtgkq",
-        "partNumber": "454853581",
-        "description": "USED ENGINE MILES 66,527",
-        "qty": "1",
-        "price": "6258.32"
-      },
-      {
-        "id": "mraly9aoho3j",
-        "partNumber": "530V",
-        "description": "5W30 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
-        "qty": "5",
-        "price": "4.99"
-      },
-      {
-        "id": "mraly9ug7pvv",
-        "partNumber": "00232-19010",
-        "description": "COOLANT/ANTI-FREEZE 1 GALLON",
-        "qty": "1",
-        "price": "23.15"
-      },
-      {
-        "id": "mram0kfll5tl",
-        "partNumber": "28411-2B600",
-        "description": "GASKET-INTAKE MANIFOLD",
-        "qty": "1",
-        "price": "39.97"
-      },
-      {
-        "id": "mram0vyrnhhs",
-        "partNumber": "28521-2B700",
-        "description": "GASKET-EXHAUST MANIFOLD",
-        "qty": "1",
-        "price": "27.11"
-      },
-      {
-        "id": "mram1cygvtz3",
-        "partNumber": "28247-2B700",
-        "description": "GASKET-T/C OIL DRAIN",
-        "qty": "1",
-        "price": "5.81"
-      },
-      {
-        "id": "mram1wrswtch",
-        "partNumber": "28246-2B710",
-        "description": "GASKET-OIL DRAIN",
-        "qty": "1",
-        "price": "7.61"
-      },
-      {
-        "id": "mram28892u2a",
-        "partNumber": "28241-2B710",
-        "description": "GASKET-T/C OIL FEED",
-        "qty": "1",
-        "price": "7.98"
-      },
-      {
-        "id": "mram2swpyx8v",
-        "partNumber": "58797-1R000",
-        "description": "GASKET(10)",
-        "qty": "2",
-        "price": "2.52"
-      },
-      {
-        "id": "mram3879sfat",
-        "partNumber": "17512-12000",
-        "description": "GASKET",
-        "qty": "4",
-        "price": "1.63"
-      },
-      {
-        "id": "mram3qcw4i9y",
-        "partNumber": "28751-3S100",
-        "description": "GASKET-EXHAUST PIPE",
-        "qty": "1",
-        "price": "23.10"
-      },
-      {
-        "id": "mram457ftknl",
-        "partNumber": "28282-2B700",
-        "description": "GSKET-TUBOCHARGER COUPLER",
-        "qty": "1",
-        "price": "26.23"
-      },
-      {
-        "id": "mram4khmpn96",
-        "partNumber": "26300-35505",
-        "description": "FILTER ASSY-ENGINE OIL",
-        "qty": "1",
-        "price": "8.15"
-      },
-      {
-        "id": "mram5awjqlaj",
-        "partNumber": "21513-23001",
-        "description": "GASKET-ENGINE OIL PLUG",
-        "qty": "1",
-        "price": "2.87"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "CALLED IN 07/07/2026 @9:30AM. NEED 4 MAINTANCE RECORDS SENT TO EMAIL: photos@assurant.com. THEN CALL BACK TO GO TO NEXT STEP. SUBJECT LINE LAST 8 VIN AND CUSTOMER NAME.\n\n07/07/2026 SENT 2 MAINTANCE RECORDS THAT CUSTOMER PROVIDED.\n07/08/2026 called @ 9:57am to check on claim. send inspector 24-48 hrs.",
     "approved": false,
     "approvedDate": "",
     "denied": false,
