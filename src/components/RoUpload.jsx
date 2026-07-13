@@ -25,23 +25,30 @@ const roKey = (v) => String(v ?? '').trim().toUpperCase();
 function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
-// Only purple or green User Flags get added to the website.
+// Only purple (WIP), green (Used Car) or pink (PDI) User Flags get added.
 function flagAllowed(v) {
   const f = norm(v);
-  return f.includes('purple') || f.includes('green');
+  return f.includes('purple') || f.includes('green') || f.includes('pink');
 }
 
-// Flag color → '' | 'green' | 'purple'.
+// Flag color → '' | 'green' | 'purple' | 'pink'.
 function flagColor(v) {
   const f = norm(v);
   if (f.includes('green')) return 'green';
+  if (f.includes('pink')) return 'pink';
   if (f.includes('purple')) return 'purple';
   return '';
 }
-// Auto description by flag: green = Used Car Inspection, purple = PDI.
+// Auto description by flag: green = Used Car Inspection, pink = PDI. Purple
+// (plain WIP) gets NO auto description — the advisor fills it in themselves.
 function autoDescForFlag(v) {
   const c = flagColor(v);
-  return c === 'green' ? 'USED CAR INSPECTION' : c === 'purple' ? 'PDI' : '';
+  return c === 'green' ? 'USED CAR INSPECTION' : c === 'pink' ? 'PDI' : '';
+}
+// Display color for the flag label in the tables.
+function flagTextColor(v) {
+  const c = flagColor(v);
+  return c === 'green' ? '#4ade80' : c === 'pink' ? '#f472b6' : c === 'purple' ? '#c084fc' : '#94a3b8';
 }
 
 function findHeaderRow(rows) {
@@ -382,7 +389,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">📤 RO Upload</div>
-          <div className="adv-sub">Bulk-add purple/green flagged ROs from an open-RO report · managers only</div>
+          <div className="adv-sub">Bulk-add purple/pink/green flagged ROs from an open-RO report · managers only</div>
         </div>
         <div style={{ flex: 1 }} />
         {(headers.length > 0 || fileName) && <button className="secondary" onClick={reset} style={{ marginRight: 10 }}>↺ Start Over</button>}
@@ -400,7 +407,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
           >
             <div style={{ fontSize: 38, marginBottom: 8 }}>📄</div>
             <div style={{ fontWeight: 800, color: '#6ee7b7', fontSize: 16 }}>{fileName || 'Click to choose an .xlsx file (or drag it here)'}</div>
-            <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>Open Repair Order report. Only RO# rows with a <strong>purple</strong> or <strong>green</strong> User Flag will be added.</div>
+            <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>Open Repair Order report. Only RO# rows with a <strong>purple</strong> (WIP), <strong>pink</strong> (PDI) or <strong>green</strong> (Used Car) User Flag will be added.</div>
             <input ref={fileRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={e => handleFile(e.target.files?.[0])} />
           </div>
 
@@ -497,7 +504,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                             <td style={tdSt}>{o.vehicle || '—'}</td>
                             <td style={tdSt}>{o.tech || '—'}</td>
                             <td style={{ ...tdSt, color: resolveTech(o.tech) ? '#c4b5fd' : '#fbbf24' }}>{resolveTech(o.tech) ? `${resolveTech(o.tech)}'s WIP` : 'Cars Awaiting'}</td>
-                            <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
+                            <td style={{ ...tdSt, color: flagTextColor(o.userFlag), fontWeight: 700 }}>{o.userFlag}</td>
                             <td style={tdSt}>
                               <input
                                 value={descs[roKey(o.ro)] != null ? descs[roKey(o.ro)] : autoDescForFlag(o.userFlag)}
@@ -528,7 +535,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                   {siteRos && stale.length > 0 && (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0', flexWrap: 'wrap', gap: 10 }}>
-                        <div style={{ fontWeight: 800, color: '#fca5a5' }}>On the site but NOT purple/green in your report — review & remove ({stale.length})</div>
+                        <div style={{ fontWeight: 800, color: '#fca5a5' }}>On the site but NOT purple/pink/green in your report — review & remove ({stale.length})</div>
                         <button onClick={removeAllStale} disabled={busy}
                           style={{ background: 'rgba(239,68,68,.16)', border: '1px solid rgba(239,68,68,.45)', color: '#fca5a5', borderRadius: 9, padding: '7px 16px', fontWeight: 800, fontSize: 13, cursor: busy ? 'default' : 'pointer' }}>
                           🗑 Remove all {stale.length}
@@ -555,7 +562,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                           </tbody>
                         </table>
                       </div>
-                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These are on the site but aren't flagged purple/green in your report (closed, or no longer flagged), so they shouldn't be here. Remove takes them off the site right away (WIP or Cars Awaiting).</div>
+                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These are on the site but aren't flagged purple/pink/green in your report (closed, or no longer flagged), so they shouldn't be here. Remove takes them off the site right away (WIP or Cars Awaiting).</div>
                     </>
                   )}
                 </>
@@ -569,8 +576,8 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const cfg = {
           new:     { title: 'New repair orders to add', color: '#6ee7b7', rows: toAdd },
           dup:     { title: 'Duplicates already on the site (skipped)', color: '#fbbf24', rows: dupList },
-          stale:   { title: 'On the site but not flagged purple/green', color: '#fca5a5', rows: stale },
-          flagged: { title: 'All purple/green flagged ROs in the file', color: '#94a3b8', rows: flaggedUnique },
+          stale:   { title: 'On the site but not flagged purple/pink/green', color: '#fca5a5', rows: stale },
+          flagged: { title: 'All purple/pink/green flagged ROs in the file', color: '#94a3b8', rows: flaggedUnique },
         }[modal];
         if (!cfg) return null;
         const isStale = modal === 'stale';
@@ -604,7 +611,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                           <td style={tdSt}>{o.vehicle || '—'}</td>
                           <td style={tdSt}>{o.tech || '—'}</td>
                           {modal === 'dup' && <td style={tdSt}>{o.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.where}'s WIP`}</td>}
-                          <td style={{ ...tdSt, color: norm(o.userFlag).includes('purple') ? '#c084fc' : '#4ade80', fontWeight: 700 }}>{o.userFlag}</td>
+                          <td style={{ ...tdSt, color: flagTextColor(o.userFlag), fontWeight: 700 }}>{o.userFlag}</td>
                         </>}
                       </tr>
                     ))}
