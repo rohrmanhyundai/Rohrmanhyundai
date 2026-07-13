@@ -1,7 +1,7 @@
 {
   "id": "mrcetum0jbum",
   "createdAt": "2026-07-08T18:27:14.617Z",
-  "updatedAt": "2026-07-08T18:31:40.304Z",
+  "updatedAt": "2026-07-13T15:27:43.322Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Rachel Galati",
   "customerPhone": " (765) 412 - 8935",
@@ -25,13 +25,6 @@
       "description": "- steering rack",
       "qty": "1",
       "price": "2714.55"
-    },
-    {
-      "id": "mrceyrnzpyfo",
-      "partNumber": "alig",
-      "description": "alignment",
-      "qty": "1",
-      "price": "99.99"
     }
   ],
   "taxPct": "7",
@@ -42,7 +35,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "called 07/08/2026 @ 1pm will send inspector 24-48hrs. once inspector comes call next day for update on claim.",
+  "notes": "called 07/08/2026 @ 1pm will send inspector 24-48hrs. once inspector comes call next day for update on claim.\n\nNOTE: ALIGNMENT IS PART OF LABOR PRICE 99.95. THE TOTAL OF LABOR IS 531.95 W/ALIGNMENT. MAKE TOTAL PAYABLE 3,436.52",
   "approved": false,
   "approvedDate": "",
   "denied": false,
