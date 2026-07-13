@@ -208,7 +208,11 @@ function computeMonthMetrics(mkStr, monthData) {
   // entered/completed month completedDays === totalDays, so this equals the
   // forecast — but mid-month it correctly shows the to-date expectation.
   const expectedMTD = dailyTarget * completedDays;
-  return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD, projected: actualTotal };
+  // For the CURRENT month, project month-end from the run rate (so a cross-dept
+  // viewer sees the same projection the owner does). For PAST months the month is
+  // done, so the projection is just the final total.
+  const projected = mkStr === monthKey() ? runRate * totalDays : actualTotal;
+  return { year, monthIdx, label, dates, forecast, lastYear, actuals, totalDays, dailyTarget, rows, actualTotal, enteredDays, completedDays, runRate, expectedMTD, projected };
 }
 
 // Read-only detail for one completed/historical month.
