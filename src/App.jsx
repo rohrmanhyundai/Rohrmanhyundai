@@ -464,6 +464,15 @@ export default function App() {
   // otherwise infer from the role (parts → parts, everyone else → service).
   const currentUserRecord = users.find(u => (u.username || '').toLowerCase() === (currentUser || '').toLowerCase()) || {};
   const goalDept = currentUserRecord.goalDept || ((currentRole || '').includes('parts') ? 'parts' : 'service');
+
+  // `currentRole` answers "what may this person SEE" — Management Access folds a
+  // "manager" marker into it so manager views unlock. `jobRole` answers "what IS
+  // this person" — their actual job title, never touched by that grant. Pages
+  // that decide *identity* (is this a tech? an advisor?) must use `jobRole`, or a
+  // technician with Management Access reads as "technician manager" and stops
+  // matching `=== 'technician'` — losing his own tech schedule, reviews, and
+  // performance reports. Falls back to stripping the marker while `users` loads.
+  const jobRole = (currentUserRecord.role || (currentRole || '').replace(/\s*manager$/i, '')).toLowerCase();
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
@@ -474,6 +483,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
+        jobRole={jobRole}
         userPages={currentPages}
         onWorkSchedule={() => setPage('tech-work-schedule')}
         onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
@@ -575,6 +585,7 @@ export default function App() {
       <WorkInProgress
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
+        jobRole={jobRole}
         techList={techList}
         advisorList={advisorList}
         backLabel={wipBackLabel}
@@ -790,8 +801,8 @@ export default function App() {
     return (
       <PerformanceReport
         currentUser={currentUser.toUpperCase()}
-        role={currentRole}
-        onBack={() => navTo(prevPage || (currentRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
+        role={jobRole}
+        onBack={() => navTo(prevPage || (jobRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
         canDelete={isAdminOrManager}
       />
     );
@@ -830,7 +841,7 @@ export default function App() {
     const wsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
     const backDest = prevPage || 'advisor-calendar';
     // Technicians routed here should see the tech schedule, not advisor schedule
-    if (currentRole === 'technician') {
+    if (jobRole === 'technician') {
       if (window.innerWidth < 600) return (
         <MobileSchedule schedules={schedules} employeeNames={techList}
           currentUser={currentUser.toUpperCase()} title="Tech Schedule"

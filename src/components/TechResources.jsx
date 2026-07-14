@@ -66,16 +66,21 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onBack }) {
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onBack }) {
   const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
+
+  // Whether someone HAS a review is a fact about their job title, so this keys
+  // off `jobRole` — Management Access grants extra views, it doesn't stop a tech
+  // from being a tech. (`currentRole` fallback for callers that pass no jobRole.)
+  const myJobRole = jobRole || currentRole;
 
   // Check if this tech has a pending review (only for technician role)
   const [hasPendingReview, setHasPendingReview] = useState(false);
   const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
 
   useEffect(() => {
-    if (!currentUser || currentRole !== 'technician') return;
+    if (!currentUser || myJobRole !== 'technician') return;
     const key = currentUser.toLowerCase();
     Promise.all([
       loadGithubFile(`data/tech-reviews/pending/${key}.json`).catch(() => null),
@@ -84,9 +89,9 @@ export default function TechResources({ currentUser, currentUserDisplay, current
       setHasPendingReview(!!pending && !sub);
       setHasSubmittedReview(!!sub);
     }).catch(() => {});
-  }, [currentUser, currentRole]);
+  }, [currentUser, myJobRole]);
 
-  const showMyReview = currentRole === 'technician' && (hasPendingReview || hasSubmittedReview);
+  const showMyReview = myJobRole === 'technician' && (hasPendingReview || hasSubmittedReview);
 
   return (
     <div className="adv-page">
