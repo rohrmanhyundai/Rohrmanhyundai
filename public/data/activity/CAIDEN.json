@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-07-14T13:03:28.867Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-14T13:03:27.670Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-14T13:03:25.363Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-14T13:03:22.938Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-14T13:03:20.897Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-07-14T13:03:03.766Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-14T12:59:18.690Z",
     "type": "page",
     "label": "live-pay"
