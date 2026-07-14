@@ -63,8 +63,8 @@
     "jobDesc": "CUSTOMER STATES WARNING HYBIRD SYSTEM. CHECK AND ADVISE- no active issue",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/14/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "Techline advises replacing HPCU. "
