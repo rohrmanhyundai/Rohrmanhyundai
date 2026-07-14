@@ -126,5 +126,21 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrl5pv6w2yab",
+    "ro": "779221",
+    "roDate": "2026-07-14",
+    "vehicle": "2017 Chevrolet Silverado 1500",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
