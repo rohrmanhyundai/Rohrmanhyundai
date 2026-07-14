@@ -68,5 +68,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "Techline advises replacing HPCU. "
+  },
+  {
+    "id": "mrl5pw1g4avk",
+    "ro": "779188",
+    "roDate": "2026-07-14",
+    "vehicle": "2025 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES RADIO DISPLAY IS NOT WORKING.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
