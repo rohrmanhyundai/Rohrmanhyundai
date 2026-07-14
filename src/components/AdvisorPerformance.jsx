@@ -27,24 +27,37 @@ export default function AdvisorPerformance({ data }) {
     ['Valvoline', pct(sum.valvoline, 1)],
   ];
 
+  // Column minimums (goals) paired with the decimals the cell rounds to. A value
+  // under its goal gets the pulsing "perf-low" highlight to draw the eye on the
+  // TV. Rounding first keeps the highlight honest with what's on screen: 0.2496
+  // prints as "25.0%", which reads as meeting a 25% goal, so it must not flag.
+  // MTD Hrs is excluded on purpose — it's a cumulative monthly goal, so it's
+  // always "under" mid-month.
+  const G = {
+    hpr:   [1.4,  2],
+    align: [0.10, 3],
+    tires: [0.15, 3],
+    valv:  [0.25, 3],
+    roh50: [1.2,  2],
+    csi:   [910,  0],
+    asr:   [0.21, 3],
+    elr:   [0.88, 2],
+  };
+  const under = (val, [goal, dec]) => Number(safe(val, 0).toFixed(dec)) < goal;
+  const low = (val, goal) => (under(val, goal) ? 'perf-low' : undefined);
+
   // Same minimums as the per-advisor columns. Only flag once the month has
   // started (before that `sum` is empty and everything reads 0).
   const kpis = [
-    ['Avg Alignments', pct(sum.align, 1),     started && safe(sum.align, 0)     < 0.10],
-    ['Avg Tires',      pct(sum.tires, 1),      started && safe(sum.tires, 0)     < 0.15],
-    ['Avg Valvoline',  pct(sum.valvoline, 1),  started && safe(sum.valvoline, 0) < 0.25],
-    ['Avg CSI',        Math.round(safe(sum.csi)).toString(), started && safe(sum.csi, 0) < 910],
+    ['Avg Alignments', pct(sum.align, 1),     started && under(sum.align, G.align)],
+    ['Avg Tires',      pct(sum.tires, 1),      started && under(sum.tires, G.tires)],
+    ['Avg Valvoline',  pct(sum.valvoline, 1),  started && under(sum.valvoline, G.valv)],
+    ['Avg CSI',        Math.round(safe(sum.csi)).toString(), started && under(sum.csi, G.csi)],
   ];
 
   const thStyle = { fontSize: Math.round(fontSize * 0.85) };
   const goalStyle = { color: '#95a9c6', fontSize: Math.round(fontSize * 0.7) };
   const tdStyle = { fontSize, padding: `${Math.max(3, fontSize * 0.35)}px 8px` };
-
-  // Column minimums (goals). A value under its goal gets the pulsing "perf-low"
-  // highlight to draw the eye on the TV. MTD Hrs is excluded on purpose — it's a
-  // cumulative monthly goal, so it's always "under" mid-month.
-  const G = { hpr: 1.4, align: 0.10, tires: 0.15, valv: 0.25, roh50: 1.2, csi: 910, asr: 0.21, elr: 0.88 };
-  const low = (val, goal) => (safe(val, 0) < goal ? 'perf-low' : undefined);
 
   return (
     <section className="card">
