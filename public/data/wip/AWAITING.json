@@ -108,9 +108,9 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "DAVID RILEY",
-    "notes": "",
+    "notes": "DRIVER CAR TIRE TIRE IS ON ORDER CAR IS NOT HERE",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": true
+    "isNew": false
   }
 ]
