@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
@@ -350,6 +350,17 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   // While searching, pool BOTH libraries so a recall number is found from the
   // TSB tab and vice-versa. Without a query, show only the current tab.
   const searchPool = search.trim() ? [...items, ...otherItems] : items;
+
+  // The Op Code Generator is universal: a tech looking up an op code knows the
+  // bulletin number, not which library it lives in, so it searches BOTH no matter
+  // which tab is open. Items from the active tab carry no `_kind` (only the other
+  // library is tagged on load), so stamp it here — the generator badges each hit
+  // with where it came from.
+  const opCodePool = useMemo(
+    () => [...items.map(it => ({ ...it, _kind: tab })), ...otherItems],
+    [items, otherItems, tab],
+  );
+
   const filteredItems = (search.trim() ? rankedMatches(searchPool, search) : items)
     .slice()
     .sort((a, b) => (b.warranty ? 1 : 0) - (a.warranty ? 1 : 0));
@@ -976,8 +987,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
       {showOpGen && (
         <OpCodeGenerator
-          items={items}
-          kindLabel={isRecalls ? 'recall' : 'TSB'}
+          items={opCodePool}
           onClose={() => setShowOpGen(false)}
         />
       )}
