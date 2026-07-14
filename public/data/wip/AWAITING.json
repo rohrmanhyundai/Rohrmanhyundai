@@ -23,20 +23,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "mrjrsxa67qhq",
-    "ro": "779185",
-    "roDate": "2026-07-13",
-    "vehicle": "2025 Hyundai Tucson",
-    "jobDesc": "RECALLS ENTERPRISE",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CAIDEN HENSON",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
