@@ -329,6 +329,22 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
     });
   }
 
+  // Move an unassigned RO between "Cars Awaiting Technician" and "Used Cars".
+  // Both sections read the same awaiting file — `usedCar` is the only thing that
+  // decides which one a row sits in — so this is a flag flip, not a file move,
+  // and it's reversible with the button on the other side.
+  function setAwaitingUsedCar(aw, value) {
+    setMovingId(aw.id);
+    setAwaiting(prev => {
+      const updated = prev.map(r => r.id === aw.id ? { ...r, usedCar: value } : r);
+      saveAwaitingData(updated)
+        .catch(e => setError(e.message))
+        .finally(() => setMovingId(null));
+      return updated;
+    });
+    trackAction(value ? 'awaiting-move-to-used-cars' : 'awaiting-move-to-cars-awaiting', `RO ${aw.ro || '?'}`);
+  }
+
   async function saveRow(id) {
     // Don't save if we're between tabs (prevents writing one tech's rows under
     // another tech's filename during a tab switch).
@@ -543,11 +559,12 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
             .map(r => ({ ...r, techName: tech, _source: 'wip' }));
         } catch { return []; }
       });
-      // Also search Cars Awaiting (excluding used-car rows — they're not in the
-      // awaiting list anymore, so a match would scroll to a hidden row).
+      // Also search the unassigned pool. Used-car rows live in the same file and
+      // now have their own visible section, so they're searchable too — labelled
+      // by the section the hit will actually scroll to.
       const awaitingMatches = awaiting
-        .filter(r => !r.usedCar && (r.ro || '').toLowerCase().includes(q.toLowerCase()))
-        .map(r => ({ ...r, techName: 'Cars Awaiting', _source: 'awaiting' }));
+        .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+        .map(r => ({ ...r, techName: r.usedCar ? 'Used Cars' : 'Cars Awaiting', _source: 'awaiting' }));
 
       const allMatches = [...wipResults.flat(), ...awaitingMatches];
 
@@ -733,8 +750,9 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
     try { await saveAwaitingData(rows); } catch (e) { setError(e.message); }
   }
 
-  async function addAwaitingRow() {
-    const fresh = emptyAwaiting();
+  // `usedCar` decides which of the two unassigned sections the new row lands in.
+  async function addAwaitingRow(usedCar = false) {
+    const fresh = { ...emptyAwaiting(), usedCar };
     dirtyAwaitingRef.current.add(fresh.id);
     const updated = [fresh, ...awaiting];
     setAwaiting(updated);
@@ -927,10 +945,18 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
 
   const hasChatAccess = chatUsers && chatUsers.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
 
-  // Cars moved to Used Cars are parked in the shared awaiting file tagged
-  // `usedCar`, but must NOT show in "Cars Awaiting Technician" — that list is the
-  // unassigned tech pool. They live in the Used Car Hub instead.
+  // Both unassigned sections read the same awaiting file; `usedCar` decides which
+  // one a row sits in. A row is in exactly one of these, and the move buttons on
+  // each row flip it between them.
   const visibleAwaiting = awaiting.filter(r => !r.usedCar);
+  const usedCarRows     = awaiting.filter(r => r.usedCar);
+
+  // Unsaved new rows on top, then high priority, then newest RO date.
+  const awaitingSort = (a, b) => {
+    if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
+    if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
+    return new Date(b.roDate || 0) - new Date(a.roDate || 0);
+  };
 
   return (
     <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1371,36 +1397,41 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
               style={{ background: 'rgba(167,139,250,.15)', border: '1px solid rgba(167,139,250,.35)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, marginTop: 4 }}
             >+ Add Row</button>
 
-            {/* ── Cars Awaiting Technician ── */}
-            <div style={{ marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(251,191,36,.25)' }}>
+            {/* ── The two unassigned pools: Cars Awaiting Technician & Used Cars ──
+                Same rows, same file, same controls — `usedCar` decides the section,
+                and each row's move button flips it to the other one. */}
+            {[
+              { key: 'awaiting', usedCar: false, title: '🚛 Cars Awaiting Technician', sub: 'Unassigned repair orders — claim or assign to a tech',
+                rows: visibleAwaiting, empty: 'No cars awaiting — click + Add to create one.',
+                accent: '#fbbf24', rule: 'rgba(251,191,36,.25)', chip: 'rgba(251,191,36,.15)', chipBorder: 'rgba(251,191,36,.35)',
+                rowBg: 'rgba(251,191,36,.06)', rowBorder: 'rgba(251,191,36,.22)' },
+              { key: 'usedcars', usedCar: true,  title: '🚗 Used Cars', sub: 'Used-car repair orders — move one back to the tech pool anytime',
+                rows: usedCarRows, empty: 'No used cars — move one here from Cars Awaiting, or click + Add.',
+                accent: '#6ee7b7', rule: 'rgba(52,211,153,.25)', chip: 'rgba(52,211,153,.15)', chipBorder: 'rgba(52,211,153,.35)',
+                rowBg: 'rgba(52,211,153,.06)', rowBorder: 'rgba(52,211,153,.22)' },
+            ].map(sec => (
+            <div key={sec.key} style={{ marginTop: 36, paddingTop: 24, borderTop: `2px solid ${sec.rule}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1 }}>🚗 Cars Awaiting Technician</div>
-                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Unassigned repair orders — claim or assign to a tech</div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: sec.accent, textTransform: 'uppercase', letterSpacing: 1 }}>{sec.title}</div>
+                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sec.sub}</div>
                 </div>
                 {!isTech && (
                   <button
-                    onClick={addAwaitingRow}
-                    style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                    onClick={() => addAwaitingRow(sec.usedCar)}
+                    style={{ marginLeft: 'auto', background: sec.chip, border: `1px solid ${sec.chipBorder}`, color: sec.accent, borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
                   >+ Add</button>
                 )}
               </div>
 
               {awaitingLoading ? (
                 <div style={{ color: '#475569', fontSize: 13, padding: '16px 0' }}>Loading…</div>
-              ) : visibleAwaiting.length === 0 ? (
-                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
-              ) : [...visibleAwaiting].sort((a, b) => {
-                  // 1. Unsaved new rows always on top
-                  if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
-                  // 2. High priority next
-                  if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
-                  // 3. Newest date first
-                  return new Date(b.roDate || 0) - new Date(a.roDate || 0);
-                }).map(aw => {
+              ) : sec.rows.length === 0 ? (
+                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>{sec.empty}</div>
+              ) : [...sec.rows].sort(awaitingSort).map(aw => {
                 const isHighlighted = !!highlightRO && (aw.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
                 return (
-                <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : 'rgba(251,191,36,.06)'), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : 'rgba(251,191,36,.22)')}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
+                <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : sec.rowBg), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : sec.rowBorder)}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
 
                   {/* High priority banner */}
                   {aw.highPriority && (
@@ -1544,6 +1575,14 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
                             )}
                           </>
                         )}
+                        {/* Move between the two unassigned pools — always reversible
+                            from the button that appears on the other side. */}
+                        <button
+                          onClick={() => setAwaitingUsedCar(aw, !sec.usedCar)}
+                          disabled={movingId === aw.id}
+                          title={sec.usedCar ? 'Move this RO back to the unassigned tech pool' : 'Move this RO to the Used Cars list'}
+                          style={{ background: sec.usedCar ? 'rgba(251,191,36,.18)' : 'rgba(52,211,153,.18)', border: `1px solid ${sec.usedCar ? 'rgba(251,191,36,.45)' : 'rgba(52,211,153,.45)'}`, color: sec.usedCar ? '#fbbf24' : '#6ee7b7', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, opacity: movingId === aw.id ? 0.5 : 1 }}
+                        >{movingId === aw.id ? '⏳ Moving…' : sec.usedCar ? '↩ Move to Cars Awaiting' : '🚗 Move to Used Cars'}</button>
                         {canDeleteAwaiting && (
                           <button
                             onClick={() => deleteAwaitingRow(aw.id)}
@@ -1557,6 +1596,7 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
                 );
               })}
             </div>
+            ))}
           </>
         )}
       </div>
