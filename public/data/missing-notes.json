@@ -1,52 +1,24 @@
 {
-  "updatedAt": "2026-07-14T16:56:18.264Z",
+  "updatedAt": "2026-07-14T21:22:11.242Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "779218",
-        "vehicle": "2024 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779217",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779213",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "779210",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779203",
-        "vehicle": "2020 Hyundai Palisade"
-      },
-      {
-        "ro": "779202",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779200",
-        "vehicle": "2025 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779192",
-        "vehicle": "2024 Hyundai IONIQ 6"
-      }
-    ],
-    "ISAIAH": [
-      {
-        "ro": "779216",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "779215",
-        "vehicle": "2026 Hyundai Sonata"
-      }
-    ],
     "DAVID": [
+      {
+        "ro": "779232",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "779229",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "779224",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779219",
+        "vehicle": "2024 Hyundai Sonata Hybrid"
+      },
       {
         "ro": "779212",
         "vehicle": "2026 Hyundai Palisade Hybrid"
@@ -70,13 +42,31 @@
       {
         "ro": "779190",
         "vehicle": "2024 Hyundai Santa Fe"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779231",
+        "vehicle": "2018 Buick Encore"
       },
       {
-        "ro": "779188",
-        "vehicle": "2025 Hyundai Sonata Hybrid"
+        "ro": "779230",
+        "vehicle": "2024 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779213",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "779210",
+        "vehicle": "2026 Hyundai Palisade"
       }
     ],
     "CORY": [
+      {
+        "ro": "779221",
+        "vehicle": "2017 Chevrolet Silverado 1500"
+      },
       {
         "ro": "779211",
         "vehicle": "2014 Hyundai Santa Fe Sport"
@@ -102,16 +92,22 @@
         "vehicle": "2020 Kia Telluride"
       },
       {
-        "ro": "779105",
-        "vehicle": "2012 GMC Acadia"
-      },
-      {
         "ro": "779103",
         "vehicle": "2016 Hyundai Tucson"
       },
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
+      }
+    ],
+    "ISAIAH": [
+      {
+        "ro": "779216",
+        "vehicle": "2026 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "779215",
+        "vehicle": "2026 Hyundai Sonata"
       }
     ]
   }
