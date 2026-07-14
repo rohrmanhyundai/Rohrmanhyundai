@@ -50,8 +50,8 @@ const emptyRow = () => ({
 // WIP flag taxonomy — a row's `flag` categorizes it on the tech's board.
 // Every row belongs to exactly one flag; missing/unknown flags fall back to WIP.
 const FLAGS = [
-  { key: 'purple', label: 'WIP',       icon: '💜', color: '#a78bfa', border: 'rgba(167,139,250,.4)',  headBorder: 'rgba(167,139,250,.3)',  bg: 'rgba(30,41,59,.85)',    sub: 'General work in progress' },
-  { key: 'pink',   label: 'PDI',       icon: '🩷', color: '#f472b6', border: 'rgba(244,114,182,.45)', headBorder: 'rgba(244,114,182,.35)', bg: 'rgba(244,114,182,.08)', sub: 'Pre-delivery inspection' },
+  { key: 'purple', label: 'WIP',       icon: '🛠️', color: '#a78bfa', border: 'rgba(167,139,250,.4)',  headBorder: 'rgba(167,139,250,.3)',  bg: 'rgba(30,41,59,.85)',    sub: 'General work in progress' },
+  { key: 'pink',   label: 'PDI',       icon: '🔎', color: '#f472b6', border: 'rgba(244,114,182,.45)', headBorder: 'rgba(244,114,182,.35)', bg: 'rgba(244,114,182,.08)', sub: 'Pre-delivery inspection' },
   { key: 'green',  label: 'Used Car',  icon: '🚗', color: '#6ee7b7', border: 'rgba(52,211,153,.45)',  headBorder: 'rgba(52,211,153,.3)',   bg: 'rgba(52,211,153,.08)',  sub: "Still on this tech's board" },
 ];
 const FLAG_BY_KEY = Object.fromEntries(FLAGS.map(f => [f.key, f]));
