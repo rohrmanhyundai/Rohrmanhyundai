@@ -358,7 +358,12 @@ export function DigitalDocModal({ item, onClose }) {
 }
 
 // ── Op Code Generator (lookup UI) ─────────────────────────────────────────────
-export function OpCodeGenerator({ items, kindLabel, onClose }) {
+// `items` is the UNIVERSAL pool — every TSB *and* every recall — because a tech
+// looking up an op code has a bulletin number in hand and no reason to know which
+// library it was filed under. Each item carries `_kind` so a hit can say where it
+// came from. Everything the generator needs (opData, filename) rides on the item,
+// and docRawUrl() is kind-agnostic, so cross-library hits resolve like any other.
+export function OpCodeGenerator({ items, onClose }) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState({});
@@ -432,11 +437,11 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
         {!selected ? (
           <>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
-              Search the {kindLabel} number to look up its warranty op code(s).
+              Searches every TSB <strong style={{ color: '#cbd5e1' }}>and</strong> recall — you don't need to be on the matching tab.
             </div>
             <input
               autoFocus value={query} onChange={e => setQuery(e.target.value)}
-              placeholder='Search bulletin number or keyword (e.g. "26-EM-012H")'
+              placeholder='Search any TSB or recall — number or keyword (e.g. "26-EM-012H" or "298")'
               style={input}
             />
             <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -446,8 +451,17 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
                     ? 'No bulletins have op codes set up yet. A manager can add them with the "⚙️ Op Codes" button on a bulletin.'
                     : 'No matching bulletins.'}
                 </div>
-              ) : matches.map(it => (
-                <button key={it.id} onClick={() => pick(it)} style={rowBtn}>
+              ) : matches.map(it => {
+                // Ids are only unique within a library, so qualify the key by kind.
+                const isRecall = it._kind === 'recalls';
+                return (
+                <button key={`${it._kind || ''}-${it.id}`} onClick={() => pick(it)} style={rowBtn}>
+                  <span style={{
+                    fontSize: 10, fontWeight: 900, letterSpacing: 0.4, marginRight: 8, padding: '2px 7px', borderRadius: 999, whiteSpace: 'nowrap',
+                    background: isRecall ? 'rgba(251,191,36,.15)' : 'rgba(96,165,250,.15)',
+                    border: `1px solid ${isRecall ? 'rgba(251,191,36,.45)' : 'rgba(96,165,250,.45)'}`,
+                    color: isRecall ? '#fbbf24' : '#93c5fd',
+                  }}>{isRecall ? '📢 RECALL' : '🔧 TSB'}</span>
                   <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{it.label}</span>
                   {it.tags && <span style={{ fontSize: 11, color: '#6ee7f9', marginLeft: 8 }}>{it.tags}</span>}
                   <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>
@@ -456,13 +470,20 @@ export function OpCodeGenerator({ items, kindLabel, onClose }) {
                       : 'look up →'}
                   </span>
                 </button>
-              ))}
+                );
+              })}
             </div>
           </>
         ) : (
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
               <button onClick={reset} style={secBtn}>← Back</button>
+              <span style={{
+                fontSize: 10, fontWeight: 900, letterSpacing: 0.4, padding: '2px 7px', borderRadius: 999, whiteSpace: 'nowrap',
+                background: selected._kind === 'recalls' ? 'rgba(251,191,36,.15)' : 'rgba(96,165,250,.15)',
+                border: `1px solid ${selected._kind === 'recalls' ? 'rgba(251,191,36,.45)' : 'rgba(96,165,250,.45)'}`,
+                color: selected._kind === 'recalls' ? '#fbbf24' : '#93c5fd',
+              }}>{selected._kind === 'recalls' ? '📢 RECALL' : '🔧 TSB'}</span>
               <span style={{ fontWeight: 800, color: '#e2e8f0', flex: 1 }}>{selected.label}</span>
               <button onClick={() => window.open(docRawUrl(selected.filename), '_blank')} style={viewBulletinBtn}>📄 View Bulletin</button>
             </div>
