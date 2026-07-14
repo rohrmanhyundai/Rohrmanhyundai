@@ -21,7 +21,8 @@
     "notes": "USED CAR JACOB HAS THE RO",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": false
+    "isNew": false,
+    "usedCar": true
   },
   {
     "id": "mrkw7zc5do8f",
