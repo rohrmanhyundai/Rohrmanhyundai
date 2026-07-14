@@ -42,5 +42,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrl5puj2bhx2",
+    "ro": "779230",
+    "roDate": "2026-07-14",
+    "vehicle": "2024 Hyundai Santa Fe",
+    "jobDesc": "RECALLS AND OIL CHANGE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
