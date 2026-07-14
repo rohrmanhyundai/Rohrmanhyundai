@@ -85,10 +85,13 @@ const emptyAwaiting = () => ({
   ro: '', roDate: todayISO(), jobDesc: '', highPriority: false, advisor: '', notes: '', partsArrived: null, partsArrivedDate: '', isNew: true,
 });
 
-export default function WorkInProgress({ currentUser, currentRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialJob = null, onInitialJobConsumed }) {
+export default function WorkInProgress({ currentUser, currentRole, jobRole, techList, advisorList = [], onBack, backLabel, chatUsers, initialJob = null, onInitialJobConsumed }) {
   const canSeeTabs = currentRole === 'admin' || currentRole === 'advisor' || currentRole === 'lead advisor' || currentRole === 'warranty' || currentRole === 'parts' || (currentRole || '').includes('manager');
   const isManager        = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const isTech           = currentRole === 'technician';
+  // What a tech DOES on a job (mark work complete) follows their job title, not
+  // their view permissions — a tech with Management Access is still the one
+  // turning the wrench. `currentRole` fallback covers callers that pass no jobRole.
+  const isTech           = (jobRole || currentRole) === 'technician';
   const isManagerOrAdvisor = isManager || currentRole === 'advisor' || currentRole === 'lead advisor';
   const canDeleteAwaiting  = isManagerOrAdvisor;
   const canAssignAwaiting  = isManagerOrAdvisor;
