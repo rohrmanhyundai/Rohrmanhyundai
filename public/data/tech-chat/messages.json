@@ -1,17 +1,5 @@
 [
   {
-    "id": "mq831rwfgof",
-    "username": "KAI",
-    "text": "parts are in and customers have been texted for new SORS. 11796, 11803, 11805",
-    "timestamp": 1781096801919
-  },
-  {
-    "id": "mqc9jxzqxwu",
-    "username": "SETH",
-    "text": "PARTS RECIEVED WITH OPEN RO;  778014,  777092",
-    "timestamp": 1781349592022
-  },
-  {
     "id": "mqfb9n567rg",
     "username": "SHAWN",
     "text": "i have recalls for anyone.",
@@ -380,5 +368,11 @@
     "username": "KAI",
     "text": "RO 779053 parts have been received",
     "timestamp": 1783686523470
+  },
+  {
+    "id": "mrlzlx8wkv4",
+    "username": "KAI",
+    "text": "RO 779188 parts have been received",
+    "timestamp": 1784114332304
   }
 ]
