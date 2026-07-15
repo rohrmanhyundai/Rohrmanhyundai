@@ -7,8 +7,8 @@
     "jobDesc": "TEAR DOWN TO POINT OF FAILURE",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/15/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
