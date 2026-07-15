@@ -479,8 +479,8 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 147.3,
-        "hours_per_ro": 1.15,
+        "mtd_hours": 154.5,
+        "hours_per_ro": 1.21,
         "align": 0.0833,
         "tires": 0.0972,
         "valvoline": 0.1944,
@@ -500,8 +500,8 @@
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 193.2,
-        "hours_per_ro": 1.39,
+        "mtd_hours": 210.1,
+        "hours_per_ro": 1.51,
         "align": 0.0897,
         "tires": 0.1538,
         "valvoline": 0.3333,
@@ -519,9 +519,9 @@
       },
       {
         "name": "ISAIAH",
-        "mtd_hours": 27.3,
+        "mtd_hours": 33.3,
         "daily_avg": 0,
-        "hours_per_ro": 1.24,
+        "hours_per_ro": 1.51,
         "align": 0.1111,
         "tires": 0.2222,
         "valvoline": 0.2222,
@@ -620,7 +620,7 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 367.8,
+      "total_hours": 397.90000000000003,
       "align": 0.0947,
       "tires": 0.15773333333333334,
       "valvoline": 0.24996666666666667,
