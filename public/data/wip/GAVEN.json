@@ -7,8 +7,8 @@
     "jobDesc": "TEAR DOWN",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/15/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "WAITING ON INSPECTOR. INSPECTOR HAS BEEN HERE. WAITING ON APPROVAL WARRANTY APPROVED PARTS ARE HERE WE ARE STARTING ON CAR TODAY"
