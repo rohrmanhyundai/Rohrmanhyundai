@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-15T16:47:52.792Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
     "at": "2026-07-14T13:34:46.403Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -753,10 +758,5 @@
     "at": "2026-06-15T17:10:02.038Z",
     "type": "page",
     "label": "dashboard"
-  },
-  {
-    "at": "2026-06-15T13:39:18.096Z",
-    "type": "page",
-    "label": "work-schedule"
   }
 ]
