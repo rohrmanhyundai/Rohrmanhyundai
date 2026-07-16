@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-16T12:06:51.811Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-07-15T14:53:54.487Z",
     "type": "page",
     "label": "recalls"
@@ -826,91 +831,6 @@
   },
   {
     "at": "2026-06-16T15:08:29.082Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-06-15T20:12:22.184Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-15T20:12:19.606Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-15T20:12:14.380Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-06-15T20:12:10.505Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-15T20:11:40.968Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-15T20:11:15.356Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-15T20:11:13.048Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-06-15T20:09:47.398Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-15T20:07:42.651Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-15T20:07:18.811Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-15T20:07:16.644Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-15T20:07:14.951Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-15T20:07:14.951Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-15T20:07:08.793Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-15T20:07:08.792Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-15T20:07:07.768Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-15T20:07:03.312Z",
     "type": "action",
     "label": "login"
   }
