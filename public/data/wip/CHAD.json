@@ -46,21 +46,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CUSTOMER STATES- Just had reman trans install and now car will not go over 30mph.- give to Chad"
-  },
-  {
-    "id": "mro34bnlxnqx",
-    "ro": "779030",
-    "roDate": "2026-07-16",
-    "vehicle": "2021 Hyundai Santa Fe",
-    "jobDesc": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
   }
 ]
