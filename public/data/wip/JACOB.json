@@ -110,5 +110,21 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrnf84xhmdp5",
+    "ro": "779259",
+    "roDate": "2026-07-16",
+    "vehicle": "2019 Subaru Ascent",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
