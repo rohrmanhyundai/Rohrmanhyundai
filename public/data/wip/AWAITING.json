@@ -37,21 +37,6 @@
     "usedCar": true
   },
   {
-    "id": "mrkw7zc5do8f",
-    "ro": "779216",
-    "roDate": "2026-07-14",
-    "vehicle": "2026 Hyundai Sonata Hybrid",
-    "jobDesc": "PDI",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": false
-  },
-  {
     "id": "mrkw7zc57t6u",
     "ro": "779213",
     "roDate": "2026-07-14",
