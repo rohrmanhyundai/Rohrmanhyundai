@@ -4,6 +4,7 @@ import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoA
 import { trackAction } from '../utils/activityTracker';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
+import UnassignedRow, { unassignedSort } from './UnassignedRow';
 
 function ChipBtn({ active, color, onClick, children }) {
   const colors = {
@@ -559,12 +560,11 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
             .map(r => ({ ...r, techName: tech, _source: 'wip' }));
         } catch { return []; }
       });
-      // Also search the unassigned pool. Used-car rows live in the same file and
-      // now have their own visible section, so they're searchable too — labelled
-      // by the section the hit will actually scroll to.
+      // Also search Cars Awaiting. Used-car rows are excluded: they render on the
+      // Used Car Hub, so a hit here would scroll to a row that isn't on this page.
       const awaitingMatches = awaiting
-        .filter(r => (r.ro || '').toLowerCase().includes(q.toLowerCase()))
-        .map(r => ({ ...r, techName: r.usedCar ? 'Used Cars' : 'Cars Awaiting', _source: 'awaiting' }));
+        .filter(r => !r.usedCar && (r.ro || '').toLowerCase().includes(q.toLowerCase()))
+        .map(r => ({ ...r, techName: 'Cars Awaiting', _source: 'awaiting' }));
 
       const allMatches = [...wipResults.flat(), ...awaitingMatches];
 
@@ -945,18 +945,9 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
 
   const hasChatAccess = chatUsers && chatUsers.map(u => u.toUpperCase()).includes(currentUser.toUpperCase());
 
-  // Both unassigned sections read the same awaiting file; `usedCar` decides which
-  // one a row sits in. A row is in exactly one of these, and the move buttons on
-  // each row flip it between them.
+  // Rows tagged `usedCar` belong to the used-car team and render on the Used Car
+  // Hub, not here — this list is the unassigned pool techs claim from.
   const visibleAwaiting = awaiting.filter(r => !r.usedCar);
-  const usedCarRows     = awaiting.filter(r => r.usedCar);
-
-  // Unsaved new rows on top, then high priority, then newest RO date.
-  const awaitingSort = (a, b) => {
-    if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
-    if (a.highPriority !== b.highPriority) return a.highPriority ? -1 : 1;
-    return new Date(b.roDate || 0) - new Date(a.roDate || 0);
-  };
 
   return (
     <div ref={rootRef} className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1397,206 +1388,67 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
               style={{ background: 'rgba(167,139,250,.15)', border: '1px solid rgba(167,139,250,.35)', color: '#c4b5fd', borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800, fontSize: 14, marginTop: 4 }}
             >+ Add Row</button>
 
-            {/* ── The two unassigned pools: Cars Awaiting Technician & Used Cars ──
-                Same rows, same file, same controls — `usedCar` decides the section,
-                and each row's move button flips it to the other one. */}
-            {[
-              { key: 'awaiting', usedCar: false, title: '🚛 Cars Awaiting Technician', sub: 'Unassigned repair orders — claim or assign to a tech',
-                rows: visibleAwaiting, empty: 'No cars awaiting — click + Add to create one.',
-                accent: '#fbbf24', rule: 'rgba(251,191,36,.25)', chip: 'rgba(251,191,36,.15)', chipBorder: 'rgba(251,191,36,.35)',
-                rowBg: 'rgba(251,191,36,.06)', rowBorder: 'rgba(251,191,36,.22)' },
-              { key: 'usedcars', usedCar: true,  title: '🚗 Used Cars', sub: 'Used-car repair orders — move one back to the tech pool anytime',
-                rows: usedCarRows, empty: 'No used cars — move one here from Cars Awaiting, or click + Add.',
-                accent: '#6ee7b7', rule: 'rgba(52,211,153,.25)', chip: 'rgba(52,211,153,.15)', chipBorder: 'rgba(52,211,153,.35)',
-                rowBg: 'rgba(52,211,153,.06)', rowBorder: 'rgba(52,211,153,.22)' },
-            ].map(sec => (
-            <div key={sec.key} style={{ marginTop: 36, paddingTop: 24, borderTop: `2px solid ${sec.rule}` }}>
+            {/* ── Cars Awaiting Technician ──
+                The unassigned pool techs claim from. Rows tagged `usedCar` are NOT
+                here — they're the used-car team's queue and live on the Used Car
+                Hub, reachable from the header. The move button sends a row there;
+                the Hub has the button that sends it back. */}
+            <div style={{ marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(251,191,36,.25)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: sec.accent, textTransform: 'uppercase', letterSpacing: 1 }}>{sec.title}</div>
-                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{sec.sub}</div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1 }}>🚛 Cars Awaiting Technician</div>
+                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Unassigned repair orders — claim or assign to a tech</div>
                 </div>
                 {!isTech && (
                   <button
-                    onClick={() => addAwaitingRow(sec.usedCar)}
-                    style={{ marginLeft: 'auto', background: sec.chip, border: `1px solid ${sec.chipBorder}`, color: sec.accent, borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
+                    onClick={() => addAwaitingRow(false)}
+                    style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.35)', color: '#fbbf24', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}
                   >+ Add</button>
                 )}
               </div>
 
               {awaitingLoading ? (
                 <div style={{ color: '#475569', fontSize: 13, padding: '16px 0' }}>Loading…</div>
-              ) : sec.rows.length === 0 ? (
-                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>{sec.empty}</div>
-              ) : [...sec.rows].sort(awaitingSort).map(aw => {
+              ) : visibleAwaiting.length === 0 ? (
+                <div style={{ color: '#475569', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>No cars awaiting — click + Add to create one.</div>
+              ) : [...visibleAwaiting].sort(unassignedSort).map(aw => {
                 const isHighlighted = !!highlightRO && (aw.ro || '').trim().toLowerCase().includes(highlightRO.trim().toLowerCase());
                 return (
-                <div key={aw.id} ref={isHighlighted ? highlightedRowRef : null} style={{ background: isHighlighted ? 'rgba(96,165,250,.14)' : (aw.highPriority ? 'rgba(239,68,68,.08)' : sec.rowBg), border: `${isHighlighted ? 2 : 1}px solid ${isHighlighted ? 'rgba(96,165,250,.7)' : (aw.highPriority ? 'rgba(239,68,68,.5)' : sec.rowBorder)}`, boxShadow: isHighlighted ? '0 0 0 4px rgba(96,165,250,.18)' : 'none', borderRadius: 14, padding: '16px 20px', marginBottom: 12, transition: 'all .2s' }}>
-
-                  {/* High priority banner */}
-                  {aw.highPriority && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, background: 'rgba(239,68,68,.15)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, padding: '6px 12px' }}>
-                      <span style={{ fontSize: 16 }}>🚨</span>
-                      <span style={{ fontWeight: 900, fontSize: 12, color: '#fca5a5', textTransform: 'uppercase', letterSpacing: 1 }}>High Priority</span>
-                    </div>
-                  )}
-
-                  {isTech ? (
-                    /* ── TECH VIEW: read-only + Claim It only ── */
-                    <>
-                      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 14, alignItems: 'center' }}>
-                        <div><div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={aw.ro} k={`aw-${aw.id}`} /></div><div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>{aw.ro || '—'}</div></div>
-                        <div><div style={labelSt}>RO Date</div><div style={{ fontSize: 14, color: '#94a3b8' }}>{aw.roDate || '—'}</div></div>
-                        <div style={{ flex: 1 }}><div style={labelSt}>Job Description</div><div style={{ fontSize: 14, color: '#e2e8f0' }}>{aw.jobDesc || '—'}</div></div>
-                        {aw.advisor && <div><div style={labelSt}>Advisor</div><div style={{ fontSize: 14, color: '#c4b5fd', fontWeight: 700 }}>👤 {aw.advisor}</div></div>}
-                        {aw.partsArrived === true && (
-                          <div className="parts-here-badge" style={{ marginTop: 2 }}>
-                            <span className="pha-icon">📦</span>
-                            <span>Parts Here</span>
-                            {aw.partsArrivedDate && <span className="pha-date">📅 {aw.partsArrivedDate}</span>}
-                          </div>
-                        )}
-                      </div>
-                      {aw.notes && (
-                        <div style={{ marginBottom: 14 }}>
-                          <div style={labelSt}>Notes</div>
-                          <div style={{ fontSize: 14, color: '#e2e8f0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{aw.notes}</div>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => setClaimConfirm({ aw, tech: currentUser })}
-                        disabled={movingId === aw.id}
-                        style={{ background: 'rgba(74,222,128,.25)', border: '1px solid rgba(74,222,128,.55)', color: '#4ade80', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 900, fontSize: 13 }}
-                      >{movingId === aw.id ? '⏳ Moving…' : '✋ Claim It'}</button>
-                    </>
-                  ) : (
-                    /* ── MANAGER / ADVISOR VIEW: editable + all controls ── */
-                    <>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px 16px', marginBottom: 14 }}>
-                        <div>
-                          <div style={{ ...labelSt, display: 'flex', alignItems: 'center' }}>Repair Order #<CopyRoBtn ro={aw.ro} k={`awe-${aw.id}`} /></div>
-                          <input style={inpSt} value={aw.ro} onChange={e => updateAwaiting(aw.id, 'ro', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveAwaitingRow(aw.id); } }} placeholder="RO#" />
-                        </div>
-                        <div>
-                          <div style={labelSt}>RO Date</div>
-                          <input style={inpSt} type="date" value={aw.roDate} onChange={e => updateAwaiting(aw.id, 'roDate', e.target.value)} />
-                        </div>
-                        <div style={{ gridColumn: 'span 2' }}>
-                          <div style={labelSt}>Job Description</div>
-                          <input style={inpSt} value={aw.jobDesc} onChange={e => updateAwaiting(aw.id, 'jobDesc', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); saveAwaitingRow(aw.id); } }} placeholder="Describe the job…" />
-                        </div>
-                        <div>
-                          <div style={labelSt}>Parts Arrived</div>
-                          {aw.partsArrived === true ? (
-                            <div className="parts-here-badge" style={{ marginTop: 2 }}>
-                              <span className="pha-icon">📦</span>
-                              <span>Parts Here</span>
-                              {aw.partsArrivedDate && <span className="pha-date">📅 {aw.partsArrivedDate}</span>}
-                              <button
-                                className="pha-undo"
-                                onClick={() => {
-                                  if (window.confirm('Undo "Parts Here"?\n\nThis will clear the parts-arrived status and remove the arrival date. Only do this if it was marked by mistake.')) {
-                                    toggleAwaitingPartsArrived(aw.id, null);
-                                  }
-                                }}
-                                title="Mark parts as not arrived"
-                              >Undo</button>
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
-                              <ChipBtn active={aw.partsArrived === true}  color="green" onClick={() => toggleAwaitingPartsArrived(aw.id, aw.partsArrived === true ? null : true)}>✓ Yes</ChipBtn>
-                              <ChipBtn active={aw.partsArrived === false} color="red"   onClick={() => toggleAwaitingPartsArrived(aw.id, aw.partsArrived === false ? null : false)}>✗ No</ChipBtn>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {/* Notes */}
-                      <div style={{ marginBottom: 14 }}>
-                        <div style={labelSt}>Notes</div>
-                        <textarea
-                          value={aw.notes || ''}
-                          onChange={e => updateAwaiting(aw.id, 'notes', e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              e.currentTarget.blur();
-                              saveAwaitingRow(aw.id);
-                            }
-                          }}
-                          placeholder="Add notes here… (Enter to save, Shift+Enter for new line)"
-                          rows={2}
-                          style={{ ...inpSt, resize: 'vertical', lineHeight: 1.5 }}
-                        />
-                      </div>
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <button
-                          onClick={() => { updateAwaitingAndSave(aw.id, 'highPriority', !aw.highPriority); }}
-                          style={{ background: aw.highPriority ? 'rgba(239,68,68,.28)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.highPriority ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.15)'}`, color: aw.highPriority ? '#fca5a5' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, transition: 'all .15s' }}
-                        >{aw.highPriority ? '🚨 HIGH PRIORITY' : '⚡ High Priority'}</button>
-                        {/* Advisor picker */}
-                        <div style={{ position: 'relative' }}>
-                          <button
-                            onClick={() => setAwAdvisorPickerId(awAdvisorPickerId === aw.id ? null : aw.id)}
-                            style={{ background: aw.advisor ? 'rgba(139,92,246,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${aw.advisor ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.15)'}`, color: aw.advisor ? '#c4b5fd' : '#64748b', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
-                          >👤 {aw.advisor || 'Select Advisor'}</button>
-                          {awAdvisorPickerId === aw.id && (
-                            <div style={{ position: 'absolute', top: '110%', left: 0, zIndex: 100, background: '#1e293b', border: '1px solid rgba(139,92,246,.4)', borderRadius: 10, padding: 8, minWidth: 180, boxShadow: '0 8px 24px rgba(0,0,0,.5)' }}>
-                              {aw.advisor && (
-                                <button onClick={() => { updateAwaitingAndSave(aw.id, 'advisor', ''); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(239,68,68,.1)', border: 'none', color: '#f87171', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginBottom: 4 }}>✕ Clear</button>
-                              )}
-                              {advisorList.map(adv => (
-                                <button key={adv} onClick={() => { updateAwaitingAndSave(aw.id, 'advisor', adv); setAwAdvisorPickerId(null); }} style={{ display: 'block', width: '100%', textAlign: 'left', background: aw.advisor === adv ? 'rgba(139,92,246,.25)' : 'transparent', border: 'none', color: aw.advisor === adv ? '#c4b5fd' : '#cbd5e1', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontSize: 13, fontWeight: aw.advisor === adv ? 800 : 400 }}>{adv}</button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => saveAwaitingRow(aw.id)}
-                          disabled={awaitingSavingId === aw.id}
-                          style={{ background: 'rgba(251,191,36,.18)', border: '1px solid rgba(251,191,36,.4)', color: '#fbbf24', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12, opacity: awaitingSavingId === aw.id ? 0.6 : 1 }}
-                        >{awaitingSavingId === aw.id ? '⏳ Saving…' : '💾 Save'}</button>
-                        {canAssignAwaiting && (
-                          <>
-                            <button
-                              onClick={() => setAwaitingPickerId(awaitingPickerId === aw.id ? null : aw.id)}
-                              style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.45)', color: '#c4b5fd', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
-                            >👤 Assign Tech</button>
-                            {awaitingPickerId === aw.id && (
-                              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                                <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700 }}>→</span>
-                                {techList.map(tech => (
-                                  <button key={tech}
-                                    onClick={() => claimAwaiting(aw, tech)}
-                                    disabled={movingId === aw.id}
-                                    style={{ background: 'rgba(167,139,250,.2)', border: '1px solid rgba(167,139,250,.4)', color: '#c4b5fd', borderRadius: 7, padding: '5px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}
-                                  >{movingId === aw.id ? '⏳' : tech}</button>
-                                ))}
-                              </div>
-                            )}
-                          </>
-                        )}
-                        {/* Move between the two unassigned pools — always reversible
-                            from the button that appears on the other side. */}
-                        <button
-                          onClick={() => setAwaitingUsedCar(aw, !sec.usedCar)}
-                          disabled={movingId === aw.id}
-                          title={sec.usedCar ? 'Move this RO back to the unassigned tech pool' : 'Move this RO to the Used Cars list'}
-                          style={{ background: sec.usedCar ? 'rgba(251,191,36,.18)' : 'rgba(52,211,153,.18)', border: `1px solid ${sec.usedCar ? 'rgba(251,191,36,.45)' : 'rgba(52,211,153,.45)'}`, color: sec.usedCar ? '#fbbf24' : '#6ee7b7', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 12, opacity: movingId === aw.id ? 0.5 : 1 }}
-                        >{movingId === aw.id ? '⏳ Moving…' : sec.usedCar ? '↩ Move to Cars Awaiting' : '🚗 Move to Used Cars'}</button>
-                        {canDeleteAwaiting && (
-                          <button
-                            onClick={() => deleteAwaitingRow(aw.id)}
-                            style={{ marginLeft: 'auto', background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.35)', color: '#f87171', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
-                          >🗑 Delete</button>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
+                  <UnassignedRow
+                    key={aw.id}
+                    aw={aw}
+                    isTech={isTech}
+                    canAssign={canAssignAwaiting}
+                    canDelete={canDeleteAwaiting}
+                    techList={techList}
+                    advisorList={advisorList}
+                    movingId={movingId}
+                    savingId={awaitingSavingId}
+                    advisorPickerId={awAdvisorPickerId}
+                    setAdvisorPickerId={setAwAdvisorPickerId}
+                    techPickerId={awaitingPickerId}
+                    setTechPickerId={setAwaitingPickerId}
+                    isHighlighted={isHighlighted}
+                    rowRef={isHighlighted ? highlightedRowRef : null}
+                    rowBg="rgba(251,191,36,.06)"
+                    rowBorder="rgba(251,191,36,.22)"
+                    onUpdate={updateAwaiting}
+                    onSave={saveAwaitingRow}
+                    onTogglePartsArrived={toggleAwaitingPartsArrived}
+                    onUpdateAndSave={updateAwaitingAndSave}
+                    onClaim={claimAwaiting}
+                    onClaimIt={(row) => setClaimConfirm({ aw: row, tech: currentUser })}
+                    onDelete={deleteAwaitingRow}
+                    onMove={(row) => setAwaitingUsedCar(row, true)}
+                    moveLabel="🚗 Move to Used Cars"
+                    moveTitle="Move this RO to the Used Car Hub"
+                    moveAccent="#6ee7b7"
+                    moveBg="rgba(52,211,153,.18)"
+                    moveBorder="rgba(52,211,153,.45)"
+                  />
                 );
               })}
             </div>
-            ))}
           </>
         )}
       </div>
