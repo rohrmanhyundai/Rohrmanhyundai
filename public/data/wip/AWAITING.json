@@ -4,7 +4,7 @@
     "ro": "779272",
     "roDate": "2026-07-16",
     "jobDesc": "CUSTOMER STATES VEHICLE WONT START. CHECK AND ADVISE.",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN",
     "notes": "",
     "partsArrived": null,
