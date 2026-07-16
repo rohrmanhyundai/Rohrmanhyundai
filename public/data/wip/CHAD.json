@@ -14,5 +14,53 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mro34bnkf80v",
+    "ro": "779291",
+    "roDate": "2026-07-16",
+    "vehicle": "2013 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES- Steering bushing making noise",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mro34bnlht5l",
+    "ro": "779086",
+    "roDate": "2026-07-16",
+    "vehicle": "2017 Hyundai Tucson",
+    "jobDesc": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mro34bnlxnqx",
+    "ro": "779030",
+    "roDate": "2026-07-16",
+    "vehicle": "2021 Hyundai Santa Fe",
+    "jobDesc": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
