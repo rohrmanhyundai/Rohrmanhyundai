@@ -64,22 +64,6 @@
     "flag": "green"
   },
   {
-    "id": "mrfd4lklou8i",
-    "ro": "779122",
-    "roDate": "2026-07-10",
-    "vehicle": "",
-    "jobDesc": "PERFORM CERTIFIED MULTI-POINT VEHICLE INSPECTION",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": "",
-    "usedCar": true,
-    "flag": "green"
-  },
-  {
     "id": "mrkw7yk10d1m",
     "ro": "779211",
     "roDate": "2026-07-14",
