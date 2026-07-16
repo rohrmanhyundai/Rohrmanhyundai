@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "mrnf85koq46r",
+    "ro": "779256",
+    "roDate": "2026-07-16",
+    "vehicle": "2019 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES - DRIVER SIDE REAR POWER TAILGATE LIFTER NOT OPERATING.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  }
+]
