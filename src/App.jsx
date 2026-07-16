@@ -658,6 +658,10 @@ export default function App() {
       <UsedCarHub
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
+        currentRole={currentRole}
+        jobRole={jobRole}
+        techList={techList}
+        advisorList={advisorList}
         onBack={() => setPage('dashboard')}
       />
     );
