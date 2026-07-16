@@ -1,7 +1,7 @@
 {
   "id": "mqgsqk0qwjxa",
   "createdAt": "2026-06-16T15:27:57.914Z",
-  "updatedAt": "2026-07-16T19:12:04.850Z",
+  "updatedAt": "2026-07-16T19:28:54.569Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "DANIELLE STOKES",
   "customerPhone": "765) 720 - 8908",
@@ -14,9 +14,9 @@
   "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
   "warrantyPhone": "800-222-2721",
   "claimNumber": "PRO3077391 (MAXQ CLAIM)",
-  "authNumber": "",
+  "authNumber": "PRO3077391",
   "laborRate": "190.00",
-  "laborTime": "9.4",
+  "laborTime": "11.9",
   "diagnosisTime": "1.0",
   "parts": [
     {
@@ -158,6 +158,20 @@
       "description": "O-RING",
       "qty": "1",
       "price": "13.16"
+    },
+    {
+      "id": "mrnwbx0kco6d",
+      "partNumber": "1234YF",
+      "description": "1234YF FREON",
+      "qty": "1",
+      "price": "272"
+    },
+    {
+      "id": "mrnwcijp960j",
+      "partNumber": "97762-S8700",
+      "description": "HOSE-DISCHARGE",
+      "qty": "1",
+      "price": "161.92"
     }
   ],
   "taxPct": "7",
