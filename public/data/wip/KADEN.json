@@ -12,5 +12,37 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "mrnf86bcf9l9",
+    "ro": "779248",
+    "roDate": "2026-07-16",
+    "vehicle": "2024 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES- CHECK ENGINE LIGHT IS ON CHECK AND ADVISE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mrnf86bc2bpw",
+    "ro": "779245",
+    "roDate": "2026-07-16",
+    "vehicle": "2023 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES A.C NOT OPERATING. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
