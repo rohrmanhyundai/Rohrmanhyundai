@@ -1,7 +1,7 @@
 {
   "id": "mqgsqk0qwjxa",
   "createdAt": "2026-06-16T15:27:57.914Z",
-  "updatedAt": "2026-07-07T00:25:07.542Z",
+  "updatedAt": "2026-07-16T19:07:14.153Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "DANIELLE STOKES",
   "customerPhone": "765) 720 - 8908",
@@ -13,7 +13,7 @@
   "mileage": "94315",
   "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
   "warrantyPhone": "800-222-2721",
-  "claimNumber": "PRO3077391",
+  "claimNumber": "PRO3077391 (MAXQ CLAIM)",
   "authNumber": "",
   "laborRate": "190.00",
   "laborTime": "9.4",
@@ -84,10 +84,80 @@
     },
     {
       "id": "mqjm3g8q0duf",
-      "partNumber": "21355-3C550",
+      "partNumber": "21355-3C550 ()",
       "description": "GASKET-WATER PUMP,RH",
       "qty": "1",
       "price": "5.24"
+    },
+    {
+      "id": "mrntzipfa9of",
+      "partNumber": "22441-3L101",
+      "description": "GASKET-ROCKER COVER,RH",
+      "qty": "1",
+      "price": "48.18"
+    },
+    {
+      "id": "mrntzjdj764i",
+      "partNumber": "22443-3L110",
+      "description": "GASKET",
+      "qty": "1",
+      "price": "11.03"
+    },
+    {
+      "id": "mrntzk3cpgug",
+      "partNumber": "22453-3L101",
+      "description": "GASKET-ROCKER COVER,LH",
+      "qty": "1",
+      "price": "46.76"
+    },
+    {
+      "id": "mrntzknthx2r",
+      "partNumber": "21354-3C550",
+      "description": "GASKET-OUTLET,RH",
+      "qty": "1",
+      "price": "15.81"
+    },
+    {
+      "id": "mrntzl09fqa0",
+      "partNumber": "21356-3C510",
+      "description": "GASKET-OIL FILTER BRKT",
+      "qty": "2",
+      "price": "14.32"
+    },
+    {
+      "id": "mrntzlclsmdd",
+      "partNumber": "21443-3C700",
+      "description": "SEAL-OIL RR",
+      "qty": "1",
+      "price": "72.27"
+    },
+    {
+      "id": "mrntzlq5uud4",
+      "partNumber": "28215-3CFA0",
+      "description": "GASKET-INLET MANIFOLD",
+      "qty": "6",
+      "price": "21.16"
+    },
+    {
+      "id": "mrntzm4aa0pl",
+      "partNumber": "29215-3CFA1",
+      "description": "GASKET-SURGE TANK",
+      "qty": "1",
+      "price": "31.45"
+    },
+    {
+      "id": "mrntzmhklalk",
+      "partNumber": "21354-3C540",
+      "description": "GASKET-OUTLET,LH",
+      "qty": "1",
+      "price": "15.81"
+    },
+    {
+      "id": "mrntzmwuyc8a",
+      "partNumber": "21353-3C500",
+      "description": "O-RING",
+      "qty": "1",
+      "price": "13.16"
     }
   ],
   "taxPct": "7",
