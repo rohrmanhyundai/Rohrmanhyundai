@@ -12,5 +12,37 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "WAITING ON INSPECTOR. INSPECTOR HAS BEEN HERE. WAITING ON APPROVAL WARRANTY APPROVED PARTS ARE HERE WE ARE STARTING ON CAR TODAY"
+  },
+  {
+    "id": "mro34ccjvgsp",
+    "ro": "779286",
+    "roDate": "2026-07-16",
+    "vehicle": "2017 Hyundai Ioniq Hybrid",
+    "jobDesc": "Faulty Dual Clutch Actuator needs repaired",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
+  },
+  {
+    "id": "mro34ccjhuvn",
+    "ro": "779267",
+    "roDate": "2026-07-16",
+    "vehicle": "2020 Hyundai Tucson",
+    "jobDesc": "GAS PEDAL REPLACEMENT",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
