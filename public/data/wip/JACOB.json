@@ -48,22 +48,6 @@
     "flag": "green"
   },
   {
-    "id": "mrck4lankmo5",
-    "ro": "779031",
-    "roDate": "2026-07-08",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES STEERING WHEEL WOULDN'T CENTER AFTER TURNING. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/15/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "usedCar": true,
-    "flag": "green"
-  },
-  {
     "id": "mrkw7yk10d1m",
     "ro": "779211",
     "roDate": "2026-07-14",
