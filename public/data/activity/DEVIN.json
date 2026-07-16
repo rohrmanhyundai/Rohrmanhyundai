@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-16T20:53:03.298Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-16T20:53:03.296Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-06-23T16:29:25.199Z",
     "type": "action",
     "label": "logout"
@@ -60,30 +70,5 @@
     "at": "2026-06-23T15:35:35.208Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-04T18:19:25.813Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T13:16:39.579Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-04T13:16:33.940Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-03T19:38:05.670Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-02T14:32:56.138Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
