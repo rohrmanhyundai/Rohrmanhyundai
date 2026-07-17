@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-17T21:19:40.309Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-07-17T12:10:38.968Z",
     "type": "page",
     "label": "work-in-progress"
@@ -828,42 +833,6 @@
   },
   {
     "at": "2026-06-18T12:02:07.123Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-17T19:24:18.114Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-17T19:24:16.977Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-17T18:58:59.481Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778430 tech CORY"
-  },
-  {
-    "at": "2026-06-17T18:16:10.438Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-17T13:43:16.983Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-17T13:43:16.982Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-17T13:43:15.776Z",
     "type": "page",
     "label": "tech-resources"
   }
