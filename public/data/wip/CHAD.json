@@ -46,5 +46,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CUSTOMER STATES- Just had reman trans install and now car will not go over 30mph.- give to Chad we need to look at the car one more time "
+  },
+  {
+    "id": "mr3gfvpf2cu",
+    "ro": "778812",
+    "roDate": "2026-06-30",
+    "vehicle": "",
+    "jobDesc": "Tow in, engine locked had flashing CEL. Oil level good",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/17/2026",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": "Engine seized. Techline advised replace engine. NEED STUI OF VALVE COVER.  Engine approved."
   }
 ]
