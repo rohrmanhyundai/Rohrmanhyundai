@@ -106,22 +106,31 @@ export async function saveDashboardToGitHub(payload) {
     let sha = null;
     try {
       const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
+      noteRateLimit(getRes);
       if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
       else if (getRes.status !== 404) { lastErr = new Error(`Failed to read existing file (${getRes.status})`); }
     } catch { /* network hiccup on GET — retry */ }
+
+    let putRes;
     try {
-      const putRes = await fetch(putUrl, {
+      putRes = await fetch(putUrl, {
         method: 'PUT',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: `Update dashboard data ${new Date().toISOString()}`, content, branch: GITHUB_BRANCH, sha }),
       });
-      if (putRes.ok) return await putRes.json();
-      let putJson = {}; try { putJson = await putRes.json(); } catch {}
-      lastErr = new Error(putJson.message || `GitHub update failed (${putRes.status})`);
-      if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) throw lastErr;
     } catch (e) {
-      lastErr = e;
+      lastErr = e; // network error reaching GitHub — worth a retry
+      await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      continue;
     }
+
+    if (putRes.ok) return await putRes.json();
+    noteRateLimit(putRes);
+    let putJson = {}; try { putJson = await putRes.json(); } catch {}
+    lastErr = new Error(putJson.message || `GitHub update failed (${putRes.status})`);
+    // Retry only conflicts / transient server errors; a 403/401/404 fails the
+    // same every attempt, so stop rather than burn more of the shared quota.
+    if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) break;
     await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
   }
   throw lastErr || new Error('GitHub update failed');
@@ -140,22 +149,33 @@ async function saveGitHubFile(headers, path, data, message) {
     let sha = null;
     try {
       const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
+      noteRateLimit(getRes);
       if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
     } catch { /* network hiccup on the GET — retry below */ }
+
+    let putRes;
     try {
-      const putRes = await fetch(putUrl, {
+      putRes = await fetch(putUrl, {
         method: 'PUT',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, content, branch: GITHUB_BRANCH, sha }),
       });
-      if (putRes.ok) return;
-      let j = {}; try { j = await putRes.json(); } catch {}
-      lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
-      // Only retry conflicts / stale-sha / transient server errors.
-      if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) throw lastErr;
     } catch (e) {
-      lastErr = e; // network error on the PUT — retry
+      lastErr = e; // network error reaching GitHub — worth a retry
+      await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      continue;
     }
+
+    if (putRes.ok) return;
+    noteRateLimit(putRes);
+    let j = {}; try { j = await putRes.json(); } catch {}
+    lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
+    // Only conflicts / stale-sha / transient server errors are worth retrying.
+    // Anything else (403 rate limit, 401 bad token, 404) will fail the same way
+    // every attempt — retrying just burns more of the shared quota, so stop now.
+    // (This is the bug the rate-limit report exposed: the old `throw` here was
+    // caught by a surrounding try/catch and the loop retried 403s five times.)
+    if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) break;
     await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
   }
   throw lastErr || new Error('GitHub save failed');
@@ -169,11 +189,81 @@ async function readGitHubFile(headers, path) {
       `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
       { headers, cache: 'no-store' }
     );
+    noteRateLimit(res);
     if (!res.ok) return null;
     const fileData = await res.json();
     const bytes = Uint8Array.from(atob(fileData.content.replace(/\s/g, '')), c => c.charCodeAt(0));
     return JSON.parse(new TextDecoder('utf-8').decode(bytes));
   } catch { return null; }
+}
+
+// ── Rate-limit awareness ──────────────────────────────────────────────────────
+// One GitHub token is shared by every device, and GitHub's 5,000 req/hr limit is
+// counted per-token — so all the TVs, phones and laptops draw from one pool. When
+// it runs dry, WRITES start failing (a move, a save), which is the visible
+// symptom. Two defenses live here:
+//   1. ETag conditional reads (see conditionalReadGitHubFile) — a poll that gets
+//      304 Not Modified does NOT count against the limit, and our WIP/Awaiting
+//      files rarely change between polls, so most polls become free.
+//   2. A shared "we're currently limited" signal the UI can read to show a calm
+//      "try again in a moment" instead of a raw error, and that callers check to
+//      stop hammering a dead quota.
+
+let _rateLimitedUntil = 0; // epoch ms; 0 = not limited
+
+// Records the reset time from a 403/429 so the app can back off until then.
+function noteRateLimit(res) {
+  try {
+    if (res.status !== 403 && res.status !== 429) return;
+    const remaining = res.headers.get('x-ratelimit-remaining');
+    // A 403 with remaining>0 is a permissions/other error, not the quota.
+    if (remaining !== null && Number(remaining) > 0) return;
+    const reset = Number(res.headers.get('x-ratelimit-reset'));
+    _rateLimitedUntil = reset ? reset * 1000 : Date.now() + 60000;
+  } catch {}
+}
+
+// True while we believe the shared quota is exhausted. Callers use this to skip
+// polling and to explain a failed save. Cleared automatically once reset passes.
+export function isRateLimited() {
+  if (_rateLimitedUntil && Date.now() >= _rateLimitedUntil) _rateLimitedUntil = 0;
+  return _rateLimitedUntil > 0;
+}
+
+// Seconds until the quota resets (0 if not limited) — for a countdown in the UI.
+export function rateLimitResetSeconds() {
+  if (!isRateLimited()) return 0;
+  return Math.max(0, Math.ceil((_rateLimitedUntil - Date.now()) / 1000));
+}
+
+// Per-path ETag cache so polls can send If-None-Match.
+const _etagCache = {};
+
+// Conditional read for polling. On 304 Not Modified GitHub returns no body and —
+// crucially — does NOT decrement the rate limit, so a quiet file costs nothing to
+// watch. Returns { changed:false } when unchanged, { changed:true, data } when it
+// changed, or { changed:true, data:null } on error so the caller can fall back.
+async function conditionalReadGitHubFile(headers, path) {
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const etag = _etagCache[path];
+  const reqHeaders = { ...headers };
+  if (etag) reqHeaders['If-None-Match'] = etag;
+  try {
+    // No cache-busting query param here: it would change the URL and defeat the
+    // conditional request. `cache: no-store` keeps the browser from serving a
+    // stale 200 while still letting GitHub answer 304.
+    const res = await fetch(url, { headers: reqHeaders, cache: 'no-store' });
+    noteRateLimit(res);
+    if (res.status === 304) return { changed: false };
+    if (!res.ok) return { changed: true, data: null };
+    const newEtag = res.headers.get('etag');
+    if (newEtag) _etagCache[path] = newEtag;
+    const fileData = await res.json();
+    const bytes = Uint8Array.from(atob(fileData.content.replace(/\s/g, '')), c => c.charCodeAt(0));
+    return { changed: true, data: JSON.parse(new TextDecoder('utf-8').decode(bytes)) };
+  } catch {
+    return { changed: true, data: null };
+  }
 }
 
 // Minimal headers for unauthenticated reads on a public repo
@@ -870,6 +960,24 @@ export async function saveWipData(techName, rows) {
   return rows;
 }
 
+// Conditional poll for a tech's WIP board. Returns { changed, data }: when the
+// file is unchanged since the last poll GitHub answers 304 for FREE (no quota
+// spent), and we return { changed:false } so the caller keeps its current rows.
+// Used by the background refresh; the initial load still uses loadWipData.
+export async function pollWipData(techName) {
+  const path = `public/data/wip/${techName.toUpperCase()}.json`;
+  const r = await conditionalReadGitHubFile(authHeaders(), path);
+  if (!r.changed) return { changed: false };
+  if (Array.isArray(r.data)) return { changed: true, data: r.data };
+  // Error path (r.data === null): fall back to the static copy so a hiccup or a
+  // spent quota doesn't wipe the board out.
+  try {
+    const res = await fetch(`${BASE}data/wip/${techName.toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return { changed: true, data: await res.json() };
+  } catch {}
+  return { changed: false };
+}
+
 export async function loadCoaching(techName) {
   const username = techName.toUpperCase();
   const path = `public/data/coaching/${username}.json`;
@@ -910,6 +1018,21 @@ export async function saveAwaitingData(rows) {
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   await saveGitHubFile(authHeaders(), 'public/data/wip/AWAITING.json', rows, 'Update cars awaiting technician');
   return rows;
+}
+
+// Conditional poll for the shared Cars Awaiting / Used Cars file. Same free-304
+// behavior as pollWipData — the file rarely changes between polls, so most polls
+// cost nothing against the shared quota.
+export async function pollAwaitingData() {
+  const path = 'public/data/wip/AWAITING.json';
+  const r = await conditionalReadGitHubFile(authHeaders(), path);
+  if (!r.changed) return { changed: false };
+  if (Array.isArray(r.data)) return { changed: true, data: r.data };
+  try {
+    const res = await fetch(`${BASE}data/wip/AWAITING.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return { changed: true, data: await res.json() };
+  } catch {}
+  return { changed: false };
 }
 
 // List every tech that has a WIP file on disk (the file owner names), regardless
