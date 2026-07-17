@@ -28,21 +28,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "AC COMPRESSOR APPROVED "
-  },
-  {
-    "id": "mro34b19gtu3",
-    "ro": "779301",
-    "roDate": "2026-07-16",
-    "vehicle": "2024 Hyundai Palisade",
-    "jobDesc": "ALTERNATOR REPLACEMENT",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
   }
 ]
