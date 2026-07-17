@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-07-17T20:27:49.861Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 779256 tech CHAD"
+  },
+  {
     "at": "2026-07-17T13:45:49.436Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1614,71 +1620,6 @@
   },
   {
     "at": "2026-06-18T14:03:08.695Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-17T18:41:09.312Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-17T18:41:09.310Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-17T18:41:07.601Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-17T18:08:12.529Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-17T18:07:53.340Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-17T18:07:53.337Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-17T18:07:51.551Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-17T15:47:36.694Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-17T15:45:59.355Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-17T15:01:18.053Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-17T15:01:16.861Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-17T15:01:16.859Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-17T15:01:15.074Z",
     "type": "page",
     "label": "tech-resources"
   }
