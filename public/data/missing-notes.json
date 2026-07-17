@@ -1,11 +1,35 @@
 {
-  "updatedAt": "2026-07-16T22:32:44.980Z",
+  "updatedAt": "2026-07-17T16:53:39.970Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "779306",
-        "vehicle": "2023 Hyundai Santa Fe Hybrid"
+        "ro": "779330",
+        "vehicle": "2024 Hyundai Sonata"
+      },
+      {
+        "ro": "779329",
+        "vehicle": "2024 Hyundai Kona"
+      },
+      {
+        "ro": "779328",
+        "vehicle": "2015 Hyundai Veloster"
+      },
+      {
+        "ro": "779326",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "779320",
+        "vehicle": "2025 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "779318",
+        "vehicle": "2013 Hyundai Equus"
+      },
+      {
+        "ro": "779313",
+        "vehicle": "2024 Hyundai Palisade"
       },
       {
         "ro": "779301",
@@ -26,21 +50,23 @@
       {
         "ro": "779290",
         "vehicle": "2016 Hyundai Sonata"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779327",
+        "vehicle": "2024 Hyundai Kona"
       },
       {
-        "ro": "779273",
-        "vehicle": "2025 Hyundai Sonata"
-      },
-      {
-        "ro": "779212",
+        "ro": "779213",
         "vehicle": "2026 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "779209",
-        "vehicle": "2026 Hyundai Kona"
       }
     ],
     "CORY": [
+      {
+        "ro": "779325",
+        "vehicle": "2018 Honda Odyssey"
+      },
       {
         "ro": "779304",
         "vehicle": "2016 Chevrolet Colorado"
@@ -78,32 +104,12 @@
         "vehicle": "2018 Ford Explorer"
       },
       {
-        "ro": "779163",
-        "vehicle": "2014 Nissan Sentra"
-      },
-      {
         "ro": "779161",
         "vehicle": "2022 Mitsubishi Mirage"
       },
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "779265",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779213",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      }
-    ],
-    "ISAIAH": [
-      {
-        "ro": "779216",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
       }
     ]
   }
