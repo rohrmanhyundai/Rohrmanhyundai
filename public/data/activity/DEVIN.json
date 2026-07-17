@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-17T13:36:43.867Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-07-16T20:53:03.298Z",
     "type": "page",
     "label": "hotRepairs"
