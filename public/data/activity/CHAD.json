@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-17T22:18:15.442Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-07-17T20:34:38.376Z",
     "type": "page",
     "label": "tech-resources"
