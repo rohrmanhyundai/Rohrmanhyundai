@@ -28,5 +28,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "AC COMPRESSOR APPROVED "
+  },
+  {
+    "id": "mrp6g4gpiqx6",
+    "ro": "779306",
+    "roDate": "2026-07-17",
+    "vehicle": "2023 Hyundai Santa Fe Hybrid",
+    "jobDesc": "CUSTOMER STATES- CEL on check and advice",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
