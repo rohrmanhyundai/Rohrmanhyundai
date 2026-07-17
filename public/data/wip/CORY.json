@@ -28,20 +28,6 @@
     "notes": "Engine seized. Techline advised replace engine. NEED STUI OF VALVE COVER.  Engine approved."
   },
   {
-    "id": "mr9d5jmf2gm",
-    "ro": "778910",
-    "roDate": "2026-07-02",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES TRANSMISSION ISSUES, ONLY HAS REVERSE. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "Recommended transmission replacement. "
-  },
-  {
     "id": "mrfd4n5hk57k",
     "ro": "779093",
     "roDate": "2026-07-10",
