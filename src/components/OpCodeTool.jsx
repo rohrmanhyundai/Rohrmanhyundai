@@ -1,48 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { setHotRepairOpData, docRawUrl } from '../utils/github';
+import { loadPdfJs, extractPdfText, rankedMatches } from '../utils/pdfText';
 
-// ── PDF.js (CDN, shared singleton) ────────────────────────────────────────────
-let pdfjsPromise = null;
-function loadPdfJs() {
-  if (pdfjsPromise) return pdfjsPromise;
-  pdfjsPromise = new Promise((resolve, reject) => {
-    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    script.onload = () => {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      resolve(window.pdfjsLib);
-    };
-    script.onerror = () => reject(new Error('Failed to load PDF.js'));
-    document.head.appendChild(script);
-  });
-  return pdfjsPromise;
-}
-
-const pdfTextCache = {};
-async function fetchPdfText(item) {
-  if (item.searchText) return item.searchText;
-  if (pdfTextCache[item.id] != null) return pdfTextCache[item.id];
-  try {
-    const pdfjs = await loadPdfJs();
-    const res = await fetch(docRawUrl(item.filename));
-    const buf = await res.arrayBuffer();
-    const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
-    let text = '';
-    const maxPages = Math.min(pdf.numPages, 15);
-    for (let p = 1; p <= maxPages; p++) {
-      const page = await pdf.getPage(p);
-      const content = await page.getTextContent();
-      text += ' ' + content.items.map(i => i.str).join(' ');
-    }
-    pdfTextCache[item.id] = text;
-    return text;
-  } catch {
-    pdfTextCache[item.id] = '';
-    return '';
-  }
-}
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -376,14 +335,14 @@ export function OpCodeGenerator({ items, onClose }) {
   // Every bulletin is searchable. Excluded ones still show up, but instead of an
   // op code they offer a link to open the bulletin and read the codes there.
   const searchable = useMemo(() => (items || []), [items]);
-  const q = query.trim().toLowerCase();
-  const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const nq = norm(query);
-  // Nothing is listed until the user actually searches.
-  const matches = q
-    ? searchable.filter(it =>
-        norm(it.label).includes(nq) || norm(it.tags).includes(nq) || norm(it.filename).includes(nq))
-    : [];
+  const q = query.trim();
+  // Same ranked, full-text search as the bulletin library: matches the title, the
+  // manager's tags, the filename AND the text of the PDF itself, so a tech who
+  // knows the symptom but not the number ("inoperable horn") finds the bulletin.
+  // Title/tag hits still outrank a passing mention in the body, so searching a
+  // number lands on the bulletin that IS that number. Nothing lists until the
+  // user actually types.
+  const matches = useMemo(() => (q ? rankedMatches(searchable, q) : []), [searchable, q]);
 
   async function pick(item) {
     setSelected(item); setAnswers({}); setResolved(null);
@@ -398,7 +357,7 @@ export function OpCodeGenerator({ items, onClose }) {
     // No manual data — auto-read the warranty table from the PDF text.
     setAutoLoading(true);
     try {
-      const text = await fetchPdfText(item);
+      const text = await extractPdfText(item);
       const { entries, questions, rawText } = extractWarrantyDraft(text);
       setResolved({ source: 'auto', opData: { questions: questions || [], entries }, rawText });
     } catch {
@@ -437,11 +396,12 @@ export function OpCodeGenerator({ items, onClose }) {
         {!selected ? (
           <>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
-              Searches every TSB <strong style={{ color: '#cbd5e1' }}>and</strong> recall — you don't need to be on the matching tab.
+              Searches every TSB <strong style={{ color: '#cbd5e1' }}>and</strong> recall — title, tags, and the full text inside each PDF.
+              Don't know the number? Describe the job.
             </div>
             <input
               autoFocus value={query} onChange={e => setQuery(e.target.value)}
-              placeholder='Search any TSB or recall — number or keyword (e.g. "26-EM-012H" or "298")'
+              placeholder='Number or description — e.g. "26-EM-012H", "298", or "inoperable horn"'
               style={input}
             />
             <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -602,7 +562,7 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
           if (it.opExcluded) { c.excluded++; return; }
           if (it.opData && (it.opData.entries || []).length) { c.set++; return; }
           let text = it.searchText;
-          if (!text) { try { text = await fetchPdfText(it); } catch { text = ''; } }
+          if (!text) { try { text = await extractPdfText(it); } catch { text = ''; } }
           const { entries } = extractWarrantyDraft(text || '');
           if (entries.length) { c.auto++; } else { c.missing++; miss.push(it); }
         }));
@@ -664,12 +624,10 @@ export function OpCodeEditorLauncher({ items, kind, kindLabel, onSaved, onClose 
   const [query, setQuery] = useState('');
   const [picked, setPicked] = useState(null);
 
-  const q = query.trim().toLowerCase();
-  const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const nq = norm(query);
-  const matches = q
-    ? (items || []).filter(it => norm(it.label).includes(nq) || norm(it.tags).includes(nq) || norm(it.filename).includes(nq))
-    : [];
+  // Full-text ranked, same as the generator — a manager finding the bulletin to
+  // add op codes to has the same problem a tech does.
+  const q = query.trim();
+  const matches = q ? rankedMatches(items || [], q) : [];
 
   if (picked) {
     // Re-resolve the picked item from the latest items so it reflects saves.
@@ -744,7 +702,7 @@ export function OpCodeEditor({ item, kind, onSaved, onClose }) {
     try {
       // Use stored text if present, otherwise read the PDF live (same as the
       // generator) so un-indexed bulletins still draft.
-      const text = await fetchPdfText(item);
+      const text = await extractPdfText(item);
       const { entries: drafted, questions: q, rawText: raw } = extractWarrantyDraft(text);
       setRawText(raw);
       if (q && q.length) setQuestions(q.map(x => ({ ...x })));
