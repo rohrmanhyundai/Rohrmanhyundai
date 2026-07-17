@@ -1,7 +1,7 @@
 {
   "id": "mrmd9p2f6co1",
   "createdAt": "2026-07-15T17:41:16.455Z",
-  "updatedAt": "2026-07-16T16:00:09.703Z",
+  "updatedAt": "2026-07-17T20:18:23.114Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "NATHAN PALOMBO",
   "customerPhone": "337) 215 - 2954",
@@ -36,8 +36,8 @@
   "tireTax": null,
   "tireDisposal": null,
   "notes": "EVAP/RECHARGE 1.4 LABOR @190. 00 ADDED TO R&R TIME.",
-  "approved": true,
-  "approvedDate": "2026-07-15",
+  "approved": false,
+  "approvedDate": "",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -46,8 +46,8 @@
   "paymentDate": "",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": false,
-  "readySubmissionDate": "",
+  "readySubmission": true,
+  "readySubmissionDate": "2026-07-17",
   "inspectorDispatched": false,
   "inspectorDispatchedDate": ""
 }
