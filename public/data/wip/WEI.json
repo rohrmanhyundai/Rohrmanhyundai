@@ -58,5 +58,37 @@
     "advisor": "",
     "notes": "Tow in, Crank no start",
     "flag": "purple"
+  },
+  {
+    "id": "mrpe9w5f24o1",
+    "ro": "779329",
+    "roDate": "2026-07-17",
+    "vehicle": "2024 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES- car not responding to key fobs",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mrpe9w5fkn6l",
+    "ro": "779328",
+    "roDate": "2026-07-17",
+    "vehicle": "2015 Hyundai Veloster",
+    "jobDesc": "CUSTOMER STATES- Will build RPMs but car will not accelerate. will not move in reverse",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
