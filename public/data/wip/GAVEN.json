@@ -28,21 +28,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
-  },
-  {
-    "id": "mro34ccjhuvn",
-    "ro": "779267",
-    "roDate": "2026-07-16",
-    "vehicle": "2020 Hyundai Tucson",
-    "jobDesc": "GAS PEDAL REPLACEMENT",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/17/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
