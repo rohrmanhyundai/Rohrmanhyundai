@@ -1,5 +1,16 @@
 [
   {
+    "at": "2026-07-17T15:08:42.567Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 779163 tech JACOB"
+  },
+  {
+    "at": "2026-07-17T15:08:16.841Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-07-17T15:07:52.926Z",
     "type": "page",
     "label": "tech-resources"
