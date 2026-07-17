@@ -14,22 +14,6 @@
     "notes": "ENGINE P/A HAS BEEN SUBMITTED. ENGINE APPROVED \n"
   },
   {
-    "id": "mrnf86bc2bpw",
-    "ro": "779245",
-    "roDate": "2026-07-16",
-    "vehicle": "2023 Hyundai Tucson Hybrid",
-    "jobDesc": "CUSTOMER STATES A.C NOT OPERATING. CHECK AND ADVISE.",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/17/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "AC COMPRESSOR APPROVED "
-  },
-  {
     "id": "mrp6g4gpiqx6",
     "ro": "779306",
     "roDate": "2026-07-17",
