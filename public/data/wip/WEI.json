@@ -7,8 +7,8 @@
     "jobDesc": "ENGINE IS KNOCKING",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/17/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "P/A IS SUBMITTED FOR ENGINE REPLACEMENT WAITING ON ENGINE "
