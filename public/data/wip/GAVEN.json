@@ -57,5 +57,21 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Vehicle has no compression and coolant in the cylinders.Has signs of overheating. Recommended engine replacement. Engine approved. Ready for ASRs. "
+  },
+  {
+    "id": "mrpe9t105gm0",
+    "ro": "779337",
+    "roDate": "2026-07-17",
+    "vehicle": "2021 Hyundai Kona",
+    "jobDesc": "CHECK ENGINE LIGHT DIAGNOSTIC",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
