@@ -39,8 +39,8 @@
     "usedCar": false,
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/17/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
