@@ -1,6 +1,6 @@
 /* wip */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive, listWipTechs } from '../utils/github';
+import { loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, appendRoArchive, listWipTechs, pollWipData, pollAwaitingData, isRateLimited, rateLimitResetSeconds } from '../utils/github';
 import { trackAction } from '../utils/activityTracker';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
@@ -106,6 +106,9 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
   const [deletingRow, setDeletingRow] = useState(null);
   const [workCompleteConfirmId, setWorkCompleteConfirmId] = useState(null);
   const [error, setError] = useState('');
+  // >0 while the shared GitHub quota is exhausted — drives a calm "busy" banner
+  // instead of the raw rate-limit error, and counts down to reset.
+  const [rateLimitedSec, setRateLimitedSec] = useState(0);
   const [searchRO, setSearchRO] = useState('');
   const [searchResults, setSearchResults] = useState(null); // null = not searching
   const [searching, setSearching] = useState(false);
@@ -233,47 +236,73 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
       if (isUserTyping()) return;
       // Don't poll while a search-results screen is open.
       if (searchResults !== null) return;
+      // Quota is spent — don't add to the pile. The next poll after reset resumes
+      // automatically. (The banner is driven by the 1s sync effect below.)
+      if (isRateLimited()) return;
 
       const targetTech = activeTech;
 
-      // Refresh WIP rows for the active tech
+      // Refresh WIP rows for the active tech. Conditional (ETag) request: an
+      // unchanged file answers 304 for free, and { changed:false } means keep
+      // what we have — no re-render, no quota spent.
       try {
-        const fresh = dedupeWip(await loadWipData(targetTech));
+        const res = await pollWipData(targetTech);
         // Bail if user switched tabs or started typing while we waited
         if (rowsTechRef.current !== targetTech) return;
         if (isUserTyping()) return;
-        setRows(prev => {
-          const dirty = dirtyRowsRef.current;
-          if (dirty.size === 0) return fresh;
-          const localById = new Map(prev.map(r => [r.id, r]));
-          const merged = fresh.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
-          // Preserve any locally-added rows that aren't on the server yet
-          for (const r of prev) {
-            if (dirty.has(r.id) && !fresh.some(f => f.id === r.id)) merged.unshift(r);
-          }
-          return merged;
-        });
+        if (res.changed) {
+          const fresh = dedupeWip(res.data);
+          setRows(prev => {
+            const dirty = dirtyRowsRef.current;
+            if (dirty.size === 0) return fresh;
+            const localById = new Map(prev.map(r => [r.id, r]));
+            const merged = fresh.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
+            // Preserve any locally-added rows that aren't on the server yet
+            for (const r of prev) {
+              if (dirty.has(r.id) && !fresh.some(f => f.id === r.id)) merged.unshift(r);
+            }
+            return merged;
+          });
+        }
       } catch {}
 
-      // Refresh Cars Awaiting
+      // Refresh Cars Awaiting — same conditional poll.
       try {
-        const freshAw = await loadAwaitingData();
+        const res = await pollAwaitingData();
         if (isUserTyping()) return;
-        setAwaiting(prev => {
-          const dirty = dirtyAwaitingRef.current;
-          if (dirty.size === 0) return freshAw;
-          const localById = new Map(prev.map(r => [r.id, r]));
-          const merged = freshAw.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
-          for (const r of prev) {
-            if (dirty.has(r.id) && !freshAw.some(f => f.id === r.id)) merged.unshift(r);
-          }
-          return merged;
-        });
+        if (res.changed) {
+          const freshAw = res.data;
+          setAwaiting(prev => {
+            const dirty = dirtyAwaitingRef.current;
+            if (dirty.size === 0) return freshAw;
+            const localById = new Map(prev.map(r => [r.id, r]));
+            const merged = freshAw.map(r => (dirty.has(r.id) && localById.has(r.id)) ? localById.get(r.id) : r);
+            for (const r of prev) {
+              if (dirty.has(r.id) && !freshAw.some(f => f.id === r.id)) merged.unshift(r);
+            }
+            return merged;
+          });
+        }
       } catch {}
-    }, 10000); // 10s — slow enough to be invisible
+
+    }, 10000); // 10s — but a 304 costs nothing, so this is essentially free
 
     return () => clearInterval(intervalId);
   }, [activeTech, loading, saving, savingRow, deletingRow, awaitingSavingId, movingId, searchResults]);
+
+  // Mirror the shared rate-limit state into the banner once a second. Centralized
+  // here so it lights up within a second no matter WHAT tripped the limit — a
+  // background poll or a failed move — without touching every catch site. Reading
+  // is local-only (no network), so a 1s tick is free.
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRateLimitedSec(prev => {
+        const next = rateLimitResetSeconds();
+        return next === prev ? prev : next;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   function updateRow(id, field, value) {
     dirtyRowsRef.current.add(id);
@@ -1029,7 +1058,12 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
       {/* Content + Chat */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-        {error && <div style={{ marginBottom: 12, padding: '10px 14px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, color: '#f87171', fontSize: 13 }}>{error}</div>}
+        {rateLimitedSec > 0 && (
+          <div style={{ marginBottom: 12, padding: '10px 14px', background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.4)', borderRadius: 8, color: '#fbbf24', fontSize: 13, fontWeight: 700 }}>
+            ⏳ Syncing is busy right now — the dashboard hit GitHub's shared limit. Changes will save automatically in about {rateLimitedSec < 60 ? `${rateLimitedSec}s` : `${Math.ceil(rateLimitedSec / 60)} min`}. You can keep working; nothing is lost.
+          </div>
+        )}
+        {error && !(rateLimitedSec > 0 && /rate limit/i.test(error)) && <div style={{ marginBottom: 12, padding: '10px 14px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 8, color: '#f87171', fontSize: 13 }}>{error}</div>}
 
         {/* Search results panel */}
         {searchResults !== null && (
