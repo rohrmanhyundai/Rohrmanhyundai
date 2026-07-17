@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
+import { loadPdfJs, extractPdfText, extractPdfTextFromBuffer, rankedMatches, scoreItem, textCache } from '../utils/pdfText';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -22,114 +23,8 @@ function isNew(iso) {
   catch { return false; }
 }
 
-// ── PDF.js – loaded from CDN on first use ─────────────────────────────────────
-let pdfjsPromise = null;
-function loadPdfJs() {
-  if (pdfjsPromise) return pdfjsPromise;
-  pdfjsPromise = new Promise((resolve, reject) => {
-    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    script.onload = () => {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      resolve(window.pdfjsLib);
-    };
-    script.onerror = () => reject(new Error('Failed to load PDF.js'));
-    document.head.appendChild(script);
-  });
-  return pdfjsPromise;
-}
-
 // Cache rendered previews (data URLs) by item id so we only render once.
 const previewCache = {};
-
-// Cache extracted first-page text (for search) by item id.
-const textCache = {};
-
-// Normalize a string for forgiving search: lowercase, strip everything but
-// letters/digits. So "26-01-045H" and "2601045h" and "26 01 045 h" all match.
-function norm(s) {
-  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-// Extract text from EVERY page of a PDF given its raw bytes. Returns '' on any
-// failure (e.g. an image-only/scanned PDF with no text layer).
-async function extractPdfTextFromBuffer(buf) {
-  try {
-    const pdfjs = await loadPdfJs();
-    const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
-    let text = '';
-    const maxPages = Math.min(pdf.numPages, 15); // cap for very long bulletins
-    for (let p = 1; p <= maxPages; p++) {
-      const page = await pdf.getPage(p);
-      const content = await page.getTextContent();
-      text += ' ' + content.items.map(i => i.str).join(' ');
-    }
-    return text;
-  } catch {
-    return '';
-  }
-}
-
-// Extract text from a PDF by URL (cached by item id). Used only for search.
-async function extractPdfText(item, rawUrl) {
-  // Prefer text already stored in the index (extracted at upload / re-index) —
-  // no network needed and always available.
-  if (item.searchText) { textCache[item.id] = item.searchText; return item.searchText; }
-  if (textCache[item.id] != null) return textCache[item.id];
-  try {
-    const res = await fetch(rawUrl);
-    const buf = await res.arrayBuffer();
-    const text = await extractPdfTextFromBuffer(buf);
-    textCache[item.id] = text;
-    return text;
-  } catch {
-    textCache[item.id] = '';
-    return '';
-  }
-}
-
-// Relevance score for an item against the query. Every token must appear
-// somewhere (title, manager tags, filename, or PDF text) or the item doesn't
-// match at all (score -1). When it does match, where each token is found is
-// weighted: a hit in the TITLE or TAGS (e.g. the recall/bulletin number a
-// manager typed) counts far more than an incidental hit buried in the PDF body
-// text — so searching "298" opens the bulletin titled "(RECALL 298)" rather
-// than some other PDF that merely mentions 298 in a date or table.
-function scoreItem(item, query) {
-  const tokens = query.trim().split(/\s+/).filter(Boolean).map(norm).filter(Boolean);
-  if (tokens.length === 0) return 0;
-  const label = norm(item.label);
-  const tags = norm(item.tags || '');
-  const filename = norm(item.filename || '');
-  const text = norm(item.searchText || textCache[item.id] || '');
-  let total = 0;
-  for (const tok of tokens) {
-    let best;
-    if (label.includes(tok)) best = 100;
-    else if (tags.includes(tok)) best = 80;
-    else if (filename.includes(tok)) best = 40;
-    else if (text.includes(tok)) best = 10;
-    else return -1; // token not found anywhere → not a match
-    total += best;
-  }
-  return total;
-}
-
-// Boolean match wrapper (kept for readability at call sites).
-function itemMatches(item, query) {
-  return scoreItem(item, query) >= 0;
-}
-
-// All matching items, sorted best-match first (ties keep original/newest order).
-function rankedMatches(items, query) {
-  return items
-    .map((it, i) => ({ it, i, s: scoreItem(it, query) }))
-    .filter(m => m.s >= 0)
-    .sort((a, b) => (b.s - a.s) || (a.i - b.i))
-    .map(m => m.it);
-}
 
 // Renders a large image of page 1 of the PDF; falls back to a wrench icon.
 function PdfPreview({ item, rawUrl }) {
