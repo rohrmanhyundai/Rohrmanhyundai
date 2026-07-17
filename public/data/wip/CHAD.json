@@ -60,5 +60,37 @@
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Engine seized. Techline advised replace engine. NEED STUI OF VALVE COVER.  Engine approved."
+  },
+  {
+    "id": "mrp6g3oyvteb",
+    "ro": "779318",
+    "roDate": "2026-07-17",
+    "vehicle": "2013 Hyundai Equus",
+    "jobDesc": "CUSTOMER STATES RADIO NO SOUND. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
+  },
+  {
+    "id": "mrp6g3oysevn",
+    "ro": "779317",
+    "roDate": "2026-07-17",
+    "vehicle": "2026 Hyundai Santa Fe Hybrid",
+    "jobDesc": "CUSTOMER STATES - light on dash check and advice (SOP)",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CAIDEN HENSON",
+    "notes": ""
   }
 ]
