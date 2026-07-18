@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-18T14:49:43.323Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-18T14:49:35.777Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
     "at": "2026-07-18T11:49:35.809Z",
     "type": "action",
     "label": "login"
@@ -808,25 +818,5 @@
     "at": "2026-06-18T18:08:53.151Z",
     "type": "page",
     "label": "at-diag-worksheet"
-  },
-  {
-    "at": "2026-06-18T12:43:39.794Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-18T12:43:08.057Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-18T12:43:08.053Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-18T12:43:06.560Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
