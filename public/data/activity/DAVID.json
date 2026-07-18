@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-18T19:03:21.705Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-07-18T12:03:39.118Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
@@ -818,10 +823,5 @@
     "at": "2026-06-18T20:37:56.867Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-18T18:39:59.077Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
