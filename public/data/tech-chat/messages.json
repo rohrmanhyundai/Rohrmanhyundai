@@ -1,29 +1,5 @@
 [
   {
-    "id": "mqh57tvlzsy",
-    "username": "DAVID",
-    "text": "Cory- Tires are here for 778416",
-    "timestamp": 1781644639233
-  },
-  {
-    "id": "mqh8ffs0onk",
-    "username": "SHAWN",
-    "text": "CHAD DONT START ON 778405 UNTIL WE GET THE REGISTRATION",
-    "timestamp": 1781650033056
-  },
-  {
-    "id": "mqi1dfim7c3",
-    "username": "KAI",
-    "text": "778430, 778416, 778455, 777817. all parts here for repair orders provided.",
-    "timestamp": 1781698648270
-  },
-  {
-    "id": "mqii7jnsttm",
-    "username": "SHAWN",
-    "text": "Cory Ignition coils are approved",
-    "timestamp": 1781726927176
-  },
-  {
     "id": "mqjg04k6wnd",
     "username": "KAI",
     "text": "778105, 778458, 778423 parts are here, see updated work in progress",
@@ -382,5 +358,11 @@
     "username": "SHAWN",
     "text": "779245 AC COMPRESSOR APPROVED",
     "timestamp": 1784217631558
+  },
+  {
+    "id": "mrqa1yphqo3",
+    "username": "SETH",
+    "text": "RO 779169 parts have been received",
+    "timestamp": 1784373741557
   }
 ]
