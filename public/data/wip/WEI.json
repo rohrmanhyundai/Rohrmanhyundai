@@ -90,5 +90,19 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrp6g58lavri",
+    "ro": "779323",
+    "roDate": "2026-07-17",
+    "vehicle": "2019 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES check engine light on check and advise",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
