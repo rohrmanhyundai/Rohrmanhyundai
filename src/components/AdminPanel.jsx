@@ -1184,19 +1184,27 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   function addAdvisor() { setAddingAdvisor(true); }
 
-  function pickAdvisor(username) {
-    const name = (username || '').toUpperCase();
-    if (!name) return;
-    if (data.advisors.some(a => (a.name || '').toUpperCase() === name)) { setAddingAdvisor(false); return; }
-    const newData = structuredClone(data);
-    newData.advisors.push({
-      name, mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
+  // Push a fresh advisor + training row onto a dashboard data object (mutates it).
+  // Shared by the manual "Add Advisor" picker and the auto-add on user save so the
+  // two paths can never drift apart. No-op if the advisor is already on the roster.
+  function addAdvisorToRoster(newData, name) {
+    const upper = (name || '').toUpperCase();
+    if (!upper) return false;
+    if ((newData.advisors || []).some(a => (a.name || '').toUpperCase() === upper)) return false;
+    (newData.advisors ||= []).push({
+      name: upper, mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
       align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0, ro_count: 0,
     });
-    newData.advisorTraining.push({
-      name, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
+    (newData.advisorTraining ||= []).push({
+      name: upper, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
     });
-    onDataChange(newData, vacations);
+    return true;
+  }
+
+  function pickAdvisor(username) {
+    if (!(username || '').trim()) return;
+    const newData = structuredClone(data);
+    if (addAdvisorToRoster(newData, username)) onDataChange(newData, vacations);
     setAddingAdvisor(false);
   }
 
@@ -1278,9 +1286,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const updated = users.find(u => u.username === newUserName)
       ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
       : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
+    // An advisor-role user must also live on the dashboard roster (data.advisors)
+    // or they never render on the dashboard. Saving the user alone only writes
+    // users.json, so auto-add them to the roster + training table and persist the
+    // dashboard in the same action. "lead advisor" counts too (Jordan).
+    const wantsRoster = (newUserRole || '').toLowerCase().includes('advisor');
+    const rosterData = wantsRoster ? structuredClone(data) : null;
+    const addedToRoster = rosterData ? addAdvisorToRoster(rosterData, newUserName) : false;
+
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
+      .then(() => {
+        if (!addedToRoster) return;
+        onDataChange(rosterData, vacations);
+        return saveDashboardToGitHub({ data: rosterData, vacations });
+      })
       .catch(err => alert('Failed to save user: ' + err.message))
       .finally(() => setUserSaving(false));
   }
