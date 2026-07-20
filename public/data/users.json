@@ -533,7 +533,8 @@
         "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "managementAccess": false
     }
   ],
   "sharedSaveCode": "",
