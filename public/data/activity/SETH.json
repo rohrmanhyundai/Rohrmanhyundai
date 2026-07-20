@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-20T11:59:55.923Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-18T11:55:03.280Z",
     "type": "page",
     "label": "work-schedule"
@@ -340,63 +345,6 @@
   },
   {
     "at": "2026-06-23T12:10:51.078Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-20T11:34:35.606Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-20T11:34:13.939Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 778504"
-  },
-  {
-    "at": "2026-06-20T11:34:04.839Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 778423"
-  },
-  {
-    "at": "2026-06-20T11:33:46.311Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-20T11:33:42.240Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-06-20T11:32:12.718Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-20T11:32:10.367Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-06-19T20:25:00.332Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-06-19T14:46:02.927Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-06-19T13:20:39.784Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-18T12:15:46.536Z",
     "type": "page",
     "label": "advisor-calendar"
   }
