@@ -44,15 +44,15 @@
     "ro": "779387",
     "roDate": "2026-07-20",
     "vehicle": "2026 Hyundai Elantra",
-    "jobDesc": "PDI",
+    "jobDesc": "FLAT TIRE",
     "flag": "pink",
     "usedCar": false,
     "highPriority": false,
     "advisor": "HOLLI LYBROOK",
-    "notes": "",
+    "notes": "TIRE IS FLAT",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": true
+    "isNew": false
   },
   {
     "id": "mrtj5whq8shn",
