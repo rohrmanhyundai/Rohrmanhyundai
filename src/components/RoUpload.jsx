@@ -151,12 +151,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       await Promise.all((techs || []).map(async t => {
         try {
           const rows = await loadWipData(t);
-          (rows || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: t }); });
+          (rows || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: t, advisor: r.advisor || '' }); });
         } catch {}
       }));
       try {
         const aw = await loadAwaitingData();
-        (aw || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: 'Cars Awaiting' }); });
+        (aw || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: 'Cars Awaiting', advisor: r.advisor || '' }); });
       } catch {}
       setSiteRos(out);
     } finally {
@@ -223,17 +223,40 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   const techSet = useMemo(() => new Set((techList || []).map(roKey)), [techList]);
   const isValidPlace = (where) => where === 'Cars Awaiting' || techSet.has(roKey(where));
 
-  // Categorize against the site.
-  const { toAdd, dupList } = useMemo(() => {
-    const validWhere = new Map();
-    (siteRos || []).forEach(s => { if (isValidPlace(s.where) && !validWhere.has(s.ro)) validWhere.set(s.ro, s.where); });
-    const add = [], dups = [];
+  // Categorize against the site. A duplicate (RO# already on site) is split into
+  // a CLEAN duplicate — the report's tech + advisor already match what's on the
+  // site, so nothing to do — and a MISMATCH — the report assigns a different
+  // technician and/or advisor, so the on-site record is out of date and gets
+  // fixed (moved to the right tech's WIP and/or the advisor corrected).
+  const { toAdd, dupList, mismatches } = useMemo(() => {
+    const site = new Map(); // ro -> { where, advisor }
+    (siteRos || []).forEach(s => { if (isValidPlace(s.where) && !site.has(s.ro)) site.set(s.ro, s); });
+    const add = [], dups = [], mism = [];
     for (const o of flaggedUnique) {
       const k = roKey(o.ro);
-      if (validWhere.has(k)) dups.push({ ...o, where: validWhere.get(k) });
-      else if (!excluded[k]) add.push(o);
+      const s = site.get(k);
+      if (s) {
+        // The report names the tech/advisor of record. Only treat as a mismatch
+        // when the report actually specifies one that differs — a blank tech or
+        // advisor in the report doesn't yank an existing assignment.
+        const reportTab   = resolveTech(o.tech);                 // '' if no WIP tab matches
+        const techMismatch = !!reportTab && roKey(reportTab) !== roKey(s.where);
+        const reportAdv   = canonicalAdvisorFirst(o.advisor);    // '' if blank
+        const siteAdv     = canonicalAdvisorFirst(s.advisor);
+        const advMismatch = !!reportAdv && reportAdv !== siteAdv;
+        if (techMismatch || advMismatch) {
+          mism.push({
+            ro: k, roDisplay: o.ro, from: s.where, toTab: reportTab,
+            techMismatch, advMismatch,
+            reportTech: o.tech || '', reportAdvisor: o.advisor || '',
+            reportAdvFirst: reportAdv, siteAdvFirst: siteAdv,
+          });
+        } else {
+          dups.push({ ...o, where: s.where });
+        }
+      } else if (!excluded[k]) add.push(o);
     }
-    return { toAdd: add, dupList: dups };
+    return { toAdd: add, dupList: dups, mismatches: mism };
   }, [flaggedUnique, siteRos, excluded, techSet]);
   const dupCount = dupList.length;
 
@@ -294,6 +317,78 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       setStatus(`✅ Removed ${stale.length} repair order${stale.length === 1 ? '' : 's'} from the site.`);
       await loadSiteRos();
     } catch (e) { setError(e.message || 'Remove failed.'); setStatus(''); }
+    finally { setBusy(false); }
+  }
+
+  // Correct duplicate ROs whose tech/advisor on the site differs from the report.
+  // Loads each affected file once, applies every fix in memory, then saves each
+  // file a single time (keeps the API load down). Moving a tech-mismatched RO
+  // preserves the existing record's data — description, parts, ETAs — it just
+  // relocates it and/or updates the advisor. Advisor-only fixes edit in place.
+  const [fixingRo, setFixingRo] = useState('');
+  async function applyFixes(list, label) {
+    if (!list || list.length === 0) return;
+    const cache = new Map(); // location -> mutable records array ('Cars Awaiting' is a key)
+    const load = async (loc) => {
+      if (!cache.has(loc)) {
+        const recs = loc === 'Cars Awaiting' ? await loadAwaitingData() : await loadWipData(loc);
+        cache.set(loc, [...(recs || [])]);
+      }
+      return cache.get(loc);
+    };
+    const save = (loc, recs) => (loc === 'Cars Awaiting' ? saveAwaitingData(recs) : saveWipData(loc, recs));
+    const dirty = new Set();
+    let fixed = 0;
+    for (const m of list) {
+      const fromRecs = await load(m.from);
+      const idx = fromRecs.findIndex(r => roKey(r.ro) === m.ro);
+      if (idx === -1) continue; // already gone / moved
+      const rec = fromRecs[idx];
+      if (m.techMismatch && m.toTab) {
+        // Move to the report's tech WIP, carrying an advisor correction along.
+        fromRecs.splice(idx, 1);
+        dirty.add(m.from);
+        const destRecs = await load(m.toTab);
+        if (!destRecs.some(r => roKey(r.ro) === m.ro)) {
+          const moved = { ...rec, advisor: m.advMismatch ? m.reportAdvisor : rec.advisor };
+          delete moved.isNew; // Cars-Awaiting-only flag; meaningless in a WIP
+          destRecs.push(moved);
+          dirty.add(m.toTab);
+        }
+        fixed++;
+      } else if (m.advMismatch) {
+        rec.advisor = m.reportAdvisor;
+        dirty.add(m.from);
+        fixed++;
+      }
+    }
+    for (const loc of dirty) await save(loc, cache.get(loc));
+    return fixed;
+  }
+
+  async function fixMismatch(m) {
+    setFixingRo(m.ro); setError('');
+    try {
+      await applyFixes([m]);
+      await loadSiteRos();
+    } catch (e) { setError(e.message || 'Fix failed.'); }
+    finally { setFixingRo(''); }
+  }
+
+  async function fixAllMismatches() {
+    if (mismatches.length === 0) return;
+    if (!window.confirm(
+      `Fix ${mismatches.length} RO${mismatches.length === 1 ? '' : 's'} whose tech/advisor differs from your report?\n\n` +
+      `ROs assigned to a different technician get moved to the correct tech's WIP; ` +
+      `mismatched advisors are corrected to match the report. The RO's description, ` +
+      `parts, and ETA info are kept.`
+    )) return;
+    setBusy(true); setError(''); setStatus('Fixing…');
+    try {
+      const fixed = await applyFixes(mismatches);
+      setStatus(`✅ Fixed ${fixed} repair order${fixed === 1 ? '' : 's'} (tech/advisor corrected).`);
+      await loadSiteRos();
+    } catch (e) { setError(e.message || 'Fix failed.'); setStatus(''); }
     finally { setBusy(false); }
   }
 
@@ -470,6 +565,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                   <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                     <Chip color="#6ee7b7" label="New to add" value={toAdd.length} onClick={() => setModal('new')} />
                     <Chip color="#fbbf24" label="Duplicates (skipped)" value={dupCount} onClick={() => setModal('dup')} />
+                    <Chip color="#f59e0b" label="Tech/advisor mismatch" value={siteRos ? mismatches.length : '…'} onClick={() => setModal('mismatch')} />
                     <Chip color="#fca5a5" label="On site, not flagged" value={siteRos ? stale.length : '…'} onClick={() => setModal('stale')} />
                     <Chip color="#94a3b8" label="Flagged in file" value={flaggedUnique.length} onClick={() => setModal('flagged')} />
                   </div>
@@ -531,6 +627,55 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                     </div>
                   )}
 
+                  {/* Tech / advisor mismatches on duplicate ROs */}
+                  {siteRos && mismatches.length > 0 && (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '18px 0 8px', flexWrap: 'wrap', gap: 10 }}>
+                        <div style={{ fontWeight: 800, color: '#f59e0b' }}>Already on site but tech/advisor differs from your report — verify & fix ({mismatches.length})</div>
+                        <button onClick={fixAllMismatches} disabled={busy}
+                          style={{ background: 'rgba(245,158,11,.16)', border: '1px solid rgba(245,158,11,.5)', color: '#fbbf24', borderRadius: 9, padding: '7px 16px', fontWeight: 800, fontSize: 13, cursor: busy ? 'default' : 'pointer' }}>
+                          🔧 Fix all {mismatches.length}
+                        </button>
+                      </div>
+                      <div style={{ ...cardSt, padding: 0, overflow: 'auto', maxHeight: 340 }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                          <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
+                            <th style={thSt}>RO #</th><th style={thSt}>Advisor (report → site)</th><th style={thSt}>Technician (fix)</th><th style={thSt}></th>
+                          </tr></thead>
+                          <tbody>
+                            {mismatches.map((m, i) => (
+                              <tr key={i}>
+                                <td style={tdSt}>
+                                  <span onClick={() => copyRo(m.roDisplay)} title="Click to copy RO#"
+                                    style={{ color: copiedRo === String(m.roDisplay).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                                    {copiedRo === String(m.roDisplay).trim() ? '✓ Copied' : `📋 ${m.roDisplay}`}
+                                  </span>
+                                </td>
+                                <td style={tdSt}>
+                                  {m.advMismatch
+                                    ? <span><span style={{ color: '#fbbf24', fontWeight: 700 }}>{m.reportAdvFirst || '—'}</span> <span style={{ color: '#64748b' }}>→ was {m.siteAdvFirst || '—'}</span></span>
+                                    : <span style={{ color: '#64748b' }}>{m.siteAdvFirst || '—'} (unchanged)</span>}
+                                </td>
+                                <td style={tdSt}>
+                                  {m.techMismatch
+                                    ? <span><span style={{ color: '#94a3b8' }}>{m.from === 'Cars Awaiting' ? 'Cars Awaiting' : `${m.from}'s WIP`}</span> <span style={{ color: '#c4b5fd', fontWeight: 700 }}>→ {m.toTab}'s WIP</span></span>
+                                    : <span style={{ color: '#64748b' }}>{m.from === 'Cars Awaiting' ? 'Cars Awaiting' : `${m.from}'s WIP`} (unchanged)</span>}
+                                </td>
+                                <td style={{ ...tdSt, textAlign: 'center' }}>
+                                  <button onClick={() => fixMismatch(m)} disabled={fixingRo === m.ro || busy}
+                                    style={{ background: 'rgba(245,158,11,.14)', border: '1px solid rgba(245,158,11,.4)', color: '#fbbf24', borderRadius: 7, padding: '3px 12px', fontSize: 12, fontWeight: 700, cursor: fixingRo === m.ro ? 'wait' : 'pointer' }}>
+                                    {fixingRo === m.ro ? '⏳' : '🔧 Fix'}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div style={{ fontSize: 12, color: '#475569', marginTop: 8, marginBottom: 24 }}>These ROs are already on the site, but your report lists a different technician and/or advisor. Fixing moves the RO to the correct tech's WIP and/or corrects the advisor — the description, parts, and ETA info are kept.</div>
+                    </>
+                  )}
+
                   {/* Stale */}
                   {siteRos && stale.length > 0 && (
                     <>
@@ -574,13 +719,15 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
 
       {modal && (() => {
         const cfg = {
-          new:     { title: 'New repair orders to add', color: '#6ee7b7', rows: toAdd },
-          dup:     { title: 'Duplicates already on the site (skipped)', color: '#fbbf24', rows: dupList },
-          stale:   { title: 'On the site but not flagged purple/pink/green', color: '#fca5a5', rows: stale },
-          flagged: { title: 'All purple/pink/green flagged ROs in the file', color: '#94a3b8', rows: flaggedUnique },
+          new:      { title: 'New repair orders to add', color: '#6ee7b7', rows: toAdd },
+          dup:      { title: 'Duplicates already on the site (skipped)', color: '#fbbf24', rows: dupList },
+          mismatch: { title: 'On site but tech/advisor differs from your report', color: '#f59e0b', rows: mismatches },
+          stale:    { title: 'On the site but not flagged purple/pink/green', color: '#fca5a5', rows: stale },
+          flagged:  { title: 'All purple/pink/green flagged ROs in the file', color: '#94a3b8', rows: flaggedUnique },
         }[modal];
         if (!cfg) return null;
         const isStale = modal === 'stale';
+        const isMismatch = modal === 'mismatch';
         return (
           <div onClick={() => setModal('')} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 24 }}>
             <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 880, maxHeight: '82vh', display: 'flex', flexDirection: 'column', background: '#0f172a', border: `1px solid ${cfg.color}55`, borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
@@ -592,7 +739,9 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
                     <th style={thSt}>RO #</th>
-                    {isStale ? <th style={thSt}>Where it lives</th> : <>
+                    {isStale ? <th style={thSt}>Where it lives</th>
+                     : isMismatch ? <><th style={thSt}>Advisor (report → site)</th><th style={thSt}>Technician (fix)</th></>
+                     : <>
                       <th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th>
                       {modal === 'dup' && <th style={thSt}>On site at</th>}
                       <th style={thSt}>Flag</th>
@@ -602,11 +751,16 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                     {cfg.rows.map((o, i) => (
                       <tr key={i}>
                         <td style={tdSt}>
-                          <span onClick={() => copyRo(o.ro)} title="Click to copy RO#" style={{ color: copiedRo === String(o.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
-                            {copiedRo === String(o.ro).trim() ? '✓ Copied' : `📋 ${o.ro}`}
+                          <span onClick={() => copyRo(isMismatch ? o.roDisplay : o.ro)} title="Click to copy RO#" style={{ color: copiedRo === String(isMismatch ? o.roDisplay : o.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                            {copiedRo === String(isMismatch ? o.roDisplay : o.ro).trim() ? '✓ Copied' : `📋 ${isMismatch ? o.roDisplay : o.ro}`}
                           </span>
                         </td>
-                        {isStale ? <td style={tdSt}>{o.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.where}'s WIP`}</td> : <>
+                        {isStale ? <td style={tdSt}>{o.where === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.where}'s WIP`}</td>
+                         : isMismatch ? <>
+                          <td style={tdSt}>{o.advMismatch ? <span><span style={{ color: '#fbbf24', fontWeight: 700 }}>{o.reportAdvFirst || '—'}</span> <span style={{ color: '#64748b' }}>→ was {o.siteAdvFirst || '—'}</span></span> : <span style={{ color: '#64748b' }}>{o.siteAdvFirst || '—'} (unchanged)</span>}</td>
+                          <td style={tdSt}>{o.techMismatch ? <span><span style={{ color: '#94a3b8' }}>{o.from === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.from}'s WIP`}</span> <span style={{ color: '#c4b5fd', fontWeight: 700 }}>→ {o.toTab}'s WIP</span></span> : <span style={{ color: '#64748b' }}>{o.from === 'Cars Awaiting' ? 'Cars Awaiting' : `${o.from}'s WIP`} (unchanged)</span>}</td>
+                         </>
+                         : <>
                           <td style={tdSt}>{o.advisor || '—'}</td>
                           <td style={tdSt}>{o.vehicle || '—'}</td>
                           <td style={tdSt}>{o.tech || '—'}</td>
