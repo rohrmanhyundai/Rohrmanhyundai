@@ -1,22 +1,16 @@
 {
-  "updatedAt": "2026-07-20T21:19:30.687Z",
+  "updatedAt": "2026-07-20T21:33:44.846Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
+    "JORDAN": [
+      {
+        "ro": "779405",
+        "vehicle": "2019 Hyundai Sonata"
+      },
       {
         "ro": "779404",
         "vehicle": "2021 Hyundai Palisade"
       },
-      {
-        "ro": "779402",
-        "vehicle": "2025 Hyundai Sonata"
-      },
-      {
-        "ro": "779364",
-        "vehicle": "2026 Hyundai Elantra Hybrid"
-      }
-    ],
-    "JORDAN": [
       {
         "ro": "779401",
         "vehicle": "2018 Hyundai Santa Fe Sport"
@@ -40,6 +34,16 @@
       {
         "ro": "779355",
         "vehicle": "2018 Hyundai Elantra"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779402",
+        "vehicle": "2025 Hyundai Sonata"
+      },
+      {
+        "ro": "779364",
+        "vehicle": "2026 Hyundai Elantra Hybrid"
       }
     ],
     "CORY": [
@@ -102,10 +106,6 @@
       {
         "ro": "779277",
         "vehicle": "2016 Subaru Legacy"
-      },
-      {
-        "ro": "779259",
-        "vehicle": "2019 Subaru Ascent"
       },
       {
         "ro": "779221",
