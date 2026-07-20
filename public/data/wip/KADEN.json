@@ -12,20 +12,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "ENGINE P/A HAS BEEN SUBMITTED. ENGINE APPROVED \n"
-  },
-  {
-    "id": "mrpebtvc379",
-    "ro": "779338",
-    "roDate": "2026-07-17",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES- oil leak from oil pan, covered under warranty",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "",
-    "flag": "purple"
   }
 ]
