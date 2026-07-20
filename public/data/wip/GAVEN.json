@@ -73,5 +73,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrtj5voy5wj3",
+    "ro": "779352",
+    "roDate": "2026-07-20",
+    "vehicle": "2026 Genesis GV80",
+    "jobDesc": "REPLACE ONE TIRE REAR PASSANGER TIRE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
