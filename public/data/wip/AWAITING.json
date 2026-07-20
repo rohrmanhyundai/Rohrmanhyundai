@@ -1,18 +1,5 @@
 [
   {
-    "id": "mr10dfyo6jtd",
-    "ro": "778822",
-    "roDate": "2026-06-30",
-    "jobDesc": "CUSTOMER STATES VEHICLE DOES NOT START",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": "USED CAR JACOB HAS THE RO",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": false,
-    "usedCar": true
-  },
-  {
     "id": "mrtj5whq82fh",
     "ro": "779387",
     "roDate": "2026-07-20",
