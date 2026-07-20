@@ -1,21 +1,5 @@
 [
   {
-    "id": "mrjit0nloyi2",
-    "ro": "779161",
-    "roDate": "2026-07-13",
-    "vehicle": "",
-    "jobDesc": "USED CAR PERFORMANCE INSPECTION - INCLUDES TEST DRIVE AND MULTI-POINT INSPECTION WITH OIL AND FILTER CHANGE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": "",
-    "usedCar": true,
-    "flag": "green"
-  },
-  {
     "id": "mrjit0nlp4x9",
     "ro": "779164",
     "roDate": "2026-07-13",
