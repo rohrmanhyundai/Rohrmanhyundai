@@ -535,6 +535,32 @@
       "chatAccess": true,
       "techChatAccess": true,
       "managementAccess": false
+    },
+    {
+      "username": "Cody",
+      "lastName": "",
+      "password": "Wedding0530!",
+      "role": "advisor",
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": true,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDhlDbkRPNhduD3F6SBE6XxcJZDdxNgtXa2ZIRDM+OwghIGNtXw==",
