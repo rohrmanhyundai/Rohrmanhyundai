@@ -44,21 +44,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
-  },
-  {
-    "id": "mrp6g3oysevn",
-    "ro": "779317",
-    "roDate": "2026-07-17",
-    "vehicle": "2026 Hyundai Santa Fe Hybrid",
-    "jobDesc": "CUSTOMER STATES - light on dash check and advice (SOP)",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CAIDEN HENSON",
-    "notes": ""
   }
 ]
