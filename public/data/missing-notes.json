@@ -1,8 +1,58 @@
 {
-  "updatedAt": "2026-07-20T18:00:42.070Z",
+  "updatedAt": "2026-07-20T20:30:43.990Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "779403",
+        "vehicle": "2022 Hyundai Sonata"
+      },
+      {
+        "ro": "779402",
+        "vehicle": "2025 Hyundai Sonata"
+      },
+      {
+        "ro": "779381",
+        "vehicle": "2025 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779375",
+        "vehicle": "2023 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779365",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "779364",
+        "vehicle": "2026 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "779362",
+        "vehicle": "2025 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779353",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "779352",
+        "vehicle": "2026 Genesis GV80"
+      },
+      {
+        "ro": "779351",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
     "JORDAN": [
+      {
+        "ro": "779401",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "779399",
+        "vehicle": "2024 Hyundai Tucson Hybrid"
+      },
       {
         "ro": "779395",
         "vehicle": "2021 Hyundai Palisade"
@@ -104,60 +154,6 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779392",
-        "vehicle": "2021 Cadillac XT6"
-      },
-      {
-        "ro": "779389",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "779386",
-        "vehicle": "2020 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779381",
-        "vehicle": "2025 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779380",
-        "vehicle": "2024 Hyundai Elantra"
-      },
-      {
-        "ro": "779375",
-        "vehicle": "2023 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779365",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779364",
-        "vehicle": "2026 Hyundai Elantra Hybrid"
-      },
-      {
-        "ro": "779362",
-        "vehicle": "2025 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779353",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779352",
-        "vehicle": "2026 Genesis GV80"
-      },
-      {
-        "ro": "779351",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "779342",
-        "vehicle": "2023 Hyundai Santa Fe"
       }
     ]
   }
