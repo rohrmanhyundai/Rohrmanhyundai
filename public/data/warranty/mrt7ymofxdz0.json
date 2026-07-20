@@ -1,7 +1,7 @@
 {
   "id": "mrt7ymofxdz0",
   "createdAt": "2026-07-20T12:47:05.295Z",
-  "updatedAt": "2026-07-20T12:48:34.966Z",
+  "updatedAt": "2026-07-20T12:55:02.122Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "SHAWN LAUGHNER",
   "customerPhone": "765-404-4675",
@@ -24,7 +24,7 @@
       "partNumber": "005MC-76159",
       "description": "265/40R22, 106W, PRIMACY TOUR",
       "qty": "1",
-      "price": "391.58"
+      "price": "391.51"
     }
   ],
   "taxPct": "",
