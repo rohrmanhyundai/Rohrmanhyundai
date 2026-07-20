@@ -543,7 +543,7 @@
         "elr": 0.9399,
         "last_month_total": 0,
         "ro_count": 41,
-        "hidden": false,
+        "hidden": true,
         "_lastImport": 1784542715661,
         "min_csi": 915,
         "coupon_labor": 448,
