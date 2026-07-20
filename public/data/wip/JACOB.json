@@ -286,5 +286,37 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrtoiuhl55t1",
+    "ro": "779395",
+    "roDate": "2026-07-20",
+    "vehicle": "2021 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHTS CAME ON AND STOPPED RUNNING",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
+  },
+  {
+    "id": "mrtoiuhllqk0",
+    "ro": "779393",
+    "roDate": "2026-07-20",
+    "vehicle": "2026 Hyundai Tucson",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
