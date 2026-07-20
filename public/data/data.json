@@ -549,6 +549,21 @@
         "coupon_labor": 448,
         "total_sales": 10064.78,
         "coupon_usage_pct": 0.0445
+      },
+      {
+        "name": "CODY",
+        "mtd_hours": 0,
+        "daily_avg": 0,
+        "hours_per_ro": 0,
+        "align": 0,
+        "tires": 0,
+        "valvoline": 0,
+        "roh50_hrs_ro": 0,
+        "csi": 0,
+        "asr": 0,
+        "elr": 0,
+        "last_month_total": 0,
+        "ro_count": 0
       }
     ],
     "advisorTraining": [
@@ -578,6 +593,12 @@
       },
       {
         "name": "ISAIAH",
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
+      },
+      {
+        "name": "CODY",
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—"
@@ -633,10 +654,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 517.8000000000001,
-      "align": 0.0891,
-      "tires": 0.11706666666666667,
-      "valvoline": 0.23553333333333334,
-      "csi": 853
+      "align": 0.066825,
+      "tires": 0.0878,
+      "valvoline": 0.17665,
+      "csi": 639.75
     },
     "techTotals": {
       "mon": 42.199999999999996,
