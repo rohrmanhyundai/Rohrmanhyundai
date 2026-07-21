@@ -320,36 +320,34 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   });
 
   return (
-    <div className="adv-form-page">
-      <div className="adv-form-topbar no-print">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+    // Same shell every other advisor page uses, so the top bar matches the rest
+    // of the app instead of a pair of loose buttons stacked in the corner.
+    <div className="adv-page adv-form-page">
+      <div className="adv-topbar no-print">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           <button className="secondary" onClick={onBack}>← Back to Calendar</button>
-          {advisorName !== ownAdvisor && (
-            <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>Viewing: {advisorName}'s surveys</span>
-          )}
+          <div>
+            <div className="adv-title">📞 After Call Reviews</div>
+            <div className="adv-sub">
+              <strong style={{ color: 'var(--text)' }}>{advisorName}</strong>
+              {advisorName !== ownAdvisor && <span style={{ color: 'var(--cyan)', fontWeight: 700 }}> · viewing as manager</span>}
+              {' · '}{displayDate}
+            </div>
+          </div>
         </div>
         <button className="secondary" onClick={() => window.print()}>Print</button>
       </div>
 
+      {/* Tabs sit on their own bar, matching the advisor-switcher strip on the calendar. */}
+      <div className="adv-advisor-tabs no-print" style={{ gap: 6 }}>
+        <TabBtn active={afterCallTab === 'report'}   onClick={() => setAfterCallTab('report')}   color="cyan">📋 View Report</TabBtn>
+        <TabBtn active={afterCallTab === 'complete'} onClick={() => setAfterCallTab('complete')} color="green">✅ Complete Review</TabBtn>
+        {canUpload && <TabBtn active={afterCallTab === 'uploads'}  onClick={() => setAfterCallTab('uploads')}  color="purple">📁 Survey Uploads{sortedCompleted.length > 0 ? ` (${sortedCompleted.length})` : ''}</TabBtn>}
+        {canUpload && <TabBtn active={afterCallTab === 'upload'} onClick={() => setAfterCallTab('upload')} color="amber">📤 Upload Report</TabBtn>}
+      </div>
+
       <div className="adv-form-wrap">
       <div className="adv-section">
-        <div className="adv-form-header" style={{ alignItems: 'flex-start', gap: 16 }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <h2 className="adv-form-title" style={{ margin: 0 }}>ADVISOR AFTER CALL REPORT</h2>
-              <div className="no-print" style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,.05)', borderRadius: 10, padding: 3 }}>
-                <TabBtn active={afterCallTab === 'report'}   onClick={() => setAfterCallTab('report')}   color="cyan">📋 View Report</TabBtn>
-                <TabBtn active={afterCallTab === 'complete'} onClick={() => setAfterCallTab('complete')} color="green">✅ Complete Review</TabBtn>
-                {canUpload && <TabBtn active={afterCallTab === 'uploads'}  onClick={() => setAfterCallTab('uploads')}  color="purple">📁 Survey Uploads{sortedCompleted.length > 0 ? ` (${sortedCompleted.length})` : ''}</TabBtn>}
-                {canUpload && <TabBtn active={afterCallTab === 'upload'} onClick={() => setAfterCallTab('upload')} color="amber">📤 Upload Report</TabBtn>}
-              </div>
-            </div>
-          </div>
-          <div className="adv-form-meta">
-            <span>Advisor Name: <strong>{advisorName}</strong></span>
-            <span>Date: <strong>{displayDate}</strong></span>
-          </div>
-        </div>
 
         {/* ── VIEW REPORT TAB ── */}
         {afterCallTab === 'report' && (
