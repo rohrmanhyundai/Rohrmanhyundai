@@ -191,7 +191,9 @@ export function parseQuery(query) {
   // stripping punctuation glues neighbouring words into one nonsense token —
   // "INSP.,ANTI-THEFT S/W&DECAL" became "inspantitheft"/"swdecal", which appear
   // in no bulletin, so a perfectly good RO title matched nothing.
-  const tokens = rest.split(/[^A-Za-z0-9]+/).map(norm).filter(t => t.length >= 2);
+  // Deduped: "MODULE INS & MULTI-FUSE INS." must not let "ins" vote twice, which
+  // both doubled its score and inflated the coverage bonus.
+  const tokens = Array.from(new Set(rest.split(/[^A-Za-z0-9]+/).map(norm).filter(t => t.length >= 2)));
   const words = tokens.filter(t => !NOISE.has(t));
   const ignored = tokens.filter(t => NOISE.has(t));
   // If the query was ALL boilerplate ("recall", "tsb"), search it anyway rather
@@ -209,10 +211,20 @@ export function parseQuery(query) {
 const W_LABEL = 100, W_SUBJECT = 90, W_TAGS = 80, W_FILE = 40, W_TEXT = 10;
 
 function tokenWeight(tok, hay) {
-  // Short numeric tokens must start a word; anything else matches as a
-  // substring so abbreviations still work ("prot" → "protection").
+  // How a token is allowed to match, by length:
+  //  ≤3 letters  — WHOLE WORD only. RO shorthand like "INS." (install/inspect)
+  //                otherwise matches inside INStrument, INSpection, INStallation
+  //                and outvotes the real content words. Genuine short terms
+  //                (ABS, ECU, DTC, GDI, CLU) still match, because they stand
+  //                alone in a bulletin.
+  //  ≤4 digits   — must START a word, so "298" hits "(RECALL 298)" but not 1298.
+  //  otherwise   — substring, so abbreviations still work ("prot" → protection).
   const shortNum = tok.length <= 4 && /^\d+$/.test(tok);
-  const hit = (loose, spaced) => shortNum ? spaced.includes(' ' + tok) : loose.includes(tok);
+  const shortWord = tok.length <= 3 && !shortNum;
+  const hit = (loose, spaced) =>
+    shortWord ? spaced.includes(' ' + tok + ' ')
+      : shortNum ? spaced.includes(' ' + tok)
+        : loose.includes(tok);
   if (hit(hay.label, hay.labelS)) return W_LABEL;
   if (hit(hay.subject, hay.subjectS)) return W_SUBJECT;
   if (hit(hay.tags, hay.tagsS)) return W_TAGS;
