@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { setHotRepairOpData, docRawUrl } from '../utils/github';
-import { loadPdfJs, extractPdfText, rankedMatches } from '../utils/pdfText';
+import { loadPdfJs, extractPdfText, rankedMatches, parseQuery } from '../utils/pdfText';
 
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
@@ -342,7 +342,11 @@ export function OpCodeGenerator({ items, onClose }) {
   // Title/tag hits still outrank a passing mention in the body, so searching a
   // number lands on the bulletin that IS that number. Nothing lists until the
   // user actually types.
-  const matches = useMemo(() => (q ? rankedMatches(searchable, q) : []), [searchable, q]);
+  const matches = useMemo(() => (q ? rankedMatches(searchable, q, 40) : []), [searchable, q]);
+  // What the search actually keyed on. Techs paste the whole RO line, so showing
+  // the bulletin number and keywords we pulled out of it (and the boilerplate we
+  // dropped) makes an empty result explainable instead of a dead end.
+  const parsed = useMemo(() => (q ? parseQuery(q) : null), [q]);
 
   async function pick(item) {
     setSelected(item); setAnswers({}); setResolved(null);
@@ -397,19 +401,40 @@ export function OpCodeGenerator({ items, onClose }) {
           <>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
               Searches every TSB <strong style={{ color: '#cbd5e1' }}>and</strong> recall — title, tags, and the full text inside each PDF.
-              Don't know the number? Describe the job.
+              Paste the whole RO line, type the number, or just describe the job.
             </div>
             <input
               autoFocus value={query} onChange={e => setQuery(e.target.value)}
-              placeholder='Number or description — e.g. "26-EM-012H", "298", or "inoperable horn"'
+              placeholder='Paste the RO line, or "26-EM-012H", "298", "inoperable horn"'
               style={input}
             />
+
+            {/* What the search keyed on — bulletin number first, then keywords. */}
+            {parsed && (parsed.numbers.length > 0 || parsed.words.length > 0) && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+                <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', letterSpacing: 0.4, textTransform: 'uppercase' }}>Searching for</span>
+                {parsed.numbersRaw.map(n => <span key={n} style={{ ...chip, background: 'rgba(74,222,128,.14)', borderColor: 'rgba(74,222,128,.45)', color: '#86efac' }}>{n}</span>)}
+                {parsed.words.map(w => <span key={w} style={chip}>{w}</span>)}
+                {parsed.ignored.length > 0 && (
+                  <span style={{ fontSize: 11, color: '#475569' }}>· ignoring {parsed.ignored.join(', ')}</span>
+                )}
+              </div>
+            )}
+
             <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
               {!q ? null : matches.length === 0 ? (
-                <div style={{ color: '#64748b', fontSize: 13, padding: '12px 4px' }}>
+                <div style={{ color: '#64748b', fontSize: 13, padding: '12px 4px', lineHeight: 1.6 }}>
                   {searchable.length === 0
                     ? 'No bulletins have op codes set up yet. A manager can add them with the "⚙️ Op Codes" button on a bulletin.'
-                    : 'No matching bulletins.'}
+                    : parsed?.numbersRaw.length ? (
+                      <>Nothing on file for <b style={{ color: '#cbd5e1' }}>{parsed.numbersRaw[0]}</b>.{' '}
+                        {parsed.words.length
+                          ? <>Check the number, or search the job instead — e.g. “{parsed.words[0]}”.</>
+                          : <>Check the number, or describe the job in words instead.</>}
+                      </>
+                    ) : (
+                      <>No bulletin matched those keywords. Try fewer words, or the bulletin number if you have it.</>
+                    )}
                 </div>
               ) : matches.map(it => {
                 // Ids are only unique within a library, so qualify the key by kind.
@@ -852,6 +877,7 @@ const draftBtn = { background: 'rgba(167,139,250,.18)', border: '1px solid rgba(
 const digDocBtn = { background: 'rgba(251,146,60,.18)', border: '1px solid rgba(251,146,60,.5)', color: '#fb923c', borderRadius: 8, padding: '9px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
 const viewBulletinBtn = { background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' };
 const xBtn = { background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 };
+const chip = { fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'rgba(110,231,249,.1)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', whiteSpace: 'nowrap' };
 const delBtn = { background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 6, padding: '4px 8px', fontSize: 12, cursor: 'pointer' };
 // ── Op code editor card layout ────────────────────────────────────────────────
 const entryCard = { background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 12, padding: '14px 16px' };
