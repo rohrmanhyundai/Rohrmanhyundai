@@ -664,15 +664,28 @@ function ContractDetail({ contract, onEdit, onBack }) {
           .amw-screen-preview { display: none !important; }
           .amw-print-doc { display: block !important; }
 
-          /* Release height/overflow clamps so content can flow to new pages */
+          /* Release the clamps so content can flow onto new pages.
+             POSITION MATTERS MOST: .adv-page is position:fixed with inset:0, and
+             a fixed ancestor pins its subtree to a single viewport-sized page —
+             which is why a long claim printed as "1 sheet of paper" with the
+             parts table chopped off. Height/overflow alone never fixed that. */
           html, body, #root, .adv-page {
+            position: static !important;
+            inset: auto !important;
             height: auto !important;
             min-height: 0 !important;
             max-height: none !important;
             overflow: visible !important;
             display: block !important;
+            z-index: auto !important;
+            background: #fff !important;
           }
           .adv-page { padding: 0 !important; margin: 0 !important; }
+
+          /* The document rounds its table corners with overflow:hidden, which
+             also clips whatever crosses a page boundary. Rows must be free to
+             continue on the next sheet. */
+          .amw-print-doc div, .amw-print-doc table { overflow: visible !important; }
 
           /* The print document itself flows naturally across pages */
           .amw-print-doc {
@@ -688,6 +701,9 @@ function ContractDetail({ contract, onEdit, onBack }) {
           .amw-print-doc thead { display: table-header-group; }
           .amw-pd-section { page-break-inside: avoid; }
           .amw-pd-keep    { page-break-inside: avoid; }
+          /* Blocks with no length limit must be free to split, or "don't break"
+             turns into "cut off at the bottom of the page". */
+          .amw-pd-flow    { page-break-inside: auto !important; }
 
           /* Make sure backgrounds/colors actually print */
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -1127,7 +1143,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
 
         {/* ── Notes ── */}
         {contract.notes && (
-          <div className="amw-pd-section" style={{ marginBottom: 20, border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '12px 14px', background: PD_LIGHT }}>
+          <div className="amw-pd-flow" style={{ marginBottom: 20, border: `1px solid ${PD_BORDER}`, borderRadius: 6, padding: '12px 14px', background: PD_LIGHT }}>
             <SectionHead>Notes</SectionHead>
             <div style={{ fontSize: 11, color: '#334155', whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{contract.notes}</div>
           </div>
