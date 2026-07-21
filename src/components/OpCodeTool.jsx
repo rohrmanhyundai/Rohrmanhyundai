@@ -83,7 +83,7 @@ export function extractWarrantyDraft(fullText) {
   // cause digit can't be eaten by an op code), THEN rebuild op codes.
   body = body
     .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                    // "0. 9 M/H" → "0.9 M/H"
-    .replace(/\bZZ\s+(\d)\b/gi, 'ZZ$1')                                        // cause "ZZ 3" → "ZZ3"
+    .replace(/\bZ\s*Z\s*(\d)\b/gi, 'ZZ$1')                                     // cause "ZZ 3" / "Z Z3" → "ZZ3"
     .replace(/\b([A-Z]\d?)\s*([A-Z0-9])\s+(ZZ\d)\b/g, '$1$2 $3')               // nature "B1 E ZZ3" → "B1E ZZ3"
     .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')            // causal "940C3 – P9060" → "940C3-P9060"
     .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');                        // "0.6 M/H" → "0.6M/H"
@@ -112,20 +112,37 @@ export function extractWarrantyDraft(fullText) {
   // Part / Nature / Cause often MERGED across several model rows. We pair each
   // model with its op code, read whatever typed fields sit in the gap after that
   // op code, then carry the merged values forward to rows that share them.
-  const tidy = s => s.replace(/\b([A-Z]) ([a-z])/g, '$1$2').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
+  // Also closes up a hyphen the PDF spaced out ("Multi – Fuse" → "Multi-Fuse")
+  // and normalises en/em dashes, so the operation reads as the bulletin prints it.
+  const tidy = s => s.replace(/\b([A-Z]) ([a-z])/g, '$1$2').replace(/(\w)\s*[-–—]\s*(\w)/g, '$1-$2')
+    .replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/\s+/g, ' ').trim();
   const toks = body.split(/\s+/).filter(Boolean);
   const isCause  = t => /^ZZ\d$/i.test(t);
   // Op code: 8 base alphanumeric chars with at least one letter AND one digit
   // (so digit-leading "50D116R0" AND letter-leading "REC290I0" both qualify),
   // optionally a "-SUFFIX" range. Excludes causes and op-time tokens.
   const isOp     = t => { const m = /^([A-Z0-9]{8})(-[A-Z0-9]{1,3})?$/.exec(t); return !!m && /[A-Z]/.test(m[1]) && /\d/.test(m[1]) && !isCause(t) && !/M\/H/i.test(t); };
-  const isTime   = t => /^\d+(?:\.\d+)?M\/H$/i.test(t);
+  // Op time is usually printed "0.4 M/H", but plenty of tables print the bare
+  // number ("0.3", "2.0") under an "Op. Time" heading. A bare DECIMAL is the
+  // signal — a bare integer is too easily an ordinary number in the operation
+  // text ("2 Fuse"), so it is not treated as a time.
+  const isTimeMH   = t => /^\d+(?:\.\d+)?M\/H$/i.test(t);
+  const isBareTime = t => /^\d{1,3}\.\d{1,2}$/.test(t);
   const isCausal = t => /^[0-9A-Z]{3,7}-[0-9A-Z]{3,9}$/.test(t) && !isOp(t);
-  // Nature is detected POSITIONALLY (the token right before the cause code), since
-  // by pattern alone a 3-char code like "B1E" is indistinguishable from an
-  // operation word like "AAF". This is only used as a sanity check on that token.
-  const looksNature = t => /^[A-Z][A-Z0-9]{2}$/.test(t) && !isCause(t) && !isOp(t);
-  const isTyped  = t => isOp(t) || isTime(t) || isCausal(t) || isCause(t);
+  // Nature and Cause can't be told apart from an operation word by pattern alone
+  // ("B1E"/"N99"/"A31" look like any 3-char token), so they're read POSITIONALLY:
+  // they are the last two columns, sitting immediately after the causal part.
+  // They always carry a DIGIT, which is what separates them from a pure-letter
+  // part-number suffix ("94750-37200 QQH", "88085-DO000 NNB") that belongs on
+  // the causal part instead.
+  const looksNature = t => /^[A-Z][A-Z0-9]{2}$/.test(t) && /\d/.test(t) && !isCause(t) && !isOp(t);
+  const looksCode   = t => isCause(t) || looksNature(t);
+  // NOTE: a bare decimal is deliberately NOT "typed". Model names carry engine
+  // displacements ("Elantra 2.0 (CN7)", "Kona 1.6T (OS)"), and treating those as
+  // a column boundary truncated the model. Only the unambiguous "0.4 M/H" form
+  // stops modelBefore(); a bare decimal is read as a time solely inside the gap
+  // after an op code, and only before the causal part has been seen.
+  const isTyped  = t => isOp(t) || isTimeMH(t) || isCausal(t) || isCause(t);
 
   const opIdx = [];
   toks.forEach((t, i) => { if (isOp(t)) opIdx.push(i); });
@@ -152,14 +169,24 @@ export function extractWarrantyDraft(fullText) {
     const opWords = [], trailing = [];
     for (let gi = 0; gi < gap.length; gi++) {
       const t = gap[gi];
-      if (isTime(t))        { time = time || t.replace(/M\/H/i, ' M/H'); seenTyped = true; }
+      if (isTimeMH(t) || (isBareTime(t) && !time && !causal)) {
+        time = time || (/M\/H/i.test(t) ? t.replace(/M\/H/i, ' M/H') : t + ' M/H');
+        seenTyped = true;
+      }
       else if (isCausal(t)) {
         if (!causal) {
           causal = t;
           // Absorb a fragmented pure-letter suffix ("DO000 NN B" → "DO000NNB").
-          while (gi + 1 < gap.length && /^[A-Z]{1,4}$/.test(gap[gi + 1]) && !isCause(gap[gi + 1])) {
+          while (gi + 1 < gap.length && /^[A-Z]{1,4}$/.test(gap[gi + 1]) && !isCause(gap[gi + 1]) && !looksCode(gap[gi + 1])) {
             causal += gap[gi + 1]; consumed.add(oi + 1 + gi + 1); gi++;
           }
+          // Nature then Cause follow the causal part, in that order. Claiming
+          // them here is also what stops modelBefore() from walking back over
+          // them and reading "N99 C99" as the next row's model.
+          let j2 = gi + 1;
+          if (j2 < gap.length && looksCode(gap[j2])) { nature = nature || gap[j2]; consumed.add(oi + 1 + j2); j2++; }
+          if (j2 < gap.length && looksCode(gap[j2])) { cause = cause || gap[j2]; consumed.add(oi + 1 + j2); j2++; }
+          gi = j2 - 1;
         }
         seenTyped = true;
       }
