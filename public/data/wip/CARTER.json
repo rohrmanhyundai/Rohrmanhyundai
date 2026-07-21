@@ -14,5 +14,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
+  },
+  {
+    "id": "mrv635a8mb3m",
+    "ro": "779434",
+    "roDate": "2026-07-21",
+    "vehicle": "2017 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES- CEL on, Car struggles with RPMs bogging down. Check and Advise.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
