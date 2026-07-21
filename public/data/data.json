@@ -739,6 +739,20 @@
       "dateStart": "2026-07-27",
       "dateEnd": "2026-07-29",
       "status": "APPROVED"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "Aug 10–14, 2026",
+      "dateStart": "2026-08-10",
+      "dateEnd": "2026-08-14",
+      "status": "APPROVED"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "Aug 17–21, 2026",
+      "dateStart": "2026-08-17",
+      "dateEnd": "2026-08-21",
+      "status": "APPROVED"
     }
   ]
 }
