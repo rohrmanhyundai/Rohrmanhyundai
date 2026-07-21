@@ -113,8 +113,14 @@ export function parseQuery(query) {
   const numbers = Array.from(new Set(found.map(norm).filter(Boolean)));
   // The same numbers as typed (minus stray spacing) — what to show a human.
   const numbersRaw = Array.from(new Set(found.map(n => n.replace(/\s+/g, '').toUpperCase())));
-  const rest = raw.replace(BULLETIN_RE, ' ');
-  const tokens = rest.split(/\s+/).map(norm).filter(t => t.length >= 2);
+  // Engine sizes must survive the split: "2.5T-GDI" has to become "25t"+"gdi",
+  // not "2"(dropped)+"5t"+"gdi".
+  const rest = raw.replace(BULLETIN_RE, ' ').replace(/(\d)\.(\d)/g, '$1$2');
+  // Split on PUNCTUATION as well as spaces. Splitting on spaces alone and then
+  // stripping punctuation glues neighbouring words into one nonsense token —
+  // "INSP.,ANTI-THEFT S/W&DECAL" became "inspantitheft"/"swdecal", which appear
+  // in no bulletin, so a perfectly good RO title matched nothing.
+  const tokens = rest.split(/[^A-Za-z0-9]+/).map(norm).filter(t => t.length >= 2);
   const words = tokens.filter(t => !NOISE.has(t));
   const ignored = tokens.filter(t => NOISE.has(t));
   // If the query was ALL boilerplate ("recall", "tsb"), search it anyway rather
@@ -148,8 +154,14 @@ function tokenWeight(tok, hay) {
 // score by where they hit, and an item qualifies when it covers enough of them
 // — one word is enough for a short query or a title hit, half of a long one.
 // That's what lets a pasted RO line find its bulletin instead of nothing.
-export function scoreItem(item, query) {
-  const { numbers, words } = parseQuery(query);
+export function scoreItem(item, query, opts) {
+  const parsed = parseQuery(query);
+  // `ignoreNumbers` re-runs the query as a pure keyword search. rankedMatches
+  // uses it when the number a tech typed is on NO bulletin in the library —
+  // usually because they pasted the superseded number off an RO title
+  // ("...&DECAL(24-01-009H-1)" when the library files it as 25-01-089H).
+  const numbers = opts?.ignoreNumbers ? [] : parsed.numbers;
+  const words = parsed.words;
   if (numbers.length === 0 && words.length === 0) return 0;
 
   const label = norm(item.label), tags = norm(item.tags || '');
@@ -201,10 +213,17 @@ export function itemMatches(item, query) {
 
 // All matching items, best match first (ties keep original/newest order).
 export function rankedMatches(items, query, limit) {
-  const out = items
-    .map((it, i) => ({ it, i, s: scoreItem(it, query) }))
+  const rank = opts => (items || [])
+    .map((it, i) => ({ it, i, s: scoreItem(it, query, opts) }))
     .filter(m => m.s >= 0)
     .sort((a, b) => (b.s - a.s) || (a.i - b.i))
     .map(m => m.it);
+
+  let out = rank();
+  // A number in the query normally decides the result. But when that number is
+  // on nothing in the library — a superseded number, a typo, a campaign code we
+  // don't file under — it must not veto the keywords too. Fall back to a
+  // words-only search rather than showing the tech nothing.
+  if (out.length === 0 && parseQuery(query).numbers.length) out = rank({ ignoreNumbers: true });
   return limit ? out.slice(0, limit) : out;
 }
