@@ -176,22 +176,6 @@
     "notes": ""
   },
   {
-    "id": "mrtj5utl0nv5",
-    "ro": "779378",
-    "roDate": "2026-07-20",
-    "vehicle": "2024 Hyundai Palisade",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "mrtj5utllsdg",
     "ro": "779377",
     "roDate": "2026-07-20",
