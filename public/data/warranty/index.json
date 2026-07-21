@@ -1,5 +1,205 @@
 [
   {
+    "id": "mqgsqk0qwjxa",
+    "createdAt": "2026-06-16T15:27:57.914Z",
+    "updatedAt": "2026-07-21T19:49:48.443Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "DANIELLE STOKES",
+    "customerPhone": "765) 720 - 8908",
+    "repairOrder": "778436",
+    "vin": "KM8R5DHE3MU202356",
+    "vehicleYear": "2021",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Palisade",
+    "mileage": "94315",
+    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
+    "warrantyPhone": "800-222-2721",
+    "claimNumber": "PRO3077391 (MAXQ CLAIM)",
+    "authNumber": "PRO3077391",
+    "laborRate": "190.00",
+    "laborTime": "11.9",
+    "diagnosisTime": "1.0",
+    "parts": [
+      {
+        "id": "mqgsqk0qujg2",
+        "partNumber": "24410-3CGA3",
+        "description": "TENSIONER ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "132.29"
+      },
+      {
+        "id": "mqguj6mylsq7",
+        "partNumber": "24810-3CGA3",
+        "description": "GUIDE ASSY-TIMING CHAIN",
+        "qty": "2",
+        "price": "25.74"
+      },
+      {
+        "id": "mqguju294th1",
+        "partNumber": "24820-3CGA3",
+        "description": "TENSIONER ARM ASSY-TIMING",
+        "qty": "2",
+        "price": "48.44"
+      },
+      {
+        "id": "mqgukk4hfzrj",
+        "partNumber": "24350-3L100 ",
+        "description": "CVVT ASSY-INTAKE",
+        "qty": "1",
+        "price": "287.16"
+      },
+      {
+        "id": "mqgul8qhxv6r",
+        "partNumber": "24355-3L100",
+        "description": " OCV & CENTER BOLT ASSY,IN",
+        "qty": "1",
+        "price": "65.18"
+      },
+      {
+        "id": "mqgulxjlskm5",
+        "partNumber": "24378-3L100",
+        "description": "SOLENOID ASSY-VARIABLE FORCE",
+        "qty": "1",
+        "price": "106.02"
+      },
+      {
+        "id": "mqgumigpdo94",
+        "partNumber": "24312-3L100",
+        "description": "CHAIN-TIMING",
+        "qty": "2",
+        "price": "141.23"
+      },
+      {
+        "id": "mqjm1xzmzw6l",
+        "partNumber": "26345-3LAA1",
+        "description": "SEAL-OIL",
+        "qty": "1",
+        "price": "7.06"
+      },
+      {
+        "id": "mqjm2q2q6xxl",
+        "partNumber": "21355-3C530",
+        "description": "GASKET-WATER PUMP,LH",
+        "qty": "1",
+        "price": "31.76"
+      },
+      {
+        "id": "mqjm3g8q0duf",
+        "partNumber": "21355-3C550 ()",
+        "description": "GASKET-WATER PUMP,RH",
+        "qty": "1",
+        "price": "5.24"
+      },
+      {
+        "id": "mrntzipfa9of",
+        "partNumber": "22441-3L101",
+        "description": "GASKET-ROCKER COVER,RH",
+        "qty": "1",
+        "price": "48.18"
+      },
+      {
+        "id": "mrntzjdj764i",
+        "partNumber": "22443-3L110",
+        "description": "GASKET",
+        "qty": "1",
+        "price": "11.03"
+      },
+      {
+        "id": "mrntzk3cpgug",
+        "partNumber": "22453-3L101",
+        "description": "GASKET-ROCKER COVER,LH",
+        "qty": "1",
+        "price": "46.76"
+      },
+      {
+        "id": "mrntzknthx2r",
+        "partNumber": "21354-3C550",
+        "description": "GASKET-OUTLET,RH",
+        "qty": "1",
+        "price": "15.81"
+      },
+      {
+        "id": "mrntzl09fqa0",
+        "partNumber": "21356-3C510",
+        "description": "GASKET-OIL FILTER BRKT",
+        "qty": "2",
+        "price": "14.32"
+      },
+      {
+        "id": "mrntzlclsmdd",
+        "partNumber": "21443-3C700",
+        "description": "SEAL-OIL RR",
+        "qty": "1",
+        "price": "72.27"
+      },
+      {
+        "id": "mrntzlq5uud4",
+        "partNumber": "28215-3CFA0",
+        "description": "GASKET-INLET MANIFOLD",
+        "qty": "6",
+        "price": "21.16"
+      },
+      {
+        "id": "mrntzm4aa0pl",
+        "partNumber": "29215-3CFA1",
+        "description": "GASKET-SURGE TANK",
+        "qty": "1",
+        "price": "31.45"
+      },
+      {
+        "id": "mrntzmhklalk",
+        "partNumber": "21354-3C540",
+        "description": "GASKET-OUTLET,LH",
+        "qty": "1",
+        "price": "15.81"
+      },
+      {
+        "id": "mrntzmwuyc8a",
+        "partNumber": "21353-3C500",
+        "description": "O-RING",
+        "qty": "1",
+        "price": "13.16"
+      },
+      {
+        "id": "mrnwbx0kco6d",
+        "partNumber": "1234YF",
+        "description": "1234YF FREON",
+        "qty": "1",
+        "price": "272"
+      },
+      {
+        "id": "mrnwcijp960j",
+        "partNumber": "97762-S8700",
+        "description": "HOSE-DISCHARGE",
+        "qty": "1",
+        "price": "161.92"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "200.00",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "NEED TEAR DOWN TO POINT OF FAILURE AND CALL BACK TO HAVE INSP. SENT OUT. 06/16/2026 @ 11:30. NO CLAIM NUBMER YET USE LAST 8 OF VIN FOR REFER. contract # FRP3 99900364415.\n\n inspector 24-48 hrs  06/18/2026. inspoector came 06/22/2026 @ 10am.\n\napproved 03/25/2026",
+    "approved": true,
+    "approvedDate": "2026-06-25",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
+  },
+  {
     "id": "mr3qjajws9x1",
     "createdAt": "2026-07-02T16:45:01.868Z",
     "updatedAt": "2026-07-21T15:05:57.163Z",
@@ -581,206 +781,6 @@
     "waitingDate": "",
     "paid": true,
     "paymentDate": "2026-07-20",
-    "repairsFinished": false,
-    "repairsFinishedDate": "",
-    "readySubmission": false,
-    "readySubmissionDate": "",
-    "inspectorDispatched": false,
-    "inspectorDispatchedDate": ""
-  },
-  {
-    "id": "mqgsqk0qwjxa",
-    "createdAt": "2026-06-16T15:27:57.914Z",
-    "updatedAt": "2026-07-16T19:28:55.910Z",
-    "dealershipName": "Bob Rohrman Hyundai",
-    "customerName": "DANIELLE STOKES",
-    "customerPhone": "765) 720 - 8908",
-    "repairOrder": "778436",
-    "vin": "KM8R5DHE3MU202356",
-    "vehicleYear": "2021",
-    "vehicleMake": "HYUNDAI",
-    "vehicleModel": "Palisade",
-    "mileage": "94315",
-    "warrantyCompany": "PROTECTIVE ASSET PROTECTION",
-    "warrantyPhone": "800-222-2721",
-    "claimNumber": "PRO3077391 (MAXQ CLAIM)",
-    "authNumber": "PRO3077391",
-    "laborRate": "190.00",
-    "laborTime": "11.9",
-    "diagnosisTime": "1.0",
-    "parts": [
-      {
-        "id": "mqgsqk0qujg2",
-        "partNumber": "24410-3CGA3",
-        "description": "TENSIONER ASSY-TIMING CHAIN",
-        "qty": "2",
-        "price": "132.29"
-      },
-      {
-        "id": "mqguj6mylsq7",
-        "partNumber": "24810-3CGA3",
-        "description": "GUIDE ASSY-TIMING CHAIN",
-        "qty": "2",
-        "price": "25.74"
-      },
-      {
-        "id": "mqguju294th1",
-        "partNumber": "24820-3CGA3",
-        "description": "TENSIONER ARM ASSY-TIMING",
-        "qty": "2",
-        "price": "48.44"
-      },
-      {
-        "id": "mqgukk4hfzrj",
-        "partNumber": "24350-3L100 ",
-        "description": "CVVT ASSY-INTAKE",
-        "qty": "1",
-        "price": "287.16"
-      },
-      {
-        "id": "mqgul8qhxv6r",
-        "partNumber": "24355-3L100",
-        "description": " OCV & CENTER BOLT ASSY,IN",
-        "qty": "1",
-        "price": "65.18"
-      },
-      {
-        "id": "mqgulxjlskm5",
-        "partNumber": "24378-3L100",
-        "description": "SOLENOID ASSY-VARIABLE FORCE",
-        "qty": "1",
-        "price": "106.02"
-      },
-      {
-        "id": "mqgumigpdo94",
-        "partNumber": "24312-3L100",
-        "description": "CHAIN-TIMING",
-        "qty": "2",
-        "price": "141.23"
-      },
-      {
-        "id": "mqjm1xzmzw6l",
-        "partNumber": "26345-3LAA1",
-        "description": "SEAL-OIL",
-        "qty": "1",
-        "price": "7.06"
-      },
-      {
-        "id": "mqjm2q2q6xxl",
-        "partNumber": "21355-3C530",
-        "description": "GASKET-WATER PUMP,LH",
-        "qty": "1",
-        "price": "31.76"
-      },
-      {
-        "id": "mqjm3g8q0duf",
-        "partNumber": "21355-3C550 ()",
-        "description": "GASKET-WATER PUMP,RH",
-        "qty": "1",
-        "price": "5.24"
-      },
-      {
-        "id": "mrntzipfa9of",
-        "partNumber": "22441-3L101",
-        "description": "GASKET-ROCKER COVER,RH",
-        "qty": "1",
-        "price": "48.18"
-      },
-      {
-        "id": "mrntzjdj764i",
-        "partNumber": "22443-3L110",
-        "description": "GASKET",
-        "qty": "1",
-        "price": "11.03"
-      },
-      {
-        "id": "mrntzk3cpgug",
-        "partNumber": "22453-3L101",
-        "description": "GASKET-ROCKER COVER,LH",
-        "qty": "1",
-        "price": "46.76"
-      },
-      {
-        "id": "mrntzknthx2r",
-        "partNumber": "21354-3C550",
-        "description": "GASKET-OUTLET,RH",
-        "qty": "1",
-        "price": "15.81"
-      },
-      {
-        "id": "mrntzl09fqa0",
-        "partNumber": "21356-3C510",
-        "description": "GASKET-OIL FILTER BRKT",
-        "qty": "2",
-        "price": "14.32"
-      },
-      {
-        "id": "mrntzlclsmdd",
-        "partNumber": "21443-3C700",
-        "description": "SEAL-OIL RR",
-        "qty": "1",
-        "price": "72.27"
-      },
-      {
-        "id": "mrntzlq5uud4",
-        "partNumber": "28215-3CFA0",
-        "description": "GASKET-INLET MANIFOLD",
-        "qty": "6",
-        "price": "21.16"
-      },
-      {
-        "id": "mrntzm4aa0pl",
-        "partNumber": "29215-3CFA1",
-        "description": "GASKET-SURGE TANK",
-        "qty": "1",
-        "price": "31.45"
-      },
-      {
-        "id": "mrntzmhklalk",
-        "partNumber": "21354-3C540",
-        "description": "GASKET-OUTLET,LH",
-        "qty": "1",
-        "price": "15.81"
-      },
-      {
-        "id": "mrntzmwuyc8a",
-        "partNumber": "21353-3C500",
-        "description": "O-RING",
-        "qty": "1",
-        "price": "13.16"
-      },
-      {
-        "id": "mrnwbx0kco6d",
-        "partNumber": "1234YF",
-        "description": "1234YF FREON",
-        "qty": "1",
-        "price": "272"
-      },
-      {
-        "id": "mrnwcijp960j",
-        "partNumber": "97762-S8700",
-        "description": "HOSE-DISCHARGE",
-        "qty": "1",
-        "price": "161.92"
-      }
-    ],
-    "taxPct": "7",
-    "deductible": "200.00",
-    "rental": null,
-    "towing": null,
-    "sublet": null,
-    "tireRepair": null,
-    "tireTax": null,
-    "tireDisposal": null,
-    "notes": "NEED TEAR DOWN TO POINT OF FAILURE AND CALL BACK TO HAVE INSP. SENT OUT. 06/16/2026 @ 11:30. NO CLAIM NUBMER YET USE LAST 8 OF VIN FOR REFER. contract # FRP3 99900364415.\n\n inspector 24-48 hrs  06/18/2026. inspoector came 06/22/2026 @ 10am.\n\napproved 03/25/2026",
-    "approved": true,
-    "approvedDate": "2026-06-25",
-    "denied": false,
-    "deniedDate": "",
-    "waiting": false,
-    "waitingDate": "",
-    "paid": false,
-    "paymentDate": "",
     "repairsFinished": false,
     "repairsFinishedDate": "",
     "readySubmission": false,
