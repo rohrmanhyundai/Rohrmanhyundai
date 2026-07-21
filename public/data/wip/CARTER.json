@@ -1,21 +1,5 @@
 [
   {
-    "id": "mrtoitozw2kw",
-    "ro": "779401",
-    "roDate": "2026-07-20",
-    "vehicle": "2018 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES CEL FLASHING. P1326 CODE. DROP OFF",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
-  },
-  {
     "id": "mrtj5whqcjb7",
     "ro": "779364",
     "roDate": "2026-07-20",
