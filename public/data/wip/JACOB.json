@@ -112,22 +112,6 @@
     "notes": ""
   },
   {
-    "id": "mrtj5utlvdk7",
-    "ro": "779390",
-    "roDate": "2026-07-20",
-    "vehicle": "2026 Hyundai Sonata Hybrid",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "mrtj5utlnoti",
     "ro": "779388",
     "roDate": "2026-07-20",
