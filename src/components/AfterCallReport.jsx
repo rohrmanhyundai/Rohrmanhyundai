@@ -154,6 +154,32 @@ function ChipBtn({ active, onClick, color, children }) {
 }
 
 
+// The surveys one advisor still owes a call on: theirs, from the last 4 months,
+// excluding undeliverable/opted-out rows and anything already reviewed. Newest
+// first. Exported so the Advisor Calendar's attention badge counts exactly what
+// this page lists — one definition, so the badge can never disagree with the
+// report it points at.
+export function pendingSurveysFor(siRows, completedReviews, advisorName) {
+  const completedROs = new Set((completedReviews || []).map(r => r.repairOrder));
+  return (siRows || [])
+    .filter(r => !r.__meta)
+    .filter(row => {
+      if (!matchesAdvisor(row.consultant, advisorName)) return false;
+      if (!isWithin4Months(row.serviceDate || row.invitationDate)) return false;
+      const s = (row.status || '').toUpperCase();
+      if (s.startsWith('QUARANTINE')) return false;
+      if (s === 'HARDBOUNCE')        return false;
+      if (s === 'INVALID_EMAIL')     return false;
+      if (s === 'MISSING_EMAIL')     return false;
+      if (s === 'BUSINESS_NAME')     return false;
+      if (s === 'LIST_UNSUBSCRIBES') return false;
+      if (s === 'OPT_OUT')           return false;
+      return true;
+    })
+    .filter(s => !completedROs.has(s.repairOrder))
+    .sort((a, b) => parseDateVal(b.serviceDate) - parseDateVal(a.serviceDate));
+}
+
 export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, canEditDashboard, onBack }) {
   const canUpload = canEditDashboard || currentRole === 'admin' || (currentRole || '').includes('manager');
 
@@ -277,27 +303,8 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   }
 
   // ── Computed survey lists ─────────────────────────────────────────────────
-  const completedROs  = new Set(completedReviews.map(r => r.repairOrder));
   const allDataRows   = siData.filter(r => !r.__meta);
-
-  const advisorSurveys = allDataRows.filter(row => {
-    if (!matchesAdvisor(row.consultant, advisorName)) return false;
-    if (!isWithin4Months(row.serviceDate || row.invitationDate)) return false;
-    const s = (row.status || '').toUpperCase();
-    if (s.startsWith('QUARANTINE')) return false;
-    if (s === 'HARDBOUNCE')        return false;
-    if (s === 'INVALID_EMAIL')     return false;
-    if (s === 'MISSING_EMAIL')     return false;
-    if (s === 'BUSINESS_NAME')     return false;
-    if (s === 'LIST_UNSUBSCRIBES') return false;
-    if (s === 'OPT_OUT')           return false;
-    return true;
-  });
-
-  // Pending = not yet submitted, newest first.
-  const pendingSurveys = advisorSurveys
-    .filter(s => !completedROs.has(s.repairOrder))
-    .sort((a, b) => parseDateVal(b.serviceDate) - parseDateVal(a.serviceDate));
+  const pendingSurveys = pendingSurveysFor(siData, completedReviews, advisorName);
 
   // Survey Uploads = completed reviews newest first, excluding manager-deleted.
   const sortedCompleted = [...completedReviews]
