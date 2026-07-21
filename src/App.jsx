@@ -11,6 +11,7 @@ import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } 
 import AdvisorCalendar from './components/AdvisorCalendar';
 import RoUpload from './components/RoUpload';
 import AdvisorDayForm from './components/AdvisorDayForm';
+import AfterCallReport from './components/AfterCallReport';
 import DocumentLibrary from './components/DocumentLibrary';
 import ServicePricingMenu from './components/ServicePricingMenu';
 import LivePay from './components/LivePay';
@@ -887,6 +888,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
+        onAfterCall={() => setPage('after-call')}
         onMyReports={() => goTo('performance-report', 'advisor-calendar')}
         onWorkInProgress={(arg) => { setWipInitialRO(arg && typeof arg === 'object' ? arg : (typeof arg === 'string' ? { ro: arg } : null)); goTo('work-in-progress', 'advisor-calendar'); }}
         onRoUpload={() => goTo('ro-upload', 'advisor-calendar')}
@@ -924,9 +926,20 @@ export default function App() {
         advisorName={activeAdvisor}
         ownAdvisor={ownAdvisor}
         date={selectedDay}
+        onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
+      />
+    );
+  }
+  // After Call Reviews — always one advisor: your own, or whoever a manager has
+  // selected on the calendar.
+  if (page === 'after-call') {
+    return (
+      <AfterCallReport
+        advisorName={activeAdvisor}
+        ownAdvisor={ownAdvisor}
         currentRole={currentRole}
         canEditDashboard={canEditDashboard}
-        onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
+        onBack={() => navTo('advisor-calendar')}
       />
     );
   }
