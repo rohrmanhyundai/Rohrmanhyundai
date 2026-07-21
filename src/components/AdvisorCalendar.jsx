@@ -784,8 +784,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </div>
 
             <div className="adv-cal-grid">
-              {DAY_NAMES.map(d => (
-                <div key={d} className="adv-cal-dayname">{d}</div>
+              {DAY_NAMES.map((d, i) => (
+                <div key={d} className={`adv-cal-dayname${i === 0 ? ' adv-cal-dayname--off' : ''}`}>{d}</div>
               ))}
               {cells.map((d, i) => {
                 if (!d) return <div key={`empty-${i}`} className="adv-cal-day adv-cal-empty" />;
@@ -799,14 +799,29 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   if (type === 'training') return { bg: 'rgba(96,165,250,.16)', border: 'rgba(96,165,250,.45)',  color: '#93c5fd', icon: '📘' };
                   return { bg: 'rgba(148,163,184,.15)', border: 'rgba(148,163,184,.4)', color: '#cbd5e1', icon: '•' };
                 };
+                // Cell colour, weakest signal to strongest: closed Sunday, then
+                // whatever event the day carries, then today on top.
+                const isPast   = dateStr < todayStr;
+                const isSunday = i % 7 === 0;
+                const eventTint = events.some(e => e.type === 'holiday')  ? ' adv-cal-day--holiday'
+                                : events.some(e => e.type === 'vacation') ? ' adv-cal-day--vacation'
+                                : events.some(e => e.type === 'training') ? ' adv-cal-day--training'
+                                : '';
+                const cls = 'adv-cal-day'
+                  + (isSunday && !eventTint ? ' adv-cal-day--closed' : '')
+                  + eventTint
+                  + (isPast && !isToday ? ' adv-cal-day--past' : '')
+                  + (hasNotes ? ' adv-has-notes' : '')
+                  + (isToday ? ' adv-today' : '');
                 return (
                   <div
                     key={dateStr}
-                    className={`adv-cal-day${isToday ? ' adv-today' : ''}${hasNotes ? ' adv-has-notes' : ''}`}
+                    className={cls}
                     onClick={() => onSelectDay(dateStr)}
                   >
                     <span className="adv-day-num">{d}</span>
-                    {hasNotes && <span className="adv-note-dot" title="Notes saved" />}
+                    {isToday && <span className="adv-today-chip">TODAY</span>}
+                    {hasNotes && <span className="adv-note-dot" title="Prep notes saved" />}
                     {events.length > 0 && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, alignItems: 'flex-start' }}>
                         {events.map((ev, j) => {
@@ -828,6 +843,14 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   </div>
                 );
               })}
+            </div>
+
+            <div className="adv-cal-legend">
+              <span><i style={{ background: 'linear-gradient(180deg,#22d3ee,#3b82f6)', borderColor: 'rgba(110,231,249,.7)' }} />Today</span>
+              <span><i style={{ background: 'var(--teal)', borderColor: 'transparent', width: 4, height: 13, borderRadius: 2 }} />Prep notes saved</span>
+              <span><i style={{ background: 'rgba(74,222,128,.45)', borderColor: 'rgba(74,222,128,.6)' }} />Vacation</span>
+              <span><i style={{ background: 'rgba(96,165,250,.45)', borderColor: 'rgba(96,165,250,.6)' }} />Training</span>
+              <span><i style={{ background: 'rgba(244,114,182,.45)', borderColor: 'rgba(244,114,182,.6)' }} />Holiday</span>
             </div>
 
             {loading && <div className="adv-loading">Loading saved notes...</div>}
