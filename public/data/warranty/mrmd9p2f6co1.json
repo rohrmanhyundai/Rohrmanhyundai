@@ -1,7 +1,7 @@
 {
   "id": "mrmd9p2f6co1",
   "createdAt": "2026-07-15T17:41:16.455Z",
-  "updatedAt": "2026-07-21T15:01:56.003Z",
+  "updatedAt": "2026-07-21T15:02:12.003Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "NATHAN PALOMBO",
   "customerPhone": "337) 215 - 2954",
@@ -46,8 +46,8 @@
   "paymentDate": "2026-07-21",
   "repairsFinished": false,
   "repairsFinishedDate": "",
-  "readySubmission": true,
-  "readySubmissionDate": "2026-07-17",
+  "readySubmission": false,
+  "readySubmissionDate": "",
   "inspectorDispatched": false,
   "inspectorDispatchedDate": ""
 }
