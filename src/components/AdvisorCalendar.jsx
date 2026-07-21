@@ -322,11 +322,14 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   useEffect(() => {
     let cancelled = false;
     const me = (currentUser || '').toUpperCase();
-    // Advisors only — a manager viewing someone else's calendar isn't on the hook.
-    if (!eodUrgent || !me || !(advisorList || []).map(a => (a || '').toUpperCase()).includes(me)) {
-      setPendingCallCount(0);
-      return;
-    }
+    // Anyone who owes calls gets pinned — NOT just names in advisorList.
+    // Managers are added to the calendar as a separate hard-coded tab and never
+    // appear in advisorList, so gating on it meant a manager with pending
+    // surveys could never light up while End of Day Reporting, which keys off
+    // the clock alone, lit for them every afternoon. Whether there is anything
+    // to call is decided by the count below, which is self-limiting: someone
+    // with no surveys to their name simply counts zero.
+    if (!eodUrgent || !me) { setPendingCallCount(0); return; }
     Promise.all([loadServiceInvitations(), loadCompletedReviews(me)])
       .then(([si, completed]) => {
         if (cancelled) return;
@@ -334,7 +337,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       })
       .catch(() => { if (!cancelled) setPendingCallCount(0); });
     return () => { cancelled = true; };
-  }, [eodUrgent, currentUser, advisorList, refreshKey]);
+  }, [eodUrgent, currentUser, refreshKey]);
   const afterCallDue = pendingCallCount > 0;
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
