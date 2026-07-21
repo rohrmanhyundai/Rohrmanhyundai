@@ -1,20 +1,5 @@
 [
   {
-    "id": "mrtj5whq8shn",
-    "ro": "779375",
-    "roDate": "2026-07-20",
-    "vehicle": "2023 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES- WE OWE KEY FOB",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/21/2026",
-    "isNew": false
-  },
-  {
     "id": "mrtj5whq1980",
     "ro": "779355",
     "roDate": "2026-07-20",
