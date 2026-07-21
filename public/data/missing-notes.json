@@ -1,49 +1,11 @@
 {
-  "updatedAt": "2026-07-21T18:13:35.998Z",
+  "updatedAt": "2026-07-21T21:30:11.183Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "779430",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "779429",
-        "vehicle": "2025 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779428",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779426",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779420",
-        "vehicle": "2025 Hyundai Elantra Hybrid"
-      },
-      {
-        "ro": "779408",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "779406",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "779402",
-        "vehicle": "2025 Hyundai Sonata"
-      },
-      {
-        "ro": "779364",
-        "vehicle": "2026 Hyundai Elantra Hybrid"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "779427",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
+        "ro": "779436",
+        "vehicle": "2019 Hyundai Santa Fe"
       },
       {
         "ro": "779423",
@@ -74,12 +36,18 @@
         "vehicle": "2020 Hyundai Elantra"
       },
       {
-        "ro": "779355",
-        "vehicle": "2018 Hyundai Elantra"
-      },
-      {
         "ro": "779211",
         "vehicle": "2014 Hyundai Santa Fe Sport"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779435",
+        "vehicle": "2018 BMW M4"
+      },
+      {
+        "ro": "779364",
+        "vehicle": "2026 Hyundai Elantra Hybrid"
       }
     ],
     "CORY": [
@@ -102,10 +70,6 @@
       {
         "ro": "779393",
         "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "779390",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
       },
       {
         "ro": "779388",
@@ -142,10 +106,6 @@
       {
         "ro": "779304",
         "vehicle": "2016 Chevrolet Colorado"
-      },
-      {
-        "ro": "779302",
-        "vehicle": "2004 Chevrolet Malibu Maxx"
       },
       {
         "ro": "779281",
