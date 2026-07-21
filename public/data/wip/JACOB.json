@@ -346,21 +346,5 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
-  },
-  {
-    "id": "mruvsi0dg62k",
-    "ro": "779409",
-    "roDate": "2026-07-21",
-    "vehicle": "2025 Hyundai Elantra Hybrid",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
   }
 ]
