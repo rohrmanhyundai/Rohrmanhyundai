@@ -72,6 +72,77 @@ export async function extractPdfText(item, rawUrl) {
   }
 }
 
+// ── The bulletin's own SUBJECT line ───────────────────────────────────────────
+// Every Hyundai bulletin states its job in the header block: "SUBJECT: ANTI-THEFT
+// IGNITION CYLINDER PROTECTOR & DECAL INSTALLATION (CUSTOMER SATISFACTION
+// CAMPAIGN P33)". That's the manufacturer's own description of the work, so it
+// beats a manager-typed title for finding a bulletin by what the job IS — and it
+// carries wording the title often drops.
+// PDF extraction sprinkles stray spaces inside words — real examples from this
+// library: "D escription:", "W arranty", "R ADIATOR", "C ause Code". So every
+// terminator is matched letter-by-letter with optional spaces between, or the
+// subject runs on and swallows half the bulletin.
+const looseWord = w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split('').join('\\s*');
+const loosePhrase = p => '\\b' + p.trim().split(/\s+/).map(looseWord).join('\\s+');
+
+// Where the subject stops: the next section, or a running page header (later
+// pages repeat "TSB #: … Page 2 of 2 SUBJECT:", which is how a subject used to
+// run on into the page-2 body).
+const SUBJECT_END = new RegExp('(?:' + [
+  'Description:', 'Applicable Vehicles', 'Warranty Information', 'Information:',
+  'This TSB supersedes', 'This bulletin supersedes', 'Circulate To',
+  'NOTE:', 'GROUP', 'SUBJECT',
+].map(loosePhrase).concat([
+  '[*★☆]\\s*IMPORTANT',
+  'TSB\\s*#',
+  'Page\\s*\\d+\\s*of\\s*\\d+',
+]).join('|') + ')', 'i');
+
+// A subject is a short statement of the job. Body text that happens to follow a
+// running header ("WARNING! GDS Vehicle Battery Voltage…", a bulleted table) is
+// not, and must never land in a high-weight search field.
+function looksLikeSubject(s) {
+  if (!s || s.length < 4 || s.length > 200) return false;
+  if (/[•■]/.test(s)) return false;
+  return !/^(?:WARNING|CAUTION|NOTE|IMPORTANT|Page\b|\d+[.)]\s)/i.test(s);
+}
+
+export function extractSubject(fullText) {
+  const text = (fullText || '').replace(/\s+/g, ' ');
+  const re = /SUBJECT\s*:?\s*/gi;
+  // Try the first few "SUBJECT" hits, not just the first: on some bulletins the
+  // page-1 header extracts without the label, so the first hit is a page-2
+  // running header. Anything that doesn't look like a subject is skipped, and
+  // if none qualifies we return '' — label and body text still carry the search.
+  for (let m, n = 0; (m = re.exec(text)) && n < 4; n++) {
+    let s = text.slice(m.index + m[0].length);
+    const end = SUBJECT_END.exec(s);
+    if (end) s = s.slice(0, end.index);
+    s = s.trim();
+    if (looksLikeSubject(s)) return s;
+  }
+  return '';
+}
+
+// Derived subjects by item id. The subject comes out of the stored searchText,
+// so every bulletin already in the library gets one with no re-index and no
+// network — but an explicit `subject` on the item wins if one is ever stored.
+export const subjectCache = {};
+
+export function subjectFor(item) {
+  if (!item) return '';
+  if (item.subject) return item.subject;
+  // Keyed by filename, not id: ids are only unique WITHIN a library, and the
+  // generator pools TSBs and recalls together.
+  const key = item.filename || item.id;
+  if (subjectCache[key] != null) return subjectCache[key];
+  const text = item.searchText || textCache[item.id] || '';
+  if (!text) return '';                      // not indexed yet — don't cache ''
+  const s = extractSubject(text);
+  subjectCache[key] = s;
+  return s;
+}
+
 // Same as norm() but keeps word boundaries as single spaces, padded with one on
 // each end, so `" " + tok` tests whether a token starts a word. Used to stop a
 // short number from matching inside a longer one ("298" vs "1298"/a date).
@@ -132,7 +203,10 @@ export function parseQuery(query) {
 // searching "298" lands on the bulletin titled "(RECALL 298)" rather than one
 // that merely mentions 298 in a table. Body text still counts, which is what
 // finds a bulletin by what it SAYS ("inoperable horn") and not just its number.
-const W_LABEL = 100, W_TAGS = 80, W_FILE = 40, W_TEXT = 10;
+// The SUBJECT sits just under the title: it's Hyundai's own one-line statement
+// of the job, so a hit there is nearly as good as one in the title and far
+// better than a passing mention somewhere in the body.
+const W_LABEL = 100, W_SUBJECT = 90, W_TAGS = 80, W_FILE = 40, W_TEXT = 10;
 
 function tokenWeight(tok, hay) {
   // Short numeric tokens must start a word; anything else matches as a
@@ -140,6 +214,7 @@ function tokenWeight(tok, hay) {
   const shortNum = tok.length <= 4 && /^\d+$/.test(tok);
   const hit = (loose, spaced) => shortNum ? spaced.includes(' ' + tok) : loose.includes(tok);
   if (hit(hay.label, hay.labelS)) return W_LABEL;
+  if (hit(hay.subject, hay.subjectS)) return W_SUBJECT;
   if (hit(hay.tags, hay.tagsS)) return W_TAGS;
   if (hit(hay.filename, hay.filenameS)) return W_FILE;
   if (hit(hay.text, hay.textS)) return W_TEXT;
@@ -164,18 +239,20 @@ export function scoreItem(item, query, opts) {
   const words = parsed.words;
   if (numbers.length === 0 && words.length === 0) return 0;
 
-  const label = norm(item.label), tags = norm(item.tags || '');
-  const filename = norm(item.filename || ''), text = norm(item.searchText || textCache[item.id] || '');
+  const rawText = item.searchText || textCache[item.id] || '';
+  const rawSubject = subjectFor(item);
+  const label = norm(item.label), subject = norm(rawSubject), tags = norm(item.tags || '');
+  const filename = norm(item.filename || ''), text = norm(rawText);
   const hay = {
-    label, tags, filename, text,
-    labelS: normSpaced(item.label), tagsS: normSpaced(item.tags || ''),
-    filenameS: normSpaced(item.filename || ''), textS: normSpaced(item.searchText || textCache[item.id] || ''),
+    label, subject, tags, filename, text,
+    labelS: normSpaced(item.label), subjectS: normSpaced(rawSubject), tagsS: normSpaced(item.tags || ''),
+    filenameS: normSpaced(item.filename || ''), textS: normSpaced(rawText),
   };
 
   // ── Bulletin number: the strongest possible signal ─────────────────────────
   let numScore = 0;
   for (const n of numbers) {
-    if (label.includes(n) || tags.includes(n) || filename.includes(n)) numScore += 5000;
+    if (label.includes(n) || subject.includes(n) || tags.includes(n) || filename.includes(n)) numScore += 5000;
     else if (text.includes(n)) numScore += 150;   // referenced inside (supersedes, related)
   }
 
