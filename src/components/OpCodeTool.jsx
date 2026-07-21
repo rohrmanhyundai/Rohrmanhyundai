@@ -245,6 +245,86 @@ function resolveStep(questions, entries, answers) {
   return { done: true, matching };
 }
 
+// ── Digital Documentation: which pages actually hold the requirements ─────────
+// A page qualifies when it TELLS the tech to capture something — "take clear
+// photos of the following components", "record a video", "Capture at least 1
+// photo", "STUI video is required". It is NOT enough for a page to mention the
+// Digital Documentation Policy: nearly every bulletin carries that boilerplate
+// in a NOTE next to the warranty table, and matching it landed 23-01-063H on
+// page 5 (the warranty table) while the real photo pages sat at 20-23.
+const PHOTO_INSTRUCTION = new RegExp([
+  'picture\\s+requirements?',
+  '\\btak\\w+(?:\\s+[\\w-]+){0,3}\\s+(?:photo|picture|video)s?\\b',        // "take clear photos"
+  '\\bcaptur\\w+(?:\\s+[\\w-]+){0,4}\\s+(?:photo|picture|video|image)s?\\b',
+  '\\brecord\\w*\\s+(?:a\\s+|the\\s+)?video\\b',
+  '\\b(?:submit|upload|attach)\\s+(?:[\\w-]+\\s+){0,2}(?:photo|picture|video|image)s?\\b',
+  '\\bphotograph\\s+the\\b',
+  '\\bSTUI\\s+(?:video|camera|photo)',
+].join('|'), 'i');
+
+// Verbs that mark a numbered line as a procedure STEP rather than the name of a
+// component to photograph.
+const STEP_VERB = /\b(remove|reinstall|install|disconnect|reconnect|connect|unscrew|attach|detach|apply|spray|use|verify|check|confirm|inspect|replace|torque|tighten|loosen|perform|refer|follow|repeat|clean|allow|press|push|pull|open|close|lift|raise|cut|drain|fill|measure|test|select|enter|ensure|place|cover|mask|wear|rinse|unplug|plug|start|turn|set|adjust|reassemble|assemble)\b/i;
+
+const pageBody = t => (t || '').replace(/^.*?Page\s+\d+\s+of\s+\d+/i, '').replace(/SUBJECT\s*:/gi, ' ').replace(/\s+/g, ' ').trim();
+
+// The photo list usually runs over the following pages as bare captions with the
+// example shots ("5. Left rear trailing arm"), carrying no instruction of their
+// own — that's the rest of what the tech has to shoot, so it has to come along.
+// Procedure pages are numbered too, which is why the test is that the numbered
+// items are component NAMES, not steps.
+function isCaptionPage(text) {
+  const b = pageBody(text);
+  if (!b || b.length > 500) return false;
+  const items = b.split(/(?:^|\s)\d{1,2}\.\s+/).slice(1).map(s => s.trim()).filter(Boolean);
+  return items.filter(s => s.split(/\s+/).length <= 16 && !STEP_VERB.test(s)).length >= 2;
+}
+
+export function digitalDocPages(pageTexts) {
+  const sel = new Set();
+  pageTexts.forEach((t, i) => { if (PHOTO_INSTRUCTION.test(t || '')) sel.add(i + 1); });
+  for (const s of Array.from(sel)) {
+    for (let p = s + 1; p <= Math.min(pageTexts.length, s + 4); p++) {
+      if (sel.has(p)) continue;
+      if (!isCaptionPage(pageTexts[p - 1])) break;
+      sel.add(p);
+    }
+  }
+  return Array.from(sel).sort((a, b) => a - b);
+}
+
+// The checklist: every instruction sentence, plus the component captions that
+// follow it, so a tech can tick them off without reading the page images.
+export function digitalDocChecklist(pageTexts, pageNums) {
+  const out = [];
+  const seen = new Set();
+  // Closing boilerplate that shares the photo list's numbering but isn't a photo.
+  const BOILER = /procedure is\s+(?:now\s+)?complete|reverse order of (?:the\s+)?removal/i;
+  const add = s => {
+    // Close up hyphens the PDF spaced out ("Front sub - frame").
+    const v = s.replace(/\s+/g, ' ').trim().replace(/^[-•·]\s*/, '').replace(/(\w)\s*-\s*(\w)/g, '$1-$2');
+    const key = v.toLowerCase();
+    if (v.length >= 8 && v.length <= 240 && !seen.has(key)) { seen.add(key); out.push(v); }
+  };
+  for (const num of pageNums) {
+    const b = pageBody(pageTexts[num - 1]);
+    if (!b) continue;
+    // Split on sentence ends AND before an instruction verb, since the last
+    // caption of a list runs into the sentence after it with no full stop.
+    b.split(/(?:\.|;)\s+|(?=\b(?:Upload|Submit|Attach|Photograph|Capture|Record)\s)/)
+      .forEach(s => { if (s && PHOTO_INSTRUCTION.test(s) && !BOILER.test(s)) add(s); });
+    // Component names off ANY selected page — the first few sit on the
+    // instruction page itself, the rest continue overleaf.
+    b.split(/(?:^|\s)\d{1,2}\.\s+/).slice(1).forEach(s => {
+      // The last caption on a page runs straight into the sentence that follows
+      // it ("Spare tire carrier Upload all photos to STUI."), so cut it there.
+      const v = s.trim().split(/\s+(?:Upload|Submit|Attach|Refer|NOTE|Note)\b/)[0].replace(/\s+STUI\.?$/i, '').trim();
+      if (v.split(/\s+/).length <= 16 && !STEP_VERB.test(v) && !PHOTO_INSTRUCTION.test(v) && !BOILER.test(v)) add(v);
+    });
+  }
+  return out.slice(0, 16);
+}
+
 // ── Digital Documentation viewer ──────────────────────────────────────────────
 // Finds the bulletin pages that hold the photo/claim-submission requirements and
 // renders them, plus a quick checklist of each required photo.
@@ -262,24 +342,18 @@ export function DigitalDocModal({ item, onClose }) {
         const res = await fetch(docRawUrl(item.filename));
         const buf = await res.arrayBuffer();
         const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
-        const qualifying = [];
-        const checks = new Set();
+        // Read every page first, then decide: a photo list runs ACROSS pages, so
+        // whether page N belongs depends on what page N-1 said.
+        const pageTexts = [];
         for (let p = 1; p <= pdf.numPages; p++) {
           const page = await pdf.getPage(p);
           const content = await page.getTextContent();
-          const t = content.items.map(i => i.str).join(' ');
-          // A real photo-requirement page (not just a passing "Digital
-          // Documentation Policy" mention in a NOTE).
-          const qualifies = /picture requirement/i.test(t) ||
-            (/digital\s+documentation/i.test(t) && /(take a photo|take photos|stui|photo of the|photos of)/i.test(t));
-          if (qualifies) {
-            qualifying.push(p);
-            (t.match(/tak\w* (?:a )?photos?[^.]*\./gi) || []).forEach(s => checks.add(s.replace(/\s+/g, ' ').trim()));
-          }
+          pageTexts.push(content.items.map(i => i.str).join(' '));
           if (cancelled) return;
         }
         if (cancelled) return;
-        setChecklist(Array.from(checks));
+        const qualifying = digitalDocPages(pageTexts);
+        setChecklist(digitalDocChecklist(pageTexts, qualifying));
         const imgs = [];
         for (const p of qualifying) {
           const page = await pdf.getPage(p);
