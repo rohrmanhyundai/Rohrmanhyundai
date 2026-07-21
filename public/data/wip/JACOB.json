@@ -16,22 +16,6 @@
     "flag": "green"
   },
   {
-    "id": "mrkw7yk10d1m",
-    "ro": "779211",
-    "roDate": "2026-07-14",
-    "vehicle": "2014 Hyundai Santa Fe Sport",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/21/2026",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": "PARTS WILL BE HERE TOMORROW"
-  },
-  {
     "id": "mrl5pv6w2yab",
     "ro": "779221",
     "roDate": "2026-07-14",
