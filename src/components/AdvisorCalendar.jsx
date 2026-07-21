@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews } from '../utils/github';
+import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import Chat from './Chat';
@@ -311,6 +312,30 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     return () => { cancelled = true; };
   }, [currentUser, advisorList, schedules, vacations, refreshKey]);
   const eodMissed = missedEodCount > 0;
+
+  // After Call Reviews attention badge. Same end-of-day trigger as End of Day
+  // Reporting: from 3pm Eastern the button pulses with a count of the surveys
+  // the logged-in advisor still owes a call on. The survey file is ~400KB, so it
+  // is only fetched once that window opens — before 3pm this costs nothing.
+  // Never nags at zero: no pending calls, no pulse.
+  const [pendingCallCount, setPendingCallCount] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    const me = (currentUser || '').toUpperCase();
+    // Advisors only — a manager viewing someone else's calendar isn't on the hook.
+    if (!eodUrgent || !me || !(advisorList || []).map(a => (a || '').toUpperCase()).includes(me)) {
+      setPendingCallCount(0);
+      return;
+    }
+    Promise.all([loadServiceInvitations(), loadCompletedReviews(me)])
+      .then(([si, completed]) => {
+        if (cancelled) return;
+        setPendingCallCount(pendingSurveysFor(si, completed, me).length);
+      })
+      .catch(() => { if (!cancelled) setPendingCallCount(0); });
+    return () => { cancelled = true; };
+  }, [eodUrgent, currentUser, advisorList, refreshKey]);
+  const afterCallDue = pendingCallCount > 0;
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
@@ -615,9 +640,30 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </button>
           )}
           {onAfterCall && (
-            <button onClick={onAfterCall} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-              📞 After Call Reviews
-            </button>
+            <>
+              {afterCallDue && <style>{`@keyframes acPulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(52,211,153,.75);transform:scale(1.06)}}@keyframes acBellBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
+              <span style={{ position: 'relative', display: 'inline-flex' }}>
+                <button onClick={onAfterCall}
+                  style={afterCallDue
+                    ? { background: 'linear-gradient(180deg,#10b981,#047857)', borderColor: '#a7f3d0', color: '#fff', fontWeight: 900, animation: 'acPulse 1.2s ease-in-out infinite' }
+                    : { background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+                  {afterCallDue ? '📞 After Call Reviews ‼️' : '📞 After Call Reviews'}
+                </button>
+                {afterCallDue && (
+                  <span
+                    title={`You have ${pendingCallCount} customer${pendingCallCount === 1 ? '' : 's'} still to call for their after-call review`}
+                    style={{
+                      position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
+                      background: '#a7f3d0', color: '#064e3b', fontWeight: 900, fontSize: 12,
+                      border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
+                      transformOrigin: 'center', animation: 'acBellBob 1.1s ease-in-out infinite', pointerEvents: 'none',
+                    }}>
+                    {pendingCallCount}
+                  </span>
+                )}
+              </span>
+            </>
           )}
           {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (
             <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
