@@ -1,21 +1,5 @@
 [
   {
-    "id": "mro34bnlht5l",
-    "ro": "779086",
-    "roDate": "2026-07-16",
-    "vehicle": "2017 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES- Just had reman trans install and now car will not go over 30mph",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "CUSTOMER STATES- Just had reman trans install and now car will not go over 30mph.- give to Chad we need to look at the car one more time "
-  },
-  {
     "id": "mr3gfvpf2cu",
     "ro": "778812",
     "roDate": "2026-06-30",
