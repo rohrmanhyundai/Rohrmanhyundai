@@ -5,7 +5,10 @@ import { decodeVin, findBulletinsForVehicle, knownModels, yearFromVin } from '..
 // Decode the VIN on the car, then show what's open on that exact vehicle. The
 // tech picks Recalls or TSBs — they're different jobs and different conversations
 // with the customer, so the results are never mixed together.
-export default function VinSearchModal({ tsbs = [], recalls = [], onOpen, onClose }) {
+// `hidden` keeps this mounted but out of sight while a bulletin is open on top,
+// so closing the bulletin drops the tech straight back on their VIN results —
+// same vehicle, same list, same place in it — ready to open the next one.
+export default function VinSearchModal({ tsbs = [], recalls = [], hidden = false, onOpen, onClose }) {
   const [vin, setVin] = useState('');
   const [busy, setBusy] = useState(false);
   const [vehicle, setVehicle] = useState(null);   // { year, model, electrified, ... }
@@ -42,7 +45,9 @@ export default function VinSearchModal({ tsbs = [], recalls = [], onOpen, onClos
   const reset = () => { setVehicle(null); setKind(''); setError(''); setNeedModel(false); };
 
   return (
-    <div onClick={onClose} style={overlay}>
+    // visibility (not display:none) so the results list keeps its scroll
+    // position while a bulletin is open over the top of it.
+    <div onClick={onClose} style={hidden ? { ...overlay, visibility: 'hidden', pointerEvents: 'none' } : overlay}>
       <div onClick={e => e.stopPropagation()} style={modal}>
         <div style={head}>
           <span style={{ fontWeight: 900, fontSize: 18, color: '#6ee7f9' }}>🚗 Search by VIN</span>

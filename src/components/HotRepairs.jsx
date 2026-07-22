@@ -898,7 +898,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         <VinSearchModal
           tsbs={tab === 'hot-repairs' ? items : otherItems}
           recalls={tab === 'recalls' ? items : otherItems}
-          onOpen={item => { setShowVin(false); setPreviewItem(item); }}
+          hidden={!!previewItem}
+          onOpen={item => setPreviewItem(item)}
           onClose={() => setShowVin(false)}
         />
       )}
