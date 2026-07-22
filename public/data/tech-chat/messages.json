@@ -1,23 +1,5 @@
 [
   {
-    "id": "mqpea6kh2zk",
-    "username": "SHAWN",
-    "text": "Chad 778516 engine approved",
-    "timestamp": 1782143594945
-  },
-  {
-    "id": "mqpeca3dv8g",
-    "username": "SHAWN",
-    "text": "Chad 778516 add ASR so advisor can sell",
-    "timestamp": 1782143692825
-  },
-  {
-    "id": "mqpg6uwej0g",
-    "username": "SHAWN",
-    "text": "David 778516 ASR are added for engine job",
-    "timestamp": 1782146799086
-  },
-  {
     "id": "mqpn2tbpwym",
     "username": "SHAWN",
     "text": "WE HAVE PDI TO DO",
@@ -369,5 +351,11 @@
     "username": "KAI",
     "text": "RO 779336 parts have been received",
     "timestamp": 1784734017319
+  },
+  {
+    "id": "mrwds2fygtj",
+    "username": "SETH",
+    "text": "RO 779352 parts have been received",
+    "timestamp": 1784742795358
   }
 ]
