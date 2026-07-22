@@ -257,6 +257,19 @@
         "agreed": true,
         "agreedBy": "JORDAN",
         "submittedAt": 1784670627717
+      },
+      "2026-07-22": {
+        "hours": 298.7,
+        "hrsRo": 1.24,
+        "openRoCount": 22,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1784758454278
       }
     },
     "entryMode": "mtd"
