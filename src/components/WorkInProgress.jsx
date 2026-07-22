@@ -1398,8 +1398,8 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
                   />
                 </div>
 
-                {/* Row actions */}
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                {/* Row actions — left-aligned, under the Notes box */}
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-start' }}>
                   <button
                     onClick={() => isTech ? setWorkCompleteConfirmId(row.id) : deleteRow(row.id)}
                     disabled={deletingRow === row.id}
