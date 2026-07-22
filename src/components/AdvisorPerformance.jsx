@@ -45,6 +45,9 @@ export default function AdvisorPerformance({ data }) {
   };
   const under = (val, [goal, dec]) => Number(safe(val, 0).toFixed(dec)) < goal;
   const low = (val, goal) => (under(val, goal) ? 'perf-low' : undefined);
+  // An advisor held out of the averages isn't being measured yet, so don't
+  // pulse their whole row red on the TV for missing goals they don't have.
+  const lowFor = (a, val, goal) => (a.exclude_from_avg ? undefined : low(val, goal));
 
   // Same minimums as the per-advisor columns. Only flag once the month has
   // started (before that `sum` is empty and everything reads 0).
@@ -93,17 +96,25 @@ export default function AdvisorPerformance({ data }) {
           <tbody>
             {visibleAdvisors.map(a => (
               <tr key={a.name}>
-                <td className="name" style={tdStyle}>{a.name}</td>
+                <td className="name" style={tdStyle}>
+                  {a.name}
+                  {a.exclude_from_avg && (
+                    <span title="Ramping up — shown here, but not counted in the shop averages"
+                      style={{ marginLeft: 7, fontSize: Math.round(fontSize * 0.55), fontWeight: 800, letterSpacing: .4, color: '#7dd3fc', background: 'rgba(56,189,248,.14)', border: '1px solid rgba(56,189,248,.32)', borderRadius: 5, padding: '1px 5px', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
+                      NOT IN AVG
+                    </span>
+                  )}
+                </td>
                 <td style={tdStyle}>{n(advisorDailyAverage(a, data), 2)}</td>
                 <td style={tdStyle}>{n(a.mtd_hours, 1)}</td>
-                <td className={low(a.hours_per_ro, G.hpr)} style={tdStyle}>{n(a.hours_per_ro, 2)}</td>
-                <td className={low(a.align, G.align)} style={tdStyle}>{pct(a.align, 1)}</td>
-                <td className={low(a.tires, G.tires)} style={tdStyle}>{pct(a.tires, 1)}</td>
-                <td className={low(a.valvoline, G.valv)} style={tdStyle}>{pct(a.valvoline, 1)}</td>
-                <td className={low(a.roh50_hrs_ro, G.roh50)} style={tdStyle}>{n(a.roh50_hrs_ro, 2)}</td>
-                <td className={low(a.csi, G.csi)} style={tdStyle}>{Math.round(safe(a.csi)).toString()}</td>
-                <td className={low(a.asr, G.asr)} style={tdStyle}>{pct(a.asr, 1)}</td>
-                <td className={low(a.elr, G.elr)} style={tdStyle}>{pct(a.elr, 0)}</td>
+                <td className={lowFor(a, a.hours_per_ro, G.hpr)} style={tdStyle}>{n(a.hours_per_ro, 2)}</td>
+                <td className={lowFor(a, a.align, G.align)} style={tdStyle}>{pct(a.align, 1)}</td>
+                <td className={lowFor(a, a.tires, G.tires)} style={tdStyle}>{pct(a.tires, 1)}</td>
+                <td className={lowFor(a, a.valvoline, G.valv)} style={tdStyle}>{pct(a.valvoline, 1)}</td>
+                <td className={lowFor(a, a.roh50_hrs_ro, G.roh50)} style={tdStyle}>{n(a.roh50_hrs_ro, 2)}</td>
+                <td className={lowFor(a, a.csi, G.csi)} style={tdStyle}>{Math.round(safe(a.csi)).toString()}</td>
+                <td className={lowFor(a, a.asr, G.asr)} style={tdStyle}>{pct(a.asr, 1)}</td>
+                <td className={lowFor(a, a.elr, G.elr)} style={tdStyle}>{pct(a.elr, 0)}</td>
                 <td style={tdStyle}>{n(a.last_month_total, 1)}</td>
               </tr>
             ))}

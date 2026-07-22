@@ -182,12 +182,21 @@ export function recalcTech(data, schedules) {
 }
 
 export function recalcAdvisorSummary(data) {
-  const count = data.advisors.length || 1;
+  // A new hire who isn't selling yet still belongs on the dashboard, but their
+  // zeros would drag every shop average down and make the whole team look like
+  // it's missing goal. Advisors flagged "Don't apply to dashboard" are left out
+  // of the AVERAGES — out of the total AND the divisor, so the remaining
+  // advisors average against their own count.
+  //
+  // Hours stay a full sum of everyone: a sum isn't distorted by a zero, and the
+  // shop's hours should reflect every hour actually produced.
+  const counted = data.advisors.filter(a => !a.exclude_from_avg);
+  const count = counted.length || 1;
   data.advisorSummary.total_hours = data.advisors.reduce((s, a) => s + safe(a.mtd_hours, 0), 0);
-  data.advisorSummary.align = data.advisors.reduce((s, a) => s + safe(a.align, 0), 0) / count;
-  data.advisorSummary.tires = data.advisors.reduce((s, a) => s + safe(a.tires, 0), 0) / count;
-  data.advisorSummary.valvoline = data.advisors.reduce((s, a) => s + safe(a.valvoline, 0), 0) / count;
-  data.advisorSummary.csi = data.advisors.reduce((s, a) => s + safe(a.csi, 0), 0) / count;
+  data.advisorSummary.align = counted.reduce((s, a) => s + safe(a.align, 0), 0) / count;
+  data.advisorSummary.tires = counted.reduce((s, a) => s + safe(a.tires, 0), 0) / count;
+  data.advisorSummary.valvoline = counted.reduce((s, a) => s + safe(a.valvoline, 0), 0) / count;
+  data.advisorSummary.csi = counted.reduce((s, a) => s + safe(a.csi, 0), 0) / count;
 }
 
 export function buildGaugeData(data) {
