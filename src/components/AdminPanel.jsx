@@ -1546,8 +1546,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <span>
                 {a.name}
                 {a.hidden && <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Hidden</span>}
+                {a.exclude_from_avg && <span style={{ marginLeft: 8, fontSize: 11, color: '#38bdf8', background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Not in averages</span>}
               </span>
               <div style={{ display: 'flex', gap: 6 }}>
+                <button className="secondary"
+                  style={a.exclude_from_avg ? { color: '#38bdf8', borderColor: 'rgba(56,189,248,.4)' } : {}}
+                  title="New hire still ramping up: keep them on the dashboard, but leave their numbers out of the shop averages so their zeros don't drag the team down."
+                  onClick={() => updateField(`advisors.${idx}.exclude_from_avg`, !a.exclude_from_avg)}>
+                  {a.exclude_from_avg ? 'Apply to Dashboard' : "Don't Apply to Dashboard"}
+                </button>
                 <button className="secondary" style={a.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}} onClick={() => updateField(`advisors.${idx}.hidden`, !a.hidden)}>
                   {a.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
                 </button>
