@@ -282,5 +282,21 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrwdje424g7b",
+    "ro": "779456",
+    "roDate": "2026-07-22",
+    "vehicle": "2023 Kia Forte",
+    "jobDesc": "CUSTOMER STATES TPMS LIGHT ON. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
