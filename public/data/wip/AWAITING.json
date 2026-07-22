@@ -25,5 +25,50 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mrwdjgkit4fb",
+    "ro": "779459",
+    "roDate": "2026-07-22",
+    "vehicle": "2026 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES check engine light on. Check & advise",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mrwdjgki0d0f",
+    "ro": "779449",
+    "roDate": "2026-07-22",
+    "vehicle": "2026 Hyundai Palisade Hybrid",
+    "jobDesc": "PDI",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mrwdjgkis7kd",
+    "ro": "779448",
+    "roDate": "2026-07-22",
+    "vehicle": "2026 Hyundai Sonata Hybrid",
+    "jobDesc": "PDI",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
