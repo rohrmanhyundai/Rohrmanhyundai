@@ -1,7 +1,7 @@
 {
   "id": "mrw5gkfls6bh",
   "createdAt": "2026-07-22T14:00:21.873Z",
-  "updatedAt": "2026-07-22T14:02:41.615Z",
+  "updatedAt": "2026-07-22T15:48:00.238Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "JACOB ESPY",
   "customerPhone": "(765) 479 - 4128",
@@ -14,7 +14,7 @@
   "warrantyCompany": "SMART DRIVER",
   "warrantyPhone": "888-684-9327",
   "claimNumber": "292-16810168",
-  "authNumber": "3268873-8591008",
+  "authNumber": "3268873-8591589",
   "laborRate": "73.33",
   "laborTime": ".30",
   "diagnosisTime": "",
@@ -24,7 +24,7 @@
       "partNumber": "1016785",
       "description": "215/55R17 HANKOOK KINERGY H436",
       "qty": "1",
-      "price": "149.99"
+      "price": "175.99"
     }
   ],
   "taxPct": "7",
