@@ -74,5 +74,21 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "NEED TO GET IN TO CALL TECHLINE "
+  },
+  {
+    "id": "mrl5pw1g4avk",
+    "ro": "779188",
+    "roDate": "2026-07-14",
+    "vehicle": "2025 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES RADIO DISPLAY IS NOT WORKING.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "07/21/2026",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "CAR IS IN THE SHOP NOW"
   }
 ]
