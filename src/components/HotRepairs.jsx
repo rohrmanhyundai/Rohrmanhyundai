@@ -3,6 +3,7 @@ import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reor
 import { trackPage } from '../utils/activityTracker';
 import { loadPdfJs, extractPdfText, extractPdfTextFromBuffer, rankedMatches, scoreItem, textCache } from '../utils/pdfText';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
+import VinSearchModal from './VinSearchModal';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -175,6 +176,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [reindexing, setReindexing]   = useState(false);
   const [reindexStatus, setReindexStatus] = useState('');
   const [showOpGen, setShowOpGen]     = useState(false);
+  const [showVin, setShowVin]         = useState(false);
   const [showOpEditSearch, setShowOpEditSearch] = useState(false);
   const [showMissingOps, setShowMissingOps] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
@@ -569,6 +571,10 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
       {/* Op Code Generator / Editor launchers */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 10, padding: '12px 24px 0', flexWrap: 'wrap' }}>
+        <button onClick={() => setShowVin(true)}
+          style={{ background: 'linear-gradient(135deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', border: '1px solid rgba(52,211,153,.5)', color: '#6ee7b7', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+          🚗 Search by VIN
+        </button>
         <button onClick={() => setShowOpGen(true)}
           style={{ background: 'linear-gradient(135deg,rgba(96,165,250,.25),rgba(59,130,246,.18))', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
           ⚙️ Op Code Generator
@@ -884,6 +890,16 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         <OpCodeGenerator
           items={opCodePool}
           onClose={() => setShowOpGen(false)}
+        />
+      )}
+      {showVin && (
+        // Both libraries, whichever tab is open — the tech picks Recalls or TSBs
+        // inside the modal.
+        <VinSearchModal
+          tsbs={tab === 'hot-repairs' ? items : otherItems}
+          recalls={tab === 'recalls' ? items : otherItems}
+          onOpen={item => { setShowVin(false); setPreviewItem(item); }}
+          onClose={() => setShowVin(false)}
         />
       )}
       {opEditItem && (
