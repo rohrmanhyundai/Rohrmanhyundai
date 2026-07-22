@@ -604,7 +604,8 @@
         "elr": 0,
         "last_month_total": 0,
         "ro_count": 0,
-        "_lastImport": 1784715412457
+        "_lastImport": 1784715412457,
+        "exclude_from_avg": true
       }
     ],
     "advisorTraining": [
@@ -695,10 +696,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 591.2,
-      "align": 0.066925,
-      "tires": 0.085475,
-      "valvoline": 0.172475,
-      "csi": 639.5
+      "align": 0.08923333333333333,
+      "tires": 0.11396666666666666,
+      "valvoline": 0.22996666666666665,
+      "csi": 852.6666666666666
     },
     "techTotals": {
       "mon": 46.9,
