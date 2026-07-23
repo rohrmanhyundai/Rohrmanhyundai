@@ -1,11 +1,5 @@
 [
   {
-    "id": "mqpn2tbpwym",
-    "username": "SHAWN",
-    "text": "WE HAVE PDI TO DO",
-    "timestamp": 1782158367733
-  },
-  {
     "id": "mqqpgpvbmg2",
     "username": "KAI",
     "text": "PARTS HERE FOR 778540, 778359 AND THE ECU FOR ENTERPRISE",
@@ -357,5 +351,11 @@
     "username": "SETH",
     "text": "RO 779352 parts have been received",
     "timestamp": 1784742795358
+  },
+  {
+    "id": "mrxfjwq92ks",
+    "username": "KAI",
+    "text": "RO 779188 parts have been received",
+    "timestamp": 1784806240113
   }
 ]
