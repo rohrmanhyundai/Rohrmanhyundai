@@ -198,24 +198,49 @@ async function mutateGitHubJson(path, mutate, message) {
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
   let lastErr = null;
   for (let attempt = 0; attempt < 6; attempt++) {
-    let sha = null, current = null;
+    let sha = null, current = null, fileExists = false, readOk = false;
     try {
       const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
       noteRateLimit(getRes);
       if (getRes.ok) {
+        fileExists = true;
         const ex = await getRes.json();
         sha = ex.sha || null;
+        // The contents API inlines base64 content only for files <= 1 MB; for a
+        // larger file `content` is EMPTY. Reading that as "" and writing it back
+        // wiped the recalls index (1 MB+ of embedded search text). So: parse the
+        // inline content when present, otherwise pull the raw bytes (up to 100 MB)
+        // via the raw media type.
         try {
-          const bytes = Uint8Array.from(atob(ex.content.replace(/\s/g, '')), c => c.charCodeAt(0));
-          current = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-        } catch { current = null; }
-      } else if (getRes.status !== 404) {
+          if (ex.content && ex.content.trim()) {
+            const bytes = Uint8Array.from(atob(ex.content.replace(/\s/g, '')), c => c.charCodeAt(0));
+            current = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+            readOk = true;
+          } else if (sha) {
+            const rawRes = await fetch(`${getUrl}&_=${Date.now()}`, {
+              headers: { ...headers, Accept: 'application/vnd.github.raw' }, cache: 'no-store',
+            });
+            noteRateLimit(rawRes);
+            if (rawRes.ok) { current = JSON.parse(await rawRes.text()); readOk = true; }
+          }
+        } catch { readOk = false; }
+      } else if (getRes.status === 404) {
+        fileExists = false; readOk = true; current = null; // genuinely new file
+      } else {
         lastErr = new Error(`GitHub read failed (${getRes.status})`);
         await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
         continue;
       }
     } catch (e) {
       lastErr = e;
+      await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      continue;
+    }
+
+    // NEVER overwrite a file we couldn't read — that's how the whole index got
+    // wiped. Retry the read; only a real 404 is allowed to proceed with `null`.
+    if (fileExists && !readOk) {
+      lastErr = new Error('Could not read current file content — refusing to overwrite');
       await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
       continue;
     }
@@ -247,17 +272,19 @@ async function mutateGitHubJson(path, mutate, message) {
 
 // Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay).
 // Works without a token for public repos (60 req/hr unauthenticated).
+// Uses the RAW media type so it reads files of ANY size — the default contents
+// response only inlines content up to 1 MB, and the recalls index (1 MB+ of
+// embedded search text) crossed that, which is why display fell back to a stale
+// Pages copy. Returns null on any failure so callers can fall back.
 async function readGitHubFile(headers, path) {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
-      { headers, cache: 'no-store' }
+      { headers: { ...headers, Accept: 'application/vnd.github.raw' }, cache: 'no-store' }
     );
     noteRateLimit(res);
     if (!res.ok) return null;
-    const fileData = await res.json();
-    const bytes = Uint8Array.from(atob(fileData.content.replace(/\s/g, '')), c => c.charCodeAt(0));
-    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    return JSON.parse(await res.text());
   } catch { return null; }
 }
 
