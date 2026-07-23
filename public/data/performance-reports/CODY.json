@@ -4,8 +4,7 @@
     "label": "July 22, 2026",
     "month": "2026-07",
     "type": "advisor",
-    "savedAt": "2026-07-23T05:42:37.329Z",
-    "autoSaved": true,
+    "savedAt": "2026-07-23T10:22:26.616Z",
     "csi": 0,
     "hours_per_ro": 0,
     "roh50_hrs_ro": 0,
@@ -17,7 +16,10 @@
     "asr": 0,
     "elr": 0,
     "last_month_total": 0,
-    "ro_count": 0
+    "ro_count": 0,
+    "coupon_labor": 0,
+    "total_sales": 0,
+    "coupon_usage_pct": 0
   },
   {
     "date": "2026-07-21",
