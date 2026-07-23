@@ -222,6 +222,61 @@ async function parseGrossReport(file) {
       }
     }
   }
+
+  // ── Page 6: Wholesale by SALES (not gross) ────────────────────────────────
+  // The Wholesale card tracks sales volume, which lives on page 6 (Oil / Retail
+  // / Wholesale), not the gross on page 2. Page 6 has three sections side by
+  // side, each COST · SALES · GROSS · %; wholesale is the rightmost. On any
+  // summary row the currency cells read left-to-right as
+  //   oil[cost,sales,gross] retail[cost,sales,gross] wholesale[cost,sales,gross]
+  // — nine of them (parseCurrency drops the % and date cells) — so wholesale
+  // SALES is index 7 and wholesale GROSS index 8. We find the this-year total
+  // row by matching its wholesale GROSS to the page-2 figure we already read,
+  // which pins the right row without re-summing. If anything looks off we leave
+  // the page-2 gross in place rather than guess.
+  if (summary && summary.parts && pdf.numPages >= 6) {
+    try {
+      const page = await pdf.getPage(6);
+      const content = await page.getTextContent();
+      const its = content.items.filter(i => i.str && i.str.trim())
+        .map(i => ({ x: i.transform[4], y: i.transform[5], text: i.str.trim() }));
+      const rows6 = {};
+      for (const it of its) { const y = Math.round(it.y); (rows6[y] = rows6[y] || []).push(it); }
+      // Cluster a row's fragments into cells (pdf.js splits "$21,065.43"), then
+      // keep only the ones that parse as currency.
+      const currencyCells = (row) => {
+        const sorted = [...row].sort((a, b) => a.x - b.x);
+        const cells = []; let cur = null, lastX = null;
+        for (const t of sorted) {
+          if (lastX == null || t.x - lastX > 30) { cur = { text: t.text }; cells.push(cur); }
+          else { cur.text += t.text; }
+          lastX = t.x;
+        }
+        return cells.map(c => parseCurrency(c.text)).filter(n => n != null);
+      };
+      const targetGross = safe(summary.parts.mtd.wholesale, 0); // page-2 wholesale GROSS
+      const readWhslSales = (row) => { const v = currencyCells(row); return v.length === 9 ? v[7] : null; };
+      const wholeGrossOf   = (row) => { const v = currencyCells(row); return v.length === 9 ? v[8] : null; };
+
+      let totRow = null, totBest = Infinity;
+      for (const row of Object.values(rows6)) {
+        if (row.some(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text))) continue; // skip daily rows
+        const g = wholeGrossOf(row);
+        if (g == null) continue;
+        const d = Math.abs(g - targetGross);
+        if (d < totBest) { totBest = d; totRow = row; }
+      }
+      const norm = (s) => s.replace(/\s+/g, '').toUpperCase();
+      const lyRow6 = Object.values(rows6).find(row => norm(row.map(t => t.text).join('')).includes('LASTYEAR'));
+
+      // Only trust the total row if its wholesale gross really is the page-2 one.
+      const thisYearSales = (totRow && totBest < 5) ? readWhslSales(totRow) : null;
+      const lastYearSales = lyRow6 ? readWhslSales(lyRow6) : null;
+      if (thisYearSales != null) summary.parts.mtd.wholesale = thisYearSales;
+      if (lastYearSales != null) summary.parts.ly.wholesale = lastYearSales;
+    } catch { /* keep the page-2 gross wholesale */ }
+  }
+
   return { daily: out, summary };
 }
 
@@ -407,7 +462,7 @@ const PARTS_CATS = [
   { key: 'internalTire',  label: 'Internal Tire',      accent: '#f59e0b' },
   { key: 'oilParts',      label: 'Oil Parts',          accent: '#34d399' },
   { key: 'oilRetail',     label: 'Oil Retail Parts',   accent: '#4ade80' },
-  { key: 'wholesale',     label: 'Wholesale Parts',    accent: '#fb7185' },
+  { key: 'wholesale',     label: 'Wholesale Sales',    accent: '#fb7185' },
   { key: 'total',         label: 'Total Parts Gross',  accent: '#34d399' },
 ];
 
