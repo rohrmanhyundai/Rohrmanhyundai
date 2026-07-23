@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-23T15:41:31.719Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-07-23T14:03:04.987Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1316,11 +1321,6 @@
   },
   {
     "at": "2026-06-24T15:02:04.117Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T15:11:48.900Z",
     "type": "page",
     "label": "advisor-calendar"
   }
