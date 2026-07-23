@@ -48,22 +48,6 @@
     "notes": ""
   },
   {
-    "id": "mro34afakvsw",
-    "ro": "779277",
-    "roDate": "2026-07-16",
-    "vehicle": "2016 Subaru Legacy",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": "SOMETHING ABOUT A MIRROR?"
-  },
-  {
     "id": "mrp6g2w1h1uu",
     "ro": "779325",
     "roDate": "2026-07-17",
