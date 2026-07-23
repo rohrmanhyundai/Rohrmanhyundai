@@ -169,7 +169,56 @@ async function parseGrossReport(file) {
         const labor = (dailySum > 1 && mtdRow && best < 5)
           ? { mtd: readLabor(mtdRow), ly: readLabor(lyRow[1]) }
           : null;
-        summary = { cpActual: cpActual == null ? null : cpActual, grossActual: mtd.grossActual, labor };
+
+        // ── Per-category PARTS breakdown ──────────────────────────────────────
+        // Same idea as labor, but the parts columns are packed tighter. Page 2
+        // has six "PTS GROSS" columns (Customer / Warranty / Internal / Oil /
+        // Retail / Wholesale) and two "TIRE Gross" columns (Customer / Internal),
+        // left-to-right in that order. The eight of them sum to TOTAL PARTS.
+        const ptsXs  = items.filter(i => /^PTS\s*GROSS$/i.test(i.text)).map(i => i.x).sort((a, b) => a - b);
+        const tireXs = items.filter(i => /^TIRE\s*GROSS$/i.test(i.text)).map(i => i.x).sort((a, b) => a - b);
+        let parts = null;
+        if (ptsXs.length >= 6 && tireXs.length >= 2) {
+          const readParts = (row) => {
+            const v = (x) => parseCurrency(band(row, x - 16, x + 42)) || 0;
+            return {
+              cpParts:       v(ptsXs[0]),
+              warrantyParts: v(ptsXs[1]),
+              internalParts: v(ptsXs[2]),
+              oilParts:      v(ptsXs[3]),
+              oilRetail:     v(ptsXs[4]),
+              wholesale:     v(ptsXs[5]),
+              cpTire:        v(tireXs[0]),
+              internalTire:  v(tireXs[1]),
+              total:         parseCurrency(band(row, mid, partsHi)) || 0,
+            };
+          };
+          // The MTD parts row is the grand-total-of-daily row, matched by its
+          // TOTAL PARTS ≈ the sum of the daily parts entries (independent of the
+          // labor match, so parts still works if labor didn't).
+          const partsSum = Object.values(out).reduce((s, r) => s + (r.parts || 0), 0);
+          let pRow = null, pBest = Infinity;
+          for (const [, row] of Object.entries(byY)) {
+            if (row.some(t => /^\d{2}\/\d{2}\/\d{2}$/.test(t.text))) continue;
+            const tp = parseCurrency(band(row, mid, partsHi));
+            if (tp == null) continue;
+            const diff = Math.abs(tp - partsSum);
+            if (diff < pBest) { pBest = diff; pRow = row; }
+          }
+          if (partsSum > 1 && pRow && pBest < 5) {
+            const mtdP = readParts(pRow);
+            // Reconcile: the eight categories must add up to the total we read
+            // separately. If the packed columns bled into each other, this won't
+            // hold — so store nothing rather than show wrong numbers.
+            const catSum = mtdP.cpParts + mtdP.warrantyParts + mtdP.internalParts
+              + mtdP.oilParts + mtdP.oilRetail + mtdP.wholesale + mtdP.cpTire + mtdP.internalTire;
+            if (mtdP.total > 0 && Math.abs(catSum - mtdP.total) < Math.max(5, mtdP.total * 0.01)) {
+              parts = { mtd: mtdP, ly: readParts(lyRow[1]) };
+            }
+          }
+        }
+
+        summary = { cpActual: cpActual == null ? null : cpActual, grossActual: mtd.grossActual, labor, parts };
       }
     }
   }
@@ -227,7 +276,8 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
   const variance = M.actualTotal - M.expectedMTD;
   const up = variance >= 0;
   const projected = M.projected;
-  const lb = monthData && monthData.laborBreakdown;
+  // History/cross-dept: show whichever breakdown the stored bucket has.
+  const bd = breakdownConfig(monthData, undefined);
   const [open, setOpen] = useState(false); // daily table collapsed until clicked
   const [bkOpen, setBkOpen] = useState(false);
   const card = (icon, label, value, color, sub, onClick, subColor) => (
@@ -237,8 +287,8 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
   );
   return (
     <div>
-      {bkOpen && lb && (
-        <LaborBreakdownModal breakdown={lb} completedDays={M.completedDays} totalDays={M.totalDays} monthLabel={M.label} onClose={() => setBkOpen(false)} />
+      {bkOpen && bd && (
+        <GrossBreakdownModal breakdown={bd.breakdown} cats={bd.cats} title={bd.title} icon={bd.icon} completedDays={M.completedDays} totalDays={M.totalDays} monthLabel={M.label} onClose={() => setBkOpen(false)} />
       )}
       {isCurrent ? (<>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
@@ -247,7 +297,7 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
           {card('🎯', 'Daily Target', money(M.dailyTarget), '#22d3ee', `${M.totalDays} working days · ${M.completedDays} completed`)}
         </div>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-          {card('🔥', 'Actual MTD', money(M.actualTotal), '#c4b5fd', lb ? '🔍 Click for labor breakdown' : undefined, lb ? () => setBkOpen(true) : undefined, lb ? '#c4b5fd' : undefined)}
+          {card('🔥', 'Actual MTD', money(M.actualTotal), '#c4b5fd', bd ? `🔍 Click for ${bd.unit} breakdown` : undefined, bd ? () => setBkOpen(true) : undefined, bd ? '#c4b5fd' : undefined)}
           {card('📊', 'Expected MTD', money(M.expectedMTD), '#7dd3fc', `where you should be (${M.completedDays} × daily target)`)}
           {card('📈', 'Daily Average', hasActuals ? money(M.runRate) : '—', !hasActuals ? '#e2e8f0' : (M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185'), hasActuals ? 'per working day · target ' + money(M.dailyTarget) : 'avg gross per working day', undefined, !hasActuals ? undefined : (M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185'))}
           {card('⚡', up ? 'Ahead of Pace' : 'Behind Pace', (up ? '▲ ' : '▼ ') + money(Math.abs(variance)), up ? '#34d399' : '#fb7185')}
@@ -340,17 +390,49 @@ function MetricCard({ accent, icon, label, sub, subColor, children, minWidth = 1
 }
 const gfBig = (color) => ({ fontSize: 27, fontWeight: 900, color, marginTop: 6, letterSpacing: '-.01em', textShadow: `0 0 22px ${color}55` });
 
-// Detailed labor-gross breakdown, opened from the Actual MTD card. Shows each
-// labor category's MTD, projected month-end (MTD pace × workdays) and how that
+// The category rows for each department's breakdown. Every non-total row on
+// page 2 of the gross report; the eight parts columns sum exactly to Total Parts.
+const LABOR_CATS = [
+  { key: 'cp',        label: 'Customer Pay Labor', accent: '#38bdf8' },
+  { key: 'warranty',  label: 'Warranty Labor',     accent: '#a78bfa' },
+  { key: 'internal',  label: 'Internal Labor',     accent: '#fbbf24' },
+  { key: 'unapplied', label: 'Unapplied',          accent: '#94a3b8' },
+  { key: 'total',     label: 'Total Labor Gross',  accent: '#34d399' },
+];
+const PARTS_CATS = [
+  { key: 'cpParts',       label: 'Customer Pay Parts', accent: '#38bdf8' },
+  { key: 'cpTire',        label: 'Customer Tire',      accent: '#22d3ee' },
+  { key: 'warrantyParts', label: 'Warranty Parts',     accent: '#a78bfa' },
+  { key: 'internalParts', label: 'Internal Parts',     accent: '#fbbf24' },
+  { key: 'internalTire',  label: 'Internal Tire',      accent: '#f59e0b' },
+  { key: 'oilParts',      label: 'Oil Parts',          accent: '#34d399' },
+  { key: 'oilRetail',     label: 'Oil Retail Parts',   accent: '#4ade80' },
+  { key: 'wholesale',     label: 'Wholesale Parts',    accent: '#fb7185' },
+  { key: 'total',         label: 'Total Parts Gross',  accent: '#34d399' },
+];
+
+// Which breakdown a stored month has, if any. A bucket is per-department, so a
+// parts bucket carries partsBreakdown and a service bucket laborBreakdown.
+export function breakdownConfig(monthData, dept) {
+  const wantParts = dept === 'parts';
+  if (wantParts && monthData?.partsBreakdown)
+    return { breakdown: monthData.partsBreakdown, cats: PARTS_CATS, title: 'Parts Gross Breakdown', unit: 'parts', icon: '📦' };
+  if (!wantParts && monthData?.laborBreakdown)
+    return { breakdown: monthData.laborBreakdown, cats: LABOR_CATS, title: 'Labor Gross Breakdown', unit: 'labor', icon: '🔧' };
+  // History/cross-dept views don't pass a dept — fall back to whatever's stored.
+  if (dept === undefined) {
+    if (monthData?.partsBreakdown) return { breakdown: monthData.partsBreakdown, cats: PARTS_CATS, title: 'Parts Gross Breakdown', unit: 'parts', icon: '📦' };
+    if (monthData?.laborBreakdown) return { breakdown: monthData.laborBreakdown, cats: LABOR_CATS, title: 'Labor Gross Breakdown', unit: 'labor', icon: '🔧' };
+  }
+  return null;
+}
+
+// Detailed gross breakdown, opened from the Actual MTD card. Shows each
+// category's MTD, projected month-end (MTD pace × workdays) and how that
 // projection paces vs last year — same look/colors as the Goal Forecast page.
-function LaborBreakdownModal({ breakdown, completedDays, totalDays, monthLabel, onClose }) {
-  const cats = [
-    { key: 'cp',        label: 'Customer Pay Labor', accent: '#38bdf8' },
-    { key: 'warranty',  label: 'Warranty Labor',     accent: '#a78bfa' },
-    { key: 'internal',  label: 'Internal Labor',     accent: '#fbbf24' },
-    { key: 'unapplied', label: 'Unapplied',          accent: '#94a3b8' },
-    { key: 'total',     label: 'Total Labor Gross',  accent: '#34d399' },
-  ];
+// `cats`/`title`/`icon` come from breakdownConfig, so one modal serves labor and
+// parts.
+function GrossBreakdownModal({ breakdown, cats = LABOR_CATS, title = 'Labor Gross Breakdown', icon = '🔧', completedDays, totalDays, monthLabel, onClose }) {
   const cd = Math.max(completedDays || 0, 1);
   const td = Math.max(totalDays || cd, cd);
   const rows = cats.map(c => {
@@ -369,7 +451,7 @@ function LaborBreakdownModal({ breakdown, completedDays, totalDays, monthLabel, 
       <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1280, background: 'linear-gradient(160deg,#0c1322,#0a0f1c)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 22, padding: 32, boxShadow: '0 30px 90px rgba(0,0,0,.65)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <div>
-            <div style={{ fontSize: 27, fontWeight: 900, background: 'linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>Labor Gross Breakdown</div>
+            <div style={{ fontSize: 27, fontWeight: 900, background: 'linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>{title}</div>
             <div style={{ fontSize: 14.5, color: '#94a3b8', marginTop: 4 }}>{monthLabel} · projected month-end paced vs last year · {cd} of {td} workdays</div>
           </div>
           <button onClick={onClose} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 12, width: 46, height: 46, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>✕</button>
@@ -381,7 +463,7 @@ function LaborBreakdownModal({ breakdown, completedDays, totalDays, monthLabel, 
             const up = r.delta >= 0;
             const dColor = up ? '#34d399' : '#fb7185';
             return (
-              <MetricCard key={r.key} accent={r.accent} icon={r.key === 'total' ? '🏁' : '🔧'} label={r.label}
+              <MetricCard key={r.key} accent={r.accent} icon={r.key === 'total' ? '🏁' : icon} label={r.label}
                 minWidth={r.key === 'total' ? 260 : 210}
                 sub={<span style={{ fontSize: 13.5 }}>projected <strong style={{ color: '#e2e8f0' }}>{money(r.projected)}</strong> · <span style={{ color: dColor, fontWeight: 800 }}>{up ? '▲' : '▼'} {money(Math.abs(r.delta))}</span> vs LY{r.ly !== 0 ? ` (${r.pct >= 0 ? '+' : ''}${r.pct.toFixed(1)}%)` : ''}</span>}>
                 <div style={{ ...gfBig(r.accent), fontSize: 34 }}>{money(r.mtd)}</div>
@@ -551,6 +633,7 @@ export default function GoalForecast({
   const [lastYear, setLastYear] = useState(0);
   const [actuals, setActuals] = useState({}); // { 'YYYY-MM-DD': number }
   const [laborBreakdown, setLaborBreakdown] = useState(null); // { mtd:{cp,warranty,internal,unapplied,total}, ly:{...} } from the last gross-report upload
+  const [partsBreakdown, setPartsBreakdown] = useState(null); // parts equivalent, stored on the parts bucket
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [gridOpen, setGridOpen] = useState(false); // daily entry grid collapsed by default
   const [allMonths, setAllMonths] = useState({});  // every saved month (for History)
@@ -627,6 +710,7 @@ export default function GoalForecast({
       const next = { ...actuals, ...rowsByDate };
       setActuals(next);
       if (extra && extra.laborBreakdown) setLaborBreakdown(extra.laborBreakdown);
+      if (extra && extra.partsBreakdown) setPartsBreakdown(extra.partsBreakdown);
       persist({ actuals: next, ...(extra || {}) });
       setGridOpen(true);
     } else {
@@ -654,8 +738,9 @@ export default function GoalForecast({
       if (v.parts != null) partsRows[k] = safe(v.parts, 0);
     });
     const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : null;
+    const pb = (parseSummary && parseSummary.parts) ? parseSummary.parts : null;
     writeDeptActuals('service', svcRows, lb ? { laborBreakdown: lb } : null);
-    writeDeptActuals('parts', partsRows, null);
+    writeDeptActuals('parts', partsRows, pb ? { partsBreakdown: pb } : null);
 
     // Push the service MTD pacing figures to the dashboard Goal Gauges.
     if (parseSummary && onGaugeActuals) {
@@ -684,7 +769,8 @@ export default function GoalForecast({
         setLastYear(safe(parsed.lastYear, 0));
         setActuals(parsed.actuals || {});
         setLaborBreakdown(parsed.laborBreakdown || null);
-        latestRef.current = { forecast: safe(parsed.forecast, 0), lastYear: safe(parsed.lastYear, 0), actuals: parsed.actuals || {}, laborBreakdown: parsed.laborBreakdown || null };
+        setPartsBreakdown(parsed.partsBreakdown || null);
+        latestRef.current = { forecast: safe(parsed.forecast, 0), lastYear: safe(parsed.lastYear, 0), actuals: parsed.actuals || {}, laborBreakdown: parsed.laborBreakdown || null, partsBreakdown: parsed.partsBreakdown || null };
       }
     } catch { /* ignore */ }
     // 2) Authoritative load from the server (per-department file).
@@ -695,9 +781,10 @@ export default function GoalForecast({
       if (bucket) {
         const f = safe(bucket.forecast, 0), ly = safe(bucket.lastYear, 0), ac = bucket.actuals || {};
         const lb = bucket.laborBreakdown || null;
-        setForecast(f); setLastYear(ly); setActuals(ac); setLaborBreakdown(lb);
-        latestRef.current = { forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb };
-        try { localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb })); } catch {}
+        const pb = bucket.partsBreakdown || null;
+        setForecast(f); setLastYear(ly); setActuals(ac); setLaborBreakdown(lb); setPartsBreakdown(pb);
+        latestRef.current = { forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb, partsBreakdown: pb };
+        try { localStorage.setItem(storageKey(mk), JSON.stringify({ forecast: f, lastYear: ly, actuals: ac, laborBreakdown: lb, partsBreakdown: pb })); } catch {}
       }
     }).catch(() => {});
     return () => { cancelled = true; };
@@ -706,7 +793,7 @@ export default function GoalForecast({
   // Persist locally immediately (cache) and to the server debounced, so rapid
   // typing doesn't hammer the API. Only this department's file is touched.
   function persist(next) {
-    const merged = { forecast, lastYear, actuals, laborBreakdown, ...next };
+    const merged = { forecast, lastYear, actuals, laborBreakdown, partsBreakdown, ...next };
     latestRef.current = merged;
     try { localStorage.setItem(storageKey(mk), JSON.stringify(merged)); } catch { /* ignore */ }
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -964,10 +1051,14 @@ export default function GoalForecast({
     });
   }
 
+  // The breakdown for THIS page's department: parts page → parts, service → labor.
+  const mainBd = breakdownConfig({ laborBreakdown, partsBreakdown }, dept);
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-      {breakdownOpen && laborBreakdown && (
-        <LaborBreakdownModal breakdown={laborBreakdown} completedDays={completedDays} totalDays={totalDays}
+      {breakdownOpen && mainBd && (
+        <GrossBreakdownModal breakdown={mainBd.breakdown} cats={mainBd.cats} title={mainBd.title} icon={mainBd.icon}
+          completedDays={completedDays} totalDays={totalDays}
           monthLabel={monthLabel} onClose={() => setBreakdownOpen(false)} />
       )}
       {(parsePreview || parseErr) && (
@@ -1210,8 +1301,8 @@ export default function GoalForecast({
           {/* Summary cards */}
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
             <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD"
-              onClick={laborBreakdown ? () => setBreakdownOpen(true) : undefined}
-              sub={laborBreakdown ? '🔍 Click for labor breakdown' : undefined} subColor="#c4b5fd">
+              onClick={mainBd ? () => setBreakdownOpen(true) : undefined}
+              sub={mainBd ? `🔍 Click for ${mainBd.unit} breakdown` : undefined} subColor="#c4b5fd">
               <div style={gfBig('#c4b5fd')}>{money(actualMTD)}</div>
             </MetricCard>
             <MetricCard accent="#38bdf8" icon="📊" label="Expected MTD" sub={`where you should be (${completedDays} × daily target)`}>
