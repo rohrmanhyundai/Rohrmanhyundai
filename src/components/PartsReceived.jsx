@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, listWipTechs,
-  loadTechChatMessages, saveTechChatMessages,
+  updateTechChatMessages,
 } from '../utils/github';
 import { triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 import { trackAction } from '../utils/activityTracker';
@@ -31,14 +31,14 @@ async function mapLimit(items, limit, fn) {
 // Post a message to the Tech Chat from `username` and broadcast it so every
 // open chat refreshes immediately.
 async function postTechChat(username, text) {
-  const latest = await loadTechChatMessages();
   const newMsg = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
     username,
     text,
     timestamp: Date.now(),
   };
-  await saveTechChatMessages([...latest, newMsg]);
+  // Append against the fresh server list so a simultaneous chat send isn't lost.
+  await updateTechChatMessages(cur => [...cur, newMsg]);
   triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT);
 }
 

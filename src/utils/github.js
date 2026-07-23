@@ -181,6 +181,70 @@ async function saveGitHubFile(headers, path, data, message) {
   throw lastErr || new Error('GitHub save failed');
 }
 
+// Conflict-safe read-modify-write for a JSON file. Re-reads the FRESH content on
+// EVERY attempt (including after a conflict) and re-applies `mutate`, then writes
+// with that read's sha. This is what saveGitHubFile can't do: on a 409 it re-read
+// only the sha and re-sent the SAME stale content, so two clients appending to
+// the chat at the same moment each overwrote the other — one message silently
+// vanished ("I sent it and it didn't show up"). Here the loser of the race simply
+// re-reads the winner's message and appends onto it, so both survive.
+// `mutate(current)` gets the latest parsed value (or null if the file is missing)
+// and returns the next value to write.
+async function mutateGitHubJson(path, mutate, message) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = authHeaders();
+  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  let lastErr = null;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    let sha = null, current = null;
+    try {
+      const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
+      noteRateLimit(getRes);
+      if (getRes.ok) {
+        const ex = await getRes.json();
+        sha = ex.sha || null;
+        try {
+          const bytes = Uint8Array.from(atob(ex.content.replace(/\s/g, '')), c => c.charCodeAt(0));
+          current = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+        } catch { current = null; }
+      } else if (getRes.status !== 404) {
+        lastErr = new Error(`GitHub read failed (${getRes.status})`);
+        await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+        continue;
+      }
+    } catch (e) {
+      lastErr = e;
+      await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      continue;
+    }
+
+    const next = mutate(current);
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(next, null, 2))));
+    let putRes;
+    try {
+      putRes = await fetch(putUrl, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, content, branch: GITHUB_BRANCH, sha }),
+      });
+    } catch (e) {
+      lastErr = e;
+      await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      continue;
+    }
+    if (putRes.ok) return next;
+    noteRateLimit(putRes);
+    let j = {}; try { j = await putRes.json(); } catch {}
+    lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
+    // Stale-sha / transient: loop re-reads fresh content and re-applies mutate.
+    if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) break;
+    await new Promise(r => setTimeout(r, 200 * (attempt + 1)));
+  }
+  throw lastErr || new Error('GitHub save failed');
+}
+
 // Read a file directly from the GitHub API (bypasses GitHub Pages rebuild delay).
 // Works without a token for public repos (60 req/hr unauthenticated).
 async function readGitHubFile(headers, path) {
@@ -840,15 +904,15 @@ export async function loadChatMessages() {
   return [];
 }
 
-export async function saveChatMessages(messages) {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  // Prune messages older than 30 days
+// Conflict-safe update: `mutate(currentMessages)` runs against the FRESH server
+// list (re-run if another client saved first), so concurrent sends/reactions
+// never clobber each other. Returns the saved list. Prunes >30-day-old messages.
+export async function updateChatMessages(mutate) {
   const cutoff = Date.now() - THIRTY_DAYS_MS;
-  const pruned = messages.filter(m => m.timestamp > cutoff);
-  await saveGitHubFile(headers, CHAT_PATH, pruned, `Chat update ${new Date().toISOString()}`);
-  return pruned;
+  return mutateGitHubJson(CHAT_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return (mutate(arr) || []).filter(m => m && m.timestamp > cutoff);
+  }, `Chat update ${new Date().toISOString()}`);
 }
 
 // ── Aftermarket Warranty Contracts ────────────────────────────────────────────
@@ -1309,14 +1373,13 @@ export async function loadTechChatMessages() {
   return [];
 }
 
-export async function saveTechChatMessages(messages) {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
+// Conflict-safe update — see updateChatMessages.
+export async function updateTechChatMessages(mutate) {
   const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  const pruned = messages.filter(m => m.timestamp > cutoff);
-  await saveGitHubFile(headers, TECH_CHAT_PATH, pruned, `Tech chat update ${new Date().toISOString()}`);
-  return pruned;
+  return mutateGitHubJson(TECH_CHAT_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return (mutate(arr) || []).filter(m => m && m.timestamp > cutoff);
+  }, `Tech chat update ${new Date().toISOString()}`);
 }
 
 
