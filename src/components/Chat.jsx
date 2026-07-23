@@ -238,6 +238,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       borderRadius: 18, overflow: 'hidden', height: '100%',
       boxShadow: '0 4px 18px rgba(0,0,0,0.35)',
     }}>
+      <style>{`@keyframes chatAlertPulse{0%,100%{box-shadow:0 0 0 2px rgba(239,68,68,.9),0 0 14px 3px rgba(239,68,68,.45)}50%{box-shadow:0 0 0 2px rgba(239,68,68,1),0 0 22px 6px rgba(239,68,68,.75)}}`}</style>
       {/* Header */}
       <div style={{
         padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -294,6 +295,9 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           const isActive = activeMsgId === msg.id;
           const reactions = msg.reactions || {};
           const activeReactions = ['👍','❤️','❓','🚨'].filter(em => (reactions[em] || []).length > 0);
+          // A 🚨 reaction marks the message as an alert — the bubble pulses red
+          // so it's impossible to miss.
+          const isAlert = (reactions['🚨'] || []).length > 0;
           const r = 18;
           const tail = 5;
           const radius = isMe
@@ -345,7 +349,10 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
                     fontSize: 14, lineHeight: 1.4,
                     maxWidth: '100%', minWidth: 0,
                     wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'pre-wrap',
-                    boxShadow: isMe ? '0 1px 2px rgba(37,99,235,.4)' : '0 1px 2px rgba(0,0,0,.25)',
+                    boxShadow: isAlert
+                      ? '0 0 0 2px rgba(239,68,68,.9), 0 0 16px 4px rgba(239,68,68,.55)'
+                      : isMe ? '0 1px 2px rgba(37,99,235,.4)' : '0 1px 2px rgba(0,0,0,.25)',
+                    animation: isAlert ? 'chatAlertPulse 1.4s ease-in-out infinite' : undefined,
                     cursor: hasChatAccess ? 'pointer' : 'default',
                     transition: 'transform .12s ease',
                     transform: isActive ? 'scale(1.02)' : 'scale(1)',
