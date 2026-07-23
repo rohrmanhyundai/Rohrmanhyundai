@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { loadTechChatMessages, saveTechChatMessages } from '../utils/github';
+import { loadTechChatMessages, updateTechChatMessages } from '../utils/github';
 import { getPusher, triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 
 const TYPING_PAUSE_MS = 2000;
@@ -97,7 +97,6 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
     setSending(true);
     setError('');
     try {
-      const latest = await loadTechChatMessages();
       const newMsg = {
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
         username: currentUser,
@@ -105,7 +104,8 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
         timestamp: Date.now(),
         ...(replyTo ? { replyTo: { id: replyTo.id, username: replyTo.username, text: replyTo.text.slice(0, 140) } } : {}),
       };
-      const saved = await saveTechChatMessages([...latest, newMsg]);
+      // Append against the FRESH server list so a simultaneous send can't drop it.
+      const saved = await updateTechChatMessages(cur => [...cur, newMsg]);
       setMessages(saved);
       setText('');
       setReplyTo(null);
@@ -135,8 +135,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
   async function toggleReaction(msgId, emoji) {
     setError('');
     try {
-      const latest = await loadTechChatMessages();
-      const updated = latest.map(m => {
+      const saved = await updateTechChatMessages(cur => cur.map(m => {
         if (m.id !== msgId) return m;
         const reactions = { ...(m.reactions || {}) };
         const list = reactions[emoji] || [];
@@ -146,8 +145,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
         if (next.length === 0) delete reactions[emoji];
         else reactions[emoji] = next;
         return { ...m, reactions };
-      });
-      const saved = await saveTechChatMessages(updated);
+      }));
       setMessages(saved);
       triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT);
     } catch (err) {
@@ -160,8 +158,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
     setDeleting(id);
     setError('');
     try {
-      const latest = await loadTechChatMessages();
-      const updated = await saveTechChatMessages(latest.filter(m => m.id !== id));
+      const updated = await updateTechChatMessages(cur => cur.filter(m => m.id !== id));
       setMessages(updated);
     } catch (err) {
       setError(err.message);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { loadChatMessages, saveChatMessages } from '../utils/github';
+import { loadChatMessages, updateChatMessages } from '../utils/github';
 import { getPusher, triggerEvent, ADVISOR_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 
 const TYPING_PAUSE_MS = 2000;
@@ -128,7 +128,6 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     setSending(true);
     setError('');
     try {
-      const latest = await loadChatMessages();
       const newMsg = {
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
         username: currentUser,
@@ -136,7 +135,8 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
         timestamp: Date.now(),
         ...(replyTo ? { replyTo: { id: replyTo.id, username: replyTo.username, text: replyTo.text.slice(0, 140) } } : {}),
       };
-      const saved = await saveChatMessages([...latest, newMsg]);
+      // Append against the FRESH server list so a simultaneous send can't drop it.
+      const saved = await updateChatMessages(cur => [...cur, newMsg]);
       setMessages(saved);
       setText('');
       setReplyTo(null);
@@ -166,8 +166,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   async function toggleReaction(msgId, emoji) {
     setError('');
     try {
-      const latest = await loadChatMessages();
-      const updated = latest.map(m => {
+      const saved = await updateChatMessages(cur => cur.map(m => {
         if (m.id !== msgId) return m;
         const reactions = { ...(m.reactions || {}) };
         const list = reactions[emoji] || [];
@@ -177,8 +176,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
         if (next.length === 0) delete reactions[emoji];
         else reactions[emoji] = next;
         return { ...m, reactions };
-      });
-      const saved = await saveChatMessages(updated);
+      }));
       setMessages(saved);
       triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT);
     } catch (err) {
@@ -191,8 +189,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
     setDeleting(id);
     setError('');
     try {
-      const latest = await loadChatMessages();
-      const updated = await saveChatMessages(latest.filter(m => m.id !== id));
+      const updated = await updateChatMessages(cur => cur.filter(m => m.id !== id));
       setMessages(updated);
     } catch (err) {
       setError(err.message);
