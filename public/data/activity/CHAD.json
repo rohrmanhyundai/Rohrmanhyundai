@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-23T11:55:39.484Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-22T20:33:18.945Z",
     "type": "page",
     "label": "hotRepairs"
@@ -1477,11 +1482,5 @@
     "at": "2026-06-23T12:16:12.893Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-22T21:35:34.615Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778597 tech CHAD"
   }
 ]
