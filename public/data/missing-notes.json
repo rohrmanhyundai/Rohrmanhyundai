@@ -1,8 +1,16 @@
 {
-  "updatedAt": "2026-07-23T18:31:30.220Z",
+  "updatedAt": "2026-07-23T20:54:53.436Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
+      {
+        "ro": "779509",
+        "vehicle": "2021 Hyundai Elantra"
+      },
+      {
+        "ro": "779507",
+        "vehicle": "2024 Hyundai Sonata"
+      },
       {
         "ro": "779505",
         "vehicle": "2026 Hyundai Palisade"
@@ -14,10 +22,6 @@
       {
         "ro": "779502",
         "vehicle": "2018 Hyundai Tucson"
-      },
-      {
-        "ro": "779499",
-        "vehicle": "2024 Hyundai Tucson"
       },
       {
         "ro": "779497",
@@ -80,37 +84,11 @@
         "vehicle": "2021 Hyundai Palisade"
       }
     ],
-    "DAVID": [
-      {
-        "ro": "779503",
-        "vehicle": "2016 Hyundai Elantra"
-      },
-      {
-        "ro": "779495",
-        "vehicle": "2024 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779488",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779479",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779476",
-        "vehicle": "2024 Hyundai Kona"
-      },
-      {
-        "ro": "779471",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "779448",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "779508",
+        "vehicle": "2025 Nissan Rogue"
+      },
       {
         "ro": "779482",
         "vehicle": "2025 Toyota Camry"
@@ -166,6 +144,20 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779506",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "779476",
+        "vehicle": "2024 Hyundai Kona"
+      },
+      {
+        "ro": "779448",
+        "vehicle": "2026 Hyundai Sonata Hybrid"
       }
     ],
     "CODY": [
