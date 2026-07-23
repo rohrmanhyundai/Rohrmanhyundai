@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-23T17:56:37.167Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-07-23T14:26:41.261Z",
     "type": "page",
     "label": "work-in-progress"
@@ -381,21 +386,5 @@
     "type": "action",
     "label": "delete-wip-row",
     "details": "RO 778627 tech JACOB"
-  },
-  {
-    "at": "2026-06-23T16:54:29.536Z",
-    "type": "action",
-    "label": "undo-parts-arrived",
-    "details": "RO 778359"
-  },
-  {
-    "at": "2026-06-23T16:54:12.100Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-23T16:54:10.612Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
