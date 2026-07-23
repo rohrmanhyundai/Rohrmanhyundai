@@ -61,6 +61,30 @@
       "2026-07-21": 5818.27,
       "2026-07-22": 8556.44
     },
-    "laborBreakdown": null
+    "laborBreakdown": null,
+    "partsBreakdown": {
+      "mtd": {
+        "cpParts": 14725.17,
+        "warrantyParts": 30074.53101,
+        "internalParts": 8868.57,
+        "oilParts": 6029.81,
+        "oilRetail": 471.87,
+        "wholesale": 6670.81,
+        "cpTire": 734.70294,
+        "internalTire": 752.39,
+        "total": 68327.85
+      },
+      "ly": {
+        "cpParts": 17820.39,
+        "warrantyParts": 51741.67164,
+        "internalParts": 11229.42,
+        "oilParts": 5381.92,
+        "oilRetail": 2603.65,
+        "wholesale": 14036.52,
+        "cpTire": 1385.45333,
+        "internalTire": 2589.14,
+        "total": 106788.16
+      }
+    }
   }
 }
