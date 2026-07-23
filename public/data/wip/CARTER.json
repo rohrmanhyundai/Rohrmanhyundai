@@ -1,21 +1,5 @@
 [
   {
-    "id": "mruz2br4kv1s",
-    "ro": "779428",
-    "roDate": "2026-07-21",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES- active air keeps staying open. (sop)",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/22/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
-  },
-  {
     "id": "mrv635a8mb3m",
     "ro": "779434",
     "roDate": "2026-07-21",
