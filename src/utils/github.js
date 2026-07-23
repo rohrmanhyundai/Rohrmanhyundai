@@ -634,7 +634,6 @@ const MAX_SEARCH_TEXT = 200000;
 export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-repairs', searchText = '') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
   const indexPath = bulletinIndexPath(kind);
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -649,7 +648,6 @@ export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-rep
     throw new Error('S3 upload failed: ' + (err.message || err));
   }
 
-  const currentIndex = await loadHotRepairs(kind);
   const newEntry = {
     id,
     label,
@@ -660,9 +658,11 @@ export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-rep
     uploadedAt: new Date().toISOString(),
     searchText: (searchText || '').slice(0, MAX_SEARCH_TEXT),
   };
-  const newIndex = [newEntry, ...currentIndex];
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: add ${label}`);
-  return newIndex;
+  // Prepend onto the authoritative index (retry on conflict) so a concurrent
+  // op-code save or another upload can't drop this new bulletin.
+  return mutateGitHubJson(indexPath,
+    (cur) => [newEntry, ...(Array.isArray(cur) ? cur : [])],
+    `${BULLETIN_KINDS[kind]}: add ${label}`);
 }
 
 // Backfill/refresh stored full-text for search. `textById` is a map of
@@ -672,76 +672,56 @@ export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-rep
 export async function backfillHotRepairSearchText(textById, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
+  // Nothing to do → no write (avoids an empty commit and an extra API round-trip).
   const currentIndex = await loadHotRepairs(kind);
-  let changed = 0;
-  const newIndex = currentIndex.map(d => {
-    if (textById[d.id] != null) {
-      changed++;
-      return { ...d, searchText: String(textById[d.id] || '').slice(0, MAX_SEARCH_TEXT) };
-    }
-    return d;
-  });
-  if (changed > 0) {
-    await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: index ${changed} PDF(s) for search`);
-  }
-  return newIndex;
+  if (!currentIndex.some(d => textById[d.id] != null)) return currentIndex;
+  return mutateGitHubJson(bulletinIndexPath(kind), (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(d => textById[d.id] != null
+      ? { ...d, searchText: String(textById[d.id] || '').slice(0, MAX_SEARCH_TEXT) }
+      : d);
+  }, `${BULLETIN_KINDS[kind]}: index ${Object.keys(textById).length} PDF(s) for search`);
 }
 
 export async function renameHotRepair(id, newLabel, kind = 'hot-repairs') {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
-  const currentIndex = await loadHotRepairs(kind);
-  const newIndex = currentIndex.map(d => d.id === id ? { ...d, label: newLabel } : d);
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: rename to ${newLabel}`);
-  return newIndex;
+  return mutateGitHubJson(bulletinIndexPath(kind),
+    (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === id ? { ...d, label: newLabel } : d),
+    `${BULLETIN_KINDS[kind]}: rename to ${newLabel}`);
 }
 
 // Flag/unflag an item as a "Warranty Hot Repair" (highlighted for viewers).
 export async function setHotRepairWarranty(id, warranty, kind = 'hot-repairs') {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
-  const currentIndex = await loadHotRepairs(kind);
-  const newIndex = currentIndex.map(d => d.id === id ? { ...d, warranty: !!warranty } : d);
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: warranty flag ${warranty ? 'on' : 'off'}`);
-  return newIndex;
+  return mutateGitHubJson(bulletinIndexPath(kind),
+    (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === id ? { ...d, warranty: !!warranty } : d),
+    `${BULLETIN_KINDS[kind]}: warranty flag ${warranty ? 'on' : 'off'}`);
 }
 
 // Set searchable tags / bulletin numbers on an item (free text, searchable).
 export async function setHotRepairTags(id, tags, kind = 'hot-repairs') {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
-  const currentIndex = await loadHotRepairs(kind);
-  const newIndex = currentIndex.map(d => d.id === id ? { ...d, tags: tags || '' } : d);
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: update tags`);
-  return newIndex;
+  return mutateGitHubJson(bulletinIndexPath(kind),
+    (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === id ? { ...d, tags: tags || '' } : d),
+    `${BULLETIN_KINDS[kind]}: update tags`);
 }
 
 // Save the Op Code Generator data for a bulletin (and/or its exclude flag).
 // opData shape: { questions: [{id,label}], entries: [{id, answers:{qid:val}, model,
 // opCode, operation, opTime, causalPart, natureCode, causeCode}] }.
 export async function setHotRepairOpData(id, { opData, opExcluded } = {}, kind = 'hot-repairs') {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
-  const currentIndex = await loadHotRepairs(kind);
-  const newIndex = currentIndex.map(d => {
-    if (d.id !== id) return d;
-    const next = { ...d };
-    if (opData !== undefined) next.opData = opData;
-    if (opExcluded !== undefined) next.opExcluded = !!opExcluded;
-    return next;
-  });
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: update op codes`);
-  return newIndex;
+  // Conflict-safe: the mutation is applied to the AUTHORITATIVE index read inside
+  // the write (with retry), never to a possibly-stale copy. The old path loaded
+  // the index up front and re-saved the whole thing, so if another device had
+  // just added a bulletin, this save wrote the stale list back and DELETED that
+  // bulletin — the reported bug.
+  return mutateGitHubJson(bulletinIndexPath(kind), (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(d => {
+      if (d.id !== id) return d;
+      const next = { ...d };
+      if (opData !== undefined) next.opData = opData;
+      if (opExcluded !== undefined) next.opExcluded = !!opExcluded;
+      return next;
+    });
+  }, `${BULLETIN_KINDS[kind]}: update op codes`);
 }
 
 // Move a bulletin between kinds (e.g. 'recalls' → 'hot-repairs'). The PDF lives
@@ -750,39 +730,35 @@ export async function setHotRepairOpData(id, { opData, opExcluded } = {}, kind =
 export async function moveHotRepair(item, fromKind, toKind) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
   const fromIndex = await loadHotRepairs(fromKind);
   const victim = fromIndex.find(d => d.id === item.id) || item;
-  const newFrom = fromIndex.filter(d => d.id !== item.id);
-  const toIndex = await loadHotRepairs(toKind);
-  const newTo = [victim, ...toIndex.filter(d => d.id !== item.id)];
   // Save the destination FIRST so a partial failure leaves a recoverable
-  // duplicate rather than losing the bulletin entirely.
-  await saveGitHubFile(headers, bulletinIndexPath(toKind), newTo, `${BULLETIN_KINDS[toKind]}: move in ${victim.label}`);
-  await saveGitHubFile(headers, bulletinIndexPath(fromKind), newFrom, `${BULLETIN_KINDS[fromKind]}: move out ${victim.label}`);
-  return newFrom;
+  // duplicate rather than losing the bulletin entirely. Each write re-reads its
+  // own index fresh, so neither move can drop bulletins added elsewhere.
+  await mutateGitHubJson(bulletinIndexPath(toKind),
+    (cur) => [victim, ...(Array.isArray(cur) ? cur : []).filter(d => d.id !== item.id)],
+    `${BULLETIN_KINDS[toKind]}: move in ${victim.label}`);
+  return mutateGitHubJson(bulletinIndexPath(fromKind),
+    (cur) => (Array.isArray(cur) ? cur : []).filter(d => d.id !== item.id),
+    `${BULLETIN_KINDS[fromKind]}: move out ${victim.label}`);
 }
 
 // Persist a manual ordering. `orderedIds` is the desired top-to-bottom order.
 export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
-  const currentIndex = await loadHotRepairs(kind);
-  const byId = new Map(currentIndex.map(d => [d.id, d]));
-  const ordered = orderedIds.map(id => byId.get(id)).filter(Boolean);
-  // Append any items not present in orderedIds (safety), keeping their order.
-  for (const d of currentIndex) if (!orderedIds.includes(d.id)) ordered.push(d);
-  await saveGitHubFile(headers, indexPath, ordered, `${BULLETIN_KINDS[kind]}: reorder`);
-  return ordered;
+  return mutateGitHubJson(bulletinIndexPath(kind), (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const byId = new Map(arr.map(d => [d.id, d]));
+    const ordered = orderedIds.map(id => byId.get(id)).filter(Boolean);
+    // Append anything not in orderedIds (e.g. a bulletin added on another device
+    // since the drag started) so a reorder can never drop it.
+    for (const d of arr) if (!orderedIds.includes(d.id)) ordered.push(d);
+    return ordered;
+  }, `${BULLETIN_KINDS[kind]}: reorder`);
 }
 
 export async function deleteHotRepair(item, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  const indexPath = bulletinIndexPath(kind);
 
   if (await ensureAwsCreds()) {
     try {
@@ -792,10 +768,9 @@ export async function deleteHotRepair(item, kind = 'hot-repairs') {
     }
   }
 
-  const currentIndex = await loadHotRepairs(kind);
-  const newIndex = currentIndex.filter(d => d.id !== item.id);
-  await saveGitHubFile(headers, indexPath, newIndex, `${BULLETIN_KINDS[kind]}: remove ${item.label}`);
-  return newIndex;
+  return mutateGitHubJson(bulletinIndexPath(kind),
+    (cur) => (Array.isArray(cur) ? cur : []).filter(d => d.id !== item.id),
+    `${BULLETIN_KINDS[kind]}: remove ${item.label}`);
 }
 
 // ── Service Invitation Completed Reviews ───────────────────────────────────────
