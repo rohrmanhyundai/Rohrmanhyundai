@@ -127,20 +127,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mrxf842e7i8j",
-    "ro": "779445",
-    "roDate": "2026-07-23",
-    "vehicle": "2013 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES ENGINE WILL NOT START. CHECK AND ADVISE.",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
