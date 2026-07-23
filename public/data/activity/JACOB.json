@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-23T20:22:17.548Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-07-23T17:56:37.167Z",
     "type": "page",
     "label": "tech-resources"
@@ -369,22 +374,5 @@
     "at": "2026-06-24T14:36:03.838Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-23T19:59:00.775Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-23T19:58:29.909Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778613 tech JACOB"
-  },
-  {
-    "at": "2026-06-23T19:58:25.067Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778627 tech JACOB"
   }
 ]
