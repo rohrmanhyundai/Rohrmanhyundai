@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-23T11:54:57.435Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-22T17:53:16.195Z",
     "type": "action",
     "label": "parts-received-mark",
