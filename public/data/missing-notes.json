@@ -1,57 +1,43 @@
 {
-  "updatedAt": "2026-07-22T17:46:34.981Z",
+  "updatedAt": "2026-07-23T11:21:31.333Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "779461",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
+        "ro": "779476",
+        "vehicle": "2024 Hyundai Kona"
       },
       {
-        "ro": "779460",
-        "vehicle": "2019 Hyundai Tucson"
+        "ro": "779473",
+        "vehicle": "2011 Hyundai Sonata"
       },
       {
-        "ro": "779455",
-        "vehicle": "2016 Hyundai Sonata"
-      },
-      {
-        "ro": "779452",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779450",
-        "vehicle": "2025 Hyundai Tucson"
+        "ro": "779471",
+        "vehicle": "2026 Hyundai Sonata"
       },
       {
         "ro": "779448",
         "vehicle": "2026 Hyundai Sonata Hybrid"
-      },
+      }
+    ],
+    "CODY": [
       {
-        "ro": "779440",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779439",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779438",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "779370",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "779472",
+        "vehicle": "2020 Subaru Legacy"
       }
     ],
     "JORDAN": [
       {
-        "ro": "779459",
-        "vehicle": "2026 Hyundai Kona"
+        "ro": "779470",
+        "vehicle": "2020 Hyundai Elantra"
       },
       {
-        "ro": "779457",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
+        "ro": "779465",
+        "vehicle": "2015 Hyundai Sonata"
+      },
+      {
+        "ro": "779459",
+        "vehicle": "2026 Hyundai Kona"
       },
       {
         "ro": "779456",
@@ -134,10 +120,6 @@
       {
         "ro": "779304",
         "vehicle": "2016 Chevrolet Colorado"
-      },
-      {
-        "ro": "779281",
-        "vehicle": "2017 GMC Acadia Limited"
       },
       {
         "ro": "779277",
