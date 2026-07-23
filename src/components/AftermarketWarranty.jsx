@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies } from '../utils/github';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
 
@@ -1413,7 +1413,9 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
         newContracts = [form, ...contracts];
       }
       newContracts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-      await saveWarrantyContract(form, newContracts);
+      // Conflict-safe upsert — the server merges this contract into the freshest
+      // index rather than overwriting with our (possibly stale) list.
+      await saveWarrantyContract(form);
       setContracts(newContracts);
       setActiveContract(form);
       setView('detail');
@@ -1448,7 +1450,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
     setSaving(true); setSaveError('');
     try {
       const newContracts = contracts.filter(c => c.id !== activeContract.id);
-      await saveWarrantyContract(activeContract, newContracts);
+      await removeWarrantyContract(activeContract.id);
       setContracts(newContracts);
       setActiveContract(null);
       setView('list');

@@ -945,13 +945,32 @@ export async function loadWarrantyContract(id) {
   return null;
 }
 
-export async function saveWarrantyContract(contract, index) {
+export async function saveWarrantyContract(contract) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = authHeaders();
-  await saveGitHubFile(headers, warrantyContractPath(contract.id), contract,
+  // The per-contract file is keyed by a unique id, so a plain save is safe.
+  await saveGitHubFile(authHeaders(), warrantyContractPath(contract.id), contract,
     `Warranty contract ${contract.id} - ${contract.customerName || 'unknown'}`);
-  await saveGitHubFile(headers, WARRANTY_INDEX_PATH, index, `Update warranty index ${new Date().toISOString()}`);
+  // The INDEX is shared. It used to be overwritten with the caller's whole
+  // in-memory list, so saving from a stale page dropped contracts other people
+  // had just added. Upsert this one contract into the freshest index instead.
+  return mutateGitHubJson(WARRANTY_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(c => c.id === contract.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = contract; return next; }
+    return [contract, ...arr];
+  }, `Update warranty index ${new Date().toISOString()}`);
+}
+
+// Remove a contract from the shared index (conflict-safe). The per-contract file
+// is left in place — harmless, and it means a mis-click is recoverable.
+export async function removeWarrantyContract(contract) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const id = typeof contract === 'string' ? contract : contract.id;
+  return mutateGitHubJson(WARRANTY_INDEX_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(c => c.id !== id),
+    `Remove warranty contract ${id}`);
 }
 
 // ── Warranty Company Directory ────────────────────────────────────────────────
