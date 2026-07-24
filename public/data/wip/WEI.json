@@ -90,21 +90,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": "CAR IS IN THE SHOP NOW LCD WAS ORDERED"
-  },
-  {
-    "id": "mrxf82eywxye",
-    "ro": "779446",
-    "roDate": "2026-07-23",
-    "vehicle": "2025 Hyundai Sonata",
-    "jobDesc": "REPLACE ONE TIRE",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
