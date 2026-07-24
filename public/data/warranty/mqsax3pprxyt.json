@@ -1,7 +1,7 @@
 {
   "id": "mqsax3pprxyt",
   "createdAt": "2026-06-24T16:42:24.397Z",
-  "updatedAt": "2026-07-24T18:13:53.192Z",
+  "updatedAt": "2026-07-24T19:11:22.277Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Brittany Rice",
   "customerPhone": "260) 443 - 1735",
@@ -16,7 +16,7 @@
   "claimNumber": "C102534940",
   "authNumber": "C102534940",
   "laborRate": "190.00",
-  "laborTime": "13.10",
+  "laborTime": "16.8",
   "diagnosisTime": "1.00",
   "parts": [
     {
@@ -46,6 +46,20 @@
       "description": "SERVICE KIT",
       "qty": "1",
       "price": "101.21"
+    },
+    {
+      "id": "mrzbdqdas6qw",
+      "partNumber": "25310-D3500",
+      "description": "RADIATOR ASSY",
+      "qty": "1",
+      "price": "769.37"
+    },
+    {
+      "id": "mrzbe351kkrb",
+      "partNumber": "719005",
+      "description": "VALVOLINE MAX LIFE COOLANT",
+      "qty": "1",
+      "price": "16.99"
     }
   ],
   "taxPct": "7",
