@@ -27,8 +27,23 @@ function itemMath(item, doorRate) {
   const parts = hasParts ? (numOf(item.parts) || 0) : Math.max(0, (numOf(item.total) || 0) - laborCost);
   return { parts, laborCost, total: parts + laborCost };
 }
-function packageTotal(pkg, doorRate) {
-  return (pkg.items || []).reduce((s, it) => s + itemMath(it, doorRate).total, 0);
+// Roll every line up into the package-level totals. Tax defaults to 7% and can
+// be aimed at parts only (auto-service standard) or the whole subtotal. The
+// grand total = parts + labor + tax.
+function packageSummary(pkg, doorRate) {
+  const dr = numOf(doorRate) || 0;
+  let parts = 0, labor = 0, hours = 0;
+  for (const it of (pkg.items || [])) {
+    const m = itemMath(it, doorRate);
+    parts += m.parts; labor += m.laborCost; hours += numOf(it.laborHours) || 0;
+  }
+  const subtotal = parts + labor;
+  const elr = (hours > 0 && dr > 0) ? (labor / hours) / dr * 100 : null;
+  const rate = numOf(pkg.taxRate);
+  const taxRate = rate == null ? 0 : rate;
+  const taxBase = pkg.taxBase === 'subtotal' ? 'subtotal' : 'parts';
+  const taxAmt = (taxRate / 100) * (taxBase === 'subtotal' ? subtotal : parts);
+  return { parts, labor, hours, subtotal, elr, taxRate, taxBase, taxAmt, grand: subtotal + taxAmt };
 }
 // Build a package item from one of the menu's services. Parts = price − labor
 // (whole price is parts if no labor is set); ELR starts at the service's own
@@ -165,7 +180,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
     const priced = {
       ...pkg,
       status: pkgStatus,
-      price: round2(packageTotal(pkg, doorRate)),
+      price: round2(packageSummary(pkg, doorRate).grand),
       updatedAt: Date.now(),
     };
     const i = packages.findIndex(p => p.id === priced.id);
@@ -306,7 +321,10 @@ function ReadView({ categories, packages }) {
                     <div style={{ fontSize: 16.5, fontWeight: 800, color: '#f1f5f9' }}>{pkg.name || 'Package'}</div>
                     {pkg.desc && <div style={{ fontSize: 13, color: '#c4b5fd', marginTop: 3, lineHeight: 1.45 }}>{pkg.desc}</div>}
                   </div>
-                  <div style={{ fontSize: 19, fontWeight: 900, color: '#c4b5fd', letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{money(pkg.price || 0)}</div>
+                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: 19, fontWeight: 900, color: '#c4b5fd', letterSpacing: '-.01em' }}>{money(pkg.price || 0)}</div>
+                    {numOf(pkg.taxRate) > 0 && <div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>incl. {numOf(pkg.taxRate)}% tax</div>}
+                  </div>
                 </div>
                 <ul style={{ margin: '10px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 5 }}>
                   {(pkg.items || []).map(it => (
@@ -521,7 +539,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [] });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -544,7 +562,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     ? groups.map(g => ({ ...g, services: g.services.filter(s => `${s.name} ${s.opCode || ''}`.toLowerCase().includes(q)) })).filter(g => g.services.length)
     : groups;
 
-  const total = draft ? packageTotal(draft, doorRate) : 0;
+  const sum = draft ? packageSummary(draft, doorRate) : null;
   const setItems = (fn) => setDraft(d => ({ ...d, items: fn(d.items || []) }));
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
@@ -557,7 +575,12 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
   const countInPkg = (name) => (draft?.items || []).filter(it => it.name === name).length;
 
   const startNew = () => { setDraft(newPackage()); setErr(''); setFlash(''); setScreen('edit'); };
-  const editExisting = (pkg) => { setDraft(JSON.parse(JSON.stringify(pkg))); setErr(''); setFlash(''); setScreen('edit'); };
+  const editExisting = (pkg) => {
+    const d = JSON.parse(JSON.stringify(pkg));
+    if (d.taxRate == null) d.taxRate = '7';       // backfill for pre-tax packages
+    if (d.taxBase == null) d.taxBase = 'parts';
+    setDraft(d); setErr(''); setFlash(''); setScreen('edit');
+  };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
 
   async function doSave(status) {
@@ -715,11 +738,33 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 );
               })}
 
-              {/* Total */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16, padding: '14px 16px', background: 'rgba(167,139,250,.1)', border: '1px solid rgba(167,139,250,.3)', borderRadius: 12 }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: '.05em' }}>Package Price</span>
-                <div style={{ flex: 1 }} />
-                <span style={{ fontSize: 24, fontWeight: 900, color: '#c4b5fd' }}>{money(total)}</span>
+              {/* Package summary — parts, labor, blended ELR, tax, grand total. */}
+              <div style={{ marginTop: 16, padding: '14px 16px', background: 'rgba(167,139,250,.1)', border: '1px solid rgba(167,139,250,.3)', borderRadius: 12 }}>
+                <SummaryRow label="Parts" value={money(sum.parts)} />
+                <SummaryRow label="Labor" value={money(sum.labor)} />
+                <SummaryRow label="ELR (blended)" value={sum.elr == null ? '—' : `${sum.elr.toFixed(1)}%`} valueColor={sum.elr == null ? '#64748b' : elrColor(sum.elr)} />
+                <SummaryRow label="Subtotal" value={money(sum.subtotal)} strong />
+                {/* Tax — adjustable rate (default 7%) and what it applies to. */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Tax</span>
+                  <input value={draft.taxRate} onChange={e => setDraft(d => ({ ...d, taxRate: e.target.value }))} inputMode="decimal" placeholder="7"
+                    style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#fbbf24' }} />
+                  <span style={{ fontSize: 12.5, color: '#94a3b8' }}>%</span>
+                  <span style={{ fontSize: 12, color: '#94a3b8' }}>on</span>
+                  <select value={draft.taxBase} onChange={e => setDraft(d => ({ ...d, taxBase: e.target.value }))}
+                    style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
+                    <option value="parts">Parts only</option>
+                    <option value="subtotal">Parts + Labor</option>
+                  </select>
+                  <div style={{ flex: 1 }} />
+                  <span style={{ fontSize: 14, fontWeight: 800, color: '#cbd5e1' }}>{money(sum.taxAmt)}</span>
+                </div>
+                {/* Grand total */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 10, marginTop: 4, borderTop: '1px solid rgba(167,139,250,.3)' }}>
+                  <span style={{ fontSize: 13, fontWeight: 900, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: '.05em' }}>Package Total</span>
+                  <div style={{ flex: 1 }} />
+                  <span style={{ fontSize: 24, fontWeight: 900, color: '#c4b5fd' }}>{money(sum.grand)}</span>
+                </div>
               </div>
 
               {/* Actions */}
@@ -740,4 +785,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 function elrColor(pct) {
   if (pct == null) return '#e2e8f0';
   return pct >= 100 ? '#4ade80' : pct >= 80 ? '#fbbf24' : '#fb7185';
+}
+
+function SummaryRow({ label, value, valueColor = '#cbd5e1', strong }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', padding: '6px 0' }}>
+      <span style={{ fontSize: 13.5, fontWeight: strong ? 800 : 600, color: strong ? '#e2e8f0' : '#94a3b8' }}>{label}</span>
+      <div style={{ flex: 1 }} />
+      <span style={{ fontSize: 14, fontWeight: strong ? 900 : 700, color: valueColor }}>{value}</span>
+    </div>
+  );
 }
