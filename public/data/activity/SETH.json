@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-24T19:27:47.144Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-07-24T19:27:35.513Z",
+    "type": "page",
+    "label": "advisor-view-tech-schedule"
+  },
+  {
     "at": "2026-07-24T11:39:38.766Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -331,16 +341,6 @@
   },
   {
     "at": "2026-06-25T11:00:20.298Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-24T17:21:47.176Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-24T11:50:54.609Z",
     "type": "page",
     "label": "advisor-calendar"
   }
