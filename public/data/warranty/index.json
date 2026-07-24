@@ -1,5 +1,93 @@
 [
   {
+    "id": "mrzb5p2iwv69",
+    "createdAt": "2026-07-24T19:03:10.890Z",
+    "updatedAt": "2026-07-24T19:15:57.140Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Joseph Rund",
+    "customerPhone": " (217) 820 - 3046",
+    "repairOrder": "779355",
+    "vin": "5NPD84LF0JH220504",
+    "vehicleYear": "2018",
+    "vehicleMake": "HYUNDAI",
+    "vehicleModel": "Elantra",
+    "mileage": "90111",
+    "warrantyCompany": "NVP WARRANTY",
+    "warrantyPhone": "888-270-5835",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "",
+    "laborTime": "",
+    "diagnosisTime": "",
+    "parts": [
+      {
+        "id": "mrzb5p2in29c",
+        "partNumber": "15ZN1-2EX00",
+        "description": "ENGINE ASSY-SUB",
+        "qty": "1",
+        "price": ""
+      },
+      {
+        "id": "mrzb9xekqtxr",
+        "partNumber": "520V",
+        "description": " 5W20 VALVOLINE SEMI-SYNTHETIC BLEND OIL",
+        "qty": "5",
+        "price": "4.99"
+      },
+      {
+        "id": "mrzbaq0s884x",
+        "partNumber": "719005",
+        "description": "VALVOLINE MAX LIFE COOLANT",
+        "qty": "1",
+        "price": "16.99"
+      },
+      {
+        "id": "mrzbcst728g3",
+        "partNumber": "28751-3S100",
+        "description": "GASKET-EXHAUST PIPE",
+        "qty": "2",
+        "price": "37.66"
+      },
+      {
+        "id": "mrzbink3wpus",
+        "partNumber": "28521-2E000",
+        "description": "GASKET-EXHAUST MANIFOLD",
+        "qty": "1",
+        "price": "18.61"
+      },
+      {
+        "id": "mrzbjmjfldd4",
+        "partNumber": "28313-2EAA0",
+        "description": " GASKET-PORT",
+        "qty": "1",
+        "price": "25.51"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "WILL NEED MAINTANCE RECORDS SENT TO EMAIL repotrs@nvpwarranty.com attn: david. last 6 of vin in subject line.",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
+  },
+  {
     "id": "mrz2auffylmg",
     "createdAt": "2026-07-24T14:55:14.571Z",
     "updatedAt": "2026-07-24T14:59:19.090Z",
