@@ -91,7 +91,7 @@
     "jobDesc": "CUSTOMER STATES- Pass front tire flat, blew off rim, has smart driver",
     "flag": "purple",
     "usedCar": false,
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "DAVID RILEY",
     "notes": "",
     "partsArrived": null,
