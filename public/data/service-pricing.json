@@ -219,5 +219,41 @@
       ]
     }
   ],
-  "updatedAt": 1784915276402
+  "packages": [
+    {
+      "id": "pkg-mrz932irw89y",
+      "name": "service",
+      "desc": "",
+      "status": "draft",
+      "items": [
+        {
+          "id": "item-mrz93eueuu1t",
+          "name": "Synthetic Oil Change ROH$",
+          "opCode": "ROHR50",
+          "parts": "25",
+          "laborHours": "0.3",
+          "elrPct": "43.86"
+        },
+        {
+          "id": "item-mrz93l9rdpib",
+          "name": "Tire Rotation",
+          "opCode": "ROTATE",
+          "parts": "0",
+          "laborHours": "0.4",
+          "elrPct": "45.99"
+        },
+        {
+          "id": "item-mrz93x1zi1gp",
+          "name": "4 Wheel Balance",
+          "opCode": "BALANCE",
+          "parts": "0",
+          "laborHours": "0.9",
+          "elrPct": "58.47"
+        }
+      ],
+      "price": 184.94,
+      "updatedAt": 1784916397688
+    }
+  ],
+  "updatedAt": 1784916397688
 }
