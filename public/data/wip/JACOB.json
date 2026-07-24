@@ -218,5 +218,21 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "mrzcjdyii5fy",
+    "ro": "779533",
+    "roDate": "2026-07-24",
+    "vehicle": "2025 Mazda Mazda3 Sedan",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
