@@ -1,19 +1,31 @@
 {
-  "updatedAt": "2026-07-24T19:41:59.712Z",
+  "updatedAt": "2026-07-24T20:51:25.379Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "779534",
-        "vehicle": "2013 Hyundai Santa Fe"
+        "ro": "779536",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "779524",
+        "ro": "779535",
+        "vehicle": "2022 Hyundai Elantra"
+      },
+      {
+        "ro": "779532",
+        "vehicle": "2016 Hyundai Elantra"
+      },
+      {
+        "ro": "779528",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779526",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779476",
         "vehicle": "2024 Hyundai Kona"
-      },
-      {
-        "ro": "779449",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
       }
     ],
     "CORY": [
@@ -74,22 +86,14 @@
         "vehicle": "2013 Hyundai Tucson"
       }
     ],
-    "DAVID": [
+    "JORDAN": [
       {
-        "ro": "779532",
-        "vehicle": "2016 Hyundai Elantra"
-      },
-      {
-        "ro": "779528",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779526",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779476",
+        "ro": "779524",
         "vehicle": "2024 Hyundai Kona"
+      },
+      {
+        "ro": "779449",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
       }
     ]
   }
