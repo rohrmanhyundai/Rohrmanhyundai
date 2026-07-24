@@ -1,5 +1,6 @@
 {
   "by": "SHAWN",
+  "doorRate": "190.00",
   "categories": [
     {
       "id": "cat-maintenance",
@@ -10,56 +11,72 @@
           "name": "Synthetic Oil Change ROH$",
           "price": "$50.00",
           "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection.",
-          "opCode": "ROHR50"
+          "opCode": "ROHR50",
+          "laborCost": "25.00",
+          "laborHours": ".3"
         },
         {
           "id": "svc-tire-rotate",
           "name": "Tire Rotation",
           "price": "$34.95",
           "desc": "Rotate and inspect all four tires and set pressures to spec.",
-          "opCode": "ROTATE"
+          "opCode": "ROTATE",
+          "laborCost": "34.95",
+          "laborHours": ".4"
         },
         {
           "id": "svc-cabin-filter",
           "name": "Cabin Air Filter",
           "price": "$70.49",
           "desc": "Replace cabin air filter.",
-          "opCode": "CABIN"
+          "opCode": "CABIN",
+          "laborCost": "25.00",
+          "laborHours": ".2"
         },
         {
           "id": "svc-mrawpcukrk6j",
           "name": "Cabin Air Filter NON-OEM",
           "price": "$50.49",
           "desc": "Replace cabin air filter. NON-OEM replacement",
-          "opCode": "CABINAFTERNONOEM"
+          "opCode": "CABINAFTERNONOEM",
+          "laborCost": "25.00",
+          "laborHours": ".2"
         },
         {
           "id": "svc-mrawsxklwm7j",
           "name": "Air Filter",
           "price": "$60.50",
           "desc": "Engine Air Filter Replacement",
-          "opCode": "AIRFILTER"
+          "opCode": "AIRFILTER",
+          "laborCost": "25.00",
+          "laborHours": "2"
         },
         {
           "id": "svc-mrawtpr17398",
           "name": "Air Filter NON-OEM",
           "price": "$50.49",
           "desc": "Air Filter NON-OEM replacement",
-          "opCode": "AIRFILTERNONOEM"
+          "opCode": "AIRFILTERNONOEM",
+          "laborCost": "25.00",
+          "laborHours": ".2"
         },
         {
           "id": "svc-mrax890sd4fl",
           "name": "4 WHEEL ALIGNMENT",
           "price": "$139.95",
           "desc": "4 WHEEL ALIGNMENT",
-          "opCode": "ALIGNMENT"
+          "opCode": "ALIGNMENT",
+          "laborCost": "139.95",
+          "laborHours": "1.0"
         },
         {
           "id": "svc-mrb0f85sour6",
           "name": "4 Wheel Balance",
           "price": "$99.99",
           "desc": "Complete 4 wheel balance includes tire rotation",
-          "opCode": "BALANCE"
+          "opCode": "BALANCE",
+          "laborCost": "99.99",
+          "laborHours": ".9"
         }
       ]
     },
@@ -72,70 +89,90 @@
           "name": "Valvoline Fuel Service",
           "price": "$209.99",
           "desc": "Valvoline Fuel Service cleans fuel injectors and valves inproves fuel eco",
-          "opCode": "VVIFL"
+          "opCode": "VVIFL",
+          "laborCost": "149.99",
+          "laborHours": ".8"
         },
         {
           "id": "svc-mraz10wrz3lu",
           "name": "Valvoline Transmission Service",
           "price": "$276.95",
           "desc": "Full Transmission fluid service",
-          "opCode": "VVTFL"
+          "opCode": "VVTFL",
+          "laborCost": "190.00",
+          "laborHours": "1.0"
         },
         {
           "id": "svc-mraz3vju74t8",
           "name": "Valvoline Coolant Service",
           "price": "$219.99",
           "desc": "Full coolant service",
-          "opCode": "VVCFL"
+          "opCode": "VVCFL",
+          "laborCost": "168.99",
+          "laborHours": ".9"
         },
         {
           "id": "svc-mraz684xj8hq",
           "name": "Valvoline Brake Flush",
           "price": "$182.99",
           "desc": "Full brake fluid flush",
-          "opCode": "VVBFL"
+          "opCode": "VVBFL",
+          "laborCost": "137.99",
+          "laborHours": ".7"
         },
         {
           "id": "svc-mraz7kfaxsiu",
           "name": "Valvoline Ac Cleaning Service",
           "price": "$106.98",
           "desc": "Full Ac cleaning service",
-          "opCode": "VVACLEAN"
+          "opCode": "VVACLEAN",
+          "laborCost": "56.99",
+          "laborHours": ".3"
         },
         {
           "id": "svc-mrazf73m0kn0",
           "name": "Valvoline Oil Flush Service",
           "price": "$270.00",
           "desc": "Full oil flush service includes oil change",
-          "opCode": "VVEFL"
+          "opCode": "VVEFL",
+          "laborCost": "150.00",
+          "laborHours": "1.0"
         },
         {
           "id": "svc-mrazj1hwowxo",
           "name": "Valvoline HEV/EV Inverter Cooling Service",
           "price": "$249.97",
           "desc": "Full inverter cooling service for Hybrid or EV",
-          "opCode": "VVICFL"
+          "opCode": "VVICFL",
+          "laborCost": "189.99",
+          "laborHours": "1.0"
         },
         {
           "id": "svc-mrazlujvwg6l",
           "name": "Valvoline Front Differential Fluid Service",
           "price": "$139.99",
           "desc": "Full front differential service",
-          "opCode": "VVFDFL"
+          "opCode": "VVFDFL",
+          "laborCost": "95.00",
+          "laborHours": ".5"
         },
         {
           "id": "svc-mrazs69k5qxe",
           "name": "Valvoline Rear Differential Fluid Service",
           "price": "$139.99",
           "desc": "Full rear differential service",
-          "opCode": "VVRDFL"
+          "opCode": "VVRDFL",
+          "laborCost": "95.00",
+          "laborHours": ".5"
         },
         {
           "id": "svc-mraztzq2p5aw",
           "name": "Valvoline Transfer Case Service",
           "price": "$136.00",
           "desc": "4X4 Transfer case service",
-          "opCode": "VVTCFL"
+          "opCode": "VVTCFL",
+          "laborCost": "95.00",
+          "laborHours": ".5"
         }
       ]
     },
@@ -148,31 +185,39 @@
           "name": "Replace Front Pads and Resurface Rotors FACTORY --->> Starting out some models may be higher!",
           "price": "$384.00",
           "desc": "Replace Front Pads and Resurface Rotors FACTORY",
-          "opCode": "PADRESURF"
+          "opCode": "PADRESURF",
+          "laborCost": "270.00",
+          "laborHours": "1.8"
         },
         {
           "id": "svc-mrb0nu3zyd5p",
           "name": "Replace Front Pads and Resurface Rotors [NON OEM]--->> Starting out some models may be higher!",
           "price": "$350.00",
           "desc": "Replace Front Pads and Resurface Rotors [NON OEM]",
-          "opCode": "PADRESURFNONOEM"
+          "opCode": "PADRESURFNONOEM",
+          "laborCost": "270.00",
+          "laborHours": "1.8"
         },
         {
           "id": "svc-mrb0q3o8l601",
           "name": "Replace Rear Pads and Resurface Rotors FACTORY--->> Starting out some models may be higher!",
           "price": "$384.00",
           "desc": "Replace Rear Pads and Resurface Rotors FACTORY",
-          "opCode": "RPADRESURF"
+          "opCode": "RPADRESURF",
+          "laborCost": "270.0",
+          "laborHours": "1.8"
         },
         {
           "id": "svc-mrb0ryefl2vn",
           "name": "Replace Rear Pads and Resurface Rotors NON OEM--->> Starting out some models may be higher!",
           "price": "$350.00",
           "desc": "Replace Rear Pads and Resurface Rotors NON OEM",
-          "opCode": "RPADRESURFNONOEM"
+          "opCode": "RPADRESURFNONOEM",
+          "laborCost": "270.00",
+          "laborHours": "1.8"
         }
       ]
     }
   ],
-  "updatedAt": 1783619402202
+  "updatedAt": 1784914020440
 }
