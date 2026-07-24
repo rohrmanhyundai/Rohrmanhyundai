@@ -826,13 +826,22 @@ function SummaryRow({ label, value, valueColor = '#cbd5e1', strong }) {
 }
 
 // An editable package-total row: auto-filled value the user can override.
+// While the field is focused it shows exactly what's typed (so decimals and
+// partial edits aren't stomped by re-formatting); off-focus it re-syncs to the
+// live computed value.
 function SummaryEdit({ label, value, onChange, prefix, suffix, color = '#e2e8f0' }) {
+  const [focused, setFocused] = useState(false);
+  const [text, setText] = useState(value);
+  useEffect(() => { if (!focused) setText(value); }, [value, focused]);
   return (
     <div style={{ display: 'flex', alignItems: 'center', padding: '5px 0' }}>
       <span style={{ fontSize: 13.5, fontWeight: 600, color: '#94a3b8' }}>{label}</span>
       <div style={{ flex: 1 }} />
       <span style={{ fontSize: 12.5, color: '#94a3b8', marginRight: 3, width: 10, textAlign: 'right' }}>{prefix || ''}</span>
-      <input value={value} onChange={e => onChange(e.target.value)} inputMode="decimal"
+      <input value={text} inputMode="decimal"
+        onFocus={() => setFocused(true)}
+        onBlur={() => { setFocused(false); setText(value); }}
+        onChange={e => { setText(e.target.value); onChange(e.target.value); }}
         style={{ ...editInp, width: 92, padding: '5px 9px', fontSize: 13, textAlign: 'right', fontWeight: 800, color }} />
       <span style={{ fontSize: 12.5, color: '#94a3b8', marginLeft: 5, width: 26 }}>{suffix || ''}</span>
     </div>
