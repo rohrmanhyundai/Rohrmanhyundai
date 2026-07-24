@@ -219,49 +219,6 @@
       ]
     }
   ],
-  "packages": [
-    {
-      "id": "pkg-mrz932irw89y",
-      "name": "service",
-      "desc": "",
-      "status": "draft",
-      "items": [
-        {
-          "id": "item-mrz93eueuu1t",
-          "name": "Synthetic Oil Change ROH$",
-          "opCode": "ROHR50",
-          "parts": "25",
-          "laborHours": "0.3",
-          "elrPct": "43.86"
-        },
-        {
-          "id": "item-mrz93l9rdpib",
-          "name": "Tire Rotation",
-          "opCode": "ROTATE",
-          "parts": "0",
-          "laborHours": "0.4",
-          "elrPct": "45.99"
-        },
-        {
-          "id": "item-mrz93x1zi1gp",
-          "name": "4 Wheel Balance",
-          "opCode": "BALANCE",
-          "parts": "0",
-          "laborHours": "0.9",
-          "elrPct": "58.47"
-        },
-        {
-          "id": "item-mrz9f1aigim4",
-          "name": "Cabin Air Filter NON-OEM",
-          "opCode": "CABINAFTERNONOEM",
-          "parts": "25.49",
-          "laborHours": "0.2",
-          "elrPct": "65.79"
-        }
-      ],
-      "price": 235.43,
-      "updatedAt": 1784917350948
-    }
-  ],
-  "updatedAt": 1784917350948
+  "packages": [],
+  "updatedAt": 1784921145639
 }
