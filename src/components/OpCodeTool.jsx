@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { setHotRepairOpData, docRawUrl } from '../utils/github';
 import { loadPdfJs, extractPdfText, rankedMatches, parseQuery } from '../utils/pdfText';
+import { validateVin, decodeVin, findBulletinsForVehicle } from '../utils/vinLookup';
 
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
@@ -417,6 +418,48 @@ export function DigitalDocModal({ item, onClose }) {
   );
 }
 
+// A collapsible group of VIN-matched bulletins, each row pickable straight into
+// op-code lookup. Used only by the generator's VIN mode.
+function VinGroup({ title, color, rows, onPick, showYears, empty }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div>
+      <button onClick={() => setOpen(o => !o)}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}>
+        <span style={{ color, fontWeight: 800, fontSize: 13 }}>{open ? '▾' : '▸'} {title}</span>
+      </button>
+      {open && (rows.length === 0 ? (
+        empty ? <div style={{ fontSize: 13, color: '#64748b', padding: '6px 4px' }}>{empty}</div> : null
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+          {rows.map(({ item, entries }) => {
+            const isRecall = item._kind === 'recalls';
+            return (
+              <button key={`${item._kind || ''}-${item.id}`} onClick={() => onPick(item)} style={{ ...rowBtn, borderColor: `${color}55` }}>
+                <span style={{
+                  fontSize: 10, fontWeight: 900, letterSpacing: 0.4, marginRight: 8, padding: '2px 7px', borderRadius: 999, whiteSpace: 'nowrap',
+                  background: isRecall ? 'rgba(251,191,36,.15)' : 'rgba(96,165,250,.15)',
+                  border: `1px solid ${isRecall ? 'rgba(251,191,36,.45)' : 'rgba(96,165,250,.45)'}`,
+                  color: isRecall ? '#fbbf24' : '#93c5fd',
+                }}>{isRecall ? '📢 RECALL' : '🔧 TSB'}</span>
+                <span style={{ fontWeight: 800, color: '#e2e8f0' }}>{item.label}</span>
+                {showYears && entries?.length > 0 && (
+                  <span style={{ fontSize: 11, color, marginLeft: 8, whiteSpace: 'nowrap' }}>{entries[0].from}–{entries[0].to}</span>
+                )}
+                <span style={{ marginLeft: 'auto', fontSize: 11, color: '#475569' }}>
+                  {item.opExcluded ? 'view bulletin →'
+                    : (item.opData && (item.opData.entries || []).length) ? `${item.opData.entries.length} op code(s) →`
+                    : 'look up →'}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Op Code Generator (lookup UI) ─────────────────────────────────────────────
 // `items` is the UNIVERSAL pool — every TSB *and* every recall — because a tech
 // looking up an op code has a bulletin number in hand and no reason to know which
@@ -448,6 +491,34 @@ export function OpCodeGenerator({ items, onClose }) {
   // the bulletin number and keywords we pulled out of it (and the boilerplate we
   // dropped) makes an empty result explainable instead of a dead end.
   const parsed = useMemo(() => (q ? parseQuery(q) : null), [q]);
+
+  // ── VIN detection ──────────────────────────────────────────────────────────
+  // A 17-char valid VIN in the box switches the search to "what's open on this
+  // car": decode it and list every bulletin whose Applicable Vehicles cover it.
+  // Both libraries are already pooled here, so recalls and TSBs come back
+  // together — no need to choose which one first.
+  const vinCandidate = q.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const isVin = validateVin(vinCandidate).ok;
+  const [vinVehicle, setVinVehicle] = useState(null);
+  const [vinDecoding, setVinDecoding] = useState(false);
+  const [vinError, setVinError] = useState('');
+
+  useEffect(() => {
+    if (!isVin) { setVinVehicle(null); setVinError(''); setVinDecoding(false); return; }
+    let cancelled = false;
+    setVinDecoding(true); setVinError('');
+    decodeVin(vinCandidate).then(r => {
+      if (cancelled) return;
+      if (r.ok) setVinVehicle({ year: r.year, model: r.model, electrified: r.electrified, make: r.make, trim: r.trim, elecLabel: r.electrificationLabel });
+      else { setVinVehicle(null); setVinError(r.error || 'Could not decode that VIN.'); }
+    }).finally(() => { if (!cancelled) setVinDecoding(false); });
+    return () => { cancelled = true; };
+  }, [vinCandidate, isVin]);
+
+  const vinMatches = useMemo(
+    () => (isVin && vinVehicle && vinVehicle.model ? findBulletinsForVehicle(searchable, vinVehicle) : null),
+    [isVin, vinVehicle, searchable],
+  );
 
   async function pick(item) {
     setSelected(item); setAnswers({}); setResolved(null);
@@ -502,16 +573,48 @@ export function OpCodeGenerator({ items, onClose }) {
           <>
             <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
               Searches every TSB <strong style={{ color: '#cbd5e1' }}>and</strong> recall — title, tags, and the full text inside each PDF.
-              Paste the whole RO line, type the number, or just describe the job.
+              Paste the RO line, type the number, describe the job — or drop in a <strong style={{ color: '#6ee7b7' }}>VIN</strong> to see what's open on that vehicle.
             </div>
             <input
               autoFocus value={query} onChange={e => setQuery(e.target.value)}
-              placeholder='Paste the RO line, or "26-EM-012H", "298", "inoperable horn"'
+              placeholder='RO line · "26-EM-012H" · "inoperable horn" · or a 17-digit VIN'
               style={input}
             />
 
+            {/* ── VIN mode ── */}
+            {isVin && (
+              <div style={{ marginTop: 12 }}>
+                {vinDecoding ? (
+                  <div style={{ fontSize: 13, color: '#94a3b8', padding: '8px 4px' }}>⏳ Decoding VIN…</div>
+                ) : vinError ? (
+                  <div style={{ background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.4)', borderRadius: 8, padding: '9px 13px', fontSize: 13, color: '#fbbf24' }}>
+                    {vinError} Try the bulletin number or a description instead.
+                  </div>
+                ) : vinVehicle && vinVehicle.model ? (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', background: 'rgba(110,231,249,.07)', border: '1px solid rgba(110,231,249,.28)', borderRadius: 10, padding: '9px 13px', marginBottom: 10 }}>
+                      <span style={{ fontSize: 10, fontWeight: 800, color: '#64748b', letterSpacing: .5 }}>VEHICLE</span>
+                      <span style={{ fontWeight: 900, fontSize: 15, color: '#e2e8f0' }}>{vinVehicle.year || '????'} {vinVehicle.make || 'Hyundai'} {vinVehicle.model}</span>
+                      {vinVehicle.elecLabel && <span style={{ ...chip, background: 'rgba(74,222,128,.16)', borderColor: 'rgba(74,222,128,.45)', color: '#86efac' }}>{vinVehicle.elecLabel}</span>}
+                      {vinVehicle.trim && <span style={{ ...chip, background: 'rgba(96,165,250,.14)', borderColor: 'rgba(96,165,250,.4)', color: '#93c5fd' }}>{vinVehicle.trim}</span>}
+                    </div>
+                    <div style={{ maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <VinGroup title={`${vinMatches.matched.length} for this vehicle`} color="#4ade80" rows={vinMatches.matched} onPick={pick} showYears
+                        empty="No bulletins list this exact vehicle. Check the two groups below before calling it clear." />
+                      {vinMatches.checkYear.length > 0 && (
+                        <VinGroup title={`${vinMatches.checkYear.length} — model matches, year not readable`} color="#fbbf24" rows={vinMatches.checkYear} onPick={pick} />
+                      )}
+                      {vinMatches.unreadable.length > 0 && (
+                        <VinGroup title={`${vinMatches.unreadable.length} — no readable vehicle list, verify manually`} color="#94a3b8" rows={vinMatches.unreadable} onPick={pick} />
+                      )}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            )}
+
             {/* What the search keyed on — bulletin number first, then keywords. */}
-            {parsed && (parsed.numbers.length > 0 || parsed.words.length > 0) && (
+            {!isVin && parsed && (parsed.numbers.length > 0 || parsed.words.length > 0) && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
                 <span style={{ fontSize: 10, fontWeight: 800, color: '#475569', letterSpacing: 0.4, textTransform: 'uppercase' }}>Searching for</span>
                 {parsed.numbersRaw.map(n => <span key={n} style={{ ...chip, background: 'rgba(74,222,128,.14)', borderColor: 'rgba(74,222,128,.45)', color: '#86efac' }}>{n}</span>)}
@@ -523,7 +626,7 @@ export function OpCodeGenerator({ items, onClose }) {
             )}
 
             <div style={{ marginTop: 12, maxHeight: 360, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {!q ? null : matches.length === 0 ? (
+              {isVin ? null : !q ? null : matches.length === 0 ? (
                 <div style={{ color: '#64748b', fontSize: 13, padding: '12px 4px', lineHeight: 1.6 }}>
                   {searchable.length === 0
                     ? 'No bulletins have op codes set up yet. A manager can add them with the "⚙️ Op Codes" button on a bulletin.'
