@@ -60,22 +60,6 @@
     "flag": "purple"
   },
   {
-    "id": "mrpe9w5f24o1",
-    "ro": "779329",
-    "roDate": "2026-07-17",
-    "vehicle": "2024 Hyundai Kona",
-    "jobDesc": "CUSTOMER STATES- car not responding to key fobs",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/22/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "NEED TO GET IN TO CALL TECHLINE "
-  },
-  {
     "id": "mrl5pw1g4avk",
     "ro": "779188",
     "roDate": "2026-07-14",
