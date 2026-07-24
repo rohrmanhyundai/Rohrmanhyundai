@@ -12,34 +12,37 @@ const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
 const money = (n) => `$${round2(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 // ── Package math ──────────────────────────────────────────────────────────────
-// A package item is anchored to its TOTAL (the customer price). LABOR comes from
-// the ELR% the user sets: labor $ = (ELR% ÷ 100) × door rate × hours. PARTS is
-// whatever is left over: parts = total − labor (auto, but the user can override
-// it, which nudges the total). Package price = the sum of the line totals.
+// A package item keeps its PARTS (auto-filled from the menu, adjustable) and
+// gets its LABOR from the ELR% the user sets: labor $ = (ELR% ÷ 100) × door rate
+// × hours. The line TOTAL is figured automatically = parts + labor. Package
+// price = the sum of the line totals.
 function itemMath(item, doorRate) {
   const dr = numOf(doorRate) || 0;
   const hrs = numOf(item.laborHours) || 0;
   const elr = numOf(item.elrPct);
   const laborCost = (elr != null && dr > 0 && hrs > 0) ? (elr / 100) * dr * hrs : 0;
-  // Legacy items stored `parts` instead of `total`; fall back to parts + labor.
-  const hasTotal = item.total != null && String(item.total).trim() !== '';
-  const total = hasTotal ? (numOf(item.total) || 0) : (numOf(item.parts) || 0) + laborCost;
-  return { total, laborCost, parts: total - laborCost };
+  // `parts` is the source of truth; older items that stored `total` instead
+  // fall back to total − labor so their parts still resolve.
+  const hasParts = item.parts != null && String(item.parts).trim() !== '';
+  const parts = hasParts ? (numOf(item.parts) || 0) : Math.max(0, (numOf(item.total) || 0) - laborCost);
+  return { parts, laborCost, total: parts + laborCost };
 }
 function packageTotal(pkg, doorRate) {
   return (pkg.items || []).reduce((s, it) => s + itemMath(it, doorRate).total, 0);
 }
-// Build a package item from one of the menu's services. Total = the menu price;
-// ELR starts at the service's own effective rate when it has labor+hours,
-// otherwise 100% (full door rate). Parts is derived (total − labor).
+// Build a package item from one of the menu's services. Parts = price − labor
+// (whole price is parts if no labor is set); ELR starts at the service's own
+// effective rate when it has labor+hours, otherwise 100% (full door rate). The
+// line total is always figured as parts + labor.
 function itemFromService(s, doorRate) {
   const price = numOf(s.price) || 0;
   const labor = numOf(s.laborCost) || 0;
   const hrs = numOf(s.laborHours) || 0;
   const dr = numOf(doorRate) || 0;
+  const parts = Math.max(0, price - labor);
   let elr = 100;
   if (labor > 0 && hrs > 0 && dr > 0) elr = round2((labor / hrs) / dr * 100);
-  return { id: uid('item'), name: s.name || '', opCode: s.opCode || '', total: String(round2(price)), laborHours: hrs ? String(hrs) : '', elrPct: String(elr) };
+  return { id: uid('item'), name: s.name || '', opCode: s.opCode || '', parts: String(round2(parts)), laborHours: hrs ? String(hrs) : '', elrPct: String(elr) };
 }
 
 // Effective labor rate ($/hr) and its % of the door rate for one service.
@@ -545,12 +548,6 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
   const setItems = (fn) => setDraft(d => ({ ...d, items: fn(d.items || []) }));
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
-  // Editing PARTS keeps labor where it is and moves the TOTAL: total = parts + labor.
-  const setParts = (id, value) => setItems(items => items.map(it => {
-    if (it.id !== id) return it;
-    const labor = itemMath(it, doorRate).laborCost;
-    return { ...it, total: String(round2((numOf(value) || 0) + labor)) };
-  }));
   const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
   const moveItem = (id, dir) => setItems(items => {
     const i = items.findIndex(it => it.id === id); const j = i + dir;
@@ -680,8 +677,8 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 <input value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="Short description customers will see…" style={editInp} />
               </div>
 
-              {/* Item column headers. TOTAL is the customer price (anchor); LABOR
-                  comes from ELR%; PARTS = total − labor (auto, adjustable). */}
+              {/* Item column headers. LABOR comes from ELR%; PARTS is auto-filled
+                  from the menu (adjustable); TOTAL = parts + labor, figured live. */}
               {(draft.items || []).length > 0 && (
                 <div style={{ display: 'flex', gap: 8, padding: '0 2px 6px', color: '#64748b', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em' }}>
                   <div style={{ flex: '1 1 auto' }}>Service</div>
@@ -707,10 +704,9 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     <input value={it.laborHours} onChange={e => updateItem(it.id, 'laborHours', e.target.value)} inputMode="decimal" placeholder="0.0" style={{ ...editInp, flex: '0 0 56px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right' }} />
                     <input value={it.elrPct} onChange={e => updateItem(it.id, 'elrPct', e.target.value)} inputMode="decimal" placeholder="100" style={{ ...editInp, flex: '0 0 62px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: elrColor(numOf(it.elrPct)), fontWeight: 800 }} />
                     <div style={{ flex: '0 0 76px', textAlign: 'right', fontSize: 12.5, color: '#cbd5e1', fontWeight: 700 }}>{money(m.laborCost)}</div>
-                    <input value={String(round2(m.parts))} onChange={e => setParts(it.id, e.target.value)} inputMode="decimal" title="Auto = Total − Labor. Editing this moves the Total."
-                      style={{ ...editInp, flex: '0 0 82px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: m.parts < 0 ? '#fb7185' : '#e2e8f0', fontWeight: 700 }} />
-                    <input value={it.total} onChange={e => updateItem(it.id, 'total', e.target.value)} inputMode="decimal" placeholder="$0.00"
-                      style={{ ...editInp, flex: '0 0 84px', padding: '6px 8px', fontSize: 13.5, textAlign: 'right', color: '#6ee7b7', fontWeight: 900 }} />
+                    <input value={it.parts != null && it.parts !== '' ? it.parts : String(round2(m.parts))} onChange={e => updateItem(it.id, 'parts', e.target.value)} inputMode="decimal" placeholder="0.00" title="Parts $ — auto-filled from the menu, adjust as needed"
+                      style={{ ...editInp, flex: '0 0 82px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: '#e2e8f0', fontWeight: 700 }} />
+                    <div title="Parts + Labor" style={{ flex: '0 0 84px', textAlign: 'right', fontSize: 13.5, color: '#6ee7b7', fontWeight: 900 }}>{money(m.total)}</div>
                     <div style={{ flex: '0 0 54px', display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                       <button title="Up" onClick={() => moveItem(it.id, -1)} disabled={idx === 0} style={{ ...iconBtn(idx === 0), width: 24, height: 28, fontSize: 11 }}>↑</button>
                       <button title="Remove" onClick={() => removeItem(it.id)} style={{ ...iconBtn(false), width: 24, height: 28, fontSize: 11, color: '#f87171' }}>✕</button>
