@@ -2,8 +2,23 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadServicePricing, saveServicePricing } from '../utils/github';
 
 const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-const emptyService = () => ({ id: uid('svc'), name: '', price: '', desc: '', opCode: '' });
+// laborCost = labor $ charged to the customer, laborHours = the job's hours.
+// Both are editor-only and never shown on the View menu.
+const emptyService = () => ({ id: uid('svc'), name: '', price: '', desc: '', opCode: '', laborCost: '', laborHours: '' });
 const emptyCategory = () => ({ id: uid('cat'), name: '', services: [emptyService()] });
+
+const numOf = (v) => { const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.]/g, '')); return isFinite(n) ? n : null; };
+
+// Effective labor rate ($/hr) and its % of the door rate for one service.
+// ELR$ = labor charged ÷ hours; ELR% = ELR$ ÷ door rate × 100.
+function computeElr(service, doorRate) {
+  const dr = numOf(doorRate), lc = numOf(service.laborCost), lh = numOf(service.laborHours);
+  if (!lc) return { state: 'idle' };                          // nothing to show until labor $ entered
+  if (!lh) return { state: 'need-hours' };
+  const rate = lc / lh;
+  if (!dr) return { state: 'need-door', rate };
+  return { state: 'ok', rate, pct: (rate / dr) * 100 };
+}
 
 // Shared input styling for the editor.
 const editInp = {
@@ -16,6 +31,7 @@ const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransfo
 export default function ServicePricingMenu({ currentUser, currentRole, onBack, backLabel = '← Back' }) {
   const isEditor = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [categories, setCategories] = useState([]);
+  const [doorRate, setDoorRate] = useState(''); // shop door/posted labor rate ($/hr) — editor only
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');   // saved/error message
@@ -29,9 +45,11 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
     try {
       const d = await loadServicePricing();
       const cats = Array.isArray(d.categories) ? d.categories : [];
+      const dr = d.doorRate || '';
       setCategories(cats);
+      setDoorRate(dr);
       setUpdatedAt(d.updatedAt || null);
-      savedRef.current = JSON.stringify(cats);
+      savedRef.current = JSON.stringify({ doorRate: dr, categories: cats });
       setDirty(false);
     } catch (e) {
       setStatus('Could not load the pricing menu.');
@@ -43,8 +61,8 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
 
   // Track unsaved edits so the Save button and a leave-warning can react.
   useEffect(() => {
-    setDirty(JSON.stringify(categories) !== savedRef.current);
-  }, [categories]);
+    setDirty(JSON.stringify({ doorRate, categories }) !== savedRef.current);
+  }, [categories, doorRate]);
 
   // ── Editor mutations ──────────────────────────────────────────────────────
   const addCategory = () => setCategories(cs => [...cs, emptyCategory()]);
@@ -75,11 +93,13 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
     try {
       // Drop fully-blank service rows so a stray "add" doesn't leave empties.
       const clean = categories
-        .map(c => ({ ...c, name: (c.name || '').trim(), services: (c.services || []).map(s => ({ ...s, name: (s.name || '').trim(), price: (s.price || '').trim(), desc: (s.desc || '').trim(), opCode: (s.opCode || '').trim() })).filter(s => s.name) }))
+        .map(c => ({ ...c, name: (c.name || '').trim(), services: (c.services || []).map(s => ({ ...s, name: (s.name || '').trim(), price: (s.price || '').trim(), desc: (s.desc || '').trim(), opCode: (s.opCode || '').trim(), laborCost: (s.laborCost || '').trim(), laborHours: (s.laborHours || '').trim() })).filter(s => s.name) }))
         .filter(c => c.name || c.services.length);
-      const saved = await saveServicePricing({ by: (currentUser || '').toUpperCase(), categories: clean });
+      const dr = (doorRate || '').trim();
+      const saved = await saveServicePricing({ by: (currentUser || '').toUpperCase(), doorRate: dr, categories: clean });
       setCategories(clean);
-      savedRef.current = JSON.stringify(clean);
+      setDoorRate(dr);
+      savedRef.current = JSON.stringify({ doorRate: dr, categories: clean });
       setUpdatedAt(saved.updatedAt || Date.now());
       setDirty(false);
       setStatus('saved');
@@ -115,7 +135,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
           <div style={{ color: '#475569', textAlign: 'center', padding: '60px 0' }}>Loading…</div>
         ) : tab === 'edit' && isEditor ? (
           <EditView
-            categories={categories}
+            categories={categories} doorRate={doorRate} setDoorRate={setDoorRate}
             addCategory={addCategory} renameCategory={renameCategory} deleteCategory={deleteCategory} moveCategory={moveCategory}
             addService={addService} updateService={updateService} deleteService={deleteService} moveService={moveService}
             saving={saving} dirty={dirty} status={status} onSave={handleSave}
@@ -125,6 +145,26 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
         )}
       </div>
     </div>
+  );
+}
+
+// The auto-computed ELR readout for a service. Shows the % and the effective
+// $/hr once labor $, hours and a door rate are all present; otherwise a hint.
+function ElrBadge({ elr }) {
+  if (elr.state === 'idle') return null;
+  if (elr.state === 'need-hours')
+    return <span style={{ fontSize: 12, color: '#64748b' }}>· enter labor hours for ELR</span>;
+  if (elr.state === 'need-door')
+    return <span style={{ fontSize: 12, color: '#fbbf24' }}>· ${elr.rate.toFixed(2)}/hr — set the door rate above for ELR%</span>;
+  // ok
+  const good = elr.pct >= 100;
+  const color = good ? '#4ade80' : elr.pct >= 80 ? '#fbbf24' : '#fb7185';
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginLeft: 2 }}>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>ELR</span>
+      <span style={{ fontSize: 15, fontWeight: 900, color }}>{elr.pct.toFixed(1)}%</span>
+      <span style={{ fontSize: 12, color: '#94a3b8' }}>(${elr.rate.toFixed(2)}/hr)</span>
+    </span>
   );
 }
 
@@ -208,9 +248,21 @@ function ReadView({ categories }) {
 }
 
 // ── Full-area editor (managers / admins) ─────────────────────────────────────
-function EditView({ categories, addCategory, renameCategory, deleteCategory, moveCategory, addService, updateService, deleteService, moveService, saving, dirty, status, onSave }) {
+function EditView({ categories, doorRate, setDoorRate, addCategory, renameCategory, deleteCategory, moveCategory, addService, updateService, deleteService, moveService, saving, dirty, status, onSave }) {
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', paddingBottom: 90 }}>
+      {/* Door rate — one value for the whole menu, editor-only. Drives every ELR%. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.28)', borderRadius: 14, padding: '14px 18px', marginBottom: 18 }}>
+        <span style={{ fontSize: 24 }}>🚪</span>
+        <div>
+          <div style={{ ...lbl, marginBottom: 2, color: '#93c5fd' }}>Door Rate ($ / hour)</div>
+          <div style={{ fontSize: 12, color: '#94a3b8' }}>Your posted labor rate. Used to figure the ELR% on each service below.</div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <input value={doorRate} onChange={e => setDoorRate(e.target.value)} placeholder="$0.00" inputMode="decimal"
+          style={{ ...editInp, width: 140, fontSize: 18, fontWeight: 900, color: '#93c5fd', textAlign: 'center' }} />
+      </div>
+
       {categories.length === 0 && (
         <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0', fontSize: 15 }}>No categories yet. Add one to get started.</div>
       )}
@@ -240,23 +292,44 @@ function EditView({ categories, addCategory, renameCategory, deleteCategory, mov
             <div style={{ flex: '0 0 74px' }} />
           </div>
 
-          {(cat.services || []).map((s, si) => (
-            <div key={s.id} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
-              <input value={s.name} onChange={e => updateService(ci, si, 'name', e.target.value)} placeholder="Service name"
-                style={{ ...editInp, flex: '2 1 190px' }} />
-              <input value={s.opCode || ''} onChange={e => updateService(ci, si, 'opCode', e.target.value)} placeholder="Op code"
-                style={{ ...editInp, flex: '0 0 110px', color: '#6ee7f9', fontWeight: 700 }} />
-              <input value={s.price} onChange={e => updateService(ci, si, 'price', e.target.value)} placeholder="$0.00"
-                style={{ ...editInp, flex: '0 0 110px', color: '#6ee7b7', fontWeight: 800 }} />
-              <input value={s.desc} onChange={e => updateService(ci, si, 'desc', e.target.value)} placeholder="Short description…"
-                style={{ ...editInp, flex: '3 1 240px' }} />
-              <div style={{ flex: '0 0 74px', display: 'flex', gap: 3 }}>
-                <button title="Move up" onClick={() => moveService(ci, si, -1)} disabled={si === 0} style={iconBtn(si === 0)}>↑</button>
-                <button title="Move down" onClick={() => moveService(ci, si, 1)} disabled={si === cat.services.length - 1} style={iconBtn(si === cat.services.length - 1)}>↓</button>
-                <button title="Remove service" onClick={() => deleteService(ci, si)} style={{ ...iconBtn(false), color: '#f87171' }}>✕</button>
+          {(cat.services || []).map((s, si) => {
+            const elr = computeElr(s, doorRate);
+            return (
+            <div key={s.id} style={{ marginBottom: 12, borderBottom: '1px solid rgba(148,163,184,.1)', paddingBottom: 10 }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <input value={s.name} onChange={e => updateService(ci, si, 'name', e.target.value)} placeholder="Service name"
+                  style={{ ...editInp, flex: '2 1 190px' }} />
+                <input value={s.opCode || ''} onChange={e => updateService(ci, si, 'opCode', e.target.value)} placeholder="Op code"
+                  style={{ ...editInp, flex: '0 0 110px', color: '#6ee7f9', fontWeight: 700 }} />
+                <input value={s.price} onChange={e => updateService(ci, si, 'price', e.target.value)} placeholder="$0.00"
+                  style={{ ...editInp, flex: '0 0 110px', color: '#6ee7b7', fontWeight: 800 }} />
+                <input value={s.desc} onChange={e => updateService(ci, si, 'desc', e.target.value)} placeholder="Short description…"
+                  style={{ ...editInp, flex: '3 1 240px' }} />
+                <div style={{ flex: '0 0 74px', display: 'flex', gap: 3 }}>
+                  <button title="Move up" onClick={() => moveService(ci, si, -1)} disabled={si === 0} style={iconBtn(si === 0)}>↑</button>
+                  <button title="Move down" onClick={() => moveService(ci, si, 1)} disabled={si === cat.services.length - 1} style={iconBtn(si === cat.services.length - 1)}>↓</button>
+                  <button title="Remove service" onClick={() => deleteService(ci, si)} style={{ ...iconBtn(false), color: '#f87171' }}>✕</button>
+                </div>
+              </div>
+
+              {/* Labor / ELR — editor-only, never shown on the View menu. */}
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 7, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>Internal</span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8' }}>
+                  Labor $
+                  <input value={s.laborCost || ''} onChange={e => updateService(ci, si, 'laborCost', e.target.value)} placeholder="$0.00" inputMode="decimal"
+                    style={{ ...editInp, width: 92, padding: '6px 9px', fontSize: 13, fontWeight: 700, color: '#e2e8f0' }} />
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8' }}>
+                  Labor hrs
+                  <input value={s.laborHours || ''} onChange={e => updateService(ci, si, 'laborHours', e.target.value)} placeholder="0.0" inputMode="decimal"
+                    style={{ ...editInp, width: 72, padding: '6px 9px', fontSize: 13, fontWeight: 700, color: '#e2e8f0' }} />
+                </label>
+                <ElrBadge elr={elr} />
               </div>
             </div>
-          ))}
+            );
+          })}
 
           <button onClick={() => addService(ci)}
             style={{ marginTop: 6, background: 'rgba(110,231,183,.12)', border: '1px dashed rgba(110,231,183,.4)', color: '#6ee7b7', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
