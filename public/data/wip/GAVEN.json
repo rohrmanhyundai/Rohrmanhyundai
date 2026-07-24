@@ -76,19 +76,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
-  },
-  {
-    "id": "mrxf842em3dp",
-    "ro": "779472",
-    "roDate": "2026-07-23",
-    "vehicle": "2020 Subaru Legacy",
-    "jobDesc": "REPLACE ONE TIRE",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": ""
   }
 ]
