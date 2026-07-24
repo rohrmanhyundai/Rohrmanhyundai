@@ -45,21 +45,5 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
-  },
-  {
-    "id": "mrz06as7389l",
-    "ro": "779501",
-    "roDate": "2026-07-24",
-    "vehicle": "2011 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
