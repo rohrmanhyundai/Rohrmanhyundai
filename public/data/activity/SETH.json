@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-24T11:39:38.766Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-23T14:00:26.897Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -336,36 +341,6 @@
   },
   {
     "at": "2026-06-24T11:50:54.609Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T20:00:57.076Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T18:06:54.446Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T18:06:52.805Z",
-    "type": "page",
-    "label": "parts-hub"
-  },
-  {
-    "at": "2026-06-23T18:06:03.148Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-23T18:05:59.645Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-06-23T18:05:05.683Z",
     "type": "page",
     "label": "advisor-calendar"
   }
