@@ -27,23 +27,37 @@ function itemMath(item, doorRate) {
   const parts = hasParts ? (numOf(item.parts) || 0) : Math.max(0, (numOf(item.total) || 0) - laborCost);
   return { parts, laborCost, total: parts + laborCost };
 }
-// Roll every line up into the package-level totals. Tax defaults to 7% and can
-// be aimed at parts only (auto-service standard) or the whole subtotal. The
-// grand total = parts + labor + tax.
+// Roll every line up into the package-level totals, then let the user override
+// the aggregate hours / ELR% / labor / parts to fine-tune the final price. Each
+// override defaults to the summed value (null = "track the lines"). Labor is
+// figured from ELR% × door × hours; editing labor back-solves the ELR%. Tax
+// defaults to 7% on parts only. Grand total = parts + labor + tax.
 function packageSummary(pkg, doorRate) {
   const dr = numOf(doorRate) || 0;
-  let parts = 0, labor = 0, hours = 0;
+  let autoParts = 0, autoLabor = 0, autoHours = 0;
   for (const it of (pkg.items || [])) {
     const m = itemMath(it, doorRate);
-    parts += m.parts; labor += m.laborCost; hours += numOf(it.laborHours) || 0;
+    autoParts += m.parts; autoLabor += m.laborCost; autoHours += numOf(it.laborHours) || 0;
   }
+  const autoElr = (autoHours > 0 && dr > 0) ? (autoLabor / autoHours) / dr * 100 : null;
+
+  const ovrHours = numOf(pkg.ovrHours), ovrElr = numOf(pkg.ovrElr), ovrParts = numOf(pkg.ovrParts);
+  const hours = ovrHours != null ? ovrHours : autoHours;
+  const elr = ovrElr != null ? ovrElr : autoElr;
+  const parts = ovrParts != null ? ovrParts : autoParts;
+  // Labor from ELR% when we can figure it, else fall back to the summed labor.
+  const labor = (elr != null && dr > 0 && hours > 0) ? (elr / 100) * dr * hours : autoLabor;
+
   const subtotal = parts + labor;
-  const elr = (hours > 0 && dr > 0) ? (labor / hours) / dr * 100 : null;
   const rate = numOf(pkg.taxRate);
   const taxRate = rate == null ? 0 : rate;
   const taxBase = pkg.taxBase === 'subtotal' ? 'subtotal' : 'parts';
   const taxAmt = (taxRate / 100) * (taxBase === 'subtotal' ? subtotal : parts);
-  return { parts, labor, hours, subtotal, elr, taxRate, taxBase, taxAmt, grand: subtotal + taxAmt };
+  return {
+    parts, labor, hours, elr, subtotal, taxRate, taxBase, taxAmt, grand: subtotal + taxAmt,
+    autoParts, autoLabor, autoHours, autoElr,
+    overridden: ovrHours != null || ovrElr != null || ovrParts != null,
+  };
 }
 // Build a package item from one of the menu's services. Parts = price − labor
 // (whole price is parts if no labor is set); ELR starts at the service's own
@@ -564,6 +578,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 
   const sum = draft ? packageSummary(draft, doorRate) : null;
   const setItems = (fn) => setDraft(d => ({ ...d, items: fn(d.items || []) }));
+  // Package-level total overrides. Editing labor back-solves the ELR% (holding
+  // hours); a reset clears every override so the totals track the lines again.
+  const setLabor = (value) => setDraft(d => {
+    const s = packageSummary(d, doorRate);
+    if (dr > 0 && s.hours > 0) return { ...d, ovrElr: String(round2((numOf(value) || 0) / (dr * s.hours) * 100)) };
+    return d;
+  });
+  const resetTotals = () => setDraft(d => ({ ...d, ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
   const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
@@ -738,11 +760,17 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 );
               })}
 
-              {/* Package summary — parts, labor, blended ELR, tax, grand total. */}
+              {/* Package summary — auto-filled from the lines, all adjustable. */}
               <div style={{ marginTop: 16, padding: '14px 16px', background: 'rgba(167,139,250,.1)', border: '1px solid rgba(167,139,250,.3)', borderRadius: 12 }}>
-                <SummaryRow label="Parts" value={money(sum.parts)} />
-                <SummaryRow label="Labor" value={money(sum.labor)} />
-                <SummaryRow label="ELR (blended)" value={sum.elr == null ? '—' : `${sum.elr.toFixed(1)}%`} valueColor={sum.elr == null ? '#64748b' : elrColor(sum.elr)} />
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ ...lbl, marginBottom: 0, color: '#c4b5fd' }}>Package Totals · adjustable</span>
+                  <div style={{ flex: 1 }} />
+                  {sum.overridden && <button onClick={resetTotals} style={{ background: 'transparent', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}>↻ Reset to line totals</button>}
+                </div>
+                <SummaryEdit label="Parts $" prefix="$" value={String(round2(sum.parts))} onChange={v => setDraft(d => ({ ...d, ovrParts: v }))} />
+                <SummaryEdit label="Labor $" prefix="$" value={String(round2(sum.labor))} onChange={setLabor} />
+                <SummaryEdit label="Labor hours" suffix="hrs" value={String(round2(sum.hours))} onChange={v => setDraft(d => ({ ...d, ovrHours: v }))} />
+                <SummaryEdit label="ELR %" suffix="%" value={sum.elr == null ? '' : String(round2(sum.elr))} onChange={v => setDraft(d => ({ ...d, ovrElr: v }))} color={elrColor(sum.elr)} />
                 <SummaryRow label="Subtotal" value={money(sum.subtotal)} strong />
                 {/* Tax — adjustable rate (default 7%) and what it applies to. */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
@@ -793,6 +821,20 @@ function SummaryRow({ label, value, valueColor = '#cbd5e1', strong }) {
       <span style={{ fontSize: 13.5, fontWeight: strong ? 800 : 600, color: strong ? '#e2e8f0' : '#94a3b8' }}>{label}</span>
       <div style={{ flex: 1 }} />
       <span style={{ fontSize: 14, fontWeight: strong ? 900 : 700, color: valueColor }}>{value}</span>
+    </div>
+  );
+}
+
+// An editable package-total row: auto-filled value the user can override.
+function SummaryEdit({ label, value, onChange, prefix, suffix, color = '#e2e8f0' }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', padding: '5px 0' }}>
+      <span style={{ fontSize: 13.5, fontWeight: 600, color: '#94a3b8' }}>{label}</span>
+      <div style={{ flex: 1 }} />
+      <span style={{ fontSize: 12.5, color: '#94a3b8', marginRight: 3, width: 10, textAlign: 'right' }}>{prefix || ''}</span>
+      <input value={value} onChange={e => onChange(e.target.value)} inputMode="decimal"
+        style={{ ...editInp, width: 92, padding: '5px 9px', fontSize: 13, textAlign: 'right', fontWeight: 800, color }} />
+      <span style={{ fontSize: 12.5, color: '#94a3b8', marginLeft: 5, width: 26 }}>{suffix || ''}</span>
     </div>
   );
 }
