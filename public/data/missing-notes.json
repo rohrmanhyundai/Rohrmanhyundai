@@ -1,63 +1,25 @@
 {
-  "updatedAt": "2026-07-24T16:33:14.949Z",
+  "updatedAt": "2026-07-24T19:41:51.630Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "779529",
-        "vehicle": "2024 Hyundai Tucson"
+        "ro": "779534",
+        "vehicle": "2013 Hyundai Santa Fe"
       },
       {
         "ro": "779524",
         "vehicle": "2024 Hyundai Kona"
       },
       {
-        "ro": "779510",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
         "ro": "779449",
         "vehicle": "2026 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "779445",
-        "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779528",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779527",
-        "vehicle": "2022 Hyundai Sonata"
-      },
-      {
-        "ro": "779526",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779525",
-        "vehicle": "2018 Buick Encore"
-      },
-      {
-        "ro": "779523",
-        "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779521",
-        "vehicle": "2021 Hyundai Elantra"
-      },
-      {
-        "ro": "779476",
-        "vehicle": "2024 Hyundai Kona"
       }
     ],
     "CORY": [
       {
-        "ro": "779482",
-        "vehicle": "2025 Toyota Camry"
+        "ro": "779533",
+        "vehicle": "2025 Mazda Mazda3 Sedan"
       },
       {
         "ro": "779419",
@@ -112,10 +74,22 @@
         "vehicle": "2013 Hyundai Tucson"
       }
     ],
-    "CODY": [
+    "DAVID": [
       {
-        "ro": "779472",
-        "vehicle": "2020 Subaru Legacy"
+        "ro": "779532",
+        "vehicle": "2016 Hyundai Elantra"
+      },
+      {
+        "ro": "779528",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779526",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779476",
+        "vehicle": "2024 Hyundai Kona"
       }
     ]
   }
