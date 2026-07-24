@@ -506,6 +506,30 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
             <input ref={fileRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={e => handleFile(e.target.files?.[0])} />
           </div>
 
+          {/* How to flag in Tekion — so anyone uploading knows which color does what. */}
+          <div style={{ ...cardSt, marginBottom: 22 }}>
+            <div style={{ fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>How to flag an RO in Tekion</div>
+            <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 14, lineHeight: 1.6 }}>
+              On the Repair Order in Tekion, set the <strong style={{ color: '#cbd5e1' }}>User Flag</strong> to one of these colors.
+              Only ROs with one of these three flags are picked up from the report — every other row is ignored.
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {[
+                { color: 'purple', hex: '#c084fc', name: 'Purple', dest: 'Work in Progress (WIP)', desc: 'The RO is in the shop and being worked.' },
+                { color: 'pink',   hex: '#f472b6', name: 'Pink',   dest: 'PDI',                     desc: 'Pre-delivery inspection.' },
+                { color: 'green',  hex: '#4ade80', name: 'Green',  dest: 'Used Car',                desc: 'Used-car inspection / recon.' },
+              ].map(f => (
+                <div key={f.color} style={{ flex: '1 1 240px', minWidth: 220, display: 'flex', gap: 12, alignItems: 'flex-start', background: `${f.hex}14`, border: `1px solid ${f.hex}44`, borderRadius: 12, padding: '12px 14px' }}>
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: f.hex, boxShadow: `0 0 10px ${f.hex}88`, flexShrink: 0, marginTop: 2 }} />
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 900, fontSize: 13.5, color: f.hex }}>{f.name} <span style={{ color: '#64748b', fontWeight: 600 }}>→</span> <span style={{ color: '#e2e8f0' }}>{f.dest}</span></div>
+                    <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3, lineHeight: 1.5 }}>{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {busy && <div style={{ color: '#94a3b8', fontSize: 14, marginBottom: 14 }}>⏳ Working…</div>}
           {error && <div style={{ color: '#fca5a5', fontSize: 14, marginBottom: 14, background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '10px 14px' }}>{error}</div>}
           {status && <div style={{ color: status.startsWith('✅') ? '#6ee7b7' : '#fbbf24', fontSize: 14, marginBottom: 14, background: 'rgba(255,255,255,.04)', borderRadius: 10, padding: '10px 14px' }}>{status}</div>}
