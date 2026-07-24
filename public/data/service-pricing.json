@@ -49,7 +49,7 @@
           "desc": "Engine Air Filter Replacement",
           "opCode": "AIRFILTER",
           "laborCost": "25.00",
-          "laborHours": "2"
+          "laborHours": ".2"
         },
         {
           "id": "svc-mrawtpr17398",
@@ -219,5 +219,5 @@
       ]
     }
   ],
-  "updatedAt": 1784914020440
+  "updatedAt": 1784915276402
 }
