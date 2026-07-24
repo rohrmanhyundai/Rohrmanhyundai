@@ -218,21 +218,5 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
-  },
-  {
-    "id": "mrxul2n89mkv",
-    "ro": "779482",
-    "roDate": "2026-07-23",
-    "vehicle": "2025 Toyota Camry",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
   }
 ]
