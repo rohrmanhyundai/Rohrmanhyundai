@@ -1,63 +1,5 @@
 [
   {
-    "id": "mqscdo0q106",
-    "username": "SETH",
-    "text": "PART RECIEVED FOR MONTE RICE-REAR CAMERA",
-    "timestamp": 1782321796826
-  },
-  {
-    "id": "mqtf5dknn8d",
-    "username": "SETH",
-    "text": "PARTS RECEIVED FOR REBEKAH MAIDEN.",
-    "timestamp": 1782386915063
-  },
-  {
-    "id": "mquuegwbw4x",
-    "username": "SETH",
-    "text": "PARTS RECEIVED WITH NO RO; BRENT DARDEEN, BLAKE POWELL, JONI DAVIES, MELLISA LEAMING",
-    "timestamp": 1782472999691
-  },
-  {
-    "id": "mqv3049b0vb",
-    "username": "SHAWN",
-    "text": "DAVID 778680 WHAT ARE WE DOING WITH THIS CAR?",
-    "timestamp": 1782487446671
-  },
-  {
-    "id": "mqv3vblzfkg",
-    "username": "SHAWN",
-    "text": "DAVID 778684 DID WE HEAR BACK FROM CUSTOMER?",
-    "timestamp": 1782488902535
-  },
-  {
-    "id": "mqv4cx6motq",
-    "username": "DAVID",
-    "text": "need to try reach out again put brothers number in notes. Spoke with him yesterday morning",
-    "timestamp": 1782489723646,
-    "replyTo": {
-      "id": "mqv3049b0vb",
-      "username": "SHAWN",
-      "text": "DAVID 778680 WHAT ARE WE DOING WITH THIS CAR?"
-    }
-  },
-  {
-    "id": "mqv4ehpms2d",
-    "username": "DAVID",
-    "text": "updatred notes but havent heard back",
-    "timestamp": 1782489796906,
-    "replyTo": {
-      "id": "mqv3vblzfkg",
-      "username": "SHAWN",
-      "text": "DAVID 778684 DID WE HEAR BACK FROM CUSTOMER?"
-    }
-  },
-  {
-    "id": "mqw9spc62v1",
-    "username": "SETH",
-    "text": "PARTS RECEIVED FOR; ASHLEY MCCLOUD",
-    "timestamp": 1782559324230
-  },
-  {
     "id": "mr0pzmkrox0",
     "username": "SETH",
     "text": "TIRES HERE FOR BURTNER",
@@ -301,5 +243,11 @@
         "KAI"
       ]
     }
+  },
+  {
+    "id": "ms39ld0hlf6",
+    "username": "DAVID",
+    "text": "Pat King RO 779528- said she will be unavailable to come in to do the recall for some time but will call back when she can do it",
+    "timestamp": 1785159027233
   }
 ]
