@@ -628,15 +628,15 @@
       },
       {
         "name": "JORDAN",
-        "certified": "NO",
-        "trainings_due": "9",
+        "certified": "YES",
+        "trainings_due": "0",
         "excel_training": "NA"
       },
       {
         "name": "DANIEL",
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
+        "certified": "NO",
+        "trainings_due": "68",
+        "excel_training": "N/A"
       },
       {
         "name": "DANIEL",
