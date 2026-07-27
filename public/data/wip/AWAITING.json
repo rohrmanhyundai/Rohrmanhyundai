@@ -67,20 +67,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "ms3e4v5yagpb",
-    "ro": "779557",
-    "roDate": "2026-07-27",
-    "vehicle": "2025 Hyundai Palisade",
-    "jobDesc": "RECALLS",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
