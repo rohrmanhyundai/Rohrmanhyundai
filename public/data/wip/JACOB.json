@@ -128,22 +128,6 @@
     "notes": ""
   },
   {
-    "id": "mrtj5utljsns",
-    "ro": "779359",
-    "roDate": "2026-07-20",
-    "vehicle": "2018 Volkswagen Atlas",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "mr10dfyo6jtd",
     "ro": "778822",
     "roDate": "2026-06-30",
