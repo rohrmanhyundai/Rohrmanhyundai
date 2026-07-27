@@ -1,8 +1,42 @@
 {
-  "updatedAt": "2026-07-27T12:27:03.602Z",
+  "updatedAt": "2026-07-27T15:37:37.097Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "779569",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "779563",
+        "vehicle": "2018 Hyundai Elantra"
+      },
+      {
+        "ro": "779558",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "779476",
+        "vehicle": "2024 Hyundai Kona"
+      }
+    ],
     "JORDAN": [
+      {
+        "ro": "779568",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "779557",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "779556",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "779555",
+        "vehicle": "2013 Hyundai Sonata"
+      },
       {
         "ro": "779553",
         "vehicle": "2017 Hyundai Tucson"
@@ -25,6 +59,26 @@
       }
     ],
     "CORY": [
+      {
+        "ro": "779567",
+        "vehicle": "2024 Kia Seltos"
+      },
+      {
+        "ro": "779566",
+        "vehicle": "2022 Toyota Highlander"
+      },
+      {
+        "ro": "779565",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "779561",
+        "vehicle": "2019 Ram 1500 Classic"
+      },
+      {
+        "ro": "779560",
+        "vehicle": "2017 Jeep Patriot"
+      },
       {
         "ro": "779533",
         "vehicle": "2025 Mazda Mazda3 Sedan"
@@ -76,12 +130,6 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779476",
-        "vehicle": "2024 Hyundai Kona"
       }
     ]
   }
