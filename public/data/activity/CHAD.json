@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-07-27T16:04:59.002Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 779473 tech CHAD"
+  },
+  {
     "at": "2026-07-27T13:03:13.763Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1327,30 +1333,5 @@
     "at": "2026-06-27T16:57:36.338Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-27T13:22:49.791Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-27T13:05:18.528Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-27T13:05:13.240Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-06-27T13:05:11.724Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-06-27T13:05:11.721Z",
-    "type": "page",
-    "label": "hot-repairs"
   }
 ]
