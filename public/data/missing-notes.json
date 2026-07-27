@@ -1,19 +1,15 @@
 {
-  "updatedAt": "2026-07-27T16:49:48.186Z",
+  "updatedAt": "2026-07-27T21:37:00.193Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
+        "ro": "779581",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
         "ro": "779575",
         "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "779574",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "779569",
-        "vehicle": "2026 Hyundai Tucson"
       },
       {
         "ro": "779563",
@@ -26,6 +22,16 @@
       {
         "ro": "779476",
         "vehicle": "2024 Hyundai Kona"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779580",
+        "vehicle": "2013 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779449",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
       }
     ],
     "CORY": [
@@ -44,10 +50,6 @@
       {
         "ro": "779567",
         "vehicle": "2024 Kia Seltos"
-      },
-      {
-        "ro": "779566",
-        "vehicle": "2022 Toyota Highlander"
       },
       {
         "ro": "779565",
@@ -90,10 +92,6 @@
         "vehicle": "2020 Honda Pilot"
       },
       {
-        "ro": "779359",
-        "vehicle": "2018 Volkswagen Atlas"
-      },
-      {
         "ro": "779325",
         "vehicle": "2018 Honda Odyssey"
       },
@@ -112,40 +110,6 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "779572",
-        "vehicle": "2023 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779557",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779556",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779553",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "779552",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779551",
-        "vehicle": "2018 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779548",
-        "vehicle": "2020 Hyundai Palisade"
-      },
-      {
-        "ro": "779449",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
       }
     ]
   }
