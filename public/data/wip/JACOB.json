@@ -204,22 +204,6 @@
     "notes": ""
   },
   {
-    "id": "ms3e4tzm3hf9",
-    "ro": "779566",
-    "roDate": "2026-07-27",
-    "vehicle": "2022 Toyota Highlander",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "ms3e4tzmfl2a",
     "ro": "779565",
     "roDate": "2026-07-27",
