@@ -60,5 +60,20 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "ms3qjo8l07g",
+    "ro": "779576",
+    "roDate": "2026-07-27",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES ALL WARNING LIGHTS CAME ON. NOW VEHICLE WILL NOT START. CHECK AND ADVISE./ RECALLS",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "",
+    "flag": "purple"
   }
 ]
