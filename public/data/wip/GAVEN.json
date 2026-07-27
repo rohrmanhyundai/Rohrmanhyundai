@@ -60,5 +60,21 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "ms3gpp30koum",
+    "ro": "779558",
+    "roDate": "2026-07-27",
+    "vehicle": "2025 Hyundai Tucson Hybrid",
+    "jobDesc": "CRC RADAR CALIBRATION",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
