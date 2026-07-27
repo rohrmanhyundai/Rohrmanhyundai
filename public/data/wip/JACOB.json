@@ -282,5 +282,53 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "ms3gpo9jll63",
+    "ro": "779573",
+    "roDate": "2026-07-27",
+    "vehicle": "2019 Lincoln MKC",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
+  },
+  {
+    "id": "ms3gpo9j50uy",
+    "ro": "779571",
+    "roDate": "2026-07-27",
+    "vehicle": "2022 Chevrolet Silverado 1500",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
+  },
+  {
+    "id": "ms3gpo9jbhs5",
+    "ro": "779570",
+    "roDate": "2026-07-27",
+    "vehicle": "2024 Hyundai Sonata",
+    "jobDesc": "USED CAR INSPECTION",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN",
+    "notes": ""
   }
 ]
