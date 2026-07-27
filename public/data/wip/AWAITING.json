@@ -67,5 +67,35 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "ms3qz1c1puk3",
+    "ro": "779581",
+    "roDate": "2026-07-27",
+    "vehicle": "2025 Hyundai Palisade",
+    "jobDesc": "PERFORM HYUNDAI PREPAID MAINTENANCE LOF AND TIRE ROTATION. and recalls",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "ms3qz1c17fm4",
+    "ro": "779580",
+    "roDate": "2026-07-27",
+    "vehicle": "2013 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES CEL FLASHING. ENGINE KNOCKING. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
