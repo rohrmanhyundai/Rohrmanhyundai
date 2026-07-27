@@ -534,6 +534,32 @@
       },
       "chatAccess": true,
       "techChatAccess": true
+    },
+    {
+      "username": "Bryson",
+      "lastName": "",
+      "password": "Bryson2026",
+      "role": "technician",
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": true,
+        "advisorRankBoard": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDhlDbkRPNhduD3F6SBE6XxcJZDdxNgtXa2ZIRDM+OwghIGNtXw==",
