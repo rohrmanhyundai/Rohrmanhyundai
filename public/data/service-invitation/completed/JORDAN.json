@@ -286,5 +286,23 @@
     "notes": "filled out a survey\n",
     "submittedAt": "2026-07-28T19:33:54.102Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "KEVIN PETERSON",
+    "repairOrder": "778758",
+    "vin": "KM8JBCD19RU195231",
+    "model": "TUCSON HEV",
+    "serviceDate": "07/10/2026",
+    "invitationDate": "07/14/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "2195881693",
+    "notes": "left vm",
+    "submittedAt": "2026-07-28T19:35:22.772Z",
+    "submittedBy": "JORDAN"
   }
 ]
