@@ -34,7 +34,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -134,6 +134,7 @@ export default function App() {
   // replaces `data` from the server; for a short window after an upload we keep the
   // just-applied values so a stale-replica read can't revert the gauges.
   const gaugeActualsRef = useRef(null); // { grossActual?, cpActual?, ts }
+  const formerRef = useRef({ set: null, ts: 0 }); // cached former-employee first names (5-min TTL)
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -154,6 +155,24 @@ export default function App() {
           if (g.grossActual != null) d.grossActual = g.grossActual;
           if (g.cpActual != null) d.cpActual = g.cpActual;
         }
+        // Former employees are the authority on who's gone. Filter them out of
+        // the roster on every load so a concurrent stale save from another
+        // tab/device can't resurrect a deleted tech/advisor (this is why WEST
+        // kept reappearing after being deleted). Cached 5 min to limit reads.
+        try {
+          const fr = formerRef.current;
+          if (!fr.set || Date.now() - fr.ts > 5 * 60 * 1000) {
+            const former = await loadFormerEmployees();
+            const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+            fr.set = new Set((Array.isArray(former) ? former : []).map(f => firstWord(f.username)));
+            fr.ts = Date.now();
+          }
+          if (fr.set && fr.set.size) {
+            const fw = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+            d.technicians = (d.technicians || []).filter(t => !fr.set.has(fw(t.name)));
+            d.advisors = (d.advisors || []).filter(a => !fr.set.has(fw(a.name)));
+          }
+        } catch { /* non-fatal — fall back to unfiltered roster */ }
         recalcTech(d, schedulesRef.current);
         recalcAdvisorSummary(d);
         setData(d);
