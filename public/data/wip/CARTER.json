@@ -14,20 +14,5 @@
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "notes": ""
-  },
-  {
-    "id": "mrz8qiuj86e",
-    "ro": "779476",
-    "roDate": "2026-07-23",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES- Pass front tire flat, blew off rim, has smart driver",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": true,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "flag": "purple"
   }
 ]
