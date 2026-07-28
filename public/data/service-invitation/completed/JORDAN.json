@@ -304,5 +304,23 @@
     "notes": "left vm",
     "submittedAt": "2026-07-28T19:35:22.772Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "VENKATA SUNKARI",
+    "repairOrder": "779119",
+    "vin": "KM8JEDD1XSU333930",
+    "model": "TUCSON HEV",
+    "serviceDate": "07/13/2026",
+    "invitationDate": "07/15/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7657672941",
+    "notes": "enjoyed service, filling out survey\n",
+    "submittedAt": "2026-07-28T19:37:48.197Z",
+    "submittedBy": "JORDAN"
   }
 ]
