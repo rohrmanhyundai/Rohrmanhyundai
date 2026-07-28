@@ -44,5 +44,21 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": ""
+  },
+  {
+    "id": "ms559vg8ordm",
+    "ro": "779576",
+    "roDate": "2026-07-28",
+    "vehicle": "2024 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES ALL WARNING LIGHTS CAME ON. NOW VEHICLE WILL NOT START. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
