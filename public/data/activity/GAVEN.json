@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-07-28T14:44:34.712Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-28T14:44:32.800Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-07-28T14:44:29.750Z",
+    "type": "page",
+    "label": "tech-self-review"
+  },
+  {
+    "at": "2026-07-28T14:44:26.887Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-07-28T14:43:58.051Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-27T12:33:15.034Z",
     "type": "page",
     "label": "recalls"
