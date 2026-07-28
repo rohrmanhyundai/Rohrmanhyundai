@@ -256,5 +256,23 @@
     "notes": "left VM",
     "submittedAt": "2026-05-19T21:03:21.402Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "DANETTE PARKER",
+    "repairOrder": "779468",
+    "vin": "KM8JBCAE3PU263902",
+    "model": "TUCSON",
+    "serviceDate": "07/22/2026",
+    "invitationDate": "07/24/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "2675033428",
+    "notes": "left vm for review",
+    "submittedAt": "2026-07-28T19:38:20.383Z",
+    "submittedBy": "DAVID"
   }
 ]
