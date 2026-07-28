@@ -1,0 +1,27 @@
+[
+  {
+    "at": "2026-07-28T14:41:40.097Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-07-28T14:41:16.013Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-28T14:41:16.012Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-07-28T14:41:11.146Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-07-28T14:40:46.283Z",
+    "type": "action",
+    "label": "login"
+  }
+]
