@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-28T21:13:23.961Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
+    "at": "2026-07-28T21:13:16.299Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-17T13:36:43.867Z",
     "type": "action",
     "label": "logout"
@@ -13,67 +23,5 @@
     "at": "2026-07-16T20:53:03.296Z",
     "type": "page",
     "label": "hot-repairs"
-  },
-  {
-    "at": "2026-06-23T16:29:25.199Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-23T16:10:59.014Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-23T16:10:44.644Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T16:01:29.799Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 778359"
-  },
-  {
-    "at": "2026-06-23T16:01:16.642Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T16:01:09.994Z",
-    "type": "action",
-    "label": "undo-parts-arrived",
-    "details": "RO 778359"
-  },
-  {
-    "at": "2026-06-23T16:01:06.934Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-23T16:01:04.576Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T16:00:59.163Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-23T16:00:49.700Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T15:36:59.511Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-23T15:35:35.208Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
