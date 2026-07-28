@@ -7,8 +7,8 @@
     "jobDesc": "Crank no start",
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/28/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID",
     "notes": "Vehicle has no compression and coolant in the cylinders.Has signs of overheating. Recommended engine replacement. Engine approved. Ready for ASRs. "
