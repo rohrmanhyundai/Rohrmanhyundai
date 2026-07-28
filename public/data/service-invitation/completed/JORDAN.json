@@ -250,5 +250,23 @@
     "notes": "left vm",
     "submittedAt": "2026-05-20T19:15:21.718Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "GARY SIMS",
+    "repairOrder": "778813",
+    "vin": "5NTJEDDF8TH169025",
+    "model": "SANTA CRUZ",
+    "serviceDate": "06/30/2026",
+    "invitationDate": "07/02/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7653661819",
+    "notes": "will be putting in a survey\n",
+    "submittedAt": "2026-07-28T19:31:33.895Z",
+    "submittedBy": "JORDAN"
   }
 ]
