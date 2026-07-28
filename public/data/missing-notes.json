@@ -1,37 +1,75 @@
 {
-  "updatedAt": "2026-07-27T21:37:00.193Z",
+  "updatedAt": "2026-07-28T21:05:08.180Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "779581",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "779623",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "779575",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "779563",
-        "vehicle": "2018 Hyundai Elantra"
-      },
-      {
-        "ro": "779558",
+        "ro": "779622",
         "vehicle": "2025 Hyundai Tucson Hybrid"
       },
       {
-        "ro": "779476",
-        "vehicle": "2024 Hyundai Kona"
+        "ro": "779621",
+        "vehicle": "2022 Genesis GV80"
+      },
+      {
+        "ro": "779620",
+        "vehicle": "2024 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779617",
+        "vehicle": "2022 Hyundai Elantra"
+      },
+      {
+        "ro": "779614",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "779612",
+        "vehicle": "2019 Hyundai Tucson"
+      },
+      {
+        "ro": "779602",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779600",
+        "vehicle": "2026 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779596",
+        "vehicle": "2026 Hyundai Tucson"
       }
     ],
     "JORDAN": [
       {
-        "ro": "779580",
-        "vehicle": "2013 Hyundai Santa Fe"
+        "ro": "779603",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779601",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "779598",
+        "vehicle": "2026 Hyundai Santa Fe"
       },
       {
         "ro": "779449",
         "vehicle": "2026 Hyundai Palisade Hybrid"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "779599",
+        "vehicle": "2026 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779597",
+        "vehicle": "2026 Hyundai Tucson"
       }
     ],
     "CORY": [
@@ -42,14 +80,6 @@
       {
         "ro": "779571",
         "vehicle": "2022 Chevrolet Silverado 1500"
-      },
-      {
-        "ro": "779570",
-        "vehicle": "2024 Hyundai Sonata"
-      },
-      {
-        "ro": "779567",
-        "vehicle": "2024 Kia Seltos"
       },
       {
         "ro": "779565",
@@ -90,14 +120,6 @@
       {
         "ro": "779372",
         "vehicle": "2020 Honda Pilot"
-      },
-      {
-        "ro": "779325",
-        "vehicle": "2018 Honda Odyssey"
-      },
-      {
-        "ro": "779304",
-        "vehicle": "2016 Chevrolet Colorado"
       },
       {
         "ro": "779221",
