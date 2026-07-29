@@ -906,6 +906,14 @@ export async function loadChatMessages() {
   return [];
 }
 
+// Cheap poll for live chat: conditional (ETag) read that returns { changed:false }
+// when nothing's new — a 304 that does NOT count against the shared rate limit,
+// so we can poll every few seconds without draining the quota. On change returns
+// { changed:true, data:[...messages] } (or data:null on error).
+export async function pollChatMessages() {
+  return conditionalReadGitHubFile(authHeaders(), CHAT_PATH);
+}
+
 // Conflict-safe update: `mutate(currentMessages)` runs against the FRESH server
 // list (re-run if another client saved first), so concurrent sends/reactions
 // never clobber each other. Returns the saved list. Prunes >30-day-old messages.
@@ -1392,6 +1400,11 @@ export async function loadTechChatMessages() {
     if (res.ok) return await res.json();
   } catch {}
   return [];
+}
+
+// Cheap conditional (ETag) poll for live tech chat — see pollChatMessages.
+export async function pollTechChatMessages() {
+  return conditionalReadGitHubFile(authHeaders(), TECH_CHAT_PATH);
 }
 
 // Conflict-safe update — see updateChatMessages.
