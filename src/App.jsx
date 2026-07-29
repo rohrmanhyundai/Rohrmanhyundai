@@ -8,6 +8,7 @@ import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
 import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT } from './utils/pusher';
 import { isMentioned } from './utils/mentions';
+import { chatLive, setMentionConsider } from './utils/chatLive';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import RoUpload from './components/RoUpload';
@@ -307,6 +308,7 @@ export default function App() {
       setMention(cur => cur || mentionQueueRef.current[0]);
     };
     considerMentionRef.current = consider; // let the 5-min pollChats safety-net reuse it
+    setMentionConsider(consider);          // let the chat panels feed mentions off their own reads
 
     // Read one chat file and surface any unacknowledged @mentions in it.
     const scanAdvisor = async () => { try { const a = await loadChatMessages(); (Array.isArray(a) ? a : []).forEach(m => consider(m, 'Advisor Chat')); } catch {} };
@@ -336,13 +338,16 @@ export default function App() {
     // popup fires on its own — no manual refresh needed. Only runs while the tab
     // is actually visible, to keep the shared GitHub token's rate use in check.
     const isVisible = () => typeof document === 'undefined' || document.visibilityState === 'visible';
-    const tick = () => { if (isVisible()) { scanAdvisor(); scanTech(); } };
-    const pollId = setInterval(tick, 10000);
-    const onVis = () => { if (isVisible()) { scanAdvisor(); scanTech(); } };
+    // Only read a channel here when NO chat panel is mounted for it — a mounted
+    // panel already live-polls and feeds mentions, so this avoids double reads.
+    const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); };
+    const pollId = setInterval(sweep, 10000);
+    const onVis = () => sweep();
     try { document.addEventListener('visibilitychange', onVis); } catch {}
 
     return () => {
       considerMentionRef.current = null;
+      setMentionConsider(null);
       clearInterval(pollId);
       try { document.removeEventListener('visibilitychange', onVis); } catch {}
       try {
