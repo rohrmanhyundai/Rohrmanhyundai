@@ -74,5 +74,21 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "ms6mt2jh0dug",
+    "ro": "779612",
+    "roDate": "2026-07-29",
+    "vehicle": "2019 Hyundai Tucson",
+    "jobDesc": "Ignition Coil Remove and Replace",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": ""
   }
 ]
