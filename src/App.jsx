@@ -36,7 +36,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -310,9 +310,10 @@ export default function App() {
     considerMentionRef.current = consider; // let the 5-min pollChats safety-net reuse it
     setMentionConsider(consider);          // let the chat panels feed mentions off their own reads
 
-    // Read one chat file and surface any unacknowledged @mentions in it.
-    const scanAdvisor = async () => { try { const a = await loadChatMessages(); (Array.isArray(a) ? a : []).forEach(m => consider(m, 'Advisor Chat')); } catch {} };
-    const scanTech = async () => { try { const t = await loadTechChatMessages(); (Array.isArray(t) ? t : []).forEach(m => consider(m, 'Tech Chat')); } catch {} };
+    // Conditional (ETag) read so a quiet channel costs nothing against the rate
+    // limit; surfaces any unacknowledged @mentions when the file changed.
+    const scanAdvisor = async () => { try { const r = await pollChatMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => consider(m, 'Advisor Chat')); } catch {} };
+    const scanTech = async () => { try { const r = await pollTechChatMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => consider(m, 'Tech Chat')); } catch {} };
 
     let advCh, techCh, pusher;
     // On a new-message ping: if the event carries the message (sender on this
@@ -343,7 +344,7 @@ export default function App() {
     // onAdv/onTech above; keep this gentle so the shared GitHub token isn't
     // rate-limited (aggressive polling here caused 403s).
     const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); };
-    const pollId = setInterval(sweep, 60000);
+    const pollId = setInterval(sweep, 5000);
     const onVis = () => sweep();
     try { document.addEventListener('visibilitychange', onVis); } catch {}
 

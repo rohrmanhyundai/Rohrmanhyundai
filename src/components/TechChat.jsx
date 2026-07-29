@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { loadTechChatMessages, updateTechChatMessages } from '../utils/github';
+import { loadTechChatMessages, updateTechChatMessages, pollTechChatMessages } from '../utils/github';
 import { getPusher, triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 import { chatLive, feedMention } from '../utils/chatLive';
 
@@ -56,16 +56,24 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
       if (data && data.id && data.text) {
         setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data]);
         try { feedMention(data, 'Tech Chat'); } catch {}
-      } else if (!isTypingRef.current) {
-        fetchMessages();
       }
+      // Dataless pings (reactions/deletes) are picked up by the conditional poll.
     };
     channel.bind(NEW_MSG_EVENT, handler);
-    // Gentle safety net (60s) for any missed event — real-time is the event
-    // payload above, so this stays infrequent to spare the shared token.
-    const poll = setInterval(() => {
-      if (!isTypingRef.current && (typeof document === 'undefined' || document.visibilityState === 'visible')) fetchMessages();
-    }, 60000);
+    // Reliable real-time: a CONDITIONAL (ETag) poll every 4s. When nothing's new
+    // GitHub answers 304 — which does NOT count against the shared rate limit —
+    // so this is cheap, and it doesn't depend on Pusher actually delivering.
+    const poll = setInterval(async () => {
+      if (isTypingRef.current) return;
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
+      try {
+        const r = await pollTechChatMessages();
+        if (r && r.changed && Array.isArray(r.data)) {
+          setMessages(r.data);
+          try { r.data.forEach(m => feedMention(m, 'Tech Chat')); } catch {}
+        }
+      } catch {}
+    }, 4000);
     // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
     // also tear down the app-level @mention watcher's binding.
     return () => {
