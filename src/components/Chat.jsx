@@ -85,10 +85,12 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
   useEffect(() => {
     fetchMessages();
     const channel = getPusher().subscribe(ADVISOR_CHANNEL);
-    channel.bind(NEW_MSG_EVENT, () => {
-      if (!isTypingRef.current) fetchMessages();
-    });
-    return () => { getPusher().unsubscribe(ADVISOR_CHANNEL); };
+    const handler = () => { if (!isTypingRef.current) fetchMessages(); };
+    channel.bind(NEW_MSG_EVENT, handler);
+    // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
+    // also tear down the app-level @mention watcher's binding (which then goes
+    // deaf to live messages until a full refresh).
+    return () => { channel.unbind(NEW_MSG_EVENT, handler); };
   }, [fetchMessages]);
 
   useEffect(() => {
