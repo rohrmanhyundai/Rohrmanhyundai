@@ -8,7 +8,7 @@ import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
 import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT } from './utils/pusher';
-import { isMentioned } from './utils/mentions';
+import { mentionsUser } from './utils/mentions';
 import { chatLive, setMentionConsider } from './utils/chatLive';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
@@ -144,6 +144,7 @@ export default function App() {
   const mentionQueueRef = useRef([]);               // pending mentions waiting to show
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
   const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
+  const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -302,7 +303,7 @@ export default function App() {
       if (!msg || !msg.id || !msg.text) return;
       if ((msg.username || '').toUpperCase() === meU) return;            // not my own message
       if (msg.timestamp && msg.timestamp < baseline) return;            // predates this session's baseline
-      if (!isMentioned(msg.text, currentUser)) return;
+      if (!mentionsUser(msg.text, currentUser, myRoleRef.current)) return; // by name or @tech/@advisor/@part group
       // A 🚨 reaction on the message marks it an alert → red popup.
       const isAlert = !!(msg.reactions && Array.isArray(msg.reactions['🚨']) && msg.reactions['🚨'].length > 0);
       if (mentionAckRef.current.has(msg.id)) return;                    // already acknowledged
@@ -618,6 +619,7 @@ export default function App() {
   // matching `=== 'technician'` — losing his own tech schedule, reviews, and
   // performance reports. Falls back to stripping the marker while `users` loads.
   const jobRole = (currentUserRecord.role || (currentRole || '').replace(/\s*manager$/i, '')).toLowerCase();
+  myRoleRef.current = jobRole; // keep the @tech/@advisor/@part group matcher current
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
