@@ -45,10 +45,12 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
   useEffect(() => {
     fetchMessages();
     const channel = getPusher().subscribe(TECH_CHANNEL);
-    channel.bind(NEW_MSG_EVENT, () => {
-      if (!isTypingRef.current) fetchMessages();
-    });
-    return () => { getPusher().unsubscribe(TECH_CHANNEL); };
+    const handler = () => { if (!isTypingRef.current) fetchMessages(); };
+    channel.bind(NEW_MSG_EVENT, handler);
+    // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
+    // also tear down the app-level @mention watcher's binding (which then goes
+    // deaf to live messages until a full refresh).
+    return () => { channel.unbind(NEW_MSG_EVENT, handler); };
   }, [fetchMessages]);
 
   // Refetch on demand when the parent bumps refreshKey (e.g. after the Parts
