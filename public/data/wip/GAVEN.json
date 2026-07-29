@@ -45,5 +45,21 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "ms6mt1skqzg9",
+    "ro": "779627",
+    "roDate": "2026-07-29",
+    "vehicle": "2021 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES AC IS NOT GETTING COLD CHECK AND ADVISE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": ""
   }
 ]
