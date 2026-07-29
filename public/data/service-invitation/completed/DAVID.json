@@ -292,5 +292,23 @@
     "notes": "NO VM box\n",
     "submittedAt": "2026-07-29T21:26:43.674Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "CHARLES SWITZER",
+    "repairOrder": "779461",
+    "vin": "KM8JEDD1XSU326007",
+    "model": "TUCSON HEV",
+    "serviceDate": "07/22/2026",
+    "invitationDate": "07/24/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7653769119",
+    "notes": "Everything went well and he appreciated my calling ",
+    "submittedAt": "2026-07-29T21:28:29.385Z",
+    "submittedBy": "DAVID"
   }
 ]
