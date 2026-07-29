@@ -8,7 +8,14 @@
     "text": "TEST",
     "alert": true,
     "requireReply": true,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-ms6p7uaiisza",
+        "from": "GAVEN",
+        "text": "WORKS GOD",
+        "timestamp": 1785366668826
+      }
+    ],
     "timestamp": 1785366642903
   }
 ]
