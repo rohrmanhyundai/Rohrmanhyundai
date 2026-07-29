@@ -331,8 +331,20 @@ export default function App() {
 
     scanAdvisor(); scanTech(); // initial catch-up on login
 
+    // Reliable fallback: even if a Pusher event never arrives (socket asleep,
+    // delivery hiccup), re-check the chats every few seconds so the @mention
+    // popup fires on its own — no manual refresh needed. Only runs while the tab
+    // is actually visible, to keep the shared GitHub token's rate use in check.
+    const isVisible = () => typeof document === 'undefined' || document.visibilityState === 'visible';
+    const tick = () => { if (isVisible()) { scanAdvisor(); scanTech(); } };
+    const pollId = setInterval(tick, 10000);
+    const onVis = () => { if (isVisible()) { scanAdvisor(); scanTech(); } };
+    try { document.addEventListener('visibilitychange', onVis); } catch {}
+
     return () => {
       considerMentionRef.current = null;
+      clearInterval(pollId);
+      try { document.removeEventListener('visibilitychange', onVis); } catch {}
       try {
         if (advCh) advCh.unbind(NEW_MSG_EVENT, onAdv);
         if (techCh) techCh.unbind(NEW_MSG_EVENT, onTech);
