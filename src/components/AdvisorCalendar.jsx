@@ -94,13 +94,19 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
   // counts as JORDAN's and floats to the top for the logged-in advisor.
   const hl = (highlightAdvisor || '').toUpperCase().split(/\s+/)[0];
   const isMine = (j) => hl && canonicalAdvisorFirst(j.advisor) === hl;
-  if (hl) {
-    jobs = [...jobs].sort((a, b) => {
-      const am = isMine(a) ? 0 : 1;
-      const bm = isMine(b) ? 0 : 1;
-      return am - bm;
-    });
-  }
+  // HIGH-priority rows always rise to the very top of the list (even in the
+  // manager view, which has no advisor highlight). When an advisor is viewing
+  // their own board, their rows come next. Stable otherwise — a 0 return keeps
+  // the incoming order, so nothing else is reshuffled.
+  jobs = [...jobs].sort((a, b) => {
+    const ah = a.highPriority ? 0 : 1, bh = b.highPriority ? 0 : 1;
+    if (ah !== bh) return ah - bh;
+    if (hl) {
+      const am = isMine(a) ? 0 : 1, bm = isMine(b) ? 0 : 1;
+      if (am !== bm) return am - bm;
+    }
+    return 0;
+  });
   const dayAge = (iso) => {
     if (!iso) return null;
     const d = new Date(iso + 'T00:00:00');
