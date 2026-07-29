@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-29T18:19:44.977Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-07-29T18:19:05.031Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-29T15:52:17.697Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -898,10 +908,5 @@
     "at": "2026-06-30T13:10:23.325Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-29T17:31:23.310Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
   }
 ]
