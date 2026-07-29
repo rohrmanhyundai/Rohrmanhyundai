@@ -18,5 +18,17 @@
     "text": "is this working",
     "alert": true,
     "timestamp": 1785364772110
+  },
+  {
+    "id": "gm-ms6omhbt7ee6",
+    "from": "SHAWN",
+    "to": [
+      "GAVEN"
+    ],
+    "text": "test message",
+    "alert": false,
+    "requireReply": true,
+    "replies": [],
+    "timestamp": 1785365672249
   }
 ]
