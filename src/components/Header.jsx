@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread }) {
+export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread, managerUnread }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -88,8 +88,13 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                     </button>
                   )}
                   {(currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager')) && (
-                    <button onClick={onManager} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.35),rgba(139,92,246,.22))', borderColor: 'rgba(167,139,250,.4)' }}>
+                    <button onClick={onManager} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.35),rgba(139,92,246,.22))', borderColor: 'rgba(167,139,250,.4)', position: 'relative' }}>
                       Manager
+                      {managerUnread > 0 && (
+                        <span style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', boxShadow: '0 0 0 2px rgba(0,0,0,0.4)', lineHeight: 1 }}>
+                          {managerUnread > 99 ? '99+' : managerUnread}
+                        </span>
+                      )}
                     </button>
                   )}
                   {canEditDashboard && (
