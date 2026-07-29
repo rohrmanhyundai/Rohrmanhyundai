@@ -87,18 +87,27 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
 
   useEffect(() => {
     fetchMessages();
-    chatLive.advisor += 1; // tell the global watcher we're live-polling this channel
+    chatLive.advisor += 1;
     const channel = getPusher().subscribe(ADVISOR_CHANNEL);
-    const handler = () => { if (!isTypingRef.current) fetchMessages(); };
+    // Real-time WITHOUT a GitHub read: a full message on the event is appended
+    // straight to the list. A dataless ping (reaction/delete, or an older
+    // sender) falls back to one read.
+    const handler = (data) => {
+      if (data && data.id && data.text) {
+        setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data]);
+        try { feedMention(data, 'Advisor Chat'); } catch {}
+      } else if (!isTypingRef.current) {
+        fetchMessages();
+      }
+    };
     channel.bind(NEW_MSG_EVENT, handler);
-    // Poll while the tab is visible so the box stays live even when a Pusher
-    // event is missed (delivery here is unreliable). Skips while typing.
+    // Gentle safety net (60s) for any missed event — real-time is the event
+    // payload above, so this stays infrequent to spare the shared token.
     const poll = setInterval(() => {
       if (!isTypingRef.current && (typeof document === 'undefined' || document.visibilityState === 'visible')) fetchMessages();
-    }, 8000);
+    }, 60000);
     // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
-    // also tear down the app-level @mention watcher's binding (which then goes
-    // deaf to live messages until a full refresh).
+    // also tear down the app-level @mention watcher's binding.
     return () => {
       channel.unbind(NEW_MSG_EVENT, handler);
       clearInterval(poll);
@@ -156,9 +165,10 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       setText('');
       setReplyTo(null);
       isTypingRef.current = false;
-      // Carry the message on the event so the global @mention watcher can pop an
-      // alert instantly without re-reading the whole chat file.
-      triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT, { id: newMsg.id, username: newMsg.username, text: newMsg.text, timestamp: newMsg.timestamp });
+      // Carry the FULL message on the event so every other client appends it
+      // live with no GitHub read (avoids rate-limiting the shared token) and the
+      // @mention watcher can pop instantly.
+      triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT, newMsg);
     } catch (err) {
       setError(err.message);
     } finally {

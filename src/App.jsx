@@ -338,10 +338,12 @@ export default function App() {
     // popup fires on its own — no manual refresh needed. Only runs while the tab
     // is actually visible, to keep the shared GitHub token's rate use in check.
     const isVisible = () => typeof document === 'undefined' || document.visibilityState === 'visible';
-    // Only read a channel here when NO chat panel is mounted for it — a mounted
-    // panel already live-polls and feeds mentions, so this avoids double reads.
+    // Infrequent safety net for pages with NO chat panel mounted (a panel feeds
+    // mentions itself). Real-time delivery is the Pusher event payload via
+    // onAdv/onTech above; keep this gentle so the shared GitHub token isn't
+    // rate-limited (aggressive polling here caused 403s).
     const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); };
-    const pollId = setInterval(sweep, 10000);
+    const pollId = setInterval(sweep, 60000);
     const onVis = () => sweep();
     try { document.addEventListener('visibilitychange', onVis); } catch {}
 
