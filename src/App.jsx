@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Header from './components/Header';
 import MobileDashboard from './components/MobileDashboard';
 import TechProduction from './components/TechProduction';
@@ -610,6 +611,34 @@ export default function App() {
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
+  // The @mention popup must appear on EVERY screen, but each page below returns
+  // early — so render it through a portal to <body>, above the page switch, and
+  // wrap all the page rendering in renderPage() so the portal always renders.
+  const mentionModal = mention ? createPortal(
+    (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 2147483000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div style={{ width: '100%', maxWidth: 460, background: 'linear-gradient(180deg,#1e293b,#0f172a)', border: '2px solid rgba(96,165,250,.65)', borderRadius: 20, boxShadow: '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)', padding: '30px 28px', textAlign: 'center' }}>
+          <div style={{ fontSize: 46, marginBottom: 6 }}>💬</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
+            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW CHAT MESSAGE
+          </div>
+          <div style={{ fontSize: 12.5, fontWeight: 800, color: '#93c5fd', letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12 }}>
+            {mention.channel} · from {String(mention.from).toUpperCase()}
+          </div>
+          <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
+            {mention.text}
+          </div>
+          <button onClick={dismissMention} autoFocus
+            style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170, boxShadow: '0 8px 20px rgba(37,99,235,.5)' }}>
+            OK
+          </button>
+        </div>
+      </div>
+    ),
+    document.body
+  ) : null;
+
+  const renderPage = () => {
   // Technician pages
   if (page === 'tech-resources') {
     return (
@@ -1243,27 +1272,6 @@ export default function App() {
 
   return (
     <div className="viewport">
-      {/* @mention alert — a blocking popup when someone tags you in chat. */}
-      {mention && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 100000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ width: '100%', maxWidth: 460, background: 'linear-gradient(180deg,#1e293b,#0f172a)', border: '2px solid rgba(96,165,250,.65)', borderRadius: 20, boxShadow: '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)', padding: '30px 28px', textAlign: 'center' }}>
-            <div style={{ fontSize: 46, marginBottom: 6 }}>💬</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
-              {(currentUser || '').toUpperCase()}, YOU HAVE A NEW CHAT MESSAGE
-            </div>
-            <div style={{ fontSize: 12.5, fontWeight: 800, color: '#93c5fd', letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12 }}>
-              {mention.channel} · from {String(mention.from).toUpperCase()}
-            </div>
-            <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
-              {mention.text}
-            </div>
-            <button onClick={dismissMention} autoFocus
-              style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170, boxShadow: '0 8px 20px rgba(37,99,235,.5)' }}>
-              OK
-            </button>
-          </div>
-        </div>
-      )}
       <div className="stage" ref={stageRef}>
         <div className="dashboard">
           <Header
@@ -1313,4 +1321,8 @@ export default function App() {
       />
     </div>
   );
+  };
+
+  // The mention portal renders on top of whatever page is showing.
+  return (<>{mentionModal}{renderPage()}</>);
 }
