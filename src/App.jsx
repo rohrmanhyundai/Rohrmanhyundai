@@ -149,6 +149,8 @@ export default function App() {
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
   const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
   const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
+  const [globalUnread, setGlobalUnread] = useState(0); // unread global-message activity → Manager button badge
+  const globalSeenRef = useRef(0);                   // ts the user last opened the Global Message log
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -198,6 +200,16 @@ export default function App() {
   }, []);
 
   useEffect(() => { adminOpenRef.current = adminOpen; }, [adminOpen]);
+
+  // Opening the Global Message log marks its activity as read → clears the badge.
+  useEffect(() => {
+    if (page === 'global-message' && currentUser) {
+      const ts = Date.now();
+      globalSeenRef.current = ts;
+      try { localStorage.setItem(`globalMsgSeenTs:${currentUser.toUpperCase()}`, String(ts)); } catch {}
+      setGlobalUnread(0);
+    }
+  }, [page, currentUser]);
 
   useEffect(() => {
     loadDashboard();
@@ -297,6 +309,9 @@ export default function App() {
     try { mentionAckRef.current = new Set(JSON.parse(localStorage.getItem(ackKey) || '[]')); } catch { mentionAckRef.current = new Set(); }
     let baseline = parseInt(localStorage.getItem(baseKey) || '0', 10);
     if (!baseline) { baseline = Date.now(); try { localStorage.setItem(baseKey, String(baseline)); } catch {} }
+    // Default "seen" to this session's baseline so a first login doesn't badge
+    // pre-existing messages; once they open the log it advances to now.
+    globalSeenRef.current = parseInt(localStorage.getItem(`globalMsgSeenTs:${meU}`) || '0', 10) || baseline;
 
     mentionPersistRef.current = () => {
       try { localStorage.setItem(ackKey, JSON.stringify([...mentionAckRef.current].slice(-500))); } catch {}
@@ -363,10 +378,27 @@ export default function App() {
         setMention(cur => cur || mentionQueueRef.current[0]);
       }
     };
+    // Count unread global-message activity relevant to me (messages addressed to
+    // me + replies from others), since I last opened the log → Manager badge.
+    const tallyGlobalUnread = (arr) => {
+      const seen = globalSeenRef.current || 0;
+      let n = 0;
+      for (const m of (Array.isArray(arr) ? arr : [])) {
+        const from = (m.from || '').toUpperCase();
+        const to = Array.isArray(m.to) ? m.to.map(u => String(u).toUpperCase()) : [];
+        const involved = from === meU || to.includes(meU);
+        if (!involved) continue;
+        if (to.includes(meU) && from !== meU && (m.timestamp || 0) > seen) n++;
+        for (const rep of (Array.isArray(m.replies) ? m.replies : [])) {
+          if ((rep.from || '').toUpperCase() !== meU && (rep.timestamp || 0) > seen) n++;
+        }
+      }
+      setGlobalUnread(n);
+    };
     const scanGlobal = async () => {
       try {
         const r = await pollGlobalMessages();
-        if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => { considerGlobal(m); considerReplies(m); });
+        if (r && r.changed && Array.isArray(r.data)) { r.data.forEach(m => { considerGlobal(m); considerReplies(m); }); tallyGlobalUnread(r.data); }
       } catch {}
     };
 
@@ -1431,7 +1463,7 @@ export default function App() {
           onEdit={() => setAdminOpen(true)}
           onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
           onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
-          advisorUnread={advisorUnread} techUnread={techUnread}
+          advisorUnread={advisorUnread} techUnread={techUnread} managerUnread={globalUnread}
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
         />
@@ -1471,6 +1503,7 @@ export default function App() {
             onManager={() => setPage('manager-hub')}
             advisorUnread={advisorUnread}
             techUnread={techUnread}
+            managerUnread={globalUnread}
           />
 
           <TechProduction data={data} />
