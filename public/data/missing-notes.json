@@ -1,35 +1,33 @@
 {
-  "updatedAt": "2026-07-28T21:05:08.180Z",
+  "updatedAt": "2026-07-29T22:03:42.800Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
+    "JORDAN": [
       {
-        "ro": "779623",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "779643",
+        "vehicle": "2012 Hyundai Veloster"
       },
       {
-        "ro": "779622",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
+        "ro": "779603",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779601",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "779598",
+        "vehicle": "2026 Hyundai Santa Fe"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779642",
+        "vehicle": "2025 Hyundai Santa Cruz"
       },
       {
         "ro": "779621",
         "vehicle": "2022 Genesis GV80"
-      },
-      {
-        "ro": "779620",
-        "vehicle": "2024 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779617",
-        "vehicle": "2022 Hyundai Elantra"
-      },
-      {
-        "ro": "779614",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "779612",
-        "vehicle": "2019 Hyundai Tucson"
       },
       {
         "ro": "779602",
@@ -44,35 +42,11 @@
         "vehicle": "2026 Hyundai Tucson"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "779603",
-        "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779601",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779598",
-        "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779449",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "779599",
-        "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779597",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "779638",
+        "vehicle": "2024 Jeep Wagoneer L"
+      },
       {
         "ro": "779573",
         "vehicle": "2019 Lincoln MKC"
@@ -80,10 +54,6 @@
       {
         "ro": "779571",
         "vehicle": "2022 Chevrolet Silverado 1500"
-      },
-      {
-        "ro": "779565",
-        "vehicle": "2024 Hyundai Tucson"
       },
       {
         "ro": "779561",
@@ -110,10 +80,6 @@
         "vehicle": "2016 Hyundai Tucson"
       },
       {
-        "ro": "779385",
-        "vehicle": "2016 Ford F-150"
-      },
-      {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
       },
@@ -132,6 +98,16 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "779599",
+        "vehicle": "2026 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779597",
+        "vehicle": "2026 Hyundai Tucson"
       }
     ]
   }
