@@ -127,6 +127,15 @@ const NAV_BUTTONS = [
     color: '#bfdbfe',
     prop: 'onUserDataTracker',
   },
+  {
+    key: 'globalMessage',
+    label: '📣 Global Message',
+    desc: 'Send a pop-up message to one or more users — appears on their screen instantly',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
+    border: 'rgba(251,191,36,.5)',
+    color: '#fde68a',
+    prop: 'onGlobalMessage',
+  },
 ];
 
 export default function ManagerHub({
@@ -135,12 +144,14 @@ export default function ManagerHub({
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
+  onGlobalMessage,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
+    onGlobalMessage,
   };
 
   return (

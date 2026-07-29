@@ -7,7 +7,7 @@ import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
-import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT } from './utils/pusher';
+import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT } from './utils/pusher';
 import { mentionsUser } from './utils/mentions';
 import { chatLive, setMentionConsider } from './utils/chatLive';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
@@ -22,6 +22,7 @@ import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
+import GlobalMessage from './components/GlobalMessage';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
 import GoalForecast from './components/GoalForecast';
@@ -37,7 +38,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -322,29 +323,52 @@ export default function App() {
     considerMentionRef.current = consider; // let the 5-min pollChats safety-net reuse it
     setMentionConsider(consider);          // let the chat panels feed mentions off their own reads
 
+    // Global Messages — manager-composed direct popups addressed to specific
+    // users. Reuse the same popup queue; labelled 'Global Message' so OK just
+    // dismisses (no chat to jump to).
+    const considerGlobal = (msg) => {
+      if (!msg || !msg.id || !msg.text) return;
+      if (msg.timestamp && msg.timestamp < baseline) return;
+      const to = Array.isArray(msg.to) ? msg.to.map(u => String(u).toUpperCase()) : [];
+      if (!to.includes(meU)) return;                    // not addressed to me
+      if (mentionAckRef.current.has(msg.id)) return;
+      const isAlert = !!msg.alert;
+      const queued = mentionQueueRef.current.find(x => x.id === msg.id);
+      if (queued) {
+        if (isAlert && !queued.isAlert) { queued.isAlert = true; setMention(cur => (cur && cur.id === msg.id) ? { ...cur, isAlert: true } : cur); }
+        return;
+      }
+      mentionQueueRef.current.push({ id: msg.id, from: msg.from || 'Management', text: String(msg.text), channel: 'Global Message', isAlert });
+      setMention(cur => cur || mentionQueueRef.current[0]);
+    };
+    const scanGlobal = async () => { try { const r = await pollGlobalMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(considerGlobal); } catch {} };
+
     // Conditional (ETag) read so a quiet channel costs nothing against the rate
     // limit; surfaces any unacknowledged @mentions when the file changed.
     const scanAdvisor = async () => { try { const r = await pollChatMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => consider(m, 'Advisor Chat')); } catch {} };
     const scanTech = async () => { try { const r = await pollTechChatMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => consider(m, 'Tech Chat')); } catch {} };
 
-    let advCh, techCh, pusher;
+    let advCh, techCh, globalCh, pusher;
     // On a new-message ping: if the event carries the message (sender on this
     // build) check it instantly with no read; otherwise (older sender, whose
     // event has no payload) re-read the chat file. Either way only the RECEIVER
     // needs this code — so an @mention pops even if the sender hasn't updated.
     const onAdv = (data) => { if (data && data.text) consider(data, 'Advisor Chat'); else scanAdvisor(); };
     const onTech = (data) => { if (data && data.text) consider(data, 'Tech Chat'); else scanTech(); };
-    const onConnect = () => { scanAdvisor(); scanTech(); };
+    const onGlobal = (data) => { if (data && data.text) considerGlobal(data); else scanGlobal(); };
+    const onConnect = () => { scanAdvisor(); scanTech(); scanGlobal(); };
     try {
       pusher = getPusher();
       advCh = pusher.subscribe(ADVISOR_CHANNEL);
       techCh = pusher.subscribe(TECH_CHANNEL);
+      globalCh = pusher.subscribe(GLOBAL_CHANNEL);
       advCh.bind(NEW_MSG_EVENT, onAdv);
       techCh.bind(NEW_MSG_EVENT, onTech);
+      globalCh.bind(GLOBAL_MSG_EVENT, onGlobal);
       pusher.connection.bind('connected', onConnect); // re-scan after a reconnect
     } catch (e) { console.warn('mention watcher subscribe failed:', e); }
 
-    scanAdvisor(); scanTech(); // initial catch-up on login
+    scanAdvisor(); scanTech(); scanGlobal(); // initial catch-up on login
 
     // Reliable fallback: even if a Pusher event never arrives (socket asleep,
     // delivery hiccup), re-check the chats every few seconds so the @mention
@@ -355,7 +379,7 @@ export default function App() {
     // mentions itself). Real-time delivery is the Pusher event payload via
     // onAdv/onTech above; keep this gentle so the shared GitHub token isn't
     // rate-limited (aggressive polling here caused 403s).
-    const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); };
+    const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); scanGlobal(); };
     const pollId = setInterval(sweep, 15000);
     const onVis = () => sweep();
     try { document.addEventListener('visibilitychange', onVis); } catch {}
@@ -368,6 +392,7 @@ export default function App() {
       try {
         if (advCh) advCh.unbind(NEW_MSG_EVENT, onAdv);
         if (techCh) techCh.unbind(NEW_MSG_EVENT, onTech);
+        if (globalCh) globalCh.unbind(GLOBAL_MSG_EVENT, onGlobal);
         if (pusher) pusher.connection.unbind('connected', onConnect);
       } catch {}
     };
@@ -381,7 +406,10 @@ export default function App() {
       mentionAckRef.current.add(cur.id);
       mentionPersistRef.current();
       mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== cur.id);
-      navTo(cur.channel === 'Tech Chat' ? 'work-in-progress' : 'advisor-calendar');
+      // Chat mentions jump to that chat's screen; a Global Message has no chat,
+      // so OK just dismisses it.
+      if (cur.channel === 'Advisor Chat') navTo('advisor-calendar');
+      else if (cur.channel === 'Tech Chat') navTo('work-in-progress');
     }
     setMention(mentionQueueRef.current[0] || null);
   }, []);
@@ -639,7 +667,7 @@ export default function App() {
         }}>
           <div style={{ fontSize: 46, marginBottom: 6 }}>{mention.isAlert ? '🚨' : '💬'}</div>
           <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
-            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW {mention.isAlert ? 'ALERT ' : ''}CHAT MESSAGE
+            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW {mention.isAlert ? 'ALERT ' : ''}MESSAGE
           </div>
           <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12, color: mention.isAlert ? '#fca5a5' : '#93c5fd' }}>
             {mention.channel} · from {String(mention.from).toUpperCase()}
@@ -897,6 +925,19 @@ export default function App() {
         onUserDataTracker={() => goTo('user-data-tracker', 'manager-hub')}
         onGoalForecast={() => goTo('goal-forecast', 'manager-hub')}
         onAdvisorForecast={() => goTo('advisor-goals', 'manager-hub')}
+        onGlobalMessage={() => goTo('global-message', 'manager-hub')}
+      />
+    );
+  }
+
+  if (page === 'global-message') {
+    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return (
+      <GlobalMessage
+        currentUser={currentUser.toUpperCase()}
+        users={users}
+        onBack={() => setPage(prevPage || 'manager-hub')}
       />
     );
   }
