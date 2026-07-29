@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { loadChatMessages, updateChatMessages } from '../utils/github';
 import { getPusher, triggerEvent, ADVISOR_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
+import { chatLive, feedMention } from '../utils/chatLive';
 
 const TYPING_PAUSE_MS = 2000;
 
@@ -79,18 +80,30 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
         }
       }
       setMessages(msgs);
+      // Feed the app-level @mention watcher off this same read.
+      try { msgs.forEach(m => feedMention(m, 'Advisor Chat')); } catch {}
     } catch {}
   }, [currentUser]);
 
   useEffect(() => {
     fetchMessages();
+    chatLive.advisor += 1; // tell the global watcher we're live-polling this channel
     const channel = getPusher().subscribe(ADVISOR_CHANNEL);
     const handler = () => { if (!isTypingRef.current) fetchMessages(); };
     channel.bind(NEW_MSG_EVENT, handler);
+    // Poll while the tab is visible so the box stays live even when a Pusher
+    // event is missed (delivery here is unreliable). Skips while typing.
+    const poll = setInterval(() => {
+      if (!isTypingRef.current && (typeof document === 'undefined' || document.visibilityState === 'visible')) fetchMessages();
+    }, 8000);
     // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
     // also tear down the app-level @mention watcher's binding (which then goes
     // deaf to live messages until a full refresh).
-    return () => { channel.unbind(NEW_MSG_EVENT, handler); };
+    return () => {
+      channel.unbind(NEW_MSG_EVENT, handler);
+      clearInterval(poll);
+      chatLive.advisor = Math.max(0, chatLive.advisor - 1);
+    };
   }, [fetchMessages]);
 
   useEffect(() => {
