@@ -118,7 +118,7 @@
     "jobDesc": "CUSTOMER STATES- possible damage to tires from tree limbs",
     "flag": "purple",
     "usedCar": false,
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "DAVID RILEY",
     "notes": "",
     "partsArrived": null,
