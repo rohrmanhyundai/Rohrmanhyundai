@@ -898,6 +898,23 @@ export async function saveSchedules(schedules) {
   await saveGitHubFile(headers, SCHEDULE_PATH, schedules, `Update work schedules ${new Date().toISOString()}`);
 }
 
+// ── Global Messages ────────────────────────────────────────────────────────────
+// Manager-composed direct popups to specific users. Each entry:
+// { id, from, to:[USER...], text, alert, timestamp }. Kept 7 days.
+const GLOBAL_MSG_PATH = 'public/data/global-messages.json';
+
+export async function pollGlobalMessages() {
+  return conditionalReadGitHubFile(authHeaders(), GLOBAL_MSG_PATH);
+}
+
+export async function sendGlobalMessage(entry) {
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  return mutateGitHubJson(GLOBAL_MSG_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return [...arr, entry].filter(m => m && m.timestamp > cutoff);
+  }, `Global message ${new Date().toISOString()}`);
+}
+
 // ── Group Chat ─────────────────────────────────────────────────────────────────
 const CHAT_PATH = 'public/data/chat/messages.json';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
