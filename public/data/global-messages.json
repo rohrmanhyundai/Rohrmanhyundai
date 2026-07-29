@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "gm-ms6p7aaf0v6i",
+    "from": "SHAWN",
+    "to": [
+      "GAVEN"
+    ],
+    "text": "TEST",
+    "alert": true,
+    "requireReply": true,
+    "replies": [],
+    "timestamp": 1785366642903
+  }
+]
