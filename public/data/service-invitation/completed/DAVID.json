@@ -274,5 +274,23 @@
     "notes": "left vm for review",
     "submittedAt": "2026-07-28T19:38:20.383Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "KATHERINE SONDGERATH",
+    "repairOrder": "779467",
+    "vin": "5NMP2DG17SH020456",
+    "model": "SANTA FE HEV",
+    "serviceDate": "07/22/2026",
+    "invitationDate": "07/24/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "3123394654",
+    "notes": "NO VM box\n",
+    "submittedAt": "2026-07-29T21:26:43.674Z",
+    "submittedBy": "DAVID"
   }
 ]
