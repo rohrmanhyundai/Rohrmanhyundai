@@ -328,5 +328,23 @@
     "notes": "left VM",
     "submittedAt": "2026-07-29T21:29:48.801Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "STEVE WEBB",
+    "repairOrder": "779439",
+    "vin": "5NMJBCDE2SH592591",
+    "model": "TUCSON",
+    "serviceDate": "07/22/2026",
+    "invitationDate": "07/24/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7655851704",
+    "notes": "left VM",
+    "submittedAt": "2026-07-29T21:30:55.353Z",
+    "submittedBy": "DAVID"
   }
 ]
