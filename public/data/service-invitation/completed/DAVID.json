@@ -310,5 +310,23 @@
     "notes": "Everything went well and he appreciated my calling ",
     "submittedAt": "2026-07-29T21:28:29.385Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "PAM DADACZ",
+    "repairOrder": "779440",
+    "vin": "KM8R2DGE9SU830381",
+    "model": "PALISADE",
+    "serviceDate": "07/22/2026",
+    "invitationDate": "07/24/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765365099",
+    "notes": "left VM",
+    "submittedAt": "2026-07-29T21:29:48.801Z",
+    "submittedBy": "DAVID"
   }
 ]
