@@ -923,6 +923,24 @@ export async function sendGlobalMessage(entry) {
   }, `Global message ${new Date().toISOString()}`);
 }
 
+// Remove one global message (conflict-safe). Pass null to clear all sent by a
+// given user (see clearGlobalMessagesFrom).
+export async function deleteGlobalMessage(msgId) {
+  return mutateGitHubJson(GLOBAL_MSG_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.filter(m => m && m.id !== msgId);
+  }, `Delete global message ${new Date().toISOString()}`);
+}
+
+// Remove every global message sent by `from` (case-insensitive). Conflict-safe.
+export async function clearGlobalMessagesFrom(from) {
+  const f = String(from || '').toUpperCase();
+  return mutateGitHubJson(GLOBAL_MSG_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.filter(m => m && (m.from || '').toUpperCase() !== f);
+  }, `Clear global messages from ${f} ${new Date().toISOString()}`);
+}
+
 // Append a reply onto one global message (conflict-safe). `reply` =
 // { id, from, text, timestamp }. Returns the updated messages array.
 export async function replyToGlobalMessage(msgId, reply) {
