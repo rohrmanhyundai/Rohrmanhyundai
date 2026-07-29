@@ -157,5 +157,20 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "ms6mt3ag867w",
+    "ro": "779636",
+    "roDate": "2026-07-29",
+    "vehicle": "2016 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT CRANK. CHECK AND ADVISE.",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
