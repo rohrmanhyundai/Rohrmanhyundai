@@ -7,7 +7,7 @@ import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
-import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT } from './utils/pusher';
+import { getPusher, triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from './utils/pusher';
 import { mentionsUser } from './utils/mentions';
 import { chatLive, setMentionConsider } from './utils/chatLive';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
@@ -38,7 +38,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages } from './utils/github';
+import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -140,7 +140,10 @@ export default function App() {
   const gaugeActualsRef = useRef(null); // { grossActual?, cpActual?, ts }
   const formerRef = useRef({ set: null, ts: 0 }); // cached former-employee first names (5-min TTL)
   // @mention alert: a blocking popup when someone @tags the current user in chat.
-  const [mention, setMention] = useState(null);    // { id, from, text, channel } showing now, or null
+  const [mention, setMention] = useState(null);    // { id, from, text, channel, type } showing now, or null
+  const [replyDraft, setReplyDraft] = useState(''); // reply input inside a reply-required popup
+  const [replyBusy, setReplyBusy] = useState(false);
+  const [replyErr, setReplyErr] = useState('');
   const mentionAckRef = useRef(new Set());          // ids already OK'd (persisted per user)
   const mentionQueueRef = useRef([]);               // pending mentions waiting to show
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
@@ -338,10 +341,34 @@ export default function App() {
         if (isAlert && !queued.isAlert) { queued.isAlert = true; setMention(cur => (cur && cur.id === msg.id) ? { ...cur, isAlert: true } : cur); }
         return;
       }
-      mentionQueueRef.current.push({ id: msg.id, from: msg.from || 'Management', text: String(msg.text), channel: 'Global Message', isAlert });
+      // requireReply → the recipient must type a reply to close (no plain OK).
+      mentionQueueRef.current.push({ id: msg.id, type: msg.requireReply ? 'reply-required' : 'global', from: msg.from || 'Management', text: String(msg.text), channel: 'Global Message', isAlert });
       setMention(cur => cur || mentionQueueRef.current[0]);
     };
-    const scanGlobal = async () => { try { const r = await pollGlobalMessages(); if (r && r.changed && Array.isArray(r.data)) r.data.forEach(considerGlobal); } catch {} };
+    // Pop a "someone replied" notice for anyone involved in the message (the
+    // original sender, plus recipients) — except the reply's own author.
+    const considerReplies = (msg) => {
+      if (!msg || !msg.id) return;
+      const from = (msg.from || '').toUpperCase();
+      const to = Array.isArray(msg.to) ? msg.to.map(u => String(u).toUpperCase()) : [];
+      const involved = from === meU || to.includes(meU);
+      if (!involved) return;
+      for (const rep of (Array.isArray(msg.replies) ? msg.replies : [])) {
+        if (!rep || !rep.id) continue;
+        if ((rep.from || '').toUpperCase() === meU) continue;       // my own reply
+        if (rep.timestamp && rep.timestamp < baseline) continue;
+        if (mentionAckRef.current.has(rep.id)) continue;
+        if (mentionQueueRef.current.some(x => x.id === rep.id)) continue;
+        mentionQueueRef.current.push({ id: rep.id, type: 'reply-notice', from: rep.from || 'Someone', text: String(rep.text || ''), channel: 'Reply', msgId: msg.id });
+        setMention(cur => cur || mentionQueueRef.current[0]);
+      }
+    };
+    const scanGlobal = async () => {
+      try {
+        const r = await pollGlobalMessages();
+        if (r && r.changed && Array.isArray(r.data)) r.data.forEach(m => { considerGlobal(m); considerReplies(m); });
+      } catch {}
+    };
 
     // Conditional (ETag) read so a quiet channel costs nothing against the rate
     // limit; surfaces any unacknowledged @mentions when the file changed.
@@ -356,6 +383,16 @@ export default function App() {
     const onAdv = (data) => { if (data && data.text) consider(data, 'Advisor Chat'); else scanAdvisor(); };
     const onTech = (data) => { if (data && data.text) consider(data, 'Tech Chat'); else scanTech(); };
     const onGlobal = (data) => { if (data && data.text) considerGlobal(data); else scanGlobal(); };
+    // Instant reply notice to whoever the replier addressed (notify list).
+    const onReply = (data) => {
+      if (!data || !data.replyId) { scanGlobal(); return; }
+      const notify = Array.isArray(data.notify) ? data.notify.map(u => String(u).toUpperCase()) : [];
+      if (!notify.includes(meU)) return;
+      if (mentionAckRef.current.has(data.replyId)) return;
+      if (mentionQueueRef.current.some(x => x.id === data.replyId)) return;
+      mentionQueueRef.current.push({ id: data.replyId, type: 'reply-notice', from: data.replyFrom || 'Someone', text: String(data.replyText || ''), channel: 'Reply', msgId: data.msgId });
+      setMention(cur => cur || mentionQueueRef.current[0]);
+    };
     const onConnect = () => { scanAdvisor(); scanTech(); scanGlobal(); };
     try {
       pusher = getPusher();
@@ -365,6 +402,7 @@ export default function App() {
       advCh.bind(NEW_MSG_EVENT, onAdv);
       techCh.bind(NEW_MSG_EVENT, onTech);
       globalCh.bind(GLOBAL_MSG_EVENT, onGlobal);
+      globalCh.bind(GLOBAL_REPLY_EVENT, onReply);
       pusher.connection.bind('connected', onConnect); // re-scan after a reconnect
     } catch (e) { console.warn('mention watcher subscribe failed:', e); }
 
@@ -392,7 +430,7 @@ export default function App() {
       try {
         if (advCh) advCh.unbind(NEW_MSG_EVENT, onAdv);
         if (techCh) techCh.unbind(NEW_MSG_EVENT, onTech);
-        if (globalCh) globalCh.unbind(GLOBAL_MSG_EVENT, onGlobal);
+        if (globalCh) { globalCh.unbind(GLOBAL_MSG_EVENT, onGlobal); globalCh.unbind(GLOBAL_REPLY_EVENT, onReply); }
         if (pusher) pusher.connection.unbind('connected', onConnect);
       } catch {}
     };
@@ -412,6 +450,42 @@ export default function App() {
       else if (cur.channel === 'Tech Chat') navTo('work-in-progress');
     }
     setMention(mentionQueueRef.current[0] || null);
+  }, []);
+
+  // Advance the popup queue after a reply-required or reply-notice is handled.
+  const advanceMention = (id) => {
+    mentionAckRef.current.add(id);
+    mentionPersistRef.current();
+    mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== id);
+    setMention(mentionQueueRef.current[0] || null);
+  };
+
+  // Send a reply from a reply-required popup, notify the original sender, close.
+  const submitReply = useCallback(async () => {
+    const cur = mentionQueueRef.current[0];
+    if (!cur) return;
+    const t = replyDraft.trim();
+    const msgId = cur.msgId || cur.id; // reply-required: msg id is cur.id
+    if (!t || !msgId) return;
+    setReplyBusy(true); setReplyErr('');
+    try {
+      const reply = { id: `rp-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, from: currentUser.toUpperCase(), text: t, timestamp: Date.now() };
+      await replyToGlobalMessage(msgId, reply);
+      try { await triggerEvent(GLOBAL_CHANNEL, GLOBAL_REPLY_EVENT, { msgId, replyId: reply.id, replyFrom: reply.from, replyText: reply.text, notify: [String(cur.from).toUpperCase()] }); } catch {}
+      setReplyDraft('');
+      advanceMention(cur.id);
+    } catch (e) {
+      setReplyErr(e.message || 'Reply failed — try again.');
+    } finally {
+      setReplyBusy(false);
+    }
+  }, [replyDraft, currentUser]);
+
+  // "View" on a reply-notice → open the Global Message log to read/reply.
+  const viewReply = useCallback(() => {
+    const cur = mentionQueueRef.current[0];
+    if (cur) advanceMention(cur.id);
+    navTo('global-message');
   }, []);
 
   useEffect(() => {
@@ -665,25 +739,64 @@ export default function App() {
             ? '0 30px 90px rgba(0,0,0,.85), 0 0 34px rgba(239,68,68,.65)'
             : '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)',
         }}>
-          <div style={{ fontSize: 46, marginBottom: 6 }}>{mention.isAlert ? '🚨' : '💬'}</div>
-          <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
-            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW {mention.isAlert ? 'ALERT ' : ''}MESSAGE
-          </div>
-          <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12, color: mention.isAlert ? '#fca5a5' : '#93c5fd' }}>
-            {mention.channel} · from {String(mention.from).toUpperCase()}
-          </div>
-          <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
-            {mention.text}
-          </div>
-          <button onClick={dismissMention} autoFocus
-            style={{
-              background: mention.isAlert ? 'linear-gradient(180deg,#ef4444,#dc2626)' : 'linear-gradient(180deg,#3b82f6,#2563eb)',
-              border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.7)' : 'rgba(96,165,250,.7)'}`,
-              color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170,
-              boxShadow: mention.isAlert ? '0 8px 20px rgba(220,38,38,.5)' : '0 8px 20px rgba(37,99,235,.5)',
-            }}>
-            OK
-          </button>
+          {mention.type === 'reply-notice' ? (
+            <>
+              <div style={{ fontSize: 46, marginBottom: 6 }}>📩</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
+                {String(mention.from).toUpperCase()} REPLIED BACK
+              </div>
+              <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
+                {mention.text}
+              </div>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                {/* Only managers have the Global Message log to jump to. */}
+                {isAdminOrManager && <button onClick={viewReply} autoFocus style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>View</button>}
+                <button onClick={dismissMention} autoFocus={!isAdminOrManager} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(148,163,184,.3)', color: '#cbd5e1', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>OK</button>
+              </div>
+            </>
+          ) : mention.type === 'reply-required' ? (
+            <>
+              <div style={{ fontSize: 46, marginBottom: 6 }}>{mention.isAlert ? '🚨' : '✍️'}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
+                {(currentUser || '').toUpperCase()}, PLEASE REPLY
+              </div>
+              <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12, color: mention.isAlert ? '#fca5a5' : '#93c5fd' }}>
+                from {String(mention.from).toUpperCase()}
+              </div>
+              <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 14, lineHeight: 1.45, textAlign: 'left' }}>
+                {mention.text}
+              </div>
+              <textarea value={replyDraft} onChange={e => setReplyDraft(e.target.value)} rows={3} autoFocus placeholder="Type your reply to close this…"
+                style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#f1f5f9', padding: '10px 12px', fontSize: 15, fontFamily: 'inherit', resize: 'vertical', outline: 'none', marginBottom: replyErr ? 8 : 14, textAlign: 'left' }} />
+              {replyErr && <div style={{ color: '#f87171', fontSize: 12.5, fontWeight: 700, marginBottom: 12 }}>⚠️ {replyErr}</div>}
+              <button onClick={submitReply} disabled={replyBusy || !replyDraft.trim()}
+                style={{ background: (replyBusy || !replyDraft.trim()) ? 'rgba(255,255,255,.06)' : 'linear-gradient(180deg,#34d399,#10b981)', border: '1px solid rgba(52,211,153,.6)', color: (replyBusy || !replyDraft.trim()) ? '#64748b' : '#04121a', borderRadius: 12, padding: '12px 40px', fontWeight: 900, fontSize: 16, cursor: (replyBusy || !replyDraft.trim()) ? 'default' : 'pointer', minWidth: 170 }}>
+                {replyBusy ? '⏳ Sending…' : '➤ Send Reply'}
+              </button>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 46, marginBottom: 6 }}>{mention.isAlert ? '🚨' : '💬'}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
+                {(currentUser || '').toUpperCase()}, YOU HAVE A NEW {mention.isAlert ? 'ALERT ' : ''}MESSAGE
+              </div>
+              <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12, color: mention.isAlert ? '#fca5a5' : '#93c5fd' }}>
+                {mention.channel} · from {String(mention.from).toUpperCase()}
+              </div>
+              <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
+                {mention.text}
+              </div>
+              <button onClick={dismissMention} autoFocus
+                style={{
+                  background: mention.isAlert ? 'linear-gradient(180deg,#ef4444,#dc2626)' : 'linear-gradient(180deg,#3b82f6,#2563eb)',
+                  border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.7)' : 'rgba(96,165,250,.7)'}`,
+                  color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170,
+                  boxShadow: mention.isAlert ? '0 8px 20px rgba(220,38,38,.5)' : '0 8px 20px rgba(37,99,235,.5)',
+                }}>
+                OK
+              </button>
+            </>
+          )}
         </div>
       </div>
     ),

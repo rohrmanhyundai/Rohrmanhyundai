@@ -907,12 +907,31 @@ export async function pollGlobalMessages() {
   return conditionalReadGitHubFile(authHeaders(), GLOBAL_MSG_PATH);
 }
 
+export async function loadGlobalMessages() {
+  try {
+    const data = await readGitHubFile(authHeaders(), GLOBAL_MSG_PATH);
+    if (Array.isArray(data)) return data;
+  } catch {}
+  return [];
+}
+
 export async function sendGlobalMessage(entry) {
   const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
   return mutateGitHubJson(GLOBAL_MSG_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     return [...arr, entry].filter(m => m && m.timestamp > cutoff);
   }, `Global message ${new Date().toISOString()}`);
+}
+
+// Append a reply onto one global message (conflict-safe). `reply` =
+// { id, from, text, timestamp }. Returns the updated messages array.
+export async function replyToGlobalMessage(msgId, reply) {
+  return mutateGitHubJson(GLOBAL_MSG_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(m => m && m.id === msgId
+      ? { ...m, replies: [...(Array.isArray(m.replies) ? m.replies : []), reply] }
+      : m);
+  }, `Global reply ${new Date().toISOString()}`);
 }
 
 // ── Group Chat ─────────────────────────────────────────────────────────────────
