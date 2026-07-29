@@ -13,6 +13,7 @@ export const GLOBAL_CHANNEL  = 'rohrman-global-msg';
 export const NEW_MSG_EVENT       = 'new-message';
 export const FORCE_REFRESH_EVENT = 'force-refresh';
 export const GLOBAL_MSG_EVENT    = 'global-message';
+export const GLOBAL_REPLY_EVENT  = 'global-reply';
 
 let _pusher = null;
 export function getPusher() {
