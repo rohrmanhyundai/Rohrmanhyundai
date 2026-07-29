@@ -48,21 +48,27 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
   useEffect(() => {
     fetchMessages();
     chatLive.tech += 1;
-    const channel = getPusher().subscribe(TECH_CHANNEL);
-    // Real-time WITHOUT a GitHub read: a full message on the event is appended
-    // straight to the list. A dataless ping (reaction/delete, or an older
-    // sender) falls back to one read.
+    const pusher = getPusher();
+    const channel = pusher.subscribe(TECH_CHANNEL);
+    // INSTANT path — the full message rides the Pusher event, appended with no
+    // GitHub read. Dataless pings (reactions/deletes) are caught by the poll.
     const handler = (data) => {
       if (data && data.id && data.text) {
         setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data]);
         try { feedMention(data, 'Tech Chat'); } catch {}
       }
-      // Dataless pings (reactions/deletes) are picked up by the conditional poll.
     };
     channel.bind(NEW_MSG_EVENT, handler);
-    // Backup only — Pusher (append from payload above) is the instant path. This
-    // is a CONDITIONAL (ETag) poll every 12s to catch a missed event; it self-
-    // suspends while rate-limited. Kept infrequent so it can't exhaust the token.
+    // Instant CATCH-UP (cheap, human-paced): a full read when the tab refocuses
+    // or the socket reconnects, so a missed live event resolves the moment you
+    // come back — no waiting on the poll.
+    const onVisible = () => { if (document.visibilityState === 'visible' && !isTypingRef.current) fetchMessages(); };
+    const onReconnect = () => fetchMessages();
+    try { document.addEventListener('visibilitychange', onVisible); } catch {}
+    try { pusher.connection.bind('connected', onReconnect); } catch {}
+    // Safe backbone — a CONDITIONAL (ETag) poll every 20s. When idle GitHub says
+    // 304 (free, no rate-limit cost) and it suspends entirely while limited, so
+    // it can never exhaust the shared token. Pusher covers the instant case.
     const poll = setInterval(async () => {
       if (isTypingRef.current) return;
       if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
@@ -73,11 +79,13 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
           try { r.data.forEach(m => feedMention(m, 'Tech Chat')); } catch {}
         }
       } catch {}
-    }, 12000);
+    }, 20000);
     // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
     // also tear down the app-level @mention watcher's binding.
     return () => {
       channel.unbind(NEW_MSG_EVENT, handler);
+      try { document.removeEventListener('visibilitychange', onVisible); } catch {}
+      try { pusher.connection.unbind('connected', onReconnect); } catch {}
       clearInterval(poll);
       chatLive.tech = Math.max(0, chatLive.tech - 1);
     };
