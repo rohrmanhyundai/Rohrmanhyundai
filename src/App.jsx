@@ -302,10 +302,20 @@ export default function App() {
       if (!msg || !msg.id || !msg.text) return;
       if ((msg.username || '').toUpperCase() === meU) return;            // not my own message
       if (msg.timestamp && msg.timestamp < baseline) return;            // predates this session's baseline
-      if (mentionAckRef.current.has(msg.id)) return;                    // already acknowledged
-      if (mentionQueueRef.current.some(x => x.id === msg.id)) return;   // already queued
       if (!isMentioned(msg.text, currentUser)) return;
-      mentionQueueRef.current.push({ id: msg.id, from: msg.username || 'Someone', text: String(msg.text), channel });
+      // A 🚨 reaction on the message marks it an alert → red popup.
+      const isAlert = !!(msg.reactions && Array.isArray(msg.reactions['🚨']) && msg.reactions['🚨'].length > 0);
+      if (mentionAckRef.current.has(msg.id)) return;                    // already acknowledged
+      const queued = mentionQueueRef.current.find(x => x.id === msg.id);
+      if (queued) {
+        // Already waiting/showing — upgrade to red if it just became an alert.
+        if (isAlert && !queued.isAlert) {
+          queued.isAlert = true;
+          setMention(cur => (cur && cur.id === msg.id) ? { ...cur, isAlert: true } : cur);
+        }
+        return;
+      }
+      mentionQueueRef.current.push({ id: msg.id, from: msg.username || 'Someone', text: String(msg.text), channel, isAlert });
       setMention(cur => cur || mentionQueueRef.current[0]);
     };
     considerMentionRef.current = consider; // let the 5-min pollChats safety-net reuse it
@@ -362,17 +372,17 @@ export default function App() {
     };
   }, [isLoggedIn, currentUser]);
 
-  // OK on the mention popup: acknowledge it (so it never returns) and show the
-  // next queued mention, if any.
+  // OK on the mention popup: acknowledge it (so it never returns), jump to the
+  // screen that holds that chat, then show the next queued mention, if any.
   const dismissMention = useCallback(() => {
-    setMention(cur => {
-      if (cur) {
-        mentionAckRef.current.add(cur.id);
-        mentionPersistRef.current();
-        mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== cur.id);
-      }
-      return mentionQueueRef.current[0] || null;
-    });
+    const cur = mentionQueueRef.current[0]; // the one currently shown
+    if (cur) {
+      mentionAckRef.current.add(cur.id);
+      mentionPersistRef.current();
+      mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== cur.id);
+      navTo(cur.channel === 'Tech Chat' ? 'work-in-progress' : 'advisor-calendar');
+    }
+    setMention(mentionQueueRef.current[0] || null);
   }, []);
 
   useEffect(() => {
@@ -617,19 +627,31 @@ export default function App() {
   const mentionModal = mention ? createPortal(
     (
       <div style={{ position: 'fixed', inset: 0, zIndex: 2147483000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 460, background: 'linear-gradient(180deg,#1e293b,#0f172a)', border: '2px solid rgba(96,165,250,.65)', borderRadius: 20, boxShadow: '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)', padding: '30px 28px', textAlign: 'center' }}>
-          <div style={{ fontSize: 46, marginBottom: 6 }}>💬</div>
+        <div style={{
+          width: '100%', maxWidth: 460, background: 'linear-gradient(180deg,#1e293b,#0f172a)', borderRadius: 20, padding: '30px 28px', textAlign: 'center',
+          // Red outline + glow when the message was flagged as an alert (🚨).
+          border: `2px solid ${mention.isAlert ? 'rgba(248,113,113,.95)' : 'rgba(96,165,250,.65)'}`,
+          boxShadow: mention.isAlert
+            ? '0 30px 90px rgba(0,0,0,.85), 0 0 34px rgba(239,68,68,.65)'
+            : '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)',
+        }}>
+          <div style={{ fontSize: 46, marginBottom: 6 }}>{mention.isAlert ? '🚨' : '💬'}</div>
           <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
-            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW CHAT MESSAGE
+            {(currentUser || '').toUpperCase()}, YOU HAVE A NEW {mention.isAlert ? 'ALERT ' : ''}CHAT MESSAGE
           </div>
-          <div style={{ fontSize: 12.5, fontWeight: 800, color: '#93c5fd', letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12 }}>
+          <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12, color: mention.isAlert ? '#fca5a5' : '#93c5fd' }}>
             {mention.channel} · from {String(mention.from).toUpperCase()}
           </div>
-          <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
+          <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
             {mention.text}
           </div>
           <button onClick={dismissMention} autoFocus
-            style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170, boxShadow: '0 8px 20px rgba(37,99,235,.5)' }}>
+            style={{
+              background: mention.isAlert ? 'linear-gradient(180deg,#ef4444,#dc2626)' : 'linear-gradient(180deg,#3b82f6,#2563eb)',
+              border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.7)' : 'rgba(96,165,250,.7)'}`,
+              color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170,
+              boxShadow: mention.isAlert ? '0 8px 20px rgba(220,38,38,.5)' : '0 8px 20px rgba(37,99,235,.5)',
+            }}>
             OK
           </button>
         </div>
