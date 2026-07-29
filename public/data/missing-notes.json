@@ -1,26 +1,12 @@
 {
-  "updatedAt": "2026-07-29T22:03:46.732Z",
+  "updatedAt": "2026-07-29T23:07:05.317Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "779643",
-        "vehicle": "2012 Hyundai Veloster"
-      },
-      {
-        "ro": "779603",
-        "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779601",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779598",
-        "vehicle": "2026 Hyundai Santa Fe"
-      }
-    ],
     "DAVID": [
+      {
+        "ro": "779645",
+        "vehicle": "2023 Hyundai IONIQ 5"
+      },
       {
         "ro": "779642",
         "vehicle": "2025 Hyundai Santa Cruz"
@@ -98,6 +84,20 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779603",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779601",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "779598",
+        "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
     "CODY": [
