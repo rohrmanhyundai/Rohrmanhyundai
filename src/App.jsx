@@ -6,7 +6,8 @@ import TickerPanel from './components/TickerPanel';
 import AdvisorPerformance from './components/AdvisorPerformance';
 import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
-import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from './utils/pusher';
+import { getPusher, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT } from './utils/pusher';
+import { isMentioned } from './utils/mentions';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
 import RoUpload from './components/RoUpload';
@@ -135,6 +136,11 @@ export default function App() {
   // just-applied values so a stale-replica read can't revert the gauges.
   const gaugeActualsRef = useRef(null); // { grossActual?, cpActual?, ts }
   const formerRef = useRef({ set: null, ts: 0 }); // cached former-employee first names (5-min TTL)
+  // @mention alert: a blocking popup when someone @tags the current user in chat.
+  const [mention, setMention] = useState(null);    // { id, from, text, channel } showing now, or null
+  const mentionAckRef = useRef(new Set());          // ids already OK'd (persisted per user)
+  const mentionQueueRef = useRef([]);               // pending mentions waiting to show
+  const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -268,6 +274,86 @@ export default function App() {
       } catch {}
     };
   }, [isLoggedIn]);
+
+  // ── @mention alerts ─────────────────────────────────────────────────────────
+  // When someone types "@<you>" in either chat, pop a blocking OK popup on this
+  // user's screen. Real-time via the chat Pusher events (which now carry the
+  // message text); a scan on login/reconnect catches any that fired while this
+  // browser was asleep. Acknowledged ids are remembered so a popup shows once.
+  useEffect(() => {
+    if (!isLoggedIn || !currentUser) return;
+    const meU = currentUser.toUpperCase();
+    const ackKey = `chatMentionAck:${meU}`;
+    const baseKey = `chatMentionBaseline:${meU}`;
+
+    try { mentionAckRef.current = new Set(JSON.parse(localStorage.getItem(ackKey) || '[]')); } catch { mentionAckRef.current = new Set(); }
+    let baseline = parseInt(localStorage.getItem(baseKey) || '0', 10);
+    if (!baseline) { baseline = Date.now(); try { localStorage.setItem(baseKey, String(baseline)); } catch {} }
+
+    mentionPersistRef.current = () => {
+      try { localStorage.setItem(ackKey, JSON.stringify([...mentionAckRef.current].slice(-500))); } catch {}
+    };
+
+    // Decide whether one message should alert this user, and if so enqueue it.
+    const consider = (msg, channel) => {
+      if (!msg || !msg.id || !msg.text) return;
+      if ((msg.username || '').toUpperCase() === meU) return;            // not my own message
+      if (msg.timestamp && msg.timestamp < baseline) return;            // predates this session's baseline
+      if (mentionAckRef.current.has(msg.id)) return;                    // already acknowledged
+      if (mentionQueueRef.current.some(x => x.id === msg.id)) return;   // already queued
+      if (!isMentioned(msg.text, currentUser)) return;
+      mentionQueueRef.current.push({ id: msg.id, from: msg.username || 'Someone', text: String(msg.text), channel });
+      setMention(cur => cur || mentionQueueRef.current[0]);
+    };
+
+    // Catch-up: read both chats and surface any unacknowledged @mentions.
+    const scan = async () => {
+      try {
+        const [adv, tech] = await Promise.all([
+          loadChatMessages().catch(() => []),
+          loadTechChatMessages().catch(() => []),
+        ]);
+        (Array.isArray(adv) ? adv : []).forEach(m => consider(m, 'Advisor Chat'));
+        (Array.isArray(tech) ? tech : []).forEach(m => consider(m, 'Tech Chat'));
+      } catch {}
+    };
+
+    let advCh, techCh, pusher;
+    const onAdv = (data) => { if (data && data.text) consider(data, 'Advisor Chat'); };
+    const onTech = (data) => { if (data && data.text) consider(data, 'Tech Chat'); };
+    const onConnect = () => scan();
+    try {
+      pusher = getPusher();
+      advCh = pusher.subscribe(ADVISOR_CHANNEL);
+      techCh = pusher.subscribe(TECH_CHANNEL);
+      advCh.bind(NEW_MSG_EVENT, onAdv);
+      techCh.bind(NEW_MSG_EVENT, onTech);
+      pusher.connection.bind('connected', onConnect); // re-scan after a reconnect
+    } catch (e) { console.warn('mention watcher subscribe failed:', e); }
+
+    scan(); // initial catch-up on login
+
+    return () => {
+      try {
+        if (advCh) advCh.unbind(NEW_MSG_EVENT, onAdv);
+        if (techCh) techCh.unbind(NEW_MSG_EVENT, onTech);
+        if (pusher) pusher.connection.unbind('connected', onConnect);
+      } catch {}
+    };
+  }, [isLoggedIn, currentUser]);
+
+  // OK on the mention popup: acknowledge it (so it never returns) and show the
+  // next queued mention, if any.
+  const dismissMention = useCallback(() => {
+    setMention(cur => {
+      if (cur) {
+        mentionAckRef.current.add(cur.id);
+        mentionPersistRef.current();
+        mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== cur.id);
+      }
+      return mentionQueueRef.current[0] || null;
+    });
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn || !currentUser) return;
@@ -1129,6 +1215,27 @@ export default function App() {
 
   return (
     <div className="viewport">
+      {/* @mention alert — a blocking popup when someone tags you in chat. */}
+      {mention && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 100000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ width: '100%', maxWidth: 460, background: 'linear-gradient(180deg,#1e293b,#0f172a)', border: '2px solid rgba(96,165,250,.65)', borderRadius: 20, boxShadow: '0 30px 90px rgba(0,0,0,.85), 0 0 30px rgba(59,130,246,.4)', padding: '30px 28px', textAlign: 'center' }}>
+            <div style={{ fontSize: 46, marginBottom: 6 }}>💬</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25, marginBottom: 10 }}>
+              {(currentUser || '').toUpperCase()}, YOU HAVE A NEW CHAT MESSAGE
+            </div>
+            <div style={{ fontSize: 12.5, fontWeight: 800, color: '#93c5fd', letterSpacing: .4, textTransform: 'uppercase', marginBottom: 12 }}>
+              {mention.channel} · from {String(mention.from).toUpperCase()}
+            </div>
+            <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
+              {mention.text}
+            </div>
+            <button onClick={dismissMention} autoFocus
+              style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 48px', fontWeight: 900, fontSize: 17, cursor: 'pointer', minWidth: 170, boxShadow: '0 8px 20px rgba(37,99,235,.5)' }}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       <div className="stage" ref={stageRef}>
         <div className="dashboard">
           <Header
