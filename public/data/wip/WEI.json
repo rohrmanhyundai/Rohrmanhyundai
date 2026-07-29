@@ -58,21 +58,5 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A",
     "flag": "purple"
-  },
-  {
-    "id": "mrl5pw1g4avk",
-    "ro": "779188",
-    "roDate": "2026-07-14",
-    "vehicle": "2025 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES RADIO DISPLAY IS NOT WORKING.",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/23/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "CAR IS IN THE SHOP NOW LCD WAS ORDERED"
   }
 ]
