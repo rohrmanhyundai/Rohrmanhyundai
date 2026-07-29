@@ -52,7 +52,14 @@
     "text": "TEST",
     "alert": false,
     "requireReply": true,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-ms6oyf9m1m0g",
+        "from": "GAVEN",
+        "text": "WILL DO",
+        "timestamp": 1785366229450
+      }
+    ],
     "timestamp": 1785366209775
   }
 ]
