@@ -141,6 +141,7 @@ export default function App() {
   const mentionAckRef = useRef(new Set());          // ids already OK'd (persisted per user)
   const mentionQueueRef = useRef([]);               // pending mentions waiting to show
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
+  const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -305,23 +306,20 @@ export default function App() {
       mentionQueueRef.current.push({ id: msg.id, from: msg.username || 'Someone', text: String(msg.text), channel });
       setMention(cur => cur || mentionQueueRef.current[0]);
     };
+    considerMentionRef.current = consider; // let the 5-min pollChats safety-net reuse it
 
-    // Catch-up: read both chats and surface any unacknowledged @mentions.
-    const scan = async () => {
-      try {
-        const [adv, tech] = await Promise.all([
-          loadChatMessages().catch(() => []),
-          loadTechChatMessages().catch(() => []),
-        ]);
-        (Array.isArray(adv) ? adv : []).forEach(m => consider(m, 'Advisor Chat'));
-        (Array.isArray(tech) ? tech : []).forEach(m => consider(m, 'Tech Chat'));
-      } catch {}
-    };
+    // Read one chat file and surface any unacknowledged @mentions in it.
+    const scanAdvisor = async () => { try { const a = await loadChatMessages(); (Array.isArray(a) ? a : []).forEach(m => consider(m, 'Advisor Chat')); } catch {} };
+    const scanTech = async () => { try { const t = await loadTechChatMessages(); (Array.isArray(t) ? t : []).forEach(m => consider(m, 'Tech Chat')); } catch {} };
 
     let advCh, techCh, pusher;
-    const onAdv = (data) => { if (data && data.text) consider(data, 'Advisor Chat'); };
-    const onTech = (data) => { if (data && data.text) consider(data, 'Tech Chat'); };
-    const onConnect = () => scan();
+    // On a new-message ping: if the event carries the message (sender on this
+    // build) check it instantly with no read; otherwise (older sender, whose
+    // event has no payload) re-read the chat file. Either way only the RECEIVER
+    // needs this code — so an @mention pops even if the sender hasn't updated.
+    const onAdv = (data) => { if (data && data.text) consider(data, 'Advisor Chat'); else scanAdvisor(); };
+    const onTech = (data) => { if (data && data.text) consider(data, 'Tech Chat'); else scanTech(); };
+    const onConnect = () => { scanAdvisor(); scanTech(); };
     try {
       pusher = getPusher();
       advCh = pusher.subscribe(ADVISOR_CHANNEL);
@@ -331,9 +329,10 @@ export default function App() {
       pusher.connection.bind('connected', onConnect); // re-scan after a reconnect
     } catch (e) { console.warn('mention watcher subscribe failed:', e); }
 
-    scan(); // initial catch-up on login
+    scanAdvisor(); scanTech(); // initial catch-up on login
 
     return () => {
+      considerMentionRef.current = null;
       try {
         if (advCh) advCh.unbind(NEW_MSG_EVENT, onAdv);
         if (techCh) techCh.unbind(NEW_MSG_EVENT, onTech);
@@ -395,6 +394,15 @@ export default function App() {
         if (curPage === 'work-in-progress') localStorage.setItem('techChatLastSeen', Date.now().toString());
 
         const [advisorMsgs, techMsgs] = await Promise.all([loadChatMessages(), loadTechChatMessages()]);
+
+        // Safety net for @mention popups: if a Pusher event was missed (socket
+        // asleep), this catches the mention within the poll window.
+        const cm = considerMentionRef.current;
+        if (cm) {
+          (Array.isArray(advisorMsgs) ? advisorMsgs : []).forEach(m => cm(m, 'Advisor Chat'));
+          (Array.isArray(techMsgs) ? techMsgs : []).forEach(m => cm(m, 'Tech Chat'));
+        }
+
         const advisorSeen = getLastSeen('advisorChatLastSeen');
         const techSeen = getLastSeen('techChatLastSeen');
 

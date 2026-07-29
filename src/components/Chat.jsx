@@ -143,7 +143,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       isTypingRef.current = false;
       // Carry the message on the event so the global @mention watcher can pop an
       // alert instantly without re-reading the whole chat file.
-      triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT, { id: newMsg.id, username: newMsg.username, text: newMsg.text });
+      triggerEvent(ADVISOR_CHANNEL, NEW_MSG_EVENT, { id: newMsg.id, username: newMsg.username, text: newMsg.text, timestamp: newMsg.timestamp });
     } catch (err) {
       setError(err.message);
     } finally {

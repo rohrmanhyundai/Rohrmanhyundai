@@ -112,7 +112,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
       isTypingRef.current = false;
       // Carry the message on the event so the global @mention watcher can pop an
       // alert instantly without re-reading the whole chat file.
-      triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT, { id: newMsg.id, username: newMsg.username, text: newMsg.text });
+      triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT, { id: newMsg.id, username: newMsg.username, text: newMsg.text, timestamp: newMsg.timestamp });
     } catch (err) {
       setError(err.message);
     } finally {
