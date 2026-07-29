@@ -100,9 +100,9 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
       // Dataless pings (reactions/deletes) are picked up by the conditional poll.
     };
     channel.bind(NEW_MSG_EVENT, handler);
-    // Reliable real-time: a CONDITIONAL (ETag) poll every 4s. When nothing's new
-    // GitHub answers 304 — which does NOT count against the shared rate limit —
-    // so this is cheap, and it doesn't depend on Pusher actually delivering.
+    // Backup only — Pusher (append from payload above) is the instant path. This
+    // is a CONDITIONAL (ETag) poll every 12s to catch a missed event; it self-
+    // suspends while rate-limited. Kept infrequent so it can't exhaust the token.
     const poll = setInterval(async () => {
       if (isTypingRef.current) return;
       if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
@@ -113,7 +113,7 @@ export default function Chat({ currentUser, currentRole, hasChatAccess }) {
           try { r.data.forEach(m => feedMention(m, 'Advisor Chat')); } catch {}
         }
       } catch {}
-    }, 4000);
+    }, 12000);
     // Unbind only THIS handler — never unsubscribe the shared channel, or we'd
     // also tear down the app-level @mention watcher's binding.
     return () => {

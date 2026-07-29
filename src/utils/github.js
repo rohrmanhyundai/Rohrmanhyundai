@@ -193,11 +193,16 @@ async function saveGitHubFile(headers, path, data, message) {
 async function mutateGitHubJson(path, mutate, message) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  // Don't even try (and don't retry-hammer) while the shared quota is spent —
+  // that only deepens the rate limit. Fail fast with a friendly message.
+  if (isRateLimited()) throw new Error(`Too many requests right now — wait ${rateLimitResetSeconds()}s and resend.`);
   const headers = authHeaders();
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
   let lastErr = null;
   for (let attempt = 0; attempt < 6; attempt++) {
+    // If a prior attempt (or another caller) hit the quota, stop retrying into it.
+    if (isRateLimited()) { lastErr = new Error(`Too many requests right now — wait ${rateLimitResetSeconds()}s and resend.`); break; }
     let sha = null, current = null, fileExists = false, readOk = false;
     try {
       const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
@@ -335,6 +340,9 @@ const _etagCache = {};
 // watch. Returns { changed:false } when unchanged, { changed:true, data } when it
 // changed, or { changed:true, data:null } on error so the caller can fall back.
 async function conditionalReadGitHubFile(headers, path) {
+  // Back off entirely while the shared quota is exhausted — hammering a 403
+  // only keeps it exhausted (and trips GitHub's secondary rate limit harder).
+  if (isRateLimited()) return { changed: false };
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
   const etag = _etagCache[path];
   const reqHeaders = { ...headers };

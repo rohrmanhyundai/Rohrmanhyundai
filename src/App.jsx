@@ -355,7 +355,7 @@ export default function App() {
     // onAdv/onTech above; keep this gentle so the shared GitHub token isn't
     // rate-limited (aggressive polling here caused 403s).
     const sweep = () => { if (!isVisible()) return; if (chatLive.advisor === 0) scanAdvisor(); if (chatLive.tech === 0) scanTech(); };
-    const pollId = setInterval(sweep, 5000);
+    const pollId = setInterval(sweep, 15000);
     const onVis = () => sweep();
     try { document.addEventListener('visibilitychange', onVis); } catch {}
 
