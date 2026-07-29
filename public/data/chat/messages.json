@@ -314,6 +314,11 @@
     "id": "ms6jicicpz5",
     "username": "SHAWN",
     "text": "@david working?",
-    "timestamp": 1785357081300
+    "timestamp": 1785357081300,
+    "reactions": {
+      "🚨": [
+        "SHAWN"
+      ]
+    }
   }
 ]
