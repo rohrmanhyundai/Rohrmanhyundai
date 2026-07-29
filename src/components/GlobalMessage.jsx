@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { sendGlobalMessage, loadGlobalMessages, pollGlobalMessages, replyToGlobalMessage } from '../utils/github';
+import { sendGlobalMessage, loadGlobalMessages, pollGlobalMessages, replyToGlobalMessage, deleteGlobalMessage, clearGlobalMessagesFrom } from '../utils/github';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from '../utils/pusher';
 
 const uid = () => `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -21,6 +21,7 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
   const [messages, setMessages] = useState([]);   // all global messages (for the log)
   const [replyDrafts, setReplyDrafts] = useState({}); // msgId -> in-thread reply text
   const [replyingId, setReplyingId] = useState('');
+  const [deletingId, setDeletingId] = useState('');
 
   // Load the log on mount, then keep it fresh with a cheap conditional poll.
   const refresh = useCallback(async () => {
@@ -92,6 +93,23 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
     } finally {
       setReplyingId('');
     }
+  }
+
+  async function handleDelete(msg) {
+    if (!window.confirm(`Delete this message${(msg.replies || []).length ? ' and its replies' : ''}?\n\n"${(msg.text || '').slice(0, 80)}"`)) return;
+    setDeletingId(msg.id);
+    setMessages(prev => prev.filter(m => m.id !== msg.id)); // optimistic
+    try { await deleteGlobalMessage(msg.id); } catch (e) { setStatus('⚠️ ' + (e.message || 'Delete failed')); refresh(); }
+    finally { setDeletingId(''); }
+  }
+
+  async function handleClearAll() {
+    if (!myThreads.length) return;
+    if (!window.confirm(`Delete ALL ${myThreads.length} of your sent messages and their replies? This cannot be undone.`)) return;
+    setDeletingId('all');
+    try { await clearGlobalMessagesFrom(me); setMessages(prev => prev.filter(m => (m.from || '').toUpperCase() !== me)); }
+    catch (e) { setStatus('⚠️ ' + (e.message || 'Clear failed')); refresh(); }
+    finally { setDeletingId(''); }
   }
 
   // Messages I sent, newest first, that have recipients — the log.
@@ -183,6 +201,7 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
               <div style={stepLbl}>Sent messages &amp; replies</div>
               <div style={{ flex: 1 }} />
+              {myThreads.length > 0 && <button onClick={handleClearAll} disabled={deletingId === 'all'} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700, marginRight: 8 }}>{deletingId === 'all' ? '⏳' : '🗑 Clear all'}</button>}
               <button onClick={refresh} style={{ background: 'transparent', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>↻ Refresh</button>
             </div>
             {!myThreads.length ? (
@@ -196,6 +215,10 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
                         <span style={{ fontSize: 14.5, fontWeight: 800, color: '#e2e8f0', flex: 1, minWidth: 0 }}>{m.text}</span>
                         <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{timeLabel(m.timestamp)}</span>
+                        <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete this message"
+                          style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                          {deletingId === m.id ? '⏳' : '🗑'}
+                        </button>
                       </div>
                       <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 4 }}>
                         To: {(m.to || []).join(', ')}
