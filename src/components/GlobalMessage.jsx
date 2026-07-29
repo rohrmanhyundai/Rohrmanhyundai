@@ -52,10 +52,12 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
   const addGroup = (names) => setSelected(prev => { const next = new Set(prev); const allIn = names.every(n => next.has(n)); names.forEach(n => allIn ? next.delete(n) : next.add(n)); return next; });
   const clearAll = () => setSelected(new Set());
 
-  const canSend = selected.size > 0 && text.trim().length > 0 && !sending;
+  const ready = selected.size > 0 && text.trim().length > 0;
 
   async function handleSend() {
-    if (!canSend) return;
+    if (sending) return;
+    if (!selected.size) { setStatus('⚠️ Pick at least one recipient above.'); return; }
+    if (!text.trim()) { setStatus('⚠️ Type a message first.'); return; }
     setSending(true); setStatus('');
     try {
       const entry = { id: uid(), from: me, to: [...selected], text: text.trim(), alert, requireReply, replies: [], timestamp: Date.now() };
@@ -165,12 +167,12 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             {status && <span style={{ fontWeight: 800, fontSize: 13.5, color: status.startsWith('⚠️') ? '#f87171' : '#4ade80' }}>{status}</span>}
             <div style={{ flex: 1 }} />
-            <button onClick={handleSend} disabled={!canSend}
+            <button onClick={handleSend} disabled={sending}
               style={{
-                background: canSend ? 'linear-gradient(180deg,#f59e0b,#d97706)' : 'rgba(255,255,255,.06)',
-                border: `1px solid ${canSend ? 'rgba(251,191,36,.6)' : 'rgba(255,255,255,.12)'}`,
-                color: canSend ? '#1a1205' : '#64748b', borderRadius: 12, padding: '12px 32px',
-                cursor: canSend ? 'pointer' : 'default', fontWeight: 900, fontSize: 15.5,
+                background: (ready && !sending) ? 'linear-gradient(180deg,#f59e0b,#d97706)' : 'rgba(255,255,255,.06)',
+                border: `1px solid ${(ready && !sending) ? 'rgba(251,191,36,.6)' : 'rgba(255,255,255,.18)'}`,
+                color: (ready && !sending) ? '#1a1205' : '#cbd5e1', borderRadius: 12, padding: '12px 32px',
+                cursor: sending ? 'default' : 'pointer', fontWeight: 900, fontSize: 15.5,
               }}>
               {sending ? '⏳ Sending…' : '📣 Send Pop-Up'}
             </button>
