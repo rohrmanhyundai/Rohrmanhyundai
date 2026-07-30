@@ -206,45 +206,49 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                   </span>
                 )}
                 {age != null && <span style={{ fontSize: 11, color: ageColor, whiteSpace: 'nowrap', alignSelf: 'center', fontWeight: 700 }}>{age}d</span>}
-                {canFlag && onFlag && (
-                  <button
-                    onClick={() => onFlag(j)}
-                    disabled={flaggingId === j.id}
-                    title={j.flagged ? 'Remove attention flag' : 'Flag this RO for the advisor'}
-                    className={`attn-flag-btn ${j.flagged ? 'attn-flag-btn--on' : 'attn-flag-btn--off'}`}
-                    style={{ cursor: flaggingId === j.id ? 'wait' : 'pointer', opacity: flaggingId === j.id ? 0.6 : 1 }}
-                  >{flaggingId === j.id ? '⏳' : (j.flagged ? '🚩 Unflag' : '🚩 Flag')}</button>
-                )}
-                {onOpen && (
-                  <button
-                    onClick={() => onOpen(j)}
-                    title="Open this RO in WIP"
-                    style={{
-                      alignSelf: 'center', whiteSpace: 'nowrap',
-                      background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.45)',
-                      color: '#93c5fd', borderRadius: 6, padding: '4px 10px',
-                      fontWeight: 800, fontSize: 11, cursor: 'pointer',
-                    }}
-                  >View / Edit</button>
-                )}
-                {onDelete && (
-                  <button
-                    onClick={() => {
-                      const label = j.ro ? `RO #${j.ro}` : 'this row';
-                      if (!window.confirm(`Are you sure you want to delete ${label}? This cannot be undone.`)) return;
-                      onDelete(j);
-                    }}
-                    disabled={deletingId === j.id}
-                    title="Delete this RO"
-                    style={{
-                      alignSelf: 'center', whiteSpace: 'nowrap',
-                      background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.45)',
-                      color: '#f87171', borderRadius: 6, padding: '4px 10px',
-                      fontWeight: 800, fontSize: 11, cursor: deletingId === j.id ? 'wait' : 'pointer',
-                      opacity: deletingId === j.id ? 0.6 : 1,
-                    }}
-                  >{deletingId === j.id ? '⏳' : '🗑 Delete'}</button>
-                )}
+                {/* Keep the action buttons together and right-aligned so Delete is
+                    always in the same spot on every row (not split by wrapping). */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexShrink: 0, alignSelf: 'center' }}>
+                  {canFlag && onFlag && (
+                    <button
+                      onClick={() => onFlag(j)}
+                      disabled={flaggingId === j.id}
+                      title={j.flagged ? 'Remove attention flag' : 'Flag this RO for the advisor'}
+                      className={`attn-flag-btn ${j.flagged ? 'attn-flag-btn--on' : 'attn-flag-btn--off'}`}
+                      style={{ cursor: flaggingId === j.id ? 'wait' : 'pointer', opacity: flaggingId === j.id ? 0.6 : 1 }}
+                    >{flaggingId === j.id ? '⏳' : (j.flagged ? '🚩 Unflag' : '🚩 Flag')}</button>
+                  )}
+                  {onOpen && (
+                    <button
+                      onClick={() => onOpen(j)}
+                      title="Open this RO in WIP"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        background: 'rgba(96,165,250,.18)', border: '1px solid rgba(96,165,250,.45)',
+                        color: '#93c5fd', borderRadius: 6, padding: '4px 10px',
+                        fontWeight: 800, fontSize: 11, cursor: 'pointer',
+                      }}
+                    >View / Edit</button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        const label = j.ro ? `RO #${j.ro}` : 'this row';
+                        if (!window.confirm(`Are you sure you want to delete ${label}? This cannot be undone.`)) return;
+                        onDelete(j);
+                      }}
+                      disabled={deletingId === j.id}
+                      title="Delete this RO"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        background: 'rgba(248,113,113,.15)', border: '1px solid rgba(248,113,113,.45)',
+                        color: '#f87171', borderRadius: 6, padding: '4px 10px',
+                        fontWeight: 800, fontSize: 11, cursor: deletingId === j.id ? 'wait' : 'pointer',
+                        opacity: deletingId === j.id ? 0.6 : 1,
+                      }}
+                    >{deletingId === j.id ? '⏳' : '🗑 Delete'}</button>
+                  )}
+                </div>
               </div>
             );
           })}
