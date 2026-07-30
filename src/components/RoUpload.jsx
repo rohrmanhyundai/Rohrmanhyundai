@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import {
   loadAwaitingData, saveAwaitingData,
   loadWipData, saveWipData, listWipTechs, loadDashboardData,
-  saveMissingNotes,
+  saveMissingNotes, loadRoArchive, saveRoArchive,
 } from '../utils/github';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 
@@ -94,6 +94,8 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   const [status, setStatus] = useState('');
   // Site state for comparison: [{ ro, where }]  where = tech name or 'Cars Awaiting'
   const [siteRos, setSiteRos] = useState(null); // null = not loaded yet
+  const [archive, setArchive] = useState([]);   // deleted-RO archive (for undelete)
+  const [undeletingRo, setUndeletingRo] = useState(''); // roKey currently being restored
   const [siteLoading, setSiteLoading] = useState(false);
   const [descs, setDescs] = useState({}); // RO# (upper) -> description typed before saving
   const setDesc = (ro, v) => setDescs(d => ({ ...d, [roKey(ro)]: v }));
@@ -161,9 +163,62 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         (aw || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: 'Cars Awaiting', advisor: r.advisor || '' }); });
       } catch {}
       setSiteRos(out);
+      try { const arch = await loadRoArchive(); setArchive(Array.isArray(arch) ? arch : []); } catch { setArchive([]); }
     } finally {
       setSiteLoading(false);
     }
+  }
+
+  // Undelete a previously deleted RO: put the original row (notes, ETAs and all)
+  // back where it lived and drop it from the archive.
+  async function undeleteRo(entry) {
+    if (!entry) return;
+    const roLabel = entry.ro || '?';
+    const where = entry._source === 'awaiting' ? 'Cars Awaiting' : `${entry._sourceTech || 'WIP'}'s WIP`;
+    if (!window.confirm(`Undelete RO ${roLabel} back to ${where}?`)) return;
+    setUndeletingRo(roKey(entry.ro)); setError(''); setStatus('');
+    try {
+      const clean = { ...entry };
+      delete clean._archiveId; delete clean._archivedAt; delete clean._archivedBy; delete clean._source; delete clean._sourceTech;
+      if (entry._source === 'awaiting') {
+        const list = await loadAwaitingData();
+        await saveAwaitingData([clean, ...(list || []).filter(r => r.id !== clean.id)]);
+      } else {
+        const tech = entry._sourceTech;
+        if (!tech) throw new Error('Original tech unknown — restore it from the Repair Order Database instead.');
+        const list = await loadWipData(tech);
+        await saveWipData(tech, [clean, ...(list || []).filter(r => r.id !== clean.id)]);
+      }
+      const nextArchive = (archive || []).filter(e => e._archiveId !== entry._archiveId);
+      await saveRoArchive(nextArchive);
+      setArchive(nextArchive);
+      await loadSiteRos(); // now on site → it drops out of the deleted section
+      setStatus(`✅ Undeleted RO ${roLabel} to ${where}.`);
+    } catch (e) {
+      setError(e?.message || 'Undelete failed.');
+    } finally {
+      setUndeletingRo('');
+    }
+  }
+
+  async function undeleteAll(list) {
+    for (const d of list) { await undeleteRoSilent(d.archiveEntry); }
+    await loadSiteRos();
+  }
+  // Non-confirming variant used by "Undelete all".
+  async function undeleteRoSilent(entry) {
+    if (!entry) return;
+    try {
+      const clean = { ...entry };
+      delete clean._archiveId; delete clean._archivedAt; delete clean._archivedBy; delete clean._source; delete clean._sourceTech;
+      if (entry._source === 'awaiting') {
+        const l = await loadAwaitingData(); await saveAwaitingData([clean, ...(l || []).filter(r => r.id !== clean.id)]);
+      } else if (entry._sourceTech) {
+        const l = await loadWipData(entry._sourceTech); await saveWipData(entry._sourceTech, [clean, ...(l || []).filter(r => r.id !== clean.id)]);
+      } else { return; }
+      const next = (await loadRoArchive() || []).filter(e => e._archiveId !== entry._archiveId);
+      await saveRoArchive(next); setArchive(next);
+    } catch {}
   }
 
   // Parsed rows that pass the purple/green flag filter.
@@ -230,10 +285,18 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   // site, so nothing to do — and a MISMATCH — the report assigns a different
   // technician and/or advisor, so the on-site record is out of date and gets
   // fixed (moved to the right tech's WIP and/or the advisor corrected).
-  const { toAdd, dupList, mismatches } = useMemo(() => {
+  // Archived (deleted-from-site) ROs, keyed by RO# — so a report RO that was
+  // previously deleted can be offered for undelete instead of a blank re-add.
+  const archiveByRo = useMemo(() => {
+    const m = new Map();
+    (archive || []).forEach(e => { if (e && e.ro && !m.has(roKey(e.ro))) m.set(roKey(e.ro), e); });
+    return m;
+  }, [archive]);
+
+  const { toAdd, dupList, mismatches, deletedMatches } = useMemo(() => {
     const site = new Map(); // ro -> { where, advisor }
     (siteRos || []).forEach(s => { if (isValidPlace(s.where) && !site.has(s.ro)) site.set(s.ro, s); });
-    const add = [], dups = [], mism = [];
+    const add = [], dups = [], mism = [], deleted = [];
     for (const o of flaggedUnique) {
       const k = roKey(o.ro);
       const s = site.get(k);
@@ -256,10 +319,13 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         } else {
           dups.push({ ...o, where: s.where });
         }
+      } else if (archiveByRo.has(k)) {
+        // Not on the site, but it's in the deleted archive → offer an undelete.
+        deleted.push({ ...o, archiveEntry: archiveByRo.get(k) });
       } else if (!excluded[k]) add.push(o);
     }
-    return { toAdd: add, dupList: dups, mismatches: mism };
-  }, [flaggedUnique, siteRos, excluded, techSet]);
+    return { toAdd: add, dupList: dups, mismatches: mism, deletedMatches: deleted };
+  }, [flaggedUnique, siteRos, excluded, techSet, archiveByRo]);
   const dupCount = dupList.length;
 
   // The set of RO#s that SHOULD be on the site = the green/purple flagged ones.
@@ -595,6 +661,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                     <Chip color="#fbbf24" label="Duplicates (skipped)" value={dupCount} onClick={() => setModal('dup')} />
                     <Chip color="#f59e0b" label="Tech/advisor mismatch" value={siteRos ? mismatches.length : '…'} onClick={() => setModal('mismatch')} />
                     <Chip color="#fca5a5" label="On site, not flagged" value={siteRos ? stale.length : '…'} onClick={() => setModal('stale')} />
+                    {deletedMatches.length > 0 && <Chip color="#f97316" label="Previously deleted" value={deletedMatches.length} />}
                     <Chip color="#94a3b8" label="Flagged in file" value={flaggedUnique.length} onClick={() => setModal('flagged')} />
                   </div>
                   {siteLoading && <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>Scanning the site for duplicates & stale ROs…</div>}
@@ -607,6 +674,49 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                       {busy || notesSaving ? '⏳ Saving…' : `💾 Save to WIP${hasNotesToSave ? ` + ${missingTotal} for Day End` : ''}`}
                     </button>
                   </div>
+
+                  {/* Previously deleted — in your report but deleted from the site */}
+                  {deletedMatches.length > 0 && (
+                    <div style={{ marginBottom: 22 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 10 }}>
+                        <div style={{ fontWeight: 800, color: '#fb923c' }}>Previously deleted — in your report but removed from the site ({deletedMatches.length})</div>
+                        <button onClick={() => undeleteAll(deletedMatches)} disabled={!!undeletingRo}
+                          style={{ background: 'rgba(249,115,22,.16)', border: '1px solid rgba(249,115,22,.5)', color: '#fdba74', borderRadius: 9, padding: '7px 16px', fontWeight: 800, fontSize: 13, cursor: undeletingRo ? 'default' : 'pointer' }}>
+                          ♻️ Undelete all {deletedMatches.length}
+                        </button>
+                      </div>
+                      <div style={{ ...cardSt, padding: 0, overflow: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                          <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
+                            <th style={thSt}>RO #</th><th style={thSt}>Was in</th><th style={thSt}>Vehicle</th><th style={thSt}>Advisor</th><th style={thSt}>Deleted</th><th style={thSt}></th>
+                          </tr></thead>
+                          <tbody>
+                            {deletedMatches.map((d, i) => {
+                              const e = d.archiveEntry || {};
+                              const where = e._source === 'awaiting' ? 'Cars Awaiting' : `${e._sourceTech || '—'}'s WIP`;
+                              const when = e._archivedAt ? new Date(e._archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+                              return (
+                                <tr key={i}>
+                                  <td style={{ ...tdSt, color: '#6ee7f9', fontFamily: 'monospace' }}>{d.ro}</td>
+                                  <td style={tdSt}>{where}</td>
+                                  <td style={tdSt}>{e.vehicle || d.vehicle || '—'}</td>
+                                  <td style={tdSt}>{e.advisor || d.advisor || '—'}</td>
+                                  <td style={{ ...tdSt, color: '#94a3b8' }}>{when}{e._archivedBy ? ` · ${e._archivedBy}` : ''}</td>
+                                  <td style={{ ...tdSt, textAlign: 'center' }}>
+                                    <button onClick={() => undeleteRo(e)} disabled={undeletingRo === roKey(d.ro)}
+                                      style={{ background: 'rgba(249,115,22,.16)', border: '1px solid rgba(249,115,22,.5)', color: '#fdba74', borderRadius: 7, padding: '4px 12px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                      {undeletingRo === roKey(d.ro) ? '⏳' : '♻️ Undelete'}
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div style={{ fontSize: 12, color: '#64748b', marginTop: 8 }}>These ROs are flagged in your report but were deleted from the site. Undelete restores the original row (notes, ETAs and all) — no need to re-add it.</div>
+                    </div>
+                  )}
 
                   {/* To add */}
                   <div style={{ fontWeight: 800, color: '#6ee7b7', marginBottom: 8 }}>New repair orders to add ({toAdd.length})</div>
