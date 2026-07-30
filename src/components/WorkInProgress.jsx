@@ -461,7 +461,7 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
       return `<span class="muted">—</span>`;
     };
 
-    const rowsHtml = ordered.map((r, i) => `
+    const cardHtml = (r, i) => `
       <div class="card${r.highPriority ? ' card-hi' : ''}">
         <div class="card-head">
           <div class="ro-block">
@@ -481,7 +481,14 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
         <div class="field field-wide"><div class="flabel">Job Description</div><div class="fval">${esc(r.jobDesc || '—')}</div></div>
         ${r.notes ? `<div class="field field-wide"><div class="flabel">Notes</div><div class="fval notes">${esc(r.notes)}</div></div>` : ''}
       </div>
-    `).join('');
+    `;
+    const rowsHtml = ordered.map(cardHtml).join('');
+
+    // Cars waiting on a tech (not yet assigned; exclude used cars). High first.
+    const awaitingList = [...awaiting]
+      .filter(a => !a.usedCar && a.flag !== 'green')
+      .sort((a, b) => (b.highPriority ? 1 : 0) - (a.highPriority ? 1 : 0));
+    const awaitingHtml = awaitingList.map(cardHtml).join('');
 
     const html = `<!doctype html>
 <html><head><meta charset="utf-8"><title>WIP — ${esc(activeTech)}</title>
@@ -498,6 +505,7 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
   .head .tech { font-size: 28px; font-weight: 800; color: #0ea5b7; letter-spacing: -.02em; }
   .head .meta { text-align: right; font-size: 12px; color: #64748b; }
   .count { font-size: 12px; color: #475569; margin-bottom: 16px; font-weight: 600; }
+  .section-title { font-size: 16px; font-weight: 800; color: #0f172a; margin: 26px 0 4px; padding-top: 18px; border-top: 2px solid #e2e8f0; }
   .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; page-break-inside: avoid; }
   .card-hi { border-color: #fca5a5; background: #fff5f5; }
   .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -532,6 +540,11 @@ export default function WorkInProgress({ currentUser, currentRole, jobRole, tech
   </div>
   <div class="count">${ordered.length} open repair order${ordered.length === 1 ? '' : 's'}</div>
   ${ordered.length ? rowsHtml : '<div class="empty">No work in progress for this technician.</div>'}
+  ${awaitingList.length ? `
+    <div class="section-title">All Cars Waiting on Tech</div>
+    <div class="count">${awaitingList.length} car${awaitingList.length === 1 ? '' : 's'} waiting</div>
+    ${awaitingHtml}
+  ` : ''}
   <div class="foot">Rohrman Hyundai Service — Work in Progress — ${esc(activeTech)}</div>
 </body></html>`;
 
