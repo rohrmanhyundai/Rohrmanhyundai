@@ -1,8 +1,16 @@
 {
-  "updatedAt": "2026-07-30T15:03:08.737Z",
+  "updatedAt": "2026-07-30T15:28:51.401Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
+      {
+        "ro": "779663",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "779662",
+        "vehicle": "2012 Hyundai Tucson"
+      },
       {
         "ro": "779661",
         "vehicle": "2025 Hyundai Santa Cruz"
@@ -14,10 +22,6 @@
       {
         "ro": "779658",
         "vehicle": "2025 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "779647",
-        "vehicle": "2015 Hyundai Sonata"
       },
       {
         "ro": "779645",
@@ -46,16 +50,8 @@
         "vehicle": "2018 Hyundai Santa Fe Sport"
       },
       {
-        "ro": "779657",
-        "vehicle": "2021 Hyundai Tucson"
-      },
-      {
         "ro": "779656",
         "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779653",
-        "vehicle": "2024 Hyundai Tucson"
       },
       {
         "ro": "779648",
