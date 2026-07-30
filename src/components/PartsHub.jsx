@@ -99,15 +99,26 @@ const NAV_BUTTONS = [
     color: '#4ade80',
     href: 'https://hyundaitirecenter.com/InitDealer?dealer=IN007',
   },
+  {
+    key: 'globalMessage',
+    label: '📣 Global Message',
+    desc: 'Send a pop-up message to one or more users — appears on their screen instantly',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
+    border: 'rgba(251,191,36,.5)',
+    color: '#fde68a',
+    prop: 'onGlobalMessage',
+    managerOnly: true,
+  },
 ];
 
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast,
+  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast };
-  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
+  const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && (!b.managerOnly || isMgr));
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
