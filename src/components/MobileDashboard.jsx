@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 import { advisorProjectedHours, advisorsForDisplay } from '../utils/calculations';
+import { hasExcelTraining } from '../utils/training';
 
 function StatRow({ label, value, highlight }) {
   return (
@@ -144,7 +145,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
                 {[
                   ['Certified', p.certified],
                   ['Training Due', p.trainings_due],
-                  ['Excel', p.excel_training ?? p.excel],
+                  ['Excel', hasExcelTraining(p) ? (p.excel_training ?? p.excel) : 'N/A'],
                 ].map(([lbl, val]) => (
                   <div key={lbl} style={{ textAlign: 'center', background: 'rgba(255,255,255,0.04)', borderRadius: 6, padding: '4px 2px' }}>
                     <div style={{ color: '#7a92b8', fontSize: 10, marginBottom: 2 }}>{lbl}</div>

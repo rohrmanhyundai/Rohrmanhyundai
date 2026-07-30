@@ -10,6 +10,7 @@ import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
 import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/pusher';
 import { trackAction } from '../utils/activityTracker';
+import { hasExcelTraining } from '../utils/training';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -1625,7 +1626,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="training-edit-grid" key={t.name}>
             <div className="field"><label>{t.name} Certified</label><input defaultValue={t.certified || ''} onBlur={e => updateField(`technicians.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
             <div className="field"><label>Training Due</label><input defaultValue={t.trainings_due || ''} onBlur={e => updateField(`technicians.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-            <div className="field"><label>Excel Training</label><input defaultValue={t.excel_training || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
+            <div className="field">
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                Excel Training
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
+                  <input type="checkbox" checked={hasExcelTraining(t)} onChange={e => updateField(`technicians.${idx}.hasExcel`, e.target.checked)} /> has it
+                </label>
+              </label>
+              {hasExcelTraining(t)
+                ? <input key={`ex-${t.name}`} defaultValue={(t.excel_training && t.excel_training !== '\u2014' ? t.excel_training : '') || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
+                : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
+            </div>
           </div>
         ))}
         <div className="form-section">
@@ -1634,7 +1645,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <div className="training-edit-grid" key={a.name}>
               <div className="field"><label>{a.name} Certified</label><input defaultValue={a.certified || ''} onBlur={e => updateField(`advisorTraining.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
               <div className="field"><label>Training Due</label><input defaultValue={a.trainings_due || ''} onBlur={e => updateField(`advisorTraining.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Excel Training</label><input defaultValue={a.excel_training || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field">
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  Excel Training
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
+                    <input type="checkbox" checked={hasExcelTraining(a)} onChange={e => updateField(`advisorTraining.${idx}.hasExcel`, e.target.checked)} /> has it
+                  </label>
+                </label>
+                {hasExcelTraining(a)
+                  ? <input key={`ex-${a.name}`} defaultValue={(a.excel_training && a.excel_training !== '\u2014' ? a.excel_training : '') || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
+                  : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
+              </div>
             </div>
           ))}
         </div>
