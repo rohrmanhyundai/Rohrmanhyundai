@@ -1,27 +1,15 @@
 {
-  "updatedAt": "2026-07-30T16:23:01.784Z",
+  "updatedAt": "2026-07-30T19:44:37.492Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "779663",
-        "vehicle": "2022 Hyundai Tucson"
-      },
-      {
-        "ro": "779662",
-        "vehicle": "2012 Hyundai Tucson"
-      },
-      {
-        "ro": "779659",
-        "vehicle": "2012 Hyundai Elantra"
+        "ro": "779667",
+        "vehicle": "2026 Hyundai Sonata"
       },
       {
         "ro": "779642",
         "vehicle": "2025 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779621",
-        "vehicle": "2022 Genesis GV80"
       },
       {
         "ro": "779602",
@@ -32,29 +20,11 @@
         "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "779660",
-        "vehicle": "2018 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "779656",
-        "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779648",
-        "vehicle": "2012 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779601",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779598",
-        "vehicle": "2026 Hyundai Santa Fe"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "779665",
+        "vehicle": "2025 Mitsubishi Outlander"
+      },
       {
         "ro": "779638",
         "vehicle": "2024 Jeep Wagoneer L"
@@ -84,20 +54,8 @@
         "vehicle": "2017 Nissan Murano"
       },
       {
-        "ro": "779413",
-        "vehicle": "2020 Buick Enclave"
-      },
-      {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
-      },
-      {
-        "ro": "779372",
-        "vehicle": "2020 Honda Pilot"
-      },
-      {
-        "ro": "779221",
-        "vehicle": "2017 Chevrolet Silverado 1500"
       },
       {
         "ro": "779164",
@@ -106,6 +64,16 @@
       {
         "ro": "778822",
         "vehicle": "2013 Hyundai Tucson"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779601",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "779598",
+        "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
     "CODY": [
