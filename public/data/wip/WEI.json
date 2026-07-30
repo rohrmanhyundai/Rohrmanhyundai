@@ -58,21 +58,5 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A",
     "flag": "purple"
-  },
-  {
-    "id": "ms7q2t9jxfuo",
-    "ro": "779645",
-    "roDate": "2026-07-30",
-    "vehicle": "2023 Hyundai IONIQ 5",
-    "jobDesc": "CUSTOMER STATES CAR WILL NOT CHARGE FULLY ALL THE TIME.",
-    "notes": "CUSTOMER IS LEAVING HERE UNTIL DOOR COVER COMES IN TOMORROW",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
