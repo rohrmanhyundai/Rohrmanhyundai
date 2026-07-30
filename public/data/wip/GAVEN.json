@@ -27,7 +27,7 @@
     "etaCompletion": "",
     "partsArrived": true,
     "partsArrivedDate": "07/29/2026",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN TROXEL",
     "notes": ""
   },
