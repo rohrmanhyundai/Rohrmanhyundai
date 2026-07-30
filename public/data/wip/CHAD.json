@@ -87,7 +87,7 @@
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "DAVID RILEY",
     "notes": "NEEDS DONE 7/30"
   }
