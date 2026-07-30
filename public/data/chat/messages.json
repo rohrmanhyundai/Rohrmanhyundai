@@ -1,34 +1,5 @@
 [
   {
-    "id": "mr0zun3ogz0",
-    "username": "SHAWN",
-    "text": "i do not David",
-    "timestamp": 1782844949364,
-    "replyTo": {
-      "id": "mr0ws52wevr",
-      "username": "DAVID",
-      "text": "Jerry / Shawn do ether of you have 778692's RO?"
-    }
-  },
-  {
-    "id": "mr0zw770xss",
-    "username": "SHAWN",
-    "text": "David please update that customer with the transmission approval. there are ASR as well he might do. make sure you tell him he has a $200 deductible",
-    "timestamp": 1782845022060
-  },
-  {
-    "id": "mr0zwwgwl8j",
-    "username": "SHAWN",
-    "text": "Jordan 778771 is done too. its in cleanup.",
-    "timestamp": 1782845054816
-  },
-  {
-    "id": "mr0zyftgthw",
-    "username": "SHAWN",
-    "text": "jordan, 778771 is done",
-    "timestamp": 1782845126548
-  },
-  {
     "id": "mr57e09kgle",
     "username": "DAVID",
     "text": "Jerry, just want to make sure if you need to tie up 778692 before I call the cust",
@@ -280,5 +251,11 @@
     "username": "SHAWN",
     "text": "@kai can you remove parts from 779221. we are not doing this used car",
     "timestamp": 1785434083185
+  },
+  {
+    "id": "ms7wkh6jyu8",
+    "username": "KAI",
+    "text": "@shawn done",
+    "timestamp": 1785439481851
   }
 ]
