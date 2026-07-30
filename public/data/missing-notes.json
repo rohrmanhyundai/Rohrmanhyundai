@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-30T15:29:52.881Z",
+  "updatedAt": "2026-07-30T16:23:01.784Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
@@ -12,20 +12,8 @@
         "vehicle": "2012 Hyundai Tucson"
       },
       {
-        "ro": "779661",
-        "vehicle": "2025 Hyundai Santa Cruz"
-      },
-      {
         "ro": "779659",
         "vehicle": "2012 Hyundai Elantra"
-      },
-      {
-        "ro": "779658",
-        "vehicle": "2025 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "779645",
-        "vehicle": "2023 Hyundai IONIQ 5"
       },
       {
         "ro": "779642",
