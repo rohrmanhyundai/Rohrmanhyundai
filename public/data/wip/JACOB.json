@@ -32,22 +32,6 @@
     "notes": "HAVING ISSUES GETTING N THE RACK"
   },
   {
-    "id": "mrtj5utlnoti",
-    "ro": "779388",
-    "roDate": "2026-07-20",
-    "vehicle": "2016 Hyundai Tucson",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "mrtj5utllsdg",
     "ro": "779377",
     "roDate": "2026-07-20",
