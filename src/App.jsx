@@ -187,6 +187,7 @@ export default function App() {
             const fw = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
             d.technicians = (d.technicians || []).filter(t => !fr.set.has(fw(t.name)));
             d.advisors = (d.advisors || []).filter(a => !fr.set.has(fw(a.name)));
+            d.advisorTraining = (d.advisorTraining || []).filter(a => !fr.set.has(fw(a.name)));
           }
         } catch { /* non-fatal — fall back to unfiltered roster */ }
         recalcTech(d, schedulesRef.current);

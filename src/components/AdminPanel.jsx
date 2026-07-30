@@ -1328,9 +1328,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
     const delFirst = firstWord(selectedUser);
     const newData = structuredClone(data);
-    newData.advisors    = (newData.advisors    || []).filter(a => firstWord(a.name) !== delFirst);
-    newData.technicians = (newData.technicians || []).filter(t => firstWord(t.name) !== delFirst);
-    const newVacations  = (vacations || []).filter(v => firstWord(v.name) !== delFirst);
+    newData.advisors        = (newData.advisors        || []).filter(a => firstWord(a.name) !== delFirst);
+    newData.advisorTraining = (newData.advisorTraining || []).filter(a => firstWord(a.name) !== delFirst);
+    newData.technicians     = (newData.technicians     || []).filter(t => firstWord(t.name) !== delFirst);
+    const newVacations      = (vacations || []).filter(v => firstWord(v.name) !== delFirst);
 
     setUserSaving(true);
     // Remove from the user list first, then purge their per-user data (keeping
