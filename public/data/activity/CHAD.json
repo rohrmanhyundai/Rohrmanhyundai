@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-30T13:04:53.249Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-07-30T13:04:50.226Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-07-29T20:45:56.378Z",
     "type": "action",
     "label": "delete-wip-row",
@@ -1341,16 +1351,6 @@
   },
   {
     "at": "2026-06-30T15:16:05.611Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-06-30T12:00:43.115Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-30T12:00:41.014Z",
     "type": "page",
     "label": "tech-resources"
   }
