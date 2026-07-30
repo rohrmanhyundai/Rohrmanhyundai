@@ -189,7 +189,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
                 )}
-                <div style={{ flex: 1, minWidth: 240, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
+                <div style={{ flex: 1, minWidth: 120, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
                   {j.jobDesc || '—'}
                   {j.notes ? <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{j.notes}</div> : null}
                 </div>
