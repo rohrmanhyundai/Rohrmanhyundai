@@ -1,7 +1,7 @@
 {
   "id": "mrzb5p2iwv69",
   "createdAt": "2026-07-24T19:03:10.890Z",
-  "updatedAt": "2026-07-24T19:15:57.140Z",
+  "updatedAt": "2026-07-30T14:56:52.062Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Joseph Rund",
   "customerPhone": " (217) 820 - 3046",
@@ -70,7 +70,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "WILL NEED MAINTANCE RECORDS SENT TO EMAIL repotrs@nvpwarranty.com attn: david. last 6 of vin in subject line.",
+  "notes": "WILL NEED MAINTANCE RECORDS SENT TO EMAIL reports@nvpwarranty.com attn: david. last 6 of vin in subject line.\n\n07/30/2026 @ 10:55 AM SENT MAINTANCE RECORDS TO NVP WARRANTY CO.",
   "approved": false,
   "approvedDate": "",
   "denied": false,
