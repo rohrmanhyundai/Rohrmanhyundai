@@ -1,8 +1,24 @@
 {
-  "updatedAt": "2026-07-29T23:07:07.926Z",
+  "updatedAt": "2026-07-30T15:03:08.737Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
+      {
+        "ro": "779661",
+        "vehicle": "2025 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779659",
+        "vehicle": "2012 Hyundai Elantra"
+      },
+      {
+        "ro": "779658",
+        "vehicle": "2025 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "779647",
+        "vehicle": "2015 Hyundai Sonata"
+      },
       {
         "ro": "779645",
         "vehicle": "2023 Hyundai IONIQ 5"
@@ -22,10 +38,36 @@
       {
         "ro": "779600",
         "vehicle": "2026 Hyundai Santa Fe"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779660",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
       },
       {
-        "ro": "779596",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "779657",
+        "vehicle": "2021 Hyundai Tucson"
+      },
+      {
+        "ro": "779656",
+        "vehicle": "2022 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779653",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "779648",
+        "vehicle": "2012 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779601",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "779598",
+        "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
     "CORY": [
@@ -62,10 +104,6 @@
         "vehicle": "2020 Buick Enclave"
       },
       {
-        "ro": "779388",
-        "vehicle": "2016 Hyundai Tucson"
-      },
-      {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
       },
@@ -86,28 +124,10 @@
         "vehicle": "2013 Hyundai Tucson"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "779603",
-        "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779601",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779598",
-        "vehicle": "2026 Hyundai Santa Fe"
-      }
-    ],
     "CODY": [
       {
         "ro": "779599",
         "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779597",
-        "vehicle": "2026 Hyundai Tucson"
       }
     ]
   }
