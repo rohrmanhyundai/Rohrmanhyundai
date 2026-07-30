@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-30T20:10:50.489Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-30T13:16:44.683Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -943,55 +948,5 @@
     "at": "2026-06-30T21:11:41.999Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-06-30T17:27:28.935Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-30T17:12:46.905Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-06-30T16:51:29.909Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-06-30T16:46:47.720Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-06-30T16:46:44.770Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T16:46:43.879Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-06-30T15:02:02.798Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T15:01:28.393Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-06-30T15:01:08.744Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-06-30T15:00:58.972Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
