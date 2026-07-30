@@ -992,6 +992,7 @@ export default function App() {
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
         onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
+        onGlobalMessage={() => goTo('global-message', 'parts-hub')}
       />
     );
   }
