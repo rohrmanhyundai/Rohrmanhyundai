@@ -39,21 +39,6 @@
     "isNew": true
   },
   {
-    "id": "ms559welga7r",
-    "ro": "779602",
-    "roDate": "2026-07-28",
-    "vehicle": "2026 Hyundai Santa Cruz",
-    "jobDesc": "PDI",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "ms559welh5xl",
     "ro": "779601",
     "roDate": "2026-07-28",
