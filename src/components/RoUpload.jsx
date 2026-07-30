@@ -97,6 +97,8 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   const [siteLoading, setSiteLoading] = useState(false);
   const [descs, setDescs] = useState({}); // RO# (upper) -> description typed before saving
   const setDesc = (ro, v) => setDescs(d => ({ ...d, [roKey(ro)]: v }));
+  const [notesMap, setNotesMap] = useState({}); // RO# (upper) -> notes typed before saving
+  const setNote = (ro, v) => setNotesMap(n => ({ ...n, [roKey(ro)]: v }));
   const [copiedRo, setCopiedRo] = useState('');
   const [excluded, setExcluded] = useState({}); // RO# (upper) -> true: dropped from the add list
   const [removingRo, setRemovingRo] = useState('');
@@ -393,7 +395,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   }
 
   function reset() {
-    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null); setDescs({}); setExcluded({});
+    setFileName(''); setHeaders([]); setDataRows([]); setMapping({}); setError(''); setStatus(''); setSiteRos(null); setDescs({}); setNotesMap({}); setExcluded({});
     if (fileRef.current) fileRef.current.value = '';
   }
 
@@ -424,9 +426,10 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const additions = list.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
           jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
+          notes: (notesMap[roKey(o.ro)] || '').trim(),
           flag: flagColor(o.userFlag), usedCar: flagColor(o.userFlag) === 'green',
           etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
-          highPriority: false, advisor: o.advisor || '', notes: '',
+          highPriority: false, advisor: o.advisor || '',
         }));
         if (additions.length) {
           await saveWipData(tech, [...(existing || []), ...additions]);
@@ -440,8 +443,9 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const additions = awaiting.filter(o => !have.has(roKey(o.ro))).map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
           jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
+          notes: (notesMap[roKey(o.ro)] || '').trim(),
           flag: flagColor(o.userFlag), usedCar: flagColor(o.userFlag) === 'green',
-          highPriority: false, advisor: o.advisor || '', notes: '',
+          highPriority: false, advisor: o.advisor || '',
           partsArrived: null, partsArrivedDate: '', isNew: true,
         }));
         if (additions.length) {
@@ -609,7 +613,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                   <div style={{ ...cardSt, padding: 0, overflow: 'auto', maxHeight: 420 }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a' }}>
-                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th><th style={{ ...thSt, minWidth: 240 }}>Description</th><th style={thSt}></th>
+                        <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Vehicle</th><th style={thSt}>Technician</th><th style={thSt}>Destination</th><th style={thSt}>Flag</th><th style={{ ...thSt, minWidth: 220 }}>Description</th><th style={{ ...thSt, minWidth: 220 }}>Notes (optional)</th><th style={thSt}></th>
                       </tr></thead>
                       <tbody>
                         {toAdd.map((o, i) => (
@@ -630,7 +634,15 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                                 value={descs[roKey(o.ro)] != null ? descs[roKey(o.ro)] : autoDescForFlag(o.userFlag)}
                                 onChange={e => setDesc(o.ro, e.target.value)}
                                 placeholder="Add description…"
-                                style={{ ...inpSel, padding: '5px 8px', minWidth: 220 }}
+                                style={{ ...inpSel, padding: '5px 8px', minWidth: 200 }}
+                              />
+                            </td>
+                            <td style={tdSt}>
+                              <input
+                                value={notesMap[roKey(o.ro)] || ''}
+                                onChange={e => setNote(o.ro, e.target.value)}
+                                placeholder="Add notes…"
+                                style={{ ...inpSel, padding: '5px 8px', minWidth: 200 }}
                               />
                             </td>
                             <td style={{ ...tdSt, textAlign: 'center' }}>
@@ -639,7 +651,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                             </td>
                           </tr>
                         ))}
-                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={8}>Nothing new to add{Object.keys(excluded).length ? ' (some were removed below)' : ' — all flagged ROs are already on the site'}.</td></tr>}
+                        {toAdd.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={9}>Nothing new to add{Object.keys(excluded).length ? ' (some were removed below)' : ' — all flagged ROs are already on the site'}.</td></tr>}
                       </tbody>
                     </table>
                   </div>
