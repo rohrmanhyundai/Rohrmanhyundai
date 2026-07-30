@@ -154,5 +154,21 @@
     "highPriority": false,
     "advisor": "CORY CHAPMAN",
     "notes": ""
+  },
+  {
+    "id": "ms7xa2l48iph",
+    "ro": "779665",
+    "roDate": "2026-07-30",
+    "vehicle": "2025 Mitsubishi Outlander",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
