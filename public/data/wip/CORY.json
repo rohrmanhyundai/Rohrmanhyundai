@@ -1,21 +1,5 @@
 [
   {
-    "id": "mrpe9tuwykdz",
-    "ro": "779336",
-    "roDate": "2026-07-17",
-    "vehicle": "2025 Hyundai Elantra",
-    "jobDesc": "CUSTOMER STATES center vents not blowing air",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/22/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
-  },
-  {
     "id": "ms6p2lgoi6ms",
     "ro": "779642",
     "roDate": "2026-07-29",
