@@ -1,21 +1,5 @@
 [
   {
-    "id": "mrp6g3oyvteb",
-    "ro": "779318",
-    "roDate": "2026-07-17",
-    "vehicle": "2013 Hyundai Equus",
-    "jobDesc": "CUSTOMER STATES RADIO NO SOUND. CHECK AND ADVISE.",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/30/2026",
-    "highPriority": true,
-    "advisor": "DAVID RILEY",
-    "notes": "CHAD NEED STUI PICS FOR RECALLS. "
-  },
-  {
     "id": "mrxr25euekc",
     "ro": "779445",
     "roDate": "2026-07-23",
