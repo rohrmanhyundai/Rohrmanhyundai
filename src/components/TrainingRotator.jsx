@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { badgeCls } from '../utils/formatters';
+import { hasExcelTraining } from '../utils/training';
 
 export default function TrainingRotator({ data, vacations }) {
   const [showTraining, setShowTraining] = useState(true);
@@ -39,7 +40,7 @@ export default function TrainingRotator({ data, vacations }) {
                     {(data.technicians || []).map(t => {
                       const certified = t.certified || '\u2014';
                       const due = t.trainings_due || '\u2014';
-                      const excel = t.excel_training || t.excel || '\u2014';
+                      const excel = hasExcelTraining(t) ? (t.excel_training || t.excel || '\u2014') : 'N/A';
                       return (
                         <tr key={t.name}>
                           <td className="name">{t.name || '\u2014'}</td>
@@ -62,7 +63,7 @@ export default function TrainingRotator({ data, vacations }) {
                     {(data.advisorTraining || []).map(a => {
                       const certified = a.certified || '\u2014';
                       const due = a.trainings_due || '\u2014';
-                      const excel = a.excel_training || a.excel || '\u2014';
+                      const excel = hasExcelTraining(a) ? (a.excel_training || a.excel || '\u2014') : 'N/A';
                       return (
                         <tr key={a.name}>
                           <td className="name">{a.name || '\u2014'}</td>

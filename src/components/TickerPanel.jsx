@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { badgeCls } from '../utils/formatters';
+import { hasExcelTraining } from '../utils/training';
 
 const SPEED = 55; // pixels per second
 
@@ -72,8 +73,10 @@ export default function TickerPanel({ data, vacations }) {
         <span className={`badge ${badgeCls(t.certified)}`}>{t.certified || '\u2014'}</span>
         <span style={{ color: '#95a9c6', fontSize: 11 }}>Training:</span>
         <span className="badge neutral">{t.trainings_due || '\u2014'}</span>
-        <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
-        <span className="badge neutral">{t.excel_training || t.excel || '\u2014'}</span>
+        {hasExcelTraining(t) && <>
+          <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
+          <span className="badge neutral">{t.excel_training || t.excel || '\u2014'}</span>
+        </>}
       </span>
     )),
     ...(data.advisorTraining || [])
@@ -84,8 +87,10 @@ export default function TickerPanel({ data, vacations }) {
           <span className={`badge ${badgeCls(a.certified)}`}>{a.certified || '\u2014'}</span>
           <span style={{ color: '#95a9c6', fontSize: 11 }}>Training:</span>
           <span className="badge neutral">{a.trainings_due || '\u2014'}</span>
-          <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
-          <span className="badge neutral">{a.excel_training || a.excel || '\u2014'}</span>
+          {hasExcelTraining(a) && <>
+            <span style={{ color: '#95a9c6', fontSize: 11 }}>Excel:</span>
+            <span className="badge neutral">{a.excel_training || a.excel || '\u2014'}</span>
+          </>}
         </span>
       )),
   ];
