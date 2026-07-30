@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-07-30T19:53:34.085Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-30T19:53:32.414Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-07-30T19:53:32.411Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-07-30T19:15:40.100Z",
     "type": "page",
     "label": "advisor-calendar"
