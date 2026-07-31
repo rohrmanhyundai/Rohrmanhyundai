@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-31T13:35:38.191Z",
+    "type": "page",
+    "label": "charge-account-list"
+  },
+  {
     "at": "2026-07-31T13:19:53.709Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -873,15 +878,5 @@
     "at": "2026-07-01T15:20:23.304Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-01T13:23:58.321Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-01T13:20:58.921Z",
-    "type": "page",
-    "label": "work-schedule"
   }
 ]
