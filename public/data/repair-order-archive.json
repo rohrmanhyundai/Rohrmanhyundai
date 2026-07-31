@@ -83,27 +83,6 @@
     "_sourceTech": "GAVEN"
   },
   {
-    "id": "mruz2ci0htpd",
-    "ro": "779422",
-    "roDate": "2026-07-21",
-    "vehicle": "2022 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES KEEPS GETTING WARRNING LIGHTS ON DASH",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/29/2026",
-    "highPriority": true,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "_archiveId": "ms8wxj2vw7z",
-    "_archivedAt": "2026-07-31T12:22:37.015Z",
-    "_archivedBy": "GAVEN",
-    "_source": "wip",
-    "_sourceTech": "GAVEN"
-  },
-  {
     "id": "mruz2ci07t8c",
     "ro": "779423",
     "roDate": "2026-07-21",
