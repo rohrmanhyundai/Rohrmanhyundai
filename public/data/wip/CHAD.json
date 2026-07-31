@@ -30,21 +30,6 @@
     "flag": "purple"
   },
   {
-    "id": "ms6bfq31kpd",
-    "ro": "779452",
-    "roDate": "2026-07-22",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES VEHICLE DIED AND NOT RESTARTING. DRAINED JUMP BOX AND WONT STAY RUNNING. CHECK AND ADVISE. TOWED IN",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/31/2026",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "",
-    "flag": "purple"
-  },
-  {
     "id": "ms6hi3d2nxg",
     "ro": "779465",
     "roDate": "2026-07-23",
