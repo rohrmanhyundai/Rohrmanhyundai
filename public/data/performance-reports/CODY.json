@@ -4,8 +4,7 @@
     "label": "July 30, 2026",
     "month": "2026-07",
     "type": "advisor",
-    "savedAt": "2026-07-31T05:53:46.997Z",
-    "autoSaved": true,
+    "savedAt": "2026-07-31T11:05:57.062Z",
     "csi": 0,
     "hours_per_ro": 1.03,
     "roh50_hrs_ro": 0.6,
@@ -17,7 +16,10 @@
     "asr": 0.75,
     "elr": 0.8736,
     "last_month_total": 0,
-    "ro_count": 3
+    "ro_count": 3,
+    "coupon_labor": 29,
+    "total_sales": 924.44,
+    "coupon_usage_pct": 0.031370343126649644
   },
   {
     "date": "2026-07-29",
