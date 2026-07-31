@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews } from '../utils/github';
 import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
+import { ensureMtd, dailyPacing } from '../utils/advisorGoals';
 import Chat from './Chat';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
@@ -284,7 +285,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -292,6 +293,36 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
   const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
   const eodUrgent = easternHour >= 15;
+
+  // Daily pacing badge for TODAY's cell: from the viewed advisor's monthly Hours
+  // Goal (Goals/Forecasting) and their MTD hours (the morning upload), figure how
+  // many hours they need to sell today — to reach goal if behind pace, or to hold
+  // their pace if ahead. Recomputes when the advisor / MTD / schedule changes.
+  const [pacing, setPacing] = useState(null);
+  const pacingAdv = (viewingAdvisor || '').toUpperCase().split(/\s+/)[0];
+  // Primitive MTD so the effect only re-fires when the number changes, not on
+  // every dashboard poll (which hands us a fresh `advisors` array reference).
+  const pacingMtd = useMemo(() => {
+    const rec = (advisors || []).find(a => (a.name || '').toUpperCase().split(/\s+/)[0] === pacingAdv);
+    return rec ? Number(rec.mtd_hours) || 0 : 0;
+  }, [advisors, pacingAdv]);
+  useEffect(() => {
+    if (!pacingAdv) { setPacing(null); return; }
+    const now = new Date();
+    const y = now.getFullYear(), mo = now.getMonth();
+    let cancelled = false;
+    (async () => {
+      try {
+        const all = await loadAdvisorGoals(pacingAdv);
+        const mk = `${y}-${String(mo + 1).padStart(2, '0')}`;
+        const bucket = ensureMtd((all && all[mk]) || {});
+        const offKeys = advisorOffDates(pacingAdv, y, mo, schedules, vacations);
+        const p = dailyPacing({ hoursGoal: bucket.hoursGoal, mtd: pacingMtd, year: y, month: mo, offKeys, today: now });
+        if (!cancelled) setPacing(p);
+      } catch { if (!cancelled) setPacing(null); }
+    })();
+    return () => { cancelled = true; };
+  }, [pacingAdv, pacingMtd, schedules, vacations]);
 
   // Missed End-of-Day Reporting pin: count the logged-in advisor's own
   // unreported prior working days this month. Drives an attention badge on the
@@ -835,6 +866,23 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                     <span className="adv-day-num">{d}</span>
                     {isToday && <span className="adv-today-chip">TODAY</span>}
                     {hasNotes && <span className="adv-note-dot" title="Prep notes saved" />}
+                    {isToday && pacing && (
+                      <div title={pacing.mode === 'behind'
+                          ? 'Hours to sell today to reach your monthly goal'
+                          : 'Hours to sell today to hold your pace above goal'}
+                        style={{
+                          marginTop: 6, borderRadius: 8, padding: '4px 7px', lineHeight: 1.15,
+                          background: pacing.mode === 'behind' ? 'rgba(251,146,60,.16)' : 'rgba(74,222,128,.16)',
+                          border: `1px solid ${pacing.mode === 'behind' ? 'rgba(251,146,60,.5)' : 'rgba(74,222,128,.5)'}`,
+                        }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 900, color: pacing.mode === 'behind' ? '#fdba74' : '#86efac' }}>
+                          🎯 {pacing.value.toFixed(1)} hrs
+                        </div>
+                        <div style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: .3, textTransform: 'uppercase', color: '#94a3b8' }}>
+                          {pacing.mode === 'behind' ? 'to hit goal' : 'to hold pace'}
+                        </div>
+                      </div>
+                    )}
                     {events.length > 0 && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, alignItems: 'flex-start' }}>
                         {events.map((ev, j) => {
