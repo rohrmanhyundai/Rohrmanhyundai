@@ -29,21 +29,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "notes": "gaven approved parts in stock "
-  },
-  {
-    "id": "ms7n81k4wwkk",
-    "ro": "779652",
-    "roDate": "2026-07-30",
-    "vehicle": "2014 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES A/C NOT WORKING PROPERLY. CHECK AND ADVISE.",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/31/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
