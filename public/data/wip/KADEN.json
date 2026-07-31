@@ -14,21 +14,5 @@
     "highPriority": true,
     "advisor": "JORDAN TROXEL",
     "notes": "WE NEED GET THIS ONE COMPLETED 7/30 PLEASE "
-  },
-  {
-    "id": "mrxf83b86k1w",
-    "ro": "779436",
-    "roDate": "2026-07-23",
-    "vehicle": "2019 Hyundai Santa Fe",
-    "jobDesc": "timing cover reseal",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/31/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
   }
 ]
