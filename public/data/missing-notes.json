@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-07-31T14:01:26.368Z",
+  "updatedAt": "2026-07-31T15:21:05.271Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
+      {
+        "ro": "779683",
+        "vehicle": "2025 Kia K5"
+      },
+      {
+        "ro": "779680",
+        "vehicle": "2022 Toyota Highlander"
+      },
+      {
+        "ro": "779678",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      },
       {
         "ro": "779673",
         "vehicle": "2025 Hyundai Palisade"
@@ -14,8 +26,28 @@
     ],
     "DAVID": [
       {
-        "ro": "779672",
-        "vehicle": "2023 Hyundai IONIQ 5"
+        "ro": "779682",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779681",
+        "vehicle": "2012 Hyundai Tucson"
+      },
+      {
+        "ro": "779679",
+        "vehicle": "2023 Hyundai Elantra"
+      },
+      {
+        "ro": "779677",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "779675",
+        "vehicle": "2021 Hyundai Kona"
+      },
+      {
+        "ro": "779674",
+        "vehicle": "2025 Hyundai Elantra Hybrid"
       },
       {
         "ro": "779642",
@@ -66,10 +98,6 @@
       {
         "ro": "779164",
         "vehicle": "2018 Ford Explorer"
-      },
-      {
-        "ro": "778822",
-        "vehicle": "2013 Hyundai Tucson"
       }
     ],
     "CODY": [
