@@ -58,21 +58,5 @@
     "advisor": "JORDAN TROXEL",
     "notes": "HTSS# 2026073004560 (APPROVED)",
     "flag": "purple"
-  },
-  {
-    "id": "ms6mt2jh0dug",
-    "ro": "779612",
-    "roDate": "2026-07-29",
-    "vehicle": "2019 Hyundai Tucson",
-    "jobDesc": "Ignition Coil Remove and Replace",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/31/2026",
-    "highPriority": true,
-    "advisor": "DAVID RILEY",
-    "notes": "NEEDS DONE 7/30. WAITING ON INJECTOR."
   }
 ]
