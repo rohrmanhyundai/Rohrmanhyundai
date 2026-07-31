@@ -30,21 +30,6 @@
     "notes": "WARRANTY DECLINED"
   },
   {
-    "id": "mrngoe3g3qh",
-    "ro": "779228",
-    "roDate": "2026-07-14",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES PUT NEW COMPUTER IN VEHICLE AND NEEDS PROGRAMED.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "CUSTOMER IS BRINING IS A NEW PCM",
-    "flag": "purple"
-  },
-  {
     "id": "mro3a7o9xsj",
     "ro": "779297",
     "roDate": "2026-07-16",
