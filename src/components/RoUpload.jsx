@@ -697,7 +697,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                               const when = e._archivedAt ? new Date(e._archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
                               return (
                                 <tr key={i}>
-                                  <td style={{ ...tdSt, color: '#6ee7f9', fontFamily: 'monospace' }}>{d.ro}</td>
+                                  <td style={tdSt}>
+                                    <span onClick={() => copyRo(d.ro)} title="Click to copy RO#"
+                                      style={{ color: copiedRo === String(d.ro).trim() ? '#4ade80' : '#6ee7f9', fontFamily: 'monospace', cursor: 'pointer', userSelect: 'all' }}>
+                                      {copiedRo === String(d.ro).trim() ? '✓ Copied' : `📋 ${d.ro}`}
+                                    </span>
+                                  </td>
                                   <td style={tdSt}>{where}</td>
                                   <td style={tdSt}>{e.vehicle || d.vehicle || '—'}</td>
                                   <td style={tdSt}>{e.advisor || d.advisor || '—'}</td>
