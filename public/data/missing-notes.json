@@ -1,33 +1,25 @@
 {
-  "updatedAt": "2026-07-30T20:47:26.528Z",
+  "updatedAt": "2026-07-31T14:01:26.368Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "779669",
-        "vehicle": "2023 Hyundai Elantra"
+        "ro": "779673",
+        "vehicle": "2025 Hyundai Palisade"
       },
       {
         "ro": "779601",
         "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "779598",
-        "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
     "DAVID": [
       {
-        "ro": "779668",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "779672",
+        "vehicle": "2023 Hyundai IONIQ 5"
       },
       {
         "ro": "779642",
         "vehicle": "2025 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779602",
-        "vehicle": "2026 Hyundai Santa Cruz"
       },
       {
         "ro": "779600",
