@@ -27,7 +27,7 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
-    "notes": "Failed BCT. Awaiting engine approval. ",
+    "notes": "",
     "flag": "purple"
   },
   {
@@ -40,7 +40,7 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
-    "notes": "",
+    "notes": "Failed BCT. Awaiting engine approval. ",
     "partsArrived": null,
     "partsArrivedDate": ""
   }
