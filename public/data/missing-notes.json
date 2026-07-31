@@ -1,15 +1,35 @@
 {
-  "updatedAt": "2026-07-31T15:21:05.271Z",
+  "updatedAt": "2026-07-31T17:26:35.209Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "779683",
-        "vehicle": "2025 Kia K5"
+        "ro": "779694",
+        "vehicle": "2024 Hyundai Venue"
       },
       {
-        "ro": "779680",
-        "vehicle": "2022 Toyota Highlander"
+        "ro": "779693",
+        "vehicle": "2006 Acura TSX"
+      },
+      {
+        "ro": "779692",
+        "vehicle": "2023 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "779691",
+        "vehicle": "2019 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779687",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "779684",
+        "vehicle": "2026 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "779683",
+        "vehicle": "2025 Kia K5"
       },
       {
         "ro": "779678",
@@ -26,28 +46,20 @@
     ],
     "DAVID": [
       {
+        "ro": "779690",
+        "vehicle": "2020 Genesis G70"
+      },
+      {
+        "ro": "779685",
+        "vehicle": "2015 Hyundai Sonata"
+      },
+      {
         "ro": "779682",
         "vehicle": "2025 Hyundai Tucson"
       },
       {
-        "ro": "779681",
-        "vehicle": "2012 Hyundai Tucson"
-      },
-      {
-        "ro": "779679",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
         "ro": "779677",
         "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779675",
-        "vehicle": "2021 Hyundai Kona"
-      },
-      {
-        "ro": "779674",
-        "vehicle": "2025 Hyundai Elantra Hybrid"
       },
       {
         "ro": "779642",
@@ -59,6 +71,14 @@
       }
     ],
     "CORY": [
+      {
+        "ro": "779689",
+        "vehicle": "2023 Hyundai Tucson"
+      },
+      {
+        "ro": "779688",
+        "vehicle": "2019 Dodge Charger"
+      },
       {
         "ro": "779665",
         "vehicle": "2025 Mitsubishi Outlander"
@@ -94,10 +114,6 @@
       {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
-      },
-      {
-        "ro": "779164",
-        "vehicle": "2018 Ford Explorer"
       }
     ],
     "CODY": [
