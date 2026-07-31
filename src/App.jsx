@@ -1277,6 +1277,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         schedules={schedules}
         vacations={vacations}
+        advisors={data.advisors || []}
         chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
         techChatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
