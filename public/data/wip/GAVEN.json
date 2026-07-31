@@ -16,22 +16,6 @@
     "notes": ""
   },
   {
-    "id": "mruz2ci0htpd",
-    "ro": "779422",
-    "roDate": "2026-07-21",
-    "vehicle": "2022 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES KEEPS GETTING WARRNING LIGHTS ON DASH",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/29/2026",
-    "highPriority": true,
-    "advisor": "JORDAN TROXEL",
-    "notes": ""
-  },
-  {
     "id": "ms6hunf2wbt",
     "ro": "779619",
     "roDate": "2026-07-28",
@@ -45,22 +29,6 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
-  },
-  {
-    "id": "ms6mt1skqzg9",
-    "ro": "779627",
-    "roDate": "2026-07-29",
-    "vehicle": "2021 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES AC IS NOT GETTING COLD CHECK AND ADVISE",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/31/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "gaven approved parts in stock "
   },
   {
     "id": "ms7uipywbrg",
