@@ -58,5 +58,20 @@
     "advisor": "JORDAN",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "ms6hunf2wbt",
+    "ro": "779619",
+    "roDate": "2026-07-28",
+    "vehicle": "",
+    "jobDesc": "Timing Chain was already done.  Error codes p0011 and p0014 still show up. Oil pressure test was done. Mechanic found no issue. But oil pressure light flickers in idle after warmed up.",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": true,
+    "advisor": "JORDAN TROXEL",
+    "notes": "",
+    "flag": "purple"
   }
 ]
