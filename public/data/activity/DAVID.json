@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-07-31T22:04:46.848Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-07-31T22:04:45.627Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-31T13:35:38.191Z",
     "type": "page",
     "label": "charge-account-list"
@@ -866,16 +876,6 @@
   },
   {
     "at": "2026-07-01T22:06:43.928Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-01T22:01:49.951Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-01T15:20:23.304Z",
     "type": "page",
     "label": "advisor-calendar"
   }
