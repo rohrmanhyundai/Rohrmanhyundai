@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-31T11:08:58.294Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-07-30T21:54:35.569Z",
     "type": "page",
     "label": "work-in-progress"
