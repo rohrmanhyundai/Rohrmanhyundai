@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-07-31T13:19:53.709Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-07-30T20:58:22.731Z",
     "type": "page",
     "label": "advisor-goals"
@@ -878,85 +883,5 @@
     "at": "2026-07-01T13:20:58.921Z",
     "type": "page",
     "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-01T13:18:33.577Z",
-    "type": "page",
-    "label": "document-library"
-  },
-  {
-    "at": "2026-07-01T13:18:25.104Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-01T13:18:20.643Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-01T13:18:09.047Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-01T13:18:09.045Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-01T13:17:42.989Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-01T13:17:38.773Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-06-30T22:08:18.326Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-06-30T21:33:22.225Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-06-30T21:31:44.002Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T21:31:06.049Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-06-30T21:30:55.186Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T21:28:27.280Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-06-30T21:28:20.950Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T21:28:12.274Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-06-30T21:11:41.999Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
