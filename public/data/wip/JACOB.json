@@ -96,22 +96,6 @@
     "notes": ""
   },
   {
-    "id": "ms6mt10kdbw6",
-    "ro": "779638",
-    "roDate": "2026-07-29",
-    "vehicle": "2024 Jeep Wagoneer L",
-    "jobDesc": "USED CAR INSPECTION",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "notes": ""
-  },
-  {
     "id": "ms7xa2l48iph",
     "ro": "779665",
     "roDate": "2026-07-30",
