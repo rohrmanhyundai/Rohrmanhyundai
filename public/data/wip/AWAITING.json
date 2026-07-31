@@ -1,35 +1,5 @@
 [
   {
-    "id": "ms559welh5xl",
-    "ro": "779601",
-    "roDate": "2026-07-28",
-    "vehicle": "2026 Hyundai Santa Fe Hybrid",
-    "jobDesc": "PDI",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "ms559wel9l0g",
-    "ro": "779599",
-    "roDate": "2026-07-28",
-    "vehicle": "2026 Hyundai Santa Fe",
-    "jobDesc": "PDI",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "ms7n82bctqu6",
     "ro": "779655",
     "roDate": "2026-07-30",
