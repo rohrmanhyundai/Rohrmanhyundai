@@ -1,21 +1,11 @@
 {
-  "updatedAt": "2026-07-31T20:45:20.160Z",
+  "updatedAt": "2026-07-31T21:34:15.274Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
         "ro": "779704",
         "vehicle": "2021 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779703",
-        "vehicle": "2026 Hyundai Kona"
-      },
-      {
-        "ro": "779642",
-        "vehicle": "2025 Hyundai Santa Cruz"
       }
     ],
     "SHAWN": [
@@ -36,10 +26,6 @@
       {
         "ro": "779665",
         "vehicle": "2025 Mitsubishi Outlander"
-      },
-      {
-        "ro": "779638",
-        "vehicle": "2024 Jeep Wagoneer L"
       },
       {
         "ro": "779573",
@@ -64,6 +50,12 @@
       {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779642",
+        "vehicle": "2025 Hyundai Santa Cruz"
       }
     ]
   }
