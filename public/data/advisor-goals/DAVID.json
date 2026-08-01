@@ -393,5 +393,25 @@
       }
     },
     "entryMode": "mtd"
+  },
+  "2026-08": {
+    "hoursGoal": 0,
+    "hrsRoGoal": 0,
+    "days": {
+      "2026-08-01": {
+        "hours": 0,
+        "hrsRo": 0,
+        "openRoCount": 21,
+        "invoiced": "no",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": null,
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1785610837209
+      }
+    },
+    "entryMode": "mtd"
   }
 }
