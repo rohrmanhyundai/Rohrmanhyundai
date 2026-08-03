@@ -534,8 +534,8 @@
       {
         "name": "DAVID",
         "daily_avg": 11.15,
-        "mtd_hours": 424.6,
-        "hours_per_ro": 1.28,
+        "mtd_hours": 0,
+        "hours_per_ro": 0,
         "align": 0.1005,
         "tires": 0.0854,
         "valvoline": 0.1859,
@@ -555,8 +555,8 @@
       {
         "name": "JORDAN",
         "daily_avg": 12.58636364,
-        "mtd_hours": 467.6,
-        "hours_per_ro": 1.38,
+        "mtd_hours": 0,
+        "hours_per_ro": 0,
         "align": 0.1324,
         "tires": 0.1471,
         "valvoline": 0.3088,
@@ -573,31 +573,10 @@
         "min_csi": 913
       },
       {
-        "name": "ISAIAH",
-        "mtd_hours": 42.7,
-        "daily_avg": 0,
-        "hours_per_ro": 1.04,
-        "align": 0.0741,
-        "tires": 0.1481,
-        "valvoline": 0.1852,
-        "roh50_hrs_ro": 0.71,
-        "csi": 715,
-        "asr": 0.1468,
-        "elr": 0.9399,
-        "last_month_total": 0,
-        "ro_count": 41,
-        "hidden": true,
-        "_lastImport": 1785755098405,
-        "min_csi": 912,
-        "coupon_labor": 448,
-        "total_sales": 10064.78,
-        "coupon_usage_pct": 0.0445
-      },
-      {
         "name": "CODY",
-        "mtd_hours": 3.9,
+        "mtd_hours": 0,
         "daily_avg": 0,
-        "hours_per_ro": 0.98,
+        "hours_per_ro": 0,
         "align": 0,
         "tires": 1,
         "valvoline": 0,
@@ -627,12 +606,6 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
-      },
-      {
-        "name": "ISAIAH",
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
       },
       {
         "name": "CODY",
@@ -690,11 +663,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 938.8000000000001,
-      "align": 0.10233333333333333,
-      "tires": 0.12686666666666668,
-      "valvoline": 0.22663333333333335,
-      "csi": 863.6666666666666
+      "total_hours": 0,
+      "align": 0.11645,
+      "tires": 0.11625,
+      "valvoline": 0.24735000000000001,
+      "csi": 938
     },
     "techTotals": {
       "mon": 46.99999999999999,
