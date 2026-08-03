@@ -1,17 +1,33 @@
 {
-  "updatedAt": "2026-07-31T21:34:15.274Z",
+  "updatedAt": "2026-08-03T12:35:00.640Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
+      {
+        "ro": "779720",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "779719",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "779717",
+        "vehicle": "2023 Hyundai Tucson"
+      },
       {
         "ro": "779704",
         "vehicle": "2021 Hyundai Tucson"
       }
     ],
-    "SHAWN": [
+    "DAVID": [
       {
-        "ro": "779702",
-        "vehicle": "2026 Hyundai Santa Cruz"
+        "ro": "779718",
+        "vehicle": "2021 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "779710",
+        "vehicle": "2013 Hyundai Sonata"
       }
     ],
     "CORY": [
@@ -50,12 +66,6 @@
       {
         "ro": "779377",
         "vehicle": "2009 Porsche Cayenne"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779642",
-        "vehicle": "2025 Hyundai Santa Cruz"
       }
     ]
   }
