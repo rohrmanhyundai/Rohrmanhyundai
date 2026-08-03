@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-03T12:08:45.067Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-01T00:02:15.149Z",
     "type": "action",
     "label": "delete-wip-row",
@@ -1273,122 +1278,6 @@
   },
   {
     "at": "2026-07-06T11:52:30.012Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-03T15:47:20.840Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-03T15:47:20.837Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-03T15:47:18.345Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-03T12:21:12.731Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-03T12:20:48.496Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-03T11:46:41.133Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-03T11:45:40.150Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-03T11:37:06.483Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-03T11:37:04.292Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-02T19:39:03.908Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-02T18:39:45.027Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-02T18:39:43.347Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-02T18:39:43.346Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-02T18:39:41.788Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-02T18:11:52.457Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-02T17:53:21.660Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-02T17:53:20.631Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-02T17:53:20.629Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-02T17:53:19.138Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-02T11:59:48.690Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778851 tech CHAD"
-  },
-  {
-    "at": "2026-07-02T11:59:26.348Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-02T11:59:24.503Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-02T11:56:53.762Z",
     "type": "action",
     "label": "login"
   }
