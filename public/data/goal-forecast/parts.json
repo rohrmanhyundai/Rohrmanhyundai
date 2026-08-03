@@ -95,5 +95,12 @@
         "total": 106788.16
       }
     }
+  },
+  "2026-08": {
+    "forecast": 100558,
+    "lastYear": 0,
+    "actuals": {},
+    "laborBreakdown": null,
+    "partsBreakdown": null
   }
 }
