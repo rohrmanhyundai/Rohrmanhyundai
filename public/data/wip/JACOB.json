@@ -142,5 +142,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "msdhalujxoou",
+    "ro": "779737",
+    "roDate": "2026-08-03",
+    "vehicle": "2015 Honda Civic Sedan",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "msdhalujfn1v",
+    "ro": "779736",
+    "roDate": "2026-08-03",
+    "vehicle": "2023 Kia Sorento",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
