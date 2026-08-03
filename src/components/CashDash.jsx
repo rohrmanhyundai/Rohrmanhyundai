@@ -53,14 +53,33 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [techHours, setTechHours] = useState({}); // { NAME: hours } for PLAN.monthKey
+  const [repCount, setRepCount] = useState('');    // Reputation.com survey/review count
+  const [repScore, setRepScore] = useState('');    // Reputation.com score
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState('');
 
   const refresh = useCallback(async () => {
-    try { const all = await loadCashDash(); setTechHours(((all && all[PLAN.monthKey]) || {}).techHours || {}); }
-    catch {} finally { setLoading(false); }
+    try {
+      const all = await loadCashDash();
+      const b = (all && all[PLAN.monthKey]) || {};
+      setTechHours(b.techHours || {});
+      setRepCount(b.repCount != null ? b.repCount : '');
+      setRepScore(b.repScore != null ? b.repScore : '');
+    } catch {} finally { setLoading(false); }
   }, []);
   useEffect(() => { refresh(); }, [refresh]);
+
+  async function saveRep(field, val) {
+    if (field === 'count') setRepCount(val); else setRepScore(val);
+    try {
+      await updateCashDash(cur => {
+        const bucket = { techHours: {}, ...(cur[PLAN.monthKey] || {}) };
+        if (field === 'count') bucket.repCount = num(val); else bucket.repScore = num(val);
+        bucket.updatedAt = Date.now();
+        return { ...cur, [PLAN.monthKey]: bucket };
+      });
+    } catch {}
+  }
 
   const pace = useMemo(() => bizDays(), []);
 
@@ -115,6 +134,9 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
           {/* Plan chart — styled reproduction of the qualify/earn-pulls board */}
           <PlanChart />
 
+          {/* Reputation.com department progress — manager enters the count daily */}
+          <RepProgress count={num(repCount)} score={num(repScore)} rawCount={repCount} rawScore={repScore} canEdit={isManager} onEdit={saveRep} />
+
           {target ? (
             <PersonView row={target} tiers={plan(target.role).tiers} unit={plan(target.role).unit}
               warning={target.role === 'tech' ? PLAN.tech.warning : ''} pace={pace} />
@@ -131,6 +153,62 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Reputation.com department progress (managers enter the daily count) ───────
+function RepProgress({ count, score, rawCount, rawScore, canEdit, onEdit }) {
+  const tiers = [
+    { label: 'Must Hit', reviews: 30, scoreReq: 700, reward: 'Department qualifies' },
+    { label: 'Bonus 1', reviews: 50, scoreReq: 725, reward: '+2 pulls per participant' },
+    { label: 'Bonus 2', reviews: 80, scoreReq: 725, reward: '+2 more pulls per participant' },
+  ];
+  const inp = { width: 110, background: 'rgba(2,6,23,.55)', border: '1px solid rgba(251,191,36,.45)', borderRadius: 8, color: '#fde68a', padding: '7px 11px', fontSize: 20, fontWeight: 900, textAlign: 'center', outline: 'none' };
+  return (
+    <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginBottom: 14 }}>
+        <div style={{ fontSize: 15, fontWeight: 900, color: '#fde68a' }}>⭐ Reputation.com — Department Progress</div>
+        <div style={{ flex: 1 }} />
+        {canEdit ? (
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#94a3b8' }}>
+              Survey count
+              <input value={rawCount} onChange={e => onEdit('count', e.target.value)} inputMode="decimal" placeholder="0" style={inp} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#94a3b8' }}>
+              Score
+              <input value={rawScore} onChange={e => onEdit('score', e.target.value)} inputMode="decimal" placeholder="0" style={{ ...inp, color: '#93c5fd', borderColor: 'rgba(96,165,250,.45)' }} />
+            </label>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 22 }}>
+            <div style={{ textAlign: 'right' }}><div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>Reviews</div><div style={{ fontSize: 24, fontWeight: 900, color: '#fde68a' }}>{count}</div></div>
+            <div style={{ textAlign: 'right' }}><div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>Score</div><div style={{ fontSize: 24, fontWeight: 900, color: '#93c5fd' }}>{score || '—'}</div></div>
+          </div>
+        )}
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        {tiers.map(t => {
+          const rMet = count >= t.reviews, sMet = score >= t.scoreReq, met = rMet && sMet;
+          return (
+            <div key={t.label} style={{ flex: '1 1 200px', minWidth: 190, background: met ? 'rgba(52,211,153,.12)' : 'rgba(2,6,23,.4)', border: `1px solid ${met ? 'rgba(52,211,153,.5)' : 'rgba(148,163,184,.2)'}`, borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 900, color: met ? '#6ee7b7' : '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.04em' }}>{t.label}</span>
+                <div style={{ flex: 1 }} />
+                <span style={{ fontSize: 12.5, fontWeight: 900, color: met ? '#6ee7b7' : '#64748b' }}>{met ? '✓ MET' : ''}</span>
+              </div>
+              <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 6 }}>
+                <span style={{ color: rMet ? '#6ee7b7' : '#fca5a5', fontWeight: 700 }}>{count}/{t.reviews} reviews</span>
+                {' · '}
+                <span style={{ color: sMet ? '#6ee7b7' : '#fca5a5', fontWeight: 700 }}>{score || 0}/{t.scoreReq} score</span>
+              </div>
+              <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 3 }}>{t.reward}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 10 }}>Applies to all positions except technicians.{canEdit ? ' Update the survey count daily.' : ''}</div>
+    </section>
   );
 }
 
