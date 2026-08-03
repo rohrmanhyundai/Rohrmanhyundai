@@ -43,5 +43,21 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "msdj3as75l9r",
+    "ro": "779721",
+    "roDate": "2026-08-03",
+    "vehicle": "2025 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES- drives like 4wd truck. Rear end feels like its walking over its self and buckling.",
+    "notes": "p/a submitted for transmission",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
