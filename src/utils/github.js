@@ -1418,6 +1418,19 @@ export async function saveRoArchive(entries) {
   return entries;
 }
 
+// ── Cash Dash ──────────────────────────────────────────────────────────────────
+// Per-month manual tech booked-hours entries (advisor hours come from the perf
+// report's mtd_hours). Shape: { "2026-08": { techHours: { NAME: hrs }, updatedAt } }.
+const CASH_DASH_PATH = 'public/data/cash-dash.json';
+export async function loadCashDash() {
+  try { const d = await readGitHubFile(authHeaders(), CASH_DASH_PATH); if (d && typeof d === 'object') return d; } catch {}
+  return {};
+}
+export async function updateCashDash(mutate) {
+  return mutateGitHubJson(CASH_DASH_PATH, (cur) => mutate(cur && typeof cur === 'object' ? cur : {}),
+    `Cash Dash update ${new Date().toISOString()}`);
+}
+
 // Convenience: append-only helper that loads, prepends, and saves. Returns the
 // new full archive array.
 export async function appendRoArchive(entry) {

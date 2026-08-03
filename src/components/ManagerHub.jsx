@@ -136,6 +136,15 @@ const NAV_BUTTONS = [
     color: '#fde68a',
     prop: 'onGlobalMessage',
   },
+  {
+    key: 'cashDash',
+    label: '💰 Cash Dash',
+    desc: 'August pull pacing per advisor & tech — enter tech hours and see locked pulls',
+    bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(245,158,11,.18))',
+    border: 'rgba(52,211,153,.5)',
+    color: '#6ee7b7',
+    prop: 'onCashDash',
+  },
 ];
 
 export default function ManagerHub({
@@ -144,14 +153,14 @@ export default function ManagerHub({
   onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage,
+  onGlobalMessage, onCashDash,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage,
+    onGlobalMessage, onCashDash,
   };
 
   return (

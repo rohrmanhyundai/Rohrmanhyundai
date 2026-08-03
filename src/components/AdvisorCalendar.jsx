@@ -285,7 +285,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -717,6 +717,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           {onMyReports && (
             <button onClick={onMyReports} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.25),rgba(110,231,249,.18))', borderColor: 'rgba(61,214,195,.35)' }}>
               📈 My Reports
+            </button>
+          )}
+          {onCashDash && (
+            <button onClick={onCashDash} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.28),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.4)' }}>
+              💰 Cash Dash
             </button>
           )}
           {onGoalsForecasting && (
