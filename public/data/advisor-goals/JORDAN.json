@@ -368,7 +368,21 @@
   "2026-08": {
     "hoursGoal": 475,
     "hrsRoGoal": 1.5,
-    "days": {},
+    "days": {
+      "2026-08-03": {
+        "hours": 15.5,
+        "hrsRo": 1.18,
+        "openRoCount": 17,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1785787413192
+      }
+    },
     "entryMode": "mtd"
   }
 }
