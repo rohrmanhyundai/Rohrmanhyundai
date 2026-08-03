@@ -10,20 +10,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "ms7n82bctqu6",
-    "ro": "779655",
-    "roDate": "2026-07-30",
-    "vehicle": "2022 Hyundai Elantra N",
-    "jobDesc": "REPLACE TWO TIRES",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "TIRES ARE ON ORDER ",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": false
   }
 ]
