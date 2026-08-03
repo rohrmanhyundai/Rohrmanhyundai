@@ -342,12 +342,13 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay, onEditFore
   );
   // Editable $ card — matches the own-page Forecast/Last-Year inputs exactly so
   // the cross-dept viewer looks identical.
+  // accent must be a HEX color — MetricCard appends alpha to it for the card bg.
   const editMoneyCard = (icon, label, val, color, accent, onEdit, sub, width = 190) => (
     <MetricCard accent={accent} icon={icon} label={label} sub={sub} minWidth={250}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
         <span style={{ fontSize: 26, fontWeight: 900, color }}>$</span>
         <input type="number" value={val || ''} placeholder="0" onChange={e => onEdit(e.target.value)}
-          style={{ background: 'rgba(2,6,23,.5)', border: `1px solid ${accent}`, borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color, width, outline: 'none' }} />
+          style={{ background: 'rgba(2,6,23,.5)', border: `1px solid ${accent}77`, borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color, width, outline: 'none' }} />
       </div>
     </MetricCard>
   );
@@ -359,10 +360,10 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay, onEditFore
       {isCurrent ? (<>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
           {onEditForecast
-            ? editMoneyCard('💰', 'Month Forecast Gross Profit', M.forecast, '#6ee7b7', 'rgba(52,211,153,.45)', onEditForecast, undefined, 200)
+            ? editMoneyCard('💰', 'Month Forecast Gross Profit', M.forecast, '#6ee7b7', '#34d399', onEditForecast, undefined, 200)
             : card('💰', 'Month Forecast Gross Profit', money(M.forecast), '#34d399', M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'monthly gross-profit goal')}
           {onEditLastYear
-            ? editMoneyCard('📆', 'Last Year (This Month)', M.lastYear, '#7dd3fc', 'rgba(56,189,248,.4)', onEditLastYear, M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'last year’s final gross', 190)
+            ? editMoneyCard('📆', 'Last Year (This Month)', M.lastYear, '#7dd3fc', '#38bdf8', onEditLastYear, M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'last year’s final gross', 190)
             : card('📆', 'Last Year (This Month)', money(M.lastYear), '#38bdf8', 'last year’s final gross')}
           {card('🎯', 'Daily Target', money(M.dailyTarget), '#22d3ee', `${M.totalDays} working days · ${M.completedDays} completed`)}
         </div>
@@ -378,10 +379,10 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay, onEditFore
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
           {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
           {onEditForecast
-            ? editMoneyCard('💰', 'Forecast', M.forecast, '#7dd3fc', 'rgba(56,189,248,.5)', onEditForecast)
+            ? editMoneyCard('💰', 'Forecast', M.forecast, '#7dd3fc', '#38bdf8', onEditForecast)
             : card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
           {onEditLastYear
-            ? editMoneyCard('📆', 'Last Year', M.lastYear, '#fde68a', 'rgba(251,191,36,.5)', onEditLastYear)
+            ? editMoneyCard('📆', 'Last Year', M.lastYear, '#fde68a', '#fbbf24', onEditLastYear)
             : card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
           {card('📈', 'Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185', `target ${money(M.dailyTarget)}/day`)}
         </div>
