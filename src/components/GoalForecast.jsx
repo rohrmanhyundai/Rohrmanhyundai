@@ -725,8 +725,11 @@ export default function GoalForecast({
   async function handlePdf(file, targetDept = dept) {
     if (!file) return;
     // Fill the month you're LOOKING at — the History month when browsing history,
-    // otherwise the current month. Lets you finalize a prior month after rollover.
-    const effMk = (view === 'history' && histSel) ? histSel : mk;
+    // otherwise the current month. In the cross viewer, use its own month state.
+    // Lets you finalize a prior month after rollover.
+    const effMk = crossOpen
+      ? ((crossView === 'history' && crossSel) ? crossSel : mk)
+      : ((view === 'history' && histSel) ? histSel : mk);
     const effLabel = new Date(effMk + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' });
     setParseTargetMk(effMk);
     setParsing(true); setParseErr(''); setParsePreview(null); setParsedDaily(null); setParseSummary(null); setParseDept(targetDept);
@@ -822,6 +825,7 @@ export default function GoalForecast({
 
   const saveTimer = useRef(null);
   const histSaveTimer = useRef(null);
+  const crossSaveTimer = useRef(null);
   const latestRef = useRef({ forecast: 0, lastYear: 0, actuals: {} });
 
   useEffect(() => {
@@ -890,6 +894,20 @@ export default function GoalForecast({
 
   // Edit a PAST (history) month's daily total — updates that month's bucket in
   // allMonths and saves it (debounced) to this department's file.
+  // Edit a day in the OTHER department's month (the read-only-turned-editable
+  // cross viewer) — saves to that dept's own bucket so nothing of theirs is lost.
+  function updateCrossActual(crossMk, dayKey, val) {
+    const prev = crossMonths || {};
+    const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...(prev[crossMk] || {}) };
+    const nextActuals = { ...(bucket.actuals || {}) };
+    if (val === '' || val == null) delete nextActuals[dayKey];
+    else nextActuals[dayKey] = safe(val, 0);
+    const nextBucket = { ...bucket, actuals: nextActuals };
+    setCrossMonths({ ...prev, [crossMk]: nextBucket });
+    if (crossSaveTimer.current) clearTimeout(crossSaveTimer.current);
+    crossSaveTimer.current = setTimeout(() => { saveGoalForecastMonth(otherDept, crossMk, nextBucket).catch(() => {}); }, 900);
+  }
+
   function updateHistActual(histMk, dayKey, val) {
     const prev = allMonths || {};
     const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...(prev[histMk] || {}) };
@@ -1254,7 +1272,7 @@ export default function GoalForecast({
                     <div>
                       <button className="secondary" onClick={() => setCrossSel(null)} style={{ marginBottom: 16 }}>← All months</button>
                       <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 16 }}>{computeMonthMetrics(crossSel, crossMonths[crossSel]).label}</div>
-                      <MonthDetail mkStr={crossSel} monthData={crossMonths[crossSel]} />
+                      <MonthDetail mkStr={crossSel} monthData={crossMonths[crossSel]} editable onEditDay={(k, v) => updateCrossActual(crossSel, k, v)} />
                     </div>
                   );
                 }
@@ -1279,9 +1297,7 @@ export default function GoalForecast({
                   </div>
                 );
               })() : (
-                (crossMonths && crossMonths[mk])
-                  ? <MonthDetail mkStr={mk} monthData={crossMonths[mk]} />
-                  : <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>No {otherDeptLabel.toLowerCase()} numbers entered for {monthLabel} yet.</div>
+                <MonthDetail mkStr={mk} monthData={crossMonths[mk] || { forecast: 0, lastYear: 0, actuals: {} }} editable onEditDay={(k, v) => updateCrossActual(mk, k, v)} />
               )}
             </div>
           </div>
