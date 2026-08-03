@@ -396,7 +396,7 @@
   },
   "2026-08": {
     "hoursGoal": 450,
-    "hrsRoGoal": 0,
+    "hrsRoGoal": 1,
     "days": {
       "2026-08-01": {
         "hours": 424.6,
