@@ -150,9 +150,40 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
           ) : (
             <div style={{ color: '#94a3b8', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>You’re not part of the {PLAN.label} Cash Dash.</div>
           )}
+
+          {/* Shareable customer review flyer — download to send/print */}
+          <ReviewFlyer />
         </div>
       </div>
     </div>
+  );
+}
+
+// Customer review flyer — anyone can preview and download it to share/print.
+// The image lives at public/review-flyer.png (served at BASE_URL/review-flyer.png).
+function ReviewFlyer() {
+  const src = `${import.meta.env.BASE_URL}review-flyer.png`;
+  const [ok, setOk] = useState(true);
+  return (
+    <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px', textAlign: 'center' }}>
+      <div style={{ fontSize: 15, fontWeight: 900, color: '#f1f5f9', marginBottom: 4 }}>📄 Customer Review Flyer</div>
+      <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 14 }}>Download to text, email, or print for customers — Google &amp; Facebook review QR codes.</div>
+      {ok ? (
+        <img src={src} alt="Customer review flyer" onError={() => setOk(false)}
+          onClick={() => window.open(src, '_blank')}
+          style={{ maxWidth: 300, width: '100%', borderRadius: 10, border: '1px solid rgba(148,163,184,.25)', cursor: 'pointer', boxShadow: '0 10px 30px rgba(0,0,0,.5)' }} />
+      ) : (
+        <div style={{ color: '#64748b', fontSize: 13, padding: '16px 0', border: '1px dashed rgba(148,163,184,.3)', borderRadius: 10 }}>
+          Flyer image not added yet — save it in the site’s <code style={{ color: '#93c5fd' }}>public/review-flyer.png</code>.
+        </div>
+      )}
+      <div style={{ marginTop: 14 }}>
+        <a href={src} download="Bob-Rohrman-Hyundai-Review-Flyer.png"
+          style={{ display: 'inline-block', background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.6)', color: '#fff', borderRadius: 10, padding: '10px 24px', fontWeight: 900, fontSize: 14, textDecoration: 'none' }}>
+          ⬇ Download to Share
+        </a>
+      </div>
+    </section>
   );
 }
 
