@@ -720,9 +720,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </button>
           )}
           {onCashDash && (
-            <button onClick={onCashDash} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.28),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.4)' }}>
-              💰 Cash Dash
-            </button>
+            <>
+              <style>{`@keyframes cashGlow{0%,100%{box-shadow:0 0 10px 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 20px 5px rgba(34,197,94,.85)}}`}</style>
+              <button onClick={onCashDash}
+                style={{ background: 'linear-gradient(180deg,#22c55e,#059669)', borderColor: '#6ee7b7', color: '#052e16', fontWeight: 900, textShadow: '0 1px 0 rgba(255,255,255,.25)', animation: 'cashGlow 1.8s ease-in-out infinite' }}>
+                💰 Cash Dash
+              </button>
+            </>
           )}
           {onGoalsForecasting && (
             <>
