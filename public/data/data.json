@@ -539,7 +539,7 @@
         "align": 0.1005,
         "tires": 0.0854,
         "valvoline": 0.1859,
-        "csi": 963,
+        "csi": 953,
         "asr": 0.1526,
         "elr": 0.9368,
         "last_month_total": 454.8,
@@ -550,7 +550,7 @@
         "_lastImport": 1785755098405,
         "total_sales": 152331.18,
         "coupon_usage_pct": 0.0299,
-        "min_csi": 912
+        "min_csi": 913
       },
       {
         "name": "JORDAN",
@@ -560,7 +560,7 @@
         "align": 0.1324,
         "tires": 0.1471,
         "valvoline": 0.3088,
-        "csi": 913,
+        "csi": 908,
         "asr": 0.2081,
         "elr": 0.9304,
         "last_month_total": 433.4,
@@ -667,7 +667,7 @@
       "align": 0.11645,
       "tires": 0.11625,
       "valvoline": 0.24735000000000001,
-      "csi": 938
+      "csi": 930.5
     },
     "techTotals": {
       "mon": 46.99999999999999,
