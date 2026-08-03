@@ -23,6 +23,7 @@ import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import GlobalMessage from './components/GlobalMessage';
+import CashDash from './components/CashDash';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
 import GoalForecast from './components/GoalForecast';
@@ -854,6 +855,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'tech-resources')}
         onMyReview={() => navTo('tech-self-review')}
         onMyReports={() => goTo('performance-report', 'tech-resources')}
+        onCashDash={() => goTo('cash-dash', 'tech-resources')}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -1073,6 +1075,7 @@ export default function App() {
         onGoalForecast={() => goTo('goal-forecast', 'manager-hub')}
         onAdvisorForecast={() => goTo('advisor-goals', 'manager-hub')}
         onGlobalMessage={() => goTo('global-message', 'manager-hub')}
+        onCashDash={() => goTo('cash-dash', 'manager-hub')}
       />
     );
   }
@@ -1085,6 +1088,18 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         users={users}
         onBack={() => setPage(prevPage || 'manager-hub')}
+      />
+    );
+  }
+
+  if (page === 'cash-dash') {
+    return (
+      <CashDash
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        advisors={data.advisors || []}
+        technicians={data.technicians || []}
+        onBack={() => setPage(prevPage || 'dashboard')}
       />
     );
   }
@@ -1270,6 +1285,7 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
+        onCashDash={() => goTo('cash-dash', 'advisor-calendar')}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}

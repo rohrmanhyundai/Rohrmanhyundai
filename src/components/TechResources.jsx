@@ -64,10 +64,18 @@ const NAV_BUTTONS = [
     color: '#fbbf24',
     prop: 'onATDiagWorksheet',
   },
+  {
+    key: 'cashDash',
+    label: '💰 Cash Dash',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.3),rgba(245,158,11,.2))',
+    border: 'rgba(251,191,36,.5)',
+    color: '#fde68a',
+    prop: 'onCashDash',
+  },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onBack }) {
-  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs };
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onBack }) {
+  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   // Whether someone HAS a review is a fact about their job title, so this keys
