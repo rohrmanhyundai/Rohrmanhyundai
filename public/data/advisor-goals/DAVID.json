@@ -395,7 +395,7 @@
     "entryMode": "mtd"
   },
   "2026-08": {
-    "hoursGoal": 0,
+    "hoursGoal": -1,
     "hrsRoGoal": 0,
     "days": {
       "2026-08-01": {
