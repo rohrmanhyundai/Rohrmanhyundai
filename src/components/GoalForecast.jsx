@@ -694,6 +694,7 @@ export default function GoalForecast({
   const [allMonths, setAllMonths] = useState({});  // every saved month (for History)
   const [view, setView] = useState('current');     // 'current' | 'history'
   const [histSel, setHistSel] = useState(null);    // selected history month key
+  const [parseTargetMk, setParseTargetMk] = useState(mk); // month a parsed report will fill (viewed month)
   // Read-only cross-department viewer (service ↔ parts).
   const otherDept = dept === 'parts' ? 'service' : 'parts';
   const otherDeptLabel = otherDept === 'parts' ? 'Parts' : 'Service';
@@ -723,12 +724,17 @@ export default function GoalForecast({
   // parts numbers from a service login and vice-versa.
   async function handlePdf(file, targetDept = dept) {
     if (!file) return;
+    // Fill the month you're LOOKING at — the History month when browsing history,
+    // otherwise the current month. Lets you finalize a prior month after rollover.
+    const effMk = (view === 'history' && histSel) ? histSel : mk;
+    const effLabel = new Date(effMk + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    setParseTargetMk(effMk);
     setParsing(true); setParseErr(''); setParsePreview(null); setParsedDaily(null); setParseSummary(null); setParseDept(targetDept);
     const col = targetDept === 'parts' ? 'Parts' : 'Labor';
     try {
       const { daily: parsed, summary } = await parseGrossReport(file);
       const monthDaily = {};
-      Object.keys(parsed).filter(k => k.slice(0, 7) === mk).forEach(k => { monthDaily[k] = parsed[k]; });
+      Object.keys(parsed).filter(k => k.slice(0, 7) === effMk).forEach(k => { monthDaily[k] = parsed[k]; });
       // Preview shows the button's own column, but on Apply we fill BOTH the
       // Service (labor) and Parts (parts) forecasts from this one report.
       const rowsOut = Object.keys(monthDaily)
@@ -740,7 +746,7 @@ export default function GoalForecast({
         })
         .filter(r => r.value != null);
       if (rowsOut.length === 0) {
-        setParseErr(`No ${monthLabel} rows with a ${col} total were found in this PDF. Make sure it's the gross report and the dates fall in ${monthLabel}.`);
+        setParseErr(`No ${effLabel} rows with a ${col} total were found in this PDF. Make sure it's the gross report and the dates fall in ${effLabel}.`);
       } else {
         setParsePreview(rowsOut);
         setParsedDaily(monthDaily);
@@ -759,9 +765,10 @@ export default function GoalForecast({
   // Write a department's daily actuals for this month, merging into its current
   // bucket. The page's OWN dept updates live state; the OTHER dept is loaded,
   // merged and saved to the server + cache so nothing it already has is lost.
-  async function writeDeptActuals(targetD, rowsByDate, extra) {
+  async function writeDeptActuals(targetD, rowsByDate, extra, targetMk = mk) {
     if (!rowsByDate || (!Object.keys(rowsByDate).length && !extra)) return;
-    if (targetD === dept) {
+    // The page's own dept, current month → update live state (fast path).
+    if (targetD === dept && targetMk === mk) {
       const next = { ...actuals, ...rowsByDate };
       setActuals(next);
       if (extra && extra.laborBreakdown) setLaborBreakdown(extra.laborBreakdown);
@@ -769,17 +776,19 @@ export default function GoalForecast({
       persist({ actuals: next, ...(extra || {}) });
       setGridOpen(true);
     } else {
+      // Any other month/dept → load that month's bucket, merge, save.
       let all = {};
       try { all = await loadGoalForecast(targetD); } catch { all = {}; }
-      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[mk]) || {}) };
+      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[targetMk]) || {}) };
       const nextActuals = { ...(bucket.actuals || {}), ...rowsByDate };
       const nextBucket = { ...bucket, actuals: nextActuals, ...(extra || {}) };
-      saveGoalForecastMonth(targetD, mk, nextBucket).catch(() => {});
-      if (targetD === otherDept) setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));
+      saveGoalForecastMonth(targetD, targetMk, nextBucket).catch(() => {});
+      if (targetD === dept) setAllMonths(prev => ({ ...prev, [targetMk]: nextBucket }));       // history month of own dept
+      else if (targetMk === mk) setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));        // other dept, current month
       try {
         const prefix = targetD === 'parts' ? 'partsGoalForecast' : 'goalForecast';
-        const saved = JSON.parse(localStorage.getItem(`${prefix}-${mk}`) || '{}') || {};
-        localStorage.setItem(`${prefix}-${mk}`, JSON.stringify({ ...saved, actuals: nextActuals, ...(extra || {}) }));
+        const saved = JSON.parse(localStorage.getItem(`${prefix}-${targetMk}`) || '{}') || {};
+        localStorage.setItem(`${prefix}-${targetMk}`, JSON.stringify({ ...saved, actuals: nextActuals, ...(extra || {}) }));
       } catch {}
     }
   }
@@ -794,11 +803,13 @@ export default function GoalForecast({
     });
     const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : null;
     const pb = (parseSummary && parseSummary.parts) ? parseSummary.parts : null;
-    writeDeptActuals('service', svcRows, lb ? { laborBreakdown: lb } : null);
-    writeDeptActuals('parts', partsRows, pb ? { partsBreakdown: pb } : null);
+    const targetMk = parseTargetMk || mk;
+    writeDeptActuals('service', svcRows, lb ? { laborBreakdown: lb } : null, targetMk);
+    writeDeptActuals('parts', partsRows, pb ? { partsBreakdown: pb } : null, targetMk);
 
-    // Push the service MTD pacing figures to the dashboard Goal Gauges.
-    if (parseSummary && onGaugeActuals) {
+    // Push the service MTD pacing figures to the dashboard Goal Gauges — only for
+    // the CURRENT month (a back-filled prior month must not move today's gauges).
+    if (targetMk === mk && parseSummary && onGaugeActuals) {
       const patch = {};
       if (parseSummary.grossActual != null) patch.grossActual = safe(parseSummary.grossActual, 0);
       if (parseSummary.cpActual != null) patch.cpActual = safe(parseSummary.cpActual, 0);
@@ -1108,6 +1119,7 @@ export default function GoalForecast({
 
   // The breakdown for THIS page's department: parts page → parts, service → labor.
   const mainBd = breakdownConfig({ laborBreakdown, partsBreakdown }, dept);
+  const parseTargetLabel = (() => { try { return new Date((parseTargetMk || mk) + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' }); } catch { return monthLabel; } })();
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1120,7 +1132,7 @@ export default function GoalForecast({
         <div onClick={() => { setParsePreview(null); setParseErr(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16, width: '100%', maxWidth: 520, maxHeight: '82vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 18px 60px rgba(0,0,0,.6)' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 16, fontWeight: 800, color: '#6ee7b7' }}>📤 Import {colName} Totals — {monthLabel}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#6ee7b7' }}>📤 Import {colName} Totals — {parseTargetLabel}</div>
               <div style={{ flex: 1 }} />
               <button onClick={() => { setParsePreview(null); setParseErr(''); }} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
             </div>
