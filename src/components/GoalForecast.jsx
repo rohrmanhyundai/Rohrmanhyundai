@@ -322,7 +322,7 @@ function computeMonthMetrics(mkStr, monthData) {
 // Read-only detail for a month. For the CURRENT month it renders the same full
 // card layout the owner sees (so a cross-department viewer gets an identical
 // report); for PAST months it shows the compact final-total summary.
-function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
+function MonthDetail({ mkStr, monthData, editable = false, onEditDay, onEditForecast, onEditLastYear }) {
   const M = computeMonthMetrics(mkStr, monthData);
   const isCurrent = mkStr === monthKey();
   const vsForecast = M.actualTotal - M.forecast;
@@ -340,6 +340,16 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
       <div style={gfBig(color)}>{value}</div>
     </MetricCard>
   );
+  // Editable $ card (used in the cross-dept viewer so numbers can be adjusted).
+  const editMoneyCard = (icon, label, val, color, accent, onEdit, sub) => (
+    <MetricCard accent={accent} icon={icon} label={label} sub={sub} minWidth={200}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+        <span style={{ fontSize: 24, fontWeight: 900, color }}>$</span>
+        <input type="number" value={val || ''} placeholder="0" onChange={e => onEdit(e.target.value)}
+          style={{ background: 'rgba(2,6,23,.5)', border: `1px solid ${accent}`, borderRadius: 10, padding: '6px 10px', fontSize: 24, fontWeight: 900, color, width: 175, outline: 'none' }} />
+      </div>
+    </MetricCard>
+  );
   return (
     <div>
       {bkOpen && bd && (
@@ -347,8 +357,12 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
       )}
       {isCurrent ? (<>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-          {card('💰', 'Month Forecast Gross Profit', money(M.forecast), '#34d399', M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'monthly gross-profit goal')}
-          {card('📆', 'Last Year (This Month)', money(M.lastYear), '#38bdf8', 'last year’s final gross')}
+          {onEditForecast
+            ? editMoneyCard('💰', 'Month Forecast Gross Profit', M.forecast, '#6ee7b7', 'rgba(52,211,153,.5)', onEditForecast, 'monthly gross-profit goal')
+            : card('💰', 'Month Forecast Gross Profit', money(M.forecast), '#34d399', M.forecast > 0 && M.lastYear > 0 ? (M.forecast >= M.lastYear ? '▲ ' : '▼ ') + money(Math.abs(M.forecast - M.lastYear)) + ' forecast vs LY' : 'monthly gross-profit goal')}
+          {onEditLastYear
+            ? editMoneyCard('📆', 'Last Year (This Month)', M.lastYear, '#7dd3fc', 'rgba(56,189,248,.5)', onEditLastYear, 'last year’s final gross')
+            : card('📆', 'Last Year (This Month)', money(M.lastYear), '#38bdf8', 'last year’s final gross')}
           {card('🎯', 'Daily Target', money(M.dailyTarget), '#22d3ee', `${M.totalDays} working days · ${M.completedDays} completed`)}
         </div>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
@@ -362,8 +376,12 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay }) {
       </>) : (
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
           {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
-          {card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
-          {card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
+          {onEditForecast
+            ? editMoneyCard('💰', 'Forecast', M.forecast, '#7dd3fc', 'rgba(56,189,248,.5)', onEditForecast)
+            : card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
+          {onEditLastYear
+            ? editMoneyCard('📆', 'Last Year', M.lastYear, '#fde68a', 'rgba(251,191,36,.5)', onEditLastYear)
+            : card('📆', 'Last Year', money(M.lastYear), '#fbbf24', M.lastYear > 0 ? `${vsLY >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsLY))} vs LY` : '—')}
           {card('📈', 'Daily Average', money(M.runRate), M.runRate >= M.dailyTarget ? '#34d399' : '#fb7185', `target ${money(M.dailyTarget)}/day`)}
         </div>
       )}
@@ -907,6 +925,15 @@ export default function GoalForecast({
     if (crossSaveTimer.current) clearTimeout(crossSaveTimer.current);
     crossSaveTimer.current = setTimeout(() => { saveGoalForecastMonth(otherDept, crossMk, nextBucket).catch(() => {}); }, 900);
   }
+  // Edit the other dept's monthly Forecast / Last-Year targets from the cross viewer.
+  function updateCrossField(crossMk, field, val) {
+    const prev = crossMonths || {};
+    const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...(prev[crossMk] || {}) };
+    const nextBucket = { ...bucket, [field]: safe(val, 0) };
+    setCrossMonths({ ...prev, [crossMk]: nextBucket });
+    if (crossSaveTimer.current) clearTimeout(crossSaveTimer.current);
+    crossSaveTimer.current = setTimeout(() => { saveGoalForecastMonth(otherDept, crossMk, nextBucket).catch(() => {}); }, 900);
+  }
 
   function updateHistActual(histMk, dayKey, val) {
     const prev = allMonths || {};
@@ -1272,7 +1299,10 @@ export default function GoalForecast({
                     <div>
                       <button className="secondary" onClick={() => setCrossSel(null)} style={{ marginBottom: 16 }}>← All months</button>
                       <div style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', marginBottom: 16 }}>{computeMonthMetrics(crossSel, crossMonths[crossSel]).label}</div>
-                      <MonthDetail mkStr={crossSel} monthData={crossMonths[crossSel]} editable onEditDay={(k, v) => updateCrossActual(crossSel, k, v)} />
+                      <MonthDetail mkStr={crossSel} monthData={crossMonths[crossSel]} editable
+                        onEditDay={(k, v) => updateCrossActual(crossSel, k, v)}
+                        onEditForecast={(v) => updateCrossField(crossSel, 'forecast', v)}
+                        onEditLastYear={(v) => updateCrossField(crossSel, 'lastYear', v)} />
                     </div>
                   );
                 }
@@ -1297,7 +1327,10 @@ export default function GoalForecast({
                   </div>
                 );
               })() : (
-                <MonthDetail mkStr={mk} monthData={crossMonths[mk] || { forecast: 0, lastYear: 0, actuals: {} }} editable onEditDay={(k, v) => updateCrossActual(mk, k, v)} />
+                <MonthDetail mkStr={mk} monthData={crossMonths[mk] || { forecast: 0, lastYear: 0, actuals: {} }} editable
+                  onEditDay={(k, v) => updateCrossActual(mk, k, v)}
+                  onEditForecast={(v) => updateCrossField(mk, 'forecast', v)}
+                  onEditLastYear={(v) => updateCrossField(mk, 'lastYear', v)} />
               )}
             </div>
           </div>
