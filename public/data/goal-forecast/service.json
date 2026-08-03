@@ -88,5 +88,12 @@
       }
     },
     "partsBreakdown": null
+  },
+  "2026-08": {
+    "forecast": 148,
+    "lastYear": 0,
+    "actuals": {},
+    "laborBreakdown": null,
+    "partsBreakdown": null
   }
 }
