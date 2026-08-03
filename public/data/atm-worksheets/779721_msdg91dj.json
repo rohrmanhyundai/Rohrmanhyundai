@@ -6,7 +6,7 @@
   "repairDate": "2026-08-03",
   "mileage": "18761",
   "vin": "KM8R7DGEXSU869482",
-  "repairType": "",
+  "repairType": "Warranty",
   "removedPN": "",
   "removedSN": "",
   "installedPN": "",
@@ -53,5 +53,5 @@
   "techSSN": "5895",
   "savedAt": "2026-08-03T16:34:31.351Z",
   "updatedBy": "SHAWN",
-  "updatedAt": "2026-08-03T16:49:00.783Z"
+  "updatedAt": "2026-08-03T16:49:28.045Z"
 }
