@@ -21,7 +21,7 @@ const PLAN = {
   tech: {
     unit: 'Booked hours · includes internal',
     tiers: [[150, 5], [185, 10], [215, 15], [245, 19], [285, 25], [330, 34]],
-    warning: 'PTO / Holiday hours do NOT count as hours sold — they are excluded.',
+    warning: 'PTO / Vacation / Holiday time does NOT count toward hours — must be SOLD hours.',
   },
 };
 
@@ -112,14 +112,8 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
       <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 20 }}>
 
-          {/* Qualify banner */}
-          <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 16, padding: '16px 18px' }}>
-            <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '.05em', textTransform: 'uppercase', color: '#fde68a', marginBottom: 10 }}>How to qualify + earn pulls</div>
-            <div style={{ display: 'grid', gap: 8, fontSize: 13, color: '#cbd5e1' }}>
-              <div>🎓 <strong style={{ color: '#e2e8f0' }}>Core:</strong> {PLAN.core} <span style={{ color: '#94a3b8' }}>({PLAN.coreTech})</span></div>
-              <div>⭐ <strong style={{ color: '#e2e8f0' }}>Reputation.com</strong> ({PLAN.reputation.note}): {PLAN.reputation.mustHit}. <span style={{ color: '#94a3b8' }}>Bonus 1 — {PLAN.reputation.bonus1}; Bonus 2 — {PLAN.reputation.bonus2}.</span></div>
-            </div>
-          </section>
+          {/* Plan chart — styled reproduction of the qualify/earn-pulls board */}
+          <PlanChart />
 
           {target ? (
             <PersonView row={target} tiers={plan(target.role).tiers} unit={plan(target.role).unit}
@@ -137,6 +131,60 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Styled reproduction of the qualify/earn-pulls board (advisors + techs) ────
+function PlanChart() {
+  const cream = '#f4efdd', dark = '#1f1e1c', gold = '#e6b93f', ink = '#1a1a1a';
+  const tierTable = (title, unit, headerBg, tiers, warning) => (
+    <div style={{ flex: '1 1 300px', minWidth: 260, background: cream, borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(0,0,0,.15)' }}>
+      <div style={{ background: '#111', color: '#fff', textAlign: 'center', fontWeight: 900, fontSize: 15, letterSpacing: 1, padding: '12px' }}>{title}</div>
+      <div style={{ background: '#fff', textAlign: 'center', fontStyle: 'italic', fontSize: 12, color: '#555', padding: '7px' }}>{unit}</div>
+      <div style={{ display: 'flex', background: headerBg, color: ink, fontWeight: 800, fontSize: 11, letterSpacing: .5, textTransform: 'uppercase', padding: '8px 16px' }}>
+        <div style={{ flex: 1 }}>Qualifier</div><div>Pulls</div>
+      </div>
+      {tiers.map(([q, p], i) => (
+        <div key={q} style={{ display: 'flex', padding: '11px 16px', background: i % 2 ? '#fff' : '#faf6e8', color: ink, fontWeight: 800, fontSize: 15.5 }}>
+          <div style={{ flex: 1 }}>{q}{i === tiers.length - 1 ? '+' : ''}</div><div>{p}</div>
+        </div>
+      ))}
+      {warning && <div style={{ background: '#7f1d1d', color: '#fecaca', fontSize: 11.5, fontWeight: 800, padding: '10px 14px', textAlign: 'center', letterSpacing: .3 }}>⚠️ {warning}</div>}
+    </div>
+  );
+  return (
+    <section style={{ background: cream, borderRadius: 16, overflow: 'hidden', boxShadow: '0 12px 44px rgba(0,0,0,.55)' }}>
+      <div style={{ background: '#111', padding: '14px 22px' }}>
+        <div style={{ color: gold, fontWeight: 900, fontSize: 18, letterSpacing: 1.5 }}>HOW TO QUALIFY + EARN PULLS</div>
+      </div>
+      {/* Reputation.com row */}
+      <div style={{ background: dark, margin: 14, borderRadius: 10, padding: '16px 20px', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <div style={{ minWidth: 200, flex: '1 1 200px' }}>
+          <div style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>REPUTATION.COM</div>
+          <div style={{ color: gold, fontWeight: 800, fontSize: 12, marginTop: 3, letterSpacing: .5 }}>JULY 20 – AUGUST 31</div>
+          <div style={{ color: '#cbd5e1', fontSize: 11.5, marginTop: 5 }}>Required for all positions except technicians.</div>
+        </div>
+        {[['MUST HIT', '30 REVIEWS + 700 SCORE', 'Department qualifies'], ['BONUS 1', '50 REVIEWS + 725 SCORE', '+2 pulls per participant'], ['BONUS 2', '80 REVIEWS + 725 SCORE', '+2 more pulls per participant']].map(([h, a, b]) => (
+          <div key={h} style={{ borderLeft: `3px solid ${gold}`, paddingLeft: 12, minWidth: 150, flex: '1 1 150px' }}>
+            <div style={{ color: gold, fontWeight: 800, fontSize: 11, letterSpacing: .5 }}>{h}</div>
+            <div style={{ color: '#fff', fontWeight: 800, fontSize: 13, marginTop: 4 }}>{a}</div>
+            <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>{b}</div>
+          </div>
+        ))}
+      </div>
+      {/* Core certification + the two tier tables */}
+      <div style={{ display: 'flex', gap: 14, padding: '0 14px 16px', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 220px', minWidth: 210, background: dark, borderRadius: 10, padding: 20 }}>
+          <div style={{ color: '#fff', fontWeight: 900, fontSize: 22, letterSpacing: 1 }}>CORE <span style={{ color: gold }}>CERTIFICATION</span></div>
+          <div style={{ color: '#e2e8f0', fontSize: 14, marginTop: 14, fontWeight: 600, lineHeight: 1.4 }}>Core Training must be completed to qualify for any pulls.</div>
+          <div style={{ height: 3, width: 60, background: gold, margin: '14px 0' }} />
+          <div style={{ color: gold, fontWeight: 800, fontSize: 13 }}>TECHNICIANS</div>
+          <div style={{ color: '#e2e8f0', fontSize: 13, marginTop: 4, lineHeight: 1.4 }}>Core Complete + CP/W Video Utilization above 75%</div>
+        </div>
+        {tierTable('SERVICE ADVISORS', 'Hours sold · excludes internal', '#e08a1e', PLAN.advisor.tiers)}
+        {tierTable('TECHNICIANS', 'Booked hours · includes internal', '#e8c14a', PLAN.tech.tiers, PLAN.tech.warning)}
+      </div>
+    </section>
   );
 }
 
