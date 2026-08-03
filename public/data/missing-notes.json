@@ -1,8 +1,12 @@
 {
-  "updatedAt": "2026-08-03T12:35:00.640Z",
+  "updatedAt": "2026-08-03T12:42:27.039Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
+      {
+        "ro": "779722",
+        "vehicle": "2022 Hyundai Tucson Hybrid"
+      },
       {
         "ro": "779720",
         "vehicle": "2020 Hyundai Tucson"
@@ -21,6 +25,10 @@
       }
     ],
     "DAVID": [
+      {
+        "ro": "779721",
+        "vehicle": "2025 Hyundai Palisade"
+      },
       {
         "ro": "779718",
         "vehicle": "2021 Hyundai Sonata Hybrid"
