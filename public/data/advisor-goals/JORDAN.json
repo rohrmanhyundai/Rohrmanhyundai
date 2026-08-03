@@ -364,5 +364,11 @@
       }
     },
     "entryMode": "mtd"
+  },
+  "2026-08": {
+    "hoursGoal": 475,
+    "hrsRoGoal": 0,
+    "days": {},
+    "entryMode": "mtd"
   }
 }
