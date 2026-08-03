@@ -412,6 +412,11 @@
     "id": "msdjy9l6f2r",
     "username": "SHAWN",
     "text": "@david @chat 779721 transmission approved",
-    "timestamp": 1785781087242
+    "timestamp": 1785781087242,
+    "reactions": {
+      "❤️": [
+        "DAVID"
+      ]
+    }
   }
 ]
