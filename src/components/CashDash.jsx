@@ -171,7 +171,7 @@ function ReviewFlyer() {
       {ok ? (
         <img src={src} alt="Customer review flyer" onError={() => setOk(false)}
           onClick={() => window.open(src, '_blank')}
-          style={{ maxWidth: 300, width: '100%', borderRadius: 10, border: '1px solid rgba(148,163,184,.25)', cursor: 'pointer', boxShadow: '0 10px 30px rgba(0,0,0,.5)' }} />
+          style={{ maxWidth: 700, width: '100%', borderRadius: 10, border: '1px solid rgba(148,163,184,.25)', cursor: 'pointer', boxShadow: '0 10px 30px rgba(0,0,0,.5)' }} />
       ) : (
         <div style={{ color: '#64748b', fontSize: 13, padding: '16px 0', border: '1px dashed rgba(148,163,184,.3)', borderRadius: 10 }}>
           Flyer image not added yet — save it in the site’s <code style={{ color: '#93c5fd' }}>public/review-flyer.jpg</code>.
