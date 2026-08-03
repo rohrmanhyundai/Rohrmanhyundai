@@ -1,23 +1,61 @@
 {
-  "updatedAt": "2026-08-03T17:54:04.048Z",
+  "updatedAt": "2026-08-03T20:24:31.287Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "779755",
+        "vehicle": "2013 Hyundai Sonata"
+      },
+      {
+        "ro": "779753",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "779752",
+        "vehicle": "2023 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779751",
+        "vehicle": "2022 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779750",
+        "vehicle": "2018 Hyundai Kona"
+      },
+      {
+        "ro": "779749",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "779742",
+        "vehicle": "2023 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779734",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "779730",
+        "vehicle": "2022 Hyundai Palisade"
+      },
+      {
+        "ro": "779727",
+        "vehicle": "2013 Jeep Grand Cherokee"
+      },
+      {
+        "ro": "779718",
+        "vehicle": "2021 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "779710",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
     "JORDAN": [
       {
-        "ro": "779748",
-        "vehicle": "2023 Hyundai Sonata"
-      },
-      {
-        "ro": "779740",
-        "vehicle": "2019 Nissan Rogue"
-      },
-      {
-        "ro": "779739",
-        "vehicle": "2026 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779719",
-        "vehicle": "2020 Hyundai Tucson"
+        "ro": "779754",
+        "vehicle": "2025 Hyundai Elantra"
       }
     ],
     "CORY": [
@@ -66,10 +104,6 @@
         "vehicle": "2019 Ram 1500 Classic"
       },
       {
-        "ro": "779560",
-        "vehicle": "2017 Jeep Patriot"
-      },
-      {
         "ro": "779533",
         "vehicle": "2025 Mazda Mazda3 Sedan"
       },
@@ -86,32 +120,6 @@
       {
         "ro": "779745",
         "vehicle": "2024 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779742",
-        "vehicle": "2023 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779734",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "779730",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "779727",
-        "vehicle": "2013 Jeep Grand Cherokee"
-      },
-      {
-        "ro": "779718",
-        "vehicle": "2021 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "779710",
-        "vehicle": "2013 Hyundai Sonata"
       }
     ]
   }
