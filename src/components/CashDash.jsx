@@ -90,7 +90,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
     .sort((x, y) => x.name.localeCompare(y.name)), [advisors]);
   const techRows = useMemo(() => (technicians || [])
     .filter(t => t && t.name)
-    .map(t => ({ name: firstName(t.name), display: t.name, role: 'tech', hours: num(techHours[firstName(t.name)]) }))
+    .map(t => { const k = firstName(t.name); return { name: k, display: t.name, role: 'tech', hours: num(techHours[k]), raw: techHours[k] }; })
     .sort((x, y) => x.name.localeCompare(y.name)), [technicians, techHours]);
 
   // Who is the logged-in user (for the self view)?
@@ -379,7 +379,7 @@ function Roster({ title, unit, rows, tiers, pace, editable, saving, onEdit, onOp
               <div style={{ flex: 1, fontSize: 14.5, fontWeight: 800, color: '#e2e8f0' }}>{r.display}</div>
               <div style={{ width: 130, textAlign: 'right' }}>
                 {editable
-                  ? <input value={r.hours || ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0"
+                  ? <input value={r.raw != null ? r.raw : ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0"
                       style={{ width: 96, background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#f1f5f9', padding: '5px 9px', fontSize: 14, fontWeight: 800, textAlign: 'right', outline: 'none' }} />
                   : <span style={{ fontSize: 15, fontWeight: 800, color: '#6ee7b7' }}>{hrs(r.hours)}</span>}
               </div>
