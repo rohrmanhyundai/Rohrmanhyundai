@@ -1425,7 +1425,9 @@ export default function App() {
   }
 
   if (page === 'tire-warranty') {
-    const twBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
+    const twBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub'
+      : prevPage === 'dashboard' ? '← Dashboard'
+      : '← Advisor Calendar';
     return (
       <TireWarranty
         currentUser={currentUser}
@@ -1485,6 +1487,7 @@ export default function App() {
           advisorUnread={advisorUnread} techUnread={techUnread} managerUnread={globalUnread}
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
+          onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
