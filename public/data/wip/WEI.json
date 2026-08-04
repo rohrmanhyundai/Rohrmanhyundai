@@ -70,5 +70,21 @@
     "notes": "",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "msf6uyriz1u2",
+    "ro": "779771",
+    "roDate": "2026-08-04",
+    "vehicle": "2019 Hyundai Elantra",
+    "jobDesc": "Camshaft Position Sensor Remove and Replace",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
