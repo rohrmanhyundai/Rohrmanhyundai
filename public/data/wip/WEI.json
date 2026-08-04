@@ -59,16 +59,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "SHAWN LAUGHNER"
-  },
-  {
-    "id": "msacc2d79k8",
-    "ro": "779705",
-    "roDate": "2026-08-01",
-    "jobDesc": "Tow in, no crank no start, cust believes is starter failure",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "",
-    "partsArrived": null,
-    "partsArrivedDate": ""
   }
 ]
