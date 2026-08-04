@@ -381,16 +381,20 @@ function StepHeader({ step, total, title }) {
 }
 
 // ── Read-only claim detail (reused by the After Market Warranty tab) ───────────
-export function TireClaimDetail({ claim }) {
+// hideInfo skips the customer/RO header (used when a full contract form already
+// shows those fields) and renders only the captured photo evidence.
+export function TireClaimDetail({ claim, hideInfo }) {
   const flagged = flaggedWheels(claim);
   return (
     <div>
+      {!hideInfo && (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12, marginBottom: 20 }}>
         <DetailRow label="Customer" value={claim.customerName} />
         <DetailRow label="Repair Order" value={claim.repairOrder} mono />
         <DetailRow label="Created By" value={claim.createdBy} />
         <DetailRow label="Date" value={claim.updatedAt ? new Date(claim.updatedAt).toLocaleString() : ''} />
       </div>
+      )}
       {claim.repairOrderPhoto && (
         <div style={{ marginBottom: 22 }}>
           <div style={labelSt}>Repair Order Photo</div>
