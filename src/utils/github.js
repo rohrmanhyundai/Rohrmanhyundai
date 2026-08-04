@@ -1093,6 +1093,19 @@ export async function saveTireWarrantyClaim(claim, index) {
   await saveGitHubFile(headers, TIRE_INDEX_PATH, index, `Update tire warranty index ${new Date().toISOString()}`);
 }
 
+export async function removeTireWarrantyClaim(claim) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const id = typeof claim === 'string' ? claim : claim.id;
+  // Conflict-safe: drop this id from the freshest index rather than overwriting.
+  await mutateGitHubJson(TIRE_INDEX_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(c => c.id !== id),
+    `Remove tire warranty claim ${id}`);
+  // Best-effort removal of the per-claim file; index is the source of truth.
+  try { await deleteGitHubFile(authHeaders(), tireClaimPath(id), `Delete tire warranty claim ${id}`); }
+  catch { /* file may not exist (legacy index-only claim); ignore */ }
+}
+
 // ── Work In Progress ──────────────────────────────────────────────────────────
 export async function loadWipData(techName) {
   const path = `public/data/wip/${techName.toUpperCase()}.json`;

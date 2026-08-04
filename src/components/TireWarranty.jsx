@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loadTireWarrantyIndex, saveTireWarrantyClaim } from '../utils/github';
+import { loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
 import { uploadTirePhotoToS3, ensureAwsCreds } from '../utils/s3';
 
 const accent = '#fbbf24'; // amber — tire theme
@@ -482,6 +482,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
   const [savedOk, setSavedOk] = useState(false);
   const [form, setForm] = useState(emptyForm());
   const [activeClaim, setActiveClaim] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const loadClaims = useCallback(async () => {
     setLoading(true);
@@ -526,6 +527,22 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
       setSaveError(err.message || 'Save failed');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDelete(claim) {
+    const who = claim.customerName || claim.repairOrder || 'this claim';
+    if (!window.confirm(`Delete the tire warranty claim for ${who}? This cannot be undone.`)) return;
+    setDeleting(true); setSaveError('');
+    try {
+      await removeTireWarrantyClaim(claim);
+      setClaims(prev => prev.filter(c => c.id !== claim.id));
+      setActiveClaim(null);
+      setView('list');
+    } catch (err) {
+      setSaveError(err.message || 'Delete failed');
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -576,6 +593,11 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
         {view === 'detail' && activeClaim && (
           <div style={{ padding: '18px 16px 40px' }}>
             <TireClaimDetail claim={activeClaim} />
+            {saveError && <div style={{ color: '#f87171', fontSize: 13, textAlign: 'center', marginTop: 12 }}>{saveError}</div>}
+            <button onClick={() => handleDelete(activeClaim)} disabled={deleting}
+              style={{ width: '100%', marginTop: 20, background: 'rgba(248,113,133,0.12)', border: '1px solid rgba(248,113,133,0.5)', color: '#fb7185', borderRadius: 12, padding: '14px', cursor: deleting ? 'not-allowed' : 'pointer', fontWeight: 700, fontSize: 15 }}>
+              {deleting ? 'Deleting…' : '🗑 Delete Claim'}
+            </button>
           </div>
         )}
       </div>
