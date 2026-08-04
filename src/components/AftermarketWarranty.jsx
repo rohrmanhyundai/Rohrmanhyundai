@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, loadTireWarrantyIndex } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, loadTireWarrantyIndex, removeTireWarrantyClaim } from '../utils/github';
 import { TireClaimDetail, flaggedWheels } from './TireWarranty';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
@@ -1366,6 +1366,8 @@ function TireClaimsPanel() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(null);
   const [search, setSearch] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -1378,6 +1380,21 @@ function TireClaimsPanel() {
     })();
   }, []);
 
+  async function handleDelete(claim) {
+    const who = claim.customerName || claim.repairOrder || 'this claim';
+    if (!window.confirm(`Delete the tire warranty claim for ${who}? This cannot be undone.`)) return;
+    setDeleting(true); setDeleteError('');
+    try {
+      await removeTireWarrantyClaim(claim);
+      setClaims(prev => prev.filter(c => c.id !== claim.id));
+      setActive(null);
+    } catch (err) {
+      setDeleteError(err.message || 'Delete failed');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   const q = search.trim().toLowerCase();
   const filtered = q
     ? claims.filter(c => String(c.customerName || '').toLowerCase().includes(q) || String(c.repairOrder || '').toLowerCase().includes(q))
@@ -1387,7 +1404,15 @@ function TireClaimsPanel() {
     return (
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <button className="secondary" onClick={() => setActive(null)} style={{ marginBottom: 16 }}>← Tire Claims</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <button className="secondary" onClick={() => setActive(null)} disabled={deleting}>← Tire Claims</button>
+            <div style={{ flex: 1 }} />
+            {deleteError && <span style={{ color: '#f87171', fontSize: 13 }}>{deleteError}</span>}
+            <button onClick={() => handleDelete(active)} disabled={deleting}
+              style={{ background: 'rgba(248,113,133,0.12)', border: '1px solid rgba(248,113,133,0.5)', color: '#fb7185', borderRadius: 8, padding: '8px 18px', cursor: deleting ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
+              {deleting ? 'Deleting…' : '🗑 Delete Claim'}
+            </button>
+          </div>
           <TireClaimDetail claim={active} />
         </div>
       </div>
