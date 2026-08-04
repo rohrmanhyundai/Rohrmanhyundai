@@ -587,7 +587,7 @@
         "last_month_total": 0,
         "ro_count": 2,
         "_lastImport": 1785841170591,
-        "exclude_from_avg": true,
+        "exclude_from_avg": false,
         "coupon_labor": 0,
         "total_sales": 424.96,
         "coupon_usage_pct": 0,
@@ -664,10 +664,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 29.4,
-      "align": 0.11645,
-      "tires": 0.11625,
-      "valvoline": 0.24735000000000001,
-      "csi": 932.5
+      "align": 0.07763333333333333,
+      "tires": 0.41083333333333333,
+      "valvoline": 0.16490000000000002,
+      "csi": 621.6666666666666
     },
     "techTotals": {
       "mon": 46.99999999999999,
