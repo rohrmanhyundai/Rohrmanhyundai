@@ -1075,22 +1075,38 @@ const tireClaimPath = id => `public/data/tire-warranty/${id}.json`;
 export async function loadTireWarrantyIndex() {
   try {
     const data = await readGitHubFile(authHeaders(), TIRE_INDEX_PATH);
-    if (data) return Array.isArray(data) ? data : [];
+    // Only trust a real array. A truthy non-array means the GitHub read failed
+    // (e.g. a rate-limit error object) — fall through to the public copy rather
+    // than wrongly reporting zero claims.
+    if (Array.isArray(data)) return data;
   } catch {}
   try {
     const res = await fetch(`${BASE}data/tire-warranty/index.json?v=${Date.now()}`, { cache: 'no-store' });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
   } catch {}
   return [];
 }
 
+// The `index` argument is ignored (kept for call-site compatibility). Writing the
+// caller's whole in-memory list used to wipe claims added on other devices when a
+// stale or rate-limited page saved — so we upsert this one claim into the freshest
+// index instead, exactly like saveWarrantyContract.
 export async function saveTireWarrantyClaim(claim, index) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = authHeaders();
+  // The per-claim file is keyed by a unique id, so a plain save is safe.
   await saveGitHubFile(headers, tireClaimPath(claim.id), claim,
     `Tire warranty claim ${claim.id} - ${claim.customerName || 'unknown'}`);
-  await saveGitHubFile(headers, TIRE_INDEX_PATH, index, `Update tire warranty index ${new Date().toISOString()}`);
+  return mutateGitHubJson(TIRE_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(c => c.id === claim.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = claim; return next; }
+    return [claim, ...arr];
+  }, `Update tire warranty index ${new Date().toISOString()}`);
 }
 
 export async function removeTireWarrantyClaim(claim) {
