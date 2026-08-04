@@ -1,64 +1,20 @@
 {
-  "updatedAt": "2026-08-03T20:24:31.287Z",
+  "updatedAt": "2026-08-04T21:47:12.342Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "779755",
-        "vehicle": "2013 Hyundai Sonata"
-      },
-      {
-        "ro": "779753",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779752",
-        "vehicle": "2023 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779751",
-        "vehicle": "2022 Hyundai Santa Fe"
-      },
-      {
-        "ro": "779750",
-        "vehicle": "2018 Hyundai Kona"
-      },
-      {
-        "ro": "779749",
-        "vehicle": "2022 Hyundai Tucson"
-      },
-      {
-        "ro": "779742",
-        "vehicle": "2023 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779734",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "779730",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "779727",
-        "vehicle": "2013 Jeep Grand Cherokee"
-      },
-      {
-        "ro": "779718",
-        "vehicle": "2021 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "779710",
-        "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "779754",
-        "vehicle": "2025 Hyundai Elantra"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "779781",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "779779",
+        "vehicle": "2023 Lexus IS350"
+      },
+      {
+        "ro": "779778",
+        "vehicle": "2023 Hyundai Tucson"
+      },
       {
         "ro": "779747",
         "vehicle": "2023 Hyundai Kona"
@@ -66,10 +22,6 @@
       {
         "ro": "779746",
         "vehicle": "2024 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "779744",
-        "vehicle": "2020 Hyundai Tucson"
       },
       {
         "ro": "779743",
@@ -96,30 +48,18 @@
         "vehicle": "2025 Mitsubishi Outlander"
       },
       {
-        "ro": "779573",
-        "vehicle": "2019 Lincoln MKC"
-      },
-      {
         "ro": "779561",
         "vehicle": "2019 Ram 1500 Classic"
       },
       {
-        "ro": "779533",
-        "vehicle": "2025 Mazda Mazda3 Sedan"
-      },
-      {
         "ro": "779419",
         "vehicle": "2017 Nissan Murano"
-      },
-      {
-        "ro": "779377",
-        "vehicle": "2009 Porsche Cayenne"
       }
     ],
     "CODY": [
       {
-        "ro": "779745",
-        "vehicle": "2024 Hyundai Tucson"
+        "ro": "779756",
+        "vehicle": "2020 Subaru Legacy"
       }
     ]
   }
