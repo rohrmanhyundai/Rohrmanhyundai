@@ -1,18 +1,55 @@
-import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadTireWarrantyIndex, saveTireWarrantyClaim } from '../utils/github';
 import { uploadTirePhotoToS3, ensureAwsCreds } from '../utils/s3';
 
-const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
+const accent = '#fbbf24'; // amber — tire theme
 
-// Common tire brands — used for the brand auto-complete.
-const TIRE_BRANDS = [
-  'Achilles', 'Atturo', 'BFGoodrich', 'Bridgestone', 'Continental', 'Cooper',
-  'Crosswind', 'Dunlop', 'Falken', 'Firestone', 'Fuzion', 'General', 'Goodyear',
-  'Hankook', 'Hercules', 'Ironman', 'Kelly', 'Kumho', 'Laufenn', 'Lexani',
-  'Mastercraft', 'Maxxis', 'Michelin', 'Milestar', 'Nexen', 'Nitto', 'Nokian',
-  'Pirelli', 'Sailun', 'Sentury', 'Sumitomo', 'Toyo', 'Uniroyal', 'Vercelli',
-  'Vredestein', 'Westlake', 'Yokohama',
+// ── Claim shape ───────────────────────────────────────────────────────────────
+// The four wheel positions. `front` drives the "FRONT" marker on the diagram.
+export const WHEELS = [
+  { key: 'LF', label: 'Left Front',  front: true  },
+  { key: 'RF', label: 'Right Front', front: true  },
+  { key: 'LR', label: 'Left Rear',   front: false },
+  { key: 'RR', label: 'Right Rear',  front: false },
 ];
+
+// Photo slots required for tire damage vs. rim damage.
+export const TIRE_SLOTS = [
+  { key: 'tireDamage', label: 'Tire Damage' },
+  { key: 'dot',        label: 'DOT Number' },
+  { key: 'size',       label: 'Tire Size' },
+  { key: 'brand',      label: 'Tire Brand' },
+  { key: 'tireFull',   label: 'Full Tire' },
+];
+export const RIM_SLOTS = [
+  { key: 'rimDamage', label: 'Rim Damage' },
+  { key: 'rimFull',   label: 'Full Rim' },
+];
+
+// Which photo slots a wheel needs, based on the damage flagged on it.
+export function wheelPhotoSlots(w) {
+  if (!w) return [];
+  const slots = [];
+  if (w.tire) slots.push(...TIRE_SLOTS);
+  if (w.rim)  slots.push(...RIM_SLOTS);
+  return slots;
+}
+
+// Wheels that have any damage flagged, in canonical order.
+export function flaggedWheels(form) {
+  return WHEELS.filter(w => {
+    const d = form.wheels?.[w.key];
+    return d && (d.tire || d.rim);
+  });
+}
+
+function damageLabel(d) {
+  if (!d) return '';
+  if (d.tire && d.rim) return 'Tire & Rim';
+  if (d.tire) return 'Tire';
+  if (d.rim) return 'Rim';
+  return '';
+}
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -22,113 +59,66 @@ const emptyForm = () => ({
   id: genId(),
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  createdBy: '',
   customerName: '',
   repairOrder: '',
-  customerPhone: '',
-  vin: '',
-  vehicleYear: '',
-  vehicleMake: '',
-  vehicleModel: '',
-  tireWarrantyName: '',
-  tireBrand: '',
-  tireModel: '',
-  tireSize: '',
-  tirePartNumber: '',
-  purchaseDate: '',
-  replacementDate: '',
-  treadDepth: '',
-  dotNumber: '',
-  partNumberPhoto: '',
-  damagePhoto: '',
-  treadDepthPhoto: '',
-  dotNumberPhoto: '',
-  sideViewPhoto: '',
   repairOrderPhoto: '',
-  damageNotes: '',
-  // Cost information — filled in after the claim is started
-  origCustomerPrice: '',
-  dealerCost: '',
-  newTreadDepth: '',
-  remainingTreadDepth: '',
-  customerPctTreadUsed: '',
+  wheels: {
+    LF: { tire: false, rim: false },
+    RF: { tire: false, rim: false },
+    LR: { tire: false, rim: false },
+    RR: { tire: false, rim: false },
+  },
+  photos: { LF: {}, RF: {}, LR: {}, RR: {} },
 });
+
+// True once every required field + photo is present.
+export function claimComplete(form) {
+  if (!String(form.customerName || '').trim()) return false;
+  if (!String(form.repairOrder || '').trim()) return false;
+  if (!form.repairOrderPhoto) return false;
+  const flagged = flaggedWheels(form);
+  if (flagged.length === 0) return false;
+  return flagged.every(w =>
+    wheelPhotoSlots(form.wheels[w.key]).every(s => !!form.photos?.[w.key]?.[s.key]));
+}
+
+// Count of (captured, required) photos across all flagged wheels.
+export function photoProgress(form) {
+  let have = 0, need = 0;
+  flaggedWheels(form).forEach(w => {
+    wheelPhotoSlots(form.wheels[w.key]).forEach(s => {
+      need += 1;
+      if (form.photos?.[w.key]?.[s.key]) have += 1;
+    });
+  });
+  return { have, need };
+}
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const labelSt = {
   display: 'block', fontSize: 11, fontWeight: 700,
-  color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4,
+  color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6,
 };
 const inpSt = {
   width: '100%', boxSizing: 'border-box',
   background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)',
-  borderRadius: 8, color: '#e2e8f0', padding: '9px 12px', fontSize: 14, outline: 'none',
+  borderRadius: 10, color: '#e2e8f0', padding: '12px 14px', fontSize: 16, outline: 'none',
 };
-const roSt = {
-  ...inpSt, background: 'rgba(255,255,255,0.03)',
-  border: '1px solid rgba(255,255,255,0.06)', color: '#64748b',
-};
-const accent = '#fbbf24'; // amber — tire theme
+const primaryBtn = (enabled) => ({
+  width: '100%', boxSizing: 'border-box',
+  background: enabled ? 'linear-gradient(135deg,rgba(251,191,36,0.9),rgba(245,158,11,0.85))' : 'rgba(255,255,255,0.06)',
+  border: `1px solid ${enabled ? accent : 'rgba(255,255,255,0.12)'}`,
+  color: enabled ? '#1a1205' : '#64748b',
+  borderRadius: 12, padding: '15px 20px', fontSize: 16, fontWeight: 800,
+  cursor: enabled ? 'pointer' : 'not-allowed', transition: 'background .2s, box-shadow .2s',
+  boxShadow: enabled ? '0 4px 18px rgba(251,191,36,0.35)' : 'none',
+});
 
-function Section({ title, children }) {
-  return (
-    <div style={{ marginBottom: 28 }}>
-      <div style={{ fontSize: 12, fontWeight: 800, color: accent, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 14, paddingBottom: 6, borderBottom: `1px solid ${accent}33` }}>
-        {title}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function F({ label, value, onChange, type = 'text', placeholder = '', readOnly = false, maxLength }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <label style={labelSt}>{label}</label>
-      <input type={type} value={value} onChange={e => onChange?.(e.target.value)}
-        placeholder={placeholder} readOnly={readOnly} maxLength={maxLength}
-        style={readOnly ? roSt : inpSt} />
-    </div>
-  );
-}
-
-// ── Brand auto-complete ───────────────────────────────────────────────────────
-function BrandField({ value, onChange }) {
-  const [open, setOpen] = useState(false);
-  const q = (value || '').trim().toLowerCase();
-  const matches = q
-    ? TIRE_BRANDS.filter(b => b.toLowerCase().startsWith(q) && b.toLowerCase() !== q)
-    : [];
-  return (
-    <div style={{ marginBottom: 12, position: 'relative' }}>
-      <label style={labelSt}>Tire Brand</label>
-      <input
-        value={value}
-        onChange={e => { onChange(e.target.value); setOpen(true); }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        placeholder="Start typing… e.g. Ku → Kumho"
-        style={inpSt}
-        autoComplete="off"
-      />
-      {open && matches.length > 0 && (
-        <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50, marginTop: 4, background: '#0f172a', border: '1px solid rgba(251,191,36,0.35)', borderRadius: 8, maxHeight: 200, overflowY: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
-          {matches.map(b => (
-            <div key={b}
-              onMouseDown={() => { onChange(b); setOpen(false); }}
-              style={{ padding: '8px 12px', fontSize: 14, color: '#e2e8f0', cursor: 'pointer' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(251,191,36,0.15)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              {b}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Photo upload box ──────────────────────────────────────────────────────────
-function PhotoBox({ label, value, onChange, claimId, field, allowPdf = false }) {
+// ── Camera / photo capture button ─────────────────────────────────────────────
+// On phones, accept="image/*" + capture="environment" opens the rear camera
+// directly. The captured image uploads to S3 immediately and stores its URL.
+function CameraButton({ label, value, onChange, claimId, slotKey, compact }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -136,14 +126,13 @@ function PhotoBox({ label, value, onChange, claimId, field, allowPdf = false }) 
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const ok = file.type.startsWith('image/') || (allowPdf && file.type === 'application/pdf');
-    if (!ok) { setError(allowPdf ? 'Please choose an image or PDF file.' : 'Please choose an image file.'); return; }
+    if (!file.type.startsWith('image/')) { setError('Please choose an image.'); return; }
     setError('');
     setUploading(true);
     try {
-      if (!(await ensureAwsCreds())) { setError('AWS credentials required.'); return; }
+      if (!(await ensureAwsCreds())) { setError('AWS setup required.'); return; }
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-      const filename = `${claimId}-${field}-${Date.now()}.${ext}`;
+      const filename = `${claimId}-${slotKey}-${Date.now()}.${ext}`;
       const url = await uploadTirePhotoToS3(filename, file);
       onChange(url);
     } catch (err) {
@@ -154,466 +143,345 @@ function PhotoBox({ label, value, onChange, claimId, field, allowPdf = false }) 
     }
   }
 
+  const thumb = compact ? 64 : 84;
+
   return (
-    <div style={{ marginBottom: 12 }}>
-      <label style={labelSt}>{label}</label>
-      <input ref={inputRef} type="file" accept={allowPdf ? 'image/*,application/pdf' : 'image/*'}
+    <div style={{ marginBottom: compact ? 0 : 14 }}>
+      {!compact && <label style={labelSt}>{label}</label>}
+      <input ref={inputRef} type="file" accept="image/*" capture="environment"
         onChange={handleFile} style={{ display: 'none' }} />
       {value ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <a href={value} target="_blank" rel="noopener noreferrer">
-            {value.toLowerCase().endsWith('.pdf') ? (
-              <div style={{ width: 90, height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: `1px solid ${accent}55`, background: 'rgba(255,255,255,0.05)', fontSize: 32 }}>📄</div>
-            ) : (
-              <img src={value} alt={label}
-                style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
-            )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <a href={value} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0 }}>
+            <img src={value} alt={label}
+              style={{ width: thumb, height: thumb, objectFit: 'cover', borderRadius: 10, border: `2px solid #4ade80` }} />
           </a>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 700 }}>✓ Photo uploaded</span>
-            <button type="button" onClick={() => inputRef.current?.click()}
-              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-              Replace
-            </button>
-            <button type="button" onClick={() => onChange('')}
-              style={{ background: 'transparent', border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-              Remove
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {compact && <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', marginBottom: 2 }}>{label}</div>}
+            <div style={{ fontSize: 12, color: '#4ade80', fontWeight: 700, marginBottom: 6 }}>✓ Uploaded</div>
+            <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+              {uploading ? 'Uploading…' : '📷 Retake'}
             </button>
           </div>
         </div>
       ) : (
         <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
-          style={{ width: '100%', background: 'rgba(251,191,36,0.08)', border: `1px dashed ${accent}66`, color: accent, borderRadius: 8, padding: '18px 12px', cursor: uploading ? 'wait' : 'pointer', fontSize: 13, fontWeight: 700 }}>
-          {uploading ? 'Uploading…' : (allowPdf ? '📎 Add Photo or PDF' : '📷 Add Photo')}
+          style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: 'rgba(251,191,36,0.08)', border: `1.5px dashed ${accent}66`, color: accent,
+            borderRadius: 12, padding: compact ? '16px 12px' : '22px 12px', cursor: uploading ? 'wait' : 'pointer', fontSize: 15, fontWeight: 700 }}>
+          {uploading ? 'Uploading…' : <>📷 {compact ? label : 'Take Photo'}</>}
         </button>
       )}
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 4 }}>{error}</div>}
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
     </div>
   );
 }
 
-// ── Claim Form ────────────────────────────────────────────────────────────────
-const ClaimForm = forwardRef(function ClaimForm({ initial, onSave, saving }, ref) {
-  const [form, setForm] = useState(() => initial ? { ...initial } : emptyForm());
-  const [vinLoading, setVinLoading] = useState(false);
-  const [vinError, setVinError] = useState('');
-  const [showErrors, setShowErrors] = useState(false);
-
-  useImperativeHandle(ref, () => ({
-    getForm: () => ({ ...form, updatedAt: new Date().toISOString() }),
-  }));
-
-  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
-
-  const decodeVin = useCallback(async (vin) => {
-    const v = vin.trim().toUpperCase();
-    if (v.length < 17) { setVinError(''); return; }
-    setVinLoading(true); setVinError('');
-    try {
-      const res = await fetch(`${NHTSA}/${v}?format=json`);
-      const json = await res.json();
-      const r = json.Results?.[0];
-      const year = r?.ModelYear || '';
-      const make = r?.Make || '';
-      const model = r?.Model || '';
-      if (!year && !make && !model) { setVinError('VIN not recognized'); return; }
-      setForm(f => ({ ...f, vehicleYear: year, vehicleMake: make, vehicleModel: model }));
-    } catch {
-      setVinError('Could not decode VIN — check connection');
-    } finally {
-      setVinLoading(false);
-    }
-  }, []);
-
-  // Every field below must be filled before a claim can be started.
-  const required = {
-    customerName: 'First and last name',
-    repairOrder: 'Repair order number',
-    vin: 'VIN',
-    tireWarrantyName: 'Tire warranty name',
-    tireBrand: 'Tire brand',
-    tireModel: 'Tire model',
-    tireSize: 'Tire size',
-    tirePartNumber: 'Tire part number',
-    purchaseDate: 'Original purchase date',
-    replacementDate: 'Replacement date',
-    treadDepth: 'Tire tread depth',
-    dotNumber: 'DOT number',
-    damageNotes: 'Explanation of why the tire is not repairable',
-    damagePhoto: 'Unrepairable damage photo',
-    sideViewPhoto: 'Complete side view photo of the tire',
-    treadDepthPhoto: 'Tire tread depth photo',
-    dotNumberPhoto: 'DOT number photo',
-    repairOrderPhoto: 'Original repair order / proof of purchase',
-  };
-  const missing = Object.keys(required).filter(k => !String(form[k] || '').trim());
-
-  function handleStartClaim() {
-    if (missing.length > 0) { setShowErrors(true); return; }
-    onSave({ ...form, updatedAt: new Date().toISOString() });
-  }
-
-  const errStyle = (key) => showErrors && !String(form[key] || '').trim()
-    ? { boxShadow: '0 0 0 2px rgba(248,113,113,0.6)' } : {};
-
+// ── Step 1: Customer + Repair Order ───────────────────────────────────────────
+function StepStart({ form, set, onNext }) {
+  const ready = String(form.customerName || '').trim() && String(form.repairOrder || '').trim() && form.repairOrderPhoto;
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 60px' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto' }}>
+    <div style={{ padding: '20px 18px 32px' }}>
+      <StepHeader step={1} total={3} title="Customer & Repair Order" />
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelSt}>Customer Name</label>
+        <input value={form.customerName} onChange={e => set('customerName', e.target.value)}
+          placeholder="First and last name" style={inpSt} />
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelSt}>Repair Order Number</label>
+        <input value={form.repairOrder} onChange={e => set('repairOrder', e.target.value)}
+          placeholder="RO #" inputMode="numeric" style={inpSt} />
+      </div>
+      <CameraButton label="Photo of Repair Order" value={form.repairOrderPhoto}
+        onChange={v => set('repairOrderPhoto', v)} claimId={form.id} slotKey="repairorder" />
+      <div style={{ marginTop: 24 }}>
+        <button onClick={onNext} disabled={!ready} style={primaryBtn(ready)}>Next → Mark Damage</button>
+      </div>
+      {!ready && <div style={{ textAlign: 'center', color: '#64748b', fontSize: 12, marginTop: 10 }}>
+        Enter the name, RO number, and a photo of the repair order to continue.
+      </div>}
+    </div>
+  );
+}
 
-        {/* Customer & Vehicle */}
-        <Section title="Customer & Vehicle Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>First and Last Name</label>
-              <input value={form.customerName} onChange={e => set('customerName', e.target.value)}
-                style={{ ...inpSt, ...errStyle('customerName') }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Repair Order Number</label>
-              <input value={form.repairOrder} onChange={e => set('repairOrder', e.target.value)}
-                style={{ ...inpSt, ...errStyle('repairOrder') }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>VIN Number</label>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <input
-                  value={form.vin}
-                  onChange={e => { const v = e.target.value.toUpperCase(); set('vin', v); decodeVin(v); }}
-                  placeholder="Enter 17-digit VIN"
-                  maxLength={17}
-                  style={{ ...inpSt, ...errStyle('vin'), fontFamily: 'monospace', letterSpacing: 1.5, flex: 1 }}
-                />
-                {vinLoading && <span style={{ color: '#64748b', fontSize: 12, flexShrink: 0 }}>Decoding…</span>}
-              </div>
-              {vinError && <div style={{ color: '#f87171', fontSize: 12, marginTop: 4 }}>{vinError}</div>}
-              {form.vehicleYear && !vinLoading && (
-                <div style={{ marginTop: 6, padding: '6px 10px', background: 'rgba(251,191,36,0.1)', borderRadius: 6, fontSize: 13, color: accent, fontWeight: 600 }}>
-                  ✓ {form.vehicleYear} {form.vehicleMake} {form.vehicleModel}
-                </div>
-              )}
-            </div>
-            <F label="Vehicle Year" value={form.vehicleYear} readOnly />
-            <F label="Vehicle Make" value={form.vehicleMake} readOnly />
-            <F label="Vehicle Model" value={form.vehicleModel} readOnly />
-          </div>
-        </Section>
+// ── Step 2: Damage map ────────────────────────────────────────────────────────
+function Wheel({ wheelKey, damage, onTap }) {
+  const active = damage && (damage.tire || damage.rim);
+  const both = damage?.tire && damage?.rim;
+  const bg = both ? 'linear-gradient(135deg,#fbbf24,#60a5fa)'
+    : damage?.tire ? accent
+    : damage?.rim ? '#60a5fa'
+    : 'rgba(255,255,255,0.09)';
+  return (
+    <button onClick={() => onTap(wheelKey)}
+      style={{
+        width: 72, height: 104, borderRadius: 16,
+        background: bg,
+        border: active ? '2px solid #fff' : '2px solid rgba(255,255,255,0.18)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', color: active ? '#0d1627' : '#94a3b8', fontWeight: 800,
+        boxShadow: active ? '0 0 16px rgba(251,191,36,0.5)' : 'none',
+      }}>
+      <span style={{ fontSize: 22 }}>🛞</span>
+      <span style={{ fontSize: 11, marginTop: 2 }}>{wheelKey}</span>
+      {active && <span style={{ fontSize: 9, fontWeight: 700, marginTop: 2, textAlign: 'center', lineHeight: 1.1 }}>{damageLabel(damage)}</span>}
+    </button>
+  );
+}
 
-        {/* Tire Information */}
-        <Section title="Tire Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Tire Warranty Name</label>
-              <input value={form.tireWarrantyName} onChange={e => set('tireWarrantyName', e.target.value)}
-                placeholder="Name of the tire warranty"
-                style={{ ...inpSt, ...errStyle('tireWarrantyName') }} />
-            </div>
-            <BrandField value={form.tireBrand} onChange={v => set('tireBrand', v)} />
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Tire Model</label>
-              <input value={form.tireModel} onChange={e => set('tireModel', e.target.value)}
-                style={{ ...inpSt, ...errStyle('tireModel') }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Tire Size</label>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input value={form.tireSize} onChange={e => set('tireSize', e.target.value)}
-                  placeholder="e.g. 235/65R17"
-                  style={{ ...inpSt, ...errStyle('tireSize'), flex: 1 }} />
-                <a href="https://hyundaitirecenter.com/tires/tirebrand.jsp" target="_blank" rel="noopener noreferrer"
-                  style={{ flexShrink: 0, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', background: 'rgba(251,191,36,0.12)', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '0 14px', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
-                  🔎 Look Up Tires
-                </a>
-              </div>
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Tire Part Number</label>
-              <input value={form.tirePartNumber} onChange={e => set('tirePartNumber', e.target.value)}
-                style={{ ...inpSt, ...errStyle('tirePartNumber') }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Original Purchase Date</label>
-              <input type="date" value={form.purchaseDate} onChange={e => set('purchaseDate', e.target.value)}
-                style={{ ...inpSt, ...errStyle('purchaseDate'), colorScheme: 'dark' }} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>Replacement Date</label>
-              <input type="date" value={form.replacementDate} onChange={e => set('replacementDate', e.target.value)}
-                style={{ ...inpSt, ...errStyle('replacementDate'), colorScheme: 'dark' }} />
-            </div>
-          </div>
-        </Section>
-
-        {/* Cost Information — only shown when editing a claim that has been started */}
-        {initial && (
-        <Section title="Cost Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>A. Original Customer Price ($)</label>
-              <input type="number" step="0.01" value={form.origCustomerPrice}
-                onChange={e => set('origCustomerPrice', e.target.value)} placeholder="0.00" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>B. Dealer Cost ($)</label>
-              <input type="number" step="0.01" value={form.dealerCost}
-                onChange={e => set('dealerCost', e.target.value)} placeholder="0.00" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>C. New Tire Tread Depth (/32nds)</label>
-              <input type="number" value={form.newTreadDepth}
-                onChange={e => set('newTreadDepth', e.target.value)} placeholder="e.g. 10" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>D. Remaining Tread Depth (/32nds)</label>
-              <input type="number" value={form.remainingTreadDepth}
-                onChange={e => set('remainingTreadDepth', e.target.value)} placeholder="e.g. 6" style={inpSt} />
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <label style={labelSt}>E. Customer % of Tread Used</label>
-              <input value={form.customerPctTreadUsed}
-                onChange={e => set('customerPctTreadUsed', e.target.value)} placeholder="% (use chart)" style={inpSt} />
-              {(() => {
-                const c = parseFloat(form.newTreadDepth), d = parseFloat(form.remainingTreadDepth);
-                if (c > 0 && d >= 0 && d <= c) {
-                  const pct = Math.round(((c - d) / c) * 100);
-                  return <div style={{ fontSize: 12, color: accent, marginTop: 4 }}>Calculated: {pct}% — verify against the chart</div>;
-                }
-                return null;
-              })()}
-            </div>
-          </div>
-        </Section>
-        )}
-
-        {/* Unrepairable Damage */}
-        <Section title="Unrepairable Damage to Tire">
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelSt}>Explain why the tire is not repairable</label>
-            <textarea value={form.damageNotes} onChange={e => set('damageNotes', e.target.value)}
-              rows={3} placeholder="Describe the damage and why the tire cannot be repaired"
-              style={{ ...inpSt, resize: 'vertical', ...errStyle('damageNotes') }} />
-          </div>
-          <PhotoBox label="Unrepairable Damage Photo" value={form.damagePhoto}
-            onChange={v => set('damagePhoto', v)} claimId={form.id} field="damage" />
-          <PhotoBox label="Complete Side View Photo of the Tire" value={form.sideViewPhoto}
-            onChange={v => set('sideViewPhoto', v)} claimId={form.id} field="sideview" />
-        </Section>
-
-        {/* Tread Depth */}
-        <Section title="Tire Tread Depth">
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelSt}>Tread Depth</label>
-            <input value={form.treadDepth} onChange={e => set('treadDepth', e.target.value)}
-              placeholder="e.g. 4/32"
-              style={{ ...inpSt, ...errStyle('treadDepth') }} />
-          </div>
-          <PhotoBox label="Tire Tread Depth Photo" value={form.treadDepthPhoto}
-            onChange={v => set('treadDepthPhoto', v)} claimId={form.id} field="tread" />
-        </Section>
-
-        {/* DOT Number */}
-        <Section title="DOT Number">
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelSt}>DOT Number</label>
-            <input value={form.dotNumber} onChange={e => set('dotNumber', e.target.value)}
-              style={{ ...inpSt, ...errStyle('dotNumber') }} />
-          </div>
-          <PhotoBox label="DOT Number Photo" value={form.dotNumberPhoto}
-            onChange={v => set('dotNumberPhoto', v)} claimId={form.id} field="dot" />
-        </Section>
-
-        {/* Proof of Purchase */}
-        <Section title="Original Repair Order / Proof of Purchase">
-          <PhotoBox label="Upload Original Repair Order of Tire Purchase" value={form.repairOrderPhoto}
-            onChange={v => set('repairOrderPhoto', v)} claimId={form.id} field="repairorder" allowPdf />
-        </Section>
-
-        {/* Validation summary + Start Claim */}
-        {showErrors && missing.length > 0 && (
-          <div style={{ marginBottom: 16, padding: '12px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.35)', borderRadius: 10 }}>
-            <div style={{ color: '#f87171', fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
-              All fields and photos are required before starting the claim. Still needed:
-            </div>
-            <ul style={{ margin: 0, paddingLeft: 20, color: '#fca5a5', fontSize: 13 }}>
-              {missing.map(k => <li key={k}>{required[k]}</li>)}
-            </ul>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button onClick={handleStartClaim} disabled={saving}
-            style={{ background: missing.length === 0 ? 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))' : 'rgba(255,255,255,0.05)', border: `1px solid ${accent}66`, color: accent, borderRadius: 10, padding: '12px 32px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 800, fontSize: 15, opacity: saving ? 0.7 : 1 }}>
-            {saving ? 'Starting…' : '🛞 Start Tire Claim'}
+function DamageChooser({ wheelKey, damage, onSet, onClose }) {
+  const label = WHEELS.find(w => w.key === wheelKey)?.label || wheelKey;
+  const opt = (title, sub, val) => {
+    const isOn = damage?.tire === val.tire && damage?.rim === val.rim;
+    return (
+      <button onClick={() => { onSet(val); onClose(); }}
+        style={{ width: '100%', textAlign: 'left', background: isOn ? 'rgba(251,191,36,0.18)' : 'rgba(255,255,255,0.05)',
+          border: `1px solid ${isOn ? accent : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '14px 16px', marginBottom: 10, cursor: 'pointer' }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: isOn ? accent : '#e2e8f0' }}>{title}</div>
+        <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{sub}</div>
+      </button>
+    );
+  };
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 100, display: 'flex', alignItems: 'flex-end' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: '#111c30', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: '22px 18px 28px', borderTop: `2px solid ${accent}55` }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>{label} Wheel</div>
+        <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 18 }}>What kind of damage is on this wheel?</div>
+        {opt('Tire Damage', '5 photos: damage, DOT#, size, brand, full tire', { tire: true, rim: false })}
+        {opt('Rim Damage', '2 photos: damage, full rim', { tire: false, rim: true })}
+        {opt('Tire & Rim', '7 photos: 5 tire + 2 rim', { tire: true, rim: true })}
+        {damage && (damage.tire || damage.rim) && (
+          <button onClick={() => { onSet({ tire: false, rim: false }); onClose(); }}
+            style={{ width: '100%', background: 'transparent', border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', borderRadius: 12, padding: '12px', cursor: 'pointer', fontWeight: 700, marginTop: 4 }}>
+            Clear this wheel
           </button>
-        </div>
+        )}
       </div>
     </div>
   );
-});
+}
 
-// ── Claim Detail ──────────────────────────────────────────────────────────────
+function StepMap({ form, setWheel, onNext, onBack }) {
+  const [chooser, setChooser] = useState(null);
+  const anyFlagged = flaggedWheels(form).length > 0;
+  const wheelFor = k => form.wheels?.[k] || { tire: false, rim: false };
+  return (
+    <div style={{ padding: '20px 18px 32px' }}>
+      <StepHeader step={2} total={3} title="Mark the Damage" />
+      <div style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', marginBottom: 20 }}>
+        Tap each wheel that has damage.
+      </div>
+
+      {/* Top-down car diagram */}
+      <div style={{ position: 'relative', maxWidth: 260, margin: '0 auto 8px', padding: '10px 0' }}>
+        <div style={{ position: 'absolute', top: 2, left: 0, right: 0, textAlign: 'center', fontSize: 11, fontWeight: 800, color: '#64748b', letterSpacing: 2 }}>▲ FRONT</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+          <Wheel wheelKey="LF" damage={wheelFor('LF')} onTap={setChooser} />
+          <div style={{ flex: 1, height: 190, margin: '18px 4px 0', borderRadius: 26, background: 'linear-gradient(180deg,rgba(255,255,255,0.09),rgba(255,255,255,0.04))', border: '1px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 30 }}>🚗</div>
+          <Wheel wheelKey="RF" damage={wheelFor('RF')} onTap={setChooser} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: -70 }}>
+          <Wheel wheelKey="LR" damage={wheelFor('LR')} onTap={setChooser} />
+          <Wheel wheelKey="RR" damage={wheelFor('RR')} onTap={setChooser} />
+        </div>
+      </div>
+
+      {/* Summary of selections */}
+      <div style={{ marginTop: 28, marginBottom: 8 }}>
+        {flaggedWheels(form).length === 0 ? (
+          <div style={{ textAlign: 'center', color: '#64748b', fontSize: 13 }}>No wheels marked yet.</div>
+        ) : flaggedWheels(form).map(w => (
+          <div key={w.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.04)', borderRadius: 10, marginBottom: 8 }}>
+            <span style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 14 }}>{w.label}</span>
+            <span style={{ color: accent, fontWeight: 700, fontSize: 13 }}>{damageLabel(form.wheels[w.key])} · {wheelPhotoSlots(form.wheels[w.key]).length} photos</span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
+        <button onClick={onBack} style={{ flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: '#cbd5e1', borderRadius: 12, padding: '15px 20px', cursor: 'pointer', fontWeight: 700 }}>← Back</button>
+        <button onClick={onNext} disabled={!anyFlagged} style={primaryBtn(anyFlagged)}>Next → Photos</button>
+      </div>
+
+      {chooser && (
+        <DamageChooser wheelKey={chooser} damage={wheelFor(chooser)}
+          onSet={val => setWheel(chooser, val)} onClose={() => setChooser(null)} />
+      )}
+    </div>
+  );
+}
+
+// ── Step 3: Photos per wheel ──────────────────────────────────────────────────
+function StepPhotos({ form, setPhoto, onSave, onBack, saving, saveError }) {
+  const flagged = flaggedWheels(form);
+  const { have, need } = photoProgress(form);
+  const complete = claimComplete(form);
+  return (
+    <div style={{ padding: '20px 18px 40px' }}>
+      <StepHeader step={3} total={3} title="Take the Photos" />
+      <div style={{ position: 'sticky', top: 0, zIndex: 5, background: '#0d1627', padding: '4px 0 12px', marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <span style={{ color: '#94a3b8', fontSize: 13, fontWeight: 700 }}>Photos captured</span>
+          <span style={{ color: have === need ? '#4ade80' : accent, fontSize: 14, fontWeight: 800 }}>{have} / {need}</span>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 6, height: 8, overflow: 'hidden' }}>
+          <div style={{ width: `${need ? (have / need) * 100 : 0}%`, height: '100%', background: have === need ? '#4ade80' : accent, transition: 'width .3s' }} />
+        </div>
+      </div>
+
+      {flagged.map(w => {
+        const slots = wheelPhotoSlots(form.wheels[w.key]);
+        const wHave = slots.filter(s => form.photos?.[w.key]?.[s.key]).length;
+        return (
+          <div key={w.key} style={{ marginBottom: 22, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '16px 14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ fontSize: 15, fontWeight: 800, color: accent }}>{w.label}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: wHave === slots.length ? '#4ade80' : '#94a3b8' }}>
+                {damageLabel(form.wheels[w.key])} · {wHave}/{slots.length}
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {slots.map(s => (
+                <CameraButton key={s.key} compact label={s.label}
+                  value={form.photos?.[w.key]?.[s.key] || ''}
+                  onChange={url => setPhoto(w.key, s.key, url)}
+                  claimId={form.id} slotKey={`${w.key}-${s.key}`} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      {saveError && <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12, textAlign: 'center' }}>{saveError}</div>}
+
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button onClick={onBack} disabled={saving} style={{ flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: '#cbd5e1', borderRadius: 12, padding: '15px 20px', cursor: 'pointer', fontWeight: 700 }}>← Back</button>
+        <button onClick={onSave} disabled={!complete || saving} style={primaryBtn(complete && !saving)}>
+          {saving ? 'Saving…' : complete ? '✓ Save Claim' : `Save Claim (${have}/${need})`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StepHeader({ step, total, title }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <div key={i} style={{ flex: 1, height: 5, borderRadius: 3, background: i < step ? accent : 'rgba(255,255,255,0.12)' }} />
+        ))}
+      </div>
+      <div style={{ fontSize: 12, color: '#64748b', fontWeight: 700 }}>STEP {step} OF {total}</div>
+      <div style={{ fontSize: 22, fontWeight: 900, color: '#e2e8f0', marginTop: 2 }}>{title}</div>
+    </div>
+  );
+}
+
+// ── Read-only claim detail (reused by the After Market Warranty tab) ───────────
+export function TireClaimDetail({ claim }) {
+  const flagged = flaggedWheels(claim);
+  return (
+    <div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12, marginBottom: 20 }}>
+        <DetailRow label="Customer" value={claim.customerName} />
+        <DetailRow label="Repair Order" value={claim.repairOrder} mono />
+        <DetailRow label="Created By" value={claim.createdBy} />
+        <DetailRow label="Date" value={claim.updatedAt ? new Date(claim.updatedAt).toLocaleString() : ''} />
+      </div>
+      {claim.repairOrderPhoto && (
+        <div style={{ marginBottom: 22 }}>
+          <div style={labelSt}>Repair Order Photo</div>
+          <PhotoThumb url={claim.repairOrderPhoto} />
+        </div>
+      )}
+      {flagged.map(w => (
+        <div key={w.key} style={{ marginBottom: 22 }}>
+          <div style={{ fontSize: 14, fontWeight: 800, color: accent, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${accent}33` }}>
+            {w.label} — {damageLabel(claim.wheels[w.key])}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(120px,1fr))', gap: 14 }}>
+            {wheelPhotoSlots(claim.wheels[w.key]).map(s => (
+              <div key={s.key}>
+                <div style={{ ...labelSt, marginBottom: 4 }}>{s.label}</div>
+                <PhotoThumb url={claim.photos?.[w.key]?.[s.key]} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DetailRow({ label, value, mono }) {
   return (
-    <div style={{ marginBottom: 10 }}>
+    <div>
       <div style={labelSt}>{label}</div>
-      <div style={{ fontSize: 14, color: '#e2e8f0', fontWeight: 600, fontFamily: mono ? 'monospace' : 'inherit' }}>
-        {value || '—'}
-      </div>
+      <div style={{ fontSize: 14, color: '#e2e8f0', fontWeight: 600, fontFamily: mono ? 'monospace' : 'inherit' }}>{value || '—'}</div>
     </div>
   );
 }
 
-function PhotoView({ label, url }) {
+function PhotoThumb({ url }) {
+  if (!url) return <div style={{ color: '#475569', fontSize: 12 }}>No photo</div>;
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={labelSt}>{label}</div>
-      {url ? (
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          {url.toLowerCase().endsWith('.pdf') ? (
-            <div style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: `1px solid ${accent}55`, background: 'rgba(255,255,255,0.05)', fontSize: 44 }}>📄</div>
-          ) : (
-            <img src={url} alt={label}
-              style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 8, border: `1px solid ${accent}55` }} />
-          )}
-        </a>
-      ) : <div style={{ color: '#64748b', fontSize: 13 }}>No file</div>}
-    </div>
+    <a href={url} target="_blank" rel="noopener noreferrer">
+      <img src={url} alt="" style={{ width: '100%', maxWidth: 150, aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: `1px solid ${accent}55` }} />
+    </a>
   );
 }
 
-function ClaimDetail({ claim, onEdit, onBack }) {
-  return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 60px' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto' }}>
-        <Section title="Customer & Vehicle">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
-            <DetailRow label="First and Last Name" value={claim.customerName} />
-            <DetailRow label="Repair Order Number" value={claim.repairOrder} />
-            <DetailRow label="VIN" value={claim.vin} mono />
-            <DetailRow label="Vehicle" value={`${claim.vehicleYear} ${claim.vehicleMake} ${claim.vehicleModel}`.trim()} />
-          </div>
-        </Section>
-        <Section title="Tire Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
-            <DetailRow label="Tire Warranty Name" value={claim.tireWarrantyName} />
-            <DetailRow label="Tire Brand" value={claim.tireBrand} />
-            <DetailRow label="Tire Model" value={claim.tireModel} />
-            <DetailRow label="Tire Size" value={claim.tireSize} />
-            <DetailRow label="Tire Part Number" value={claim.tirePartNumber} mono />
-            <DetailRow label="Original Purchase Date" value={claim.purchaseDate} />
-            <DetailRow label="Replacement Date" value={claim.replacementDate} />
-            <DetailRow label="Tread Depth" value={claim.treadDepth} />
-            <DetailRow label="DOT Number" value={claim.dotNumber} mono />
-          </div>
-          {claim.damageNotes && <DetailRow label="Why Not Repairable" value={claim.damageNotes} />}
-        </Section>
-        <Section title="Photos & Documents">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 16 }}>
-            <PhotoView label="Unrepairable Damage" url={claim.damagePhoto} />
-            <PhotoView label="Complete Side View" url={claim.sideViewPhoto} />
-            <PhotoView label="Tire Tread Depth" url={claim.treadDepthPhoto} />
-            <PhotoView label="DOT Number" url={claim.dotNumberPhoto} />
-            <PhotoView label="Original Repair Order" url={claim.repairOrderPhoto} />
-          </div>
-        </Section>
-        <Section title="Cost Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 20px' }}>
-            <DetailRow label="A. Original Customer Price" value={claim.origCustomerPrice ? '$' + claim.origCustomerPrice : ''} />
-            <DetailRow label="B. Dealer Cost" value={claim.dealerCost ? '$' + claim.dealerCost : ''} />
-            <DetailRow label="C. New Tire Tread Depth" value={claim.newTreadDepth ? claim.newTreadDepth + ' /32nds' : ''} />
-            <DetailRow label="D. Remaining Tread Depth" value={claim.remainingTreadDepth ? claim.remainingTreadDepth + ' /32nds' : ''} />
-            <DetailRow label="E. Customer % of Tread Used" value={claim.customerPctTreadUsed} />
-          </div>
-        </Section>
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button onClick={onBack} className="secondary">← Claims</button>
-          <button onClick={onEdit}
-            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 10, padding: '10px 24px', cursor: 'pointer', fontWeight: 800 }}>
-            ✏️ Edit Claim
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Claim List ────────────────────────────────────────────────────────────────
+// ── Claim list ────────────────────────────────────────────────────────────────
 function ClaimList({ claims, loading, onNew, onView }) {
-  const [search, setSearch] = useState('');
-  const q = search.trim().toLowerCase();
-  const filtered = q
-    ? claims.filter(c =>
-        String(c.customerName || '').toLowerCase().includes(q) ||
-        String(c.repairOrder || '').toLowerCase().includes(q) ||
-        String(c.vin || '').toLowerCase().includes(q) ||
-        String(c.tirePartNumber || '').toLowerCase().includes(q))
-    : claims;
-
   return (
-    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 32px' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        {!loading && claims.length > 0 && (
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search by name, VIN, or part number…"
-            style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: '#e2e8f0', fontSize: 14, outline: 'none', marginBottom: 16 }} />
-        )}
-        {loading ? (
-          <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading claims…</div>
-        ) : claims.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 60 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🛞</div>
-            <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No tire claims yet</div>
-            <div style={{ color: '#64748b', fontSize: 14, marginBottom: 24 }}>Click "New Claim" to start a tire warranty claim.</div>
-            <button onClick={onNew}
-              style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 10, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
-              + New Claim
-            </button>
-          </div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                {['Date', 'Customer', 'RO #', 'Vehicle', 'Tire Brand', 'Part Number', ''].map(h => (
-                  <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No claims match "{search}"</td></tr>
-              ) : filtered.map(c => (
-                <tr key={c.id} onClick={() => onView(c)}
-                  style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-                  onMouseLeave={e => e.currentTarget.style.background = ''}>
-                  <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#94a3b8' }}>{c.repairOrder || '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{`${c.vehicleYear || ''} ${c.vehicleMake || ''} ${c.vehicleModel || ''}`.trim() || '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0' }}>{c.tireBrand || '—'}</td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: accent }}>{c.tirePartNumber || '—'}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                    <span style={{ fontSize: 12, color: accent, fontWeight: 600 }}>View →</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+    <div style={{ padding: '16px 16px 40px' }}>
+      {loading ? (
+        <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading claims…</div>
+      ) : claims.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '50px 20px' }}>
+          <div style={{ fontSize: 48, marginBottom: 14 }}>🛞</div>
+          <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No tire claims yet</div>
+          <div style={{ color: '#64748b', fontSize: 14, marginBottom: 24 }}>Start a claim to document tire or rim damage.</div>
+          <button onClick={onNew} style={{ ...primaryBtn(true), maxWidth: 240, margin: '0 auto' }}>+ Start a Claim</button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 640, margin: '0 auto' }}>
+          {claims.map(c => {
+            const wheels = flaggedWheels(c).map(w => w.key).join(', ');
+            return (
+              <button key={c.id} onClick={() => onView(c)}
+                style={{ textAlign: 'left', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 15 }}>{c.customerName || '—'}</span>
+                  <span style={{ color: '#64748b', fontSize: 12 }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : ''}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 14, marginTop: 4, fontSize: 12, color: '#94a3b8' }}>
+                  <span>RO <span style={{ fontFamily: 'monospace', color: '#cbd5e1' }}>{c.repairOrder || '—'}</span></span>
+                  <span>Wheels: <span style={{ color: accent, fontWeight: 700 }}>{wheels || '—'}</span></span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────────────────
 export default function TireWarranty({ currentUser, currentRole, onBack, backLabel }) {
-  const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
+  const [view, setView] = useState('list');    // 'list' | 'form' | 'detail'
+  const [step, setStep] = useState(1);          // 1 | 2 | 3 (within 'form')
   const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeClaim, setActiveClaim] = useState(null);
-  const [editingClaim, setEditingClaim] = useState(null);
   const [saveError, setSaveError] = useState('');
-  const formRef = useRef(null);
+  const [savedOk, setSavedOk] = useState(false);
+  const [form, setForm] = useState(emptyForm());
+  const [activeClaim, setActiveClaim] = useState(null);
 
   const loadClaims = useCallback(async () => {
     setLoading(true);
@@ -629,18 +497,31 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
 
   useEffect(() => { loadClaims(); }, [loadClaims]);
 
-  async function handleSave(form, targetView = 'detail') {
+  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
+  const setWheel = (wheelKey, val) =>
+    setForm(f => ({ ...f, wheels: { ...f.wheels, [wheelKey]: { ...f.wheels[wheelKey], ...val } } }));
+  const setPhoto = (wheelKey, slotKey, url) =>
+    setForm(f => ({ ...f, photos: { ...f.photos, [wheelKey]: { ...f.photos[wheelKey], [slotKey]: url } } }));
+
+  function startNew() {
+    setForm({ ...emptyForm(), createdBy: currentUser || '' });
+    setStep(1);
+    setSaveError('');
+    setSavedOk(false);
+    setView('form');
+  }
+
+  async function handleSave() {
     setSaving(true); setSaveError('');
     try {
-      const exists = claims.findIndex(c => c.id === form.id);
-      let next;
-      if (exists >= 0) next = claims.map(c => c.id === form.id ? form : c);
-      else next = [form, ...claims];
+      const finalForm = { ...form, updatedAt: new Date().toISOString() };
+      const exists = claims.findIndex(c => c.id === finalForm.id);
+      let next = exists >= 0 ? claims.map(c => c.id === finalForm.id ? finalForm : c) : [finalForm, ...claims];
       next.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-      await saveTireWarrantyClaim(form, next);
+      await saveTireWarrantyClaim(finalForm, next);
       setClaims(next);
-      setActiveClaim(form);
-      setView(targetView);
+      setSavedOk(true);
+      setView('list');
     } catch (err) {
       setSaveError(err.message || 'Save failed');
     } finally {
@@ -648,54 +529,56 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
     }
   }
 
-  // Save whatever is currently in the form (even if incomplete), then navigate.
-  async function saveFormAndGo(targetView) {
-    if (formRef.current) {
-      await handleSave(formRef.current.getForm(), targetView);
-    } else {
-      setView(targetView);
-    }
+  function topBack() {
+    if (view === 'form') { setView('list'); return; }
+    if (view === 'detail') { setView('list'); return; }
+    onBack();
   }
 
   return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-        <button className="secondary" disabled={saving} onClick={() => {
-          if (view === 'list') { onBack(); return; }
-          if (view === 'form') { saveFormAndGo('list'); return; }
-          setView('list');
-        }}>
+    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0d1627' }}>
+      <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0, position: 'sticky', top: 0, zIndex: 20 }}>
+        <button className="secondary" onClick={topBack} disabled={saving}>
           {view === 'list' ? (backLabel || '← Back') : '← Claims'}
         </button>
-        <span style={{ fontWeight: 800, fontSize: 18, color: accent, flex: 1 }}>🛞 Tire Warranty</span>
-        {view === 'form' && (
-          <button onClick={() => saveFormAndGo('detail')} disabled={saving}
-            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '8px 20px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
-            {saving ? 'Saving…' : '💾 Save'}
-          </button>
-        )}
+        <span style={{ fontWeight: 800, fontSize: 17, color: accent, flex: 1 }}>🛞 Tire Warranty</span>
         {view === 'list' && (
-          <button onClick={() => { setEditingClaim(null); setView('form'); }}
-            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 700 }}>
-            + New Claim
+          <button onClick={startNew}
+            style={{ background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: `1px solid ${accent}66`, color: accent, borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 700 }}>
+            + New
           </button>
         )}
-        {saveError && <span style={{ color: '#f87171', fontSize: 13 }}>{saveError}</span>}
       </div>
 
-      {view === 'list' && (
-        <ClaimList claims={claims} loading={loading}
-          onNew={() => { setEditingClaim(null); setView('form'); }}
-          onView={c => { setActiveClaim(c); setView('detail'); }} />
-      )}
-      {view === 'form' && (
-        <ClaimForm ref={formRef} initial={editingClaim} onSave={handleSave} saving={saving} />
-      )}
-      {view === 'detail' && activeClaim && (
-        <ClaimDetail claim={activeClaim}
-          onEdit={() => { setEditingClaim(activeClaim); setView('form'); }}
-          onBack={() => setView('list')} />
-      )}
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', maxWidth: 720, width: '100%', margin: '0 auto' }}>
+        {savedOk && view === 'list' && (
+          <div style={{ margin: '14px 16px 0', padding: '12px 16px', background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.4)', borderRadius: 12, color: '#4ade80', fontWeight: 700, textAlign: 'center' }}>
+            ✓ Claim saved
+          </div>
+        )}
+
+        {view === 'list' && (
+          <ClaimList claims={claims} loading={loading} onNew={startNew}
+            onView={c => { setActiveClaim(c); setView('detail'); }} />
+        )}
+
+        {view === 'form' && step === 1 && (
+          <StepStart form={form} set={set} onNext={() => setStep(2)} />
+        )}
+        {view === 'form' && step === 2 && (
+          <StepMap form={form} setWheel={setWheel} onNext={() => setStep(3)} onBack={() => setStep(1)} />
+        )}
+        {view === 'form' && step === 3 && (
+          <StepPhotos form={form} setPhoto={setPhoto} onSave={handleSave} onBack={() => setStep(2)}
+            saving={saving} saveError={saveError} />
+        )}
+
+        {view === 'detail' && activeClaim && (
+          <div style={{ padding: '18px 16px 40px' }}>
+            <TireClaimDetail claim={activeClaim} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

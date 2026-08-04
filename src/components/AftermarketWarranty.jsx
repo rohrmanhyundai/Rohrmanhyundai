@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, loadTireWarrantyIndex } from '../utils/github';
+import { TireClaimDetail, flaggedWheels } from './TireWarranty';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
 
@@ -1359,7 +1360,93 @@ function ContractList({ contracts, loading, onNew, onView }) {
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
+// ── Tire Warranty claims panel (read-only view of mobile claims) ──────────────
+function TireClaimsPanel() {
+  const [claims, setClaims] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(null);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const index = await loadTireWarrantyIndex();
+        setClaims(Array.isArray(index) ? index.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) : []);
+      } catch { setClaims([]); }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
+  const q = search.trim().toLowerCase();
+  const filtered = q
+    ? claims.filter(c => String(c.customerName || '').toLowerCase().includes(q) || String(c.repairOrder || '').toLowerCase().includes(q))
+    : claims;
+
+  if (active) {
+    return (
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <button className="secondary" onClick={() => setActive(null)} style={{ marginBottom: 16 }}>← Tire Claims</button>
+          <TireClaimDetail claim={active} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        {!loading && claims.length > 0 && (
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search by RO # or customer name…"
+            style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: '#e2e8f0', fontSize: 14, outline: 'none', marginBottom: 16 }} />
+        )}
+        {loading ? (
+          <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading tire claims…</div>
+        ) : claims.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 60 }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🛞</div>
+            <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No tire claims yet</div>
+            <div style={{ color: '#64748b', fontSize: 14 }}>Tire warranty claims started on mobile appear here.</div>
+          </div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {['Date', 'Customer', 'RO #', 'Damaged Wheels', 'Created By', ''].map(h => (
+                  <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No claims match "{search}"</td></tr>
+              ) : filtered.map(c => (
+                <tr key={c.id} onClick={() => setActive(c)}
+                  style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = ''}>
+                  <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#94a3b8' }}>{c.repairOrder || '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{flaggedWheels(c).map(w => w.key).join(', ') || '—'}</td>
+                  <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.createdBy || '—'}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                    <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 600 }}>View →</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel }) {
+  const [mainTab, setMainTab] = useState('contracts');   // 'contracts' | 'tires'
   const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1467,18 +1554,21 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       {/* Top bar */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={async () => {
-          if (view === 'list') { onBack(); return; }
+          if (view === 'list') {
+            if (mainTab === 'tires') { setMainTab('contracts'); return; }
+            onBack(); return;
+          }
           if (view === 'form' && formRef.current) {
             await handleSave(formRef.current.getForm());
           } else {
             setView('list');
           }
         }}>
-          {view === 'list' ? (backLabel || '← Back') : '← Contracts'}
+          {view === 'list' ? (mainTab === 'tires' ? '← Contracts' : (backLabel || '← Back')) : '← Contracts'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty</span>
 
-        {view === 'list' && (
+        {mainTab === 'contracts' && view === 'list' && (
           <button onClick={handleNew}
             style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontWeight: 700 }}>
             + New Contract
@@ -1488,23 +1578,47 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
         {saveError && <span style={{ color: '#f87171', fontSize: 13 }}>{saveError}</span>}
       </div>
 
-      {/* Content */}
+      {/* Tab bar — only on the top-level list view */}
       {view === 'list' && (
-        <ContractList contracts={contracts} loading={loading} onNew={handleNew} onView={handleView} />
+        <div className="no-print" style={{ display: 'flex', gap: 8, padding: '10px 32px 0', flexShrink: 0 }}>
+          {[
+            { key: 'contracts', label: '🛡 Contracts', color: '#6ee7f9', border: 'rgba(61,214,195,0.5)' },
+            { key: 'tires', label: '🛞 Tire Warranty', color: '#fbbf24', border: 'rgba(251,191,36,0.5)' },
+          ].map(t => {
+            const on = mainTab === t.key;
+            return (
+              <button key={t.key} onClick={() => setMainTab(t.key)}
+                style={{ background: on ? `${t.color}22` : 'transparent', border: `1px solid ${on ? t.border : 'rgba(255,255,255,0.1)'}`, color: on ? t.color : '#94a3b8', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
       )}
-      {view === 'form' && (
-        <ContractForm
-          ref={formRef}
-          initial={editingContract}
-          onSave={handleSave}
-          onCancel={() => setView(activeContract ? 'detail' : 'list')}
-          onDelete={editingContract ? handleDelete : null}
-          saving={saving}
-          currentRole={currentRole}
-        />
-      )}
-      {view === 'detail' && activeContract && (
-        <ContractDetail contract={activeContract} onEdit={handleEdit} onBack={() => setView('list')} />
+
+      {/* Content */}
+      {mainTab === 'tires' ? (
+        <TireClaimsPanel />
+      ) : (
+        <>
+          {view === 'list' && (
+            <ContractList contracts={contracts} loading={loading} onNew={handleNew} onView={handleView} />
+          )}
+          {view === 'form' && (
+            <ContractForm
+              ref={formRef}
+              initial={editingContract}
+              onSave={handleSave}
+              onCancel={() => setView(activeContract ? 'detail' : 'list')}
+              onDelete={editingContract ? handleDelete : null}
+              saving={saving}
+              currentRole={currentRole}
+            />
+          )}
+          {view === 'detail' && activeContract && (
+            <ContractDetail contract={activeContract} onEdit={handleEdit} onBack={() => setView('list')} />
+          )}
+        </>
       )}
     </div>
   );
