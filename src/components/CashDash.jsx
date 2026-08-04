@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { loadCashDash, updateCashDash } from '../utils/github';
+import { loadCashDash, updateCashDash, loadGithubFile } from '../utils/github';
 
 // ── August 2026 Cash Dash plan (hard-coded — one month's plan) ────────────────
 const PLAN = {
@@ -52,7 +52,8 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const me = firstName(currentUser);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
 
-  const [techHours, setTechHours] = useState({}); // { NAME: hours } for PLAN.monthKey
+  const [techHours, setTechHours] = useState({}); // { NAME: hours } manual override for PLAN.monthKey
+  const [autoTech, setAutoTech] = useState({});    // { NAME: hours } auto-summed from the daily posts
   const [repCount, setRepCount] = useState('');    // Reputation.com survey/review count
   const [repScore, setRepScore] = useState('');    // Reputation.com score
   const [loading, setLoading] = useState(true);
@@ -68,6 +69,30 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
     } catch {} finally { setLoading(false); }
   }, []);
   useEffect(() => { refresh(); }, [refresh]);
+
+  // Auto-fill each tech's month-to-date booked hours from their daily posts:
+  // sum the weekly snapshots (performance-reports) whose week falls in the plan
+  // month. Managers can still override a value by typing.
+  const techKey = useMemo(() => (technicians || []).map(t => firstName(t.name)).filter(Boolean).sort().join(','), [technicians]);
+  useEffect(() => {
+    const names = techKey ? techKey.split(',') : [];
+    if (!names.length) { setAutoTech({}); return; }
+    let cancelled = false;
+    (async () => {
+      const entries = await Promise.all(names.map(async n => {
+        try {
+          const rep = await loadGithubFile(`data/performance-reports/${n}.json`);
+          const arr = Array.isArray(rep) ? rep : [];
+          const sum = arr
+            .filter(s => s && s.type === 'tech' && String(s.weekStart || s.date || '').slice(0, 7) === PLAN.monthKey)
+            .reduce((a, s) => a + num(s.total), 0);
+          return [n, Math.round(sum * 10) / 10];
+        } catch { return [n, 0]; }
+      }));
+      if (!cancelled) setAutoTech(Object.fromEntries(entries));
+    })();
+    return () => { cancelled = true; };
+  }, [techKey]);
 
   async function saveRep(field, val) {
     if (field === 'count') setRepCount(val); else setRepScore(val);
@@ -90,8 +115,16 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
     .sort((x, y) => x.name.localeCompare(y.name)), [advisors]);
   const techRows = useMemo(() => (technicians || [])
     .filter(t => t && t.name)
-    .map(t => { const k = firstName(t.name); return { name: k, display: t.name, role: 'tech', hours: num(techHours[k]), raw: techHours[k] }; })
-    .sort((x, y) => x.name.localeCompare(y.name)), [technicians, techHours]);
+    .map(t => {
+      const k = firstName(t.name);
+      const override = techHours[k];
+      const hasOverride = override != null && String(override).trim() !== '';
+      const auto = num(autoTech[k]);
+      const hours = hasOverride ? num(override) : auto;         // override wins, else auto from posts
+      const raw = hasOverride ? override : (auto ? String(auto) : '');
+      return { name: k, display: t.name, role: 'tech', hours, raw, auto, overridden: hasOverride };
+    })
+    .sort((x, y) => x.name.localeCompare(y.name)), [technicians, techHours, autoTech]);
 
   // Who is the logged-in user (for the self view)?
   const selfRow = useMemo(() => advisorRows.find(r => r.name === me) || techRows.find(r => r.name === me) || null,
@@ -102,13 +135,15 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
 
   async function setTech(name, val) {
     const key = firstName(name);
-    setTechHours(prev => ({ ...prev, [key]: val })); // optimistic
+    const empty = String(val).trim() === '';
+    setTechHours(prev => { const n = { ...prev }; if (empty) delete n[key]; else n[key] = val; return n; }); // optimistic
     setSaving(key);
     try {
       await updateCashDash(cur => {
         const bucket = { techHours: {}, ...(cur[PLAN.monthKey] || {}) };
-        bucket.techHours = { ...bucket.techHours, [key]: num(val) };
-        bucket.updatedAt = Date.now();
+        const th = { ...(bucket.techHours || {}) };
+        if (empty) delete th[key]; else th[key] = num(val);     // blank clears the override → back to auto
+        bucket.techHours = th; bucket.updatedAt = Date.now();
         return { ...cur, [PLAN.monthKey]: bucket };
       });
     } catch {} finally { setSaving(''); }
@@ -362,11 +397,11 @@ function Roster({ title, unit, rows, tiers, pace, editable, saving, onEdit, onOp
     <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
       <div style={{ padding: '13px 18px', background: 'rgba(148,163,184,.08)', borderBottom: '1px solid rgba(148,163,184,.14)' }}>
         <div style={{ fontSize: 15, fontWeight: 900, color: '#f1f5f9' }}>{title}</div>
-        <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{unit}{editable ? ' · enter each tech’s month-to-date booked hours' : ''}</div>
+        <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{unit}{editable ? ' · auto-filled from daily posts — type to override' : ''}</div>
       </div>
       {warning && <div style={{ padding: '9px 18px', background: 'rgba(248,113,113,.1)', color: '#fca5a5', fontSize: 12, fontWeight: 700 }}>⚠️ {warning}</div>}
       <div style={{ display: 'flex', padding: '8px 18px', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>
-        <div style={{ flex: 1 }}>Name</div><div style={{ width: 130, textAlign: 'right' }}>Hours</div><div style={{ width: 90, textAlign: 'right' }}>Locked</div><div style={{ width: 110, textAlign: 'right' }}>Proj. pulls</div><div style={{ width: 60 }} />
+        <div style={{ flex: 1 }}>Name</div><div style={{ width: 120, textAlign: 'right' }}>Hours (MTD)</div><div style={{ width: 100, textAlign: 'right' }}>Pacing</div><div style={{ width: 95, textAlign: 'right' }}>Locked Pulls</div><div style={{ width: 90, textAlign: 'right' }}>Proj. Pulls</div><div style={{ width: 60 }} />
       </div>
       {loading ? <div style={{ padding: '18px', color: '#64748b', fontSize: 13 }}>Loading…</div>
         : rows.length === 0 ? <div style={{ padding: '18px', color: '#64748b', fontSize: 13 }}>No one on this roster.</div>
@@ -377,14 +412,15 @@ function Roster({ title, unit, rows, tiers, pace, editable, saving, onEdit, onOp
           return (
             <div key={r.name} style={{ display: 'flex', alignItems: 'center', padding: '10px 18px', borderTop: '1px solid rgba(148,163,184,.1)' }}>
               <div style={{ flex: 1, fontSize: 14.5, fontWeight: 800, color: '#e2e8f0' }}>{r.display}</div>
-              <div style={{ width: 130, textAlign: 'right' }}>
+              <div style={{ width: 120, textAlign: 'right' }}>
                 {editable
-                  ? <input value={r.raw != null ? r.raw : ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0"
-                      style={{ width: 96, background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#f1f5f9', padding: '5px 9px', fontSize: 14, fontWeight: 800, textAlign: 'right', outline: 'none' }} />
+                  ? <input value={r.raw != null ? r.raw : ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0" title={r.overridden ? `Overridden (auto: ${hrs(r.auto)})` : 'Auto from daily posts'}
+                      style={{ width: 90, background: 'rgba(2,6,23,.55)', border: `1px solid ${r.overridden ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.3)'}`, borderRadius: 8, color: r.overridden ? '#fde68a' : '#f1f5f9', padding: '5px 9px', fontSize: 14, fontWeight: 800, textAlign: 'right', outline: 'none' }} />
                   : <span style={{ fontSize: 15, fontWeight: 800, color: '#6ee7b7' }}>{hrs(r.hours)}</span>}
               </div>
-              <div style={{ width: 90, textAlign: 'right', fontSize: 15, fontWeight: 900, color: locked.pulls > 0 ? '#6ee7b7' : '#64748b' }}>{locked.pulls}</div>
-              <div style={{ width: 110, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#38bdf8' }}>{proj.pulls}</div>
+              <div style={{ width: 100, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#c4b5fd' }}>{hrs(projected)}</div>
+              <div style={{ width: 95, textAlign: 'right', fontSize: 15, fontWeight: 900, color: locked.pulls > 0 ? '#6ee7b7' : '#64748b' }}>{locked.pulls}</div>
+              <div style={{ width: 90, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#38bdf8' }}>{proj.pulls}</div>
               <div style={{ width: 60, textAlign: 'right' }}>
                 <button onClick={() => onOpen(r)} style={{ background: 'rgba(96,165,250,.16)', border: '1px solid rgba(96,165,250,.4)', color: '#93c5fd', borderRadius: 7, padding: '4px 10px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>View</button>
               </div>
