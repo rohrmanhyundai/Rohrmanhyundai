@@ -45,21 +45,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "msdhamks1zlx",
-    "ro": "779718",
-    "roDate": "2026-08-03",
-    "vehicle": "2021 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES WARNING FOR ENGINE OVERHEATING. TURNED OFF AND BACK ON WITH NO WARNINGS. CHECK AND ADVISE.",
-    "notes": "PARTS ARE ON ORDER",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/04/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
