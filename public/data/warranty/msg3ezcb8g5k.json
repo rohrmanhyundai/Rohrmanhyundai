@@ -1,7 +1,7 @@
 {
   "id": "msg3ezcb8g5k",
   "createdAt": "2026-08-05T12:58:32.171Z",
-  "updatedAt": "2026-08-05T19:31:41.745Z",
+  "updatedAt": "2026-08-05T20:05:51.090Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Lora Hasty",
   "customerPhone": "317) 727 - 3922",
@@ -25,6 +25,13 @@
       "description": "AC COMPRESSOR",
       "qty": "1",
       "price": "313.54"
+    },
+    {
+      "id": "msghwsk2u21c",
+      "partNumber": "25380-F2000",
+      "description": "BLOWER ASSY",
+      "qty": "1",
+      "price": "575.50"
     }
   ],
   "taxPct": "7",
@@ -35,7 +42,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "NOTE: EVAP/RECHARGE 1.4 TIME INCLUDED IN LABOR ABOVE. ",
+  "notes": "NOTE: EVAP/RECHARGE 1.4 TIME INCLUDED IN LABOR ABOVE. 1.0 R&R COMPRESSOR, .50 DIAG. BLOWER ASSY R&R ",
   "approved": true,
   "approvedDate": "2026-08-05",
   "denied": false,
