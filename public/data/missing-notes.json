@@ -1,15 +1,25 @@
 {
-  "updatedAt": "2026-08-05T17:55:18.586Z",
+  "updatedAt": "2026-08-05T22:14:25.657Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
+    "JORDAN": [
       {
-        "ro": "779800",
-        "vehicle": "2019 Hyundai Kona"
+        "ro": "779807",
+        "vehicle": "2025 Hyundai Elantra Hybrid"
       },
       {
-        "ro": "779756",
-        "vehicle": "2020 Subaru Legacy"
+        "ro": "779793",
+        "vehicle": "2022 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779791",
+        "vehicle": "2018 Hyundai Sonata"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "779805",
+        "vehicle": "2022 Hyundai Tucson"
       }
     ],
     "CORY": [
@@ -34,14 +44,6 @@
         "vehicle": "2023 Hyundai Tucson"
       },
       {
-        "ro": "779747",
-        "vehicle": "2023 Hyundai Kona"
-      },
-      {
-        "ro": "779746",
-        "vehicle": "2024 Hyundai Tucson Hybrid"
-      },
-      {
         "ro": "779743",
         "vehicle": "2023 Hyundai Santa Fe"
       },
@@ -52,10 +54,6 @@
       {
         "ro": "779736",
         "vehicle": "2023 Kia Sorento"
-      },
-      {
-        "ro": "779695",
-        "vehicle": "2024 Jeep Wagoneer"
       },
       {
         "ro": "779688",
@@ -70,20 +68,10 @@
         "vehicle": "2019 Ram 1500 Classic"
       }
     ],
-    "DAVID": [
+    "CODY": [
       {
-        "ro": "779798",
-        "vehicle": "2024 Hyundai Palisade"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "779793",
-        "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779791",
-        "vehicle": "2018 Hyundai Sonata"
+        "ro": "779756",
+        "vehicle": "2020 Subaru Legacy"
       }
     ]
   }
