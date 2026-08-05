@@ -377,12 +377,52 @@ function ReadView({ categories, packages }) {
   };
   const posted = (packages || []).filter(p => p.status === 'published' && (p.items || []).length);
   const populated = categories.map(c => ({ ...c, services: (c.services || []).filter(s => s.name) })).filter(c => c.services.length || c.name);
+  // Posted packages assigned to a still-existing category render inside it; the
+  // rest fall back to the pinned "Service Packages" section at the top.
+  const catHasId = (id) => populated.some(c => c.id === id);
+  const postedTop = posted.filter(p => !p.category || !catHasId(p.category));
+
+  // One posted-package card — reused in the top section and inside a category.
+  const renderPkgCard = (pkg, showBorder) => (
+    <div key={pkg.id} style={{ padding: '16px 22px', borderTop: showBorder ? '1px solid rgba(167,139,250,.16)' : 'none', background: 'rgba(167,139,250,.06)' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 16.5, fontWeight: 800, color: '#f1f5f9' }}>{pkg.name || 'Package'}</span>
+            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', color: '#c4b5fd', background: 'rgba(167,139,250,.16)', border: '1px solid rgba(167,139,250,.4)', borderRadius: 999, padding: '2px 8px' }}>📦 Package</span>
+          </div>
+          {pkg.desc && <div style={{ fontSize: 13, color: '#c4b5fd', marginTop: 3, lineHeight: 1.45 }}>{pkg.desc}</div>}
+        </div>
+        <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 19, fontWeight: 900, color: '#c4b5fd', letterSpacing: '-.01em' }}>{money(pkg.price || 0)}</div>
+          {numOf(pkg.taxRate) > 0 && <div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>incl. {numOf(pkg.taxRate)}% tax</div>}
+        </div>
+      </div>
+      <ul style={{ margin: '10px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 5 }}>
+        {(pkg.items || []).map(it => (
+          <li key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, color: '#cbd5e1' }}>
+            <span style={{ color: '#a78bfa' }}>✓</span>
+            <span style={{ flex: 1, minWidth: 0 }}>{it.name}</span>
+            {it.opCode && (
+              <button onClick={() => copyOp(it.opCode, `${pkg.id}:${it.id}`)} title="Copy op code"
+                style={{
+                  background: copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
+                  border: `1px solid ${copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.55)' : 'rgba(110,231,249,.4)'}`,
+                  color: copiedId === `${pkg.id}:${it.id}` ? '#4ade80' : '#6ee7f9',
+                  borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontWeight: 800, fontSize: 11, whiteSpace: 'nowrap',
+                }}>{copiedId === `${pkg.id}:${it.id}` ? '✓ Copied' : '⧉ Op Code'}</button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
   if (!populated.length && !posted.length) {
     return <div style={{ color: '#475569', textAlign: 'center', padding: '60px 0', fontSize: 15 }}>No services listed yet.</div>;
   }
   return (
     <div style={{ maxWidth: 920, margin: '0 auto', display: 'grid', gap: 22 }}>
-      {posted.length > 0 && (
+      {postedTop.length > 0 && (
         <section style={{
           background: 'linear-gradient(180deg, rgba(76,29,149,.42), rgba(15,23,42,.6))',
           border: '1px solid rgba(167,139,250,.35)', borderRadius: 18, overflow: 'hidden',
@@ -391,44 +431,16 @@ function ReadView({ categories, packages }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '15px 22px', background: 'linear-gradient(90deg, rgba(167,139,250,.22), rgba(167,139,250,0))', borderBottom: '1px solid rgba(167,139,250,.24)' }}>
             <span style={{ fontSize: 20 }}>📦</span>
             <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: '#f1f5f9', letterSpacing: '-.01em' }}>Service Packages</h2>
-            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: '#a78bfa' }}>{posted.length} package{posted.length === 1 ? '' : 's'}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: '#a78bfa' }}>{postedTop.length} package{postedTop.length === 1 ? '' : 's'}</span>
           </div>
           <div>
-            {posted.map((pkg, i) => (
-              <div key={pkg.id} style={{ padding: '16px 22px', borderTop: i === 0 ? 'none' : '1px solid rgba(167,139,250,.16)' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 16.5, fontWeight: 800, color: '#f1f5f9' }}>{pkg.name || 'Package'}</div>
-                    {pkg.desc && <div style={{ fontSize: 13, color: '#c4b5fd', marginTop: 3, lineHeight: 1.45 }}>{pkg.desc}</div>}
-                  </div>
-                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                    <div style={{ fontSize: 19, fontWeight: 900, color: '#c4b5fd', letterSpacing: '-.01em' }}>{money(pkg.price || 0)}</div>
-                    {numOf(pkg.taxRate) > 0 && <div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>incl. {numOf(pkg.taxRate)}% tax</div>}
-                  </div>
-                </div>
-                <ul style={{ margin: '10px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 5 }}>
-                  {(pkg.items || []).map(it => (
-                    <li key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, color: '#cbd5e1' }}>
-                      <span style={{ color: '#a78bfa' }}>✓</span>
-                      <span style={{ flex: 1, minWidth: 0 }}>{it.name}</span>
-                      {it.opCode && (
-                        <button onClick={() => copyOp(it.opCode, `${pkg.id}:${it.id}`)} title="Copy op code"
-                          style={{
-                            background: copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
-                            border: `1px solid ${copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.55)' : 'rgba(110,231,249,.4)'}`,
-                            color: copiedId === `${pkg.id}:${it.id}` ? '#4ade80' : '#6ee7f9',
-                            borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontWeight: 800, fontSize: 11, whiteSpace: 'nowrap',
-                          }}>{copiedId === `${pkg.id}:${it.id}` ? '✓ Copied' : '⧉ Op Code'}</button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {postedTop.map((pkg, i) => renderPkgCard(pkg, i > 0))}
           </div>
         </section>
       )}
-      {populated.map(cat => (
+      {populated.map(cat => {
+       const catPkgs = posted.filter(p => p.category === cat.id);
+       return (
         <section key={cat.id} style={{
           background: 'linear-gradient(180deg, rgba(30,41,59,.7), rgba(15,23,42,.6))',
           border: '1px solid rgba(148,163,184,.16)', borderRadius: 18, overflow: 'hidden',
@@ -437,7 +449,7 @@ function ReadView({ categories, packages }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '15px 22px', background: 'linear-gradient(90deg, rgba(110,231,183,.16), rgba(110,231,183,0))', borderBottom: '1px solid rgba(148,163,184,.14)' }}>
             <span style={{ width: 4, height: 22, borderRadius: 2, background: 'linear-gradient(180deg,#34d399,#6ee7b7)' }} />
             <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: '#f1f5f9', letterSpacing: '-.01em' }}>{cat.name || 'Services'}</h2>
-            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: '#64748b' }}>{cat.services.length} item{cat.services.length === 1 ? '' : 's'}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: '#64748b' }}>{cat.services.length + catPkgs.length} item{cat.services.length + catPkgs.length === 1 ? '' : 's'}</span>
           </div>
           <div>
             {cat.services.map((s, i) => (
@@ -477,9 +489,11 @@ function ReadView({ categories, packages }) {
                 </div>
               </div>
             ))}
+            {catPkgs.map((pkg, i) => renderPkgCard(pkg, cat.services.length > 0 || i > 0))}
           </div>
         </section>
-      ))}
+       );
+      })}
     </div>
   );
 }
@@ -651,7 +665,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', category: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -702,6 +716,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     if (d.couponAmt == null) d.couponAmt = '0';   // backfill for pre-coupon packages
     if (d.couponType == null) d.couponType = 'percent';
     if (d.couponMax == null) d.couponMax = '';
+    if (d.category == null) d.category = '';
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
@@ -818,9 +833,19 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 <div style={lbl}>Package name</div>
                 <input value={draft.name} onChange={e => setDraft(d => ({ ...d, name: e.target.value }))} placeholder="e.g. Hyundai 30k Mile Service" style={{ ...editInp, fontSize: 16, fontWeight: 800, color: '#f8fafc' }} />
               </div>
-              <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 12 }}>
                 <div style={lbl}>Description (shown on the menu)</div>
                 <input value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="Short description customers will see…" style={editInp} />
+              </div>
+              {/* Where the posted package lands on the View menu. */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={lbl}>Post to category</div>
+                <select value={draft.category || ''} onChange={e => setDraft(d => ({ ...d, category: e.target.value }))} style={{ ...editInp, cursor: 'pointer' }}>
+                  <option value="">📦 Service Packages (top of menu)</option>
+                  {(categories || []).filter(c => (c.name || '').trim()).map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Item column headers. LABOR comes from ELR%; PARTS is auto-filled
