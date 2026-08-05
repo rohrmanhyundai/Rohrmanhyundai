@@ -255,9 +255,9 @@
   "packages": [
     {
       "id": "pkg-msga4sfozh2x",
-      "name": "30 k",
-      "desc": "",
-      "status": "draft",
+      "name": "Customer requested the recommended 30,000-mile maintenance service.",
+      "desc": "Customer requested the recommended 30,000-mile maintenance service.",
+      "status": "published",
       "items": [
         {
           "id": "item-msga4tujbg2v",
@@ -320,10 +320,10 @@
           "lockCoupon": false
         },
         {
-          "id": "item-msgez460gfqn",
+          "id": "item-msggw4insua4",
           "name": "Wiper Blades OEM",
           "opCode": "WIPER",
-          "parts": "0",
+          "parts": "50",
           "laborHours": "0.1",
           "elrPct": "78.95",
           "excludeCoupon": false,
@@ -332,12 +332,12 @@
       ],
       "taxRate": "7",
       "taxBase": "parts",
-      "couponAmt": "0",
+      "couponAmt": "10",
       "couponType": "percent",
       "couponMax": "",
-      "price": 638.69,
-      "updatedAt": 1785955778206
+      "price": 628.49,
+      "updatedAt": 1785957428478
     }
   ],
-  "updatedAt": 1785957314486
+  "updatedAt": 1785957428478
 }
