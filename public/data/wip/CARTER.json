@@ -60,5 +60,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "msgn9su7ex39",
+    "ro": "779805",
+    "roDate": "2026-08-05",
+    "vehicle": "2022 Hyundai Tucson",
+    "jobDesc": "AIRBOX CLEANOUT",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
