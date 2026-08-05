@@ -189,7 +189,8 @@
           "desc": "Replace Front Pads and Resurface Rotors FACTORY",
           "opCode": "PADRESURF",
           "laborCost": "270.00",
-          "laborHours": "1.8"
+          "laborHours": "1.8",
+          "noCoupon": true
         },
         {
           "id": "svc-mrb0nu3zyd5p",
@@ -198,7 +199,8 @@
           "desc": "Replace Front Pads and Resurface Rotors [NON OEM]",
           "opCode": "PADRESURFNONOEM",
           "laborCost": "270.00",
-          "laborHours": "1.8"
+          "laborHours": "1.8",
+          "noCoupon": true
         },
         {
           "id": "svc-mrb0q3o8l601",
@@ -207,7 +209,8 @@
           "desc": "Replace Rear Pads and Resurface Rotors FACTORY",
           "opCode": "RPADRESURF",
           "laborCost": "270.0",
-          "laborHours": "1.8"
+          "laborHours": "1.8",
+          "noCoupon": true
         },
         {
           "id": "svc-mrb0ryefl2vn",
@@ -216,11 +219,12 @@
           "desc": "Replace Rear Pads and Resurface Rotors NON OEM",
           "opCode": "RPADRESURFNONOEM",
           "laborCost": "270.00",
-          "laborHours": "1.8"
+          "laborHours": "1.8",
+          "noCoupon": true
         }
       ]
     }
   ],
   "packages": [],
-  "updatedAt": 1785942592283
+  "updatedAt": 1785943528002
 }
