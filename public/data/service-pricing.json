@@ -260,7 +260,7 @@
   "packages": [
     {
       "id": "pkg-msga4sfozh2x",
-      "name": "Customer requested the recommended 30,000-mile maintenance service.",
+      "name": "Customer requested the recommended 30,000-mile maintenance service. PRICE INCLUDES 10%",
       "desc": "Customer requested the recommended 30,000-mile maintenance service.",
       "status": "published",
       "items": [
@@ -341,8 +341,9 @@
       "couponType": "percent",
       "couponMax": "",
       "price": 628.49,
-      "updatedAt": 1785957428478
+      "updatedAt": 1785958263026,
+      "category": "cat-msggyh2n4fce"
     }
   ],
-  "updatedAt": 1785957510364
+  "updatedAt": 1785958263026
 }
