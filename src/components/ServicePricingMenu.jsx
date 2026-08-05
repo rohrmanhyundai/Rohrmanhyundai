@@ -1099,8 +1099,24 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
                   {sum.eligibleFrac < 1 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>on {money(sum.eligibleSubtotal)} eligible</span>}
                 </span>
               </div>
+              {/* Coupon target guardrail — advisors should keep the effective ELR
+                  as close to 75% as possible when discounting. Warn below, confirm at/above. */}
               {sum.couponAmt > 0 && (
-                <SummaryRow label="Effective ELR (after coupon)" value={sum.effElr == null ? '—' : round2(sum.effElr) + '%'} valueColor={elrColor(sum.effElr)} />
+                <SummaryRow label="Effective ELR (after coupon)"
+                  value={sum.effElr == null ? '—' : round2(sum.effElr) + '%'}
+                  valueColor={sum.effElr != null && sum.effElr < 75 ? '#fb7185' : '#4ade80'} />
+              )}
+              {sum.couponAmt > 0 && sum.effElr != null && sum.effElr < 75 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8, padding: '9px 12px', background: 'rgba(251,113,133,.13)', border: '1px solid rgba(251,113,133,.5)', borderRadius: 10 }}>
+                  <span style={{ fontSize: 17 }}>⚠️</span>
+                  <span style={{ fontSize: 12.5, fontWeight: 800, color: '#fda4af' }}>Effective ELR is {round2(sum.effElr)}% — keep it as close to 75% as possible. Trim the coupon to protect margin.</span>
+                </div>
+              )}
+              {sum.couponAmt > 0 && sum.effElr != null && sum.effElr >= 75 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 8, padding: '7px 12px', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.4)', borderRadius: 10 }}>
+                  <span style={{ fontSize: 15 }}>✅</span>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#86efac' }}>On target — effective ELR is {round2(sum.effElr)}% (goal: ~75%).</span>
+                </div>
               )}
               {/* Tax */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
