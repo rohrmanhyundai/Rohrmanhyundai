@@ -1,6 +1,7 @@
 {
   "by": "SHAWN",
   "doorRate": "190.00",
+  "maxCoupon": "100",
   "categories": [
     {
       "id": "cat-maintenance",
@@ -220,5 +221,5 @@
     }
   ],
   "packages": [],
-  "updatedAt": 1785931539188
+  "updatedAt": 1785942578267
 }
