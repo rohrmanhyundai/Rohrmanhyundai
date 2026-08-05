@@ -390,6 +390,16 @@ function ReadView({ categories, packages }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 16.5, fontWeight: 800, color: '#f1f5f9' }}>{pkg.name || 'Package'}</span>
             <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', color: '#c4b5fd', background: 'rgba(167,139,250,.16)', border: '1px solid rgba(167,139,250,.4)', borderRadius: 999, padding: '2px 8px' }}>📦 Package</span>
+            {pkg.opCode && (
+              <button onClick={() => copyOp(pkg.opCode, pkg.id)} title="Copy package op code"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+                  background: copiedId === pkg.id ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
+                  border: `1px solid ${copiedId === pkg.id ? 'rgba(74,222,128,.55)' : 'rgba(110,231,249,.4)'}`,
+                  color: copiedId === pkg.id ? '#4ade80' : '#6ee7f9',
+                  borderRadius: 8, padding: '4px 10px', cursor: 'pointer', fontWeight: 800, fontSize: 11.5 }}>
+                {copiedId === pkg.id ? '✓ Copied' : `⧉ ${pkg.opCode}`}
+              </button>
+            )}
           </div>
           {pkg.desc && <div style={{ fontSize: 13, color: '#c4b5fd', marginTop: 3, lineHeight: 1.45 }}>{pkg.desc}</div>}
         </div>
@@ -403,15 +413,6 @@ function ReadView({ categories, packages }) {
           <li key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, color: '#cbd5e1' }}>
             <span style={{ color: '#a78bfa' }}>✓</span>
             <span style={{ flex: 1, minWidth: 0 }}>{it.name}</span>
-            {it.opCode && (
-              <button onClick={() => copyOp(it.opCode, `${pkg.id}:${it.id}`)} title="Copy op code"
-                style={{
-                  background: copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.2)' : 'rgba(110,231,249,.12)',
-                  border: `1px solid ${copiedId === `${pkg.id}:${it.id}` ? 'rgba(74,222,128,.55)' : 'rgba(110,231,249,.4)'}`,
-                  color: copiedId === `${pkg.id}:${it.id}` ? '#4ade80' : '#6ee7f9',
-                  borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontWeight: 800, fontSize: 11, whiteSpace: 'nowrap',
-                }}>{copiedId === `${pkg.id}:${it.id}` ? '✓ Copied' : '⧉ Op Code'}</button>
-            )}
           </li>
         ))}
       </ul>
@@ -665,7 +666,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', category: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', category: '', opCode: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -717,6 +718,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     if (d.couponType == null) d.couponType = 'percent';
     if (d.couponMax == null) d.couponMax = '';
     if (d.category == null) d.category = '';
+    if (d.opCode == null) d.opCode = '';
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
@@ -837,15 +839,22 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 <div style={lbl}>Description (shown on the menu)</div>
                 <input value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="Short description customers will see…" style={editInp} />
               </div>
-              {/* Where the posted package lands on the View menu. */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={lbl}>Post to category</div>
-                <select value={draft.category || ''} onChange={e => setDraft(d => ({ ...d, category: e.target.value }))} style={{ ...editInp, cursor: 'pointer' }}>
-                  <option value="">📦 Service Packages (top of menu)</option>
-                  {(categories || []).filter(c => (c.name || '').trim()).map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+              {/* Where the posted package lands + its single op code. */}
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+                <div style={{ flex: '2 1 260px' }}>
+                  <div style={lbl}>Post to category</div>
+                  <select value={draft.category || ''} onChange={e => setDraft(d => ({ ...d, category: e.target.value }))} style={{ ...editInp, cursor: 'pointer' }}>
+                    <option value="">📦 Service Packages (top of menu)</option>
+                    {(categories || []).filter(c => (c.name || '').trim()).map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: '1 1 150px' }}>
+                  <div style={lbl}>Package op code</div>
+                  <input value={draft.opCode || ''} onChange={e => setDraft(d => ({ ...d, opCode: e.target.value }))} placeholder="e.g. PKG30K"
+                    style={{ ...editInp, color: '#6ee7f9', fontWeight: 700 }} />
+                </div>
               </div>
 
               {/* Item column headers. LABOR comes from ELR%; PARTS is auto-filled
