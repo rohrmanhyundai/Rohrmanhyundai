@@ -446,7 +446,15 @@ function ReadView({ categories, packages }) {
                 borderTop: i === 0 ? 'none' : '1px solid rgba(148,163,184,.09)',
               }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 15.5, fontWeight: 700, color: '#e2e8f0' }}>{s.name}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 15.5, fontWeight: 700, color: '#e2e8f0' }}>{s.name}</span>
+                    {s.noCoupon && (
+                      <span title="A coupon cannot be applied to this service"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10.5, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', color: '#fbbf24', background: 'rgba(251,191,36,.14)', border: '1px solid rgba(251,191,36,.45)', borderRadius: 999, padding: '2px 9px', whiteSpace: 'nowrap' }}>
+                        🚫 No coupon
+                      </span>
+                    )}
+                  </div>
                   {s.desc && <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 3, lineHeight: 1.45 }}>{s.desc}</div>}
                 </div>
                 <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 14 }}>
