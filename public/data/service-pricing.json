@@ -349,7 +349,7 @@
       "id": "pkg-msgi1ijmrp1g",
       "name": "Synthetic Oil Change With Rotate",
       "desc": "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
-      "category": "",
+      "category": "cat-maintenance",
       "opCode": "ROH50ROTATE",
       "status": "published",
       "items": [
@@ -380,8 +380,8 @@
       "couponType": "percent",
       "couponMax": "",
       "price": 86.7,
-      "updatedAt": 1785959411852
+      "updatedAt": 1785959757969
     }
   ],
-  "updatedAt": 1785959411852
+  "updatedAt": 1785959757969
 }
