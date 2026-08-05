@@ -14,7 +14,8 @@
           "desc": "Up to 5 qts full synthetic oil, new OEM filter, and multipoint inspection.",
           "opCode": "ROHR50",
           "laborCost": "25.00",
-          "laborHours": ".3"
+          "laborHours": ".3",
+          "noCoupon": true
         },
         {
           "id": "svc-tire-rotate",
@@ -221,5 +222,5 @@
     }
   ],
   "packages": [],
-  "updatedAt": 1785942578267
+  "updatedAt": 1785942592283
 }
