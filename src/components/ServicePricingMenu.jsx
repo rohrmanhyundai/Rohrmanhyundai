@@ -129,6 +129,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
   const isEditor = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [categories, setCategories] = useState([]);
   const [doorRate, setDoorRate] = useState(''); // shop door/posted labor rate ($/hr) — editor only
+  const [maxCoupon, setMaxCoupon] = useState(''); // manager-locked cap on the Pricing Tool coupon ($)
   const [packages, setPackages] = useState([]); // built service packages (draft + published)
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -146,12 +147,14 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
       const d = await loadServicePricing();
       const cats = Array.isArray(d.categories) ? d.categories : [];
       const dr = d.doorRate || '';
+      const mc = d.maxCoupon || '';
       const pks = Array.isArray(d.packages) ? d.packages : [];
       setCategories(cats);
       setDoorRate(dr);
+      setMaxCoupon(mc);
       setPackages(pks);
       setUpdatedAt(d.updatedAt || null);
-      savedRef.current = JSON.stringify({ doorRate: dr, categories: cats, packages: pks });
+      savedRef.current = JSON.stringify({ doorRate: dr, maxCoupon: mc, categories: cats, packages: pks });
       setDirty(false);
     } catch (e) {
       setStatus('Could not load the pricing menu.');
@@ -163,8 +166,8 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
 
   // Track unsaved edits so the Save button and a leave-warning can react.
   useEffect(() => {
-    setDirty(JSON.stringify({ doorRate, categories, packages }) !== savedRef.current);
-  }, [categories, doorRate, packages]);
+    setDirty(JSON.stringify({ doorRate, maxCoupon, categories, packages }) !== savedRef.current);
+  }, [categories, doorRate, maxCoupon, packages]);
 
   // ── Editor mutations ──────────────────────────────────────────────────────
   const addCategory = () => setCategories(cs => [...cs, emptyCategory()]);
@@ -197,18 +200,20 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
       .map(c => ({ ...c, name: (c.name || '').trim(), services: (c.services || []).map(s => ({ ...s, name: (s.name || '').trim(), price: (s.price || '').trim(), desc: (s.desc || '').trim(), opCode: (s.opCode || '').trim(), laborCost: (s.laborCost || '').trim(), laborHours: (s.laborHours || '').trim() })).filter(s => s.name) }))
       .filter(c => c.name || c.services.length);
     const dr = (doorRate || '').trim();
+    const mc = ((over.maxCoupon != null ? over.maxCoupon : maxCoupon) || '').trim();
     const pks = over.packages != null ? over.packages : packages;
-    return { by: (currentUser || '').toUpperCase(), doorRate: dr, categories: clean, packages: pks, _clean: clean, _dr: dr, _pks: pks };
+    return { by: (currentUser || '').toUpperCase(), doorRate: dr, maxCoupon: mc, categories: clean, packages: pks, _clean: clean, _dr: dr, _mc: mc, _pks: pks };
   }
 
   async function handleSave() {
     setSaving(true); setStatus('');
     try {
-      const { _clean, _dr, _pks, ...data } = serialize();
+      const { _clean, _dr, _mc, _pks, ...data } = serialize();
       const saved = await saveServicePricing(data);
       setCategories(_clean);
       setDoorRate(_dr);
-      savedRef.current = JSON.stringify({ doorRate: _dr, categories: _clean, packages: _pks });
+      setMaxCoupon(_mc);
+      savedRef.current = JSON.stringify({ doorRate: _dr, maxCoupon: _mc, categories: _clean, packages: _pks });
       setUpdatedAt(saved.updatedAt || Date.now());
       setDirty(false);
       setStatus('saved');
@@ -232,10 +237,10 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
     };
     const i = packages.findIndex(p => p.id === priced.id);
     const next = i >= 0 ? packages.map((p, k) => k === i ? priced : p) : [...packages, priced];
-    const { _clean, _dr, _pks, ...data } = serialize({ packages: next });
+    const { _clean, _dr, _mc, _pks, ...data } = serialize({ packages: next });
     const saved = await saveServicePricing(data);
-    setCategories(_clean); setDoorRate(_dr); setPackages(next);
-    savedRef.current = JSON.stringify({ doorRate: _dr, categories: _clean, packages: next });
+    setCategories(_clean); setDoorRate(_dr); setMaxCoupon(_mc); setPackages(next);
+    savedRef.current = JSON.stringify({ doorRate: _dr, maxCoupon: _mc, categories: _clean, packages: next });
     setUpdatedAt(saved.updatedAt || Date.now());
     setDirty(false);
     return priced;
@@ -243,10 +248,24 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
 
   async function deletePackage(id) {
     const next = packages.filter(p => p.id !== id);
-    const { _clean, _dr, _pks, ...data } = serialize({ packages: next });
+    const { _clean, _dr, _mc, _pks, ...data } = serialize({ packages: next });
     const saved = await saveServicePricing(data);
-    setCategories(_clean); setDoorRate(_dr); setPackages(next);
-    savedRef.current = JSON.stringify({ doorRate: _dr, categories: _clean, packages: next });
+    setCategories(_clean); setDoorRate(_dr); setMaxCoupon(_mc); setPackages(next);
+    savedRef.current = JSON.stringify({ doorRate: _dr, maxCoupon: _mc, categories: _clean, packages: next });
+    setUpdatedAt(saved.updatedAt || Date.now());
+    setDirty(false);
+  }
+
+  // Persist the manager-locked coupon cap on its own (from the Pricing Tool).
+  // Saves the whole menu so every user picks up the new cap on next load.
+  async function commitMaxCoupon(value) {
+    const v = (value || '').trim();
+    if (v === (maxCoupon || '').trim()) return;   // nothing changed
+    setMaxCoupon(v);
+    const { _clean, _dr, _mc, _pks, ...data } = serialize({ maxCoupon: v });
+    const saved = await saveServicePricing(data);
+    setCategories(_clean); setDoorRate(_dr); setPackages(_pks);
+    savedRef.current = JSON.stringify({ doorRate: _dr, maxCoupon: _mc, categories: _clean, packages: _pks });
     setUpdatedAt(saved.updatedAt || Date.now());
     setDirty(false);
   }
@@ -281,6 +300,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
         ) : tab === 'edit' && isEditor ? (
           <EditView
             categories={categories} doorRate={doorRate} setDoorRate={setDoorRate} packages={packages}
+            maxCoupon={maxCoupon} setMaxCoupon={setMaxCoupon}
             addCategory={addCategory} renameCategory={renameCategory} deleteCategory={deleteCategory} moveCategory={moveCategory}
             addService={addService} updateService={updateService} deleteService={deleteService} moveService={moveService}
             saving={saving} dirty={dirty} status={status} onSave={handleSave}
@@ -302,6 +322,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
       {pricingOpen && (
         <PricingToolModal
           categories={categories} doorRate={doorRate}
+          maxCoupon={maxCoupon} canEditCap={isEditor} onCommitCap={commitMaxCoupon}
           onClose={() => setPricingOpen(false)}
         />
       )}
@@ -456,7 +477,7 @@ function ReadView({ categories, packages }) {
 }
 
 // ── Full-area editor (managers / admins) ─────────────────────────────────────
-function EditView({ categories, doorRate, setDoorRate, packages, addCategory, renameCategory, deleteCategory, moveCategory, addService, updateService, deleteService, moveService, saving, dirty, status, onSave, onOpenBuilder }) {
+function EditView({ categories, doorRate, setDoorRate, maxCoupon, setMaxCoupon, packages, addCategory, renameCategory, deleteCategory, moveCategory, addService, updateService, deleteService, moveService, saving, dirty, status, onSave, onOpenBuilder }) {
   const pubCount = (packages || []).filter(p => p.status === 'published').length;
   const draftCount = (packages || []).filter(p => p.status !== 'published').length;
   return (
@@ -471,6 +492,19 @@ function EditView({ categories, doorRate, setDoorRate, packages, addCategory, re
         <div style={{ flex: 1 }} />
         <input value={doorRate} onChange={e => setDoorRate(e.target.value)} placeholder="$0.00" inputMode="decimal"
           style={{ ...editInp, width: 140, fontSize: 18, fontWeight: 900, color: '#93c5fd', textAlign: 'center' }} />
+      </div>
+
+      {/* Max coupon — the manager lock. Caps the coupon in the Pricing Tool for
+          everyone; advisors can't change it. Blank = no cap. Saved with the menu. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.28)', borderRadius: 14, padding: '14px 18px', marginBottom: 14 }}>
+        <span style={{ fontSize: 24 }}>🔒</span>
+        <div>
+          <div style={{ ...lbl, marginBottom: 2, color: '#fbbf24' }}>Max Coupon Amount ($)</div>
+          <div style={{ fontSize: 12, color: '#94a3b8' }}>Locks the biggest coupon anyone can apply in the Pricing Tool. Advisors can't change it. Leave blank for no cap.</div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <input value={maxCoupon} onChange={e => setMaxCoupon(e.target.value)} placeholder="No cap" inputMode="decimal"
+          style={{ ...editInp, width: 140, fontSize: 18, fontWeight: 900, color: '#fbbf24', textAlign: 'center' }} />
       </div>
 
       {/* Package builder launcher */}
@@ -908,9 +942,11 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 // the Package Builder — pick services, apply a coupon (with an optional cap) —
 // but nothing is saved or posted; it just prices a job on the spot. Services the
 // manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
-function PricingToolModal({ categories, doorRate, onClose }) {
-  const [draft, setDraft] = useState({ items: [], couponAmt: '0', couponType: 'dollar', couponMax: '', taxRate: '7', taxBase: 'parts' });
+function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose }) {
+  // The coupon cap is manager-locked: it always starts from the saved menu value.
+  const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'dollar', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
   const [search, setSearch] = useState('');
+  const [capSaving, setCapSaving] = useState(false);
 
   const dr = numOf(doorRate) || 0;
   const groups = (categories || [])
@@ -943,7 +979,7 @@ function PricingToolModal({ categories, doorRate, onClose }) {
           <span style={{ fontSize: 22 }}>🧮</span>
           <div>
             <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>Pricing Tool</div>
-            <div style={{ fontSize: 11.5, color: '#94a3b8' }}>Price a job & apply a coupon — nothing is saved</div>
+            <div style={{ fontSize: 11.5, color: '#94a3b8' }}>Price a job & apply a coupon — quotes aren't saved</div>
           </div>
           <div style={{ flex: 1 }} />
           <button onClick={onClose} style={{ ...iconBtn(false), width: 34 }}>✕</button>
@@ -1048,9 +1084,14 @@ function PricingToolModal({ categories, doorRate, onClose }) {
                   <option value="dollar">$ off</option>
                   <option value="percent">% off</option>
                 </select>
-                <span style={{ fontSize: 12, color: '#94a3b8' }}>max $</span>
-                <input value={draft.couponMax ?? ''} onChange={e => setDraft(d => ({ ...d, couponMax: e.target.value }))} inputMode="decimal" placeholder="—"
-                  style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#94a3b8' }} />
+                <span style={{ fontSize: 12, color: '#94a3b8' }}>max ${canEditCap ? '' : ' 🔒'}</span>
+                <input value={draft.couponMax ?? ''} readOnly={!canEditCap} disabled={!canEditCap}
+                  onChange={e => { if (canEditCap) setDraft(d => ({ ...d, couponMax: e.target.value })); }}
+                  onBlur={async () => { if (canEditCap && onCommitCap) { setCapSaving(true); try { await onCommitCap(draft.couponMax); } catch { /* ignore */ } finally { setCapSaving(false); } } }}
+                  inputMode="decimal" placeholder={canEditCap ? '—' : 'none'}
+                  title={canEditCap ? 'Manager cap — saved for everyone using the Pricing Tool' : 'Coupon cap locked by a manager'}
+                  style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: canEditCap ? '#fbbf24' : '#94a3b8', cursor: canEditCap ? 'text' : 'not-allowed', opacity: canEditCap ? 1 : .7 }} />
+                {capSaving && <span style={{ fontSize: 10, color: '#94a3b8' }}>saving…</span>}
                 <div style={{ flex: 1 }} />
                 <span style={{ textAlign: 'right' }}>
                   <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
