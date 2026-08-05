@@ -341,9 +341,10 @@
       "couponType": "percent",
       "couponMax": "",
       "price": 628.49,
-      "updatedAt": 1785958263026,
-      "category": "cat-msggyh2n4fce"
+      "updatedAt": 1785959108137,
+      "category": "cat-msggyh2n4fce",
+      "opCode": "30KSERVICE"
     }
   ],
-  "updatedAt": 1785958694414
+  "updatedAt": 1785959108137
 }
