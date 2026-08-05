@@ -58,7 +58,7 @@
     },
     {
       "username": "David",
-      "password": "david2026",
+      "password": "David2026",
       "role": "advisor",
       "canEditDashboard": false,
       "pages": {
@@ -71,10 +71,16 @@
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": true
+        "chargeAccountList": true,
+        "partsHub": true,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "managementAccess": false
     },
     {
       "username": "Jason",
