@@ -643,7 +643,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'dollar', couponMax: '' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -692,7 +692,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     if (d.taxRate == null) d.taxRate = '7';       // backfill for pre-tax packages
     if (d.taxBase == null) d.taxBase = 'parts';
     if (d.couponAmt == null) d.couponAmt = '0';   // backfill for pre-coupon packages
-    if (d.couponType == null) d.couponType = 'dollar';
+    if (d.couponType == null) d.couponType = 'percent';
     if (d.couponMax == null) d.couponMax = '';
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
@@ -880,10 +880,10 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                   <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Coupon</span>
                   <input value={draft.couponAmt ?? '0'} onChange={e => setDraft(d => ({ ...d, couponAmt: e.target.value }))} inputMode="decimal" placeholder="0"
                     style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#4ade80' }} />
-                  <select value={draft.couponType || 'dollar'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
+                  <select value={draft.couponType || 'percent'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
                     style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
-                    <option value="dollar">$ off</option>
                     <option value="percent">% off</option>
+                    <option value="dollar">$ off</option>
                   </select>
                   <span style={{ fontSize: 12, color: '#94a3b8' }}>max $</span>
                   <input value={draft.couponMax ?? ''} onChange={e => setDraft(d => ({ ...d, couponMax: e.target.value }))} inputMode="decimal" placeholder="—"
@@ -944,7 +944,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 // manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
 function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose }) {
   // The coupon cap is manager-locked: it always starts from the saved menu value.
-  const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'dollar', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
+  const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
   const [search, setSearch] = useState('');
   const [capSaving, setCapSaving] = useState(false);
 
@@ -968,7 +968,7 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
   const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
-  const clearAll = () => setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'dollar', couponMax: '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
+  const clearAll = () => setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
   const countInPkg = (name) => (draft.items || []).filter(it => it.name === name).length;
 
   return (
@@ -1079,10 +1079,10 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
                 <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Coupon</span>
                 <input value={draft.couponAmt ?? '0'} onChange={e => setDraft(d => ({ ...d, couponAmt: e.target.value }))} inputMode="decimal" placeholder="0"
                   style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#4ade80' }} />
-                <select value={draft.couponType || 'dollar'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
+                <select value={draft.couponType || 'percent'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
                   style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
-                  <option value="dollar">$ off</option>
                   <option value="percent">% off</option>
+                  <option value="dollar">$ off</option>
                 </select>
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>max ${canEditCap ? '' : ' 🔒'}</span>
                 <input value={draft.couponMax ?? ''} readOnly={!canEditCap} disabled={!canEditCap}
