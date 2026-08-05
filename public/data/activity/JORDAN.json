@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-05T13:22:56.251Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-04T20:12:04.469Z",
     "type": "page",
     "label": "advisor-goals"
@@ -1032,97 +1037,6 @@
   },
   {
     "at": "2026-07-06T13:30:34.129Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T13:10:05.483Z",
-    "type": "page",
-    "label": "goal-forecast"
-  },
-  {
-    "at": "2026-07-06T12:56:26.994Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-06T12:56:24.272Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T12:48:45.921Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-06T10:55:40.352Z",
-    "type": "action",
-    "label": "send-to-reports"
-  },
-  {
-    "at": "2026-07-06T10:55:33.022Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-07-06T10:55:31.851Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report.xlsx"
-  },
-  {
-    "at": "2026-07-06T10:53:27.538Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-07-06T10:52:16.368Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-07-06T10:49:03.553Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-06T10:49:01.465Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-06T10:48:56.897Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-06T10:48:47.501Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T10:40:11.446Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T10:28:23.124Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-06T10:28:17.678Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T10:25:41.801Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-06T10:25:33.164Z",
     "type": "page",
     "label": "advisor-calendar"
   }
