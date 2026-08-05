@@ -55,7 +55,7 @@
   {
     "id": "msd961y2ff6a",
     "createdAt": "2026-08-03T13:16:14.810Z",
-    "updatedAt": "2026-08-03T13:28:02.865Z",
+    "updatedAt": "2026-08-05T15:36:11.552Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Megan Templin",
     "customerPhone": " (317) 410 - 4064",
@@ -64,21 +64,21 @@
     "vehicleYear": "2023",
     "vehicleMake": "HYUNDAI",
     "vehicleModel": "Santa Fe",
-    "mileage": "",
+    "mileage": "73685",
     "warrantyCompany": "aagi",
     "warrantyPhone": "888-442-2886",
-    "claimNumber": "",
-    "authNumber": "",
+    "claimNumber": "604254",
+    "authNumber": "604254",
     "laborRate": "170.00",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "laborTime": "1.0",
+    "diagnosisTime": ".5",
     "parts": [
       {
         "id": "msd961y2iqsp",
         "partNumber": "55307-S2EA0",
         "description": "SHOCK ABSORBER ASSY-REAR",
         "qty": "2",
-        "price": ""
+        "price": "406.69"
       }
     ],
     "taxPct": "7",
@@ -90,8 +90,8 @@
     "tireTax": null,
     "tireDisposal": null,
     "notes": "CALLED AAGI 08/03/2026 @ 9:15AM.  HAS AAGI POLICY AND NEEDS TO BRING VEHICLE BACK IN. WHEN COMES BACK IN THE NAME ON THE REPAIR ORDER HAS TO BE UNDER (JUSTIN HOFFMANN). THIS IS WHAT AAGI HAS FOR OWNER.",
-    "approved": false,
-    "approvedDate": "",
+    "approved": true,
+    "approvedDate": "2026-08-05",
     "denied": false,
     "deniedDate": "",
     "waiting": false,
