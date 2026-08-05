@@ -41,5 +41,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "msge0llu288a",
+    "ro": "779786",
+    "roDate": "2026-08-05",
+    "vehicle": "2017 Hyundai Elantra",
+    "jobDesc": "a/c compressor replacement",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
