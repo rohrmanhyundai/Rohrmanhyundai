@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-05T12:57:41.545Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-08-05T12:03:09.723Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1348,22 +1353,6 @@
   },
   {
     "at": "2026-07-06T13:35:01.643Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-06T12:32:45.497Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778692 tech CHAD"
-  },
-  {
-    "at": "2026-07-06T12:31:56.724Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-06T12:31:54.939Z",
     "type": "page",
     "label": "tech-resources"
   }
