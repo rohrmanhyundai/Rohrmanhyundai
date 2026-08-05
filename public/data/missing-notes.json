@@ -1,8 +1,26 @@
 {
-  "updatedAt": "2026-08-04T21:47:12.342Z",
+  "updatedAt": "2026-08-05T17:55:18.586Z",
   "by": "SHAWN",
   "advisors": {
+    "CODY": [
+      {
+        "ro": "779800",
+        "vehicle": "2019 Hyundai Kona"
+      },
+      {
+        "ro": "779756",
+        "vehicle": "2020 Subaru Legacy"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "779799",
+        "vehicle": "2018 Honda Odyssey"
+      },
+      {
+        "ro": "779792",
+        "vehicle": "2012 Nissan Sentra"
+      },
       {
         "ro": "779781",
         "vehicle": "2020 Hyundai Tucson"
@@ -50,16 +68,22 @@
       {
         "ro": "779561",
         "vehicle": "2019 Ram 1500 Classic"
-      },
-      {
-        "ro": "779419",
-        "vehicle": "2017 Nissan Murano"
       }
     ],
-    "CODY": [
+    "DAVID": [
       {
-        "ro": "779756",
-        "vehicle": "2020 Subaru Legacy"
+        "ro": "779798",
+        "vehicle": "2024 Hyundai Palisade"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "779793",
+        "vehicle": "2022 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "779791",
+        "vehicle": "2018 Hyundai Sonata"
       }
     ]
   }
