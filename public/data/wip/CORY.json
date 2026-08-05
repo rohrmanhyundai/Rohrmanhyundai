@@ -1,21 +1,5 @@
 [
   {
-    "id": "ms6p2lgoi6ms",
-    "ro": "779642",
-    "roDate": "2026-07-29",
-    "vehicle": "2025 Hyundai Santa Cruz",
-    "jobDesc": "CUSTOMER STATES AIR BAG LIGHT IS ON (SOP)",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "07/29/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": ""
-  },
-  {
     "id": "ms3qz1c17fm4",
     "ro": "779580",
     "roDate": "2026-07-27",
