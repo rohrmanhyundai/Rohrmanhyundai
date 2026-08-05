@@ -50,8 +50,8 @@
           "price": "TBD",
           "desc": "INSTALL NEW REAR WIPER BLADE",
           "opCode": "RWIPER",
-          "laborCost": "",
-          "laborHours": ""
+          "laborCost": "15",
+          "laborHours": ".1"
         },
         {
           "id": "svc-cabin-filter",
@@ -339,5 +339,5 @@
       "updatedAt": 1785955778206
     }
   ],
-  "updatedAt": 1785957292878
+  "updatedAt": 1785957314486
 }
