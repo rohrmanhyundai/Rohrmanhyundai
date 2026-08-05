@@ -32,8 +32,8 @@
           "price": "",
           "desc": "INSTALL NEW FRONT WIPER BLADES",
           "opCode": "WIPER",
-          "laborCost": "",
-          "laborHours": ""
+          "laborCost": "15",
+          "laborHours": ".1"
         },
         {
           "id": "svc-msgc1dk2shr9",
@@ -46,7 +46,7 @@
         },
         {
           "id": "svc-msgckhr5dtzg",
-          "name": "Wiper Rear",
+          "name": "Wiper Rear (MUST GET QUOTE)",
           "price": "",
           "desc": "INSTALL NEW REAR WIPER BLADE",
           "opCode": "RWIPER",
@@ -329,5 +329,5 @@
       "updatedAt": 1785949042275
     }
   ],
-  "updatedAt": 1785950690191
+  "updatedAt": 1785953099947
 }
