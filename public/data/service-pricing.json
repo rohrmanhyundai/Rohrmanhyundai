@@ -79,6 +79,15 @@
           "opCode": "BALANCE",
           "laborCost": "99.99",
           "laborHours": ".9"
+        },
+        {
+          "id": "svc-msgc1dk2shr9",
+          "name": "Wiper Blades NON-OEM",
+          "price": "$39.00",
+          "desc": "INSTALL NEW FRONT WIPER BLADES [NON OEM]",
+          "opCode": "WIPERAFTERMARKET",
+          "laborCost": "20",
+          "laborHours": ".1"
         }
       ]
     },
@@ -302,5 +311,5 @@
       "updatedAt": 1785949042275
     }
   ],
-  "updatedAt": 1785949042275
+  "updatedAt": 1785949594437
 }
