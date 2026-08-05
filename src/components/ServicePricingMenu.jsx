@@ -49,12 +49,30 @@ function packageSummary(pkg, doorRate) {
   const labor = (elr != null && dr > 0 && hours > 0) ? (elr / 100) * dr * hours : autoLabor;
 
   const subtotal = parts + labor;
+
+  // Coupon — an optional manager-set discount, split 70% off labor / 30% off
+  // parts. The labor share drops the effective ELR to reflect what's actually
+  // being charged. A percentage is figured off the pre-coupon subtotal; a dollar
+  // amount is taken straight off. Default is nothing (0% / $0) → no change.
+  const couponType = pkg.couponType === 'percent' ? 'percent' : 'dollar';
+  const couponVal = numOf(pkg.couponAmt) || 0;
+  const couponAmt = couponVal <= 0 ? 0
+    : Math.min(couponType === 'percent' ? (couponVal / 100) * subtotal : couponVal, subtotal);
+  const couponLabor = couponAmt * 0.7;                        // 70% comes off labor
+  const couponParts = couponAmt * 0.3;                        // 30% comes off parts
+  const netLabor = labor - couponLabor;
+  const netParts = parts - couponParts;
+  const netSubtotal = netLabor + netParts;                    // = subtotal − couponAmt
+  const effElr = (dr > 0 && hours > 0) ? (netLabor / hours) / dr * 100 : elr;
+
   const rate = numOf(pkg.taxRate);
   const taxRate = rate == null ? 0 : rate;
   const taxBase = pkg.taxBase === 'subtotal' ? 'subtotal' : 'parts';
-  const taxAmt = (taxRate / 100) * (taxBase === 'subtotal' ? subtotal : parts);
+  const taxAmt = (taxRate / 100) * (taxBase === 'subtotal' ? netSubtotal : netParts);
   return {
-    parts, labor, hours, elr, subtotal, taxRate, taxBase, taxAmt, grand: subtotal + taxAmt,
+    parts, labor, hours, elr, subtotal, taxRate, taxBase, taxAmt,
+    couponType, couponVal, couponAmt, couponLabor, couponParts, netParts, netSubtotal, netLabor, effElr,
+    grand: netSubtotal + taxAmt,
     autoParts, autoLabor, autoHours, autoElr,
     overridden: ovrHours != null || ovrElr != null || ovrParts != null,
   };
@@ -553,7 +571,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'dollar' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -601,6 +619,8 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     const d = JSON.parse(JSON.stringify(pkg));
     if (d.taxRate == null) d.taxRate = '7';       // backfill for pre-tax packages
     if (d.taxBase == null) d.taxBase = 'parts';
+    if (d.couponAmt == null) d.couponAmt = '0';   // backfill for pre-coupon packages
+    if (d.couponType == null) d.couponType = 'dollar';
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
@@ -772,6 +792,24 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                 <SummaryEdit label="Labor hours" suffix="hrs" value={String(round2(sum.hours))} onChange={v => setDraft(d => ({ ...d, ovrHours: v }))} />
                 <SummaryEdit label="ELR %" suffix="%" value={sum.elr == null ? '' : String(round2(sum.elr))} onChange={v => setDraft(d => ({ ...d, ovrElr: v }))} color={elrColor(sum.elr)} />
                 <SummaryRow label="Subtotal" value={money(sum.subtotal)} strong />
+                {/* Coupon — optional discount, split 70% labor / 30% parts; the
+                    labor share moves the effective ELR. Default is 0% / $0. */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Coupon</span>
+                  <input value={draft.couponAmt ?? '0'} onChange={e => setDraft(d => ({ ...d, couponAmt: e.target.value }))} inputMode="decimal" placeholder="0"
+                    style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#4ade80' }} />
+                  <select value={draft.couponType || 'dollar'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
+                    style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
+                    <option value="dollar">$ off</option>
+                    <option value="percent">% off</option>
+                  </select>
+                  <div style={{ flex: 1 }} />
+                  <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
+                </div>
+                {/* Effective ELR after the coupon — auto-figured from discounted labor. */}
+                {sum.couponAmt > 0 && (
+                  <SummaryRow label="Effective ELR (after coupon)" value={sum.effElr == null ? '—' : round2(sum.effElr) + '%'} valueColor={elrColor(sum.effElr)} />
+                )}
                 {/* Tax — adjustable rate (default 7%) and what it applies to. */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
                   <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Tax</span>
