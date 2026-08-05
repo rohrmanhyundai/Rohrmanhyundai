@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-08-05T14:49:47.940Z",
+    "type": "page",
+    "label": "service-pricing"
+  },
+  {
+    "at": "2026-08-05T14:49:43.650Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-05T14:49:42.809Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-04T21:11:09.494Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -991,16 +1006,6 @@
   },
   {
     "at": "2026-07-06T15:59:09.615Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-06T13:34:10.523Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-06T13:34:03.859Z",
     "type": "page",
     "label": "advisor-calendar"
   }
