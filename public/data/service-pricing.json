@@ -257,7 +257,7 @@
       "id": "pkg-msga4sfozh2x",
       "name": "30 k",
       "desc": "",
-      "status": "published",
+      "status": "draft",
       "items": [
         {
           "id": "item-msga4tujbg2v",
@@ -332,12 +332,12 @@
       ],
       "taxRate": "7",
       "taxBase": "parts",
-      "couponAmt": "10",
+      "couponAmt": "0",
       "couponType": "percent",
       "couponMax": "",
-      "price": 580.1,
-      "updatedAt": 1785954472544
+      "price": 638.69,
+      "updatedAt": 1785955778206
     }
   ],
-  "updatedAt": 1785954472544
+  "updatedAt": 1785955778206
 }
