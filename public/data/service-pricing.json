@@ -261,16 +261,46 @@
           "elrPct": "98.68",
           "excludeCoupon": false,
           "lockCoupon": false
+        },
+        {
+          "id": "item-msgalhdr91co",
+          "name": "Valvoline Brake Flush",
+          "opCode": "VVBFL",
+          "parts": "45",
+          "laborHours": "0.7",
+          "elrPct": "103.75",
+          "excludeCoupon": false,
+          "lockCoupon": false
+        },
+        {
+          "id": "item-msgalst6attl",
+          "name": "Cabin Air Filter",
+          "opCode": "CABIN",
+          "parts": "45.49",
+          "laborHours": "0.2",
+          "elrPct": "65.79",
+          "excludeCoupon": false,
+          "lockCoupon": false
+        },
+        {
+          "id": "item-msgaltizxuhm",
+          "name": "Air Filter",
+          "opCode": "AIRFILTER",
+          "parts": "35.5",
+          "laborHours": "0.2",
+          "elrPct": "65.79",
+          "excludeCoupon": false,
+          "lockCoupon": false
         }
       ],
       "taxRate": "7",
       "taxBase": "parts",
-      "couponAmt": "0",
+      "couponAmt": "10",
       "couponType": "percent",
       "couponMax": "",
-      "price": 300.9,
-      "updatedAt": 1785946063964
+      "price": 566.63,
+      "updatedAt": 1785947951790
     }
   ],
-  "updatedAt": 1785946063964
+  "updatedAt": 1785947951790
 }
