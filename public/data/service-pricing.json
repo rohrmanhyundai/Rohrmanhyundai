@@ -253,7 +253,7 @@
     },
     {
       "id": "cat-msggyh2n4fce",
-      "name": "Maintance Packages *Taxes and Fees not included*",
+      "name": "Maintance Packages *Fees not included*",
       "services": []
     }
   ],
@@ -345,5 +345,5 @@
       "category": "cat-msggyh2n4fce"
     }
   ],
-  "updatedAt": 1785958263026
+  "updatedAt": 1785958694414
 }
