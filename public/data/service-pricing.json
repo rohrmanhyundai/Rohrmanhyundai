@@ -27,6 +27,33 @@
           "laborHours": ".4"
         },
         {
+          "id": "svc-msgck0hosanm",
+          "name": "Wiper Blades OEM",
+          "price": "",
+          "desc": "INSTALL NEW FRONT WIPER BLADES",
+          "opCode": "WIPER",
+          "laborCost": "",
+          "laborHours": ""
+        },
+        {
+          "id": "svc-msgc1dk2shr9",
+          "name": "Wiper Blades NON-OEM",
+          "price": "$39.00",
+          "desc": "INSTALL NEW FRONT WIPER BLADES [NON OEM]",
+          "opCode": "WIPERAFTERMARKET",
+          "laborCost": "15",
+          "laborHours": ".1"
+        },
+        {
+          "id": "svc-msgckhr5dtzg",
+          "name": "Wiper Rear",
+          "price": "",
+          "desc": "INSTALL NEW REAR WIPER BLADE",
+          "opCode": "RWIPER",
+          "laborCost": "",
+          "laborHours": ""
+        },
+        {
           "id": "svc-cabin-filter",
           "name": "Cabin Air Filter OEM",
           "price": "$70.49",
@@ -79,33 +106,6 @@
           "opCode": "BALANCE",
           "laborCost": "99.99",
           "laborHours": ".9"
-        },
-        {
-          "id": "svc-msgc1dk2shr9",
-          "name": "Wiper Blades NON-OEM",
-          "price": "$39.00",
-          "desc": "INSTALL NEW FRONT WIPER BLADES [NON OEM]",
-          "opCode": "WIPERAFTERMARKET",
-          "laborCost": "15",
-          "laborHours": ".1"
-        },
-        {
-          "id": "svc-msgck0hosanm",
-          "name": "Wiper Blades OEM",
-          "price": "",
-          "desc": "INSTALL NEW FRONT WIPER BLADES",
-          "opCode": "WIPER",
-          "laborCost": "",
-          "laborHours": ""
-        },
-        {
-          "id": "svc-msgckhr5dtzg",
-          "name": "Wiper Rear",
-          "price": "",
-          "desc": "INSTALL NEW REAR WIPER BLADE",
-          "opCode": "RWIPER",
-          "laborCost": "",
-          "laborHours": ""
         }
       ]
     },
@@ -329,5 +329,5 @@
       "updatedAt": 1785949042275
     }
   ],
-  "updatedAt": 1785950608827
+  "updatedAt": 1785950690191
 }
