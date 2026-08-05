@@ -29,7 +29,7 @@
         {
           "id": "svc-msgck0hosanm",
           "name": "Wiper Blades OEM",
-          "price": "",
+          "price": "$65.00",
           "desc": "INSTALL NEW FRONT WIPER BLADES",
           "opCode": "WIPER",
           "laborCost": "15",
@@ -47,7 +47,7 @@
         {
           "id": "svc-msgckhr5dtzg",
           "name": "Wiper Rear (MUST GET QUOTE)",
-          "price": "",
+          "price": "TBD",
           "desc": "INSTALL NEW REAR WIPER BLADE",
           "opCode": "RWIPER",
           "laborCost": "",
@@ -339,5 +339,5 @@
       "updatedAt": 1785955778206
     }
   ],
-  "updatedAt": 1785955778206
+  "updatedAt": 1785957292878
 }
