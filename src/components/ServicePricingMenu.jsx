@@ -34,11 +34,16 @@ function itemMath(item, doorRate) {
 // defaults to 7% on parts only. Grand total = parts + labor + tax.
 function packageSummary(pkg, doorRate) {
   const dr = numOf(doorRate) || 0;
-  let autoParts = 0, autoLabor = 0, autoHours = 0;
+  let autoParts = 0, autoLabor = 0, autoHours = 0, autoLineTotal = 0, eligLineTotal = 0;
   for (const it of (pkg.items || [])) {
     const m = itemMath(it, doorRate);
     autoParts += m.parts; autoLabor += m.laborCost; autoHours += numOf(it.laborHours) || 0;
+    const lt = m.parts + m.laborCost;             // this line's share of the package
+    autoLineTotal += lt;
+    if (!it.excludeCoupon) eligLineTotal += lt;    // only non-excluded lines earn the coupon
   }
+  // Fraction of the package the coupon is allowed to touch (1 when nothing is excluded).
+  const eligibleFrac = autoLineTotal > 0 ? eligLineTotal / autoLineTotal : 1;
   const autoElr = (autoHours > 0 && dr > 0) ? (autoLabor / autoHours) / dr * 100 : null;
 
   const ovrHours = numOf(pkg.ovrHours), ovrElr = numOf(pkg.ovrElr), ovrParts = numOf(pkg.ovrParts);
@@ -56,8 +61,9 @@ function packageSummary(pkg, doorRate) {
   // amount is taken straight off. Default is nothing (0% / $0) → no change.
   const couponType = pkg.couponType === 'percent' ? 'percent' : 'dollar';
   const couponVal = numOf(pkg.couponAmt) || 0;
+  const eligibleSubtotal = subtotal * eligibleFrac;           // portion the coupon can discount
   const rawCoupon = couponVal <= 0 ? 0
-    : Math.min(couponType === 'percent' ? (couponVal / 100) * subtotal : couponVal, subtotal);
+    : Math.min(couponType === 'percent' ? (couponVal / 100) * eligibleSubtotal : couponVal, eligibleSubtotal);
   // Optional dollar cap — when set (> 0), the discount can't exceed it. Handy for
   // "% off, up to $X". Empty / 0 means no cap.
   const couponMax = numOf(pkg.couponMax);
@@ -77,6 +83,7 @@ function packageSummary(pkg, doorRate) {
   return {
     parts, labor, hours, elr, subtotal, taxRate, taxBase, taxAmt,
     couponType, couponVal, couponMax, couponCapped, couponAmt, couponLabor, couponParts, netParts, netSubtotal, netLabor, effElr,
+    eligibleSubtotal, eligibleFrac,
     grand: netSubtotal + taxAmt,
     autoParts, autoLabor, autoHours, autoElr,
     overridden: ovrHours != null || ovrElr != null || ovrParts != null,
@@ -771,6 +778,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     <div style={{ flex: '1 1 auto', minWidth: 0 }}>
                       <div style={{ fontSize: 13.5, fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</div>
                       {it.opCode && <div style={{ fontSize: 11, color: '#6ee7f9', fontWeight: 700 }}>{it.opCode}</div>}
+                      <button onClick={() => updateItem(it.id, 'excludeCoupon', !it.excludeCoupon)}
+                        title="Toggle whether the package coupon applies to this service"
+                        style={{ marginTop: 3, background: it.excludeCoupon ? 'rgba(251,191,36,.15)' : 'transparent',
+                          border: `1px solid ${it.excludeCoupon ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.28)'}`,
+                          color: it.excludeCoupon ? '#fbbf24' : '#64748b', borderRadius: 6, padding: '1px 7px',
+                          fontSize: 10, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                        {it.excludeCoupon ? '🚫 No coupon' : 'Coupon applies'}
+                      </button>
                     </div>
                     <input value={it.laborHours} onChange={e => updateItem(it.id, 'laborHours', e.target.value)} inputMode="decimal" placeholder="0.0" style={{ ...editInp, flex: '0 0 56px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right' }} />
                     <input value={it.elrPct} onChange={e => updateItem(it.id, 'elrPct', e.target.value)} inputMode="decimal" placeholder="100" style={{ ...editInp, flex: '0 0 62px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: elrColor(numOf(it.elrPct)), fontWeight: 800 }} />
@@ -816,6 +831,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                   <span style={{ textAlign: 'right' }}>
                     <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
                     {sum.couponCapped && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#fbbf24' }}>capped at ${round2(sum.couponMax)}</span>}
+                    {sum.eligibleFrac < 1 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>on {money(sum.eligibleSubtotal)} eligible</span>}
                   </span>
                 </div>
                 {/* Effective ELR after the coupon — auto-figured from discounted labor. */}
