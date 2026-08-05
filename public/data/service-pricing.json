@@ -257,7 +257,7 @@
       "id": "pkg-msga4sfozh2x",
       "name": "30 k",
       "desc": "",
-      "status": "draft",
+      "status": "published",
       "items": [
         {
           "id": "item-msga4tujbg2v",
@@ -318,6 +318,16 @@
           "elrPct": "65.79",
           "excludeCoupon": false,
           "lockCoupon": false
+        },
+        {
+          "id": "item-msgez460gfqn",
+          "name": "Wiper Blades OEM",
+          "opCode": "WIPER",
+          "parts": "0",
+          "laborHours": "0.1",
+          "elrPct": "78.95",
+          "excludeCoupon": false,
+          "lockCoupon": false
         }
       ],
       "taxRate": "7",
@@ -325,9 +335,9 @@
       "couponAmt": "10",
       "couponType": "percent",
       "couponMax": "",
-      "price": 566.63,
-      "updatedAt": 1785949042275
+      "price": 580.1,
+      "updatedAt": 1785954472544
     }
   ],
-  "updatedAt": 1785953099947
+  "updatedAt": 1785954472544
 }
