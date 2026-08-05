@@ -13,21 +13,5 @@
     "advisor": "JORDAN TROXEL",
     "notes": "Assign to Gavin. ",
     "flag": "purple"
-  },
-  {
-    "id": "ms97sebaks37",
-    "ro": "779675",
-    "roDate": "2026-07-31",
-    "vehicle": "2021 Hyundai Kona",
-    "jobDesc": "CUSTOMER STATES engine light still on after picking up from service Tuesday",
-    "notes": "GAVEN IS LOOKING MORE INTO THIS CAR MONDAY",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
