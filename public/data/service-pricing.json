@@ -250,6 +250,11 @@
           "noCoupon": true
         }
       ]
+    },
+    {
+      "id": "cat-msggyh2n4fce",
+      "name": "Maintance Packages",
+      "services": []
     }
   ],
   "packages": [
@@ -339,5 +344,5 @@
       "updatedAt": 1785957428478
     }
   ],
-  "updatedAt": 1785957428478
+  "updatedAt": 1785957489422
 }
