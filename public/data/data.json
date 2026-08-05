@@ -6,14 +6,14 @@
         "name": "JACOB",
         "goal": 42.5,
         "mon": 12.3,
-        "tue": 0,
+        "tue": 12.9,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 12.3,
-        "goal_pct": 0.28941176470588237,
-        "pacing": 61.5,
+        "total": 25.200000000000003,
+        "goal_pct": 0.5929411764705883,
+        "pacing": 63.00000000000001,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "12",
@@ -79,7 +79,7 @@
           "2026-08-05": true,
           "2026-08-08": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "CARTER",
@@ -159,20 +159,20 @@
           "2026-08-03": true,
           "2026-08-08": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "GAVEN",
         "goal": 42.5,
         "mon": 12.5,
-        "tue": 0,
+        "tue": 8,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 12.5,
-        "goal_pct": 0.29411764705882354,
-        "pacing": 62.5,
+        "total": 20.5,
+        "goal_pct": 0.4823529411764706,
+        "pacing": 51.25,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "85",
@@ -235,20 +235,20 @@
           "2026-08-08": true,
           "2026-08-05": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "CORY",
         "goal": 42.5,
         "mon": 2.4,
-        "tue": 0,
+        "tue": 4.7,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 2.9,
-        "total": 5.3,
-        "goal_pct": 0.12470588235294117,
-        "pacing": 15.899999999999999,
+        "total": 10,
+        "goal_pct": 0.23529411764705882,
+        "pacing": 20,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "126",
@@ -312,23 +312,24 @@
           "2026-08-03": true,
           "2026-08-05": true,
           "2026-08-06": true,
-          "2026-08-08": true
+          "2026-08-08": true,
+          "2026-08-04": true
         },
         "mon_ro": 0,
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "CHAD",
         "goal": 42.5,
         "mon": 2.7,
-        "tue": 0,
+        "tue": 0.2,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 2.7,
-        "goal_pct": 0.06352941176470589,
-        "pacing": 13.5,
+        "total": 2.9000000000000004,
+        "goal_pct": 0.06823529411764706,
+        "pacing": 7.250000000000001,
         "certified": "NO",
         "trainings_due": "65",
         "excel_training": "NA",
@@ -394,20 +395,20 @@
           "2026-08-05": true,
           "2026-08-08": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "KADEN",
         "goal": 42.5,
         "mon": 6.1,
-        "tue": 0,
+        "tue": 7.6,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 6.1,
-        "goal_pct": 0.14352941176470588,
-        "pacing": 30.5,
+        "total": 13.7,
+        "goal_pct": 0.32235294117647056,
+        "pacing": 34.25,
         "certified": "NO",
         "trainings_due": "65",
         "excel_training": "NA",
@@ -472,20 +473,20 @@
           "2026-08-05": true,
           "2026-08-08": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "WEI",
         "goal": 42.5,
         "mon": 9.6,
-        "tue": 0,
+        "tue": 5.2,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 9.6,
-        "goal_pct": 0.22588235294117645,
-        "pacing": 48,
+        "total": 14.8,
+        "goal_pct": 0.3482352941176471,
+        "pacing": 37,
         "certified": "—NO",
         "trainings_due": "65",
         "excel_training": "N/A",
@@ -537,20 +538,20 @@
           "2026-08-06": true,
           "2026-08-08": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       },
       {
         "name": "BRYSON",
         "goal": 25.5,
         "mon": 0,
-        "tue": 0,
+        "tue": 2.4,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "total": 2.4,
+        "goal_pct": 0.09411764705882353,
+        "pacing": 12,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
@@ -560,9 +561,10 @@
           "2026-07-30": true,
           "2026-08-07": true,
           "2026-08-08": true,
-          "2026-08-03": true
+          "2026-08-03": true,
+          "2026-08-04": true
         },
-        "_hrsStamp": 1785841415315
+        "_hrsStamp": 1785927848531
       }
     ],
     "advisors": [
@@ -706,14 +708,14 @@
     },
     "techTotals": {
       "mon": 47,
-      "tue": 0,
+      "tue": 41,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 7.4,
-      "week_total": 54.400000000000006,
-      "week_pct": 0.16842105263157897,
-      "shop_pacing": 249.6
+      "week_total": 95.4,
+      "week_pct": 0.2953560371517028,
+      "shop_pacing": 242.45000000000002
     },
     "grossGoal": 163905,
     "grossActual": 149346.35,
