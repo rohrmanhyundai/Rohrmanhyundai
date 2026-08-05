@@ -101,7 +101,9 @@ function itemFromService(s, doorRate) {
   const parts = Math.max(0, price - labor);
   let elr = 100;
   if (labor > 0 && hrs > 0 && dr > 0) elr = round2((labor / hrs) / dr * 100);
-  return { id: uid('item'), name: s.name || '', opCode: s.opCode || '', parts: String(round2(parts)), laborHours: hrs ? String(hrs) : '', elrPct: String(elr) };
+  // A service the manager flagged "no coupon" starts excluded and locked so the
+  // coupon can never be applied to it (in the builder or the advisor pricing tool).
+  return { id: uid('item'), name: s.name || '', opCode: s.opCode || '', parts: String(round2(parts)), laborHours: hrs ? String(hrs) : '', elrPct: String(elr), excludeCoupon: !!s.noCoupon, lockCoupon: !!s.noCoupon };
 }
 
 // Effective labor rate ($/hr) and its % of the door rate for one service.
@@ -135,6 +137,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
   const [tab, setTab] = useState('view');      // view | edit
   const [dirty, setDirty] = useState(false);
   const [builderOpen, setBuilderOpen] = useState(false); // package builder modal
+  const [pricingOpen, setPricingOpen] = useState(false); // advisor pricing tool modal
   const savedRef = useRef('');                 // JSON snapshot of last-saved data
 
   const load = useCallback(async () => {
@@ -259,6 +262,11 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
           <div className="adv-sub">{tab === 'edit' ? 'Editing — changes go live when you save' : `${totalServices} service${totalServices === 1 ? '' : 's'}${updatedAt ? ` · updated ${new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}`}</div>
         </div>
         <div style={{ flex: 1 }} />
+        {/* Pricing Tool — available to everyone with menu access */}
+        <button onClick={() => setPricingOpen(true)}
+          style={{ background: 'linear-gradient(180deg,#60a5fa,#3b82f6)', border: '1px solid rgba(96,165,250,.6)', color: '#04122e', borderRadius: 10, padding: '8px 16px', cursor: 'pointer', fontWeight: 900, fontSize: 13, whiteSpace: 'nowrap' }}>
+          🧮 Pricing Tool
+        </button>
         {/* View / Edit tabs */}
         <div style={{ display: 'flex', gap: 6, background: 'rgba(255,255,255,.05)', borderRadius: 10, padding: 4 }}>
           <button onClick={() => setTab('view')} style={pillTab(tab === 'view')}>📋 View Menu</button>
@@ -288,6 +296,13 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
           categories={categories} doorRate={doorRate} packages={packages}
           onSavePackage={savePackage} onDeletePackage={deletePackage}
           onClose={() => setBuilderOpen(false)}
+        />
+      )}
+
+      {pricingOpen && (
+        <PricingToolModal
+          categories={categories} doorRate={doorRate}
+          onClose={() => setPricingOpen(false)}
         />
       )}
     </div>
@@ -538,6 +553,17 @@ function EditView({ categories, doorRate, setDoorRate, packages, addCategory, re
                     style={{ ...editInp, width: 72, padding: '6px 9px', fontSize: 13, fontWeight: 700, color: '#e2e8f0' }} />
                 </label>
                 <ElrBadge elr={elr} />
+                <div style={{ flex: 1 }} />
+                {/* Coupon eligibility — managers can bar a coupon from this service.
+                    It then starts locked/excluded in the pricing tool & builder. */}
+                <button onClick={() => updateService(ci, si, 'noCoupon', !s.noCoupon)}
+                  title="When on, a coupon can never be applied to this service"
+                  style={{ background: s.noCoupon ? 'rgba(251,191,36,.15)' : 'transparent',
+                    border: `1px solid ${s.noCoupon ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.28)'}`,
+                    color: s.noCoupon ? '#fbbf24' : '#64748b', borderRadius: 7, padding: '4px 10px',
+                    fontSize: 11, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  {s.noCoupon ? '🚫 No coupon allowed' : 'Coupon allowed'}
+                </button>
               </div>
             </div>
             );
@@ -778,13 +804,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     <div style={{ flex: '1 1 auto', minWidth: 0 }}>
                       <div style={{ fontSize: 13.5, fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</div>
                       {it.opCode && <div style={{ fontSize: 11, color: '#6ee7f9', fontWeight: 700 }}>{it.opCode}</div>}
-                      <button onClick={() => updateItem(it.id, 'excludeCoupon', !it.excludeCoupon)}
-                        title="Toggle whether the package coupon applies to this service"
+                      <button onClick={() => { if (!it.lockCoupon) updateItem(it.id, 'excludeCoupon', !it.excludeCoupon); }}
+                        disabled={it.lockCoupon}
+                        title={it.lockCoupon ? 'This service is set to No coupon on the pricing menu' : 'Toggle whether the package coupon applies to this service'}
                         style={{ marginTop: 3, background: it.excludeCoupon ? 'rgba(251,191,36,.15)' : 'transparent',
                           border: `1px solid ${it.excludeCoupon ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.28)'}`,
                           color: it.excludeCoupon ? '#fbbf24' : '#64748b', borderRadius: 6, padding: '1px 7px',
-                          fontSize: 10, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                        {it.excludeCoupon ? '🚫 No coupon' : 'Coupon applies'}
+                          fontSize: 10, fontWeight: 800, cursor: it.lockCoupon ? 'default' : 'pointer', whiteSpace: 'nowrap' }}>
+                        {it.lockCoupon ? '🔒 No coupon' : it.excludeCoupon ? '🚫 No coupon' : 'Coupon applies'}
                       </button>
                     </div>
                     <input value={it.laborHours} onChange={e => updateItem(it.id, 'laborHours', e.target.value)} inputMode="decimal" placeholder="0.0" style={{ ...editInp, flex: '0 0 56px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right' }} />
@@ -871,6 +898,199 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── Advisor Pricing Tool ─────────────────────────────────────────────────────
+// A quote-only calculator for anyone with menu access. Same building blocks as
+// the Package Builder — pick services, apply a coupon (with an optional cap) —
+// but nothing is saved or posted; it just prices a job on the spot. Services the
+// manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
+function PricingToolModal({ categories, doorRate, onClose }) {
+  const [draft, setDraft] = useState({ items: [], couponAmt: '0', couponType: 'dollar', couponMax: '', taxRate: '7', taxBase: 'parts' });
+  const [search, setSearch] = useState('');
+
+  const dr = numOf(doorRate) || 0;
+  const groups = (categories || [])
+    .map(c => ({ name: c.name || 'Services', services: (c.services || []).filter(s => s.name) }))
+    .filter(g => g.services.length);
+  const q = search.trim().toLowerCase();
+  const shownGroups = q
+    ? groups.map(g => ({ ...g, services: g.services.filter(s => `${s.name} ${s.opCode || ''}`.toLowerCase().includes(q)) })).filter(g => g.services.length)
+    : groups;
+
+  const sum = packageSummary(draft, doorRate);
+  const setItems = (fn) => setDraft(d => ({ ...d, items: fn(d.items || []) }));
+  const setLabor = (value) => setDraft(d => {
+    const s = packageSummary(d, doorRate);
+    if (dr > 0 && s.hours > 0) return { ...d, ovrElr: String(round2((numOf(value) || 0) / (dr * s.hours) * 100)) };
+    return d;
+  });
+  const resetTotals = () => setDraft(d => ({ ...d, ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
+  const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
+  const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
+  const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
+  const clearAll = () => setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'dollar', couponMax: '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
+  const countInPkg = (name) => (draft.items || []).filter(it => it.name === name).length;
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '4vh 16px', overflowY: 'auto' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1080, background: 'linear-gradient(180deg,#141c2e,#0d1424)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 18, boxShadow: '0 30px 80px -30px rgba(0,0,0,.9)', overflow: 'hidden' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '15px 20px', background: 'linear-gradient(90deg, rgba(96,165,250,.2), rgba(96,165,250,0))', borderBottom: '1px solid rgba(96,165,250,.24)' }}>
+          <span style={{ fontSize: 22 }}>🧮</span>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>Pricing Tool</div>
+            <div style={{ fontSize: 11.5, color: '#94a3b8' }}>Price a job & apply a coupon — nothing is saved</div>
+          </div>
+          <div style={{ flex: 1 }} />
+          <button onClick={onClose} style={{ ...iconBtn(false), width: 34 }}>✕</button>
+        </div>
+
+        <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', alignItems: 'stretch' }}>
+          {/* Palette */}
+          <div style={{ flex: '1 1 320px', minWidth: 280, borderRight: '1px solid rgba(148,163,184,.14)', maxHeight: '68vh', overflowY: 'auto', padding: 16 }}>
+            <div style={{ ...lbl, marginBottom: 8 }}>Add services · click to add</div>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search services…" style={{ ...editInp, marginBottom: 12 }} />
+            {!shownGroups.length ? (
+              <div style={{ color: '#64748b', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>No matching services.</div>
+            ) : shownGroups.map(g => (
+              <div key={g.name} style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 6 }}>{g.name}</div>
+                <div style={{ display: 'grid', gap: 6 }}>
+                  {g.services.map(s => {
+                    const n = countInPkg(s.name);
+                    return (
+                      <button key={s.id} onClick={() => addService(s)} style={{ display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left', background: 'rgba(30,41,59,.6)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 9, padding: '8px 11px', cursor: 'pointer' }}>
+                        <span style={{ color: '#60a5fa', fontWeight: 900, fontSize: 15 }}>＋</span>
+                        <span style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ display: 'block', fontSize: 13.5, fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}{s.noCoupon ? ' 🔒' : ''}</span>
+                          {s.price && <span style={{ fontSize: 11.5, color: '#6ee7b7' }}>{s.price}</span>}
+                        </span>
+                        {n > 0 && <span style={{ fontSize: 10, fontWeight: 800, color: '#6ee7b7', background: 'rgba(52,211,153,.15)', borderRadius: 999, padding: '2px 7px' }}>×{n}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Quote */}
+          <div style={{ flex: '2 1 460px', minWidth: 320, maxHeight: '68vh', overflowY: 'auto', padding: 18 }}>
+            {dr <= 0 && <div style={{ background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.3)', color: '#fbbf24', borderRadius: 10, padding: '9px 13px', fontSize: 12.5, fontWeight: 700, marginBottom: 14 }}>No door rate set on the menu — labor $ can't be figured from ELR%.</div>}
+
+            {(draft.items || []).length > 0 && (
+              <div style={{ display: 'flex', gap: 8, padding: '0 2px 6px', color: '#64748b', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                <div style={{ flex: '1 1 auto' }}>Service</div>
+                <div style={{ flex: '0 0 56px' }}>Hrs</div>
+                <div style={{ flex: '0 0 62px' }}>ELR %</div>
+                <div style={{ flex: '0 0 76px', textAlign: 'right' }}>Labor $</div>
+                <div style={{ flex: '0 0 82px', textAlign: 'right' }}>Parts $</div>
+                <div style={{ flex: '0 0 84px', textAlign: 'right' }}>Total</div>
+                <div style={{ flex: '0 0 30px' }} />
+              </div>
+            )}
+
+            {(draft.items || []).length === 0 ? (
+              <div style={{ color: '#64748b', textAlign: 'center', padding: '30px 0', border: '1px dashed rgba(148,163,184,.25)', borderRadius: 12, fontSize: 13.5 }}>Click services on the left to price them.</div>
+            ) : (draft.items || []).map((it) => {
+              const m = itemMath(it, doorRate);
+              return (
+                <div key={it.id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '9px 2px', borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</div>
+                    {it.opCode && <div style={{ fontSize: 11, color: '#6ee7f9', fontWeight: 700 }}>{it.opCode}</div>}
+                    <button onClick={() => { if (!it.lockCoupon) updateItem(it.id, 'excludeCoupon', !it.excludeCoupon); }}
+                      disabled={it.lockCoupon}
+                      title={it.lockCoupon ? 'This service is set to No coupon on the pricing menu' : 'Toggle whether the coupon applies to this service'}
+                      style={{ marginTop: 3, background: it.excludeCoupon ? 'rgba(251,191,36,.15)' : 'transparent',
+                        border: `1px solid ${it.excludeCoupon ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.28)'}`,
+                        color: it.excludeCoupon ? '#fbbf24' : '#64748b', borderRadius: 6, padding: '1px 7px',
+                        fontSize: 10, fontWeight: 800, cursor: it.lockCoupon ? 'default' : 'pointer', whiteSpace: 'nowrap' }}>
+                      {it.lockCoupon ? '🔒 No coupon' : it.excludeCoupon ? '🚫 No coupon' : 'Coupon applies'}
+                    </button>
+                  </div>
+                  <input value={it.laborHours} onChange={e => updateItem(it.id, 'laborHours', e.target.value)} inputMode="decimal" placeholder="0.0" style={{ ...editInp, flex: '0 0 56px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right' }} />
+                  <input value={it.elrPct} onChange={e => updateItem(it.id, 'elrPct', e.target.value)} inputMode="decimal" placeholder="100" style={{ ...editInp, flex: '0 0 62px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: elrColor(numOf(it.elrPct)), fontWeight: 800 }} />
+                  <div style={{ flex: '0 0 76px', textAlign: 'right', fontSize: 12.5, color: '#cbd5e1', fontWeight: 700 }}>{money(m.laborCost)}</div>
+                  <input value={it.parts != null && it.parts !== '' ? it.parts : String(round2(m.parts))} onChange={e => updateItem(it.id, 'parts', e.target.value)} inputMode="decimal" placeholder="0.00" title="Parts $ — auto-filled from the menu, adjust as needed"
+                    style={{ ...editInp, flex: '0 0 82px', padding: '6px 8px', fontSize: 12.5, textAlign: 'right', color: '#e2e8f0', fontWeight: 700 }} />
+                  <div title="Parts + Labor" style={{ flex: '0 0 84px', textAlign: 'right', fontSize: 13.5, color: '#6ee7b7', fontWeight: 900 }}>{money(m.total)}</div>
+                  <div style={{ flex: '0 0 30px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <button title="Remove" onClick={() => removeItem(it.id)} style={{ ...iconBtn(false), width: 24, height: 28, fontSize: 11, color: '#f87171' }}>✕</button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Totals — same math as the builder, coupon-aware. */}
+            <div style={{ marginTop: 16, padding: '14px 16px', background: 'rgba(96,165,250,.1)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <span style={{ ...lbl, marginBottom: 0, color: '#93c5fd' }}>Job Total · adjustable</span>
+                <div style={{ flex: 1 }} />
+                {sum.overridden && <button onClick={resetTotals} style={{ background: 'transparent', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}>↻ Reset to line totals</button>}
+              </div>
+              <SummaryEdit label="Parts $" prefix="$" value={String(round2(sum.parts))} onChange={v => setDraft(d => ({ ...d, ovrParts: v }))} />
+              <SummaryEdit label="Labor $" prefix="$" value={String(round2(sum.labor))} onChange={setLabor} />
+              <SummaryEdit label="Labor hours" suffix="hrs" value={String(round2(sum.hours))} onChange={v => setDraft(d => ({ ...d, ovrHours: v }))} />
+              <SummaryEdit label="ELR %" suffix="%" value={sum.elr == null ? '' : String(round2(sum.elr))} onChange={v => setDraft(d => ({ ...d, ovrElr: v }))} color={elrColor(sum.elr)} />
+              <SummaryRow label="Subtotal" value={money(sum.subtotal)} strong />
+              {/* Coupon — split 70% labor / 30% parts, optional dollar cap. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
+                <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Coupon</span>
+                <input value={draft.couponAmt ?? '0'} onChange={e => setDraft(d => ({ ...d, couponAmt: e.target.value }))} inputMode="decimal" placeholder="0"
+                  style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#4ade80' }} />
+                <select value={draft.couponType || 'dollar'} onChange={e => setDraft(d => ({ ...d, couponType: e.target.value }))}
+                  style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
+                  <option value="dollar">$ off</option>
+                  <option value="percent">% off</option>
+                </select>
+                <span style={{ fontSize: 12, color: '#94a3b8' }}>max $</span>
+                <input value={draft.couponMax ?? ''} onChange={e => setDraft(d => ({ ...d, couponMax: e.target.value }))} inputMode="decimal" placeholder="—"
+                  style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#94a3b8' }} />
+                <div style={{ flex: 1 }} />
+                <span style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
+                  {sum.couponCapped && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#fbbf24' }}>capped at ${round2(sum.couponMax)}</span>}
+                  {sum.eligibleFrac < 1 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>on {money(sum.eligibleSubtotal)} eligible</span>}
+                </span>
+              </div>
+              {sum.couponAmt > 0 && (
+                <SummaryRow label="Effective ELR (after coupon)" value={sum.effElr == null ? '—' : round2(sum.effElr) + '%'} valueColor={elrColor(sum.effElr)} />
+              )}
+              {/* Tax */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: '1px solid rgba(148,163,184,.14)' }}>
+                <span style={{ fontSize: 13.5, fontWeight: 700, color: '#cbd5e1' }}>Tax</span>
+                <input value={draft.taxRate} onChange={e => setDraft(d => ({ ...d, taxRate: e.target.value }))} inputMode="decimal" placeholder="7"
+                  style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#fbbf24' }} />
+                <span style={{ fontSize: 12.5, color: '#94a3b8' }}>%</span>
+                <span style={{ fontSize: 12, color: '#94a3b8' }}>on</span>
+                <select value={draft.taxBase} onChange={e => setDraft(d => ({ ...d, taxBase: e.target.value }))}
+                  style={{ ...editInp, width: 'auto', padding: '5px 8px', fontSize: 12.5, cursor: 'pointer' }}>
+                  <option value="parts">Parts only</option>
+                  <option value="subtotal">Parts + Labor</option>
+                </select>
+                <div style={{ flex: 1 }} />
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#cbd5e1' }}>{money(sum.taxAmt)}</span>
+              </div>
+              {/* Customer price */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 10, marginTop: 4, borderTop: '1px solid rgba(96,165,250,.3)' }}>
+                <span style={{ fontSize: 13, fontWeight: 900, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '.05em' }}>Customer Price</span>
+                <div style={{ flex: 1 }} />
+                <span style={{ fontSize: 24, fontWeight: 900, color: '#93c5fd' }}>{money(sum.grand)}</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18 }}>
+              <div style={{ flex: 1 }} />
+              {(draft.items || []).length > 0 && <button onClick={clearAll} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>↺ Start over</button>}
+              <button onClick={onClose} style={{ background: 'linear-gradient(180deg,#60a5fa,#3b82f6)', border: '1px solid rgba(96,165,250,.6)', color: '#04122e', borderRadius: 10, padding: '10px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 14 }}>Done</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
