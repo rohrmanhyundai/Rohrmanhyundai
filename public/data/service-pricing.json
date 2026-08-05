@@ -219,59 +219,6 @@
       ]
     }
   ],
-  "packages": [
-    {
-      "id": "pkg-mrzc5lrryy1u",
-      "name": "30K Service",
-      "desc": "",
-      "status": "draft",
-      "items": [
-        {
-          "id": "item-mrzc5ng2thb0",
-          "name": "Synthetic Oil Change ROH$",
-          "opCode": "ROHR50",
-          "parts": "25",
-          "laborHours": "0.3",
-          "elrPct": "43.86"
-        },
-        {
-          "id": "item-mrzc5tookfs3",
-          "name": "4 Wheel Balance",
-          "opCode": "BALANCE",
-          "parts": "0",
-          "laborHours": "0.9",
-          "elrPct": "58.47"
-        },
-        {
-          "id": "item-mrzc61dz9ktu",
-          "name": "Cabin Air Filter",
-          "opCode": "CABIN",
-          "parts": "45.49",
-          "laborHours": "0.2",
-          "elrPct": "65.79"
-        },
-        {
-          "id": "item-mrzc62jnw48u",
-          "name": "Air Filter",
-          "opCode": "AIRFILTER",
-          "parts": "35.5",
-          "laborHours": "0.2",
-          "elrPct": "65.79"
-        },
-        {
-          "id": "item-mrzc67c53px7",
-          "name": "Valvoline Fuel Service",
-          "opCode": "VVIFL",
-          "parts": "60",
-          "laborHours": "0.8",
-          "elrPct": "98.68"
-        }
-      ],
-      "taxRate": "7",
-      "taxBase": "parts",
-      "price": 502.59,
-      "updatedAt": 1784921517927
-    }
-  ],
-  "updatedAt": 1784921517927
+  "packages": [],
+  "updatedAt": 1785931539188
 }
