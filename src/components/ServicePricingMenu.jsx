@@ -901,6 +901,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
                     {sum.couponCapped && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#fbbf24' }}>capped at ${round2(sum.couponMax)}</span>}
                     {sum.eligibleFrac < 1 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>on {money(sum.eligibleSubtotal)} eligible</span>}
+                    {sum.couponAmt > 0 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#4ade80' }}>−{money(sum.couponLabor)} labor · −{money(sum.couponParts)} parts</span>}
                   </span>
                 </div>
                 {/* Effective ELR after the coupon — auto-figured from discounted labor. */}
@@ -1105,6 +1106,7 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
                   <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
                   {sum.couponCapped && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#fbbf24' }}>capped at ${round2(sum.couponMax)}</span>}
                   {sum.eligibleFrac < 1 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#94a3b8' }}>on {money(sum.eligibleSubtotal)} eligible</span>}
+                  {sum.couponAmt > 0 && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#4ade80' }}>−{money(sum.couponLabor)} labor · −{money(sum.couponParts)} parts</span>}
                 </span>
               </div>
               {/* Coupon target guardrail — advisors should keep the effective ELR
