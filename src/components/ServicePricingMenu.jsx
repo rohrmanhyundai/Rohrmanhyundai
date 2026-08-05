@@ -56,8 +56,13 @@ function packageSummary(pkg, doorRate) {
   // amount is taken straight off. Default is nothing (0% / $0) → no change.
   const couponType = pkg.couponType === 'percent' ? 'percent' : 'dollar';
   const couponVal = numOf(pkg.couponAmt) || 0;
-  const couponAmt = couponVal <= 0 ? 0
+  const rawCoupon = couponVal <= 0 ? 0
     : Math.min(couponType === 'percent' ? (couponVal / 100) * subtotal : couponVal, subtotal);
+  // Optional dollar cap — when set (> 0), the discount can't exceed it. Handy for
+  // "% off, up to $X". Empty / 0 means no cap.
+  const couponMax = numOf(pkg.couponMax);
+  const couponCapped = couponMax != null && couponMax > 0 && rawCoupon > couponMax;
+  const couponAmt = couponCapped ? couponMax : rawCoupon;
   const couponLabor = couponAmt * 0.7;                        // 70% comes off labor
   const couponParts = couponAmt * 0.3;                        // 30% comes off parts
   const netLabor = labor - couponLabor;
@@ -71,7 +76,7 @@ function packageSummary(pkg, doorRate) {
   const taxAmt = (taxRate / 100) * (taxBase === 'subtotal' ? netSubtotal : netParts);
   return {
     parts, labor, hours, elr, subtotal, taxRate, taxBase, taxAmt,
-    couponType, couponVal, couponAmt, couponLabor, couponParts, netParts, netSubtotal, netLabor, effElr,
+    couponType, couponVal, couponMax, couponCapped, couponAmt, couponLabor, couponParts, netParts, netSubtotal, netLabor, effElr,
     grand: netSubtotal + taxAmt,
     autoParts, autoLabor, autoHours, autoElr,
     overridden: ovrHours != null || ovrElr != null || ovrParts != null,
@@ -571,7 +576,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'dollar' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'dollar', couponMax: '' });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -621,6 +626,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     if (d.taxBase == null) d.taxBase = 'parts';
     if (d.couponAmt == null) d.couponAmt = '0';   // backfill for pre-coupon packages
     if (d.couponType == null) d.couponType = 'dollar';
+    if (d.couponMax == null) d.couponMax = '';
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
@@ -803,8 +809,14 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     <option value="dollar">$ off</option>
                     <option value="percent">% off</option>
                   </select>
+                  <span style={{ fontSize: 12, color: '#94a3b8' }}>max $</span>
+                  <input value={draft.couponMax ?? ''} onChange={e => setDraft(d => ({ ...d, couponMax: e.target.value }))} inputMode="decimal" placeholder="—"
+                    style={{ ...editInp, width: 58, padding: '5px 8px', fontSize: 12.5, textAlign: 'right', fontWeight: 800, color: '#94a3b8' }} />
                   <div style={{ flex: 1 }} />
-                  <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
+                  <span style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: sum.couponAmt > 0 ? '#4ade80' : '#94a3b8' }}>{sum.couponAmt > 0 ? '−' + money(sum.couponAmt) : money(0)}</span>
+                    {sum.couponCapped && <span style={{ display: 'block', fontSize: 10, fontWeight: 700, color: '#fbbf24' }}>capped at ${round2(sum.couponMax)}</span>}
+                  </span>
                 </div>
                 {/* Effective ELR after the coupon — auto-figured from discounted labor. */}
                 {sum.couponAmt > 0 && (
