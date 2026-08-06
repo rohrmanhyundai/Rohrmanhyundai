@@ -207,27 +207,90 @@ function StepStart({ form, set, onNext }) {
 }
 
 // ── Step 2: Damage map ────────────────────────────────────────────────────────
-function Wheel({ wheelKey, damage, onTap }) {
-  const active = damage && (damage.tire || damage.rim);
-  const both = damage?.tire && damage?.rim;
-  const bg = both ? 'linear-gradient(135deg,#fbbf24,#60a5fa)'
-    : damage?.tire ? accent
-    : damage?.rim ? '#60a5fa'
-    : 'rgba(255,255,255,0.09)';
+// A clean top-down car illustration with four tappable tires at the corners.
+// Tire fill encodes the flagged damage: amber = tire, blue = rim, split = both.
+function CarDamageMap({ form, onTap }) {
+  const wheelFor = k => form.wheels?.[k] || { tire: false, rim: false };
+  const TW = 26, TH = 50;
+  const wheels = [
+    { key: 'LF', x: 38,  y: 74 },
+    { key: 'RF', x: 196, y: 74 },
+    { key: 'LR', x: 38,  y: 250 },
+    { key: 'RR', x: 196, y: 250 },
+  ];
+  const fill = d => {
+    if (d?.tire && d?.rim) return 'url(#twBoth)';
+    if (d?.tire) return accent;
+    if (d?.rim) return '#60a5fa';
+    return '#3b4a63';
+  };
   return (
-    <button onClick={() => onTap(wheelKey)}
-      style={{
-        width: 72, height: 104, borderRadius: 16,
-        background: bg,
-        border: active ? '2px solid #fff' : '2px solid rgba(255,255,255,0.18)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer', color: active ? '#0d1627' : '#94a3b8', fontWeight: 800,
-        boxShadow: active ? '0 0 16px rgba(251,191,36,0.5)' : 'none',
-      }}>
-      <span style={{ fontSize: 22 }}>🛞</span>
-      <span style={{ fontSize: 11, marginTop: 2 }}>{wheelKey}</span>
-      {active && <span style={{ fontSize: 9, fontWeight: 700, marginTop: 2, textAlign: 'center', lineHeight: 1.1 }}>{damageLabel(damage)}</span>}
-    </button>
+    <div style={{ maxWidth: 300, margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', fontSize: 11, fontWeight: 800, color: '#64748b', letterSpacing: 2, marginBottom: 2 }}>▲ FRONT</div>
+      <svg viewBox="0 0 260 360" width="100%" style={{ display: 'block', overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="twBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#38496700" />
+            <stop offset="0.06" stopColor="#3a4c68" />
+            <stop offset="0.5" stopColor="#2a3a56" />
+            <stop offset="1" stopColor="#1a2740" />
+          </linearGradient>
+          <linearGradient id="twGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#1b2b47" />
+            <stop offset="1" stopColor="#0e1a31" />
+          </linearGradient>
+          <linearGradient id="twBoth" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fbbf24" />
+            <stop offset="0.5" stopColor="#fbbf24" />
+            <stop offset="0.5" stopColor="#60a5fa" />
+            <stop offset="1" stopColor="#60a5fa" />
+          </linearGradient>
+        </defs>
+
+        {/* Car body */}
+        <rect x="78" y="28" width="104" height="304" rx="46" fill="url(#twBody)" stroke="#54689012" strokeWidth="0" />
+        <rect x="78" y="28" width="104" height="304" rx="46" fill="none" stroke="#5c729c" strokeWidth="2" opacity="0.9" />
+        {/* Hood sheen */}
+        <path d="M96 42 Q130 33 164 42 L160 96 L100 96 Z" fill="#ffffff" opacity="0.05" />
+        {/* Windshield */}
+        <path d="M100 98 L160 98 L152 128 L108 128 Z" fill="url(#twGlass)" stroke="#7c9ac6" strokeOpacity="0.3" strokeWidth="1.5" />
+        {/* Cabin roof */}
+        <rect x="102" y="132" width="56" height="94" rx="14" fill="#ffffff" opacity="0.045" />
+        {/* Rear window */}
+        <path d="M108 230 L152 230 L160 262 L100 262 Z" fill="url(#twGlass)" stroke="#7c9ac6" strokeOpacity="0.3" strokeWidth="1.5" />
+        {/* Headlights */}
+        <rect x="90" y="34" width="20" height="9" rx="4.5" fill="#e2e8f0" opacity="0.72" />
+        <rect x="150" y="34" width="20" height="9" rx="4.5" fill="#e2e8f0" opacity="0.72" />
+        {/* Taillights */}
+        <rect x="88" y="318" width="24" height="9" rx="4.5" fill="#f87171" opacity="0.7" />
+        <rect x="148" y="318" width="24" height="9" rx="4.5" fill="#f87171" opacity="0.7" />
+        {/* Center detail */}
+        <line x1="130" y1="134" x2="130" y2="224" stroke="#ffffff" strokeOpacity="0.06" strokeWidth="2" />
+
+        {/* Tires */}
+        {wheels.map(w => {
+          const d = wheelFor(w.key);
+          const active = d.tire || d.rim;
+          const left = w.x < 130;
+          return (
+            <g key={w.key} onClick={() => onTap(w.key)} style={{ cursor: 'pointer' }}>
+              <rect x={w.x - 13} y={w.y - 16} width={TW + 26} height={TH + 44} fill="transparent" />
+              {active && <rect x={w.x - 3} y={w.y - 3} width={TW + 6} height={TH + 6} rx="10" fill={accent} opacity="0.16" />}
+              <rect x={w.x} y={w.y} width={TW} height={TH} rx="8" fill={fill(d)}
+                stroke={active ? '#ffffff' : 'rgba(255,255,255,0.24)'} strokeWidth={active ? 2.5 : 1.5} />
+              <line x1={w.x + 7} y1={w.y + 11} x2={w.x + TW - 7} y2={w.y + 11} stroke="#000" strokeOpacity="0.22" strokeWidth="1.5" />
+              <line x1={w.x + 7} y1={w.y + TH / 2} x2={w.x + TW - 7} y2={w.y + TH / 2} stroke="#000" strokeOpacity="0.22" strokeWidth="1.5" />
+              <line x1={w.x + 7} y1={w.y + TH - 11} x2={w.x + TW - 7} y2={w.y + TH - 11} stroke="#000" strokeOpacity="0.22" strokeWidth="1.5" />
+              <text x={left ? w.x - 9 : w.x + TW + 9} y={w.y + TH / 2} textAnchor={left ? 'end' : 'start'} dominantBaseline="middle"
+                fontSize="13" fontWeight="800" fill={active ? '#f8fafc' : '#7c8aa3'}>{w.key}</text>
+              {active && (
+                <text x={w.x + TW / 2} y={w.y + TH + 15} textAnchor="middle" fontSize="9.5" fontWeight="700" fill={accent}>{damageLabel(d)}</text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -275,18 +338,7 @@ function StepMap({ form, setWheel, onNext, onBack }) {
       </div>
 
       {/* Top-down car diagram */}
-      <div style={{ position: 'relative', maxWidth: 260, margin: '0 auto 8px', padding: '10px 0' }}>
-        <div style={{ position: 'absolute', top: 2, left: 0, right: 0, textAlign: 'center', fontSize: 11, fontWeight: 800, color: '#64748b', letterSpacing: 2 }}>▲ FRONT</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <Wheel wheelKey="LF" damage={wheelFor('LF')} onTap={setChooser} />
-          <div style={{ flex: 1, height: 190, margin: '18px 4px 0', borderRadius: 26, background: 'linear-gradient(180deg,rgba(255,255,255,0.09),rgba(255,255,255,0.04))', border: '1px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 30 }}>🚗</div>
-          <Wheel wheelKey="RF" damage={wheelFor('RF')} onTap={setChooser} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: -70 }}>
-          <Wheel wheelKey="LR" damage={wheelFor('LR')} onTap={setChooser} />
-          <Wheel wheelKey="RR" damage={wheelFor('RR')} onTap={setChooser} />
-        </div>
-      </div>
+      <CarDamageMap form={form} onTap={setChooser} />
 
       {/* Summary of selections */}
       <div style={{ marginTop: 28, marginBottom: 8 }}>
