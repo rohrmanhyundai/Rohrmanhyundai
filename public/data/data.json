@@ -618,7 +618,7 @@
         "tires": 0,
         "valvoline": 0,
         "roh50_hrs_ro": 0.5,
-        "csi": 0,
+        "csi": 913,
         "asr": 0.0476,
         "elr": 0.9146,
         "last_month_total": 0,
@@ -628,7 +628,7 @@
         "coupon_labor": 58,
         "total_sales": 918.82,
         "coupon_usage_pct": 0.0631,
-        "min_csi": 912
+        "min_csi": 913
       }
     ],
     "advisorTraining": [
@@ -704,7 +704,7 @@
       "align": 0.0933,
       "tires": 0.034466666666666666,
       "valvoline": 0.1244,
-      "csi": 621.6666666666666
+      "csi": 926
     },
     "techTotals": {
       "mon": 47,
