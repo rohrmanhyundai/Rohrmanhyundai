@@ -19,6 +19,7 @@ export const TIRE_SLOTS = [
   { key: 'dot',        label: 'DOT Number' },
   { key: 'size',       label: 'Tire Size' },
   { key: 'brand',      label: 'Tire Brand' },
+  { key: 'gauge',      label: 'Tire Gauge' },
   { key: 'tireFull',   label: 'Full Tire' },
 ];
 export const RIM_SLOTS = [
@@ -296,10 +297,15 @@ function CarDamageMap({ form, onTap }) {
 
 function DamageChooser({ wheelKey, damage, onSet, onClose }) {
   const label = WHEELS.find(w => w.key === wheelKey)?.label || wheelKey;
+  const hadDamage = !!(damage && (damage.tire || damage.rim));
+  // Pending selection + tread depth; nothing is committed until "Save".
+  const [sel, setSel] = useState(hadDamage ? { tire: !!damage.tire, rim: !!damage.rim } : null);
+  const [depth, setDepth] = useState(damage?.treadDepth ? String(damage.treadDepth).replace('/32', '') : '');
+
   const opt = (title, sub, val) => {
-    const isOn = damage?.tire === val.tire && damage?.rim === val.rim;
+    const isOn = sel?.tire === val.tire && sel?.rim === val.rim;
     return (
-      <button onClick={() => { onSet(val); onClose(); }}
+      <button onClick={() => setSel(val)}
         style={{ width: '100%', textAlign: 'left', background: isOn ? 'rgba(251,191,36,0.18)' : 'rgba(255,255,255,0.05)',
           border: `1px solid ${isOn ? accent : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '14px 16px', marginBottom: 10, cursor: 'pointer' }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: isOn ? accent : '#e2e8f0' }}>{title}</div>
@@ -307,17 +313,51 @@ function DamageChooser({ wheelKey, damage, onSet, onClose }) {
       </button>
     );
   };
+
+  // Any tire damage requires a tread-depth reading (in 32nds) before saving.
+  const needsDepth = !!sel?.tire;
+  const depthNum = parseFloat(depth);
+  const depthValid = depth.trim() !== '' && !isNaN(depthNum) && depthNum >= 0 && depthNum <= 32;
+  const canSave = !!sel && (!needsDepth || depthValid);
+
+  function save() {
+    if (!canSave) return;
+    onSet({ tire: !!sel.tire, rim: !!sel.rim, treadDepth: sel.tire ? `${depth.trim()}/32` : '' });
+    onClose();
+  }
+
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 100, display: 'flex', alignItems: 'flex-end' }}>
       <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: '#111c30', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: '22px 18px 28px', borderTop: `2px solid ${accent}55` }}>
         <div style={{ fontSize: 17, fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>{label} Wheel</div>
         <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 18 }}>What kind of damage is on this wheel?</div>
-        {opt('Tire Damage', '5 photos: damage, DOT#, size, brand, full tire', { tire: true, rim: false })}
+        {opt('Tire Damage', '6 photos: damage, DOT#, size, brand, gauge, full tire', { tire: true, rim: false })}
         {opt('Rim Damage', '2 photos: damage, full rim', { tire: false, rim: true })}
-        {opt('Tire & Rim', '7 photos: 5 tire + 2 rim', { tire: true, rim: true })}
-        {damage && (damage.tire || damage.rim) && (
-          <button onClick={() => { onSet({ tire: false, rim: false }); onClose(); }}
-            style={{ width: '100%', background: 'transparent', border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', borderRadius: 12, padding: '12px', cursor: 'pointer', fontWeight: 700, marginTop: 4 }}>
+        {opt('Tire & Rim', '8 photos: 6 tire + 2 rim', { tire: true, rim: true })}
+
+        {needsDepth && (
+          <div style={{ margin: '4px 0 14px', padding: '14px 16px', background: 'rgba(251,191,36,0.06)', border: `1px solid ${accent}44`, borderRadius: 12 }}>
+            <label style={labelSt}>Tire Tread Depth (required)</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <input value={depth} onChange={e => setDepth(e.target.value.replace(/[^0-9.]/g, ''))}
+                placeholder="e.g. 3" inputMode="decimal" autoFocus
+                style={{ ...inpSt, width: 110, textAlign: 'center', fontSize: 18, fontWeight: 800 }} />
+              <span style={{ fontSize: 20, fontWeight: 800, color: '#e2e8f0' }}>/ 32&quot;</span>
+            </div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Measured in 32nds of an inch (e.g. 3/32).</div>
+            {depth.trim() !== '' && !depthValid && (
+              <div style={{ fontSize: 12, color: '#f87171', marginTop: 6 }}>Enter a number from 0 to 32.</div>
+            )}
+          </div>
+        )}
+
+        <button onClick={save} disabled={!canSave} style={primaryBtn(canSave)}>
+          {!sel ? 'Choose a damage type' : needsDepth && !depthValid ? 'Enter tread depth to save' : 'Save'}
+        </button>
+
+        {hadDamage && (
+          <button onClick={() => { onSet({ tire: false, rim: false, treadDepth: '' }); onClose(); }}
+            style={{ width: '100%', background: 'transparent', border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', borderRadius: 12, padding: '12px', cursor: 'pointer', fontWeight: 700, marginTop: 10 }}>
             Clear this wheel
           </button>
         )}
@@ -330,6 +370,10 @@ function StepMap({ form, setWheel, onNext, onBack }) {
   const [chooser, setChooser] = useState(null);
   const anyFlagged = flaggedWheels(form).length > 0;
   const wheelFor = k => form.wheels?.[k] || { tire: false, rim: false };
+  // Every wheel with tire damage must have a tread-depth reading before photos.
+  const needsDepth = flaggedWheels(form).filter(w => form.wheels[w.key]?.tire &&
+    !String(form.wheels[w.key]?.treadDepth || '').trim());
+  const canNext = anyFlagged && needsDepth.length === 0;
   return (
     <div style={{ padding: '20px 18px 32px' }}>
       <StepHeader step={2} total={3} title="Mark the Damage" />
@@ -347,15 +391,27 @@ function StepMap({ form, setWheel, onNext, onBack }) {
         ) : flaggedWheels(form).map(w => (
           <div key={w.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.04)', borderRadius: 10, marginBottom: 8 }}>
             <span style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 14 }}>{w.label}</span>
-            <span style={{ color: accent, fontWeight: 700, fontSize: 13 }}>{damageLabel(form.wheels[w.key])} · {wheelPhotoSlots(form.wheels[w.key]).length} photos</span>
+            <span style={{ color: accent, fontWeight: 700, fontSize: 13, textAlign: 'right' }}>
+              {damageLabel(form.wheels[w.key])} · {wheelPhotoSlots(form.wheels[w.key]).length} photos
+              {form.wheels[w.key]?.tire && (
+                form.wheels[w.key]?.treadDepth
+                  ? <span> · {form.wheels[w.key].treadDepth} tread</span>
+                  : <span style={{ color: '#f87171' }}> · tread needed</span>
+              )}
+            </span>
           </div>
         ))}
       </div>
 
       <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
         <button onClick={onBack} style={{ flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: '#cbd5e1', borderRadius: 12, padding: '15px 20px', cursor: 'pointer', fontWeight: 700 }}>← Back</button>
-        <button onClick={onNext} disabled={!anyFlagged} style={primaryBtn(anyFlagged)}>Next → Photos</button>
+        <button onClick={onNext} disabled={!canNext} style={primaryBtn(canNext)}>Next → Photos</button>
       </div>
+      {anyFlagged && needsDepth.length > 0 && (
+        <div style={{ textAlign: 'center', color: '#f87171', fontSize: 12, marginTop: 10 }}>
+          Enter the tire tread depth for {needsDepth.map(w => w.label).join(', ')} to continue.
+        </div>
+      )}
 
       {chooser && (
         <DamageChooser wheelKey={chooser} damage={wheelFor(chooser)}
@@ -457,6 +513,9 @@ export function TireClaimDetail({ claim, hideInfo }) {
         <div key={w.key} style={{ marginBottom: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 800, color: accent, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${accent}33` }}>
             {w.label} — {damageLabel(claim.wheels[w.key])}
+            {claim.wheels[w.key]?.tire && claim.wheels[w.key]?.treadDepth && (
+              <span style={{ color: '#e2e8f0', fontWeight: 700 }}> · Tread {claim.wheels[w.key].treadDepth}</span>
+            )}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(120px,1fr))', gap: 14 }}>
             {wheelPhotoSlots(claim.wheels[w.key]).map(s => (
