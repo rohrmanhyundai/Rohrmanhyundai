@@ -1,44 +1,5 @@
 [
   {
-    "id": "msep5gfiqjaj",
-    "createdAt": "2026-08-04T13:31:26.958Z",
-    "updatedAt": "2026-08-04T13:33:56.113Z",
-    "createdBy": "Shawn",
-    "customerName": "Test dummy",
-    "repairOrder": "1747564",
-    "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-repairorder-1785850305308.jpg",
-    "wheels": {
-      "LF": {
-        "tire": true,
-        "rim": false
-      },
-      "RF": {
-        "tire": false,
-        "rim": false
-      },
-      "LR": {
-        "tire": false,
-        "rim": false
-      },
-      "RR": {
-        "tire": false,
-        "rim": false
-      }
-    },
-    "photos": {
-      "LF": {
-        "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-LF-tireDamage-1785850413387.jpg",
-        "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-LF-dot-1785850417942.jpg",
-        "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-LF-size-1785850421860.jpg",
-        "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-LF-brand-1785850426346.jpg",
-        "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msep5gfiqjaj-LF-tireFull-1785850430100.jpg"
-      },
-      "RF": {},
-      "LR": {},
-      "RR": {}
-    }
-  },
-  {
     "id": "mseoz3x01tzs",
     "createdAt": "2026-08-04T13:26:30.804Z",
     "updatedAt": "2026-08-04T13:28:05.227Z",
