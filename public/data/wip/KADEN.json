@@ -57,5 +57,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mshsqr4biybh",
+    "ro": "779809",
+    "roDate": "2026-08-06",
+    "vehicle": "2023 Hyundai Tucson Hybrid",
+    "jobDesc": "multifunction switch  R&R",
+    "notes": "PARTS ON ORDER",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
