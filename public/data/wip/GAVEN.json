@@ -27,5 +27,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mshlmvulqrdh",
+    "ro": "779814",
+    "roDate": "2026-08-06",
+    "vehicle": "2019 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES CEL FLASHING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
