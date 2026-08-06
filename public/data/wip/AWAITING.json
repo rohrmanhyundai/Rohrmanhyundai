@@ -13,5 +13,20 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mshsqs0izijq",
+    "ro": "779828",
+    "roDate": "2026-08-06",
+    "vehicle": "2022 Hyundai Palisade",
+    "jobDesc": "WHITE PAINT PEEL",
+    "notes": "NOT FOR TECH UNTIL IT COMES BACK FROM BODY SHOP. CAR DOES HAVE RECALLS ON IT",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
