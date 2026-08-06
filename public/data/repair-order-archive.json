@@ -1,5 +1,26 @@
 [
   {
+    "id": "msf6ux8cgubg",
+    "ro": "779783",
+    "roDate": "2026-08-04",
+    "vehicle": "2022 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES REAR STRUTS MAKING NOISE. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/06/2026",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "_archiveId": "msi0blfmido",
+    "_archivedAt": "2026-08-06T21:07:27.682Z",
+    "_archivedBy": "SHAWN",
+    "_source": "wip",
+    "_sourceTech": "KADEN"
+  },
+  {
     "id": "ms6hi3d2nxg",
     "ro": "779465",
     "roDate": "2026-07-23",
