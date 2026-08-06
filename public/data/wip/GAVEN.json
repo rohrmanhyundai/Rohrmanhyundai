@@ -15,22 +15,6 @@
     "flag": "purple"
   },
   {
-    "id": "mshlmvulqrdh",
-    "ro": "779814",
-    "roDate": "2026-08-06",
-    "vehicle": "2019 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CEL FLASHING. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mshsqqdg3q6m",
     "ro": "779815",
     "roDate": "2026-08-06",
@@ -45,20 +29,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mshwlhdzyy7",
-    "ro": "779842",
-    "roDate": "2026-08-06",
-    "vehicle": "",
-    "jobDesc": "",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": true,
-    "advisor": "JORDAN",
-    "notes": "CUSTOMER STATES VEHICLE LEAKING OIL. CHECK AND ADVISE.",
-    "flag": "purple"
   }
 ]
