@@ -99,8 +99,37 @@
   "2026-08": {
     "forecast": 101896,
     "lastYear": 121210.58,
-    "actuals": {},
+    "actuals": {
+      "2026-08-05": 3680.26,
+      "2026-08-04": 2969.05,
+      "2026-08-03": 3758.88,
+      "2026-08-02": 0,
+      "2026-08-01": 42
+    },
     "laborBreakdown": null,
-    "partsBreakdown": null
+    "partsBreakdown": {
+      "mtd": {
+        "cpParts": 3245.48,
+        "warrantyParts": 2302.4419,
+        "internalParts": 2804.61,
+        "oilParts": 1094.81,
+        "oilRetail": 0,
+        "wholesale": 2258.52,
+        "cpTire": 85.84,
+        "internalTire": 383.6,
+        "total": 10450.19
+      },
+      "ly": {
+        "cpParts": 19189.97,
+        "warrantyParts": 67952.73142,
+        "internalParts": 8708.77,
+        "oilParts": 5027.39,
+        "oilRetail": 747.4,
+        "wholesale": 66797.78,
+        "cpTire": 937.62314,
+        "internalTire": 1403.25,
+        "total": 121240.58
+      }
+    }
   }
 }
