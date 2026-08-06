@@ -1,29 +1,31 @@
 {
-  "updatedAt": "2026-08-06T14:16:24.750Z",
+  "updatedAt": "2026-08-06T17:35:20.635Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "779823",
-        "vehicle": "2023 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779822",
-        "vehicle": "2022 Hyundai Santa Cruz"
-      }
-    ],
     "DAVID": [
       {
-        "ro": "779821",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
+        "ro": "779837",
+        "vehicle": "2020 Hyundai Kona"
+      },
+      {
+        "ro": "779836",
+        "vehicle": "2023 Hyundai Elantra"
+      },
+      {
+        "ro": "779835",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779834",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "779832",
+        "vehicle": "2024 Hyundai Sonata"
       },
       {
         "ro": "779820",
         "vehicle": "2026 Hyundai Elantra Hybrid"
-      },
-      {
-        "ro": "779818",
-        "vehicle": "2025 Hyundai Tucson"
       },
       {
         "ro": "779816",
@@ -34,19 +36,33 @@
         "vehicle": "2019 Hyundai Tucson"
       },
       {
-        "ro": "779812",
-        "vehicle": "2024 Hyundai Elantra"
-      },
-      {
-        "ro": "779809",
-        "vehicle": "2023 Hyundai Tucson Hybrid"
-      },
-      {
         "ro": "779791",
         "vehicle": "2018 Hyundai Sonata"
       }
     ],
+    "CODY": [
+      {
+        "ro": "779833",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "779756",
+        "vehicle": "2020 Subaru Legacy"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "779831",
+        "vehicle": "2017 Nissan Rogue"
+      },
+      {
+        "ro": "779829",
+        "vehicle": "2016 Ford F-150"
+      },
+      {
+        "ro": "779827",
+        "vehicle": "2017 Buick LaCrosse"
+      },
       {
         "ro": "779799",
         "vehicle": "2018 Honda Odyssey"
@@ -88,10 +104,14 @@
         "vehicle": "2019 Ram 1500 Classic"
       }
     ],
-    "CODY": [
+    "JORDAN": [
       {
-        "ro": "779756",
-        "vehicle": "2020 Subaru Legacy"
+        "ro": "779828",
+        "vehicle": "2022 Hyundai Palisade"
+      },
+      {
+        "ro": "779825",
+        "vehicle": "2017 Hyundai Sonata"
       }
     ]
   }
