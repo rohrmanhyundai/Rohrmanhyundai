@@ -56,9 +56,9 @@
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN",
-    "notes": "",
+    "notes": "CUSTOMER STATES VEHICLE LEAKING OIL. CHECK AND ADVISE.",
     "flag": "purple"
   }
 ]
