@@ -1,56 +1,18 @@
 {
-  "updatedAt": "2026-08-06T17:35:31.725Z",
+  "updatedAt": "2026-08-06T20:57:55.471Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
+    "JORDAN": [
       {
-        "ro": "779837",
-        "vehicle": "2020 Hyundai Kona"
-      },
-      {
-        "ro": "779836",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "779835",
+        "ro": "779846",
         "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "779834",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "779832",
-        "vehicle": "2024 Hyundai Sonata"
-      },
-      {
-        "ro": "779820",
-        "vehicle": "2026 Hyundai Elantra Hybrid"
-      },
-      {
-        "ro": "779816",
-        "vehicle": "2022 Hyundai Elantra N"
-      },
-      {
-        "ro": "779814",
-        "vehicle": "2019 Hyundai Tucson"
-      },
-      {
-        "ro": "779791",
-        "vehicle": "2018 Hyundai Sonata"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "779833",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "779756",
-        "vehicle": "2020 Subaru Legacy"
       }
     ],
     "CORY": [
+      {
+        "ro": "779843",
+        "vehicle": "2019 Chevrolet Equinox"
+      },
       {
         "ro": "779831",
         "vehicle": "2017 Nissan Rogue"
@@ -76,24 +38,12 @@
         "vehicle": "2020 Hyundai Tucson"
       },
       {
-        "ro": "779779",
-        "vehicle": "2023 Lexus IS350"
-      },
-      {
         "ro": "779778",
         "vehicle": "2023 Hyundai Tucson"
       },
       {
-        "ro": "779743",
-        "vehicle": "2023 Hyundai Santa Fe"
-      },
-      {
         "ro": "779737",
         "vehicle": "2015 Honda Civic Sedan"
-      },
-      {
-        "ro": "779736",
-        "vehicle": "2023 Kia Sorento"
       },
       {
         "ro": "779665",
@@ -104,14 +54,16 @@
         "vehicle": "2019 Ram 1500 Classic"
       }
     ],
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "779828",
-        "vehicle": "2022 Hyundai Palisade"
-      },
+        "ro": "779816",
+        "vehicle": "2022 Hyundai Elantra N"
+      }
+    ],
+    "CODY": [
       {
-        "ro": "779825",
-        "vehicle": "2017 Hyundai Sonata"
+        "ro": "779756",
+        "vehicle": "2020 Subaru Legacy"
       }
     ]
   }
