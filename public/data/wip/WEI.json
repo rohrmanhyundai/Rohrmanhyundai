@@ -45,22 +45,6 @@
     "partsArrivedDate": ""
   },
   {
-    "id": "ms9gmwt4h2u7",
-    "ro": "779702",
-    "roDate": "2026-07-31",
-    "vehicle": "2026 Hyundai Santa Cruz",
-    "jobDesc": "swap bumper",
-    "notes": "PARTS ARE ON ORDER",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "SHAWN LAUGHNER"
-  },
-  {
     "id": "msd91qnfssy",
     "ro": "779727",
     "roDate": "2026-08-03",
