@@ -29,5 +29,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mshzz9bo17yz",
+    "ro": "779841",
+    "roDate": "2026-08-06",
+    "vehicle": "2021 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES- cel on",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
