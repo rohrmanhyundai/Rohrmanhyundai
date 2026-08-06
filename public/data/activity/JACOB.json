@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-08-06T14:56:46.852Z",
+    "type": "page",
+    "label": "cash-dash"
+  },
+  {
+    "at": "2026-08-06T14:56:43.333Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-08-06T14:56:41.062Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-08-06T14:56:39.428Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-08-06T14:56:35.165Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-05T20:50:09.821Z",
     "type": "page",
     "label": "tech-resources"
