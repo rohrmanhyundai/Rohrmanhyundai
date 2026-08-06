@@ -1,25 +1,49 @@
 {
-  "updatedAt": "2026-08-05T22:14:25.657Z",
+  "updatedAt": "2026-08-06T14:16:24.750Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "779807",
-        "vehicle": "2025 Hyundai Elantra Hybrid"
+        "ro": "779823",
+        "vehicle": "2023 Hyundai Santa Cruz"
       },
       {
-        "ro": "779793",
+        "ro": "779822",
         "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "779791",
-        "vehicle": "2018 Hyundai Sonata"
       }
     ],
     "DAVID": [
       {
-        "ro": "779805",
-        "vehicle": "2022 Hyundai Tucson"
+        "ro": "779821",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "779820",
+        "vehicle": "2026 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "779818",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "779816",
+        "vehicle": "2022 Hyundai Elantra N"
+      },
+      {
+        "ro": "779814",
+        "vehicle": "2019 Hyundai Tucson"
+      },
+      {
+        "ro": "779812",
+        "vehicle": "2024 Hyundai Elantra"
+      },
+      {
+        "ro": "779809",
+        "vehicle": "2023 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "779791",
+        "vehicle": "2018 Hyundai Sonata"
       }
     ],
     "CORY": [
@@ -54,10 +78,6 @@
       {
         "ro": "779736",
         "vehicle": "2023 Kia Sorento"
-      },
-      {
-        "ro": "779688",
-        "vehicle": "2019 Dodge Charger"
       },
       {
         "ro": "779665",
