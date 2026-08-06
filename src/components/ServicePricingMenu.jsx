@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadServicePricing, saveServicePricing } from '../utils/github';
+import { openPackageFlyer } from '../utils/packageFlyer';
 
 const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 // laborCost = labor $ charged to the customer, laborHours = the job's hours.
@@ -307,7 +308,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
             onOpenBuilder={() => setBuilderOpen(true)}
           />
         ) : (
-          <ReadView categories={categories} packages={packages} />
+          <ReadView categories={categories} packages={packages} doorRate={doorRate} />
         )}
       </div>
 
@@ -360,8 +361,31 @@ function pillTab(active) {
 }
 
 // ── Modern read-only menu (all advisors) ─────────────────────────────────────
-function ReadView({ categories, packages }) {
+function ReadView({ categories, packages, doorRate }) {
   const [copiedId, setCopiedId] = useState('');
+  // Look up a service's menu description (for the printable flyer) by op code
+  // first, then by name — package line items don't store their own description.
+  const catalogDesc = {};
+  (categories || []).forEach(c => (c.services || []).forEach(s => {
+    if (s.opCode) catalogDesc['op:' + String(s.opCode).trim().toLowerCase()] = s.desc || '';
+    if (s.name) catalogDesc['nm:' + String(s.name).trim().toLowerCase()] = s.desc || '';
+  }));
+  const descForItem = (it) =>
+    catalogDesc['op:' + String(it.opCode || '').trim().toLowerCase()]
+    ?? catalogDesc['nm:' + String(it.name || '').trim().toLowerCase()]
+    ?? '';
+
+  const printFlyer = (pkg) => {
+    const sum = packageSummary(pkg, doorRate);
+    const regular = packageSummary({ ...pkg, couponAmt: '0', couponMax: '' }, doorRate);
+    const savings = round2(regular.grand - sum.grand);
+    const hasDiscount = sum.couponAmt > 0.005 && savings > 0.005;
+    openPackageFlyer({
+      pkg,
+      lines: (pkg.items || []).map(it => ({ name: it.name, desc: descForItem(it) })),
+      pricing: { hasDiscount, before: regular.grand, after: sum.grand, savings, taxRate: numOf(pkg.taxRate) || 0 },
+    });
+  };
   const copyOp = (code, id) => {
     const v = String(code || '').trim();
     if (!v) return;
@@ -406,6 +430,14 @@ function ReadView({ categories, packages }) {
         <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
           <div style={{ fontSize: 19, fontWeight: 900, color: '#c4b5fd', letterSpacing: '-.01em' }}>{money(pkg.price || 0)}</div>
           {numOf(pkg.taxRate) > 0 && <div style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>incl. {numOf(pkg.taxRate)}% tax</div>}
+          {pkg.flyerEnabled && (
+            <button onClick={() => printFlyer(pkg)} title="Print a customer flyer for this package"
+              style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+                background: 'rgba(0,165,201,.14)', border: '1px solid rgba(0,165,201,.5)', color: '#67e8f9',
+                borderRadius: 8, padding: '5px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 12 }}>
+              🖨 Print flyer
+            </button>
+          )}
         </div>
       </div>
       <ul style={{ margin: '10px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 5 }}>
@@ -666,7 +698,7 @@ function iconBtn(disabled) {
   };
 }
 
-const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', category: '', opCode: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '' });
+const newPackage = () => ({ id: uid('pkg'), name: '', desc: '', category: '', opCode: '', status: 'draft', items: [], taxRate: '7', taxBase: 'parts', couponAmt: '0', couponType: 'percent', couponMax: '', flyerEnabled: false });
 
 // ── Package Tool Builder ─────────────────────────────────────────────────────
 // Landing lists saved packages (draft + posted); the editor bundles services,
@@ -719,6 +751,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
     if (d.couponMax == null) d.couponMax = '';
     if (d.category == null) d.category = '';
     if (d.opCode == null) d.opCode = '';
+    if (d.flyerEnabled == null) d.flyerEnabled = false;   // backfill for pre-flyer packages
     setDraft(d); setErr(''); setFlash(''); setScreen('edit');
   };
   const isSaved = draft && (packages || []).some(p => p.id === draft.id);
@@ -856,6 +889,31 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
                     style={{ ...editInp, color: '#6ee7f9', fontWeight: 700 }} />
                 </div>
               </div>
+
+              {/* Customer flyer — when on, a "Print flyer" button shows on this
+                  package in the View menu so an advisor can hand the customer a
+                  clean, illustrated one-pager (with before/after pricing if a
+                  coupon is set). */}
+              <button type="button" onClick={() => setDraft(d => ({ ...d, flyerEnabled: !d.flyerEnabled }))}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer',
+                  background: draft.flyerEnabled ? 'rgba(0,165,201,.12)' : 'rgba(255,255,255,.04)',
+                  border: `1px solid ${draft.flyerEnabled ? 'rgba(0,165,201,.55)' : 'rgba(148,163,184,.22)'}`,
+                  borderRadius: 12, padding: '13px 15px', marginBottom: 16 }}>
+                <span style={{ flexShrink: 0, width: 40, height: 40, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 20,
+                  background: draft.flyerEnabled ? 'rgba(0,165,201,.22)' : 'rgba(148,163,184,.12)' }}>🖨</span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: 'block', fontSize: 14, fontWeight: 800, color: draft.flyerEnabled ? '#67e8f9' : '#e2e8f0' }}>
+                    Customer flyer {draft.flyerEnabled ? '· ON' : '· off'}
+                  </span>
+                  <span style={{ display: 'block', fontSize: 12, color: '#94a3b8', marginTop: 2, lineHeight: 1.45 }}>
+                    Adds a “Print flyer” button on this package in the View menu — a modern, illustrated one-pager an advisor can print to show the customer. Shows before/after pricing when a coupon is set.
+                  </span>
+                </span>
+                <span style={{ flexShrink: 0, alignSelf: 'center', width: 42, height: 24, borderRadius: 999, position: 'relative',
+                  background: draft.flyerEnabled ? '#00a5c9' : 'rgba(148,163,184,.35)', transition: 'background .15s' }}>
+                  <span style={{ position: 'absolute', top: 2, left: draft.flyerEnabled ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'left .15s' }} />
+                </span>
+              </button>
 
               {/* Item column headers. LABOR comes from ELR%; PARTS is auto-filled
                   from the menu (adjustable); TOTAL = parts + labor, figured live. */}
