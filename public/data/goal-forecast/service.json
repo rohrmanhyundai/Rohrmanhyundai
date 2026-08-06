@@ -92,8 +92,29 @@
   "2026-08": {
     "forecast": 152561,
     "lastYear": 120354,
-    "actuals": {},
-    "laborBreakdown": null,
+    "actuals": {
+      "2026-08-05": 4452.48,
+      "2026-08-04": 5872.13,
+      "2026-08-03": 5699.43,
+      "2026-08-02": 0,
+      "2026-08-01": 0
+    },
+    "laborBreakdown": {
+      "mtd": {
+        "cp": 7130.39,
+        "warranty": 3235.81,
+        "internal": 5657.84,
+        "unapplied": 0,
+        "total": 16024.04
+      },
+      "ly": {
+        "cp": 53322.43,
+        "warranty": 37631.12,
+        "internal": 31517.31,
+        "unapplied": -2116.11,
+        "total": 120354.75
+      }
+    },
     "partsBreakdown": null
   }
 }
