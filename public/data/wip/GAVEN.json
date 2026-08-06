@@ -29,5 +29,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mshsqqdg3q6m",
+    "ro": "779815",
+    "roDate": "2026-08-06",
+    "vehicle": "2020 Hyundai Kona",
+    "jobDesc": "REC - C-MDPS WORM SHAFT BEARING",
+    "notes": "MIRROR IS ON ORDER",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
