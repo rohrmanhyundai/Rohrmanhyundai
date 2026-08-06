@@ -27,22 +27,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "msf6ux8cgubg",
-    "ro": "779783",
-    "roDate": "2026-08-04",
-    "vehicle": "2022 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES REAR STRUTS MAKING NOISE. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/06/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "msge0llu288a",
     "ro": "779786",
     "roDate": "2026-08-05",
