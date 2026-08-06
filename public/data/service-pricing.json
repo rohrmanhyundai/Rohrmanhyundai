@@ -337,11 +337,11 @@
       ],
       "taxRate": "7",
       "taxBase": "parts",
-      "couponAmt": "10",
+      "couponAmt": "12",
       "couponType": "percent",
       "couponMax": "",
-      "price": 628.49,
-      "updatedAt": 1785959229847,
+      "price": 615.75,
+      "updatedAt": 1786033809945,
       "category": "cat-msggyh2n4fce",
       "opCode": "30KSERVICE"
     },
@@ -383,5 +383,5 @@
       "updatedAt": 1785959757969
     }
   ],
-  "updatedAt": 1785959757969
+  "updatedAt": 1786033809945
 }
