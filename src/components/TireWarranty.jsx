@@ -488,13 +488,90 @@ function StepHeader({ step, total, title }) {
   );
 }
 
+// ── Photo download helpers ─────────────────────────────────────────────────────
+function extFromUrl(url) {
+  const m = String(url || '').split('?')[0].match(/\.([a-zA-Z0-9]{2,5})$/);
+  return (m ? m[1] : 'jpg').toLowerCase();
+}
+function safeName(s) {
+  return String(s || '').trim().replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, '') || 'photo';
+}
+
+// Save an image to the user's device. The S3 bucket's CORS allows GET from the
+// app origin, so we fetch the bytes and download them as a real file. If that
+// ever fails we fall back to opening the image so the user can save it manually.
+async function downloadPhoto(url, filename) {
+  if (!url) return false;
+  try {
+    const res = await fetch(url, { mode: 'cors', cache: 'no-store' });
+    if (!res.ok) throw new Error('bad status');
+    const blob = await res.blob();
+    const objUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = objUrl;
+    a.download = filename || `photo.${extFromUrl(url)}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(objUrl), 5000);
+    return true;
+  } catch {
+    window.open(url, '_blank', 'noopener');
+    return false;
+  }
+}
+
+// Every photo on a claim, with a descriptive filename, in display order.
+function claimPhotoList(claim) {
+  const base = safeName(claim.repairOrder || claim.customerName || 'tire-claim');
+  const items = [];
+  if (claim.repairOrderPhoto) {
+    items.push({ url: claim.repairOrderPhoto, filename: `${base}_RepairOrder.${extFromUrl(claim.repairOrderPhoto)}` });
+  }
+  flaggedWheels(claim).forEach(w => {
+    wheelPhotoSlots(claim.wheels[w.key]).forEach(s => {
+      const url = claim.photos?.[w.key]?.[s.key];
+      if (url) items.push({ url, filename: `${base}_${w.key}_${safeName(s.label)}.${extFromUrl(url)}` });
+    });
+  });
+  return items;
+}
+
 // ── Read-only claim detail (reused by the After Market Warranty tab) ───────────
 // hideInfo skips the customer/RO header (used when a full contract form already
 // shows those fields) and renders only the captured photo evidence.
 export function TireClaimDetail({ claim, hideInfo }) {
   const flagged = flaggedWheels(claim);
+  const base = safeName(claim.repairOrder || claim.customerName || 'tire-claim');
+  const allPhotos = claimPhotoList(claim);
+  const [dl, setDl] = useState({ active: false, done: 0, total: 0 });
+
+  async function downloadAll() {
+    if (dl.active || allPhotos.length === 0) return;
+    setDl({ active: true, done: 0, total: allPhotos.length });
+    for (let i = 0; i < allPhotos.length; i++) {
+      await downloadPhoto(allPhotos[i].url, allPhotos[i].filename);
+      setDl({ active: true, done: i + 1, total: allPhotos.length });
+      await new Promise(r => setTimeout(r, 400)); // space out so the browser keeps every file
+    }
+    setDl({ active: false, done: 0, total: 0 });
+  }
+
   return (
     <div>
+      {allPhotos.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <span style={{ color: '#64748b', fontSize: 12 }}>Tip: click any photo to download it.</span>
+          <button type="button" onClick={downloadAll} disabled={dl.active}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: dl.active ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg,rgba(251,191,36,0.9),rgba(245,158,11,0.85))',
+              border: `1px solid ${dl.active ? 'rgba(255,255,255,0.15)' : accent}`, color: dl.active ? '#cbd5e1' : '#1a1205',
+              borderRadius: 10, padding: '10px 16px', fontWeight: 800, fontSize: 14, cursor: dl.active ? 'wait' : 'pointer',
+              boxShadow: dl.active ? 'none' : '0 4px 14px rgba(251,191,36,0.3)' }}>
+            {dl.active ? `Downloading ${dl.done}/${dl.total}…` : `⬇ Download All to PC (${allPhotos.length})`}
+          </button>
+        </div>
+      )}
       {!hideInfo && (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12, marginBottom: 20 }}>
         <DetailRow label="Customer" value={claim.customerName} />
@@ -506,7 +583,7 @@ export function TireClaimDetail({ claim, hideInfo }) {
       {claim.repairOrderPhoto && (
         <div style={{ marginBottom: 22 }}>
           <div style={labelSt}>Repair Order Photo</div>
-          <PhotoThumb url={claim.repairOrderPhoto} />
+          <PhotoThumb url={claim.repairOrderPhoto} filename={`${base}_RepairOrder.${extFromUrl(claim.repairOrderPhoto)}`} />
         </div>
       )}
       {flagged.map(w => (
@@ -521,7 +598,8 @@ export function TireClaimDetail({ claim, hideInfo }) {
             {wheelPhotoSlots(claim.wheels[w.key]).map(s => (
               <div key={s.key}>
                 <div style={{ ...labelSt, marginBottom: 4 }}>{s.label}</div>
-                <PhotoThumb url={claim.photos?.[w.key]?.[s.key]} />
+                <PhotoThumb url={claim.photos?.[w.key]?.[s.key]}
+                  filename={`${base}_${w.key}_${safeName(s.label)}.${extFromUrl(claim.photos?.[w.key]?.[s.key])}`} />
               </div>
             ))}
           </div>
@@ -540,12 +618,25 @@ function DetailRow({ label, value, mono }) {
   );
 }
 
-function PhotoThumb({ url }) {
+function PhotoThumb({ url, filename }) {
+  const [busy, setBusy] = useState(false);
   if (!url) return <div style={{ color: '#475569', fontSize: 12 }}>No photo</div>;
+  async function handleClick() {
+    if (busy) return;
+    setBusy(true);
+    await downloadPhoto(url, filename);
+    setBusy(false);
+  }
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer">
-      <img src={url} alt="" style={{ width: '100%', maxWidth: 150, aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: `1px solid ${accent}55` }} />
-    </a>
+    <button type="button" onClick={handleClick} disabled={busy} title="Click to download to your PC"
+      style={{ display: 'block', position: 'relative', width: '100%', maxWidth: 150, padding: 0,
+        border: 'none', background: 'none', cursor: busy ? 'wait' : 'pointer' }}>
+      <img src={url} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: `1px solid ${accent}55`, display: 'block' }} />
+      <span style={{ position: 'absolute', bottom: 6, right: 6, background: 'rgba(0,0,0,0.65)', color: accent,
+        borderRadius: 6, padding: '2px 7px', fontSize: 12, fontWeight: 800, pointerEvents: 'none' }}>
+        {busy ? '…' : '⬇'}
+      </span>
+    </button>
   );
 }
 
