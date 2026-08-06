@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-06T20:54:54.880Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-08-06T18:53:43.000Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -993,15 +998,5 @@
     "at": "2026-07-07T22:14:57.018Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-07-07T20:47:26.675Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T18:53:47.411Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
