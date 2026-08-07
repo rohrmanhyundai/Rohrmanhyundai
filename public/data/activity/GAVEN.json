@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-07T19:44:50.717Z",
+    "type": "page",
+    "label": "cash-dash"
+  },
+  {
+    "at": "2026-08-07T19:44:48.879Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-07T19:43:44.162Z",
     "type": "action",
     "label": "delete-wip-row",
