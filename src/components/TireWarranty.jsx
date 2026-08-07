@@ -570,7 +570,7 @@ function claimPhotoList(claim) {
 // ── Read-only claim detail (reused by the After Market Warranty tab) ───────────
 // hideInfo skips the customer/RO header (used when a full contract form already
 // shows those fields) and renders only the captured photo evidence.
-export function TireClaimDetail({ claim, hideInfo }) {
+export function TireClaimDetail({ claim, hideInfo, onOptionalUpload }) {
   const flagged = flaggedWheels(claim);
   const base = safeName(claim.repairOrder || claim.customerName || 'tire-claim');
   const allPhotos = claimPhotoList(claim);
@@ -649,7 +649,10 @@ export function TireClaimDetail({ claim, hideInfo }) {
         </div>
         {claim.originalPurchasePhoto
           ? <PhotoThumb url={claim.originalPurchasePhoto} filename={`${base}_OriginalPurchaseRO.${extFromUrl(claim.originalPurchasePhoto)}`} />
-          : <MissingPhotoCard />}
+          : onOptionalUpload
+            ? <CameraButton compact label="Tap to upload" value="" claimId={claim.id} slotKey="originalpurchase"
+                onChange={url => onOptionalUpload('originalPurchasePhoto', url)} />
+            : <MissingPhotoCard />}
       </div>
       <div style={{ marginBottom: 22 }}>
         <div style={{ ...labelSt, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -657,7 +660,10 @@ export function TireClaimDetail({ claim, hideInfo }) {
         </div>
         {claim.replacementQuotePhoto
           ? <PhotoThumb url={claim.replacementQuotePhoto} filename={`${base}_ReplacementQuote.${extFromUrl(claim.replacementQuotePhoto)}`} />
-          : <MissingPhotoCard />}
+          : onOptionalUpload
+            ? <CameraButton compact label="Tap to upload" value="" claimId={claim.id} slotKey="replacementquote"
+                onChange={url => onOptionalUpload('replacementQuotePhoto', url)} />
+            : <MissingPhotoCard />}
       </div>
       {flagged.map(w => (
         <div key={w.key} style={{ marginBottom: 22 }}>
@@ -835,6 +841,23 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
     }
   }
 
+  // Upload an optional supporting photo from the read-only detail view and
+  // persist it to the claim (CameraButton already put the image on S3).
+  async function handleOptionalUpload(key, url) {
+    if (!activeClaim || !url) return;
+    const updated = { ...activeClaim, [key]: url, updatedAt: new Date().toISOString() };
+    const next = claims.map(c => (c.id === updated.id ? updated : c))
+      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    setActiveClaim(updated);
+    setClaims(next);
+    setSaveError('');
+    try {
+      await saveTireWarrantyClaim(updated, next);
+    } catch (err) {
+      setSaveError(err.message || 'Could not save the photo. Try again.');
+    }
+  }
+
   async function handleDelete(claim) {
     const who = claim.customerName || claim.repairOrder || 'this claim';
     if (!window.confirm(`Delete the tire warranty claim for ${who}? This cannot be undone.`)) return;
@@ -897,7 +920,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
 
         {view === 'detail' && activeClaim && (
           <div style={{ padding: '18px 16px 40px' }}>
-            <TireClaimDetail claim={activeClaim} />
+            <TireClaimDetail claim={activeClaim} onOptionalUpload={handleOptionalUpload} />
             {saveError && <div style={{ color: '#f87171', fontSize: 13, textAlign: 'center', marginTop: 12 }}>{saveError}</div>}
             <button onClick={() => handleDelete(activeClaim)} disabled={deleting}
               style={{ width: '100%', marginTop: 20, background: 'rgba(248,113,133,0.12)', border: '1px solid rgba(248,113,133,0.5)', color: '#fb7185', borderRadius: 12, padding: '14px', cursor: deleting ? 'not-allowed' : 'pointer', fontWeight: 700, fontSize: 15 }}>
