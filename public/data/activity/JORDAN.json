@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-07T20:03:24.439Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-08-07T20:03:20.264Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-07T20:01:57.376Z",
     "type": "page",
     "label": "repair-order-process"
