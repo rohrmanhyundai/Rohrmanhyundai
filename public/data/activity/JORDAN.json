@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-08-07T15:32:38.462Z",
+    "type": "action",
+    "label": "mark-parts-arrived",
+    "details": "RO 779580"
+  },
+  {
     "at": "2026-08-07T15:31:42.960Z",
     "type": "page",
     "label": "work-in-progress"
