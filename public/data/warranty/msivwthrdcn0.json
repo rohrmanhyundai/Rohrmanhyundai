@@ -1,7 +1,7 @@
 {
   "id": "msivwthrdcn0",
   "createdAt": "2026-08-07T11:51:45.999Z",
-  "updatedAt": "2026-08-07T11:53:48.246Z",
+  "updatedAt": "2026-08-07T19:33:30.423Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Karla Jenkins",
   "customerPhone": "765) 438 - 8239",
@@ -13,8 +13,8 @@
   "mileage": "28691",
   "warrantyCompany": "SMART DRIVER",
   "warrantyPhone": "888-684-9327",
-  "claimNumber": "",
-  "authNumber": "",
+  "claimNumber": " 292-16869975",
+  "authNumber": "3278424-8623332",
   "laborRate": "73.33",
   "laborTime": ".30",
   "diagnosisTime": "",
@@ -24,7 +24,7 @@
       "partNumber": "2345652",
       "description": "235/60R18 Kumho Crugen HP71",
       "qty": "1",
-      "price": "184.99"
+      "price": "175.94"
     }
   ],
   "taxPct": "7",
@@ -36,8 +36,8 @@
   "tireTax": ".25",
   "tireDisposal": "3.0",
   "notes": "",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-08-07",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
