@@ -86,5 +86,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "msiyqxuoj11c",
+    "ro": "779228",
+    "roDate": "2026-08-07",
+    "vehicle": "2013 Hyundai Elantra",
+    "jobDesc": "needs ecu",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
