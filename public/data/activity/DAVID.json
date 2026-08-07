@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-07T14:03:03.344Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-06T20:54:54.880Z",
     "type": "page",
     "label": "advisor-goals"
@@ -938,65 +943,5 @@
     "at": "2026-07-08T15:40:43.505Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-08T12:40:54.244Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-08T12:37:16.941Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-08T12:37:14.439Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-08T12:36:14.816Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-08T11:59:49.539Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-08T11:59:01.769Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-08T11:58:57.062Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T22:52:26.243Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-07T22:25:43.969Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-07T22:15:02.694Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T22:14:58.098Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T22:14:57.018Z",
-    "type": "action",
-    "label": "login"
   }
 ]
