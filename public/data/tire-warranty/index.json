@@ -85,46 +85,5 @@
         "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-tireFull-1786112381518.jpg"
       }
     }
-  },
-  {
-    "id": "mshmmmy3bpb7",
-    "createdAt": "2026-08-06T14:44:08.235Z",
-    "updatedAt": "2026-08-06T14:46:22.881Z",
-    "createdBy": "Shawn",
-    "customerName": "Test ",
-    "repairOrder": "121212",
-    "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-repairorder-1786027460951.jpg",
-    "wheels": {
-      "LF": {
-        "tire": true,
-        "rim": false,
-        "treadDepth": "9/32"
-      },
-      "RF": {
-        "tire": false,
-        "rim": false
-      },
-      "LR": {
-        "tire": false,
-        "rim": false
-      },
-      "RR": {
-        "tire": false,
-        "rim": false
-      }
-    },
-    "photos": {
-      "LF": {
-        "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-tireDamage-1786027493206.jpg",
-        "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-dot-1786027515326.jpg",
-        "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-size-1786027524364.jpg",
-        "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-brand-1786027536912.jpg",
-        "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-gauge-1786027567041.jpg",
-        "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mshmmmy3bpb7-LF-tireFull-1786027579345.jpg"
-      },
-      "RF": {},
-      "LR": {},
-      "RR": {}
-    }
   }
 ]
