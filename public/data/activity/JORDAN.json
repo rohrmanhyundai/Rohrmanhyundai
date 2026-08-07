@@ -1,5 +1,22 @@
 [
   {
+    "at": "2026-08-07T11:15:05.190Z",
+    "type": "action",
+    "label": "save-dashboard"
+  },
+  {
+    "at": "2026-08-07T11:15:02.312Z",
+    "type": "action",
+    "label": "upload-advisor-pdf",
+    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS.pdf"
+  },
+  {
+    "at": "2026-08-07T11:14:42.746Z",
+    "type": "action",
+    "label": "upload-advisor-xlsx",
+    "details": "Advisor Performance Report (2).xlsx"
+  },
+  {
     "at": "2026-08-06T19:55:20.851Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -886,91 +903,6 @@
   },
   {
     "at": "2026-07-08T15:15:20.089Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T22:51:56.312Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-07T21:48:49.284Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T21:48:43.832Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T21:45:35.788Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T21:45:34.335Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T21:40:42.497Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T21:02:04.615Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T21:02:03.082Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-07T21:02:03.005Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T21:00:28.112Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-07T20:59:00.486Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T20:58:58.487Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T20:58:00.010Z",
-    "type": "page",
-    "label": "goal-forecast"
-  },
-  {
-    "at": "2026-07-07T20:55:25.442Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-07T20:55:22.945Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-07T20:47:10.247Z",
-    "type": "page",
-    "label": "goal-forecast"
-  },
-  {
-    "at": "2026-07-07T20:46:08.583Z",
     "type": "page",
     "label": "advisor-calendar"
   }
