@@ -1,22 +1,14 @@
 {
-  "updatedAt": "2026-08-07T20:01:50.896Z",
+  "updatedAt": "2026-08-07T21:55:05.180Z",
   "by": "JORDAN",
   "advisors": {
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "779875",
-        "vehicle": "2018 Hyundai Elantra"
-      },
-      {
-        "ro": "779871",
-        "vehicle": "2006 Acura TSX"
+        "ro": "779864",
+        "vehicle": "2013 Hyundai Equus"
       }
     ],
     "CODY": [
-      {
-        "ro": "779874",
-        "vehicle": "2016 Hyundai Tucson"
-      },
       {
         "ro": "779856",
         "vehicle": "2026 Hyundai Sonata"
@@ -24,16 +16,6 @@
       {
         "ro": "779756",
         "vehicle": "2020 Subaru Legacy"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779872",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "779864",
-        "vehicle": "2013 Hyundai Equus"
       }
     ],
     "CORY": [
@@ -60,10 +42,6 @@
       {
         "ro": "779778",
         "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "779737",
-        "vehicle": "2015 Honda Civic Sedan"
       },
       {
         "ro": "779665",
