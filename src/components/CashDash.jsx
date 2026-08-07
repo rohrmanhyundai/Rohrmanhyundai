@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { loadCashDash, updateCashDash, loadGithubFile } from '../utils/github';
+import CashDashUpload from './CashDashUpload';
 
 // ── August 2026 Cash Dash plan (hard-coded — one month's plan) ────────────────
 const PLAN = {
@@ -165,6 +166,12 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 20 }}>
+
+          {/* Manager: bulk-set every tech's month booked hours from the report */}
+          {isManager && (
+            <CashDashUpload technicians={technicians} monthKey={PLAN.monthKey} monthLabel={PLAN.label}
+              currentUser={currentUser} onApplied={refresh} />
+          )}
 
           {/* Plan chart — styled reproduction of the qualify/earn-pulls board */}
           <PlanChart />
