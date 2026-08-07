@@ -285,7 +285,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTechSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onRepairOrderProcess, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -990,6 +990,17 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >📤 RO Upload</button>
+            )}
+            {canManageWip && onRepairOrderProcess && (
+              <button
+                onClick={onRepairOrderProcess}
+                title="Repair Order Process — RO status report (managers only)"
+                style={{
+                  background: 'rgba(96,165,250,.16)', border: '1px solid rgba(96,165,250,.5)',
+                  color: '#93c5fd', borderRadius: 10, padding: '8px 16px', fontWeight: 800, fontSize: 13,
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >🧰 Repair Order Process</button>
             )}
             {roSearch && (
               <button onClick={() => setRoSearch('')} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>

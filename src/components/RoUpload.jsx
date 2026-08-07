@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import {
   loadAwaitingData, saveAwaitingData,
   loadWipData, saveWipData, listWipTechs, loadDashboardData,
-  saveMissingNotes, loadRoArchive, saveRoArchive,
+  saveMissingNotes, loadRoArchive, saveRoArchive, saveRoStatusReport,
 } from '../utils/github';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 
@@ -15,6 +15,12 @@ const FIELDS = [
   { key: 'tech',     label: 'Technician',      required: false, hints: ['technician', 'tech'] },
   { key: 'userFlag', label: 'User Flag',       required: true,  hints: ['user flag', 'flag', 'userflag'] },
   { key: 'internalNotes', label: 'Internal Notes', required: false, hints: ['internal notes', 'internal note', 'internal'] },
+  // Optional — power the manager-only Repair Order Process page. Not required to
+  // run the WIP upload; captured for every RO row when present.
+  { key: 'roStatus', label: 'RO Status',   required: false, hints: ['ro status', 'repair order status', 'ro state', 'status'] },
+  { key: 'cpStatus', label: 'CP Status',   required: false, hints: ['cp status', 'customer pay status', 'pay status', 'cp'] },
+  { key: 'roAge',    label: 'RO Age (days)', required: false, hints: ['ro age', 'age (days)', 'age days', 'age', 'days open', 'days'] },
+  { key: 'openDate', label: 'RO Open Date', required: false, hints: ['open date', 'ro open date', 'ro date', 'date opened', 'opened', 'created date'] },
 ];
 
 // "FIRST LAST" → "FIRST" (uppercased), to key the list by advisor first name.
@@ -39,6 +45,11 @@ function flagColor(v) {
   if (f.includes('purple')) return 'purple';
   return '';
 }
+// A RED User Flag marks the RO as warranty (used by the Repair Order Process
+// page). Red rows are NOT ingested into WIP — flagAllowed above still excludes
+// them — this only tags the status snapshot.
+function isWarrantyFlag(v) { return norm(v).includes('red'); }
+
 // Auto description by flag: green = Used Car Inspection, pink = PDI. Purple
 // (plain WIP) gets NO auto description — the advisor fills it in themselves.
 function autoDescForFlag(v) {
@@ -229,6 +240,32 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       return { ro: val('ro'), advisor: val('advisor'), vehicle: val('vehicle'), tech: val('tech'), userFlag: val('userFlag') };
     }).filter(o => o.ro && flagAllowed(o.userFlag));
   }, [dataRows, mapping]);
+
+  // Every RO row with its status columns → snapshot for the Repair Order Process
+  // page. Independent of the purple/pink/green WIP filter: captures ALL rows
+  // (including red/warranty), deduped by RO#. Needs RO Status mapped.
+  const roStatusMapped = (mapping.roStatus ?? -1) >= 0;
+  const roStatusRows = useMemo(() => {
+    if (!roStatusMapped || (mapping.ro ?? -1) < 0) return [];
+    const seen = new Set(), out = [];
+    for (const r of dataRows) {
+      const val = (k) => { const i = mapping[k]; return (i != null && i >= 0) ? String(r[i] ?? '').trim() : ''; };
+      const ro = val('ro');
+      if (!ro) continue;
+      const k = roKey(ro);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      const ageRaw = val('roAge');
+      const ageNum = ageRaw === '' ? null : parseInt(String(ageRaw).replace(/[^\d-]/g, ''), 10);
+      out.push({
+        ro: ro.trim(), advisor: val('advisor'), vehicle: val('vehicle'), tech: val('tech'),
+        userFlag: val('userFlag'), warranty: isWarrantyFlag(val('userFlag')),
+        roStatus: val('roStatus'), cpStatus: val('cpStatus'),
+        roAge: Number.isFinite(ageNum) ? ageNum : null, openDate: val('openDate'),
+      });
+    }
+    return out;
+  }, [dataRows, mapping, roStatusMapped]);
 
   // ROs whose Internal Notes (col J) are blank, grouped by advisor first name.
   // Needs the Internal Notes column mapped (otherwise we can't tell).
@@ -532,15 +569,33 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
   // One button for the page: save flagged ROs to WIP AND the missing-notes list
   // for Day End Reporting in a single click. Runs whichever has anything to save.
   const hasNotesToSave = notesMapped && missingTotal > 0;
-  const canSaveAll = toAdd.length > 0 || hasNotesToSave;
+  const hasRoStatusToSave = roStatusRows.length > 0;
+  const canSaveAll = toAdd.length > 0 || hasNotesToSave || hasRoStatusToSave;
+
+  const [roStatusSaving, setRoStatusSaving] = useState(false);
+  const [roStatusSaved, setRoStatusSaved] = useState('');
+  async function saveRoStatusSnapshot() {
+    setRoStatusSaving(true); setRoStatusSaved('');
+    try {
+      await saveRoStatusReport(roStatusRows, currentUser || '');
+      setRoStatusSaved(`✅ Repair Order Process updated — ${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'}.`);
+    } catch (e) {
+      setRoStatusSaved('RO status save failed: ' + (e.message || e));
+    } finally {
+      setRoStatusSaving(false);
+    }
+  }
+
   async function handleSaveAll() {
     if (!canSaveAll) return;
     const parts = [];
     if (toAdd.length > 0) parts.push(`${toAdd.length} new RO${toAdd.length === 1 ? '' : 's'} to WIP`);
     if (hasNotesToSave) parts.push(`${missingTotal} missing-note RO${missingTotal === 1 ? '' : 's'} for Day End Reporting`);
+    if (hasRoStatusToSave) parts.push(`${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'} to Repair Order Process`);
     if (!window.confirm(`Save ${parts.join(' and ')}?`)) return;
     if (toAdd.length > 0) await handleSave(true);   // skip its own confirm
     if (hasNotesToSave) await saveMissingNotesList();
+    if (hasRoStatusToSave) await saveRoStatusSnapshot();
   }
 
   const inpSel = { background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#e2e8f0', padding: '6px 10px', fontSize: 13, outline: 'none', width: '100%' };
@@ -609,7 +664,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
               {/* Column mapping */}
               <div style={cardSt}>
                 <div style={{ fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>Match the columns</div>
-                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required.</div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required. Map <strong style={{ color: '#93c5fd' }}>RO Status</strong> (and CP Status / RO Age) to feed the manager <strong style={{ color: '#93c5fd' }}>Repair Order Process</strong> page.</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
                   {FIELDS.map(f => (
                     <div key={f.key}>
@@ -667,11 +722,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
                   {siteLoading && <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>Scanning the site for duplicates & stale ROs…</div>}
 
                   {/* Save — one button: WIP + Day End Reporting */}
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+                    {roStatusSaved && <span style={{ fontSize: 13, fontWeight: 700, color: roStatusSaved.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{roStatusSaved}</span>}
                     {notesSaved && <span style={{ fontSize: 13, fontWeight: 700, color: notesSaved.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{notesSaved}</span>}
-                    <button onClick={handleSaveAll} disabled={busy || notesSaving || !canSaveAll}
+                    <button onClick={handleSaveAll} disabled={busy || notesSaving || roStatusSaving || !canSaveAll}
                       style={{ background: canSaveAll ? 'rgba(52,211,153,.22)' : 'rgba(255,255,255,.05)', border: `1px solid ${canSaveAll ? 'rgba(52,211,153,.55)' : 'rgba(255,255,255,.1)'}`, color: canSaveAll ? '#6ee7b7' : '#475569', borderRadius: 10, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: canSaveAll ? 'pointer' : 'default' }}>
-                      {busy || notesSaving ? '⏳ Saving…' : `💾 Save to WIP${hasNotesToSave ? ` + ${missingTotal} for Day End` : ''}`}
+                      {busy || notesSaving || roStatusSaving ? '⏳ Saving…' : `💾 Save to WIP${hasNotesToSave ? ` + ${missingTotal} for Day End` : ''}${hasRoStatusToSave ? ' + RO Process' : ''}`}
                     </button>
                   </div>
 
