@@ -64,6 +64,9 @@ const emptyForm = () => ({
   customerName: '',
   repairOrder: '',
   repairOrderPhoto: '',
+  // Optional supporting docs — not required to advance the claim.
+  originalPurchasePhoto: '',
+  replacementQuotePhoto: '',
   wheels: {
     LF: { tire: false, rim: false },
     RF: { tire: false, rim: false },
@@ -197,6 +200,13 @@ function StepStart({ form, set, onNext }) {
       </div>
       <CameraButton label="Photo of Repair Order" value={form.repairOrderPhoto}
         onChange={v => set('repairOrderPhoto', v)} claimId={form.id} slotKey="repairorder" />
+      <div style={{ marginTop: 8, marginBottom: 6, fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        Optional — attach if available
+      </div>
+      <CameraButton label="Original Tire Purchase Repair Order (optional)" value={form.originalPurchasePhoto}
+        onChange={v => set('originalPurchasePhoto', v)} claimId={form.id} slotKey="originalpurchase" />
+      <CameraButton label="Replacement Tire Quote w/ Cost (optional)" value={form.replacementQuotePhoto}
+        onChange={v => set('replacementQuotePhoto', v)} claimId={form.id} slotKey="replacementquote" />
       <div style={{ marginTop: 24 }}>
         <button onClick={onNext} disabled={!ready} style={primaryBtn(ready)}>Next → Mark Damage</button>
       </div>
@@ -528,6 +538,12 @@ function claimPhotoList(claim) {
   if (claim.repairOrderPhoto) {
     items.push({ url: claim.repairOrderPhoto, filename: `${base}_RepairOrder.${extFromUrl(claim.repairOrderPhoto)}` });
   }
+  if (claim.originalPurchasePhoto) {
+    items.push({ url: claim.originalPurchasePhoto, filename: `${base}_OriginalPurchaseRO.${extFromUrl(claim.originalPurchasePhoto)}` });
+  }
+  if (claim.replacementQuotePhoto) {
+    items.push({ url: claim.replacementQuotePhoto, filename: `${base}_ReplacementQuote.${extFromUrl(claim.replacementQuotePhoto)}` });
+  }
   flaggedWheels(claim).forEach(w => {
     wheelPhotoSlots(claim.wheels[w.key]).forEach(s => {
       const url = claim.photos?.[w.key]?.[s.key];
@@ -584,6 +600,18 @@ export function TireClaimDetail({ claim, hideInfo }) {
         <div style={{ marginBottom: 22 }}>
           <div style={labelSt}>Repair Order Photo</div>
           <PhotoThumb url={claim.repairOrderPhoto} filename={`${base}_RepairOrder.${extFromUrl(claim.repairOrderPhoto)}`} />
+        </div>
+      )}
+      {claim.originalPurchasePhoto && (
+        <div style={{ marginBottom: 22 }}>
+          <div style={labelSt}>Original Tire Purchase Repair Order</div>
+          <PhotoThumb url={claim.originalPurchasePhoto} filename={`${base}_OriginalPurchaseRO.${extFromUrl(claim.originalPurchasePhoto)}`} />
+        </div>
+      )}
+      {claim.replacementQuotePhoto && (
+        <div style={{ marginBottom: 22 }}>
+          <div style={labelSt}>Replacement Tire Quote w/ Cost</div>
+          <PhotoThumb url={claim.replacementQuotePhoto} filename={`${base}_ReplacementQuote.${extFromUrl(claim.replacementQuotePhoto)}`} />
         </div>
       )}
       {flagged.map(w => (
