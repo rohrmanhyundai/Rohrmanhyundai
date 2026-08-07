@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-08-07T14:17:33.827Z",
+    "type": "page",
+    "label": "service-pricing"
+  },
+  {
+    "at": "2026-08-07T14:17:27.571Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-07T14:17:13.962Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-05T22:11:42.196Z",
     "type": "action",
     "label": "logout"
