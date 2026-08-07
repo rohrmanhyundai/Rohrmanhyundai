@@ -44,5 +44,21 @@
     "partsArrivedDate": "08/05/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "msiyqwxvg7r2",
+    "ro": "779834",
+    "roDate": "2026-08-07",
+    "vehicle": "2025 Hyundai Palisade",
+    "jobDesc": "fuel",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
