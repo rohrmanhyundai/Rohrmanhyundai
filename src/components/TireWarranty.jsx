@@ -122,7 +122,7 @@ const primaryBtn = (enabled) => ({
 // ── Camera / photo capture button ─────────────────────────────────────────────
 // On phones, accept="image/*" + capture="environment" opens the rear camera
 // directly. The captured image uploads to S3 immediately and stores its URL.
-function CameraButton({ label, value, onChange, claimId, slotKey, compact }) {
+function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -151,7 +151,12 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact }) {
 
   return (
     <div style={{ marginBottom: compact ? 0 : 14 }}>
-      {!compact && <label style={labelSt}>{label}</label>}
+      {!compact && (
+        <label style={{ ...labelSt, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {badge && <span className="tire-opt-badge">✦ {badge}</span>}
+          <span>{label}</span>
+        </label>
+      )}
       <input ref={inputRef} type="file" accept="image/*" capture="environment"
         onChange={handleFile} style={{ display: 'none' }} />
       {value ? (
@@ -200,12 +205,13 @@ function StepStart({ form, set, onNext }) {
       </div>
       <CameraButton label="Photo of Repair Order" value={form.repairOrderPhoto}
         onChange={v => set('repairOrderPhoto', v)} claimId={form.id} slotKey="repairorder" />
-      <div style={{ marginTop: 8, marginBottom: 6, fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-        Optional — attach if available
+      <div style={{ marginTop: 16, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span className="tire-opt-badge">✦ Optional</span>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#cbd5e1' }}>Attach if available — not required to continue</span>
       </div>
-      <CameraButton label="Original Tire Purchase Repair Order (optional)" value={form.originalPurchasePhoto}
+      <CameraButton badge="Optional" label="Original Tire Purchase Repair Order" value={form.originalPurchasePhoto}
         onChange={v => set('originalPurchasePhoto', v)} claimId={form.id} slotKey="originalpurchase" />
-      <CameraButton label="Replacement Tire Quote w/ Cost (optional)" value={form.replacementQuotePhoto}
+      <CameraButton badge="Optional" label="Replacement Tire Quote w/ Cost" value={form.replacementQuotePhoto}
         onChange={v => set('replacementQuotePhoto', v)} claimId={form.id} slotKey="replacementquote" />
       <div style={{ marginTop: 24 }}>
         <button onClick={onNext} disabled={!ready} style={primaryBtn(ready)}>Next → Mark Damage</button>
@@ -562,6 +568,12 @@ export function TireClaimDetail({ claim, hideInfo }) {
   const allPhotos = claimPhotoList(claim);
   const [dl, setDl] = useState({ active: false, done: 0, total: 0 });
 
+  // Optional supporting docs — surface a loud visual alert when they're missing.
+  const missingOptional = [
+    !claim.originalPurchasePhoto && 'Original Tire Purchase Repair Order',
+    !claim.replacementQuotePhoto && 'Replacement Tire Quote w/ Cost',
+  ].filter(Boolean);
+
   async function downloadAll() {
     if (dl.active || allPhotos.length === 0) return;
     setDl({ active: true, done: 0, total: allPhotos.length });
@@ -575,6 +587,27 @@ export function TireClaimDetail({ claim, hideInfo }) {
 
   return (
     <div>
+      {missingOptional.length > 0 && (
+        <div className="tire-missing-alert" style={{
+          display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18, padding: '14px 16px',
+          borderRadius: 14, background: 'linear-gradient(135deg,rgba(251,146,60,0.20),rgba(234,88,12,0.14))',
+          border: '2px solid rgba(251,146,60,0.9)' }}>
+          <span className="tire-missing-icon" style={{ fontSize: 30, lineHeight: 1 }}>⚠️</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 900, fontSize: 15, color: '#ffedd5', letterSpacing: 0.3, marginBottom: 4 }}>
+              Optional photo{missingOptional.length > 1 ? 's' : ''} not uploaded
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {missingOptional.map(m => (
+                <span key={m} className="tire-missing-chip" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 11px', borderRadius: 999,
+                  background: 'rgba(234,88,12,0.28)', border: '1.5px solid rgba(251,146,60,0.95)',
+                  color: '#fff', fontWeight: 800, fontSize: 12 }}>✗ {m}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       {allPhotos.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 16 }}>
           <span style={{ color: '#64748b', fontSize: 12 }}>Tip: click any photo to download it.</span>
@@ -602,18 +635,22 @@ export function TireClaimDetail({ claim, hideInfo }) {
           <PhotoThumb url={claim.repairOrderPhoto} filename={`${base}_RepairOrder.${extFromUrl(claim.repairOrderPhoto)}`} />
         </div>
       )}
-      {claim.originalPurchasePhoto && (
-        <div style={{ marginBottom: 22 }}>
-          <div style={labelSt}>Original Tire Purchase Repair Order</div>
-          <PhotoThumb url={claim.originalPurchasePhoto} filename={`${base}_OriginalPurchaseRO.${extFromUrl(claim.originalPurchasePhoto)}`} />
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ ...labelSt, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="tire-opt-badge">✦ Optional</span> Original Tire Purchase Repair Order
         </div>
-      )}
-      {claim.replacementQuotePhoto && (
-        <div style={{ marginBottom: 22 }}>
-          <div style={labelSt}>Replacement Tire Quote w/ Cost</div>
-          <PhotoThumb url={claim.replacementQuotePhoto} filename={`${base}_ReplacementQuote.${extFromUrl(claim.replacementQuotePhoto)}`} />
+        {claim.originalPurchasePhoto
+          ? <PhotoThumb url={claim.originalPurchasePhoto} filename={`${base}_OriginalPurchaseRO.${extFromUrl(claim.originalPurchasePhoto)}`} />
+          : <MissingPhotoCard />}
+      </div>
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ ...labelSt, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="tire-opt-badge">✦ Optional</span> Replacement Tire Quote w/ Cost
         </div>
-      )}
+        {claim.replacementQuotePhoto
+          ? <PhotoThumb url={claim.replacementQuotePhoto} filename={`${base}_ReplacementQuote.${extFromUrl(claim.replacementQuotePhoto)}`} />
+          : <MissingPhotoCard />}
+      </div>
       {flagged.map(w => (
         <div key={w.key} style={{ marginBottom: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 800, color: accent, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${accent}33` }}>
@@ -642,6 +679,20 @@ function DetailRow({ label, value, mono }) {
     <div>
       <div style={labelSt}>{label}</div>
       <div style={{ fontSize: 14, color: '#e2e8f0', fontWeight: 600, fontFamily: mono ? 'monospace' : 'inherit' }}>{value || '—'}</div>
+    </div>
+  );
+}
+
+// Loud "not uploaded" placeholder shown in place of an optional photo thumb.
+function MissingPhotoCard() {
+  return (
+    <div className="tire-missing-chip" style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+      width: '100%', maxWidth: 150, aspectRatio: '1', borderRadius: 10,
+      background: 'linear-gradient(135deg,rgba(251,146,60,0.16),rgba(234,88,12,0.10))',
+      border: '2px dashed rgba(251,146,60,0.9)', color: '#fdba74', textAlign: 'center', padding: 8 }}>
+      <span className="tire-missing-icon" style={{ fontSize: 26, lineHeight: 1 }}>⚠️</span>
+      <span style={{ fontWeight: 900, fontSize: 12, color: '#ffedd5' }}>Not uploaded</span>
     </div>
   );
 }
