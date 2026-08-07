@@ -57,21 +57,5 @@
     "partsArrivedDate": "08/07/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mshzza1ees03",
-    "ro": "779833",
-    "roDate": "2026-08-06",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES right front tire is flat check and advise (driver care)",
-    "notes": "CAR HAS GRAVY SOLD AS WELL",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/07/2026",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
   }
 ]
