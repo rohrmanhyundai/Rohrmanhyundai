@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-07T18:29:42.326Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-07T18:29:36.464Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-08-07T18:24:04.675Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
