@@ -1442,7 +1442,8 @@ function TireClaimsPanel({ currentRole }) {
     : claims;
 
   if (active) {
-    const hasPhotos = active.repairOrderPhoto || flaggedWheels(active).length > 0;
+    const hasPhotos = active.repairOrderPhoto || active.originalPurchasePhoto ||
+      active.replacementQuotePhoto || flaggedWheels(active).length > 0;
     return (
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -1457,7 +1458,7 @@ function TireClaimsPanel({ currentRole }) {
           {hasPhotos && (
             <div style={{ marginBottom: 24, padding: '18px 20px', background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: 14 }}>
               <div style={{ fontSize: 12, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 14 }}>
-                🛞 Damage Photos — submitted from mobile{active.createdBy ? ` by ${active.createdBy}` : ''}
+                🛞 Photos & Documents — submitted from mobile{active.createdBy ? ` by ${active.createdBy}` : ''}
               </div>
               <TireClaimDetail claim={active} hideInfo />
             </div>
