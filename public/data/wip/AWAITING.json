@@ -13,20 +13,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "msiyqyktwfqy",
-    "ro": "779756",
-    "roDate": "2026-08-07",
-    "vehicle": "2020 Subaru Legacy",
-    "jobDesc": "1 tire",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
