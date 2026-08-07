@@ -1,8 +1,30 @@
 {
-  "updatedAt": "2026-08-06T21:04:42.709Z",
-  "by": "SHAWN",
+  "updatedAt": "2026-08-07T13:11:13.113Z",
+  "by": "JORDAN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "779850",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "779849",
+        "vehicle": "2023 Hyundai Santa Fe"
+      },
+      {
+        "ro": "779847",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "779816",
+        "vehicle": "2022 Hyundai Elantra N"
+      }
+    ],
     "JORDAN": [
+      {
+        "ro": "779848",
+        "vehicle": "2025 Hyundai Tucson"
+      },
       {
         "ro": "779846",
         "vehicle": "2025 Hyundai Tucson"
@@ -52,12 +74,6 @@
       {
         "ro": "779561",
         "vehicle": "2019 Ram 1500 Classic"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "779816",
-        "vehicle": "2022 Hyundai Elantra N"
       }
     ],
     "CODY": [
