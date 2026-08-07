@@ -1558,6 +1558,21 @@ export async function saveMissingNotes(data) {
   return data;
 }
 
+// ── Repair Order Process (status snapshot from the RO Upload report) ──────────
+// One JSON file holding every RO row from the last open-RO report, with its RO
+// Status / CP Status / warranty flag / age. Refreshed automatically on RO Upload
+// and read by the manager-only Repair Order Process page.
+const RO_STATUS_PATH = 'data/ro-status.json';
+export async function loadRoStatusReport() {
+  const d = await loadGithubFile(RO_STATUS_PATH);
+  return (d && typeof d === 'object' && Array.isArray(d.rows)) ? d : { updatedAt: null, by: '', rows: [] };
+}
+export async function saveRoStatusReport(rows, by) {
+  const payload = { updatedAt: new Date().toISOString(), by: by || '', rows: Array.isArray(rows) ? rows : [] };
+  await saveGithubFile(RO_STATUS_PATH, payload, `RO status report ${new Date().toISOString()}`);
+  return payload;
+}
+
 // ── Service Pricing Menu ─────────────────────────────────────────────────────
 // A manager/admin-editable menu of services + prices that all advisors can view.
 // Stored as one JSON file: { updatedAt, by, categories: [{ id, name, services:
