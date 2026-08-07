@@ -1,11 +1,5 @@
 [
   {
-    "id": "mrc1mgbdtth",
-    "username": "KAI",
-    "text": "Parts received in for the following SORS, C12057, 12024, 11891. Please get a hold of these customers.",
-    "timestamp": 1783513054489
-  },
-  {
     "id": "mrc88btgcub",
     "username": "KAI",
     "text": "@Advisors, If you schedule a customer who has an SOR part, please change the flag to **green** and add the appointment date and time in the notes. This helps us keep track of parts and ensures everything is ready when the customer arrives. Thank you!",
@@ -355,6 +349,9 @@
     "reactions": {
       "🚨": [
         "KAI"
+      ],
+      "👍": [
+        "DAVID"
       ]
     }
   }
