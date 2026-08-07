@@ -1,0 +1,41 @@
+{
+  "id": "msj0yvxm9r85",
+  "createdAt": "2026-08-07T14:13:20.554Z",
+  "updatedAt": "2026-08-07T14:19:44.893Z",
+  "createdBy": "Jordan",
+  "customerName": "Katherine Goldberg",
+  "repairOrder": "779854",
+  "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-repairorder-1786112077012.jpg",
+  "wheels": {
+    "LF": {
+      "tire": false,
+      "rim": false
+    },
+    "RF": {
+      "tire": false,
+      "rim": false
+    },
+    "LR": {
+      "tire": false,
+      "rim": false
+    },
+    "RR": {
+      "tire": true,
+      "rim": false,
+      "treadDepth": "9/32"
+    }
+  },
+  "photos": {
+    "LF": {},
+    "RF": {},
+    "LR": {},
+    "RR": {
+      "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-tireDamage-1786112214349.jpg",
+      "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-dot-1786112227724.jpg",
+      "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-size-1786112239168.jpg",
+      "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-brand-1786112256463.jpg",
+      "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-gauge-1786112369127.jpg",
+      "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msj0yvxm9r85-RR-tireFull-1786112381518.jpg"
+    }
+  }
+}
