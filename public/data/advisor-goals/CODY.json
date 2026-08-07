@@ -49,6 +49,19 @@
       "2026-08-06": {
         "hours": 4.4,
         "hrsRo": 0.63
+      },
+      "2026-08-07": {
+        "hours": 7.1,
+        "hrsRo": 0.49,
+        "openRoCount": 11,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "CODY",
+        "submittedAt": 1786139924033
       }
     },
     "entryMode": "mtd"
