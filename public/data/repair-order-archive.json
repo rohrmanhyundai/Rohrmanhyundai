@@ -1,5 +1,26 @@
 [
   {
+    "id": "msf6uyriz1u2",
+    "ro": "779771",
+    "roDate": "2026-08-04",
+    "vehicle": "2019 Hyundai Elantra",
+    "jobDesc": "Camshaft Position Sensor Remove and Replace",
+    "notes": "AFTERMARKET PARTS, NO WARRANTY. CAM CAP NO OIL PRESSURE WEAR AND PREVIOUS IMPROPER REPAIR, NEEDS LONG BLOCK",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/05/2026",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "_archiveId": "msiz01770us",
+    "_archivedAt": "2026-08-07T13:18:14.803Z",
+    "_archivedBy": "JORDAN",
+    "_source": "wip",
+    "_sourceTech": "WEI"
+  },
+  {
     "id": "msf6ux8cgubg",
     "ro": "779783",
     "roDate": "2026-08-04",
