@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-07T15:31:42.960Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-08-07T15:07:23.629Z",
     "type": "page",
     "label": "recalls"
@@ -1003,26 +1008,6 @@
   },
   {
     "at": "2026-07-08T15:58:45.666Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-08T15:15:42.716Z",
-    "type": "page",
-    "label": "advisor-day"
-  },
-  {
-    "at": "2026-07-08T15:15:35.924Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-08T15:15:35.063Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-08T15:15:20.089Z",
     "type": "page",
     "label": "advisor-calendar"
   }
