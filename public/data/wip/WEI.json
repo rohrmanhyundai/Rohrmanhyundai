@@ -1,21 +1,5 @@
 [
   {
-    "id": "mrjrswlbduzx",
-    "ro": "779182",
-    "roDate": "2026-07-13",
-    "vehicle": "2018 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES ENGINE DIAG. CHECK AND ADVISE. refer to ticket 778908 tow in engine replace under warranty",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "WARRANTY DECLINED"
-  },
-  {
     "id": "mro3a7o9xsj",
     "ro": "779297",
     "roDate": "2026-07-16",
