@@ -99,6 +99,14 @@ export function photoProgress(form) {
   return { have, need };
 }
 
+// Optional supporting docs the advisor still needs to attach before submitting.
+export function missingOptionalPhotos(claim) {
+  return [
+    !claim.originalPurchasePhoto && 'Original Tire Purchase Repair Order',
+    !claim.replacementQuotePhoto && 'Replacement Tire Quote w/ Cost',
+  ].filter(Boolean);
+}
+
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const labelSt = {
   display: 'block', fontSize: 11, fontWeight: 700,
@@ -569,10 +577,7 @@ export function TireClaimDetail({ claim, hideInfo }) {
   const [dl, setDl] = useState({ active: false, done: 0, total: 0 });
 
   // Optional supporting docs — surface a loud visual alert when they're missing.
-  const missingOptional = [
-    !claim.originalPurchasePhoto && 'Original Tire Purchase Repair Order',
-    !claim.replacementQuotePhoto && 'Replacement Tire Quote w/ Cost',
-  ].filter(Boolean);
+  const missingOptional = missingOptionalPhotos(claim);
 
   async function downloadAll() {
     if (dl.active || allPhotos.length === 0) return;
@@ -604,6 +609,9 @@ export function TireClaimDetail({ claim, hideInfo }) {
                   background: 'rgba(234,88,12,0.28)', border: '1.5px solid rgba(251,146,60,0.95)',
                   color: '#fff', fontWeight: 800, fontSize: 12 }}>✗ {m}</span>
               ))}
+            </div>
+            <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 700, color: '#fed7aa', lineHeight: 1.4 }}>
+              Optional at this time — but the advisor must complete these before the warranty can be submitted.
             </div>
           </div>
         </div>
@@ -736,9 +744,13 @@ function ClaimList({ claims, loading, onNew, onView }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 640, margin: '0 auto' }}>
           {claims.map(c => {
             const wheels = flaggedWheels(c).map(w => w.key).join(', ');
+            const missOpt = missingOptionalPhotos(c);
             return (
               <button key={c.id} onClick={() => onView(c)}
-                style={{ textAlign: 'left', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer' }}>
+                className={missOpt.length ? 'tire-missing-alert' : undefined}
+                style={{ textAlign: 'left', borderRadius: 12, padding: '14px 16px', cursor: 'pointer',
+                  background: missOpt.length ? 'linear-gradient(135deg,rgba(251,146,60,0.12),rgba(234,88,12,0.07))' : 'rgba(255,255,255,0.04)',
+                  border: missOpt.length ? '2px solid rgba(251,146,60,0.9)' : '1px solid rgba(255,255,255,0.09)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   <span style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 15 }}>{c.customerName || '—'}</span>
                   <span style={{ color: '#64748b', fontSize: 12 }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : ''}</span>
@@ -747,6 +759,14 @@ function ClaimList({ claims, loading, onNew, onView }) {
                   <span>RO <span style={{ fontFamily: 'monospace', color: '#cbd5e1' }}>{c.repairOrder || '—'}</span></span>
                   <span>Wheels: <span style={{ color: accent, fontWeight: 700 }}>{wheels || '—'}</span></span>
                 </div>
+                {missOpt.length > 0 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 8 }}>
+                    <span className="tire-missing-icon" style={{ fontSize: 16, lineHeight: 1 }}>⚠️</span>
+                    <span style={{ color: '#fdba74', fontWeight: 800, fontSize: 12 }}>
+                      {missOpt.length} optional photo{missOpt.length > 1 ? 's' : ''} missing — advisor must complete before submit
+                    </span>
+                  </div>
+                )}
               </button>
             );
           })}
