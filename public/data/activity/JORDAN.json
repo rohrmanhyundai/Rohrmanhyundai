@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-07T15:34:31.743Z",
+    "type": "page",
+    "label": "goal-forecast"
+  },
+  {
+    "at": "2026-08-07T15:33:49.299Z",
+    "type": "page",
+    "label": "global-message"
+  },
+  {
     "at": "2026-08-07T15:32:38.462Z",
     "type": "action",
     "label": "mark-parts-arrived",
