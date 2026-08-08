@@ -693,3 +693,14 @@ html, body {
   background: transparent;
   border-bottom: 1px solid rgba(255,255,255,0.10);
 }
+/* Hyundai H watermark behind the calendar, sized to the grid */
+.apt-prep-bg .adv-cal-grid { position: relative; }
+.apt-prep-bg .adv-cal-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/Rohrmanhyundai/hyundai-h.svg') center / contain no-repeat;
+  opacity: 0.18;
+  z-index: -1;
+  pointer-events: none;
+}
