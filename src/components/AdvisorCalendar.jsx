@@ -623,7 +623,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const isViewingOwn = viewingAdvisor === ownAdvisor;
 
   return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {showPartsReceived && (
         <PartsReceived currentUser={currentUser || ''} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
       )}
