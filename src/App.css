@@ -633,14 +633,14 @@ html, body {
    app's dark theme (light text) — kept readable by darker blue where the
    centered calendar sits. */
 .apt-prep-bg {
-  background-color: #0b3f86;
+  background-color: #072b5b;
   background-image:
-    radial-gradient(46% 82% at 97% 42%, rgba(150,224,255,0.55) 0%, rgba(80,170,240,0.22) 34%, rgba(11,63,134,0) 62%),
-    radial-gradient(22% 26% at 12% 20%, rgba(160,215,255,0.42) 0%, rgba(11,63,134,0) 70%),
-    radial-gradient(20% 24% at 26% 60%, rgba(180,225,255,0.32) 0%, rgba(11,63,134,0) 72%),
-    radial-gradient(24% 26% at 58% 80%, rgba(150,205,250,0.26) 0%, rgba(11,63,134,0) 72%),
-    radial-gradient(18% 22% at 8% 90%, rgba(120,190,245,0.28) 0%, rgba(11,63,134,0) 72%),
-    linear-gradient(125deg, #0a2f6b 0%, #0e4693 42%, #1257b4 66%, #0c3f86 100%);
+    radial-gradient(46% 82% at 97% 42%, rgba(120,190,235,0.42) 0%, rgba(60,130,200,0.18) 34%, rgba(7,32,73,0) 62%),
+    radial-gradient(22% 26% at 12% 20%, rgba(120,175,225,0.30) 0%, rgba(7,32,73,0) 70%),
+    radial-gradient(20% 24% at 26% 60%, rgba(130,185,230,0.24) 0%, rgba(7,32,73,0) 72%),
+    radial-gradient(24% 26% at 58% 80%, rgba(110,165,220,0.20) 0%, rgba(7,32,73,0) 72%),
+    radial-gradient(18% 22% at 8% 90%, rgba(95,155,215,0.20) 0%, rgba(7,32,73,0) 72%),
+    linear-gradient(125deg, #072049 0%, #0a3064 42%, #0c3b7a 66%, #082b5b 100%);
   background-repeat: no-repeat;
 }
 /* Make the calendar read clearly over the bright blue — darker glass cells,
