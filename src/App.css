@@ -688,3 +688,8 @@ html, body {
   filter: drop-shadow(0 2px 16px rgba(130,205,255,0.45));
 }
 .apt-prep-bg .adv-cal-nav { gap: 26px; }
+/* Let the aurora run continuously behind the header instead of a dark bar */
+.apt-prep-bg > .adv-topbar {
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
