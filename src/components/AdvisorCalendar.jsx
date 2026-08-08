@@ -876,18 +876,21 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                     {isToday && <span className="adv-today-chip">TODAY</span>}
                     {hasNotes && <span className="adv-note-dot" title="Prep notes saved" />}
                     {isToday && pacing && (
-                      <div title={pacing.mode === 'behind'
+                      <div className={pacing.mode === 'behind' ? 'pace-behind' : 'pace-ahead'}
+                        title={pacing.mode === 'behind'
                           ? 'Hours to sell today to reach your monthly goal'
                           : 'Hours to sell today to hold your pace above goal'}
                         style={{
-                          marginTop: 6, borderRadius: 8, padding: '4px 7px', lineHeight: 1.15,
-                          background: pacing.mode === 'behind' ? 'rgba(251,146,60,.16)' : 'rgba(74,222,128,.16)',
-                          border: `1px solid ${pacing.mode === 'behind' ? 'rgba(251,146,60,.5)' : 'rgba(74,222,128,.5)'}`,
+                          marginTop: 6, borderRadius: 9, padding: '5px 9px', lineHeight: 1.15,
+                          background: pacing.mode === 'behind'
+                            ? 'linear-gradient(180deg, rgba(239,68,68,.28), rgba(190,18,18,.18))'
+                            : 'linear-gradient(180deg, rgba(34,197,94,.26), rgba(21,128,61,.16))',
+                          border: `1px solid ${pacing.mode === 'behind' ? 'rgba(248,113,113,.95)' : 'rgba(74,222,128,.9)'}`,
                         }}>
-                        <div style={{ fontSize: 12.5, fontWeight: 900, color: pacing.mode === 'behind' ? '#fdba74' : '#86efac' }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 900, color: pacing.mode === 'behind' ? '#fecaca' : '#bbf7d0', textShadow: '0 1px 3px rgba(0,0,0,.5)' }}>
                           🎯 {pacing.value.toFixed(1)} hrs
                         </div>
-                        <div style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: .3, textTransform: 'uppercase', color: '#94a3b8' }}>
+                        <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', color: pacing.mode === 'behind' ? '#fca5a5' : '#86efac' }}>
                           {pacing.mode === 'behind' ? 'to hit goal' : 'to hold pace'}
                         </div>
                       </div>
