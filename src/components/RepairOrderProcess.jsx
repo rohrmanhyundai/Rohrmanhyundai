@@ -12,8 +12,9 @@ function ageOf(r) {
 }
 
 // Apply the manager rules to one RO. sev drives sort order + highlight.
-//  4 urgent  — READY_FOR_DISPATCH older than 1 day
-//  3 high    — READY_FOR_INVOICE + warranty (red) flag, not invoiced
+//  5 urgent  — READY_FOR_DISPATCH older than 1 day
+//  4 high    — READY_FOR_INVOICE + warranty (red) flag, not invoiced
+//  3 high    — flag "Ready for AWN Review" and not INVOICED
 //  2 warn    — READY_FOR_DISPATCH (needs to get in the shop)
 //  1 info    — READY_FOR_INVOICE, no flag (tech done, needs acceptance)
 //  0 none    — INVOICED / anything else (shown, not highlighted)
@@ -21,12 +22,20 @@ function evaluate(r) {
   const st = normStatus(r.roStatus);
   const warranty = !!r.warranty;
   const age = ageOf(r);
+  const invoiced = st === 'INVOICED';
+  // "Ready for AWN Review" may sit in the flag or a status column — check all.
+  const flagText = `${r.userFlag || ''} ${r.roStatus || ''} ${r.cpStatus || ''}`.toLowerCase();
+  const awnReview = flagText.includes('awn') && flagText.includes('review');
+
   if (st === 'READY_FOR_DISPATCH') {
-    if (age != null && age > 1) return { sev: 4, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: `Car needs to get into the shop — ${age} days old.` };
+    if (age != null && age > 1) return { sev: 5, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: `Car needs to get into the shop — ${age} days old.` };
     return { sev: 2, tag: 'Get car in shop', color: '#fbbf24', msg: 'Car needs to get into the shop.' };
   }
+  if (awnReview && !invoiced) {
+    return { sev: 3, tag: 'AWN — needs invoicing', color: '#c084fc', pulse: 'coaching-glow', msg: 'Ready for AWN repair needs invoiced.' };
+  }
   if (st === 'READY_FOR_INVOICE') {
-    if (warranty) return { sev: 3, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Check repair order — flagged warranty but not invoiced.' };
+    if (warranty) return { sev: 4, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Check repair order — flagged warranty but not invoiced.' };
     return { sev: 1, tag: 'Needs acceptance', color: '#38bdf8', msg: 'Tech has completed car repair — needs acceptance.' };
   }
   // INVOICED (with or without flag) and everything else → no alert.
@@ -34,11 +43,12 @@ function evaluate(r) {
 }
 
 const CATS = [
-  { key: 'all',  label: 'All ROs',            color: '#94a3b8', match: () => true },
-  { key: 4,      label: 'Dispatch overdue',   color: '#f87171', match: (e) => e.sev === 4 },
-  { key: 3,      label: 'Warranty not invoiced', color: '#fb923c', match: (e) => e.sev === 3 },
-  { key: 2,      label: 'Get car in shop',    color: '#fbbf24', match: (e) => e.sev === 2 },
-  { key: 1,      label: 'Needs acceptance',   color: '#38bdf8', match: (e) => e.sev === 1 },
+  { key: 'all',  label: 'All ROs',            color: '#94a3b8' },
+  { key: 5,      label: 'Dispatch overdue',   color: '#f87171' },
+  { key: 4,      label: 'Warranty not invoiced', color: '#fb923c' },
+  { key: 3,      label: 'AWN needs invoicing', color: '#c084fc' },
+  { key: 2,      label: 'Get car in shop',    color: '#fbbf24' },
+  { key: 1,      label: 'Needs acceptance',   color: '#38bdf8' },
 ];
 
 export default function RepairOrderProcess({ onBack, currentRole }) {
@@ -63,7 +73,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
   }, [data]);
 
   const counts = useMemo(() => {
-    const c = { all: evaluated.length, 1: 0, 2: 0, 3: 0, 4: 0 };
+    const c = { all: evaluated.length, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     evaluated.forEach(({ e }) => { if (c[e.sev] != null) c[e.sev] += 1; });
     return c;
   }, [evaluated]);
