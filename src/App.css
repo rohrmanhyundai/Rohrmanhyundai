@@ -692,6 +692,10 @@ html, body {
   background: transparent;
   border-bottom: 1px solid rgba(255,255,255,0.10);
 }
+/* Raise the Tech/Advisor chat panels off the background (layered depth shadow) */
+.apt-prep-bg .apt-chat-col {
+  filter: drop-shadow(0 2px 5px rgba(2,10,26,0.35)) drop-shadow(0 18px 34px rgba(2,10,26,0.5));
+}
 /* Hyundai H watermark behind the calendar, sized to the grid */
 .apt-prep-bg .adv-cal-grid { position: relative; }
 .apt-prep-bg .adv-cal-grid::before {
