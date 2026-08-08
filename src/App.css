@@ -627,26 +627,20 @@ html, body {
 .tire-missing-icon { display: inline-block; animation: tireMissingWobble 1.3s ease-in-out infinite; }
 .tire-missing-chip { animation: tireMissingPulse 1.3s ease-in-out infinite; }
 
-/* ── "Dark Blue Concept" background — Appointment Prep Calendar only ─────────── */
-/* Scoped class (not .adv-page, which every page shares). Dark navy base with
-   diagonal blue bands and bright glows top-right + bottom-left. */
+/* ── Vivid blue "aurora" background — Appointment Prep Calendar only ─────────── */
+/* Scoped to .apt-prep-bg (not the shared .adv-page). Rich blue base with soft
+   glowing bokeh orbs and a bright cyan glow on the right. Content stays the
+   app's dark theme (light text) — kept readable by darker blue where the
+   centered calendar sits. */
 .apt-prep-bg {
-  background-color: #0a0e24;
+  background-color: #0b3f86;
   background-image:
-    radial-gradient(85% 55% at 92% -6%, rgba(96,165,220,0.55) 0%, rgba(40,95,150,0.16) 42%, rgba(10,14,36,0) 70%),
-    radial-gradient(70% 55% at -4% 104%, rgba(37,120,180,0.42) 0%, rgba(20,50,90,0.10) 46%, rgba(10,14,36,0) 66%),
-    linear-gradient(118deg,
-      #0a1030 0%,
-      #0c1436 21%,
-      #142c54 33%,
-      #1f4c7a 41%,
-      #123258 46%,
-      #0d1a3c 54%,
-      #0b1330 67%,
-      #163e69 73%,
-      #215d90 80%,
-      #0f1d40 86%,
-      #0a1024 100%);
+    radial-gradient(46% 82% at 97% 42%, rgba(150,224,255,0.55) 0%, rgba(80,170,240,0.22) 34%, rgba(11,63,134,0) 62%),
+    radial-gradient(22% 26% at 12% 20%, rgba(160,215,255,0.42) 0%, rgba(11,63,134,0) 70%),
+    radial-gradient(20% 24% at 26% 60%, rgba(180,225,255,0.32) 0%, rgba(11,63,134,0) 72%),
+    radial-gradient(24% 26% at 58% 80%, rgba(150,205,250,0.26) 0%, rgba(11,63,134,0) 72%),
+    radial-gradient(18% 22% at 8% 90%, rgba(120,190,245,0.28) 0%, rgba(11,63,134,0) 72%),
+    linear-gradient(125deg, #0a2f6b 0%, #0e4693 42%, #1257b4 66%, #0c3f86 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
