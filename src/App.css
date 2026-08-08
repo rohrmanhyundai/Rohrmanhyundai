@@ -642,7 +642,6 @@ html, body {
     radial-gradient(18% 22% at 8% 90%, rgba(120,190,245,0.28) 0%, rgba(11,63,134,0) 72%),
     linear-gradient(125deg, #0a2f6b 0%, #0e4693 42%, #1257b4 66%, #0c3f86 100%);
   background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 /* Make the calendar read clearly over the bright blue — darker glass cells,
    crisp borders, brighter header row. Text stays the app's light theme. */
