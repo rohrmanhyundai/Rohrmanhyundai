@@ -139,7 +139,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
       ) : jobs.length === 0 ? (
         <div style={{ color: '#64748b', fontSize: 13, padding: '6px 0' }}>{emptyText}</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {jobs.map((j, i) => {
             const age = dayAge(j.roDate);
             const ageColor = age == null ? '#64748b' : age >= 14 ? '#f87171' : age >= 7 ? '#fbbf24' : '#94a3b8';
@@ -149,7 +149,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             // keep the pink "Needs Attention" look regardless. The manager view
             // (no hl) falls through to the default parts-in/neutral styling.
             const other = !!hl && !mine;
-            const rowBase = { display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderRadius: 8, padding: '8px 12px' };
+            const rowBase = { display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderRadius: 8, padding: '8px 12px', filter: 'drop-shadow(0 3px 7px rgba(2,10,26,0.5))' };
             const rowStyle = j.highPriority ? {
               ...rowBase,
               background: 'linear-gradient(135deg, rgba(239,68,68,.22) 0%, rgba(249,115,22,.12) 100%)',
