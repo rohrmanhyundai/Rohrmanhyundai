@@ -56,22 +56,6 @@
     "partsArrivedDate": ""
   },
   {
-    "id": "mshzzasgyha5",
-    "ro": "779819",
-    "roDate": "2026-08-06",
-    "vehicle": "2020 Hyundai Palisade",
-    "jobDesc": "REPLACE REAR PARKING SENSOR HARNESS",
-    "notes": "CAR IS COMING BACK",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "msiyqxuoj11c",
     "ro": "779228",
     "roDate": "2026-08-07",
