@@ -1,28 +1,5 @@
 [
   {
-    "id": "mrc88btgcub",
-    "username": "KAI",
-    "text": "@Advisors, If you schedule a customer who has an SOR part, please change the flag to **green** and add the appointment date and time in the notes. This helps us keep track of parts and ensures everything is ready when the customer arrives. Thank you!",
-    "timestamp": 1783524152788
-  },
-  {
-    "id": "mrcb8d1pk1z",
-    "username": "SHAWN",
-    "text": "778405 Jordan are we doing any ASR?",
-    "timestamp": 1783529193229,
-    "reactions": {
-      "🚨": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mrcjl9rbn3a",
-    "username": "SHAWN",
-    "text": "Jordan 779007 did we get that back on the books so we can close this ro?",
-    "timestamp": 1783543232423
-  },
-  {
     "id": "mrdpize3hkr",
     "username": "KAI",
     "text": "part is in for sor 12076, joe pacheco",
@@ -354,5 +331,11 @@
         "DAVID"
       ]
     }
+  },
+  {
+    "id": "msk9u8xrrad",
+    "username": "SETH",
+    "text": "PARTS RECEIVED FOR;  JESSICA MILLER, TERRY ZINK",
+    "timestamp": 1786187366847
   }
 ]
