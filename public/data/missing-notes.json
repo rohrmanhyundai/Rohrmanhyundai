@@ -1,51 +1,47 @@
 {
-  "updatedAt": "2026-08-07T21:55:05.180Z",
+  "updatedAt": "2026-08-08T12:12:05.494Z",
   "by": "JORDAN",
   "advisors": {
     "DAVID": [
       {
         "ro": "779864",
-        "vehicle": "2013 Hyundai Equus"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "779856",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "779756",
-        "vehicle": "2020 Subaru Legacy"
+        "vehicle": ""
       }
     ],
     "CORY": [
       {
         "ro": "779831",
-        "vehicle": "2017 Nissan Rogue"
+        "vehicle": ""
       },
       {
         "ro": "779829",
-        "vehicle": "2016 Ford F-150"
+        "vehicle": ""
       },
       {
         "ro": "779827",
-        "vehicle": "2017 Buick LaCrosse"
+        "vehicle": ""
       },
       {
         "ro": "779799",
-        "vehicle": "2018 Honda Odyssey"
+        "vehicle": ""
       },
       {
         "ro": "779781",
-        "vehicle": "2020 Hyundai Tucson"
+        "vehicle": ""
       },
       {
         "ro": "779778",
-        "vehicle": "2023 Hyundai Tucson"
+        "vehicle": ""
       },
       {
         "ro": "779665",
-        "vehicle": "2025 Mitsubishi Outlander"
+        "vehicle": ""
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "779756",
+        "vehicle": ""
       }
     ]
   }
