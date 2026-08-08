@@ -10,7 +10,7 @@ const ME_GRADIENT     = 'linear-gradient(180deg,#3b82f6,#2563eb)';
 const ME_TEXT         = '#ffffff';
 const THEM_BG         = 'rgba(255,255,255,0.08)';
 const THEM_TEXT       = '#e5e7eb';
-const PANEL_BG        = 'rgba(15,23,42,0.92)';
+const PANEL_BG        = 'linear-gradient(180deg,#17181a 0%,#25272a 52%,#3a3d42 100%)';
 const HEADER_BG       = 'rgba(15,23,42,0.96)';
 
 export default function TechChat({ currentUser, currentRole, hasChatAccess, refreshKey }) {
@@ -255,7 +255,7 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
       {/* Header */}
       <div style={{
         padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.06)',
-        background: HEADER_BG, flexShrink: 0,
+        background: 'transparent', flexShrink: 0,
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
         <div style={{
