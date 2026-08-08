@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { loadRoStatusReport } from '../utils/github';
 
 // Normalize a status label to an underscore key: "Ready For Invoice" → READY_FOR_INVOICE.
@@ -58,13 +58,24 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
 
-  async function load() {
-    setLoading(true); setError('');
+  const load = useCallback(async (silent) => {
+    if (!silent) setLoading(true);
+    setError('');
     try { setData(await loadRoStatusReport()); }
-    catch (e) { setError(e?.message || 'Could not load the RO status report.'); }
-    finally { setLoading(false); }
-  }
-  useEffect(() => { load(); }, []);
+    catch (e) { if (!silent) setError(e?.message || 'Could not load the RO status report.'); }
+    finally { if (!silent) setLoading(false); }
+  }, []);
+
+  // Load on mount, then auto-refresh so a new RO upload appears without a manual
+  // refresh — poll periodically and whenever the tab regains focus.
+  useEffect(() => {
+    load();
+    const id = setInterval(() => load(true), 60000);
+    const onWake = () => { if (!document.hidden) load(true); };
+    window.addEventListener('focus', onWake);
+    document.addEventListener('visibilitychange', onWake);
+    return () => { clearInterval(id); window.removeEventListener('focus', onWake); document.removeEventListener('visibilitychange', onWake); };
+  }, [load]);
 
   // Evaluate + sort: most urgent first, then oldest.
   const evaluated = useMemo(() => {
@@ -107,10 +118,10 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">🧰 Repair Order Process</div>
-          <div className="adv-sub">Live RO status from your open-RO upload · managers only{updated ? ` · updated ${updated}${data.by ? ` by ${data.by}` : ''}` : ''}</div>
+          <div className="adv-sub">Live RO status · auto-updates on each RO upload · managers only{updated ? ` · updated ${updated}${data.by ? ` by ${data.by}` : ''}` : ''}</div>
         </div>
         <div style={{ flex: 1 }} />
-        <button className="secondary" onClick={load} disabled={loading} style={{ marginRight: 10 }}>{loading ? '⏳' : '↻ Refresh'}</button>
+        <button className="secondary" onClick={() => load()} disabled={loading} style={{ marginRight: 10 }}>{loading ? '⏳' : '↻ Refresh'}</button>
         <button className="secondary" onClick={onBack}>← Advisor Calendar</button>
       </div>
 

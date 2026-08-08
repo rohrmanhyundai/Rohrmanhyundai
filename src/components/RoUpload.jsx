@@ -664,7 +664,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
               {/* Column mapping */}
               <div style={cardSt}>
                 <div style={{ fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>Match the columns</div>
-                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required. Map <strong style={{ color: '#93c5fd' }}>RO Status</strong> (and CP Status / RO Age) to feed the manager <strong style={{ color: '#93c5fd' }}>Repair Order Process</strong> page.</div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required. Map <strong style={{ color: '#93c5fd' }}>RO Status</strong> (and CP Status / RO Age) to feed the manager <strong style={{ color: '#93c5fd' }}>Repair Order Process</strong> page. Saving <strong>replaces</strong> that list — any RO not on this report is removed.</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
                   {FIELDS.map(f => (
                     <div key={f.key}>
