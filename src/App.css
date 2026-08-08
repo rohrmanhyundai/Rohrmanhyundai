@@ -675,4 +675,16 @@ html, body {
   border-color: rgba(110,231,249,0.95);
   box-shadow: 0 0 0 1px rgba(110,231,249,0.6), 0 10px 26px rgba(56,189,248,0.35);
 }
-.apt-prep-bg .adv-cal-empty { background: none; box-shadow: none; }
+.apt-prep-bg .adv-cal-empty { background: none; box-shadow: none; border-color: transparent; }
+/* Modern month title — uppercase, wide tracking, white→cyan gradient + glow */
+.apt-prep-bg .adv-cal-month {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #cfeaff 55%, #8fd0ff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 2px 16px rgba(130,205,255,0.45));
+}
+.apt-prep-bg .adv-cal-nav { gap: 26px; }
