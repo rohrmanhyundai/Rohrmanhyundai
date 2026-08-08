@@ -644,3 +644,35 @@ html, body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+/* Make the calendar read clearly over the bright blue — darker glass cells,
+   crisp borders, brighter header row. Text stays the app's light theme. */
+.apt-prep-bg .adv-cal-dayname { color: #dbe8ff; }
+.apt-prep-bg .adv-cal-dayname--off { color: #a9c0e0; }
+.apt-prep-bg .adv-cal-day {
+  background: linear-gradient(160deg, rgba(8,24,52,0.5), rgba(8,24,52,0.3));
+  border-color: rgba(255,255,255,0.32);
+  box-shadow: 0 6px 18px rgba(3,12,30,0.32), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.apt-prep-bg .adv-cal-day:hover {
+  background: linear-gradient(160deg, rgba(20,60,110,0.62), rgba(12,36,72,0.42));
+  border-color: rgba(110,231,249,0.72);
+  box-shadow: 0 12px 28px rgba(3,12,30,0.42), 0 0 0 1px rgba(110,231,249,0.35);
+}
+.apt-prep-bg .adv-cal-day--closed {
+  background: rgba(8,24,52,0.28); border-color: rgba(255,255,255,0.16); border-style: dashed;
+}
+.apt-prep-bg .adv-cal-day--vacation {
+  background: linear-gradient(160deg, rgba(34,160,95,0.5), rgba(10,40,30,0.34)); border-color: rgba(110,231,170,0.6);
+}
+.apt-prep-bg .adv-cal-day--training {
+  background: linear-gradient(160deg, rgba(59,130,246,0.5), rgba(12,30,70,0.34)); border-color: rgba(147,197,253,0.65);
+}
+.apt-prep-bg .adv-cal-day--holiday {
+  background: linear-gradient(160deg, rgba(219,60,150,0.5), rgba(50,12,40,0.34)); border-color: rgba(244,150,200,0.6);
+}
+.apt-prep-bg .adv-today {
+  background: linear-gradient(160deg, rgba(34,211,238,0.34), rgba(59,130,246,0.2));
+  border-color: rgba(110,231,249,0.95);
+  box-shadow: 0 0 0 1px rgba(110,231,249,0.6), 0 10px 26px rgba(56,189,248,0.35);
+}
+.apt-prep-bg .adv-cal-empty { background: none; box-shadow: none; }
