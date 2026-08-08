@@ -819,7 +819,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 16, padding: '8px 16px 16px', overflow: 'hidden' }}>
         {/* Tech Chat — left */}
-        <div style={{ width: 300, flexShrink: 0 }}>
+        <div className="apt-chat-col" style={{ width: 300, flexShrink: 0 }}>
           <TechChat
             currentUser={currentUser || ''}
             currentRole={currentRole}
@@ -1088,7 +1088,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           </>)}
         </div>
         {/* Advisor Chat — right */}
-        <div style={{ width: 300, flexShrink: 0 }}>
+        <div className="apt-chat-col" style={{ width: 300, flexShrink: 0 }}>
           <Chat
             currentUser={currentUser || ''}
             currentRole={currentRole}
