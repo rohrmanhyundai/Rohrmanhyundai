@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-10T11:56:27.853Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-08-10T11:56:26.381Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-07T14:02:52.947Z",
     "type": "page",
     "label": "cash-dash"
@@ -312,76 +322,6 @@
   },
   {
     "at": "2026-07-13T15:05:52.484Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-10T17:25:23.121Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-10T17:25:23.118Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-10T17:25:21.621Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-09T14:34:53.991Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-09T14:34:51.799Z",
-    "type": "page",
-    "label": "tech-self-review"
-  },
-  {
-    "at": "2026-07-09T14:34:50.237Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-09T14:34:47.671Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-09T14:34:45.893Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-09T14:31:05.666Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-09T14:30:41.115Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-09T14:30:38.915Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-08T17:10:58.176Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-08T17:10:58.173Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-08T17:10:56.644Z",
     "type": "page",
     "label": "tech-resources"
   }
