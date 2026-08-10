@@ -14,5 +14,19 @@
     "partsArrivedDate": "08/05/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "msjhgnptvcub",
+    "ro": "779864",
+    "roDate": "2026-08-07",
+    "vehicle": "2013 Hyundai Equus",
+    "jobDesc": "Remove and replace factory Amp",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
