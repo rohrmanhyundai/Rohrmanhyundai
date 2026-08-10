@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-10T16:07:30.075Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-08-10T16:07:22.498Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-10T12:56:15.873Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1144,25 +1154,5 @@
     "at": "2026-07-11T17:08:29.967Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-11T15:27:10.988Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-11T15:27:06.164Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-11T15:27:06.156Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-11T15:27:01.447Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
