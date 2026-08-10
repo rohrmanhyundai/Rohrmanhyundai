@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-10T17:40:16.790Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-10T16:20:39.857Z",
     "type": "page",
     "label": "aftermarket-warranty"
@@ -1159,15 +1164,5 @@
     "at": "2026-07-11T19:10:49.006Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-11T17:09:18.863Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-11T17:08:29.967Z",
-    "type": "page",
-    "label": "advisor-goals"
   }
 ]
