@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-08-10T11:19:11.030Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-08-10T11:18:53.676Z",
+    "type": "page",
+    "label": "manager-hub"
+  },
+  {
+    "at": "2026-08-10T11:18:44.079Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-08-08T12:12:09.386Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1056,120 +1071,5 @@
     "at": "2026-07-11T15:27:01.447Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T21:52:31.487Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-10T21:52:28.374Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-10T21:52:27.327Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T19:00:44.860Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T19:00:40.638Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-10T19:00:40.523Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T18:37:57.669Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-10T18:37:44.179Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T18:28:59.851Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-10T18:28:57.826Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-10T16:55:18.021Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T15:49:14.982Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-10T15:49:06.411Z",
-    "type": "page",
-    "label": "charge-account-list"
-  },
-  {
-    "at": "2026-07-10T14:54:02.410Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T13:07:44.181Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-07-09T21:44:39.949Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-09T21:44:39.043Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T21:07:46.537Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-09T20:30:59.815Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T19:54:19.666Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-09T19:23:25.153Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T17:34:30.614Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-09T17:28:34.298Z",
-    "type": "page",
-    "label": "charge-account-list"
   }
 ]
