@@ -16,22 +16,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "msf6uy1ijse4",
-    "ro": "779781",
-    "roDate": "2026-08-04",
-    "vehicle": "2020 Hyundai Tucson",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "msf6uy1izr74",
     "ro": "779778",
     "roDate": "2026-08-04",
