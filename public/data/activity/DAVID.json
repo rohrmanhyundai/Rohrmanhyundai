@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-10T13:54:52.912Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-08-10T13:54:48.828Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-07T15:55:22.568Z",
     "type": "page",
     "label": "advisor-goals"
@@ -726,206 +736,6 @@
   },
   {
     "at": "2026-07-13T13:50:56.805Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T20:44:26.056Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-10T20:30:38.205Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-10T17:48:12.524Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-10T15:16:18.917Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-07-10T14:12:48.337Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:56:05.924Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-09T20:56:04.766Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:21:37.002Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:21:17.298Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-09T20:21:15.962Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-09T20:21:01.777Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-09T20:21:01.772Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-09T20:20:47.326Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:20:41.809Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-09T20:20:37.881Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-07-09T20:20:31.073Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-07-09T20:19:27.512Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-09T20:19:22.394Z",
-    "type": "page",
-    "label": "charge-account-list"
-  },
-  {
-    "at": "2026-07-09T20:19:14.725Z",
-    "type": "page",
-    "label": "document-library"
-  },
-  {
-    "at": "2026-07-09T20:19:05.656Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:17:16.742Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-09T20:13:08.098Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:13:01.627Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-09T20:12:47.695Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:12:29.072Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-09T20:12:22.966Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-07-09T20:12:09.676Z",
-    "type": "page",
-    "label": "document-library"
-  },
-  {
-    "at": "2026-07-09T20:11:50.903Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:11:44.704Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-09T20:11:39.770Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-09T20:11:35.083Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T20:11:29.534Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-09T20:11:27.112Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T17:34:18.083Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-09T14:30:38.264Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T13:37:13.354Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T12:56:09.146Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T11:57:07.799Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-09T11:57:01.919Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-09T11:56:59.563Z",
     "type": "page",
     "label": "advisor-calendar"
   }
