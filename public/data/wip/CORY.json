@@ -30,5 +30,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "msnfmak3gclj",
+    "ro": "779912",
+    "roDate": "2026-08-10",
+    "vehicle": "",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
