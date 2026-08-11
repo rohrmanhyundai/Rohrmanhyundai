@@ -1,0 +1,43 @@
+{
+  "id": "msoviqlust1r",
+  "createdAt": "2026-08-11T16:27:26.130Z",
+  "updatedAt": "2026-08-11T16:31:36.536Z",
+  "createdBy": "Jordan",
+  "customerName": "Yuna Lee",
+  "repairOrder": "779938",
+  "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-repairorder-1786465749640.jpg",
+  "originalPurchasePhoto": "",
+  "replacementQuotePhoto": "",
+  "wheels": {
+    "LF": {
+      "tire": true,
+      "rim": false,
+      "treadDepth": "6/32"
+    },
+    "RF": {
+      "tire": false,
+      "rim": false
+    },
+    "LR": {
+      "tire": false,
+      "rim": false
+    },
+    "RR": {
+      "tire": false,
+      "rim": false
+    }
+  },
+  "photos": {
+    "LF": {
+      "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-gauge-1786465823969.jpg",
+      "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-tireDamage-1786465832974.jpg",
+      "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-dot-1786465860239.jpg",
+      "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-size-1786465870078.jpg",
+      "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-brand-1786465880277.jpg",
+      "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/msoviqlust1r-LF-tireFull-1786465893607.jpg"
+    },
+    "RF": {},
+    "LR": {},
+    "RR": {}
+  }
+}
