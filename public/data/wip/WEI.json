@@ -10,8 +10,8 @@
     "usedCar": false,
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/05/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
   },
