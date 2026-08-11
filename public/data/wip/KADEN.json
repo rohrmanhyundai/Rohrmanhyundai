@@ -1,21 +1,5 @@
 [
   {
-    "id": "ms9evzxrh44r",
-    "ro": "779685",
-    "roDate": "2026-07-31",
-    "vehicle": "2015 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES- CEL flashing",
-    "notes": "BEARING TEST DONE AND FAILED TEST P/A SUBMITTED. kadeb when can we get this in?",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/05/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mshsqr4biybh",
     "ro": "779809",
     "roDate": "2026-08-06",
