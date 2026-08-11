@@ -16,22 +16,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "msge0llu288a",
-    "ro": "779786",
-    "roDate": "2026-08-05",
-    "vehicle": "2017 Hyundai Elantra",
-    "jobDesc": "a/c compressor replacement",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/07/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mshsqr4biybh",
     "ro": "779809",
     "roDate": "2026-08-06",
