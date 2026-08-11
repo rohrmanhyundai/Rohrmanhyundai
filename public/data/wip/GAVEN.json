@@ -13,20 +13,5 @@
     "advisor": "JORDAN TROXEL",
     "notes": "ENGINE APPROVED AND ON ORDER ",
     "flag": "purple"
-  },
-  {
-    "id": "msj48tthpxe",
-    "ro": "779842",
-    "roDate": "2026-08-07",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES VEHICLE LEAKING OIL. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/08/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "OIL FILTER HOUSING GASKET ON ORDER ",
-    "flag": "purple"
   }
 ]
