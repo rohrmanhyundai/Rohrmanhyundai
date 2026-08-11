@@ -1,5 +1,26 @@
 [
   {
+    "id": "mshsqr4biybh",
+    "ro": "779809",
+    "roDate": "2026-08-06",
+    "vehicle": "2023 Hyundai Tucson Hybrid",
+    "jobDesc": "multifunction switch  R&R",
+    "notes": "PARTS ON ORDER",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/07/2026",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "_archiveId": "msouhgdz9sc",
+    "_archivedAt": "2026-08-11T15:58:26.615Z",
+    "_archivedBy": "KADEN",
+    "_source": "wip",
+    "_sourceTech": "KADEN"
+  },
+  {
     "id": "ms9evzxrh44r",
     "ro": "779685",
     "roDate": "2026-07-31",
