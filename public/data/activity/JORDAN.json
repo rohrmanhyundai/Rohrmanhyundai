@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-12T11:22:49.029Z",
+    "type": "action",
+    "label": "send-to-reports"
+  },
+  {
     "at": "2026-08-12T11:22:15.979Z",
     "type": "action",
     "label": "save-dashboard"
