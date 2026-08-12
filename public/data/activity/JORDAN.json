@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-12T12:13:13.405Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-12T11:22:49.029Z",
     "type": "action",
     "label": "send-to-reports"
