@@ -57,21 +57,6 @@
     "flagged": false
   },
   {
-    "id": "msozcdya4t6",
-    "ro": "779892",
-    "roDate": "2026-08-10",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY",
-    "notes": "HAD 12V DIED, CAME IN WITH 4V. FULLY CHARGED, TEST DROVE NO DTC. WAIT ONE NIGHT FOR 12V DRAIN ISSUE",
-    "flag": "purple"
-  },
-  {
     "id": "msqe71dn8dgy",
     "ro": "779970",
     "roDate": "2026-08-12",
