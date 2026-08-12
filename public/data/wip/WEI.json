@@ -53,7 +53,8 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": false,
-    "advisor": "JORDAN TROXEL"
+    "advisor": "JORDAN TROXEL",
+    "flagged": true
   },
   {
     "id": "msozcdya4t6",
