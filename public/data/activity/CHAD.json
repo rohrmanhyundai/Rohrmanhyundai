@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-08-12T21:10:17.544Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 779917 tech CHAD"
+  },
+  {
+    "at": "2026-08-12T21:10:07.901Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-08-12T21:10:06.911Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-12T18:43:48.555Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1251,22 +1267,6 @@
   },
   {
     "at": "2026-07-13T21:17:49.070Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-13T19:25:11.047Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 779086 tech CHAD"
-  },
-  {
-    "at": "2026-07-13T19:24:57.435Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-13T19:24:55.711Z",
     "type": "page",
     "label": "tech-resources"
   }
