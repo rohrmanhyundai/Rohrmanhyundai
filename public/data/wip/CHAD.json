@@ -28,7 +28,7 @@
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "DAVID"
   }
 ]
