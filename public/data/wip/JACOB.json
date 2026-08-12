@@ -142,5 +142,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "Jason Troxel"
+  },
+  {
+    "id": "msqe73yj6tqw",
+    "ro": "779947",
+    "roDate": "2026-08-12",
+    "vehicle": "",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "msqe73yj2us0",
+    "ro": "779928",
+    "roDate": "2026-08-12",
+    "vehicle": "",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
