@@ -3,13 +3,18 @@
   "date": "2026-08-20",
   "rows": [
     {
-      "customerName": "",
+      "customerName": "JERRY BERKEY",
       "appointmentTime": "",
-      "criticalDeferredService": "",
+      "criticalDeferredService": "SICK DAY",
       "waiter": false,
       "dropOff": false,
       "technician": "",
-      "notes": []
+      "notes": [
+        {
+          "author": "JERRY",
+          "text": "SICK DAY"
+        }
+      ]
     },
     {
       "customerName": "",
@@ -49,5 +54,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-08-12T19:08:48.199Z"
+  "savedAt": "2026-08-12T19:10:02.062Z"
 }
