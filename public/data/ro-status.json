@@ -1,129 +1,153 @@
 {
-  "updatedAt": "2026-08-10T19:24:08.184Z",
+  "updatedAt": "2026-08-12T17:58:06.114Z",
   "by": "JORDAN",
   "rows": [
     {
-      "ro": "779920",
-      "advisor": "DAVID RILEY",
-      "vehicle": "",
-      "tech": "CARTER JEAN",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 2:49 PM"
-    },
-    {
-      "ro": "779919",
-      "advisor": "CODY TINCHER",
-      "vehicle": "",
-      "tech": "",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 2:29 PM"
-    },
-    {
-      "ro": "779918",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "BRYSON HUTSELL",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 2:26 PM"
-    },
-    {
-      "ro": "779917",
-      "advisor": "CODY TINCHER",
-      "vehicle": "",
-      "tech": "CHAD KRINTZ",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 1:51 PM"
-    },
-    {
-      "ro": "779916",
+      "ro": "779973",
       "advisor": "DAVID RILEY",
       "vehicle": "",
       "tech": "GAVEN LAUGHNER",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "IN_PROGRESS",
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 1:13 PM"
+      "openDate": "Wed, Aug 12, 2026 1:16 PM"
     },
     {
-      "ro": "779913",
-      "advisor": "CORY CHAPMAN",
+      "ro": "779972",
+      "advisor": "CODY TINCHER",
       "vehicle": "",
-      "tech": "JACOB KUNTZ",
+      "tech": "CARTER JEAN",
       "userFlag": "GREEN",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 11:20 AM"
+      "openDate": "Wed, Aug 12, 2026 12:56 PM"
     },
     {
-      "ro": "779912",
-      "advisor": "CORY CHAPMAN",
+      "ro": "779971",
+      "advisor": "CODY TINCHER",
       "vehicle": "",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 11:14 AM"
-    },
-    {
-      "ro": "779910",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 11:12 AM"
-    },
-    {
-      "ro": "779909",
-      "advisor": "DAVID RILEY",
-      "vehicle": "",
-      "tech": "",
+      "tech": "KADEN WILSON",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
+      "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 11:09 AM"
+      "openDate": "Wed, Aug 12, 2026 12:51 PM"
     },
     {
-      "ro": "779905",
-      "advisor": "CORY CHAPMAN",
+      "ro": "779970",
+      "advisor": "CODY TINCHER",
       "vehicle": "",
-      "tech": "JACOB KUNTZ",
+      "tech": "WEI GUO",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 12:44 PM"
+    },
+    {
+      "ro": "779969",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "WEI GUO; BRYSON HUTSELL",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 12:15 PM"
+    },
+    {
+      "ro": "779968",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "WEI GUO",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:52 AM"
+    },
+    {
+      "ro": "779967",
+      "advisor": "CODY TINCHER",
+      "vehicle": "",
+      "tech": "CARTER JEAN",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:46 AM"
+    },
+    {
+      "ro": "779966",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:42 AM"
+    },
+    {
+      "ro": "779965",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "WEI GUO",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:37 AM"
+    },
+    {
+      "ro": "779964",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "GAVEN LAUGHNER",
       "userFlag": "GREEN",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 10:34 AM"
+      "openDate": "Wed, Aug 12, 2026 11:25 AM"
     },
     {
-      "ro": "779904",
+      "ro": "779963",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:25 AM"
+    },
+    {
+      "ro": "779962",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "CORY SWINDLE",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 11:01 AM"
+    },
+    {
+      "ro": "779960",
       "advisor": "DAVID RILEY",
       "vehicle": "",
       "tech": "CARTER JEAN",
@@ -132,22 +156,94 @@
       "roStatus": "INVOICED",
       "cpStatus": "NA",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 10:25 AM"
+      "openDate": "Wed, Aug 12, 2026 10:46 AM"
     },
     {
-      "ro": "779901",
-      "advisor": "JORDAN TROXEL",
+      "ro": "779959",
+      "advisor": "CODY TINCHER",
       "vehicle": "",
-      "tech": "CORY SWINDLE",
+      "tech": "GAVEN LAUGHNER",
       "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "INVOICED",
-      "cpStatus": "CLOSED",
+      "cpStatus": "NA",
       "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 9:59 AM"
+      "openDate": "Wed, Aug 12, 2026 10:38 AM"
     },
     {
-      "ro": "779900",
+      "ro": "779957",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "WEI GUO",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 10:19 AM"
+    },
+    {
+      "ro": "779956",
+      "advisor": "SHAWN LAUGHNER",
+      "vehicle": "",
+      "tech": "",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 10:13 AM"
+    },
+    {
+      "ro": "779955",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "KADEN WILSON",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 10:12 AM"
+    },
+    {
+      "ro": "779952",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 9:18 AM"
+    },
+    {
+      "ro": "779949",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 1,
+      "openDate": "Wed, Aug 12, 2026 7:16 AM"
+    },
+    {
+      "ro": "779948",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 1,
+      "openDate": "Tue, Aug 11, 2026 5:38 PM"
+    },
+    {
+      "ro": "779947",
       "advisor": "CORY CHAPMAN",
       "vehicle": "",
       "tech": "JACOB KUNTZ",
@@ -156,6 +252,138 @@
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
       "roAge": 1,
+      "openDate": "Tue, Aug 11, 2026 4:14 PM"
+    },
+    {
+      "ro": "779940",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
+      "roAge": 2,
+      "openDate": "Tue, Aug 11, 2026 1:04 PM"
+    },
+    {
+      "ro": "779937",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "PAID",
+      "roAge": 2,
+      "openDate": "Tue, Aug 11, 2026 11:18 AM"
+    },
+    {
+      "ro": "779928",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 2,
+      "openDate": "Tue, Aug 11, 2026 8:13 AM"
+    },
+    {
+      "ro": "779925",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "CHAD KRINTZ",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "CLOSED",
+      "roAge": 2,
+      "openDate": "Tue, Aug 11, 2026 7:19 AM"
+    },
+    {
+      "ro": "779924",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "CHAD KRINTZ",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 2,
+      "openDate": "Tue, Aug 11, 2026 7:14 AM"
+    },
+    {
+      "ro": "779917",
+      "advisor": "CODY TINCHER",
+      "vehicle": "",
+      "tech": "CHAD KRINTZ",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 2,
+      "openDate": "Mon, Aug 10, 2026 1:51 PM"
+    },
+    {
+      "ro": "779916",
+      "advisor": "DAVID RILEY",
+      "vehicle": "",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 3,
+      "openDate": "Mon, Aug 10, 2026 1:13 PM"
+    },
+    {
+      "ro": "779913",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "",
+      "tech": "CORY SWINDLE",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 3,
+      "openDate": "Mon, Aug 10, 2026 11:20 AM"
+    },
+    {
+      "ro": "779912",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "",
+      "tech": "CORY SWINDLE",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 3,
+      "openDate": "Mon, Aug 10, 2026 11:14 AM"
+    },
+    {
+      "ro": "779910",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "",
+      "tech": "CARTER JEAN",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 3,
+      "openDate": "Mon, Aug 10, 2026 11:12 AM"
+    },
+    {
+      "ro": "779900",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 3,
       "openDate": "Mon, Aug 10, 2026 9:45 AM"
     },
     {
@@ -167,68 +395,20 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 1,
+      "roAge": 3,
       "openDate": "Mon, Aug 10, 2026 9:23 AM"
-    },
-    {
-      "ro": "779894",
-      "advisor": "CODY TINCHER",
-      "vehicle": "",
-      "tech": "GAVEN LAUGHNER",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "IN_PROGRESS",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 8:47 AM"
     },
     {
       "ro": "779892",
       "advisor": "CODY TINCHER",
       "vehicle": "",
-      "tech": "",
+      "tech": "WEI GUO",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 1,
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
+      "roAge": 3,
       "openDate": "Mon, Aug 10, 2026 8:37 AM"
-    },
-    {
-      "ro": "779889",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "GAVEN LAUGHNER",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Mon, Aug 10, 2026 7:07 AM"
-    },
-    {
-      "ro": "779883",
-      "advisor": "Jason Troxel",
-      "vehicle": "",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 3,
-      "openDate": "Sat, Aug 8, 2026 11:19 AM"
-    },
-    {
-      "ro": "779880",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "JACOB KUNTZ; BRYSON HUTSELL",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 3,
-      "openDate": "Sat, Aug 8, 2026 8:57 AM"
     },
     {
       "ro": "779864",
@@ -237,9 +417,9 @@
       "tech": "CHAD KRINTZ",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "PARTIALLY_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 4,
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
+      "roAge": 6,
       "openDate": "Fri, Aug 7, 2026 11:35 AM"
     },
     {
@@ -249,34 +429,10 @@
       "tech": "CORY SWINDLE",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 4,
-      "openDate": "Thu, Aug 6, 2026 3:48 PM"
-    },
-    {
-      "ro": "779842",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "GAVEN LAUGHNER",
-      "userFlag": "PURPLE",
-      "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 5,
-      "openDate": "Thu, Aug 6, 2026 3:03 PM"
-    },
-    {
-      "ro": "779841",
-      "advisor": "DAVID RILEY",
-      "vehicle": "",
-      "tech": "GAVEN LAUGHNER",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
-      "roAge": 5,
-      "openDate": "Thu, Aug 6, 2026 2:40 PM"
+      "roAge": 6,
+      "openDate": "Thu, Aug 6, 2026 3:48 PM"
     },
     {
       "ro": "779831",
@@ -285,9 +441,9 @@
       "tech": "JACOB KUNTZ",
       "userFlag": "GREEN",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
+      "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 5,
+      "roAge": 7,
       "openDate": "Thu, Aug 6, 2026 11:29 AM"
     },
     {
@@ -299,7 +455,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 5,
+      "roAge": 7,
       "openDate": "Thu, Aug 6, 2026 11:18 AM"
     },
     {
@@ -311,32 +467,8 @@
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
-      "roAge": 5,
+      "roAge": 7,
       "openDate": "Thu, Aug 6, 2026 11:14 AM"
-    },
-    {
-      "ro": "779827",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 5,
-      "openDate": "Thu, Aug 6, 2026 11:11 AM"
-    },
-    {
-      "ro": "779809",
-      "advisor": "DAVID RILEY",
-      "vehicle": "",
-      "tech": "KADEN WILSON",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "IN_PROGRESS",
-      "roAge": 5,
-      "openDate": "Thu, Aug 6, 2026 7:03 AM"
     },
     {
       "ro": "779799",
@@ -347,7 +479,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 6,
+      "roAge": 8,
       "openDate": "Wed, Aug 5, 2026 12:15 PM"
     },
     {
@@ -359,20 +491,8 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 6,
+      "roAge": 8,
       "openDate": "Wed, Aug 5, 2026 9:13 AM"
-    },
-    {
-      "ro": "779786",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "",
-      "tech": "KADEN WILSON",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 6,
-      "openDate": "Wed, Aug 5, 2026 8:12 AM"
     },
     {
       "ro": "779778",
@@ -381,9 +501,9 @@
       "tech": "JACOB KUNTZ",
       "userFlag": "GREEN",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 7,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 8,
       "openDate": "Tue, Aug 4, 2026 1:54 PM"
     },
     {
@@ -393,9 +513,9 @@
       "tech": "WEI GUO",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "IN_PROGRESS",
-      "cpStatus": "IN_PROGRESS",
-      "roAge": 7,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 9,
       "openDate": "Tue, Aug 4, 2026 10:45 AM"
     },
     {
@@ -407,7 +527,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 8,
+      "roAge": 10,
       "openDate": "Mon, Aug 3, 2026 9:11 AM"
     },
     {
@@ -417,22 +537,10 @@
       "tech": "CHAD KRINTZ",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
-      "roAge": 8,
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
+      "roAge": 10,
       "openDate": "Mon, Aug 3, 2026 8:37 AM"
-    },
-    {
-      "ro": "779685",
-      "advisor": "DAVID RILEY",
-      "vehicle": "",
-      "tech": "KADEN WILSON",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 11,
-      "openDate": "Fri, Jul 31, 2026 11:51 AM"
     },
     {
       "ro": "779665",
@@ -441,9 +549,9 @@
       "tech": "JACOB KUNTZ",
       "userFlag": "GREEN",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
+      "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 12,
+      "roAge": 14,
       "openDate": "Thu, Jul 30, 2026 1:21 PM"
     },
     {
@@ -455,7 +563,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 13,
+      "roAge": 15,
       "openDate": "Wed, Jul 29, 2026 10:38 AM"
     },
     {
@@ -465,9 +573,9 @@
       "tech": "CARTER JEAN",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "IN_PROGRESS",
-      "roAge": 13,
+      "roStatus": "INVOICED",
+      "cpStatus": "PAID",
+      "roAge": 15,
       "openDate": "Tue, Jul 28, 2026 4:10 PM"
     },
     {
@@ -478,8 +586,8 @@
       "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 19,
+      "cpStatus": "CLOSED",
+      "roAge": 21,
       "openDate": "Thu, Jul 23, 2026 10:00 AM"
     },
     {
@@ -491,7 +599,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 19,
+      "roAge": 21,
       "openDate": "Thu, Jul 23, 2026 8:49 AM"
     },
     {
@@ -503,7 +611,7 @@
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
-      "roAge": 20,
+      "roAge": 22,
       "openDate": "Wed, Jul 22, 2026 11:59 AM"
     },
     {
@@ -515,7 +623,7 @@
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
-      "roAge": 20,
+      "roAge": 22,
       "openDate": "Wed, Jul 22, 2026 9:29 AM"
     },
     {
@@ -526,8 +634,8 @@
       "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 22,
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 24,
       "openDate": "Mon, Jul 20, 2026 7:29 AM"
     },
     {
@@ -539,7 +647,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 26,
+      "roAge": 28,
       "openDate": "Thu, Jul 16, 2026 1:16 PM"
     },
     {
@@ -551,7 +659,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 28,
+      "roAge": 29,
       "openDate": "Tue, Jul 14, 2026 3:11 PM"
     },
     {
@@ -563,7 +671,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 28,
+      "roAge": 30,
       "openDate": "Mon, Jul 13, 2026 3:31 PM"
     }
   ]
