@@ -69,5 +69,37 @@
     "advisor": "CODY",
     "notes": "HAD 12V DIED, CAME IN WITH 4V. FULLY CHARGED, TEST DROVE NO DTC. WAIT ONE NIGHT FOR 12V DRAIN ISSUE",
     "flag": "purple"
+  },
+  {
+    "id": "msqe71dn8dgy",
+    "ro": "779970",
+    "roDate": "2026-08-12",
+    "vehicle": "",
+    "jobDesc": "RECALL",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "msqe71dn796h",
+    "ro": "779968",
+    "roDate": "2026-08-12",
+    "vehicle": "",
+    "jobDesc": "RECALL",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
