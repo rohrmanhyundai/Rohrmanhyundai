@@ -1,45 +1,5 @@
 [
   {
-    "id": "mrj83fwt5lu",
-    "username": "SHAWN",
-    "text": "Jordan, 779007 have you got a hold of the customer? i hate to write this RO off. if we have to go pick car up to complete the recalls we can too.",
-    "timestamp": 1783947188045,
-    "reactions": {
-      "🚨": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mrjat5w76ma",
-    "username": "SHAWN",
-    "text": "Jordan 777425 when are they picking the car up?",
-    "timestamp": 1783951747351
-  },
-  {
-    "id": "mrjdjb52mgh",
-    "username": "KAI",
-    "text": "tire is in for c12102, haleigh nichole mccoy",
-    "timestamp": 1783956326438,
-    "reactions": {
-      "👍": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
-    "id": "mrjizyorw6z",
-    "username": "SHAWN",
-    "text": "I WILL CALL HAILEIGH",
-    "timestamp": 1783965501531
-  },
-  {
-    "id": "mrjjezat1n8",
-    "username": "SHAWN",
-    "text": "HAILEIGH WILL BE HERE TOMORROW",
-    "timestamp": 1783966202165
-  },
-  {
     "id": "mrng671s4n1",
     "username": "KAI",
     "text": "PARTS ARE IN FOR THE FOLLOWING SORS RAY GEPHART (12122 & 12123) EVAN NCCULLOUGH (C12134) MIKYLA LYNN DALTON (C12136) ADAMS ELECTRIC (C12094)",
@@ -331,5 +291,11 @@
     "username": "CODY",
     "text": "I believe shes your customer Jordan",
     "timestamp": 1786394719082
+  },
+  {
+    "id": "msqfzal5l09",
+    "username": "DAVID",
+    "text": "@Jerry - Any update on RO779854? Goldberg for US auto Force?",
+    "timestamp": 1786560477017
   }
 ]
