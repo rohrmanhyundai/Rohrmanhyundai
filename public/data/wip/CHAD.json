@@ -14,5 +14,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "msryzzp2e3zc",
+    "ro": "779982",
+    "roDate": "2026-08-13",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHTS ON DASH. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
