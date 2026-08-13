@@ -505,6 +505,19 @@
       "2026-08-12": {
         "hours": 90.1,
         "hrsRo": 1.23
+      },
+      "2026-08-13": {
+        "hours": 128.2,
+        "hrsRo": 1.34,
+        "openRoCount": 15,
+        "invoiced": "no",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": null,
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1786654417748
       }
     },
     "entryMode": "mtd"
