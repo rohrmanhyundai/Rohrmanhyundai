@@ -40,8 +40,8 @@
     "usedCar": true,
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/13/2026",
     "highPriority": false,
     "advisor": "CODY TINCHER"
   },
