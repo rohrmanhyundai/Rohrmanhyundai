@@ -1,21 +1,5 @@
 [
   {
-    "id": "mshzz8mj6201",
-    "ro": "779844",
-    "roDate": "2026-08-06",
-    "vehicle": "2016 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES CEL FLASHING. CHECK AND ADVISE.",
-    "notes": "ENGINE DECLINED WAITING ON BUY BACK",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mshsqpf4b6hd",
     "ro": "779829",
     "roDate": "2026-08-06",
