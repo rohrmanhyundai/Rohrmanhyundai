@@ -57,38 +57,6 @@
     "flagged": false
   },
   {
-    "id": "msqe71dn8dgy",
-    "ro": "779970",
-    "roDate": "2026-08-12",
-    "vehicle": "",
-    "jobDesc": "RECALL",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
-  },
-  {
-    "id": "msqe71dn796h",
-    "ro": "779968",
-    "roDate": "2026-08-12",
-    "vehicle": "",
-    "jobDesc": "RECALL",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "msryzywo2xtp",
     "ro": "779989",
     "roDate": "2026-08-13",
