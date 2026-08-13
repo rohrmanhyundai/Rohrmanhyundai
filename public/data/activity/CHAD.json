@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-13T11:55:53.950Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-08-13T11:55:52.772Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-12T21:15:35.594Z",
     "type": "page",
     "label": "tech-resources"
@@ -1253,36 +1263,5 @@
     "at": "2026-07-14T15:02:53.840Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-14T11:54:27.654Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-14T11:54:27.652Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-14T11:54:24.668Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-13T21:17:58.722Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 778834 tech CHAD"
-  },
-  {
-    "at": "2026-07-13T21:17:52.379Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-13T21:17:49.070Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
