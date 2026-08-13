@@ -501,6 +501,10 @@
         "agreed": true,
         "agreedBy": "DAVID",
         "submittedAt": 1786481254678
+      },
+      "2026-08-12": {
+        "hours": 90.1,
+        "hrsRo": 1.23
       }
     },
     "entryMode": "mtd"
