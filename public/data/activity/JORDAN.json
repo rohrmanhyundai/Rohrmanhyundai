@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-14T20:07:19.767Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-08-14T17:05:38.455Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1438,20 +1443,5 @@
     "at": "2026-07-16T15:28:39.957Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-15T20:03:34.938Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-15T18:53:08.433Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-15T18:52:35.719Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
