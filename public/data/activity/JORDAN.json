@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-14T17:05:38.455Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-14T11:43:24.386Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1448,35 +1453,5 @@
     "at": "2026-07-15T18:52:35.719Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-15T16:44:43.458Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-15T12:22:27.327Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-15T12:08:40.916Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-07-15T12:07:19.578Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-15T12:07:15.574Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-15T12:06:46.413Z",
-    "type": "action",
-    "label": "save-dashboard"
   }
 ]
