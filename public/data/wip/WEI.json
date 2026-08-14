@@ -103,5 +103,20 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "mst6zs6i0s2",
+    "ro": "779990",
+    "roDate": "2026-08-13",
+    "vehicle": "",
+    "jobDesc": "PDI",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "notes": "",
+    "flag": "purple"
   }
 ]
