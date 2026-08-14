@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-08-14T10:58:58.311Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 779355 tech GAVEN"
+  },
+  {
+    "at": "2026-08-14T10:58:40.410Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-08-14T10:58:39.377Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-12T17:20:29.813Z",
     "type": "page",
     "label": "recalls"
@@ -546,140 +562,5 @@
     "at": "2026-07-15T12:38:34.174Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-07-14T21:31:17.870Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-14T21:29:44.073Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-14T21:29:39.902Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T19:27:39.287Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-14T19:26:59.831Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-14T19:26:26.020Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-14T19:26:26.017Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-14T19:26:24.160Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T17:41:39.407Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-14T17:41:36.687Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T17:35:24.690Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-14T17:35:10.595Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-14T17:34:04.895Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-14T17:34:03.097Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T17:30:55.280Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-07-14T17:30:47.022Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T17:27:54.453Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-07-14T17:23:37.822Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-14T17:23:37.820Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-14T17:23:37.711Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T17:18:38.023Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-14T16:58:42.300Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-14T16:58:41.371Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-14T16:58:41.368Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-14T16:58:40.577Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-14T16:58:34.121Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-14T16:58:33.354Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
