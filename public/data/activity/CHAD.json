@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-15T13:50:59.415Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-14T20:16:09.821Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1225,21 +1230,5 @@
     "at": "2026-07-16T17:07:45.520Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-16T12:12:01.222Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-16T12:11:59.023Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-15T21:45:13.284Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 779030 tech CHAD"
   }
 ]
