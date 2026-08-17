@@ -490,32 +490,6 @@
       "techChatAccess": true
     },
     {
-      "username": "Isaiah",
-      "lastName": "",
-      "password": "save",
-      "role": "advisor",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": true,
-        "advisorRankBoard": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true,
-        "partsHub": true,
-        "tireQuote": true,
-        "atDiagWorksheet": true,
-        "usedCarHub": true
-      },
-      "chatAccess": true,
-      "techChatAccess": true,
-      "managementAccess": false
-    },
-    {
       "username": "Cody",
       "lastName": "",
       "password": "Cody2026",
