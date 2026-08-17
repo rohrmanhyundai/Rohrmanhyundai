@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-17T11:42:24.227Z",
+    "type": "action",
+    "label": "save-dashboard"
+  },
+  {
     "at": "2026-08-15T13:49:51.921Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
@@ -1376,86 +1381,6 @@
   },
   {
     "at": "2026-07-20T13:24:57.862Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T13:53:42.209Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T13:51:48.110Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-17T13:51:46.718Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-17T13:22:14.823Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T12:15:30.542Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-17T11:58:18.505Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T11:32:29.170Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-07-17T11:32:27.973Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-17T11:32:15.304Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-16T20:20:36.747Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-16T20:20:34.479Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-16T18:21:35.497Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-16T18:21:34.310Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-16T18:21:34.298Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-16T18:15:25.055Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-16T15:28:39.957Z",
     "type": "page",
     "label": "advisor-calendar"
   }
