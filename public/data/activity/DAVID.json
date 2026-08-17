@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-08-17T21:27:26.928Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-08-17T21:27:25.814Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-17T21:27:22.252Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-08-17T16:12:08.285Z",
     "type": "page",
     "label": "aftermarket-warranty"
@@ -678,15 +693,5 @@
     "at": "2026-07-20T14:12:09.928Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-18T19:17:30.699Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-18T19:03:21.705Z",
-    "type": "page",
-    "label": "work-schedule"
   }
 ]
