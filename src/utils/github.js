@@ -735,13 +735,20 @@ export async function updateHotRepairPdf(item, file, uploaderName, kind = 'hot-r
   }
 
   const oldFilename = item.filename;
-  const updated = await mutateGitHubJson(bulletinIndexPath(kind),
-    (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === item.id
-      ? { ...d, filename: newFilename, fileType: 'pdf', size: file.size,
-          uploadedBy: uploaderName || d.uploadedBy, uploadedAt: new Date().toISOString(),
-          searchText: (searchText || '').slice(0, MAX_SEARCH_TEXT) }
-      : d),
-    `${BULLETIN_KINDS[kind]}: update PDF for ${item.label}`);
+  const updated = await mutateGitHubJson(bulletinIndexPath(kind), (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const idx = arr.findIndex(d => d.id === item.id);
+    if (idx === -1) return arr;
+    const entry = {
+      ...arr[idx],
+      filename: newFilename, fileType: 'pdf', size: file.size,
+      uploadedBy: uploaderName || arr[idx].uploadedBy,
+      updatedAt: new Date().toISOString(),        // marks it "UPDATED"; keeps original uploadedAt
+      searchText: (searchText || '').slice(0, MAX_SEARCH_TEXT),
+    };
+    // Move the freshly-updated bulletin to the top, like a new upload.
+    return [entry, ...arr.filter((_, i) => i !== idx)];
+  }, `${BULLETIN_KINDS[kind]}: update PDF for ${item.label}`);
 
   // Old file is now orphaned — best-effort delete (index already points at new).
   if (oldFilename && oldFilename !== newFilename) {
