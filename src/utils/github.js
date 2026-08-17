@@ -718,6 +718,38 @@ export async function backfillHotRepairSearchText(textById, kind = 'hot-repairs'
   }, `${BULLETIN_KINDS[kind]}: index ${Object.keys(textById).length} PDF(s) for search`);
 }
 
+// Replace a bulletin's PDF with a newer version: upload the new file, point the
+// entry at it (keeping label / tags / warranty / op-codes), then delete the old
+// S3 file. Only the PDF, its size, search text, and updated timestamp change.
+export async function updateHotRepairPdf(item, file, uploaderName, kind = 'hot-repairs', searchText = '') {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!(await ensureAwsCreds())) throw new Error('AWS credentials are required to upload.');
+
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const newFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  try {
+    await uploadFileToS3(newFilename, file);
+  } catch (err) {
+    throw new Error('S3 upload failed: ' + (err.message || err));
+  }
+
+  const oldFilename = item.filename;
+  const updated = await mutateGitHubJson(bulletinIndexPath(kind),
+    (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === item.id
+      ? { ...d, filename: newFilename, fileType: 'pdf', size: file.size,
+          uploadedBy: uploaderName || d.uploadedBy, uploadedAt: new Date().toISOString(),
+          searchText: (searchText || '').slice(0, MAX_SEARCH_TEXT) }
+      : d),
+    `${BULLETIN_KINDS[kind]}: update PDF for ${item.label}`);
+
+  // Old file is now orphaned — best-effort delete (index already points at new).
+  if (oldFilename && oldFilename !== newFilename) {
+    try { await deleteFileFromS3(oldFilename); } catch (err) { console.warn('S3 delete warning:', err.message || err); }
+  }
+  return updated;
+}
+
 export async function renameHotRepair(id, newLabel, kind = 'hot-repairs') {
   return mutateGitHubJson(bulletinIndexPath(kind),
     (cur) => (Array.isArray(cur) ? cur : []).map(d => d.id === id ? { ...d, label: newLabel } : d),
