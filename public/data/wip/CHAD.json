@@ -21,7 +21,7 @@
     "roDate": "2026-08-13",
     "vehicle": "",
     "jobDesc": "CUSTOMER STATES WARNING LIGHTS ON DASH. CHECK AND ADVISE.",
-    "notes": "REAR HARNESS ORDERED. SEEING LEFT REAR BODY REPAIR, BUT NOT SURE WHAT TO DO...CALLING TECH LINE.",
+    "notes": "REAR BUMPER HARNESS SHORTED BETWEEN BOTH REAR CORNER RADAR MODULES. HARNESS ORDERED.",
     "flag": "purple",
     "usedCar": false,
     "etaParts": "",
@@ -30,37 +30,5 @@
     "partsArrivedDate": "08/15/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "msx9ke3akzp5",
-    "ro": "780060",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES CEL ON. WAS TOLD ITS A COOLING SYSTEM ERROR BY BELLE TIRE. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "msx9ke3aakz5",
-    "ro": "780054",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE CODE SHOWING UP ON HEAD UNIT",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
