@@ -2871,78 +2871,78 @@
       ],
       "entries": [
         {
-          "id": "mq0h0tn7jjiw",
+          "id": "msxervycbix6",
           "answers": {
             "model": "Palisade (LX3)"
           },
           "model": "Palisade (LX3)",
           "opCode": "50D310R0",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection",
           "opTime": "0.3 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mq0h0tn761qm",
+          "id": "msxervycwe6i",
           "answers": {
             "model": "Palisade (LX3)"
           },
           "model": "Palisade (LX3)",
           "opCode": "50D310R2-R5",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & LH Actuator & Sensor Replacement",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection , Sensor Connectors Check , and Wiring & L H Actuator & Sensor Replacement",
           "opTime": "1.1 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mq0h0tn7kv5n",
+          "id": "msxervydntru",
           "answers": {
             "model": "Palisade (LX3)"
           },
           "model": "Palisade (LX3)",
           "opCode": "50D310RD-RG",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & LH/RH Actuator & LH/RH Sensor Replacement",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & L H /R H Actuator & L H /R H Sensor Replacement",
           "opTime": "1.2 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mq0h0tn7bav0",
+          "id": "msxervydk2wl",
           "answers": {
             "model": "Palisade Hybrid (LX3 HEV)"
           },
           "model": "Palisade Hybrid (LX3 HEV)",
           "opCode": "50D310RH",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection",
           "opTime": "0.3 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mq0h0tn7wmpf",
+          "id": "msxervydonxa",
           "answers": {
             "model": "Palisade Hybrid (LX3 HEV)"
           },
           "model": "Palisade Hybrid (LX3 HEV)",
           "opCode": "50D310RK-RM",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & LH Actuator & Sensor Replacement",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & L H Actuator & Sensor Replacement",
           "opTime": "1.1 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
           "causeCode": "ZZ3"
         },
         {
-          "id": "mq0h0tn7q1vt",
+          "id": "msxervydc04b",
           "answers": {
             "model": "Palisade Hybrid (LX3 HEV)"
           },
           "model": "Palisade Hybrid (LX3 HEV)",
           "opCode": "50D310RU-RW",
-          "operation": "Front Bumper Wiring & AAF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & LH/RH Actuator & LH/RH Sensor Replacement",
+          "operation": "Front Bumper Wiring & A AF Actuato r Pin Inspection , Sensor Connectors Check , a nd Wiring & L H /R H Actuator & L H /R H Sensor Replacement",
           "opTime": "1.2 M/H",
           "causalPart": "91891-P9AC0",
           "natureCode": "B1E",
