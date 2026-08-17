@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { loadHotRepairs, uploadHotRepair, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, updateHotRepairPdf, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 import { loadPdfJs, extractPdfText, extractPdfTextFromBuffer, rankedMatches, scoreItem, textCache } from '../utils/pdfText';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
@@ -391,6 +391,41 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     }
   }
 
+  // ── Update PDF: replace an existing bulletin's file, keeping its title/tags ──
+  const updateInputRef = useRef(null);
+  const pendingUpdateItemRef = useRef(null);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  function startUpdatePdf(item) {
+    if (!window.confirm(
+      `Replace the PDF for "${item.label}"?\n\nPick the new PDF next — it replaces the current file and the old one is deleted. The title and everything else stay the same.`
+    )) return;
+    pendingUpdateItemRef.current = item;
+    updateInputRef.current?.click();
+  }
+
+  async function handleUpdateFile(e) {
+    const f = e.target.files?.[0];
+    if (updateInputRef.current) updateInputRef.current.value = '';
+    const item = pendingUpdateItemRef.current;
+    pendingUpdateItemRef.current = null;
+    if (!f || !item) return;
+    if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)) { setActionError('Please choose a PDF file.'); return; }
+    if (!await ensureToken()) return;
+    setUpdatingId(item.id);
+    setActionError('');
+    try {
+      let searchText = '';
+      try { searchText = await extractPdfTextFromBuffer(await f.arrayBuffer()); } catch { searchText = ''; }
+      const newItems = await updateHotRepairPdf(item, f, currentUserDisplay || currentUser, tab, searchText);
+      setItems(newItems);
+    } catch (err) {
+      setActionError('Update failed: ' + (err.message || err));
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   // Backfill stored search text for every bulletin that doesn't have it yet
   // (i.e. uploaded before full-text indexing existed). Fetches each PDF, extracts
   // its text, and saves the whole index in one commit. One-time, manager-only.
@@ -643,6 +678,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
 
       <div className="doc-lib-wrap">
 
+        {/* Hidden picker for "Update PDF" — replaces a bulletin's file in place */}
+        <input ref={updateInputRef} type="file" accept=".pdf" onChange={handleUpdateFile} style={{ display: 'none' }} />
+
         {/* Upload Panel — managers/admins only */}
         {canManage && (
           <div className="doc-lib-upload-panel">
@@ -846,6 +884,13 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                         <button onClick={() => startEdit(item)} title="Rename"
                           style={{ background: 'rgba(110,231,249,.12)', border: '1px solid rgba(110,231,249,.3)', color: '#6ee7f9', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
                           ✏️ Rename
+                        </button>
+                      )}
+                      {canManageItem && editId !== item.id && tagsId !== item.id && (
+                        <button onClick={() => startUpdatePdf(item)} disabled={updatingId === item.id}
+                          title="Replace this bulletin's PDF with a newer version (the old file is deleted)"
+                          style={{ background: 'rgba(167,139,250,.14)', border: '1px solid rgba(167,139,250,.4)', color: '#c4b5fd', borderRadius: 8, padding: '6px 12px', cursor: updatingId === item.id ? 'wait' : 'pointer', fontWeight: 700, fontSize: 13 }}>
+                          {updatingId === item.id ? '⏳ Updating…' : '⬆️ Update PDF'}
                         </button>
                       )}
                       {canManageItem && editId !== item.id && tagsId !== item.id && (
