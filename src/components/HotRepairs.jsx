@@ -759,7 +759,9 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     style={{ position: 'relative', cursor: 'pointer', maxHeight: 720, overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,.08)' }}
                   >
                     <PdfPreview item={item} rawUrl={docRawUrl(item.filename)} />
-                    {isNew(item.uploadedAt) && (
+                    {isNew(item.updatedAt) ? (
+                      <span style={{ position: 'absolute', top: 12, left: 12, background: '#f59e0b', color: '#1a1205', borderRadius: 20, fontSize: 12, fontWeight: 900, padding: '4px 12px', letterSpacing: 0.5, boxShadow: '0 2px 8px rgba(0,0,0,.4)' }}>UPDATED</span>
+                    ) : isNew(item.uploadedAt) && (
                       <span style={{ position: 'absolute', top: 12, left: 12, background: '#ef4444', color: '#fff', borderRadius: 20, fontSize: 12, fontWeight: 900, padding: '4px 12px', letterSpacing: 0.5, boxShadow: '0 2px 8px rgba(0,0,0,.4)' }}>NEW</span>
                     )}
                     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,.55)', opacity: 0, transition: 'opacity .15s' }}
@@ -797,6 +799,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
                     )}
                     <div style={{ fontSize: 12, color: '#64748b' }}>
                       {formatSize(item.size)} · Posted by <strong style={{ color: '#94a3b8' }}>{item.uploadedBy}</strong> · {formatDate(item.uploadedAt)}
+                      {item.updatedAt && <span style={{ color: '#f59e0b', fontWeight: 700 }}> · updated {formatDate(item.updatedAt)}</span>}
                     </div>
 
                     {/* Searchable tags / bulletin number */}
