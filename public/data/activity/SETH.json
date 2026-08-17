@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-17T20:50:56.801Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-15T11:46:05.101Z",
     "type": "action",
     "label": "parts-received-mark",
@@ -227,105 +232,6 @@
   },
   {
     "at": "2026-07-20T11:59:55.923Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-18T11:55:03.280Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-07-18T11:22:31.455Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 779306"
-  },
-  {
-    "at": "2026-07-18T11:22:22.337Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 779169"
-  },
-  {
-    "at": "2026-07-18T11:21:49.271Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T18:19:04.762Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-17T17:06:22.494Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-17T17:06:22.488Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-17T11:15:24.507Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-17T11:15:23.737Z",
-    "type": "page",
-    "label": "parts-hub"
-  },
-  {
-    "at": "2026-07-17T11:15:09.179Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 779245"
-  },
-  {
-    "at": "2026-07-17T11:15:00.230Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 779291"
-  },
-  {
-    "at": "2026-07-17T11:14:48.467Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 779267"
-  },
-  {
-    "at": "2026-07-17T11:14:22.302Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 779256"
-  },
-  {
-    "at": "2026-07-17T11:14:11.979Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 778812"
-  },
-  {
-    "at": "2026-07-17T11:14:01.527Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 778560"
-  },
-  {
-    "at": "2026-07-17T11:13:45.174Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 778510"
-  },
-  {
-    "at": "2026-07-17T11:13:31.827Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-16T17:11:16.441Z",
     "type": "page",
     "label": "advisor-calendar"
   }
