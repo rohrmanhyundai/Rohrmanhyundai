@@ -1,53 +1,22 @@
 [
   {
-    "id": "gm-ms7vmnitgan2",
+    "id": "gm-msxfgtm11omp",
     "from": "SHAWN",
     "to": [
-      "JORDAN"
+      "BRYSON",
+      "CARTER",
+      "CHAD",
+      "CORY",
+      "DERRICK",
+      "GAVEN",
+      "JACOB",
+      "KADEN",
+      "WEI"
     ],
-    "text": "Go ahead and get the tire coming for your 779619 while we wait for approval",
+    "text": "All new bulletins have been uploaded. There were a few new missing.",
     "alert": true,
     "requireReply": false,
     "replies": [],
-    "timestamp": 1785437903765
-  },
-  {
-    "id": "gm-ms7w7s3m0bz1",
-    "from": "SHAWN",
-    "to": [
-      "DAVID",
-      "JORDAN"
-    ],
-    "text": "779662 what are we doing with this RO?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1785438889474
-  },
-  {
-    "id": "gm-ms8ypy9e8tia",
-    "from": "SHAWN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "Make aure we drive the shifter issue car please",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1785503562674
-  },
-  {
-    "id": "gm-mshuajml91gk",
-    "from": "SHAWN",
-    "to": [
-      "CODY",
-      "DAVID",
-      "JORDAN"
-    ],
-    "text": "Please update all internal notes please. Im trying to get a update on all repair orders. Thank you!",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1786040320989
+    "timestamp": 1786982878441
   }
 ]
