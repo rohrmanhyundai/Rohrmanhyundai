@@ -14,5 +14,20 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "msywva7xgb1",
+    "ro": "779828",
+    "roDate": "2026-08-06",
+    "vehicle": "",
+    "jobDesc": "WHITE PAINT PEEL",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "NOT FOR TECH UNTIL IT COMES BACK FROM BODY SHOP. CAR DOES HAVE RECALLS ON IT",
+    "flag": "purple"
   }
 ]
