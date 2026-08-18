@@ -29,5 +29,20 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "msykz2q0vc9",
+    "ro": "780070",
+    "roDate": "2026-08-17",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES ENGINE IS MAKING A KNOCKING NOISE DURING COLD START",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER",
+    "notes": "",
+    "flag": "purple"
   }
 ]
