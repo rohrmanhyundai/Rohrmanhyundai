@@ -14,20 +14,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "msyr771iw7n",
-    "ro": "780078",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "PDI",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "",
-    "flag": "purple"
   }
 ]
