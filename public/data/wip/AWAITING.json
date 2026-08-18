@@ -36,36 +36,6 @@
     "isNew": false
   },
   {
-    "id": "msrz01ezv56m",
-    "ro": "780012",
-    "roDate": "2026-08-13",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "highPriority": false,
-    "advisor": "HOLLI LYBROOK",
-    "partsArrived": true,
-    "partsArrivedDate": "08/15/2026",
-    "isNew": true
-  },
-  {
-    "id": "msx9khycfkpv",
-    "ro": "780018",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "msxoawb1ninl",
     "ro": "780084",
     "roDate": "2026-08-17",
@@ -106,21 +76,6 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "msxoawb1qxbi",
-    "ro": "780081",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
