@@ -55,21 +55,5 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "flagged": false
-  },
-  {
-    "id": "msryzywo2xtp",
-    "ro": "779989",
-    "roDate": "2026-08-13",
-    "vehicle": "",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
