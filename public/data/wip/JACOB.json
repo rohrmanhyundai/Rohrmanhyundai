@@ -1,21 +1,5 @@
 [
   {
-    "id": "msf6uy1izr74",
-    "ro": "779778",
-    "roDate": "2026-08-04",
-    "vehicle": "2023 Hyundai Tucson",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/06/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "msge0jxg1ohs",
     "ro": "779799",
     "roDate": "2026-08-05",
