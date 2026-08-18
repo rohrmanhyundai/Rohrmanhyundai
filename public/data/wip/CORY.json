@@ -1,21 +1,5 @@
 [
   {
-    "id": "msryzxhw95qm",
-    "ro": "780006",
-    "roDate": "2026-08-13",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "msx9kg7ziq9v",
     "ro": "780044",
     "roDate": "2026-08-17",
