@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "id": "msryzzp2e3zc",
+    "ro": "779982",
+    "roDate": "2026-08-13",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHTS ON DASH. CHECK AND ADVISE.",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "REAR BUMPER HARNESS SHORTED BETWEEN BOTH REAR CORNER RADAR MODULES. HARNESS ORDERED.",
+    "partsArrived": true,
+    "partsArrivedDate": "08/15/2026"
+  },
+  {
+    "id": "msqe74ptlih9",
+    "ro": "779924",
+    "roDate": "2026-08-12",
+    "jobDesc": "297 R 3RD ROW LH SEAT WIRING INST(26-01-036H)",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "notes": "PARTS IN 8/13 LEFT CUSTOMER VM",
+    "partsArrived": true,
+    "partsArrivedDate": "08/15/2026"
+  }
+]
