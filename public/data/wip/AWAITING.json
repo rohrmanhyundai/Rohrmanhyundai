@@ -57,21 +57,6 @@
     "isNew": true
   },
   {
-    "id": "mt04r0g9v3ja",
-    "ro": "780123",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "REPLACE ONE TIRE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mt04r0g98u0b",
     "ro": "780111",
     "roDate": "2026-08-19",
