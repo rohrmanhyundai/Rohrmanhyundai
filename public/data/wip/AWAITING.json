@@ -70,20 +70,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mt04r0g993us",
-    "ro": "780107",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "sales car/battery issues",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
