@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-08-19T12:03:28.024Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-08-19T12:03:25.071Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-19T12:03:13.044Z",
+    "type": "action",
+    "label": "send-to-reports"
+  },
+  {
+    "at": "2026-08-19T12:03:09.160Z",
+    "type": "action",
+    "label": "save-dashboard"
+  },
+  {
     "at": "2026-08-19T12:03:06.022Z",
     "type": "action",
     "label": "upload-advisor-pdf",
