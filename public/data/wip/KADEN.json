@@ -16,22 +16,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "mt04qzaj2c3k",
-    "ro": "780130",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
-  },
-  {
     "id": "mt04qzajw3sx",
     "ro": "780108",
     "roDate": "2026-08-19",
