@@ -1,43 +1,8 @@
 [
   {
-    "at": "2026-08-19T15:41:08.738Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-18T20:57:46.665Z",
+    "at": "2026-08-19T21:01:06.023Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-18T14:42:27.347Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-08-18T12:08:56.962Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T21:27:26.928Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-17T21:27:25.814Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T21:27:22.252Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-17T16:12:08.285Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
   },
   {
     "at": "2026-08-17T15:51:01.303Z",
@@ -703,10 +668,5 @@
     "at": "2026-07-21T14:06:13.592Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T20:52:43.095Z",
-    "type": "page",
-    "label": "advisor-goals"
   }
 ]
