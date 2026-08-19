@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-19T14:22:09.718Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-18T22:01:35.687Z",
     "type": "page",
     "label": "advisor-goals"
@@ -473,80 +478,5 @@
     "at": "2026-07-22T19:17:13.736Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T14:03:05.165Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-20T14:02:58.602Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-20T14:02:55.343Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T14:02:42.415Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-20T14:02:16.719Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-07-20T14:01:40.161Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-20T14:01:38.870Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-20T14:01:36.521Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-20T14:01:36.512Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-20T14:01:27.072Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T14:00:03.986Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-20T13:59:14.354Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T13:56:48.711Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T13:56:08.279Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-20T13:54:39.572Z",
-    "type": "action",
-    "label": "login"
   }
 ]
