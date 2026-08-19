@@ -60,19 +60,17 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mt04qy8brsyz",
-    "ro": "780102",
+    "id": "mt04r0g91nmw",
+    "ro": "780142",
     "roDate": "2026-08-19",
     "vehicle": "",
-    "jobDesc": "CUSTOMER STATES- insurance engine replace. Bill to body shop",
+    "jobDesc": "front radar bracket and calibration",
     "notes": "",
     "flag": "purple",
     "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
     "highPriority": false,
-    "advisor": "DAVID RILEY"
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
