@@ -1,21 +1,5 @@
 [
   {
-    "id": "mt04qw6wva2w",
-    "ro": "780125",
-    "roDate": "2026-08-19",
-    "vehicle": "23 Tucson",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mt0h601euxkc",
     "ro": "780157",
     "roDate": "2026-08-19",
