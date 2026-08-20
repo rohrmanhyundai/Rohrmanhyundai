@@ -57,62 +57,19 @@
     "flagged": false
   },
   {
-    "id": "msxoawb1j3i0",
-    "ro": "780083",
-    "roDate": "2026-08-17",
+    "id": "msryzywo2xtp",
+    "ro": "779989",
+    "roDate": "2026-08-13",
     "vehicle": "",
     "jobDesc": "PDI",
     "notes": "",
     "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
-    "id": "msxoawb1wbj9",
-    "ro": "780082",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
-    "id": "mt08d5mas93",
-    "ro": "780107",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "sales car/battery issues",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/19/2026",
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "notes": "",
-    "flag": "purple"
-  },
-  {
-    "id": "mt04qy8brsyz",
-    "ro": "780102",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES- insurance engine replace. Bill to body shop",
-    "notes": "",
-    "flag": "purple",
     "usedCar": false,
     "etaParts": "",
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
     "highPriority": false,
-    "advisor": "DAVID RILEY"
+    "advisor": "JORDAN TROXEL"
   }
 ]
