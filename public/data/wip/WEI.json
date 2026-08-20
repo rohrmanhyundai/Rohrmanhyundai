@@ -71,5 +71,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mt1yytj36erc",
+    "ro": "780107",
+    "roDate": "2026-08-20",
+    "vehicle": "",
+    "jobDesc": "USED CAR BATTERY REPLACEMENT",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "mt1yytj30sx9",
+    "ro": "780102",
+    "roDate": "2026-08-20",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- insurance engine replace. Bill to body shop",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
