@@ -1,21 +1,5 @@
 [
   {
-    "id": "msqe70jfasp8",
-    "ro": "779972",
-    "roDate": "2026-08-12",
-    "vehicle": "",
-    "jobDesc": "RECALL",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/13/2026",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
-  },
-  {
     "id": "msx9kh611r06",
     "ro": "780038",
     "roDate": "2026-08-17",
