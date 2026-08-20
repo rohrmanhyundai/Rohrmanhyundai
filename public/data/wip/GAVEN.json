@@ -16,22 +16,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "mt04qy8bxs1o",
-    "ro": "780131",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mt04r0g91nmw",
     "ro": "780142",
     "roDate": "2026-08-19",
