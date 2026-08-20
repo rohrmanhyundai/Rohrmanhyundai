@@ -14,21 +14,5 @@
     "partsArrivedDate": "08/19/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mt04qzajw3sx",
-    "ro": "780108",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "CUSTOMER STATES 3RD ROW DRIVER SIDE NOT FOLDING DOWN COMPLETELY. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": true,
-    "advisor": "JORDAN TROXEL"
   }
 ]
