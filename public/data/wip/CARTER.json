@@ -1,21 +1,5 @@
 [
   {
-    "id": "msx9kh611r06",
-    "ro": "780038",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mt1yysm6aevj",
     "ro": "780123",
     "roDate": "2026-08-20",
