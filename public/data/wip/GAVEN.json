@@ -27,6 +27,7 @@
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
     "partsArrived": true,
-    "partsArrivedDate": "08/21/2026"
+    "partsArrivedDate": "08/21/2026",
+    "flagged": true
   }
 ]
