@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-21T15:02:00.613Z",
+    "type": "page",
+    "label": "manager-hub"
+  },
+  {
+    "at": "2026-08-21T15:01:18.789Z",
+    "type": "page",
+    "label": "goal-forecast"
+  },
+  {
     "at": "2026-08-21T12:35:04.507Z",
     "type": "action",
     "label": "send-to-reports"
@@ -1702,21 +1712,6 @@
   },
   {
     "at": "2026-07-22T17:21:55.449Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-22T14:33:57.931Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-22T14:33:55.089Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-22T14:33:48.499Z",
     "type": "page",
     "label": "advisor-calendar"
   }
