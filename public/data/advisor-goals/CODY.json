@@ -192,6 +192,19 @@
         "agreed": true,
         "agreedBy": "CODY",
         "submittedAt": 1787263102705
+      },
+      "2026-08-21": {
+        "hours": 75.1,
+        "hrsRo": 0.77,
+        "openRoCount": 10,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "CODY",
+        "submittedAt": 1787327728455
       }
     },
     "entryMode": "mtd"
