@@ -12,12 +12,23 @@
       "questions": [],
       "entries": [
         {
-          "id": "mq0fb435h6at",
+          "id": "mt3cq1ghrz1v",
           "answers": {},
-          "model": "Tucson  (NX4A)",
-          "opCode": "60DA06R0",
-          "operation": "Inside Rear Combination Lamp Assembly Replacement",
-          "opTime": "0.4  M/H",
+          "model": "Tucson (NX4A)",
+          "opCode": "60DA06R1",
+          "operation": "Inspect ion of LH Side of Rear Combination Lamp & Assembly Replacement",
+          "opTime": "0.4 M/H",
+          "causalPart": "92403-CW540",
+          "natureCode": "A32",
+          "causeCode": "ZZ1"
+        },
+        {
+          "id": "mt3cq1ghik0k",
+          "answers": {},
+          "model": "Tucson (NX4A)",
+          "opCode": "60DA06R2",
+          "operation": "Inspect ion of LH Side of Rear Combination Lamp & Washer Installatio n",
+          "opTime": "0.4 M/H",
           "causalPart": "92403-CW540",
           "natureCode": "A32",
           "causeCode": "ZZ1"
