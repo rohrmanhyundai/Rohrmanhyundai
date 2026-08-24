@@ -22,7 +22,7 @@
     "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT CRANK. CHECK AND ADVISE.",
     "flag": "purple",
     "usedCar": false,
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN TROXEL",
     "notes": "NEEDS ENGINE DIAG WORKSHEET DONE. HYUNDAI BUYBACK WEI NEEDS TO COMPLETE RECALLS. TRY TO HAVE DONE DY THURSDAY HYUNDAI IS PICKING CAR UP END OF WEEK. ",
     "partsArrived": null,
