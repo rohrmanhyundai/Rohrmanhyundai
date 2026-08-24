@@ -78,5 +78,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mt7kdd3gpvo4",
+    "ro": "780264",
+    "roDate": "2026-08-24",
+    "vehicle": "2017 Buick LaCrosse",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mt7kdd3g04jx",
+    "ro": "780260",
+    "roDate": "2026-08-24",
+    "vehicle": "2014 Ford Expedition",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
