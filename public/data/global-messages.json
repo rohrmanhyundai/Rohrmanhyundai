@@ -28,7 +28,14 @@
     "text": "779182 What are we doing with this RO?",
     "alert": false,
     "requireReply": true,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mt78bk9kq7yy",
+        "from": "DAVID",
+        "text": "Going to reach back out, today she has hit me with every excuse possible to stall for more time",
+        "timestamp": 1787575537496
+      }
+    ],
     "timestamp": 1787575129521
   }
 ]
