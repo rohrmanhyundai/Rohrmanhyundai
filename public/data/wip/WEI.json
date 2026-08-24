@@ -54,21 +54,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mt7kdcbrkjvw",
-    "ro": "780268",
-    "roDate": "2026-08-24",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
   }
 ]
