@@ -14,5 +14,37 @@
     "partsArrivedDate": "08/19/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mt7rkkcjoxrf",
+    "ro": "780281",
+    "roDate": "2026-08-24",
+    "vehicle": "2022 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES SHIFTER SYSTEM MALFUNCTION SERVICE IMMEDIATELY WARNING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mt7rkkcj7mfy",
+    "ro": "780279",
+    "roDate": "2026-08-24",
+    "vehicle": "2016 Hyundai Tucson",
+    "jobDesc": "BOTH REAR TAIL LIGHT HARNESSES WITH BULBS",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
