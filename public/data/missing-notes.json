@@ -1,11 +1,59 @@
 {
-  "updatedAt": "2026-08-24T18:23:01.361Z",
+  "updatedAt": "2026-08-24T21:44:31.758Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "780291",
+        "vehicle": "2020 Hyundai Palisade"
+      },
+      {
+        "ro": "780275",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780272",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780269",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780254",
+        "vehicle": "2021 Hyundai Kona Electric"
+      },
+      {
+        "ro": "780248",
+        "vehicle": "2025 Hyundai Palisade"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780290",
+        "vehicle": "2022 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780276",
+        "vehicle": "2027 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780273",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780270",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780216",
+        "vehicle": "2022 Hyundai Palisade"
+      }
+    ],
     "CODY": [
       {
-        "ro": "780284",
-        "vehicle": "2023 Hyundai Tucson"
+        "ro": "780289",
+        "vehicle": "2024 Hyundai Palisade"
       },
       {
         "ro": "780282",
@@ -22,97 +70,17 @@
       {
         "ro": "780268",
         "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780266",
-        "vehicle": "2021 Hyundai Palisade"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "780283",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "780279",
-        "vehicle": "2016 Hyundai Tucson"
-      },
-      {
-        "ro": "780278",
-        "vehicle": "2023 Hyundai Palisade"
-      },
-      {
-        "ro": "780276",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780273",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780270",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780267",
-        "vehicle": "2024 Hyundai Kona"
-      },
-      {
-        "ro": "780256",
-        "vehicle": "2021 Hyundai Sonata"
-      },
-      {
-        "ro": "780216",
-        "vehicle": "2022 Hyundai Palisade"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780280",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780275",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780272",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780269",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780261",
-        "vehicle": "2019 Hyundai Sonata"
-      },
-      {
-        "ro": "780258",
-        "vehicle": "2025 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780254",
-        "vehicle": "2021 Hyundai Kona Electric"
-      },
-      {
-        "ro": "780251",
-        "vehicle": "2023 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "780250",
-        "vehicle": "2015 Hyundai Sonata"
-      },
-      {
-        "ro": "780248",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780222",
-        "vehicle": "2018 Hyundai Sonata Hybrid"
       }
     ],
     "CORY": [
+      {
+        "ro": "780288",
+        "vehicle": "2023 Hyundai Tucson"
+      },
+      {
+        "ro": "780287",
+        "vehicle": "2023 Hyundai Tucson"
+      },
       {
         "ro": "780264",
         "vehicle": "2017 Buick LaCrosse"
@@ -124,10 +92,6 @@
       {
         "ro": "780202",
         "vehicle": "2019 Hyundai Elantra"
-      },
-      {
-        "ro": "780200",
-        "vehicle": "2023 Hyundai Tucson"
       },
       {
         "ro": "780199",
