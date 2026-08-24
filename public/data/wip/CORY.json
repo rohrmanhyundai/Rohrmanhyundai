@@ -29,20 +29,5 @@
     "advisor": "DAVID RILEY",
     "notes": "",
     "flag": "purple"
-  },
-  {
-    "id": "mt7pglxnyz9",
-    "ro": "780251",
-    "roDate": "2026-08-24",
-    "vehicle": "",
-    "jobDesc": "E brake will not release",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID",
-    "notes": "",
-    "flag": "purple"
   }
 ]
