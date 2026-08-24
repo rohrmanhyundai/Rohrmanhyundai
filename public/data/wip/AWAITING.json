@@ -36,21 +36,6 @@
     "isNew": false
   },
   {
-    "id": "msxoawb1ninl",
-    "ro": "780084",
-    "roDate": "2026-08-17",
-    "vehicle": "",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "SHAWN LAUGHNER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mt04r0g92zux",
     "ro": "780132",
     "roDate": "2026-08-19",
@@ -63,51 +48,6 @@
     "advisor": "DAVID RILEY",
     "partsArrived": true,
     "partsArrivedDate": "08/22/2026",
-    "isNew": true
-  },
-  {
-    "id": "mt04r0g98u0b",
-    "ro": "780111",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "waiting on tire rack to cover tire",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mt0h60taaj3b",
-    "ro": "779956",
-    "roDate": "2026-08-19",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "highPriority": false,
-    "advisor": "SHAWN LAUGHNER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mt3ed9se0vcp",
-    "ro": "780178",
-    "roDate": "2026-08-21",
-    "vehicle": "",
-    "jobDesc": "sales ordering windshield",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
     "isNew": true
   }
 ]
