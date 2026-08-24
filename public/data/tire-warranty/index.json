@@ -1,5 +1,48 @@
 [
   {
+    "id": "mt7jigi1lukb",
+    "createdAt": "2026-08-24T17:58:54.985Z",
+    "updatedAt": "2026-08-24T18:06:19.127Z",
+    "createdBy": "Jordan",
+    "customerName": "Justin Milcarek",
+    "repairOrder": "780170",
+    "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-repairorder-1787594414973.jpg",
+    "originalPurchasePhoto": "",
+    "replacementQuotePhoto": "",
+    "wheels": {
+      "LF": {
+        "tire": false,
+        "rim": false
+      },
+      "RF": {
+        "tire": false,
+        "rim": false
+      },
+      "LR": {
+        "tire": true,
+        "rim": false,
+        "treadDepth": "7/32"
+      },
+      "RR": {
+        "tire": false,
+        "rim": false
+      }
+    },
+    "photos": {
+      "LF": {},
+      "RF": {},
+      "LR": {
+        "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-tireDamage-1787594674897.jpg",
+        "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-dot-1787594688813.jpg",
+        "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-size-1787594701208.jpg",
+        "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-brand-1787594712373.jpg",
+        "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-gauge-1787594754567.jpg",
+        "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mt7jigi1lukb-LR-tireFull-1787594776818.jpg"
+      },
+      "RR": {}
+    }
+  },
+  {
     "id": "msoviqlust1r",
     "createdAt": "2026-08-11T16:27:26.130Z",
     "updatedAt": "2026-08-11T16:31:36.536Z",
