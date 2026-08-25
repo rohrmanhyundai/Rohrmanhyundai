@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T20:38:53.223Z",
+  "updatedAt": "2026-08-25T20:44:23.100Z",
   "by": "SHAWN",
   "rows": [
     {
@@ -18,10 +18,10 @@
       "ro": "780316",
       "advisor": "DAVID RILEY",
       "vehicle": "2020 Hyundai Santa Fe",
-      "tech": "",
+      "tech": "CORY SWINDLE",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
+      "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
       "openDate": "Tue, Aug 25, 2026 4:20 PM"
@@ -163,7 +163,7 @@
       "advisor": "CODY TINCHER",
       "vehicle": "2026 Hyundai Sonata",
       "tech": "CARTER JEAN",
-      "userFlag": "NO_LABEL",
+      "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
@@ -294,11 +294,11 @@
       "ro": "780273",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2027 Hyundai Santa Fe Hybrid",
-      "tech": "",
-      "userFlag": "PINK",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 2,
       "openDate": "Mon, Aug 24, 2026 10:57 AM"
     },
