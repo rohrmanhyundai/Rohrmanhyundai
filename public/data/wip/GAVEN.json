@@ -14,21 +14,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mt7rkkcj7mfy",
-    "ro": "780279",
-    "roDate": "2026-08-24",
-    "vehicle": "2016 Hyundai Tucson",
-    "jobDesc": "BOTH REAR TAIL LIGHT HARNESSES WITH BULBS",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/25/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
