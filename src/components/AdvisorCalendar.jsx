@@ -91,11 +91,13 @@ function canSee(pages, role, key) {
 }
 
 // Dark surfaces for the RO rows. The page sits on a light-ish blue gradient, so
-// every row/panel gets a deep navy base underneath and the status tint is layered
-// on top of it (multi-background: tint first, solid color last). Keeps the color
+// every row/panel gets a dark base underneath and the status tint is layered on
+// top of it (multi-background: tint first, solid color last). Keeps the color
 // coding intact while giving the white text a dark backdrop to read against.
-const RO_PANEL_DARK = 'rgba(3, 10, 26, .55)';
-const RO_ROW_DARK   = 'rgba(3, 10, 26, .92)';
+// The charcoal matches the Chat panel's PANEL_BG (Chat.jsx) so the RO board and
+// the chat column read as the same surface instead of gray-next-to-navy.
+const RO_PANEL_DARK = 'rgba(23, 24, 26, .82)';
+const RO_ROW_DARK   = '#1c1e21';
 const tintOver = (tint, base = RO_ROW_DARK) => `linear-gradient(${tint}, ${tint}), ${base}`;
 
 function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor, canFlag, onFlag, flaggingId }) {
