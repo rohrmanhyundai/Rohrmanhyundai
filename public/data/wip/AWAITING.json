@@ -27,21 +27,6 @@
     "isNew": true
   },
   {
-    "id": "mt7kdeb4a1uv",
-    "ro": "780276",
-    "roDate": "2026-08-24",
-    "vehicle": "2027 Hyundai Santa Cruz",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mt7kdeb41xml",
     "ro": "780275",
     "roDate": "2026-08-24",
