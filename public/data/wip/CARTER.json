@@ -14,5 +14,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mt94v1yr8j4f",
+    "ro": "780298",
+    "roDate": "2026-08-25",
+    "vehicle": "2026 Hyundai Sonata",
+    "jobDesc": "INSTALL TIRE PARTS ON ORDER",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
