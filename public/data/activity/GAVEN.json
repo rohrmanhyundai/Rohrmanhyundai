@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-08-25T00:23:02.882Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-08-25T00:22:09.001Z",
+    "type": "page",
+    "label": "cash-dash"
+  },
+  {
+    "at": "2026-08-25T00:22:06.884Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-08-25T00:22:03.518Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-21T11:22:13.982Z",
     "type": "action",
     "label": "login"
@@ -422,95 +442,5 @@
     "at": "2026-07-27T12:33:13.247Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-24T20:11:15.440Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-24T20:09:54.566Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-24T20:09:52.148Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-24T17:04:15.390Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-24T17:04:14.127Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-24T17:04:14.118Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-24T17:04:12.552Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-23T11:44:23.007Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-23T11:44:21.629Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-23T11:44:21.619Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-23T11:44:20.248Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-22T16:56:13.341Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-22T16:56:11.511Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-22T12:33:33.994Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-22T12:33:32.764Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-22T12:33:32.760Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-22T12:33:30.908Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-22T12:33:29.981Z",
-    "type": "action",
-    "label": "login"
   }
 ]
