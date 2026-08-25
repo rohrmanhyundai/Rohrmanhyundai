@@ -90,6 +90,14 @@ function canSee(pages, role, key) {
   return pages[key] !== false;
 }
 
+// Dark surfaces for the RO rows. The page sits on a light-ish blue gradient, so
+// every row/panel gets a deep navy base underneath and the status tint is layered
+// on top of it (multi-background: tint first, solid color last). Keeps the color
+// coding intact while giving the white text a dark backdrop to read against.
+const RO_PANEL_DARK = 'rgba(3, 10, 26, .55)';
+const RO_ROW_DARK   = 'rgba(3, 10, 26, .92)';
+const tintOver = (tint, base = RO_ROW_DARK) => `linear-gradient(${tint}, ${tint}), ${base}`;
+
 function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loading, color, bg, border, onOpen, onDelete, deletingId, highlightAdvisor, canFlag, onFlag, flaggingId }) {
   // Match by first name so an RO stored as "JORDAN TROXEL" (from an upload) still
   // counts as JORDAN's and floats to the top for the logged-in advisor.
@@ -129,7 +137,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
     }
   };
   return (
-    <div style={{ marginTop: 16, background: bg, border: `1px solid ${border}`, borderLeft: `4px solid ${color}`, borderRadius: 12, padding: '14px 18px' }}>
+    <div style={{ marginTop: 16, background: tintOver(bg, RO_PANEL_DARK), border: `1px solid ${border}`, borderLeft: `4px solid ${color}`, borderRadius: 12, padding: '14px 18px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ fontWeight: 900, fontSize: 13, color, textTransform: 'uppercase', letterSpacing: 1 }}>{title}</div>
         <div style={{ fontSize: 11, color: '#64748b' }}>{loading ? '…' : `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`}</div>
@@ -152,28 +160,28 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
             const rowBase = { display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderRadius: 8, padding: '8px 12px', filter: 'drop-shadow(0 3px 7px rgba(2,10,26,0.5))' };
             const rowStyle = j.highPriority ? {
               ...rowBase,
-              background: 'linear-gradient(135deg, rgba(239,68,68,.22) 0%, rgba(249,115,22,.12) 100%)',
+              background: `linear-gradient(135deg, rgba(239,68,68,.30) 0%, rgba(249,115,22,.16) 100%), ${RO_ROW_DARK}`,
               border: '2px solid rgba(248,113,113,.95)',
               borderLeft: '6px solid #ef4444',
             } : j.flagged ? {
               ...rowBase,
-              background: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(219,39,119,.12) 100%)',
+              background: `linear-gradient(135deg, rgba(236,72,153,.26) 0%, rgba(219,39,119,.16) 100%), ${RO_ROW_DARK}`,
               border: '2px solid rgba(236,72,153,.95)',
               borderLeft: '5px solid rgba(236,72,153,1)',
             } : mine ? {
               ...rowBase,
-              background: 'rgba(61,214,195,.10)',
+              background: tintOver('rgba(61,214,195,.12)'),
               border: '1px solid rgba(61,214,195,.7)',
               boxShadow: '0 0 12px rgba(61,214,195,.45), inset 0 0 8px rgba(61,214,195,.15)',
             } : other ? {
               ...rowBase,
-              background: 'rgba(59,130,246,.10)',
+              background: tintOver('rgba(59,130,246,.14)'),
               border: '1px solid rgba(96,165,250,.7)',
               boxShadow: '0 0 12px rgba(59,130,246,.45), inset 0 0 8px rgba(59,130,246,.15)',
             } : {
               ...rowBase,
-              background: j.partsArrived === true ? 'rgba(34,197,94,.07)' : 'rgba(255,255,255,.03)',
-              border: j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(255,255,255,.06)',
+              background: j.partsArrived === true ? tintOver('rgba(34,197,94,.10)') : RO_ROW_DARK,
+              border: j.partsArrived === true ? '1px solid rgba(34,197,94,.4)' : '1px solid rgba(148,163,184,.18)',
               borderLeft: j.partsArrived === true ? '4px solid rgba(34,197,94,.85)' : undefined,
               boxShadow: j.partsArrived === true ? '0 0 10px rgba(34,197,94,.25)' : 'none',
             };
@@ -190,9 +198,9 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                 {showTech && (
                   <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
                 )}
-                <div style={{ flex: 1, minWidth: 120, fontSize: 13, color: '#cbd5e1', lineHeight: 1.4 }}>
+                <div style={{ flex: 1, minWidth: 120, fontSize: 13, color: '#e2e8f0', lineHeight: 1.4 }}>
                   {j.jobDesc || '—'}
-                  {j.notes ? <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{j.notes}</div> : null}
+                  {j.notes ? <div style={{ fontSize: 11, color: '#cbd5e1', marginTop: 2 }}>{j.notes}</div> : null}
                 </div>
                 {j.highPriority && <span style={{ fontSize: 10, fontWeight: 900, color: '#fff', background: 'linear-gradient(135deg,#ef4444,#f97316)', border: '1px solid rgba(248,113,113,.6)', borderRadius: 999, padding: '3px 9px', whiteSpace: 'nowrap', alignSelf: 'center', letterSpacing: .6, textShadow: '0 0 6px rgba(239,68,68,.6)', boxShadow: '0 0 10px rgba(239,68,68,.5)' }}>⚠ HIGH</span>}
                 {j.partsArrived === false && j.etaParts && <span style={{ fontSize: 10, color: '#fbbf24', whiteSpace: 'nowrap', alignSelf: 'center' }}>parts ETA {j.etaParts}</span>}
