@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-25T16:10:11.510Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
+    "at": "2026-08-25T16:10:08.360Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-08-25T16:10:00.244Z",
     "type": "action",
     "label": "login"
