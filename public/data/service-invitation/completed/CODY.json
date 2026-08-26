@@ -124,5 +124,23 @@
     "notes": "Left voicemail",
     "submittedAt": "2026-08-26T19:27:08.124Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "DEBORAH JOHNSON",
+    "repairOrder": "779745",
+    "vin": "5NMJBCDE2RH316339",
+    "model": "TUCSON",
+    "serviceDate": "08/03/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (219) 895 - 2257",
+    "notes": "Voicemail box full",
+    "submittedAt": "2026-08-26T19:28:51.954Z",
+    "submittedBy": "CODY"
   }
 ]
