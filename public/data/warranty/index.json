@@ -2,7 +2,7 @@
   {
     "id": "mt7bjrfyd2dq",
     "createdAt": "2026-08-24T14:15:58.894Z",
-    "updatedAt": "2026-08-26T13:36:00.592Z",
+    "updatedAt": "2026-08-26T13:36:14.158Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Jason Leachman ",
     "customerPhone": "",
@@ -36,7 +36,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "claims@aagi.com ",
+    "notes": "claims@aagi.com \nPAYMENT SENT TO OFFICE ",
     "approved": true,
     "approvedDate": "2026-08-24",
     "denied": false,
