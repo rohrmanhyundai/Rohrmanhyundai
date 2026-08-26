@@ -1,42 +1,12 @@
 {
-  "updatedAt": "2026-08-26T18:53:07.615Z",
+  "updatedAt": "2026-08-26T20:59:05.368Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
+    "CODY": [
       {
-        "ro": "780342",
-        "vehicle": "2015 Hyundai Sonata"
-      },
-      {
-        "ro": "780341",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780336",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780335",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780332",
+        "ro": "780348",
         "vehicle": "2020 Hyundai Palisade"
       },
-      {
-        "ro": "780324",
-        "vehicle": "2021 Hyundai Elantra"
-      },
-      {
-        "ro": "780319",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "780310",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      }
-    ],
-    "CODY": [
       {
         "ro": "780318",
         "vehicle": "2020 Hyundai Palisade"
@@ -48,30 +18,16 @@
       {
         "ro": "780308",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780298",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "780282",
-        "vehicle": "2024 Hyundai Venue"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780312",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780309",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ],
     "CORY": [
       {
-        "ro": "780295",
-        "vehicle": "2024 Hyundai Tucson"
+        "ro": "780346",
+        "vehicle": "2020 Toyota RAV4"
+      },
+      {
+        "ro": "780345",
+        "vehicle": "2021 Buick Encore GX"
       },
       {
         "ro": "780264",
@@ -84,6 +40,30 @@
       {
         "ro": "779799",
         "vehicle": "2018 Honda Odyssey"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780336",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780335",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780310",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "780312",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780309",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ]
   }
