@@ -95,7 +95,8 @@
           "2026-08-24": true,
           "2026-08-25": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840,
+        "warrantyMultiplier": true
       },
       {
         "name": "CARTER",
@@ -192,7 +193,7 @@
           "2026-08-27": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       },
       {
         "name": "GAVEN",
@@ -285,7 +286,7 @@
           "2026-08-26": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       },
       {
         "name": "CORY",
@@ -383,7 +384,7 @@
           "2026-08-29": true
         },
         "mon_ro": 0,
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       },
       {
         "name": "KADEN",
@@ -393,10 +394,10 @@
         "wed": 0,
         "thu": 0,
         "fri": 0,
-        "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "sat": 7.72,
+        "total": 7.72,
+        "goal_pct": 0.1816470588235294,
+        "pacing": 46.32,
         "certified": "NO",
         "trainings_due": "65",
         "excel_training": "NA",
@@ -478,7 +479,7 @@
           "2026-08-27": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       },
       {
         "name": "WEI",
@@ -560,7 +561,7 @@
           "2026-08-27": true,
           "2026-08-26": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       },
       {
         "name": "BRYSON",
@@ -570,10 +571,10 @@
         "wed": 0,
         "thu": 0,
         "fri": 0,
-        "sat": 0,
-        "total": 0,
-        "goal_pct": 0,
-        "pacing": 0,
+        "sat": 4.2,
+        "total": 4.2,
+        "goal_pct": 0.16470588235294117,
+        "pacing": 25.200000000000003,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
@@ -605,7 +606,7 @@
           "2026-08-26": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787742190182
+        "_hrsStamp": 1787766268840
       }
     ],
     "advisors": [
@@ -753,10 +754,10 @@
       "wed": 0,
       "thu": 0,
       "fri": 0,
-      "sat": 0,
-      "week_total": 0,
-      "week_pct": 0,
-      "shop_pacing": 0
+      "sat": 11.92,
+      "week_total": 11.92,
+      "week_pct": 0.04249554367201426,
+      "shop_pacing": 71.52000000000001
     },
     "grossGoal": 152561,
     "grossActual": 122413,
