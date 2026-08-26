@@ -1,25 +1,5 @@
 [
   {
-    "id": "gm-msxfgtm11omp",
-    "from": "SHAWN",
-    "to": [
-      "BRYSON",
-      "CARTER",
-      "CHAD",
-      "CORY",
-      "DERRICK",
-      "GAVEN",
-      "JACOB",
-      "KADEN",
-      "WEI"
-    ],
-    "text": "All new bulletins have been uploaded. There were a few new missing.",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1786982878441
-  },
-  {
     "id": "gm-mt782tgx6j82",
     "from": "SHAWN",
     "to": [
@@ -56,5 +36,17 @@
       }
     ],
     "timestamp": 1787580191922
+  },
+  {
+    "id": "gm-mtafqlqv7hvz",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "ARE WE DOING P/A FOR 780332? IF SO I NEED ORIGINAL OWNER FORM AND REGISTRATION",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1787769395095
   }
 ]
