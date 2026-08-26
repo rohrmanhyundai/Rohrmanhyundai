@@ -1,0 +1,53 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-08-27",
+  "rows": [
+    {
+      "customerName": "LINDA ROHRMAN",
+      "appointmentTime": "9:20am",
+      "criticalDeferredService": "Water in headlamp",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "Gaven",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    },
+    {
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": []
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-08-26T18:59:09.666Z"
+}
