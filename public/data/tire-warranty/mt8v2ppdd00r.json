@@ -1,7 +1,7 @@
 {
   "id": "mt8v2ppdd00r",
   "createdAt": "2026-08-25T16:10:21.985Z",
-  "updatedAt": "2026-08-26T18:28:23.882Z",
+  "updatedAt": "2026-08-26T20:27:14.180Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Amber Martinez",
   "customerPhone": "Amber Martinez",
@@ -15,8 +15,8 @@
   "warrantyPhone": "888-684-9327",
   "claimNumber": "292-16932715",
   "authNumber": "X3288501",
-  "laborRate": ".3",
-  "laborTime": "100",
+  "laborRate": "",
+  "laborTime": ".3",
   "diagnosisTime": "",
   "parts": [
     {
@@ -36,8 +36,8 @@
   "tireTax": ".25",
   "tireDisposal": "3",
   "notes": "",
-  "approved": false,
-  "approvedDate": "",
+  "approved": true,
+  "approvedDate": "2026-08-26",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
