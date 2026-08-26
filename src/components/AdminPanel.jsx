@@ -773,6 +773,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const DAY_LABELS = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday' };
   const WORK_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
+  // Per-technician warranty multiplier. Undefined means ON, so techs that
+  // existed before this switch keep the behaviour they already had.
+  const techMultiplierOn = (tech) => !tech || tech.warrantyMultiplier !== false;
+  function toggleTechMultiplier(idx) {
+    const newData = structuredClone(data);
+    const tech = newData.technicians[idx];
+    if (!tech) return;
+    tech.warrantyMultiplier = !techMultiplierOn(tech);
+    onDataChange(newData, structuredClone(vacations));
+  }
+  // Totals are derived at render/apply time rather than baked in at upload, so
+  // flipping a tech's switch while the preview is open updates their number.
+  function previewTotal(r) {
+    const on = techMultiplierOn((data.technicians || [])[r.idx]);
+    return Math.round((r.warranty * (on ? WARRANTY_MULTIPLIER : 1) + r.other) * 100) / 100;
+  }
+
   // Match every technician on this page to a report row by first OR last name
   // token (e.g. "GAVIN WEST" → page tech "WEST"). Each report row is used at
   // most once; unused report rows are surfaced as a warning.
@@ -783,10 +800,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const rows = (data.technicians || []).map((t, idx) => {
       const page = String(t.name || '').trim().toUpperCase();
       const e = entries.find(en => !en.used && en.first === page) || entries.find(en => !en.used && en.last === page);
-      if (!e) return { idx, name: t.name, hours: 0, warranty: 0, other: 0, detailed: false, matched: false, matchedName: '', payTypes: [] };
+      if (!e) return { idx, name: t.name, warranty: 0, other: 0, detailed: false, matched: false, matchedName: '', payTypes: [] };
       e.used = true;
       return {
-        idx, name: t.name, hours: e.total, warranty: e.warranty, other: e.other,
+        idx, name: t.name, warranty: e.warranty, other: e.other,
         detailed: e.detailed, matched: true, matchedName: e.name, payTypes: e.payTypes || [],
       };
     });
@@ -862,7 +879,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     for (const r of rows) {
       const tech = newData.technicians[r.idx];
       if (!tech) continue;
-      tech[day] = r.hours;
+      tech[day] = previewTotal(r);
       tech.hoursOverride = { ...(tech.hoursOverride || {}), [date]: true };
       tech._hrsStamp = stamp; // bump so the uncontrolled inputs remount & repaint
     }
@@ -1712,7 +1729,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="form-section" key={t.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
               {t.name}
-              <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
+              <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  onClick={() => toggleTechMultiplier(idx)}
+                  title={techMultiplierOn(t)
+                    ? `Warranty hours are multiplied by ${WARRANTY_MULTIPLIER} when a report is uploaded. Click to turn off for ${t.name}.`
+                    : `Warranty hours count at face value for ${t.name}. Click to turn the ${WARRANTY_MULTIPLIER}x multiplier on.`}
+                  style={{
+                    background: techMultiplierOn(t) ? 'rgba(52,211,153,.18)' : 'rgba(148,163,184,.12)',
+                    border: `1px solid ${techMultiplierOn(t) ? 'rgba(52,211,153,.5)' : 'rgba(148,163,184,.3)'}`,
+                    color: techMultiplierOn(t) ? '#6ee7b7' : '#94a3b8',
+                    borderRadius: 8, padding: '6px 12px', fontWeight: 800, fontSize: 12,
+                    cursor: 'pointer', whiteSpace: 'nowrap',
+                  }}>
+                  {techMultiplierOn(t) ? `⚡ Warranty ×${WARRANTY_MULTIPLIER} ON` : `Warranty ×${WARRANTY_MULTIPLIER} OFF`}
+                </button>
+                <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
+              </span>
             </div>
             <div className="form-grid" style={{ marginBottom: 8 }}>
               <div className="field"><label>Weekly Goal (hrs)</label><input defaultValue={t.goal ?? ''} onBlur={e => updateField(`technicians.${idx}.goal`, safe(e.target.value, t.goal))} /></div>
@@ -1768,14 +1801,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <div key={r.idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
                     <span style={{ color: '#e2e8f0' }}>
                       {r.name}{r.matched && r.matchedName.toUpperCase() !== String(r.name).toUpperCase() ? <span style={{ color: '#64748b', fontSize: 11 }}> ({r.matchedName})</span> : null}
-                      {r.matched && r.detailed && (
-                        <span style={{ display: 'block', color: '#64748b', fontSize: 11 }}>
-                          {r.warranty > 0 ? `war ${r.warranty} × ${WARRANTY_MULTIPLIER} = ${(Math.round(r.warranty * WARRANTY_MULTIPLIER * 100) / 100)}` : 'no warranty'}
-                          {` + other ${r.other}`}
-                        </span>
-                      )}
+                      {r.matched && r.detailed && (() => {
+                        const on = techMultiplierOn((data.technicians || [])[r.idx]);
+                        return (
+                          <span style={{ display: 'block', color: on ? '#64748b' : '#fbbf24', fontSize: 11 }}>
+                            {r.warranty > 0
+                              ? (on
+                                ? `war ${r.warranty} × ${WARRANTY_MULTIPLIER} = ${(Math.round(r.warranty * WARRANTY_MULTIPLIER * 100) / 100)}`
+                                : `war ${r.warranty} · multiplier OFF`)
+                              : 'no warranty'}
+                            {` + other ${r.other}`}
+                          </span>
+                        );
+                      })()}
                     </span>
-                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700, whiteSpace: 'nowrap' }}>{r.hours.toFixed(2)} hrs{!r.matched ? ' · not in report' : ''}</span>
+                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700, whiteSpace: 'nowrap' }}>{previewTotal(r).toFixed(2)} hrs{!r.matched ? ' · not in report' : ''}</span>
                   </div>
                 ))}
               </div>
