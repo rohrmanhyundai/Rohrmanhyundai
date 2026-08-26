@@ -1,7 +1,7 @@
 {
   "id": "mt8v2ppdd00r",
   "createdAt": "2026-08-25T16:10:21.985Z",
-  "updatedAt": "2026-08-26T20:27:14.180Z",
+  "updatedAt": "2026-08-26T20:41:23.344Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Amber Martinez",
   "customerPhone": "Amber Martinez",
@@ -18,6 +18,7 @@
   "laborRate": "",
   "laborTime": ".3",
   "diagnosisTime": "",
+  "laborTotalOverride": "22.00",
   "parts": [
     {
       "id": "mta4nexmh75u",
