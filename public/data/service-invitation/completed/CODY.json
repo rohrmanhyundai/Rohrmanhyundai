@@ -70,5 +70,23 @@
     "notes": "Customer Satisfied",
     "submittedAt": "2026-08-26T19:22:58.960Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ROHRMAN HYUNDAI",
+    "repairOrder": "780116",
+    "vin": "5NTJCDDE8TH161729",
+    "model": "SANTA CRUZ",
+    "serviceDate": "08/19/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 448-1000",
+    "notes": "",
+    "submittedAt": "2026-08-26T19:24:20.222Z",
+    "submittedBy": "CODY"
   }
 ]
