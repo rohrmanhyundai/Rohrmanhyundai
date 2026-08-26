@@ -62,5 +62,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mtagbryup9xj",
+    "ro": "780335",
+    "roDate": "2026-08-26",
+    "vehicle": "2026 Hyundai Palisade",
+    "jobDesc": "RECALL AND BATTERY",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
