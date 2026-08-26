@@ -1,0 +1,20 @@
+[
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "BRIAN MCDONALD",
+    "repairOrder": "780123",
+    "vin": "KM8RHESA2TU104386",
+    "model": "PALISADE HEV",
+    "serviceDate": "08/20/2026",
+    "invitationDate": "08/22/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 586-3553",
+    "notes": "Customer highly satisfied with service. ",
+    "submittedAt": "2026-08-26T19:15:40.933Z",
+    "submittedBy": "CODY"
+  }
+]
