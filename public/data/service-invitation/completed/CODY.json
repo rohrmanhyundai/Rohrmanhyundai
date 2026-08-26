@@ -160,5 +160,23 @@
     "notes": "Customer Satisfied",
     "submittedAt": "2026-08-26T19:35:48.132Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "HYEBIN HAN",
+    "repairOrder": "780204",
+    "vin": "KMHL44J29NA244087",
+    "model": "SONATA",
+    "serviceDate": "08/21/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (949) 232 - 4372",
+    "notes": "",
+    "submittedAt": "2026-08-26T19:37:55.710Z",
+    "submittedBy": "CODY"
   }
 ]
