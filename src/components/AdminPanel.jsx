@@ -11,6 +11,7 @@ import ManagerReports from './ManagerReports';
 import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/pusher';
 import { trackAction } from '../utils/activityTracker';
 import { hasExcelTraining } from '../utils/training';
+import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -157,9 +158,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // Technician "Flagged Hours" report upload (Technician Performance .xlsx).
   const techXlsxInputRef = useRef(null);
   const [techXlsxBusy, setTechXlsxBusy] = useState(false);
-  const [techUpload, setTechUpload] = useState(null); // { day, dateLabel, rows:[{idx,name,hours,matched,matchedName}], unmatched:[] }
+  const [techUpload, setTechUpload] = useState(null); // { day, source, warnings:[], rows:[{idx,name,hours,warranty,other,detailed,matched,matchedName}], unmatched:[] }
   const [techUploadErr, setTechUploadErr] = useState('');
   const [techUploadMsg, setTechUploadMsg] = useState('');
+  // Weekday the next uploaded report fills — picked before choosing the file.
+  const [techUploadDay, setTechUploadDay] = useState(() => {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    while (y.getDay() === 0) y.setDate(y.getDate() - 1);
+    return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][y.getDay()];
+  });
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
@@ -755,80 +763,50 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   // ── Technician "Flagged Hours" report upload ───────────────────────────────
-  // Reads the "Technician Performance" summary sheet of the dealer's Technician
-  // Report (.xlsx): Technician Name + Flagged Hours per tech. Fills one weekday
-  // column for every technician on this page — a tech that isn't in the report
-  // did no billable work that day, so their hours are set to 0.
+  // Source of truth is the dealer's Tekion "Tech Performance" report in
+  // Pay Type View, saved as .html. Each tech's credited hours for the day are
+  // Warranty x 1.4 + Internal + Customer Pay (see utils/techFlaggedReport).
+  // The older .xlsx export has no pay-type breakdown, so it still imports the
+  // flat Flagged Hours total and the preview says the multiplier was skipped.
+  // A tech that isn't in the report did no billable work, so they're set to 0.
   const DOW_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   const DAY_LABELS = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday' };
+  const WORK_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-  async function handleTechXlsx(file) {
+  // Match every technician on this page to a report row by first OR last name
+  // token (e.g. "GAVIN WEST" → page tech "WEST"). Each report row is used at
+  // most once; unused report rows are surfaced as a warning.
+  function matchTechRows(report) {
+    const firstTok = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+    const lastTok = (s) => { const p = String(s || '').trim().split(/\s+/); return (p[p.length - 1] || '').toUpperCase(); };
+    const entries = report.map(r => ({ ...r, first: firstTok(r.name), last: lastTok(r.name), used: false }));
+    const rows = (data.technicians || []).map((t, idx) => {
+      const page = String(t.name || '').trim().toUpperCase();
+      const e = entries.find(en => !en.used && en.first === page) || entries.find(en => !en.used && en.last === page);
+      if (!e) return { idx, name: t.name, hours: 0, warranty: 0, other: 0, detailed: false, matched: false, matchedName: '', payTypes: [] };
+      e.used = true;
+      return {
+        idx, name: t.name, hours: e.total, warranty: e.warranty, other: e.other,
+        detailed: e.detailed, matched: true, matchedName: e.name, payTypes: e.payTypes || [],
+      };
+    });
+    return { rows, unmatched: entries.filter(e => !e.used).map(e => e.name) };
+  }
+
+  async function handleTechReport(file) {
     if (!file) return;
     setTechXlsxBusy(true); setTechUploadErr(''); setTechUpload(null); setTechUploadMsg('');
     try {
-      const buf = await file.arrayBuffer();
-      const wb = XLSX.read(buf, { type: 'array' });
-      const norm = (s) => String(s == null ? '' : s).trim().toLowerCase().replace(/\s+/g, ' ');
-
-      // 1) Locate the per-tech summary: a sheet with "Technician Name" + "Flagged Hours".
-      let report = null; // { name(upper) -> flaggedHours }
-      for (const sn of wb.SheetNames) {
-        const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, blankrows: false });
-        const hdrIdx = aoa.findIndex(r => (r || []).some(c => norm(c) === 'technician name') && (r || []).some(c => norm(c) === 'flagged hours'));
-        if (hdrIdx === -1) continue;
-        const hdr = (aoa[hdrIdx] || []).map(norm);
-        const iName = hdr.indexOf('technician name');
-        const iFlag = hdr.indexOf('flagged hours');
-        const map = {};
-        for (let r = hdrIdx + 1; r < aoa.length; r++) {
-          const row = aoa[r] || [];
-          const nm = String(row[iName] == null ? '' : row[iName]).trim();
-          if (!nm || norm(nm) === 'total') continue;
-          const v = parseFloat(String(row[iFlag]).replace(/[, ]/g, ''));
-          map[nm.toUpperCase()] = isNaN(v) ? 0 : v;
-        }
-        if (Object.keys(map).length) { report = map; break; }
-      }
-      if (!report) throw new Error('Could not find a "Technician Name" + "Flagged Hours" sheet. Make sure this is the Technician Performance report.');
-
-      // 2) Work out which weekday the report is for. Prefer the report's own
-      //    "Flag Date" (e.g. "Wed Jul 8 2026"); fall back to yesterday (skip Sun).
-      let day = null, dateLabel = '';
-      for (const sn of wb.SheetNames) {
-        const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, blankrows: false });
-        const hdrIdx = aoa.findIndex(r => (r || []).some(c => norm(c) === 'flag date'));
-        if (hdrIdx === -1) continue;
-        const iDate = (aoa[hdrIdx] || []).map(norm).indexOf('flag date');
-        for (let r = hdrIdx + 1; r < aoa.length; r++) {
-          const val = String((aoa[r] || [])[iDate] || '').trim(); // "Wed Jul 8 2026"
-          const wd = val.slice(0, 3).toLowerCase();
-          if (['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].includes(wd)) {
-            day = wd; dateLabel = val.replace(/^[A-Za-z]{3}\s+/, ''); break;
-          }
-        }
-        if (day) break;
-      }
-      if (!day) {
-        const y = new Date(); y.setDate(y.getDate() - 1);
-        while (y.getDay() === 0) y.setDate(y.getDate() - 1);
-        day = DOW_KEYS[y.getDay()];
-        dateLabel = y.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-
-      // 3) Match every technician on this page to a report row by first OR last
-      //    name token (e.g. "GAVIN WEST" → page tech "WEST"). Each report row is
-      //    used at most once. Unused report rows are surfaced as a warning.
-      const firstTok = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
-      const lastTok = (s) => { const p = String(s || '').trim().split(/\s+/); return (p[p.length - 1] || '').toUpperCase(); };
-      const entries = Object.keys(report).map(full => ({ full, first: firstTok(full), last: lastTok(full), used: false }));
-      const rows = (data.technicians || []).map((t, idx) => {
-        const page = String(t.name || '').trim().toUpperCase();
-        let e = entries.find(en => !en.used && en.first === page) || entries.find(en => !en.used && en.last === page);
-        if (e) { e.used = true; return { idx, name: t.name, hours: report[e.full], matched: true, matchedName: e.full }; }
-        return { idx, name: t.name, hours: 0, matched: false, matchedName: '' };
+      const isHtml = /\.html?$/i.test(file.name || '');
+      const report = isHtml ? await readTechHtml(file) : await readTechXlsx(file);
+      const { rows, unmatched } = matchTechRows(report.rows);
+      setTechUpload({
+        day: techUploadDay,
+        source: isHtml ? 'html' : 'xlsx',
+        warnings: report.warnings || [],
+        rows,
+        unmatched,
       });
-      const unmatched = entries.filter(e => !e.used).map(e => e.full);
-      setTechUpload({ day, dateLabel, rows, unmatched });
     } catch (err) {
       setTechUploadErr(err.message || String(err));
     } finally {
@@ -837,11 +815,47 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  // Write the previewed flagged hours into the chosen weekday column for every
-  // technician (matched value, or 0 when absent from the report).
+  // Saved Tekion page (Pay Type View) → per-tech warranty-weighted totals.
+  async function readTechHtml(file) {
+    return parseTechReportHtml(await file.text());
+  }
+
+  // Legacy .xlsx export: Technician Name + Flagged Hours, no pay-type detail.
+  async function readTechXlsx(file) {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const norm = (s) => String(s == null ? '' : s).trim().toLowerCase().replace(/\s+/g, ' ');
+    for (const sn of wb.SheetNames) {
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, blankrows: false });
+      const hdrIdx = aoa.findIndex(r => (r || []).some(c => norm(c) === 'technician name') && (r || []).some(c => norm(c) === 'flagged hours'));
+      if (hdrIdx === -1) continue;
+      const hdr = (aoa[hdrIdx] || []).map(norm);
+      const iName = hdr.indexOf('technician name');
+      const iFlag = hdr.indexOf('flagged hours');
+      const rows = [];
+      for (let r = hdrIdx + 1; r < aoa.length; r++) {
+        const row = aoa[r] || [];
+        const nm = String(row[iName] == null ? '' : row[iName]).trim();
+        if (!nm || norm(nm) === 'total') continue;
+        const v = parseFloat(String(row[iFlag]).replace(/[, ]/g, ''));
+        const flat = isNaN(v) ? 0 : v;
+        rows.push({ name: nm, payTypes: [], warranty: 0, other: flat, total: flat, detailed: false });
+      }
+      if (rows.length) {
+        return {
+          rows,
+          warnings: ['This .xlsx has no Pay Type breakdown, so the 1.4x warranty multiplier was NOT applied — these are flat Flagged Hours. Save the Tekion report in Pay Type View as .html to get warranty-weighted hours.'],
+        };
+      }
+    }
+    throw new Error('Could not find a "Technician Name" + "Flagged Hours" sheet. Make sure this is the Technician Performance report.');
+  }
+
+  // Write the previewed hours into the chosen weekday column for every
+  // technician (weighted total, or 0 when absent from the report).
   function applyTechUpload() {
     if (!techUpload) return;
-    const { day, rows, dateLabel } = techUpload;
+    const { day, rows } = techUpload;
     const date = currentWeekDates()[day];
     const stamp = Date.now();
     const newData = structuredClone(data);
@@ -854,7 +868,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
     onDataChange(newData, structuredClone(vacations));
     const filled = rows.filter(r => r.matched).length;
-    setTechUploadMsg(`✅ Set ${DAY_LABELS[day]} (${dateLabel}) flagged hours for ${rows.length} tech${rows.length === 1 ? '' : 's'} (${filled} from report, ${rows.length - filled} set to 0). Click Save Changes to push it live.`);
+    setTechUploadMsg(`✅ Set ${DAY_LABELS[day]} hours for ${rows.length} tech${rows.length === 1 ? '' : 's'} (${filled} from report, ${rows.length - filled} set to 0). Click Save Changes to push it live.`);
     setTechUpload(null);
   }
 
@@ -1667,12 +1681,28 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         {/* Upload the dealer's Technician Performance report to auto-fill one
             day's flagged hours for every tech. */}
         <div style={{ border: '1px solid rgba(96,165,250,.28)', background: 'rgba(96,165,250,.07)', borderRadius: 12, padding: '12px 14px', marginBottom: 14 }}>
-          <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>📥 Upload Flagged Hours Report (.xlsx)</div>
+          <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>📥 Upload Flagged Hours Report (.html)</div>
           <div className="small" style={{ color: '#94a3b8', margin: '4px 0 8px' }}>
-            Reads <strong>Technician Name</strong> + <strong>Flagged Hours</strong> from the report and fills that day's hours for each tech. A tech not on the report is set to <strong>0</strong> for the day. Review before applying, then <em>Save Changes</em>.
+            Save the Tekion <strong>Tech Performance</strong> report in <strong>Pay Type View</strong> as .html and upload it here. Each tech's hours are
+            <strong> Warranty × {WARRANTY_MULTIPLIER}</strong> + Internal + Customer Pay. <strong>Pick the day first</strong> — those hours fill that day's column.
+            A tech not on the report is set to <strong>0</strong>. Review before applying, then <em>Save Changes</em>.
           </div>
-          <input ref={techXlsxInputRef} type="file" accept=".xlsx,.xls" disabled={techXlsxBusy}
-            onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleTechXlsx(f); }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1' }}>Apply to</span>
+            {WORK_DAYS.map(d => (
+              <button key={d} onClick={() => setTechUploadDay(d)} disabled={techXlsxBusy}
+                style={{
+                  background: techUploadDay === d ? 'rgba(96,165,250,.28)' : 'rgba(255,255,255,.04)',
+                  border: `1px solid ${techUploadDay === d ? 'rgba(96,165,250,.65)' : 'rgba(148,163,184,.25)'}`,
+                  color: techUploadDay === d ? '#bfdbfe' : '#94a3b8',
+                  borderRadius: 8, padding: '5px 12px', fontWeight: 800, fontSize: 12, cursor: 'pointer',
+                }}>
+                {d.charAt(0).toUpperCase() + d.slice(1)}
+              </button>
+            ))}
+          </div>
+          <input ref={techXlsxInputRef} type="file" accept=".html,.htm,.xlsx,.xls" disabled={techXlsxBusy}
+            onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleTechReport(f); }} />
           {techXlsxBusy && <span style={{ marginLeft: 10, fontSize: 12, color: '#93c5fd' }}>Reading…</span>}
           {techUploadErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {techUploadErr}</div>}
           {techUploadMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{techUploadMsg}</div>}
@@ -1722,17 +1752,30 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               </div>
               <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span>Apply to</span>
-                <select value={techUpload.day} onChange={e => setTechUpload({ ...techUpload, day: e.target.value })}
+                <select value={techUpload.day} onChange={e => { setTechUploadDay(e.target.value); setTechUpload({ ...techUpload, day: e.target.value }); }}
                   style={{ background: '#1e293b', color: '#e2e8f0', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, padding: '5px 8px', fontWeight: 700, fontSize: 13 }}>
-                  {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
+                  {WORK_DAYS.map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
                 </select>
-                {techUpload.dateLabel && <span style={{ color: '#64748b', fontSize: 12 }}>· report date {techUpload.dateLabel}</span>}
+                <span style={{ color: '#64748b', fontSize: 12 }}>· warranty × {WARRANTY_MULTIPLIER}</span>
               </div>
+              {techUpload.warnings.length > 0 && (
+                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.45 }}>
+                  {techUpload.warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                </div>
+              )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 12 }}>
                 {techUpload.rows.map(r => (
                   <div key={r.idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
-                    <span style={{ color: '#e2e8f0' }}>{r.name}{r.matched && r.matchedName.toUpperCase() !== String(r.name).toUpperCase() ? <span style={{ color: '#64748b', fontSize: 11 }}> ({r.matchedName})</span> : null}</span>
-                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700 }}>{r.hours.toFixed(1)} hrs{!r.matched ? ' · not in report' : ''}</span>
+                    <span style={{ color: '#e2e8f0' }}>
+                      {r.name}{r.matched && r.matchedName.toUpperCase() !== String(r.name).toUpperCase() ? <span style={{ color: '#64748b', fontSize: 11 }}> ({r.matchedName})</span> : null}
+                      {r.matched && r.detailed && (
+                        <span style={{ display: 'block', color: '#64748b', fontSize: 11 }}>
+                          {r.warranty > 0 ? `war ${r.warranty} × ${WARRANTY_MULTIPLIER} = ${(Math.round(r.warranty * WARRANTY_MULTIPLIER * 100) / 100)}` : 'no warranty'}
+                          {` + other ${r.other}`}
+                        </span>
+                      )}
+                    </span>
+                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700, whiteSpace: 'nowrap' }}>{r.hours.toFixed(2)} hrs{!r.matched ? ' · not in report' : ''}</span>
                   </div>
                 ))}
               </div>
