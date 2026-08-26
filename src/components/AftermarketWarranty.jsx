@@ -32,6 +32,7 @@ const emptyForm = () => ({
   laborRate: '',
   laborTime: '',
   diagnosisTime: '',
+  laborTotalOverride: '',
   parts: [emptyPart()],
   taxPct: '',
   deductible: '',
@@ -62,7 +63,12 @@ function num(v) { return parseFloat(v) || 0; }
 function fmtDol(v) { return '$' + num(v).toFixed(2); }
 
 function calcTotals(form) {
-  const laborTotal = num(form.laborRate) * (num(form.laborTime) + num(form.diagnosisTime));
+  // Labor is normally rate x (labor + diagnosis) hours, but a flat labor total
+  // can be typed instead — some claims are quoted as a lump sum with no rate.
+  // An empty override falls back to the calculation.
+  const laborComputed = num(form.laborRate) * (num(form.laborTime) + num(form.diagnosisTime));
+  const laborOverridden = form.laborTotalOverride !== '' && form.laborTotalOverride != null;
+  const laborTotal = laborOverridden ? num(form.laborTotalOverride) : laborComputed;
   const partsTotal = (form.parts || []).reduce((s, p) => s + num(p.qty || 1) * num(p.price), 0);
   const taxAmt = partsTotal * (num(form.taxPct) / 100);
   const deductible = num(form.deductible);
@@ -75,7 +81,7 @@ function calcTotals(form) {
   const tireFees = tireTax + tireDisposal;
   const totalClaim = laborTotal + partsTotal + taxAmt + rental + towing + sublet + tireRepair + tireFees - deductible;
   const totalDue = deductible;
-  return { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue };
+  return { laborTotal, laborComputed, laborOverridden, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue };
 }
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -312,7 +318,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
   }
 
 
-  const { laborTotal, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(form);
+  const { laborTotal, laborComputed, laborOverridden, partsTotal, taxAmt, totalClaim, totalDue } = calcTotals(form);
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 60px' }}>
@@ -369,9 +375,28 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             <F label="Labor Time (hrs)" value={form.laborTime} onChange={v => set('laborTime', v)} type="number" placeholder="0.0" />
             <F label="Diagnosis Time (hrs)" value={form.diagnosisTime} onChange={v => set('diagnosisTime', v)} type="number" placeholder="0.0" />
             <div style={{ marginBottom: 12, display: 'flex', alignItems: 'flex-end' }}>
-              <div style={{ width: '100%', padding: '10px 14px', background: 'rgba(61,214,195,0.08)', border: '1px solid rgba(61,214,195,0.2)', borderRadius: 8 }}>
-                <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>Labor Total</div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: '#3dd6c3', marginTop: 2 }}>{fmtDol(laborTotal)}</div>
+              <div style={{ width: '100%', padding: '8px 14px 10px', background: laborOverridden ? 'rgba(251,191,36,0.09)' : 'rgba(61,214,195,0.08)', border: `1px solid ${laborOverridden ? 'rgba(251,191,36,0.35)' : 'rgba(61,214,195,0.2)'}`, borderRadius: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>Labor Total</span>
+                  {laborOverridden
+                    ? <button type="button" onClick={() => set('laborTotalOverride', '')}
+                        title="Go back to Labor Rate x hours"
+                        style={{ background: 'none', border: 'none', color: '#fbbf24', fontSize: 10, fontWeight: 800, letterSpacing: .4, cursor: 'pointer', padding: 0 }}>
+                        MANUAL · RESET
+                      </button>
+                    : <span style={{ fontSize: 10, color: '#475569', fontWeight: 800, letterSpacing: .4 }}>AUTO</span>}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginTop: 1 }}>
+                  <span style={{ fontSize: 18, fontWeight: 900, color: laborOverridden ? '#fbbf24' : '#3dd6c3' }}>$</span>
+                  <input
+                    type="number" step="0.01" min="0"
+                    value={laborOverridden ? form.laborTotalOverride : (laborComputed ? laborComputed.toFixed(2) : '')}
+                    onChange={e => set('laborTotalOverride', e.target.value)}
+                    placeholder="0.00"
+                    title="Type a flat labor total to override the rate x hours calculation"
+                    style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', padding: 0,
+                             fontSize: 18, fontWeight: 900, color: laborOverridden ? '#fbbf24' : '#3dd6c3' }} />
+                </div>
               </div>
             </div>
           </div>
@@ -568,7 +593,7 @@ function PrintRow({ label, value, bold = false }) {
 }
 
 function ContractDetail({ contract, onEdit, onBack }) {
-  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
+  const { laborTotal, laborOverridden, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
   const pdfRef = useRef(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -775,9 +800,15 @@ function ContractDetail({ contract, onEdit, onBack }) {
               <InfoRow label="Mileage" value={contract.mileage ? Number(contract.mileage).toLocaleString() + ' mi' : '—'} />
             </InfoBlock>
             <InfoBlock title="Labor">
-              <InfoRow label="Rate" value={`$${num(contract.laborRate).toFixed(2)}/hr`} />
-              <InfoRow label="Labor Time" value={`${num(contract.laborTime).toFixed(1)} hrs`} />
-              <InfoRow label="Diagnosis Time" value={`${num(contract.diagnosisTime).toFixed(1)} hrs`} />
+              {laborOverridden ? (
+                <InfoRow label="Basis" value="Flat labor total (entered)" />
+              ) : (
+                <>
+                  <InfoRow label="Rate" value={`$${num(contract.laborRate).toFixed(2)}/hr`} />
+                  <InfoRow label="Labor Time" value={`${num(contract.laborTime).toFixed(1)} hrs`} />
+                  <InfoRow label="Diagnosis Time" value={`${num(contract.diagnosisTime).toFixed(1)} hrs`} />
+                </>
+              )}
               <InfoRow label="Labor Total" value={fmtDol(laborTotal)} highlight />
             </InfoBlock>
           </div>
@@ -1004,9 +1035,9 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
             </thead>
             <tbody>
               <tr style={{ background: PD_LIGHT }}>
-                <TD>${num(contract.laborRate).toFixed(2)} / hr</TD>
-                <TD>{num(contract.laborTime).toFixed(1)} hrs</TD>
-                <TD>{num(contract.diagnosisTime).toFixed(1)} hrs</TD>
+                <TD>{calcTotals(contract).laborOverridden ? 'Flat total' : `$${num(contract.laborRate).toFixed(2)} / hr`}</TD>
+                <TD>{calcTotals(contract).laborOverridden ? '—' : `${num(contract.laborTime).toFixed(1)} hrs`}</TD>
+                <TD>{calcTotals(contract).laborOverridden ? '—' : `${num(contract.diagnosisTime).toFixed(1)} hrs`}</TD>
                 <TD right bold>{fmtDol(laborTotal)}</TD>
               </tr>
             </tbody>
