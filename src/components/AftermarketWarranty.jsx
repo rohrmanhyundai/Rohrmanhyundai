@@ -593,7 +593,7 @@ function PrintRow({ label, value, bold = false }) {
 }
 
 function ContractDetail({ contract, onEdit, onBack }) {
-  const { laborTotal, laborOverridden, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
+  const { laborTotal, partsTotal, taxAmt, rental, towing, sublet, tireRepair, tireTax, tireDisposal, tireFees, totalClaim, totalDue } = calcTotals(contract);
   const date = contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : '';
   const pdfRef = useRef(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -800,15 +800,9 @@ function ContractDetail({ contract, onEdit, onBack }) {
               <InfoRow label="Mileage" value={contract.mileage ? Number(contract.mileage).toLocaleString() + ' mi' : '—'} />
             </InfoBlock>
             <InfoBlock title="Labor">
-              {laborOverridden ? (
-                <InfoRow label="Basis" value="Flat labor total (entered)" />
-              ) : (
-                <>
-                  <InfoRow label="Rate" value={`$${num(contract.laborRate).toFixed(2)}/hr`} />
-                  <InfoRow label="Labor Time" value={`${num(contract.laborTime).toFixed(1)} hrs`} />
-                  <InfoRow label="Diagnosis Time" value={`${num(contract.diagnosisTime).toFixed(1)} hrs`} />
-                </>
-              )}
+              <InfoRow label="Rate" value={`$${num(contract.laborRate).toFixed(2)}/hr`} />
+              <InfoRow label="Labor Time" value={`${num(contract.laborTime).toFixed(1)} hrs`} />
+              <InfoRow label="Diagnosis Time" value={`${num(contract.diagnosisTime).toFixed(1)} hrs`} />
               <InfoRow label="Labor Total" value={fmtDol(laborTotal)} highlight />
             </InfoBlock>
           </div>
@@ -1035,9 +1029,9 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
             </thead>
             <tbody>
               <tr style={{ background: PD_LIGHT }}>
-                <TD>{calcTotals(contract).laborOverridden ? 'Flat total' : `$${num(contract.laborRate).toFixed(2)} / hr`}</TD>
-                <TD>{calcTotals(contract).laborOverridden ? '—' : `${num(contract.laborTime).toFixed(1)} hrs`}</TD>
-                <TD>{calcTotals(contract).laborOverridden ? '—' : `${num(contract.diagnosisTime).toFixed(1)} hrs`}</TD>
+                <TD>${num(contract.laborRate).toFixed(2)} / hr</TD>
+                <TD>{num(contract.laborTime).toFixed(1)} hrs</TD>
+                <TD>{num(contract.diagnosisTime).toFixed(1)} hrs</TD>
                 <TD right bold>{fmtDol(laborTotal)}</TD>
               </tr>
             </tbody>
