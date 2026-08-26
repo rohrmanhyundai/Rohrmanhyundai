@@ -24,13 +24,15 @@ export function payTypeWeight(label) {
 const round2 = (v) => Math.round((Number(v) || 0) * 100) / 100;
 
 // payTypes: [{ type, hours }] -> { warranty, other, total }
-export function weightedTotal(payTypes) {
+// `multiplier` is per-technician: techs with the warranty multiplier switched
+// off count warranty time at face value, so pass 1.
+export function weightedTotal(payTypes, multiplier = WARRANTY_MULTIPLIER) {
   let warranty = 0, other = 0;
   for (const p of payTypes || []) {
     const h = Number(p.hours) || 0;
     if (isWarrantyPayType(p.type)) warranty += h; else other += h;
   }
-  return { warranty: round2(warranty), other: round2(other), total: round2(warranty * WARRANTY_MULTIPLIER + other) };
+  return { warranty: round2(warranty), other: round2(other), total: round2(warranty * multiplier + other) };
 }
 
 const cleanText = (el) => String(el ? el.textContent : '').replace(/\s+/g, ' ').trim();
