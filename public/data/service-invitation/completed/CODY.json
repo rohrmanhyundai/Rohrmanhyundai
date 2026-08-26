@@ -34,5 +34,23 @@
     "notes": "Left voicemail",
     "submittedAt": "2026-08-26T19:18:24.859Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "JOHN DUIS",
+    "repairOrder": "780152",
+    "vin": "KMHL54JJ9TA156061",
+    "model": "SONATA HEV",
+    "serviceDate": "08/19/2026",
+    "invitationDate": "08/21/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(815) 644-0590",
+    "notes": "Left voicemail",
+    "submittedAt": "2026-08-26T19:20:54.772Z",
+    "submittedBy": "CODY"
   }
 ]
