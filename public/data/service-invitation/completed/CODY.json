@@ -88,5 +88,23 @@
     "notes": "",
     "submittedAt": "2026-08-26T19:24:20.222Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "1722_BOB HYUNDAI GENES",
+    "repairOrder": "779599",
+    "vin": "5NMP2DGL9TH233217",
+    "model": "SANTA FE",
+    "serviceDate": "07/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 448-1000",
+    "notes": "",
+    "submittedAt": "2026-08-26T19:25:22.735Z",
+    "submittedBy": "CODY"
   }
 ]
