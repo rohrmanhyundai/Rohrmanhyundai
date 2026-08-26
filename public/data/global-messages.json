@@ -83,7 +83,14 @@
     "text": "HAVE YOU COMPLETED RECALLS ON 779636? THANK YOU",
     "alert": false,
     "requireReply": true,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtakx6v7llos",
+        "from": "WEI",
+        "text": "NOT YET, NEEDS COUPLE GUYS TO PUSH THE SANTA FE IN",
+        "timestamp": 1787778100483
+      }
+    ],
     "timestamp": 1787777034425
   }
 ]
