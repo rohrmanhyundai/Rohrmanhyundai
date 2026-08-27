@@ -2,7 +2,7 @@
   {
     "id": "mtbu8eknpb8c",
     "createdAt": "2026-08-27T18:10:06.407Z",
-    "updatedAt": "2026-08-27T18:54:58.391Z",
+    "updatedAt": "2026-08-27T18:55:37.789Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Joyce Linback",
     "customerPhone": "(765) 404 - 6234",
@@ -37,7 +37,7 @@
     "tireRepair": null,
     "tireTax": ".25",
     "tireDisposal": "3.0",
-    "notes": "",
+    "notes": "CLAIM APPROVED 292-16946176 Claim Number Authorization: X3289204",
     "approved": true,
     "approvedDate": "2026-08-27",
     "denied": false,
