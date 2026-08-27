@@ -1,16 +1,5 @@
 [
   {
-    "id": "ms3gimn43rd",
-    "username": "SHAWN",
-    "text": "ALL TECHS PLEASE PLEASE REMEMEBER YOUR VCI TO TAKE OUT OF THE CAR! WE CANT LEAVE THESE IN THE CARS! THEY ARE $4K EACH!",
-    "timestamp": 1785170657056,
-    "reactions": {
-      "🚨": [
-        "SHAWN"
-      ]
-    }
-  },
-  {
     "id": "ms4lf0l35m1",
     "username": "KAI",
     "text": "RO 779318 parts have been received",
@@ -519,5 +508,11 @@
     "text": "@cory @david 780180 engine approved ready for asr",
     "timestamp": 1787756865910,
     "reactions": {}
+  },
+  {
+    "id": "mtbg43v3gc4",
+    "username": "KAI",
+    "text": "RO 780313 parts have been received",
+    "timestamp": 1787830491279
   }
 ]
