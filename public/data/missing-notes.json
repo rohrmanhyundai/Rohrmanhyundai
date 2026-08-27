@@ -1,22 +1,58 @@
 {
-  "updatedAt": "2026-08-26T20:59:05.368Z",
+  "updatedAt": "2026-08-27T16:51:11.003Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
+    "JORDAN": [
       {
-        "ro": "780348",
-        "vehicle": "2020 Hyundai Palisade"
+        "ro": "780367",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "780318",
-        "vehicle": "2020 Hyundai Palisade"
+        "ro": "780365",
+        "vehicle": "2018 Hyundai Tucson"
       },
       {
-        "ro": "780311",
+        "ro": "780362",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "780360",
         "vehicle": "2027 Hyundai Palisade Hybrid"
       },
       {
-        "ro": "780308",
+        "ro": "780354",
+        "vehicle": "2021 Hyundai Ioniq Plug-In Hybrid"
+      },
+      {
+        "ro": "780353",
+        "vehicle": "2025 Hyundai Sonata"
+      },
+      {
+        "ro": "780351",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "780335",
+        "vehicle": "2026 Hyundai Palisade"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780361",
+        "vehicle": "2025 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780358",
+        "vehicle": "2026 Hyundai Elantra N"
+      },
+      {
+        "ro": "780350",
+        "vehicle": "2025 Hyundai Tucson"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "780359",
         "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ],
@@ -40,30 +76,6 @@
       {
         "ro": "779799",
         "vehicle": "2018 Honda Odyssey"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "780336",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780335",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780310",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780312",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780309",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ]
   }
