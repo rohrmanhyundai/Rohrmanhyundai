@@ -16,22 +16,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mt3ed92nbqhm",
-    "ro": "780202",
-    "roDate": "2026-08-21",
-    "vehicle": "",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/26/2026",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mt7kdd3gpvo4",
     "ro": "780264",
     "roDate": "2026-08-24",
