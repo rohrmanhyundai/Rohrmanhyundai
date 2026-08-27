@@ -114,7 +114,14 @@
     "text": "TEST",
     "alert": false,
     "requireReply": true,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtatr77x5nda",
+        "from": "GAVEN",
+        "text": "TEST",
+        "timestamp": 1787792937549
+      }
+    ],
     "timestamp": 1787792797936
   }
 ]
