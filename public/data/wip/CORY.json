@@ -13,5 +13,20 @@
     "advisor": "DAVID RILEY",
     "notes": "ENGINE APPROVED ",
     "flag": "purple"
+  },
+  {
+    "id": "mtbuplhzdha",
+    "ro": "780361",
+    "roDate": "2026-08-27",
+    "vehicle": "",
+    "jobDesc": "Tow in Hybrid Warning",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY",
+    "notes": "",
+    "flag": "purple"
   }
 ]
