@@ -34,8 +34,8 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/27/2026",
     "isNew": true
   },
   {
