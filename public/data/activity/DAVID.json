@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-27T14:23:04.314Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-26T20:49:18.197Z",
     "type": "page",
     "label": "advisor-goals"
@@ -648,25 +653,5 @@
     "at": "2026-07-28T17:49:45.662Z",
     "type": "page",
     "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-07-28T13:22:45.505Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-07-27T21:47:47.713Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-27T21:42:37.694Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-07-27T21:37:45.296Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
