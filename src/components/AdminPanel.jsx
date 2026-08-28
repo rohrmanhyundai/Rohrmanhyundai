@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
-import { advisorDailyAverage, currentWeekDates, advisorOffDates } from '../utils/calculations';
+import { advisorDailyAverage, currentWeekDates, advisorOffDates, isScheduledOff } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -883,6 +883,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     for (const r of rows) {
       const tech = newData.technicians[r.idx];
       if (!tech) continue;
+      // A tech on vacation/training/holiday isn't on the report. Zeroing them
+      // and flagging the day as manually entered would suppress the schedule's
+      // 8-hour fill, silently costing them the day — so leave it alone and let
+      // applyScheduleHours populate it.
+      if (!r.matched && isScheduledOff(schedules, tech.name, date)) {
+        tech[day] = 0;
+        delete tech[`${day}_raw`];
+        if (tech.hoursOverride) delete tech.hoursOverride[date];
+        tech._hrsStamp = stamp;
+        continue;
+      }
       tech[day] = previewTotal(r);
       // Raw (unmultiplied) hours are kept alongside the credited hours so Cash
       // Dash can pay on warranty + customer pay + internal at face value.

@@ -84,6 +84,16 @@ export function currentWeekDates() {
 
 const OFF_STATUSES = ['holiday', 'vacation', 'training', 'off'];
 
+// True when the schedule marks this tech off for the date (vacation, training,
+// holiday, off) or the shop is closed. Mirrors the test applyScheduleHours uses
+// to fill 8 hours, so callers can tell whether a day is schedule-driven.
+export function isScheduledOff(schedules, techName, date) {
+  if (!schedules || !date) return false;
+  if ((schedules.__HOLIDAY__ || {})[date]) return true;
+  const sched = schedules[String(techName || '').toUpperCase()] || {};
+  return OFF_STATUSES.includes(String(sched[date] || '').trim().toLowerCase());
+}
+
 // Local YYYY-MM-DD (no UTC shift) so it matches the schedule/vacation keys.
 function isoLocal(dt) {
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
