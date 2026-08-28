@@ -156,9 +156,16 @@ export function recalcTech(data, schedules) {
 
   data.technicians.forEach(t => {
     t.total = 0;
+    // total_raw mirrors total but without the warranty multiplier, for Cash
+    // Dash. A day with no recorded raw value (hand-typed hours) counts at its
+    // face value, which is already unmultiplied.
+    t.total_raw = 0;
     days.forEach(k => {
       t[k] = safe(t[k], 0);
       t.total += t[k];
+      const rawK = `${k}_raw`;
+      const hasRaw = t[rawK] !== undefined && t[rawK] !== null && t[rawK] !== '';
+      t.total_raw += hasRaw ? safe(t[rawK], 0) : t[k];
       totals[k] += t[k];
     });
     t.goal = safe(t.goal, 0);
