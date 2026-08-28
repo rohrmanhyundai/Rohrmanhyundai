@@ -1,19 +1,27 @@
 {
-  "updatedAt": "2026-08-27T21:28:26.466Z",
+  "updatedAt": "2026-08-28T14:20:07.682Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
+        "ro": "780401",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "780399",
+        "vehicle": "2024 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780398",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "780384",
+        "vehicle": "2020 Hyundai Ioniq Hybrid"
+      },
+      {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780379",
-        "vehicle": "2025 Genesis GV70"
-      },
-      {
-        "ro": "780378",
-        "vehicle": "2013 Hyundai Sonata"
       },
       {
         "ro": "780376",
@@ -26,11 +34,47 @@
     ],
     "CODY": [
       {
+        "ro": "780400",
+        "vehicle": "2021 Hyundai Sonata"
+      },
+      {
+        "ro": "780393",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
         "ro": "780361",
         "vehicle": "2025 Hyundai Santa Fe Hybrid"
       }
     ],
+    "JORDAN": [
+      {
+        "ro": "780397",
+        "vehicle": "2019 Hyundai Tucson"
+      },
+      {
+        "ro": "780395",
+        "vehicle": "2020 Hyundai Palisade"
+      },
+      {
+        "ro": "780392",
+        "vehicle": "2021 Hyundai Palisade"
+      },
+      {
+        "ro": "780386",
+        "vehicle": "2023 Hyundai IONIQ 6"
+      }
+    ],
+    "HOLLI": [
+      {
+        "ro": "780396",
+        "vehicle": "2026 Hyundai Kona"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "780388",
+        "vehicle": "2023 Hyundai Tucson"
+      },
       {
         "ro": "780346",
         "vehicle": "2020 Toyota RAV4"
