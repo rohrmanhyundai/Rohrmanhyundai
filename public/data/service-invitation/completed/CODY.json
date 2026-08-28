@@ -484,5 +484,23 @@
     "notes": "",
     "submittedAt": "2026-08-28T20:22:52.330Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "CARLY CLISHAM",
+    "repairOrder": "780051",
+    "vin": "5NMS2DAJ2PH549209",
+    "model": "SANTA FE",
+    "serviceDate": "08/15/2026",
+    "invitationDate": "08/18/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (513) 667 - 0005",
+    "notes": "Left Voicemail",
+    "submittedAt": "2026-08-28T20:24:46.241Z",
+    "submittedBy": "CODY"
   }
 ]
