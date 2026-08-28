@@ -1,5 +1,115 @@
 [
   {
+    "id": "mtcxy628srlx",
+    "createdAt": "2026-08-28T12:41:53.456Z",
+    "updatedAt": "2026-08-28T13:05:02.681Z",
+    "dealershipName": "Bob Rohrman Hyundai",
+    "customerName": "Cady Branaman",
+    "customerPhone": "(812) 216 - 5416",
+    "repairOrder": "780382",
+    "vin": "JM3KFABM9M1334449",
+    "vehicleYear": "2021",
+    "vehicleMake": "MAZDA",
+    "vehicleModel": "CX-5",
+    "mileage": "34632",
+    "warrantyCompany": "CERTIFIED CAR CAR",
+    "warrantyPhone": "800-428-2350",
+    "claimNumber": "",
+    "authNumber": "",
+    "laborRate": "190",
+    "laborTime": "9.8",
+    "diagnosisTime": "1",
+    "laborTotalOverride": "",
+    "parts": [
+      {
+        "id": "mtcxy628zt99",
+        "partNumber": "GS33489",
+        "description": "HEAD BOLT SET",
+        "qty": "1",
+        "price": "174.56"
+      },
+      {
+        "id": "mtcy14gs7ce1",
+        "partNumber": "VS51006R",
+        "description": "VALVE COVER GASKET",
+        "qty": "1",
+        "price": "49.14"
+      },
+      {
+        "id": "mtcy1cswh1g7",
+        "partNumber": "MS20463",
+        "description": "EXHAUST MANIFOLD GASKET",
+        "qty": "1",
+        "price": "50.83"
+      },
+      {
+        "id": "mtcy1h5qxvhy",
+        "partNumber": "MS20605",
+        "description": "INTAKE GASKET",
+        "qty": "1",
+        "price": "64.39"
+      },
+      {
+        "id": "mtcy1nuzkzss",
+        "partNumber": "C33804",
+        "description": "THERMOSTAT GASKET",
+        "qty": "1",
+        "price": "13.54"
+      },
+      {
+        "id": "mtcy1s8fwjr6",
+        "partNumber": "719005",
+        "description": "VALVOLINE MAX LIFE COOLANT",
+        "qty": "1",
+        "price": "16.99"
+      },
+      {
+        "id": "mtcy1w08xtbn",
+        "partNumber": "26829PT",
+        "description": "CYLINDER HEAD GASKET",
+        "qty": "1",
+        "price": "97.44"
+      },
+      {
+        "id": "mtcy8tgpi36r",
+        "partNumber": "881494",
+        "description": "VALVOLINE FULL SYNTHETIC 0W-20 OIL",
+        "qty": "5",
+        "price": "5.99"
+      },
+      {
+        "id": "mtcy96qlemkj",
+        "partNumber": "V0106",
+        "description": "VALVOLINE OIL FILTER",
+        "qty": "1",
+        "price": "9.99"
+      }
+    ],
+    "taxPct": "7",
+    "deductible": "",
+    "rental": null,
+    "towing": null,
+    "sublet": null,
+    "tireRepair": null,
+    "tireTax": null,
+    "tireDisposal": null,
+    "notes": "",
+    "approved": false,
+    "approvedDate": "",
+    "denied": false,
+    "deniedDate": "",
+    "waiting": false,
+    "waitingDate": "",
+    "paid": false,
+    "paymentDate": "",
+    "repairsFinished": false,
+    "repairsFinishedDate": "",
+    "readySubmission": false,
+    "readySubmissionDate": "",
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
+  },
+  {
     "id": "mt7bjrfyd2dq",
     "createdAt": "2026-08-24T14:15:58.894Z",
     "updatedAt": "2026-08-26T13:36:14.158Z",
