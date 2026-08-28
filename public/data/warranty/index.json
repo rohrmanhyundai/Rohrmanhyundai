@@ -2,7 +2,7 @@
   {
     "id": "mtcxy628srlx",
     "createdAt": "2026-08-28T12:41:53.456Z",
-    "updatedAt": "2026-08-28T13:05:02.681Z",
+    "updatedAt": "2026-08-28T13:44:36.566Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Cady Branaman",
     "customerPhone": "(812) 216 - 5416",
@@ -15,7 +15,7 @@
     "warrantyCompany": "CERTIFIED CAR CAR",
     "warrantyPhone": "800-428-2350",
     "claimNumber": "",
-    "authNumber": "",
+    "authNumber": "191766",
     "laborRate": "190",
     "laborTime": "9.8",
     "diagnosisTime": "1",
@@ -58,10 +58,10 @@
       },
       {
         "id": "mtcy1s8fwjr6",
-        "partNumber": "719005",
-        "description": "VALVOLINE MAX LIFE COOLANT",
+        "partNumber": "",
+        "description": "",
         "qty": "1",
-        "price": "16.99"
+        "price": ""
       },
       {
         "id": "mtcy1w08xtbn",
@@ -72,30 +72,30 @@
       },
       {
         "id": "mtcy8tgpi36r",
-        "partNumber": "881494",
-        "description": "VALVOLINE FULL SYNTHETIC 0W-20 OIL",
-        "qty": "5",
-        "price": "5.99"
+        "partNumber": "",
+        "description": "",
+        "qty": "1",
+        "price": ""
       },
       {
         "id": "mtcy96qlemkj",
-        "partNumber": "V0106",
-        "description": "VALVOLINE OIL FILTER",
+        "partNumber": "",
+        "description": "",
         "qty": "1",
-        "price": "9.99"
+        "price": ""
       }
     ],
     "taxPct": "7",
-    "deductible": "",
+    "deductible": "100",
     "rental": null,
     "towing": null,
     "sublet": null,
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "",
-    "approved": false,
-    "approvedDate": "",
+    "notes": "PAYMENT DAVIDGREGORY@AUTODEALERCERITFIED.COM",
+    "approved": true,
+    "approvedDate": "2026-08-28",
     "denied": false,
     "deniedDate": "",
     "waiting": false,
