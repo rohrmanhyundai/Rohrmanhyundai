@@ -382,5 +382,23 @@
     "notes": "always a very nice guy to work with",
     "submittedAt": "2026-08-28T19:57:07.134Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "KENNETH BLANTON",
+    "repairOrder": "780201",
+    "vin": "5NMS6DAJ7NH412512",
+    "model": "SANTA FE",
+    "serviceDate": "08/21/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7655324754",
+    "notes": "rang once , discvonnected",
+    "submittedAt": "2026-08-28T19:59:47.462Z",
+    "submittedBy": "DAVID"
   }
 ]
