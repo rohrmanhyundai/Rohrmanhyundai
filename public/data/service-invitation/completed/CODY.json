@@ -502,5 +502,23 @@
     "notes": "Left Voicemail",
     "submittedAt": "2026-08-28T20:24:46.241Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "SHARLENE HENSLEY",
+    "repairOrder": "780027",
+    "vin": "5NMJB3DE6SH511074",
+    "model": "TUCSON",
+    "serviceDate": "08/14/2026",
+    "invitationDate": "08/18/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (352) 459 - 1072",
+    "notes": "",
+    "submittedAt": "2026-08-28T20:26:27.008Z",
+    "submittedBy": "CODY"
   }
 ]
