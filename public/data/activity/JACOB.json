@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-28T15:49:20.206Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-08-28T13:41:37.376Z",
     "type": "page",
     "label": "cash-dash"
@@ -328,20 +333,5 @@
     "at": "2026-07-30T12:46:34.509Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-07-29T13:45:15.703Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-29T13:45:09.024Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-07-29T13:45:07.128Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
