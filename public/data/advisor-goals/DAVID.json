@@ -652,6 +652,19 @@
         "agreed": true,
         "agreedBy": "DAVID",
         "submittedAt": 1787864373538
+      },
+      "2026-08-28": {
+        "hours": 275.8,
+        "hrsRo": 1.25,
+        "openRoCount": 17,
+        "invoiced": "no",
+        "customersUpdated": "yes",
+        "notesUpdated": "no",
+        "afterCallReviews": "yes",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1787951001486
       }
     },
     "entryMode": "mtd"
