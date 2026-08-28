@@ -2,7 +2,7 @@
   {
     "id": "mtddqlt20qy4",
     "createdAt": "2026-08-28T20:03:54.470Z",
-    "updatedAt": "2026-08-28T20:05:38.111Z",
+    "updatedAt": "2026-08-28T20:35:50.120Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Jessica Loutsos",
     "customerPhone": "765-769-6140",
@@ -16,19 +16,26 @@
     "warrantyPhone": "708-482-4900",
     "claimNumber": "",
     "authNumber": "",
-    "laborRate": "",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "laborRate": "190",
+    "laborTime": "2.0",
+    "diagnosisTime": "10",
     "parts": [
       {
         "id": "mtddqlt25mx6",
-        "partNumber": "",
-        "description": "",
+        "partNumber": "91200-L1000-FFF",
+        "description": "WIRING KIT-BLOWER",
         "qty": "1",
-        "price": ""
+        "price": "378.18"
+      },
+      {
+        "id": "mtdeklk2wzm7",
+        "partNumber": "18980-09910-FFF",
+        "description": "MULTI FUSE",
+        "qty": "1",
+        "price": "9.69"
       }
     ],
-    "taxPct": "",
+    "taxPct": "7",
     "deductible": "",
     "rental": null,
     "towing": null,
