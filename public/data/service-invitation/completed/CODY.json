@@ -592,5 +592,23 @@
     "notes": "Customer Satisfied",
     "submittedAt": "2026-08-28T20:31:57.701Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ANDREW DAIGLE",
+    "repairOrder": "779892",
+    "vin": "KM8KRDAF3NU090362",
+    "model": "IONIQ 5",
+    "serviceDate": "08/13/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 463 - 6814",
+    "notes": "Left Voicemail",
+    "submittedAt": "2026-08-28T20:34:00.270Z",
+    "submittedBy": "CODY"
   }
 ]
