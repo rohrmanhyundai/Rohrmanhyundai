@@ -31,22 +31,6 @@
     "flag": "purple"
   },
   {
-    "id": "mtagbth5vw99",
-    "ro": "780314",
-    "roDate": "2026-08-26",
-    "vehicle": "2018 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES ENGINE KNOCKING. CHECK AND ADVISE.",
-    "notes": "ENGINE APPROVED ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/28/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mtbreugpm807",
     "ro": "780365",
     "roDate": "2026-08-27",
