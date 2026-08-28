@@ -98,7 +98,8 @@
           "2026-08-27": true
         },
         "_hrsStamp": 1787915290807,
-        "warrantyMultiplier": true
+        "warrantyMultiplier": true,
+        "total_raw": 54
       },
       {
         "name": "CARTER",
@@ -195,7 +196,8 @@
           "2026-08-27": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 24.2
       },
       {
         "name": "GAVEN",
@@ -288,7 +290,8 @@
           "2026-08-26": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 46.98
       },
       {
         "name": "CORY",
@@ -386,7 +389,8 @@
           "2026-08-29": true
         },
         "mon_ro": 0,
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 21.2
       },
       {
         "name": "KADEN",
@@ -481,7 +485,8 @@
           "2026-08-27": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 41.72
       },
       {
         "name": "WEI",
@@ -563,7 +568,8 @@
           "2026-08-27": true,
           "2026-08-26": true
         },
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 24.58
       },
       {
         "name": "BRYSON",
@@ -608,7 +614,8 @@
           "2026-08-26": true,
           "2026-08-29": true
         },
-        "_hrsStamp": 1787915290807
+        "_hrsStamp": 1787915290807,
+        "total_raw": 14.04
       }
     ],
     "advisors": [
