@@ -358,5 +358,23 @@
     "notes": "Left Voicemail",
     "submittedAt": "2026-08-28T20:04:16.026Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "JENNIFER ANDEL",
+    "repairOrder": "780043",
+    "vin": "KM8JCCD10RU203021",
+    "model": "TUCSON HEV",
+    "serviceDate": "08/17/2026",
+    "invitationDate": "08/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 918 - 0786",
+    "notes": "Left Voicemail",
+    "submittedAt": "2026-08-28T20:05:58.426Z",
+    "submittedBy": "CODY"
   }
 ]
