@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-08-28T20:03:52.731Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
+    "at": "2026-08-28T20:03:40.585Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-28T12:29:37.554Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -586,61 +596,6 @@
   },
   {
     "at": "2026-07-29T20:30:21.773Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T19:42:38.628Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-07-29T19:40:42.620Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T19:30:05.541Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T19:29:37.803Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-07-29T19:27:41.645Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T19:17:37.030Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T18:50:29.352Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T18:48:25.360Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T18:19:44.977Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-07-29T18:19:05.031Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-29T15:52:17.697Z",
     "type": "page",
     "label": "advisor-calendar"
   }
