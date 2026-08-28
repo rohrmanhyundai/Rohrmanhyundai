@@ -520,5 +520,23 @@
     "notes": "",
     "submittedAt": "2026-08-28T20:26:27.008Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "SUSAN HASKINS",
+    "repairOrder": "780024",
+    "vin": "5NMJACDE7TH716889",
+    "model": "TUCSON",
+    "serviceDate": "08/14/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 279 - 0998",
+    "notes": "",
+    "submittedAt": "2026-08-28T20:27:14.069Z",
+    "submittedBy": "CODY"
   }
 ]
