@@ -304,5 +304,23 @@
     "notes": "",
     "submittedAt": "2026-08-26T19:52:23.122Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "FIRST OF GOD",
+    "repairOrder": "780101",
+    "vin": "5NMJECDE2SH458283",
+    "model": "TUCSON",
+    "serviceDate": "08/19/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 586 - 6888",
+    "notes": "Left voicemail",
+    "submittedAt": "2026-08-28T20:00:23.734Z",
+    "submittedBy": "CODY"
   }
 ]
