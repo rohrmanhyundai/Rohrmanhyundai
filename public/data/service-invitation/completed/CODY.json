@@ -538,5 +538,23 @@
     "notes": "",
     "submittedAt": "2026-08-28T20:27:14.069Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ZUJUN SU",
+    "repairOrder": "780014",
+    "vin": "5NMS2DAJXPH625064",
+    "model": "SANTA FE",
+    "serviceDate": "08/14/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (260) 502 - 6802",
+    "notes": "Customer Satisfied",
+    "submittedAt": "2026-08-28T20:29:18.675Z",
+    "submittedBy": "CODY"
   }
 ]
