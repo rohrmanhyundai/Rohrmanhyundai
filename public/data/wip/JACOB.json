@@ -62,5 +62,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mtd1gfnk99zv",
+    "ro": "780388",
+    "roDate": "2026-08-28",
+    "vehicle": "2023 Hyundai Tucson",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mtd1gfnklgez",
+    "ro": "780382",
+    "roDate": "2026-08-28",
+    "vehicle": "2021 Mazda CX-5",
+    "jobDesc": "HEAD GASKET REPLACEMENT",
+    "notes": "WARRANTY APPROVED",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
