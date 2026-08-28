@@ -394,5 +394,23 @@
     "notes": "Voicemail Box Full",
     "submittedAt": "2026-08-28T20:07:56.188Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ANGELA OBRIEN",
+    "repairOrder": "780052",
+    "vin": "KMHLL4DG3TU100931",
+    "model": "ELANTRA",
+    "serviceDate": "08/17/2026",
+    "invitationDate": "08/19/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 242 - 2284",
+    "notes": "",
+    "submittedAt": "2026-08-28T20:14:43.316Z",
+    "submittedBy": "CODY"
   }
 ]
