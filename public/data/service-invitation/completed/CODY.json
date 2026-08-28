@@ -340,5 +340,23 @@
     "notes": "Customer satisfied",
     "submittedAt": "2026-08-28T20:03:01.465Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "WANTING CUT",
+    "repairOrder": "780106",
+    "vin": "KMHLM4DG5SU936820",
+    "model": "ELANTRA",
+    "serviceDate": "08/18/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 409 - 2469",
+    "notes": "Left Voicemail",
+    "submittedAt": "2026-08-28T20:04:16.026Z",
+    "submittedBy": "CODY"
   }
 ]
