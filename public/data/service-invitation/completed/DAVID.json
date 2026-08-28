@@ -364,5 +364,23 @@
     "notes": "left vm",
     "submittedAt": "2026-08-28T19:55:32.947Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "RICHARD HAMPTON",
+    "repairOrder": "780208",
+    "vin": "KM8R7DHE1NU382254",
+    "model": "PALISADE",
+    "serviceDate": "08/21/2026",
+    "invitationDate": "",
+    "status": "READY_TO_PROCESS_INVITE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654010247",
+    "notes": "always a very nice guy to work with",
+    "submittedAt": "2026-08-28T19:57:07.134Z",
+    "submittedBy": "DAVID"
   }
 ]
