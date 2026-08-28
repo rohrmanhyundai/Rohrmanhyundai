@@ -86,7 +86,10 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
           const arr = Array.isArray(rep) ? rep : [];
           const sum = arr
             .filter(s => s && s.type === 'tech' && String(s.weekStart || s.date || '').slice(0, 7) === PLAN.monthKey)
-            .reduce((a, s) => a + num(s.total), 0);
+            // Cash Dash pays on raw hours — warranty, customer pay and internal
+            // at face value, with no warranty multiplier. Older snapshots (and
+            // hand-entered weeks) have no total_raw, so fall back to total.
+            .reduce((a, s) => a + num(s.total_raw != null ? s.total_raw : s.total), 0);
           return [n, Math.round(sum * 10) / 10];
         } catch { return [n, 0]; }
       }));

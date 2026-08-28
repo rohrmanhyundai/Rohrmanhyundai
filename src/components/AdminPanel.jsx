@@ -757,6 +757,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const newData = structuredClone(data);
     const tech = newData.technicians[idx];
     tech[day] = value;
+    // A hand-typed figure has no warranty multiplier applied, so the raw hours
+    // for that day are the same number — otherwise a stale raw value from an
+    // earlier import would keep feeding Cash Dash.
+    tech[`${day}_raw`] = value;
     const date = currentWeekDates()[day];
     tech.hoursOverride = { ...(tech.hoursOverride || {}), [date]: true };
     onDataChange(newData, structuredClone(vacations));
@@ -880,6 +884,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const tech = newData.technicians[r.idx];
       if (!tech) continue;
       tech[day] = previewTotal(r);
+      // Raw (unmultiplied) hours are kept alongside the credited hours so Cash
+      // Dash can pay on warranty + customer pay + internal at face value.
+      tech[`${day}_raw`] = Math.round((r.warranty + r.other) * 100) / 100;
       tech.hoursOverride = { ...(tech.hoursOverride || {}), [date]: true };
       tech._hrsStamp = stamp; // bump so the uncontrolled inputs remount & repaint
     }
@@ -1106,12 +1113,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         // must be recomputed off that same total — otherwise it stays stuck on
         // the pre-bonus ratio and the gauges/averages read wrong.
         const totalWithBonus = (parseFloat(t.total) || 0) + bonusTotal;
+        // Same figure without the warranty multiplier — Cash Dash pays on this.
+        // Bonus (vacation/training/holiday) is carried the same way it is for
+        // `total`, so this differs from `total` only by the multiplier.
+        const totalRawWithBonus = (parseFloat(t.total_raw ?? t.total) || 0) + bonusTotal;
         const goalNum = parseFloat(t.goal) || 0;
         const entry = {
           date: techWeek.weekStart, label: techWeek.label,
           weekStart: techWeek.weekStart, weekEnd: techWeek.weekEnd,
           type: 'tech', savedAt: new Date().toISOString(),
           total:   totalWithBonus,
+          total_raw: totalRawWithBonus,
           goal:    t.goal,
           goal_pct: goalNum > 0 ? totalWithBonus / goalNum : (parseFloat(t.goal_pct) || 0),
           pacing:  t.pacing,
