@@ -466,5 +466,23 @@
     "notes": "Left Voicemail",
     "submittedAt": "2026-08-28T20:21:27.878Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "PRATIK PATEL",
+    "repairOrder": "780046",
+    "vin": "5NMS2DAJXPH530343",
+    "model": "SANTA FE",
+    "serviceDate": "08/15/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (734) 773 - 6870",
+    "notes": "",
+    "submittedAt": "2026-08-28T20:22:52.330Z",
+    "submittedBy": "CODY"
   }
 ]
