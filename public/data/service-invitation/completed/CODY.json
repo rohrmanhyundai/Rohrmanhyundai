@@ -646,5 +646,23 @@
     "notes": "Left voicemail",
     "submittedAt": "2026-08-31T21:17:47.615Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "MARIANNE NELSON",
+    "repairOrder": "779936",
+    "vin": "KM8JCDD17TU430428",
+    "model": "TUCSON HEV",
+    "serviceDate": "08/11/2026",
+    "invitationDate": "08/13/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (219) 819 - 5311",
+    "notes": "",
+    "submittedAt": "2026-08-31T21:21:04.553Z",
+    "submittedBy": "CODY"
   }
 ]
