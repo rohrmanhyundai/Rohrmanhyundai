@@ -15,22 +15,6 @@
     "flag": "purple"
   },
   {
-    "id": "mtbretl84gew",
-    "ro": "780367",
-    "roDate": "2026-08-27",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CEL ON. FUEL GAUGE SAYS EMPTY WHEN IT IS FULL. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "08/28/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mtagbuaqshol",
     "ro": "780319",
     "roDate": "2026-08-26",
