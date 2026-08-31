@@ -1,5 +1,26 @@
 [
   {
+    "id": "mtbretl84gew",
+    "ro": "780367",
+    "roDate": "2026-08-27",
+    "vehicle": "2026 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES CEL ON. FUEL GAUGE SAYS EMPTY WHEN IT IS FULL. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/28/2026",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "_archiveId": "mthjjejgmj3",
+    "_archivedAt": "2026-08-31T17:57:20.860Z",
+    "_archivedBy": "SHAWN",
+    "_source": "wip",
+    "_sourceTech": "WEI"
+  },
+  {
     "id": "mtagbsqaxfam",
     "ro": "780332",
     "roDate": "2026-08-26",
