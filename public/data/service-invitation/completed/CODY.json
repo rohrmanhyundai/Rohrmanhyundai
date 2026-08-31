@@ -628,5 +628,23 @@
     "notes": "",
     "submittedAt": "2026-08-31T21:15:52.771Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ELMER COVINGTON",
+    "repairOrder": "779958",
+    "vin": "KM8K3CAB8PU938490",
+    "model": "KONA",
+    "serviceDate": "08/12/2026",
+    "invitationDate": "08/14/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "+1 - (765) 366 - 2045",
+    "notes": "Left voicemail",
+    "submittedAt": "2026-08-31T21:17:47.615Z",
+    "submittedBy": "CODY"
   }
 ]
