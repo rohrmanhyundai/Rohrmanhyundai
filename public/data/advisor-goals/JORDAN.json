@@ -609,6 +609,19 @@
       "2026-08-29": {
         "hours": 295.4,
         "hrsRo": 1.12
+      },
+      "2026-08-31": {
+        "hours": 271.9,
+        "hrsRo": 1.08,
+        "openRoCount": 22,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1788206163909
       }
     },
     "entryMode": "mtd"
