@@ -10,35 +10,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "mtc0tz5p2hjr",
-    "ro": "780381",
-    "roDate": "2026-08-27",
-    "vehicle": "2026 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES- died on lot. Won't do into gear or start gas engine",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mtdd683q5u2v",
-    "ro": "780409",
-    "roDate": "2026-08-28",
-    "vehicle": "2020 Hyundai Kona",
-    "jobDesc": "CUSTOMER STATES ENGINE NOISE ON ACCELERATION. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
