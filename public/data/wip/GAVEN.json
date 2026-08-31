@@ -61,5 +61,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mthj1eeqx0dg",
+    "ro": "780446",
+    "roDate": "2026-08-31",
+    "vehicle": "2022 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES- Tow in for.hybrid system warning- has active CEL",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
