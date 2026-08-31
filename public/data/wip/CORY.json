@@ -28,5 +28,21 @@
     "advisor": "CODY",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "mthj1g1dr8hv",
+    "ro": "780440",
+    "roDate": "2026-08-31",
+    "vehicle": "2023 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES BRAKE LIGHT SEEMS TO BE SHORTING OUT. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
