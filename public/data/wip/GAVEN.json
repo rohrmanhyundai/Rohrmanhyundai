@@ -45,37 +45,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mtdd674um715",
-    "ro": "780411",
-    "roDate": "2026-08-28",
-    "vehicle": "2022 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES- Heat and AC failed on controls. Has after market warranty purchased through us.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mthj1eeqx0dg",
-    "ro": "780446",
-    "roDate": "2026-08-31",
-    "vehicle": "2022 Hyundai Tucson Hybrid",
-    "jobDesc": "CUSTOMER STATES- Tow in for.hybrid system warning- has active CEL",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
