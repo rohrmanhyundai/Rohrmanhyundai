@@ -2,7 +2,7 @@
   {
     "id": "mtddqlt20qy4",
     "createdAt": "2026-08-28T20:03:54.470Z",
-    "updatedAt": "2026-08-31T18:07:04.412Z",
+    "updatedAt": "2026-08-31T19:07:32.630Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Jessica Loutsos",
     "customerPhone": "765-769-6140",
@@ -17,7 +17,7 @@
     "claimNumber": "733485",
     "authNumber": "",
     "laborRate": "170.00",
-    "laborTime": ".50",
+    "laborTime": "1.0",
     "diagnosisTime": "1.0",
     "parts": [
       {
@@ -26,6 +26,13 @@
         "description": "WIRING KIT-BLOWER",
         "qty": "1",
         "price": "378.18"
+      },
+      {
+        "id": "mthl6ghyxy04",
+        "partNumber": "18980-09910-FFF",
+        "description": "MULTI FUSE",
+        "qty": "1",
+        "price": "9.69"
       }
     ],
     "taxPct": "7",
@@ -36,7 +43,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "*****PART NOT COVERED***** 18980-09910-FFF - MULTI FUSE. ",
+    "notes": "TSB 25-EE-002H. ",
     "approved": true,
     "approvedDate": "2026-08-31",
     "denied": false,
