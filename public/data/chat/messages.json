@@ -1,83 +1,5 @@
 [
   {
-    "id": "ms7o080eizv",
-    "username": "SHAWN",
-    "text": "@david lets invoise and attach payment to 779318. recalls are done. we will repoen a new RO if we do the amp.",
-    "timestamp": 1785425099918
-  },
-  {
-    "id": "ms7tcrjllto",
-    "username": "SHAWN",
-    "text": "@kai can you remove parts from 779221. we are not doing this used car",
-    "timestamp": 1785434083185
-  },
-  {
-    "id": "ms7wkh6jyu8",
-    "username": "KAI",
-    "text": "@shawn done",
-    "timestamp": 1785439481851
-  },
-  {
-    "id": "ms7yl4ksrpv",
-    "username": "DAVID",
-    "text": "779318- Amp is in the mail",
-    "timestamp": 1785442871404
-  },
-  {
-    "id": "ms7z807mnf3",
-    "username": "KAI",
-    "text": "@david what do you mean? like its shipped or we should have it?",
-    "timestamp": 1785443938834
-  },
-  {
-    "id": "ms7z9xy1iqn",
-    "username": "DAVID",
-    "text": "they ordered through Ebay and should arrive in our parts department early next week",
-    "timestamp": 1785444029209
-  },
-  {
-    "id": "ms7zaowwcwx",
-    "username": "KAI",
-    "text": "thank you",
-    "timestamp": 1785444064160
-  },
-  {
-    "id": "ms8yzpq7dpe",
-    "username": "DAVID",
-    "text": "@shawn, can i get the AllDATA log in again, new computer lost the save",
-    "timestamp": 1785504018175
-  },
-  {
-    "id": "ms93zm9iope",
-    "username": "KAI",
-    "text": "myalldata.com/ip",
-    "timestamp": 1785512411766
-  },
-  {
-    "id": "ms93zr91bjn",
-    "username": "KAI",
-    "text": "@david",
-    "timestamp": 1785512418229
-  },
-  {
-    "id": "ms97chae3w1",
-    "username": "SHAWN",
-    "text": "@jordan have you talked to 776948?",
-    "timestamp": 1785518050694
-  },
-  {
-    "id": "ms97k699cos",
-    "username": "SHAWN",
-    "text": "@jordan is 779436 picking up today?",
-    "timestamp": 1785518409645
-  },
-  {
-    "id": "msaa5mi8sqy",
-    "username": "SETH",
-    "text": "PARTS HERE FOR; CARLTON BLEDSOE, TESFAYE MENGISTE, RACHEL LEIGH MUSSELMAN",
-    "timestamp": 1785583235888
-  },
-  {
     "id": "msengr4plqc",
     "username": "KAI",
     "text": "@cody valve stem is here",
@@ -242,5 +164,11 @@
     "username": "SETH",
     "text": "PARTS RECEIVED FOR; JEANETTE TISDALE-ROWE, BEN UPTON",
     "timestamp": 1788002207320
+  },
+  {
+    "id": "mthf31ifp16",
+    "username": "DAVID",
+    "text": "@shawn 780448, picture added in media of ripping driver seat. Looks like regualr wear but ust asked if we can try to replace under warranty",
+    "timestamp": 1788191559015
   }
 ]
