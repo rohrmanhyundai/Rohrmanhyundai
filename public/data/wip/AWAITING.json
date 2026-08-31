@@ -1,18 +1,5 @@
 [
   {
-    "id": "mthci8e8j2q",
-    "ro": "780443",
-    "roDate": "2026-08-31",
-    "jobDesc": "REAR DR DOOR LOCK ACTUATOR",
-    "highPriority": false,
-    "advisor": "CODY",
-    "notes": "WAITING FOR PARTS TO COME TOMORROW",
-    "partsArrived": false,
-    "partsArrivedDate": "",
-    "isNew": false,
-    "usedCar": false
-  },
-  {
     "id": "msywva7xgb1",
     "ro": "779828",
     "roDate": "2026-08-06",
@@ -23,21 +10,6 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "mt7kdeb41z2j",
-    "ro": "780247",
-    "roDate": "2026-08-24",
-    "vehicle": "2025 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES DRIVER FRONT TIRE FLAT. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": true,
-    "partsArrivedDate": "08/27/2026",
-    "isNew": true
   },
   {
     "id": "mtc0tz5p2hjr",
