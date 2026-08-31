@@ -258,6 +258,15 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     [items, otherItems, tab],
   );
 
+  // An op-code save can land in either library — the Missing Op Codes scanner
+  // spans both tabs — so route the returned index to whichever list it came
+  // from. Writing the other library's items into `items` would replace the list
+  // the current tab is showing.
+  function applySavedItems(newItems, kind) {
+    if (kind === tab) setItems(newItems || []);
+    else setOtherItems((newItems || []).map(it => ({ ...it, _kind: kind })));
+  }
+
   const filteredItems = (search.trim() ? rankedMatches(searchPool, search) : items)
     .slice()
     .sort((a, b) => (b.warranty ? 1 : 0) - (a.warranty ? 1 : 0));
@@ -954,8 +963,8 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       {opEditItem && (
         <OpCodeEditor
           item={opEditItem}
-          kind={tab}
-          onSaved={(newItems) => setItems(newItems)}
+          kind={opEditItem._kind || tab}
+          onSaved={(newItems) => applySavedItems(newItems, opEditItem._kind || tab)}
           onClose={() => setOpEditItem(null)}
         />
       )}
@@ -973,7 +982,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
       )}
       {showMissingOps && (
         <MissingOpCodesModal
-          items={items}
+          items={opCodePool}
           onFix={(it) => { setShowMissingOps(false); setOpEditItem(it); }}
           onClose={() => setShowMissingOps(false)}
         />

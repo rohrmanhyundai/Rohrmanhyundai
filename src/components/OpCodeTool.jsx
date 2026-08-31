@@ -768,9 +768,11 @@ export function OpCodeGenerator({ items, onClose }) {
 }
 
 // ── Missing Op Codes scanner (manager) ────────────────────────────────────────
-// Scans every bulletin on the tab and lists the ones the generator can't produce
-// an op code for (not excluded, no manual op data, and auto-read finds nothing),
-// each with a one-click button to open its editor and fix it.
+// Scans every bulletin in BOTH libraries — the generator searches TSBs and
+// recalls together, so a scan of only the open tab reports "none missing" while
+// the other library still has gaps — and lists the ones the generator can't
+// produce an op code for (not excluded, no manual op data, and auto-read finds
+// nothing), each with a one-click button to open its editor and fix it.
 export function MissingOpCodesModal({ items, onFix, onClose }) {
   const [scanning, setScanning] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -814,7 +816,9 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
         </div>
 
         <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 10 }}>
-          {scanning ? `Scanning bulletins… ${progress}/${total}` : `Scan complete — checked ${total} bulletin(s).`}
+          {scanning
+            ? `Scanning TSBs and recalls… ${progress}/${total}`
+            : `Scan complete — checked ${total} bulletin(s) across TSBs and recalls.`}
         </div>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12, color: '#cbd5e1', marginBottom: 14 }}>
           <span>✅ Auto-readable: <b style={{ color: '#4ade80' }}>{counts.auto}</b></span>
@@ -825,7 +829,7 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
 
         {!scanning && missing.length === 0 ? (
           <div style={{ color: '#4ade80', fontSize: 14, fontWeight: 700, padding: '12px 4px' }}>
-            🎉 No missing op codes — every bulletin either has op codes or can be auto-read.
+            🎉 No missing op codes — every TSB and recall either has op codes or can be auto-read.
           </div>
         ) : (
           <>
@@ -836,6 +840,11 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
               {missing.map(it => (
                 <div key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(248,113,113,.06)', border: '1px solid rgba(248,113,113,.3)', borderRadius: 10, padding: '10px 14px' }}>
                   <span style={{ flex: 1, fontWeight: 700, color: '#e2e8f0', fontSize: 13 }}>{it.label}</span>
+                  {it._kind && (
+                    <span style={{ fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap', color: it._kind === 'recalls' ? '#c4b5fd' : '#6ee7f9' }}>
+                      {it._kind === 'recalls' ? '📢 Recall' : '🔧 TSB'}
+                    </span>
+                  )}
                   <button onClick={() => onFix(it)} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '6px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>⚙️ Fix</button>
                 </div>
               ))}
