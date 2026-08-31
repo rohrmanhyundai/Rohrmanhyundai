@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-31T19:17:57.810Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-08-31T14:41:33.096Z",
     "type": "action",
     "label": "awaiting-mark-parts-pending",
