@@ -610,5 +610,23 @@
     "notes": "Left Voicemail",
     "submittedAt": "2026-08-28T20:34:00.270Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "EVAN SOWINSKI",
+    "repairOrder": "779961",
+    "vin": "KM8KNDAF9PU213158",
+    "model": "IONIQ 5",
+    "serviceDate": "08/12/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "+1 - (937) 459 - 2774",
+    "notes": "",
+    "submittedAt": "2026-08-31T21:15:52.771Z",
+    "submittedBy": "CODY"
   }
 ]
