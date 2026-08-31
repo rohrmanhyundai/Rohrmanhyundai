@@ -14,5 +14,21 @@
     "partsArrivedDate": "08/27/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mthj1cncv5b2",
+    "ro": "780455",
+    "roDate": "2026-08-31",
+    "vehicle": "2019 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES- CEL, rough idle",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
