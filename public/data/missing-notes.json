@@ -1,53 +1,7 @@
 {
-  "updatedAt": "2026-08-31T17:43:25.446Z",
+  "updatedAt": "2026-08-31T22:48:11.129Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "780473",
-        "vehicle": "2026 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780472",
-        "vehicle": "2009 Hyundai Azera"
-      },
-      {
-        "ro": "780465",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "780463",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "780462",
-        "vehicle": "2025 Hyundai Elantra"
-      },
-      {
-        "ro": "780461",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780458",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780450",
-        "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780442",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "780440",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "780409",
-        "vehicle": "2020 Hyundai Kona"
-      }
-    ],
     "CORY": [
       {
         "ro": "780471",
@@ -78,16 +32,8 @@
         "vehicle": "2016 Hyundai Elantra"
       },
       {
-        "ro": "780422",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
         "ro": "780421",
         "vehicle": "2023 Hyundai Sonata"
-      },
-      {
-        "ro": "780420",
-        "vehicle": "2018 Hyundai Sonata"
       },
       {
         "ro": "780419",
@@ -102,21 +48,7 @@
         "vehicle": "2018 Honda Odyssey"
       }
     ],
-    "CODY": [
-      {
-        "ro": "780467",
-        "vehicle": "2023 Hyundai Palisade"
-      }
-    ],
     "DAVID": [
-      {
-        "ro": "780455",
-        "vehicle": "2019 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780446",
-        "vehicle": "2022 Hyundai Tucson Hybrid"
-      },
       {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
