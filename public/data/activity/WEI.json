@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-08-31T11:58:17.675Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
     "at": "2026-08-29T00:52:47.153Z",
     "type": "action",
     "label": "login"
@@ -632,41 +637,6 @@
   },
   {
     "at": "2026-08-01T21:45:03.107Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-31T23:14:58.368Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-07-31T16:16:29.381Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-31T16:16:06.467Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-07-31T16:16:02.762Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-07-31T16:16:02.760Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-07-31T16:16:01.962Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-07-31T11:06:36.571Z",
     "type": "action",
     "label": "login"
   }
