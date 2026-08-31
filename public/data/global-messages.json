@@ -1,24 +1,5 @@
 [
   {
-    "id": "gm-mt782tgx6j82",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "779182 What are we doing with this RO?",
-    "alert": false,
-    "requireReply": true,
-    "replies": [
-      {
-        "id": "rp-mt78bk9kq7yy",
-        "from": "DAVID",
-        "text": "Going to reach back out, today she has hit me with every excuse possible to stall for more time",
-        "timestamp": 1787575537496
-      }
-    ],
-    "timestamp": 1787575129521
-  },
-  {
     "id": "gm-mt7b3bn6qp8f",
     "from": "SHAWN",
     "to": [
@@ -123,5 +104,17 @@
       }
     ],
     "timestamp": 1787792797936
+  },
+  {
+    "id": "gm-mth86oillqnc",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "780409 need PO to close RO please",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788179971485
   }
 ]
