@@ -170,5 +170,16 @@
     "username": "DAVID",
     "text": "@shawn 780448, picture added in media of ripping driver seat. Looks like regualr wear but ust asked if we can try to replace under warranty",
     "timestamp": 1788191559015
+  },
+  {
+    "id": "mthu2ifj7gb",
+    "username": "SHAWN",
+    "text": "@david this is not concidered a manufacture defect sorry",
+    "timestamp": 1788216728527,
+    "replyTo": {
+      "id": "mthf31ifp16",
+      "username": "DAVID",
+      "text": "@shawn 780448, picture added in media of ripping driver seat. Looks like regualr wear but ust asked if we can try to replace under warranty"
+    }
   }
 ]
