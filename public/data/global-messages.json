@@ -1,24 +1,5 @@
 [
   {
-    "id": "gm-mt7b3bn6qp8f",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "779727 What are we doing with this repair?",
-    "alert": false,
-    "requireReply": true,
-    "replies": [
-      {
-        "id": "rp-mt7cruvoi5ou",
-        "from": "DAVID",
-        "text": "stand by",
-        "timestamp": 1787583016212
-      }
-    ],
-    "timestamp": 1787580191922
-  },
-  {
     "id": "gm-mtafqlqv7hvz",
     "from": "SHAWN",
     "to": [
@@ -116,5 +97,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788179971485
+  },
+  {
+    "id": "gm-mthj9itdck9w",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "780462 ARE WE DOING ALIGNMENT?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788198579841
   }
 ]
