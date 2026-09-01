@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-01T20:23:06.916Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
+    "at": "2026-09-01T20:23:03.795Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-01T13:59:19.904Z",
     "type": "page",
     "label": "cash-dash"
