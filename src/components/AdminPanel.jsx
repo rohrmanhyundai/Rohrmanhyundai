@@ -709,7 +709,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         return -1;
       })();
       const colCoupon  = findCol('coupon labor', 'coupon');
-      const colTotalSales = findCol('total sales');
+      const colTotalSales = findCol('labor sale', 'labor sales', 'total sales');
       try { console.log('[advisor-xlsx] header columns:', headerCells); } catch {}
       try { console.log('[advisor-xlsx] picked col indices →', { colName, colHours, colROs, colELR, colCoupon, colTotalSales, elrHeader: colELR >= 0 ? headerCells[colELR] : null }); } catch {}
 
