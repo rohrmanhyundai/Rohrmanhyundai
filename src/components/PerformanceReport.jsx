@@ -213,6 +213,17 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
 
       if (!Object.keys(byFirst).length) throw new Error('No advisor rows found in this report.');
 
+      // Which fields this file actually carries. Without this, a column the
+      // report doesn't have is indistinguishable from one that simply matched,
+      // and a silently-missing Coupon Labor would look like "no change".
+      const present = new Set();
+      for (const f of Object.values(byFirst)) for (const k of Object.keys(f)) present.add(k);
+      const expected = kind === 'pdf'
+        ? ['align', 'tires', 'valvoline', 'asr']
+        : ['mtd_hours', 'ro_count', 'hours_per_ro', 'elr', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
+      const carried = UPLOAD_FIELDS.filter(f => expected.includes(f.key) && present.has(f.key)).map(f => f.label);
+      const absent  = UPLOAD_FIELDS.filter(f => expected.includes(f.key) && !present.has(f.key)).map(f => f.label);
+
       // Only people on the roster as advisors get written — the report can list
       // names that aren't ours, and a first name can collide with a technician.
       setUploadMsg('⏳ Matching advisors…');
@@ -254,7 +265,7 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
         targets.push({ username: first, entries: saved, date: target.date, fields, changes });
       }
 
-      setUploadPreview({ fileName: file.name, kind, targets, skipped });
+      setUploadPreview({ fileName: file.name, kind, targets, skipped, carried, absent });
       setUploadMsg(collapsed.length
         ? `⚠️ Not expanded in this report, so Internal hours were NOT subtracted and their MTD Hrs read high: ${collapsed.join(', ')}. Re-save the page in Pay Type View with every advisor expanded.`
         : '');
@@ -395,8 +406,14 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
               const total = changed.reduce((n, t) => n + t.changes.length, 0);
               return (
               <>
-                <div style={{ fontSize: 11, fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 6 }}>
                   {uploadPreview.fileName} → {monthLabel}, all advisors
+                </div>
+                <div style={{ fontSize: 11.5, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
+                  Read from this file: {(uploadPreview.carried || []).join(', ') || 'nothing'}
+                  {(uploadPreview.absent || []).length > 0 && (
+                    <span style={{ color: '#fbbf24' }}> · No column for {uploadPreview.absent.join(', ')} — left untouched</span>
+                  )}
                 </div>
 
                 {changed.length === 0 ? (
