@@ -685,7 +685,21 @@
   "2026-09": {
     "hoursGoal": 415,
     "hrsRoGoal": 1.5,
-    "days": {},
+    "days": {
+      "2026-09-01": {
+        "hours": 1,
+        "hrsRo": 0.2,
+        "openRoCount": 11,
+        "invoiced": "no",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1788295312324
+      }
+    },
     "entryMode": "mtd"
   }
 }
