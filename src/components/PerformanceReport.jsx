@@ -56,7 +56,7 @@ const UPLOAD_FIELDS = [
   { key: 'hours_per_ro',     label: 'Hrs/RO',       fmt: v => num(v, 2) },
   { key: 'elr',              label: 'ELR',          fmt: pct },
   { key: 'coupon_labor',     label: 'Coupon Labor', fmt: money },
-  { key: 'total_sales',      label: 'Total Sales',  fmt: money },
+  { key: 'total_sales',      label: 'Labor Sales',  fmt: money },
   { key: 'coupon_usage_pct', label: 'Coupon Usage', fmt: pct },
   { key: 'align',            label: 'Alignment',    fmt: pct },
   { key: 'tires',            label: 'Tires',        fmt: pct },

@@ -92,7 +92,8 @@ function internalHoursFrom(found) {
 // Parse a saved Tekion "Advisor Performance Report" page (Pay Type View).
 // Returns { rows, warnings } where each row is:
 //   { name, bill_hrs_total, internal_hours, mtd_hours, ro_count, elr,
-//     coupon_labor, total_sales, payTypes, detailed }
+//     coupon_labor, total_sales (from the Labor Sale column), payTypes,
+//     detailed }
 export function parseAdvisorReportHtml(htmlText) {
   const doc = new DOMParser().parseFromString(String(htmlText || ''), 'text/html');
   const outer = findAdvisorTable(doc);
@@ -105,7 +106,14 @@ export function parseAdvisorReportHtml(htmlText) {
   const iROs     = findHead(heads, h => /^ro\s*count$/i.test(h));
   const iELR     = findHead(heads, h => ['elr(%)', 'elr%'].includes(stripWs(h)));
   const iCoupon  = findHead(heads, h => /coupon/i.test(h));
-  const iSales   = findHead(heads, h => /^total\s*sales$/i.test(h));
+  // The dashboard's "Labor Sales" field (stored as total_sales) is the coupon
+  // denominator: Coupon Usage % = Coupon Labor / Labor Sales, target 5-7%.
+  // Tekion prints BOTH "Labor Sale" and "Total Sales"; Total Sales includes
+  // parts, which drags the ratio to ~2.7% and puts the target out of reach —
+  // Labor Sale puts it at ~6.2%. Fall back to Total Sales only for an older
+  // report that has no Labor Sale column.
+  const iLaborSale = findHead(heads, h => /^labor\s*sales?$/i.test(h));
+  const iSales   = iLaborSale !== -1 ? iLaborSale : findHead(heads, h => /^total\s*sales$/i.test(h));
 
   const rows = [];
   const warnings = [];

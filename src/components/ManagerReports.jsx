@@ -82,7 +82,7 @@ async function parseAdvisorXlsxFile(file) {
   const colHours   = findCol('bill hours', 'bill hour', 'bill hrs', 'billed hours', 'billed hrs');
   const colROs     = findCol('ro count', '# ros', "ro's", 'ros');
   const colCoupon  = findCol('coupon labor', 'coupon');
-  const colTotalSales = findCol('total sales');
+  const colTotalSales = findCol('labor sale', 'labor sales', 'total sales');
 
   if (colName === -1) throw new Error('No Advisor Name column found in XLSX.');
 
