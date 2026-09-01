@@ -6,7 +6,8 @@
       "KADEN": 157,
       "CARTER": 112,
       "BRYSON": 43,
-      "CORY": 12
+      "CORY": 12,
+      "WEI": 9
     },
     "advHours": {
       "DAVID": 324,
@@ -14,7 +15,7 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788278258009,
+    "updatedAt": 1788278269076,
     "repScore": 74
   }
 }
