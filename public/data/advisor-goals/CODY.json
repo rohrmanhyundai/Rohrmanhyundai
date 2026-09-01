@@ -303,7 +303,21 @@
   "2026-09": {
     "hoursGoal": 250,
     "hrsRoGoal": 1,
-    "days": {},
+    "days": {
+      "2026-09-01": {
+        "hours": 3.2,
+        "hrsRo": 1.6,
+        "openRoCount": 5,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "CODY",
+        "submittedAt": 1788299767964
+      }
+    },
     "entryMode": "mtd"
   }
 }
