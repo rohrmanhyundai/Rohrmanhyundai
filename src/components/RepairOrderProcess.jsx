@@ -11,13 +11,37 @@ function ageOf(r) {
   return null;
 }
 
-// Apply the manager rules to one RO. sev drives sort order + highlight.
-//  5 urgent  — READY_FOR_DISPATCH older than 1 day
-//  4 high    — READY_FOR_INVOICE + warranty (red) flag, not invoiced
-//  3 high    — flag "Ready for AWN Review" and not INVOICED
-//  2 warn    — READY_FOR_DISPATCH (needs to get in the shop)
-//  1 info    — READY_FOR_INVOICE, no flag (tech done, needs acceptance)
-//  0 none    — INVOICED / anything else (shown, not highlighted)
+// Severity drives sort order and row highlight. Highest first.
+const SEV = {
+  DISPATCH_OVERDUE: 7,   // READY_FOR_DISPATCH older than 1 day
+  OPEN_STALLED:     6,   // open work sitting past the stalled threshold
+  WARRANTY:         5,   // READY_FOR_INVOICE + warranty (red) flag, not invoiced
+  AWN:              4,   // "Ready for AWN Review" and not INVOICED
+  OPEN_AGING:       3,   // open work past the aging threshold
+  DISPATCH:         2,   // READY_FOR_DISPATCH (needs to get in the shop)
+  ACCEPTANCE:       1,   // READY_FOR_INVOICE, no flag (needs acceptance)
+  NONE:             0,   // INVOICED / anything else (shown, not highlighted)
+};
+
+// Statuses that mean the RO still has OPEN WORK — the tech has claimed it but
+// lines remain unfinished.
+//
+// CP Status deliberately plays no part here. It is ONE LINE's state, not the
+// RO's: a used-car RO with no customer-pay lines reads CP=COMPLETED while the
+// repair is still open (780470 and its neighbours), so treating it as "done"
+// would hide live work. Age is the only reliable signal for these.
+const OPEN_WORK = new Set(['TECH_ASSIGNED', 'PARTIALLY_ASSIGNED', 'IN_PROGRESS']);
+
+// Days of open work before the page calls it out. Used-car recon (GREEN flag)
+// gets a longer leash — a recon unit sitting a few days isn't a customer
+// waiting on their car.
+const OPEN_THRESHOLDS = {
+  customer: { aging: 3, stalled: 7 },
+  used:     { aging: 5, stalled: 10 },
+};
+const isUsedCar = (r) => /green/i.test(String(r.userFlag || ''));
+
+// Apply the manager rules to one RO.
 function evaluate(r) {
   const st = normStatus(r.roStatus);
   const warranty = !!r.warranty;
@@ -28,27 +52,44 @@ function evaluate(r) {
   const awnReview = flagText.includes('awn') && flagText.includes('review');
 
   if (st === 'READY_FOR_DISPATCH') {
-    if (age != null && age > 1) return { sev: 5, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: `Car needs to get into the shop — ${age} days old.` };
-    return { sev: 2, tag: 'Get car in shop', color: '#fbbf24', msg: 'Car needs to get into the shop.' };
+    if (age != null && age > 1) return { sev: SEV.DISPATCH_OVERDUE, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: `Car needs to get into the shop — ${age} days old.` };
+    return { sev: SEV.DISPATCH, tag: 'Get car in shop', color: '#fbbf24', msg: 'Car needs to get into the shop.' };
   }
   if (awnReview && !invoiced) {
-    return { sev: 3, tag: 'AWN — needs invoicing', color: '#c084fc', pulse: 'coaching-glow', msg: 'Ready for AWN repair needs invoiced.' };
+    return { sev: SEV.AWN, tag: 'AWN — needs invoicing', color: '#c084fc', pulse: 'coaching-glow', msg: 'Ready for AWN repair needs invoiced.' };
   }
   if (st === 'READY_FOR_INVOICE') {
-    if (warranty) return { sev: 4, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Check repair order — flagged warranty but not invoiced.' };
-    return { sev: 1, tag: 'Needs acceptance', color: '#38bdf8', msg: 'Tech has completed car repair — needs acceptance.' };
+    if (warranty) return { sev: SEV.WARRANTY, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Check repair order — flagged warranty but not invoiced.' };
+    return { sev: SEV.ACCEPTANCE, tag: 'Needs acceptance', color: '#38bdf8', msg: 'Tech has completed car repair — needs acceptance.' };
+  }
+  if (OPEN_WORK.has(st)) {
+    const used = isUsedCar(r);
+    const t = used ? OPEN_THRESHOLDS.used : OPEN_THRESHOLDS.customer;
+    const kind = used ? 'Used-car recon' : 'Open work';
+    if (age != null && age >= t.stalled) {
+      return { sev: SEV.OPEN_STALLED, tag: 'Open work — stalled', color: '#f87171', pulse: 'attn-high-row',
+               msg: `${kind} still open after ${age} days — find out what it's waiting on.` };
+    }
+    if (age != null && age >= t.aging) {
+      return { sev: SEV.OPEN_AGING, tag: 'Open work — aging', color: '#fbbf24',
+               msg: `${kind} open ${age} days.` };
+    }
+    // Inside the leash — the tech has it and it's moving.
+    return { sev: SEV.NONE, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
   }
   // INVOICED (with or without flag) and everything else → no alert.
-  return { sev: 0, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
+  return { sev: SEV.NONE, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
 }
 
 const CATS = [
-  { key: 'all',  label: 'All ROs',            color: '#94a3b8' },
-  { key: 5,      label: 'Dispatch overdue',   color: '#f87171' },
-  { key: 4,      label: 'Warranty not invoiced', color: '#fb923c' },
-  { key: 3,      label: 'AWN needs invoicing', color: '#c084fc' },
-  { key: 2,      label: 'Get car in shop',    color: '#fbbf24' },
-  { key: 1,      label: 'Needs acceptance',   color: '#38bdf8' },
+  { key: 'all',                  label: 'All ROs',               color: '#94a3b8' },
+  { key: SEV.DISPATCH_OVERDUE,   label: 'Dispatch overdue',      color: '#f87171' },
+  { key: SEV.OPEN_STALLED,       label: 'Open work stalled',     color: '#f87171' },
+  { key: SEV.WARRANTY,           label: 'Warranty not invoiced', color: '#fb923c' },
+  { key: SEV.AWN,                label: 'AWN needs invoicing',   color: '#c084fc' },
+  { key: SEV.OPEN_AGING,         label: 'Open work aging',       color: '#fbbf24' },
+  { key: SEV.DISPATCH,           label: 'Get car in shop',       color: '#fbbf24' },
+  { key: SEV.ACCEPTANCE,         label: 'Needs acceptance',      color: '#38bdf8' },
 ];
 
 export default function RepairOrderProcess({ onBack, currentRole }) {
@@ -84,7 +125,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
   }, [data]);
 
   const counts = useMemo(() => {
-    const c = { all: evaluated.length, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const c = { all: evaluated.length, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
     evaluated.forEach(({ e }) => { if (c[e.sev] != null) c[e.sev] += 1; });
     return c;
   }, [evaluated]);
