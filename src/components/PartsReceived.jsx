@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
   loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, listWipTechs,
-  updateTechChatMessages,
+  updateTechChatMessages, loadUsers,
 } from '../utils/github';
+import { firstNameUpper, canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 import { trackAction } from '../utils/activityTracker';
 
@@ -40,6 +41,44 @@ async function postTechChat(username, text) {
   // Append against the fresh server list so a simultaneous chat send isn't lost.
   await updateTechChatMessages(cur => [...cur, newMsg]);
   triggerEvent(TECH_CHANNEL, NEW_MSG_EVENT);
+}
+
+// Tag the RO's advisor and technician so both get the @mention popup — the
+// app-level watcher pops an alert for anyone named in a chat message (see
+// utils/mentions), and every advisor has tech chat access.
+//
+// Names are resolved against the real user list AND the person's role, never on
+// the first name alone: most WIP rows carry advisor "CORY CHAPMAN" while CORY
+// is a TECHNICIAN's username, so a blind @CORY would ping the wrong person on
+// every one of those ROs. A name that doesn't resolve is simply left off.
+async function mentionTagsFor(match) {
+  const roleOf = new Map();
+  try {
+    const loaded = await loadUsers();
+    for (const u of (loaded?.users || [])) {
+      roleOf.set(String(u.username || '').toUpperCase(), String(u.role || '').toLowerCase());
+    }
+  } catch {
+    return '';   // no roster to check against, so make no guesses
+  }
+  const pick = (raw, normalize, isRole) => {
+    const first = normalize(raw);
+    if (!first) return null;
+    const role = roleOf.get(first);
+    return role && isRole(role) ? first : null;
+  };
+
+  const names = [];
+  // Advisor is stored as printed ("JORDAN TROXEL"), so alias + first name it.
+  const advisor = pick(match.advisor, canonicalAdvisorFirst, r => r.includes('advisor'));
+  if (advisor) names.push(advisor);
+  // An awaiting row has no assigned tech — techName is the "Cars Awaiting"
+  // bucket rather than a person — so only the advisor is tagged there.
+  if (match._source !== 'awaiting') {
+    const tech = pick(match.techName, firstNameUpper, r => r.includes('technician'));
+    if (tech) names.push(tech);
+  }
+  return [...new Set(names)].map(n => `@${n}`).join(' ');
 }
 
 const overlaySt = {
@@ -123,12 +162,13 @@ export default function PartsReceived({ currentUser, onClose, onPosted }) {
           ? { ...r, partsArrived: true, partsArrivedDate: today } : r);
         await saveWipData(match.techName, updated);
       }
-      // Auto-post to Tech Chat
-      await postTechChat(currentUser, `RO ${match.ro} parts have been received`);
+      // Auto-post to Tech Chat, @-tagging the advisor and tech on the RO.
+      const tags = await mentionTagsFor(match);
+      await postTechChat(currentUser, `${tags ? tags + ' ' : ''}RO ${match.ro} parts have been received`);
       onPosted && onPosted();
       trackAction('parts-received-mark', `RO ${match.ro || '?'}`);
       setMatches(prev => (prev || []).map(m => m.id === match.id ? { ...m, partsArrived: true, partsArrivedDate: today } : m));
-      setDone(`RO ${match.ro} marked Parts In and posted to Tech Chat.`);
+      setDone(`RO ${match.ro} marked Parts In and posted to Tech Chat${tags ? ` — notified ${tags}` : ''}.`);
     } catch (e) {
       setError(e.message || String(e));
     } finally {
