@@ -5,7 +5,7 @@
       "JACOB": 197,
       "KADEN": 145,
       "CARTER": 112,
-      "BRYSON": 43
+      "BRYSON": 43.4
     },
     "advHours": {
       "DAVID": 324,
@@ -13,7 +13,7 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788277969103,
+    "updatedAt": 1788277970177,
     "repScore": 74
   }
 }
