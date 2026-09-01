@@ -1,10 +1,11 @@
 {
   "2026-08": {
     "techHours": {
-      "GAVEN": 16
+      "GAVEN": 16,
+      "JACOB": 1
     },
     "repCount": 3,
-    "updatedAt": 1788261894608,
+    "updatedAt": 1788261904983,
     "repScore": 73
   }
 }
