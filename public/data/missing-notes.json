@@ -1,37 +1,15 @@
 {
-  "updatedAt": "2026-09-01T18:00:33.042Z",
+  "updatedAt": "2026-09-01T19:15:27.265Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
-      {
-        "ro": "780511",
-        "vehicle": "2024 Hyundai Venue"
-      },
-      {
-        "ro": "780496",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "780493",
-        "vehicle": "2027 Hyundai Kona"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "780510",
-        "vehicle": "2017 Hyundai Sonata"
-      },
-      {
-        "ro": "780509",
-        "vehicle": "2021 Hyundai Palisade"
-      },
-      {
-        "ro": "780508",
+        "ro": "780517",
         "vehicle": "2020 Hyundai Santa Fe"
       },
       {
-        "ro": "780506",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "780516",
+        "vehicle": "2024 Hyundai Palisade"
       },
       {
         "ro": "780495",
@@ -40,19 +18,21 @@
       {
         "ro": "780486",
         "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780484",
-        "vehicle": "2025 Hyundai IONIQ 6"
-      }
-    ],
-    "SHAWN": [
-      {
-        "ro": "780505",
-        "vehicle": "2025 Hyundai Elantra"
       }
     ],
     "CORY": [
+      {
+        "ro": "780515",
+        "vehicle": "2019 Subaru Crosstrek"
+      },
+      {
+        "ro": "780514",
+        "vehicle": "2020 Kia Soul"
+      },
+      {
+        "ro": "780513",
+        "vehicle": "2020 Kia Soul"
+      },
       {
         "ro": "780501",
         "vehicle": "2022 Chevrolet Traverse"
@@ -72,10 +52,6 @@
       {
         "ro": "780466",
         "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "780464",
-        "vehicle": "2021 Hyundai Sonata"
       },
       {
         "ro": "780424",
@@ -100,6 +76,10 @@
     ],
     "DAVID": [
       {
+        "ro": "780512",
+        "vehicle": "2018 Hyundai Elantra"
+      },
+      {
         "ro": "780497",
         "vehicle": "2026 Hyundai Venue"
       },
@@ -110,6 +90,26 @@
       {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780511",
+        "vehicle": "2024 Hyundai Venue"
+      },
+      {
+        "ro": "780496",
+        "vehicle": "2026 Hyundai Sonata"
+      },
+      {
+        "ro": "780493",
+        "vehicle": "2027 Hyundai Kona"
+      }
+    ],
+    "SHAWN": [
+      {
+        "ro": "780505",
+        "vehicle": "2025 Hyundai Elantra"
       }
     ]
   }
