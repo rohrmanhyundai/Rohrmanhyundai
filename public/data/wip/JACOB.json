@@ -110,5 +110,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mtiz34wr6k8r",
+    "ro": "780501",
+    "roDate": "2026-09-01",
+    "vehicle": "2022 Chevrolet Traverse",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
