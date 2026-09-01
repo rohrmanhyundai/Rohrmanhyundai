@@ -1,5 +1,21 @@
 [
   {
+    "id": "mt7rkkcjoxrf",
+    "ro": "780281",
+    "roDate": "2026-08-24",
+    "vehicle": "2022 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES SHIFTER SYSTEM MALFUNCTION SERVICE IMMEDIATELY WARNING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "08/29/2026",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
+  },
+  {
     "id": "mt8za7xuwb1",
     "ro": "780132",
     "roDate": "2026-08-19",
@@ -29,6 +45,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mthu04qddjb",
+    "ro": "780443",
+    "roDate": "2026-08-31",
+    "vehicle": "",
+    "jobDesc": "REAR DRIVER DOOR LOCK ACTUATOR ",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "09/01/2026",
+    "highPriority": false,
+    "advisor": "CODY",
+    "notes": "waiting on parts. ",
+    "flag": "purple"
   },
   {
     "id": "mtiz35tnhqby",
