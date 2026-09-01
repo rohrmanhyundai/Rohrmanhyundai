@@ -448,6 +448,11 @@
     "id": "mtj0vxbkaco",
     "username": "SHAWN",
     "text": "@DAVID @JACOB RO 780382 parts have been received",
-    "timestamp": 1788288644720
+    "timestamp": 1788288644720,
+    "reactions": {
+      "👍": [
+        "DAVID"
+      ]
+    }
   }
 ]
