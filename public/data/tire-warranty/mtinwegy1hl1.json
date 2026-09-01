@@ -1,0 +1,43 @@
+{
+  "id": "mtinwegy1hl1",
+  "createdAt": "2026-09-01T12:47:11.938Z",
+  "updatedAt": "2026-09-01T12:50:29.321Z",
+  "createdBy": "Jordan",
+  "customerName": "Caleb Mikels ",
+  "repairOrder": "780486",
+  "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-repairorder-1788266883834.jpg",
+  "originalPurchasePhoto": "",
+  "replacementQuotePhoto": "",
+  "wheels": {
+    "LF": {
+      "tire": false,
+      "rim": false
+    },
+    "RF": {
+      "tire": false,
+      "rim": false
+    },
+    "LR": {
+      "tire": true,
+      "rim": false,
+      "treadDepth": "8/32"
+    },
+    "RR": {
+      "tire": false,
+      "rim": false
+    }
+  },
+  "photos": {
+    "LF": {},
+    "RF": {},
+    "LR": {
+      "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-tireDamage-1788266970333.jpg",
+      "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-dot-1788266987336.jpg",
+      "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-size-1788266994976.jpg",
+      "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-brand-1788267002989.jpg",
+      "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-gauge-1788267020706.jpg",
+      "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtinwegy1hl1-LR-tireFull-1788267026361.jpg"
+    },
+    "RR": {}
+  }
+}
