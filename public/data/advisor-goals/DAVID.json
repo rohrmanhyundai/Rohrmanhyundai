@@ -684,7 +684,7 @@
   },
   "2026-09": {
     "hoursGoal": 415,
-    "hrsRoGoal": 1,
+    "hrsRoGoal": 1.5,
     "days": {},
     "entryMode": "mtd"
   }
