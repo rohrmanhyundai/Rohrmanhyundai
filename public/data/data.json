@@ -715,7 +715,7 @@
         "asr": 0.1412,
         "elr": 0.9133,
         "last_month_total": 424.6,
-        "roh50_hrs_ro": 0.74,
+        "roh50_hrs_ro": 0.78,
         "hidden": false,
         "ro_count": 242,
         "coupon_labor": 2943.92,
@@ -752,7 +752,7 @@
         "align": 0.0921,
         "tires": 0.1316,
         "valvoline": 0.0658,
-        "roh50_hrs_ro": 0.66,
+        "roh50_hrs_ro": 0.67,
         "csi": 1000,
         "asr": 0.1184,
         "elr": 0.8821,
@@ -857,7 +857,7 @@
     "cpGoal": 76715,
     "cpActual": 50165.71,
     "advisorMonthlyWorkdays": 27,
-    "service_policy": 688.12
+    "service_policy": 936.25
   },
   "vacations": [
     {
