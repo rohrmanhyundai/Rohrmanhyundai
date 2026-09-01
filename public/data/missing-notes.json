@@ -1,8 +1,62 @@
 {
-  "updatedAt": "2026-08-31T22:48:11.129Z",
+  "updatedAt": "2026-09-01T18:00:26.988Z",
   "by": "SHAWN",
   "advisors": {
+    "CODY": [
+      {
+        "ro": "780511",
+        "vehicle": "2024 Hyundai Venue"
+      },
+      {
+        "ro": "780496",
+        "vehicle": "2026 Hyundai Sonata"
+      },
+      {
+        "ro": "780493",
+        "vehicle": "2027 Hyundai Kona"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780510",
+        "vehicle": "2017 Hyundai Sonata"
+      },
+      {
+        "ro": "780509",
+        "vehicle": "2021 Hyundai Palisade"
+      },
+      {
+        "ro": "780508",
+        "vehicle": "2020 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780506",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "780495",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780486",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780484",
+        "vehicle": "2025 Hyundai IONIQ 6"
+      }
+    ],
+    "SHAWN": [
+      {
+        "ro": "780505",
+        "vehicle": "2025 Hyundai Elantra"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "780501",
+        "vehicle": "2022 Chevrolet Traverse"
+      },
       {
         "ro": "780471",
         "vehicle": "2019 Chrysler Pacifica"
@@ -14,10 +68,6 @@
       {
         "ro": "780469",
         "vehicle": "2013 Kia Soul"
-      },
-      {
-        "ro": "780468",
-        "vehicle": "2024 Hyundai Santa Fe"
       },
       {
         "ro": "780466",
@@ -49,6 +99,14 @@
       }
     ],
     "DAVID": [
+      {
+        "ro": "780497",
+        "vehicle": "2026 Hyundai Venue"
+      },
+      {
+        "ro": "780494",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
       {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
