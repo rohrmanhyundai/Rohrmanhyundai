@@ -5,8 +5,11 @@
       "JACOB": 197,
       "KADEN": 145
     },
+    "advHours": {
+      "DAVID": 2
+    },
     "repCount": 3,
-    "updatedAt": 1788262631628,
+    "updatedAt": 1788262703399,
     "repScore": 73
   }
 }
