@@ -6,9 +6,9 @@
     "type": "advisor",
     "savedAt": "2026-09-01T12:21:27.885Z",
     "csi": 1000,
-    "hours_per_ro": 0.78,
+    "hours_per_ro": 0.76,
     "roh50_hrs_ro": 0.67,
-    "mtd_hours": 120.9,
+    "mtd_hours": 117.7,
     "daily_avg": 0,
     "align": 0.0843,
     "tires": 0.1205,
@@ -19,7 +19,9 @@
     "ro_count": 155,
     "coupon_labor": 1815.29,
     "total_sales": 31244.56,
-    "coupon_usage_pct": 0.05809939394249751
+    "coupon_usage_pct": 0.0581,
+    "revisedAt": "2026-09-01T13:30:40.218Z",
+    "revisedFrom": "html"
   },
   {
     "date": "2026-08-29",
