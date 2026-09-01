@@ -667,8 +667,8 @@
         "submittedAt": 1787951001486
       },
       "2026-08-31": {
-        "hours": 292,
-        "hrsRo": 1.23,
+        "hours": 292.5,
+        "hrsRo": 1.21,
         "openRoCount": 10,
         "invoiced": "no",
         "customersUpdated": "yes",
