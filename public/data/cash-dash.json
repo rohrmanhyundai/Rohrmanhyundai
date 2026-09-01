@@ -3,7 +3,8 @@
     "techHours": {
       "GAVEN": 167,
       "JACOB": 197,
-      "KADEN": 145
+      "KADEN": 145,
+      "CARTER": 1
     },
     "advHours": {
       "DAVID": 324,
@@ -11,7 +12,7 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788265033721,
+    "updatedAt": 1788277945475,
     "repScore": 74
   }
 }
