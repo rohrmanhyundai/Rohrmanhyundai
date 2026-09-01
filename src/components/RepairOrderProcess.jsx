@@ -11,6 +11,12 @@ function ageOf(r) {
   return null;
 }
 
+// "READY_FOR_DISPATCH" → "Ready for dispatch".
+const prettyStatus = (v) => {
+  const t = String(v || '').trim().replace(/_/g, ' ').toLowerCase();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+};
+
 // Severity drives sort order and row highlight. Highest first.
 const SEV = {
   DISPATCH_OVERDUE: 7,   // READY_FOR_DISPATCH older than 1 day
@@ -52,15 +58,15 @@ function evaluate(r) {
   const awnReview = flagText.includes('awn') && flagText.includes('review');
 
   if (st === 'READY_FOR_DISPATCH') {
-    if (age != null && age > 1) return { sev: SEV.DISPATCH_OVERDUE, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: `Car needs to get into the shop — ${age} days old.` };
+    if (age != null && age > 1) return { sev: SEV.DISPATCH_OVERDUE, tag: 'Dispatch overdue', color: '#f87171', pulse: 'attn-high-row', msg: 'Get the car into the shop.' };
     return { sev: SEV.DISPATCH, tag: 'Get car in shop', color: '#fbbf24', msg: 'Car needs to get into the shop.' };
   }
   if (awnReview && !invoiced) {
-    return { sev: SEV.AWN, tag: 'AWN — needs invoicing', color: '#c084fc', pulse: 'coaching-glow', msg: 'Ready for AWN repair needs invoiced.' };
+    return { sev: SEV.AWN, tag: 'AWN — needs invoicing', color: '#c084fc', pulse: 'coaching-glow', msg: 'AWN repair needs invoiced.' };
   }
   if (st === 'READY_FOR_INVOICE') {
-    if (warranty) return { sev: SEV.WARRANTY, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Check repair order — flagged warranty but not invoiced.' };
-    return { sev: SEV.ACCEPTANCE, tag: 'Needs acceptance', color: '#38bdf8', msg: 'Tech has completed car repair — needs acceptance.' };
+    if (warranty) return { sev: SEV.WARRANTY, tag: 'Warranty — not invoiced', color: '#fb923c', pulse: 'tire-missing-alert', msg: 'Flagged warranty but not invoiced.' };
+    return { sev: SEV.ACCEPTANCE, tag: 'Needs acceptance', color: '#38bdf8', msg: 'Tech finished — accept the RO.' };
   }
   if (OPEN_WORK.has(st)) {
     const used = isUsedCar(r);
@@ -68,11 +74,11 @@ function evaluate(r) {
     const kind = used ? 'Used-car recon' : 'Open work';
     if (age != null && age >= t.stalled) {
       return { sev: SEV.OPEN_STALLED, tag: 'Open work — stalled', color: '#f87171', pulse: 'attn-high-row',
-               msg: `${kind} still open after ${age} days — find out what it's waiting on.` };
+               msg: `${kind} — find out what it's waiting on.` };
     }
     if (age != null && age >= t.aging) {
       return { sev: SEV.OPEN_AGING, tag: 'Open work — aging', color: '#fbbf24',
-               msg: `${kind} open ${age} days.` };
+               msg: kind === 'Used-car recon' ? 'Used-car recon.' : '' };
     }
     // Inside the leash — the tech has it and it's moving.
     return { sev: SEV.NONE, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
@@ -137,7 +143,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
 
   const cardSt = { background: 'rgba(15,23,42,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 14, padding: 18, marginBottom: 20 };
   const thSt = { textAlign: 'left', padding: '9px 12px', color: '#64748b', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.2)', whiteSpace: 'nowrap' };
-  const tdSt = { padding: '9px 12px', color: '#cbd5e1', borderBottom: '1px solid rgba(148,163,184,.07)', verticalAlign: 'middle' };
+  const tdSt = { padding: '9px 12px', color: '#cbd5e1', borderBottom: '1px solid rgba(148,163,184,.07)', verticalAlign: 'middle', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' };
 
   if (!isManager) {
     return (
@@ -167,17 +173,17 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 28px 48px' }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        <div style={{ maxWidth: 1440, margin: '0 auto' }}>
           {error && <div style={{ color: '#fca5a5', fontSize: 14, marginBottom: 14, background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '10px 14px' }}>{error}</div>}
 
           {/* Filter chips */}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 18 }}>
             {CATS.map(c => {
               const n = c.key === 'all' ? counts.all : counts[c.key];
               const active = String(filter) === String(c.key);
               return (
                 <div key={c.key} onClick={() => setFilter(c.key)}
-                  style={{ cursor: 'pointer', background: active ? `${c.color}22` : 'rgba(15,23,42,.55)', border: `1px solid ${c.color}${active ? 'aa' : '44'}`, borderRadius: 12, padding: '10px 16px', minWidth: 120 }}>
+                  style={{ cursor: 'pointer', flex: '1 1 128px', background: active ? `${c.color}22` : 'rgba(15,23,42,.55)', border: `1px solid ${c.color}${active ? 'aa' : '44'}`, borderRadius: 12, padding: '10px 14px' }}>
                   <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em' }}>{c.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: c.color }}>{n ?? 0}</div>
                 </div>
@@ -199,32 +205,38 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
             <div style={{ ...cardSt, padding: 0, overflow: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead><tr style={{ position: 'sticky', top: 0, background: '#0f172a', zIndex: 1 }}>
-                  <th style={thSt}>RO #</th><th style={thSt}>Advisor</th><th style={thSt}>Technician</th>
-                  <th style={thSt}>RO Status</th><th style={thSt}>CP Status</th><th style={thSt}>Warranty</th>
-                  <th style={thSt}>Age</th><th style={{ ...thSt, minWidth: 260 }}>What to do</th>
+                  <th style={{ ...thSt, width: 92 }}>RO #</th>
+                  <th style={{ ...thSt, width: 150 }}>Advisor</th>
+                  <th style={{ ...thSt, width: 160 }}>Technician</th>
+                  <th style={{ ...thSt, width: 150 }}>RO Status</th>
+                  <th style={{ ...thSt, width: 110 }} title="One LINE's status, not the RO's — a used-car RO with no customer-pay lines reads Completed while the repair is still open.">CP Line</th>
+                  <th style={{ ...thSt, width: 58, textAlign: 'right' }}>Age</th>
+                  <th style={thSt}>What to do</th>
                 </tr></thead>
                 <tbody>
                   {visible.map(({ r, e, age }, i) => (
                     <tr key={r.ro + i} className={e.pulse || undefined}
                       style={{ background: e.sev >= 1 ? `${e.color}14` : 'transparent' }}>
-                      <td style={{ ...tdSt, fontFamily: 'monospace', color: '#6ee7f9', fontWeight: 700 }}>{r.ro}</td>
-                      <td style={tdSt}>{r.advisor || '—'}</td>
-                      <td style={tdSt}>{r.tech || '—'}</td>
-                      <td style={{ ...tdSt, fontWeight: 700, color: e.color }}>{r.roStatus || '—'}</td>
-                      <td style={tdSt}>{r.cpStatus || '—'}</td>
-                      <td style={{ ...tdSt, textAlign: 'center' }}>{r.warranty ? <span title="Warranty (red flag)" style={{ color: '#f87171', fontWeight: 800 }}>🚩</span> : <span style={{ color: '#475569' }}>—</span>}</td>
-                      <td style={{ ...tdSt, fontWeight: 700, color: age != null && age > 1 ? '#f87171' : '#cbd5e1' }}>{age != null ? `${age}d` : '—'}</td>
+                      <td style={{ ...tdSt, fontFamily: 'monospace', color: '#6ee7f9', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        {r.ro}
+                        {r.warranty && <span title="Warranty (red flag)" style={{ marginLeft: 5 }}>🚩</span>}
+                      </td>
+                      <td style={{ ...tdSt, fontSize: 12.5, wordBreak: 'break-word' }} title={r.advisor || ''}>{r.advisor || '—'}</td>
+                      <td style={{ ...tdSt, fontSize: 12.5, wordBreak: 'break-word' }} title={r.tech || ''}>{r.tech || '—'}</td>
+                      <td style={{ ...tdSt, fontWeight: 700, color: e.color, fontSize: 12.5 }}>{prettyStatus(r.roStatus) || '—'}</td>
+                      <td style={{ ...tdSt, fontSize: 12, color: '#64748b' }}>{prettyStatus(r.cpStatus) || '—'}</td>
+                      <td style={{ ...tdSt, fontWeight: 700, textAlign: 'right', whiteSpace: 'nowrap', color: age != null && age > 1 ? '#f87171' : '#cbd5e1' }}>{age != null ? `${age}d` : '—'}</td>
                       <td style={tdSt}>
-                        {e.msg
-                          ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+                        {e.sev > 0
+                          ? <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
                               <span style={{ background: `${e.color}22`, border: `1px solid ${e.color}88`, color: e.color, borderRadius: 999, padding: '3px 10px', fontWeight: 800, fontSize: 11, whiteSpace: 'nowrap' }}>{e.sev >= 3 ? '⚠️ ' : ''}{e.tag}</span>
-                              <span style={{ color: '#e2e8f0' }}>{e.msg}</span>
-                            </span>
+                              {e.msg && <span style={{ color: '#94a3b8', fontSize: 12.5 }}>{e.msg}</span>}
+                            </div>
                           : <span style={{ color: '#475569' }}>—</span>}
                       </td>
                     </tr>
                   ))}
-                  {visible.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={8}>No repair orders in this category.</td></tr>}
+                  {visible.length === 0 && <tr><td style={{ ...tdSt, color: '#64748b' }} colSpan={7}>No repair orders in this category.</td></tr>}
                 </tbody>
               </table>
             </div>
