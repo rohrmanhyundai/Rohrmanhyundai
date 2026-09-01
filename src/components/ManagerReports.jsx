@@ -5,9 +5,40 @@ import { generateTechCoaching, generateAdvisorCoaching, getOpenAIKey } from '../
 import PerformanceReport, { CoachingReportBody } from './PerformanceReport';
 import { trackAction } from '../utils/activityTracker';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
+import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 
 // ── Shared helpers reused by the historical backfill uploader ────────────────
 const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+
+// Hrs/RO and Coupon Usage % are computed from the imported figures rather than
+// read off the report, so both file formats land on the same derived numbers.
+function deriveAdvisorFields(f) {
+  const sales = parseFloat(f.total_sales) || 0;
+  const coupon = parseFloat(f.coupon_labor) || 0;
+  if (sales > 0) f.coupon_usage_pct = Math.round((coupon / sales) * 10000) / 10000;
+  const hrs = parseFloat(f.mtd_hours) || 0;
+  const ros = parseFloat(f.ro_count) || 0;
+  if (ros > 0) f.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+  return f;
+}
+
+// Parses a saved Tekion Advisor Performance Report (.html, Pay Type View) and
+// returns { byFirst: { firstName → fields }, notExpanded }. MTD Hrs is Bill Hrs
+// minus the advisor's Internal Bill Hrs; every other field is the top-level row.
+async function parseAdvisorHtmlFile(file) {
+  const { rows } = parseAdvisorReportHtml(await file.text());
+  const byFirst = {};
+  const notExpanded = [];
+  for (const row of rows) {
+    const fn = firstWord(row.name);
+    if (!fn) continue;
+    const fields = byFirst[fn] || (byFirst[fn] = { reportName: row.name });
+    Object.assign(fields, advisorFieldsFromRow(row));
+    if (!row.detailed) notExpanded.push(row.name);
+  }
+  for (const fn of Object.keys(byFirst)) deriveAdvisorFields(byFirst[fn]);
+  return { byFirst, notExpanded };
+}
 
 // Parses an advisor performance .xlsx and returns { firstName → fields }. The
 // fields cover MTD Hrs, MTD ROs, ELR %, Coupon Labor, Total Sales — same set
@@ -77,15 +108,7 @@ async function parseAdvisorXlsxFile(file) {
     if (colTotalSales !== -1) { const v = num(row[colTotalSales]); if (v !== null) fields.total_sales = v; }
   }
   // Derive coupon usage % per row.
-  for (const fn of Object.keys(out)) {
-    const f = out[fn];
-    const sales = parseFloat(f.total_sales) || 0;
-    const coupon = parseFloat(f.coupon_labor) || 0;
-    if (sales > 0) f.coupon_usage_pct = Math.round((coupon / sales) * 10000) / 10000;
-    const hrs = parseFloat(f.mtd_hours) || 0;
-    const ros = parseFloat(f.ro_count) || 0;
-    if (ros > 0) f.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
-  }
+  for (const fn of Object.keys(out)) deriveAdvisorFields(out[fn]);
   return out;
 }
 
@@ -568,8 +591,12 @@ export default function ManagerReports({ users, onBack }) {
     setBackfillStatus('⏳ Parsing files…');
     try {
       const merged = {}; // firstName → { fields, reportName }
+      let notExpanded = [];
       if (backfillXlsxFile) {
-        const x = await parseAdvisorXlsxFile(backfillXlsxFile);
+        const isHtml = /\.html?$/i.test(backfillXlsxFile.name || '');
+        let x;
+        if (isHtml) ({ byFirst: x, notExpanded } = await parseAdvisorHtmlFile(backfillXlsxFile));
+        else x = await parseAdvisorXlsxFile(backfillXlsxFile);
         for (const fn of Object.keys(x)) merged[fn] = { ...(merged[fn] || {}), ...x[fn] };
       }
       if (backfillPdfFile) {
@@ -629,6 +656,7 @@ export default function ManagerReports({ users, onBack }) {
 
       const parts = [`✅ Backfilled ${updated} advisor${updated === 1 ? '' : 's'} for ${labelDate}`];
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      if (notExpanded.length)  parts.push(`· ⚠️ not expanded, Internal NOT subtracted: ${notExpanded.join(', ')}`);
       if (skipped.length)      parts.push(`· skipped (not on dashboard): ${skipped.join(', ')}`);
       setBackfillStatus(parts.join(' '));
       // Reset file refs but keep the modal open so the user can see the summary.
@@ -1252,16 +1280,16 @@ export default function ManagerReports({ users, onBack }) {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>Advisor Performance Report (.xlsx)</label>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 4 }}>Advisor Performance Report (.html)</label>
                   <input
                     ref={backfillXlsxRef}
                     type="file"
-                    accept=".xlsx,.xls"
+                    accept=".html,.htm,.xlsx,.xls"
                     disabled={backfillBusy}
                     onChange={e => setBackfillXlsxFile((e.target.files && e.target.files[0]) || null)}
                     style={{ fontSize: 12, color: '#cbd5e1' }}
                   />
-                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>Fills MTD Hrs, MTD ROs, ELR %, Coupon Labor, Total Sales.</div>
+                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>Fills MTD Hrs, MTD ROs, ELR %, Coupon Labor, Total Sales. Save the Tekion report in <strong>Pay Type View</strong> with every advisor expanded — MTD Hrs = Bill Hrs minus Internal.</div>
                 </div>
 
                 <div>

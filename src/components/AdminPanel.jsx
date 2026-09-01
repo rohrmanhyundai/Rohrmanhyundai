@@ -12,6 +12,7 @@ import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/push
 import { trackAction } from '../utils/activityTracker';
 import { hasExcelTraining } from '../utils/training';
 import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
+import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -568,6 +569,73 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
       if (skipped.length)      parts.push(`· skipped: ${skipped.slice(0, 4).join(', ')}${skipped.length > 4 ? '…' : ''}`);
       setAdvisorXlsxStatus(parts.join(' '));
+      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
+    } catch (err) {
+      setAdvisorXlsxStatus('❌ ' + (err.message || err));
+    } finally {
+      setAdvisorXlsxBusy(false);
+      if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = '';
+    }
+  }
+
+  // Parse a saved Tekion Advisor Performance Report (.html, Pay Type View) and
+  // merge its numbers into the on-screen advisor list. Same field set as the
+  // .xlsx path, except MTD Hrs is Bill Hrs minus the advisor's Internal Bill
+  // Hrs — see utils/advisorPerfReport.
+  async function handleAdvisorHtml(file) {
+    if (!file) return;
+    trackAction('upload-advisor-html', file.name);
+    setAdvisorXlsxBusy(true);
+    setAdvisorXlsxStatus('Reading file…');
+    try {
+      const { rows, warnings } = parseAdvisorReportHtml(await file.text());
+
+      const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+      const newData = structuredClone(data);
+      const newAdvisors = newData.advisors;
+
+      let updated = 0;
+      const skipped = [];      // in the report but not on the dashboard
+      const updatedNames = [];
+      const notExpanded = [];  // rows we couldn't net Internal out of
+
+      for (const row of rows) {
+        // Apply report aliases (e.g. "CAIDEN HENSON" → "ISAIAH") before matching.
+        const firstReport = canonicalAdvisorFirst(row.name).toLowerCase();
+        if (!firstReport) continue;
+
+        const matchIdx = newAdvisors.findIndex(a => firstWord(a.name) === firstReport);
+        if (matchIdx === -1) { skipped.push(row.name); continue; }
+        const adv = newAdvisors[matchIdx];
+
+        const fields = advisorFieldsFromRow(row);
+        if (!Object.keys(fields).length) continue;
+        Object.assign(adv, fields);
+        if (!row.detailed) notExpanded.push(adv.name);
+
+        // Re-derive Hrs/RO any time MTD Hrs or RO count changed (matches manual editor behavior).
+        const hrs = parseFloat(adv.mtd_hours) || 0;
+        const ros = parseFloat(adv.ro_count) || 0;
+        if (ros > 0) adv.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+        // Coupon usage % = Coupon Labor ÷ Total Sales. Normal range 5-7%.
+        const sales = parseFloat(adv.total_sales) || 0;
+        const couponLabor = parseFloat(adv.coupon_labor) || 0;
+        if (sales > 0) adv.coupon_usage_pct = Math.round((couponLabor / sales) * 10000) / 10000;
+
+        updated++;
+        updatedNames.push(adv.name);
+      }
+
+      const bumpStamp = Date.now();
+      for (const a of newAdvisors) a._lastImport = bumpStamp;
+      onDataChange(newData, structuredClone(vacations));
+
+      const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'} from HTML`];
+      if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
+      if (notExpanded.length)  parts.push(`· ⚠️ not expanded, Internal NOT subtracted: ${notExpanded.join(', ')}`);
+      if (skipped.length)      parts.push(`· skipped ${skipped.length} not on dashboard: ${skipped.join(', ')}`);
+      setAdvisorXlsxStatus(parts.join(' '));
+      try { if (warnings.length) console.warn('[advisor-html]', warnings); } catch {}
       setTimeout(() => setAdvisorXlsxStatus(''), 30000);
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
@@ -1552,27 +1620,29 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <div style={{ background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12, padding: '14px 16px', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
             <div style={{ fontSize: 18 }}>📥</div>
-            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.xlsx or .pdf)</div>
+            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.html or .pdf)</div>
           </div>
           <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
-            <strong>XLSX</strong> fills MTD Hrs (Bill Hours), MTD ROs (RO Count), ELR %, Coupon Labor.
+            <strong>HTML</strong> (Tekion report saved in <em>Pay Type View</em>) fills MTD Hrs, MTD ROs (RO Count), ELR %, Coupon Labor, Total Sales.
             &nbsp;·&nbsp;
             <strong>PDF</strong> fills Alignment % (Alignment PEN %), Valvoline % (Valvoline PEN %), Tires % (Tires PEN %), ASR % (% of ASR sold).
-            <br />Both match by the report's advisor first name. Click <em>Save Changes</em> after to push it live.
+            <br /><strong style={{ color: '#fbbf24' }}>Expand every advisor before saving the page</strong> — MTD Hrs is Bill Hrs minus that advisor's <em>Internal</em> Bill Hrs, and a collapsed row has no Internal line to subtract.
+            <br />Both match by the report's advisor first name. Click <em>Save Changes</em> after to push it live. (Legacy .xlsx still imports, but without the Internal subtraction.)
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <input
               ref={advisorXlsxInputRef}
               type="file"
-              accept=".xlsx,.xls,.pdf"
+              accept=".html,.htm,.xlsx,.xls,.pdf"
               disabled={advisorXlsxBusy}
               onChange={e => {
                 const f = e.target.files && e.target.files[0];
                 if (!f) return;
                 const ext = (f.name || '').toLowerCase().split('.').pop();
                 if (ext === 'pdf')        handleAdvisorPdf(f);
+                else if (ext === 'html' || ext === 'htm') handleAdvisorHtml(f);
                 else if (ext === 'xlsx' || ext === 'xls') handleAdvisorXlsx(f);
-                else { setAdvisorXlsxStatus('❌ Unsupported file type. Use .xlsx or .pdf.'); if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = ''; }
+                else { setAdvisorXlsxStatus('❌ Unsupported file type. Use .html or .pdf.'); if (advisorXlsxInputRef.current) advisorXlsxInputRef.current.value = ''; }
               }}
               style={{ fontSize: 12, color: '#cbd5e1' }}
             />
