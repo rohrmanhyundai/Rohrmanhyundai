@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { loadGithubFile, saveGithubFile, loadCoaching, loadDashboardData, recordCoachingView } from '../utils/github';
+import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
+import { parseAdvisorSaTotalsPdf } from '../utils/advisorSaTotalsPdf';
+import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -37,6 +40,30 @@ function num(val, decimals = 1) {
   return n.toFixed(decimals);
 }
 
+function money(val) {
+  if (val === null || val === undefined || val === '') return '—';
+  const n = parseFloat(val);
+  if (isNaN(n)) return '—';
+  return '$' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// The fields a re-uploaded report can revise, and how each reads on screen.
+// CSI, Roh$50 Hrs/RO and Daily Avg aren't on either report, so an upload never
+// touches them.
+const UPLOAD_FIELDS = [
+  { key: 'mtd_hours',        label: 'MTD Hrs',      fmt: v => num(v, 1) },
+  { key: 'ro_count',         label: 'MTD ROs',      fmt: v => (v === null || v === undefined || v === '' ? '—' : String(v)) },
+  { key: 'hours_per_ro',     label: 'Hrs/RO',       fmt: v => num(v, 2) },
+  { key: 'elr',              label: 'ELR',          fmt: pct },
+  { key: 'coupon_labor',     label: 'Coupon Labor', fmt: money },
+  { key: 'total_sales',      label: 'Total Sales',  fmt: money },
+  { key: 'coupon_usage_pct', label: 'Coupon Usage', fmt: pct },
+  { key: 'align',            label: 'Alignment',    fmt: pct },
+  { key: 'tires',            label: 'Tires',        fmt: pct },
+  { key: 'valvoline',        label: 'Valvoline',    fmt: pct },
+  { key: 'asr',              label: 'ASR',          fmt: pct },
+];
+
 function StatBox({ label, value, color = '#6ee7f9', compact = false }) {
   const pad   = compact ? '10px 10px' : '14px 18px';
   const min   = compact ? 72 : 100;
@@ -61,7 +88,7 @@ function TrendIcon({ curr, prev, higher = true }) {
 // ─────────────────────────────────────────────────────────────
 // ADVISOR VIEW — daily snapshots grouped by month
 // ─────────────────────────────────────────────────────────────
-function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }) {
+function AdvisorReport({ entries, username, canDelete = false, canUpload = false, onEntriesChange }) {
   // Coaching reports — same source as the tech view.
   const [coachingReports, setCoachingReports] = useState([]);
   const [coachingLoading, setCoachingLoading] = useState(false);
@@ -121,6 +148,97 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
 
   const latest = monthEntries[0];
 
+  // ── Upload Report — revise a finished month ───────────────────────────────
+  // Accounting keeps posting after the last day of the month, so the snapshot
+  // captured on the 31st goes stale. Re-uploading the report rewrites that
+  // snapshot in place instead of adding another day: the .html carries the
+  // hours / RO / ELR / coupon figures, the SA Totals .pdf the penetration %.
+  const uploadInputRef = useRef(null);
+  const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState('');
+  const [uploadPreview, setUploadPreview] = useState(null);
+
+  useEffect(() => { setUploadPreview(null); setUploadMsg(''); }, [selectedMonth]);
+
+  async function readUploadedReport(file) {
+    setUploadMsg(''); setUploadPreview(null);
+    if (!file || !latest) return;
+    setUploadBusy(true);
+    try {
+      const ext = (file.name || '').toLowerCase().split('.').pop();
+      // Report names get aliased onto the roster; the roster name is already canonical.
+      const mine = firstNameUpper(username);
+      let fields = null, kind = '', warn = '';
+      let found = [];   // names the report does list, for a useful error
+
+      if (ext === 'html' || ext === 'htm') {
+        kind = 'html';
+        const { rows } = parseAdvisorReportHtml(await file.text());
+        found = rows.map(r => r.name);
+        const row = rows.find(r => canonicalAdvisorFirst(r.name) === mine);
+        if (row) {
+          fields = advisorFieldsFromRow(row);
+          // Hrs/RO and Coupon Usage % are derived, never read off the report.
+          const hrs = parseFloat(fields.mtd_hours), ros = parseFloat(fields.ro_count);
+          if (ros > 0 && !isNaN(hrs)) fields.hours_per_ro = Math.round((hrs / ros) * 100) / 100;
+          const sales = parseFloat(fields.total_sales), coupon = parseFloat(fields.coupon_labor);
+          if (sales > 0 && !isNaN(coupon)) fields.coupon_usage_pct = Math.round((coupon / sales) * 10000) / 10000;
+          if (!row.detailed) warn = `⚠️ ${row.name} wasn't expanded in this report, so Internal hours were NOT subtracted — MTD Hrs reads high. Re-save the page in Pay Type View with every advisor expanded.`;
+        }
+      } else if (ext === 'pdf') {
+        kind = 'pdf';
+        const byFirst = await parseAdvisorSaTotalsPdf(file);
+        found = Object.values(byFirst).map(f => f.reportName).filter(Boolean);
+        const key = Object.keys(byFirst).find(k => canonicalAdvisorFirst(k) === mine);
+        if (key) { const { reportName, ...rest } = byFirst[key]; fields = rest; }
+      } else {
+        throw new Error('Unsupported file type — upload the Advisor Performance Report (.html) or the SA Totals report (.pdf).');
+      }
+
+      if (!fields || !Object.keys(fields).length) {
+        throw new Error(`${username} isn't in this report. It lists: ${found.slice(0, 8).join(', ')}${found.length > 8 ? '…' : ''}`);
+      }
+
+      // Only surface fields whose value actually moved — a revision is usually
+      // a handful of numbers, and showing the unchanged ones buries them.
+      const changes = UPLOAD_FIELDS
+        .filter(f => fields[f.key] !== undefined && fields[f.key] !== null)
+        .map(f => ({ ...f, from: latest[f.key], to: fields[f.key] }))
+        .filter(c => String(c.from ?? '') !== String(c.to));
+
+      setUploadPreview({ fileName: file.name, kind, fields, changes, date: latest.date });
+      if (warn) setUploadMsg(warn);
+    } catch (err) {
+      setUploadMsg('❌ ' + (err?.message || err));
+    } finally {
+      setUploadBusy(false);
+      if (uploadInputRef.current) uploadInputRef.current.value = '';
+    }
+  }
+
+  async function applyUpload() {
+    if (!uploadPreview) return;
+    setUploadBusy(true);
+    try {
+      const next = entries.map(e =>
+        e.date === uploadPreview.date && (e.month || (e.date || '').slice(0, 7)) === selectedMonth
+          ? { ...e, ...uploadPreview.fields, revisedAt: new Date().toISOString(), revisedFrom: uploadPreview.kind }
+          : e
+      );
+      await saveGithubFile(
+        `data/performance-reports/${username}.json`, next,
+        `Revise ${uploadPreview.date} snapshot for ${username} from uploaded ${uploadPreview.kind}`
+      );
+      onEntriesChange && onEntriesChange(next);
+      setUploadMsg(`✅ Updated ${fmtDate(uploadPreview.date)} from ${uploadPreview.fileName}.`);
+      setUploadPreview(null);
+    } catch (err) {
+      setUploadMsg('❌ Save failed: ' + (err?.message || err));
+    } finally {
+      setUploadBusy(false);
+    }
+  }
+
   const [yr, mo] = selectedMonth ? selectedMonth.split('-') : ['', ''];
   const monthLabel = yr && mo ? `${MONTHS[parseInt(mo) - 1]} ${yr}` : selectedMonth;
 
@@ -130,6 +248,32 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, gap: 12, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1 }}>Select Month</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {canUpload && selectedMonth && monthEntries.length > 0 && (
+            <>
+              <input
+                ref={uploadInputRef}
+                type="file"
+                accept=".html,.htm,.pdf"
+                style={{ display: 'none' }}
+                onChange={e => { const f = e.target.files && e.target.files[0]; if (f) readUploadedReport(f); }}
+              />
+              <button
+                onClick={() => uploadInputRef.current && uploadInputRef.current.click()}
+                disabled={uploadBusy}
+                style={{
+                  background: 'rgba(96,165,250,.18)',
+                  border: '1px solid rgba(96,165,250,.5)',
+                  color: '#bfdbfe',
+                  borderRadius: 8, padding: '5px 12px', fontWeight: 800, fontSize: 12,
+                  cursor: uploadBusy ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+                }}
+                title={`Re-upload the report to revise the ${(() => { const [y, m] = selectedMonth.split('-'); return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`; })()} numbers after accounting closes the month (.html or .pdf)`}
+              >
+                {uploadBusy ? '⏳ Reading…' : '⬆ Upload Report'}
+              </button>
+            </>
+          )}
           {canDelete && selectedMonth && (
             <button
               onClick={async () => {
@@ -158,6 +302,7 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
               🗑 Delete {(() => { const [y, m] = selectedMonth.split('-'); return `${MONTHS[parseInt(m)-1].slice(0,3)} ${y}`; })()}
             </button>
           )}
+          </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {monthKeys.map(mk => {
@@ -173,6 +318,63 @@ function AdvisorReport({ entries, username, canDelete = false, onEntriesChange }
             );
           })}
         </div>
+
+        {/* Upload preview — nothing is written until the changes are confirmed. */}
+        {(uploadMsg || uploadPreview) && (
+          <div style={{ marginTop: 12, background: 'rgba(96,165,250,.07)', border: '1px solid rgba(96,165,250,.28)', borderRadius: 12, padding: '12px 16px' }}>
+            {uploadMsg && (
+              <div style={{
+                fontSize: 12, fontWeight: 700, lineHeight: 1.5, marginBottom: uploadPreview ? 10 : 0,
+                color: uploadMsg.startsWith('❌') ? '#f87171' : uploadMsg.startsWith('⚠️') ? '#fbbf24' : '#4ade80',
+              }}>{uploadMsg}</div>
+            )}
+            {uploadPreview && (
+              <>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: .8, marginBottom: 10 }}>
+                  {uploadPreview.fileName} → {monthLabel} latest snapshot ({fmtDate(uploadPreview.date)})
+                </div>
+                {uploadPreview.changes.length === 0 ? (
+                  <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12 }}>
+                    Every number this report carries already matches the saved snapshot — nothing to revise.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+                    {uploadPreview.changes.map(c => (
+                      <div key={c.key} style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 12.5, flexWrap: 'wrap' }}>
+                        <span style={{ minWidth: 104, color: '#64748b', fontWeight: 700 }}>{c.label}</span>
+                        <span style={{ color: '#64748b', textDecoration: 'line-through' }}>{c.fmt(c.from)}</span>
+                        <span style={{ color: '#475569' }}>→</span>
+                        <span style={{ color: '#6ee7f9', fontWeight: 800 }}>{c.fmt(c.to)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button
+                    onClick={applyUpload}
+                    disabled={uploadBusy || uploadPreview.changes.length === 0}
+                    style={{
+                      background: uploadPreview.changes.length === 0 ? 'rgba(255,255,255,.04)' : 'rgba(61,214,195,.2)',
+                      border: `1px solid ${uploadPreview.changes.length === 0 ? 'rgba(255,255,255,.1)' : 'rgba(61,214,195,.5)'}`,
+                      color: uploadPreview.changes.length === 0 ? '#475569' : '#6ee7f9',
+                      borderRadius: 8, padding: '6px 16px', fontWeight: 800, fontSize: 12.5,
+                      cursor: (uploadBusy || uploadPreview.changes.length === 0) ? 'not-allowed' : 'pointer',
+                    }}
+                  >{uploadBusy ? '⏳ Saving…' : `Apply ${uploadPreview.changes.length} change${uploadPreview.changes.length === 1 ? '' : 's'}`}</button>
+                  <button
+                    onClick={() => { setUploadPreview(null); setUploadMsg(''); }}
+                    disabled={uploadBusy}
+                    style={{
+                      background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.12)',
+                      color: '#94a3b8', borderRadius: 8, padding: '6px 16px', fontWeight: 700, fontSize: 12.5,
+                      cursor: uploadBusy ? 'not-allowed' : 'pointer',
+                    }}
+                  >Cancel</button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Coaching Report toggle — sits up top so the advisor sees it immediately */}
@@ -1133,7 +1335,7 @@ function TechReport({ entries, username }) {
 // ─────────────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────
-export default function PerformanceReport({ currentUser, role, onBack, canDelete = false }) {
+export default function PerformanceReport({ currentUser, role, onBack, canDelete = false, canUpload = false }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -1201,7 +1403,7 @@ export default function PerformanceReport({ currentUser, role, onBack, canDelete
               </div>
             </div>
           ) : isAdvisor ? (
-            <AdvisorReport entries={entries} username={username} canDelete={canDelete} onEntriesChange={setEntries} />
+            <AdvisorReport entries={entries} username={username} canDelete={canDelete} canUpload={canUpload} onEntriesChange={setEntries} />
           ) : isTech ? (
             <TechReport entries={entries} username={username} />
           ) : (

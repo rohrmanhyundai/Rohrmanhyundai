@@ -1205,6 +1205,7 @@ export default function App() {
         role={jobRole}
         onBack={() => navTo(prevPage || (jobRole === 'technician' ? 'tech-resources' : 'advisor-calendar'))}
         canDelete={isAdminOrManager}
+        canUpload={isAdminOrManager}
       />
     );
   }
