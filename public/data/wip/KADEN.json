@@ -14,5 +14,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtiz36ovkq95",
+    "ro": "780487",
+    "roDate": "2026-09-01",
+    "vehicle": "2009 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES CAR WAS MAKING A STRANGE NOISE ON ACCELERATION, NOISE HAS STOPPED AND HASN’T COME BACK. WANTS EVERYTHING CHECKED OUT. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
