@@ -6,10 +6,11 @@
       "KADEN": 145
     },
     "advHours": {
-      "DAVID": 283.1
+      "DAVID": 283.1,
+      "JORDAN": 2
     },
     "repCount": 3,
-    "updatedAt": 1788262708750,
+    "updatedAt": 1788262715236,
     "repScore": 73
   }
 }
