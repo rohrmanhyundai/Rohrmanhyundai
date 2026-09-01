@@ -722,7 +722,7 @@
         "_lastImport": 1788261433453,
         "total_sales": 123088.45,
         "coupon_usage_pct": 0.0262,
-        "min_csi": 913
+        "min_csi": 917
       },
       {
         "name": "JORDAN",
@@ -732,7 +732,7 @@
         "align": 0.1034,
         "tires": 0.1103,
         "valvoline": 0.2069,
-        "csi": 901,
+        "csi": 916,
         "asr": 0.1529,
         "elr": 0.9045,
         "last_month_total": 467.6,
@@ -742,7 +742,7 @@
         "_lastImport": 1788261433453,
         "total_sales": 111243.51,
         "coupon_usage_pct": 0.0273,
-        "min_csi": 913
+        "min_csi": 917
       },
       {
         "name": "CODY",
@@ -763,7 +763,7 @@
         "coupon_labor": 1815.29,
         "total_sales": 31244.56,
         "coupon_usage_pct": 0.0581,
-        "min_csi": 913
+        "min_csi": 917
       }
     ],
     "advisorTraining": [
@@ -839,7 +839,7 @@
       "align": 0.08923333333333333,
       "tires": 0.11026666666666667,
       "valvoline": 0.1464,
-      "csi": 953
+      "csi": 958
     },
     "techTotals": {
       "mon": 45.7,
