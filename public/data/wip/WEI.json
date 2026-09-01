@@ -15,20 +15,6 @@
     "flag": "purple"
   },
   {
-    "id": "mtagbuaqshol",
-    "ro": "780319",
-    "roDate": "2026-08-26",
-    "vehicle": "2025 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CAR WILL NOT START BUT WILL REMOTE START",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": true,
-    "partsArrivedDate": "09/01/2026"
-  },
-  {
     "id": "mtdd683q5u2v",
     "ro": "780409",
     "roDate": "2026-08-28",
