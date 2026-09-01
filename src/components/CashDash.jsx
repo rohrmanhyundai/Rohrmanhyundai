@@ -54,6 +54,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [techHours, setTechHours] = useState({}); // { NAME: hours } manual override for PLAN.monthKey
+  const [advHours, setAdvHours] = useState({});   // { NAME: hours } manual override for advisors
   const [autoTech, setAutoTech] = useState({});    // { NAME: hours } auto-summed from the daily posts
   const [repCount, setRepCount] = useState('');    // Reputation.com survey/review count
   const [repScore, setRepScore] = useState('');    // Reputation.com score
@@ -65,6 +66,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
       const all = await loadCashDash();
       const b = (all && all[PLAN.monthKey]) || {};
       setTechHours(b.techHours || {});
+      setAdvHours(b.advHours || {});
       setRepCount(b.repCount != null ? b.repCount : '');
       setRepScore(b.repScore != null ? b.repScore : '');
     } catch {} finally { setLoading(false); }
@@ -115,8 +117,16 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   // Rosters. Advisors carry mtd_hours (hours sold); techs pull from techHours.
   const advisorRows = useMemo(() => (advisors || [])
     .filter(a => a && a.name)
-    .map(a => ({ name: firstName(a.name), display: a.name, role: 'advisor', hours: num(a.mtd_hours) }))
-    .sort((x, y) => x.name.localeCompare(y.name)), [advisors]);
+    .map(a => {
+      const k = firstName(a.name);
+      const override = advHours[k];
+      const hasOverride = override != null && String(override).trim() !== '';
+      const auto = num(a.mtd_hours);
+      const hours = hasOverride ? num(override) : auto;        // override wins, else the advisor's MTD hours
+      const raw = hasOverride ? override : (auto ? String(auto) : '');
+      return { name: k, display: a.name, role: 'advisor', hours, raw, auto, overridden: hasOverride };
+    })
+    .sort((x, y) => x.name.localeCompare(y.name)), [advisors, advHours]);
   const techRows = useMemo(() => (technicians || [])
     .filter(t => t && t.name)
     .map(t => {
@@ -148,6 +158,22 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
         const th = { ...(bucket.techHours || {}) };
         if (empty) delete th[key]; else th[key] = num(val);     // blank clears the override → back to auto
         bucket.techHours = th; bucket.updatedAt = Date.now();
+        return { ...cur, [PLAN.monthKey]: bucket };
+      });
+    } catch {} finally { setSaving(''); }
+  }
+
+  async function setAdv(name, val) {
+    const key = firstName(name);
+    const empty = String(val).trim() === '';
+    setAdvHours(prev => { const n = { ...prev }; if (empty) delete n[key]; else n[key] = val; return n; }); // optimistic
+    setSaving(key);
+    try {
+      await updateCashDash(cur => {
+        const bucket = { techHours: {}, advHours: {}, ...(cur[PLAN.monthKey] || {}) };
+        const ah = { ...(bucket.advHours || {}) };
+        if (empty) delete ah[key]; else ah[key] = num(val);     // blank clears the override → back to MTD hours
+        bucket.advHours = ah; bucket.updatedAt = Date.now();
         return { ...cur, [PLAN.monthKey]: bucket };
       });
     } catch {} finally { setSaving(''); }
@@ -188,9 +214,11 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
           ) : isManager ? (
             <>
               <Roster title="Service Advisors" unit={PLAN.advisor.unit} rows={advisorRows} tiers={PLAN.advisor.tiers}
-                pace={pace} onOpen={setSelected} />
+                pace={pace} editable editNote="auto-filled from hours sold — type to override" saving={saving}
+                onEdit={setAdv} onOpen={setSelected} loading={loading} />
               <Roster title="Technicians" unit={PLAN.tech.unit} rows={techRows} tiers={PLAN.tech.tiers} pace={pace}
-                editable saving={saving} onEdit={setTech} onOpen={setSelected} warning={PLAN.tech.warning} loading={loading} />
+                editable editNote="auto-filled from daily posts — type to override" saving={saving}
+                onEdit={setTech} onOpen={setSelected} warning={PLAN.tech.warning} loading={loading} />
             </>
           ) : (
             <div style={{ color: '#94a3b8', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>You’re not part of the {PLAN.label} Cash Dash.</div>
@@ -402,12 +430,12 @@ function Stat({ label, value, accent, sub, big }) {
 }
 
 // ── Manager overview list for one role ────────────────────────────────────────
-function Roster({ title, unit, rows, tiers, pace, editable, saving, onEdit, onOpen, warning, loading }) {
+function Roster({ title, unit, rows, tiers, pace, editable, editNote, saving, onEdit, onOpen, warning, loading }) {
   return (
     <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
       <div style={{ padding: '13px 18px', background: 'rgba(148,163,184,.08)', borderBottom: '1px solid rgba(148,163,184,.14)' }}>
         <div style={{ fontSize: 15, fontWeight: 900, color: '#f1f5f9' }}>{title}</div>
-        <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{unit}{editable ? ' · auto-filled from daily posts — type to override' : ''}</div>
+        <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{unit}{editable && editNote ? ` · ${editNote}` : ''}</div>
       </div>
       {warning && <div style={{ padding: '9px 18px', background: 'rgba(248,113,113,.1)', color: '#fca5a5', fontSize: 12, fontWeight: 700 }}>⚠️ {warning}</div>}
       <div style={{ display: 'flex', padding: '8px 18px', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>
@@ -424,7 +452,7 @@ function Roster({ title, unit, rows, tiers, pace, editable, saving, onEdit, onOp
               <div style={{ flex: 1, fontSize: 14.5, fontWeight: 800, color: '#e2e8f0' }}>{r.display}</div>
               <div style={{ width: 120, textAlign: 'right' }}>
                 {editable
-                  ? <input value={r.raw != null ? r.raw : ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0" title={r.overridden ? `Overridden (auto: ${hrs(r.auto)})` : 'Auto from daily posts'}
+                  ? <input value={r.raw != null ? r.raw : ''} onChange={e => onEdit(r.name, e.target.value)} inputMode="decimal" placeholder="0" title={r.overridden ? `Overridden (auto: ${hrs(r.auto)})` : 'Auto — clear to restore'}
                       style={{ width: 90, background: 'rgba(2,6,23,.55)', border: `1px solid ${r.overridden ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.3)'}`, borderRadius: 8, color: r.overridden ? '#fde68a' : '#f1f5f9', padding: '5px 9px', fontSize: 14, fontWeight: 800, textAlign: 'right', outline: 'none' }} />
                   : <span style={{ fontSize: 15, fontWeight: 800, color: '#6ee7b7' }}>{hrs(r.hours)}</span>}
               </div>
