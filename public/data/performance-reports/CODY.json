@@ -17,9 +17,11 @@
     "elr": 0.8734,
     "last_month_total": 120.9,
     "ro_count": 155,
-    "coupon_labor": 1815.29,
+    "coupon_labor": 1902.11,
     "total_sales": 31244.56,
-    "coupon_usage_pct": 0.05809939394249751
+    "coupon_usage_pct": 0.0609,
+    "revisedAt": "2026-09-01T13:23:37.651Z",
+    "revisedFrom": "html"
   },
   {
     "date": "2026-08-29",
