@@ -19,15 +19,23 @@ const prettyStatus = (v) => {
 
 // Severity drives sort order and row highlight. Highest first.
 const SEV = {
-  DISPATCH_OVERDUE: 7,   // READY_FOR_DISPATCH older than 1 day
-  OPEN_STALLED:     6,   // open work sitting past the stalled threshold
-  WARRANTY:         5,   // READY_FOR_INVOICE + warranty (red) flag, not invoiced
-  AWN:              4,   // "Ready for AWN Review" and not INVOICED
+  DISPATCH_OVERDUE: 9,   // READY_FOR_DISPATCH older than 1 day
+  UNPAID_STALE:     8,   // invoiced, still unpaid past the stale threshold
+  OPEN_STALLED:     7,   // open work sitting past the stalled threshold
+  WARRANTY:         6,   // READY_FOR_INVOICE + warranty (red) flag, not invoiced
+  AWN:              5,   // "Ready for AWN Review" and not INVOICED
+  UNPAID:           4,   // invoiced, unpaid past the aging threshold
   OPEN_AGING:       3,   // open work past the aging threshold
   DISPATCH:         2,   // READY_FOR_DISPATCH (needs to get in the shop)
   ACCEPTANCE:       1,   // READY_FOR_INVOICE, no flag (needs acceptance)
-  NONE:             0,   // INVOICED / anything else (shown, not highlighted)
+  NONE:             0,   // paid / closed / anything else (shown, not highlighted)
 };
+
+// An INVOICED RO whose customer-pay line still reads INVOICED has been billed
+// but not collected — the money is still out. PAID, CLOSED and NA are settled
+// (NA meaning there was no customer-pay portion at all).
+const isUnpaid = (r) => normStatus(r.roStatus) === 'INVOICED' && normStatus(r.cpStatus) === 'INVOICED';
+const UNPAID_THRESHOLDS = { aging: 3, stale: 7 };
 
 // Statuses that mean the RO still has OPEN WORK — the tech has claimed it but
 // lines remain unfinished.
@@ -83,20 +91,46 @@ function evaluate(r) {
     // Inside the leash — the tech has it and it's moving.
     return { sev: SEV.NONE, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
   }
+  if (isUnpaid(r)) {
+    if (age != null && age >= UNPAID_THRESHOLDS.stale) {
+      return { sev: SEV.UNPAID_STALE, tag: 'Invoiced — not paid', color: '#f472b6', pulse: 'attn-high-row',
+               msg: 'Billed but never collected — chase the payment.' };
+    }
+    if (age != null && age >= UNPAID_THRESHOLDS.aging) {
+      return { sev: SEV.UNPAID, tag: 'Invoiced — not paid', color: '#f9a8d4', msg: 'Awaiting payment.' };
+    }
+    return { sev: SEV.NONE, tag: prettyStatus(r.roStatus) || '—', color: '#64748b', msg: '' };
+  }
   // INVOICED (with or without flag) and everything else → no alert.
   return { sev: SEV.NONE, tag: r.roStatus ? String(r.roStatus) : '—', color: '#64748b', msg: '' };
 }
 
 const CATS = [
-  { key: 'all',                  label: 'All ROs',               color: '#94a3b8' },
-  { key: SEV.DISPATCH_OVERDUE,   label: 'Dispatch overdue',      color: '#f87171' },
-  { key: SEV.OPEN_STALLED,       label: 'Open work stalled',     color: '#f87171' },
-  { key: SEV.WARRANTY,           label: 'Warranty not invoiced', color: '#fb923c' },
-  { key: SEV.AWN,                label: 'AWN needs invoicing',   color: '#c084fc' },
-  { key: SEV.OPEN_AGING,         label: 'Open work aging',       color: '#fbbf24' },
-  { key: SEV.DISPATCH,           label: 'Get car in shop',       color: '#fbbf24' },
-  { key: SEV.ACCEPTANCE,         label: 'Needs acceptance',      color: '#38bdf8' },
+  { key: 'all',      label: 'All ROs',               color: '#94a3b8', sevs: null },
+  { key: 'dispatch-overdue', label: 'Dispatch overdue',      color: '#f87171', sevs: [SEV.DISPATCH_OVERDUE] },
+  { key: 'unpaid',   label: 'Invoiced not paid',     color: '#f472b6', sevs: [SEV.UNPAID_STALE, SEV.UNPAID] },
+  { key: 'stalled',  label: 'Open work stalled',     color: '#f87171', sevs: [SEV.OPEN_STALLED] },
+  { key: 'warranty', label: 'Warranty not invoiced', color: '#fb923c', sevs: [SEV.WARRANTY] },
+  { key: 'awn',      label: 'AWN needs invoicing',   color: '#c084fc', sevs: [SEV.AWN] },
+  { key: 'aging',    label: 'Open work aging',       color: '#fbbf24', sevs: [SEV.OPEN_AGING] },
+  { key: 'dispatch', label: 'Get car in shop',       color: '#fbbf24', sevs: [SEV.DISPATCH] },
+  { key: 'accept',   label: 'Needs acceptance',      color: '#38bdf8', sevs: [SEV.ACCEPTANCE] },
 ];
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+  } catch {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch { return false; }
+}
 
 export default function RepairOrderProcess({ onBack, currentRole }) {
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -104,6 +138,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
+  const [copied, setCopied] = useState('');   // RO # just copied, for the tick
 
   const load = useCallback(async (silent) => {
     if (!silent) setLoading(true);
@@ -131,14 +166,17 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
   }, [data]);
 
   const counts = useMemo(() => {
-    const c = { all: evaluated.length, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
-    evaluated.forEach(({ e }) => { if (c[e.sev] != null) c[e.sev] += 1; });
+    const c = {};
+    for (const cat of CATS) {
+      c[cat.key] = cat.sevs ? evaluated.filter(({ e }) => cat.sevs.includes(e.sev)).length : evaluated.length;
+    }
     return c;
   }, [evaluated]);
 
   const visible = useMemo(() => {
-    if (filter === 'all') return evaluated;
-    return evaluated.filter(({ e }) => String(e.sev) === String(filter));
+    const cat = CATS.find(c => c.key === filter);
+    if (!cat || !cat.sevs) return evaluated;
+    return evaluated.filter(({ e }) => cat.sevs.includes(e.sev));
   }, [evaluated, filter]);
 
   const cardSt = { background: 'rgba(15,23,42,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 14, padding: 18, marginBottom: 20 };
@@ -179,7 +217,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
           {/* Filter chips */}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 18 }}>
             {CATS.map(c => {
-              const n = c.key === 'all' ? counts.all : counts[c.key];
+              const n = counts[c.key];
               const active = String(filter) === String(c.key);
               return (
                 <div key={c.key} onClick={() => setFilter(c.key)}
@@ -217,8 +255,13 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
                   {visible.map(({ r, e, age }, i) => (
                     <tr key={r.ro + i} className={e.pulse || undefined}
                       style={{ background: e.sev >= 1 ? `${e.color}14` : 'transparent' }}>
-                      <td style={{ ...tdSt, fontFamily: 'monospace', color: '#6ee7f9', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                        {r.ro}
+                      <td style={{ ...tdSt, whiteSpace: 'nowrap' }}>
+                        <span
+                          onClick={async () => { if (await copyText(r.ro)) { setCopied(r.ro); setTimeout(() => setCopied(c => (c === r.ro ? '' : c)), 1400); } }}
+                          title="Click to copy this RO number"
+                          style={{ fontFamily: 'monospace', color: '#6ee7f9', fontWeight: 700, cursor: 'pointer', borderBottom: '1px dashed rgba(110,231,249,.4)' }}
+                        >{r.ro}</span>
+                        {copied === r.ro && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: '#4ade80' }}>✓ copied</span>}
                         {r.warranty && <span title="Warranty (red flag)" style={{ marginLeft: 5 }}>🚩</span>}
                       </td>
                       <td style={{ ...tdSt, fontSize: 12.5, wordBreak: 'break-word' }} title={r.advisor || ''}>{r.advisor || '—'}</td>
