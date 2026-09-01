@@ -299,5 +299,11 @@
       }
     },
     "entryMode": "mtd"
+  },
+  "2026-09": {
+    "hoursGoal": 250,
+    "hrsRoGoal": 0,
+    "days": {},
+    "entryMode": "mtd"
   }
 }
