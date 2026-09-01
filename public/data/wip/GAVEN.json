@@ -60,5 +60,21 @@
     "advisor": "CODY",
     "notes": "waiting on parts. ",
     "flag": "purple"
+  },
+  {
+    "id": "mtiz35tnhqby",
+    "ro": "780492",
+    "roDate": "2026-09-01",
+    "vehicle": "2009 Hyundai Santa Fe",
+    "jobDesc": "976 C CYL HEAD CVR OIL LEAK RPR (24-01-026H)",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
