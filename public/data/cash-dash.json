@@ -2,7 +2,7 @@
   "2026-08": {
     "techHours": {
       "GAVEN": 2,
-      "JACOB": 2,
+      "JACOB": 21,
       "KADEN": 145,
       "CARTER": 112,
       "BRYSON": 43,
@@ -14,7 +14,7 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788278232178,
+    "updatedAt": 1788278233495,
     "repScore": 74
   }
 }
