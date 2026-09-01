@@ -1,7 +1,7 @@
 {
   "2026-08": {
     "techHours": {
-      "GAVEN": 201,
+      "GAVEN": 201.1,
       "JACOB": 197,
       "KADEN": 145,
       "CARTER": 112,
@@ -14,7 +14,7 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788278216328,
+    "updatedAt": 1788278217224,
     "repScore": 74
   }
 }
