@@ -1,15 +1,11 @@
 {
-  "updatedAt": "2026-09-02T19:27:30.228Z",
+  "updatedAt": "2026-09-02T20:18:25.851Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "780550",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "780547",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "780557",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
       },
       {
         "ro": "780544",
@@ -28,27 +24,37 @@
         "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "780526",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
         "ro": "780495",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780424",
-        "vehicle": "2016 Hyundai Elantra"
-      },
-      {
-        "ro": "780421",
-        "vehicle": "2023 Hyundai Sonata"
       },
       {
         "ro": "780419",
         "vehicle": "2020 Hyundai Elantra GT"
       }
     ],
+    "CODY": [
+      {
+        "ro": "780555",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "780541",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780538",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780535",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
     "DAVID": [
+      {
+        "ro": "780554",
+        "vehicle": "2012 Hyundai Veloster"
+      },
       {
         "ro": "780549",
         "vehicle": "2026 Hyundai Tucson"
@@ -66,38 +72,8 @@
         "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "780497",
-        "vehicle": "2026 Hyundai Venue"
-      },
-      {
-        "ro": "780494",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780541",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780538",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780535",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780496",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "780493",
-        "vehicle": "2027 Hyundai Kona"
       }
     ],
     "CORY": [
