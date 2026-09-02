@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-02T19:36:54.607Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-02T15:49:09.327Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1634,35 +1639,5 @@
     "at": "2026-08-03T20:03:03.385Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-03T18:37:02.471Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T18:33:49.074Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-03T18:33:43.954Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T16:13:09.836Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T16:13:08.967Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-03T16:13:06.454Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
