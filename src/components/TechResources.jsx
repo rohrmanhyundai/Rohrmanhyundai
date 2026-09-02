@@ -65,6 +65,14 @@ const NAV_BUTTONS = [
     prop: 'onATDiagWorksheet',
   },
   {
+    key: 'additionalTimeReview',
+    label: '⏱️ Additional Time Reviewal',
+    bg: 'linear-gradient(135deg,rgba(192,132,252,.25),rgba(147,51,234,.18))',
+    border: 'rgba(192,132,252,.45)',
+    color: '#d8b4fe',
+    prop: 'onAdditionalTimeReview',
+  },
+  {
     key: 'cashDash',
     label: '💰 Cash Dash',
     bg: 'linear-gradient(135deg,rgba(251,191,36,.3),rgba(245,158,11,.2))',
@@ -74,8 +82,8 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onBack }) {
-  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash };
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onBack }) {
+  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview };
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 
   // Whether someone HAS a review is a fact about their job title, so this keys
