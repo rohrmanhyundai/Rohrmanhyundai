@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates, advisorOffDates, isScheduledOff } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth } from '../utils/github';
+import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
@@ -181,6 +181,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState(null);
+
+  // How many additional-time requests are waiting on a manager. Drives the badge
+  // on the Additional Time Approval card so pending work is visible from the grid
+  // without opening the section. Re-counted whenever the grid is shown, which
+  // also refreshes it right after an approval (openSection goes back to null).
+  const [addlTimePending, setAddlTimePending] = useState(0);
+  useEffect(() => {
+    if (!isOpen || openSection || !isAdminOrManager(currentRole)) return;
+    let cancelled = false;
+    loadAdditionalTimeIndex()
+      .then(rows => {
+        if (cancelled) return;
+        setAddlTimePending((Array.isArray(rows) ? rows : []).filter(r => r.status !== 'approved').length);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [isOpen, openSection, currentRole]);
   // Controlled local copy of vacations so Remove always targets the right row
   const [vacEdit, setVacEdit] = useState(() => vacations.map(v => ({ ...v })));
   const [vacSyncStatus, setVacSyncStatus] = useState({}); // { idx: 'ok' | 'err:msg' | 'syncing' }
@@ -1493,7 +1510,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     ...(isAdminOrManager(currentRole) ? [
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
       { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
-      { id: 'addlTime', icon: '⏱️', label: 'Additional Time Approval', desc: 'Review and approve warranty additional time submitted by techs', color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
+      // Waiting requests light the card up — a manager shouldn't have to open it
+      // to find out someone is blocked on them.
+      { id: 'addlTime', icon: '⏱️', label: 'Additional Time Approval', desc: 'Review and approve warranty additional time submitted by techs',
+        color: addlTimePending > 0 ? '#fcd34d' : '#c084fc',
+        bg: addlTimePending > 0 ? 'rgba(251,191,36,.16)' : 'rgba(192,132,252,.12)',
+        border: addlTimePending > 0 ? 'rgba(251,191,36,.75)' : 'rgba(192,132,252,.35)',
+        badge: addlTimePending },
     ] : []),
     ...(currentRole === 'admin' ? [
       { id: 'forceRefresh', icon: '🔄', label: 'Force Refresh All Users', desc: 'Push newly deployed features live by reloading every logged-in browser', color: '#f87171', bg: 'rgba(239,68,68,.12)', border: 'rgba(239,68,68,.4)' },
@@ -2314,7 +2337,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     }}
                     style={{
                       background: card.bg,
-                      border: `1px solid ${card.border}`,
+                      border: `${card.badge > 0 ? 2 : 1}px solid ${card.border}`,
                       borderRadius: 16,
                       padding: '24px 22px',
                       cursor: 'pointer',
@@ -2323,10 +2346,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 10,
+                      position: 'relative',
+                      boxShadow: card.badge > 0 ? '0 0 22px rgba(251,191,36,.28)' : undefined,
                     }}
                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 30px ${card.border}`; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
                   >
+                    {card.badge > 0 && (
+                      <div style={{
+                        position: 'absolute', top: 12, right: 12,
+                        background: '#f59e0b', color: '#1a1206',
+                        borderRadius: 20, padding: '3px 11px',
+                        fontSize: 11, fontWeight: 900, letterSpacing: 0.5,
+                        boxShadow: '0 2px 10px rgba(245,158,11,.55)',
+                      }}>
+                        {card.badge} NEED{card.badge === 1 ? 'S' : ''} APPROVAL
+                      </div>
+                    )}
                     <div style={{ fontSize: 36 }}>{card.icon}</div>
                     <div>
                       <div style={{ fontWeight: 900, fontSize: 15, color: card.id === 'forceRefresh' && forceRefreshState === 'sent' ? '#86efac' : card.color, marginBottom: 5 }}>
