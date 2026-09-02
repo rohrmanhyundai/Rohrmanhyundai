@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-02T21:02:24.932Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-09-02T17:15:39.494Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -436,76 +441,6 @@
   },
   {
     "at": "2026-08-04T21:09:20.191Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T20:51:30.893Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-03T20:51:28.570Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T20:49:17.195Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-03T19:11:43.905Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-08-03T19:09:26.303Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T19:08:00.655Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-03T19:07:59.655Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T19:01:08.558Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-03T19:01:06.836Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T18:55:37.562Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-03T18:55:35.751Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T18:44:32.905Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-03T18:44:30.614Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-03T18:41:14.353Z",
     "type": "page",
     "label": "advisor-calendar"
   }
