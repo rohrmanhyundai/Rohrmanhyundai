@@ -76,7 +76,7 @@ const NAV_BUTTONS = [
 
 export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onBack }) {
   const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash };
-  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
+  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 
   // Whether someone HAS a review is a fact about their job title, so this keys
   // off `jobRole` — Management Access grants extra views, it doesn't stop a tech

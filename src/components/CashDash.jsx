@@ -49,7 +49,18 @@ function bizDays(today = new Date()) {
   return { total, elapsed };
 }
 
-export default function CashDash({ currentUser, currentRole, advisors = [], technicians = [], onBack }) {
+// Season state, stored alongside the month buckets in cash-dash.json so turning
+// the board off never deletes a thing — next year's run just flips it back.
+//   active — hours track live figures, managers can edit
+//   frozen — the month's final numbers, locked, still visible to everyone
+//   off    — hidden from staff; managers keep the tile so they can turn it back on
+export const SEASON = { ACTIVE: 'active', FROZEN: 'frozen', OFF: 'off' };
+export const seasonOf = (cashDashFile) => {
+  const st = cashDashFile && cashDashFile.season && cashDashFile.season.status;
+  return st === SEASON.FROZEN || st === SEASON.OFF ? st : SEASON.ACTIVE;
+};
+
+export default function CashDash({ currentUser, currentRole, advisors = [], technicians = [], onBack, onSeasonChange }) {
   const me = firstName(currentUser);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
 
@@ -60,10 +71,15 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const [repScore, setRepScore] = useState('');    // Reputation.com score
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState('');
+  const [season, setSeason] = useState(SEASON.ACTIVE);
+  const [seasonBusy, setSeasonBusy] = useState('');
+  // Frozen and off are both read-only: the month is done, so nothing recalculates.
+  const readOnly = season !== SEASON.ACTIVE;
 
   const refresh = useCallback(async () => {
     try {
       const all = await loadCashDash();
+      setSeason(seasonOf(all));
       const b = (all && all[PLAN.monthKey]) || {};
       setTechHours(b.techHours || {});
       setAdvHours(b.advHours || {});
@@ -79,7 +95,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const techKey = useMemo(() => (technicians || []).map(t => firstName(t.name)).filter(Boolean).sort().join(','), [technicians]);
   useEffect(() => {
     const names = techKey ? techKey.split(',') : [];
-    if (!names.length) { setAutoTech({}); return; }
+    if (!names.length || readOnly) { setAutoTech({}); return; }
     let cancelled = false;
     (async () => {
       const entries = await Promise.all(names.map(async n => {
@@ -98,9 +114,10 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
       if (!cancelled) setAutoTech(Object.fromEntries(entries));
     })();
     return () => { cancelled = true; };
-  }, [techKey]);
+  }, [techKey, readOnly]);
 
   async function saveRep(field, val) {
+    if (readOnly) return;
     if (field === 'count') setRepCount(val); else setRepScore(val);
     try {
       await updateCashDash(cur => {
@@ -112,7 +129,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
     } catch {}
   }
 
-  const pace = useMemo(() => bizDays(), []);
+  const pace = useMemo(() => (readOnly ? { total: 1, elapsed: 1 } : bizDays()), [readOnly]);
 
   // Rosters. Advisors carry mtd_hours (hours sold); techs pull from techHours.
   const advisorRows = useMemo(() => (advisors || [])
@@ -121,24 +138,26 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
       const k = firstName(a.name);
       const override = advHours[k];
       const hasOverride = override != null && String(override).trim() !== '';
-      const auto = num(a.mtd_hours);
+      // Once frozen, the advisor's live MTD hours belong to a NEW month — following
+      // them would quietly rewrite the finished board. Only the captured figure counts.
+      const auto = readOnly ? 0 : num(a.mtd_hours);
       const hours = hasOverride ? num(override) : auto;        // override wins, else the advisor's MTD hours
       const raw = hasOverride ? override : (auto ? String(auto) : '');
       return { name: k, display: a.name, role: 'advisor', hours, raw, auto, overridden: hasOverride };
     })
-    .sort((x, y) => x.name.localeCompare(y.name)), [advisors, advHours]);
+    .sort((x, y) => x.name.localeCompare(y.name)), [advisors, advHours, readOnly]);
   const techRows = useMemo(() => (technicians || [])
     .filter(t => t && t.name)
     .map(t => {
       const k = firstName(t.name);
       const override = techHours[k];
       const hasOverride = override != null && String(override).trim() !== '';
-      const auto = num(autoTech[k]);
+      const auto = readOnly ? 0 : num(autoTech[k]);
       const hours = hasOverride ? num(override) : auto;         // override wins, else auto from posts
       const raw = hasOverride ? override : (auto ? String(auto) : '');
       return { name: k, display: t.name, role: 'tech', hours, raw, auto, overridden: hasOverride };
     })
-    .sort((x, y) => x.name.localeCompare(y.name)), [technicians, techHours, autoTech]);
+    .sort((x, y) => x.name.localeCompare(y.name)), [technicians, techHours, autoTech, readOnly]);
 
   // Who is the logged-in user (for the self view)?
   const selfRow = useMemo(() => advisorRows.find(r => r.name === me) || techRows.find(r => r.name === me) || null,
@@ -148,6 +167,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   const target = selected || (!isManager ? selfRow : null);
 
   async function setTech(name, val) {
+    if (readOnly) return;
     const key = firstName(name);
     const empty = String(val).trim() === '';
     setTechHours(prev => { const n = { ...prev }; if (empty) delete n[key]; else n[key] = val; return n; }); // optimistic
@@ -164,6 +184,7 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
   }
 
   async function setAdv(name, val) {
+    if (readOnly) return;
     const key = firstName(name);
     const empty = String(val).trim() === '';
     setAdvHours(prev => { const n = { ...prev }; if (empty) delete n[key]; else n[key] = val; return n; }); // optimistic
@@ -177,6 +198,73 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
         return { ...cur, [PLAN.monthKey]: bucket };
       });
     } catch {} finally { setSaving(''); }
+  }
+
+  // Move the season between active / frozen / off.
+  //
+  // Freezing CAPTURES the month's final hours into the manual overrides. It reads
+  // each advisor's last snapshot for the plan month rather than their live
+  // mtd_hours, which by now has rolled into the next month — capturing what is
+  // on screen would bank the wrong figures. A manager's existing typed override
+  // always wins over the captured value.
+  async function changeSeason(next) {
+    if (next === season || seasonBusy) return;
+    if (next === SEASON.OFF && !window.confirm('Turn Cash Dash off?\n\nStaff stop seeing it. Nothing is deleted — every hour and pull stays saved, and you can turn it back on any time.')) return;
+    setSeasonBusy(next);
+    try {
+      let advFinal = null, techFinal = null;
+      if (next === SEASON.FROZEN) {
+        advFinal = {};
+        await Promise.all((advisors || []).map(async a => {
+          const k = firstName(a.name);
+          if (!k) return;
+          try {
+            const rep = await loadGithubFile(`data/performance-reports/${k}.json`);
+            const inMonth = (Array.isArray(rep) ? rep : [])
+              .filter(e => String(e.month || e.date || '').slice(0, 7) === PLAN.monthKey)
+              .sort((x, y) => new Date(y.date) - new Date(x.date));
+            const v = inMonth.length ? num(inMonth[0].mtd_hours) : 0;
+            if (v) advFinal[k] = v;
+          } catch {}
+        }));
+        techFinal = { ...autoTech };
+      }
+      await updateCashDash(cur => {
+        const out = { ...(cur || {}) };
+        if (advFinal || techFinal) {
+          const bucket = { techHours: {}, advHours: {}, ...(out[PLAN.monthKey] || {}) };
+          const ah = { ...(bucket.advHours || {}) }, th = { ...(bucket.techHours || {}) };
+          const captured = { adv: [], tech: [] };
+          for (const [k, v] of Object.entries(advFinal || {})) if (ah[k] == null) { ah[k] = v; captured.adv.push(k); }
+          for (const [k, v] of Object.entries(techFinal || {})) if (th[k] == null && v) { th[k] = v; captured.tech.push(k); }
+          bucket.advHours = ah; bucket.techHours = th;
+          bucket.captured = captured;      // so re-activating can undo exactly these
+          bucket.updatedAt = Date.now();
+          out[PLAN.monthKey] = bucket;
+        }
+        if (next === SEASON.ACTIVE) {
+          // Re-opening drops the captured figures so the board tracks live again;
+          // anything typed by hand is left alone.
+          const bucket = { ...(out[PLAN.monthKey] || {}) };
+          const cap = bucket.captured || { adv: [], tech: [] };
+          const ah = { ...(bucket.advHours || {}) }, th = { ...(bucket.techHours || {}) };
+          (cap.adv || []).forEach(k => delete ah[k]);
+          (cap.tech || []).forEach(k => delete th[k]);
+          bucket.advHours = ah; bucket.techHours = th;
+          delete bucket.captured;
+          out[PLAN.monthKey] = bucket;
+        }
+        out.season = { status: next, updatedAt: Date.now(), by: currentUser || '' };
+        return out;
+      });
+      setSeason(next);
+      await refresh();
+      onSeasonChange && onSeasonChange(next);
+    } catch (e) {
+      alert('Could not change the season: ' + (e?.message || e));
+    } finally {
+      setSeasonBusy('');
+    }
   }
 
   const plan = (role) => role === 'tech' ? PLAN.tech : PLAN.advisor;
@@ -196,8 +284,51 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
       <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 20 }}>
 
-          {/* Manager: bulk-set every tech's month booked hours from the report */}
+          {/* Where the season stands, and (for managers) how to move it */}
+          {season !== SEASON.ACTIVE && (
+            <div style={{ background: season === SEASON.OFF ? 'rgba(148,163,184,.1)' : 'rgba(251,191,36,.1)',
+                          border: `1px solid ${season === SEASON.OFF ? 'rgba(148,163,184,.35)' : 'rgba(251,191,36,.4)'}`,
+                          borderRadius: 14, padding: '14px 18px' }}>
+              <div style={{ fontWeight: 900, fontSize: 14, color: season === SEASON.OFF ? '#cbd5e1' : '#fde68a', marginBottom: 4 }}>
+                {season === SEASON.OFF ? '🚫 Cash Dash is turned off' : `🔒 ${PLAN.label} is closed out`}
+              </div>
+              <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6 }}>
+                {season === SEASON.OFF
+                  ? 'Staff no longer see this page. Every hour, pull and entry is still saved — turn it back on any time.'
+                  : 'These are the final numbers. Hours have stopped updating and nothing can be edited, so the board stays exactly as the month ended.'}
+              </div>
+            </div>
+          )}
+
           {isManager && (
+            <div style={{ background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.22)', borderRadius: 14, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.05em' }}>Season</div>
+                <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 2 }}>Turning it off hides the page from staff — it never deletes anything.</div>
+              </div>
+              <div style={{ flex: 1 }} />
+              <div style={{ display: 'flex', gap: 6 }}>
+                {[
+                  { k: SEASON.ACTIVE, label: 'Active',  hint: 'Hours keep updating, managers can edit', color: '#6ee7b7' },
+                  { k: SEASON.FROZEN, label: 'Frozen',  hint: 'Final numbers, locked, everyone can still view', color: '#fbbf24' },
+                  { k: SEASON.OFF,    label: 'Off',     hint: 'Hidden from staff, nothing deleted', color: '#94a3b8' },
+                ].map(o => {
+                  const on = season === o.k;
+                  return (
+                    <button key={o.k} onClick={() => changeSeason(o.k)} disabled={!!seasonBusy} title={o.hint}
+                      style={{ background: on ? `${o.color}26` : 'rgba(255,255,255,.04)', border: `1px solid ${on ? o.color : 'rgba(255,255,255,.12)'}`,
+                               color: on ? o.color : '#94a3b8', borderRadius: 9, padding: '7px 15px', fontWeight: 800, fontSize: 12.5,
+                               cursor: seasonBusy ? 'wait' : 'pointer' }}>
+                      {seasonBusy === o.k ? '⏳' : on ? '● ' : ''}{o.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Manager: bulk-set every tech's month booked hours from the report */}
+          {isManager && !readOnly && (
             <CashDashUpload technicians={technicians} monthKey={PLAN.monthKey} monthLabel={PLAN.label}
               currentUser={currentUser} onApplied={refresh} />
           )}
@@ -206,18 +337,18 @@ export default function CashDash({ currentUser, currentRole, advisors = [], tech
           <PlanChart />
 
           {/* Reputation.com department progress — manager enters the count daily */}
-          <RepProgress count={num(repCount)} score={num(repScore)} rawCount={repCount} rawScore={repScore} canEdit={isManager} onEdit={saveRep} />
+          <RepProgress count={num(repCount)} score={num(repScore)} rawCount={repCount} rawScore={repScore} canEdit={isManager && !readOnly} onEdit={saveRep} />
 
           {target ? (
             <PersonView row={target} tiers={plan(target.role).tiers} unit={plan(target.role).unit}
-              warning={target.role === 'tech' ? PLAN.tech.warning : ''} pace={pace} />
+              warning={target.role === 'tech' ? PLAN.tech.warning : ''} pace={pace} final={readOnly} />
           ) : isManager ? (
             <>
               <Roster title="Service Advisors" unit={PLAN.advisor.unit} rows={advisorRows} tiers={PLAN.advisor.tiers}
-                pace={pace} editable editNote="auto-filled from hours sold — type to override" saving={saving}
+                pace={pace} final={readOnly} editable={!readOnly} editNote="auto-filled from hours sold — type to override" saving={saving}
                 onEdit={setAdv} onOpen={setSelected} loading={loading} />
-              <Roster title="Technicians" unit={PLAN.tech.unit} rows={techRows} tiers={PLAN.tech.tiers} pace={pace}
-                editable editNote="auto-filled from daily posts — type to override" saving={saving}
+              <Roster title="Technicians" unit={PLAN.tech.unit} rows={techRows} tiers={PLAN.tech.tiers} pace={pace} final={readOnly}
+                editable={!readOnly} editNote="auto-filled from daily posts — type to override" saving={saving}
                 onEdit={setTech} onOpen={setSelected} warning={PLAN.tech.warning} loading={loading} />
             </>
           ) : (
@@ -371,7 +502,7 @@ function PlanChart() {
 }
 
 // ── One person's Cash Dash: actual, locked pulls, pacing, tier ladder ─────────
-function PersonView({ row, tiers, unit, warning, pace }) {
+function PersonView({ row, tiers, unit, warning, pace, final }) {
   const actual = row.hours;
   const locked = tierFor(tiers, actual);
   const projected = pace.elapsed > 0 ? actual * (pace.total / pace.elapsed) : actual;
@@ -385,7 +516,7 @@ function PersonView({ row, tiers, unit, warning, pace }) {
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         <Stat label="Hours sold (MTD)" value={hrs(actual)} accent="#6ee7b7" />
         <Stat label="Locked pulls" value={locked.pulls} accent="#fbbf24" sub={locked.idx < 0 ? `${nxt ? hrs(nxt.need) : 0} hrs to first tier` : 'earned so far'} big />
-        <Stat label="Pacing (proj. month-end)" value={hrs(projected)} accent="#38bdf8" sub={`→ ${projTier.pulls} pulls at this pace`} />
+        <Stat label={final ? 'Final month total' : 'Pacing (proj. month-end)'} value={hrs(projected)} accent="#38bdf8" sub={final ? `→ ${projTier.pulls} pulls earned` : `→ ${projTier.pulls} pulls at this pace`} />
         <Stat label="Next tier" value={nxt ? hrs(nxt.q) : 'MAX'} accent="#c4b5fd" sub={nxt ? `${hrs(nxt.need)} more hrs → ${nxt.p} pulls` : 'top tier reached'} />
       </div>
 
@@ -430,7 +561,7 @@ function Stat({ label, value, accent, sub, big }) {
 }
 
 // ── Manager overview list for one role ────────────────────────────────────────
-function Roster({ title, unit, rows, tiers, pace, editable, editNote, saving, onEdit, onOpen, warning, loading }) {
+function Roster({ title, unit, rows, tiers, pace, editable, editNote, saving, onEdit, onOpen, warning, loading, final }) {
   return (
     <section style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, overflow: 'hidden' }}>
       <div style={{ padding: '13px 18px', background: 'rgba(148,163,184,.08)', borderBottom: '1px solid rgba(148,163,184,.14)' }}>
@@ -439,7 +570,12 @@ function Roster({ title, unit, rows, tiers, pace, editable, editNote, saving, on
       </div>
       {warning && <div style={{ padding: '9px 18px', background: 'rgba(248,113,113,.1)', color: '#fca5a5', fontSize: 12, fontWeight: 700 }}>⚠️ {warning}</div>}
       <div style={{ display: 'flex', padding: '8px 18px', fontSize: 10.5, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#64748b' }}>
-        <div style={{ flex: 1 }}>Name</div><div style={{ width: 120, textAlign: 'right' }}>Hours (MTD)</div><div style={{ width: 100, textAlign: 'right' }}>Pacing</div><div style={{ width: 95, textAlign: 'right' }}>Locked Pulls</div><div style={{ width: 90, textAlign: 'right' }}>Proj. Pulls</div><div style={{ width: 60 }} />
+        <div style={{ flex: 1 }}>Name</div><div style={{ width: 120, textAlign: 'right' }}>{final ? 'Final hours' : 'Hours (MTD)'}</div>
+        {/* A finished month has nothing to pace — the projection would just repeat the actuals. */}
+        {!final && <div style={{ width: 100, textAlign: 'right' }}>Pacing</div>}
+        <div style={{ width: 95, textAlign: 'right' }}>{final ? 'Pulls earned' : 'Locked Pulls'}</div>
+        {!final && <div style={{ width: 90, textAlign: 'right' }}>Proj. Pulls</div>}
+        <div style={{ width: 60 }} />
       </div>
       {loading ? <div style={{ padding: '18px', color: '#64748b', fontSize: 13 }}>Loading…</div>
         : rows.length === 0 ? <div style={{ padding: '18px', color: '#64748b', fontSize: 13 }}>No one on this roster.</div>
@@ -456,9 +592,9 @@ function Roster({ title, unit, rows, tiers, pace, editable, editNote, saving, on
                       style={{ width: 90, background: 'rgba(2,6,23,.55)', border: `1px solid ${r.overridden ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.3)'}`, borderRadius: 8, color: r.overridden ? '#fde68a' : '#f1f5f9', padding: '5px 9px', fontSize: 14, fontWeight: 800, textAlign: 'right', outline: 'none' }} />
                   : <span style={{ fontSize: 15, fontWeight: 800, color: '#6ee7b7' }}>{hrs(r.hours)}</span>}
               </div>
-              <div style={{ width: 100, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#c4b5fd' }}>{hrs(projected)}</div>
+              {!final && <div style={{ width: 100, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#c4b5fd' }}>{hrs(projected)}</div>}
               <div style={{ width: 95, textAlign: 'right', fontSize: 15, fontWeight: 900, color: locked.pulls > 0 ? '#6ee7b7' : '#64748b' }}>{locked.pulls}</div>
-              <div style={{ width: 90, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#38bdf8' }}>{proj.pulls}</div>
+              {!final && <div style={{ width: 90, textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#38bdf8' }}>{proj.pulls}</div>}
               <div style={{ width: 60, textAlign: 'right' }}>
                 <button onClick={() => onOpen(r)} style={{ background: 'rgba(96,165,250,.16)', border: '1px solid rgba(96,165,250,.4)', color: '#93c5fd', borderRadius: 7, padding: '4px 10px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>View</button>
               </div>
