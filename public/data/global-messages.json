@@ -109,5 +109,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788198579841
+  },
+  {
+    "id": "gm-mtkbsob01iqy",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "on 780381 do not order a turbo for this warranty will not cover this one. will need a Intake manifold.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788367435020
   }
 ]
