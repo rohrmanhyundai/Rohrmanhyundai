@@ -30,5 +30,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mtkh00e6r67h",
+    "ro": "780525",
+    "roDate": "2026-09-02",
+    "vehicle": "2023 Hyundai Santa Fe Hybrid",
+    "jobDesc": "",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
