@@ -24,7 +24,7 @@ import TireWarranty from './components/TireWarranty';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import GlobalMessage from './components/GlobalMessage';
-import CashDash from './components/CashDash';
+import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
 import GoalForecast from './components/GoalForecast';
@@ -40,7 +40,7 @@ function openRankBoard() {
   navigator.clipboard.writeText('infinitepursuit').catch(() => {});
   window.open('https://dealerplateguy.github.io/Advisor-Rank-Board/', '_blank');
 }
-import { loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage } from './utils/github';
+import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -153,6 +153,10 @@ export default function App() {
   const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
   const [globalUnread, setGlobalUnread] = useState(0); // unread global-message activity → Manager button badge
   const globalSeenRef = useRef(0);                   // ts the user last opened the Global Message log
+  // Cash Dash season — when it is switched off the tile disappears for staff,
+  // while managers keep it so they can switch it back on.
+  const [cashSeason, setCashSeason] = useState(SEASON.ACTIVE);
+  useEffect(() => { loadCashDash().then(d => setCashSeason(seasonOf(d))).catch(() => {}); }, []);
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -856,7 +860,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'tech-resources')}
         onMyReview={() => navTo('tech-self-review')}
         onMyReports={() => goTo('performance-report', 'tech-resources')}
-        onCashDash={() => goTo('cash-dash', 'tech-resources')}
+        onCashDash={(cashSeason !== SEASON.OFF || isAdminOrManager) ? () => goTo('cash-dash', 'tech-resources') : undefined}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -1100,6 +1104,7 @@ export default function App() {
         currentRole={currentRole}
         advisors={data.advisors || []}
         technicians={data.technicians || []}
+        onSeasonChange={setCashSeason}
         onBack={() => setPage(prevPage || 'dashboard')}
       />
     );
@@ -1294,7 +1299,7 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
-        onCashDash={() => goTo('cash-dash', 'advisor-calendar')}
+        onCashDash={(cashSeason !== SEASON.OFF || isAdminOrManager) ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
