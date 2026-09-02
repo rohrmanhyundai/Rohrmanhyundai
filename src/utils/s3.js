@@ -92,6 +92,22 @@ export async function uploadTirePhotoToS3(filename, file) {
   return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
 }
 
+// Upload a warranty additional-time screenshot (the tech's Techline call).
+// Returns the public URL of the stored object.
+export async function uploadAdditionalTimePhotoToS3(filename, file) {
+  const client = s3Client();
+  const key = 'additional-time/' + filename;
+  const body = new Uint8Array(await file.arrayBuffer());
+  await client.send(new PutObjectCommand({
+    Bucket: S3_BUCKET,
+    Key: key,
+    Body: body,
+    ContentType: file.type || contentTypeFor(filename),
+    ContentDisposition: 'inline',
+  }));
+  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+}
+
 export async function deleteFileFromS3(filename) {
   const client = s3Client();
   await client.send(new DeleteObjectCommand({

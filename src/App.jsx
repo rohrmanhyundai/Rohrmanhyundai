@@ -21,6 +21,8 @@ import ServicePricingMenu from './components/ServicePricingMenu';
 import LivePay from './components/LivePay';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
+import AdditionalTime from './components/AdditionalTime';
+import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import GlobalMessage from './components/GlobalMessage';
@@ -860,6 +862,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'tech-resources')}
         onMyReview={() => navTo('tech-self-review')}
         onMyReports={() => goTo('performance-report', 'tech-resources')}
+        onAdditionalTimeReview={() => goTo('additional-time-review', 'tech-resources')}
         onCashDash={(cashSeason !== SEASON.OFF || isAdminOrManager) ? () => goTo('cash-dash', 'tech-resources') : undefined}
         onBack={() => setPage('dashboard')}
       />
@@ -1452,6 +1455,32 @@ export default function App() {
     );
   }
 
+  // Warranty additional time. Declared above the phone-only block so the submit
+  // form and the tech's own list both work on a phone AND on the desktop tech
+  // resources page — same page names, one implementation.
+  if (page === 'additional-time') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <AdditionalTime
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'dashboard')}
+        onViewMine={() => goTo('additional-time-review', prevPage || 'dashboard')}
+      />
+    );
+  }
+
+  if (page === 'additional-time-review') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <AdditionalTimeReview
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'tech-resources')}
+      />
+    );
+  }
+
   if (page === 'original-owner') {
     if (!canAccess('originalOwner')) { setPage(prevPage || 'advisor-calendar'); return null; }
     const ooBackLabel = prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
@@ -1502,6 +1531,7 @@ export default function App() {
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
           onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
+          onAdditionalTime={() => goTo('additional-time', 'dashboard')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}

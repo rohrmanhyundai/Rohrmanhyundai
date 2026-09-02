@@ -1161,6 +1161,64 @@ export async function removeTireWarrantyClaim(claim) {
   catch { /* file may not exist (legacy index-only claim); ignore */ }
 }
 
+// ── Warranty Additional Time ──────────────────────────────────────────────────
+// A tech submits an RO, flat-rate hours and a screenshot of their Techline call
+// from their phone; a manager approves it. One index file holds every request —
+// they're small, and a single file keeps the read cost down on the shared token.
+const ADDL_TIME_INDEX_PATH = 'public/data/additional-time/index.json';
+
+export async function loadAdditionalTimeIndex() {
+  try {
+    const data = await readGitHubFile(authHeaders(), ADDL_TIME_INDEX_PATH);
+    // Only trust a real array — a truthy non-array means the read failed, and
+    // reporting "no requests" would look like a tech's submission vanished.
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/additional-time/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
+  } catch {}
+  return [];
+}
+
+// Upsert one request into the freshest index. Never writes the caller's whole
+// in-memory list — two techs submitting at the same moment would otherwise
+// overwrite each other.
+export async function saveAdditionalTimeRequest(req) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(r => r.id === req.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = req; return next; }
+    return [req, ...arr];
+  }, `Additional time request ${req.id} - RO ${req.ro || 'unknown'}`);
+}
+
+// Approve in place against the freshest index so a concurrent submission can't
+// be dropped by the approval write.
+export async function approveAdditionalTimeRequest(id, approvedBy) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(r => (r.id === id
+      ? { ...r, status: 'approved', approvedAt: new Date().toISOString(), approvedBy: approvedBy || '' }
+      : r));
+  }, `Approve additional time ${id}`);
+}
+
+export async function removeAdditionalTimeRequest(id) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(ADDL_TIME_INDEX_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(r => r.id !== id),
+    `Remove additional time request ${id}`);
+}
+
 // ── Work In Progress ──────────────────────────────────────────────────────────
 export async function loadWipData(techName) {
   const path = `public/data/wip/${techName.toUpperCase()}.json`;

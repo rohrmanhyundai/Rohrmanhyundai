@@ -8,6 +8,8 @@ import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAl
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
+import AdditionalTimeReview from './AdditionalTimeReview';
+import { userDisplayName } from '../utils/userDisplay';
 import { triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT } from '../utils/pusher';
 import { trackAction } from '../utils/activityTracker';
 import { hasExcelTraining } from '../utils/training';
@@ -1491,6 +1493,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     ...(isAdminOrManager(currentRole) ? [
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
       { id: 'schedule', icon: '📅', label: 'Work Schedule Editor',  desc: 'Edit the service advisor work schedule',              color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.35)'  },
+      { id: 'addlTime', icon: '⏱️', label: 'Additional Time Approval', desc: 'Review and approve warranty additional time submitted by techs', color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
     ] : []),
     ...(currentRole === 'admin' ? [
       { id: 'forceRefresh', icon: '🔄', label: 'Force Refresh All Users', desc: 'Push newly deployed features live by reloading every logged-in browser', color: '#f87171', bg: 'rgba(239,68,68,.12)', border: 'rgba(239,68,68,.4)' },
@@ -2218,6 +2221,17 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (openSection === 'schedule') return (
       <div style={{ margin: '0 -8px' }}>
         <ScheduleEditor schedules={schedules} onSchedulesChange={onSchedulesChange} users={users} vacations={vacations} embedded={true} />
+      </div>
+    );
+
+    if (openSection === 'addlTime') return (
+      <div style={{ margin: '0 -8px' }}>
+        <AdditionalTimeReview
+          currentUser={currentUser}
+          currentUserDisplay={userDisplayName(currentUser, users)}
+          canApprove
+          embedded
+        />
       </div>
     );
 
