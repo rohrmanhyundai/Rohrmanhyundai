@@ -10,35 +10,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
-  },
-  {
-    "id": "mtiz37m0m3il",
-    "ro": "780495",
-    "roDate": "2026-09-01",
-    "vehicle": "2027 Hyundai Palisade Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mtiz37m0qost",
-    "ro": "780494",
-    "roDate": "2026-09-01",
-    "vehicle": "2027 Hyundai Palisade Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
