@@ -15,22 +15,6 @@
     "flag": "purple"
   },
   {
-    "id": "mtbreugpm807",
-    "ro": "780365",
-    "roDate": "2026-08-27",
-    "vehicle": "2018 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CAR WILL NOT START UNLESS YOU PUT THE CAR IN \"N\"",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/02/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mtiz35tnhqby",
     "ro": "780492",
     "roDate": "2026-09-01",
