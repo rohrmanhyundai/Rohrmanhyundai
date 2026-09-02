@@ -1183,6 +1183,38 @@ export async function saveWipData(techName, rows) {
   return rows;
 }
 
+// APPEND, don't rebuild. The RO upload used to do loadWipData() → concat →
+// saveWipData(), but loadWipData falls back to the GitHub Pages copy whenever the
+// API read fails (rate limit, replica lag right after a write), and deploy.yml
+// deliberately never refreshes that copy for data commits — it can be hours
+// behind. Rebuilding from it made just-saved ROs reappear as "new to add" (the
+// "I have to hit Save over and over" report) and, worse, wrote the short stale
+// list back over the live file, silently dropping ROs that were already there.
+// mutateGitHubJson re-reads the REAL file on every attempt, so the append is
+// based on live content and is idempotent — re-saving the same batch adds nothing.
+const roIdKey = (v) => String(v ?? '').trim().toUpperCase();
+
+async function appendRoRows(path, rows, message) {
+  if (!rows || !rows.length) return { added: 0 };
+  let added = 0;
+  await mutateGitHubJson(path, (cur) => {
+    const list = Array.isArray(cur) ? cur : [];
+    const have = new Set(list.map(r => roIdKey(r && r.ro)));
+    const fresh = rows.filter(r => !have.has(roIdKey(r && r.ro)));
+    added = fresh.length; // recomputed on every retry; the winning attempt wins
+    return [...list, ...fresh];
+  }, message);
+  return { added };
+}
+
+export async function appendWipRows(techName, rows) {
+  return appendRoRows(`public/data/wip/${techName.toUpperCase()}.json`, rows, `WIP update: ${techName}`);
+}
+
+export async function appendAwaitingRows(rows) {
+  return appendRoRows('public/data/wip/AWAITING.json', rows, 'Update cars awaiting technician');
+}
+
 // Conditional poll for a tech's WIP board. Returns { changed, data }: when the
 // file is unchanged since the last poll GitHub answers 304 for FREE (no quota
 // spent), and we return { changed:false } so the caller keeps its current rows.

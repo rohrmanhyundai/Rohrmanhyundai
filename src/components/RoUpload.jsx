@@ -4,6 +4,7 @@ import {
   loadAwaitingData, saveAwaitingData,
   loadWipData, saveWipData, listWipTechs, loadDashboardData,
   saveMissingNotes, loadRoArchive, saveRoArchive, saveRoStatusReport,
+  appendWipRows, appendAwaitingRows, isRateLimited,
 } from '../utils/github';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 
@@ -154,7 +155,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
 
   // One-time scan of every WIP file + Cars Awaiting so we know what's already on
   // the site. (One-shot on this page — not a poll — so the API load is fine.)
-  async function loadSiteRos() {
+  // `ensure` = ROs we just wrote ourselves. loadWipData/loadAwaitingData fall back
+  // to the GitHub Pages copy when an API read fails, and that copy is only
+  // refreshed by a code deploy — so straight after a save the read-back can be
+  // hours stale and the ROs we just wrote come back missing, putting them right
+  // back in "new to add". Merging `ensure` in keeps the list honest either way.
+  async function loadSiteRos(ensure) {
     setSiteLoading(true);
     try {
       let techs = [];
@@ -173,7 +179,17 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         const aw = await loadAwaitingData();
         (aw || []).forEach(r => { if (r.ro) out.push({ ro: roKey(r.ro), where: 'Cars Awaiting', advisor: r.advisor || '' }); });
       } catch {}
+      if (ensure && ensure.length) {
+        const have = new Set(out.map(r => r.ro));
+        ensure.forEach(e => { if (!have.has(e.ro)) out.push(e); });
+      }
       setSiteRos(out);
+      // A spent quota makes the reads above fall back to the stale Pages copy, so
+      // the comparison can't be trusted. Say so rather than let it look like the
+      // save didn't take — hitting Save again only digs the rate limit deeper.
+      if (isRateLimited()) {
+        setError('GitHub is rate-limiting right now, so the on-site list may be incomplete. Your save went through — wait a minute before saving again.');
+      }
       try { const arch = await loadRoArchive(); setArchive(Array.isArray(arch) ? arch : []); } catch { setArchive([]); }
     } finally {
       setSiteLoading(false);
@@ -522,11 +538,13 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
       }
 
       let added = 0;
+      // Everything we successfully wrote, so the refresh below can't lose them to
+      // a stale read (see loadSiteRos). Recorded for the whole batch, not just the
+      // rows this click appended — an RO already on the file is still "on site".
+      const ensure = [];
       // WIP per tech
       for (const [tech, list] of byTech.entries()) {
-        const existing = await loadWipData(tech);
-        const have = new Set((existing || []).map(r => roKey(r.ro)));
-        const additions = list.filter(o => !have.has(roKey(o.ro))).map(o => ({
+        const rows = list.map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
           jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
           notes: (notesMap[roKey(o.ro)] || '').trim(),
@@ -534,16 +552,13 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
           etaParts: '', etaCompletion: '', partsArrived: null, partsArrivedDate: '',
           highPriority: false, advisor: o.advisor || '',
         }));
-        if (additions.length) {
-          await saveWipData(tech, [...(existing || []), ...additions]);
-          added += additions.length;
-        }
+        const res = await appendWipRows(tech, rows);
+        added += res.added;
+        list.forEach(o => ensure.push({ ro: roKey(o.ro), where: tech, advisor: o.advisor || '' }));
       }
       // Cars Awaiting for no-tech ROs
       if (awaiting.length) {
-        const existing = await loadAwaitingData();
-        const have = new Set((existing || []).map(r => roKey(r.ro)));
-        const additions = awaiting.filter(o => !have.has(roKey(o.ro))).map(o => ({
+        const rows = awaiting.map(o => ({
           id: genId(), ro: o.ro.trim(), roDate: todayISO(), vehicle: o.vehicle || '',
           jobDesc: (descs[roKey(o.ro)] || '').trim() || autoDescForFlag(o.userFlag),
           notes: (notesMap[roKey(o.ro)] || '').trim(),
@@ -551,13 +566,12 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
           highPriority: false, advisor: o.advisor || '',
           partsArrived: null, partsArrivedDate: '', isNew: true,
         }));
-        if (additions.length) {
-          await saveAwaitingData([...(existing || []), ...additions]);
-          added += additions.length;
-        }
+        const res = await appendAwaitingRows(rows);
+        added += res.added;
+        awaiting.forEach(o => ensure.push({ ro: roKey(o.ro), where: 'Cars Awaiting', advisor: o.advisor || '' }));
       }
       setStatus(`✅ Saved ${added} repair order${added === 1 ? '' : 's'} to the website.`);
-      await loadSiteRos(); // refresh comparison so the lists update
+      await loadSiteRos(ensure); // refresh comparison so the lists update
     } catch (e) {
       setError(e.message || 'Save failed.');
       setStatus('');
