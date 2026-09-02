@@ -121,5 +121,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788367435020
+  },
+  {
+    "id": "gm-mtkdrfsj8mkd",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "Hazzard has been driving and no lights. ready to go",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788370736563
   }
 ]
