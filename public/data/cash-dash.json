@@ -15,7 +15,16 @@
       "CODY": 117.7
     },
     "repCount": 37,
-    "updatedAt": 1788348189224,
-    "repScore": 740
+    "updatedAt": 1788348613108,
+    "repScore": 740,
+    "captured": {
+      "adv": [],
+      "tech": []
+    }
+  },
+  "season": {
+    "status": "frozen",
+    "updatedAt": 1788348613108,
+    "by": "SHAWN"
   }
 }
