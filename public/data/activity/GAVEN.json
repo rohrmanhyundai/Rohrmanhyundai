@@ -1,5 +1,50 @@
 [
   {
+    "at": "2026-09-02T20:57:00.535Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
+    "at": "2026-09-02T20:56:40.684Z",
+    "type": "page",
+    "label": "additional-time-review"
+  },
+  {
+    "at": "2026-09-02T20:56:39.339Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-02T20:56:37.562Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-02T20:56:32.998Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-02T20:56:32.566Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-02T20:56:32.117Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-02T20:56:30.931Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-02T20:56:29.215Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-02T20:54:30.234Z",
     "type": "page",
     "label": "additional-time-review"
