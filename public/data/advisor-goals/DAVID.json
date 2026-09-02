@@ -688,7 +688,7 @@
     "days": {
       "2026-09-01": {
         "hours": 1,
-        "hrsRo": 0.2,
+        "hrsRo": 0.17,
         "openRoCount": 11,
         "invoiced": "no",
         "customersUpdated": "yes",
