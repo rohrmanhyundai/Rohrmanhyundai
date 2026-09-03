@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-03T16:45:30.573Z",
+    "type": "page",
+    "label": "registration-upload"
+  },
+  {
     "at": "2026-09-03T14:47:47.499Z",
     "type": "page",
     "label": "tire-warranty"
@@ -1654,10 +1659,5 @@
     "at": "2026-08-04T17:43:23.942Z",
     "type": "page",
     "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-04T15:54:11.664Z",
-    "type": "page",
-    "label": "charge-account-list"
   }
 ]
