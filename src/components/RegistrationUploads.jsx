@@ -31,6 +31,27 @@ async function saveToPc(url, filename) {
   }
 }
 
+// Clipboard API needs a secure context; fall back to the old textarea trick so
+// this still works if the page is ever served over plain http.
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    } catch { return false; }
+  }
+}
+
 export default function RegistrationUploads({ currentUser, currentUserDisplay, onBack, backLabel = '← Warranty Hub' }) {
   const [rows, setRows] = useState(null); // null = loading
   const [error, setError] = useState('');
@@ -39,6 +60,7 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
   const [confirmDelete, setConfirmDelete] = useState('');
   const [removing, setRemoving] = useState('');
   const [saved, setSaved] = useState('');
+  const [copied, setCopied] = useState('');
   // Set when the blob download couldn't run (S3 CORS) and we fell back to
   // opening the image — the hint tells them how to finish the save themselves.
   const [openedInTab, setOpenedInTab] = useState('');
@@ -64,6 +86,15 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
     return all.slice().sort((a, b) =>
       String(b.submittedAt || '').localeCompare(String(a.submittedAt || '')));
   }, [rows, search]);
+
+  // Say so when the browser refuses the clipboard rather than looking like
+  // nothing happened — they can still select the number by hand.
+  async function handleCopyRo(r) {
+    if (!r.ro) return;
+    const ok = await copyText(String(r.ro));
+    setCopied(ok ? r.id : `fail:${r.id}`);
+    setTimeout(() => setCopied(''), ok ? 1800 : 2600);
+  }
 
   async function handleDownload(r) {
     const ext = (r.photoUrl || '').split('.').pop().split('?')[0] || 'jpg';
@@ -145,17 +176,42 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
                   border: '1px solid rgba(56,189,248,.28)',
                   borderRadius: 12, overflow: 'hidden',
                 }}>
-                  <button
+                  {/* A div, not a button — the RO number inside is its own
+                      button, and nesting buttons isn't valid. */}
+                  <div
                     onClick={() => { setOpenId(open ? null : r.id); setOpenedInTab(''); }}
-                    style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: '14px 16px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    style={{ width: '100%', cursor: 'pointer', padding: '14px 16px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                     <div style={{ flex: 1, minWidth: 180 }}>
-                      <div style={{ color: '#e2e8f0', fontWeight: 800, fontSize: 15 }}>RO {r.ro || '—'}</div>
-                      <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 3 }}>
+                      <button
+                        type="button"
+                        title="Click to copy the RO number"
+                        onClick={e => { e.stopPropagation(); handleCopyRo(r); }}
+                        style={{
+                          background: copied === r.id ? 'rgba(74,222,128,.15)'
+                            : copied === `fail:${r.id}` ? 'rgba(248,113,113,.12)' : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${copied === r.id ? 'rgba(74,222,128,.5)'
+                            : copied === `fail:${r.id}` ? 'rgba(248,113,113,.5)' : 'rgba(255,255,255,0.12)'}`,
+                          color: copied === r.id ? '#4ade80' : '#e2e8f0',
+                          fontWeight: 800, fontSize: 15, borderRadius: 8,
+                          padding: '5px 10px', cursor: 'pointer', display: 'inline-flex',
+                          alignItems: 'center', gap: 8, fontFamily: 'inherit',
+                        }}>
+                        RO {r.ro || '—'}
+                        <span style={{
+                          fontSize: 11, fontWeight: 700,
+                          color: copied === r.id ? '#4ade80' : copied === `fail:${r.id}` ? '#fca5a5' : '#64748b',
+                        }}>
+                          {copied === r.id ? '✓ Copied'
+                            : copied === `fail:${r.id}` ? '✗ Copy blocked — select it by hand'
+                            : '⧉ Copy'}
+                        </span>
+                      </button>
+                      <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 5 }}>
                         {r.submittedByDisplay || r.submittedBy || 'Unknown'} · {fmtDate(r.submittedAt)}
                       </div>
                     </div>
                     <span style={{ color: '#64748b', fontSize: 12, fontWeight: 700 }}>{open ? '▲ Hide' : '▼ View'}</span>
-                  </button>
+                  </div>
 
                   {open && (
                     <div style={{ padding: '0 16px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
