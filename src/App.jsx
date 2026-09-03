@@ -22,6 +22,8 @@ import LivePay from './components/LivePay';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import AdditionalTime from './components/AdditionalTime';
+import AdditionalTimeMenu from './components/AdditionalTimeMenu';
+import AdditionalDiagTime from './components/AdditionalDiagTime';
 import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
@@ -1452,6 +1454,33 @@ export default function App() {
   // Warranty additional time. Declared above the phone-only block so the submit
   // form and the tech's own list both work on a phone AND on the desktop tech
   // resources page — same page names, one implementation.
+  if (page === 'additional-time-menu') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    const menuBack = prevPage || 'dashboard';
+    return (
+      <AdditionalTimeMenu
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(menuBack)}
+        onTechline={() => goTo('additional-time', 'additional-time-menu')}
+        onDiag={() => goTo('additional-diag-time', 'additional-time-menu')}
+        onViewMine={() => goTo('additional-time-review', 'additional-time-menu')}
+      />
+    );
+  }
+
+  if (page === 'additional-diag-time') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <AdditionalDiagTime
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'additional-time-menu')}
+        onViewMine={() => goTo('additional-time-review', prevPage || 'additional-time-menu')}
+      />
+    );
+  }
+
   if (page === 'additional-time') {
     if (!isLoggedIn) { setPage('dashboard'); return null; }
     return (
@@ -1525,7 +1554,7 @@ export default function App() {
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
           onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
-          onAdditionalTime={() => goTo('additional-time', 'dashboard')}
+          onAdditionalTime={() => goTo('additional-time-menu', 'dashboard')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}

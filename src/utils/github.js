@@ -1199,14 +1199,22 @@ export async function saveAdditionalTimeRequest(req) {
 }
 
 // Approve in place against the freshest index so a concurrent submission can't
-// be dropped by the approval write.
-export async function approveAdditionalTimeRequest(id, approvedBy) {
+// be dropped by the approval write. approvedHours is what the manager is
+// actually granting — `hours` stays the tech's original ask so the record
+// still shows what was requested versus what was allowed.
+export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     return arr.map(r => (r.id === id
-      ? { ...r, status: 'approved', approvedAt: new Date().toISOString(), approvedBy: approvedBy || '' }
+      ? {
+          ...r,
+          status: 'approved',
+          approvedAt: new Date().toISOString(),
+          approvedBy: approvedBy || '',
+          approvedHours: String(approvedHours ?? r.approvedHours ?? r.hours ?? '').trim(),
+        }
       : r));
   }, `Approve additional time ${id}`);
 }
