@@ -1,19 +1,5 @@
 [
   {
-    "id": "mtlpzft67dnz",
-    "kind": "diag",
-    "ro": "5454",
-    "hours": "1.0",
-    "description": "Hahaha",
-    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/diag-mtlpzft67dnz-1788451742196.jpg",
-    "tech": "GAVEN",
-    "techDisplay": "GAVEN L",
-    "status": "submitted",
-    "submittedAt": "2026-09-03T16:09:11.773Z",
-    "approvedAt": null,
-    "approvedBy": null
-  },
-  {
     "id": "mtlpy5g261xu",
     "ro": "25555",
     "hours": "1.0",
