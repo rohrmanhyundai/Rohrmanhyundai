@@ -392,8 +392,13 @@ export async function saveAdvisorNotes(advisorName, date, rows, afterCallRows) {
     const apiIndex = await readGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`);
     if (apiIndex) indexData = apiIndex;
   } catch {}
-  if (!indexData.dates.includes(date)) indexData.dates = [date, ...indexData.dates].sort().reverse();
-  await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`, indexData, `Notes index: ${advisorName}`);
+  // Only rewrite the index when the date is genuinely new. The prep sheet
+  // autosaves, and an unconditional write here would commit twice on every
+  // idle-save for a day that's already listed.
+  if (!indexData.dates.includes(date)) {
+    indexData.dates = [date, ...indexData.dates].sort().reverse();
+    await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/index.json`, indexData, `Notes index: ${advisorName}`);
+  }
 }
 
 export async function loadAdvisorNotes(advisorName, date) {
