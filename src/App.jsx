@@ -650,6 +650,21 @@ export default function App() {
     });
   }, []);
 
+  // `window.innerWidth < 600` was read during render with nothing to re-run it,
+  // so rotating a phone left it stranded in whichever layout it loaded with.
+  // Recomputed on resize/orientation change; a 1920px TV is never < 600, so the
+  // scaled stage view is unaffected.
+  const [isPhone, setIsPhone] = useState(() => window.innerWidth < 600);
+  useEffect(() => {
+    const onResize = () => setIsPhone(window.innerWidth < 600);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+    };
+  }, []);
+
   const fitStage = useCallback(() => {
     if (!stageRef.current) return;
     const baseW = 1920, baseH = 1080;
@@ -941,7 +956,7 @@ export default function App() {
   }
 
   if (page === 'tech-work-schedule') {
-    if (window.innerWidth < 600) return (
+    if (isPhone) return (
       <MobileSchedule schedules={schedules} employeeNames={techList}
         currentUser={currentUser.toUpperCase()} title="Tech Schedule"
         onBack={() => setPage('tech-resources')} />
@@ -954,7 +969,7 @@ export default function App() {
   }
 
   if (page === 'tech-view-advisor-schedule') {
-    if (window.innerWidth < 600) return (
+    if (isPhone) return (
       <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
         onBack={() => setPage('tech-resources')} />
@@ -987,7 +1002,7 @@ export default function App() {
 
   if (page === 'advisor-view-tech-schedule') {
     const tsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
-    if (window.innerWidth < 600) return (
+    if (isPhone) return (
       <MobileSchedule schedules={schedules} employeeNames={techList}
         currentUser={currentUser.toUpperCase()} title="Tech Schedule"
         onBack={() => setPage(prevPage || 'advisor-calendar')} />
@@ -1268,7 +1283,7 @@ export default function App() {
     const backDest = prevPage || 'advisor-calendar';
     // Technicians routed here should see the tech schedule, not advisor schedule
     if (jobRole === 'technician') {
-      if (window.innerWidth < 600) return (
+      if (isPhone) return (
         <MobileSchedule schedules={schedules} employeeNames={techList}
           currentUser={currentUser.toUpperCase()} title="Tech Schedule"
           onBack={() => setPage(backDest)} />
@@ -1280,7 +1295,7 @@ export default function App() {
           backLabel={wsBackLabel} />
       );
     }
-    if (window.innerWidth < 600) return (
+    if (isPhone) return (
       <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
         currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
         onBack={() => setPage(backDest)} />
@@ -1564,7 +1579,7 @@ export default function App() {
   }
 
   // Phone-only mobile view — tablet/desktop/TV use the existing scaled layout unchanged
-  if (window.innerWidth < 600) {
+  if (isPhone) {
     if (page === 'mobile-advisor-schedule') {
       return (
         <MobileSchedule
