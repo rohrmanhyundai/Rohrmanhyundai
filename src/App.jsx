@@ -30,6 +30,7 @@ import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import GlobalMessage from './components/GlobalMessage';
+import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
@@ -42,7 +43,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage } from './utils/github';
+import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkSchedule from './components/WorkSchedule';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
@@ -154,6 +155,7 @@ export default function App() {
   const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
   const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
   const [globalUnread, setGlobalUnread] = useState(0); // unread global-message activity → Manager button badge
+  const [globalMessages, setGlobalMessages] = useState([]); // feeds the floating messenger panel
   const globalSeenRef = useRef(0);                   // ts the user last opened the Global Message log
   // Cash Dash season — when it is switched off the tile disappears for staff,
   // while managers keep it so they can switch it back on.
@@ -210,15 +212,30 @@ export default function App() {
 
   useEffect(() => { adminOpenRef.current = adminOpen; }, [adminOpen]);
 
-  // Opening the Global Message log marks its activity as read → clears the badge.
+  // Reading global-message activity — from the log page or the floating
+  // messenger — marks it read and clears the badge.
+  const markGlobalSeen = useCallback(() => {
+    if (!currentUser) return;
+    const ts = Date.now();
+    globalSeenRef.current = ts;
+    try { localStorage.setItem(`globalMsgSeenTs:${currentUser.toUpperCase()}`, String(ts)); } catch {}
+    setGlobalUnread(0);
+  }, [currentUser]);
+
   useEffect(() => {
-    if (page === 'global-message' && currentUser) {
-      const ts = Date.now();
-      globalSeenRef.current = ts;
-      try { localStorage.setItem(`globalMsgSeenTs:${currentUser.toUpperCase()}`, String(ts)); } catch {}
-      setGlobalUnread(0);
-    }
-  }, [page, currentUser]);
+    if (page === 'global-message') markGlobalSeen();
+  }, [page, markGlobalSeen]);
+
+  // Seed the floating messenger's list on login; the global-message scan keeps
+  // it fresh from there.
+  useEffect(() => {
+    if (!isLoggedIn || !currentUser) { setGlobalMessages([]); return; }
+    let cancelled = false;
+    loadGlobalMessages()
+      .then(all => { if (!cancelled && Array.isArray(all)) setGlobalMessages(all); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [isLoggedIn, currentUser]);
 
   useEffect(() => {
     loadDashboard();
@@ -407,7 +424,7 @@ export default function App() {
     const scanGlobal = async () => {
       try {
         const r = await pollGlobalMessages();
-        if (r && r.changed && Array.isArray(r.data)) { r.data.forEach(m => { considerGlobal(m); considerReplies(m); }); tallyGlobalUnread(r.data); }
+        if (r && r.changed && Array.isArray(r.data)) { r.data.forEach(m => { considerGlobal(m); considerReplies(m); }); tallyGlobalUnread(r.data); setGlobalMessages(r.data); }
       } catch {}
     };
 
@@ -1658,5 +1675,20 @@ export default function App() {
   };
 
   // The mention portal renders on top of whatever page is showing.
-  return (<>{mentionModal}{renderPage()}</>);
+  // The floating messenger sits beside the mention popup, above the page
+  // switch, so it survives every navigation. Sending is manager-only for now;
+  // reading is for everyone.
+  const canSendGlobal = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const messenger = isLoggedIn ? createPortal(
+    <FloatingMessenger
+      currentUser={currentUser}
+      users={users}
+      messages={globalMessages}
+      unread={globalUnread}
+      canSend={canSendGlobal}
+      onMarkSeen={markGlobalSeen}
+      onMessagesChange={setGlobalMessages}
+    />, document.body) : null;
+
+  return (<>{mentionModal}{messenger}{renderPage()}</>);
 }
