@@ -136,6 +136,10 @@ export default function AdditionalTime({ currentUser, currentUserDisplay, onBack
               <li>Tap Submit.</li>
             </ol>
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(251,191,36,.25)', color: '#fcd34d', fontSize: 13, fontWeight: 600, lineHeight: 1.5 }}>
+              ⚠️ Techline time must be submitted in the same week as the call. Calls dated outside the current week
+              <strong> will not be approved</strong>.
+            </div>
+            <div style={{ marginTop: 8, color: '#fcd34d', fontSize: 13, fontWeight: 600, lineHeight: 1.5 }}>
               ⚠️ Submitting does not approve your time. A manager reviews every request. Your time counts only after it shows
               <strong> Time Approved</strong>.
             </div>
