@@ -1407,11 +1407,71 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     .filter(u => (u.role || '').toLowerCase() === 'technician')
     .filter(u => !data.technicians.some(t => (t.name || '').toUpperCase() === (u.username || '').toUpperCase()));
 
+  // Removing someone has to be complete or they come back. Splicing the roster
+  // alone left their login in place, and the WIP board builds its tabs from user
+  // accounts (App.jsx: users.filter(role === 'technician')), not the roster — so a
+  // "removed" tech kept a WIP tab, with their old board still on disk. It also
+  // never recorded them as a former employee, which is what stops the roster
+  // filter from resurrecting them on the next load.
+  //
+  // This is the same path User Management already uses: login, per-user files,
+  // shared-file scrubs, former-employee record, roster and vacations. Performance
+  // reports and group chat are kept on purpose.
+  const [removingEmployee, setRemovingEmployee] = useState('');
+
+  async function removeEmployeeCompletely(rosterName, role) {
+    const name = String(rosterName || '').trim();
+    if (!name) return;
+    const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toLowerCase();
+    const first = firstWord(name);
+    const account = (users || []).find(u => firstWord(u.username) === first);
+
+    if (!confirm(
+      `Remove ${name} from the system?\n\n` +
+      `Deletes their Work In Progress board, activity log, coaching file, service invitations, ` +
+      `advisor notes, schedule and coaching views` +
+      (account ? `, and their "${account.username}" login` : '') + `.\n\n` +
+      `They are recorded as a former employee so they cannot reappear.\n\n` +
+      `Performance reports and group chat history are kept.\n\nThis cannot be undone.`
+    )) return;
+
+    setRemovingEmployee(name);
+    try {
+      const newData = structuredClone(data);
+      newData.technicians     = (newData.technicians     || []).filter(t => firstWord(t.name) !== first);
+      newData.advisors        = (newData.advisors        || []).filter(a => firstWord(a.name) !== first);
+      newData.advisorTraining = (newData.advisorTraining || []).filter(a => firstWord(a.name) !== first);
+      const newVacations      = (vacations || []).filter(v => firstWord(v.name) !== first);
+
+      if (account) {
+        const updatedUsers = (users || []).filter(u => u.username !== account.username);
+        await saveUsers(updatedUsers, sharedSaveCode || getGithubToken());
+        onUsersChange(updatedUsers);
+      }
+
+      // Purge under BOTH keys when the roster name and the login differ (the
+      // roster says "GAVEN LAUGHNER", the login is "GAVEN") — per-user files are
+      // named from whichever one wrote them.
+      const keys = new Set([name.toUpperCase()]);
+      if (account) keys.add(String(account.username).toUpperCase());
+      for (const key of keys) {
+        try { await deleteUserData(key, role); }
+        catch (err) { alert(`${name} was removed, but some of their data could not be cleaned up: ` + (err.message || err)); }
+      }
+
+      // Persist immediately. Leaving the roster change for Save Changes would
+      // desync it from the file deletions that already happened.
+      await saveDashboardToGitHub({ data: newData, vacations: newVacations });
+      onDataChange(newData, newVacations);
+    } catch (err) {
+      alert(`Failed to remove ${name}: ` + (err.message || err));
+    } finally {
+      setRemovingEmployee('');
+    }
+  }
+
   function removeTechnician(idx) {
-    if (!confirm(`Remove ${data.technicians[idx].name}?`)) return;
-    const newData = structuredClone(data);
-    newData.technicians.splice(idx, 1);
-    onDataChange(newData, vacations);
+    removeEmployeeCompletely(data.technicians?.[idx]?.name, 'technician');
   }
 
   function addAdvisor() { setAddingAdvisor(true); }
@@ -1446,11 +1506,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     .filter(u => !data.advisors.some(a => (a.name || '').toUpperCase() === (u.username || '').toUpperCase()));
 
   function removeAdvisor(idx) {
-    if (!confirm(`Remove ${data.advisors[idx].name}?`)) return;
-    const newData = structuredClone(data);
-    newData.advisors.splice(idx, 1);
-    if (newData.advisorTraining[idx]) newData.advisorTraining.splice(idx, 1);
-    onDataChange(newData, vacations);
+    removeEmployeeCompletely(data.advisors?.[idx]?.name, 'advisor');
   }
 
   // Build a human-readable date range string from ISO date strings (for ticker / display)
@@ -1800,7 +1856,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <button className="secondary" style={a.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}} onClick={() => updateField(`advisors.${idx}.hidden`, !a.hidden)}>
                   {a.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
                 </button>
-                <button className="secondary" onClick={() => removeAdvisor(idx)}>Remove</button>
+                <button className="secondary" disabled={!!removingEmployee} onClick={() => removeAdvisor(idx)}>{removingEmployee === a.name ? 'Removing…' : 'Remove'}</button>
               </div>
             </div>
             <div className="form-grid">
@@ -2004,7 +2060,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   }}>
                   {techMultiplierOn(t) ? `⚡ Warranty ×${WARRANTY_MULTIPLIER} ON` : `Warranty ×${WARRANTY_MULTIPLIER} OFF`}
                 </button>
-                <button className="secondary" onClick={() => removeTechnician(idx)}>Remove</button>
+                <button className="secondary" disabled={!!removingEmployee} onClick={() => removeTechnician(idx)}>{removingEmployee === t.name ? 'Removing…' : 'Remove'}</button>
               </span>
             </div>
             <div className="form-grid" style={{ marginBottom: 8 }}>
