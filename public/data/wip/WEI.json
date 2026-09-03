@@ -63,5 +63,19 @@
     "notes": "",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mtlgys5b6md2",
+    "ro": "780559",
+    "roDate": "2026-09-03",
+    "vehicle": "2015 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES CEL ON AND FLASHING. CHECK AND ADVISE",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
