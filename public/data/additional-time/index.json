@@ -1,5 +1,17 @@
 [
   {
+    "id": "mtlpsc8blbq7",
+    "ro": "545454",
+    "hours": "1.0",
+    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtlpsc8blbq7-1788451429794.png",
+    "tech": "GAVEN",
+    "techDisplay": "GAVEN L",
+    "status": "submitted",
+    "submittedAt": "2026-09-03T16:03:52.648Z",
+    "approvedAt": null,
+    "approvedBy": null
+  },
+  {
     "id": "mtlot9mb45og",
     "kind": "diag",
     "ro": "787878",
