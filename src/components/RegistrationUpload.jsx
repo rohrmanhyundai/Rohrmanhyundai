@@ -45,13 +45,17 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
   // Receipt list at the bottom — RO numbers only, never the photos. It's the
   // proof the send landed, and it stops two people uploading the same RO.
   const [sent, setSent] = useState(null); // null = loading
+  // null until asked. The question is about the customer, not the photo, so a
+  // retake doesn't re-ask — but a fresh submit clears it for the next one.
+  const [originalOwner, setOriginalOwner] = useState(null);
+  const [step, setStep] = useState('');   // '' | 'ask' | 'warn'
   // Two inputs: the first has capture="environment", which is what makes a
   // phone open the camera straight away instead of the file picker.
   const cameraRef = useRef(null);
   const libraryRef = useRef(null);
   const idRef = useRef(genId());
 
-  const canSubmit = ro.trim().length > 0 && !!photoUrl && !uploading && !saving;
+  const canSubmit = ro.trim().length > 0 && !!photoUrl && originalOwner !== null && !uploading && !saving;
 
   async function loadSent() {
     try {
@@ -74,6 +78,7 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
       const url = await uploadRegistrationPhotoToS3(`${idRef.current}-${Date.now()}.${ext}`, file);
       setPhotoUrl(url);
       setPhotoName(file.name || 'photo');
+      if (originalOwner === null) setStep('ask');
     } catch (err) {
       setError('Upload failed: ' + (err.message || err));
     } finally {
@@ -90,6 +95,7 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
         id: idRef.current,
         ro: ro.trim(),
         photoUrl,
+        originalOwner: originalOwner === true,
         submittedBy: (currentUser || '').toUpperCase(),
         submittedByDisplay: currentUserDisplay || currentUser || '',
         submittedAt: new Date().toISOString(),
@@ -98,7 +104,7 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
       loadSent();
       // Wipe every trace of the photo from this screen.
       idRef.current = genId();
-      setRo(''); setPhotoUrl(''); setPhotoName('');
+      setRo(''); setPhotoUrl(''); setPhotoName(''); setOriginalOwner(null); setStep('');
     } catch (err) {
       setError(err.message || 'Submit failed. Try again.');
     } finally {
@@ -195,6 +201,28 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
         )}
       </div>
 
+      {/* Original owner answer — shown once it's been asked */}
+      {originalOwner !== null && (
+        <div style={{
+          ...CARD,
+          borderColor: originalOwner ? 'rgba(251,191,36,.55)' : 'rgba(255,255,255,0.09)',
+          background: originalOwner ? 'rgba(251,191,36,.09)' : 'rgba(255,255,255,0.04)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ ...LABEL, marginBottom: 4 }}>Original Owner</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: originalOwner ? '#fbbf24' : '#e2e8f0' }}>
+                {originalOwner ? '⚠️ Yes — original owner form must be completed' : 'No'}
+              </div>
+            </div>
+            <button type="button" onClick={() => setStep('ask')}
+              style={{ flexShrink: 0, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+              Change
+            </button>
+          </div>
+        </div>
+      )}
+
       {error && (
         <div style={{ ...CARD, borderColor: 'rgba(248,113,113,.45)', background: 'rgba(248,113,113,.1)', color: '#fca5a5', fontSize: 13, fontWeight: 600 }}>
           {error}
@@ -213,6 +241,11 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
         }}>
         {saving ? '⏳ Submitting…' : 'Submit'}
       </button>
+      {!!photoUrl && originalOwner === null && (
+        <div style={{ color: '#fbbf24', fontSize: 12.5, fontWeight: 700, marginTop: 8, textAlign: 'center' }}>
+          Answer the original owner question before submitting.
+        </div>
+      )}
 
       {/* Sent receipts */}
       <div style={{ ...CARD, marginTop: 20 }}>
@@ -245,6 +278,57 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
           </div>
         )}
       </div>
+
+      {/* Step 2 of taking the photo: who owns the car. Asked as its own screen
+          so it can't be skipped past the way an inline checkbox would be. */}
+      {step && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 3000,
+          background: 'rgba(4,10,20,.78)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}>
+          <div style={{
+            width: '100%', maxWidth: 380, background: '#111d33',
+            border: `1px solid ${step === 'warn' ? 'rgba(251,191,36,.55)' : 'rgba(56,189,248,.4)'}`,
+            borderRadius: 16, padding: '22px 20px', boxShadow: '0 20px 60px rgba(0,0,0,.6)',
+          }}>
+            {step === 'ask' ? (
+              <>
+                <div style={{ color: '#38bdf8', fontWeight: 800, fontSize: 12, letterSpacing: 0.7, textTransform: 'uppercase', marginBottom: 10 }}>
+                  Next step
+                </div>
+                <div style={{ color: '#e2e8f0', fontWeight: 800, fontSize: 19, lineHeight: 1.35, marginBottom: 20 }}>
+                  Is the customer the original owner?
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button type="button"
+                    onClick={() => { setOriginalOwner(true); setStep('warn'); }}
+                    style={{ flex: 1, background: 'linear-gradient(180deg,#22c55e,#16a34a)', color: '#fff', border: '1px solid rgba(74,222,128,.6)', borderRadius: 10, padding: '14px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Yes
+                  </button>
+                  <button type="button"
+                    onClick={() => { setOriginalOwner(false); setStep(''); }}
+                    style={{ flex: 1, background: 'rgba(255,255,255,0.07)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 10, padding: '14px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    No
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 38, marginBottom: 10, textAlign: 'center' }}>⚠️</div>
+                <div style={{ color: '#fbbf24', fontWeight: 900, fontSize: 19, lineHeight: 1.35, textAlign: 'center', letterSpacing: 0.3 }}>
+                  ORIGINAL OWNER FORM MUST BE COMPLETED
+                </div>
+                <button type="button"
+                  onClick={() => setStep('')}
+                  style={{ width: '100%', marginTop: 22, background: 'linear-gradient(180deg,#f59e0b,#d97706)', color: '#1a1206', border: '1px solid rgba(251,191,36,.6)', borderRadius: 10, padding: '14px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  Agree
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
