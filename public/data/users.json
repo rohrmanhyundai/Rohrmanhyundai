@@ -387,32 +387,6 @@
       "managementAccess": false
     },
     {
-      "username": "Chad",
-      "lastName": "",
-      "password": "Chad2026",
-      "role": "technician",
-      "canEditDashboard": false,
-      "pages": {
-        "advisorCalendar": false,
-        "advisorRankBoard": false,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": false,
-        "originalOwner": false,
-        "workInProgress": true,
-        "chargeAccountList": false,
-        "partsHub": false,
-        "tireQuote": true,
-        "atDiagWorksheet": true,
-        "usedCarHub": true,
-        "hotRepairs": true
-      },
-      "chatAccess": false,
-      "techChatAccess": true
-    },
-    {
       "username": "Kaden",
       "lastName": "",
       "password": "Kaden2026",
