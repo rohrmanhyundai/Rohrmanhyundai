@@ -115,5 +115,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788471674341
+  },
+  {
+    "id": "gm-mtm1vvviqnr8",
+    "from": "GAVEN",
+    "to": [
+      "SHAWN"
+    ],
+    "text": "Test",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788471720990
   }
 ]
