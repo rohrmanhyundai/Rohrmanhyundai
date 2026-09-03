@@ -1857,49 +1857,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               </div>
             </div>
           )}
-        </div>
-    );
-
-    if (openSection === 'training') return (
-      <div className="group-body">
-        <div className="title" style={{ marginBottom: 6 }}>Technicians</div>
-        {data.technicians.map((t, idx) => (
-          <div className="training-edit-grid" key={t.name}>
-            <div className="field"><label>{t.name} Certified</label><input defaultValue={t.certified || ''} onBlur={e => updateField(`technicians.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
-            <div className="field"><label>Training Due</label><input defaultValue={t.trainings_due || ''} onBlur={e => updateField(`technicians.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-            <div className="field">
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                Excel Training
-                <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
-                  <input type="checkbox" checked={hasExcelTraining(t)} onChange={e => updateField(`technicians.${idx}.hasExcel`, e.target.checked)} /> has it
-                </label>
-              </label>
-              {hasExcelTraining(t)
-                ? <input key={`ex-${t.name}`} defaultValue={(t.excel_training && t.excel_training !== '\u2014' ? t.excel_training : '') || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
-                : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
-            </div>
-          </div>
-        ))}
-        <div className="form-section">
-          <div className="title" style={{ marginBottom: 6 }}>Advisors</div>
-          {(data.advisorTraining || []).map((a, idx) => (
-            <div className="training-edit-grid" key={a.name}>
-              <div className="field"><label>{a.name} Certified</label><input defaultValue={a.certified || ''} onBlur={e => updateField(`advisorTraining.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field"><label>Training Due</label><input defaultValue={a.trainings_due || ''} onBlur={e => updateField(`advisorTraining.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
-              <div className="field">
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  Excel Training
-                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
-                    <input type="checkbox" checked={hasExcelTraining(a)} onChange={e => updateField(`advisorTraining.${idx}.hasExcel`, e.target.checked)} /> has it
-                  </label>
-                </label>
-                {hasExcelTraining(a)
-                  ? <input key={`ex-${a.name}`} defaultValue={(a.excel_training && a.excel_training !== '\u2014' ? a.excel_training : '') || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
-                  : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
-              </div>
-            </div>
-          ))}
-        </div>
         {advisorUpload && (
           <div onClick={() => setAdvisorUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
             <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 560, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
@@ -1950,6 +1907,49 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
           </div>
         )}
+        </div>
+    );
+
+    if (openSection === 'training') return (
+      <div className="group-body">
+        <div className="title" style={{ marginBottom: 6 }}>Technicians</div>
+        {data.technicians.map((t, idx) => (
+          <div className="training-edit-grid" key={t.name}>
+            <div className="field"><label>{t.name} Certified</label><input defaultValue={t.certified || ''} onBlur={e => updateField(`technicians.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
+            <div className="field"><label>Training Due</label><input defaultValue={t.trainings_due || ''} onBlur={e => updateField(`technicians.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
+            <div className="field">
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                Excel Training
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
+                  <input type="checkbox" checked={hasExcelTraining(t)} onChange={e => updateField(`technicians.${idx}.hasExcel`, e.target.checked)} /> has it
+                </label>
+              </label>
+              {hasExcelTraining(t)
+                ? <input key={`ex-${t.name}`} defaultValue={(t.excel_training && t.excel_training !== '\u2014' ? t.excel_training : '') || t.excel || ''} onBlur={e => updateField(`technicians.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
+                : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
+            </div>
+          </div>
+        ))}
+        <div className="form-section">
+          <div className="title" style={{ marginBottom: 6 }}>Advisors</div>
+          {(data.advisorTraining || []).map((a, idx) => (
+            <div className="training-edit-grid" key={a.name}>
+              <div className="field"><label>{a.name} Certified</label><input defaultValue={a.certified || ''} onBlur={e => updateField(`advisorTraining.${idx}.certified`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field"><label>Training Due</label><input defaultValue={a.trainings_due || ''} onBlur={e => updateField(`advisorTraining.${idx}.trainings_due`, e.target.value.trim() || '\u2014')} /></div>
+              <div className="field">
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  Excel Training
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
+                    <input type="checkbox" checked={hasExcelTraining(a)} onChange={e => updateField(`advisorTraining.${idx}.hasExcel`, e.target.checked)} /> has it
+                  </label>
+                </label>
+                {hasExcelTraining(a)
+                  ? <input key={`ex-${a.name}`} defaultValue={(a.excel_training && a.excel_training !== '\u2014' ? a.excel_training : '') || a.excel || ''} onBlur={e => updateField(`advisorTraining.${idx}.excel_training`, e.target.value.trim() || '\u2014')} />
+                  : <div style={{ color: '#64748b', fontSize: 13, padding: '9px 0' }}>Not applicable</div>}
+              </div>
+            </div>
+          ))}
+        </div>
 
       </div>
     );
