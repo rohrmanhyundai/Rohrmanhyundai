@@ -126,21 +126,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mtj1ro2pyrpy",
-    "ro": "780513",
-    "roDate": "2026-09-01",
-    "vehicle": "2020 Kia Soul",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
   }
 ]
