@@ -23,7 +23,7 @@
     "notes": "i sent you a email with a noise on this car. check it out if you could. ",
     "flag": "purple",
     "usedCar": false,
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
