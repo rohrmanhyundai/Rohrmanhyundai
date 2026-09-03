@@ -94,21 +94,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mtj1ro2pv6yl",
-    "ro": "780515",
-    "roDate": "2026-09-01",
-    "vehicle": "2019 Subaru Crosstrek",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
   }
 ]
