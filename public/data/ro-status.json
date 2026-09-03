@@ -1,27 +1,51 @@
 {
-  "updatedAt": "2026-09-02T20:18:27.020Z",
+  "updatedAt": "2026-09-03T11:55:24.921Z",
   "by": "SHAWN",
   "rows": [
     {
-      "ro": "780557",
+      "ro": "780560",
       "advisor": "JORDAN TROXEL",
-      "vehicle": "2025 Hyundai Tucson Hybrid",
-      "tech": "CARTER JEAN",
+      "vehicle": "2026 Hyundai Tucson Hybrid",
+      "tech": "GAVEN LAUGHNER",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
+      "roStatus": "IN_PROGRESS",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 1,
+      "openDate": "Thu, Sep 3, 2026 7:18 AM"
+    },
+    {
+      "ro": "780559",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2015 Hyundai Santa Fe Sport",
+      "tech": "",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 4:09 PM"
+      "openDate": "Thu, Sep 3, 2026 7:16 AM"
+    },
+    {
+      "ro": "780558",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2024 Hyundai palisade",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
+      "roAge": 1,
+      "openDate": "Thu, Sep 3, 2026 7:11 AM"
     },
     {
       "ro": "780556",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2015 Hyundai Sonata",
-      "tech": "",
+      "tech": "WEI GUO",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
+      "roStatus": "PARTIALLY_ASSIGNED",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
       "openDate": "Wed, Sep 2, 2026 4:01 PM"
@@ -31,7 +55,7 @@
       "advisor": "CODY TINCHER",
       "vehicle": "2017 Hyundai Tucson",
       "tech": "",
-      "userFlag": "NO_LABEL",
+      "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
@@ -45,8 +69,8 @@
       "tech": "WEI GUO",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "CLOSED",
       "roAge": 1,
       "openDate": "Wed, Sep 2, 2026 3:44 PM"
     },
@@ -57,8 +81,8 @@
       "tech": "BRYSON HUTSELL",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 1,
       "openDate": "Wed, Sep 2, 2026 3:44 PM"
     },
@@ -87,30 +111,6 @@
       "openDate": "Wed, Sep 2, 2026 1:54 PM"
     },
     {
-      "ro": "780548",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2025 Hyundai Kona",
-      "tech": "CARTER JEAN",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 1:16 PM"
-    },
-    {
-      "ro": "780547",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2025 Hyundai Palisade",
-      "tech": "KADEN WILSON",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 12:31 PM"
-    },
-    {
       "ro": "780544",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2027 Hyundai Palisade Hybrid",
@@ -121,18 +121,6 @@
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
       "openDate": "Wed, Sep 2, 2026 11:41 AM"
-    },
-    {
-      "ro": "780543",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2027 Hyundai Santa Cruz",
-      "tech": "CORY SWINDLE",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 11:22 AM"
     },
     {
       "ro": "780542",
@@ -219,42 +207,6 @@
       "openDate": "Wed, Sep 2, 2026 11:21 AM"
     },
     {
-      "ro": "780535",
-      "advisor": "CODY TINCHER",
-      "vehicle": "2026 Hyundai Tucson",
-      "tech": "CARTER JEAN",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 11:21 AM"
-    },
-    {
-      "ro": "780534",
-      "advisor": "CODY TINCHER",
-      "vehicle": "2026 Hyundai Tucson",
-      "tech": "BRYSON HUTSELL",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "CLOSED",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 11:09 AM"
-    },
-    {
-      "ro": "780533",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2025 Hyundai Sonata Hybrid",
-      "tech": "CARTER JEAN",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 10:26 AM"
-    },
-    {
       "ro": "780529",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2020 Hyundai Palisade",
@@ -265,30 +217,6 @@
       "cpStatus": "IN_PROGRESS",
       "roAge": 1,
       "openDate": "Wed, Sep 2, 2026 9:10 AM"
-    },
-    {
-      "ro": "780528",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2025 Hyundai Kona",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 8:34 AM"
-    },
-    {
-      "ro": "780526",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2024 Hyundai Palisade",
-      "tech": "WEI GUO",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "CLOSED",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 8:01 AM"
     },
     {
       "ro": "780525",
@@ -303,27 +231,15 @@
       "openDate": "Wed, Sep 2, 2026 7:56 AM"
     },
     {
-      "ro": "780521",
-      "advisor": "CODY TINCHER",
-      "vehicle": "2021 Hyundai Palisade",
-      "tech": "GAVEN LAUGHNER",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "CLOSED",
-      "roAge": 1,
-      "openDate": "Wed, Sep 2, 2026 7:18 AM"
-    },
-    {
       "ro": "780519",
       "advisor": "DAVID RILEY",
       "vehicle": "2025 Hyundai Elantra Hybrid",
       "tech": "GAVEN LAUGHNER",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "INVOICED",
-      "roAge": 1,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 2,
       "openDate": "Tue, Sep 1, 2026 5:44 PM"
     },
     {
@@ -342,19 +258,7 @@
       "ro": "780514",
       "advisor": "CORY CHAPMAN",
       "vehicle": "2020 Kia Soul",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 2,
-      "openDate": "Tue, Sep 1, 2026 2:33 PM"
-    },
-    {
-      "ro": "780513",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2020 Kia Soul",
-      "tech": "JACOB KUNTZ",
+      "tech": "CORY SWINDLE",
       "userFlag": "GREEN",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
@@ -370,7 +274,7 @@
       "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "cpStatus": "IN_PROGRESS",
       "roAge": 2,
       "openDate": "Tue, Sep 1, 2026 12:45 PM"
     },
@@ -385,18 +289,6 @@
       "cpStatus": "COMPLETED",
       "roAge": 2,
       "openDate": "Tue, Sep 1, 2026 10:22 AM"
-    },
-    {
-      "ro": "780495",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2027 Hyundai Palisade Hybrid",
-      "tech": "WEI GUO",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "NA",
-      "roAge": 2,
-      "openDate": "Tue, Sep 1, 2026 9:17 AM"
     },
     {
       "ro": "780492",
@@ -431,7 +323,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 2,
+      "roAge": 3,
       "openDate": "Tue, Sep 1, 2026 7:50 AM"
     },
     {
@@ -443,7 +335,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 2,
+      "roAge": 3,
       "openDate": "Tue, Sep 1, 2026 7:30 AM"
     },
     {
@@ -503,7 +395,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 3,
+      "roAge": 4,
       "openDate": "Mon, Aug 31, 2026 7:40 AM"
     },
     {
@@ -539,7 +431,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Fri, Aug 28, 2026 7:10 AM"
     },
     {
@@ -551,7 +443,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Thu, Aug 27, 2026 4:22 PM"
     },
     {
