@@ -65,15 +65,6 @@ const NAV_BUTTONS = [
     prop: 'onTechSchedule',
   },
   {
-    key: 'advisorRankBoard',
-    label: '🏆 Advisor Rank Board',
-    desc: 'View advisor performance rankings',
-    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
-    border: 'rgba(251,191,36,.45)',
-    color: '#fde68a',
-    prop: 'onAdvisorRankBoard',
-  },
-  {
     key: 'employeeReview',
     label: '⭐ Employee Review',
     desc: 'Technician and advisor performance reviews',
@@ -150,14 +141,14 @@ const NAV_BUTTONS = [
 export default function ManagerHub({
   currentUser, currentUserDisplay, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
-  onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
+  onDocumentLibrary, onAdvisorSchedule, onTechSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
   onGlobalMessage, onCashDash,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
-    onDocumentLibrary, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard,
+    onDocumentLibrary, onAdvisorSchedule, onTechSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
     onGlobalMessage, onCashDash,

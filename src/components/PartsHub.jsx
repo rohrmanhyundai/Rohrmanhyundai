@@ -64,15 +64,6 @@ const NAV_BUTTONS = [
     prop: 'onTechSchedule',
   },
   {
-    key: 'advisorRankBoard',
-    label: '🏆 Advisor Rank Board',
-    desc: 'View advisor performance rankings',
-    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
-    border: 'rgba(251,191,36,.45)',
-    color: '#fde68a',
-    prop: 'onAdvisorRankBoard',
-  },
-  {
     key: 'workInProgress',
     label: '🔧 Work in Progress',
     desc: 'View and manage technician work in progress',
@@ -114,9 +105,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
+  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onAdvisorRankBoard, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && (!b.managerOnly || isMgr));
 
