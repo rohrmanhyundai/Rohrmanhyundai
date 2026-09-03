@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-03T15:46:59.207Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-09-03T15:46:25.520Z",
     "type": "page",
     "label": "additional-time-review"
