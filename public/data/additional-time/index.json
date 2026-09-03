@@ -1,21 +1,5 @@
 [
   {
-    "id": "mtlot9mb45og",
-    "kind": "diag",
-    "ro": "787878",
-    "hours": "1.0",
-    "description": "Test text",
-    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/diag-mtlot9mb45og-1788449786544.jpg",
-    "tech": "GAVEN",
-    "techDisplay": "GAVEN L",
-    "status": "approved",
-    "submittedAt": "2026-09-03T15:36:34.509Z",
-    "approvedAt": "2026-09-03T15:44:44.941Z",
-    "approvedBy": "Shawn",
-    "approvedHours": ".5",
-    "managerNote": "reduced time"
-  },
-  {
     "id": "mtkkwbtn6cvx",
     "ro": "780361",
     "hours": "1.0",
