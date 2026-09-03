@@ -79,13 +79,23 @@ const NAV_BUTTONS = [
     color: '#c4b5fd',
     prop: 'onNttAttWorksheet',
   },
+  {
+    key: 'registrationUploads',
+    label: '🚗 Registration Uploads',
+    desc: 'View and download vehicle registrations sent in from the drive',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(2,132,199,.18))',
+    border: 'rgba(56,189,248,.45)',
+    color: '#7dd3fc',
+    prop: 'onRegistrationUploads',
+  },
 ];
 
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet, onHotRepairs,
+  onRegistrationUploads,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet, onHotRepairs };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onNttAttWorksheet, onHotRepairs, onRegistrationUploads };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

@@ -1,0 +1,232 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { loadRegistrationIndex, removeRegistrationUpload } from '../utils/github';
+import { deleteS3ObjectByUrl } from '../utils/s3';
+
+const fmtDate = (iso) => {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+  } catch { return iso; }
+};
+
+// The S3 object is cross-origin, so a plain <a download> would just open it in
+// a tab. Pull the bytes down and hand the browser a blob it will actually save,
+// falling back to opening the image if the fetch is blocked.
+async function saveToPc(url, filename) {
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(String(res.status));
+    const blob = await res.blob();
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = href; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 10000);
+    return true;
+  } catch {
+    window.open(url, '_blank', 'noopener');
+    return false;
+  }
+}
+
+export default function RegistrationUploads({ currentUser, currentUserDisplay, onBack, backLabel = '← Warranty Hub' }) {
+  const [rows, setRows] = useState(null); // null = loading
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [openId, setOpenId] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState('');
+  const [removing, setRemoving] = useState('');
+  const [saved, setSaved] = useState('');
+  // Set when the blob download couldn't run (S3 CORS) and we fell back to
+  // opening the image — the hint tells them how to finish the save themselves.
+  const [openedInTab, setOpenedInTab] = useState('');
+
+  async function load() {
+    setError('');
+    try {
+      const all = await loadRegistrationIndex();
+      setRows(Array.isArray(all) ? all : []);
+    } catch (e) {
+      setError(e.message || 'Could not load registrations.');
+      setRows([]);
+    }
+  }
+
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const all = (rows || []).filter(r => !q
+      || String(r.ro || '').toLowerCase().includes(q)
+      || String(r.submittedByDisplay || r.submittedBy || '').toLowerCase().includes(q));
+    return all.slice().sort((a, b) =>
+      String(b.submittedAt || '').localeCompare(String(a.submittedAt || '')));
+  }, [rows, search]);
+
+  async function handleDownload(r) {
+    const ext = (r.photoUrl || '').split('.').pop().split('?')[0] || 'jpg';
+    const ok = await saveToPc(r.photoUrl, `registration-RO${r.ro || r.id}.${ext}`);
+    setSaved(ok ? r.id : '');
+    setOpenedInTab(ok ? '' : r.id);
+    if (ok) setTimeout(() => setSaved(''), 2500);
+  }
+
+  // Delete the image too — leaving orphaned registration photos in the bucket
+  // defeats the point of removing the record. A failed S3 delete doesn't block
+  // the index write; the record is what the Warranty Hub actually reads.
+  async function handleDelete(r) {
+    setRemoving(r.id); setError('');
+    try {
+      try { await deleteS3ObjectByUrl(r.photoUrl); } catch {}
+      const next = await removeRegistrationUpload(r.id);
+      setRows(Array.isArray(next) ? next : (rows || []).filter(x => x.id !== r.id));
+      setConfirmDelete('');
+      if (openId === r.id) setOpenId(null);
+    } catch (e) {
+      setError(e.message || 'Delete failed.');
+    } finally {
+      setRemoving('');
+    }
+  }
+
+  return (
+    <div className="adv-page">
+      <div className="adv-topbar">
+        <div>
+          <div className="adv-title">Registration Uploads</div>
+          <div className="adv-sub">{currentUserDisplay || currentUser}</div>
+        </div>
+        <button className="secondary" onClick={onBack}>{backLabel}</button>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', width: '100%' }}>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search by RO or who sent it…"
+              style={{
+                flex: '1 1 260px', minWidth: 200, boxSizing: 'border-box',
+                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 8, color: '#e2e8f0', padding: '10px 12px', fontSize: 14,
+              }}
+            />
+            <div style={{ color: '#94a3b8', fontSize: 14 }}>
+              {rows === null ? 'Loading…'
+                : `${visible.length} registration${visible.length === 1 ? '' : 's'}`}
+            </div>
+            <button onClick={load} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '9px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              ↻ Refresh
+            </button>
+          </div>
+
+          {error && (
+            <div style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.45)', color: '#fca5a5', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 13, fontWeight: 600 }}>
+              {error}
+            </div>
+          )}
+
+          {rows !== null && visible.length === 0 && (
+            <div style={{ color: '#7a92b8', fontSize: 14, padding: '20px 0' }}>
+              {rows.length === 0 ? 'No registrations have been uploaded yet.' : 'Nothing matches that search.'}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {visible.map(r => {
+              const open = openId === r.id;
+              return (
+                <div key={r.id} style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(56,189,248,.28)',
+                  borderRadius: 12, overflow: 'hidden',
+                }}>
+                  <button
+                    onClick={() => { setOpenId(open ? null : r.id); setOpenedInTab(''); }}
+                    style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: '14px 16px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: 180 }}>
+                      <div style={{ color: '#e2e8f0', fontWeight: 800, fontSize: 15 }}>RO {r.ro || '—'}</div>
+                      <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 3 }}>
+                        {r.submittedByDisplay || r.submittedBy || 'Unknown'} · {fmtDate(r.submittedAt)}
+                      </div>
+                    </div>
+                    <span style={{ color: '#64748b', fontSize: 12, fontWeight: 700 }}>{open ? '▲ Hide' : '▼ View'}</span>
+                  </button>
+
+                  {open && (
+                    <div style={{ padding: '0 16px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                      {r.photoUrl ? (
+                        <a href={r.photoUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 14 }}>
+                          <img src={r.photoUrl} alt={`Registration for RO ${r.ro}`}
+                            style={{ maxWidth: '100%', maxHeight: 560, borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)' }} />
+                        </a>
+                      ) : (
+                        <div style={{ color: '#f87171', fontSize: 13, fontWeight: 600, marginTop: 14 }}>⚠️ No photo on this record.</div>
+                      )}
+
+                      <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {r.photoUrl && (
+                          <button
+                            onClick={() => handleDownload(r)}
+                            style={{
+                              background: 'linear-gradient(180deg,#38bdf8,#0284c7)', color: '#06232f',
+                              border: '1px solid rgba(56,189,248,.6)', borderRadius: 10,
+                              padding: '11px 22px', fontSize: 14, fontWeight: 800, cursor: 'pointer',
+                            }}>
+                            ⬇ Download to PC
+                          </button>
+                        )}
+                        {saved === r.id && (
+                          <span style={{ color: '#4ade80', fontSize: 13, fontWeight: 700 }}>✓ Saved</span>
+                        )}
+                        {openedInTab === r.id && (
+                          <span style={{ color: '#fcd34d', fontSize: 12.5, fontWeight: 600 }}>
+                            Opened in a new tab — right-click the image and choose “Save image as…”
+                          </span>
+                        )}
+
+                        {confirmDelete === r.id ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginLeft: 'auto' }}>
+                            <span style={{ color: '#fca5a5', fontSize: 13, fontWeight: 700 }}>
+                              Delete RO {r.ro} and its photo for good?
+                            </span>
+                            <button
+                              onClick={() => handleDelete(r)}
+                              disabled={removing === r.id}
+                              style={{
+                                background: 'linear-gradient(180deg,#ef4444,#b91c1c)', color: '#fff',
+                                border: '1px solid rgba(248,113,113,.6)', borderRadius: 8,
+                                padding: '8px 18px', fontSize: 13, fontWeight: 800,
+                                cursor: removing === r.id ? 'wait' : 'pointer',
+                              }}>
+                              {removing === r.id ? '⏳ Deleting…' : 'Yes, delete it'}
+                            </button>
+                            <button
+                              onClick={() => setConfirmDelete('')}
+                              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDelete(r.id)}
+                            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a92b8', fontSize: 13, fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+                            🗑 Delete this registration
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
