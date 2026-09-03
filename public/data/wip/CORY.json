@@ -60,21 +60,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mtkgzzfxb3fp",
-    "ro": "780529",
-    "roDate": "2026-09-02",
-    "vehicle": "2020 Hyundai Palisade",
-    "jobDesc": "",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
