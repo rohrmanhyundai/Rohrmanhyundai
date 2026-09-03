@@ -145,7 +145,6 @@ function matchEmployeeName(name, users) {
 
 const PAGE_ACCESS = [
   { key: 'advisorCalendar',    label: '📅 Advisor Calendar',        group: 'Advisor' },
-  { key: 'advisorRankBoard',   label: '🏆 Advisor Rank Board',      group: 'Advisor' },
   { key: 'surveyReports',      label: '📊 Survey Reports',          group: 'Advisor', defaultOff: true },
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
