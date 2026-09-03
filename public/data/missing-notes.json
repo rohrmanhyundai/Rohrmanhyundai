@@ -1,19 +1,19 @@
 {
-  "updatedAt": "2026-09-02T20:18:25.851Z",
+  "updatedAt": "2026-09-03T11:55:24.094Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "780557",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
+        "ro": "780560",
+        "vehicle": "2026 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "780559",
+        "vehicle": "2015 Hyundai Santa Fe Sport"
       },
       {
         "ro": "780544",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780543",
-        "vehicle": "2027 Hyundai Santa Cruz"
       },
       {
         "ro": "780540",
@@ -24,40 +24,14 @@
         "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "780495",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
         "ro": "780419",
         "vehicle": "2020 Hyundai Elantra GT"
       }
     ],
-    "CODY": [
-      {
-        "ro": "780555",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "780541",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780538",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780535",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
     "DAVID": [
       {
-        "ro": "780554",
-        "vehicle": "2012 Hyundai Veloster"
-      },
-      {
-        "ro": "780549",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "780558",
+        "vehicle": "2024 Hyundai palisade"
       },
       {
         "ro": "780542",
@@ -76,6 +50,20 @@
         "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
+    "CODY": [
+      {
+        "ro": "780555",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "780541",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780538",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
     "CORY": [
       {
         "ro": "780515",
@@ -83,10 +71,6 @@
       },
       {
         "ro": "780514",
-        "vehicle": "2020 Kia Soul"
-      },
-      {
-        "ro": "780513",
         "vehicle": "2020 Kia Soul"
       },
       {
