@@ -1558,7 +1558,9 @@ export default function App() {
           onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
           onTechSchedule={() => setPage('mobile-tech-schedule')}
           onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
-          onAdditionalTime={() => goTo('additional-time-menu', 'dashboard')}
+          onAdditionalTime={jobRole === 'technician'
+            ? () => goTo('additional-time-menu', 'dashboard')
+            : undefined}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
