@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-03T13:27:54.521Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-03T13:27:05.508Z",
     "type": "action",
     "label": "undo-parts-arrived",
