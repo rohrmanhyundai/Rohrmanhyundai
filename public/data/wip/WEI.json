@@ -63,5 +63,19 @@
     "notes": "",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mtkh01aiwen4",
+    "ro": "780544",
+    "roDate": "2026-09-02",
+    "vehicle": "2027 Hyundai Palisade Hybrid",
+    "jobDesc": "PDI",
+    "notes": "",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
