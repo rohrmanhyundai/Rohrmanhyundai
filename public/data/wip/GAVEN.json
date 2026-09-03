@@ -14,5 +14,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtlgys5bim17",
+    "ro": "780555",
+    "roDate": "2026-09-03",
+    "vehicle": "2017 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES HAS CYLINDER 4 MISFIRE. SAYS DIAG SAID NEEDS IGNITION COIL",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "CODY TINCHER",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
