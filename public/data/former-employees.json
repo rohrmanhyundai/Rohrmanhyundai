@@ -18,5 +18,10 @@
     "username": "WEST",
     "role": "technician",
     "deletedAt": "2026-07-22T18:31:03.192Z"
+  },
+  {
+    "username": "CHAD",
+    "role": "technician",
+    "deletedAt": "2026-09-03T12:09:35.364Z"
   }
 ]
