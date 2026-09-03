@@ -1676,9 +1676,9 @@ export default function App() {
 
   // The mention portal renders on top of whatever page is showing.
   // The floating messenger sits beside the mention popup, above the page
-  // switch, so it survives every navigation. Sending is manager-only for now;
-  // reading is for everyone.
-  const canSendGlobal = currentRole === 'admin' || (currentRole || '').includes('manager');
+  // switch, so it survives every navigation. Everyone who is logged in can
+  // both read and send.
+  const canSendGlobal = true;
   const messenger = isLoggedIn ? createPortal(
     <FloatingMessenger
       currentUser={currentUser}
