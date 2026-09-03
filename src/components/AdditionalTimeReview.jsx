@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { loadAdditionalTimeIndex, approveAdditionalTimeRequest } from '../utils/github';
+import {
+  loadAdditionalTimeIndex, approveAdditionalTimeRequest,
+  declineAdditionalTimeRequest, removeAdditionalTimeRequest,
+} from '../utils/github';
 
 const fmtDate = (iso) => {
   if (!iso) return '';
@@ -10,18 +13,22 @@ const fmtDate = (iso) => {
   } catch { return iso; }
 };
 
+const isPending = (r) => r.status !== 'approved' && r.status !== 'declined';
+
 function StatusPill({ status }) {
-  const approved = status === 'approved';
+  const tone = status === 'approved'
+    ? { bg: 'rgba(74,222,128,.15)', line: 'rgba(74,222,128,.5)', fg: '#4ade80', text: '✅ Time Approved' }
+    : status === 'declined'
+    ? { bg: 'rgba(248,113,113,.15)', line: 'rgba(248,113,113,.5)', fg: '#f87171', text: '🚫 Declined' }
+    : { bg: 'rgba(251,191,36,.15)', line: 'rgba(251,191,36,.5)', fg: '#fbbf24', text: '⏳ Waiting for Approval' };
   return (
     <span style={{
       display: 'inline-block', flexShrink: 0,
-      background: approved ? 'rgba(74,222,128,.15)' : 'rgba(251,191,36,.15)',
-      border: `1px solid ${approved ? 'rgba(74,222,128,.5)' : 'rgba(251,191,36,.5)'}`,
-      color: approved ? '#4ade80' : '#fbbf24',
+      background: tone.bg, border: `1px solid ${tone.line}`, color: tone.fg,
       borderRadius: 20, padding: '4px 12px', fontSize: 11, fontWeight: 800,
       letterSpacing: 0.5, textTransform: 'uppercase', whiteSpace: 'nowrap',
     }}>
-      {approved ? '✅ Time Approved' : '⏳ Waiting for Approval'}
+      {tone.text}
     </span>
   );
 }
@@ -58,6 +65,13 @@ export default function AdditionalTimeReview({
   // been typed lives here — an untouched row falls back to the tech's ask, so
   // approving without editing grants exactly what was requested.
   const [hoursDraft, setHoursDraft] = useState({});
+  // Note the manager types back to the tech, keyed the same way. Required when
+  // the hours are changed or the request is declined — a tech shouldn't have to
+  // guess why they got less time than they asked for.
+  const [noteDraft, setNoteDraft] = useState({});
+  const [declining, setDeclining] = useState('');
+  const [removing, setRemoving] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState('');
 
   const me = (currentUser || '').toUpperCase();
 
@@ -81,24 +95,57 @@ export default function AdditionalTimeReview({
     // Waiting-for-approval first, then newest first — the manager's queue reads
     // top-down, and a tech sees what's still outstanding without scrolling.
     return mine.slice().sort((a, b) => {
-      const aPend = a.status !== 'approved', bPend = b.status !== 'approved';
+      const aPend = isPending(a), bPend = isPending(b);
       if (aPend !== bPend) return aPend ? -1 : 1;
       return String(b.submittedAt || '').localeCompare(String(a.submittedAt || ''));
     });
   }, [rows, canApprove, me]);
 
-  const pendingCount = visible.filter(r => r.status !== 'approved').length;
+  const pendingCount = visible.filter(isPending).length;
 
   async function handleApprove(row) {
     const granted = (hoursDraft[row.id] ?? row.hours ?? '').trim();
+    const note = (noteDraft[row.id] || '').trim();
+    if (granted !== (row.hours || '').trim() && !note) {
+      setError('You changed the hours — add a note telling the tech why.');
+      return;
+    }
     setApproving(row.id); setError('');
     try {
-      const next = await approveAdditionalTimeRequest(row.id, currentUserDisplay || currentUser || '', granted);
+      const next = await approveAdditionalTimeRequest(row.id, currentUserDisplay || currentUser || '', granted, note);
       setRows(Array.isArray(next) ? next : rows);
     } catch (e) {
       setError(e.message || 'Approve failed.');
     } finally {
       setApproving('');
+    }
+  }
+
+  async function handleDecline(row) {
+    const note = (noteDraft[row.id] || '').trim();
+    if (!note) { setError('Add a note telling the tech why the request was declined.'); return; }
+    setDeclining(row.id); setError('');
+    try {
+      const next = await declineAdditionalTimeRequest(row.id, currentUserDisplay || currentUser || '', note);
+      setRows(Array.isArray(next) ? next : rows);
+    } catch (e) {
+      setError(e.message || 'Decline failed.');
+    } finally {
+      setDeclining('');
+    }
+  }
+
+  async function handleRemove(row) {
+    setRemoving(row.id); setError('');
+    try {
+      const next = await removeAdditionalTimeRequest(row.id);
+      setRows(Array.isArray(next) ? next : (rows || []).filter(r => r.id !== row.id));
+      setConfirmDelete('');
+      if (openId === row.id) setOpenId(null);
+    } catch (e) {
+      setError(e.message || 'Delete failed.');
+    } finally {
+      setRemoving('');
     }
   }
 
@@ -123,7 +170,7 @@ export default function AdditionalTimeReview({
 
       {!canApprove && visible.length > 0 && (
         <div style={{ background: 'rgba(251,191,36,.07)', border: '1px solid rgba(251,191,36,.3)', color: '#fcd34d', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 13, fontWeight: 600 }}>
-          Your time counts only once a manager marks it <strong>Time Approved</strong>. A manager can adjust the hours — open a request to see what was approved.
+          Your time counts only once a manager marks it <strong>Time Approved</strong>. A manager can change the hours or decline a request — open one to see what was approved and any note they left you.
         </div>
       )}
 
@@ -137,7 +184,8 @@ export default function AdditionalTimeReview({
           return (
             <div key={r.id} style={{
               background: 'rgba(255,255,255,0.04)',
-              border: `1px solid ${r.status === 'approved' ? 'rgba(74,222,128,.3)' : 'rgba(251,191,36,.35)'}`,
+              border: `1px solid ${r.status === 'approved' ? 'rgba(74,222,128,.3)'
+                : r.status === 'declined' ? 'rgba(248,113,113,.35)' : 'rgba(251,191,36,.35)'}`,
               borderRadius: 12, overflow: 'hidden',
             }}>
               <button
@@ -147,7 +195,11 @@ export default function AdditionalTimeReview({
                   <div style={{ color: '#e2e8f0', fontWeight: 800, fontSize: 15 }}>
                     RO {r.ro || '—'}
                     {headHours ? (
-                      <span style={{ color: r.status === 'approved' ? '#4ade80' : '#fbbf24', fontWeight: 700 }}> · {headHours} hrs</span>
+                      <span style={{
+                        color: r.status === 'approved' ? '#4ade80' : r.status === 'declined' ? '#f87171' : '#fbbf24',
+                        fontWeight: 700,
+                        textDecoration: r.status === 'declined' ? 'line-through' : 'none',
+                      }}> · {headHours} hrs</span>
                     ) : null}
                   </div>
                   <div style={{ marginTop: 6 }}><KindPill kind={r.kind} /></div>
@@ -191,6 +243,26 @@ export default function AdditionalTimeReview({
                         </span>
                       </>
                     )}
+                    {r.status === 'declined' && (
+                      <>
+                        <span style={{ color: '#7a92b8', fontWeight: 700 }}>Declined</span>
+                        <span style={{ color: '#f87171', fontWeight: 700 }}>
+                          {fmtDate(r.declinedAt)}{r.declinedBy ? ` · by ${r.declinedBy}` : ''}
+                        </span>
+                      </>
+                    )}
+                    {r.managerNote && (
+                      <>
+                        <span style={{ color: '#7a92b8', fontWeight: 700 }}>Note from Manager</span>
+                        <span style={{
+                          color: '#fcd34d', fontWeight: 600, whiteSpace: 'pre-wrap',
+                          background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.3)',
+                          borderRadius: 8, padding: '8px 10px',
+                        }}>
+                          {r.managerNote}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   {r.photoUrl ? (
@@ -210,9 +282,11 @@ export default function AdditionalTimeReview({
                     </div>
                   )}
 
-                  {canApprove && r.status !== 'approved' && (() => {
+                  {canApprove && isPending(r) && (() => {
                     const draft = hoursDraft[r.id] ?? requested;
+                    const note = noteDraft[r.id] || '';
                     const changed = draft.trim() !== requested;
+                    const busy = approving === r.id || declining === r.id;
                     return (
                       <div style={{
                         marginTop: 14, padding: '14px 16px', borderRadius: 12,
@@ -247,23 +321,92 @@ export default function AdditionalTimeReview({
                             ? `Tech asked for ${requested || 'nothing'} — approving ${draft.trim() || 'nothing'} instead.`
                             : 'Change this before approving if the tech asked for more or less than you want to give.'}
                         </div>
-                        <button
-                          onClick={() => handleApprove(r)}
-                          disabled={approving === r.id}
+
+                        {/* The tech sees this on their own page, so it's required
+                            whenever the answer isn't simply "yes, as asked". */}
+                        <label style={{ color: '#7a92b8', fontSize: 12, fontWeight: 700, letterSpacing: 0.6, textTransform: 'uppercase', display: 'block', margin: '14px 0 6px' }}>
+                          Note to Tech {changed && <span style={{ color: '#f87171' }}>*required — you changed the hours</span>}
+                        </label>
+                        <textarea
+                          value={note}
+                          onChange={e => setNoteDraft(d => ({ ...d, [r.id]: e.target.value }))}
+                          rows={3}
+                          placeholder={changed
+                            ? 'Why did you change the time? The tech sees this.'
+                            : 'Optional — anything you want the tech to see. Required to decline.'}
                           style={{
-                            marginTop: 12,
-                            background: 'linear-gradient(180deg,#22c55e,#16a34a)', color: '#fff',
-                            border: '1px solid rgba(74,222,128,.6)', borderRadius: 10,
-                            padding: '12px 26px', fontSize: 15, fontWeight: 800,
-                            cursor: approving === r.id ? 'wait' : 'pointer',
-                          }}>
-                          {approving === r.id
-                            ? '⏳ Approving…'
-                            : `✅ Approve ${draft.trim() ? `${draft.trim()} hrs` : 'Time'}`}
-                        </button>
+                            width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
+                            border: `1px solid ${changed && !note.trim() ? 'rgba(248,113,113,.6)' : 'rgba(255,255,255,0.15)'}`,
+                            borderRadius: 8, color: '#e2e8f0', padding: '10px 12px', fontSize: 15,
+                            lineHeight: 1.45, resize: 'vertical', fontFamily: 'inherit',
+                          }}
+                        />
+
+                        <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => handleApprove(r)}
+                            disabled={busy}
+                            style={{
+                              background: 'linear-gradient(180deg,#22c55e,#16a34a)', color: '#fff',
+                              border: '1px solid rgba(74,222,128,.6)', borderRadius: 10,
+                              padding: '12px 26px', fontSize: 15, fontWeight: 800,
+                              cursor: busy ? 'wait' : 'pointer',
+                            }}>
+                            {approving === r.id
+                              ? '⏳ Approving…'
+                              : `✅ Approve ${draft.trim() ? `${draft.trim()} hrs` : 'Time'}`}
+                          </button>
+                          <button
+                            onClick={() => handleDecline(r)}
+                            disabled={busy}
+                            style={{
+                              background: 'rgba(248,113,113,.12)', color: '#fca5a5',
+                              border: '1px solid rgba(248,113,113,.5)', borderRadius: 10,
+                              padding: '12px 22px', fontSize: 15, fontWeight: 800,
+                              cursor: busy ? 'wait' : 'pointer',
+                            }}>
+                            {declining === r.id ? '⏳ Declining…' : '🚫 Decline'}
+                          </button>
+                        </div>
                       </div>
                     );
                   })()}
+
+                  {/* Delete is available on any request, in any state, but never
+                      as a one-click action sitting next to Approve. */}
+                  {canApprove && (
+                    <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                      {confirmDelete === r.id ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <span style={{ color: '#fca5a5', fontSize: 13, fontWeight: 700 }}>
+                            Delete RO {r.ro} for good? This can't be undone.
+                          </span>
+                          <button
+                            onClick={() => handleRemove(r)}
+                            disabled={removing === r.id}
+                            style={{
+                              background: 'linear-gradient(180deg,#ef4444,#b91c1c)', color: '#fff',
+                              border: '1px solid rgba(248,113,113,.6)', borderRadius: 8,
+                              padding: '8px 18px', fontSize: 13, fontWeight: 800,
+                              cursor: removing === r.id ? 'wait' : 'pointer',
+                            }}>
+                            {removing === r.id ? '⏳ Deleting…' : 'Yes, delete it'}
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete('')}
+                            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmDelete(r.id)}
+                          style={{ background: 'none', border: 'none', color: '#7a92b8', fontSize: 13, fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+                          🗑 Delete this request
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
