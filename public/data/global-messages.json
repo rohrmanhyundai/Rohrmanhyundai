@@ -1,98 +1,5 @@
 [
   {
-    "id": "gm-mtafqlqv7hvz",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "ARE WE DOING P/A FOR 780332? IF SO I NEED ORIGINAL OWNER FORM AND REGISTRATION",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1787769395095
-  },
-  {
-    "id": "gm-mtafsw15l63r",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "CAN YOU WRITE UP A FEW MORE RECALLS FOR CARTER OR WHO EVER ELSE? PLEASE",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1787769501737
-  },
-  {
-    "id": "gm-mtafztl02hjn",
-    "from": "SHAWN",
-    "to": [
-      "CODY",
-      "CARTER"
-    ],
-    "text": "TIRE FOR RO# 780298 IS HERE",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1787769825156
-  },
-  {
-    "id": "gm-mtakacah9y01",
-    "from": "SHAWN",
-    "to": [
-      "WEI"
-    ],
-    "text": "HAVE YOU COMPLETED RECALLS ON 779636? THANK YOU",
-    "alert": false,
-    "requireReply": true,
-    "replies": [
-      {
-        "id": "rp-mtakx6v7llos",
-        "from": "WEI",
-        "text": "NOT YET, NEEDS COUPLE GUYS TO PUSH THE SANTA FE IN",
-        "timestamp": 1787778100483
-      }
-    ],
-    "timestamp": 1787777034425
-  },
-  {
-    "id": "gm-mtatnhfdievh",
-    "from": "GAVEN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "TEST",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1787792764153
-  },
-  {
-    "id": "gm-mtato7hs0e28",
-    "from": "GAVEN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "TEST",
-    "alert": false,
-    "requireReply": true,
-    "replies": [
-      {
-        "id": "rp-mtatr77x5nda",
-        "from": "GAVEN",
-        "text": "TEST",
-        "timestamp": 1787792937549
-      },
-      {
-        "id": "rp-mtlp758foasf",
-        "from": "GAVEN",
-        "text": "ok",
-        "timestamp": 1788450411327
-      }
-    ],
-    "timestamp": 1787792797936
-  },
-  {
     "id": "gm-mth86oillqnc",
     "from": "SHAWN",
     "to": [
@@ -139,5 +46,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788370736563
+  },
+  {
+    "id": "gm-mtlrflley9s7",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "On 780365 this can is done. i see its not invoiced.",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788454165010
   }
 ]
