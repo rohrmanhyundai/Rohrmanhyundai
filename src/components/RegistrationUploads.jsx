@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { loadRegistrationIndex, removeRegistrationUpload } from '../utils/github';
+import { loadRegistrationIndex, removeRegistrationUpload, saveRegistrationUpload } from '../utils/github';
 import { deleteS3ObjectByUrl } from '../utils/s3';
 
 const fmtDate = (iso) => {
@@ -61,6 +61,9 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
   const [removing, setRemoving] = useState('');
   const [saved, setSaved] = useState('');
   const [copied, setCopied] = useState('');
+  const [editingId, setEditingId] = useState('');
+  const [roDraft, setRoDraft] = useState('');
+  const [savingRo, setSavingRo] = useState('');
   // Set when the blob download couldn't run (S3 CORS) and we fell back to
   // opening the image — the hint tells them how to finish the save themselves.
   const [openedInTab, setOpenedInTab] = useState('');
@@ -94,6 +97,31 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
     const ok = await copyText(String(r.ro));
     setCopied(ok ? r.id : `fail:${r.id}`);
     setTimeout(() => setCopied(''), ok ? 1800 : 2600);
+  }
+
+  function startEdit(r) {
+    setEditingId(r.id);
+    setRoDraft(String(r.ro || ''));
+    setError('');
+  }
+
+  // Writes the whole record back through the same upsert the phone uses, so a
+  // correction can't race a fresh submission into overwriting the index.
+  async function handleSaveRo(r) {
+    const next = roDraft.trim();
+    if (!next) { setError('The RO number can\'t be blank.'); return; }
+    if (next === String(r.ro || '')) { setEditingId(''); return; }
+    setSavingRo(r.id); setError('');
+    try {
+      const updated = await saveRegistrationUpload({ ...r, ro: next });
+      setRows(Array.isArray(updated) ? updated
+        : (rows || []).map(x => (x.id === r.id ? { ...x, ro: next } : x)));
+      setEditingId('');
+    } catch (e) {
+      setError(e.message || 'Could not save the RO number.');
+    } finally {
+      setSavingRo('');
+    }
   }
 
   async function handleDownload(r) {
@@ -243,6 +271,49 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
                           <span style={{ color: '#fcd34d', fontSize: 12.5, fontWeight: 600 }}>
                             Opened in a new tab — right-click the image and choose “Save image as…”
                           </span>
+                        )}
+
+                        {editingId === r.id ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <input
+                              value={roDraft}
+                              onChange={e => setRoDraft(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') handleSaveRo(r);
+                                if (e.key === 'Escape') setEditingId('');
+                              }}
+                              autoFocus
+                              inputMode="numeric"
+                              placeholder="RO number"
+                              style={{
+                                width: 140, boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
+                                border: '1px solid rgba(251,191,36,.6)', borderRadius: 8,
+                                color: '#e2e8f0', padding: '10px 12px', fontSize: 15, fontWeight: 700,
+                              }}
+                            />
+                            <button
+                              onClick={() => handleSaveRo(r)}
+                              disabled={savingRo === r.id}
+                              style={{
+                                background: 'linear-gradient(180deg,#f59e0b,#d97706)', color: '#1a1206',
+                                border: '1px solid rgba(251,191,36,.6)', borderRadius: 8,
+                                padding: '9px 18px', fontSize: 13, fontWeight: 800,
+                                cursor: savingRo === r.id ? 'wait' : 'pointer',
+                              }}>
+                              {savingRo === r.id ? '⏳ Saving…' : 'Save RO'}
+                            </button>
+                            <button
+                              onClick={() => setEditingId('')}
+                              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '9px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => startEdit(r)}
+                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 10, padding: '11px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                            ✏️ Edit RO
+                          </button>
                         )}
 
                         {confirmDelete === r.id ? (
