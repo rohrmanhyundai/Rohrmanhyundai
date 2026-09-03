@@ -6,10 +6,12 @@
     "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtm1my701j0r-1788471318736.jpeg",
     "tech": "GAVEN",
     "techDisplay": "GAVEN L",
-    "status": "submitted",
+    "status": "approved",
     "submittedAt": "2026-09-03T21:35:22.325Z",
-    "approvedAt": null,
-    "approvedBy": null
+    "approvedAt": "2026-09-03T21:36:03.415Z",
+    "approvedBy": "Shawn",
+    "approvedHours": "1.0",
+    "managerNote": ""
   },
   {
     "id": "mtkkwbtn6cvx",
