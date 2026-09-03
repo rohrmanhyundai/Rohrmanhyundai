@@ -108,6 +108,32 @@ export async function uploadAdditionalTimePhotoToS3(filename, file) {
   return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
 }
 
+// Upload a vehicle registration photo. Returns the public URL of the stored
+// object. The submitter never sees it again — only the Warranty Hub reads
+// these back — so the key is opaque rather than named after the RO.
+export async function uploadRegistrationPhotoToS3(filename, file) {
+  const client = s3Client();
+  const key = 'registrations/' + filename;
+  const body = new Uint8Array(await file.arrayBuffer());
+  await client.send(new PutObjectCommand({
+    Bucket: S3_BUCKET,
+    Key: key,
+    Body: body,
+    ContentType: file.type || contentTypeFor(filename),
+    ContentDisposition: 'inline',
+  }));
+  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+}
+
+// Delete by full public URL — the registration index stores URLs, not keys.
+export async function deleteS3ObjectByUrl(url) {
+  const prefix = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/`;
+  if (!url || !url.startsWith(prefix)) return false;
+  const client = s3Client();
+  await client.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: url.slice(prefix.length) }));
+  return true;
+}
+
 export async function deleteFileFromS3(filename) {
   const client = s3Client();
   await client.send(new DeleteObjectCommand({

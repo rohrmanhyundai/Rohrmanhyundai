@@ -1251,6 +1251,47 @@ export async function removeAdditionalTimeRequest(id) {
     `Remove additional time request ${id}`);
 }
 
+// ── Vehicle registration uploads ─────────────────────────────────────────────
+const REGISTRATION_INDEX_PATH = 'public/data/registrations/index.json';
+
+export async function loadRegistrationIndex() {
+  try {
+    const data = await readGitHubFile(authHeaders(), REGISTRATION_INDEX_PATH);
+    // Only trust a real array — a truthy non-array means the read failed, and
+    // reporting "none" would look like someone's upload vanished.
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/registrations/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
+  } catch {}
+  return [];
+}
+
+// Upsert against the freshest index — two people submitting at the same moment
+// would otherwise overwrite each other.
+export async function saveRegistrationUpload(rec) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(REGISTRATION_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(r => r.id === rec.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = rec; return next; }
+    return [rec, ...arr];
+  }, `Registration upload ${rec.id} - RO ${rec.ro || 'unknown'}`);
+}
+
+export async function removeRegistrationUpload(id) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(REGISTRATION_INDEX_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(r => r.id !== id),
+    `Remove registration upload ${id}`);
+}
+
 // ── Work In Progress ──────────────────────────────────────────────────────────
 export async function loadWipData(techName) {
   const path = `public/data/wip/${techName.toUpperCase()}.json`;

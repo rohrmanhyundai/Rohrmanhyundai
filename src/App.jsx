@@ -24,6 +24,8 @@ import TireWarranty from './components/TireWarranty';
 import AdditionalTime from './components/AdditionalTime';
 import AdditionalTimeMenu from './components/AdditionalTimeMenu';
 import AdditionalDiagTime from './components/AdditionalDiagTime';
+import RegistrationUpload from './components/RegistrationUpload';
+import RegistrationUploads from './components/RegistrationUploads';
 import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
@@ -1051,6 +1053,7 @@ export default function App() {
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'warranty-hub')}
+        onRegistrationUploads={() => goTo('registration-uploads', 'warranty-hub')}
       />
     );
   }
@@ -1454,6 +1457,30 @@ export default function App() {
   // Warranty additional time. Declared above the phone-only block so the submit
   // form and the tech's own list both work on a phone AND on the desktop tech
   // resources page — same page names, one implementation.
+  // Registration upload is deliberately open to every logged-in user — anyone
+  // on the drive may be the one holding the customer's registration.
+  if (page === 'registration-upload') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <RegistrationUpload
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'dashboard')}
+      />
+    );
+  }
+
+  if (page === 'registration-uploads') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <RegistrationUploads
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'warranty-hub')}
+      />
+    );
+  }
+
   if (page === 'additional-time-menu') {
     if (!isLoggedIn) { setPage('dashboard'); return null; }
     // Going menu -> form -> back leaves prevPage pointing at the menu itself,
@@ -1561,6 +1588,7 @@ export default function App() {
           onAdditionalTime={jobRole === 'technician'
             ? () => goTo('additional-time-menu', 'dashboard')
             : undefined}
+          onRegistrationUpload={() => goTo('registration-upload', 'dashboard')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
