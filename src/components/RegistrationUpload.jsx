@@ -1,6 +1,13 @@
-import React, { useRef, useState } from 'react';
-import { saveRegistrationUpload } from '../utils/github';
+import React, { useEffect, useRef, useState } from 'react';
+import { saveRegistrationUpload, loadRegistrationIndex } from '../utils/github';
 import { uploadRegistrationPhotoToS3, ensureAwsCreds } from '../utils/s3';
+
+const fmtShort = (iso) => {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch { return ''; }
+};
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -35,6 +42,9 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [doneRo, setDoneRo] = useState('');
+  // Receipt list at the bottom — RO numbers only, never the photos. It's the
+  // proof the send landed, and it stops two people uploading the same RO.
+  const [sent, setSent] = useState(null); // null = loading
   // Two inputs: the first has capture="environment", which is what makes a
   // phone open the camera straight away instead of the file picker.
   const cameraRef = useRef(null);
@@ -42,6 +52,15 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
   const idRef = useRef(genId());
 
   const canSubmit = ro.trim().length > 0 && !!photoUrl && !uploading && !saving;
+
+  async function loadSent() {
+    try {
+      const all = await loadRegistrationIndex();
+      setSent(Array.isArray(all) ? all : []);
+    } catch { setSent([]); }
+  }
+
+  useEffect(() => { loadSent(); /* eslint-disable-next-line */ }, []);
 
   async function handleFile(e) {
     const file = e.target.files?.[0];
@@ -76,6 +95,7 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
         submittedAt: new Date().toISOString(),
       });
       setDoneRo(ro.trim());
+      loadSent();
       // Wipe every trace of the photo from this screen.
       idRef.current = genId();
       setRo(''); setPhotoUrl(''); setPhotoName('');
@@ -193,6 +213,38 @@ export default function RegistrationUpload({ currentUser, currentUserDisplay, on
         }}>
         {saving ? '⏳ Submitting…' : 'Submit'}
       </button>
+
+      {/* Sent receipts */}
+      <div style={{ ...CARD, marginTop: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+          <span style={LABEL}>Registrations Sent In</span>
+          <button type="button" onClick={loadSent}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a92b8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+            ↻ Refresh
+          </button>
+        </div>
+        {sent === null ? (
+          <div style={{ color: '#7a92b8', fontSize: 13 }}>Loading…</div>
+        ) : sent.length === 0 ? (
+          <div style={{ color: '#7a92b8', fontSize: 13 }}>Nothing has been sent in yet.</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {sent.slice(0, 30).map(r => (
+              <div key={r.id} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                <span style={{ fontSize: 15, flexShrink: 0 }}>✅</span>
+                <span style={{ color: '#e2e8f0', fontWeight: 800, fontSize: 15 }}>RO {r.ro || '—'}</span>
+                <span style={{ marginLeft: 'auto', color: '#7a92b8', fontSize: 12, textAlign: 'right' }}>
+                  {r.submittedByDisplay || r.submittedBy || ''}
+                  {r.submittedAt ? ` · ${fmtShort(r.submittedAt)}` : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
