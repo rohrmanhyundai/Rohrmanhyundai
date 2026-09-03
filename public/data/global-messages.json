@@ -58,5 +58,19 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788454165010
+  },
+  {
+    "id": "gm-mtlx4ng7y401",
+    "from": "SHAWN",
+    "to": [
+      "CODY",
+      "DAVID",
+      "JORDAN"
+    ],
+    "text": "Did you guys see there is a new internal chat bubble? shoulf work for everyone",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788463731895
   }
 ]
