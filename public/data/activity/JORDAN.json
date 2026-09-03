@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-03T20:07:23.289Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-03T20:07:20.922Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-03T18:56:14.680Z",
     "type": "page",
     "label": "registration-upload"
@@ -1639,35 +1649,5 @@
     "at": "2026-08-04T20:12:04.469Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-04T19:20:35.287Z",
-    "type": "page",
-    "label": "charge-account-list"
-  },
-  {
-    "at": "2026-08-04T19:14:51.147Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-04T19:14:51.143Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-04T19:00:57.709Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-04T19:00:26.411Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-04T19:00:26.403Z",
-    "type": "page",
-    "label": "hot-repairs"
   }
 ]
