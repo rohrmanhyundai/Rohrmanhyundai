@@ -1,8 +1,38 @@
 {
-  "updatedAt": "2026-09-03T11:59:10.161Z",
+  "updatedAt": "2026-09-03T14:07:33.335Z",
   "by": "SHAWN",
   "advisors": {
+    "CODY": [
+      {
+        "ro": "780567",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780555",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "780541",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780538",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
     "JORDAN": [
+      {
+        "ro": "780566",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "780564",
+        "vehicle": "2025 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780562",
+        "vehicle": "2018 Hyundai Tucson"
+      },
       {
         "ro": "780560",
         "vehicle": "2026 Hyundai Tucson Hybrid"
@@ -48,20 +78,6 @@
       {
         "ro": "780381",
         "vehicle": "2026 Hyundai Santa Fe"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780555",
-        "vehicle": "2017 Hyundai Tucson"
-      },
-      {
-        "ro": "780541",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780538",
-        "vehicle": "2026 Hyundai Tucson"
       }
     ],
     "CORY": [
