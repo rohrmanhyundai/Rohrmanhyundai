@@ -1202,7 +1202,7 @@ export async function saveAdditionalTimeRequest(req) {
 // be dropped by the approval write. approvedHours is what the manager is
 // actually granting — `hours` stays the tech's original ask so the record
 // still shows what was requested versus what was allowed.
-export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours) {
+export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours, managerNote) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
@@ -1214,9 +1214,33 @@ export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours
           approvedAt: new Date().toISOString(),
           approvedBy: approvedBy || '',
           approvedHours: String(approvedHours ?? r.approvedHours ?? r.hours ?? '').trim(),
+          managerNote: String(managerNote ?? r.managerNote ?? '').trim(),
         }
       : r));
   }, `Approve additional time ${id}`);
+}
+
+// Decline keeps the record instead of deleting it — the tech needs to see
+// that it was looked at and why, and a manager needs the history. Delete is
+// the separate, deliberate action for a request that shouldn't exist at all.
+export async function declineAdditionalTimeRequest(id, declinedBy, managerNote) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(r => (r.id === id
+      ? {
+          ...r,
+          status: 'declined',
+          approvedAt: null,
+          approvedBy: null,
+          approvedHours: '',
+          declinedAt: new Date().toISOString(),
+          declinedBy: declinedBy || '',
+          managerNote: String(managerNote ?? r.managerNote ?? '').trim(),
+        }
+      : r));
+  }, `Decline additional time ${id}`);
 }
 
 export async function removeAdditionalTimeRequest(id) {
