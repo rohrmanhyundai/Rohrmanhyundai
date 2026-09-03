@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-03T18:56:14.680Z",
+    "type": "page",
+    "label": "registration-upload"
+  },
+  {
     "at": "2026-09-03T16:51:16.625Z",
     "type": "page",
     "label": "registration-upload"
@@ -1664,10 +1669,5 @@
     "at": "2026-08-04T19:00:26.403Z",
     "type": "page",
     "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-04T17:43:23.942Z",
-    "type": "page",
-    "label": "cash-dash"
   }
 ]
