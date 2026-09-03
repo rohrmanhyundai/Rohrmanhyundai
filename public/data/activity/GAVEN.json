@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-03T15:47:52.846Z",
+    "type": "page",
+    "label": "additional-time"
+  },
+  {
+    "at": "2026-09-03T15:47:49.987Z",
+    "type": "page",
+    "label": "additional-time-menu"
+  },
+  {
+    "at": "2026-09-03T15:47:47.558Z",
+    "type": "page",
+    "label": "additional-time-menu"
+  },
+  {
     "at": "2026-09-03T15:46:59.207Z",
     "type": "action",
     "label": "logout"
