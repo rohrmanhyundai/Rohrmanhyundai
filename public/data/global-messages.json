@@ -94,7 +94,14 @@
     "text": "REMOVE PARTS TRIGGER FROM 780580 SO I CAN VOID THE RO",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtm03348vim5",
+        "from": "DAVID",
+        "text": "kai want to leave the ticket open becasue its easier for his side when the new part arrives",
+        "timestamp": 1788468697736
+      }
+    ],
     "timestamp": 1788465810589
   }
 ]
