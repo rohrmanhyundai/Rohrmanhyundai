@@ -1,19 +1,5 @@
 [
   {
-    "id": "mtm1my701j0r",
-    "ro": "45454",
-    "hours": "1.0",
-    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtm1my701j0r-1788471318736.jpeg",
-    "tech": "GAVEN",
-    "techDisplay": "GAVEN L",
-    "status": "approved",
-    "submittedAt": "2026-09-03T21:35:22.325Z",
-    "approvedAt": "2026-09-03T21:36:03.415Z",
-    "approvedBy": "Shawn",
-    "approvedHours": "1.0",
-    "managerNote": ""
-  },
-  {
     "id": "mtkkwbtn6cvx",
     "ro": "780361",
     "hours": "1.0",
