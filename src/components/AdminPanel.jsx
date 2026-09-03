@@ -18,6 +18,54 @@ import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPe
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
+// Fields an advisor report import can touch, and how to show each one.
+const ADVISOR_IMPORT_FIELDS = [
+  ['mtd_hours',        'MTD Hrs',      'num'],
+  ['ro_count',         'RO Count',     'num'],
+  ['hours_per_ro',     'Hrs/RO',       'num'],
+  ['elr',              'ELR %',        'pct'],
+  ['coupon_labor',     'Coupon Labor', 'money'],
+  ['total_sales',      'Total Sales',  'money'],
+  ['coupon_usage_pct', 'Coupon %',     'pct'],
+  ['align',            'Alignment %',  'pct'],
+  ['valvoline',        'Valvoline %',  'pct'],
+  ['tires',            'Tires %',      'pct'],
+  ['asr',              'ASR %',        'pct'],
+  ['csi',              'CSI',          'num'],
+];
+
+const isBlankVal = v => v === undefined || v === null || v === '';
+
+const fmtImportVal = (v, kind) => {
+  if (isBlankVal(v)) return '—';
+  const num = parseFloat(v);
+  if (isNaN(num)) return String(v);
+  if (kind === 'pct')   return `${(num * 100).toFixed(1)}%`;
+  if (kind === 'money') return `$${num.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+  return String(Math.round(num * 100) / 100);
+};
+
+// Compare the advisor list before and after an import so the manager sees exactly
+// which numbers move — and can back out — before anything is written. Matched by
+// index: the imported list is a structuredClone of the current one, same order.
+function advisorImportDiff(oldAdvisors, newAdvisors) {
+  const out = [];
+  (newAdvisors || []).forEach((next, i) => {
+    const prev = (oldAdvisors || [])[i] || {};
+    const changes = [];
+    for (const [key, label, kind] of ADVISOR_IMPORT_FIELDS) {
+      const a = prev[key], b = next[key];
+      if (isBlankVal(a) && isBlankVal(b)) continue;
+      const na = parseFloat(a), nb = parseFloat(b);
+      if (a === b) continue;
+      if (!isNaN(na) && !isNaN(nb) && na === nb) continue;
+      changes.push({ label, from: fmtImportVal(a, kind), to: fmtImportVal(b, kind) });
+    }
+    if (changes.length) out.push({ name: next.name, changes });
+  });
+  return out;
+}
+
 // ── Vacation → Schedule helpers ────────────────────────────────────────────
 const MONTH_ABBRS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
@@ -157,6 +205,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
   const advisorXlsxInputRef = useRef(null);
   const [advisorXlsxStatus, setAdvisorXlsxStatus] = useState('');
+  // Pending advisor import awaiting the manager's OK — mirrors the tech flagged-hours
+  // preview. { source, newData, rows:[{name,changes:[{label,from,to}]}], notes:[], message }
+  const [advisorUpload, setAdvisorUpload] = useState(null);
   const [advisorXlsxBusy, setAdvisorXlsxBusy] = useState(false);
   // Technician "Flagged Hours" report upload (Technician Performance .xlsx).
   const techXlsxInputRef = useRef(null);
@@ -583,12 +634,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         console.log('[advisor-pdf] all advisors after parse:', newAdvisors.map(a => ({ name: a.name, align: a.align, tires: a.tires, valvoline: a.valvoline, asr: a.asr })));
       } catch {}
 
-      onDataChange(newData, structuredClone(vacations));
       const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'} from PDF`];
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
       if (skipped.length)      parts.push(`· skipped: ${skipped.slice(0, 4).join(', ')}${skipped.length > 4 ? '…' : ''}`);
-      setAdvisorXlsxStatus(parts.join(' '));
-      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
+
+      const notes = [];
+      if (skipped.length) notes.push(`In the report but not on the dashboard, skipped: ${skipped.join(', ')}`);
+
+      setAdvisorUpload({
+        source: 'PDF report',
+        newData,
+        rows: advisorImportDiff(data.advisors, newAdvisors),
+        notes,
+        message: parts.join(' '),
+      });
+      setAdvisorXlsxStatus('');
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
     } finally {
@@ -647,15 +707,27 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
       const bumpStamp = Date.now();
       for (const a of newAdvisors) a._lastImport = bumpStamp;
-      onDataChange(newData, structuredClone(vacations));
 
       const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'} from HTML`];
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
       if (notExpanded.length)  parts.push(`· ⚠️ not expanded, Internal NOT subtracted: ${notExpanded.join(', ')}`);
       if (skipped.length)      parts.push(`· skipped ${skipped.length} not on dashboard: ${skipped.join(', ')}`);
-      setAdvisorXlsxStatus(parts.join(' '));
+
+      const notes = [];
+      if (notExpanded.length) notes.push(`Not expanded — Internal was NOT subtracted for: ${notExpanded.join(', ')}`);
+      if (skipped.length)     notes.push(`In the report but not on the dashboard, skipped: ${skipped.join(', ')}`);
+      warnings.forEach(w => notes.push(w));
+
+      // Nothing is written until the manager confirms the diff.
+      setAdvisorUpload({
+        source: 'HTML report',
+        newData,
+        rows: advisorImportDiff(data.advisors, newAdvisors),
+        notes,
+        message: parts.join(' '),
+      });
+      setAdvisorXlsxStatus('');
       try { if (warnings.length) console.warn('[advisor-html]', warnings); } catch {}
-      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
     } finally {
@@ -805,7 +877,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
       const bumpStamp = Date.now();
       for (const a of newAdvisors) a._lastImport = bumpStamp;
-      onDataChange(newData, structuredClone(vacations));
       const parts = [`✅ Updated ${updated} advisor${updated === 1 ? '' : 's'}`];
       if (updatedNames.length) parts.push(`(${updatedNames.join(', ')})`);
       // Surface which column was matched for each field, so column-name
@@ -813,8 +884,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const colTag = (label, idx) => `${label}=${idx >= 0 ? `"${headerCells[idx]}"` : 'NOT FOUND'}`;
       parts.push(`· Columns matched: ${colTag('MTD Hrs', colHours)}, ${colTag('MTD ROs', colROs)}, ${colTag('ELR', colELR)}, ${colTag('Coupon', colCoupon)}`);
       if (skipped.length)      parts.push(`· skipped ${skipped.length} not on dashboard: ${skipped.join(', ')}`);
-      setAdvisorXlsxStatus(parts.join(' '));
-      setTimeout(() => setAdvisorXlsxStatus(''), 30000);
+
+      const notes = [`Columns matched: ${colTag('MTD Hrs', colHours)}, ${colTag('MTD ROs', colROs)}, ${colTag('ELR', colELR)}, ${colTag('Coupon', colCoupon)}`];
+      if (skipped.length) notes.push(`In the report but not on the dashboard, skipped: ${skipped.join(', ')}`);
+
+      setAdvisorUpload({
+        source: 'legacy .xlsx',
+        newData,
+        rows: advisorImportDiff(data.advisors, newAdvisors),
+        notes,
+        message: parts.join(' '),
+      });
+      setAdvisorXlsxStatus('');
     } catch (err) {
       setAdvisorXlsxStatus('❌ ' + (err.message || err));
     } finally {
@@ -921,6 +1002,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       setTechXlsxBusy(false);
       if (techXlsxInputRef.current) techXlsxInputRef.current.value = '';
     }
+  }
+
+  // Commit a previewed advisor import. Still only touches the on-screen data —
+  // the manager pushes it live with Save Changes, same as before.
+  function applyAdvisorUpload() {
+    if (!advisorUpload) return;
+    onDataChange(advisorUpload.newData, structuredClone(vacations));
+    setAdvisorXlsxStatus(advisorUpload.message);
+    setAdvisorUpload(null);
+    setTimeout(() => setAdvisorXlsxStatus(''), 30000);
   }
 
   // Saved Tekion page (Pay Type View) → per-tech warranty-weighted totals.
@@ -1809,6 +1900,57 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
           ))}
         </div>
+        {advisorUpload && (
+          <div onClick={() => setAdvisorUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 560, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Advisor Import — Review Changes</span>
+                <button onClick={() => setAdvisorUpload(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+              </div>
+              <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12 }}>
+                From the {advisorUpload.source}. Nothing has been changed yet — these are the numbers that will move.
+              </div>
+
+              {advisorUpload.notes.length > 0 && (
+                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.5 }}>
+                  {advisorUpload.notes.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                </div>
+              )}
+
+              {advisorUpload.rows.length === 0 ? (
+                <div style={{ fontSize: 13, color: '#94a3b8', background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '14px 12px', marginBottom: 12 }}>
+                  No advisor numbers change — every value in this report already matches what's on the page.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+                  {advisorUpload.rows.map(r => (
+                    <div key={r.name} style={{ background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '10px 12px' }}>
+                      <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0', marginBottom: 6 }}>{r.name}</div>
+                      {r.changes.map(c => (
+                        <div key={c.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13, padding: '3px 0' }}>
+                          <span style={{ color: '#94a3b8' }}>{c.label}</span>
+                          <span style={{ whiteSpace: 'nowrap' }}>
+                            <span style={{ color: '#64748b', textDecoration: 'line-through' }}>{c.from}</span>
+                            <span style={{ color: '#64748b' }}> → </span>
+                            <span style={{ color: '#6ee7b7', fontWeight: 800 }}>{c.to}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button className="secondary" onClick={() => setAdvisorUpload(null)}>Cancel</button>
+                <button onClick={applyAdvisorUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+                  ✓ OK — Apply {advisorUpload.rows.length ? `${advisorUpload.rows.length} Advisor${advisorUpload.rows.length === 1 ? '' : 's'}` : ''}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     );
 
