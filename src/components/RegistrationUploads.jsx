@@ -200,8 +200,9 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
               const open = openId === r.id;
               return (
                 <div key={r.id} style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(56,189,248,.28)',
+                  background: r.originalOwner ? 'rgba(251,191,36,.07)' : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${r.originalOwner ? 'rgba(251,191,36,.6)' : 'rgba(56,189,248,.28)'}`,
+                  borderLeft: r.originalOwner ? '5px solid #fbbf24' : '1px solid rgba(56,189,248,.28)',
                   borderRadius: 12, overflow: 'hidden',
                 }}>
                   {/* A div, not a button — the RO number inside is its own
@@ -234,6 +235,16 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
                             : '⧉ Copy'}
                         </span>
                       </button>
+                      {r.originalOwner && (
+                        <span style={{
+                          display: 'inline-block', marginLeft: 8, verticalAlign: 'middle',
+                          background: 'rgba(251,191,36,.2)', border: '1px solid rgba(251,191,36,.65)',
+                          color: '#fbbf24', borderRadius: 999, padding: '4px 11px',
+                          fontSize: 11, fontWeight: 900, letterSpacing: 0.5, whiteSpace: 'nowrap',
+                        }}>
+                          ⚠️ ORIGINAL OWNER
+                        </span>
+                      )}
                       <div style={{ color: '#7a92b8', fontSize: 12, marginTop: 5 }}>
                         {r.submittedByDisplay || r.submittedBy || 'Unknown'} · {fmtDate(r.submittedAt)}
                       </div>
@@ -243,6 +254,16 @@ export default function RegistrationUploads({ currentUser, currentUserDisplay, o
 
                   {open && (
                     <div style={{ padding: '0 16px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                      {r.originalOwner && (
+                        <div style={{
+                          marginTop: 14, background: 'rgba(251,191,36,.12)',
+                          border: '1px solid rgba(251,191,36,.55)', borderRadius: 10,
+                          padding: '12px 14px', color: '#fbbf24', fontWeight: 800, fontSize: 14, lineHeight: 1.45,
+                        }}>
+                          ⚠️ Customer is the ORIGINAL OWNER — original owner form must be completed.
+                        </div>
+                      )}
+
                       {r.photoUrl ? (
                         <a href={r.photoUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 14 }}>
                           <img src={r.photoUrl} alt={`Registration for RO ${r.ro}`}
