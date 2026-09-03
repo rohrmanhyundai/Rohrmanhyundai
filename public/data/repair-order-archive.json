@@ -21,27 +21,6 @@
     "_sourceTech": "CORY"
   },
   {
-    "id": "mtkgzzfxb3fp",
-    "ro": "780529",
-    "roDate": "2026-09-02",
-    "vehicle": "2020 Hyundai Palisade",
-    "jobDesc": "",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "_archiveId": "mtlguqpnd27",
-    "_archivedAt": "2026-09-03T11:53:15.707Z",
-    "_archivedBy": "CORY",
-    "_source": "wip",
-    "_sourceTech": "CORY"
-  },
-  {
     "id": "mthu04qddjb",
     "ro": "780443",
     "roDate": "2026-08-31",
