@@ -77,5 +77,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mtlz8fp5db1z",
+    "ro": "780582",
+    "roDate": "2026-09-03",
+    "vehicle": "2024 Hyundai Venue",
+    "jobDesc": "CUSTOMER STATES THAT THEY ARE NOT ABLE TO OPEN FUEL DOOR. CHECK AND ADVISE.",
+    "notes": "CAR IS NOT HERE WAITING ON PAINT LEAVE RO OPEN",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
