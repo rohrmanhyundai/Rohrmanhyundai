@@ -114,21 +114,6 @@
     "isNew": true
   },
   {
-    "id": "mtkh01ajniib",
-    "ro": "780536",
-    "roDate": "2026-09-02",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mtlgys5b6md2",
     "ro": "780559",
     "roDate": "2026-09-03",
