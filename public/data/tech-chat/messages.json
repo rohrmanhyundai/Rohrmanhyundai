@@ -1,58 +1,5 @@
 [
   {
-    "id": "msd6xwevxzr",
-    "username": "SHAWN",
-    "text": "@KADEN 779685 VALVE COVER STUI PLEASE",
-    "timestamp": 1785759235159
-  },
-  {
-    "id": "msdaz6qhwh8",
-    "username": "SHAWN",
-    "text": "@JORDAN @CARTER 779459 FUEL TANK DRAIN APPROVED",
-    "timestamp": 1785766013657
-  },
-  {
-    "id": "msdbvubmoh7",
-    "username": "SHAWN",
-    "text": "@DAVID @KADEN 779685 ENGINE APPROVED",
-    "timestamp": 1785767537218
-  },
-  {
-    "id": "msdjy9l6f2r",
-    "username": "SHAWN",
-    "text": "@david @chat 779721 transmission approved",
-    "timestamp": 1785781087242,
-    "reactions": {
-      "❤️": [
-        "DAVID"
-      ]
-    }
-  },
-  {
-    "id": "msel0iijgwb",
-    "username": "KAI",
-    "text": "RO 779718 parts have been received",
-    "timestamp": 1785843337915
-  },
-  {
-    "id": "msel0w2qxh0",
-    "username": "KAI",
-    "text": "RO 779580 parts have been received",
-    "timestamp": 1785843355490
-  },
-  {
-    "id": "msel38kpbgr",
-    "username": "KAI",
-    "text": "RO 779465 parts have been received",
-    "timestamp": 1785843465001
-  },
-  {
-    "id": "msel3y92ft4",
-    "username": "KAI",
-    "text": "Key fob and key received for 779744, needs programmed and key cut",
-    "timestamp": 1785843498279
-  },
-  {
     "id": "msemvadhvuz",
     "username": "KAI",
     "text": "@chad i see you requested a shock to be ordered, do you mind coming back here to confirm please",
@@ -494,5 +441,11 @@
         "KADEN"
       ]
     }
+  },
+  {
+    "id": "mtlgkx1zakc",
+    "username": "KAI",
+    "text": "@DAVID @KADEN RO 780525 parts have been received",
+    "timestamp": 1788435937367
   }
 ]
