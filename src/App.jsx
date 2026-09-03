@@ -1456,7 +1456,11 @@ export default function App() {
   // resources page — same page names, one implementation.
   if (page === 'additional-time-menu') {
     if (!isLoggedIn) { setPage('dashboard'); return null; }
-    const menuBack = prevPage || 'dashboard';
+    // Going menu -> form -> back leaves prevPage pointing at the menu itself,
+    // which made the menu's Back button a no-op. Only honour prevPage when it's
+    // somewhere outside this flow; otherwise fall back to where you came in.
+    const inFlow = ['additional-time-menu', 'additional-time', 'additional-diag-time', 'additional-time-review'];
+    const menuBack = prevPage && !inFlow.includes(prevPage) ? prevPage : 'dashboard';
     return (
       <AdditionalTimeMenu
         currentUser={currentUser}
