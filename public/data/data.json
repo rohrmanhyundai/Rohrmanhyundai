@@ -859,20 +859,5 @@
     "advisorMonthlyWorkdays": 27,
     "service_policy": 0
   },
-  "vacations": [
-    {
-      "name": "JACOB",
-      "dates": "Sep 4, 2026",
-      "dateStart": "2026-09-04",
-      "dateEnd": "2026-09-04",
-      "status": "APPROVED"
-    },
-    {
-      "name": "JACOB",
-      "dates": "Sep 7, 2026",
-      "dateStart": "2026-09-07",
-      "dateEnd": "2026-09-07",
-      "status": "APPROVED"
-    }
-  ]
+  "vacations": []
 }
