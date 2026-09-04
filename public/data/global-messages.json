@@ -175,7 +175,14 @@
     "text": "780440 parts are in. are you going to ge to this one today?",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtn7v27p8uai",
+        "from": "CORY",
+        "text": "Yup. Staring it now.",
+        "timestamp": 1788542226421
+      }
+    ],
     "timestamp": 1788528517231
   },
   {
