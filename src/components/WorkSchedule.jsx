@@ -454,7 +454,7 @@ function downloadSchedule(opts) {
   setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 500);
 }
 
-function CalendarView({ year, month, schedules, employeeNames, currentUser, currentRole, onBack, title }) {
+function CalendarView({ year, month, schedules, employeeNames, currentUser, currentRole, onBack, title, tabs }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month); // 0=Sun,1=Mon,...
@@ -498,6 +498,8 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
         >⬇ Download</button>
       </div>
 
+      {tabs}
+
       {/* ── Screen calendar ── */}
       <div className="no-print" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '12px 16px 8px', minHeight: 0 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 4, flexShrink: 0 }}>
@@ -537,7 +539,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
   );
 }
 
-export default function WorkSchedule({ schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title }) {
+export default function WorkSchedule({ schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs }) {
   const today = new Date();
   const months = [
     { year: today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear(), month: (today.getMonth() + 11) % 12 },
@@ -554,7 +556,7 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, cu
           year={year} month={month}
           schedules={schedules} employeeNames={employeeNames}
           currentUser={currentUser} currentRole={currentRole}
-          title={title}
+          title={title} tabs={tabs}
           onBack={() => setSelected(null)}
         />
       </div>
@@ -567,6 +569,8 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, cu
         <button className="secondary" onClick={onBack}>{backLabel || '← Appointment Prep'}</button>
         <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>{title || 'Employee Work Schedule'}</span>
       </div>
+
+      {tabs}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
         <p style={{ color: '#7a92b8', margin: 0 }}>Select a month to view the full schedule.</p>

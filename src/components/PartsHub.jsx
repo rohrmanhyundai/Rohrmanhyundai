@@ -46,22 +46,17 @@ const NAV_BUTTONS = [
     prop: 'onAdvisorCalendar',
   },
   {
-    key: 'advisorSchedule',
-    label: '📅 Advisor Schedule',
-    desc: 'View the service advisor work schedule',
+    // One tile for both rosters — the page opens on the viewer's own schedule
+    // and the other is a tab at the top. `anyKeys` preserves the old per-user
+    // permissions: the tile shows if either schedule is allowed.
+    key: 'workSchedule',
+    anyKeys: ['advisorSchedule', 'techSchedule'],
+    label: '📅 Work Schedule',
+    desc: 'Advisor and technician work schedules',
     bg: 'linear-gradient(135deg,rgba(167,139,250,.28),rgba(139,92,246,.18))',
     border: 'rgba(167,139,250,.45)',
     color: '#c4b5fd',
-    prop: 'onAdvisorSchedule',
-  },
-  {
-    key: 'techSchedule',
-    label: '🔧 Tech Schedule',
-    desc: 'View the technician work schedule',
-    bg: 'linear-gradient(135deg,rgba(251,146,60,.28),rgba(249,115,22,.18))',
-    border: 'rgba(251,146,60,.45)',
-    color: '#fdba74',
-    prop: 'onTechSchedule',
+    prop: 'onWorkSchedule',
   },
   {
     key: 'workInProgress',
@@ -105,11 +100,12 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
+  onAdvisorCalendar, onWorkSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onAdvisorSchedule, onTechSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && (!b.managerOnly || isMgr));
+  const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
+  const visible = NAV_BUTTONS.filter(b => allowed(b) && (!b.managerOnly || isMgr));
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>

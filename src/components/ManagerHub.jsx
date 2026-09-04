@@ -47,22 +47,14 @@ const NAV_BUTTONS = [
     prop: 'onDocumentLibrary',
   },
   {
-    key: 'advisorSchedule',
-    label: '📅 Advisor Schedule',
-    desc: 'View the service advisor work schedule',
+    // Advisor and tech schedules share one page with a tab for each.
+    key: 'workSchedule',
+    label: '📅 Work Schedule',
+    desc: 'Advisor and technician work schedules',
     bg: 'linear-gradient(135deg,rgba(167,139,250,.28),rgba(139,92,246,.18))',
     border: 'rgba(167,139,250,.45)',
     color: '#c4b5fd',
-    prop: 'onAdvisorSchedule',
-  },
-  {
-    key: 'techSchedule',
-    label: '🔧 Tech Schedule',
-    desc: 'View the technician work schedule',
-    bg: 'linear-gradient(135deg,rgba(251,146,60,.28),rgba(249,115,22,.18))',
-    border: 'rgba(251,146,60,.45)',
-    color: '#fdba74',
-    prop: 'onTechSchedule',
+    prop: 'onWorkSchedule',
   },
   {
     key: 'employeeReview',
@@ -141,14 +133,14 @@ const NAV_BUTTONS = [
 export default function ManagerHub({
   currentUser, currentUserDisplay, currentRole,
   onBack, onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
-  onDocumentLibrary, onAdvisorSchedule, onTechSchedule,
+  onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
   onGlobalMessage, onCashDash,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
-    onDocumentLibrary, onAdvisorSchedule, onTechSchedule,
+    onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
     onGlobalMessage, onCashDash,

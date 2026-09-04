@@ -41,7 +41,7 @@ function GaugeBar({ label, actual, goal, prefix = '$' }) {
   );
 }
 
-export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onAdvisorSchedule, onTechSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload }) {
+export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onWorkSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload }) {
   const [showLogin, setShowLogin] = useState(false);
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
@@ -69,8 +69,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {isLoggedIn ? (
           <>
-            <button onClick={onAdvisorSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Advisor Schedule</button>
-            <button onClick={onTechSchedule} style={btnStyle('#1f2a3a', '#818cf8')}>🔧 Tech Schedule</button>
+            <button onClick={onWorkSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Work Schedule</button>
             <button onClick={onTireWarranty} style={btnStyle('#2e2410', '#fbbf24')}>🛞 Tire Warranty</button>
             {onAdditionalTime && (
               <button onClick={onAdditionalTime} style={btnStyle('#2b1f3a', '#c084fc')}>⏱️ Warranty Additional Time</button>
