@@ -1,7 +1,7 @@
 {
   "id": "mtcxy628srlx",
   "createdAt": "2026-08-28T12:41:53.456Z",
-  "updatedAt": "2026-08-28T13:44:36.566Z",
+  "updatedAt": "2026-09-04T19:13:50.993Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Cady Branaman",
   "customerPhone": "(812) 216 - 5416",
@@ -57,10 +57,10 @@
     },
     {
       "id": "mtcy1s8fwjr6",
-      "partNumber": "",
-      "description": "",
+      "partNumber": "9-6101",
+      "description": "TIMING CHAIN TENSIONER",
       "qty": "1",
-      "price": ""
+      "price": "64.39"
     },
     {
       "id": "mtcy1w08xtbn",
