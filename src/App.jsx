@@ -174,6 +174,7 @@ export default function App() {
   const [replyErr, setReplyErr] = useState('');
   const mentionAckRef = useRef(new Set());          // ids already OK'd (persisted per user)
   const mentionQueueRef = useRef([]);               // pending mentions waiting to show
+  const [messengerOpen, setMessengerOpen] = useState(0); // bumped to pop the floating bubble open
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
   const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
   const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
@@ -525,10 +526,12 @@ export default function App() {
       mentionAckRef.current.add(cur.id);
       mentionPersistRef.current();
       mentionQueueRef.current = mentionQueueRef.current.filter(x => x.id !== cur.id);
-      // Chat mentions jump to that chat's screen; a Global Message has no chat,
-      // so OK just dismisses it.
+      // Chat mentions jump to the screen holding that chat. A Global Message
+      // lives in the floating bubble, so closing the pop-up opens the bubble on
+      // the message — that is where the reply is written.
       if (cur.channel === 'Advisor Chat') navTo('advisor-calendar');
       else if (cur.channel === 'Tech Chat') navTo('work-in-progress');
+      else setMessengerOpen(n => n + 1);
     }
     setMention(mentionQueueRef.current[0] || null);
   }, []);
@@ -562,11 +565,13 @@ export default function App() {
     }
   }, [replyDraft, currentUser]);
 
-  // "View" on a reply-notice → open the Global Message log to read/reply.
+  // "View" on a reply-notice → open the floating bubble, where everyone can
+  // read the thread and answer. (It used to open the Global Message log, which
+  // is now admin-only.)
   const viewReply = useCallback(() => {
     const cur = mentionQueueRef.current[0];
     if (cur) advanceMention(cur.id);
-    navTo('global-message');
+    setMessengerOpen(n => n + 1);
   }, []);
 
   useEffect(() => {
@@ -845,9 +850,9 @@ export default function App() {
                 {mention.text}
               </div>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-                {/* Only managers have the Global Message log to jump to. */}
-                {isAdminOrManager && <button onClick={viewReply} autoFocus style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>View</button>}
-                <button onClick={dismissMention} autoFocus={!isAdminOrManager} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(148,163,184,.3)', color: '#cbd5e1', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>OK</button>
+                {/* The bubble is everyone's, so everyone gets View. */}
+                <button onClick={viewReply} autoFocus style={{ background: 'linear-gradient(180deg,#3b82f6,#2563eb)', border: '1px solid rgba(96,165,250,.7)', color: '#fff', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>View</button>
+                <button onClick={dismissMention} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(148,163,184,.3)', color: '#cbd5e1', borderRadius: 12, padding: '12px 30px', fontWeight: 900, fontSize: 16, cursor: 'pointer' }}>OK</button>
               </div>
             </>
           ) : mention.type === 'reply-required' ? (
@@ -1143,8 +1148,9 @@ export default function App() {
   }
 
   if (page === 'global-message') {
-    const isManager = currentRole === 'admin' || currentRole === 'parts manager' || currentRole === 'service manager' || (currentRole || '').includes('manager');
-    if (!isManager) { setPage('dashboard'); return null; }
+    // Admin only — this page reads every user's message history. Sending a
+    // message is still open to everyone through the floating bubble.
+    if (currentRole !== 'admin') { setPage('dashboard'); return null; }
     return (
       <GlobalMessage
         currentUser={currentUser.toUpperCase()}
@@ -1670,6 +1676,7 @@ export default function App() {
       canSend={canSendGlobal}
       onMarkSeen={markGlobalSeen}
       onMessagesChange={setGlobalMessages}
+      openSignal={messengerOpen}
     />, document.body) : null;
 
   return (<>{mentionModal}{messenger}{renderPage()}</>);

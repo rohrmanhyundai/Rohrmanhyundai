@@ -26,7 +26,7 @@ function clampToScreen(x, y, w, h) {
 // user moves between screens. Reading and sending both happen here; the
 // blocking pop-up still fires separately and is untouched.
 export default function FloatingMessenger({
-  currentUser, users, messages, unread, canSend, onMarkSeen, onMessagesChange,
+  currentUser, users, messages, unread, canSend, onMarkSeen, onMessagesChange, openSignal = 0,
 }) {
   const me = (currentUser || '').toUpperCase();
   const posKey = `floatingMsgPos:${me}`;
@@ -47,6 +47,16 @@ export default function FloatingMessenger({
   const [alert, setAlert] = useState(false);
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState('');
+
+  // The pop-up hands off to the bubble: dismissing a message opens this panel
+  // on the inbox so the reply is right there. A counter rather than a boolean,
+  // so a second pop-up re-opens a panel the user just closed.
+  useEffect(() => {
+    if (!openSignal) return;
+    setTab('inbox');
+    setOpen(true);
+    if (onMarkSeen) onMarkSeen();
+  }, [openSignal, onMarkSeen]);
 
   const dragRef = useRef({ active: false, moved: false, dx: 0, dy: 0 });
   // Mirror of `pos` that's current *within* a gesture. React hasn't re-rendered

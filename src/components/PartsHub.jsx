@@ -87,6 +87,7 @@ const NAV_BUTTONS = [
   },
   {
     key: 'globalMessage',
+    adminOnly: true,
     label: '📣 Global Message',
     desc: 'Send a pop-up message to one or more users — appears on their screen instantly',
     bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
@@ -105,7 +106,9 @@ export default function PartsHub({
   const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
-  const visible = NAV_BUTTONS.filter(b => allowed(b) && (!b.managerOnly || isMgr));
+  const visible = NAV_BUTTONS.filter(b => allowed(b)
+    && (!b.managerOnly || isMgr)
+    && (!b.adminOnly || currentRole === 'admin'));
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>

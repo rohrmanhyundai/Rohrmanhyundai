@@ -111,9 +111,12 @@ const NAV_BUTTONS = [
     prop: 'onUserDataTracker',
   },
   {
+    // Admin-only: the page reads every user's message history. The floating
+    // chat bubble is unaffected — everyone keeps that.
     key: 'globalMessage',
+    adminOnly: true,
     label: '📣 Global Message',
-    desc: 'Send a pop-up message to one or more users — appears on their screen instantly',
+    desc: 'Send a pop-up message and read any user\'s message history',
     bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
     border: 'rgba(251,191,36,.5)',
     color: '#fde68a',
@@ -177,7 +180,7 @@ export default function ManagerHub({
 
           {/* Navigation cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {NAV_BUTTONS.map(btn => (
+            {NAV_BUTTONS.filter(b => !b.adminOnly || currentRole === 'admin').map(btn => (
               <button
                 key={btn.key}
                 onClick={handlers[btn.prop]}
