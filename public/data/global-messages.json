@@ -293,7 +293,14 @@
     "text": "770581 What are we doing with this?",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtnde4jhor0s",
+        "from": "DAVID",
+        "text": "in notes. ASR approved",
+        "timestamp": 1788551513981
+      }
+    ],
     "timestamp": 1788548203869
   },
   {
