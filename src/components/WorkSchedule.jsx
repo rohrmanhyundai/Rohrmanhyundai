@@ -454,7 +454,12 @@ function downloadSchedule(opts) {
   setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 500);
 }
 
-function CalendarView({ year, month, schedules, employeeNames, currentUser, currentRole, onBack, title, tabs }) {
+const monthStepStyle = {
+  width: 34, height: 34, padding: 0, fontSize: 20, lineHeight: 1,
+  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+};
+
+function CalendarView({ year, month, schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs, onPrevMonth, onNextMonth, onToday, isCurrentMonth }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month); // 0=Sun,1=Mon,...
@@ -486,8 +491,18 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
 
       {/* ── Screen toolbar ── */}
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-        <button className="secondary" onClick={onBack}>← Back</button>
-        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', flex: 1 }}>{monthLabel(year, month)} — {title || 'Work Schedule'}</span>
+        <button className="secondary" onClick={onBack}>{backLabel || '← Back'}</button>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <button className="secondary" onClick={onPrevMonth} title="Previous month" style={monthStepStyle}>‹</button>
+          <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9', textAlign: 'center', minWidth: 330 }}>
+            {monthLabel(year, month)} — {title || 'Work Schedule'}
+          </span>
+          <button className="secondary" onClick={onNextMonth} title="Next month" style={monthStepStyle}>›</button>
+          {!isCurrentMonth && (
+            <button className="secondary" onClick={onToday} title="Back to this month"
+              style={{ background: 'rgba(61,214,195,.12)', borderColor: 'rgba(61,214,195,.35)', color: '#3dd6c3', fontSize: 12 }}>Today</button>
+          )}
+        </div>
         <button
           onClick={() => printSchedule({ year, month, employeeNames, schedules, title, currentUser, currentRole })}
           style={{ background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}
@@ -541,72 +556,35 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
 
 export default function WorkSchedule({ schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs }) {
   const today = new Date();
-  const months = [
-    { year: today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear(), month: (today.getMonth() + 11) % 12 },
-    { year: today.getFullYear(), month: today.getMonth() },
-    { year: today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear(), month: (today.getMonth() + 1) % 12 },
-  ];
-  const [selected, setSelected] = useState(null);
+  // Opens straight on the current month. The month picker this used to land on
+  // was a click on the way to the month everyone wanted anyway — ‹ › in the
+  // toolbar walk to any other month, the way the phone view already did.
+  const [shown, setShown] = useState({ year: today.getFullYear(), month: today.getMonth() });
 
-  if (selected !== null) {
-    const { year, month } = months[selected];
-    return (
-      <div className="adv-page">
-        <CalendarView
-          year={year} month={month}
-          schedules={schedules} employeeNames={employeeNames}
-          currentUser={currentUser} currentRole={currentRole}
-          title={title} tabs={tabs}
-          onBack={() => setSelected(null)}
-        />
-      </div>
-    );
+  function stepMonth(delta) {
+    setShown(({ year, month }) => {
+      const m = month + delta;
+      if (m < 0)  return { year: year - 1, month: 11 };
+      if (m > 11) return { year: year + 1, month: 0 };
+      return { year, month: m };
+    });
   }
+
+  const isCurrentMonth = shown.year === today.getFullYear() && shown.month === today.getMonth();
 
   return (
     <div className="adv-page">
-      <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button className="secondary" onClick={onBack}>{backLabel || '← Appointment Prep'}</button>
-        <span style={{ fontWeight: 700, fontSize: 18, color: '#6ee7f9' }}>{title || 'Employee Work Schedule'}</span>
-      </div>
-
-      {tabs}
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-        <p style={{ color: '#7a92b8', margin: 0 }}>Select a month to view the full schedule.</p>
-        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {months.map(({ year, month }, i) => {
-            const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
-            const daysInMonth = getDaysInMonth(year, month);
-            const totalEntries = employeeNames.reduce((sum, name) => {
-              const entries = Object.keys(schedules[name] || {}).filter(d => d.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`));
-              return sum + entries.length;
-            }, 0);
-            return (
-              <button
-                key={i}
-                onClick={() => setSelected(i)}
-                style={{
-                  width: 200, minHeight: 130, background: isCurrentMonth
-                    ? 'linear-gradient(135deg,rgba(61,214,195,.2),rgba(110,231,249,.15))'
-                    : 'rgba(255,255,255,0.04)',
-                  border: `2px solid ${isCurrentMonth ? 'rgba(61,214,195,.5)' : 'rgba(255,255,255,0.1)'}`,
-                  borderRadius: 16, cursor: 'pointer', display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: 8, padding: 20,
-                  transition: 'transform .15s, border-color .15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                {isCurrentMonth && <div style={{ fontSize: 10, color: '#3dd6c3', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Current Month</div>}
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#e2e8f0' }}>{MONTHS[month].slice(0, 3)}</div>
-                <div style={{ fontSize: 14, color: '#7a92b8' }}>{year}</div>
-                <div style={{ fontSize: 11, color: '#4fc3f7' }}>{totalEntries} shift{totalEntries !== 1 ? 's' : ''} scheduled</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <CalendarView
+        year={shown.year} month={shown.month}
+        schedules={schedules} employeeNames={employeeNames}
+        currentUser={currentUser} currentRole={currentRole}
+        title={title} tabs={tabs}
+        onBack={onBack} backLabel={backLabel}
+        onPrevMonth={() => stepMonth(-1)}
+        onNextMonth={() => stepMonth(1)}
+        onToday={() => setShown({ year: today.getFullYear(), month: today.getMonth() })}
+        isCurrentMonth={isCurrentMonth}
+      />
     </div>
   );
 }
