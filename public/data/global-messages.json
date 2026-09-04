@@ -239,5 +239,17 @@
       }
     ],
     "timestamp": 1788537427875
+  },
+  {
+    "id": "gm-mtn5aapzjmkh",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "Your hitch customer paid with a check. the office is making a check and will mail it to him.",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788537898439
   }
 ]
