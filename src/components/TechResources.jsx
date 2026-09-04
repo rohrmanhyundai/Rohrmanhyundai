@@ -17,20 +17,16 @@ const NAV_BUTTONS = [
     prop: 'onHotRepairs',
   },
   {
-    key: 'techSchedule',
-    label: '📅 Technician Work Schedule',
+    // Both rosters live behind one tile now — the page opens on yours and the
+    // other is a tab away. `anyKeys` keeps the old per-user permissions working:
+    // the tile shows if either schedule is allowed.
+    key: 'workSchedule',
+    anyKeys: ['techSchedule', 'advisorSchedule'],
+    label: '📅 Work Schedule',
     bg: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))',
     border: 'rgba(167,139,250,.45)',
     color: '#c4b5fd',
     prop: 'onWorkSchedule',
-  },
-  {
-    key: 'advisorSchedule',
-    label: '🗓 Advisor Work Schedule',
-    bg: 'linear-gradient(135deg,rgba(61,214,195,.25),rgba(110,231,249,.18))',
-    border: 'rgba(61,214,195,.45)',
-    color: '#6ee7f9',
-    prop: 'onAdvisorSchedule',
   },
   {
     key: 'documentLibrary',
@@ -82,9 +78,10 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onBack }) {
-  const handlers = { onWorkSchedule, onAdvisorSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview };
-  const visible = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onBack }) {
+  const handlers = { onWorkSchedule, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview };
+  const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
+  const visible = NAV_BUTTONS.filter(b => allowed(b) && handlers[b.prop]);
 
   // Whether someone HAS a review is a fact about their job title, so this keys
   // off `jobRole` — Management Access grants extra views, it doesn't stop a tech

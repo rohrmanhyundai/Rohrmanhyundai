@@ -10,7 +10,7 @@ function shiftColor(val) {
   return '#3dd6c3';
 }
 
-export default function MobileSchedule({ schedules, employeeNames, currentUser, title, onBack }) {
+export default function MobileSchedule({ schedules, employeeNames, currentUser, title, onBack, tabs }) {
   const today = new Date();
   const [year, setYear]   = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -92,6 +92,8 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
             : <button onClick={goToday} style={{ background: 'rgba(61,214,195,0.12)', border: '1px solid rgba(61,214,195,0.3)', color: '#3dd6c3', borderRadius: 10, padding: '7px 10px', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>Today</button>
           }
         </div>
+
+        {tabs}
 
         {/* Month nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

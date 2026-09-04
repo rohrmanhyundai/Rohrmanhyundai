@@ -44,11 +44,10 @@ import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
 import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
-import WorkSchedule from './components/WorkSchedule';
+import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
 import WorkInProgress from './components/WorkInProgress';
-import MobileSchedule from './components/MobileSchedule';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
 import UsedCarHub from './components/UsedCarHub';
@@ -61,6 +60,28 @@ import ATTNTTWorksheet from './components/ATTNTTWorksheet';
 import TechSelfReview from './components/TechSelfReview';
 import PerformanceReport from './components/PerformanceReport';
 import ManagerReports from './components/ManagerReports';
+
+// Every entry point into the combined Work Schedule page, and which tab it
+// opens on. An empty string means "whichever roster the viewer is on" — that is
+// the plain `work-schedule` tile every hub now links to. The rest are kept so
+// older links (and the phone dashboard's two shortcuts) still land where they
+// always did, just with the other schedule a tab away.
+const SCHEDULE_TABS = {
+  'work-schedule': '',
+  'tech-work-schedule': 'tech',
+  'advisor-view-tech-schedule': 'tech',
+  'mobile-tech-schedule': 'tech',
+  'tech-view-advisor-schedule': 'advisor',
+  'mobile-advisor-schedule': 'advisor',
+};
+
+const BACK_LABELS = {
+  'tech-resources': '← Technician Resources',
+  'advisor-calendar': '← Advisor Calendar',
+  'parts-hub': '← Parts Hub',
+  'manager-hub': '← Manager Hub',
+  'dashboard': '← Dashboard',
+};
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
@@ -886,8 +907,7 @@ export default function App() {
         currentRole={currentRole}
         jobRole={jobRole}
         userPages={currentPages}
-        onWorkSchedule={() => setPage('tech-work-schedule')}
-        onAdvisorSchedule={() => setPage('tech-view-advisor-schedule')}
+        onWorkSchedule={() => goTo('work-schedule', 'tech-resources')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
@@ -955,29 +975,33 @@ export default function App() {
     );
   }
 
-  if (page === 'tech-work-schedule') {
-    if (isPhone) return (
-      <MobileSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
-        onBack={() => setPage('tech-resources')} />
-    );
+  // ── Work Schedule ───────────────────────────────────────────────────────────
+  // Advisor and tech schedules are one page with two tabs. Every hub links to
+  // `work-schedule`, which opens on the roster the viewer is on. The older page
+  // ids still work as entry points — they just pick the starting tab, so any
+  // saved link or Back destination keeps behaving the way it did.
+  if (SCHEDULE_TABS[page] !== undefined) {
+    const backDest = page.startsWith('mobile-') ? 'dashboard'
+      : page.startsWith('tech-') ? 'tech-resources'
+      : (prevPage || 'advisor-calendar');
+    // Someone allowed only one roster sees only that one — never zero tabs.
+    const mayAdvisor = canAccess('advisorSchedule');
+    const mayTech    = canAccess('techSchedule');
     return (
-      <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} currentRole={currentRole} title="Tech Schedule"
-        onBack={() => setPage('tech-resources')} />
-    );
-  }
-
-  if (page === 'tech-view-advisor-schedule') {
-    if (isPhone) return (
-      <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
-        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
-        onBack={() => setPage('tech-resources')} />
-    );
-    return (
-      <WorkSchedule schedules={schedules} employeeNames={advisorScheduleList}
-        currentUser={currentUser.toUpperCase()} currentRole={currentRole} title="Advisor Schedule"
-        onBack={() => setPage('tech-resources')} />
+      <WorkScheduleTabs
+        schedules={schedules}
+        advisorNames={advisorScheduleList}
+        techNames={techList}
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        jobRole={jobRole}
+        isPhone={isPhone}
+        initialTab={SCHEDULE_TABS[page] || undefined}
+        showAdvisor={mayAdvisor || !mayTech}
+        showTech={mayTech || !mayAdvisor}
+        onBack={() => setPage(backDest)}
+        backLabel={BACK_LABELS[backDest] || '← Back'}
+      />
     );
   }
 
@@ -1000,22 +1024,6 @@ export default function App() {
     );
   }
 
-  if (page === 'advisor-view-tech-schedule') {
-    const tsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
-    if (isPhone) return (
-      <MobileSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} title="Tech Schedule"
-        onBack={() => setPage(prevPage || 'advisor-calendar')} />
-    );
-    return (
-      <WorkSchedule schedules={schedules} employeeNames={techList}
-        currentUser={currentUser.toUpperCase()} currentRole={currentRole}
-        title="Tech Schedule"
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
-        backLabel={tsBackLabel} />
-    );
-  }
-
   // Parts Hub
   if (page === 'parts-hub') {
     return (
@@ -1028,8 +1036,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'parts-hub')}
         onDocumentLibrary={() => goTo('document-library', 'parts-hub')}
         onAdvisorCalendar={() => goTo('advisor-calendar', 'parts-hub')}
-        onAdvisorSchedule={() => goTo('work-schedule', 'parts-hub')}
-        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'parts-hub')}
+        onWorkSchedule={() => goTo('work-schedule', 'parts-hub')}
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
         onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
@@ -1104,8 +1111,7 @@ export default function App() {
         onAdvisorCalendar={() => { setViewingAdvisor(ownAdvisor || advisorList[0] || ''); goTo('advisor-calendar', 'manager-hub'); }}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'manager-hub')}
         onDocumentLibrary={() => goTo('document-library', 'manager-hub')}
-        onAdvisorSchedule={() => goTo('work-schedule', 'manager-hub')}
-        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'manager-hub')}
+        onWorkSchedule={() => goTo('work-schedule', 'manager-hub')}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
@@ -1277,38 +1283,6 @@ export default function App() {
     );
   }
 
-  // Advisor pages render full-screen outside the scaled stage
-  if (page === 'work-schedule') {
-    const wsBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : '← Advisor Calendar';
-    const backDest = prevPage || 'advisor-calendar';
-    // Technicians routed here should see the tech schedule, not advisor schedule
-    if (jobRole === 'technician') {
-      if (isPhone) return (
-        <MobileSchedule schedules={schedules} employeeNames={techList}
-          currentUser={currentUser.toUpperCase()} title="Tech Schedule"
-          onBack={() => setPage(backDest)} />
-      );
-      return (
-        <WorkSchedule schedules={schedules} employeeNames={techList}
-          currentUser={currentUser.toUpperCase()} currentRole={currentRole}
-          onBack={() => setPage(backDest)}
-          backLabel={wsBackLabel} />
-      );
-    }
-    if (isPhone) return (
-      <MobileSchedule schedules={schedules} employeeNames={advisorScheduleList}
-        currentUser={currentUser.toUpperCase()} title="Advisor Schedule"
-        onBack={() => setPage(backDest)} />
-    );
-    return (
-      <WorkSchedule schedules={schedules} employeeNames={advisorScheduleList}
-        currentUser={currentUser.toUpperCase()} currentRole={currentRole}
-        title="Advisor Schedule"
-        onBack={() => setPage(backDest)}
-        backLabel={wsBackLabel} />
-    );
-  }
-
   if (page === 'advisor-calendar') {
     return (
       <AdvisorCalendar
@@ -1320,7 +1294,6 @@ export default function App() {
         onBack={() => { setViewingAdvisor(''); navTo('dashboard'); }}
         onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
-        onTechSchedule={() => goTo('advisor-view-tech-schedule', 'advisor-calendar')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
@@ -1580,29 +1553,6 @@ export default function App() {
 
   // Phone-only mobile view — tablet/desktop/TV use the existing scaled layout unchanged
   if (isPhone) {
-    if (page === 'mobile-advisor-schedule') {
-      return (
-        <MobileSchedule
-          schedules={schedules}
-          employeeNames={advisorScheduleList}
-          currentUser={currentUser.toUpperCase()}
-          title="Advisor Schedule"
-          onBack={() => setPage('dashboard')}
-        />
-      );
-    }
-    if (page === 'mobile-tech-schedule') {
-      return (
-        <MobileSchedule
-          schedules={schedules}
-          employeeNames={techList}
-          currentUser={currentUser.toUpperCase()}
-          title="Tech Schedule"
-          onBack={() => setPage('dashboard')}
-        />
-      );
-    }
-
     return (
       <>
         <MobileDashboard
@@ -1614,8 +1564,7 @@ export default function App() {
           onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
           onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
           advisorUnread={advisorUnread} techUnread={techUnread} managerUnread={globalUnread}
-          onAdvisorSchedule={() => setPage('mobile-advisor-schedule')}
-          onTechSchedule={() => setPage('mobile-tech-schedule')}
+          onWorkSchedule={() => goTo('work-schedule', 'dashboard')}
           onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
           onAdditionalTime={jobRole === 'technician'
             ? () => goTo('additional-time-menu', 'dashboard')
