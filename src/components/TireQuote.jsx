@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadTirePromos, saveTirePromo, deleteTirePromo, reorderTirePromos } from '../utils/github';
+import { loadTirePromos, saveTirePromo, deleteTirePromo, reorderTirePromos, loadTirePromoNote, saveTirePromoNote } from '../utils/github';
 import { uploadTirePromoToS3, deleteS3ObjectByUrl } from '../utils/s3';
 
 const TIRE_CENTER_URL = 'https://hyundaitirecenter.com/InitDealer?dealer=IN007';
@@ -48,13 +48,16 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
   const canEdit = isEditor(currentRole);
   const [tab, setTab] = useState('pricing');   // pricing | promos | manage
   const [promos, setPromos] = useState([]);
+  const [note, setNote] = useState({ text: '' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
-    loadTirePromos()
-      .then(rows => { if (alive) setPromos(rows); })
-      .catch(() => {})
+    Promise.all([
+      loadTirePromos().catch(() => []),
+      loadTirePromoNote().catch(() => ({ text: '' })),
+    ])
+      .then(([rows, n]) => { if (!alive) return; setPromos(rows); setNote(n || { text: '' }); })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, []);
@@ -96,13 +99,16 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
           <>
             <PricingPanel />
             <PromoBoard promos={promos} loading={loading} canEdit={canEdit} onManage={() => setTab('manage')} />
+            <PromoNote text={note.text} />
           </>
         )}
         {tab === 'manage' && canEdit && (
           <ManagePanel
             promos={promos}
+            note={note}
             currentUser={currentUser}
             onChange={setPromos}
+            onNoteChange={setNote}
           />
         )}
       </div>
@@ -229,8 +235,28 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
   );
 }
 
+/* ── The manager's own wording, under the promotions ─────────────────────────
+   Whatever gets typed on the Manage tab shows here verbatim — line breaks kept,
+   nothing added around it. Empty means the section isn't there at all. */
+function PromoNote({ text }) {
+  const body = (text || '').trim();
+  if (!body) return null;
+  return (
+    <div style={{ maxWidth: 820, margin: '34px auto 0' }}>
+      <div style={{
+        border: '1px solid rgba(148,163,184,.2)', borderRadius: 16, padding: '18px 22px',
+        background: 'linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,.05)',
+        color: '#cbd5e1', fontSize: 14.5, lineHeight: 1.65, whiteSpace: 'pre-wrap',
+      }}>
+        {body}
+      </div>
+    </div>
+  );
+}
+
 /* ── Manage (managers / admins) ────────────────────────────────────────────── */
-function ManagePanel({ promos, currentUser, onChange }) {
+function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState('');
   const [label, setLabel] = useState('');
@@ -423,6 +449,9 @@ function ManagePanel({ promos, currentUser, onChange }) {
         </div>
       </div>
 
+      {/* Wording under the promotions */}
+      <NoteEditor note={note} currentUser={currentUser} onNoteChange={onNoteChange} inputStyle={inputStyle} />
+
       {/* Existing */}
       <div>
         <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.14em', color: '#8fa7c8', marginBottom: 12 }}>
@@ -445,6 +474,77 @@ function ManagePanel({ promos, currentUser, onChange }) {
             />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* The wording that appears under the promotions on the Tire Pricing page. */
+function NoteEditor({ note, currentUser, onNoteChange, inputStyle }) {
+  const saved = (note && note.text) || '';
+  const [draft, setDraft] = useState(saved);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  // If someone else saves while this tab is open, follow their text rather than
+  // sitting on a stale draft — unless there are unsaved edits in progress.
+  useEffect(() => { setDraft(d => (d === '' || d === saved ? saved : d)); }, [saved]);
+
+  const dirty = draft !== saved;
+
+  async function save() {
+    setBusy(true); setMsg('');
+    try {
+      const next = { text: draft.trim(), updatedBy: currentUser || '', updatedAt: new Date().toISOString() };
+      await saveTirePromoNote(next);
+      onNoteChange?.(next);
+      setDraft(next.text);
+      setMsg('✅ Saved — it shows under the promotions now.');
+      setTimeout(() => setMsg(m => (m && m.startsWith('✅')) ? '' : m), 4000);
+    } catch (err) {
+      setMsg('⚠ ' + (err.message || err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{
+      border: '1px solid rgba(148,163,184,.22)', borderRadius: 16, padding: '20px 22px',
+      background: 'linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012))',
+    }}>
+      <div style={{ fontSize: 15, fontWeight: 900, color: '#e8f1ff', marginBottom: 4 }}>Wording under the promotions</div>
+      <div style={{ fontSize: 12.5, color: '#8296b4', marginBottom: 14, lineHeight: 1.6 }}>
+        Anything typed here shows on the Tire Pricing page below the promotion pictures —
+        terms, an expiration note, who to see. Line breaks are kept. Leave it empty and
+        nothing appears.
+      </div>
+      <textarea
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        rows={5}
+        placeholder="e.g. Prices include mount and balance. Ask about road hazard coverage on all four."
+        style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', resize: 'vertical', lineHeight: 1.55, fontWeight: 600 }}
+      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+        <button onClick={save} disabled={busy || !dirty}
+          style={{
+            background: (busy || !dirty) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)',
+            border: `1px solid ${(busy || !dirty) ? 'rgba(148,163,184,.25)' : 'rgba(96,165,250,.45)'}`,
+            color: (busy || !dirty) ? '#7d8ba3' : '#93c5fd',
+            borderRadius: 10, padding: '9px 20px', fontWeight: 800, fontSize: 13.5,
+          }}>
+          {busy ? 'Saving…' : dirty ? 'Save Wording' : 'Saved'}
+        </button>
+        {dirty && !busy && (
+          <button className="secondary" onClick={() => setDraft(saved)} style={{ fontSize: 12.5 }}>Undo changes</button>
+        )}
+        {msg && <span style={{ fontSize: 12.5, fontWeight: 700, color: msg.startsWith('✅') ? '#6ee7b7' : '#fca5a5' }}>{msg}</span>}
+        {!dirty && note?.updatedBy && (
+          <span style={{ fontSize: 11.5, color: '#64748b' }}>
+            Last saved by {note.updatedBy}{note.updatedAt ? ` · ${new Date(note.updatedAt).toLocaleDateString()}` : ''}
+          </span>
+        )}
       </div>
     </div>
   );

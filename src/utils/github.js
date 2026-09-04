@@ -1348,6 +1348,33 @@ export async function deleteTirePromo(promo) {
   return next;
 }
 
+// A free-text note shown under the promotions — sale terms, a disclaimer, a
+// "see the parts counter" line. Its own small file so saving the wording never
+// touches the promotion list.
+const TIRE_PROMO_NOTE_PATH = 'public/data/tire-promos/note.json';
+
+export async function loadTirePromoNote() {
+  try {
+    const data = await readGitHubFile(authHeaders(), TIRE_PROMO_NOTE_PATH);
+    if (data && typeof data === 'object') return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/tire-promos/note.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (json && typeof json === 'object') return json;
+    }
+  } catch {}
+  return { text: '' };
+}
+
+export async function saveTirePromoNote(note) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(TIRE_PROMO_NOTE_PATH, () => note,
+    note.text ? 'Update tire promo note' : 'Clear tire promo note');
+}
+
 export async function reorderTirePromos(orderedIds) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
