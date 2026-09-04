@@ -1675,7 +1675,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function renderSectionBody() {
     if (openSection === 'github') return (
       <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+        <div className="form-section" style={{ marginTop: 0 }}>
           <div className="small">Enter a GitHub Personal Access Token with repo scope. Saving here automatically syncs it to all advisor devices — they will never need to enter a save code manually.</div>
           <div className="field" style={{ marginTop: 8 }}>
             <label>GitHub Token</label>
@@ -1688,7 +1688,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'aws') return (
       <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+        <div className="form-section" style={{ marginTop: 0 }}>
           <div className="small">Enter your AWS S3 credentials. Saving here syncs them to all devices so any user can upload/delete documents in the Document Library — they will never need to enter them manually.</div>
           <div className="field" style={{ marginTop: 8 }}>
             <label>AWS Access Key ID</label>
@@ -1716,7 +1716,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'openai') return (
       <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+        <div className="form-section" style={{ marginTop: 0 }}>
           <div className="small">Enter your OpenAI API key to enable AI-generated performance review reports in Employee Reviews. The key is stored locally on this device only.</div>
           <div className="field" style={{ marginTop: 8 }}>
             <label>OpenAI API Key</label>
@@ -1789,12 +1789,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (openSection === 'advisors') return (
       <div className="group-body">
         {/* Bulk import from the dealership's Advisor Performance Report (.xlsx or .pdf) */}
-        <div style={{ background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12, padding: '14px 16px', marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-            <div style={{ fontSize: 18 }}>📥</div>
-            <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>Upload Advisor Performance Report (.html or .pdf)</div>
+        <div className="upload-card">
+          <div className="upload-title">
+            <span style={{ fontSize: 17 }}>📥</span>
+            <span>Upload Advisor Performance Report (.html or .pdf)</span>
           </div>
-          <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, lineHeight: 1.5 }}>
+          <div className="small" style={{ marginBottom: 12 }}>
             <strong>HTML</strong> (Tekion report saved in <em>Pay Type View</em>) fills MTD Hrs, MTD ROs (RO Count), ELR %, Coupon Labor, Total Sales.
             &nbsp;·&nbsp;
             <strong>PDF</strong> fills Alignment % (Alignment PEN %), Valvoline % (Valvoline PEN %), Tires % (Tires PEN %), ASR % (% of ASR sold).
@@ -2013,9 +2013,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       <div className="group-body">
         {/* Upload the dealer's Technician Performance report to auto-fill one
             day's flagged hours for every tech. */}
-        <div style={{ border: '1px solid rgba(96,165,250,.28)', background: 'rgba(96,165,250,.07)', borderRadius: 12, padding: '12px 14px', marginBottom: 14 }}>
-          <div style={{ fontWeight: 800, color: '#bfdbfe', fontSize: 13, letterSpacing: .3 }}>📥 Upload Flagged Hours Report (.html)</div>
-          <div className="small" style={{ color: '#94a3b8', margin: '4px 0 8px' }}>
+        <div className="upload-card">
+          <div className="upload-title"><span style={{ fontSize: 17 }}>📥</span><span>Upload Flagged Hours Report (.html)</span></div>
+          <div className="small" style={{ margin: '0 0 10px' }}>
             Save the Tekion <strong>Tech Performance</strong> report in <strong>Pay Type View</strong> as .html and upload it here. Each tech's hours are
             <strong> Warranty × {WARRANTY_MULTIPLIER}</strong> + Internal + Customer Pay. <strong>Pick the day first</strong> — those hours fill that day's column.
             A tech not on the report is set to <strong>0</strong>. Review before applying, then <em>Save Changes</em>.
@@ -2466,10 +2466,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Main render ───────────────────────────────────────────────────────────────
   return (
-    <div style={{ position: 'fixed', inset: 0, background: '#0b1120', zIndex: 1000, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className="admin-shell" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* Top bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 60, borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}>
+      <div className="admin-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 64, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {openSection && (
             <button
@@ -2508,7 +2508,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </div>
 
       {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
+      <div className="admin-scroll" style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
 
         {!openSection ? (
           /* ── Card grid ── */
@@ -2842,7 +2842,7 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, vacations = 
     <details className="edit-group" open={embedded || undefined}>
       <summary style={embedded ? { display: 'none' } : {}}>Work Schedule Editor</summary>
       <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+        <div className="form-section" style={{ marginTop: 0 }}>
 
           {/* Employee tabs — grouped by role */}
           <div style={{ marginBottom: 14 }}>

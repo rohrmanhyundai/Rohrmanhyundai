@@ -742,3 +742,192 @@ html, body {
   z-index: -1;
   pointer-events: none;
 }
+
+/* ── Manager Portal (Edit Dashboard) — modern shell ───────────────────────────
+   The editor screens were running on browser defaults: white system inputs,
+   hairline dividers between employees, 10px labels. Everything below is
+   presentation only — the markup, fields and handlers are untouched. Scoped to
+   .admin-shell so nothing outside the portal is affected. */
+.admin-shell{
+  background:
+    radial-gradient(1100px 520px at 12% -10%, rgba(61,214,195,.10), transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, rgba(110,231,249,.09), transparent 58%),
+    linear-gradient(180deg,#0b1120,#080e1a);
+  color:var(--text);
+}
+
+/* Top bar: frosted, so content scrolling under it stays legible */
+.admin-bar{
+  background:rgba(11,17,32,.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(148,163,184,.14);
+  box-shadow:0 1px 0 rgba(255,255,255,.03),0 8px 24px rgba(2,6,23,.35);
+}
+
+/* Scroll area */
+.admin-scroll{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.35) transparent}
+.admin-scroll::-webkit-scrollbar{width:10px}
+.admin-scroll::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+.admin-scroll::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.45);background-clip:content-box}
+
+/* Each employee / settings block becomes a card instead of a hairline divider */
+.admin-shell .form-section{
+  margin-top:14px;
+  padding:16px 18px 18px;
+  border-top:none;
+  border:1px solid rgba(148,163,184,.14);
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 26px rgba(2,6,23,.30);
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+.admin-shell .form-section:focus-within{
+  border-color:rgba(110,231,249,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 10px 30px rgba(2,6,23,.4),0 0 0 1px rgba(110,231,249,.14);
+}
+
+/* Card headings — the employee name reads as a header, not body copy */
+.admin-shell .form-section > .title{
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:.03em;
+  padding-bottom:10px;
+  margin-bottom:12px;
+  gap:10px;
+  /* Accent hairline that fades out under the name, instead of a flat rule */
+  background:linear-gradient(90deg,rgba(110,231,249,.5),rgba(148,163,184,.14) 38%,transparent 92%) bottom left/100% 1px no-repeat;
+}
+.admin-shell .form-section > .title > span:first-child,
+.admin-shell .form-section > .title{color:#e8f1ff}
+
+/* Standalone section heading above a list of cards */
+.admin-shell .group-body > .title{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:#8fa7c8;
+  margin:18px 0 2px;
+}
+
+.admin-shell .small{font-size:11.5px;line-height:1.55;color:#8296b4}
+
+/* Fields */
+.admin-shell .form-grid{gap:12px 14px}
+.admin-shell .field{gap:6px}
+.admin-shell .field label{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.11em;
+  color:#7f93b0;
+}
+.admin-shell .field > .field-hint,
+.admin-shell .field label span{letter-spacing:.04em}
+
+.admin-shell input:not([type=checkbox]):not([type=radio]):not([type=file]),
+.admin-shell select,
+.admin-shell textarea{
+  background:rgba(2,6,23,.55);
+  border:1px solid rgba(148,163,184,.22);
+  border-radius:10px;
+  padding:9px 12px;
+  font-size:14px;
+  font-weight:700;
+  font-family:inherit;
+  color:#e8f1ff;
+  outline:none;
+  max-width:100%;
+  transition:border-color .14s ease,box-shadow .14s ease,background .14s ease;
+}
+/* Only grid fields stretch — standalone inputs keep whatever width they had */
+.admin-shell .field input:not([type=checkbox]):not([type=radio]),
+.admin-shell .field select,
+.admin-shell .field textarea{width:100%}
+.admin-shell input::placeholder,.admin-shell textarea::placeholder{color:#526480;font-weight:600}
+.admin-shell input:not([type=checkbox]):not([type=radio]):not([type=file]):hover,
+.admin-shell select:hover{border-color:rgba(148,163,184,.38)}
+.admin-shell input:not([type=checkbox]):not([type=radio]):not([type=file]):focus,
+.admin-shell select:focus,
+.admin-shell textarea:focus{
+  border-color:rgba(110,231,249,.6);
+  background:rgba(2,6,23,.75);
+  box-shadow:0 0 0 3px rgba(110,231,249,.13);
+}
+.admin-shell input:disabled,.admin-shell select:disabled,.admin-shell textarea:disabled{
+  background:rgba(148,163,184,.07);
+  border-color:rgba(148,163,184,.14);
+  color:#8296b4;
+  cursor:not-allowed;
+}
+.admin-shell input[type=checkbox],.admin-shell input[type=radio]{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}
+
+/* File pickers — the default control is the loudest thing on the page */
+.admin-shell input[type=file]{
+  font-size:12px;
+  color:#a9bcd8;
+  max-width:100%;
+}
+.admin-shell input[type=file]::file-selector-button{
+  font-family:inherit;
+  font-size:12px;
+  font-weight:800;
+  color:#bfdbfe;
+  background:rgba(96,165,250,.16);
+  border:1px solid rgba(96,165,250,.4);
+  border-radius:9px;
+  padding:7px 14px;
+  margin-right:12px;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease;
+}
+.admin-shell input[type=file]::file-selector-button:hover{background:rgba(96,165,250,.28);border-color:rgba(96,165,250,.6)}
+
+/* Class-based buttons (Add Advisor, Remove, Hide from Dashboard…) */
+.admin-shell button{
+  border-radius:10px;
+  padding:7px 14px;
+  font-size:12.5px;
+  font-weight:800;
+  letter-spacing:.01em;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;
+}
+.admin-shell button:not(:disabled):hover{transform:translateY(-1px)}
+.admin-shell button:not(:disabled):active{transform:translateY(0)}
+.admin-shell button:disabled{opacity:.55;cursor:not-allowed}
+.admin-shell button.secondary{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(148,163,184,.22);
+  color:#a9bcd8;
+}
+.admin-shell button.secondary:not(:disabled):hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(148,163,184,.4);
+  color:#e8f1ff;
+}
+.admin-shell .actions{margin-top:14px;flex-wrap:wrap;align-items:center}
+
+/* Import panels (flagged hours, advisor performance report) */
+.admin-shell .upload-card{
+  border:1px solid rgba(96,165,250,.26);
+  border-radius:16px;
+  padding:16px 18px;
+  margin-bottom:18px;
+  background:
+    radial-gradient(700px 200px at 0% 0%, rgba(96,165,250,.14), transparent 70%),
+    linear-gradient(180deg,rgba(96,165,250,.08),rgba(96,165,250,.03));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 26px rgba(2,6,23,.3);
+}
+.admin-shell .upload-card .upload-title{
+  display:flex;align-items:center;gap:9px;
+  font-size:13px;font-weight:900;letter-spacing:.04em;color:#bfdbfe;
+  margin-bottom:6px;
+}
+.admin-shell .upload-card .small{color:#93a7c4}
+
+@media(max-width:640px){
+  .admin-shell .form-grid,
+  .admin-shell .training-edit-grid,
+  .admin-shell .vacation-edit-grid{grid-template-columns:1fr}
+  .admin-shell .form-section{padding:14px}
+}
