@@ -98,8 +98,7 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
         {tab === 'pricing' && (
           <>
             <PricingPanel />
-            <PromoBoard promos={promos} loading={loading} canEdit={canEdit} onManage={() => setTab('manage')} />
-            <PromoNote text={note.text} />
+            <PromoBoard promos={promos} note={note.text} loading={loading} canEdit={canEdit} onManage={() => setTab('manage')} />
           </>
         )}
         {tab === 'manage' && canEdit && (
@@ -150,7 +149,7 @@ function PricingPanel() {
 }
 
 /* ── Promotions ────────────────────────────────────────────────────────────── */
-function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
+function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
   // Expired promotions come off the board on their own — no one has to remember
   // to pull last month's sale down. They stay in Manage so a manager can extend
   // or delete them.
@@ -161,8 +160,12 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
   // Nothing running: say so only to the people who can do something about it,
   // rather than parking an empty state under the pricing card for everyone.
   if (!promos.length) {
-    if (!canEdit) return null;
+    // The wording is not tied to a picture — it stays up even when every
+    // promotion has expired.
+    if (!canEdit) return <PromoNote text={note} />;
     return (
+      <>
+      <PromoNote text={note} />
       <div style={{ textAlign: 'center', color: '#7a92b8', maxWidth: 460, margin: '34px auto 0', lineHeight: 1.7 }}>
         <div style={{ fontSize: 13.5 }}>
           {allPromos.length
@@ -173,6 +176,7 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
           {allPromos.length ? 'Manage promotions' : 'Post the first one'}
         </button>
       </div>
+      </>
     );
   }
 
@@ -186,6 +190,10 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
         Current Promotions
         <span style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(148,163,184,.28),transparent)' }} />
       </div>
+
+      {/* Sits under the heading and above the pictures — read the terms, then
+          look at the offer. */}
+      <PromoNote text={note} inline />
       {/* Capped, centred tracks — a lone promotion sits under the card rather
           than stranded in the left column of a full-width grid. */}
       <div style={{
@@ -238,11 +246,11 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
 /* ── The manager's own wording, under the promotions ─────────────────────────
    Whatever gets typed on the Manage tab shows here verbatim — line breaks kept,
    nothing added around it. Empty means the section isn't there at all. */
-function PromoNote({ text }) {
+function PromoNote({ text, inline = false }) {
   const body = (text || '').trim();
   if (!body) return null;
   return (
-    <div style={{ maxWidth: 820, margin: '34px auto 0' }}>
+    <div style={{ maxWidth: 820, margin: inline ? '0 auto 22px' : '34px auto 0' }}>
       <div style={{
         border: '1px solid rgba(148,163,184,.2)', borderRadius: 16, padding: '18px 22px',
         background: 'linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))',
