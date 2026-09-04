@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-03",
+    "label": "September 3, 2026",
+    "month": "2026-09",
+    "type": "advisor",
+    "savedAt": "2026-09-04T07:28:16.117Z",
+    "autoSaved": true,
+    "csi": 916,
+    "hours_per_ro": 0.86,
+    "roh50_hrs_ro": 1.03,
+    "mtd_hours": 24.1,
+    "daily_avg": 12.58636364,
+    "align": 0.1034,
+    "tires": 0.1103,
+    "valvoline": 0.2069,
+    "asr": 0.1529,
+    "elr": 0.962,
+    "last_month_total": 320.4,
+    "ro_count": 28
+  },
+  {
     "date": "2026-09-02",
     "label": "September 2, 2026",
     "month": "2026-09",
