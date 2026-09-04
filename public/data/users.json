@@ -475,7 +475,6 @@
       "managementAccess": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -487,7 +486,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": false
       },
       "chatAccess": false,
       "techChatAccess": true
