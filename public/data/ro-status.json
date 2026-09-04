@@ -1,15 +1,27 @@
 {
-  "updatedAt": "2026-09-04T20:01:50.992Z",
+  "updatedAt": "2026-09-04T20:19:37.161Z",
   "by": "SHAWN",
   "rows": [
     {
-      "ro": "780626",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2026 Hyundai Santa Fe",
+      "ro": "780627",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2020 Hyundai Santa Fe",
       "tech": "",
       "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 4, 2026 4:07 PM"
+    },
+    {
+      "ro": "780626",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2026 Hyundai Santa Fe",
+      "tech": "WEI GUO",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
       "openDate": "Fri, Sep 4, 2026 3:39 PM"
@@ -21,8 +33,8 @@
       "tech": "CARTER JEAN",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
       "roAge": 1,
       "openDate": "Fri, Sep 4, 2026 3:25 PM"
     },
@@ -45,8 +57,8 @@
       "tech": "CARTER JEAN",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
       "roAge": 1,
       "openDate": "Fri, Sep 4, 2026 2:59 PM"
     },
@@ -163,7 +175,7 @@
       "advisor": "DAVID RILEY",
       "vehicle": "2026 Hyundai Sonata Hybrid",
       "tech": "KADEN WILSON",
-      "userFlag": "NO_LABEL",
+      "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "IN_PROGRESS",
       "cpStatus": "IN_PROGRESS",
@@ -201,8 +213,8 @@
       "tech": "GAVEN LAUGHNER",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "IN_PROGRESS",
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
       "roAge": 1,
       "openDate": "Fri, Sep 4, 2026 8:53 AM"
     },
@@ -249,7 +261,7 @@
       "tech": "CORY SWINDLE",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
+      "roStatus": "INVOICED",
       "cpStatus": "NA",
       "roAge": 1,
       "openDate": "Fri, Sep 4, 2026 7:52 AM"
@@ -467,7 +479,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
-      "roAge": 2,
+      "roAge": 3,
       "openDate": "Wed, Sep 2, 2026 4:01 PM"
     },
     {
@@ -561,8 +573,8 @@
       "tech": "WEI GUO",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 3,
       "openDate": "Wed, Sep 2, 2026 11:22 AM"
     },
@@ -585,8 +597,8 @@
       "tech": "WEI GUO",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 3,
       "openDate": "Wed, Sep 2, 2026 11:22 AM"
     },
@@ -597,8 +609,8 @@
       "tech": "WEI GUO",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 3,
       "openDate": "Wed, Sep 2, 2026 11:21 AM"
     },
@@ -609,8 +621,8 @@
       "tech": "WEI GUO",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 3,
       "openDate": "Wed, Sep 2, 2026 11:21 AM"
     },
@@ -755,7 +767,7 @@
       "warranty": false,
       "roStatus": "PARTIALLY_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 4,
+      "roAge": 5,
       "openDate": "Mon, Aug 31, 2026 4:01 PM"
     },
     {
@@ -769,18 +781,6 @@
       "cpStatus": "COMPLETED",
       "roAge": 5,
       "openDate": "Mon, Aug 31, 2026 12:57 PM"
-    },
-    {
-      "ro": "780469",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2013 Kia Soul",
-      "tech": "CORY SWINDLE",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 5,
-      "openDate": "Mon, Aug 31, 2026 12:54 PM"
     },
     {
       "ro": "780455",
@@ -829,18 +829,6 @@
       "cpStatus": "COMPLETED",
       "roAge": 8,
       "openDate": "Fri, Aug 28, 2026 12:40 PM"
-    },
-    {
-      "ro": "780382",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2021 Mazda CX-5",
-      "tech": "JACOB KUNTZ; SHAWN LAUGHNER",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "PAID",
-      "roAge": 8,
-      "openDate": "Fri, Aug 28, 2026 7:10 AM"
     },
     {
       "ro": "780381",
