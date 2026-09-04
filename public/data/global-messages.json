@@ -230,7 +230,14 @@
     "text": "780609 recommendations is in submit mode. not deferred/approved?",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtn56q6otpsm",
+        "from": "SHAWN",
+        "text": "I FIXED IT",
+        "timestamp": 1788537731856
+      }
+    ],
     "timestamp": 1788537427875
   }
 ]
