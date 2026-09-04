@@ -83,7 +83,7 @@ const NAV_BUTTONS = [
     bg: 'linear-gradient(135deg,rgba(74,222,128,.28),rgba(34,197,94,.18))',
     border: 'rgba(74,222,128,.45)',
     color: '#4ade80',
-    href: 'https://hyundaitirecenter.com/InitDealer?dealer=IN007',
+    prop: 'onTireQuote',
   },
   {
     key: 'globalMessage',
@@ -100,9 +100,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onWorkSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
+  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b) && (!b.managerOnly || isMgr));

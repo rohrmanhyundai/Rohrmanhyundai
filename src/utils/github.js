@@ -5,7 +5,7 @@ const GITHUB_PATH = 'public/data/data.json';
 const TOKEN_KEY = 'rohrmanGithubToken';
 const BASE = import.meta.env.BASE_URL;
 
-import { uploadFileToS3, deleteFileFromS3, ensureAwsCreds } from './s3.js';
+import { uploadFileToS3, deleteFileFromS3, deleteS3ObjectByUrl, ensureAwsCreds } from './s3.js';
 
 export function getGithubToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
@@ -1295,6 +1295,71 @@ export async function removeRegistrationUpload(id) {
   return mutateGitHubJson(REGISTRATION_INDEX_PATH,
     (cur) => (Array.isArray(cur) ? cur : []).filter(r => r.id !== id),
     `Remove registration upload ${id}`);
+}
+
+// ── Tire promotions ───────────────────────────────────────────────────────────
+// The image itself lives in S3 (same as tire photos and registrations); this
+// index holds only the small stuff — the image URL, where clicking it goes, and
+// the order managers put them in.
+const TIRE_PROMO_INDEX_PATH = 'public/data/tire-promos/index.json';
+
+export async function loadTirePromos() {
+  try {
+    const data = await readGitHubFile(authHeaders(), TIRE_PROMO_INDEX_PATH);
+    // Only an actual array means "read succeeded" — anything else would show an
+    // empty board and look like every promo had been deleted.
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/tire-promos/index.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
+  } catch {}
+  return [];
+}
+
+// Upsert against the freshest index so two managers posting at once can't drop
+// each other's promotion.
+export async function saveTirePromo(promo) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(TIRE_PROMO_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(p => p.id === promo.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = promo; return next; }
+    return [...arr, promo];
+  }, `Tire promo: ${promo.label || promo.id}`);
+}
+
+// Drops the index entry first, then the S3 object. A failed S3 delete leaves an
+// orphaned file nobody links to; a failed index write would leave a promo
+// pointing at a deleted image, which is the worse of the two.
+export async function deleteTirePromo(promo) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const next = await mutateGitHubJson(TIRE_PROMO_INDEX_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(p => p.id !== promo.id),
+    `Remove tire promo ${promo.label || promo.id}`);
+  try {
+    if (promo.imageUrl) await deleteS3ObjectByUrl(promo.imageUrl);
+  } catch { /* orphaned image is harmless — the index no longer points at it */ }
+  return next;
+}
+
+export async function reorderTirePromos(orderedIds) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(TIRE_PROMO_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const byId = new Map(arr.map(p => [p.id, p]));
+    const ordered = orderedIds.map(id => byId.get(id)).filter(Boolean);
+    // Anything added by someone else mid-drag keeps its place at the end rather
+    // than disappearing.
+    const seen = new Set(orderedIds);
+    return [...ordered, ...arr.filter(p => !seen.has(p.id))];
+  }, 'Reorder tire promos');
 }
 
 // ── Work In Progress ──────────────────────────────────────────────────────────

@@ -931,3 +931,14 @@ html, body {
   .admin-shell .vacation-edit-grid{grid-template-columns:1fr}
   .admin-shell .form-section{padding:14px}
 }
+
+/* Tire promotion upload — the browser's default file control is the loudest
+   thing on an otherwise dark form, same fix as the Manager Portal's. */
+.promo-file{font-size:12px;color:#a9bcd8;max-width:100%}
+.promo-file::file-selector-button{
+  font-family:inherit;font-size:12px;font-weight:800;color:#bfdbfe;
+  background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.4);
+  border-radius:9px;padding:7px 14px;margin-right:12px;cursor:pointer;
+  transition:background .14s ease,border-color .14s ease;
+}
+.promo-file::file-selector-button:hover{background:rgba(96,165,250,.28);border-color:rgba(96,165,250,.6)}

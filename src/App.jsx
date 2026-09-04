@@ -45,6 +45,7 @@ import { userDisplayName } from './utils/userDisplay';
 
 import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
+import TireQuote from './components/TireQuote';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
 import WorkInProgress from './components/WorkInProgress';
@@ -79,6 +80,7 @@ const BACK_LABELS = {
   'tech-resources': '← Technician Resources',
   'advisor-calendar': '← Advisor Calendar',
   'parts-hub': '← Parts Hub',
+  'warranty-hub': '← Warranty Hub',
   'manager-hub': '← Manager Hub',
   'dashboard': '← Dashboard',
 };
@@ -908,6 +910,7 @@ export default function App() {
         jobRole={jobRole}
         userPages={currentPages}
         onWorkSchedule={() => goTo('work-schedule', 'tech-resources')}
+        onTireQuote={() => goTo('tire-quote', 'tech-resources')}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
@@ -975,6 +978,18 @@ export default function App() {
     );
   }
 
+  if (page === 'tire-quote') {
+    const tqBack = prevPage || 'tech-resources';
+    return (
+      <TireQuote
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => setPage(tqBack)}
+        backLabel={BACK_LABELS[tqBack] || '← Back'}
+      />
+    );
+  }
+
   // ── Work Schedule ───────────────────────────────────────────────────────────
   // Advisor and tech schedules are one page with two tabs. Every hub links to
   // `work-schedule`, which opens on the roster the viewer is on. The older page
@@ -1037,6 +1052,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'parts-hub')}
         onAdvisorCalendar={() => goTo('advisor-calendar', 'parts-hub')}
         onWorkSchedule={() => goTo('work-schedule', 'parts-hub')}
+        onTireQuote={() => goTo('tire-quote', 'parts-hub')}
         onWorkInProgress={() => goTo('work-in-progress', 'parts-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
         onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
@@ -1093,6 +1109,7 @@ export default function App() {
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
         onHotRepairs={() => goTo('hot-repairs', 'warranty-hub')}
         onRegistrationUploads={() => goTo('registration-uploads', 'warranty-hub')}
+        onTireQuote={() => goTo('tire-quote', 'warranty-hub')}
       />
     );
   }
@@ -1294,6 +1311,7 @@ export default function App() {
         onBack={() => { setViewingAdvisor(''); navTo('dashboard'); }}
         onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
+        onTireQuote={() => goTo('tire-quote', 'advisor-calendar')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
