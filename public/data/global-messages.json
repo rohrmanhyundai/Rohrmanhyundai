@@ -156,7 +156,14 @@
     "text": "780555 any news on this ro?",
     "alert": true,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtn1gm9u6sfw",
+        "from": "CODY",
+        "text": "Dylan is going to update me around 11 what his cousin wants to do. Thinking about Sunbit.",
+        "timestamp": 1788531474882
+      }
+    ],
     "timestamp": 1788528436689
   },
   {
