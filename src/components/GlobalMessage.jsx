@@ -22,6 +22,7 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
   const [replyDrafts, setReplyDrafts] = useState({}); // msgId -> in-thread reply text
   const [replyingId, setReplyingId] = useState('');
   const [deletingId, setDeletingId] = useState('');
+  const [viewUser, setViewUser] = useState('');   // whose history is open
 
   // Load the log on mount, then keep it fresh with a cheap conditional poll.
   const refresh = useCallback(async () => {
@@ -104,18 +105,44 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
   }
 
   async function handleClearAll() {
-    if (!myThreads.length) return;
-    if (!window.confirm(`Delete ALL ${myThreads.length} of your sent messages and their replies? This cannot be undone.`)) return;
+    if (!myThreadCount) return;
+    if (!window.confirm(`Delete ALL ${myThreadCount} of your sent messages and their replies? This cannot be undone.`)) return;
     setDeletingId('all');
     try { await clearGlobalMessagesFrom(me); setMessages(prev => prev.filter(m => (m.from || '').toUpperCase() !== me)); }
     catch (e) { setStatus('⚠️ ' + (e.message || 'Clear failed')); refresh(); }
     finally { setDeletingId(''); }
   }
 
-  // Messages I sent, newest first, that have recipients — the log.
-  const myThreads = useMemo(() => (messages || [])
-    .filter(m => (m.from || '').toUpperCase() === me)
-    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)), [messages, me]);
+  // Every message that touches a given person — sent BY them, sent TO them, or
+  // carrying a reply from them. An admin opening this page is auditing that
+  // user's traffic, not just their own outbox.
+  const involves = useCallback((m, name) => {
+    if ((m.from || '').toUpperCase() === name) return true;
+    if ((m.to || []).some(t => String(t).toUpperCase() === name)) return true;
+    return (m.replies || []).some(r => String(r.from || '').toUpperCase() === name);
+  }, []);
+
+  const sorted = useMemo(() => (messages || [])
+    .slice()
+    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)), [messages]);
+
+  // Counts drive the roster list, so a name with traffic is obvious at a glance.
+  const countsByUser = useMemo(() => {
+    const counts = {};
+    roster.forEach(u => { counts[u.name] = 0; });
+    sorted.forEach(m => {
+      roster.forEach(u => { if (involves(m, u.name)) counts[u.name] += 1; });
+    });
+    return counts;
+  }, [sorted, roster, involves]);
+
+  // "Clear mine" only ever removed the messages I sent, so it needs that count.
+  const myThreadCount = useMemo(
+    () => sorted.filter(m => (m.from || '').toUpperCase() === me).length, [sorted, me]);
+
+  const userThreads = useMemo(
+    () => (viewUser ? sorted.filter(m => involves(m, viewUser)) : []),
+    [sorted, viewUser, involves]);
 
   const chip = (active) => ({
     background: active ? 'rgba(251,191,36,.22)' : 'rgba(30,41,59,.6)',
@@ -196,65 +223,109 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
             </button>
           </div>
 
-          {/* Sent messages & replies log */}
+          {/* Messages by user — click a name, read everything they touched */}
           <section style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-              <div style={stepLbl}>Sent messages &amp; replies</div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+              <div style={stepLbl}>Messages by user</div>
               <div style={{ flex: 1 }} />
-              {myThreads.length > 0 && <button onClick={handleClearAll} disabled={deletingId === 'all'} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700, marginRight: 8 }}>{deletingId === 'all' ? '⏳' : '🗑 Clear all'}</button>}
+              {myThreadCount > 0 && (
+                <button onClick={handleClearAll} disabled={deletingId === 'all'}
+                  style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  {deletingId === 'all' ? '⏳' : '🗑 Clear mine'}
+                </button>
+              )}
               <button onClick={refresh} style={{ background: 'transparent', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>↻ Refresh</button>
             </div>
-            {!myThreads.length ? (
-              <div style={{ color: '#64748b', fontSize: 13.5, padding: '14px 0' }}>Nothing sent yet. Replies to your messages will show here.</div>
-            ) : (
-              <div style={{ display: 'grid', gap: 12 }}>
-                {myThreads.map(m => {
-                  const replies = Array.isArray(m.replies) ? m.replies : [];
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 190px) 1fr', gap: 16, alignItems: 'start' }} className="gm-browser">
+              {/* Roster */}
+              <div style={{ display: 'grid', gap: 5, maxHeight: 460, overflowY: 'auto', paddingRight: 4 }}>
+                {roster.map(u => {
+                  const n = countsByUser[u.name] || 0;
+                  const active = viewUser === u.name;
                   return (
-                    <div key={m.id} style={{ background: 'rgba(2,6,23,.4)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 12, padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 14.5, fontWeight: 800, color: '#e2e8f0', flex: 1, minWidth: 0 }}>{m.text}</span>
-                        <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{timeLabel(m.timestamp)}</span>
-                        <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete this message"
-                          style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>
-                          {deletingId === m.id ? '⏳' : '🗑'}
-                        </button>
-                      </div>
-                      <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 4 }}>
-                        To: {(m.to || []).join(', ')}
-                        {m.alert ? <span style={{ color: '#fca5a5', fontWeight: 700 }}> · 🚨 alert</span> : null}
-                        {m.requireReply ? <span style={{ color: '#93c5fd', fontWeight: 700 }}> · reply required</span> : null}
-                      </div>
-
-                      {/* Replies */}
-                      {replies.length > 0 && (
-                        <div style={{ marginTop: 10, display: 'grid', gap: 6, borderTop: '1px solid rgba(148,163,184,.12)', paddingTop: 10 }}>
-                          {replies.map(rep => (
-                            <div key={rep.id} style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                              <span style={{ fontSize: 11.5, fontWeight: 800, color: (rep.from || '').toUpperCase() === me ? '#6ee7b7' : '#a78bfa', minWidth: 64 }}>{String(rep.from || '').toUpperCase()}</span>
-                              <span style={{ fontSize: 13.5, color: '#cbd5e1', flex: 1 }}>{rep.text}</span>
-                              <span style={{ fontSize: 10.5, color: '#64748b', whiteSpace: 'nowrap' }}>{timeLabel(rep.timestamp)}</span>
-                            </div>
-                          ))}
-                        </div>
+                    <button key={u.name} onClick={() => setViewUser(active ? '' : u.name)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left', width: '100%',
+                        background: active ? 'rgba(251,191,36,.18)' : 'rgba(2,6,23,.4)',
+                        border: `1px solid ${active ? 'rgba(251,191,36,.6)' : 'rgba(148,163,184,.16)'}`,
+                        color: active ? '#fde68a' : n ? '#e2e8f0' : '#7d8ba3',
+                        borderRadius: 10, padding: '8px 11px', cursor: 'pointer', fontWeight: 800, fontSize: 13,
+                      }}>
+                      <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.name}</span>
+                      {n > 0 && (
+                        <span style={{ fontSize: 11, fontWeight: 900, color: active ? '#fde68a' : '#94a3b8', background: 'rgba(148,163,184,.16)', borderRadius: 999, padding: '1px 7px' }}>{n}</span>
                       )}
-
-                      {/* Reply back */}
-                      <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                        <input value={replyDrafts[m.id] || ''} onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
-                          onKeyDown={e => { if (e.key === 'Enter') sendThreadReply(m); }}
-                          placeholder="Reply back…"
-                          style={{ flex: 1, background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#f1f5f9', padding: '7px 11px', fontSize: 13.5, outline: 'none', fontFamily: 'inherit' }} />
-                        <button onClick={() => sendThreadReply(m)} disabled={replyingId === m.id || !(replyDrafts[m.id] || '').trim()}
-                          style={{ background: (replyingId === m.id || !(replyDrafts[m.id] || '').trim()) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
-                          {replyingId === m.id ? '⏳' : 'Reply'}
-                        </button>
-                      </div>
-                    </div>
+                    </button>
                   );
                 })}
+                {!roster.length && <div style={{ color: '#64748b', fontSize: 13 }}>No users found.</div>}
               </div>
-            )}
+
+              {/* That user's messages */}
+              <div style={{ minWidth: 0 }}>
+                {!viewUser ? (
+                  <div style={{ color: '#64748b', fontSize: 13.5, padding: '18px 4px' }}>
+                    Pick a name to read every message they sent or received.
+                  </div>
+                ) : !userThreads.length ? (
+                  <div style={{ color: '#64748b', fontSize: 13.5, padding: '18px 4px' }}>
+                    Nothing for {viewUser} yet.
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gap: 12, maxHeight: 460, overflowY: 'auto', paddingRight: 4 }}>
+                    <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 700 }}>
+                      {viewUser} · {userThreads.length} message{userThreads.length === 1 ? '' : 's'}
+                    </div>
+                    {userThreads.map(m => {
+                      const replies = Array.isArray(m.replies) ? m.replies : [];
+                      const fromMe = (m.from || '').toUpperCase() === me;
+                      return (
+                        <div key={m.id} style={{ background: 'rgba(2,6,23,.4)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 12, padding: '12px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 14.5, fontWeight: 800, color: '#e2e8f0', flex: 1, minWidth: 0 }}>{m.text}</span>
+                            <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{timeLabel(m.timestamp)}</span>
+                            <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete this message"
+                              style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 7, padding: '3px 9px', cursor: 'pointer', fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                              {deletingId === m.id ? '⏳' : '🗑'}
+                            </button>
+                          </div>
+                          <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 4 }}>
+                            <span style={{ color: fromMe ? '#6ee7b7' : '#a78bfa', fontWeight: 800 }}>{fromMe ? 'You' : String(m.from || 'Someone').toUpperCase()}</span>
+                            {' → '}{(m.to || []).join(', ') || '—'}
+                            {m.alert ? <span style={{ color: '#fca5a5', fontWeight: 700 }}> · 🚨 alert</span> : null}
+                            {m.requireReply ? <span style={{ color: '#93c5fd', fontWeight: 700 }}> · reply required</span> : null}
+                          </div>
+
+                          {replies.length > 0 && (
+                            <div style={{ marginTop: 10, display: 'grid', gap: 6, borderTop: '1px solid rgba(148,163,184,.12)', paddingTop: 10 }}>
+                              {replies.map(rep => (
+                                <div key={rep.id} style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                                  <span style={{ fontSize: 11.5, fontWeight: 800, color: (rep.from || '').toUpperCase() === me ? '#6ee7b7' : '#a78bfa', minWidth: 64 }}>{String(rep.from || '').toUpperCase()}</span>
+                                  <span style={{ fontSize: 13.5, color: '#cbd5e1', flex: 1 }}>{rep.text}</span>
+                                  <span style={{ fontSize: 10.5, color: '#64748b', whiteSpace: 'nowrap' }}>{timeLabel(rep.timestamp)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                            <input value={replyDrafts[m.id] || ''} onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
+                              onKeyDown={e => { if (e.key === 'Enter') sendThreadReply(m); }}
+                              placeholder="Reply back…"
+                              style={{ flex: 1, minWidth: 0, background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, color: '#f1f5f9', padding: '7px 11px', fontSize: 13.5, outline: 'none', fontFamily: 'inherit' }} />
+                            <button onClick={() => sendThreadReply(m)} disabled={replyingId === m.id || !(replyDrafts[m.id] || '').trim()}
+                              style={{ background: (replyingId === m.id || !(replyDrafts[m.id] || '').trim()) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+                              {replyingId === m.id ? '⏳' : 'Reply'}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
           </section>
 
         </div>
