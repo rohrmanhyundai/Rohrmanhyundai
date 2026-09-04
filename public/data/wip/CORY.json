@@ -76,5 +76,21 @@
     "partsArrivedDate": "09/04/2026",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mtndqv43k17n",
+    "ro": "780600",
+    "roDate": "2026-09-04",
+    "vehicle": "2024 Hyundai IONIQ 5",
+    "jobDesc": "Program New Keyfob & Cut Key- Smart Driver approved 492-16968201",
+    "notes": "CAR IS GONE KEEP RO OPEN DUE TO WARRANTY CLAIM",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
