@@ -17,6 +17,28 @@ function normalizeUrl(raw) {
   return `https://${url}`;
 }
 
+// Expiry is a plain YYYY-MM-DD, compared as text against today's local date.
+// Storing a timestamp instead would make a promo set to "the 30th" vanish on the
+// evening of the 29th for anyone in a westward timezone.
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// A promotion runs THROUGH its expiry date — one set to the 30th is still on the
+// board all day on the 30th and gone on the 1st. No date means it runs until a
+// manager takes it down.
+function isExpired(promo, today = todayStr()) {
+  return !!promo.expiresOn && promo.expiresOn < today;
+}
+
+function prettyDate(ymd) {
+  if (!ymd) return '';
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return ymd;
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 function openPromo(url) {
   const dest = normalizeUrl(url);
   if (dest) window.open(dest, '_blank', 'noopener,noreferrer');
@@ -114,14 +136,23 @@ function PricingPanel() {
 }
 
 /* ── Promotions ────────────────────────────────────────────────────────────── */
-function PromoBoard({ promos, loading, canEdit, onManage }) {
+function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
+  // Expired promotions come off the board on their own — no one has to remember
+  // to pull last month's sale down. They stay in Manage so a manager can extend
+  // or delete them.
+  const promos = allPromos.filter(p => !isExpired(p));
+
   if (loading) return <div style={{ textAlign: 'center', color: '#7a92b8' }}>Loading promotions…</div>;
 
   if (!promos.length) {
     return (
       <div style={{ textAlign: 'center', color: '#7a92b8', maxWidth: 460, margin: '40px auto 0', lineHeight: 1.7 }}>
         <div style={{ fontSize: 40 }}>🏷</div>
-        <div style={{ marginTop: 10, fontSize: 15 }}>No tire promotions posted right now.</div>
+        <div style={{ marginTop: 10, fontSize: 15 }}>
+          {allPromos.length
+            ? 'Every posted promotion has passed its end date.'
+            : 'No tire promotions posted right now.'}
+        </div>
         {canEdit && (
           <button className="secondary" onClick={onManage} style={{ marginTop: 16 }}>
             Post the first one
@@ -183,6 +214,7 @@ function ManagePanel({ promos, currentUser, onChange }) {
   const [preview, setPreview] = useState('');
   const [label, setLabel] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [expiresOn, setExpiresOn] = useState('');
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
 
@@ -205,6 +237,7 @@ function ManagePanel({ promos, currentUser, onChange }) {
   async function post() {
     if (!file) { setError('Pick a promotion image first.'); return; }
     if (!linkUrl.trim()) { setError('Add the web address the picture should open.'); return; }
+    if (expiresOn && expiresOn < todayStr()) { setError('That end date has already passed — the promotion would never show.'); return; }
     setError('');
     setBusy('Uploading image…');
     try {
@@ -217,12 +250,13 @@ function ManagePanel({ promos, currentUser, onChange }) {
         label: label.trim(),
         linkUrl: normalizeUrl(linkUrl),
         imageUrl,
+        expiresOn: expiresOn || '',
         postedBy: currentUser || '',
         postedAt: new Date().toISOString(),
       };
       await saveTirePromo(promo);
       onChange([...promos, promo]);
-      setFile(null); setLabel(''); setLinkUrl('');
+      setFile(null); setLabel(''); setLinkUrl(''); setExpiresOn('');
     } catch (err) {
       setError(err.message || String(err));
     } finally {
@@ -244,6 +278,19 @@ function ManagePanel({ promos, currentUser, onChange }) {
     }
   }
 
+  // Re-dating from the list is how an expired promo comes back, and how a
+  // running one gets extended, without re-uploading the picture.
+  async function setExpiry(promo, value) {
+    const updated = { ...promo, expiresOn: value || '' };
+    onChange(promos.map(p => (p.id === promo.id ? updated : p)));
+    setError('');
+    try {
+      await saveTirePromo(updated);
+    } catch (err) {
+      setError('End date not saved: ' + (err.message || err));
+    }
+  }
+
   async function move(index, delta) {
     const next = promos.slice();
     const target = index + delta;
@@ -256,6 +303,8 @@ function ManagePanel({ promos, currentUser, onChange }) {
       setError('Order not saved: ' + (err.message || err));
     }
   }
+
+  const expiredCount = promos.filter(p => isExpired(p)).length;
 
   const inputStyle = {
     width: '100%', background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.25)',
@@ -297,6 +346,19 @@ function ManagePanel({ promos, currentUser, onChange }) {
           </div>
 
           <div>
+            <label style={{ display: 'block', fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em', color: '#7f93b0', textTransform: 'uppercase' }}>
+              Runs through <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none' }}>(optional end date)</span>
+            </label>
+            <input type="date" value={expiresOn} min={todayStr()} onChange={e => setExpiresOn(e.target.value)}
+              style={{ ...inputStyle, marginTop: 6, maxWidth: 220 }} />
+            <div style={{ fontSize: 11.5, color: '#8296b4', marginTop: 5 }}>
+              {expiresOn
+                ? `Shows through ${prettyDate(expiresOn)}, then comes off the board on its own.`
+                : 'Leave blank and it stays up until you remove it.'}
+            </div>
+          </div>
+
+          <div>
             <label style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em', color: '#7f93b0', textTransform: 'uppercase' }}>Caption <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none' }}>(optional)</span></label>
             <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Buy 3 get 1 free — through October"
               style={{ ...inputStyle, marginTop: 6 }} />
@@ -319,22 +381,38 @@ function ManagePanel({ promos, currentUser, onChange }) {
       {/* Existing */}
       <div>
         <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.14em', color: '#8fa7c8', marginBottom: 12 }}>
-          Posted promotions ({promos.length})
+          Posted promotions ({promos.filter(p => !isExpired(p)).length} live{expiredCount ? ` · ${expiredCount} expired` : ''})
         </div>
         {!promos.length && <div style={{ color: '#7a92b8', fontSize: 14 }}>Nothing posted yet.</div>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {promos.map((p, i) => (
+          {promos.map((p, i) => {
+            const expired = isExpired(p);
+            return (
             <div key={p.id} style={{
               display: 'flex', alignItems: 'center', gap: 14, padding: 12, flexWrap: 'wrap',
-              border: '1px solid rgba(148,163,184,.18)', borderRadius: 14, background: 'rgba(255,255,255,.03)',
+              border: `1px solid ${expired ? 'rgba(248,113,113,.3)' : 'rgba(148,163,184,.18)'}`,
+              borderRadius: 14, background: expired ? 'rgba(248,113,113,.06)' : 'rgba(255,255,255,.03)',
             }}>
-              <img src={p.imageUrl} alt="" style={{ width: 108, height: 68, objectFit: 'cover', borderRadius: 9, flexShrink: 0, background: 'rgba(2,6,23,.5)' }} />
+              <img src={p.imageUrl} alt="" style={{ width: 108, height: 68, objectFit: 'cover', borderRadius: 9, flexShrink: 0, background: 'rgba(2,6,23,.5)', opacity: expired ? .5 : 1 }} />
               <div style={{ flex: 1, minWidth: 170 }}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: '#e8f1ff' }}>{p.label || <span style={{ color: '#64748b' }}>No caption</span>}</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: '#e8f1ff', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  {p.label || <span style={{ color: '#64748b' }}>No caption</span>}
+                  {expired && (
+                    <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.08em', color: '#fca5a5', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 6, padding: '2px 7px' }}>
+                      EXPIRED — OFF THE BOARD
+                    </span>
+                  )}
+                </div>
                 <a href={normalizeUrl(p.linkUrl)} target="_blank" rel="noopener noreferrer"
                   style={{ fontSize: 12, color: '#6ee7f9', wordBreak: 'break-all' }}>{p.linkUrl}</a>
                 <div style={{ fontSize: 11, color: '#64748b', marginTop: 3 }}>
                   {p.postedBy ? `Posted by ${p.postedBy}` : 'Posted'}{p.postedAt ? ` · ${new Date(p.postedAt).toLocaleDateString()}` : ''}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 7, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#7f93b0' }}>Runs through</span>
+                  <input type="date" value={p.expiresOn || ''} onChange={e => setExpiry(p, e.target.value)}
+                    style={{ ...inputStyle, width: 165, padding: '5px 9px', fontSize: 12.5, color: expired ? '#fca5a5' : '#e8f1ff' }} />
+                  {!p.expiresOn && <span style={{ fontSize: 11, color: '#64748b' }}>no end date</span>}
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
@@ -344,7 +422,8 @@ function ManagePanel({ promos, currentUser, onChange }) {
                   style={{ color: '#fca5a5', borderColor: 'rgba(248,113,113,.35)' }}>Remove</button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
