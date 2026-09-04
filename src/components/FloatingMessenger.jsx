@@ -13,7 +13,7 @@ const timeLabel = (ts) => {
 
 const BUBBLE = 56;
 const PANEL_W = 340;
-const PANEL_H = 460;
+const PANEL_H = 560;   // roomy enough for the roster; clamped to the window below
 const DRAG_SLOP = 4; // px of movement before a press counts as a drag, not a click
 
 function clampToScreen(x, y, w, h) {
@@ -57,6 +57,23 @@ export default function FloatingMessenger({
     setOpen(true);
     if (onMarkSeen) onMarkSeen();
   }, [openSignal, onMarkSeen]);
+
+  const panelRef = useRef(null);
+  const bubbleRef = useRef(null);
+
+  // Click anywhere off the panel and it closes. The bubble is excluded because
+  // its own handler already toggles — closing here first would just reopen it.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e) => {
+      if (panelRef.current?.contains(e.target)) return;
+      if (bubbleRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
+    // Capture, so a click that a page handler stops still closes the panel.
+    document.addEventListener('pointerdown', onDown, true);
+    return () => document.removeEventListener('pointerdown', onDown, true);
+  }, [open]);
 
   const dragRef = useRef({ active: false, moved: false, dx: 0, dy: 0 });
   // Mirror of `pos` that's current *within* a gesture. React hasn't re-rendered
@@ -150,6 +167,10 @@ export default function FloatingMessenger({
       setText(''); setSelected(new Set()); setAlert(false);
       setStatus(`✅ Sent to ${entry.to.length} user${entry.to.length === 1 ? '' : 's'}`);
       setTimeout(() => setStatus(s => (s && s.startsWith('✅')) ? '' : s), 4000);
+      // Sending is the end of the job — get the panel out of the way rather
+      // than leaving it parked over the page. It reopens on the inbox.
+      setTab('inbox');
+      setOpen(false);
     } catch (e) {
       setStatus('⚠️ ' + (e.message || 'Send failed'));
     } finally {
@@ -179,11 +200,12 @@ export default function FloatingMessenger({
 
   // Panel opens toward whichever side of the screen has room, so a bubble
   // parked in a corner doesn't push it off-screen.
+  const panelH = Math.min(PANEL_H, Math.max(160, window.innerHeight - 24));
   const panelPos = (() => {
     const left = pos.x + BUBBLE + 12 + PANEL_W < window.innerWidth
       ? pos.x + BUBBLE + 12
       : Math.max(8, pos.x - PANEL_W - 12);
-    const top = Math.min(Math.max(8, pos.y + BUBBLE / 2 - PANEL_H / 2), Math.max(8, window.innerHeight - PANEL_H - 8));
+    const top = Math.min(Math.max(8, pos.y + BUBBLE / 2 - panelH / 2), Math.max(8, window.innerHeight - panelH - 8));
     return { left, top };
   })();
 
@@ -198,8 +220,8 @@ export default function FloatingMessenger({
   return (
     <>
       {open && (
-        <div style={{
-          position: 'fixed', left: panelPos.left, top: panelPos.top, width: PANEL_W, height: PANEL_H,
+        <div ref={panelRef} style={{
+          position: 'fixed', left: panelPos.left, top: panelPos.top, width: PANEL_W, height: panelH,
           background: '#111d33', border: '1px solid rgba(56,189,248,.35)', borderRadius: 14,
           boxShadow: '0 18px 50px rgba(0,0,0,.55)', zIndex: 2147483000,
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
@@ -298,26 +320,34 @@ export default function FloatingMessenger({
                     padding: '9px 11px', fontSize: 13.5, lineHeight: 1.45, resize: 'vertical', fontFamily: 'inherit',
                   }}
                 />
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0', color: '#cbd5e1', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={alert} onChange={e => setAlert(e.target.checked)} />
-                  🚨 Mark as an alert
-                </label>
-                <button onClick={handleSend} disabled={sending}
-                  style={{
-                    width: '100%', background: sending ? 'rgba(255,255,255,.06)' : 'linear-gradient(180deg,#38bdf8,#0284c7)',
-                    border: '1px solid rgba(56,189,248,.6)', color: sending ? '#cbd5e1' : '#06232f',
-                    borderRadius: 10, padding: '11px', fontSize: 14, fontWeight: 800,
-                    cursor: sending ? 'default' : 'pointer', fontFamily: 'inherit',
-                  }}>
-                  {sending ? '⏳ Sending…' : '📣 Send Message'}
-                </button>
               </>
             )}
           </div>
+
+          {/* Send sits outside the scroll area — the roster grows with the
+              staff list, and the button was ending up below the fold. */}
+          {tab === 'send' && (
+            <div style={{ flexShrink: 0, padding: '8px 12px 10px', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(2,6,23,.35)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '2px 0 8px', color: '#cbd5e1', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+                <input type="checkbox" checked={alert} onChange={e => setAlert(e.target.checked)} />
+                🚨 Mark as an alert
+              </label>
+              <button onClick={handleSend} disabled={sending}
+                style={{
+                  width: '100%', background: sending ? 'rgba(255,255,255,.06)' : 'linear-gradient(180deg,#38bdf8,#0284c7)',
+                  border: '1px solid rgba(56,189,248,.6)', color: sending ? '#cbd5e1' : '#06232f',
+                  borderRadius: 10, padding: '11px', fontSize: 14, fontWeight: 800,
+                  cursor: sending ? 'default' : 'pointer', fontFamily: 'inherit',
+                }}>
+                {sending ? '⏳ Sending…' : '📣 Send Message'}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       <div
+        ref={bubbleRef}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
