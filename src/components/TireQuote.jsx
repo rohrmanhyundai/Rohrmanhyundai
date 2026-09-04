@@ -181,7 +181,7 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
   }
 
   return (
-    <div style={{ maxWidth: 1180, margin: '38px auto 0' }}>
+    <div style={{ maxWidth: 1160, margin: '38px auto 0' }}>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18,
         fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: '#8fa7c8',
@@ -198,8 +198,7 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
           than stranded in the left column of a full-width grid. */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 360px))',
-        justifyContent: 'center',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
         alignItems: 'stretch',
         gap: 22,
       }}>
@@ -218,7 +217,8 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
             background: 'rgba(255,255,255,.03)', overflow: 'hidden', textAlign: 'left',
             cursor: p.linkUrl ? 'pointer' : 'default',
             transition: 'transform .16s, border-color .16s, box-shadow .16s',
-            display: 'flex', flexDirection: 'column', width: '100%', height: '100%',
+            display: 'flex', flexDirection: 'column', height: '100%',
+            width: '100%', maxWidth: 560, justifySelf: 'center',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.transform = 'translateY(-3px)';
@@ -250,10 +250,10 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
                 onClick={e => { e.stopPropagation(); openPromo(p.submitUrl); }}
                 title={`Submit this promotion — opens ${normalizeUrl(p.submitUrl)}`}
                 style={{
-                  position: 'absolute', right: 8, bottom: 8,
+                  position: 'absolute', right: 10, bottom: 10,
                   background: 'linear-gradient(180deg,rgba(56,189,248,.95),rgba(2,132,199,.95))',
                   border: '1px solid rgba(125,211,252,.8)', color: '#04121f',
-                  borderRadius: 8, padding: '5px 10px', fontSize: 11.5, fontWeight: 900,
+                  borderRadius: 9, padding: '7px 14px', fontSize: 13, fontWeight: 900,
                   cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
                   boxShadow: '0 4px 14px rgba(2,6,23,.5)',
                 }}>
@@ -263,7 +263,7 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
           </div>
           {p.label && (
             <div style={{
-              padding: '12px 14px 14px', fontSize: 13.5, fontWeight: 800, color: '#e8f1ff',
+              padding: '14px 16px 16px', fontSize: 15, fontWeight: 800, color: '#e8f1ff',
               lineHeight: 1.45, flex: 1,
             }}>
               {p.label}
