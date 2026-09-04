@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-04T15:02:47.180Z",
+    "type": "page",
+    "label": "service-pricing"
+  },
+  {
     "at": "2026-09-04T14:05:53.338Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -443,30 +448,5 @@
     "at": "2026-08-05T15:22:10.612Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T15:02:07.181Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-08-05T14:51:56.680Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-08-05T14:49:47.940Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-05T14:49:43.650Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T14:49:42.809Z",
-    "type": "action",
-    "label": "login"
   }
 ]
