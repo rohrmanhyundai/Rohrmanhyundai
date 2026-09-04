@@ -203,9 +203,14 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
         gap: 22,
       }}>
       {promos.map(p => (
-        <button
+        // A div, not a button: the Submit box below is a real button and
+        // nesting one inside another is invalid and swallows clicks.
+        <div
           key={p.id}
+          role="button"
+          tabIndex={0}
           onClick={() => openPromo(p.linkUrl)}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPromo(p.linkUrl); } }}
           title={p.linkUrl ? `Opens ${normalizeUrl(p.linkUrl)}` : p.label}
           style={{
             padding: 0, border: '1px solid rgba(148,163,184,.2)', borderRadius: 16,
@@ -225,18 +230,37 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
             e.currentTarget.style.boxShadow = '';
           }}
         >
-          <img
-            src={p.imageUrl}
-            alt={p.label || 'Tire promotion'}
-            style={{ width: '100%', display: 'block', background: 'rgba(2,6,23,.5)' }}
-          />
+          <div style={{ position: 'relative' }}>
+            <img
+              src={p.imageUrl}
+              alt={p.label || 'Tire promotion'}
+              style={{ width: '100%', display: 'block', background: 'rgba(2,6,23,.5)' }}
+            />
+            {/* Claiming the offer is its own destination, so it gets its own
+                control in the corner rather than sharing the card's link. */}
+            {p.submitUrl && (
+              <button
+                onClick={e => { e.stopPropagation(); openPromo(p.submitUrl); }}
+                title={`Submit this promotion — opens ${normalizeUrl(p.submitUrl)}`}
+                style={{
+                  position: 'absolute', right: 10, bottom: 10,
+                  background: 'linear-gradient(180deg,rgba(56,189,248,.95),rgba(2,132,199,.95))',
+                  border: '1px solid rgba(125,211,252,.8)', color: '#04121f',
+                  borderRadius: 9, padding: '6px 12px', fontSize: 12, fontWeight: 900,
+                  cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                  boxShadow: '0 4px 14px rgba(2,6,23,.5)',
+                }}>
+                Submit Promotion
+              </button>
+            )}
+          </div>
           {p.label && (
             <div style={{ padding: '11px 14px', fontSize: 14, fontWeight: 800, color: '#e8f1ff' }}>
               {p.label}
               {p.linkUrl && <span style={{ color: '#6ee7f9', fontWeight: 700 }}> ↗</span>}
             </div>
           )}
-        </button>
+        </div>
       ))}
       </div>
     </div>
@@ -269,6 +293,7 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
   const [preview, setPreview] = useState('');
   const [label, setLabel] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [submitUrl, setSubmitUrl] = useState('');
   const [expiresOn, setExpiresOn] = useState('');
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
@@ -304,6 +329,7 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
         id,
         label: label.trim(),
         linkUrl: normalizeUrl(linkUrl),
+        submitUrl: submitUrl.trim() ? normalizeUrl(submitUrl) : '',
         imageUrl,
         expiresOn: expiresOn || '',
         postedBy: currentUser || '',
@@ -311,7 +337,7 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
       };
       await saveTirePromo(promo);
       onChange([...promos, promo]);
-      setFile(null); setLabel(''); setLinkUrl(''); setExpiresOn('');
+      setFile(null); setLabel(''); setLinkUrl(''); setSubmitUrl(''); setExpiresOn('');
     } catch (err) {
       setError(err.message || String(err));
     } finally {
@@ -351,6 +377,7 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
         ...promo,
         label: (fields.label || '').trim(),
         linkUrl: normalizeUrl(fields.linkUrl),
+        submitUrl: (fields.submitUrl || '').trim() ? normalizeUrl(fields.submitUrl) : '',
         expiresOn: fields.expiresOn || '',
         imageUrl,
         editedBy: currentUser || '',
@@ -422,6 +449,19 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
             <label style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em', color: '#7f93b0', textTransform: 'uppercase' }}>Link (opens when clicked)</label>
             <input value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="hyundaitirecenter.com/promotions"
               style={{ ...inputStyle, marginTop: 6 }} />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em', color: '#7f93b0', textTransform: 'uppercase' }}>
+              Submit promotion link <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none' }}>(optional)</span>
+            </label>
+            <input value={submitUrl} onChange={e => setSubmitUrl(e.target.value)} placeholder="where the customer claims it — e.g. kumhotirerebates.com"
+              style={{ ...inputStyle, marginTop: 6 }} />
+            <div style={{ fontSize: 11.5, color: '#8296b4', marginTop: 5 }}>
+              {submitUrl.trim()
+                ? 'Adds a Submit Promotion button in the corner of the picture.'
+                : 'Leave blank and the picture has no Submit button.'}
+            </div>
           </div>
 
           <div>
@@ -564,6 +604,7 @@ function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDo
   const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(promo.label || '');
   const [linkUrl, setLinkUrl] = useState(promo.linkUrl || '');
+  const [submitUrl, setSubmitUrl] = useState(promo.submitUrl || '');
   const [expiresOn, setExpiresOn] = useState(promo.expiresOn || '');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState('');
@@ -583,6 +624,7 @@ function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDo
     // someone cancelled earlier.
     setLabel(promo.label || '');
     setLinkUrl(promo.linkUrl || '');
+    setSubmitUrl(promo.submitUrl || '');
     setExpiresOn(promo.expiresOn || '');
     setFile(null);
     setRowError('');
@@ -599,7 +641,7 @@ function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDo
 
   async function save() {
     if (!linkUrl.trim()) { setRowError('A promotion needs a web address to open.'); return; }
-    const ok = await onSave({ label, linkUrl, expiresOn, file });
+    const ok = await onSave({ label, linkUrl, submitUrl, expiresOn, file });
     if (ok) { setFile(null); setEditing(false); }
   }
 
@@ -624,6 +666,11 @@ function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDo
             <div>
               <label style={labelStyle}>Link</label>
               <input value={linkUrl} onChange={e => setLinkUrl(e.target.value)}
+                style={{ ...inputStyle, marginTop: 5 }} />
+            </div>
+            <div>
+              <label style={labelStyle}>Submit promotion link</label>
+              <input value={submitUrl} onChange={e => setSubmitUrl(e.target.value)} placeholder="blank = no Submit button on the picture"
                 style={{ ...inputStyle, marginTop: 5 }} />
             </div>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -673,6 +720,11 @@ function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDo
         </div>
         <a href={normalizeUrl(promo.linkUrl)} target="_blank" rel="noopener noreferrer"
           style={{ fontSize: 12, color: '#6ee7f9', wordBreak: 'break-all' }}>{promo.linkUrl}</a>
+        {promo.submitUrl && (
+          <div style={{ fontSize: 11.5, color: '#7dd3fc', marginTop: 2 }}>
+            Submit → <span style={{ wordBreak: 'break-all' }}>{promo.submitUrl}</span>
+          </div>
+        )}
         <div style={{ fontSize: 11, color: '#64748b', marginTop: 3 }}>
           {promo.postedBy ? `Posted by ${promo.postedBy}` : 'Posted'}{promo.postedAt ? ` · ${new Date(promo.postedAt).toLocaleDateString()}` : ''}
           {promo.editedBy ? ` · edited by ${promo.editedBy}` : ''}
