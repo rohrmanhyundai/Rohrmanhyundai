@@ -28,5 +28,53 @@
     "advisor": "CODY TINCHER",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mtndquhdkvkn",
+    "ro": "780616",
+    "roDate": "2026-09-04",
+    "vehicle": "2018 Hyundai Sonata",
+    "jobDesc": "CUSTOMER STATES CUSTOMER PURCHASED VEHICLE JULY 2ND. A COUPLE WEEKS AGO MULTIPLE LIGHTS STARTED APPEARING ON DASH FOR ABS & AUTO HOLD ON. ONLY HAPPENS INTERMITTENLY. HAPPENS MORE FREQUENT IN HOT WEATHER. BOB ROHRMAN TOYOTA FOUND CODE C240201.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mtndquhddtoi",
+    "ro": "780606",
+    "roDate": "2026-09-04",
+    "vehicle": "2011 Hyundai Sonata",
+    "jobDesc": "RECALLS",
+    "notes": "CAR IS STAYING HERE UNTIL ALL ARE DONE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "mtndquhdvb3c",
+    "ro": "780598",
+    "roDate": "2026-09-04",
+    "vehicle": "2017 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES CAR HESITATES WHEN TAKING OFF IN THE MORNING FOR ABOUT A MILE.",
+    "notes": "TRANSMISSION SERVICE SOLD",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
