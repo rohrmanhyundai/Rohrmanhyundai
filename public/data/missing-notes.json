@@ -1,7 +1,33 @@
 {
-  "updatedAt": "2026-09-04T20:01:50.080Z",
+  "updatedAt": "2026-09-04T20:19:36.307Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "780627",
+        "vehicle": "2020 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780620",
+        "vehicle": "2023 Hyundai Tucson"
+      },
+      {
+        "ro": "780544",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780540",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780537",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780419",
+        "vehicle": "2020 Hyundai Elantra GT"
+      }
+    ],
     "DAVID": [
       {
         "ro": "780626",
@@ -40,32 +66,6 @@
         "vehicle": "2026 Hyundai Santa Fe"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "780624",
-        "vehicle": "2023 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780620",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "780544",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780540",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780537",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780419",
-        "vehicle": "2020 Hyundai Elantra GT"
-      }
-    ],
     "CORY": [
       {
         "ro": "780622",
@@ -98,10 +98,6 @@
       {
         "ro": "780471",
         "vehicle": "2019 Chrysler Pacifica"
-      },
-      {
-        "ro": "780469",
-        "vehicle": "2013 Kia Soul"
       },
       {
         "ro": "780264",
