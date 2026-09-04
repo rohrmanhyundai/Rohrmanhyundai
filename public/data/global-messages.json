@@ -127,5 +127,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788471720990
+  },
+  {
+    "id": "gm-mtmw72oaab2n",
+    "from": "SHAWN",
+    "to": [
+      "BRYSON",
+      "CARTER",
+      "CORY",
+      "DERRICK",
+      "GAVEN",
+      "JACOB",
+      "KADEN",
+      "WEI"
+    ],
+    "text": "We have a coupon this month for LOF w/Rotate the customer gets a alighnment for $100. Lets make sure we are getting them on the MPI. Lets make some hours.",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788522631498
   }
 ]
