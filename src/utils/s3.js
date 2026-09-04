@@ -125,6 +125,22 @@ export async function uploadRegistrationPhotoToS3(filename, file) {
   return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
 }
 
+// Upload a tire promotion image. Returns the public URL of the stored object —
+// the promo index stores that URL and the page renders it directly.
+export async function uploadTirePromoToS3(filename, file) {
+  const client = s3Client();
+  const key = 'tire-promos/' + filename;
+  const body = new Uint8Array(await file.arrayBuffer());
+  await client.send(new PutObjectCommand({
+    Bucket: S3_BUCKET,
+    Key: key,
+    Body: body,
+    ContentType: file.type || contentTypeFor(filename),
+    ContentDisposition: 'inline',
+  }));
+  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+}
+
 // Delete by full public URL — the registration index stores URLs, not keys.
 export async function deleteS3ObjectByUrl(url) {
   const prefix = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/`;

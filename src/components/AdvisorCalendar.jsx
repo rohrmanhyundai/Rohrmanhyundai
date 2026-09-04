@@ -229,7 +229,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onRepairOrderProcess, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onRepairOrderProcess, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -695,7 +695,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </button>
           )}
           {canSee(userPages, currentRole, 'tireQuote') && (
-            <button onClick={() => window.open('https://hyundaitirecenter.com/InitDealer?dealer=IN007', '_blank')} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
+            <button onClick={onTireQuote} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
               🛞 Tire Quote
             </button>
           )}
