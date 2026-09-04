@@ -1670,6 +1670,7 @@ export default function App() {
   const messenger = isLoggedIn ? createPortal(
     <FloatingMessenger
       currentUser={currentUser}
+      currentRole={currentRole}
       users={users}
       messages={globalMessages}
       unread={globalUnread}
