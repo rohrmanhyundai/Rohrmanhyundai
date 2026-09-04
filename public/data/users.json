@@ -469,13 +469,12 @@
     {
       "username": "Bryson",
       "lastName": "",
-      "password": "Bryson2026",
+      "password": "bh064114032",
       "role": "technician",
       "canEditDashboard": false,
       "managementAccess": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -487,7 +486,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": false
       },
       "chatAccess": false,
       "techChatAccess": true
