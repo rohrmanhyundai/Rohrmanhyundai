@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadTirePromos, saveTirePromo, deleteTirePromo, reorderTirePromos } from '../utils/github';
-import { uploadTirePromoToS3 } from '../utils/s3';
+import { uploadTirePromoToS3, deleteS3ObjectByUrl } from '../utils/s3';
 
 const TIRE_CENTER_URL = 'https://hyundaitirecenter.com/InitDealer?dealer=IN007';
 
@@ -299,16 +299,40 @@ function ManagePanel({ promos, currentUser, onChange }) {
     }
   }
 
-  // Re-dating from the list is how an expired promo comes back, and how a
-  // running one gets extended, without re-uploading the picture.
-  async function setExpiry(promo, value) {
-    const updated = { ...promo, expiresOn: value || '' };
-    onChange(promos.map(p => (p.id === promo.id ? updated : p)));
+  // Editing writes the whole promotion back through the same upsert a post
+  // uses. A replaced picture is uploaded first and the old S3 object dropped
+  // only after the index write lands, so a failure never leaves the promo
+  // pointing at an image that no longer exists.
+  async function saveEdits(promo, fields) {
     setError('');
+    setBusy(fields.file ? 'Uploading new picture…' : 'Saving…');
     try {
+      let imageUrl = promo.imageUrl;
+      if (fields.file) {
+        const safeName = `${promo.id}-${Date.now().toString(36)}-${fields.file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        imageUrl = await uploadTirePromoToS3(safeName, fields.file);
+        setBusy('Saving…');
+      }
+      const updated = {
+        ...promo,
+        label: (fields.label || '').trim(),
+        linkUrl: normalizeUrl(fields.linkUrl),
+        expiresOn: fields.expiresOn || '',
+        imageUrl,
+        editedBy: currentUser || '',
+        editedAt: new Date().toISOString(),
+      };
       await saveTirePromo(updated);
+      onChange(promos.map(x => (x.id === promo.id ? updated : x)));
+      if (fields.file && promo.imageUrl && promo.imageUrl !== imageUrl) {
+        try { await deleteS3ObjectByUrl(promo.imageUrl); } catch { /* orphan is harmless */ }
+      }
+      return true;
     } catch (err) {
-      setError('End date not saved: ' + (err.message || err));
+      setError(err.message || String(err));
+      return false;
+    } finally {
+      setBusy('');
     }
   }
 
@@ -406,47 +430,164 @@ function ManagePanel({ promos, currentUser, onChange }) {
         </div>
         {!promos.length && <div style={{ color: '#7a92b8', fontSize: 14 }}>Nothing posted yet.</div>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {promos.map((p, i) => {
-            const expired = isExpired(p);
-            return (
-            <div key={p.id} style={{
-              display: 'flex', alignItems: 'center', gap: 14, padding: 12, flexWrap: 'wrap',
-              border: `1px solid ${expired ? 'rgba(248,113,113,.3)' : 'rgba(148,163,184,.18)'}`,
-              borderRadius: 14, background: expired ? 'rgba(248,113,113,.06)' : 'rgba(255,255,255,.03)',
-            }}>
-              <img src={p.imageUrl} alt="" style={{ width: 108, height: 68, objectFit: 'cover', borderRadius: 9, flexShrink: 0, background: 'rgba(2,6,23,.5)', opacity: expired ? .5 : 1 }} />
-              <div style={{ flex: 1, minWidth: 170 }}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: '#e8f1ff', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  {p.label || <span style={{ color: '#64748b' }}>No caption</span>}
-                  {expired && (
-                    <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.08em', color: '#fca5a5', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 6, padding: '2px 7px' }}>
-                      EXPIRED — OFF THE BOARD
-                    </span>
-                  )}
-                </div>
-                <a href={normalizeUrl(p.linkUrl)} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 12, color: '#6ee7f9', wordBreak: 'break-all' }}>{p.linkUrl}</a>
-                <div style={{ fontSize: 11, color: '#64748b', marginTop: 3 }}>
-                  {p.postedBy ? `Posted by ${p.postedBy}` : 'Posted'}{p.postedAt ? ` · ${new Date(p.postedAt).toLocaleDateString()}` : ''}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 7, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#7f93b0' }}>Runs through</span>
-                  <input type="date" value={p.expiresOn || ''} onChange={e => setExpiry(p, e.target.value)}
-                    style={{ ...inputStyle, width: 165, padding: '5px 9px', fontSize: 12.5, color: expired ? '#fca5a5' : '#e8f1ff' }} />
-                  {!p.expiresOn && <span style={{ fontSize: 11, color: '#64748b' }}>no end date</span>}
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                <button className="secondary" onClick={() => move(i, -1)} disabled={i === 0} title="Move up">↑</button>
-                <button className="secondary" onClick={() => move(i, 1)} disabled={i === promos.length - 1} title="Move down">↓</button>
-                <button className="secondary" onClick={() => remove(p)} disabled={!!busy}
-                  style={{ color: '#fca5a5', borderColor: 'rgba(248,113,113,.35)' }}>Remove</button>
-              </div>
-            </div>
-            );
-          })}
+          {promos.map((p, i) => (
+            <PromoRow
+              key={p.id}
+              promo={p}
+              isFirst={i === 0}
+              isLast={i === promos.length - 1}
+              busy={busy}
+              inputStyle={inputStyle}
+              onMoveUp={() => move(i, -1)}
+              onMoveDown={() => move(i, 1)}
+              onSave={fields => saveEdits(p, fields)}
+              onRemove={() => remove(p)}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 }
+
+/* One posted promotion: a summary row that flips into an edit form in place, so
+   fixing a typo or swapping the picture never means deleting and re-posting. */
+function PromoRow({ promo, isFirst, isLast, busy, inputStyle, onMoveUp, onMoveDown, onSave, onRemove }) {
+  const [editing, setEditing] = useState(false);
+  const [label, setLabel] = useState(promo.label || '');
+  const [linkUrl, setLinkUrl] = useState(promo.linkUrl || '');
+  const [expiresOn, setExpiresOn] = useState(promo.expiresOn || '');
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState('');
+  const [rowError, setRowError] = useState('');
+
+  useEffect(() => {
+    if (!file) { setPreview(''); return; }
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const expired = isExpired(promo);
+
+  function open() {
+    // Always start from what is actually stored, not from a half-finished edit
+    // someone cancelled earlier.
+    setLabel(promo.label || '');
+    setLinkUrl(promo.linkUrl || '');
+    setExpiresOn(promo.expiresOn || '');
+    setFile(null);
+    setRowError('');
+    setEditing(true);
+  }
+
+  function pickFile(f) {
+    setRowError('');
+    if (!f) return;
+    if (!f.type.startsWith('image/')) { setRowError('That is not an image. Use a .jpg, .png or .webp.'); return; }
+    if (f.size > 8 * 1024 * 1024) { setRowError('That image is over 8 MB — please shrink it first.'); return; }
+    setFile(f);
+  }
+
+  async function save() {
+    if (!linkUrl.trim()) { setRowError('A promotion needs a web address to open.'); return; }
+    const ok = await onSave({ label, linkUrl, expiresOn, file });
+    if (ok) { setFile(null); setEditing(false); }
+  }
+
+  const shell = {
+    padding: 12, borderRadius: 14, flexWrap: 'wrap',
+    border: `1px solid ${expired ? 'rgba(248,113,113,.3)' : 'rgba(148,163,184,.18)'}`,
+    background: expired ? 'rgba(248,113,113,.06)' : 'rgba(255,255,255,.03)',
+  };
+
+  if (editing) {
+    return (
+      <div style={{ ...shell, borderColor: 'rgba(110,231,249,.4)', background: 'rgba(110,231,249,.05)' }}>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <img src={preview || promo.imageUrl} alt=""
+            style={{ width: 150, height: 94, objectFit: 'cover', borderRadius: 9, background: 'rgba(2,6,23,.5)' }} />
+          <div style={{ flex: 1, minWidth: 230, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div>
+              <label style={labelStyle}>Caption</label>
+              <input value={label} onChange={e => setLabel(e.target.value)} placeholder="No caption"
+                style={{ ...inputStyle, marginTop: 5 }} />
+            </div>
+            <div>
+              <label style={labelStyle}>Link</label>
+              <input value={linkUrl} onChange={e => setLinkUrl(e.target.value)}
+                style={{ ...inputStyle, marginTop: 5 }} />
+            </div>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+              <div>
+                <label style={labelStyle}>Runs through</label>
+                <input type="date" value={expiresOn} onChange={e => setExpiresOn(e.target.value)}
+                  style={{ ...inputStyle, marginTop: 5, width: 168 }} />
+              </div>
+              {expiresOn && (
+                <button className="secondary" onClick={() => setExpiresOn('')} style={{ fontSize: 11.5 }}
+                  title="Runs until someone removes it">Clear end date</button>
+              )}
+            </div>
+            <div>
+              <label style={labelStyle}>Replace picture <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none' }}>(optional)</span></label>
+              <input className="promo-file" type="file" accept="image/*"
+                onChange={e => pickFile(e.target.files && e.target.files[0])}
+                style={{ display: 'block', marginTop: 7 }} />
+              {file && <div style={{ fontSize: 11.5, color: '#6ee7b7', marginTop: 5 }}>New picture ready — Save to swap it in.</div>}
+            </div>
+            {rowError && <div style={{ fontSize: 12.5, color: '#fca5a5', fontWeight: 700 }}>⚠ {rowError}</div>}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={save} disabled={!!busy}
+                style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', padding: '8px 18px' }}>
+                {busy || 'Save Changes'}
+              </button>
+              <button className="secondary" onClick={() => { setEditing(false); setFile(null); }} disabled={!!busy}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ ...shell, display: 'flex', alignItems: 'center', gap: 14 }}>
+      <img src={promo.imageUrl} alt=""
+        style={{ width: 108, height: 68, objectFit: 'cover', borderRadius: 9, flexShrink: 0, background: 'rgba(2,6,23,.5)', opacity: expired ? .5 : 1 }} />
+      <div style={{ flex: 1, minWidth: 170 }}>
+        <div style={{ fontWeight: 800, fontSize: 14, color: '#e8f1ff', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {promo.label || <span style={{ color: '#64748b' }}>No caption</span>}
+          {expired && (
+            <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.08em', color: '#fca5a5', background: 'rgba(248,113,113,.14)', border: '1px solid rgba(248,113,113,.4)', borderRadius: 6, padding: '2px 7px' }}>
+              EXPIRED — OFF THE BOARD
+            </span>
+          )}
+        </div>
+        <a href={normalizeUrl(promo.linkUrl)} target="_blank" rel="noopener noreferrer"
+          style={{ fontSize: 12, color: '#6ee7f9', wordBreak: 'break-all' }}>{promo.linkUrl}</a>
+        <div style={{ fontSize: 11, color: '#64748b', marginTop: 3 }}>
+          {promo.postedBy ? `Posted by ${promo.postedBy}` : 'Posted'}{promo.postedAt ? ` · ${new Date(promo.postedAt).toLocaleDateString()}` : ''}
+          {promo.editedBy ? ` · edited by ${promo.editedBy}` : ''}
+        </div>
+        <div style={{ fontSize: 11.5, marginTop: 4, color: expired ? '#fca5a5' : '#8296b4' }}>
+          {promo.expiresOn
+            ? `${expired ? 'Ended' : 'Runs through'} ${prettyDate(promo.expiresOn)}`
+            : 'No end date'}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+        <button className="secondary" onClick={onMoveUp} disabled={isFirst} title="Move up">↑</button>
+        <button className="secondary" onClick={onMoveDown} disabled={isLast} title="Move down">↓</button>
+        <button className="secondary" onClick={open} disabled={!!busy}
+          style={{ color: '#93c5fd', borderColor: 'rgba(96,165,250,.4)' }}>Edit</button>
+        <button className="secondary" onClick={onRemove} disabled={!!busy}
+          style={{ color: '#fca5a5', borderColor: 'rgba(248,113,113,.35)' }}>Remove</button>
+      </div>
+    </div>
+  );
+}
+
+const labelStyle = {
+  display: 'block', fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em',
+  color: '#7f93b0', textTransform: 'uppercase',
+};
