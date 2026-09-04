@@ -177,5 +177,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788528517231
+  },
+  {
+    "id": "gm-mtn2iyd7y7iw",
+    "from": "JERRY",
+    "to": [
+      "SHAWN"
+    ],
+    "text": "780593 stui mileage is wrong. looked at media at check in and it shows the right mileage.",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788533263484
   }
 ]
