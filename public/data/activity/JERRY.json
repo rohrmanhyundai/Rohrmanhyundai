@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-04T18:17:07.266Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
     "at": "2026-09-04T17:54:56.978Z",
     "type": "page",
     "label": "aftermarket-warranty"
@@ -348,25 +353,5 @@
     "at": "2026-08-05T18:21:16.006Z",
     "type": "action",
     "label": "logout"
-  },
-  {
-    "at": "2026-08-05T18:10:04.465Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-05T18:10:01.095Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T18:09:54.756Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-08-05T17:58:40.693Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
   }
 ]
