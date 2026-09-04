@@ -157,5 +157,38 @@
         "total": 121240.58
       }
     }
+  },
+  "2026-09": {
+    "forecast": 0,
+    "lastYear": 0,
+    "actuals": {
+      "2026-09-03": 2201.13,
+      "2026-09-02": 4076.41,
+      "2026-09-01": 3350.1
+    },
+    "partsBreakdown": {
+      "mtd": {
+        "cpParts": 1721.45,
+        "warrantyParts": 1835.5911,
+        "internalParts": 1898.71,
+        "oilParts": 1066.04,
+        "oilRetail": 355.68,
+        "wholesale": 11190.29,
+        "cpTire": 75.34,
+        "internalTire": 222.25,
+        "total": 9627.64
+      },
+      "ly": {
+        "cpParts": 23157.09,
+        "warrantyParts": 34188.70187,
+        "internalParts": 14173.06,
+        "oilParts": 7992.52,
+        "oilRetail": 1167.36,
+        "wholesale": 56114.89,
+        "cpTire": 226.53295,
+        "internalTire": 2428.34,
+        "total": 97106.97
+      }
+    }
   }
 }
