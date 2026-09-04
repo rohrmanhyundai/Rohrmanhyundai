@@ -76,5 +76,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mtndqtu8xzw3",
+    "ro": "780619",
+    "roDate": "2026-09-04",
+    "vehicle": "2023 Hyundai Santa Cruz",
+    "jobDesc": "CUSTOMER STATES- CEL on diag approved.  (SOR)",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
