@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { sendGlobalMessage, loadGlobalMessages, pollGlobalMessages, replyToGlobalMessage, deleteGlobalMessage, clearGlobalMessagesFrom } from '../utils/github';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from '../utils/pusher';
+import { withinRetention } from './FloatingMessenger';
 
 const uid = () => `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 const rid = () => `rp-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -122,7 +123,10 @@ export default function GlobalMessage({ currentUser, users, onBack }) {
     return (m.replies || []).some(r => String(r.from || '').toUpperCase() === name);
   }, []);
 
+  // Same 30-day window the messenger shows. The nightly job does the actual
+  // deleting; this keeps the page consistent with the bubble in between runs.
   const sorted = useMemo(() => (messages || [])
+    .filter(m => withinRetention(m))
     .slice()
     .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)), [messages]);
 

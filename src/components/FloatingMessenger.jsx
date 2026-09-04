@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { sendGlobalMessage, replyToGlobalMessage } from '../utils/github';
+import { sendGlobalMessage, replyToGlobalMessage, deleteGlobalMessage } from '../utils/github';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from '../utils/pusher';
 
 const uid = () => `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -25,10 +25,30 @@ function clampToScreen(x, y, w, h) {
 // A draggable bubble that lives above the page switch, so it stays put as the
 // user moves between screens. Reading and sending both happen here; the
 // blocking pop-up still fires separately and is untouched.
+// Messages are kept for 30 days. A nightly job prunes the stored file; this
+// cutoff is what stops an old thread showing in the hours before it runs.
+const RETENTION_DAYS = 30;
+const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000;
+
+// The newest thing in a thread — a month-old message with a reply from
+// yesterday is still live and must not age out on the original timestamp.
+export function lastActivity(m) {
+  const replies = Array.isArray(m.replies) ? m.replies : [];
+  return replies.reduce((max, r) => Math.max(max, Number(r.timestamp) || 0), Number(m.timestamp) || 0);
+}
+
+// Undated messages are shown, and the nightly prune keeps them for the same
+// reason: better a stray row than a deleted one nobody can get back.
+export function withinRetention(m, windowMs = RETENTION_MS) {
+  const t = lastActivity(m);
+  return !t || Date.now() - t < windowMs;
+}
+
 export default function FloatingMessenger({
-  currentUser, users, messages, unread, canSend, onMarkSeen, onMessagesChange, openSignal = 0,
+  currentUser, currentRole, users, messages, unread, canSend, onMarkSeen, onMessagesChange, openSignal = 0,
 }) {
   const me = (currentUser || '').toUpperCase();
+  const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
   const posKey = `floatingMsgPos:${me}`;
 
   const [pos, setPos] = useState(() => {
@@ -119,6 +139,7 @@ export default function FloatingMessenger({
   };
 
   const mine = useMemo(() => (messages || [])
+    .filter(m => withinRetention(m))
     .filter(m => {
       const to = Array.isArray(m.to) ? m.to.map(u => String(u).toUpperCase()) : [];
       return to.includes(me) || (m.from || '').toUpperCase() === me;
@@ -177,6 +198,29 @@ export default function FloatingMessenger({
       setSending(false);
     }
   }, [sending, selected, text, alert, me, messages, onMessagesChange]);
+
+  // Managers and admins can take a message down for everyone. Optimistic: the
+  // row goes immediately and comes back if the write fails, so a slow token
+  // doesn't leave them clicking twice.
+  const [deletingId, setDeletingId] = useState('');
+  const handleDelete = useCallback(async (msg) => {
+    if (!window.confirm('Delete this message for everyone? This cannot be undone.')) return;
+    setDeletingId(msg.id);
+    setStatus('');
+    const before = messages || [];
+    onMessagesChange?.(before.filter(m => m.id !== msg.id));
+    try {
+      // Deliberately not adopting the array the write returns: one bad read on
+      // the other end would replace the whole inbox with a short list. The one
+      // row we removed above is the only change we know is right.
+      await deleteGlobalMessage(msg.id);
+    } catch (e) {
+      onMessagesChange?.(before);
+      setStatus('⚠️ ' + (e.message || 'Delete failed'));
+    } finally {
+      setDeletingId('');
+    }
+  }, [messages, onMessagesChange]);
 
   async function sendReply(msg) {
     const t = (replyDrafts[msg.id] || '').trim();
@@ -258,6 +302,16 @@ export default function FloatingMessenger({
                         {m.alert ? '🚨 ' : ''}{fromMe ? `You → ${(m.to || []).join(', ')}` : (m.from || 'Management')}
                       </span>
                       <span style={{ marginLeft: 'auto', color: '#64748b', fontSize: 10.5 }}>{timeLabel(m.timestamp)}</span>
+                      {canDelete && (
+                        <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete for everyone"
+                          style={{
+                            background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.35)',
+                            color: '#fca5a5', borderRadius: 6, padding: '1px 6px', fontSize: 11,
+                            cursor: deletingId === m.id ? 'default' : 'pointer', fontFamily: 'inherit', lineHeight: 1.5,
+                          }}>
+                          {deletingId === m.id ? '⏳' : '🗑'}
+                        </button>
+                      )}
                     </div>
                     <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 5, whiteSpace: 'pre-wrap' }}>{m.text}</div>
 

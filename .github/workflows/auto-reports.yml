@@ -32,15 +32,26 @@ jobs:
           TZ: America/New_York
         run: node scripts/send-reports.cjs
 
+      # Global messages are kept for 30 days. The app hides them past that
+      # window immediately; this is what removes them from the file.
+      - name: Prune messages older than 30 days
+        env:
+          TZ: America/New_York
+        run: node scripts/prune-messages.cjs
+
       - name: Commit and push report snapshots
         run: |
           git config user.name  "Auto Reports Bot"
           git config user.email "actions@github.com"
-          git add public/data/performance-reports/
+          git add public/data/performance-reports/ public/data/global-messages.json
           # Only commit if something changed
           if git diff --staged --quiet; then
             echo "No changes to report files — skipping commit."
           else
             git commit -m "🤖 Auto snapshot: $(date +'%b %d, %Y') 11pm ET"
+            # The app writes these same files all day through the API, so the
+            # branch has usually moved on since checkout. Rebase onto it rather
+            # than failing the run.
+            git pull --rebase --autostash
             git push
           fi
