@@ -295,5 +295,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788548203869
+  },
+  {
+    "id": "gm-mtnd0ts6t0yo",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "780562 engine is approved. please let customer know. she was very upset we have not reached out to her",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788550893510
   }
 ]
