@@ -59,9 +59,11 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
     return () => { alive = false; };
   }, []);
 
+  // Promotions sit on the Tire Pricing page under the tire-center card, not
+  // behind a tab of their own — nobody goes looking for a promotion, so it has
+  // to be on the page they already opened.
   const TABS = [
     { key: 'pricing', label: '🛞 Tire Pricing' },
-    { key: 'promos',  label: '🏷 Promotions' },
     canEdit && { key: 'manage', label: '⚙️ Manage Promotions' },
   ].filter(Boolean);
 
@@ -75,6 +77,7 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
         </div>
       </div>
 
+      {TABS.length > 1 && (
       <div className="adv-advisor-tabs" style={{ justifyContent: 'center' }}>
         {TABS.map(t => (
           <button
@@ -86,11 +89,16 @@ export default function TireQuote({ currentUser, currentRole, onBack, backLabel 
           </button>
         ))}
       </div>
+      )}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 24px 48px' }}>
-        {tab === 'pricing' && <PricingPanel />}
-        {tab === 'promos'  && <PromoBoard promos={promos} loading={loading} canEdit={canEdit} onManage={() => setTab('manage')} />}
-        {tab === 'manage'  && canEdit && (
+        {tab === 'pricing' && (
+          <>
+            <PricingPanel />
+            <PromoBoard promos={promos} loading={loading} canEdit={canEdit} onManage={() => setTab('manage')} />
+          </>
+        )}
+        {tab === 'manage' && canEdit && (
           <ManagePanel
             promos={promos}
             currentUser={currentUser}
@@ -142,32 +150,44 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
   // or delete them.
   const promos = allPromos.filter(p => !isExpired(p));
 
-  if (loading) return <div style={{ textAlign: 'center', color: '#7a92b8' }}>Loading promotions…</div>;
+  if (loading) return null;
 
+  // Nothing running: say so only to the people who can do something about it,
+  // rather than parking an empty state under the pricing card for everyone.
   if (!promos.length) {
+    if (!canEdit) return null;
     return (
-      <div style={{ textAlign: 'center', color: '#7a92b8', maxWidth: 460, margin: '40px auto 0', lineHeight: 1.7 }}>
-        <div style={{ fontSize: 40 }}>🏷</div>
-        <div style={{ marginTop: 10, fontSize: 15 }}>
+      <div style={{ textAlign: 'center', color: '#7a92b8', maxWidth: 460, margin: '34px auto 0', lineHeight: 1.7 }}>
+        <div style={{ fontSize: 13.5 }}>
           {allPromos.length
             ? 'Every posted promotion has passed its end date.'
             : 'No tire promotions posted right now.'}
         </div>
-        {canEdit && (
-          <button className="secondary" onClick={onManage} style={{ marginTop: 16 }}>
-            Post the first one
-          </button>
-        )}
+        <button className="secondary" onClick={onManage} style={{ marginTop: 12 }}>
+          {allPromos.length ? 'Manage promotions' : 'Post the first one'}
+        </button>
       </div>
     );
   }
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))',
-      gap: 22, maxWidth: 1180, margin: '0 auto',
-    }}>
+    <div style={{ maxWidth: 1180, margin: '38px auto 0' }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18,
+        fontSize: 11.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: '#8fa7c8',
+      }}>
+        <span style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,transparent,rgba(148,163,184,.28))' }} />
+        Current Promotions
+        <span style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(148,163,184,.28),transparent)' }} />
+      </div>
+      {/* Capped, centred tracks — a lone promotion sits under the card rather
+          than stranded in the left column of a full-width grid. */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 380px))',
+        justifyContent: 'center',
+        gap: 22,
+      }}>
       {promos.map(p => (
         <button
           key={p.id}
@@ -204,6 +224,7 @@ function PromoBoard({ promos: allPromos, loading, canEdit, onManage }) {
           )}
         </button>
       ))}
+      </div>
     </div>
   );
 }
