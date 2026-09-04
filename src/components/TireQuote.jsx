@@ -198,8 +198,9 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
           than stranded in the left column of a full-width grid. */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 380px))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 360px))',
         justifyContent: 'center',
+        alignItems: 'stretch',
         gap: 22,
       }}>
       {promos.map(p => (
@@ -217,7 +218,7 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
             background: 'rgba(255,255,255,.03)', overflow: 'hidden', textAlign: 'left',
             cursor: p.linkUrl ? 'pointer' : 'default',
             transition: 'transform .16s, border-color .16s, box-shadow .16s',
-            display: 'block', width: '100%',
+            display: 'flex', flexDirection: 'column', width: '100%', height: '100%',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.transform = 'translateY(-3px)';
@@ -230,11 +231,17 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
             e.currentTarget.style.boxShadow = '';
           }}
         >
-          <div style={{ position: 'relative' }}>
+          {/* One frame for every promotion, whatever shape was uploaded. The
+              picture is fitted inside rather than cropped — these are rebate
+              ads and the terms run to the edges. */}
+          <div style={{
+            position: 'relative', width: '100%', aspectRatio: '3.6 / 1',
+            background: 'rgba(2,6,23,.55)', overflow: 'hidden',
+          }}>
             <img
               src={p.imageUrl}
               alt={p.label || 'Tire promotion'}
-              style={{ width: '100%', display: 'block', background: 'rgba(2,6,23,.5)' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
             />
             {/* Claiming the offer is its own destination, so it gets its own
                 control in the corner rather than sharing the card's link. */}
@@ -243,10 +250,10 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
                 onClick={e => { e.stopPropagation(); openPromo(p.submitUrl); }}
                 title={`Submit this promotion — opens ${normalizeUrl(p.submitUrl)}`}
                 style={{
-                  position: 'absolute', right: 10, bottom: 10,
+                  position: 'absolute', right: 8, bottom: 8,
                   background: 'linear-gradient(180deg,rgba(56,189,248,.95),rgba(2,132,199,.95))',
                   border: '1px solid rgba(125,211,252,.8)', color: '#04121f',
-                  borderRadius: 9, padding: '6px 12px', fontSize: 12, fontWeight: 900,
+                  borderRadius: 8, padding: '5px 10px', fontSize: 11.5, fontWeight: 900,
                   cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
                   boxShadow: '0 4px 14px rgba(2,6,23,.5)',
                 }}>
@@ -255,7 +262,10 @@ function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
             )}
           </div>
           {p.label && (
-            <div style={{ padding: '11px 14px', fontSize: 14, fontWeight: 800, color: '#e8f1ff' }}>
+            <div style={{
+              padding: '12px 14px 14px', fontSize: 13.5, fontWeight: 800, color: '#e8f1ff',
+              lineHeight: 1.45, flex: 1,
+            }}>
               {p.label}
               {p.linkUrl && <span style={{ color: '#6ee7f9', fontWeight: 700 }}> ↗</span>}
             </div>
