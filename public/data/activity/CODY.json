@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-05T19:47:30.316Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-05T19:47:28.559Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-04T16:07:38.907Z",
     "type": "page",
     "label": "advisor-goals"
@@ -797,46 +807,6 @@
   },
   {
     "at": "2026-08-07T14:17:13.962Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-08-05T22:11:42.196Z",
-    "type": "action",
-    "label": "logout"
-  },
-  {
-    "at": "2026-08-05T21:59:49.817Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-08-05T21:59:47.849Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T21:57:01.150Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-05T21:56:59.648Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T21:55:57.974Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-08-05T21:55:54.889Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-05T21:55:51.653Z",
     "type": "action",
     "label": "login"
   }
