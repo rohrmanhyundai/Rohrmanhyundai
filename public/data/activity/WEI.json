@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-05T12:39:32.469Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-05T12:39:30.255Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-04T14:56:46.047Z",
     "type": "page",
     "label": "hotRepairs"
@@ -729,10 +739,5 @@
     "at": "2026-08-06T13:59:37.342Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-05T16:11:57.856Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
