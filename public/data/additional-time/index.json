@@ -1,5 +1,17 @@
 [
   {
+    "id": "mtt0u36uacvk",
+    "ro": "780525",
+    "hours": "1.2",
+    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtt0u36uacvk-1788893229608.png",
+    "tech": "KADEN",
+    "techDisplay": "KADEN",
+    "status": "submitted",
+    "submittedAt": "2026-09-08T18:47:16.523Z",
+    "approvedAt": null,
+    "approvedBy": null
+  },
+  {
     "id": "mtkkwbtn6cvx",
     "ro": "780361",
     "hours": "1.0",
