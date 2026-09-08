@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-08T18:41:38.466Z",
+    "type": "page",
+    "label": "additional-time"
+  },
+  {
+    "at": "2026-09-08T18:41:36.726Z",
+    "type": "page",
+    "label": "additional-time-menu"
+  },
+  {
+    "at": "2026-09-08T18:41:32.986Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-08T18:32:04.925Z",
     "type": "page",
     "label": "tech-resources"
