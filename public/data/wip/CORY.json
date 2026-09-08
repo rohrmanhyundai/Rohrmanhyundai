@@ -91,5 +91,21 @@
     "advisor": "JORDAN",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "mtt4um0th06s",
+    "ro": "780672",
+    "roDate": "2026-09-08",
+    "vehicle": "2013 Kia Soul",
+    "jobDesc": "Replcae Clockspring Assembly",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
