@@ -866,5 +866,20 @@
     "advisorMonthlyWorkdays": 27,
     "service_policy": 54
   },
-  "vacations": []
+  "vacations": [
+    {
+      "name": "JERRY",
+      "dates": "Sep 17–18, 2026",
+      "dateStart": "2026-09-17",
+      "dateEnd": "2026-09-18",
+      "status": "APPROVED"
+    },
+    {
+      "name": "",
+      "dates": "",
+      "dateStart": "",
+      "dateEnd": "",
+      "status": "APPROVED"
+    }
+  ]
 }
