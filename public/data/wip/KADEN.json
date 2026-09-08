@@ -60,21 +60,5 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
-  },
-  {
-    "id": "mtnedpvc7iod",
-    "ro": "780604",
-    "roDate": "2026-09-04",
-    "vehicle": "2026 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES- Tow in from Ziebart. WILL ONLY GO INTO ACC MODE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
