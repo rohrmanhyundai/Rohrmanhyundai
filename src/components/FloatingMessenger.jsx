@@ -11,6 +11,28 @@ const timeLabel = (ts) => {
   } catch { return ''; }
 };
 
+// In a 340px panel a full date on every row wraps onto two lines and pushes the
+// message down. Today's messages only need the clock; older ones only the day.
+const shortTime = (ts) => {
+  try {
+    const d = new Date(ts), now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    return sameDay
+      ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch { return ''; }
+};
+
+// "You → BRYSON, CARTER, CORY, DERRICK, GAVEN, JACOB, KADEN, WEI" ate three
+// lines. One name plus a count keeps the row to one, and the full list is in
+// the tooltip.
+const toSummary = (to = []) => {
+  const names = (to || []).map(n => String(n).toUpperCase()).filter(Boolean);
+  if (!names.length) return '';
+  if (names.length <= 2) return names.join(', ');
+  return `${names[0]} +${names.length - 1}`;
+};
+
 const BUBBLE = 56;
 const PANEL_W = 340;
 const PANEL_H = 560;   // roomy enough for the roster; clamped to the window below
@@ -62,6 +84,7 @@ export default function FloatingMessenger({
   const [tab, setTab] = useState('inbox');
   const [replyDrafts, setReplyDrafts] = useState({});
   const [replyingId, setReplyingId] = useState('');
+  const [replyOpenId, setReplyOpenId] = useState('');   // which message has its reply box open
   const [selected, setSelected] = useState(() => new Set());
   const [text, setText] = useState('');
   const [alert, setAlert] = useState(false);
@@ -145,7 +168,9 @@ export default function FloatingMessenger({
       return to.includes(me) || (m.from || '').toUpperCase() === me;
     })
     .slice()
-    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)), [messages, me]);
+    // Newest activity first, not newest send: a reply pulls its thread back to
+    // the top, which is where you look for what just came in.
+    .sort((a, b) => lastActivity(b) - lastActivity(a)), [messages, me]);
 
   const roster = useMemo(() => (users || [])
     .filter(u => u.username && u.username.toLowerCase() !== 'admin')
@@ -228,13 +253,16 @@ export default function FloatingMessenger({
     setReplyingId(msg.id);
     try {
       const reply = { id: rid(), from: me, text: t, timestamp: Date.now() };
-      const next = await replyToGlobalMessage(msg.id, reply);
+      await replyToGlobalMessage(msg.id, reply);
       const notify = [...(Array.isArray(msg.to) ? msg.to : []), msg.from]
         .map(u => String(u || '').toUpperCase()).filter(u => u && u !== me);
       try { await triggerEvent(GLOBAL_CHANNEL, GLOBAL_REPLY_EVENT, { msgId: msg.id, replyId: reply.id, replyFrom: reply.from, replyText: reply.text, notify }); } catch {}
       setReplyDrafts(d => ({ ...d, [msg.id]: '' }));
-      onMessagesChange?.(Array.isArray(next) ? next
-        : (messages || []).map(m => m.id === msg.id ? { ...m, replies: [...(m.replies || []), reply] } : m));
+      // Append locally rather than adopting the array the write returns: if the
+      // read behind that write came back empty, taking it wholesale would clear
+      // the whole inbox. The poll picks up everyone else's messages anyway.
+      onMessagesChange?.((messages || []).map(m =>
+        m.id === msg.id ? { ...m, replies: [...(m.replies || []), reply] } : m));
     } catch (e) {
       setStatus('⚠️ ' + (e.message || 'Reply failed'));
     } finally {
@@ -291,56 +319,91 @@ export default function FloatingMessenger({
                 <div style={{ color: '#7a92b8', fontSize: 13, padding: '10px 0' }}>No messages.</div>
               ) : mine.map(m => {
                 const fromMe = (m.from || '').toUpperCase() === me;
+                const replies = Array.isArray(m.replies) ? m.replies : [];
+                const open = replyOpenId === m.id;
                 return (
                   <div key={m.id} style={{
                     background: m.alert ? 'rgba(248,113,113,.09)' : 'rgba(255,255,255,0.04)',
                     border: `1px solid ${m.alert ? 'rgba(248,113,113,.4)' : 'rgba(255,255,255,0.09)'}`,
-                    borderRadius: 10, padding: '10px 12px', marginBottom: 8,
+                    borderRadius: 10, padding: '10px 12px', marginBottom: 10,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span style={{ fontWeight: 800, fontSize: 12.5, color: m.alert ? '#fca5a5' : '#7dd3fc' }}>
-                        {m.alert ? '🚨 ' : ''}{fromMe ? `You → ${(m.to || []).join(', ')}` : (m.from || 'Management')}
+                    {/* Who and when, on one line that never wraps */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span
+                        title={fromMe ? `To: ${(m.to || []).join(', ')}` : `From ${m.from}`}
+                        style={{
+                          fontWeight: 800, fontSize: 12, letterSpacing: '.02em',
+                          color: m.alert ? '#fca5a5' : fromMe ? '#7dd3fc' : '#c4b5fd',
+                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flex: 1,
+                        }}>
+                        {m.alert ? '🚨 ' : ''}{fromMe ? `You → ${toSummary(m.to)}` : String(m.from || 'Management').toUpperCase()}
                       </span>
-                      <span style={{ marginLeft: 'auto', color: '#64748b', fontSize: 10.5 }}>{timeLabel(m.timestamp)}</span>
+                      <span title={timeLabel(m.timestamp)}
+                        style={{ color: '#64748b', fontSize: 10.5, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                        {shortTime(m.timestamp)}
+                      </span>
                       {canDelete && (
                         <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete for everyone"
                           style={{
-                            background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.35)',
-                            color: '#fca5a5', borderRadius: 6, padding: '1px 6px', fontSize: 11,
-                            cursor: deletingId === m.id ? 'default' : 'pointer', fontFamily: 'inherit', lineHeight: 1.5,
+                            flexShrink: 0,
+                            background: 'transparent', border: 'none',
+                            color: '#7d8ba3', padding: '0 2px', fontSize: 12,
+                            cursor: deletingId === m.id ? 'default' : 'pointer', fontFamily: 'inherit', lineHeight: 1.4,
                           }}>
                           {deletingId === m.id ? '⏳' : '🗑'}
                         </button>
                       )}
                     </div>
-                    <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 5, whiteSpace: 'pre-wrap' }}>{m.text}</div>
 
-                    {(m.replies || []).map(rep => (
-                      <div key={rep.id} style={{ marginTop: 8, paddingLeft: 10, borderLeft: '2px solid rgba(255,255,255,0.12)' }}>
-                        <div style={{ color: '#94a3b8', fontSize: 11, fontWeight: 700 }}>
-                          {(rep.from || '').toUpperCase() === me ? 'You' : rep.from} · {timeLabel(rep.timestamp)}
-                        </div>
-                        <div style={{ fontSize: 13, lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>{rep.text}</div>
+                    <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 6, whiteSpace: 'pre-wrap' }}>{m.text}</div>
+
+                    {replies.length > 0 && (
+                      <div style={{ marginTop: 9, borderLeft: '2px solid rgba(125,211,252,.35)', paddingLeft: 10, display: 'grid', gap: 7 }}>
+                        {replies.map(rep => (
+                          <div key={rep.id}>
+                            <div style={{ fontSize: 10.5, fontWeight: 800, color: (rep.from || '').toUpperCase() === me ? '#6ee7b7' : '#c4b5fd' }}>
+                              {(rep.from || '').toUpperCase() === me ? 'You' : String(rep.from || '').toUpperCase()}
+                              <span style={{ color: '#64748b', fontWeight: 600 }}> · {shortTime(rep.timestamp)}</span>
+                            </div>
+                            <div style={{ fontSize: 13, lineHeight: 1.4, whiteSpace: 'pre-wrap', color: '#cbd5e1' }}>{rep.text}</div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
 
-                    <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                      <input
-                        value={replyDrafts[m.id] || ''}
-                        onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
-                        onKeyDown={e => { if (e.key === 'Enter') sendReply(m); }}
-                        placeholder="Reply…"
+                    {/* The reply box is out of the way until it's wanted — a box
+                        under every message is most of what made this hard to read. */}
+                    {open ? (
+                      <div style={{ display: 'flex', gap: 6, marginTop: 9 }}>
+                        <input
+                          autoFocus
+                          value={replyDrafts[m.id] || ''}
+                          onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') { sendReply(m); setReplyOpenId(''); }
+                            if (e.key === 'Escape') setReplyOpenId('');
+                          }}
+                          placeholder="Reply…"
+                          style={{
+                            flex: 1, minWidth: 0, boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
+                            border: '1px solid rgba(56,189,248,.45)', borderRadius: 8, color: '#e2e8f0',
+                            padding: '7px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none',
+                          }}
+                        />
+                        <button onClick={() => { sendReply(m); setReplyOpenId(''); }} disabled={replyingId === m.id}
+                          style={{ flexShrink: 0, background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: '#7dd3fc', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                          {replyingId === m.id ? '…' : 'Send'}
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setReplyOpenId(m.id)}
                         style={{
-                          flex: 1, minWidth: 0, boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
-                          border: '1px solid rgba(255,255,255,0.14)', borderRadius: 8, color: '#e2e8f0',
-                          padding: '7px 10px', fontSize: 13, fontFamily: 'inherit',
-                        }}
-                      />
-                      <button onClick={() => sendReply(m)} disabled={replyingId === m.id}
-                        style={{ flexShrink: 0, background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: '#7dd3fc', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
-                        {replyingId === m.id ? '…' : 'Send'}
+                          marginTop: 8, background: 'transparent', border: 'none', padding: 0,
+                          color: '#7dd3fc', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
+                        }}>
+                        ↩ Reply{replies.length ? ` · ${replies.length}` : ''}
                       </button>
-                    </div>
+                    )}
                   </div>
                 );
               })
