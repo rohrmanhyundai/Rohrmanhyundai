@@ -54,5 +54,21 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
     "flag": "purple"
+  },
+  {
+    "id": "mtt4uo2f4iye",
+    "ro": "780644",
+    "roDate": "2026-09-08",
+    "vehicle": "2026 Hyundai Santa Fe Hybrid",
+    "jobDesc": "CUSTOMER STATES WASHER FLUID RUNNING OUT EXTREMELY QUICK. CHECK AND ADVISE.",
+    "notes": "car is staying over night to check in the morning",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
