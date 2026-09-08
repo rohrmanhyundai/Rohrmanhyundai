@@ -1,72 +1,42 @@
 {
-  "updatedAt": "2026-09-04T20:19:36.307Z",
+  "updatedAt": "2026-09-08T16:24:13.556Z",
   "by": "SHAWN",
   "advisors": {
     "JORDAN": [
       {
-        "ro": "780627",
-        "vehicle": "2020 Hyundai Santa Fe"
+        "ro": "780667",
+        "vehicle": "2025 Hyundai Elantra"
       },
       {
-        "ro": "780620",
-        "vehicle": "2023 Hyundai Tucson"
+        "ro": "780664",
+        "vehicle": "2024 Hyundai Sonata"
       },
       {
-        "ro": "780544",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
+        "ro": "780653",
+        "vehicle": "2024 Hyundai Tucson Hybrid"
       },
       {
-        "ro": "780540",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780537",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780419",
-        "vehicle": "2020 Hyundai Elantra GT"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780626",
-        "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780625",
-        "vehicle": "2026 Hyundai Venue"
-      },
-      {
-        "ro": "780619",
-        "vehicle": "2023 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780615",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780598",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "780542",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780539",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780536",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780381",
-        "vehicle": "2026 Hyundai Santa Fe"
+        "ro": "780651",
+        "vehicle": "2023 Hyundai Palisade"
       }
     ],
     "CORY": [
+      {
+        "ro": "780666",
+        "vehicle": "2024 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780665",
+        "vehicle": "2013 Kia Soul"
+      },
+      {
+        "ro": "780660",
+        "vehicle": "2020 Hyundai Kona"
+      },
+      {
+        "ro": "780656",
+        "vehicle": "2010 Dodge Ram 1500"
+      },
       {
         "ro": "780622",
         "vehicle": "2015 Jeep Cherokee"
@@ -74,18 +44,6 @@
       {
         "ro": "780621",
         "vehicle": "2017 Nissan Rogue"
-      },
-      {
-        "ro": "780576",
-        "vehicle": "2023 Hyundai Tucson"
-      },
-      {
-        "ro": "780572",
-        "vehicle": "2011 Honda CR-Z"
-      },
-      {
-        "ro": "780515",
-        "vehicle": "2019 Subaru Crosstrek"
       },
       {
         "ro": "780514",
@@ -108,14 +66,44 @@
         "vehicle": "2018 Honda Odyssey"
       }
     ],
-    "CODY": [
+    "DAVID": [
       {
-        "ro": "780541",
+        "ro": "780663",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780648",
+        "vehicle": "2022 Hyundai Kona"
+      },
+      {
+        "ro": "780647",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780643",
+        "vehicle": "2019 Hyundai Tucson"
+      },
+      {
+        "ro": "780542",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       },
       {
-        "ro": "780538",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "780381",
+        "vehicle": "2026 Hyundai Santa Fe"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780662",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780659",
+        "vehicle": "2015 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "780632",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ]
   }
