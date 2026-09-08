@@ -14,5 +14,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mtsvqf7xeqg8",
+    "ro": "780667",
+    "roDate": "2026-09-08",
+    "vehicle": "2025 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES- cust brought only the tire.",
+    "notes": "TIRE HAS WARRANTY",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
