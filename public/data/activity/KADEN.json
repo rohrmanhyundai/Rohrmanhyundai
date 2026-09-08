@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-08T18:47:00.772Z",
+    "type": "page",
+    "label": "additional-time"
+  },
+  {
+    "at": "2026-09-08T18:46:58.116Z",
+    "type": "page",
+    "label": "additional-time-menu"
+  },
+  {
+    "at": "2026-09-08T18:46:55.700Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-08T18:44:40.510Z",
     "type": "page",
     "label": "additional-time"
