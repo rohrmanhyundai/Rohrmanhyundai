@@ -312,7 +312,14 @@
     "text": "did you see 780440 parts are here?",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtsx0h6ir9op",
+        "from": "CORY",
+        "text": "Yup, the car is not here. The car should be here tomorrow morning.",
+        "timestamp": 1788886800378
+      }
+    ],
     "timestamp": 1788881542949
   },
   {
