@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { loadHotRepairs, uploadHotRepair, updateHotRepairPdf, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
+import { loadHotRepairs, uploadHotRepair, updateHotRepairPdf, deleteHotRepair, renameHotRepair, reorderHotRepairs, setHotRepairWarranty, setHotRepairTags, setHotRepairOpData, backfillHotRepairSearchText, moveHotRepair, docRawUrl, getGithubToken, setGithubToken, loadUsers } from '../utils/github';
 import { trackPage } from '../utils/activityTracker';
 import { loadPdfJs, extractPdfText, extractPdfTextFromBuffer, rankedMatches, scoreItem, textCache } from '../utils/pdfText';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
@@ -295,28 +295,41 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
     if (matches.length >= 1) setPreviewItem(matches[0]);
   }
 
-  // Auto-open the best match when the search clearly points at one bulletin:
-  // either it's the only match, or the top match scores strictly higher than
-  // the next (e.g. a title/number hit beats incidental body-text mentions).
-  // Won't reopen the same one after you close it unless the query changes.
+  // A bulletin number is a jump — "299" means open 299. A condition is a
+  // browse: you want to see every bulletin that covers it and choose. So only a
+  // number-shaped query can auto-open, and only after typing stops.
+  const isNumberQuery = (q) => /^[0-9][0-9a-z-]*$/i.test(q) && !/\s/.test(q);
+
+  // Read the libraries through a ref so background PDF indexing can't restart
+  // the pause below. Depending on `items`/`textVer` reset the timer on every
+  // extraction tick, and it never survived long enough to fire.
+  const libraryRef = useRef({ items: [], otherItems: [] });
+  libraryRef.current = { items, otherItems };
+
   const autoOpenedRef = useRef(null);
   useEffect(() => {
-    if (!search.trim()) { autoOpenedRef.current = null; return; }
-    const scored = [...items, ...otherItems]
-      .map(it => ({ it, s: scoreItem(it, search) }))
-      .filter(m => m.s >= 0)
-      .sort((a, b) => b.s - a.s);
-    if (scored.length === 0) return;
-    // Only auto-pop when there's an unambiguous winner: a single match, or a
-    // strong title/tag hit (≥80) that outscores everything else. This opens the
-    // right bulletin for "298" while not popping up mid-typing on partial/ambiguous
-    // queries (e.g. "29" matching both RECALL 298 and 299 equally).
-    const isClearWinner = scored.length === 1 || (scored[0].s >= 80 && scored[0].s > scored[1].s);
-    if (isClearWinner && autoOpenedRef.current !== scored[0].it.id) {
+    const q = search.trim();
+    if (!q) { autoOpenedRef.current = null; return; }
+    // Typing a condition never pops a PDF over the results.
+    if (!isNumberQuery(q) || q.length < 3) return;
+
+    // Wait for a pause: "2" then "29" then "299" would otherwise each get a
+    // chance to open whatever happened to match at that instant.
+    const timer = setTimeout(() => {
+      const { items: mine, otherItems: others } = libraryRef.current;
+      const scored = [...mine, ...others]
+        .map(it => ({ it, s: scoreItem(it, q) }))
+        .filter(m => m.s >= 0)
+        .sort((a, b) => b.s - a.s);
+      // Several bulletins for one number is precisely when the list has to stay
+      // on screen — Enter still opens the top one if that's what you wanted.
+      if (scored.length !== 1) return;
+      if (autoOpenedRef.current === scored[0].it.id) return;
       autoOpenedRef.current = scored[0].it.id;
       setPreviewItem(scored[0].it);
-    }
-  }, [search, textVer, items, otherItems]);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   function handleFileChange(e) {
     const f = e.target.files[0];
@@ -662,7 +675,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
             {indexing
               ? '⏳ Scanning PDF contents for search…'
               : search.trim()
-                ? `${filteredItems.length} match${filteredItems.length === 1 ? '' : 'es'} — press Enter to open the top result`
+                ? `${filteredItems.length} bulletin${filteredItems.length === 1 ? '' : 's'} match — press Enter to open the top one, or pick from the list below`
                 : 'Searches the title, tags, and the full text of every uploaded PDF. Tip: add a 🏷 # tag if a bulletin number is part of an image and isn’t found.'}
           </div>
           {/* Manager-only: backfill full-text search for older bulletins. */}
@@ -984,6 +997,11 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
         <MissingOpCodesModal
           items={opCodePool}
           onFix={(it) => { setShowMissingOps(false); setOpEditItem(it); }}
+          onIgnore={async (it) => {
+            const kind = it._kind || tab;
+            const newItems = await setHotRepairOpData(it.id, { opExcluded: true }, kind);
+            applySavedItems(newItems, kind);
+          }}
           onClose={() => setShowMissingOps(false)}
         />
       )}
