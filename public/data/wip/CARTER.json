@@ -14,5 +14,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtt4ulbfx38j",
+    "ro": "780674",
+    "roDate": "2026-09-08",
+    "vehicle": "2026 Hyundai Sonata",
+    "jobDesc": "REPLACE ONE TIRE PIRELLI PZERO 235/45R18 LARGE BUBBLE IN SIDEWALL OF TIRE.",
+    "notes": "tire is on order",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
