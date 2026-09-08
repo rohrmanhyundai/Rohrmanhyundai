@@ -22,5 +22,50 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": false
+  },
+  {
+    "id": "mtsvqf7xeqg8",
+    "ro": "780667",
+    "roDate": "2026-09-08",
+    "vehicle": "2025 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES- cust brought only the tire.",
+    "notes": "TIRE HAS WARRANTY",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mtsvqf7x3f8f",
+    "ro": "780663",
+    "roDate": "2026-09-08",
+    "vehicle": "2027 Hyundai Palisade Hybrid",
+    "jobDesc": "PDI",
+    "notes": "",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mtsvqf7x0xgl",
+    "ro": "780662",
+    "roDate": "2026-09-08",
+    "vehicle": "2027 Hyundai Palisade Hybrid",
+    "jobDesc": "PDI",
+    "notes": "",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "CODY TINCHER",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
