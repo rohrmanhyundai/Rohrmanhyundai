@@ -1,29 +1,5 @@
 [
   {
-    "id": "gm-mth86oillqnc",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "780409 need PO to close RO please",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788179971485
-  },
-  {
-    "id": "gm-mthj9itdck9w",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "780462 ARE WE DOING ALIGNMENT?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788198579841
-  },
-  {
     "id": "gm-mtkbsob01iqy",
     "from": "SHAWN",
     "to": [
@@ -326,5 +302,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788551026017
+  },
+  {
+    "id": "gm-mtstvsit9iul",
+    "from": "SHAWN",
+    "to": [
+      "CORY"
+    ],
+    "text": "did you see 780440 parts are here?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788881542949
   }
 ]
