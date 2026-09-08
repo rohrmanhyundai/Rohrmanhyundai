@@ -162,21 +162,23 @@
     "forecast": 96988.99,
     "lastYear": 97106.97,
     "actuals": {
-      "2026-09-03": 2201.13,
+      "2026-09-03": 2246.14,
       "2026-09-02": 4076.41,
-      "2026-09-01": 3350.1
+      "2026-09-01": 3350.1,
+      "2026-09-05": 227.29,
+      "2026-09-04": 3505.48
     },
     "partsBreakdown": {
       "mtd": {
-        "cpParts": 1721.45,
-        "warrantyParts": 1835.5911,
-        "internalParts": 1898.71,
-        "oilParts": 1066.04,
-        "oilRetail": 355.68,
-        "wholesale": 11190.29,
-        "cpTire": 75.34,
-        "internalTire": 222.25,
-        "total": 9627.64
+        "cpParts": 3220.97,
+        "warrantyParts": 2978.8915,
+        "internalParts": 1957.44,
+        "oilParts": 1494.88,
+        "oilRetail": 421.9,
+        "wholesale": 13106.33,
+        "cpTire": 91.52,
+        "internalTire": 332.17,
+        "total": 13405.42
       },
       "ly": {
         "cpParts": 23157.09,
