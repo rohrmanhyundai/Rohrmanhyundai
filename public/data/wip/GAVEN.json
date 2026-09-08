@@ -32,22 +32,6 @@
     "advisor": "CODY TINCHER"
   },
   {
-    "id": "mtndquhdvb3c",
-    "ro": "780598",
-    "roDate": "2026-09-04",
-    "vehicle": "2017 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES CAR HESITATES WHEN TAKING OFF IN THE MORNING FOR ABOUT A MILE.",
-    "notes": "TRANSMISSION SERVICE SOLD",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mtkiwfsptvb",
     "ro": "780556",
     "roDate": "2026-09-02",
