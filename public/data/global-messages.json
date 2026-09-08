@@ -406,5 +406,19 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788898107043
+  },
+  {
+    "id": "gm-mtt4a2owi60l",
+    "from": "SHAWN",
+    "to": [
+      "CODY",
+      "DAVID",
+      "JORDAN"
+    ],
+    "text": "If you have a RO that has already been set to a red flag. No need to change it to blue. Thank you!",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788899005472
   }
 ]
