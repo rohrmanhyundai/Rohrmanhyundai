@@ -91,5 +91,20 @@
     "advisor": "DAVID",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "mtsyli4h8w5",
+    "ro": "780552",
+    "roDate": "2026-09-02",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES- Tow in from another shop, engine is locked up. has CARS PRIME 866-446-4537 extended warranty. Claim already started",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "",
+    "flag": "purple"
   }
 ]
