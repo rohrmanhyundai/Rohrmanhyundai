@@ -394,5 +394,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788890228532
+  },
+  {
+    "id": "gm-mtt3qtgj18p0",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "Sent you a email from a customer VM",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788898107043
   }
 ]
