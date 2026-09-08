@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-08T13:00:21.227Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-09-08T12:59:47.840Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-05T19:47:30.316Z",
     "type": "page",
     "label": "advisor-goals"
@@ -749,65 +759,5 @@
     "at": "2026-08-10T13:10:22.092Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T21:59:37.625Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T21:33:48.406Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-07T21:33:44.380Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T20:06:52.939Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-07T20:06:32.842Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T19:12:56.448Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-07T19:11:01.535Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T19:10:31.518Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-08-07T18:12:13.192Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T14:17:33.827Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-07T14:17:27.571Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-07T14:17:13.962Z",
-    "type": "action",
-    "label": "login"
   }
 ]
