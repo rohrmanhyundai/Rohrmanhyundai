@@ -64,38 +64,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mtlz8hd4iv78",
-    "ro": "780576",
-    "roDate": "2026-09-03",
-    "vehicle": "2023 Hyundai Tucson",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mtlz8hd4roqw",
-    "ro": "780572",
-    "roDate": "2026-09-03",
-    "vehicle": "2011 Honda CR-Z",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mtndqt7imcci",
     "ro": "780622",
     "roDate": "2026-09-04",
