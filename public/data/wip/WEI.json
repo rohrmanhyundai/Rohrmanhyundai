@@ -39,5 +39,20 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "mro3a7o9xsj",
+    "ro": "779297",
+    "roDate": "2026-07-16",
+    "vehicle": "",
+    "jobDesc": "Crank no start",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID",
+    "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
+    "flag": "purple"
   }
 ]
