@@ -1,35 +1,5 @@
 [
   {
-    "id": "mtiz35tnhqby",
-    "ro": "780492",
-    "roDate": "2026-09-01",
-    "vehicle": "2009 Hyundai Santa Fe",
-    "jobDesc": "976 C CYL HEAD CVR OIL LEAK RPR (24-01-026H)",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mtlgys5bim17",
-    "ro": "780555",
-    "roDate": "2026-09-03",
-    "vehicle": "2017 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES HAS CYLINDER 4 MISFIRE. SAYS DIAG SAID NEEDS IGNITION COIL",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
     "id": "mtndquhdkvkn",
     "ro": "780616",
     "roDate": "2026-09-04",
