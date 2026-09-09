@@ -19,9 +19,9 @@ export const DEFAULT_PLAN = {
   payType: 'flat',     // 'flat' = flat rate only | 'flat_clock' = clock + flat rate
   flatRate: 0,         // $ per flagged hour, base tier
   tier1Hours: TIER1_HOURS,
-  tier1Rate: 0,        // base rate is used when this is 0 (tier not set up)
+  tier1Bump: 0,        // ADDED to the base rate once the tier is reached, not a replacement
   tier2Hours: TIER2_HOURS,
-  tier2Rate: 0,
+  tier2Bump: 0,
   tierMode: 'all',     // 'all' = every hour at the bumped rate | 'above' = only the hours past the threshold
   clockRate: 0,        // $ per clock hour
   clockHours: 40,      // clock hours per week
@@ -34,14 +34,22 @@ const num = (v, d = 0) => {
 };
 
 export function normalizePlan(plan) {
-  const p = { ...DEFAULT_PLAN, ...(plan || {}) };
+  const raw = plan || {};
+  const p = { ...DEFAULT_PLAN, ...raw };
+  // Read the legacy key off the STORED plan, not the merged one — the merged one
+  // always carries a defaulted tier1Bump, which would mask it.
+  const bumpOf = (bump, legacy) => Math.max(0, num(bump !== undefined ? bump : legacy));
   return {
     payType: p.payType === 'flat_clock' ? 'flat_clock' : 'flat',
     flatRate: num(p.flatRate),
     tier1Hours: num(p.tier1Hours, TIER1_HOURS),
-    tier1Rate: num(p.tier1Rate),
+    // A bump is what the tier ADDS to the base rate — that's how the pay plans
+    // are written ("$2 more an hour past 50"). The first version of this screen
+    // asked for a replacement rate instead, so a plan saved with tier1Rate reads
+    // its number as the bump it was always meant to be.
+    tier1Bump: bumpOf(raw.tier1Bump, raw.tier1Rate),
     tier2Hours: num(p.tier2Hours, TIER2_HOURS),
-    tier2Rate: num(p.tier2Rate),
+    tier2Bump: bumpOf(raw.tier2Bump, raw.tier2Rate),
     tierMode: p.tierMode === 'above' ? 'above' : 'all',
     clockRate: num(p.clockRate),
     clockHours: num(p.clockHours),
@@ -56,12 +64,14 @@ export function planIsSet(plan) {
   return p.flatRate > 0 || (p.payType === 'flat_clock' && p.clockRate > 0);
 }
 
-// The ladder, lowest first. A tier with no rate entered falls back to the rate
-// below it, so a half-filled plan never pays less than the base.
+// The ladder, lowest first. Each tier is the base rate plus that tier's bump, so
+// a blank bump simply pays the base and a half-filled plan can never pay less
+// than the base. Tier 2 is held at or above tier 1 — turning MORE hours must
+// never drop someone's rate.
 export function tiersOf(plan) {
   const p = normalizePlan(plan);
-  const t1 = p.tier1Rate > 0 ? p.tier1Rate : p.flatRate;
-  const t2 = p.tier2Rate > 0 ? p.tier2Rate : t1;
+  const t1 = p.flatRate + p.tier1Bump;
+  const t2 = Math.max(t1, p.flatRate + p.tier2Bump);
   return [
     { label: `Up to ${p.tier1Hours} hrs`, min: 0, rate: p.flatRate },
     { label: `${p.tier1Hours} – ${p.tier2Hours} hrs`, min: p.tier1Hours, rate: t1 },

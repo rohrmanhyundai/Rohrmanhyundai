@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { safe } from '../utils/formatters';
 import { loadTechPay, saveTechPayPlan } from '../utils/github';
-import { computeTechPay, normalizePlan, planIsSet, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
+import { computeTechPay, normalizePlan, planIsSet, tiersOf, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
 import { HeroCard, QualCard, Row } from './LivePay';
 
 /* Tech Live Pay — the flat-rate mirror of the advisor page.
@@ -288,6 +288,7 @@ function SetupPanel({ techName, plan, onSaved }) {
   }
 
   const preview = computeTechPay(form, 50);
+  const ladder = tiersOf(form);
 
   return (
     <div style={{ maxWidth: 780, margin: '0 auto' }}>
@@ -311,18 +312,22 @@ function SetupPanel({ techName, plan, onSaved }) {
         <div style={{ height: 1, background: 'rgba(148,163,184,.14)', margin: '4px 0 18px' }} />
         <div style={{ fontSize: 12, fontWeight: 900, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 12 }}>Tier Bumps</div>
 
+        <div style={{ fontSize: 12.5, color: '#64748b', marginBottom: 12, lineHeight: 1.45 }}>
+          A bump is what the tier <strong>adds</strong> to the base rate — enter 2 for "two dollars more an hour past 50".
+          Leave a bump blank and that tier just pays the base.
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 14 }}>
           <Field label={`Tier 1 — hours (default ${TIER1_HOURS})`}>
             <input type="number" step="0.5" min="0" style={inputStyle} {...numField('tier1Hours')} />
           </Field>
-          <Field label="Tier 1 rate ($/hr)">
-            <input type="number" step="0.01" min="0" placeholder="leave blank for none" style={inputStyle} {...numField('tier1Rate')} />
+          <Field label="Tier 1 bump (+$/hr)" hint={`Pays ${rate(ladder[1].rate)}/hr past ${hrs1(form.tier1Hours)} hrs`}>
+            <input type="number" step="0.01" min="0" placeholder="0.00" style={inputStyle} {...numField('tier1Bump')} />
           </Field>
           <Field label={`Tier 2 — hours (default ${TIER2_HOURS})`}>
             <input type="number" step="0.5" min="0" style={inputStyle} {...numField('tier2Hours')} />
           </Field>
-          <Field label="Tier 2 rate ($/hr)">
-            <input type="number" step="0.01" min="0" placeholder="leave blank for none" style={inputStyle} {...numField('tier2Rate')} />
+          <Field label="Tier 2 bump (+$/hr)" hint={`Pays ${rate(ladder[2].rate)}/hr past ${hrs1(form.tier2Hours)} hrs`}>
+            <input type="number" step="0.01" min="0" placeholder="0.00" style={inputStyle} {...numField('tier2Bump')} />
           </Field>
         </div>
 
