@@ -11,5 +11,19 @@
     "clockHours": 40,
     "clockMode": "add",
     "updated": "2026-09-09T16:22:14.856Z"
+  },
+  "CARTER": {
+    "payType": "flat",
+    "flatRate": 24,
+    "tier1Hours": 50,
+    "tier1Bump": 2,
+    "tier2Hours": 60,
+    "tier2Bump": 2,
+    "tierMode": "all",
+    "clockRate": 0,
+    "clockHours": 40,
+    "clockMode": "add",
+    "eligiblePto": true,
+    "updated": "2026-09-09T17:50:58.119Z"
   }
 }
