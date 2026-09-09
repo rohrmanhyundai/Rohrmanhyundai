@@ -187,8 +187,11 @@ export default function App() {
   const [globalUnread, setGlobalUnread] = useState(0); // unread global-message activity → Manager button badge
   const [globalMessages, setGlobalMessages] = useState([]); // feeds the floating messenger panel
   const globalSeenRef = useRef(0);                   // ts the user last opened the Global Message log
-  // Cash Dash season — when it is switched off the tile disappears for staff,
-  // while managers keep it so they can switch it back on.
+  // Cash Dash season — switched off, the tile disappears for EVERYONE on the
+  // staff hubs, managers included: off means off, not "off for other people".
+  // The Manager Hub keeps its tile, because that page is manager-only and the
+  // Active/Frozen/Off switch lives inside Cash Dash itself — hiding it there too
+  // would leave no way to turn it back on.
   const [cashSeason, setCashSeason] = useState(SEASON.ACTIVE);
   useEffect(() => { loadCashDash().then(d => setCashSeason(seasonOf(d))).catch(() => {}); }, []);
 
@@ -947,7 +950,7 @@ export default function App() {
         onMyReview={() => navTo('tech-self-review')}
         onMyReports={() => goTo('performance-report', 'tech-resources')}
         onAdditionalTimeReview={() => goTo('additional-time-review', 'tech-resources')}
-        onCashDash={(cashSeason !== SEASON.OFF || isAdminOrManager) ? () => goTo('cash-dash', 'tech-resources') : undefined}
+        onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'tech-resources') : undefined}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -1372,7 +1375,7 @@ export default function App() {
         onGoalsForecasting={() => goTo('advisor-goals', 'advisor-calendar')}
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
-        onCashDash={(cashSeason !== SEASON.OFF || isAdminOrManager) ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
+        onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
