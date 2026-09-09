@@ -436,5 +436,23 @@
     "notes": "was happy when she left",
     "submittedAt": "2026-09-09T20:25:16.298Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "HAILEY CHILD",
+    "repairOrder": "780626",
+    "vin": "5NMP2DGL1TH192663",
+    "model": "SANTA FE",
+    "serviceDate": "09/04/2026",
+    "invitationDate": "09/08/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "7654043542",
+    "notes": "cust was very happy and appreciative of of service when she picked up",
+    "submittedAt": "2026-09-09T20:28:46.429Z",
+    "submittedBy": "DAVID"
   }
 ]
