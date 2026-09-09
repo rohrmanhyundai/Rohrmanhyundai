@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-09T13:50:46.980Z",
+    "type": "page",
+    "label": "registration-upload"
+  },
+  {
+    "at": "2026-09-09T13:50:46.111Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-09T13:50:34.200Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-09T13:50:33.500Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-08T19:12:28.942Z",
     "type": "page",
     "label": "tire-warranty"
@@ -1298,113 +1318,5 @@
     "at": "2026-08-10T16:07:22.498Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T12:56:15.873Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T12:42:37.027Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-10T12:42:28.065Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T11:53:41.786Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:48:51.301Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-10T11:48:15.809Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:47:09.944Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:46:20.956Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:45:51.621Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:42:17.170Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:42:15.136Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (3).xlsx"
-  },
-  {
-    "at": "2026-08-10T11:41:13.617Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (1).pdf"
-  },
-  {
-    "at": "2026-08-10T11:39:18.131Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:37:55.819Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-10T11:37:51.972Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (1).pdf"
-  },
-  {
-    "at": "2026-08-10T11:37:33.049Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-10T11:19:22.807Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T11:19:18.840Z",
-    "type": "page",
-    "label": "manager-hub"
-  },
-  {
-    "at": "2026-08-10T11:19:11.030Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-10T11:18:53.676Z",
-    "type": "page",
-    "label": "manager-hub"
-  },
-  {
-    "at": "2026-08-10T11:18:44.079Z",
-    "type": "page",
-    "label": "advisor-goals"
   }
 ]
