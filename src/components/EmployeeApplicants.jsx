@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { loadApplicants, saveApplicant, deleteApplicant } from '../utils/github';
 import { uploadResumeToS3 } from '../utils/s3';
 import { verifyAccessCode, hasAccessCode } from '../utils/accessCode';
+import { parseResume } from '../utils/resumeParse';
 
 /* Employee Applicants — one hiring pipeline per manager.
  *
@@ -401,6 +402,25 @@ function ApplicantForm({ onCancel, onSave }) {
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const [readNote, setReadNote] = useState('');
+
+  // Read the resume as soon as it's picked and fill in what it tells us. Only
+  // empty boxes are touched — anything already typed is the person's own and
+  // outranks a guess — and everything stays editable.
+  async function pickResume(f) {
+    setFile(f || null);
+    setReadNote('');
+    if (!f || !/\.pdf$/i.test(f.name)) return;
+    setReadNote('Reading the resume…');
+    const found = await parseResume(f);
+    const filled = [];
+    if (found.name && !name.trim()) { setName(found.name); filled.push('name'); }
+    if (found.phone && !phone.trim()) { setPhone(found.phone); filled.push('phone'); }
+    if (found.email && !email.trim()) { setEmail(found.email); filled.push('email'); }
+    setReadNote(filled.length
+      ? `Filled ${filled.join(', ')} from the resume — check it's right.`
+      : 'Couldn’t read the details off this one — type them in.');
+  }
 
   async function save() {
     if (!name.trim()) { setError('A name is the one thing this needs.'); return; }
@@ -433,7 +453,7 @@ function ApplicantForm({ onCancel, onSave }) {
     }}>
       <div style={{ fontSize: 15, fontWeight: 900, color: '#bfdbfe', marginBottom: 14 }}>New applicant</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14 }}>
-        <div><label style={labelStyle}>Name</label><input autoFocus value={name} onChange={e => setName(e.target.value)} style={inputStyle} /></div>
+        <div><label style={labelStyle}>Name</label><input value={name} onChange={e => setName(e.target.value)} style={inputStyle} /></div>
         <div><label style={labelStyle}>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} inputMode="tel" style={inputStyle} /></div>
         <div><label style={labelStyle}>Email</label><input value={email} onChange={e => setEmail(e.target.value)} inputMode="email" style={inputStyle} /></div>
         <div>
@@ -457,7 +477,12 @@ function ApplicantForm({ onCancel, onSave }) {
       <div style={{ marginTop: 14 }}>
         <label style={labelStyle}>Resume <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none' }}>(optional)</span></label>
         <input className="promo-file" type="file" accept=".pdf,.doc,.docx,image/*"
-          onChange={e => setFile(e.target.files?.[0] || null)} style={{ display: 'block' }} />
+          onChange={e => pickResume(e.target.files?.[0] || null)} style={{ display: 'block' }} />
+        {readNote && (
+          <div style={{ fontSize: 12, marginTop: 6, color: readNote.startsWith('Filled') ? '#6ee7b7' : '#8296b4' }}>
+            {readNote}
+          </div>
+        )}
       </div>
 
       {error && <div style={{ color: '#fca5a5', fontSize: 13, fontWeight: 700, marginTop: 12 }}>⚠ {error}</div>}
