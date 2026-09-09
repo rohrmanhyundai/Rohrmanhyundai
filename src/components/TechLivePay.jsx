@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { safe } from '../utils/formatters';
 import { loadTechPay, saveTechPayPlan, loadTechPayHistory } from '../utils/github';
-import { computeTechPay, normalizePlan, planIsSet, tiersOf, payBasis, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
+import { computeTechPay, normalizePlan, planIsSet, tiersOf, payBasis, weekBounds, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
 import { HeroCard, QualCard, Row } from './LivePay';
 
 /* Tech Live Pay — the flat-rate mirror of the advisor page.
@@ -224,7 +224,7 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                   </strong>
                 </div>
 
-                <HistoryPanel techName={firstWord(selected.name)} />
+                <HistoryPanel techName={firstWord(selected.name)} currentWeekStart={weekBounds().start} />
               </>
             )}
           </div>
@@ -236,11 +236,11 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
 
 /* ---------------------------------------------------------------- history */
 
-/* Past days, newest first. The Tech Hours board is cleared at the start of each
- * week, so this is the only place a finished week survives. The dollars stored
- * are the ones that were true on the day — a pay plan edited later doesn't
- * rewrite what someone was already told. */
-function HistoryPanel({ techName }) {
+/* Past weeks, newest first. The Tech Hours board is cleared when a week is
+ * closed out, so this is the only place a finished week survives. The figures
+ * stored are the ones that were true when the week closed — a pay plan edited
+ * later doesn't rewrite what someone was already told they earned. */
+function HistoryPanel({ techName, currentWeekStart }) {
   const [rows, setRows] = useState(null);   // null = loading
   const [open, setOpen] = useState(false);
 
@@ -251,18 +251,21 @@ function HistoryPanel({ techName }) {
       .then(h => {
         if (!alive) return;
         const list = Object.values(h || {})
-          .filter(r => r && r.date)
-          .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+          .filter(r => r && r.weekStart)
+          .sort((a, b) => (a.weekStart < b.weekStart ? 1 : a.weekStart > b.weekStart ? -1 : 0));
         setRows(list);
       })
       .catch(() => { if (alive) setRows([]); });
     return () => { alive = false; };
   }, [techName]);
 
-  const dayLabel = (iso) => {
-    const [y, m, d] = String(iso).split('-').map(Number);
-    if (!y || !m || !d) return iso;
-    return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  const weekLabel = (r) => {
+    const fmt = (iso) => {
+      const [y, m, d] = String(iso || '').split('-').map(Number);
+      if (!y || !m || !d) return iso || '';
+      return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+    return r.weekEnd ? `${fmt(r.weekStart)} – ${fmt(r.weekEnd)}` : fmt(r.weekStart);
   };
 
   return (
@@ -271,7 +274,7 @@ function HistoryPanel({ techName }) {
         style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 18px', background: 'linear-gradient(90deg, rgba(56,189,248,.16), transparent)', border: 'none', borderBottom: open ? '1px solid rgba(148,163,184,.14)' : 'none', cursor: 'pointer', textAlign: 'left' }}>
         <span style={{ width: 4, height: 16, borderRadius: 2, background: 'linear-gradient(180deg,#38bdf8,#0ea5e9)' }} />
         <div style={{ flex: 1, fontSize: 12, fontWeight: 900, color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-          Daily History{rows && rows.length ? ` (${rows.length} day${rows.length === 1 ? '' : 's'})` : ''}
+          Weekly History{rows && rows.length ? ` (${rows.length} week${rows.length === 1 ? '' : 's'})` : ''}
         </div>
         <span style={{ color: '#7dd3fc', fontWeight: 900, fontSize: 13 }}>{open ? '▲' : '▼'}</span>
       </button>
@@ -281,29 +284,42 @@ function HistoryPanel({ techName }) {
           <div style={{ padding: '18px', color: '#94a3b8', fontSize: 13.5, fontWeight: 700 }}>Loading…</div>
         ) : rows.length === 0 ? (
           <div style={{ padding: '18px', color: '#94a3b8', fontSize: 13.5, fontWeight: 700, lineHeight: 1.5 }}>
-            Nothing recorded yet. A day is saved automatically each night, so this fills in from here on.
+            No finished weeks yet. Each week is stored when it&rsquo;s closed out on the Tech Hours board.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <div style={{ minWidth: 520 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1.3fr .8fr .9fr .8fr 1fr', padding: '8px 18px', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.1)' }}>
-                <div>Day</div>
-                <div style={{ textAlign: 'right' }}>Hrs That Day</div>
-                <div style={{ textAlign: 'right' }}>Week Hrs</div>
+            <div style={{ minWidth: 540 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr .9fr .8fr 1fr .9fr', padding: '8px 18px', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                <div>Week</div>
+                <div style={{ textAlign: 'right' }}>Hours Paid</div>
                 <div style={{ textAlign: 'right' }}>Rate</div>
-                <div style={{ textAlign: 'right' }}>Banked</div>
+                <div style={{ textAlign: 'right' }}>Pay</div>
+                <div style={{ textAlign: 'right' }}>Status</div>
               </div>
-              {rows.map(r => (
-                <div key={r.date} style={{ display: 'grid', gridTemplateColumns: '1.3fr .8fr .9fr .8fr 1fr', padding: '10px 18px', fontSize: 13.5, alignItems: 'center', borderBottom: '1px solid rgba(148,163,184,.06)' }}>
-                  <div style={{ fontWeight: 800, color: '#cbd5e1' }}>{dayLabel(r.date)}</div>
-                  <div style={{ textAlign: 'right', color: '#94a3b8', fontWeight: 700 }}>{hrs1(r.dayHours)}</div>
-                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 700 }}>{hrs1(r.weekHours)}</div>
-                  <div style={{ textAlign: 'right', color: '#a78bfa', fontWeight: 800 }}>{rate(r.rate)}</div>
-                  <div style={{ textAlign: 'right', color: '#38bdf8', fontWeight: 900 }}>{money(r.banked)}</div>
-                </div>
-              ))}
+              {rows.map(r => {
+                const live = r.weekStart === currentWeekStart && !r.closed;
+                return (
+                  <div key={r.weekStart} style={{ display: 'grid', gridTemplateColumns: '1.5fr .9fr .8fr 1fr .9fr', padding: '10px 18px', fontSize: 13.5, alignItems: 'center', borderBottom: '1px solid rgba(148,163,184,.06)', background: live ? 'rgba(52,211,153,.06)' : 'transparent' }}>
+                    <div style={{ fontWeight: 800, color: '#cbd5e1' }}>
+                      {weekLabel(r)}
+                      {r.ptoHours > 0 && !r.ptoPaid && (
+                        <span style={{ display: 'block', fontSize: 11, color: '#94a3b8', fontWeight: 700 }}>
+                          {hrs1(r.ptoHours)} PTO hrs not paid
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 700 }}>{hrs1(r.hours)}</div>
+                    <div style={{ textAlign: 'right', color: '#a78bfa', fontWeight: 800 }}>{rate(r.rate)}</div>
+                    <div style={{ textAlign: 'right', color: '#38bdf8', fontWeight: 900 }}>{money(r.pay)}</div>
+                    <div style={{ textAlign: 'right', fontSize: 11, fontWeight: 800, color: r.closed ? '#6ee7b7' : '#fbbf24' }}>
+                      {r.closed ? 'Final' : 'In progress'}
+                    </div>
+                  </div>
+                );
+              })}
               <div style={{ padding: '12px 18px', fontSize: 12.5, fontWeight: 700, color: '#64748b', lineHeight: 1.5 }}>
-                Each row is where the week stood at the end of that day, at the rate in force then — gross, before tax and deductions.
+                A week marked Final was closed out and adjusted by a manager — those are the figures that stand.
+                All amounts are gross, before tax and deductions.
               </div>
             </div>
           </div>
