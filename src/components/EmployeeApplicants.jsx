@@ -13,7 +13,12 @@ import { verifyAccessCode, hasAccessCode } from '../utils/accessCode';
 
 const uid = () => `ap-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-const POSITIONS = ['Technician', 'Service Advisor', 'Parts', 'Lot / Porter', 'Detail', 'Office', 'Other'];
+const POSITIONS = ['Technician', 'Advisor', 'Porter', 'Lube Technician', 'Parts Counter', 'Warranty Admin', 'Other'];
+
+// Anyone filed before the list settled keeps their spot rather than dropping
+// into "Other" — the old wording maps onto the role it became.
+const LEGACY_POSITIONS = { 'Service Advisor': 'Advisor', 'Parts': 'Parts Counter', 'Lot / Porter': 'Porter', 'Detail': 'Other', 'Office': 'Other' };
+const positionOf = (a) => LEGACY_POSITIONS[a.position] || a.position || 'Other';
 const SOURCES = ['Indeed', 'Walk-in', 'Referral', 'Hyundai site', 'Facebook', 'Other'];
 
 // ── Dates ────────────────────────────────────────────────────────────────────
@@ -95,6 +100,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('open');
+  const [role, setRole] = useState('all');       // which category is showing
   const [search, setSearch] = useState('');
   const [adding, setAdding] = useState(false);
   const [busyId, setBusyId] = useState('');
@@ -167,6 +173,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         if (filter === 'archived') return !!a.archived;
         return true;
       })
+      .filter(a => role === 'all' || positionOf(a) === role)
       .filter(a => !q || [a.name, a.phone, a.email, a.position].some(v => String(v || '').toLowerCase().includes(q)))
       .slice()
       .sort((a, b) => {
@@ -174,11 +181,46 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         if (ra !== rb) return ra - rb;
         return String(a.interviewAt || a.appliedAt || '').localeCompare(String(b.interviewAt || b.appliedAt || ''));
       });
-  }, [rows, filter, search]);
+  }, [rows, filter, role, search]);
 
   // Follow edits to whoever is open below, and drop the panel if they're deleted.
   const viewingLive = viewing ? rows.find(r => r.id === viewing.id) || null : null;
   useEffect(() => { if (viewing && !viewingLive) setViewing(null); }, [viewing, viewingLive]);
+
+  // Counts for the role chips reflect the status filter above them, so "Needs a
+  // decision" plus "Technician" reads as the number it actually shows.
+  const roleCounts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const c = {};
+    rows.forEach(a => {
+      const st = stageOf(a).key;
+      const passesStatus = filter === 'open' ? (!a.archived && st !== 'pass')
+        : filter === 'today' ? (st === 'today' || st === 'overdue')
+        : filter === 'decide' ? st === 'decide'
+        : filter === 'hire' ? st === 'hire'
+        : filter === 'archived' ? !!a.archived
+        : true;
+      if (!passesStatus) return;
+      if (q && ![a.name, a.phone, a.email, a.position].some(v => String(v || '').toLowerCase().includes(q))) return;
+      const p = positionOf(a);
+      c[p] = (c[p] || 0) + 1;
+    });
+    return c;
+  }, [rows, filter, search]);
+
+  // Grouped for display: each role its own block, in the order the list defines,
+  // with anything unrecognised last rather than hidden.
+  const grouped = useMemo(() => {
+    const byRole = new Map();
+    view.forEach(a => {
+      const p = positionOf(a);
+      if (!byRole.has(p)) byRole.set(p, []);
+      byRole.get(p).push(a);
+    });
+    const known = POSITIONS.filter(p => byRole.has(p));
+    const extra = [...byRole.keys()].filter(p => !POSITIONS.includes(p)).sort();
+    return [...known, ...extra].map(p => [p, byRole.get(p)]);
+  }, [view]);
 
   const counts = useMemo(() => {
     const c = { today: 0, decide: 0, hire: 0 };
@@ -276,6 +318,21 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
               style={{ ...inputStyle, width: 'auto', flex: 1, minWidth: 180, padding: '7px 12px', fontSize: 13 }} />
           </div>
 
+          {/* One category per role. Only roles with somebody in them show, so
+              the row doesn't fill up with empty chips. */}
+          <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+            <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.11em', color: '#7f93b0', textTransform: 'uppercase', marginRight: 2 }}>Role</span>
+            {[['all', 'All roles'], ...POSITIONS.filter(p => roleCounts[p]).map(p => [p, p]),
+              ...Object.keys(roleCounts).filter(p => !POSITIONS.includes(p)).map(p => [p, p])].map(([key, label]) => (
+              <button key={key} onClick={() => setRole(key)}
+                className={`adv-advisor-tab${role === key ? ' adv-advisor-tab--active' : ''}`}
+                style={{ fontSize: 12, padding: '5px 12px' }}>
+                {label}
+                {key !== 'all' && <span style={{ opacity: .65, fontWeight: 700 }}> {roleCounts[key]}</span>}
+              </button>
+            ))}
+          </div>
+
           {err && <div style={{ color: '#fca5a5', fontWeight: 700, fontSize: 13, marginBottom: 12 }}>⚠ {err}</div>}
 
           {adding && (
@@ -295,17 +352,31 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
               {rows.length ? 'Nobody matches that filter.' : 'No applicants yet. Add the first one above.'}
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: 14 }}>
-              {view.map(a => (
-                <ApplicantCard
-                  key={a.id}
-                  applicant={a}
-                  busy={busyId === a.id}
-                  viewing={viewingLive?.id === a.id}
-                  onView={show => setViewing(show ? a : null)}
-                  onChange={patch => persist({ ...a, ...patch })}
-                  onDelete={() => remove(a)}
-                />
+            <div style={{ display: 'grid', gap: 26 }}>
+              {grouped.map(([roleName, list]) => (
+                <div key={roleName}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10,
+                    fontSize: 11.5, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8fa7c8',
+                  }}>
+                    {roleName}
+                    <span style={{ color: '#64748b', letterSpacing: 0 }}>{list.length}</span>
+                    <span style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(148,163,184,.28),transparent)' }} />
+                  </div>
+                  <div style={{ display: 'grid', gap: 14 }}>
+                    {list.map(a => (
+                      <ApplicantCard
+                        key={a.id}
+                        applicant={a}
+                        busy={busyId === a.id}
+                        viewing={viewingLive?.id === a.id}
+                        onView={show => setViewing(show ? a : null)}
+                        onChange={patch => persist({ ...a, ...patch })}
+                        onDelete={() => remove(a)}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -574,7 +645,7 @@ function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete
       </div>
 
       <div style={{ fontSize: 12.5, color: '#8296b4', marginTop: 6, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-        {a.position && <span>{a.position}</span>}
+        <span>{positionOf(a)}</span>
         {a.phone && <a href={`tel:${a.phone}`} style={{ color: '#7dd3fc' }}>{a.phone}</a>}
         {a.email && <a href={`mailto:${a.email}`} style={{ color: '#7dd3fc' }}>{a.email}</a>}
         {a.resumeUrl && (
@@ -589,6 +660,45 @@ function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete
 
       {open && (
         <div style={{ marginTop: 16, display: 'grid', gap: 16 }}>
+          {/* Role first: it decides which category they're filed under, and
+              people get put in the wrong one. */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+            <div>
+              <label style={labelStyle}>Applying for</label>
+              <select value={positionOf(a)} onChange={e => onChange({ position: e.target.value })} style={inputStyle}>
+                {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                {/* Keep an unrecognised value selectable rather than silently
+                    re-filing them the moment this panel opens. */}
+                {!POSITIONS.includes(positionOf(a)) && <option value={positionOf(a)}>{positionOf(a)}</option>}
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Came from</label>
+              <select value={a.source || SOURCES[0]} onChange={e => onChange({ source: e.target.value })} style={inputStyle}>
+                {SOURCES.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Contact — editable, because a typed phone number is usually wrong once */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+            <div>
+              <label style={labelStyle}>Name</label>
+              <input defaultValue={a.name || ''} key={`n-${a.id}-${a.name}`} style={inputStyle}
+                onBlur={e => { const v = e.target.value.trim(); if (v && v !== a.name) onChange({ name: v }); }} />
+            </div>
+            <div>
+              <label style={labelStyle}>Phone</label>
+              <input defaultValue={a.phone || ''} key={`p-${a.id}-${a.phone}`} inputMode="tel" style={inputStyle}
+                onBlur={e => { const v = e.target.value.trim(); if (v !== (a.phone || '')) onChange({ phone: v }); }} />
+            </div>
+            <div>
+              <label style={labelStyle}>Email</label>
+              <input defaultValue={a.email || ''} key={`e-${a.id}-${a.email}`} inputMode="email" style={inputStyle}
+                onBlur={e => { const v = e.target.value.trim(); if (v !== (a.email || '')) onChange({ email: v }); }} />
+            </div>
+          </div>
+
           {/* Scheduling */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
             <div>
