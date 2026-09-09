@@ -54,5 +54,19 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
     "flag": "purple"
+  },
+  {
+    "id": "mtt4uopwa80f",
+    "ro": "780680",
+    "roDate": "2026-09-08",
+    "vehicle": "2017 Hyundai Sonata",
+    "jobDesc": "PROGRAM KEY FOB/SMART KEY REPLACEMENT",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
