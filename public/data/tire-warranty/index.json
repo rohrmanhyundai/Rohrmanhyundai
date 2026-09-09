@@ -1,5 +1,48 @@
 [
   {
+    "id": "mtuki5l90kh8",
+    "createdAt": "2026-09-09T20:45:22.509Z",
+    "updatedAt": "2026-09-09T20:48:08.163Z",
+    "createdBy": "David",
+    "customerName": "Deline",
+    "repairOrder": "780715",
+    "repairOrderPhoto": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-repairorder-1788986750817.jpg",
+    "originalPurchasePhoto": "",
+    "replacementQuotePhoto": "",
+    "wheels": {
+      "LF": {
+        "tire": true,
+        "rim": false,
+        "treadDepth": "6/32"
+      },
+      "RF": {
+        "tire": false,
+        "rim": false
+      },
+      "LR": {
+        "tire": false,
+        "rim": false
+      },
+      "RR": {
+        "tire": false,
+        "rim": false
+      }
+    },
+    "photos": {
+      "LF": {
+        "tireDamage": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-tireDamage-1788986800558.jpg",
+        "dot": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-dot-1788986813213.jpg",
+        "size": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-size-1788986821370.jpg",
+        "brand": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-brand-1788986836952.jpg",
+        "gauge": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-gauge-1788986868362.jpg",
+        "tireFull": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/tire-photos/mtuki5l90kh8-LF-tireFull-1788986877058.jpg"
+      },
+      "RF": {},
+      "LR": {},
+      "RR": {}
+    }
+  },
+  {
     "id": "mtsz3s7pq6ba",
     "createdAt": "2026-09-08T17:58:33.877Z",
     "updatedAt": "2026-09-08T18:08:14.097Z",
