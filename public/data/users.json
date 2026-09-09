@@ -65,12 +65,11 @@
     },
     {
       "username": "David",
-      "password": "David2026",
+      "password": "David1234",
       "role": "advisor",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -82,7 +81,8 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": true
       },
       "chatAccess": true,
       "techChatAccess": true,
