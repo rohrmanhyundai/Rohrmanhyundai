@@ -9,8 +9,8 @@
     "contacted": "yes",
     "contactedAt": "2026-09-09T11:24",
     "contactNotes": "BY PHONE. INTERVIEW WAS SET NO SHOW. ",
-    "interviewed": "no",
-    "interviewedAt": "",
+    "interviewed": "yes",
+    "interviewedAt": "2026-09-09T11:45",
     "interviewNotes": "",
     "considerHire": "",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-mtu91c668c3x.pdf",
@@ -18,7 +18,7 @@
     "archived": false,
     "id": "ap-mtu91chhz364",
     "appliedAt": "2026-09-09T15:24:22.517Z",
-    "updatedAt": "2026-09-09T15:45:05.554Z",
+    "updatedAt": "2026-09-09T15:45:11.140Z",
     "updatedBy": "SHAWN"
   },
   {
