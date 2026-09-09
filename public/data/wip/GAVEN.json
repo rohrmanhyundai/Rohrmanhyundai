@@ -16,22 +16,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "mtndquhddtoi",
-    "ro": "780606",
-    "roDate": "2026-09-04",
-    "vehicle": "2011 Hyundai Sonata",
-    "jobDesc": "RECALLS",
-    "notes": "CAR IS STAYING HERE UNTIL ALL ARE DONE",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/08/2026",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
-  },
-  {
     "id": "mtkiwfsptvb",
     "ro": "780556",
     "roDate": "2026-09-02",
