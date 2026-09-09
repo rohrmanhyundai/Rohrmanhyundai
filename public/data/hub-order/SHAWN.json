@@ -14,5 +14,16 @@
     "userDataTracker",
     "globalMessage",
     "cashDash"
+  ],
+  "warrantyHub": [
+    "atDiagWorksheet",
+    "hotRepairs",
+    "aftermarketWarranty",
+    "originalOwner",
+    "documentLibrary",
+    "tireWarranty",
+    "tireQuote",
+    "nttAttWorksheet",
+    "registrationUploads"
   ]
 }
