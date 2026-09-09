@@ -220,6 +220,9 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                   {' '}<strong style={{ color: '#fdba74', fontWeight: 900 }}>
                     These are gross figures — pre-tax and before any payroll deductions.
                   </strong>
+                  {' '}<strong style={{ color: '#fdba74', fontWeight: 900 }}>
+                    The monthly VMPI bonus is not included here — it is paid out on the first full week of each month.
+                  </strong>
                 </div>
 
                 <HistoryPanel techName={firstWord(selected.name)} currentWeekStart={weekBounds().start} />
