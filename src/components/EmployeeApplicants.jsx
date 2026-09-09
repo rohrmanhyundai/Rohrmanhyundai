@@ -99,6 +99,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   const [adding, setAdding] = useState(false);
   const [busyId, setBusyId] = useState('');
   const [err, setErr] = useState('');
+  const [viewing, setViewing] = useState(null);   // applicant whose resume is docked below
 
   useEffect(() => {
     if (!unlocked) return;
@@ -174,6 +175,10 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         return String(a.interviewAt || a.appliedAt || '').localeCompare(String(b.interviewAt || b.appliedAt || ''));
       });
   }, [rows, filter, search]);
+
+  // Follow edits to whoever is open below, and drop the panel if they're deleted.
+  const viewingLive = viewing ? rows.find(r => r.id === viewing.id) || null : null;
+  useEffect(() => { if (viewing && !viewingLive) setViewing(null); }, [viewing, viewingLive]);
 
   const counts = useMemo(() => {
     const c = { today: 0, decide: 0, hire: 0 };
@@ -256,7 +261,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         </button>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px 48px', paddingBottom: viewingLive ? 'calc(46vh + 32px)' : 48 }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
@@ -296,6 +301,8 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
                   key={a.id}
                   applicant={a}
                   busy={busyId === a.id}
+                  viewing={viewingLive?.id === a.id}
+                  onView={() => setViewing(v => (v && v.id === a.id ? null : a))}
                   onChange={patch => persist({ ...a, ...patch })}
                   onDelete={() => remove(a)}
                 />
@@ -304,6 +311,8 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
           )}
         </div>
       </div>
+
+      {viewingLive && <ResumeDock applicant={viewingLive} onClose={() => setViewing(null)} />}
     </div>
   );
 }
@@ -391,8 +400,94 @@ function ApplicantForm({ onCancel, onSave }) {
   );
 }
 
+/* ── Resume docked at the bottom ──────────────────────────────────────────────
+   Half the screen, pinned to the bottom, so the applicant's details stay
+   readable above it while you read their resume. */
+function ResumeDock({ applicant: a, onClose }) {
+  const [tall, setTall] = useState(false);
+  const url = a.resumeUrl || '';
+
+  // Same approach the bulletin viewer settled on: fetch the file and show it
+  // through a blob URL so the browser's own PDF viewer renders it (real text,
+  // selectable and searchable), falling back to Google's viewer when the fetch
+  // is blocked. Pointing an iframe straight at the S3 URL renders blank in some
+  // browsers, which is a confusing empty panel rather than a resume.
+  const [blobUrl, setBlobUrl] = useState('');
+  const [useGview, setUseGview] = useState(false);
+  useEffect(() => {
+    if (!url) return undefined;
+    let cancelled = false, made = '';
+    setBlobUrl(''); setUseGview(false);
+    (async () => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('fetch failed');
+        made = URL.createObjectURL(await res.blob());
+        if (!cancelled) setBlobUrl(made);
+      } catch {
+        if (!cancelled) setUseGview(true);
+      }
+    })();
+    return () => { cancelled = true; if (made) URL.revokeObjectURL(made); };
+  }, [url]);
+  const frameSrc = useGview
+    ? `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`
+    : blobUrl;
+  const ext = (a.resumeName || url).split('.').pop().toLowerCase();
+  const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic'].includes(ext);
+  // Word documents can't render in a frame; nothing gained by pretending.
+  const isOffice = ['doc', 'docx', 'rtf', 'pages'].includes(ext);
+
+  return (
+    <div style={{
+      position: 'fixed', left: 0, right: 0, bottom: 0, height: tall ? '78vh' : '46vh',
+      background: '#0d1524', borderTop: '1px solid rgba(56,189,248,.35)',
+      boxShadow: '0 -18px 50px rgba(2,6,23,.6)', zIndex: 60,
+      display: 'flex', flexDirection: 'column', transition: 'height .18s ease',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 16px', borderBottom: '1px solid rgba(148,163,184,.16)', flexWrap: 'wrap' }}>
+        <span style={{ fontWeight: 900, fontSize: 14, color: '#7dd3fc' }}>📄 {a.name}</span>
+        {a.resumeName && <span style={{ fontSize: 12, color: '#64748b' }}>{a.resumeName}</span>}
+        <div style={{ flex: 1 }} />
+        <button className="secondary" onClick={() => setTall(t => !t)} style={{ fontSize: 12 }}>
+          {tall ? '▼ Shorter' : '▲ Taller'}
+        </button>
+        {url && (
+          <a href={url} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 12, fontWeight: 700, color: '#93c5fd', textDecoration: 'none', border: '1px solid rgba(96,165,250,.4)', borderRadius: 8, padding: '5px 11px' }}>
+            Open in a new tab ↗
+          </a>
+        )}
+        <button className="secondary" onClick={onClose} style={{ fontSize: 12 }}>✕ Close</button>
+      </div>
+
+      <div style={{ flex: 1, minHeight: 0, background: 'rgba(2,6,23,.5)' }}>
+        {!url ? (
+          <div style={{ color: '#7a92b8', fontSize: 14, padding: 28, textAlign: 'center' }}>
+            No resume was uploaded for {a.name}.
+          </div>
+        ) : isImage ? (
+          <div style={{ height: '100%', overflow: 'auto', display: 'flex', justifyContent: 'center', padding: 12 }}>
+            <img src={url} alt={`${a.name} resume`} style={{ maxWidth: '100%', objectFit: 'contain' }} />
+          </div>
+        ) : isOffice ? (
+          <div style={{ color: '#cbd5e1', fontSize: 14, padding: 28, textAlign: 'center', lineHeight: 1.7 }}>
+            This one is a Word document, which browsers can't show inline.
+            <br />
+            <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: '#7dd3fc', fontWeight: 700 }}>Open it in a new tab ↗</a>
+          </div>
+        ) : !frameSrc ? (
+          <div style={{ color: '#7a92b8', fontSize: 13.5, padding: 24, textAlign: 'center' }}>Loading resume…</div>
+        ) : (
+          <iframe src={frameSrc} title={`${a.name} resume`} style={{ width: '100%', height: '100%', border: 'none' }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── One applicant ────────────────────────────────────────────────────────── */
-function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
+function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete }) {
   const [open, setOpen] = useState(false);
   const [notes, setNotes] = useState(a.interviewNotes || '');
   const stage = stageOf(a);
@@ -423,7 +518,18 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ fontSize: 17, fontWeight: 900, color: '#e8f1ff' }}>{a.name}</div>
+        <button
+          onClick={onView}
+          title={a.resumeUrl ? 'Show their resume at the bottom of the page' : 'No resume uploaded'}
+          style={{
+            background: 'none', border: 'none', padding: 0, textAlign: 'left', fontFamily: 'inherit',
+            fontSize: 17, fontWeight: 900, color: viewing ? '#7dd3fc' : '#e8f1ff',
+            cursor: a.resumeUrl ? 'pointer' : 'default',
+            textDecoration: a.resumeUrl ? 'underline' : 'none',
+            textDecorationColor: 'rgba(125,211,252,.4)', textUnderlineOffset: 4,
+          }}>
+          {a.name}
+        </button>
         <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', color: stage.color, background: stage.bg, border: `1px solid ${stage.border}`, borderRadius: 999, padding: '3px 10px' }}>
           {stage.label}
         </span>
@@ -439,9 +545,10 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
         {a.phone && <a href={`tel:${a.phone}`} style={{ color: '#7dd3fc' }}>{a.phone}</a>}
         {a.email && <a href={`mailto:${a.email}`} style={{ color: '#7dd3fc' }}>{a.email}</a>}
         {a.resumeUrl && (
-          <a href={a.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#c4b5fd', fontWeight: 700 }}>
-            📄 Resume
-          </a>
+          <button onClick={onView}
+            style={{ background: 'none', border: 'none', padding: 0, color: '#c4b5fd', fontWeight: 700, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' }}>
+            📄 {viewing ? 'Hide resume' : 'Resume'}
+          </button>
         )}
         {a.source && <span style={{ color: '#64748b' }}>via {a.source}</span>}
       </div>
@@ -464,7 +571,9 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
 
           {/* Interviewed */}
           <div>
-            <label style={labelStyle}>Interviewed</label>
+            <label style={labelStyle}>
+              Interviewed <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none', color: '#64748b' }}>— click the same button again to clear it</span>
+            </label>
             {yesNo(a.interviewed, v => onChange({
               interviewed: v,
               // Saying yes without a date is the common case — stamp the time
@@ -492,7 +601,9 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
 
           {/* Decision */}
           <div style={{ borderTop: '1px solid rgba(148,163,184,.14)', paddingTop: 14 }}>
-            <label style={labelStyle}>Consider for hire</label>
+            <label style={labelStyle}>
+              Consider for hire <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none', color: '#64748b' }}>— click again to clear</span>
+            </label>
             {yesNo(a.considerHire, v => onChange({ considerHire: v }))}
           </div>
 
