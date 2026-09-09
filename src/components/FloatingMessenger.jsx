@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { EMOJIS } from '../utils/emoji';
 import { sendGlobalMessage, replyToGlobalMessage, deleteGlobalMessage } from '../utils/github';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from '../utils/pusher';
 
@@ -66,6 +67,66 @@ export function withinRetention(m, windowMs = RETENTION_MS) {
   return !t || Date.now() - t < windowMs;
 }
 
+/* A 😊 button with a grid of emoji above it.
+ *
+ * The panel floats over the message list rather than pushing it around — the
+ * reply box sits inches from the bottom of a small window, and a picker that
+ * grew the layout shoved the Send button out of reach. Clicking outside or
+ * pressing Escape closes it; picking one drops it in and closes it, because
+ * hunting for the close button after every emoji is the annoying part.
+ */
+function EmojiPicker({ onPick, title = 'Add an emoji' }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('pointerdown', onDown, true);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} style={{ position: 'relative', flexShrink: 0 }}>
+      <button
+        type="button"
+        title={title}
+        onClick={() => setOpen(o => !o)}
+        style={{
+          background: open ? 'rgba(56,189,248,.18)' : 'transparent',
+          border: `1px solid ${open ? 'rgba(56,189,248,.45)' : 'transparent'}`,
+          borderRadius: 8, padding: '5px 7px', fontSize: 17, lineHeight: 1,
+          cursor: 'pointer', fontFamily: 'inherit',
+        }}>
+        😊
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', bottom: '100%', right: 0, marginBottom: 6, zIndex: 30,
+          width: 250, background: '#1e293b', border: '1px solid rgba(255,255,255,0.14)',
+          borderRadius: 12, padding: 8, display: 'flex', flexWrap: 'wrap', gap: 2,
+          boxShadow: '0 -8px 26px rgba(0,0,0,0.55)',
+        }}>
+          {EMOJIS.map(e => (
+            <button key={e} type="button"
+              onClick={() => { onPick(e); setOpen(false); }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 19, padding: '3px 4px', borderRadius: 7, lineHeight: 1, fontFamily: 'inherit' }}
+              onMouseEnter={el => el.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+              onMouseLeave={el => el.currentTarget.style.background = 'none'}>
+              {e}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FloatingMessenger({
   currentUser, currentRole, users, messages, unread, canSend, onMarkSeen, onMessagesChange, openSignal = 0,
 }) {
@@ -101,6 +162,7 @@ export default function FloatingMessenger({
     if (onMarkSeen) onMarkSeen();
   }, [openSignal, onMarkSeen]);
 
+  const composeRef = useRef(null);
   const panelRef = useRef(null);
   const bubbleRef = useRef(null);
 
@@ -199,6 +261,16 @@ export default function FloatingMessenger({
     names.forEach(n => allIn ? next.delete(n) : next.add(n));
     return next;
   });
+
+  function insertIntoCompose(emoji) {
+    const el = composeRef.current;
+    if (!el) { setText(t => t + emoji); return; }
+    const start = el.selectionStart ?? text.length;
+    const end = el.selectionEnd ?? text.length;
+    setText(text.slice(0, start) + emoji + text.slice(end));
+    // Put the caret after the emoji once React has repainted the value.
+    setTimeout(() => { el.selectionStart = el.selectionEnd = start + emoji.length; el.focus(); }, 0);
+  }
 
   const handleSend = useCallback(async () => {
     if (sending) return;
@@ -374,7 +446,7 @@ export default function FloatingMessenger({
                     {/* The reply box is out of the way until it's wanted — a box
                         under every message is most of what made this hard to read. */}
                     {open ? (
-                      <div style={{ display: 'flex', gap: 6, marginTop: 9 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 9 }}>
                         <input
                           autoFocus
                           value={replyDrafts[m.id] || ''}
@@ -390,6 +462,8 @@ export default function FloatingMessenger({
                             padding: '7px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none',
                           }}
                         />
+                        <EmojiPicker title="Add an emoji to your reply"
+                          onPick={e => setReplyDrafts(d => ({ ...d, [m.id]: (d[m.id] || '') + e }))} />
                         <button onClick={() => { sendReply(m); setReplyOpenId(''); }} disabled={replyingId === m.id}
                           style={{ flexShrink: 0, background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: '#7dd3fc', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
                           {replyingId === m.id ? '…' : 'Send'}
@@ -427,6 +501,7 @@ export default function FloatingMessenger({
                   ))}
                 </div>
                 <textarea
+                  ref={composeRef}
                   value={text}
                   onChange={e => setText(e.target.value)}
                   rows={4}
@@ -437,6 +512,11 @@ export default function FloatingMessenger({
                     padding: '9px 11px', fontSize: 13.5, lineHeight: 1.45, resize: 'vertical', fontFamily: 'inherit',
                   }}
                 />
+                {/* An emoji lands where the cursor is, not tacked on the end —
+                    people add one mid-sentence as often as at the finish. */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
+                  <EmojiPicker onPick={insertIntoCompose} />
+                </div>
               </>
             )}
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { EMOJIS } from '../utils/emoji';
 import { loadTechChatMessages, updateTechChatMessages, pollTechChatMessages } from '../utils/github';
 import { getPusher, triggerEvent, TECH_CHANNEL, NEW_MSG_EVENT } from '../utils/pusher';
 import { chatLive, feedMention } from '../utils/chatLive';
@@ -29,12 +30,6 @@ export default function TechChat({ currentUser, currentRole, hasChatAccess, refr
   const textareaRef = useRef(null);
 
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
-
-  const EMOJIS = [
-    '😀','😂','😍','🥰','😎','🤔','😅','🙏','👍','👎','🔥','💯',
-    '❤️','✅','⚠️','🚗','🔧','📋','📞','💬','🎉','👏','💪','🤝',
-    '😊','😬','🤦','🙌','👀','💀','😤','🥳','😴','🤯','😭','😱',
-  ];
 
   const fetchMessages = useCallback(async () => {
     try {
