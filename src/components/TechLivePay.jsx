@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { safe } from '../utils/formatters';
-import { loadTechPay, saveTechPayPlan } from '../utils/github';
+import { loadTechPay, saveTechPayPlan, loadTechPayHistory } from '../utils/github';
 import { computeTechPay, normalizePlan, planIsSet, tiersOf, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
 import { HeroCard, QualCard, Row } from './LivePay';
 
@@ -202,19 +202,103 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                   })}
                 </div>
 
-                <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 14, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', marginTop: 14, lineHeight: 1.6 }}>
                   Banked is the hours already turned this week. Pacing projects the full week from the current daily pace
                   (hours ÷ days worked × the week's workdays), the same number the Tech Hours board shows.
                   {plan.tierMode === 'all'
                     ? ' A tier bump lifts every hour that week to the higher rate.'
                     : ' A tier bump applies only to the hours above the threshold.'}
                   {' '}Final pay is calculated by payroll after the week closes.
+                  {' '}<strong style={{ color: '#fdba74', fontWeight: 900 }}>
+                    These are gross figures — pre-tax and before any payroll deductions.
+                  </strong>
                 </div>
+
+                <HistoryPanel techName={firstWord(selected.name)} />
               </>
             )}
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- history */
+
+/* Past days, newest first. The Tech Hours board is cleared at the start of each
+ * week, so this is the only place a finished week survives. The dollars stored
+ * are the ones that were true on the day — a pay plan edited later doesn't
+ * rewrite what someone was already told. */
+function HistoryPanel({ techName }) {
+  const [rows, setRows] = useState(null);   // null = loading
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    setRows(null);
+    loadTechPayHistory(techName)
+      .then(h => {
+        if (!alive) return;
+        const list = Object.values(h || {})
+          .filter(r => r && r.date)
+          .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+        setRows(list);
+      })
+      .catch(() => { if (alive) setRows([]); });
+    return () => { alive = false; };
+  }, [techName]);
+
+  const dayLabel = (iso) => {
+    const [y, m, d] = String(iso).split('-').map(Number);
+    if (!y || !m || !d) return iso;
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <div style={{ marginTop: 18, background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 16, overflow: 'hidden' }}>
+      <button onClick={() => setOpen(o => !o)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 18px', background: 'linear-gradient(90deg, rgba(56,189,248,.16), transparent)', border: 'none', borderBottom: open ? '1px solid rgba(148,163,184,.14)' : 'none', cursor: 'pointer', textAlign: 'left' }}>
+        <span style={{ width: 4, height: 16, borderRadius: 2, background: 'linear-gradient(180deg,#38bdf8,#0ea5e9)' }} />
+        <div style={{ flex: 1, fontSize: 12, fontWeight: 900, color: '#7dd3fc', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+          Daily History{rows && rows.length ? ` (${rows.length} day${rows.length === 1 ? '' : 's'})` : ''}
+        </div>
+        <span style={{ color: '#7dd3fc', fontWeight: 900, fontSize: 13 }}>{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        rows === null ? (
+          <div style={{ padding: '18px', color: '#94a3b8', fontSize: 13.5, fontWeight: 700 }}>Loading…</div>
+        ) : rows.length === 0 ? (
+          <div style={{ padding: '18px', color: '#94a3b8', fontSize: 13.5, fontWeight: 700, lineHeight: 1.5 }}>
+            Nothing recorded yet. A day is saved automatically each night, so this fills in from here on.
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <div style={{ minWidth: 520 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.3fr .8fr .9fr .8fr 1fr', padding: '8px 18px', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                <div>Day</div>
+                <div style={{ textAlign: 'right' }}>Hrs That Day</div>
+                <div style={{ textAlign: 'right' }}>Week Hrs</div>
+                <div style={{ textAlign: 'right' }}>Rate</div>
+                <div style={{ textAlign: 'right' }}>Banked</div>
+              </div>
+              {rows.map(r => (
+                <div key={r.date} style={{ display: 'grid', gridTemplateColumns: '1.3fr .8fr .9fr .8fr 1fr', padding: '10px 18px', fontSize: 13.5, alignItems: 'center', borderBottom: '1px solid rgba(148,163,184,.06)' }}>
+                  <div style={{ fontWeight: 800, color: '#cbd5e1' }}>{dayLabel(r.date)}</div>
+                  <div style={{ textAlign: 'right', color: '#94a3b8', fontWeight: 700 }}>{hrs1(r.dayHours)}</div>
+                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 700 }}>{hrs1(r.weekHours)}</div>
+                  <div style={{ textAlign: 'right', color: '#a78bfa', fontWeight: 800 }}>{rate(r.rate)}</div>
+                  <div style={{ textAlign: 'right', color: '#38bdf8', fontWeight: 900 }}>{money(r.banked)}</div>
+                </div>
+              ))}
+              <div style={{ padding: '12px 18px', fontSize: 12.5, fontWeight: 700, color: '#64748b', lineHeight: 1.5 }}>
+                Each row is where the week stood at the end of that day, at the rate in force then — gross, before tax and deductions.
+              </div>
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 }

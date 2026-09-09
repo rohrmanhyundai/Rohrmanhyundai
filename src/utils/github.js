@@ -2063,3 +2063,23 @@ export async function saveTechPayPlan(techName, plan) {
     return all;
   }, `Tech pay plan — ${key}`);
 }
+
+// One file per technician of end-of-day pay snapshots, written by the nightly
+// workflow (scripts/tech-pay-daily.mjs). Keyed by date: { '2026-09-09': {…} }.
+export async function loadTechPayHistory(techName) {
+  const key = String(techName || '').trim().toUpperCase();
+  if (!key) return {};
+  const rel = `data/tech-pay-history/${key}.json`;
+  try {
+    const data = await readGitHubFile(authHeaders(), `public/${rel}`);
+    if (data && typeof data === 'object') return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}${rel}?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (json && typeof json === 'object') return json;
+    }
+  } catch {}
+  return {};   // nothing recorded yet — the page says so rather than showing zeros
+}

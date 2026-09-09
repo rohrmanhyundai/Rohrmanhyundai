@@ -39,11 +39,19 @@ jobs:
           TZ: America/New_York
         run: node scripts/prune-messages.cjs
 
+      # The Tech Hours board is cleared at the start of each week, so a tech's
+      # own pay week vanishes with it. This records where each tech stood at
+      # end of day so they can look back later.
+      - name: Snapshot technician pay for the day
+        env:
+          TZ: America/New_York
+        run: node scripts/tech-pay-daily.mjs
+
       - name: Commit and push report snapshots
         run: |
           git config user.name  "Auto Reports Bot"
           git config user.email "actions@github.com"
-          git add public/data/performance-reports/ public/data/global-messages.json
+          git add public/data/performance-reports/ public/data/global-messages.json public/data/tech-pay-history/
           # Only commit if something changed
           if git diff --staged --quiet; then
             echo "No changes to report files — skipping commit."
