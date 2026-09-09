@@ -42,7 +42,7 @@ export function computeLivePay(a, hours, servicePolicy, numAdvisors, leadBonus) 
   return { hours, elr, csi, minCsi, elrQualifies, naturalTier, tierIdx, tier, basePay, csiQualifies, csiBonus, csiPotential, csiMissed, leadBonus: lead, gross, adjustment, net };
 }
 
-const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' };
+export const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' };
 const CSS = `@keyframes lpPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,146,60,.35),0 12px 34px -14px rgba(249,115,22,.6)}50%{box-shadow:0 0 24px 5px rgba(251,146,60,.32),0 14px 40px -12px rgba(249,115,22,.8)}}`;
 
 export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', initialAdvisor = '', onFixCsi, onBack, backLabel = '← Back' }) {
@@ -219,7 +219,7 @@ export default function LivePay({ data, currentUser, currentRole, leadAdvisor = 
   );
 }
 
-function HeroCard({ icon, title, value, sub, active, onClick, a1, a2 }) {
+export function HeroCard({ icon, title, value, sub, active, onClick, a1, a2 }) {
   return (
     <button onClick={onClick} style={{
       textAlign: 'left', cursor: 'pointer', position: 'relative', overflow: 'hidden',
@@ -239,7 +239,7 @@ function HeroCard({ icon, title, value, sub, active, onClick, a1, a2 }) {
   );
 }
 
-function QualCard({ title, value, note, accent = '#38bdf8', onClick, cta }) {
+export function QualCard({ title, value, note, accent = '#38bdf8', onClick, cta }) {
   const clickable = !!onClick;
   return (
     <div onClick={onClick} title={clickable ? 'View your surveys' : undefined} style={{
@@ -257,7 +257,7 @@ function QualCard({ title, value, note, accent = '#38bdf8', onClick, cta }) {
   );
 }
 
-function Row({ label, value, sub, strong, net, netColor, valueColor, subColor, muted, tint }) {
+export function Row({ label, value, sub, strong, net, netColor, valueColor, subColor, muted, tint }) {
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, padding: net ? '13px 18px' : '11px 18px', borderBottom: '1px solid rgba(148,163,184,.07)', background: net ? `linear-gradient(90deg, ${netColor}22, transparent)` : (tint || 'transparent') }}>
       <div>

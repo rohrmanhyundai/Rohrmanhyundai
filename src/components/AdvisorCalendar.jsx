@@ -230,7 +230,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onRepairOrderProcess, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onRepairOrderProcess, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -601,6 +601,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               onGoalsForecasting && { key: 'goalsForecasting' },
               canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && { key: 'workInProgress' },
               canSee(userPages, currentRole, 'tireQuote') && { key: 'tireQuote' },
+              onLivePay && { key: 'livePay' },
             ].filter(Boolean)}
             style={{ display: 'contents' }}
             hint="compact"
@@ -687,6 +688,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                       💰 Cash Dash
                     </button>
                   </>
+                );
+                case 'livePay': return (
+                  <button onClick={onLivePay} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+                    💵 Live Pay
+                  </button>
                 );
                 case 'goalsForecasting': return (
                   <>
