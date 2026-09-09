@@ -78,6 +78,9 @@ function stageOf(a) {
     if (day === today) return { key: 'today', label: 'Interview today', color: '#7dd3fc', bg: 'rgba(56,189,248,.16)', border: 'rgba(56,189,248,.5)' };
     return { key: 'scheduled', label: `Interview ${prettyWhen(a.interviewAt)}`, color: '#93c5fd', bg: 'rgba(96,165,250,.13)', border: 'rgba(96,165,250,.4)' };
   }
+  // Before anything is scheduled, the honest state is whether they've been
+  // called yet — that's the step that's actually outstanding.
+  if (a.contacted !== 'yes') return { key: 'new', label: 'Not contacted yet', color: '#cbd5e1', bg: 'rgba(255,255,255,.05)', border: 'rgba(148,163,184,.28)' };
   return { key: 'new', label: 'Needs an interview date', color: '#cbd5e1', bg: 'rgba(255,255,255,.05)', border: 'rgba(148,163,184,.28)' };
 }
 
@@ -436,6 +439,7 @@ function ApplicantForm({ onCancel, onSave }) {
       await onSave({
         name: name.trim(), phone: phone.trim(), email: email.trim(),
         position, source, interviewAt,
+        contacted: '', contactedAt: '', contactNotes: '',
         interviewed: '', interviewedAt: '', interviewNotes: '',
         considerHire: '', resumeUrl, resumeName, archived: false,
       });
@@ -563,6 +567,7 @@ function ResumeView({ applicant: a }) {
 function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
   const [open, setOpen] = useState(false);
   const [notes, setNotes] = useState(a.interviewNotes || '');
+  const [contactNotes, setContactNotes] = useState(a.contactNotes || '');
   const [downloading, setDownloading] = useState(false);
   const stage = stageOf(a);
 
@@ -593,6 +598,7 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
   }
 
   useEffect(() => { setNotes(a.interviewNotes || ''); }, [a.interviewNotes]);
+  useEffect(() => { setContactNotes(a.contactNotes || ''); }, [a.contactNotes]);
 
   const yesNo = (value, onPick, yesLabel = 'Yes', noLabel = 'No') => (
     <div style={{ display: 'inline-flex', gap: 6 }}>
@@ -699,6 +705,40 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
                 onBlur={e => { const v = e.target.value.trim(); if (v !== (a.email || '')) onChange({ email: v }); }} />
             </div>
           </div>
+
+          {/* Contact comes first: you call them, then you book them in. */}
+          <div style={{ borderTop: '1px solid rgba(148,163,184,.14)', paddingTop: 14 }}>
+            <label style={labelStyle}>
+              Contacted <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none', color: '#64748b' }}>— click the same button again to clear it</span>
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              {yesNo(a.contacted, v => onChange({
+                contacted: v,
+                // Stamp when they were reached, the way the interview does, so
+                // "did anyone call this person?" has a date on it.
+                contactedAt: v === 'yes' && !a.contactedAt ? nowLocalStamp()
+                  : v === 'no' ? '' : a.contactedAt,
+              }))}
+              {a.contacted === 'yes' && a.contactedAt && (
+                <span style={{ fontSize: 11.5, color: '#8296b4' }}>{prettyWhen(a.contactedAt)}</span>
+              )}
+            </div>
+          </div>
+
+          {a.contacted === 'yes' && (
+            <div>
+              <label style={labelStyle}>Contact notes</label>
+              <textarea
+                rows={3}
+                value={contactNotes}
+                onChange={e => setContactNotes(e.target.value)}
+                onBlur={() => { if (contactNotes !== (a.contactNotes || '')) onChange({ contactNotes }); }}
+                placeholder="Left a voicemail, spoke to them, when they're free, what they're looking for…"
+                style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.55 }}
+              />
+              <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 4 }}>Saves when you click out of the box.</div>
+            </div>
+          )}
 
           {/* Scheduling */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
