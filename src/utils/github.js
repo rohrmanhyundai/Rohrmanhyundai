@@ -1297,6 +1297,55 @@ export async function removeRegistrationUpload(id) {
     `Remove registration upload ${id}`);
 }
 
+// ── Employee applicants ───────────────────────────────────────────────────────
+// One list per hiring manager: the parts manager's applicants are his, the
+// service manager's are his. The file is named by manager, so nobody's list is
+// mixed into anyone else's.
+const applicantsPath = (mgr) => `public/data/applicants/${String(mgr || '').toUpperCase()}.json`;
+
+export async function loadApplicants(mgr) {
+  if (!mgr) return [];
+  try {
+    const data = await readGitHubFile(authHeaders(), applicantsPath(mgr));
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/applicants/${String(mgr).toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
+  } catch {}
+  return [];
+}
+
+// Upsert against the freshest list so two windows open at once can't drop a
+// record either of them added.
+export async function saveApplicant(mgr, applicant) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(applicantsPath(mgr), (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const i = arr.findIndex(a => a.id === applicant.id);
+    if (i >= 0) { const next = arr.slice(); next[i] = applicant; return next; }
+    return [applicant, ...arr];
+  }, `Applicant: ${applicant.name || applicant.id}`);
+}
+
+// Index entry first, then the resume file: an orphaned upload costs nothing,
+// whereas a record pointing at a deleted file shows a broken link.
+export async function deleteApplicant(mgr, applicant) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const next = await mutateGitHubJson(applicantsPath(mgr),
+    (cur) => (Array.isArray(cur) ? cur : []).filter(a => a.id !== applicant.id),
+    `Remove applicant ${applicant.name || applicant.id}`);
+  try {
+    if (applicant.resumeUrl) await deleteS3ObjectByUrl(applicant.resumeUrl);
+  } catch { /* the record is gone; a stray file is harmless */ }
+  return next;
+}
+
 // ── Per-user hub tile order ───────────────────────────────────────────────────
 // Each person arranges their own hubs and that layout follows them to any
 // device. One small file per user so a rearrange never rewrites users.json.

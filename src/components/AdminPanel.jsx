@@ -4,6 +4,7 @@ import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatter
 import { advisorDailyAverage, currentWeekDates, advisorOffDates, isScheduledOff } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
+import { hashAccessCode } from '../utils/accessCode';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -224,6 +225,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
+  const [newUserCode, setNewUserCode] = useState('');        // Employee Applicants code (blank = leave as-is)
+  const [existingCode, setExistingCode] = useState(false);   // whether the selected user already has one
   const [newUserRole, setNewUserRole] = useState('advisor');
   const [newUserCanEdit, setNewUserCanEdit] = useState(false);
   const [newUserManagementAccess, setNewUserManagementAccess] = useState(false);
@@ -1598,12 +1601,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  function handleSaveUser() {
+  async function handleSaveUser() {
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
     if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
-    const updated = users.find(u => u.username === newUserName)
-      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess }];
+    if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
+    // Hash a newly typed code; a blank box means "leave whatever they have".
+    const existing = users.find(u => u.username === newUserName);
+    const codePatch = newUserCode
+      ? { applicantCode: await hashAccessCode(newUserCode) }
+      : (existing && existing.applicantCode ? { applicantCode: existing.applicantCode } : {});
+    const updated = existing
+      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
     // An advisor-role user must also live on the dashboard roster (data.advisors)
     // or they never render on the dashboard. Saving the user alone only writes
     // users.json, so auto-add them to the roster + training table and persist the
@@ -1614,7 +1623,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
-      .then(() => { onUsersChange(updated); setSelectedUser(newUserName); })
+      .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
       .then(() => {
         if (!addedToRoster) return;
         onDataChange(rosterData, vacations);
@@ -2393,7 +2402,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -2417,7 +2426,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
@@ -2431,6 +2440,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
                 {ROLES.map(r => <option key={r} value={r}>{r.replace(/\b\w/g, c => c.toUpperCase())}</option>)}
               </select>
+            </div>
+          </div>
+          <div className="form-grid" style={{ marginTop: 10 }}>
+            <div className="field">
+              <label title="Managers type this to open their Employee Applicants page. Stored hashed — it can't be read back, only replaced.">
+                Applicants Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits)</span>
+              </label>
+              <input value={newUserCode} inputMode="numeric" type="password"
+                onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder={existingCode ? 'Set — type to replace' : 'Not set'} />
+              <div className="small" style={{ marginTop: 4 }}>
+                {existingCode
+                  ? 'A code is set. Leave blank to keep it, or type a new one to replace it.'
+                  : 'Their Employee Applicants page stays locked until you set this.'}
+              </div>
             </div>
           </div>
           <label className="user-edit-toggle">

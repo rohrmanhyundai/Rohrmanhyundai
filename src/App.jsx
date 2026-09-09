@@ -46,6 +46,7 @@ import { userDisplayName } from './utils/userDisplay';
 import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
+import EmployeeApplicants from './components/EmployeeApplicants';
 import TechResources from './components/TechResources';
 import HotRepairs from './components/HotRepairs';
 import WorkInProgress from './components/WorkInProgress';
@@ -983,6 +984,21 @@ export default function App() {
     );
   }
 
+  if (page === 'employee-applicants') {
+    // Managers only, and each one sees just their own applicants. The page
+    // itself then asks for that manager's code before showing anything.
+    if (!isAdminOrManager) { setPage('dashboard'); return null; }
+    const eaBack = prevPage || 'manager-hub';
+    return (
+      <EmployeeApplicants
+        currentUser={currentUser.toUpperCase()}
+        currentUserRecord={currentUserRecord}
+        onBack={() => setPage(eaBack)}
+        backLabel={BACK_LABELS[eaBack] || '← Back'}
+      />
+    );
+  }
+
   if (page === 'tire-quote') {
     const tqBack = prevPage || 'tech-resources';
     return (
@@ -1143,6 +1159,7 @@ export default function App() {
         onAdvisorForecast={() => goTo('advisor-goals', 'manager-hub')}
         onGlobalMessage={() => goTo('global-message', 'manager-hub')}
         onCashDash={() => goTo('cash-dash', 'manager-hub')}
+        onEmployeeApplicants={() => goTo('employee-applicants', 'manager-hub')}
       />
     );
   }
