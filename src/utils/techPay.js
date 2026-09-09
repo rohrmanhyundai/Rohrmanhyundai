@@ -26,6 +26,7 @@ export const DEFAULT_PLAN = {
   clockRate: 0,        // $ per clock hour
   clockHours: 40,      // clock hours per week
   clockMode: 'add',    // 'add' = paid on top of flat rate | 'greater' = guarantee, paid the greater of the two
+  eligiblePto: true,   // false = holiday / PTO / training hours are not paid to this tech
 };
 
 const num = (v, d = 0) => {
@@ -54,6 +55,9 @@ export function normalizePlan(plan) {
     clockRate: num(p.clockRate),
     clockHours: num(p.clockHours),
     clockMode: p.clockMode === 'greater' ? 'greater' : 'add',
+    // Default TRUE — a tech with no answer recorded keeps being paid for the
+    // hours the schedule fills in, which is what the site did before this flag.
+    eligiblePto: p.eligiblePto !== false,
   };
 }
 
@@ -136,4 +140,73 @@ export function computeTechPay(plan, flagHours) {
     clockPay, clockPotential, guaranteeApplied, gross,
     next, toNext, nextGain: nextGain > 0 ? nextGain : 0,
   };
+}
+
+/* ------------------------------------------- holiday / PTO / training hours */
+
+export const WEEK_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+/* Which of a tech's week days are schedule-filled time off.
+ *
+ * When the calendar marks a day holiday / vacation / training and the tech has
+ * no hours on it, the dashboard drops 8.0 hours in (applyScheduleHours). Those
+ * hours are recognisable by what they LACK rather than by re-reading the
+ * schedule: every real figure — typed by hand or matched off the hours report —
+ * writes both a `<day>_raw` value and a hoursOverride stamp for that date, and
+ * the fill writes neither. So hours with no raw and no override are the fill,
+ * which also means this works anywhere, with no schedules file to load.
+ */
+export function ptoDaysOf(tech) {
+  const t = tech || {};
+  const overrides = t.hoursOverride || {};
+  const dates = weekDates();
+  return WEEK_DAYS.filter(d => {
+    if (!(num(t[d]) > 0)) return false;
+    const raw = t[`${d}_raw`];
+    if (raw !== undefined && raw !== null && raw !== '') return false;
+    return !overrides[dates[d]];
+  });
+}
+
+// Mon..Sat of the current week as YYYY-MM-DD, local — the same keys the
+// schedule and hoursOverride use.
+function weekDates() {
+  const out = {};
+  const now = new Date();
+  const dow = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + (dow === 0 ? -6 : 1 - dow));
+  WEEK_DAYS.forEach((k, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    out[k] = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+  return out;
+}
+
+/* The hours a tech is actually paid on, banked and projected.
+ *
+ * Eligible (the default) is exactly what the Tech Hours board shows. Not
+ * eligible strips the filled hours out and re-paces over the days that are left
+ * — projecting a holiday week across five days the tech was never going to work
+ * would quietly inflate the number.
+ */
+export function payBasis(tech, plan) {
+  const p = normalizePlan(plan);
+  const t = tech || {};
+  const total = num(t.total);
+  const ptoDays = ptoDaysOf(t);
+  const ptoHours = ptoDays.reduce((s, d) => s + num(t[d]), 0);
+
+  if (p.eligiblePto) {
+    return { banked: total, pacing: num(t.pacing) || total, ptoHours, ptoDays, excluded: 0 };
+  }
+
+  const banked = Math.max(0, total - ptoHours);
+  const workedSat = num(t.sat) > 0 && !ptoDays.includes('sat');
+  const span = workedSat ? WEEK_DAYS : WEEK_DAYS.slice(0, 5);
+  const payableDays = span.filter(d => !ptoDays.includes(d));
+  const daysWorked = payableDays.filter(d => num(t[d]) > 0).length;
+  const pacing = daysWorked > 0 ? (banked / daysWorked) * payableDays.length : 0;
+  return { banked, pacing, ptoHours, ptoDays, excluded: ptoHours };
 }

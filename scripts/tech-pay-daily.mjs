@@ -15,7 +15,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { computeTechPay, normalizePlan, planIsSet } from '../src/utils/techPay.js';
+import { computeTechPay, normalizePlan, planIsSet, payBasis } from '../src/utils/techPay.js';
 
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR  = path.join(__dirname, '..', 'public', 'data');
@@ -74,9 +74,13 @@ function main() {
     if (!planIsSet(plans[name])) continue;
 
     const plan = normalizePlan(plans[name]);
-    const weekHours = Number(tech.total) || 0;
-    const dayHours = Number(tech[dayKey]) || 0;
-    const paceHours = Number(tech.pacing) || weekHours;
+    // The same basis the page uses, so history can't disagree with the screen —
+    // holiday/PTO/training hours are already out of these when the tech isn't
+    // eligible for them.
+    const basis = payBasis(tech, plan);
+    const weekHours = basis.banked;
+    const dayHours = basis.ptoDays.includes(dayKey) && !plan.eligiblePto ? 0 : (Number(tech[dayKey]) || 0);
+    const paceHours = basis.pacing;
     const banked = computeTechPay(plan, weekHours);
     const pacing = computeTechPay(plan, paceHours);
 
@@ -92,6 +96,8 @@ function main() {
       banked: round2(banked.gross),
       pacing: round2(pacing.gross),
       payType: plan.payType,
+      ptoHours: round2(basis.ptoHours),
+      ptoPaid: plan.eligiblePto,
       capturedAt: now.toISOString(),
     };
 
