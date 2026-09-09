@@ -478,5 +478,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1788981690548
+  },
+  {
+    "id": "gm-mtukayzks205",
+    "from": "SHAWN",
+    "to": [
+      "CODY"
+    ],
+    "text": "780684 is done not invoiced. is the customer been updated no notes? are they picking up tonight?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1788986387360
   }
 ]
