@@ -933,6 +933,36 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, structuredClone(vacations));
   }
 
+  // Wipe the week back to zero — the Monday-morning starting point. Local only;
+  // nothing leaves until Save Changes, so a misclick is one Close away.
+  function resetTechWeek() {
+    const techs = data.technicians || [];
+    if (!techs.length) return;
+    if (!window.confirm(
+      `Reset ALL days to 0 for ${techs.length} technician${techs.length === 1 ? '' : 's'}?\n\n` +
+      `Clears Mon–Sat hours and RO counts for everyone.\n` +
+      `Weekly goals and the warranty multiplier are left alone.\n\n` +
+      `Nothing is live until you click Save Changes.`)) return;
+
+    const stamp = Date.now();
+    const newData = structuredClone(data);
+    for (const tech of newData.technicians || []) {
+      for (const day of ['mon', 'tue', 'wed', 'thu', 'fri', 'sat']) {
+        tech[day] = 0;
+        delete tech[`${day}_raw`];
+        delete tech[`${day}_ro`];
+      }
+      // The override map marks days as hand-entered, which switches OFF the
+      // schedule's 8-hour fill for vacation, training and holidays. Carrying it
+      // into a fresh week would quietly cost every tech their PTO hours.
+      delete tech.hoursOverride;
+      tech._hrsStamp = stamp;   // remount the uncontrolled inputs so they show 0
+    }
+    onDataChange(newData, structuredClone(vacations));
+    setTechUploadErr('');
+    setTechUploadMsg(`✅ All days reset to 0 for ${techs.length} technician${techs.length === 1 ? '' : 's'}. Click Save Changes to push it live.`);
+  }
+
   // ── Technician "Flagged Hours" report upload ───────────────────────────────
   // Source of truth is the dealer's Tekion "Tech Performance" report in
   // Pay Type View, saved as .html. Each tech's credited hours for the day are
@@ -2033,6 +2063,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 {d.charAt(0).toUpperCase() + d.slice(1)}
               </button>
             ))}
+            <button onClick={resetTechWeek} disabled={techXlsxBusy}
+              title="Set Mon–Sat hours and RO counts to 0 for every technician — the start of a new week"
+              style={{
+                marginLeft: 'auto',
+                background: 'rgba(251,146,60,.14)', border: '1px solid rgba(251,146,60,.45)',
+                color: '#fdba74', borderRadius: 8, padding: '5px 14px', fontWeight: 800, fontSize: 12,
+                cursor: techXlsxBusy ? 'default' : 'pointer', whiteSpace: 'nowrap',
+              }}>
+              ↺ Reset All
+            </button>
           </div>
           <input ref={techXlsxInputRef} type="file" accept=".html,.htm,.xlsx,.xls" disabled={techXlsxBusy}
             onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleTechReport(f); }} />
@@ -2077,7 +2117,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 return (
                   <div className="field" key={roKey}>
                     <label style={{ color: '#94a3b8' }}>{day.charAt(0).toUpperCase() + day.slice(1)} ROs</label>
-                    <input defaultValue={t[roKey] ?? ''} onBlur={e => updateField(`technicians.${idx}.${roKey}`, safe(e.target.value, 0))} />
+                    {/* Keyed on the same stamp as the hours: without it a reset
+                        clears the value underneath but leaves the old number on
+                        screen, and blurring the box writes it straight back. */}
+                    <input key={`${roKey}-${t._hrsStamp || 0}-${t[roKey] ?? ''}`}
+                      defaultValue={t[roKey] ?? ''}
+                      onBlur={e => updateField(`technicians.${idx}.${roKey}`, safe(e.target.value, 0))} />
                   </div>
                 );
               })}
