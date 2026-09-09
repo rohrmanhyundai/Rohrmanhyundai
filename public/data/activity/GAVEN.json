@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-09T11:50:34.820Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-09T11:50:32.066Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-09T11:50:31.610Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-09T11:50:30.261Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-08T22:03:23.693Z",
     "type": "page",
     "label": "work-schedule"
