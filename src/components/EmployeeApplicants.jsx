@@ -302,7 +302,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
                   applicant={a}
                   busy={busyId === a.id}
                   viewing={viewingLive?.id === a.id}
-                  onView={() => setViewing(v => (v && v.id === a.id ? null : a))}
+                  onView={show => setViewing(show ? a : null)}
                   onChange={patch => persist({ ...a, ...patch })}
                   onDelete={() => remove(a)}
                 />
@@ -490,7 +490,40 @@ function ResumeDock({ applicant: a, onClose }) {
 function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete }) {
   const [open, setOpen] = useState(false);
   const [notes, setNotes] = useState(a.interviewNotes || '');
+  const [downloading, setDownloading] = useState(false);
   const stage = stageOf(a);
+
+  // Opening someone brings their resume up below without a second click; closing
+  // them takes it away again.
+  function toggleOpen() {
+    const next = !open;
+    setOpen(next);
+    onView(next && !!a.resumeUrl);
+  }
+
+  // Save it to the machine rather than viewing it. A cross-origin file ignores
+  // the download attribute, so fetch the bytes and hand the browser a blob; if
+  // that's blocked, opening it is better than doing nothing.
+  async function downloadResume(e) {
+    e.stopPropagation();
+    if (!a.resumeUrl || downloading) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(a.resumeUrl);
+      if (!res.ok) throw new Error('fetch failed');
+      const href = URL.createObjectURL(await res.blob());
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = a.resumeName || `${a.name || 'applicant'}-resume.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => { URL.revokeObjectURL(href); link.remove(); }, 800);
+    } catch {
+      window.open(a.resumeUrl, '_blank', 'noopener,noreferrer');
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   useEffect(() => { setNotes(a.interviewNotes || ''); }, [a.interviewNotes]);
 
@@ -519,13 +552,13 @@ function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <button
-          onClick={onView}
-          title={a.resumeUrl ? 'Show their resume at the bottom of the page' : 'No resume uploaded'}
+          onClick={toggleOpen}
+          title={a.resumeUrl ? 'Open this applicant — their resume loads below' : 'Open this applicant'}
           style={{
             background: 'none', border: 'none', padding: 0, textAlign: 'left', fontFamily: 'inherit',
             fontSize: 17, fontWeight: 900, color: viewing ? '#7dd3fc' : '#e8f1ff',
-            cursor: a.resumeUrl ? 'pointer' : 'default',
-            textDecoration: a.resumeUrl ? 'underline' : 'none',
+            cursor: 'pointer',
+            textDecoration: 'underline',
             textDecorationColor: 'rgba(125,211,252,.4)', textUnderlineOffset: 4,
           }}>
           {a.name}
@@ -535,7 +568,7 @@ function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete
         </span>
         <div style={{ flex: 1 }} />
         {busy && <span style={{ fontSize: 12, color: '#7dd3fc' }}>Saving…</span>}
-        <button className="secondary" onClick={() => setOpen(o => !o)} style={{ fontSize: 12.5 }}>
+        <button className="secondary" onClick={toggleOpen} style={{ fontSize: 12.5 }}>
           {open ? 'Hide' : 'Details'}
         </button>
       </div>
@@ -545,9 +578,10 @@ function ApplicantCard({ applicant: a, busy, viewing, onView, onChange, onDelete
         {a.phone && <a href={`tel:${a.phone}`} style={{ color: '#7dd3fc' }}>{a.phone}</a>}
         {a.email && <a href={`mailto:${a.email}`} style={{ color: '#7dd3fc' }}>{a.email}</a>}
         {a.resumeUrl && (
-          <button onClick={onView}
+          <button onClick={downloadResume} disabled={downloading}
+            title={`Download ${a.resumeName || 'the resume'} to this computer`}
             style={{ background: 'none', border: 'none', padding: 0, color: '#c4b5fd', fontWeight: 700, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' }}>
-            📄 {viewing ? 'Hide resume' : 'Resume'}
+            {downloading ? '⏳ Downloading…' : '⬇ Download resume'}
           </button>
         )}
         {a.source && <span style={{ color: '#64748b' }}>via {a.source}</span>}
