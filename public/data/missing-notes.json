@@ -1,51 +1,43 @@
 {
-  "updatedAt": "2026-09-08T20:39:28.773Z",
+  "updatedAt": "2026-09-09T14:13:14.585Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
+    "CODY": [
       {
-        "ro": "780682",
-        "vehicle": "2026 Hyundai Kona"
+        "ro": "780695",
+        "vehicle": "2024 Hyundai Palisade"
       },
       {
-        "ro": "780678",
-        "vehicle": "2018 Hyundai Elantra"
+        "ro": "780694",
+        "vehicle": "2024 Hyundai Elantra"
+      },
+      {
+        "ro": "780684",
+        "vehicle": "2019 Hyundai Santa Fe"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "780693",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780692",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
       },
       {
         "ro": "780663",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780648",
-        "vehicle": "2022 Hyundai Kona"
-      },
-      {
-        "ro": "780542",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
       }
     ],
     "JORDAN": [
       {
-        "ro": "780681",
-        "vehicle": "2018 Hyundai Tucson"
+        "ro": "780691",
+        "vehicle": "2025 Hyundai Elantra"
       },
       {
-        "ro": "780679",
-        "vehicle": "2026 Hyundai Tucson Hybrid"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780677",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780662",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780632",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
+        "ro": "780690",
+        "vehicle": "2021 Hyundai Accent"
       }
     ],
     "CORY": [
@@ -80,10 +72,6 @@
       {
         "ro": "780501",
         "vehicle": "2022 Chevrolet Traverse"
-      },
-      {
-        "ro": "780471",
-        "vehicle": "2019 Chrysler Pacifica"
       },
       {
         "ro": "780264",
