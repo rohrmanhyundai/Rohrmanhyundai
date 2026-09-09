@@ -9,13 +9,13 @@
     "interviewed": "no",
     "interviewedAt": "",
     "interviewNotes": "",
-    "considerHire": "yes",
+    "considerHire": "no",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-mtu34dpjlbqv.pdf",
     "resumeName": "Taylor_Stokes_Resume_v2.pdf",
     "archived": false,
     "id": "ap-mtu34e1gs3x7",
     "appliedAt": "2026-09-09T12:38:46.804Z",
-    "updatedAt": "2026-09-09T12:38:54.794Z",
+    "updatedAt": "2026-09-09T12:38:57.647Z",
     "updatedBy": "SHAWN"
   }
 ]
