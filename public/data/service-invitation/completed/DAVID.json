@@ -418,5 +418,23 @@
     "notes": "Happy with his time here\n",
     "submittedAt": "2026-09-09T20:23:32.249Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "HAYLEY WARNE",
+    "repairOrder": "780595",
+    "vin": "5NMJFCAE1PH204024",
+    "model": "TUCSON",
+    "serviceDate": "09/04/2026",
+    "invitationDate": "09/08/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "2198698481",
+    "notes": "was happy when she left",
+    "submittedAt": "2026-09-09T20:25:16.298Z",
+    "submittedBy": "DAVID"
   }
 ]
