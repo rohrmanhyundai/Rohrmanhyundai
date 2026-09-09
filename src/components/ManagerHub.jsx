@@ -112,6 +112,15 @@ const NAV_BUTTONS = [
     prop: 'onUserDataTracker',
   },
   {
+    key: 'employeeApplicants',
+    label: '🧑‍💼 Employee Applicants',
+    desc: 'Your own applicants — resumes, interviews and hire decisions',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(14,165,233,.18))',
+    border: 'rgba(56,189,248,.45)',
+    color: '#7dd3fc',
+    prop: 'onEmployeeApplicants',
+  },
+  {
     // Admin-only: the page reads every user's message history. The floating
     // chat bubble is unaffected — everyone keeps that.
     key: 'globalMessage',
@@ -140,14 +149,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash,
+  onGlobalMessage, onCashDash, onEmployeeApplicants,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash,
+    onGlobalMessage, onCashDash, onEmployeeApplicants,
   };
 
   return (

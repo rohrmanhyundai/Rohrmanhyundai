@@ -141,6 +141,22 @@ export async function uploadTirePromoToS3(filename, file) {
   return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
 }
 
+// Upload an applicant's resume. The key is deliberately opaque — an applicant's
+// name has no business being guessable in a URL.
+export async function uploadResumeToS3(filename, file) {
+  const client = s3Client();
+  const key = 'applicant-resumes/' + filename;
+  const body = new Uint8Array(await file.arrayBuffer());
+  await client.send(new PutObjectCommand({
+    Bucket: S3_BUCKET,
+    Key: key,
+    Body: body,
+    ContentType: file.type || contentTypeFor(filename),
+    ContentDisposition: 'inline',
+  }));
+  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+}
+
 // Delete by full public URL — the registration index stores URLs, not keys.
 export async function deleteS3ObjectByUrl(url) {
   const prefix = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/`;
