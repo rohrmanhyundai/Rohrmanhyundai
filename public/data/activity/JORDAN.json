@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-09T19:58:12.832Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-09T19:58:11.701Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-09T15:33:04.170Z",
     "type": "page",
     "label": "work-schedule"
@@ -1298,60 +1308,5 @@
     "at": "2026-08-10T20:32:09.911Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-10T19:24:09.774Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T19:23:54.413Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-10T19:17:57.074Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-08-10T18:32:39.313Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T18:32:26.110Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-10T17:40:16.790Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T16:20:39.857Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-08-10T16:14:39.319Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-10T16:09:38.361Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-10T16:07:30.075Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-08-10T16:07:22.498Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
