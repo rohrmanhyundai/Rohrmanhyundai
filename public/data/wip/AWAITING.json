@@ -25,35 +25,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mtt4uopwa80f",
-    "ro": "780680",
-    "roDate": "2026-09-08",
-    "vehicle": "2017 Hyundai Sonata",
-    "jobDesc": "PROGRAM KEY FOB/SMART KEY REPLACEMENT",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mtuaqh8szph5",
-    "ro": "780703",
-    "roDate": "2026-09-09",
-    "vehicle": "2012 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES- engine knocking",
-    "notes": "P/A IS SUBMITTED ",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": false
   }
 ]
