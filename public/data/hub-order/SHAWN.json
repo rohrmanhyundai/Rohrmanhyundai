@@ -1,5 +1,6 @@
 {
   "managerHub": [
+    "goalForecast",
     "chargeAccountList",
     "surveyReports",
     "advisorCalendar",
@@ -9,7 +10,6 @@
     "employeeReview",
     "performanceReports",
     "repairOrderDatabase",
-    "goalForecast",
     "advisorForecast",
     "userDataTracker",
     "globalMessage",
