@@ -39,5 +39,19 @@
     "clockMode": "add",
     "eligiblePto": true,
     "updated": "2026-09-09T17:51:29.690Z"
+  },
+  "CORY": {
+    "payType": "flat",
+    "flatRate": 27,
+    "tier1Hours": 50,
+    "tier1Bump": 2,
+    "tier2Hours": 60,
+    "tier2Bump": 2,
+    "tierMode": "all",
+    "clockRate": 0,
+    "clockHours": 40,
+    "clockMode": "add",
+    "eligiblePto": true,
+    "updated": "2026-09-09T17:51:58.932Z"
   }
 }
