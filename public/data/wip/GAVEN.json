@@ -41,5 +41,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtuaqh8szph5",
+    "ro": "780703",
+    "roDate": "2026-09-09",
+    "vehicle": "2012 Hyundai Sonata",
+    "jobDesc": "CUSTOMER STATES- engine knocking",
+    "notes": "P/A IS SUBMITTED ",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
