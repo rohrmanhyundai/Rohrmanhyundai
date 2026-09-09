@@ -6,8 +6,8 @@
     "position": "Technician",
     "source": "Indeed",
     "interviewAt": "",
-    "interviewed": "",
-    "interviewedAt": "",
+    "interviewed": "yes",
+    "interviewedAt": "2026-09-09T08:38",
     "interviewNotes": "",
     "considerHire": "",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-mtu34dpjlbqv.pdf",
@@ -15,7 +15,7 @@
     "archived": false,
     "id": "ap-mtu34e1gs3x7",
     "appliedAt": "2026-09-09T12:38:46.804Z",
-    "updatedAt": "2026-09-09T12:38:46.804Z",
+    "updatedAt": "2026-09-09T12:38:52.114Z",
     "updatedBy": "SHAWN"
   }
 ]
