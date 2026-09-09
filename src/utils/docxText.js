@@ -1,4 +1,5 @@
-/* Read the text out of a .docx, with no library.
+/* Read the text out of an uploaded document — .docx, .rtf or plain text — with
+ * no library.
  *
  * A .docx is a ZIP holding word/document.xml. The browser can inflate a raw
  * deflate stream on its own (DecompressionStream), so this walks the ZIP's
@@ -92,6 +93,95 @@ function xmlToLines(xml) {
     .filter(Boolean);
 }
 
+/* ── RTF ───────────────────────────────────────────────────────────────────
+ *
+ * An .rtf is plain text carrying its formatting inline, so reading it as text
+ * drags \pard\sa200\f0\fs22 into the middle of every company name. This walks it
+ * properly: control words are obeyed or dropped, \par ends a line, and the
+ * groups that hold fonts, colours and the generator stamp are skipped whole
+ * rather than having their contents mistaken for content.
+ */
+
+// Groups whose contents are bookkeeping, not text.
+const RTF_SKIP = new Set([
+  'fonttbl', 'colortbl', 'stylesheet', 'listtable', 'listoverridetable',
+  'info', 'generator', 'pict', 'object', 'themedata', 'datastore',
+  'latentstyles', 'rsidtbl', 'xmlnstbl', 'filetbl', 'header', 'footer',
+]);
+
+export function rtfToText(rtf) {
+  let out = '';
+  let i = 0;
+  const stack = [];               // one entry per open group: true = skipping
+  let skipping = 0;               // depth of the group being skipped, 0 = not
+
+  while (i < rtf.length) {
+    const ch = rtf[i];
+
+    if (ch === '{') {
+      stack.push(skipping > 0);
+      i++;
+      // Two ways a group is bookkeeping: it opens with \* (a destination this
+      // reader may ignore), or its control word is one of the known tables.
+      if (!skipping) {
+        const starred = rtf[i] === '\\' && rtf[i + 1] === '*';
+        const word = /^\\([a-zA-Z]+)/.exec(rtf.slice(i));
+        if (starred || (word && RTF_SKIP.has(word[1]))) skipping = stack.length;
+      }
+      continue;
+    }
+    if (ch === '}') {
+      if (skipping === stack.length) skipping = 0;
+      stack.pop();
+      i++;
+      continue;
+    }
+    if (ch === '\\') {
+      const word = /^\\([a-zA-Z]+)(-?\d+)?[ ]?/.exec(rtf.slice(i));
+      if (word) {
+        i += word[0].length;
+        if (skipping) continue;
+        if (word[1] === 'par' || word[1] === 'line' || word[1] === 'sect') out += '\n';
+        else if (word[1] === 'tab') out += '\t';
+        else if (word[1] === 'u') {
+          // \uN with a replacement character after it, which must be dropped.
+          const code = parseInt(word[2], 10);
+          if (Number.isFinite(code)) out += String.fromCharCode(code < 0 ? code + 65536 : code);
+          if (rtf[i] === '?') i++;
+        }
+        continue;
+      }
+      const esc = rtf[i + 1];
+      if (esc === "'") {                       // \'hh — one byte, written in hex
+        const code = parseInt(rtf.substr(i + 2, 2), 16);
+        if (!skipping && Number.isFinite(code)) out += String.fromCharCode(code);
+        i += 4;
+        continue;
+      }
+      if (esc === '\\' || esc === '{' || esc === '}') {
+        if (!skipping) out += esc;
+        i += 2;
+        continue;
+      }
+      i += 2;                                   // \* and friends
+      continue;
+    }
+    if (ch === '\r' || ch === '\n') { i++; continue; }   // layout only; \par is the real break
+    if (!skipping) out += ch;
+    i++;
+  }
+  return out;
+}
+
+export async function extractRtfLines(file) {
+  const lines = rtfToText(await file.text())
+    .split('\n')
+    .map(l => l.replace(/ /g, ' ').replace(/[ \t]*\t[ \t]*/g, '\t').replace(/ +/g, ' ').trim())
+    .filter(Boolean);
+  if (!lines.length) throw new Error('That document has no readable text.');
+  return lines;
+}
+
 export async function extractDocxLines(file) {
   const buffer = await file.arrayBuffer();
   const xml = new TextDecoder().decode(await readZipEntry(buffer, 'word/document.xml'));
@@ -109,6 +199,7 @@ export async function extractTextLines(file) {
 export async function extractLines(file) {
   const name = ((file && file.name) || '').toLowerCase();
   if (name.endsWith('.docx')) return extractDocxLines(file);
+  if (name.endsWith('.rtf')) return extractRtfLines(file);
   if (name.endsWith('.doc')) {
     throw new Error('That is the older .doc format. Open it in Word, use Save As and pick .docx, then upload that.');
   }

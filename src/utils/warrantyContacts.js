@@ -13,10 +13,15 @@ import { findPhoneMatch, findPhone, findEmail } from './contactPatterns';
 const HEADINGS = /^(company|companies|name|phone|telephone|tel|email|e-?mail|contact|contacts|warranty|aftermarket|claims?|fax|notes?|address)\b[\s:|-]*$/i;
 
 const clean = (s) => String(s || '')
-  .replace(/^[\s|,;:•\-–—()]+/, '')
-  .replace(/[\s|,;:•\-–—()]+$/, '')
+  .replace(/^[\s|,;:•\-–—]+/, '')
+  .replace(/[\s|,;:•\-–—]+$/, '')
   .replace(/\s+/g, ' ')
   .trim();
+
+// "1." / "12)" at the start of a line — a typed list is nearly always numbered,
+// and the number is not part of the company's name. A dot or bracket is
+// required, so a company called 3M keeps its 3.
+const stripListNumber = (s) => String(s || '').replace(/^\s*\d{1,3}\s*[.)]\s*/, '');
 
 // Labels sitting next to the value, e.g. "Phone: 800-555-1212".
 const stripLabels = (s) => clean(String(s || '')
@@ -53,12 +58,17 @@ export function parseContactLines(lines) {
     let rest = line;
     if (hit) rest = rest.slice(0, hit.index) + ' ' + rest.slice(hit.index + hit.raw.length);
     if (email) rest = rest.split(email).join(' ');
-    let name = clean(stripLabels(rest.split('\t').filter(p => looksLikeName(p))[0] || rest));
+    // Commas and pipes separate the columns of a typed list just as tabs do, so
+    // the name is the first piece that reads like one. Anything left over — a
+    // note where an email should be, or a phone number too mangled to read — is
+    // dropped rather than glued onto the company's name.
+    const pieces = rest.split(/[\t|,]/).map(p => clean(stripLabels(stripListNumber(p))));
+    let name = pieces.find(looksLikeName) || clean(stripLabels(stripListNumber(rest)));
 
     // Nothing usable on the line — try the line above, which is often the
     // company name on its own row.
     if (!looksLikeName(name)) {
-      const above = clean(stripLabels(list[i - 1] || ''));
+      const above = clean(stripLabels(stripListNumber(list[i - 1] || '')));
       name = looksLikeName(above) && !findPhone(above) && !findEmail(above) ? above : '';
     }
     if (!name) continue;                         // a phone with no company is no use
