@@ -133,6 +133,15 @@ const NAV_BUTTONS = [
     prop: 'onGlobalMessage',
   },
   {
+    key: 'livePay',
+    label: '💵 Live Pay',
+    desc: 'Advisor commission and technician flat-rate pay — banked and pacing',
+    bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(14,165,233,.18))',
+    border: 'rgba(52,211,153,.5)',
+    color: '#6ee7b7',
+    prop: 'onLivePay',
+  },
+  {
     key: 'cashDash',
     label: '💰 Cash Dash',
     desc: 'August pull pacing per advisor & tech — enter tech hours and see locked pulls',
@@ -149,14 +158,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash, onEmployeeApplicants,
+  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash, onEmployeeApplicants,
+    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay,
   };
 
   return (
@@ -192,7 +201,7 @@ export default function ManagerHub({
           <SortableTiles
             hubKey="managerHub"
             currentUser={currentUser}
-            items={NAV_BUTTONS.filter(b => !b.adminOnly || currentRole === 'admin')}
+            items={NAV_BUTTONS.filter(b => (!b.adminOnly || currentRole === 'admin') && handlers[b.prop])}
             style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}
           >
             {btn => (

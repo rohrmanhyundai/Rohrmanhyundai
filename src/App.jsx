@@ -159,6 +159,7 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [viewingAdvisor, setViewingAdvisor] = useState('');
   const [livePayFocus, setLivePayFocus] = useState(''); // advisor to open Live Pay on
+  const [livePayFrom, setLivePayFrom] = useState('dashboard'); // hub that opened Live Pay
   const [surveyFocus, setSurveyFocus] = useState('');   // advisor to preselect on Survey Reports
   const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [advisorUnread, setAdvisorUnread] = useState(0);
@@ -938,7 +939,7 @@ export default function App() {
         userPages={currentPages}
         onWorkSchedule={() => goTo('work-schedule', 'tech-resources')}
         onTireQuote={() => goTo('tire-quote', 'tech-resources')}
-        onLivePay={canSeeAnyPay ? () => goTo('live-pay-hub', 'tech-resources') : undefined}
+        onLivePay={canSeeAnyPay ? () => { setLivePayFrom('tech-resources'); goTo('live-pay-hub', 'tech-resources'); } : undefined}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
@@ -1172,6 +1173,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'manager-hub')}
         onDocumentLibrary={() => goTo('document-library', 'manager-hub')}
         onWorkSchedule={() => goTo('work-schedule', 'manager-hub')}
+        onLivePay={canSeeAnyPay ? () => { setLivePayFrom('manager-hub'); goTo('live-pay-hub', 'manager-hub'); } : undefined}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
@@ -1357,7 +1359,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTireQuote={() => goTo('tire-quote', 'advisor-calendar')}
-        onLivePay={canSeeAnyPay ? () => goTo('live-pay-hub', 'advisor-calendar') : undefined}
+        onLivePay={canSeeAnyPay ? () => { setLivePayFrom('advisor-calendar'); goTo('live-pay-hub', 'advisor-calendar'); } : undefined}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
@@ -1471,8 +1473,8 @@ export default function App() {
         showTech={showTech}
         onAdvisor={() => { setLivePayFocus(''); goTo('live-pay', 'live-pay-hub'); }}
         onTech={() => goTo('tech-live-pay', 'live-pay-hub')}
-        onBack={() => setPage(prevPage || 'dashboard')}
-        backLabel={BACK_LABELS[prevPage] || '← Back'}
+        onBack={() => setPage(livePayFrom === 'live-pay-hub' ? 'dashboard' : (livePayFrom || 'dashboard'))}
+        backLabel={BACK_LABELS[livePayFrom] || '← Back'}
       />
     );
   }
