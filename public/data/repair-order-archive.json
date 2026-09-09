@@ -1,5 +1,26 @@
 [
   {
+    "id": "mthj1g1dr8hv",
+    "ro": "780440",
+    "roDate": "2026-08-31",
+    "vehicle": "2023 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES BRAKE LIGHT SEEMS TO BE SHORTING OUT. CHECK AND ADVISE.",
+    "notes": "Recommended replacing taillight wiring harness and bulb. ",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "09/04/2026",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "_archiveId": "mtu2ikgowdq",
+    "_archivedAt": "2026-09-09T12:21:48.696Z",
+    "_archivedBy": "CORY",
+    "_source": "wip",
+    "_sourceTech": "CORY"
+  },
+  {
     "id": "mthj1cncv5b2",
     "ro": "780455",
     "roDate": "2026-08-31",
