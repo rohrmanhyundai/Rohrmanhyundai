@@ -262,7 +262,10 @@ export function buildWeekRecord(tech, plan, extra = {}) {
   const p = normalizePlan(plan);
   const t = tech || {};
   const basis = payBasis(t, p);
-  const pay = computeTechPay(p, basis.banked);
+  // A manager's adjustment at close-out — hours added to or taken off the week.
+  const adjustment = num(extra.adjustment);
+  const hours = Math.max(0, basis.banked + adjustment);
+  const pay = computeTechPay(p, hours);
   const { start, end } = extra.weekStart ? weekBoundsOf(extra.weekStart) : weekBounds();
   const days = {};
   for (const d of WEEK_DAYS) days[d] = round2(num(t[d]));
@@ -270,8 +273,10 @@ export function buildWeekRecord(tech, plan, extra = {}) {
     weekStart: start,
     weekEnd: end,
     days,
-    hours: round2(basis.banked),
-    boardHours: round2(num(t.total)),
+    hours: round2(hours),               // what the tech is paid on
+    payableHours: round2(basis.banked), // before the adjustment
+    adjustment: round2(adjustment),
+    boardHours: round2(num(t.total)),   // what the Tech Hours board said
     ptoHours: round2(basis.ptoHours),
     ptoPaid: p.eligiblePto,
     rate: round2(pay.effRate),
@@ -282,6 +287,12 @@ export function buildWeekRecord(tech, plan, extra = {}) {
     updatedAt: new Date().toISOString(),
     ...extra,
   };
+}
+
+// The payable hours a week would be stored with, before any adjustment — the
+// number the close-out screen shows next to the adjustment box.
+export function payableHoursOf(tech, plan) {
+  return round2(payBasis(tech, plan).banked);
 }
 
 const round2 = (n) => Math.round((num(n)) * 100) / 100;

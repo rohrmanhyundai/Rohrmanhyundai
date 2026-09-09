@@ -6,7 +6,7 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { loadTechPay, saveTechWeek } from '../utils/github';
-import { buildWeekRecord, planIsSet, boardWeekBounds } from '../utils/techPay';
+import { buildWeekRecord, planIsSet, boardWeekBounds, payableHoursOf } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -953,17 +953,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
    */
   const WEEK_DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-  function weekDayDates(startIso) {
-    const [y, m, d] = String(startIso || '').split('-').map(Number);
-    const monday = (y && m && d) ? new Date(y, m - 1, d) : new Date();
-    const out = {};
-    WEEK_DAY_KEYS.forEach((k, i) => {
-      const dt = new Date(monday);
-      dt.setDate(monday.getDate() + i);
-      out[k] = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
-    });
-    return out;
-  }
 
   async function openWeekCloseout() {
     const techs = data.technicians || [];
@@ -971,8 +960,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const rows = techs.map((t, idx) => ({
       idx,
       name: t.name,
-      days: WEEK_DAY_KEYS.reduce((o, d) => { o[d] = safe(t[d], 0); return o; }, {}),
-      edited: {},
+      total: Math.round(WEEK_DAY_KEYS.reduce((sum, d) => sum + safe(t[d], 0), 0) * 100) / 100,
+      adjust: '',   // blank until the manager types one
     }));
     setCloseout({ rows, plans: null, busy: false, err: '', week: boardWeekBounds(techs) });
     // Plans decide what each week is worth. If they can't be read the week is
@@ -985,14 +974,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  function setCloseoutHours(rowIdx, day, value) {
-    setCloseout(c => {
-      if (!c) return c;
-      const rows = c.rows.map((r, i) => (i === rowIdx
-        ? { ...r, days: { ...r.days, [day]: value }, edited: { ...r.edited, [day]: true } }
-        : r));
-      return { ...c, rows };
-    });
+  function setCloseoutAdjust(rowIdx, value) {
+    setCloseout(c => c ? { ...c, rows: c.rows.map((r, i) => (i === rowIdx ? { ...r, adjust: value } : r)) } : c);
   }
 
   async function confirmWeekCloseout() {
@@ -1003,27 +986,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const newData = structuredClone(data);
     const plans = closeout.plans || {};
     // The week on the board, which on a Monday morning is last week — see
-    // boardWeekBounds. Stamps go on that week's dates, not today's.
+    // boardWeekBounds.
     const bounds = boardWeekBounds(newData.technicians);
-    const dates = weekDayDates(bounds.start);
 
-    // 1. Apply the adjustments, so the archived week and the board agree.
-    for (const row of closeout.rows) {
-      const tech = (newData.technicians || [])[row.idx];
-      if (!tech) continue;
-      for (const day of WEEK_DAY_KEYS) {
-        if (!row.edited[day]) continue;
-        const v = safe(row.days[day], 0);
-        tech[day] = v;
-        // A hand-set figure carries no warranty multiplier, and marking the date
-        // as entered stops the schedule's 8-hour fill overwriting the decision.
-        tech[`${day}_raw`] = v;
-        tech.hoursOverride = { ...(tech.hoursOverride || {}), [dates[day]]: true };
-      }
-      tech.total = WEEK_DAY_KEYS.reduce((sum, d) => sum + safe(tech[d], 0), 0);
-    }
-
-    // 2. Store the week for every tech on a pay plan.
+    // Store the week for every tech on a pay plan, with the manager's
+    // adjustment folded into the hours they're paid on.
     const stored = [];
     const failed = [];
     for (const row of closeout.rows) {
@@ -1033,6 +1000,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       try {
         const record = buildWeekRecord(tech, plans[key], {
           weekStart: bounds.start,
+          adjustment: safe(row.adjust, 0),
           closed: true,
           closedBy: (currentUser || '').toUpperCase(),
           closedAt: new Date().toISOString(),
@@ -2323,40 +2291,54 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 </div>
                 <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 5, lineHeight: 1.5 }}>
                   Week of <strong style={{ color: '#cbd5e1' }}>{closeout.week.start}</strong> to <strong style={{ color: '#cbd5e1' }}>{closeout.week.end}</strong>.
-                  Adjust any hours below — what you leave here is what each tech is paid on and what gets stored.
+                  Adjust a week with the box beside it — the Final column is what each tech is paid on and what gets stored.
                   The week is saved to every tech&rsquo;s Weekly History, then the board is cleared for the new week.
                 </div>
                 {closeout.err && <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 8, fontWeight: 700 }}>{closeout.err}</div>}
               </div>
 
               <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr repeat(6, 1fr) .9fr', gap: 6, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 6 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 8, borderBottom: '1px solid rgba(148,163,184,.12)' }}>
                   <div>Technician</div>
-                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d} style={{ textAlign: 'center' }}>{d}</div>)}
-                  <div style={{ textAlign: 'right' }}>Total</div>
+                  <div style={{ textAlign: 'right' }}>Week Hours</div>
+                  <div style={{ textAlign: 'center' }}>Adjustment</div>
+                  <div style={{ textAlign: 'right' }}>Final</div>
                 </div>
                 {closeout.rows.map((row, ri) => {
-                  const total = ['mon','tue','wed','thu','fri','sat'].reduce((sum, d) => sum + safe(row.days[d], 0), 0);
+                  const adj = safe(row.adjust, 0);
                   const key = String(row.name || '').toUpperCase();
                   const hasPlan = closeout.plans ? planIsSet(closeout.plans[key]) : true;
+                  // What the week is actually stored with: payable hours (PTO already
+                  // out if this tech isn't eligible) plus the adjustment.
+                  const payable = closeout.plans && hasPlan
+                    ? payableHoursOf((data.technicians || [])[row.idx], closeout.plans[key])
+                    : row.total;
+                  const final = Math.max(0, Math.round((payable + adj) * 100) / 100);
+                  const ptoOut = Math.round((row.total - payable) * 100) / 100;
                   return (
-                    <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1.2fr repeat(6, 1fr) .9fr', gap: 6, alignItems: 'center', padding: '5px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
-                      <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0' }}>
+                    <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', padding: '9px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>
                         {row.name}
                         {closeout.plans && !hasPlan && (
                           <span title="No pay plan — hours are cleared but no week is stored"
                             style={{ color: '#fb923c', fontSize: 11, fontWeight: 700 }}> · no plan</span>
                         )}
+                        {ptoOut > 0 && (
+                          <span style={{ display: 'block', color: '#94a3b8', fontSize: 11, fontWeight: 700 }}>
+                            {ptoOut} PTO hrs not paid
+                          </span>
+                        )}
                       </div>
-                      {['mon','tue','wed','thu','fri','sat'].map(d => (
-                        <input key={d} type="number" step="0.01" min="0" value={row.days[d]}
-                          onChange={e => setCloseoutHours(ri, d, e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
-                          style={{ width: '100%', background: row.edited[d] ? 'rgba(251,191,36,.12)' : 'rgba(2,6,23,.6)',
-                                   border: `1px solid ${row.edited[d] ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.22)'}`,
-                                   borderRadius: 7, padding: '5px 6px', color: '#e2e8f0', fontSize: 12.5, fontWeight: 700, textAlign: 'center' }} />
-                      ))}
-                      <div style={{ textAlign: 'right', fontSize: 13.5, fontWeight: 900, color: '#6ee7b7' }}>
-                        {(Math.round(total * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                      <div style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#cbd5e1' }}>
+                        {row.total.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                      </div>
+                      <input type="number" step="0.01" value={row.adjust} placeholder="+ / −"
+                        onChange={e => setCloseoutAdjust(ri, e.target.value)}
+                        style={{ width: '100%', background: adj ? 'rgba(251,191,36,.12)' : 'rgba(2,6,23,.6)',
+                                 border: `1px solid ${adj ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.22)'}`,
+                                 borderRadius: 8, padding: '7px 8px', color: '#e2e8f0', fontSize: 13.5, fontWeight: 700, textAlign: 'center' }} />
+                      <div style={{ textAlign: 'right', fontSize: 15, fontWeight: 900, color: adj ? '#fbbf24' : '#6ee7b7' }}>
+                        {final.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                       </div>
                     </div>
                   );
@@ -2368,7 +2350,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
               <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(148,163,184,.14)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
                 <span style={{ flex: 1, fontSize: 11.5, color: '#64748b', lineHeight: 1.45 }}>
-                  Edited cells are highlighted. A tech with no pay plan has their hours cleared but no week stored.
+                  Enter a positive or negative number to adjust a week. A tech with no pay plan has their hours cleared but no week stored.
                 </span>
                 <button className="secondary" disabled={closeout.busy} onClick={() => setCloseout(null)}>Cancel</button>
                 <button onClick={confirmWeekCloseout} disabled={closeout.busy || !closeout.plans}
