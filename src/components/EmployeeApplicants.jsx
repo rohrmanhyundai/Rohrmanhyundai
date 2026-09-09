@@ -116,6 +116,11 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('open');
   const [role, setRole] = useState('all');       // which category is showing
+  // The applicant whose details are open. Marking someone "not considering"
+  // moves them to Passed, which the Open filter hides — so the card, and the
+  // notes box you just asked for, would vanish mid-sentence. Whoever is open
+  // stays on screen until they're closed.
+  const [openId, setOpenId] = useState('');
   const [search, setSearch] = useState('');
   const [adding, setAdding] = useState(false);
   const [busyId, setBusyId] = useState('');
@@ -179,6 +184,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
     const rank = { today: 0, overdue: 1, decide: 2, scheduled: 3, new: 4, hire: 5, pass: 6, archived: 7 };
     return rows
       .filter(a => {
+        if (a.id === openId) return true;              // never pull it out from under you
         const st = stageOf(a).key;
         if (filter === 'open') return !a.archived && st !== 'pass';
         if (filter === 'today') return st === 'today' || st === 'overdue';
@@ -195,7 +201,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         if (ra !== rb) return ra - rb;
         return String(a.interviewAt || a.appliedAt || '').localeCompare(String(b.interviewAt || b.appliedAt || ''));
       });
-  }, [rows, filter, role, search]);
+  }, [rows, filter, role, search, openId]);
 
   // Counts for the role chips reflect the status filter above them, so "Needs a
   // decision" plus "Technician" reads as the number it actually shows.
@@ -379,6 +385,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
                         key={a.id}
                         applicant={a}
                         busy={busyId === a.id}
+                        onOpenChange={isOpen => setOpenId(isOpen ? a.id : (id => id === a.id ? '' : id))}
                         onChange={patch => persist({ ...a, ...patch })}
                         onDelete={() => remove(a)}
                       />
@@ -439,7 +446,7 @@ function ApplicantForm({ onCancel, onSave }) {
       await onSave({
         name: name.trim(), phone: phone.trim(), email: email.trim(),
         position, source, interviewAt,
-        contacted: '', contactedAt: '', contactNotes: '',
+        contacted: '', contactedAt: '', contactNotes: '', decisionNotes: '',
         interviewed: '', interviewedAt: '', interviewNotes: '',
         considerHire: '', resumeUrl, resumeName, archived: false,
       });
@@ -564,14 +571,15 @@ function ResumeView({ applicant: a }) {
 }
 
 /* ── One applicant ────────────────────────────────────────────────────────── */
-function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
+function ApplicantCard({ applicant: a, busy, onOpenChange, onChange, onDelete }) {
   const [open, setOpen] = useState(false);
   const [notes, setNotes] = useState(a.interviewNotes || '');
   const [contactNotes, setContactNotes] = useState(a.contactNotes || '');
+  const [decisionNotes, setDecisionNotes] = useState(a.decisionNotes || '');
   const [downloading, setDownloading] = useState(false);
   const stage = stageOf(a);
 
-  const toggleOpen = () => setOpen(o => !o);
+  const toggleOpen = () => setOpen(o => { onOpenChange?.(!o); return !o; });
 
   // Save it to the machine rather than viewing it. A cross-origin file ignores
   // the download attribute, so fetch the bytes and hand the browser a blob; if
@@ -599,6 +607,7 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
 
   useEffect(() => { setNotes(a.interviewNotes || ''); }, [a.interviewNotes]);
   useEffect(() => { setContactNotes(a.contactNotes || ''); }, [a.contactNotes]);
+  useEffect(() => { setDecisionNotes(a.decisionNotes || ''); }, [a.decisionNotes]);
 
   const yesNo = (value, onPick, yesLabel = 'Yes', noLabel = 'No') => (
     <div style={{ display: 'inline-flex', gap: 6 }}>
@@ -790,6 +799,23 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
               Consider for hire <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none', color: '#64748b' }}>— click again to clear</span>
             </label>
             {yesNo(a.considerHire, v => onChange({ considerHire: v }))}
+
+            {/* Why someone was passed over is the thing you'll want months later
+                — when they reapply, or when the same question comes up again. */}
+            {a.considerHire === 'no' && (
+              <div style={{ marginTop: 12 }}>
+                <label style={labelStyle}>Why you're passing</label>
+                <textarea
+                  rows={3}
+                  value={decisionNotes}
+                  onChange={e => setDecisionNotes(e.target.value)}
+                  onBlur={() => { if (decisionNotes !== (a.decisionNotes || '')) onChange({ decisionNotes }); }}
+                  placeholder="Not enough experience, pay expectations, no-showed the interview, took another job…"
+                  style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.55 }}
+                />
+                <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 4 }}>Saves when you click out of the box.</div>
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
