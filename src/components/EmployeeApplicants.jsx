@@ -47,6 +47,17 @@ const nowLocalStamp = () => {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 };
 
+// appliedAt is a real instant (ISO), so it formats to the reader's local clock.
+function prettyStamp(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit',
+  });
+}
+
 const todayKey = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -616,6 +627,11 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
           </button>
         )}
         {a.source && <span style={{ color: '#64748b' }}>via {a.source}</span>}
+        {a.appliedAt && (
+          <span style={{ color: '#64748b' }} title={`Application added ${prettyStamp(a.appliedAt)}`}>
+            Added {prettyStamp(a.appliedAt)}
+          </span>
+        )}
       </div>
 
       {open && (
@@ -720,7 +736,10 @@ function ApplicantCard({ applicant: a, busy, onChange, onDelete }) {
               Delete
             </button>
             <div style={{ flex: 1 }} />
-            {a.appliedAt && <span style={{ fontSize: 11.5, color: '#64748b' }}>Added {new Date(a.appliedAt).toLocaleDateString()}</span>}
+            <span style={{ fontSize: 11.5, color: '#64748b', textAlign: 'right' }}>
+              {a.appliedAt && <>Added {prettyStamp(a.appliedAt)}</>}
+              {a.updatedAt && a.updatedAt !== a.appliedAt && <><br />Last updated {prettyStamp(a.updatedAt)}</>}
+            </span>
           </div>
 
           <ResumeView applicant={a} />
