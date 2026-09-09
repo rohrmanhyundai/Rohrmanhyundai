@@ -430,7 +430,14 @@
     "text": "Dont forget about RO 780644 with the washer fluid",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtuaju45j7hj",
+        "from": "SHAWN",
+        "text": "did we check this car again?",
+        "timestamp": 1788970004789
+      }
+    ],
     "timestamp": 1788956880315
   },
   {
