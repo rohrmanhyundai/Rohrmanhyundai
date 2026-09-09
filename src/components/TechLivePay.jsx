@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { safe } from '../utils/formatters';
 import { loadTechPay, saveTechPayPlan, loadTechPayHistory } from '../utils/github';
-import { computeTechPay, normalizePlan, planIsSet, tiersOf, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
+import { computeTechPay, normalizePlan, planIsSet, tiersOf, payBasis, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
 import { HeroCard, QualCard, Row } from './LivePay';
 
 /* Tech Live Pay — the flat-rate mirror of the advisor page.
@@ -48,9 +48,14 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
 
   const calc = useMemo(() => {
     if (!selected) return null;
-    const banked = safe(selected.total, 0);
-    const pace = safe(selected.pacing, 0) || banked;
-    return { banked: computeTechPay(plan, banked), pacing: computeTechPay(plan, pace) };
+    // Holiday / PTO / training hours are stripped out here when the tech isn't
+    // eligible for them, so every figure below is already on payable hours.
+    const basis = payBasis(selected, plan);
+    return {
+      basis,
+      banked: computeTechPay(plan, basis.banked),
+      pacing: computeTechPay(plan, basis.pacing),
+    };
   }, [selected, plan]);
 
   const pay = calc ? (mode === 'pacing' ? calc.pacing : calc.banked) : null;
@@ -152,7 +157,8 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                 )}
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 18 }}>
-                  <QualCard accent="#a78bfa" title={mode === 'pacing' ? 'Projected Hours' : 'Hours Turned'} value={hrs1(pay.hours)} note={pay.tier.label} />
+                  <QualCard accent="#a78bfa" title={mode === 'pacing' ? 'Projected Hours' : 'Hours Turned'} value={hrs1(pay.hours)}
+                    note={calc.basis.excluded > 0 ? `${pay.tier.label} · ${hrs1(calc.basis.excluded)} PTO hrs not paid` : pay.tier.label} />
                   <QualCard accent="#34d399" title="Effective Flat Rate" value={rate(pay.effRate)} note={plan.tierMode === 'all' ? 'Every hour at the tier rate' : 'Blended across the tiers'} />
                   <QualCard accent={plan.payType === 'flat_clock' ? '#fbbf24' : '#38bdf8'} title="Pay Type"
                     value={plan.payType === 'flat_clock' ? 'Clock + Flat' : 'Flat Rate'}
@@ -166,6 +172,10 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                     <span style={{ width: 4, height: 18, borderRadius: 2, background: mode === 'pacing' ? 'linear-gradient(180deg,#34d399,#10b981)' : 'linear-gradient(180deg,#38bdf8,#0ea5e9)' }} />
                     <div style={{ fontSize: 12, fontWeight: 900, color: '#e2e8f0', textTransform: 'uppercase', letterSpacing: '.05em' }}>{mode === 'pacing' ? 'Pacing Pay Breakdown' : 'Banked Pay Breakdown'}</div>
                   </div>
+                  {calc.basis.excluded > 0 && (
+                    <Row label={`Holiday / PTO / Training (${hrs1(calc.basis.excluded)} hrs)`} value="Not paid"
+                      valueColor="#94a3b8" sub="This pay plan is not eligible for those hours, so they're left out below" subColor="#94a3b8" muted />
+                  )}
                   {pay.bands.length === 0 && <Row label="Flat Rate Pay" value={money(0)} sub="No hours turned yet this week" subColor="#94a3b8" muted />}
                   {pay.bands.map((b, i) => (
                     <Row key={i} label={`Flat Rate — ${b.label} (${rate(b.rate)}/hr × ${hrs1(b.hours)} hrs)`} value={money(b.amount)} />
@@ -414,6 +424,14 @@ function SetupPanel({ techName, plan, onSaved }) {
             <input type="number" step="0.01" min="0" placeholder="0.00" style={inputStyle} {...numField('tier2Bump')} />
           </Field>
         </div>
+
+        <Field label="Holiday / PTO / training hours"
+          hint="The dashboard fills 8 hours into a day the calendar marks off. Switch this off and those hours are left out of this tech's pay — and out of the pace, so a holiday week isn't projected across days they were never going to work.">
+          <Choice value={form.eligiblePto === false ? 'no' : 'yes'} onChange={v => set('eligiblePto', v === 'yes')} options={[
+            { value: 'yes', label: 'Eligible — paid', note: 'Filled hours count toward pay' },
+            { value: 'no', label: 'Not eligible', note: 'Filled hours are excluded from pay' },
+          ]} />
+        </Field>
 
         <Field label="How a bump is applied" hint="Shops write this both ways — pick the one on this tech's pay plan.">
           <Choice value={form.tierMode} onChange={v => set('tierMode', v)} options={[
