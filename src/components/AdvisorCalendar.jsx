@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import SortableTiles from './SortableTiles';
 import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews } from '../utils/github';
 import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
@@ -577,128 +578,160 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && (
-            <button onClick={onHotRepairs} style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.25),rgba(239,68,68,.18))', borderColor: 'rgba(248,113,113,.35)' }}>
-              🔧 Recalls/TSB Bulletins
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'documentLibrary') && (
-            <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
-              📁 Document Library
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && (
-            <button onClick={onChargeList} style={{ background: 'linear-gradient(180deg,rgba(251,113,133,.25),rgba(244,63,94,.18))', borderColor: 'rgba(251,113,133,.35)' }}>
-              💳 Charge List
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'servicePricing') && onServicePricing && (
-            <button onClick={onServicePricing} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-              💲 Service Pricing Menu
-            </button>
-          )}
-          {/* One page, a tab per roster — it opens on the viewer's own schedule. */}
-          {(canSee(userPages, currentRole, 'advisorSchedule') || canSee(userPages, currentRole, 'techSchedule')) && (
-            <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-              📅 Work Schedule
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'aftermarketWarranty') && (
-            <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-              🛡 After Market Warranty
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'originalOwner') && onOriginalOwner && (
-            <button onClick={onOriginalOwner} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}>
-              📋 Original Owner
-            </button>
-          )}
-          {onAfterCall && (
-            <>
-              {afterCallDue && <style>{`@keyframes acPulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(52,211,153,.75);transform:scale(1.06)}}@keyframes acBellBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
-              <span style={{ position: 'relative', display: 'inline-flex' }}>
-                <button onClick={onAfterCall}
-                  style={afterCallDue
-                    ? { background: 'linear-gradient(180deg,#10b981,#047857)', borderColor: '#a7f3d0', color: '#fff', fontWeight: 900, animation: 'acPulse 1.2s ease-in-out infinite' }
-                    : { background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-                  {afterCallDue ? '📞 After Call Reviews ‼️' : '📞 After Call Reviews'}
-                </button>
-                {afterCallDue && (
-                  <span
-                    title={`You have ${pendingCallCount} customer${pendingCallCount === 1 ? '' : 's'} still to call for their after-call review`}
-                    style={{
-                      position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
-                      background: '#a7f3d0', color: '#064e3b', fontWeight: 900, fontSize: 12,
-                      border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
-                      transformOrigin: 'center', animation: 'acBellBob 1.1s ease-in-out infinite', pointerEvents: 'none',
-                    }}>
-                    {pendingCallCount}
-                  </span>
-                )}
-              </span>
-            </>
-          )}
-          {canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && (
-            <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-              📊 Survey Reports
-            </button>
-          )}
-          {onMyReports && (
-            <button onClick={onMyReports} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.25),rgba(110,231,249,.18))', borderColor: 'rgba(61,214,195,.35)' }}>
-              📈 My Reports
-            </button>
-          )}
-          {onCashDash && (
-            <>
-              <style>{`@keyframes cashGlow{0%,100%{box-shadow:0 0 10px 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 20px 5px rgba(34,197,94,.85)}}`}</style>
-              <button onClick={onCashDash}
-                style={{ background: 'linear-gradient(180deg,#22c55e,#059669)', borderColor: '#6ee7b7', color: '#052e16', fontWeight: 900, textShadow: '0 1px 0 rgba(255,255,255,.25)', animation: 'cashGlow 1.8s ease-in-out infinite' }}>
-                💰 Cash Dash
-              </button>
-            </>
-          )}
-          {onGoalsForecasting && (
-            <>
-              {(eodUrgent || eodMissed) && <style>{`@keyframes eodPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(239,68,68,.7);transform:scale(1.06)}}@keyframes eodPinBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
-              <span style={{ position: 'relative', display: 'inline-flex' }}>
-                <button onClick={onGoalsForecasting}
-                  style={eodMissed
-                    ? { background: 'linear-gradient(180deg,#dc2626,#991b1b)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.1s ease-in-out infinite' }
-                    : eodUrgent
-                    ? { background: 'linear-gradient(180deg,#f97316,#ef4444)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.3s ease-in-out infinite' }
-                    : { background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
-                  {eodMissed
-                    ? `📌 Missed Reporting — Fix Now`
-                    : eodUrgent ? '⏰ End of Day Reporting ‼️' : '🎯 End of Day Reporting'}
-                </button>
-                {eodMissed && (
-                  <span
-                    title={`You have ${missedEodCount} missed day${missedEodCount === 1 ? '' : 's'} of End of Day Reporting to complete`}
-                    style={{
-                      position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
-                      background: '#fbbf24', color: '#7c2d12', fontWeight: 900, fontSize: 12,
-                      border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
-                      transformOrigin: 'center', animation: 'eodPinBob 1.1s ease-in-out infinite', pointerEvents: 'none',
-                    }}>
-                    {missedEodCount}
-                  </span>
-                )}
-              </span>
-            </>
-          )}
-          {canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && (
-            <button onClick={onWorkInProgress} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
-              🔧 Work in Progress
-            </button>
-          )}
-          {canSee(userPages, currentRole, 'tireQuote') && (
-            <button onClick={onTireQuote} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
-              🛞 Tire Quote
-            </button>
-          )}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Same buttons as ever, just held in a list so each advisor can press
+              and hold to arrange them the way they work. `display: contents`
+              keeps them as direct children of this row, so the layout is
+              unchanged. Back stays pinned at the end — it isn't a feature. */}
+          <SortableTiles
+            hubKey="advisorCalendar"
+            currentUser={currentUser}
+            items={[
+              canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && { key: 'hotRepairs' },
+              canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
+              canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && { key: 'chargeList' },
+              canSee(userPages, currentRole, 'servicePricing') && onServicePricing && { key: 'servicePricing' },
+              (canSee(userPages, currentRole, 'advisorSchedule') || canSee(userPages, currentRole, 'techSchedule')) && { key: 'workSchedule' },
+              canSee(userPages, currentRole, 'aftermarketWarranty') && { key: 'aftermarketWarranty' },
+              canSee(userPages, currentRole, 'originalOwner') && onOriginalOwner && { key: 'originalOwner' },
+              onAfterCall && { key: 'afterCall' },
+              canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && { key: 'surveyReports' },
+              onMyReports && { key: 'myReports' },
+              onCashDash && { key: 'cashDash' },
+              onGoalsForecasting && { key: 'goalsForecasting' },
+              canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && { key: 'workInProgress' },
+              canSee(userPages, currentRole, 'tireQuote') && { key: 'tireQuote' },
+            ].filter(Boolean)}
+            style={{ display: 'contents' }}
+            hint="compact"
+          >
+            {btn => {
+              switch (btn.key) {
+                case 'hotRepairs': return (
+                  <button onClick={onHotRepairs} style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.25),rgba(239,68,68,.18))', borderColor: 'rgba(248,113,113,.35)' }}>
+                    🔧 Recalls/TSB Bulletins
+                  </button>
+                );
+                case 'documentLibrary': return (
+                  <button onClick={onDocumentLibrary} style={{ background: 'linear-gradient(180deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', borderColor: 'rgba(110,231,249,.35)' }}>
+                    📁 Document Library
+                  </button>
+                );
+                case 'chargeList': return (
+                  <button onClick={onChargeList} style={{ background: 'linear-gradient(180deg,rgba(251,113,133,.25),rgba(244,63,94,.18))', borderColor: 'rgba(251,113,133,.35)' }}>
+                    💳 Charge List
+                  </button>
+                );
+                case 'servicePricing': return (
+                  <button onClick={onServicePricing} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+                    💲 Service Pricing Menu
+                  </button>
+                );
+                case 'workSchedule': return (
+                  /* One page, a tab per roster — it opens on the viewer's own schedule. */
+                  <button onClick={onWorkSchedule} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+                    📅 Work Schedule
+                  </button>
+                );
+                case 'aftermarketWarranty': return (
+                  <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+                    🛡 After Market Warranty
+                  </button>
+                );
+                case 'originalOwner': return (
+                  <button onClick={onOriginalOwner} style={{ background: 'linear-gradient(180deg,rgba(251,191,36,.25),rgba(245,158,11,.18))', borderColor: 'rgba(251,191,36,.35)' }}>
+                    📋 Original Owner
+                  </button>
+                );
+                case 'afterCall': return (
+                  <>
+                    {afterCallDue && <style>{`@keyframes acPulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(52,211,153,.75);transform:scale(1.06)}}@keyframes acBellBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
+                    <span style={{ position: 'relative', display: 'inline-flex' }}>
+                      <button onClick={onAfterCall}
+                        style={afterCallDue
+                          ? { background: 'linear-gradient(180deg,#10b981,#047857)', borderColor: '#a7f3d0', color: '#fff', fontWeight: 900, animation: 'acPulse 1.2s ease-in-out infinite' }
+                          : { background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
+                        {afterCallDue ? '📞 After Call Reviews ‼️' : '📞 After Call Reviews'}
+                      </button>
+                      {afterCallDue && (
+                        <span
+                          title={`You have ${pendingCallCount} customer${pendingCallCount === 1 ? '' : 's'} still to call for their after-call review`}
+                          style={{
+                            position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
+                            background: '#a7f3d0', color: '#064e3b', fontWeight: 900, fontSize: 12,
+                            border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
+                            transformOrigin: 'center', animation: 'acBellBob 1.1s ease-in-out infinite', pointerEvents: 'none',
+                          }}>
+                          {pendingCallCount}
+                        </span>
+                      )}
+                    </span>
+                  </>
+                );
+                case 'surveyReports': return (
+                  <button onClick={onSurveyReports} style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+                    📊 Survey Reports
+                  </button>
+                );
+                case 'myReports': return (
+                  <button onClick={onMyReports} style={{ background: 'linear-gradient(180deg,rgba(61,214,195,.25),rgba(110,231,249,.18))', borderColor: 'rgba(61,214,195,.35)' }}>
+                    📈 My Reports
+                  </button>
+                );
+                case 'cashDash': return (
+                  <>
+                    <style>{`@keyframes cashGlow{0%,100%{box-shadow:0 0 10px 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 20px 5px rgba(34,197,94,.85)}}`}</style>
+                    <button onClick={onCashDash}
+                      style={{ background: 'linear-gradient(180deg,#22c55e,#059669)', borderColor: '#6ee7b7', color: '#052e16', fontWeight: 900, textShadow: '0 1px 0 rgba(255,255,255,.25)', animation: 'cashGlow 1.8s ease-in-out infinite' }}>
+                      💰 Cash Dash
+                    </button>
+                  </>
+                );
+                case 'goalsForecasting': return (
+                  <>
+                    {(eodUrgent || eodMissed) && <style>{`@keyframes eodPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);transform:scale(1)}50%{box-shadow:0 0 20px 7px rgba(239,68,68,.7);transform:scale(1.06)}}@keyframes eodPinBob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-3px) rotate(-8deg)}}`}</style>}
+                    <span style={{ position: 'relative', display: 'inline-flex' }}>
+                      <button onClick={onGoalsForecasting}
+                        style={eodMissed
+                          ? { background: 'linear-gradient(180deg,#dc2626,#991b1b)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.1s ease-in-out infinite' }
+                          : eodUrgent
+                          ? { background: 'linear-gradient(180deg,#f97316,#ef4444)', borderColor: '#fecaca', color: '#fff', fontWeight: 900, animation: 'eodPulse 1.3s ease-in-out infinite' }
+                          : { background: 'linear-gradient(180deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.35)' }}>
+                        {eodMissed
+                          ? `📌 Missed Reporting — Fix Now`
+                          : eodUrgent ? '⏰ End of Day Reporting ‼️' : '🎯 End of Day Reporting'}
+                      </button>
+                      {eodMissed && (
+                        <span
+                          title={`You have ${missedEodCount} missed day${missedEodCount === 1 ? '' : 's'} of End of Day Reporting to complete`}
+                          style={{
+                            position: 'absolute', top: -9, right: -9, minWidth: 22, height: 22, padding: '0 6px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999,
+                            background: '#fbbf24', color: '#7c2d12', fontWeight: 900, fontSize: 12,
+                            border: '2px solid #0b1220', boxShadow: '0 2px 8px rgba(0,0,0,.5)',
+                            transformOrigin: 'center', animation: 'eodPinBob 1.1s ease-in-out infinite', pointerEvents: 'none',
+                          }}>
+                          {missedEodCount}
+                        </span>
+                      )}
+                    </span>
+                  </>
+                );
+                case 'workInProgress': return (
+                  <button onClick={onWorkInProgress} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.25),rgba(249,115,22,.18))', borderColor: 'rgba(251,146,60,.35)' }}>
+                    🔧 Work in Progress
+                  </button>
+                );
+                case 'tireQuote': return (
+                  <button onClick={onTireQuote} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.25),rgba(34,197,94,.18))', borderColor: 'rgba(74,222,128,.35)' }}>
+                    🛞 Tire Quote
+                  </button>
+                );
+                default: return null;
+              }
+            }}
+          </SortableTiles>
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
       </div>

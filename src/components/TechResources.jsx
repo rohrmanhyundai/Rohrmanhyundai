@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SortableTiles from './SortableTiles';
 import { loadGithubFile } from '../utils/github';
 
 function canSee(pages, role, key) {
@@ -121,31 +122,19 @@ export default function TechResources({ currentUser, currentUserDisplay, current
       <div style={{ flex: 1, overflowY: 'auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
         <p style={{ color: '#7a92b8', margin: 0, fontSize: 15 }}>Select a resource below.</p>
 
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {visible.map(btn => (
-            <button
-              key={btn.key}
-              onClick={btn.href ? () => window.open(btn.href, '_blank') : handlers[btn.prop]}
-              style={{
-                width: 220, minHeight: 140,
-                background: btn.bg,
-                border: `2px solid ${btn.border}`,
-                borderRadius: 18, cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
-                padding: 24, transition: 'transform .15s, border-color .15s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <span style={{ fontSize: 36 }}>{btn.label.split(' ')[0]}</span>
-              <span style={{ fontWeight: 800, fontSize: 16, color: btn.color, textAlign: 'center' }}>
-                {btn.label.slice(btn.label.indexOf(' ') + 1)}
-              </span>
-            </button>
-          ))}
-
-          {/* My Reports */}
-          {onMyReports && (
+        {/* Press and hold a tile to move it. The two personal tiles below are
+            part of the same list so they can be arranged with the rest. */}
+        <SortableTiles
+          hubKey="techResources"
+          currentUser={currentUser}
+          items={[
+            ...visible,
+            onMyReports && { key: 'myReports', custom: 'reports' },
+            showMyReview && { key: 'myReview', custom: 'review' },
+          ].filter(Boolean)}
+          style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}
+        >
+          {btn => btn.custom === 'reports' ? (
             <button
               onClick={onMyReports}
               style={{ width: 220, minHeight: 140, background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', border: '1px solid rgba(61,214,195,.45)', borderRadius: 18, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 24, transition: 'transform .15s' }}
@@ -156,10 +145,7 @@ export default function TechResources({ currentUser, currentUserDisplay, current
               <span style={{ fontWeight: 800, fontSize: 16, color: '#6ee7f9', textAlign: 'center' }}>My Reports</span>
               <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>Performance history</span>
             </button>
-          )}
-
-          {/* My Review — only shown when manager has sent a review or tech has submitted */}
-          {showMyReview && (
+          ) : btn.custom === 'review' ? (
             <button
               onClick={onMyReview}
               style={{
@@ -187,8 +173,27 @@ export default function TechResources({ currentUser, currentUserDisplay, current
                 {hasSubmittedReview ? '✅ Submitted' : '⚠️ Needs your response'}
               </span>
             </button>
+          ) : (
+            <button
+              onClick={btn.href ? () => window.open(btn.href, '_blank') : handlers[btn.prop]}
+              style={{
+                width: 220, minHeight: 140,
+                background: btn.bg,
+                border: `2px solid ${btn.border}`,
+                borderRadius: 18, cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
+                padding: 24, transition: 'transform .15s, border-color .15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <span style={{ fontSize: 36 }}>{btn.label.split(' ')[0]}</span>
+              <span style={{ fontWeight: 800, fontSize: 16, color: btn.color, textAlign: 'center' }}>
+                {btn.label.slice(btn.label.indexOf(' ') + 1)}
+              </span>
+            </button>
           )}
-        </div>
+        </SortableTiles>
       </div>
     </div>
   );

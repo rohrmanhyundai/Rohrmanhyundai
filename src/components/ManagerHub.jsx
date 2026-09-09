@@ -1,4 +1,5 @@
 import React from 'react';
+import SortableTiles from './SortableTiles';
 
 const NAV_BUTTONS = [
   {
@@ -178,13 +179,18 @@ export default function ManagerHub({
             </div>
           </div>
 
-          {/* Navigation cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-            {NAV_BUTTONS.filter(b => !b.adminOnly || currentRole === 'admin').map(btn => (
+          {/* Navigation cards — press and hold one to rearrange them. */}
+          <SortableTiles
+            hubKey="managerHub"
+            currentUser={currentUser}
+            items={NAV_BUTTONS.filter(b => !b.adminOnly || currentRole === 'admin')}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}
+          >
+            {btn => (
               <button
-                key={btn.key}
                 onClick={handlers[btn.prop]}
                 style={{
+                  width: '100%', height: '100%',
                   background: btn.bg,
                   border: `1px solid ${btn.border}`,
                   borderRadius: 16,
@@ -202,8 +208,8 @@ export default function ManagerHub({
                 </div>
                 <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{btn.desc}</div>
               </button>
-            ))}
-          </div>
+            )}
+          </SortableTiles>
 
         </div>
       </div>

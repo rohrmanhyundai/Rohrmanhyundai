@@ -1,4 +1,5 @@
 import React from 'react';
+import SortableTiles from './SortableTiles';
 
 function canSee(pages, role, key) {
   if (role === 'admin' || (role || '').includes('manager')) return true;
@@ -146,12 +147,17 @@ export default function PartsHub({
               <span style={{ fontSize: 13, color: '#334155' }}>Contact an admin to grant access.</span>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
-              {visible.map(btn => (
+            <SortableTiles
+              hubKey="partsHub"
+              currentUser={currentUser}
+              items={visible}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}
+            >
+              {btn => (
                 <button
-                  key={btn.key}
                   onClick={btn.href ? () => window.open(btn.href, '_blank') : handlers[btn.prop]}
                   style={{
+                    width: '100%', height: '100%',
                     background: btn.bg,
                     border: `1px solid ${btn.border}`,
                     borderRadius: 16,
@@ -169,8 +175,8 @@ export default function PartsHub({
                   </div>
                   <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{btn.desc}</div>
                 </button>
-              ))}
-            </div>
+              )}
+            </SortableTiles>
           )}
         </div>
       </div>
