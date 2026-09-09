@@ -80,5 +80,18 @@
     "clockMode": "add",
     "eligiblePto": false,
     "updated": "2026-09-09T18:04:50.432Z"
+  },
+  "BRYSON": {
+    "payType": "flat_clock",
+    "flatRate": 0,
+    "tier1Hours": 50,
+    "tier1Bump": 0,
+    "tier2Hours": 60,
+    "tier2Bump": 0,
+    "clockRate": 17,
+    "clockHours": 40,
+    "clockMode": "add",
+    "eligiblePto": true,
+    "updated": "2026-09-09T18:06:10.777Z"
   }
 }
