@@ -262,11 +262,16 @@ export function buildWeekRecord(tech, plan, extra = {}) {
   const p = normalizePlan(plan);
   const t = tech || {};
   const basis = payBasis(t, p);
-  // A manager's adjustment at close-out — hours added to or taken off the week.
-  const adjustment = num(extra.adjustment);
-  const hours = Math.max(0, basis.banked + adjustment);
+  // At close-out a manager can type the week's final hours. Blank means the
+  // week's own number is right — an override of 0 is a real answer, so this
+  // tests for a number rather than for truthiness.
+  // Pulled out of `extra` so the raw input never lands in the stored record —
+  // what it MEANT is already captured in hours / overridden / adjustment.
+  const { overrideHours: override, ...rest } = extra;
+  const overridden = override !== undefined && override !== null && override !== '' && Number.isFinite(num(override, NaN));
+  const hours = Math.max(0, overridden ? num(override) : basis.banked);
   const pay = computeTechPay(p, hours);
-  const { start, end } = extra.weekStart ? weekBoundsOf(extra.weekStart) : weekBounds();
+  const { start, end } = rest.weekStart ? weekBoundsOf(rest.weekStart) : weekBounds();
   const days = {};
   for (const d of WEEK_DAYS) days[d] = round2(num(t[d]));
   return {
@@ -274,8 +279,9 @@ export function buildWeekRecord(tech, plan, extra = {}) {
     weekEnd: end,
     days,
     hours: round2(hours),               // what the tech is paid on
-    payableHours: round2(basis.banked), // before the adjustment
-    adjustment: round2(adjustment),
+    payableHours: round2(basis.banked), // the week's own number, before any override
+    overridden,                         // true when a manager typed the final hours
+    adjustment: round2(hours - basis.banked),   // the difference, for reconciling later
     boardHours: round2(num(t.total)),   // what the Tech Hours board said
     ptoHours: round2(basis.ptoHours),
     ptoPaid: p.eligiblePto,
@@ -285,7 +291,7 @@ export function buildWeekRecord(tech, plan, extra = {}) {
     payType: p.payType,
     closed: false,
     updatedAt: new Date().toISOString(),
-    ...extra,
+    ...rest,
   };
 }
 

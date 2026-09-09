@@ -1000,7 +1000,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       try {
         const record = buildWeekRecord(tech, plans[key], {
           weekStart: bounds.start,
-          adjustment: safe(row.adjust, 0),
+          overrideHours: row.adjust,
           closed: true,
           closedBy: (currentUser || '').toUpperCase(),
           closedAt: new Date().toISOString(),
@@ -2291,7 +2291,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 </div>
                 <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 5, lineHeight: 1.5 }}>
                   Week of <strong style={{ color: '#cbd5e1' }}>{closeout.week.start}</strong> to <strong style={{ color: '#cbd5e1' }}>{closeout.week.end}</strong>.
-                  Adjust a week with the box beside it — the Final column is what each tech is paid on and what gets stored.
+                  Type a tech&rsquo;s final hours in the box to change a week, or leave it blank to take the week as it stands. Final is what gets stored and paid.
                   The week is saved to every tech&rsquo;s Weekly History, then the board is cleared for the new week.
                 </div>
                 {closeout.err && <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 8, fontWeight: 700 }}>{closeout.err}</div>}
@@ -2301,19 +2301,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 <div style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 8, borderBottom: '1px solid rgba(148,163,184,.12)' }}>
                   <div>Technician</div>
                   <div style={{ textAlign: 'right' }}>Week Hours</div>
-                  <div style={{ textAlign: 'center' }}>Adjustment</div>
+                  <div style={{ textAlign: 'center' }}>Adjusted Hours</div>
                   <div style={{ textAlign: 'right' }}>Final</div>
                 </div>
                 {closeout.rows.map((row, ri) => {
-                  const adj = safe(row.adjust, 0);
                   const key = String(row.name || '').toUpperCase();
                   const hasPlan = closeout.plans ? planIsSet(closeout.plans[key]) : true;
-                  // What the week is actually stored with: payable hours (PTO already
-                  // out if this tech isn't eligible) plus the adjustment.
+                  // The week's own payable hours — holiday/PTO already out when this
+                  // tech isn't eligible for them.
                   const payable = closeout.plans && hasPlan
                     ? payableHoursOf((data.technicians || [])[row.idx], closeout.plans[key])
                     : row.total;
-                  const final = Math.max(0, Math.round((payable + adj) * 100) / 100);
+                  // A typed number IS the week's final hours. Blank means the week's
+                  // own number is right. Zero is a real answer, not a blank.
+                  const typed = String(row.adjust ?? '').trim();
+                  const overridden = typed !== '' && Number.isFinite(parseFloat(typed));
+                  const final = Math.max(0, Math.round((overridden ? parseFloat(typed) : payable) * 100) / 100);
                   const ptoOut = Math.round((row.total - payable) * 100) / 100;
                   return (
                     <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', padding: '9px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
@@ -2332,12 +2335,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                       <div style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#cbd5e1' }}>
                         {row.total.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                       </div>
-                      <input type="number" step="0.01" value={row.adjust} placeholder="+ / −"
+                      <input type="number" step="0.01" min="0" value={row.adjust}
+                        placeholder={payable.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                        title="Type the week's final hours, or leave blank to keep the number on the left"
                         onChange={e => setCloseoutAdjust(ri, e.target.value)}
-                        style={{ width: '100%', background: adj ? 'rgba(251,191,36,.12)' : 'rgba(2,6,23,.6)',
-                                 border: `1px solid ${adj ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.22)'}`,
+                        style={{ width: '100%', background: overridden ? 'rgba(251,191,36,.12)' : 'rgba(2,6,23,.6)',
+                                 border: `1px solid ${overridden ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.22)'}`,
                                  borderRadius: 8, padding: '7px 8px', color: '#e2e8f0', fontSize: 13.5, fontWeight: 700, textAlign: 'center' }} />
-                      <div style={{ textAlign: 'right', fontSize: 15, fontWeight: 900, color: adj ? '#fbbf24' : '#6ee7b7' }}>
+                      <div style={{ textAlign: 'right', fontSize: 15, fontWeight: 900, color: overridden ? '#fbbf24' : '#6ee7b7' }}>
                         {final.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                       </div>
                     </div>
@@ -2350,7 +2355,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
               <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(148,163,184,.14)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
                 <span style={{ flex: 1, fontSize: 11.5, color: '#64748b', lineHeight: 1.45 }}>
-                  Enter a positive or negative number to adjust a week. A tech with no pay plan has their hours cleared but no week stored.
+                  Type a number only to change a week — it replaces the hours. Blank means the week&rsquo;s own number is right. A tech with no pay plan has their hours cleared but no week stored.
                 </span>
                 <button className="secondary" disabled={closeout.busy} onClick={() => setCloseout(null)}>Cancel</button>
                 <button onClick={confirmWeekCloseout} disabled={closeout.busy || !closeout.plans}
