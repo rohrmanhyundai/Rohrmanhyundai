@@ -1,1 +1,15 @@
-{}
+{
+  "JACOB": {
+    "payType": "flat",
+    "flatRate": 31,
+    "tier1Hours": 50,
+    "tier1Rate": 2,
+    "tier2Hours": 60,
+    "tier2Rate": 2,
+    "tierMode": "all",
+    "clockRate": 0,
+    "clockHours": 40,
+    "clockMode": "add",
+    "updated": "2026-09-09T16:22:14.856Z"
+  }
+}
