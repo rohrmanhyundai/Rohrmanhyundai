@@ -1,4 +1,5 @@
 import { loadPdfJs } from './pdfText';
+import { EMAIL_RE, PHONE_RE, tidyPhone } from './contactPatterns';
 
 /* Read a resume and pull out the name, phone and email.
  *
@@ -14,23 +15,6 @@ import { loadPdfJs } from './pdfText';
 
 // Words that appear near the top of a resume but are never someone's name.
 const NOT_A_NAME = /\b(resume|curriculum|vitae|\bcv\b|profile|summary|objective|professional|experience|education|skills|contact|address|phone|email|linkedin|portfolio|references|willing|seeking|available)\b/i;
-
-const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
-
-// US numbers as people actually write them: (765) 555-0142, 765-555-0142,
-// 765.555.0142, 7655550142, +1 765 555 0142.
-//
-// The separator allows up to three characters because a PDF often stores one
-// number as several text pieces — "…IN | 773", "220", "1749 | email" — which
-// rejoin as "773 - 220 - 1749". Matching a single separator missed those.
-const PHONE_RE = /(?:\+?1[\s.\-–]{0,3})?(?:\(\s*\d{3}\s*\)|\d{3})[\s.\-–]{0,3}\d{3}[\s.\-–]{0,3}\d{4}/;
-
-function tidyPhone(raw) {
-  const digits = String(raw).replace(/\D/g, '');
-  const ten = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
-  if (ten.length !== 10) return String(raw).trim();
-  return `${ten.slice(0, 3)}-${ten.slice(3, 6)}-${ten.slice(6)}`;
-}
 
 // A line is a name if it reads like one: a few words, letters only, and none of
 // the heading words above.
