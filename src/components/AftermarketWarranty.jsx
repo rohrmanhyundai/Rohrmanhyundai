@@ -1692,11 +1692,12 @@ function ContactsPanel() {
         <div style={{ background: 'linear-gradient(180deg, rgba(30,41,59,.7), rgba(15,23,42,.5))', border: '1px solid rgba(61,214,195,.3)', borderRadius: 14, padding: '18px 20px', marginBottom: 18 }}>
           <div style={{ fontSize: 15.5, fontWeight: 900, color: '#6ee7f9', marginBottom: 4 }}>📄 Upload a contacts document</div>
           <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.5, marginBottom: 12 }}>
-            A Word document (.docx) or a plain text file. Every company on a line with a phone number or an email is picked up —
-            a table works, and so does a list. Nothing is saved until you have looked at what was found.
+            A Word document (.docx), a rich text file (.rtf), or plain text. Every company on a line with a phone number or an
+            email is picked up — a numbered list works, and so does a table. Nothing is saved until you have looked at what was
+            found, and anything read oddly can be fixed in the table below.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <input ref={fileRef} type="file" accept=".docx,.txt,.csv" disabled={!!busy}
+            <input ref={fileRef} type="file" accept=".docx,.rtf,.txt,.csv" disabled={!!busy}
               onChange={e => handleFile(e.target.files && e.target.files[0])} />
             <button onClick={fixOlderClaims} disabled={!!busy || !dir}
               title="Fill these details into claims written before the company had them"
