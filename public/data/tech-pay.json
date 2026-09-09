@@ -25,5 +25,19 @@
     "clockMode": "add",
     "eligiblePto": true,
     "updated": "2026-09-09T17:50:58.119Z"
+  },
+  "GAVEN": {
+    "payType": "flat",
+    "flatRate": 28,
+    "tier1Hours": 50,
+    "tier1Bump": 2,
+    "tier2Hours": 60,
+    "tier2Bump": 2,
+    "tierMode": "all",
+    "clockRate": 0,
+    "clockHours": 40,
+    "clockMode": "add",
+    "eligiblePto": true,
+    "updated": "2026-09-09T17:51:29.690Z"
   }
 }
