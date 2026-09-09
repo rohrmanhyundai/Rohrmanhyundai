@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, backfillWarrantyCompanyDetails, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
+import { extractLines } from '../utils/docxText';
+import { parseContactLines, mergeContacts } from '../utils/warrantyContacts';
 import { TireClaimDetail, flaggedWheels } from './TireWarranty';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
@@ -27,6 +29,7 @@ const emptyForm = () => ({
   mileage: '',
   warrantyCompany: '',
   warrantyPhone: '',
+  warrantyEmail: '',
   claimNumber: '',
   authNumber: '',
   laborRate: '',
@@ -279,15 +282,17 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
-  // When the warranty company name matches a saved company, auto-fill the phone.
+  // When the warranty company name matches one in the directory, fill in its
+  // phone and email.
   function setWarrantyCompany(name) {
     const match = companies[(name || '').trim().toUpperCase()];
     setForm(f => ({
       ...f,
       warrantyCompany: name,
-      // Only auto-fill when we have a match and the phone is empty, so we never
-      // clobber a phone the user is intentionally editing.
+      // Only auto-fill what is still blank, so this never clobbers a detail the
+      // user is deliberately editing.
       warrantyPhone: (match && match.phone && !((f.warrantyPhone || '').trim())) ? formatWarrantyPhone(match.phone) : f.warrantyPhone,
+      warrantyEmail: (match && match.email && !((f.warrantyEmail || '').trim())) ? match.email : f.warrantyEmail,
     }));
   }
 
@@ -363,6 +368,7 @@ const ContractForm = forwardRef(function ContractForm({ initial, onSave, onCance
             <F label="Warranty Company Name" value={form.warrantyCompany} onChange={setWarrantyCompany}
                suggestions={Object.values(companies).map(c => c && c.name).filter(Boolean).sort()} />
             <F label="Warranty Company Phone" value={form.warrantyPhone} onChange={v => set('warrantyPhone', formatWarrantyPhone(v))} type="tel" />
+            <F label="Warranty Company Email" value={form.warrantyEmail} onChange={v => set('warrantyEmail', v)} type="email" placeholder="claims@company.com" />
             <F label="Claim Number" value={form.claimNumber} onChange={v => set('claimNumber', v)} placeholder="WC-XXXXXXXX" />
             <F label="Authorization Number" value={form.authNumber} onChange={v => set('authNumber', v)} placeholder="" />
           </div>
@@ -791,6 +797,7 @@ function ContractDetail({ contract, onEdit, onBack }) {
             <InfoBlock title="Warranty Company">
               <InfoRow label="Company" value={contract.warrantyCompany} />
               <InfoRow label="Phone" value={contract.warrantyPhone} />
+              <InfoRow label="Email" value={contract.warrantyEmail} />
               <InfoRow label="Claim #" value={contract.claimNumber} />
               <InfoRow label="Auth #" value={contract.authNumber} />
             </InfoBlock>
@@ -996,6 +1003,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
             <SectionHead>Warranty Company</SectionHead>
             <DataCell label="Company" value={contract.warrantyCompany} />
             <DataCell label="Phone" value={contract.warrantyPhone} />
+            <DataCell label="Email" value={contract.warrantyEmail} />
             <DataCell label="Claim Number" value={contract.claimNumber} />
           </div>
 
@@ -1560,6 +1568,253 @@ function TireClaimsPanel({ currentRole }) {
   );
 }
 
+/* ── Aftermarket Warranty Contacts ──────────────────────────────────────────
+ *
+ * The directory that feeds the claim form's auto-fill, with a face on it. A
+ * contacts document goes in at the top; the table below is the same store the
+ * claim form reads, so anything corrected here shows up on the next claim.
+ */
+function ContactsPanel() {
+  const [dir, setDir] = useState(null);          // null = loading
+  const [busy, setBusy] = useState('');
+  const [msg, setMsg] = useState('');
+  const [err, setErr] = useState('');
+  const [preview, setPreview] = useState(null);  // parsed contacts awaiting confirmation
+  const [q, setQ] = useState('');
+  const [editing, setEditing] = useState(null);  // { key, name, phone, email }
+  const fileRef = useRef(null);
+
+  useEffect(() => {
+    loadWarrantyCompanies()
+      .then(d => setDir(d && typeof d === 'object' ? d : {}))
+      .catch(() => { setDir({}); setErr('Could not load the contacts.'); });
+  }, []);
+
+  const rows = useMemo(() => {
+    const list = Object.entries(dir || {}).map(([key, v]) => ({ key, ...(v || {}) }));
+    const needle = q.trim().toLowerCase();
+    const found = needle
+      ? list.filter(r => [r.name, r.phone, r.email].some(x => String(x || '').toLowerCase().includes(needle)))
+      : list;
+    return found.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  }, [dir, q]);
+
+  async function handleFile(file) {
+    if (!file) return;
+    setBusy('reading'); setErr(''); setMsg(''); setPreview(null);
+    try {
+      const lines = await extractLines(file);
+      const contacts = parseContactLines(lines);
+      if (!contacts.length) {
+        setErr('No contacts found in that document. Each company needs a phone number or an email on its line.');
+      } else {
+        setPreview({ contacts, fileName: file.name });
+      }
+    } catch (e) {
+      setErr(e.message || 'Could not read that file.');
+    } finally {
+      setBusy('');
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  async function confirmImport() {
+    if (!preview) return;
+    setBusy('saving'); setErr(''); setMsg('');
+    try {
+      const { directory, added, updated } = mergeContacts(dir, preview.contacts);
+      await saveWarrantyCompanies(directory);
+      setDir(directory);
+      // Claims written before this import have no email on them. Fill them in
+      // now rather than leaving the older ones half-blank.
+      let filled = 0;
+      try { ({ filled } = await backfillWarrantyCompanyDetails(directory)); } catch { /* the import itself still stands */ }
+      setPreview(null);
+      setMsg(`Imported ${preview.contacts.length} contact${preview.contacts.length === 1 ? '' : 's'} — ${added} new, ${updated} updated.`
+        + (filled ? ` ${filled} earlier claim${filled === 1 ? '' : 's'} filled in.` : ''));
+    } catch (e) {
+      setErr(e.message || 'Could not save the contacts.');
+    } finally {
+      setBusy('');
+    }
+  }
+
+  async function saveRow(row) {
+    const name = (row.name || '').trim();
+    if (!name) { setErr('A contact needs a company name.'); return; }
+    setBusy('saving'); setErr(''); setMsg('');
+    try {
+      const next = { ...(dir || {}) };
+      if (row.key && row.key !== name.toUpperCase()) delete next[row.key];   // renamed
+      next[name.toUpperCase()] = { name, phone: (row.phone || '').trim(), email: (row.email || '').trim() };
+      await saveWarrantyCompanies(next);
+      setDir(next);
+      setEditing(null);
+      setMsg(`Saved ${name}.`);
+    } catch (e) {
+      setErr(e.message || 'Could not save.');
+    } finally { setBusy(''); }
+  }
+
+  async function removeRow(row) {
+    if (!window.confirm(`Remove ${row.name} from the contacts?\n\nClaims already written keep the details on them.`)) return;
+    setBusy('saving'); setErr(''); setMsg('');
+    try {
+      const next = { ...(dir || {}) };
+      delete next[row.key];
+      await saveWarrantyCompanies(next);
+      setDir(next);
+      setMsg(`Removed ${row.name}.`);
+    } catch (e) {
+      setErr(e.message || 'Could not remove.');
+    } finally { setBusy(''); }
+  }
+
+  async function fixOlderClaims() {
+    setBusy('saving'); setErr(''); setMsg('');
+    try {
+      const { filled } = await backfillWarrantyCompanyDetails(dir || {});
+      setMsg(filled ? `Filled in ${filled} earlier claim${filled === 1 ? '' : 's'}.` : 'Every claim already has its company details.');
+    } catch (e) {
+      setErr(e.message || 'Could not update the older claims.');
+    } finally { setBusy(''); }
+  }
+
+  const cell = { padding: '9px 12px', fontSize: 13.5, color: '#e2e8f0' };
+  const head = { padding: '8px 12px', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.05em', textAlign: 'left' };
+  const input = { width: '100%', boxSizing: 'border-box', background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 7, color: '#e2e8f0', padding: '6px 8px', fontSize: 13, fontFamily: 'inherit' };
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '18px 32px 40px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+
+        {/* Upload */}
+        <div style={{ background: 'linear-gradient(180deg, rgba(30,41,59,.7), rgba(15,23,42,.5))', border: '1px solid rgba(61,214,195,.3)', borderRadius: 14, padding: '18px 20px', marginBottom: 18 }}>
+          <div style={{ fontSize: 15.5, fontWeight: 900, color: '#6ee7f9', marginBottom: 4 }}>📄 Upload a contacts document</div>
+          <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.5, marginBottom: 12 }}>
+            A Word document (.docx) or a plain text file. Every company on a line with a phone number or an email is picked up —
+            a table works, and so does a list. Nothing is saved until you have looked at what was found.
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <input ref={fileRef} type="file" accept=".docx,.txt,.csv" disabled={!!busy}
+              onChange={e => handleFile(e.target.files && e.target.files[0])} />
+            <button onClick={fixOlderClaims} disabled={!!busy || !dir}
+              title="Fill these details into claims written before the company had them"
+              style={{ marginLeft: 'auto', background: 'rgba(251,191,36,.14)', border: '1px solid rgba(251,191,36,.45)', color: '#fde68a', borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 12.5, cursor: busy ? 'default' : 'pointer' }}>
+              ↻ Fix Older Claims
+            </button>
+          </div>
+          {busy === 'reading' && <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 10, fontWeight: 700 }}>Reading the document…</div>}
+          {err && <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 10, fontWeight: 700, lineHeight: 1.5 }}>{err}</div>}
+          {msg && <div style={{ fontSize: 12.5, color: '#6ee7b7', marginTop: 10, fontWeight: 700 }}>{msg}</div>}
+        </div>
+
+        {/* What the document gave us, before anything is saved */}
+        {preview && (
+          <div style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(251,191,36,.45)', borderRadius: 14, padding: '16px 18px', marginBottom: 18 }}>
+            <div style={{ fontSize: 14.5, fontWeight: 900, color: '#fde68a', marginBottom: 8 }}>
+              Found {preview.contacts.length} contact{preview.contacts.length === 1 ? '' : 's'} in {preview.fileName}
+            </div>
+            <div style={{ maxHeight: 260, overflowY: 'auto', marginBottom: 12 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr><th style={head}>Company</th><th style={head}>Phone</th><th style={head}>Email</th></tr></thead>
+                <tbody>
+                  {preview.contacts.map((c, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid rgba(148,163,184,.1)' }}>
+                      <td style={{ ...cell, fontWeight: 700 }}>{c.name}</td>
+                      <td style={cell}>{c.phone || <span style={{ color: '#64748b' }}>—</span>}</td>
+                      <td style={cell}>{c.email || <span style={{ color: '#64748b' }}>—</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', alignItems: 'center' }}>
+              <span style={{ flex: 1, fontSize: 11.5, color: '#94a3b8', lineHeight: 1.45 }}>
+                A company already saved keeps anything this document leaves blank. Everything stays editable below.
+              </span>
+              <button className="secondary" disabled={!!busy} onClick={() => setPreview(null)}>Cancel</button>
+              <button onClick={confirmImport} disabled={!!busy}
+                style={{ background: 'rgba(61,214,195,.18)', border: '1px solid rgba(61,214,195,.5)', color: '#6ee7f9', borderRadius: 8, padding: '8px 18px', fontWeight: 800, fontSize: 13, cursor: busy ? 'default' : 'pointer' }}>
+                {busy === 'saving' ? 'Saving…' : `✓ Import ${preview.contacts.length}`}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* The directory */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔍 Search contacts…"
+            style={{ ...input, maxWidth: 320 }} />
+          <div style={{ flex: 1 }} />
+          <button onClick={() => setEditing({ key: '', name: '', phone: '', email: '' })} disabled={!!busy}
+            style={{ background: 'rgba(61,214,195,.14)', border: '1px solid rgba(61,214,195,.4)', color: '#6ee7f9', borderRadius: 8, padding: '7px 14px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer' }}>
+            + Add a contact
+          </button>
+        </div>
+
+        <div style={{ background: 'rgba(30,41,59,.5)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 14, overflow: 'hidden' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr style={{ background: 'rgba(2,6,23,.4)' }}>
+              <th style={head}>Company</th><th style={head}>Phone</th><th style={head}>Email</th><th style={{ ...head, textAlign: 'right' }}>—</th>
+            </tr></thead>
+            <tbody>
+              {editing && editing.key === '' && (
+                <EditRow row={editing} setRow={setEditing} onSave={saveRow} onCancel={() => setEditing(null)} busy={!!busy} input={input} cell={cell} />
+              )}
+              {dir === null ? (
+                <tr><td colSpan={4} style={{ ...cell, color: '#94a3b8', textAlign: 'center', padding: 22 }}>Loading…</td></tr>
+              ) : rows.length === 0 ? (
+                <tr><td colSpan={4} style={{ ...cell, color: '#94a3b8', textAlign: 'center', padding: 22 }}>
+                  {q ? 'No contact matches that.' : 'No contacts yet — upload a document above, or add one.'}
+                </td></tr>
+              ) : rows.map(r => (
+                editing && editing.key === r.key ? (
+                  <EditRow key={r.key} row={editing} setRow={setEditing} onSave={saveRow} onCancel={() => setEditing(null)} busy={!!busy} input={input} cell={cell} />
+                ) : (
+                  <tr key={r.key} style={{ borderTop: '1px solid rgba(148,163,184,.08)' }}>
+                    <td style={{ ...cell, fontWeight: 800 }}>{r.name}</td>
+                    <td style={cell}>{r.phone || <span style={{ color: '#64748b' }}>—</span>}</td>
+                    <td style={cell}>{r.email || <span style={{ color: '#64748b' }}>—</span>}</td>
+                    <td style={{ ...cell, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <button onClick={() => setEditing({ ...r })} disabled={!!busy}
+                        style={{ background: 'none', border: 'none', color: '#7dd3fc', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' }}>Edit</button>
+                      <button onClick={() => removeRow(r)} disabled={!!busy} title="Remove"
+                        style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 14, cursor: 'pointer', marginLeft: 8 }}>🗑</button>
+                    </td>
+                  </tr>
+                )
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 12, lineHeight: 1.5 }}>
+          These contacts fill in the warranty company&rsquo;s phone and email as you type the name on a new claim.
+          Saving a claim also remembers whatever it carries, so the list keeps itself current.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditRow({ row, setRow, onSave, onCancel, busy, input, cell }) {
+  const set = (k, v) => setRow(r => ({ ...r, [k]: v }));
+  return (
+    <tr style={{ borderTop: '1px solid rgba(61,214,195,.35)', background: 'rgba(61,214,195,.06)' }}>
+      <td style={cell}><input autoFocus value={row.name} onChange={e => set('name', e.target.value)} placeholder="Company name" style={input} /></td>
+      <td style={cell}><input value={row.phone} onChange={e => set('phone', e.target.value)} placeholder="800-555-1212" style={input} /></td>
+      <td style={cell}><input value={row.email} onChange={e => set('email', e.target.value)} placeholder="claims@company.com" style={input} /></td>
+      <td style={{ ...cell, textAlign: 'right', whiteSpace: 'nowrap' }}>
+        <button onClick={() => onSave(row)} disabled={busy}
+          style={{ background: 'rgba(61,214,195,.18)', border: '1px solid rgba(61,214,195,.5)', color: '#6ee7f9', borderRadius: 7, padding: '5px 12px', fontWeight: 800, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}>Save</button>
+        <button onClick={onCancel} disabled={busy}
+          style={{ background: 'none', border: 'none', color: '#94a3b8', fontWeight: 700, fontSize: 12.5, cursor: 'pointer', marginLeft: 8, fontFamily: 'inherit' }}>Cancel</button>
+      </td>
+    </tr>
+  );
+}
+
 export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel }) {
   const [mainTab, setMainTab] = useState('contracts');   // 'contracts' | 'tires'
   const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
@@ -1589,16 +1844,20 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
   // Upsert a warranty company's name → phone into the shared directory so the
   // next claim auto-fills the phone when the name is typed. Loads the latest
   // directory first to avoid clobbering entries added by other users.
-  async function rememberWarrantyCompany(rawName, rawPhone) {
+  async function rememberWarrantyCompany(rawName, rawPhone, rawEmail) {
     const name = (rawName || '').trim();
     const phone = formatWarrantyPhone((rawPhone || '').trim());
-    if (!name || !phone) return;
+    const email = (rawEmail || '').trim();
+    if (!name || (!phone && !email)) return;
     try {
       const dir = await loadWarrantyCompanies();
       const key = name.toUpperCase();
-      const existing = dir[key];
-      if (existing && existing.name === name && existing.phone === phone) return; // no change
-      dir[key] = { name, phone };
+      const existing = dir[key] || {};
+      // Keep whatever this claim doesn't carry — a claim written without an
+      // email must not wipe the email the directory already has.
+      const next = { name, phone: phone || existing.phone || '', email: email || existing.email || '' };
+      if (existing.name === next.name && existing.phone === next.phone && existing.email === next.email) return;
+      dir[key] = next;
       await saveWarrantyCompanies(dir);
     } catch { /* directory is a convenience; never surface its errors */ }
   }
@@ -1623,7 +1882,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       setView('detail');
       // Remember this warranty company's name → phone so it auto-fills next time.
       // Fire-and-forget: never block or fail the claim save on the directory.
-      rememberWarrantyCompany(form.warrantyCompany, form.warrantyPhone);
+      rememberWarrantyCompany(form.warrantyCompany, form.warrantyPhone, form.warrantyEmail);
     } catch (err) {
       setSaveError(err.message || 'Save failed');
     } finally {
@@ -1670,7 +1929,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={async () => {
           if (view === 'list') {
-            if (mainTab === 'tires') { setMainTab('contracts'); return; }
+            if (mainTab === 'tires' || mainTab === 'contacts') { setMainTab('contracts'); return; }
             onBack(); return;
           }
           if (view === 'form' && formRef.current) {
@@ -1679,7 +1938,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
             setView('list');
           }
         }}>
-          {view === 'list' ? (mainTab === 'tires' ? '← Contracts' : (backLabel || '← Back')) : '← Contracts'}
+          {view === 'list' ? (mainTab === 'contracts' ? (backLabel || '← Back') : (mainTab === 'tires' ? '← Contracts' : (backLabel || '← Back'))) : '← Contracts'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty</span>
 
@@ -1699,6 +1958,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
           {[
             { key: 'contracts', label: '🛡 Contracts', color: '#6ee7f9', border: 'rgba(61,214,195,0.5)' },
             { key: 'tires', label: '🛞 Tire Warranty', color: '#fbbf24', border: 'rgba(251,191,36,0.5)' },
+            { key: 'contacts', label: '📇 Aftermarket Warranty Contacts', color: '#c4b5fd', border: 'rgba(167,139,250,0.5)' },
           ].map(t => {
             const on = mainTab === t.key;
             return (
@@ -1712,7 +1972,9 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       )}
 
       {/* Content */}
-      {mainTab === 'tires' ? (
+      {mainTab === 'contacts' ? (
+        <ContactsPanel />
+      ) : mainTab === 'tires' ? (
         <TireClaimsPanel currentRole={currentRole} />
       ) : (
         <>

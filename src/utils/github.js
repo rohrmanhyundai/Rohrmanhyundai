@@ -1088,8 +1088,8 @@ export async function removeWarrantyContract(contract) {
 }
 
 // ── Warranty Company Directory ────────────────────────────────────────────────
-// A shared name → phone map so any user can type a known warranty company and
-// have the phone auto-filled. Stored as a single small JSON object on GitHub.
+// A shared name → { phone, email } map so any user can type a known warranty
+// company and have its details auto-filled. One small JSON object on GitHub.
 const WARRANTY_COMPANIES_PATH = 'public/data/warranty/companies.json';
 
 export async function loadWarrantyCompanies() {
@@ -1110,6 +1110,39 @@ export async function saveWarrantyCompanies(companies) {
   await saveGitHubFile(authHeaders(), WARRANTY_COMPANIES_PATH, companies,
     `Update warranty company directory ${new Date().toISOString()}`);
   return companies;
+}
+
+/* Fill a company's phone and email into claims already written.
+ *
+ * Claims saved before the directory knew a company's email have a blank there,
+ * and re-typing it on every old claim isn't reasonable. This matches by company
+ * name and fills only what is BLANK — a detail typed on a claim is what happened
+ * on that claim and is never overwritten.
+ *
+ * One write against the shared index, which is what the page lists and prints.
+ * The per-claim snapshot files aren't read by the app; they pick the detail up
+ * the next time that claim is saved.
+ */
+export async function backfillWarrantyCompanyDetails(directory) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const dir = directory || {};
+  let filled = 0;
+  const updated = await mutateGitHubJson(WARRANTY_INDEX_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    return arr.map(c => {
+      const match = dir[String(c && c.warrantyCompany || '').trim().toUpperCase()];
+      if (!match) return c;
+      const next = { ...c };
+      let touched = false;
+      if (match.email && !String(c.warrantyEmail || '').trim()) { next.warrantyEmail = match.email; touched = true; }
+      if (match.phone && !String(c.warrantyPhone || '').trim()) { next.warrantyPhone = match.phone; touched = true; }
+      if (!touched) return c;
+      filled++;
+      return next;
+    });
+  }, `Backfill warranty company details ${new Date().toISOString()}`);
+  return { filled, contracts: Array.isArray(updated) ? updated : [] };
 }
 
 // ── Tire Warranty Claims ──────────────────────────────────────────────────────
