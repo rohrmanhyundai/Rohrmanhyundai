@@ -88,10 +88,10 @@
     "tier1Bump": 0,
     "tier2Hours": 60,
     "tier2Bump": 0,
-    "clockRate": 17,
+    "clockRate": 0,
     "clockHours": 40,
     "clockMode": "add",
     "eligiblePto": true,
-    "updated": "2026-09-09T18:06:10.777Z"
+    "updated": "2026-09-09T18:09:21.931Z"
   }
 }
