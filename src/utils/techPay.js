@@ -22,7 +22,6 @@ export const DEFAULT_PLAN = {
   tier1Bump: 0,        // ADDED to the base rate once the tier is reached, not a replacement
   tier2Hours: TIER2_HOURS,
   tier2Bump: 0,        // ADDED to the TIER 1 rate — bumps stack, they don't both come off the base
-  tierMode: 'all',     // 'all' = every hour at the bumped rate | 'above' = only the hours past the threshold
   clockRate: 0,        // $ per clock hour
   clockHours: 40,      // clock hours per week
   clockMode: 'add',    // 'add' = paid on top of flat rate | 'greater' = guarantee, paid the greater of the two
@@ -51,7 +50,6 @@ export function normalizePlan(plan) {
     tier1Bump: bumpOf(raw.tier1Bump, raw.tier1Rate),
     tier2Hours: num(p.tier2Hours, TIER2_HOURS),
     tier2Bump: bumpOf(raw.tier2Bump, raw.tier2Rate),
-    tierMode: p.tierMode === 'above' ? 'above' : 'all',
     clockRate: num(p.clockRate),
     clockHours: num(p.clockHours),
     clockMode: p.clockMode === 'greater' ? 'greater' : 'add',
@@ -99,20 +97,12 @@ export function computeTechPay(plan, flagHours) {
   const tierIdx = tierIndexFor(plan, hours);
   const tier = tiers[tierIdx];
 
-  // How the flat-rate dollars are built, spelled out so the breakdown can show
-  // the same arithmetic the tech would do on paper.
-  let bands = [];
-  if (p.tierMode === 'above') {
-    // Marginal: each band of hours is paid at its own rate.
-    const edges = [0, p.tier1Hours, p.tier2Hours, Infinity];
-    for (let i = 0; i < 3; i++) {
-      const band = Math.max(0, Math.min(hours, edges[i + 1]) - edges[i]);
-      if (band > 0) bands.push({ label: tiers[i].label, hours: band, rate: tiers[i].rate, amount: band * tiers[i].rate });
-    }
-  } else {
-    // Retroactive: hitting the tier lifts every hour to the higher rate.
-    if (hours > 0) bands.push({ label: tier.label, hours, rate: tier.rate, amount: hours * tier.rate });
-  }
+  // Reaching a tier lifts EVERY hour that week to that tier's rate. Spelled out
+  // as a band so the breakdown can show the same arithmetic a tech would do on
+  // paper. A tech below the first tier is simply on the base rate.
+  const bands = hours > 0
+    ? [{ label: tier.label, hours, rate: tier.rate, amount: hours * tier.rate }]
+    : [];
   const flatPay = bands.reduce((s, b) => s + b.amount, 0);
   const effRate = hours > 0 ? flatPay / hours : tier.rate;
 
