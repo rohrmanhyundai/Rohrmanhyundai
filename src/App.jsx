@@ -9,6 +9,7 @@ import Gauges from './components/Gauges';
 import AdminPanel from './components/AdminPanel';
 import { getPusher, triggerEvent, SYSTEM_CHANNEL, FORCE_REFRESH_EVENT, ADVISOR_CHANNEL, TECH_CHANNEL, NEW_MSG_EVENT, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from './utils/pusher';
 import { mentionsUser } from './utils/mentions';
+import { playMessageBell } from './utils/sounds';
 import { chatLive, setMentionConsider } from './utils/chatLive';
 import { initActivityTracker, shutdownActivityTracker, trackPage, trackAction } from './utils/activityTracker';
 import AdvisorCalendar from './components/AdvisorCalendar';
@@ -410,6 +411,9 @@ export default function App() {
       // requireReply → the recipient must type a reply to close (no plain OK).
       mentionQueueRef.current.push({ id: msg.id, type: msg.requireReply ? 'reply-required' : 'global', from: msg.from || 'Management', text: String(msg.text), channel: 'Global Message', isAlert });
       setMention(cur => cur || mentionQueueRef.current[0]);
+      // Inside the dedupe guards above, so the bell rings once per message even
+      // when the Pusher event and the poll both find it.
+      playMessageBell();
     };
     // Pop a "someone replied" notice for anyone involved in the message (the
     // original sender, plus recipients) — except the reply's own author.
@@ -427,6 +431,7 @@ export default function App() {
         if (mentionQueueRef.current.some(x => x.id === rep.id)) continue;
         mentionQueueRef.current.push({ id: rep.id, type: 'reply-notice', from: rep.from || 'Someone', text: String(rep.text || ''), channel: 'Reply', msgId: msg.id });
         setMention(cur => cur || mentionQueueRef.current[0]);
+        playMessageBell();
       }
     };
     // Count unread global-message activity relevant to me (messages addressed to
@@ -475,6 +480,7 @@ export default function App() {
       if (mentionQueueRef.current.some(x => x.id === data.replyId)) return;
       mentionQueueRef.current.push({ id: data.replyId, type: 'reply-notice', from: data.replyFrom || 'Someone', text: String(data.replyText || ''), channel: 'Reply', msgId: data.msgId });
       setMention(cur => cur || mentionQueueRef.current[0]);
+      playMessageBell();
     };
     const onConnect = () => { scanAdvisor(); scanTech(); scanGlobal(); };
     try {
