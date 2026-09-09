@@ -307,6 +307,11 @@ function HistoryPanel({ techName, currentWeekStart }) {
                           {hrs1(r.ptoHours)} PTO hrs not paid
                         </span>
                       )}
+                      {r.overridden && (
+                        <span style={{ display: 'block', fontSize: 11, color: '#fbbf24', fontWeight: 700 }}>
+                          Adjusted at close-out from {hrs1(r.payableHours)} hrs
+                        </span>
+                      )}
                     </div>
                     <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 700 }}>{hrs1(r.hours)}</div>
                     <div style={{ textAlign: 'right', color: '#a78bfa', fontWeight: 800 }}>{rate(r.rate)}</div>
