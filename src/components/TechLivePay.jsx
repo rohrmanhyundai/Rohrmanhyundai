@@ -149,7 +149,7 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                       </div>
                       <div style={{ fontSize: 12.5, color: '#bae6fd', marginTop: 3, lineHeight: 1.45 }}>
                         Rate goes {rate(pay.tier.rate)} → <strong>{rate(pay.next.rate)}</strong> per flagged hour
-                        {plan.tierMode === 'all' ? ' on every hour this week' : ' on the hours above it'}.
+ on every hour this week.
                       </div>
                     </div>
                     <div style={{ fontSize: 30, fontWeight: 900, color: '#34d399', whiteSpace: 'nowrap', textShadow: '0 0 22px rgba(52,211,153,.6)' }}>+{money(pay.nextGain)}</div>
@@ -159,7 +159,7 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 18 }}>
                   <QualCard accent="#a78bfa" title={mode === 'pacing' ? 'Projected Hours' : 'Hours Turned'} value={hrs1(pay.hours)}
                     note={calc.basis.excluded > 0 ? `${pay.tier.label} · ${hrs1(calc.basis.excluded)} PTO hrs not paid` : pay.tier.label} />
-                  <QualCard accent="#34d399" title="Effective Flat Rate" value={rate(pay.effRate)} note={plan.tierMode === 'all' ? 'Every hour at the tier rate' : 'Blended across the tiers'} />
+                  <QualCard accent="#34d399" title="Effective Flat Rate" value={rate(pay.effRate)} note="Every hour at the tier rate" />
                   <QualCard accent={plan.payType === 'flat_clock' ? '#fbbf24' : '#38bdf8'} title="Pay Type"
                     value={plan.payType === 'flat_clock' ? 'Clock + Flat' : 'Flat Rate'}
                     note={plan.payType === 'flat_clock'
@@ -215,9 +215,7 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', marginTop: 14, lineHeight: 1.6 }}>
                   Banked is the hours already turned this week. Pacing projects the full week from the current daily pace
                   (hours ÷ days worked × the week's workdays), the same number the Tech Hours board shows.
-                  {plan.tierMode === 'all'
-                    ? ' A tier bump lifts every hour that week to the higher rate.'
-                    : ' A tier bump applies only to the hours above the threshold.'}
+                  {' '}A tier bump lifts every hour that week to the higher rate.
                   {' '}Final pay is calculated by payroll after the week closes.
                   {' '}<strong style={{ color: '#fdba74', fontWeight: 900 }}>
                     These are gross figures — pre-tax and before any payroll deductions.
@@ -452,13 +450,6 @@ function SetupPanel({ techName, plan, onSaved }) {
           <Choice value={form.eligiblePto === false ? 'no' : 'yes'} onChange={v => set('eligiblePto', v === 'yes')} options={[
             { value: 'yes', label: 'Eligible — paid', note: 'Filled hours count toward pay' },
             { value: 'no', label: 'Not eligible', note: 'Filled hours are excluded from pay' },
-          ]} />
-        </Field>
-
-        <Field label="How a bump is applied" hint="Shops write this both ways — pick the one on this tech's pay plan.">
-          <Choice value={form.tierMode} onChange={v => set('tierMode', v)} options={[
-            { value: 'all', label: 'All hours at the new rate', note: 'Hitting the tier lifts every hour that week' },
-            { value: 'above', label: 'Only hours above the tier', note: 'Each band of hours paid at its own rate' },
           ]} />
         </Field>
 
