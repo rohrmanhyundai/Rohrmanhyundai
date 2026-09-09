@@ -47,13 +47,13 @@
     "roDate": "2026-09-09",
     "vehicle": "2012 Hyundai Sonata",
     "jobDesc": "CUSTOMER STATES- engine knocking",
-    "notes": "",
+    "notes": "P/A IS SUBMITTED ",
     "flag": "purple",
     "usedCar": false,
     "highPriority": false,
     "advisor": "DAVID RILEY",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "isNew": true
+    "isNew": false
   }
 ]
