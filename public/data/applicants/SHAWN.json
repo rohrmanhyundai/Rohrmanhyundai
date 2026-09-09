@@ -6,8 +6,8 @@
     "position": "Technician",
     "source": "Indeed",
     "interviewAt": "",
-    "contacted": "",
-    "contactedAt": "",
+    "contacted": "yes",
+    "contactedAt": "2026-09-09T11:24",
     "contactNotes": "",
     "interviewed": "",
     "interviewedAt": "",
@@ -18,7 +18,7 @@
     "archived": false,
     "id": "ap-mtu91chhz364",
     "appliedAt": "2026-09-09T15:24:22.517Z",
-    "updatedAt": "2026-09-09T15:24:22.517Z",
+    "updatedAt": "2026-09-09T15:24:32.279Z",
     "updatedBy": "SHAWN"
   },
   {
