@@ -5,6 +5,8 @@ import { advisorDailyAverage, currentWeekDates, advisorOffDates, isScheduledOff 
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
+import { loadTechPay, saveTechWeek } from '../utils/github';
+import { buildWeekRecord, planIsSet, boardWeekBounds } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -214,6 +216,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [techXlsxBusy, setTechXlsxBusy] = useState(false);
   const [techUpload, setTechUpload] = useState(null); // { day, source, warnings:[], rows:[{idx,name,hours,warranty,other,detailed,matched,matchedName}], unmatched:[] }
   const [techUploadErr, setTechUploadErr] = useState('');
+  // Week close-out: { rows: [{ idx, name, days:{mon..sat}, edited:{} }], plans, busy, err }
+  const [closeout, setCloseout] = useState(null);
   const [techUploadMsg, setTechUploadMsg] = useState('');
   // Weekday the next uploaded report fills — picked before choosing the file.
   const [techUploadDay, setTechUploadDay] = useState(() => {
@@ -938,19 +942,118 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // Wipe the week back to zero — the Monday-morning starting point. Local only;
   // nothing leaves until Save Changes, so a misclick is one Close away.
-  function resetTechWeek() {
+  /* Closing out the week.
+   *
+   * "Reset All" used to zero the board on the spot. It now opens a review screen
+   * first: the week's hours for every tech, editable, because the last word on a
+   * week is the manager's and not the report's. Confirming writes the adjusted
+   * hours back to the board (so anything reading tech hours sees the corrected
+   * figures), stores the week in each tech's pay history, and only then clears
+   * the board for the week ahead.
+   */
+  const WEEK_DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+  function weekDayDates(startIso) {
+    const [y, m, d] = String(startIso || '').split('-').map(Number);
+    const monday = (y && m && d) ? new Date(y, m - 1, d) : new Date();
+    const out = {};
+    WEEK_DAY_KEYS.forEach((k, i) => {
+      const dt = new Date(monday);
+      dt.setDate(monday.getDate() + i);
+      out[k] = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    });
+    return out;
+  }
+
+  async function openWeekCloseout() {
     const techs = data.technicians || [];
     if (!techs.length) return;
-    if (!window.confirm(
-      `Reset ALL days to 0 for ${techs.length} technician${techs.length === 1 ? '' : 's'}?\n\n` +
-      `Clears Mon–Sat hours and RO counts for everyone.\n` +
-      `Weekly goals and the warranty multiplier are left alone.\n\n` +
-      `Nothing is live until you click Save Changes.`)) return;
+    const rows = techs.map((t, idx) => ({
+      idx,
+      name: t.name,
+      days: WEEK_DAY_KEYS.reduce((o, d) => { o[d] = safe(t[d], 0); return o; }, {}),
+      edited: {},
+    }));
+    setCloseout({ rows, plans: null, busy: false, err: '', week: boardWeekBounds(techs) });
+    // Plans decide what each week is worth. If they can't be read the week is
+    // still archived — with the hours, and no dollars invented.
+    try {
+      const plans = await loadTechPay();
+      setCloseout(c => (c ? { ...c, plans: plans || {} } : c));
+    } catch {
+      setCloseout(c => (c ? { ...c, plans: {}, err: 'Could not load pay plans — hours will be stored without pay figures.' } : c));
+    }
+  }
+
+  function setCloseoutHours(rowIdx, day, value) {
+    setCloseout(c => {
+      if (!c) return c;
+      const rows = c.rows.map((r, i) => (i === rowIdx
+        ? { ...r, days: { ...r.days, [day]: value }, edited: { ...r.edited, [day]: true } }
+        : r));
+      return { ...c, rows };
+    });
+  }
+
+  async function confirmWeekCloseout() {
+    if (!closeout) return;
+    setCloseout(c => ({ ...c, busy: true, err: '' }));
 
     const stamp = Date.now();
     const newData = structuredClone(data);
+    const plans = closeout.plans || {};
+    // The week on the board, which on a Monday morning is last week — see
+    // boardWeekBounds. Stamps go on that week's dates, not today's.
+    const bounds = boardWeekBounds(newData.technicians);
+    const dates = weekDayDates(bounds.start);
+
+    // 1. Apply the adjustments, so the archived week and the board agree.
+    for (const row of closeout.rows) {
+      const tech = (newData.technicians || [])[row.idx];
+      if (!tech) continue;
+      for (const day of WEEK_DAY_KEYS) {
+        if (!row.edited[day]) continue;
+        const v = safe(row.days[day], 0);
+        tech[day] = v;
+        // A hand-set figure carries no warranty multiplier, and marking the date
+        // as entered stops the schedule's 8-hour fill overwriting the decision.
+        tech[`${day}_raw`] = v;
+        tech.hoursOverride = { ...(tech.hoursOverride || {}), [dates[day]]: true };
+      }
+      tech.total = WEEK_DAY_KEYS.reduce((sum, d) => sum + safe(tech[d], 0), 0);
+    }
+
+    // 2. Store the week for every tech on a pay plan.
+    const stored = [];
+    const failed = [];
+    for (const row of closeout.rows) {
+      const tech = (newData.technicians || [])[row.idx];
+      const key = String(row.name || '').trim().toUpperCase();
+      if (!tech || !key || !planIsSet(plans[key])) continue;
+      try {
+        const record = buildWeekRecord(tech, plans[key], {
+          weekStart: bounds.start,
+          closed: true,
+          closedBy: (currentUser || '').toUpperCase(),
+          closedAt: new Date().toISOString(),
+        });
+        await saveTechWeek(key, record);
+        stored.push(key);
+      } catch (e) {
+        failed.push(`${key} (${e.message || 'failed'})`);
+      }
+    }
+
+    // A week that couldn't be stored must not be wiped — that would lose it for
+    // good. Stop here and let the manager retry.
+    if (failed.length) {
+      setCloseout(c => ({ ...c, busy: false, err: `Could not store: ${failed.join(', ')}. Nothing was reset — try again.` }));
+      return;
+    }
+
+    // 3. Clear the board for the new week.
     for (const tech of newData.technicians || []) {
-      for (const day of ['mon', 'tue', 'wed', 'thu', 'fri', 'sat']) {
+      for (const day of WEEK_DAY_KEYS) {
         tech[day] = 0;
         delete tech[`${day}_raw`];
         delete tech[`${day}_ro`];
@@ -960,10 +1063,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       // into a fresh week would quietly cost every tech their PTO hours.
       delete tech.hoursOverride;
       tech._hrsStamp = stamp;   // remount the uncontrolled inputs so they show 0
+      tech.total = 0;
     }
     onDataChange(newData, structuredClone(vacations));
+    setCloseout(null);
     setTechUploadErr('');
-    setTechUploadMsg(`✅ All days reset to 0 for ${techs.length} technician${techs.length === 1 ? '' : 's'}. Click Save Changes to push it live.`);
+    setTechUploadMsg(
+      `✅ Week of ${bounds.start} closed${stored.length ? ` — stored for ${stored.join(', ')}` : ''}. ` +
+      `Board reset to 0. Click Save Changes to push it live.`);
   }
 
   // ── Technician "Flagged Hours" report upload ───────────────────────────────
@@ -2072,15 +2179,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 {d.charAt(0).toUpperCase() + d.slice(1)}
               </button>
             ))}
-            <button onClick={resetTechWeek} disabled={techXlsxBusy}
-              title="Set Mon–Sat hours and RO counts to 0 for every technician — the start of a new week"
+            <button onClick={openWeekCloseout} disabled={techXlsxBusy}
+              title="Review and adjust the week's hours, store it to each tech's pay history, then clear the board for the new week"
               style={{
                 marginLeft: 'auto',
                 background: 'rgba(251,146,60,.14)', border: '1px solid rgba(251,146,60,.45)',
                 color: '#fdba74', borderRadius: 8, padding: '5px 14px', fontWeight: 800, fontSize: 12,
                 cursor: techXlsxBusy ? 'default' : 'pointer', whiteSpace: 'nowrap',
               }}>
-              ↺ Reset All
+              ↺ Close Out Week
             </button>
           </div>
           <input ref={techXlsxInputRef} type="file" accept=".html,.htm,.xlsx,.xls" disabled={techXlsxBusy}
@@ -2197,6 +2304,77 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
                 <button className="secondary" onClick={() => setTechUpload(null)}>Cancel</button>
                 <button onClick={applyTechUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✓ Apply to {DAY_LABELS[techUpload.day]}</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {closeout && (
+          <div onClick={() => { if (!closeout.busy) setCloseout(null); }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.75)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '5vh 16px' }}>
+            <div onClick={e => e.stopPropagation()}
+              style={{ width: '100%', maxWidth: 860, maxHeight: '88vh', display: 'flex', flexDirection: 'column', background: '#0f172a', border: '1px solid rgba(251,146,60,.35)', borderRadius: 14, boxShadow: '0 20px 60px rgba(0,0,0,.55)' }}>
+
+              <div style={{ padding: '18px 20px 12px', borderBottom: '1px solid rgba(148,163,184,.14)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <span style={{ fontWeight: 900, fontSize: 17, color: '#fdba74' }}>Close Out the Week</span>
+                  <button onClick={() => { if (!closeout.busy) setCloseout(null); }}
+                    style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+                </div>
+                <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 5, lineHeight: 1.5 }}>
+                  Week of <strong style={{ color: '#cbd5e1' }}>{closeout.week.start}</strong> to <strong style={{ color: '#cbd5e1' }}>{closeout.week.end}</strong>.
+                  Adjust any hours below — what you leave here is what each tech is paid on and what gets stored.
+                  The week is saved to every tech&rsquo;s Weekly History, then the board is cleared for the new week.
+                </div>
+                {closeout.err && <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 8, fontWeight: 700 }}>{closeout.err}</div>}
+              </div>
+
+              <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr repeat(6, 1fr) .9fr', gap: 6, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 6 }}>
+                  <div>Technician</div>
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d} style={{ textAlign: 'center' }}>{d}</div>)}
+                  <div style={{ textAlign: 'right' }}>Total</div>
+                </div>
+                {closeout.rows.map((row, ri) => {
+                  const total = ['mon','tue','wed','thu','fri','sat'].reduce((sum, d) => sum + safe(row.days[d], 0), 0);
+                  const key = String(row.name || '').toUpperCase();
+                  const hasPlan = closeout.plans ? planIsSet(closeout.plans[key]) : true;
+                  return (
+                    <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1.2fr repeat(6, 1fr) .9fr', gap: 6, alignItems: 'center', padding: '5px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: '#e2e8f0' }}>
+                        {row.name}
+                        {closeout.plans && !hasPlan && (
+                          <span title="No pay plan — hours are cleared but no week is stored"
+                            style={{ color: '#fb923c', fontSize: 11, fontWeight: 700 }}> · no plan</span>
+                        )}
+                      </div>
+                      {['mon','tue','wed','thu','fri','sat'].map(d => (
+                        <input key={d} type="number" step="0.01" min="0" value={row.days[d]}
+                          onChange={e => setCloseoutHours(ri, d, e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                          style={{ width: '100%', background: row.edited[d] ? 'rgba(251,191,36,.12)' : 'rgba(2,6,23,.6)',
+                                   border: `1px solid ${row.edited[d] ? 'rgba(251,191,36,.5)' : 'rgba(148,163,184,.22)'}`,
+                                   borderRadius: 7, padding: '5px 6px', color: '#e2e8f0', fontSize: 12.5, fontWeight: 700, textAlign: 'center' }} />
+                      ))}
+                      <div style={{ textAlign: 'right', fontSize: 13.5, fontWeight: 900, color: '#6ee7b7' }}>
+                        {(Math.round(total * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  );
+                })}
+                {!closeout.plans && (
+                  <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 10, fontWeight: 700 }}>Loading pay plans…</div>
+                )}
+              </div>
+
+              <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(148,163,184,.14)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
+                <span style={{ flex: 1, fontSize: 11.5, color: '#64748b', lineHeight: 1.45 }}>
+                  Edited cells are highlighted. A tech with no pay plan has their hours cleared but no week stored.
+                </span>
+                <button className="secondary" disabled={closeout.busy} onClick={() => setCloseout(null)}>Cancel</button>
+                <button onClick={confirmWeekCloseout} disabled={closeout.busy || !closeout.plans}
+                  style={{ background: 'rgba(251,146,60,.2)', border: '1px solid rgba(251,146,60,.5)', color: '#fdba74', borderRadius: 8, padding: '8px 18px', cursor: closeout.busy ? 'default' : 'pointer', fontWeight: 800, fontSize: 13, opacity: closeout.busy ? .6 : 1 }}>
+                  {closeout.busy ? 'Storing…' : '✓ Store Week & Reset Board'}
+                </button>
               </div>
             </div>
           </div>

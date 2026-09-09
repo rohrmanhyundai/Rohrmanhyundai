@@ -171,7 +171,7 @@ export function ptoDaysOf(tech) {
 
 // Mon..Sat of the current week as YYYY-MM-DD, local — the same keys the
 // schedule and hoursOverride use.
-function weekDates() {
+export function weekDates() {
   const out = {};
   const now = new Date();
   const dow = now.getDay();
@@ -211,3 +211,77 @@ export function payBasis(tech, plan) {
   const pacing = daysWorked > 0 ? (banked / daysWorked) * payableDays.length : 0;
   return { banked, pacing, ptoHours, ptoDays, excluded: ptoHours };
 }
+
+/* ------------------------------------------------------------ week records */
+
+// The Monday that starts the current week, and the Saturday that ends it.
+export function weekBounds() {
+  const d = weekDates();
+  return { start: d.mon, end: d.sat };
+}
+
+// Monday..Saturday for the week containing a given YYYY-MM-DD.
+export function weekBoundsOf(iso) {
+  const [y, m, d] = String(iso || '').split('-').map(Number);
+  if (!y || !m || !d) return weekBounds();
+  const day = new Date(y, m - 1, d);
+  const dow = day.getDay();
+  const monday = new Date(day);
+  monday.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow));
+  const sat = new Date(monday);
+  sat.setDate(monday.getDate() + 5);
+  const iso2 = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
+  return { start: iso2(monday), end: iso2(sat) };
+}
+
+/* Which week the Tech Hours board is actually holding.
+ *
+ * Not necessarily this one: a manager closing out on Monday morning is closing
+ * LAST week, and filing it under today's Monday would put it in the wrong week
+ * and overwrite the new one. Every real figure stamps its date in hoursOverride,
+ * so the latest stamped date says which week the numbers belong to. With no
+ * stamps at all — a board of nothing but schedule fills — this week is right.
+ */
+export function boardWeekBounds(technicians) {
+  let latest = '';
+  for (const t of technicians || []) {
+    for (const d of Object.keys((t && t.hoursOverride) || {})) {
+      if (d > latest) latest = d;
+    }
+  }
+  return latest ? weekBoundsOf(latest) : weekBounds();
+}
+
+/* One technician's week, ready to store. Built in one place so the close-out
+ * screen, the nightly job and the history list can never tell three different
+ * stories about the same week. `hours` is what the tech is PAID on — holiday /
+ * PTO / training hours are already out of it when they aren't eligible — while
+ * `boardHours` is the raw Tech Hours total, kept so a week can be reconciled
+ * against the board later. */
+export function buildWeekRecord(tech, plan, extra = {}) {
+  const p = normalizePlan(plan);
+  const t = tech || {};
+  const basis = payBasis(t, p);
+  const pay = computeTechPay(p, basis.banked);
+  const { start, end } = extra.weekStart ? weekBoundsOf(extra.weekStart) : weekBounds();
+  const days = {};
+  for (const d of WEEK_DAYS) days[d] = round2(num(t[d]));
+  return {
+    weekStart: start,
+    weekEnd: end,
+    days,
+    hours: round2(basis.banked),
+    boardHours: round2(num(t.total)),
+    ptoHours: round2(basis.ptoHours),
+    ptoPaid: p.eligiblePto,
+    rate: round2(pay.effRate),
+    tier: pay.tier.label,
+    pay: round2(pay.gross),
+    payType: p.payType,
+    closed: false,
+    updatedAt: new Date().toISOString(),
+    ...extra,
+  };
+}
+
+const round2 = (n) => Math.round((num(n)) * 100) / 100;

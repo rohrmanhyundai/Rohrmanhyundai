@@ -39,13 +39,13 @@ jobs:
           TZ: America/New_York
         run: node scripts/prune-messages.cjs
 
-      # The Tech Hours board is cleared at the start of each week, so a tech's
-      # own pay week vanishes with it. This records where each tech stood at
-      # end of day so they can look back later.
-      - name: Snapshot technician pay for the day
+      # Keeps the current week's pay record current for every tech, so a week is
+      # never lost if it isn't formally closed out on the Tech Hours board. A
+      # week already closed out is left exactly as the manager finalised it.
+      - name: Snapshot technician pay for the week
         env:
           TZ: America/New_York
-        run: node scripts/tech-pay-daily.mjs
+        run: node scripts/tech-pay-week.mjs
 
       - name: Commit and push report snapshots
         run: |

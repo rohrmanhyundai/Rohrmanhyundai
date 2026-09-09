@@ -2064,8 +2064,9 @@ export async function saveTechPayPlan(techName, plan) {
   }, `Tech pay plan — ${key}`);
 }
 
-// One file per technician of end-of-day pay snapshots, written by the nightly
-// workflow (scripts/tech-pay-daily.mjs). Keyed by date: { '2026-09-09': {…} }.
+// One file per technician of weekly pay records, keyed by the Monday that starts
+// the week: { '2026-09-07': {…} }. The nightly job keeps the week in progress up
+// to date; closing the week out on the Tech Hours board stamps the final one.
 export async function loadTechPayHistory(techName) {
   const key = String(techName || '').trim().toUpperCase();
   if (!key) return {};
@@ -2082,4 +2083,22 @@ export async function loadTechPayHistory(techName) {
     }
   } catch {}
   return {};   // nothing recorded yet — the page says so rather than showing zeros
+}
+
+// Store one technician's week. Read-modify-write so closing out seven techs in a
+// row can't have them overwrite each other, and so a week already closed keeps
+// its closing figures unless this write is itself a close-out.
+export async function saveTechWeek(techName, record) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const key = String(techName || '').trim().toUpperCase();
+  if (!key || !record || !record.weekStart) throw new Error('Nothing to store for this week.');
+  const path = `public/data/tech-pay-history/${key}.json`;
+  return mutateGitHubJson(path, (current) => {
+    const all = (current && typeof current === 'object') ? { ...current } : {};
+    const existing = all[record.weekStart];
+    if (existing && existing.closed && !record.closed) return all;   // don't undo a close-out
+    all[record.weekStart] = { ...existing, ...record };
+    return all;
+  }, `Tech week ${record.weekStart} — ${key}`);
 }
