@@ -407,20 +407,21 @@ function SetupPanel({ techName, plan, onSaved }) {
         <div style={{ fontSize: 12, fontWeight: 900, color: '#c4b5fd', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 12 }}>Tier Bumps</div>
 
         <div style={{ fontSize: 12.5, color: '#64748b', marginBottom: 12, lineHeight: 1.45 }}>
-          A bump is what the tier <strong>adds</strong> to the base rate — enter 2 for "two dollars more an hour past 50".
-          Leave a bump blank and that tier just pays the base.
+          Bumps <strong>stack</strong>: tier 1 adds to the base rate, tier 2 adds to tier 1. A $31.00 base with
+          bumps of 2 and 2 pays $31.00, then $33.00, then $35.00. Leave a bump blank and that tier carries the
+          rate below it forward.
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 14 }}>
           <Field label={`Tier 1 — hours (default ${TIER1_HOURS})`}>
             <input type="number" step="0.5" min="0" style={inputStyle} {...numField('tier1Hours')} />
           </Field>
-          <Field label="Tier 1 bump (+$/hr)" hint={`Pays ${rate(ladder[1].rate)}/hr past ${hrs1(form.tier1Hours)} hrs`}>
+          <Field label="Tier 1 bump (+$/hr on base)" hint={`Pays ${rate(ladder[1].rate)}/hr past ${hrs1(form.tier1Hours)} hrs`}>
             <input type="number" step="0.01" min="0" placeholder="0.00" style={inputStyle} {...numField('tier1Bump')} />
           </Field>
           <Field label={`Tier 2 — hours (default ${TIER2_HOURS})`}>
             <input type="number" step="0.5" min="0" style={inputStyle} {...numField('tier2Hours')} />
           </Field>
-          <Field label="Tier 2 bump (+$/hr)" hint={`Pays ${rate(ladder[2].rate)}/hr past ${hrs1(form.tier2Hours)} hrs`}>
+          <Field label="Tier 2 bump (+$/hr on tier 1)" hint={`Pays ${rate(ladder[2].rate)}/hr past ${hrs1(form.tier2Hours)} hrs`}>
             <input type="number" step="0.01" min="0" placeholder="0.00" style={inputStyle} {...numField('tier2Bump')} />
           </Field>
         </div>

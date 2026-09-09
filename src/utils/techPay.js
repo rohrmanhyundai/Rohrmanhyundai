@@ -21,7 +21,7 @@ export const DEFAULT_PLAN = {
   tier1Hours: TIER1_HOURS,
   tier1Bump: 0,        // ADDED to the base rate once the tier is reached, not a replacement
   tier2Hours: TIER2_HOURS,
-  tier2Bump: 0,
+  tier2Bump: 0,        // ADDED to the TIER 1 rate — bumps stack, they don't both come off the base
   tierMode: 'all',     // 'all' = every hour at the bumped rate | 'above' = only the hours past the threshold
   clockRate: 0,        // $ per clock hour
   clockHours: 40,      // clock hours per week
@@ -68,14 +68,15 @@ export function planIsSet(plan) {
   return p.flatRate > 0 || (p.payType === 'flat_clock' && p.clockRate > 0);
 }
 
-// The ladder, lowest first. Each tier is the base rate plus that tier's bump, so
-// a blank bump simply pays the base and a half-filled plan can never pay less
-// than the base. Tier 2 is held at or above tier 1 — turning MORE hours must
-// never drop someone's rate.
+// The ladder, lowest first. Bumps STACK: tier 1 adds to the base, tier 2 adds to
+// tier 1. So $31 with bumps of $2 and $2 pays $31 / $33 / $35 — each tier is
+// "another two dollars an hour", which is how the plans are written. A blank
+// bump just carries the rate below it forward, and since a bump is never
+// negative, turning more hours can't drop someone's rate.
 export function tiersOf(plan) {
   const p = normalizePlan(plan);
   const t1 = p.flatRate + p.tier1Bump;
-  const t2 = Math.max(t1, p.flatRate + p.tier2Bump);
+  const t2 = t1 + p.tier2Bump;
   return [
     { label: `Up to ${p.tier1Hours} hrs`, min: 0, rate: p.flatRate },
     { label: `${p.tier1Hours} – ${p.tier2Hours} hrs`, min: p.tier1Hours, rate: t1 },
