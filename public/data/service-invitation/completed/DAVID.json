@@ -400,5 +400,23 @@
     "notes": "rang once , discvonnected",
     "submittedAt": "2026-08-28T19:59:47.462Z",
     "submittedBy": "DAVID"
+  },
+  {
+    "consultant": "DAVID RILEY",
+    "customerName": "GIOVANNI BRAVO",
+    "repairOrder": "780599",
+    "vin": "5NMS3DA15PH010368",
+    "model": "SANTA FE HEV",
+    "serviceDate": "09/04/2026",
+    "invitationDate": "09/08/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7654218032",
+    "notes": "Happy with his time here\n",
+    "submittedAt": "2026-09-09T20:23:32.249Z",
+    "submittedBy": "DAVID"
   }
 ]
