@@ -1,0 +1,18 @@
+{
+  "managerHub": [
+    "chargeAccountList",
+    "surveyReports",
+    "advisorCalendar",
+    "aftermarketWarranty",
+    "documentLibrary",
+    "workSchedule",
+    "employeeReview",
+    "performanceReports",
+    "repairOrderDatabase",
+    "goalForecast",
+    "advisorForecast",
+    "userDataTracker",
+    "globalMessage",
+    "cashDash"
+  ]
+}
