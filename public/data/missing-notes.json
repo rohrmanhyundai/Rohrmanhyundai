@@ -1,43 +1,51 @@
 {
-  "updatedAt": "2026-09-09T14:13:14.585Z",
+  "updatedAt": "2026-09-09T16:11:57.305Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
+    "JORDAN": [
       {
-        "ro": "780695",
-        "vehicle": "2024 Hyundai Palisade"
+        "ro": "780704",
+        "vehicle": "2016 Hyundai Santa Fe"
       },
       {
-        "ro": "780694",
-        "vehicle": "2024 Hyundai Elantra"
+        "ro": "780701",
+        "vehicle": "2026 Hyundai Palisade"
       },
       {
-        "ro": "780684",
-        "vehicle": "2019 Hyundai Santa Fe"
+        "ro": "780700",
+        "vehicle": "2012 Hyundai Elantra"
+      },
+      {
+        "ro": "780691",
+        "vehicle": "2025 Hyundai Elantra"
       }
     ],
     "DAVID": [
       {
-        "ro": "780693",
-        "vehicle": "2026 Hyundai Tucson"
+        "ro": "780703",
+        "vehicle": "2012 Hyundai Sonata"
       },
       {
-        "ro": "780692",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
+        "ro": "780702",
+        "vehicle": "2015 Hyundai Sonata"
+      },
+      {
+        "ro": "780698",
+        "vehicle": "2021 Hyundai Elantra"
+      },
+      {
+        "ro": "780693",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
         "ro": "780663",
         "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ],
-    "JORDAN": [
+    "CODY": [
       {
-        "ro": "780691",
-        "vehicle": "2025 Hyundai Elantra"
-      },
-      {
-        "ro": "780690",
-        "vehicle": "2021 Hyundai Accent"
+        "ro": "780684",
+        "vehicle": "2019 Hyundai Santa Fe"
       }
     ],
     "CORY": [
