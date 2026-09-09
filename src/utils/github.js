@@ -1297,6 +1297,39 @@ export async function removeRegistrationUpload(id) {
     `Remove registration upload ${id}`);
 }
 
+// ── Per-user hub tile order ───────────────────────────────────────────────────
+// Each person arranges their own hubs and that layout follows them to any
+// device. One small file per user so a rearrange never rewrites users.json.
+const hubOrderPath = (user) => `public/data/hub-order/${String(user || '').toUpperCase()}.json`;
+
+export async function loadHubOrder(user) {
+  if (!user) return {};
+  const path = hubOrderPath(user);
+  try {
+    const data = await readGitHubFile(authHeaders(), path);
+    if (data && typeof data === 'object' && !Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/hub-order/${String(user).toUpperCase()}.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (json && typeof json === 'object' && !Array.isArray(json)) return json;
+    }
+  } catch {}
+  return {};
+}
+
+// Merges one hub's order into whatever else that user has arranged, so saving
+// the Parts Hub can't wipe their Manager Hub layout.
+export async function saveHubOrder(user, hubKey, orderedIds) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  return mutateGitHubJson(hubOrderPath(user), (cur) => ({
+    ...(cur && typeof cur === 'object' && !Array.isArray(cur) ? cur : {}),
+    [hubKey]: orderedIds,
+  }), `Hub layout: ${String(user).toUpperCase()} / ${hubKey}`);
+}
+
 // ── Tire promotions ───────────────────────────────────────────────────────────
 // The image itself lives in S3 (same as tire photos and registrations); this
 // index holds only the small stuff — the image URL, where clicking it goes, and
