@@ -2027,3 +2027,39 @@ export async function setGoalForecastDaily(dept, monthKey, dayKey, value) {
   await saveGithubFile(goalForecastPath(dept), all, `Goal forecast (${dept}) daily ${dayKey}`);
   return all;
 }
+
+/* ---------------------------------------------------------------- tech pay */
+// Every technician's pay plan in one small file, keyed by the tech's name as it
+// appears on the Tech Hours board. Kept out of data.json because that file is
+// rewritten wholesale on every hours import — a pay plan shouldn't ride along
+// with a spreadsheet upload.
+const TECH_PAY_PATH = 'public/data/tech-pay.json';
+
+export async function loadTechPay() {
+  try {
+    const data = await readGitHubFile(authHeaders(), TECH_PAY_PATH);
+    if (data && typeof data === 'object') return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/tech-pay.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (json && typeof json === 'object') return json;
+    }
+  } catch {}
+  return {};
+}
+
+// Writes one tech's plan through a read-modify-write so two managers saving
+// different techs at the same time don't wipe each other out.
+export async function saveTechPayPlan(techName, plan) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const key = String(techName || '').trim().toUpperCase();
+  if (!key) throw new Error('No technician selected.');
+  return mutateGitHubJson(TECH_PAY_PATH, (current) => {
+    const all = (current && typeof current === 'object') ? { ...current } : {};
+    all[key] = { ...plan, updated: new Date().toISOString() };
+    return all;
+  }, `Tech pay plan — ${key}`);
+}

@@ -20,6 +20,8 @@ import AfterCallReport from './components/AfterCallReport';
 import DocumentLibrary from './components/DocumentLibrary';
 import ServicePricingMenu from './components/ServicePricingMenu';
 import LivePay from './components/LivePay';
+import TechLivePay from './components/TechLivePay';
+import LivePayHub from './components/LivePayHub';
 import AftermarketWarranty from './components/AftermarketWarranty';
 import TireWarranty from './components/TireWarranty';
 import AdditionalTime from './components/AdditionalTime';
@@ -84,6 +86,7 @@ const BACK_LABELS = {
   'parts-hub': '← Parts Hub',
   'warranty-hub': '← Warranty Hub',
   'manager-hub': '← Manager Hub',
+  'live-pay-hub': '← Live Pay',
   'dashboard': '← Dashboard',
 };
 
@@ -833,6 +836,18 @@ export default function App() {
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
 
+  // Who may open which pay board. A manager sees both and can pick any name; a
+  // tech or an advisor only reaches their own board, and only when they actually
+  // have a record on it — an empty pay screen tells someone nothing.
+  const seesAllPay = currentRole === 'admin' || currentRole === 'service manager';
+  const canSeeAdvisorPay = seesAllPay
+    || ((jobRole === 'advisor' || jobRole === 'lead advisor')
+        && (data.advisors || []).some(a => String(a.name || '').trim().split(/\s+/)[0].toUpperCase() === currentUser.toUpperCase()));
+  const canSeeTechPay = seesAllPay
+    || (jobRole === 'technician'
+        && (data.technicians || []).some(t => String(t.name || '').trim().split(/\s+/)[0].toUpperCase() === currentUser.toUpperCase()));
+  const canSeeAnyPay = canSeeAdvisorPay || canSeeTechPay;
+
   // The @mention popup must appear on EVERY screen, but each page below returns
   // early — so render it through a portal to <body>, above the page switch, and
   // wrap all the page rendering in renderPage() so the portal always renders.
@@ -923,6 +938,7 @@ export default function App() {
         userPages={currentPages}
         onWorkSchedule={() => goTo('work-schedule', 'tech-resources')}
         onTireQuote={() => goTo('tire-quote', 'tech-resources')}
+        onLivePay={canSeeAnyPay ? () => goTo('live-pay-hub', 'tech-resources') : undefined}
         onDocumentLibrary={() => goTo('document-library', 'tech-resources')}
         onWorkInProgress={() => goTo('work-in-progress', 'tech-resources')}
         onATDiagWorksheet={() => { setPrevPage('tech-resources'); goTo('at-diag-worksheet', 'tech-resources'); }}
@@ -1341,6 +1357,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'advisor-calendar')}
         onWorkSchedule={() => goTo('work-schedule', 'advisor-calendar')}
         onTireQuote={() => goTo('tire-quote', 'advisor-calendar')}
+        onLivePay={canSeeAnyPay ? () => goTo('live-pay-hub', 'advisor-calendar') : undefined}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'advisor-calendar')}
         onOriginalOwner={() => goTo('original-owner', 'advisor-calendar')}
         onSurveyReports={() => setPage('survey-reports')}
@@ -1437,6 +1454,42 @@ export default function App() {
     );
   }
 
+  // Live Pay opens on a landing page with a box per pay board. Anyone who can
+  // only reach one of them is taken straight there, so nobody gets a page with
+  // a single choice on it.
+  if (page === 'live-pay-hub') {
+    const showAdvisor = canSeeAdvisorPay;
+    const showTech = canSeeTechPay;
+    if (showAdvisor && !showTech) { setPage('live-pay'); return null; }
+    if (showTech && !showAdvisor) { setPage('tech-live-pay'); return null; }
+    if (!showAdvisor && !showTech) { setPage('dashboard'); return null; }
+    return (
+      <LivePayHub
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        showAdvisor={showAdvisor}
+        showTech={showTech}
+        onAdvisor={() => { setLivePayFocus(''); goTo('live-pay', 'live-pay-hub'); }}
+        onTech={() => goTo('tech-live-pay', 'live-pay-hub')}
+        onBack={() => setPage(prevPage || 'dashboard')}
+        backLabel={BACK_LABELS[prevPage] || '← Back'}
+      />
+    );
+  }
+
+  if (page === 'tech-live-pay') {
+    if (!canSeeTechPay) { setPage('dashboard'); return null; }
+    return (
+      <TechLivePay
+        data={data}
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'live-pay-hub')}
+        backLabel={prevPage === 'live-pay-hub' ? '← Live Pay' : (BACK_LABELS[prevPage] || '← Back')}
+      />
+    );
+  }
+
   if (page === 'live-pay') {
     return (
       <LivePay
@@ -1455,7 +1508,9 @@ export default function App() {
           goTo('advisor-day', 'live-pay');
         }}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
-        backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting' : '← Appointment Prep Calendar'}
+        backLabel={prevPage === 'advisor-goals' ? '← Goals / Forecasting'
+          : prevPage === 'live-pay-hub' ? '← Live Pay'
+          : '← Appointment Prep Calendar'}
       />
     );
   }
