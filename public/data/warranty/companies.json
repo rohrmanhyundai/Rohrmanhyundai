@@ -13,7 +13,8 @@
   },
   "PROTECTIVE ASSET PROTECTION": {
     "name": "PROTECTIVE ASSET PROTECTION",
-    "phone": "800-222-2721"
+    "phone": "800-323-5771",
+    "email": "creditcardpay@protective.com"
   },
   "SUPERIOR PROTECTION": {
     "name": "SUPERIOR PROTECTION",
@@ -21,7 +22,8 @@
   },
   "SMART DRIVER": {
     "name": "SMART DRIVER",
-    "phone": "888-684-9327"
+    "phone": "888-684-9327",
+    "email": "twclaims@nationalsafedriver.com"
   },
   "SILVER ROCK": {
     "name": "SILVER ROCK",
@@ -69,6 +71,242 @@
   },
   "GWC WARRANTY": {
     "name": "GWC WARRANTY",
-    "phone": "800-482-7357"
+    "phone": "800-482-7357",
+    "email": ""
+  },
+  "AAGI WARRANTY": {
+    "name": "AAGI WARRANTY",
+    "phone": "888-442-2886",
+    "email": "mechclaims@aagi.com"
+  },
+  "ALLY WARRANTY": {
+    "name": "ALLY WARRANTY",
+    "phone": "800-631-5590",
+    "email": "scs@ally.com"
+  },
+  "ASC WARRANTY": {
+    "name": "ASC WARRANTY",
+    "phone": "800-264-5090",
+    "email": "pay@ascpay.com"
+  },
+  "ASE WARRANTY": {
+    "name": "ASE WARRANTY",
+    "phone": "800-242-7316",
+    "email": "CUSTOMERSERVICE@SMARTAUTOCARE.COM"
+  },
+  "AUL WARRANTY": {
+    "name": "AUL WARRANTY",
+    "phone": "888-285-2567",
+    "email": "cpr@aulcorp.com"
+  },
+  "AUTO ADVANTAGE": {
+    "name": "AUTO ADVANTAGE",
+    "phone": "855-807-2885",
+    "email": ""
+  },
+  "CAR SHIELD WARRANTY": {
+    "name": "CAR SHIELD WARRANTY",
+    "phone": "800-531-1925",
+    "email": "payments@americanautoshield.com"
+  },
+  "CARVANA ( SILVER ROCK)": {
+    "name": "CARVANA ( SILVER ROCK)",
+    "phone": "866-628-3905",
+    "email": "ap@silverrockinc.com"
+  },
+  "ENDURANCE WARRANTY": {
+    "name": "ENDURANCE WARRANTY",
+    "phone": "877-414-0134",
+    "email": "claims@enduranceds.com"
+  },
+  "FORD ESP WARRANTY": {
+    "name": "ford esp warranty",
+    "phone": "800-321-7790",
+    "email": "pavisain@ford.com"
+  },
+  "FREEDOM WARRANTY": {
+    "name": "FREEDOM WARRANTY",
+    "phone": "844-809-5829",
+    "email": "claims@freedomwarranty.com"
+  },
+  "I.A. AMERICA (FORMALY SUPERIOR)": {
+    "name": "I.A. AMERICA (FORMALY SUPERIOR)",
+    "phone": "866-410-6748",
+    "email": "ccpayments@iaawg.com"
+  },
+  "MBPI WARRANTY": {
+    "name": "MBPI WARRANTY",
+    "phone": "800-325-7484",
+    "email": "claimspayments@mbpnetwork.com"
+  },
+  "PORTFOLIO WARRANTY": {
+    "name": "PORTFOLIO WARRANTY",
+    "phone": "800-527-3426",
+    "email": "fepayments@assurant.com"
+  },
+  "PROTCETIVE WARRANTY": {
+    "name": "PROTCETIVE WARRANTY",
+    "phone": "800-222-2721",
+    "email": "creditcardpay@protcetive.com"
+  },
+  "PWI WARRANTY": {
+    "name": "PWI WARRANTY",
+    "phone": "800-334-4841",
+    "email": "pay@preferredwarranties.com"
+  },
+  "SMART AUTO CARE": {
+    "name": "SMART AUTO CARE",
+    "phone": "855-292-9311",
+    "email": "customerservice@smartautocare.com"
+  },
+  "THE MECHANIC": {
+    "name": "THE MECHANIC",
+    "phone": "800-621-2130",
+    "email": "mrpayments@assurant.com"
+  },
+  "WARRANTY SOLUTIONS": {
+    "name": "WARRANTY SOLUTIONS",
+    "phone": "800-322-3933",
+    "email": "wspayments@amyntagroup.com"
+  },
+  "NWAN (FOREVER WARRANTY)": {
+    "name": "NWAN (FOREVER WARRANTY)",
+    "phone": "800-810-8458",
+    "email": "claims@nwan.com"
+  },
+  "U.S.WARRANTY": {
+    "name": "U.S.WARRANTY",
+    "phone": "800-432-4566",
+    "email": "usw.ccpay@protective.com"
+  },
+  "VERITAS WARRANTY": {
+    "name": "veritas warranty",
+    "phone": "888-572-4310",
+    "email": "invoices@veritasglobal.com"
+  },
+  "E.G. ASSURANCE": {
+    "name": "E.G. ASSURANCE",
+    "phone": "855-342-0321",
+    "email": "claims@ethosgtroup.com"
+  },
+  "MAXCARE": {
+    "name": "MAXCARE",
+    "phone": "800-731-2834",
+    "email": ""
+  },
+  "FIDILITY": {
+    "name": "FIDILITY",
+    "phone": "866-499-6746",
+    "email": ""
+  },
+  "CNA WARRANTY": {
+    "name": "CNA WARRANTY",
+    "phone": "800-345-0191",
+    "email": "ccpay@cnanational.com"
+  },
+  "TOTAL WARRANTY": {
+    "name": "TOTAL WARRANTY",
+    "phone": "800-870-6856",
+    "email": "ccd@totalwarrantyservices.com"
+  },
+  "ZURICH WARRANTY": {
+    "name": "ZURICH WARRANTY",
+    "phone": "800-643-9059",
+    "email": "vsc.visa@zurichna.com"
+  },
+  "PROGARD WARRANTY": {
+    "name": "PROGARD WARRANTY",
+    "phone": "877-474-9462",
+    "email": ""
+  },
+  "J&MA GROUP": {
+    "name": "J&MA GROUP",
+    "phone": "800-327-5172",
+    "email": ""
+  },
+  "IAS COSMETIC WHEEL REPAIR": {
+    "name": "IAS COSMETIC WHEEL REPAIR",
+    "phone": "800-346-6469",
+    "email": "claims@iaawg.com"
+  },
+  "CAN-AM WARRANTY": {
+    "name": "CAN-AM WARRANTY",
+    "phone": "833-980-0105",
+    "email": "claimspayment@pdsadm.com"
+  },
+  "CENTURY AUTO": {
+    "name": "CENTURY AUTO",
+    "phone": "888-338-0389",
+    "email": "claims@centuryservicecorp.com"
+  },
+  "HIGHLINE WARRANTY": {
+    "name": "HIGHLINE WARRANTY",
+    "phone": "201-777-1000",
+    "email": "payments@dowc.com"
+  },
+  "THREE FOR ONE WARRANTY": {
+    "name": "THREE FOR ONE WARRANTY",
+    "phone": "888-989-4435",
+    "email": "mrpayments@assurant.com"
+  },
+  "CERT. CAR CARE": {
+    "name": "CERT. CAR CARE",
+    "phone": "812-804-1046",
+    "email": ""
+  },
+  "OMEGA WARRANTY": {
+    "name": "OMEGA WARRANTY",
+    "phone": "833-342-2794",
+    "email": "dealer@omegaautocare.com"
+  },
+  "ROUTE 66 WARRANTY": {
+    "name": "ROUTE 66 WARRANTY",
+    "phone": "",
+    "email": "pay@rt66pay.com"
+  },
+  "ALLSTATE": {
+    "name": "ALLSTATE",
+    "phone": "800-423-9530",
+    "email": "vscpay@allstate.com"
+  },
+  "ASSURE GUARD": {
+    "name": "ASSURE GUARD",
+    "phone": "877-831-3077",
+    "email": "claimspayable@revolos.com"
+  },
+  "DEALER GENERAL": {
+    "name": "DEALER GENERAL",
+    "phone": "800-349-9179",
+    "email": ""
+  },
+  "SAS WARRANTY": {
+    "name": "SAS WARRANTY",
+    "phone": "888-668-4360",
+    "email": "payment@saspros.com"
+  },
+  "CAREGAURD": {
+    "name": "CAREGAURD",
+    "phone": "888-565-2580",
+    "email": ""
+  },
+  "HORIZON WARRANTY": {
+    "name": "HORIZON WARRANTY",
+    "phone": "800-527-3426",
+    "email": ""
+  },
+  "FIRST EXTENDED WARRANTY": {
+    "name": "FIRST EXTENDED WARRANTY",
+    "phone": "800-527-3426",
+    "email": ""
+  },
+  "NATIONAL AUTO CARE": {
+    "name": "NATIONAL AUTO CARE",
+    "phone": "800-526-8678",
+    "email": ""
+  },
+  "SAFE GAURD": {
+    "name": "SAFE GAURD",
+    "phone": "800-742-7896",
+    "email": ""
   }
 }
