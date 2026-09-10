@@ -85,50 +85,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mtvrygnyy5kj",
-    "ro": "780733",
-    "roDate": "2026-09-10",
-    "vehicle": "2027 Hyundai Santa Fe Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mtvrygnyjo9a",
-    "ro": "780732",
-    "roDate": "2026-09-10",
-    "vehicle": "2027 Hyundai Santa Fe Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mtvrygny87vi",
-    "ro": "780731",
-    "roDate": "2026-09-10",
-    "vehicle": "2027 Hyundai Santa Fe Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "CODY TINCHER",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
