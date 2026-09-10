@@ -934,5 +934,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T21:36:22.409Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "KATHLEEN KEEVIN",
+    "repairOrder": "780393",
+    "vin": "5NMJFCAE4NH134080",
+    "model": "TUCSON",
+    "serviceDate": "08/28/2026",
+    "invitationDate": "09/01/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(219) 765 - 1776",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T21:38:23.187Z",
+    "submittedBy": "CODY"
   }
 ]
