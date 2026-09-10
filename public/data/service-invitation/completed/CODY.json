@@ -988,5 +988,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T21:43:47.984Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "KAYLA YARCHAN",
+    "repairOrder": "780410",
+    "vin": "5NMP5DG11SH043870",
+    "model": "SANTA FE HEV",
+    "serviceDate": "08/28/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": " (304) 224 - 9230",
+    "notes": "",
+    "submittedAt": "2026-09-10T21:45:14.276Z",
+    "submittedBy": "CODY"
   }
 ]
