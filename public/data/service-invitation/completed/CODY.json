@@ -682,5 +682,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T19:50:05.379Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "AMY WESTBROOK",
+    "repairOrder": "780605",
+    "vin": "5NMJBCAE9PH247988",
+    "model": "TUCSON",
+    "serviceDate": "09/04/2026",
+    "invitationDate": "09/08/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(765) 532 - 5438",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T19:51:16.846Z",
+    "submittedBy": "CODY"
   }
 ]
