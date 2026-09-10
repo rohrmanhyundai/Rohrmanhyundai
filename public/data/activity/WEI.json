@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-10T12:56:43.764Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-10T12:05:05.077Z",
     "type": "page",
     "label": "work-schedule"
@@ -734,20 +739,5 @@
     "at": "2026-08-11T16:54:24.784Z",
     "type": "page",
     "label": "recalls"
-  },
-  {
-    "at": "2026-08-11T12:34:51.374Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-11T12:34:51.369Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-11T12:34:49.836Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
