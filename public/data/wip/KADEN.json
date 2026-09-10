@@ -62,35 +62,5 @@
     "partsArrivedDate": "09/09/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mtu6hty61wb8",
-    "ro": "780693",
-    "roDate": "2026-09-09",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES- CEL check and advise",
-    "notes": "BODY SHOP CAR",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
-    "id": "mtuaqg6wb13t",
-    "ro": "780683",
-    "roDate": "2026-09-09",
-    "vehicle": "2017 Hyundai Santa Fe Sport",
-    "jobDesc": "knock sensor replacement",
-    "notes": "approved work",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
