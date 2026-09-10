@@ -718,5 +718,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T19:52:48.720Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "RAUL DIAZ",
+    "repairOrder": "780585",
+    "vin": "KMHLM4DJ0TU192699",
+    "model": "ELANTRA HEV",
+    "serviceDate": "09/03/2026",
+    "invitationDate": "09/05/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "1 - (765) 412 - 6355",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T19:53:55.939Z",
+    "submittedBy": "CODY"
   }
 ]
