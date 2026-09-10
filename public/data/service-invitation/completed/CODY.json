@@ -970,5 +970,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T21:40:48.469Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "TAMMY MIKELS",
+    "repairOrder": "780389",
+    "vin": "5NMJFCDE6RH378153",
+    "model": "TUCSON",
+    "serviceDate": "08/28/2026",
+    "invitationDate": "09/01/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": " (765) 532 - 5249",
+    "notes": "",
+    "submittedAt": "2026-09-10T21:43:47.984Z",
+    "submittedBy": "CODY"
   }
 ]
