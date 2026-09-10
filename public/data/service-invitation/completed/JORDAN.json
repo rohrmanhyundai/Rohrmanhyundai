@@ -340,5 +340,23 @@
     "notes": "says she only wants to come to the dealership when I'm here\n",
     "submittedAt": "2026-09-10T18:22:34.699Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "FARSHID SADEGHI",
+    "repairOrder": "780386",
+    "vin": "KMHM24AA2PA050103",
+    "model": "IONIQ 6",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "09/03/2026",
+    "status": "COMPLETE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7652372329",
+    "notes": "left us a 5 star Google review",
+    "submittedAt": "2026-09-10T18:24:04.419Z",
+    "submittedBy": "JORDAN"
   }
 ]
