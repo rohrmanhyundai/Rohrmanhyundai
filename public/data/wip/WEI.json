@@ -86,21 +86,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mtw1ml6tjq67",
-    "ro": "780752",
-    "roDate": "2026-09-10",
-    "vehicle": "2016 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES CEL FLASHING. (SCANNED AND GOT CODES P0014, P1326). CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
