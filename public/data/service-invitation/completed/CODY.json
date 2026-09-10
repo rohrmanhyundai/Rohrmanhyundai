@@ -1024,5 +1024,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T21:48:18.554Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ROBERT BOUR",
+    "repairOrder": "780350",
+    "vin": "5NMJCCDE7SH601931",
+    "model": "TUCSON",
+    "serviceDate": "08/27/2026",
+    "invitationDate": "08/29/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "765) 432 - 8914",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T21:49:33.064Z",
+    "submittedBy": "CODY"
   }
 ]
