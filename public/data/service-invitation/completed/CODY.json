@@ -754,5 +754,23 @@
     "notes": "NOTED HIS EXPERIENCE WITH BOB ROHRMAN IS REFRESHING COMPARED TO WHAT HE'S BEEN THROUGH WITH OTHER DEALERSHIPS.",
     "submittedAt": "2026-09-10T19:57:01.346Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ROY LADE",
+    "repairOrder": "780503",
+    "vin": "5NMP4DGL2RH068047",
+    "model": "SANTA FE",
+    "serviceDate": "09/02/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": " (765) 366 - 9813",
+    "notes": "",
+    "submittedAt": "2026-09-10T19:58:23.230Z",
+    "submittedBy": "CODY"
   }
 ]
