@@ -862,5 +862,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T20:09:08.751Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "SHANEIL STARKS",
+    "repairOrder": "780434",
+    "vin": "5NMS2DAJ0PH651639",
+    "model": "SANTA FE",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "(765) 806 - 1177",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T20:21:31.682Z",
+    "submittedBy": "CODY"
   }
 ]
