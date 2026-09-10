@@ -916,5 +916,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T21:34:57.911Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "LAVAKUMAR POLA",
+    "repairOrder": "780483",
+    "vin": "5NMJECDE0SH459013",
+    "model": "TUCSON",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": " (765) 694 - 5092",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T21:36:22.409Z",
+    "submittedBy": "CODY"
   }
 ]
