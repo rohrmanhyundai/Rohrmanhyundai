@@ -952,5 +952,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T21:38:23.187Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "JUSTIN/RYLIE GARDINER",
+    "repairOrder": "780417",
+    "vin": "5NMP2DGL8SH081199",
+    "model": "SANTA FE",
+    "serviceDate": "08/28/2026",
+    "invitationDate": "09/01/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 242 - 3888",
+    "notes": "",
+    "submittedAt": "2026-09-10T21:40:48.469Z",
+    "submittedBy": "CODY"
   }
 ]
