@@ -1,68 +1,16 @@
 {
-  "updatedAt": "2026-09-10T17:01:49.302Z",
+  "updatedAt": "2026-09-10T21:32:31.637Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "780745",
-        "vehicle": "2025 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780744",
-        "vehicle": "2026 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780738",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780735",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780732",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780693",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "780743",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780742",
-        "vehicle": "2022 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780741",
-        "vehicle": "2017 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "780736",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780733",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780728",
-        "vehicle": "2025 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780723",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "780717",
-        "vehicle": "2022 Hyundai Tucson Hybrid"
-      }
-    ],
     "CODY": [
+      {
+        "ro": "780757",
+        "vehicle": "2012 Kia Soul"
+      },
+      {
+        "ro": "780756",
+        "vehicle": "2019 Chevrolet Sonic"
+      },
       {
         "ro": "780740",
         "vehicle": "2026 Hyundai Palisade"
@@ -88,6 +36,34 @@
         "vehicle": "2024 Hyundai Santa Fe"
       }
     ],
+    "DAVID": [
+      {
+        "ro": "780755",
+        "vehicle": "2024 Hyundai Tucson Plug-In Hybrid"
+      },
+      {
+        "ro": "780738",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780735",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780732",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780736",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      },
+      {
+        "ro": "780733",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      }
+    ],
     "CORY": [
       {
         "ro": "780725",
@@ -104,10 +80,6 @@
       {
         "ro": "780665",
         "vehicle": "2013 Kia Soul"
-      },
-      {
-        "ro": "780660",
-        "vehicle": "2020 Hyundai Kona"
       },
       {
         "ro": "780656",
