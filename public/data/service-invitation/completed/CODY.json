@@ -772,5 +772,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T19:58:23.230Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "BRENDA OSTERMEYER",
+    "repairOrder": "780467",
+    "vin": "KM8R5DGE7PU626659",
+    "model": "PALISADE",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "09/03/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": "- (765) 427 - 3329",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T19:59:52.703Z",
+    "submittedBy": "CODY"
   }
 ]
