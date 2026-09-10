@@ -880,5 +880,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T20:21:31.682Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "BRANDON GREER",
+    "repairOrder": "780432",
+    "vin": "5NMJECAE4NH079276",
+    "model": "TUCSON",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": " (303) 898 - 6577",
+    "notes": "",
+    "submittedAt": "2026-09-10T20:23:54.196Z",
+    "submittedBy": "CODY"
   }
 ]
