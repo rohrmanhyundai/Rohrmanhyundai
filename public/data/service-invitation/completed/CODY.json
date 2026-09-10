@@ -808,5 +808,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T20:01:42.705Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "TALUBA HOPSON",
+    "repairOrder": "780453",
+    "vin": "KM8JEDD19SU384545",
+    "model": "TUCSON HEV",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": " (937) 242 - 8357",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T20:04:23.460Z",
+    "submittedBy": "CODY"
   }
 ]
