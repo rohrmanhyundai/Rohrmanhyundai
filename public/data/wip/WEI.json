@@ -68,5 +68,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": true,
     "partsArrivedDate": "09/10/2026"
+  },
+  {
+    "id": "mtvryfuwx680",
+    "ro": "780720",
+    "roDate": "2026-09-10",
+    "vehicle": "2025 Hyundai Sonata",
+    "jobDesc": "REPLACE ONE TIRE 235 45 R18",
+    "notes": "WARRANTY APPROVED TIRE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
