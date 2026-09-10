@@ -358,5 +358,23 @@
     "notes": "left us a 5 star Google review",
     "submittedAt": "2026-09-10T18:24:04.419Z",
     "submittedBy": "JORDAN"
+  },
+  {
+    "consultant": "JORDAN TROXEL",
+    "customerName": "SARAH FRANKIEWICZ",
+    "repairOrder": "780498",
+    "vin": "5NMS5DAL4PH626204",
+    "model": "SANTA FE",
+    "serviceDate": "09/01/2026",
+    "invitationDate": "09/03/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "7654148253",
+    "notes": "says she only wants to come to the dealership when im here",
+    "submittedAt": "2026-09-10T18:25:24.654Z",
+    "submittedBy": "JORDAN"
   }
 ]
