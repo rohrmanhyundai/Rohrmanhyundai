@@ -664,5 +664,23 @@
     "notes": "",
     "submittedAt": "2026-08-31T21:21:04.553Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "BRANDI MOORE",
+    "repairOrder": "780573",
+    "vin": "KMHL34J29NA172603",
+    "model": "SONATA",
+    "serviceDate": "09/04/2026",
+    "invitationDate": "09/08/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "voicemail",
+    "satisfied": "yes",
+    "phone": " (765) 366 - 7011",
+    "notes": "LEFT VM",
+    "submittedAt": "2026-09-10T19:50:05.379Z",
+    "submittedBy": "CODY"
   }
 ]
