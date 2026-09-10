@@ -844,5 +844,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T20:04:56.354Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "AARON PLUMMER",
+    "repairOrder": "780435",
+    "vin": "KMHLR4DF9SU910035",
+    "model": "ELANTRA",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(765) 481 - 5490",
+    "notes": "",
+    "submittedAt": "2026-09-10T20:09:08.751Z",
+    "submittedBy": "CODY"
   }
 ]
