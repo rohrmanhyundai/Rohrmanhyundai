@@ -1,55 +1,5 @@
 [
   {
-    "id": "mshfrao9ate",
-    "username": "KAI",
-    "text": "@shawn morning sir can you add sublet line to ro 779778 sending mirror for paint today",
-    "timestamp": 1786015908297
-  },
-  {
-    "id": "mshuvqhzjuo",
-    "username": "KAI",
-    "text": "@shawn @david @jordan @cody If you guys make an appoitment please change the flag to a green color and leave the appoitment date in the comments. Cody, I can show you what I mean if nobody else has shown you yet. Please guys, it makes everything flow smoothly. Thank you",
-    "timestamp": 1786041309671,
-    "reactions": {
-      "🚨": [
-        "KAI"
-      ],
-      "👍": [
-        "DAVID"
-      ]
-    }
-  },
-  {
-    "id": "msk9u8xrrad",
-    "username": "SETH",
-    "text": "PARTS RECEIVED FOR;  JESSICA MILLER, TERRY ZINK",
-    "timestamp": 1786187366847
-  },
-  {
-    "id": "msnjb1vtyui",
-    "username": "DAVID",
-    "text": "Povpin has a Hyundai care claim active. Claim # in her notes",
-    "timestamp": 1786384665929
-  },
-  {
-    "id": "msnjcwxerrj",
-    "username": "CODY",
-    "text": "RO#779915 wont let me review lines B D E",
-    "timestamp": 1786384752818
-  },
-  {
-    "id": "msnpa05gip9",
-    "username": "CODY",
-    "text": "Laura Hasty is calling to see if parts are in yet? RO# 779786",
-    "timestamp": 1786394694724
-  },
-  {
-    "id": "msnpaiy2up4",
-    "username": "CODY",
-    "text": "I believe shes your customer Jordan",
-    "timestamp": 1786394719082
-  },
-  {
     "id": "msqfzal5l09",
     "username": "DAVID",
     "text": "@Jerry - Any update on RO779854? Goldberg for US auto Force?",
@@ -181,5 +131,11 @@
     "username": "SETH",
     "text": "PARTS RECEIVED FOR; ROBERT JOHNSON, BRIAN RUND BUT NEED KEY CUT STILL",
     "timestamp": 1788606966094
+  },
+  {
+    "id": "mtvwa107egt",
+    "username": "DAVID",
+    "text": "@all I have keys to a tow in for an Arnesto Cortina that was in a wreck. Ive already told the cust it needs to go to the body shop first and he said he will get it towed. If a tow truck comes for it I have the keys in my besk",
+    "timestamp": 1789066964887
   }
 ]
