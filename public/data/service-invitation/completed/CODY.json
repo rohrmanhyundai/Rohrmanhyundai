@@ -898,5 +898,23 @@
     "notes": "",
     "submittedAt": "2026-09-10T20:23:54.196Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "JOSEPH PINEIRO",
+    "repairOrder": "780438",
+    "vin": "KMHLM4DG1RU727889",
+    "model": "ELANTRA",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "",
+    "status": "APPLIED_BUSINESS_RULE",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "(872) 294 - 5223",
+    "notes": "",
+    "submittedAt": "2026-09-10T21:34:57.911Z",
+    "submittedBy": "CODY"
   }
 ]
