@@ -790,5 +790,23 @@
     "notes": "LEFT VM",
     "submittedAt": "2026-09-10T19:59:52.703Z",
     "submittedBy": "CODY"
+  },
+  {
+    "consultant": "CODY TINCHER",
+    "customerName": "ARUSHI BHARADWAJ",
+    "repairOrder": "780433",
+    "vin": "KM8HBCAB8RU145903",
+    "model": "KONA",
+    "serviceDate": "08/31/2026",
+    "invitationDate": "09/03/2026",
+    "status": "DELIVERED",
+    "appliedBusinessRule": "",
+    "delivered": "",
+    "contacted": "yes",
+    "satisfied": "yes",
+    "phone": "619) 894 - 3438",
+    "notes": "",
+    "submittedAt": "2026-09-10T20:01:42.705Z",
+    "submittedBy": "CODY"
   }
 ]
