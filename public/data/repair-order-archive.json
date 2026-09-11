@@ -1,26 +1,5 @@
 [
   {
-    "id": "mtt4ukp4aid4",
-    "ro": "780681",
-    "roDate": "2026-09-08",
-    "vehicle": "2018 Hyundai Tucson",
-    "jobDesc": "Had engine replaced Nov 5th. CEL is on and engine is ticking",
-    "notes": "Check the date its not correct",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "_archiveId": "mtwv26q4730",
-    "_archivedAt": "2026-09-11T11:16:25.612Z",
-    "_archivedBy": "GAVEN",
-    "_source": "wip",
-    "_sourceTech": "GAVEN"
-  },
-  {
     "id": "mtndqv43k17n",
     "ro": "780600",
     "roDate": "2026-09-04",
