@@ -1,60 +1,5 @@
 [
   {
-    "id": "gm-mtlxurq12haf",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "780577 need to remove the parts so we can close the ro. i assume the car is gone?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788464950489
-  },
-  {
-    "id": "gm-mtlyd7dpxqwk",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "REMOVE PARTS TRIGGER FROM 780580 SO I CAN VOID THE RO",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtm03348vim5",
-        "from": "DAVID",
-        "text": "kai want to leave the ticket open becasue its easier for his side when the new part arrives",
-        "timestamp": 1788468697736
-      }
-    ],
-    "timestamp": 1788465810589
-  },
-  {
-    "id": "gm-mtm1uvvpoc8c",
-    "from": "GAVEN",
-    "to": [
-      "SHAWN"
-    ],
-    "text": "Test",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788471674341
-  },
-  {
-    "id": "gm-mtm1vvviqnr8",
-    "from": "GAVEN",
-    "to": [
-      "SHAWN"
-    ],
-    "text": "Test",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788471720990
-  },
-  {
     "id": "gm-mtmw72oaab2n",
     "from": "SHAWN",
     "to": [
@@ -488,5 +433,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789069404650
+  },
+  {
+    "id": "gm-mtwvidumnf41",
+    "from": "SHAWN",
+    "to": [
+      "CORY"
+    ],
+    "text": "RO 780552 i have moved this enging into your name. it was in wei name but he will not be doing it. i just need stui pic of the valve cover",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789126141342
   }
 ]
