@@ -54,35 +54,5 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
     "flag": "purple"
-  },
-  {
-    "id": "mtvryfuwx680",
-    "ro": "780720",
-    "roDate": "2026-09-10",
-    "vehicle": "2025 Hyundai Sonata",
-    "jobDesc": "REPLACE ONE TIRE 235 45 R18",
-    "notes": "WARRANTY APPROVED TIRE",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
-  },
-  {
-    "id": "mtvrygny4tnl",
-    "ro": "780738",
-    "roDate": "2026-09-10",
-    "vehicle": "2027 Hyundai Santa Fe Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
   }
 ]
