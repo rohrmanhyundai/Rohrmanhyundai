@@ -1,40 +1,38 @@
 {
-  "updatedAt": "2026-09-11T15:14:15.123Z",
+  "updatedAt": "2026-09-11T19:42:57.530Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "780769",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "780783",
+        "vehicle": "2026 Hyundai Kona"
       },
       {
-        "ro": "780736",
+        "ro": "780779",
+        "vehicle": "2024 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780738",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       },
       {
-        "ro": "780733",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780768",
-        "vehicle": "2023 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780760",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780737",
+        "ro": "780735",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       },
       {
-        "ro": "780734",
+        "ro": "780732",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       }
     ],
     "CORY": [
+      {
+        "ro": "780782",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "780781",
+        "vehicle": "2015 Chevrolet Colorado"
+      },
       {
         "ro": "780765",
         "vehicle": "2015 Jeep Wrangler Unlimited"
@@ -46,10 +44,6 @@
       {
         "ro": "780725",
         "vehicle": "2022 Ford Escape"
-      },
-      {
-        "ro": "780712",
-        "vehicle": "2021 Hyundai Elantra"
       },
       {
         "ro": "780668",
@@ -70,23 +64,25 @@
       {
         "ro": "780514",
         "vehicle": "2020 Kia Soul"
-      },
-      {
-        "ro": "780264",
-        "vehicle": "2017 Buick LaCrosse"
       }
     ],
-    "DAVID": [
+    "CODY": [
       {
-        "ro": "780738",
+        "ro": "780737",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       },
       {
-        "ro": "780735",
+        "ro": "780734",
+        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780736",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       },
       {
-        "ro": "780732",
+        "ro": "780733",
         "vehicle": "2027 Hyundai Santa Fe Hybrid"
       }
     ]
