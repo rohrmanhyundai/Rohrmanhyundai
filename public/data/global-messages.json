@@ -378,7 +378,14 @@
     "text": "780583 WHERE DO WE STAND ON THIS CAR?",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtxf2e99dg61",
+        "from": "JORDAN",
+        "text": "he will call us on monday",
+        "timestamp": 1789158987693
+      }
+    ],
     "timestamp": 1789147965667
   }
 ]
