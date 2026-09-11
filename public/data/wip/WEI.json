@@ -70,5 +70,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CODY TINCHER"
+  },
+  {
+    "id": "mtvrygny4tnl",
+    "ro": "780738",
+    "roDate": "2026-09-10",
+    "vehicle": "2027 Hyundai Santa Fe Hybrid",
+    "jobDesc": "PDI",
+    "notes": "",
+    "flag": "pink",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
