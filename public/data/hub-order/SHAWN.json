@@ -16,9 +16,9 @@
     "cashDash"
   ],
   "warrantyHub": [
+    "aftermarketWarranty",
     "atDiagWorksheet",
     "hotRepairs",
-    "aftermarketWarranty",
     "originalOwner",
     "documentLibrary",
     "tireWarranty",
