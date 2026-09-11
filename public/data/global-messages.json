@@ -1,99 +1,5 @@
 [
   {
-    "id": "gm-mtmw72oaab2n",
-    "from": "SHAWN",
-    "to": [
-      "BRYSON",
-      "CARTER",
-      "CORY",
-      "DERRICK",
-      "GAVEN",
-      "JACOB",
-      "KADEN",
-      "WEI"
-    ],
-    "text": "We have a coupon this month for LOF w/Rotate the customer gets a alighnment for $100. Lets make sure we are getting them on the MPI. Lets make some hours.",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788522631498
-  },
-  {
-    "id": "gm-mtmznhzlor3i",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "780555 any news on this ro?",
-    "alert": true,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtn1gm9u6sfw",
-        "from": "CODY",
-        "text": "Dylan is going to update me around 11 what his cousin wants to do. Thinking about Sunbit.",
-        "timestamp": 1788531474882
-      }
-    ],
-    "timestamp": 1788528436689
-  },
-  {
-    "id": "gm-mtmzp84v0neq",
-    "from": "SHAWN",
-    "to": [
-      "CORY"
-    ],
-    "text": "780440 parts are in. are you going to ge to this one today?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtn7v27p8uai",
-        "from": "CORY",
-        "text": "Yup. Staring it now.",
-        "timestamp": 1788542226421
-      },
-      {
-        "id": "rp-mtn800ca3uz0",
-        "from": "CORY",
-        "text": "The car is not here.",
-        "timestamp": 1788542457274
-      }
-    ],
-    "timestamp": 1788528517231
-  },
-  {
-    "id": "gm-mtn2iyd7y7iw",
-    "from": "JERRY",
-    "to": [
-      "SHAWN"
-    ],
-    "text": "780593 stui mileage is wrong. looked at media at check in and it shows the right mileage.",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtn3k8tj03zh",
-        "from": "SHAWN",
-        "text": "i will look at it",
-        "timestamp": 1788535003303
-      },
-      {
-        "id": "rp-mtn3uv9mwkkc",
-        "from": "SHAWN",
-        "text": "this is a strange one",
-        "timestamp": 1788535498954
-      },
-      {
-        "id": "rp-mtn45ikmt4f3",
-        "from": "SHAWN",
-        "text": "its fixed",
-        "timestamp": 1788535995718
-      }
-    ],
-    "timestamp": 1788533263484
-  },
-  {
     "id": "gm-mtn4bo90xarq",
     "from": "GAVEN",
     "to": [
@@ -445,5 +351,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789126141342
+  },
+  {
+    "id": "gm-mtx33whobkvf",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "780755 rim is here and ready for install",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789138902588
   }
 ]
