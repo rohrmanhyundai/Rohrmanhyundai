@@ -217,7 +217,7 @@
         "hidden": false,
         "ro_count": 77,
         "coupon_labor": 938.73,
-        "_lastImport": 1789124638535,
+        "_lastImport": 1789124868450,
         "total_sales": 11434.18,
         "coupon_usage_pct": 0.0821,
         "min_csi": 917
@@ -237,7 +237,7 @@
         "roh50_hrs_ro": 0.88,
         "ro_count": 100,
         "coupon_labor": 1234.76,
-        "_lastImport": 1789124638535,
+        "_lastImport": 1789124868450,
         "total_sales": 17633.7,
         "coupon_usage_pct": 0.07,
         "min_csi": 917
@@ -256,7 +256,7 @@
         "elr": 0.887,
         "last_month_total": 120.9,
         "ro_count": 54,
-        "_lastImport": 1789124638535,
+        "_lastImport": 1789124868450,
         "exclude_from_avg": false,
         "coupon_labor": 1003.69,
         "total_sales": 9334.01,
