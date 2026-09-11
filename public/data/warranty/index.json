@@ -57,7 +57,7 @@
   {
     "id": "mtn8x8ctjdt1",
     "createdAt": "2026-09-04T17:46:47.309Z",
-    "updatedAt": "2026-09-09T20:02:03.631Z",
+    "updatedAt": "2026-09-11T16:23:17.123Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Crystal Cochran",
     "customerPhone": "(765) 714 - 9627",
@@ -69,7 +69,7 @@
     "mileage": "87402",
     "warrantyCompany": "Wheelz",
     "warrantyPhone": "800-858-6324",
-    "claimNumber": "",
+    "claimNumber": "609347",
     "authNumber": "",
     "laborRate": "170.00",
     "laborTime": "3.7",
@@ -113,9 +113,9 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "ABS REPAIR 1.0 DIAG, R&R 2.1 AND ROCKER COVER LEAK DIAG .30 AND R&R 1.6. INSP 24 TO 48 HRS \n\n09/09/2026 INSP CAME.",
-    "approved": false,
-    "approvedDate": "",
+    "notes": "ABS REPAIR 1.0 DIAG, R&R 2.1 AND ROCKER COVER LEAK DIAG .30 AND R&R 1.6. INSP 24 TO 48 HRS \n\n09/09/2026 INSP CAME.\n9/11/26 claim approved",
+    "approved": true,
+    "approvedDate": "2026-09-11",
     "denied": false,
     "deniedDate": "",
     "waiting": false,
@@ -126,8 +126,8 @@
     "repairsFinishedDate": "",
     "readySubmission": false,
     "readySubmissionDate": "",
-    "inspectorDispatched": true,
-    "inspectorDispatchedDate": "2026-09-04"
+    "inspectorDispatched": false,
+    "inspectorDispatchedDate": ""
   },
   {
     "id": "mtn0zujxw8jq",
