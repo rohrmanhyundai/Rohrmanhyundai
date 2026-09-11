@@ -1,7 +1,7 @@
 {
   "id": "mokbb1eiegmw",
   "createdAt": "2026-04-29T17:11:40.506Z",
-  "updatedAt": "2026-05-12T15:30:42.517Z",
+  "updatedAt": "2026-09-11T18:14:12.240Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Sarah O'Brien",
   "customerPhone": "(765) 250 - 6124",
@@ -46,5 +46,6 @@
   "tireTax": "2.50",
   "tireDisposal": "3.00",
   "denied": false,
-  "deniedDate": ""
+  "deniedDate": "",
+  "warrantyEmail": "twclaims@nationalsafedriver.com"
 }
