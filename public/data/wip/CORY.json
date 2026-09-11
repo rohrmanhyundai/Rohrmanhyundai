@@ -91,5 +91,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtxd5j97ccl2",
+    "ro": "780760",
+    "roDate": "2026-09-11",
+    "vehicle": "2025 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHT CHECK ULTRASONICE SENSOR.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
