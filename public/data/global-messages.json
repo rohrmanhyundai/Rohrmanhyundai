@@ -342,7 +342,14 @@
     "text": "780489 did you put the keys in the car? i just closed the RO",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mtxf2h229pqc",
+        "from": "JORDAN",
+        "text": "yes",
+        "timestamp": 1789158991322
+      }
+    ],
     "timestamp": 1789143727689
   },
   {
