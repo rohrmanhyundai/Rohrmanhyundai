@@ -23,8 +23,8 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "ENGINE APPROVED WAITING FOR ENGINE TO BE HERE ",
-    "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrived": true,
+    "partsArrivedDate": "09/11/2026"
   },
   {
     "id": "mtuaqh8szph5",
