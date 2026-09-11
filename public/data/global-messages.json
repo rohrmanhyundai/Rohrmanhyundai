@@ -1,48 +1,5 @@
 [
   {
-    "id": "gm-mtn4bo90xarq",
-    "from": "GAVEN",
-    "to": [
-      "SHAWN"
-    ],
-    "text": "Test",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788536283012
-  },
-  {
-    "id": "gm-mtn507mrsyn4",
-    "from": "JERRY",
-    "to": [
-      "SHAWN"
-    ],
-    "text": "780609 recommendations is in submit mode. not deferred/approved?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtn56q6otpsm",
-        "from": "SHAWN",
-        "text": "I FIXED IT",
-        "timestamp": 1788537731856
-      }
-    ],
-    "timestamp": 1788537427875
-  },
-  {
-    "id": "gm-mtn5aapzjmkh",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "Your hitch customer paid with a check. the office is making a check and will mail it to him.",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788537898439
-  },
-  {
     "id": "gm-mtna41839mjw",
     "from": "SHAWN",
     "to": [
@@ -375,5 +332,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789139196331
+  },
+  {
+    "id": "gm-mtx5zbk9v6mf",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "780489 did you put the keys in the car? i just closed the RO",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789143727689
   }
 ]
