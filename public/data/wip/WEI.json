@@ -70,21 +70,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CODY TINCHER"
-  },
-  {
-    "id": "mtw1ml6tnyh3",
-    "ro": "780755",
-    "roDate": "2026-09-10",
-    "vehicle": "2024 Hyundai Tucson Plug-In Hybrid",
-    "jobDesc": "CUSTOMER STATES- tow in. Died from battery discharge. Now no crank no start",
-    "notes": "ENGINE IS SEIZED OIL UNDER CAR",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
