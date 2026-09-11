@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-11T13:06:21.578Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-11T13:06:18.664Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-10T21:09:11.259Z",
     "type": "page",
     "label": "advisor-goals"
@@ -461,11 +471,6 @@
   },
   {
     "at": "2026-08-13T13:40:34.332Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-12T12:13:08.434Z",
     "type": "page",
     "label": "advisor-calendar"
   }
