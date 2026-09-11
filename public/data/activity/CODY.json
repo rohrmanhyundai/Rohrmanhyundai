@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-11T15:49:49.920Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
     "at": "2026-09-11T12:36:27.564Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -759,15 +764,5 @@
     "at": "2026-08-12T17:38:12.649Z",
     "type": "page",
     "label": "performance-report"
-  },
-  {
-    "at": "2026-08-12T13:09:55.848Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-12T13:09:52.536Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
