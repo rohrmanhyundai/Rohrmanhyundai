@@ -62,5 +62,37 @@
     "partsArrivedDate": "09/09/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtxd5jwoow44",
+    "ro": "780717",
+    "roDate": "2026-09-11",
+    "vehicle": "2022 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES- Test drive after to check rear cuppler",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mtxd5jwoqwe1",
+    "ro": "780627",
+    "roDate": "2026-09-11",
+    "vehicle": "2020 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES CEL ON AFTER RECENT SERVICE. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
