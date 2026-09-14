@@ -48,38 +48,6 @@
     "advisor": "CODY TINCHER"
   },
   {
-    "id": "mtt4un8m4xqp",
-    "ro": "780659",
-    "roDate": "2026-09-08",
-    "vehicle": "2015 Hyundai Santa Fe Sport",
-    "jobDesc": "turbowaste gate replace",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/09/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mtxd5jwoow44",
-    "ro": "780717",
-    "roDate": "2026-09-11",
-    "vehicle": "2022 Hyundai Tucson Hybrid",
-    "jobDesc": "CUSTOMER STATES- Test drive after to check rear cuppler",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mtxd5jwoqwe1",
     "ro": "780627",
     "roDate": "2026-09-11",
