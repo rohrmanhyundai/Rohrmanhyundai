@@ -62,5 +62,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mu16kljnayqu",
+    "ro": "780802",
+    "roDate": "2026-09-14",
+    "vehicle": "2015 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES- return after service; car will not accelerate with power. Unsafe to drive at highway speed. Even at 5000rpm car struggles to move",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
