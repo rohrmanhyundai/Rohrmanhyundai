@@ -1,36 +1,20 @@
 {
-  "updatedAt": "2026-09-14T17:34:53.748Z",
+  "updatedAt": "2026-09-14T21:32:41.335Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "780817",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "780804",
-        "vehicle": "2023 Hyundai IONIQ 5"
-      },
-      {
-        "ro": "780802",
-        "vehicle": "2015 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "780784",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780782",
-        "vehicle": "2024 Hyundai Palisade"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780810",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "780830",
+        "vehicle": "2022 Chevrolet Equinox"
+      },
+      {
+        "ro": "780829",
+        "vehicle": "2019 Subaru Crosstrek"
+      },
+      {
+        "ro": "780828",
+        "vehicle": "2014 Chevrolet Impala"
+      },
       {
         "ro": "780781",
         "vehicle": "2015 Chevrolet Colorado"
@@ -62,6 +46,22 @@
       {
         "ro": "780514",
         "vehicle": "2020 Kia Soul"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "780810",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780784",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780782",
+        "vehicle": "2024 Hyundai Palisade"
       }
     ]
   }
