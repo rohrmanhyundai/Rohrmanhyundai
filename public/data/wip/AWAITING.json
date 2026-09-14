@@ -43,5 +43,20 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mu19y1pt11xj",
+    "ro": "780810",
+    "roDate": "2026-09-14",
+    "vehicle": "2027 Hyundai Palisade Hybrid",
+    "jobDesc": "CUSTOMER STATES WIND NOISE FROM THE DRIVER FRONT DOOR CHECK AND ADVISE",
+    "notes": "WEATHER STRIP IS ON ORDER",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
