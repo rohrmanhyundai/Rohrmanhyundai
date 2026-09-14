@@ -1,27 +1,29 @@
 {
-  "updatedAt": "2026-09-11T20:30:43.459Z",
+  "updatedAt": "2026-09-14T11:49:50.040Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "780805",
+        "vehicle": "2024 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "780804",
+        "vehicle": "2023 Hyundai IONIQ 5"
+      },
+      {
+        "ro": "780802",
+        "vehicle": "2015 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "780784",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
     "DAVID": [
       {
-        "ro": "780783",
-        "vehicle": "2026 Hyundai Kona"
-      },
-      {
-        "ro": "780779",
-        "vehicle": "2024 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780738",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780735",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780732",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
+        "ro": "780799",
+        "vehicle": "2020 Hyundai Elantra"
       }
     ],
     "CORY": [
@@ -64,26 +66,6 @@
       {
         "ro": "780514",
         "vehicle": "2020 Kia Soul"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780737",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780734",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "780736",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "780733",
-        "vehicle": "2027 Hyundai Santa Fe Hybrid"
       }
     ]
   }
