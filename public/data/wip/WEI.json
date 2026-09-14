@@ -54,5 +54,21 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
     "flag": "purple"
+  },
+  {
+    "id": "mu1iwei8q8qf",
+    "ro": "780819",
+    "roDate": "2026-09-14",
+    "vehicle": "2022 Hyundai IONIQ 5",
+    "jobDesc": "CUSTOMER STATES The car won’t charge. It popped the 50 amp breaker on Friday and now it won’t charge at all. Says it’s showing two codes  U0594 and P0C17",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
