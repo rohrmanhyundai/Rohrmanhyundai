@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-14T13:46:08.632Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-14T13:46:08.629Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-09-14T13:46:04.531Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-14T12:07:59.681Z",
     "type": "action",
     "label": "delete-wip-row",
