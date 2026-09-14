@@ -1,21 +1,5 @@
 [
   {
-    "id": "mtkh00e6r67h",
-    "ro": "780525",
-    "roDate": "2026-09-02",
-    "vehicle": "2023 Hyundai Santa Fe Hybrid",
-    "jobDesc": "",
-    "notes": "upper radiator hose replace. CAR IS IN THE SHOP ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/03/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mtlz8etvfdfa",
     "ro": "780583",
     "roDate": "2026-09-03",
