@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-14T13:23:28.371Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-09-14T13:23:26.705Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-11T15:49:49.920Z",
     "type": "page",
     "label": "advisor-goals"
@@ -704,65 +714,5 @@
     "at": "2026-08-15T16:01:27.472Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-14T23:02:41.534Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-14T23:02:40.466Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-14T20:57:25.750Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-14T20:57:24.414Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-13T22:02:41.707Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-13T22:02:39.160Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-13T18:08:15.016Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-13T12:55:05.060Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-12T21:55:33.525Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-12T20:32:32.079Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-12T17:38:26.704Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-12T17:38:12.649Z",
-    "type": "page",
-    "label": "performance-report"
   }
 ]
