@@ -15,21 +15,6 @@
     "isNew": true
   },
   {
-    "id": "mtx3jzwtai2s",
-    "ro": "780765",
-    "roDate": "2026-09-11",
-    "vehicle": "2015 Jeep Wrangler Unlimited",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mu16knkeq9s5",
     "ro": "780799",
     "roDate": "2026-09-14",
