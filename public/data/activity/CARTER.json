@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-14T03:31:37.095Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-09-12T21:07:21.346Z",
     "type": "page",
     "label": "live-pay-hub"
@@ -351,11 +356,6 @@
   },
   {
     "at": "2026-08-15T12:40:20.200Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-14T20:25:17.423Z",
     "type": "page",
     "label": "tech-resources"
   }
