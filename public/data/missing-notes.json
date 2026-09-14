@@ -1,33 +1,11 @@
 {
-  "updatedAt": "2026-09-14T13:24:13.120Z",
+  "updatedAt": "2026-09-14T17:34:53.748Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
-      {
-        "ro": "780815",
-        "vehicle": "2019 Audi A6"
-      },
-      {
-        "ro": "780813",
-        "vehicle": "2025 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780812",
-        "vehicle": "2020 Hyundai Elantra"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "780814",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780811",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780809",
-        "vehicle": "2023 Hyundai Tucson"
+        "ro": "780817",
+        "vehicle": "2026 Hyundai Sonata Hybrid"
       },
       {
         "ro": "780804",
@@ -40,30 +18,22 @@
       {
         "ro": "780784",
         "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780782",
+        "vehicle": "2024 Hyundai Palisade"
       }
     ],
     "DAVID": [
       {
         "ro": "780810",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780799",
-        "vehicle": "2020 Hyundai Elantra"
       }
     ],
     "CORY": [
       {
-        "ro": "780782",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
         "ro": "780781",
         "vehicle": "2015 Chevrolet Colorado"
-      },
-      {
-        "ro": "780765",
-        "vehicle": "2015 Jeep Wrangler Unlimited"
       },
       {
         "ro": "780764",
