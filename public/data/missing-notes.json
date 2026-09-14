@@ -1,11 +1,33 @@
 {
-  "updatedAt": "2026-09-14T11:49:50.040Z",
+  "updatedAt": "2026-09-14T13:24:13.120Z",
   "by": "SHAWN",
   "advisors": {
+    "CODY": [
+      {
+        "ro": "780815",
+        "vehicle": "2019 Audi A6"
+      },
+      {
+        "ro": "780813",
+        "vehicle": "2025 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780812",
+        "vehicle": "2020 Hyundai Elantra"
+      }
+    ],
     "JORDAN": [
       {
-        "ro": "780805",
-        "vehicle": "2024 Hyundai Tucson Hybrid"
+        "ro": "780814",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780811",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "780809",
+        "vehicle": "2023 Hyundai Tucson"
       },
       {
         "ro": "780804",
@@ -21,6 +43,10 @@
       }
     ],
     "DAVID": [
+      {
+        "ro": "780810",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
       {
         "ro": "780799",
         "vehicle": "2020 Hyundai Elantra"
