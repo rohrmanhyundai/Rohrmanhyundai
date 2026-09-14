@@ -420,6 +420,10 @@
         "agreed": true,
         "agreedBy": "CODY",
         "submittedAt": 1789141840183
+      },
+      "2026-09-12": {
+        "hours": 57.5,
+        "hrsRo": 1.06
       }
     },
     "entryMode": "mtd"
