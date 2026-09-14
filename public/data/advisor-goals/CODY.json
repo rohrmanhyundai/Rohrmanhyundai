@@ -424,6 +424,19 @@
       "2026-09-12": {
         "hours": 62.4,
         "hrsRo": 1.02
+      },
+      "2026-09-14": {
+        "hours": 72.4,
+        "hrsRo": 1.03,
+        "openRoCount": 7,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "agreed": true,
+        "agreedBy": "CODY",
+        "submittedAt": 1789423283179
       }
     },
     "entryMode": "mtd"
