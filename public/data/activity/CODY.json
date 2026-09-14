@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-14T19:31:49.413Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-14T19:31:19.836Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-14T19:31:12.598Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-14T13:23:28.371Z",
     "type": "page",
     "label": "tire-quote"
@@ -682,36 +697,6 @@
   },
   {
     "at": "2026-08-17T15:45:33.288Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-15T19:28:46.959Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-15T19:28:45.275Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-15T19:27:18.544Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-15T19:27:17.270Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-15T16:01:29.303Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-15T16:01:27.472Z",
     "type": "page",
     "label": "advisor-calendar"
   }
