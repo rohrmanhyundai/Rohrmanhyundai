@@ -71,21 +71,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mu2yx7hoxb0y",
-    "ro": "780835",
-    "roDate": "2026-09-15",
-    "vehicle": "2019 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES DOESNT LATCH. CURRENTLY STRAPPED.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
   }
 ]
