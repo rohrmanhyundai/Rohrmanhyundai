@@ -227,7 +227,7 @@
         "asr": 0.1197,
         "elr": 0.919,
         "last_month_total": 335.2,
-        "roh50_hrs_ro": 0.61,
+        "roh50_hrs_ro": 0.66,
         "hidden": false,
         "ro_count": 92,
         "coupon_labor": 1104.11,
@@ -240,7 +240,7 @@
         "name": "JORDAN",
         "daily_avg": 12.58636364,
         "mtd_hours": 115,
-        "hours_per_ro": 0.92,
+        "hours_per_ro": 0.86,
         "align": 0.0794,
         "tires": 0.0317,
         "valvoline": 0.2063,
@@ -264,7 +264,7 @@
         "align": 0.0789,
         "tires": 0.0263,
         "valvoline": 0.2632,
-        "roh50_hrs_ro": 0.89,
+        "roh50_hrs_ro": 0.79,
         "csi": 1000,
         "asr": 0.1925,
         "elr": 0.8817,
@@ -377,13 +377,6 @@
       "dates": "Sep 17–18, 2026",
       "dateStart": "2026-09-17",
       "dateEnd": "2026-09-18",
-      "status": "APPROVED"
-    },
-    {
-      "name": "JACOB",
-      "dates": "Sep 14, 2026",
-      "dateStart": "2026-09-14",
-      "dateEnd": "2026-09-14",
       "status": "APPROVED"
     }
   ]
