@@ -1,29 +1,5 @@
 [
   {
-    "id": "gm-mtsys36voibh",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "780671 NEED TO CALL BODY SHOP FOR PO PLEASE",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788889768231
-  },
-  {
-    "id": "gm-mtsz1yd0wfx1",
-    "from": "SHAWN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "780606 PARTS ARE HERE",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788890228532
-  },
-  {
     "id": "gm-mtt3qtgj18p0",
     "from": "SHAWN",
     "to": [
@@ -319,5 +295,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789491661397
+  },
+  {
+    "id": "gm-mu30zfihm1mp",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "CAN YOU EMAIL ME THE SUBLET FOR 780582 FOR THE PAINT?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789498131785
   }
 ]
