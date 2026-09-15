@@ -48,22 +48,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mu16km3znjzp",
-    "ro": "780782",
-    "roDate": "2026-09-14",
-    "vehicle": "2024 Hyundai Palisade",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu16km3z5dra",
     "ro": "780781",
     "roDate": "2026-09-14",
