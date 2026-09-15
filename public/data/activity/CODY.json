@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-15T15:35:22.285Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-09-15T15:35:17.179Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-15T15:35:15.686Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-15T15:35:07.961Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-14T22:00:14.414Z",
     "type": "page",
     "label": "advisor-goals"
