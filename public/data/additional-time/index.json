@@ -20,10 +20,12 @@
     "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtt2bgu814kd-1788895784791.png",
     "tech": "GAVEN",
     "techDisplay": "GAVEN L",
-    "status": "submitted",
+    "status": "approved",
     "submittedAt": "2026-09-08T19:29:48.958Z",
-    "approvedAt": null,
-    "approvedBy": null
+    "approvedAt": "2026-09-15T11:39:39.163Z",
+    "approvedBy": "Shawn",
+    "approvedHours": "1.6",
+    "managerNote": ""
   },
   {
     "id": "mtt0u36uacvk",
