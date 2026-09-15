@@ -6,7 +6,7 @@ import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveS
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { loadTechPay, saveTechWeek } from '../utils/github';
-import { buildWeekRecord, planIsSet, boardWeekBounds, payableHoursOf } from '../utils/techPay';
+import { buildWeekRecord, planIsSet, boardWeekBounds, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -218,6 +218,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [techUploadErr, setTechUploadErr] = useState('');
   // Week close-out: { rows: [{ idx, name, days:{mon..sat}, edited:{} }], plans, busy, err }
   const [closeout, setCloseout] = useState(null);
+  const closeoutReportInputRef = useRef(null);
   const [techUploadMsg, setTechUploadMsg] = useState('');
   // Weekday the next uploaded report fills — picked before choosing the file.
   const [techUploadDay, setTechUploadDay] = useState(() => {
@@ -963,7 +964,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       total: Math.round(WEEK_DAY_KEYS.reduce((sum, d) => sum + safe(t[d], 0), 0) * 100) / 100,
       adjust: '',   // blank until the manager types one
     }));
-    setCloseout({ rows, plans: null, busy: false, err: '', week: boardWeekBounds(techs) });
+    setCloseout({ rows, plans: null, busy: false, err: '', week: boardWeekBounds(techs), tab: 'manual', report: null, reportBusy: false, reportErr: '' });
     // Plans decide what each week is worth. If they can't be read the week is
     // still archived — with the hours, and no dollars invented.
     try {
@@ -976,6 +977,63 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   function setCloseoutAdjust(rowIdx, value) {
     setCloseout(c => c ? { ...c, rows: c.rows.map((r, i) => (i === rowIdx ? { ...r, adjust: value } : r)) } : c);
+  }
+
+  /* Close-out from the full-week report.
+   *
+   * The same Tekion Tech Performance report, run for the whole week instead of
+   * one day, is the week's real number — the daily uploads can drift from it
+   * when a line is reflagged after the day was imported. Uploading it here
+   * fills every matched tech's adjustment box with the week the report says,
+   * so the manager reviews one screen instead of retyping seven numbers.
+   *
+   * The report only has worked (flagged) hours. PTO / holiday / training fills
+   * live on the board, not in Tekion, so a tech who is paid for them keeps
+   * them on top of the report figure; a tech who isn't gets the report as-is.
+   * A tech the report doesn't name keeps the board's number and is flagged —
+   * a missing name is more often a mismatch than a week of nothing.
+   */
+  async function handleCloseoutReport(file) {
+    if (!file || !closeout) return;
+    setCloseout(c => ({ ...c, reportBusy: true, reportErr: '' }));
+    try {
+      const isHtml = /\.html?$/i.test(file.name || '');
+      const report = isHtml ? await readTechHtml(file) : await readTechXlsx(file);
+      const { rows, unmatched } = matchTechRows(report.rows);
+      const byIdx = new Map(rows.map(r => [r.idx, r]));
+      setCloseout(c => {
+        if (!c) return c;
+        const plans = c.plans || {};
+        const nextRows = c.rows.map(row => {
+          const r = byIdx.get(row.idx);
+          if (!r || !r.matched) return { ...row, adjust: '', report: null };
+          const tech = (data.technicians || [])[row.idx];
+          const key = String(row.name || '').trim().toUpperCase();
+          const plan = plans[key];
+          const worked = previewTotal(r);
+          // PTO the board is paying on — what's left of the payable week once
+          // the worked days are out. Zero for a tech who isn't eligible.
+          const ptoPaid = planIsSet(plan) && payBasis(tech, plan).excluded === 0
+            ? Math.round(payBasis(tech, plan).ptoHours * 100) / 100
+            : 0;
+          const final = Math.round((worked + ptoPaid) * 100) / 100;
+          return { ...row, adjust: String(final), report: { worked, ptoPaid, matchedName: r.matchedName, detailed: r.detailed } };
+        });
+        return {
+          ...c, rows: nextRows, reportBusy: false,
+          report: { fileName: file.name, source: isHtml ? 'html' : 'xlsx', warnings: report.warnings || [], unmatched },
+        };
+      });
+    } catch (err) {
+      setCloseout(c => c ? { ...c, reportBusy: false, reportErr: err.message || String(err) } : c);
+    } finally {
+      if (closeoutReportInputRef.current) closeoutReportInputRef.current.value = '';
+    }
+  }
+
+  // Drop the uploaded week and go back to the board's own numbers.
+  function clearCloseoutReport() {
+    setCloseout(c => c ? { ...c, report: null, reportErr: '', rows: c.rows.map(r => ({ ...r, adjust: '', report: null })) } : c);
   }
 
   async function confirmWeekCloseout() {
@@ -1001,6 +1059,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const record = buildWeekRecord(tech, plans[key], {
           weekStart: bounds.start,
           overrideHours: row.adjust,
+          ...(row.report ? { adjustSource: 'week-report' } : {}),
           closed: true,
           closedBy: (currentUser || '').toUpperCase(),
           closedAt: new Date().toISOString(),
@@ -2295,12 +2354,59 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   The week is saved to every tech&rsquo;s Weekly History, then the board is cleared for the new week.
                 </div>
                 {closeout.err && <div style={{ fontSize: 12.5, color: '#fca5a5', marginTop: 8, fontWeight: 700 }}>{closeout.err}</div>}
+                <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+                  {[['manual', '✎ Adjust by Hand'], ['upload', '📥 Upload Week Report']].map(([id, label]) => {
+                    const on = (closeout.tab || 'manual') === id;
+                    return (
+                      <button key={id} onClick={() => setCloseout(c => ({ ...c, tab: id }))} disabled={closeout.busy}
+                        style={{
+                          background: on ? 'rgba(251,146,60,.2)' : 'rgba(255,255,255,.04)',
+                          border: `1px solid ${on ? 'rgba(251,146,60,.55)' : 'rgba(148,163,184,.25)'}`,
+                          color: on ? '#fdba74' : '#94a3b8', borderRadius: 8, padding: '5px 12px',
+                          fontWeight: 800, fontSize: 12, cursor: 'pointer',
+                        }}>
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 8, borderBottom: '1px solid rgba(148,163,184,.12)' }}>
+                {closeout.tab === 'upload' && (
+                  <div style={{ background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.25)', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
+                    <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.5, marginBottom: 10 }}>
+                      Run the Tekion <strong style={{ color: '#cbd5e1' }}>Tech Performance</strong> report for the <strong style={{ color: '#cbd5e1' }}>whole week</strong> ({closeout.week.start} to {closeout.week.end}) in Pay Type View, save it as .html and upload it here.
+                      Each tech&rsquo;s adjusted hours are filled from the report (Warranty × {WARRANTY_MULTIPLIER} + Internal + Customer Pay), with paid PTO / holiday hours from the board added on top. You can still change any box before storing.
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                      <input ref={closeoutReportInputRef} type="file" accept=".html,.htm,.xlsx,.xls" disabled={closeout.busy || closeout.reportBusy || !closeout.plans}
+                        onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleCloseoutReport(f); }} />
+                      {closeout.reportBusy && <span style={{ fontSize: 12, color: '#93c5fd' }}>Reading…</span>}
+                      {closeout.report && !closeout.reportBusy && (
+                        <>
+                          <span style={{ fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>✓ {closeout.report.fileName} — {closeout.rows.filter(r => r.report).length} of {closeout.rows.length} techs filled</span>
+                          <button className="secondary" onClick={clearCloseoutReport} disabled={closeout.busy} style={{ marginLeft: 'auto', fontSize: 12, padding: '4px 10px' }}>Clear report</button>
+                        </>
+                      )}
+                    </div>
+                    {closeout.reportErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {closeout.reportErr}</div>}
+                    {closeout.report && closeout.report.warnings.length > 0 && (
+                      <div style={{ marginTop: 8, fontSize: 12, color: '#fcd34d', lineHeight: 1.5 }}>
+                        {closeout.report.warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                      </div>
+                    )}
+                    {closeout.report && closeout.report.unmatched.length > 0 && (
+                      <div style={{ marginTop: 8, fontSize: 12, color: '#fcd34d', lineHeight: 1.5 }}>
+                        ⚠ {closeout.report.unmatched.length} report name{closeout.report.unmatched.length === 1 ? '' : 's'} not matched to any tech on this page: {closeout.report.unmatched.join(', ')}.
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: closeout.report ? '1.6fr .8fr .8fr 1fr .8fr' : '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', paddingBottom: 8, borderBottom: '1px solid rgba(148,163,184,.12)' }}>
                   <div>Technician</div>
                   <div style={{ textAlign: 'right' }}>Week Hours</div>
+                  {closeout.report && <div style={{ textAlign: 'right' }}>Report</div>}
                   <div style={{ textAlign: 'center' }}>Adjusted Hours</div>
                   <div style={{ textAlign: 'right' }}>Final</div>
                 </div>
@@ -2319,7 +2425,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   const final = Math.max(0, Math.round((overridden ? parseFloat(typed) : payable) * 100) / 100);
                   const ptoOut = Math.round((row.total - payable) * 100) / 100;
                   return (
-                    <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', padding: '9px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
+                    <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: closeout.report ? '1.6fr .8fr .8fr 1fr .8fr' : '1.6fr .8fr 1fr .8fr', gap: 10, alignItems: 'center', padding: '9px 0', borderBottom: '1px solid rgba(148,163,184,.07)' }}>
                       <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>
                         {row.name}
                         {closeout.plans && !hasPlan && (
@@ -2331,10 +2437,27 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                             {ptoOut} PTO hrs not paid
                           </span>
                         )}
+                        {closeout.report && !row.report && (
+                          <span title="This tech isn't named in the week report — the board's number is kept"
+                            style={{ display: 'block', color: '#fcd34d', fontSize: 11, fontWeight: 700 }}>
+                            not in report — board kept
+                          </span>
+                        )}
+                        {row.report && row.report.ptoPaid > 0 && (
+                          <span style={{ display: 'block', color: '#94a3b8', fontSize: 11, fontWeight: 700 }}>
+                            + {row.report.ptoPaid} PTO hrs paid
+                          </span>
+                        )}
                       </div>
                       <div style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: '#cbd5e1' }}>
                         {row.total.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                       </div>
+                      {closeout.report && (
+                        <div style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: row.report ? '#93c5fd' : '#475569' }}
+                          title={row.report ? `Matched "${row.report.matchedName}"${row.report.detailed ? '' : ' (flat flagged total, no warranty multiplier)'}` : 'Not in the report'}>
+                          {row.report ? row.report.worked.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'}
+                        </div>
+                      )}
                       <input type="number" step="0.01" min="0" value={row.adjust}
                         placeholder={payable.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                         title="Type the week's final hours, or leave blank to keep the number on the left"
