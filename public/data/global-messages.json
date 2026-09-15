@@ -1,31 +1,5 @@
 [
   {
-    "id": "gm-mtt3qtgj18p0",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "Sent you a email from a customer VM",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788898107043
-  },
-  {
-    "id": "gm-mtt4a2owi60l",
-    "from": "SHAWN",
-    "to": [
-      "CODY",
-      "DAVID",
-      "JORDAN"
-    ],
-    "text": "If you have a RO that has already been set to a red flag. No need to change it to blue. Thank you!",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788899005472
-  },
-  {
     "id": "gm-mtu2qj7fhdia",
     "from": "SHAWN",
     "to": [
@@ -307,5 +281,18 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789498131785
+  },
+  {
+    "id": "gm-mu3509gs2ydi",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN",
+      "CORY"
+    ],
+    "text": "ENGINE APPROVED 780754",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789504889068
   }
 ]
