@@ -62,22 +62,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mu16kmtbjqjf",
-    "ro": "780715",
-    "roDate": "2026-09-14",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "TIRE NEEDS TO BE REPLACED DUE TO WEAR OR AGE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu2px7cuwk8",
     "ro": "780754",
     "roDate": "2026-09-10",
