@@ -1,20 +1,5 @@
 [
   {
-    "id": "mtw1mlujbi6l",
-    "ro": "780754",
-    "roDate": "2026-09-10",
-    "vehicle": "2011 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES ENGINE LOCKED UP. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mu19y1pt11xj",
     "ro": "780810",
     "roDate": "2026-09-14",
