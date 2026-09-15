@@ -15,7 +15,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { buildWeekRecord, planIsSet } from '../src/utils/techPay.js';
+import { buildWeekRecord, planIsSet, boardWeekBounds } from '../src/utils/techPay.js';
 
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR  = path.join(__dirname, '..', 'public', 'data');
@@ -49,6 +49,10 @@ function main() {
   // the step would take the other nightly snapshots down with it.
   fs.mkdirSync(HISTORY_DIR, { recursive: true });
 
+  // The week the board is holding — on a Saturday, Sunday or Monday night that
+  // is still the week that ended Friday, not the one the calendar has started.
+  const weekStart = boardWeekBounds(data.technicians).start;
+
   let written = 0, skipped = 0;
   for (const tech of data.technicians) {
     const name = String(tech.name || '').trim().toUpperCase();
@@ -58,7 +62,7 @@ function main() {
     // would read as "you earned nothing", which isn't what it means.
     if (!planIsSet(plans[name])) continue;
 
-    const record = buildWeekRecord(tech, plans[name]);
+    const record = buildWeekRecord(tech, plans[name], { weekStart });
     const file = path.join(HISTORY_DIR, `${name}.json`);
     const history = readJSON(file, {}) || {};
 

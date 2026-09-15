@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { safe } from '../utils/formatters';
 import { loadTechPay, saveTechPayPlan, loadTechPayHistory } from '../utils/github';
-import { computeTechPay, normalizePlan, planIsSet, tiersOf, payBasis, weekBounds, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
+import { computeTechPay, normalizePlan, planIsSet, tiersOf, payBasis, boardWeekBounds, TIER1_HOURS, TIER2_HOURS } from '../utils/techPay';
 import { HeroCard, QualCard, Row } from './LivePay';
 
 /* Tech Live Pay — the flat-rate mirror of the advisor page.
@@ -225,7 +225,7 @@ export default function TechLivePay({ data, currentUser, currentRole, onBack, ba
                   </strong>
                 </div>
 
-                <HistoryPanel techName={firstWord(selected.name)} currentWeekStart={weekBounds().start} />
+                <HistoryPanel techName={firstWord(selected.name)} currentWeekStart={boardWeekBounds([selected]).start} />
               </>
             )}
           </div>

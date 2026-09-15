@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
-import { advisorDailyAverage, currentWeekDates, advisorOffDates, isScheduledOff } from '../utils/calculations';
+import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, isScheduledOff } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { loadTechPay, saveTechWeek } from '../utils/github';
-import { buildWeekRecord, planIsSet, boardWeekBounds, payableHoursOf, payBasis } from '../utils/techPay';
+import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
 import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
@@ -975,6 +975,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
+  // The board can't always say which week it holds (see boardWeekBounds), so
+  // the manager can step the week the close-out is filed under.
+  function stepCloseoutWeek(n) {
+    setCloseout(c => c && !c.busy ? { ...c, week: shiftWeek(c.week.start, n) } : c);
+  }
+
   function setCloseoutAdjust(rowIdx, value) {
     setCloseout(c => c ? { ...c, rows: c.rows.map((r, i) => (i === rowIdx ? { ...r, adjust: value } : r)) } : c);
   }
@@ -1043,9 +1049,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const stamp = Date.now();
     const newData = structuredClone(data);
     const plans = closeout.plans || {};
-    // The week on the board, which on a Monday morning is last week — see
-    // boardWeekBounds.
-    const bounds = boardWeekBounds(newData.technicians);
+    // The week shown on the close-out screen — the board's own best guess
+    // (boardWeekBounds), or whichever week the manager stepped it to.
+    const bounds = closeout.week;
 
     // Store the week for every tech on a pay plan, with the manager's
     // adjustment folded into the hours they're paid on.
@@ -1221,7 +1227,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function applyTechUpload() {
     if (!techUpload) return;
     const { day, rows } = techUpload;
-    const date = currentWeekDates()[day];
+    // The day the report is for — the Friday just gone when it's uploaded on
+    // Saturday or Monday, not the Friday coming up. This stamp is what tells
+    // the close-out which week the board is holding.
+    const date = reportDateFor(day);
     const stamp = Date.now();
     const newData = structuredClone(data);
     for (const r of rows) {
@@ -2190,7 +2199,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="upload-title"><span style={{ fontSize: 17 }}>📥</span><span>Upload Flagged Hours Report (.html)</span></div>
           <div className="small" style={{ margin: '0 0 10px' }}>
             Save the Tekion <strong>Tech Performance</strong> report in <strong>Pay Type View</strong> as .html and upload it here. Each tech's hours are
-            <strong> Warranty × {WARRANTY_MULTIPLIER}</strong> + Internal + Customer Pay. <strong>Pick the day first</strong> — those hours fill that day's column.
+            <strong> Warranty × {WARRANTY_MULTIPLIER}</strong> + Internal + Customer Pay. <strong>Pick the day first</strong> — those hours fill that day's column (the pay week runs Sat–Fri, so <strong>Sat</strong> is the Saturday that opened the week).
             A tech not on the report is set to <strong>0</strong>. Review before applying, then <em>Save Changes</em>.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
@@ -2349,7 +2358,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
                 </div>
                 <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 5, lineHeight: 1.5 }}>
-                  Week of <strong style={{ color: '#cbd5e1' }}>{closeout.week.start}</strong> to <strong style={{ color: '#cbd5e1' }}>{closeout.week.end}</strong>.
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginRight: 4 }}>
+                    <button onClick={() => stepCloseoutWeek(-1)} disabled={closeout.busy} title="Previous week"
+                      style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 6, padding: '1px 8px', fontWeight: 800, fontSize: 12, cursor: 'pointer', lineHeight: 1.4 }}>◀</button>
+                    <span>Week of <strong style={{ color: '#cbd5e1' }}>{closeout.week.start}</strong> (Sat) to <strong style={{ color: '#cbd5e1' }}>{closeout.week.end}</strong> (Fri).</span>
+                    <button onClick={() => stepCloseoutWeek(1)} disabled={closeout.busy} title="Next week"
+                      style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(148,163,184,.25)', color: '#cbd5e1', borderRadius: 6, padding: '1px 8px', fontWeight: 800, fontSize: 12, cursor: 'pointer', lineHeight: 1.4 }}>▶</button>
+                  </span>
+                  The pay week runs Saturday to Friday — use the arrows if the board is holding a different week than shown.
                   Type a tech&rsquo;s final hours in the box to change a week, or leave it blank to take the week as it stands. Final is what gets stored and paid.
                   The week is saved to every tech&rsquo;s Weekly History, then the board is cleared for the new week.
                 </div>

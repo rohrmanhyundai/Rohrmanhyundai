@@ -62,24 +62,48 @@ export function advisorGoalPct(advisor, data) {
   return goal > 0 ? projected / goal : 0;
 }
 
-// Returns ISO date strings (YYYY-MM-DD) for Mon..Sat of the current week (local time).
-export function currentWeekDates() {
+/* The tech work week runs Saturday to Friday — Saturday's hours open a week,
+ * Friday's close it. That's the week payroll pays and the weekly reports
+ * summarise (scripts/send-reports.cjs), so the day columns on the Tech Hours
+ * board follow it too: the Sat column is the Saturday BEFORE the Mon..Fri
+ * beside it, not the one after. */
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// The Saturday that opened the week containing `date` (local time).
+export function weekSaturdayOf(date) {
+  const sat = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  sat.setDate(sat.getDate() - ((sat.getDay() + 1) % 7));   // Sat→0, Sun→1, … Fri→6
+  return sat;
+}
+
+// Returns ISO date strings (YYYY-MM-DD) for each day column — sat, mon..fri —
+// of the Sat–Fri week containing `date` (default today), local time.
+export function weekDatesOf(date = new Date()) {
+  const sat = weekSaturdayOf(date);
   const out = {};
-  const now = new Date();
-  const dow = now.getDay(); // 0=Sun
-  // Monday of this week
-  const monday = new Date(now);
-  const diff = dow === 0 ? -6 : 1 - dow;
-  monday.setDate(now.getDate() + diff);
-  ['mon','tue','wed','thu','fri','sat'].forEach((k, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    out[k] = `${yyyy}-${mm}-${dd}`;
+  [['sat', 0], ['mon', 2], ['tue', 3], ['wed', 4], ['thu', 5], ['fri', 6]].forEach(([k, offset]) => {
+    const d = new Date(sat);
+    d.setDate(sat.getDate() + offset);
+    out[k] = isoOf(d);
   });
   return out;
+}
+
+export function currentWeekDates() {
+  return weekDatesOf(new Date());
+}
+
+/* The date a day's hours REPORT is for: the most recent Monday / Tuesday / …
+ * on or before today. A report is always for a day that has happened, and
+ * it's usually uploaded the next morning — so Friday's report uploaded on
+ * Saturday or Monday is for the Friday just gone, not the one coming up,
+ * even though by then the calendar has rolled into a new week. */
+export function reportDateFor(day, today = new Date()) {
+  const want = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 }[day];
+  const d = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (want === undefined) return isoOf(d);
+  d.setDate(d.getDate() - ((d.getDay() - want + 7) % 7));
+  return isoOf(d);
 }
 
 const OFF_STATUSES = ['holiday', 'vacation', 'training', 'off'];
