@@ -34,10 +34,12 @@
     "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mtt0u36uacvk-1788893229608.png",
     "tech": "KADEN",
     "techDisplay": "KADEN",
-    "status": "submitted",
+    "status": "approved",
     "submittedAt": "2026-09-08T18:47:16.523Z",
-    "approvedAt": null,
-    "approvedBy": null
+    "approvedAt": "2026-09-15T11:40:03.658Z",
+    "approvedBy": "Shawn",
+    "approvedHours": "1.2",
+    "managerNote": ""
   },
   {
     "id": "mtkkwbtn6cvx",
