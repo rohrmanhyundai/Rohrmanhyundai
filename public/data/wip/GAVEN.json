@@ -27,22 +27,6 @@
     "partsArrivedDate": "09/11/2026"
   },
   {
-    "id": "mtndquhdkvkn",
-    "ro": "780616",
-    "roDate": "2026-09-04",
-    "vehicle": "2018 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES CUSTOMER PURCHASED VEHICLE JULY 2ND. A COUPLE WEEKS AGO MULTIPLE LIGHTS STARTED APPEARING ON DASH FOR ABS & AUTO HOLD ON. ONLY HAPPENS INTERMITTENLY. HAPPENS MORE FREQUENT IN HOT WEATHER. BOB ROHRMAN TOYOTA FOUND CODE C240201.",
-    "notes": "WAITING ON APPROVAL PER AFTERMARKET WARRANTY ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/12/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mtuaqh8szph5",
     "ro": "780703",
     "roDate": "2026-09-09",
