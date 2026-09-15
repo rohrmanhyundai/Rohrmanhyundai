@@ -1,56 +1,5 @@
 [
   {
-    "id": "msqfzal5l09",
-    "username": "DAVID",
-    "text": "@Jerry - Any update on RO779854? Goldberg for US auto Force?",
-    "timestamp": 1786560477017
-  },
-  {
-    "id": "msqgsxjx0rz",
-    "username": "JERRY",
-    "text": "NOTHING YET. WORKING WITH KAI WITH OUR CONTACT AT DEALER TIRE.",
-    "timestamp": 1786561859805
-  },
-  {
-    "id": "msqjml93tb3",
-    "username": "KAI",
-    "text": "@david waiting on tire rack to update us on the claim with US autoforce",
-    "timestamp": 1786566602775,
-    "reactions": {
-      "❤️": [
-        "DAVID"
-      ]
-    }
-  },
-  {
-    "id": "mst17di6xhy",
-    "username": "KAI",
-    "text": "@david we need to get patrica king back in here to perform a recall in order to get paid on her maintenance last time",
-    "timestamp": 1786717058334
-  },
-  {
-    "id": "mst295c032z",
-    "username": "DAVID",
-    "text": "reached out, she will call back with a date / time when she can get back in",
-    "timestamp": 1786718820672,
-    "replyTo": {
-      "id": "mst17di6xhy",
-      "username": "KAI",
-      "text": "@david we need to get patrica king back in here to perform a recall in order to get paid on her maintenance last time"
-    }
-  },
-  {
-    "id": "mstenefacbo",
-    "username": "SETH",
-    "text": "TIRE RECEIVED FOR KATHERINE GOLDBERG",
-    "timestamp": 1786739641030,
-    "reactions": {
-      "👍": [
-        "JORDAN"
-      ]
-    }
-  },
-  {
     "id": "mt1ywy9op3q",
     "username": "CODY",
     "text": "KEY FOB IN FOR TIFFANIE ROGERS?",
@@ -148,6 +97,11 @@
     "id": "mtx7nxs3506",
     "username": "SHAWN",
     "text": "@DAVID. DRAIN PLUG OWNER IS REACHING OUT TO OTHER DEALER",
-    "timestamp": 1789146555843
+    "timestamp": 1789146555843,
+    "reactions": {
+      "👍": [
+        "DAVID"
+      ]
+    }
   }
 ]
