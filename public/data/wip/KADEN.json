@@ -16,22 +16,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mtsvqefa5ew2",
-    "ro": "780638",
-    "roDate": "2026-09-08",
-    "vehicle": "2019 Ford Fusion Hybrid",
-    "jobDesc": "CUSTOMER STATES BRAKE LIGHTS NOT WORKING",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mu16kljnayqu",
     "ro": "780802",
     "roDate": "2026-09-14",
