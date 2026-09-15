@@ -91,5 +91,19 @@
     "advisor": "JORDAN TROXEL",
     "notes": "",
     "flag": "purple"
+  },
+  {
+    "id": "mu1iwf5rbf4y",
+    "ro": "780817",
+    "roDate": "2026-09-14",
+    "vehicle": "2026 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES SHIFTER SYSTEM MALFUNCTION SERVICE IMMEDIATELY WARNING ON DASH. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
