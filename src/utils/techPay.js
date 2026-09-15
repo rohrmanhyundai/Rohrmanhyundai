@@ -150,7 +150,9 @@ export const WEEK_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 export function ptoDaysOf(tech) {
   const t = tech || {};
   const overrides = t.hoursOverride || {};
-  const dates = weekDates();
+  // The week THIS tech's board holds — on a Saturday or Monday before close-out
+  // that is still last week, and today's calendar week would match nothing.
+  const dates = weekDatesOf(boardWeekBounds([t]).start);
   return WEEK_DAYS.filter(d => {
     if (!(num(t[d]) > 0)) return false;
     const raw = t[`${d}_raw`];
@@ -159,20 +161,40 @@ export function ptoDaysOf(tech) {
   });
 }
 
-// Mon..Sat of the current week as YYYY-MM-DD, local — the same keys the
-// schedule and hoursOverride use.
-export function weekDates() {
+/* The tech work week runs Saturday to Friday: Saturday opens it, Friday closes
+ * it, and that is the week payroll pays. The board's day columns keep their
+ * Mon..Sat order, but the Sat column is the Saturday BEFORE the Mon..Fri beside
+ * it. These are the same keys the schedule and hoursOverride use. */
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const DAY_OFFSET = { sat: 0, mon: 2, tue: 3, wed: 4, thu: 5, fri: 6 };   // days after the opening Saturday
+
+// The Saturday that opened the week containing a local Date.
+function saturdayOf(date) {
+  const sat = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  sat.setDate(sat.getDate() - ((sat.getDay() + 1) % 7));   // Sat→0, Sun→1, … Fri→6
+  return sat;
+}
+
+const parseIso = (iso) => {
+  const [y, m, d] = String(iso || '').split('-').map(Number);
+  return y && m && d ? new Date(y, m - 1, d) : null;
+};
+
+// Day column → YYYY-MM-DD for the Sat–Fri week containing `iso`.
+export function weekDatesOf(iso) {
+  const sat = saturdayOf(parseIso(iso) || new Date());
   const out = {};
-  const now = new Date();
-  const dow = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + (dow === 0 ? -6 : 1 - dow));
-  WEEK_DAYS.forEach((k, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    out[k] = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  });
+  for (const k of WEEK_DAYS) {
+    const d = new Date(sat);
+    d.setDate(sat.getDate() + DAY_OFFSET[k]);
+    out[k] = isoOf(d);
+  }
   return out;
+}
+
+// Day column → YYYY-MM-DD for the week containing today.
+export function weekDates() {
+  return weekDatesOf(isoOf(new Date()));
 }
 
 /* The hours a tech is actually paid on, banked and projected.
@@ -204,39 +226,42 @@ export function payBasis(tech, plan) {
 
 /* ------------------------------------------------------------ week records */
 
-// The Monday that starts the current week, and the Saturday that ends it.
+// The Saturday that opens the current week, and the Friday that closes it.
 export function weekBounds() {
   const d = weekDates();
-  return { start: d.mon, end: d.sat };
+  return { start: d.sat, end: d.fri };
 }
 
-// Monday..Saturday for the week containing a given YYYY-MM-DD.
+// Saturday..Friday for the week containing a given YYYY-MM-DD.
 export function weekBoundsOf(iso) {
-  const [y, m, d] = String(iso || '').split('-').map(Number);
-  if (!y || !m || !d) return weekBounds();
-  const day = new Date(y, m - 1, d);
-  const dow = day.getDay();
-  const monday = new Date(day);
-  monday.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow));
-  const sat = new Date(monday);
-  sat.setDate(monday.getDate() + 5);
-  const iso2 = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
-  return { start: iso2(monday), end: iso2(sat) };
+  if (!parseIso(iso)) return weekBounds();
+  const d = weekDatesOf(iso);
+  return { start: d.sat, end: d.fri };
+}
+
+// The Sat–Fri week `n` weeks after (or, negative, before) the one containing `iso`.
+export function shiftWeek(iso, n) {
+  const d = parseIso(iso) || new Date();
+  d.setDate(d.getDate() + 7 * n);
+  return weekBoundsOf(isoOf(d));
 }
 
 /* Which week the Tech Hours board is actually holding.
  *
- * Not necessarily this one: a manager closing out on Monday morning is closing
- * LAST week, and filing it under today's Monday would put it in the wrong week
- * and overwrite the new one. Every real figure stamps its date in hoursOverride,
+ * Not necessarily this one: a manager closing out on Saturday or Monday is
+ * closing the week that ended Friday, and filing it under today's week would
+ * put it in the wrong week and overwrite the new one. Every real figure stamps its date in hoursOverride,
  * so the latest stamped date says which week the numbers belong to. With no
  * stamps at all — a board of nothing but schedule fills — this week is right.
  */
 export function boardWeekBounds(technicians) {
+  // A stamp after today can't be a real day's hours — older uploads stamped a
+  // late report into the coming week — so it doesn't get to name the week.
+  const today = isoOf(new Date());
   let latest = '';
   for (const t of technicians || []) {
     for (const d of Object.keys((t && t.hoursOverride) || {})) {
-      if (d > latest) latest = d;
+      if (d > latest && d <= today) latest = d;
     }
   }
   return latest ? weekBoundsOf(latest) : weekBounds();
