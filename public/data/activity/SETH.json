@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-15T12:08:05.901Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-15T12:08:05.898Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-09-12T12:38:39.816Z",
     "type": "action",
     "label": "parts-received-mark",
@@ -191,49 +201,6 @@
   },
   {
     "at": "2026-08-17T20:50:56.801Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-15T11:46:05.101Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 779924"
-  },
-  {
-    "at": "2026-08-15T11:25:29.697Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 779982"
-  },
-  {
-    "at": "2026-08-15T11:25:20.712Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780012"
-  },
-  {
-    "at": "2026-08-15T11:25:04.244Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-14T18:58:27.305Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-08-14T18:58:14.807Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-08-14T14:04:03.901Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-13T16:32:39.334Z",
     "type": "page",
     "label": "advisor-calendar"
   }
