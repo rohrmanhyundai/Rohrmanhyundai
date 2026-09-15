@@ -60,5 +60,37 @@
     "partsArrivedDate": "09/15/2026",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mu36hzujxaz2",
+    "ro": "780861",
+    "roDate": "2026-09-15",
+    "vehicle": "2014 Hyundai Santa Fe Sport",
+    "jobDesc": "CONCERN - CUSTOMER STATES KNOCK SENSOR REPLACEMENT",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mu36hzuj6gcz",
+    "ro": "780853",
+    "roDate": "2026-09-15",
+    "vehicle": "2012 Hyundai Sonata",
+    "jobDesc": "replace gear shifter knob assembly",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
