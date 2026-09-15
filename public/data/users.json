@@ -498,6 +498,31 @@
       },
       "chatAccess": false,
       "techChatAccess": true
+    },
+    {
+      "username": "Chris",
+      "lastName": "",
+      "password": "Hyundai2026!",
+      "role": "technician",
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": false,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "sc1:LBpIDhlDbkRPNhduD3F6SBE6XxcJZDdxNgtXa2ZIRDM+OwghIGNtXw==",
