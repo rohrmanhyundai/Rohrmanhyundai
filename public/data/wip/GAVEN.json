@@ -37,8 +37,8 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrived": true,
+    "partsArrivedDate": "09/16/2026"
   },
   {
     "id": "mtw1ml6tnyh3",
