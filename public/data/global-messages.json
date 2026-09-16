@@ -1,44 +1,5 @@
 [
   {
-    "id": "gm-mtu9we996wm5",
-    "from": "SHAWN",
-    "to": [
-      "GAVEN",
-      "JORDAN",
-      "KAI"
-    ],
-    "text": "RO 780556 engine approved ready for asr",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtua48elt5me",
-        "from": "KAI",
-        "text": "SHOULD HAVE IT BY FRIDAY",
-        "timestamp": 1788969276813
-      },
-      {
-        "id": "rp-mtua5dv8hfp5",
-        "from": "SHAWN",
-        "text": "sweet! maybe i can crawl out of the hole im in",
-        "timestamp": 1788969330548
-      }
-    ],
-    "timestamp": 1788968911149
-  },
-  {
-    "id": "gm-mtualijrqw9p",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "what are we doing with RO 780638? you have zero internal notes and the RO is 5 days old!!",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788970083111
-  },
-  {
     "id": "gm-mtuhiawkyz2k",
     "from": "GAVEN",
     "to": [
@@ -318,5 +279,17 @@
       }
     ],
     "timestamp": 1789569162886
+  },
+  {
+    "id": "gm-mu4hak5dol6h",
+    "from": "DAVID",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "https://my.alldata.com/repair/#/parts-and-labor-article/52136/component/336/itype/189/isSelfReferenceLink/false",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789585991041
   }
 ]
