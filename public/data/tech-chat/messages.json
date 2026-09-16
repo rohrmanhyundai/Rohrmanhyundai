@@ -367,6 +367,11 @@
     "id": "mu41qff9dey",
     "username": "SHAWN",
     "text": "@DAVID @GAVEN RO 780703 parts have been received",
-    "timestamp": 1789559857557
+    "timestamp": 1789559857557,
+    "reactions": {
+      "❤️": [
+        "DAVID"
+      ]
+    }
   }
 ]
