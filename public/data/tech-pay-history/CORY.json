@@ -76,5 +76,30 @@
     "adjustSource": "week-report",
     "closedBy": "SHAWN",
     "closedAt": "2026-09-15T11:34:30.454Z"
+  },
+  "2026-09-12": {
+    "weekStart": "2026-09-12",
+    "weekEnd": "2026-09-18",
+    "days": {
+      "mon": 17.2,
+      "tue": 0,
+      "wed": 0,
+      "thu": 0,
+      "fri": 0,
+      "sat": 6.78
+    },
+    "hours": 23.98,
+    "payableHours": 23.98,
+    "overridden": false,
+    "adjustment": 0,
+    "boardHours": 23.98,
+    "ptoHours": 0,
+    "ptoPaid": true,
+    "rate": 27,
+    "tier": "Up to 50 hrs",
+    "pay": 647.46,
+    "payType": "flat",
+    "closed": false,
+    "updatedAt": "2026-09-16T07:58:07.805Z"
   }
 }
