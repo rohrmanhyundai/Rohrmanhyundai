@@ -28,5 +28,20 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mu4lm63twi40",
+    "ro": "780890",
+    "roDate": "2026-09-16",
+    "vehicle": "2022 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES- tow in from Becks, hybrid battery 100% dead",
+    "notes": "NOT FOR A TECH YET",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
