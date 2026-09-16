@@ -1,24 +1,5 @@
 [
   {
-    "id": "gm-mtu2qj7fhdia",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "Dont forget about RO 780644 with the washer fluid",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mtuaju45j7hj",
-        "from": "SHAWN",
-        "text": "did we check this car again?",
-        "timestamp": 1788970004789
-      }
-    ],
-    "timestamp": 1788956880315
-  },
-  {
     "id": "gm-mtu5jn3uq0n3",
     "from": "SHAWN",
     "to": [
@@ -294,5 +275,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789504889068
+  },
+  {
+    "id": "gm-mu43halu7adv",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "780752 YOU MAY NEED TO EMAIL THE GUY ON THIS CAR. I DONT THINK THE PHONE NUMBER IS WORKING. WE NEED TO INVOICE THE RO WE HAVE TO SUBMIT THE WARRANTY FOR HIM TO START THE BUYBACK FOR HIM",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789562790642
   }
 ]
