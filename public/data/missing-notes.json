@@ -1,43 +1,29 @@
 {
-  "updatedAt": "2026-09-16T13:05:05.624Z",
+  "updatedAt": "2026-09-16T21:14:13.447Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "780874",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780872",
-        "vehicle": "2021 Hyundai Palisade"
-      },
-      {
-        "ro": "780870",
-        "vehicle": "2023 Hyundai Palisade"
-      },
-      {
-        "ro": "780858",
-        "vehicle": "2018 Hyundai Santa Fe Sport"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780873",
-        "vehicle": "2024 Hyundai Kona"
-      }
-    ],
     "DAVID": [
       {
-        "ro": "780871",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780865",
-        "vehicle": "2015 Hyundai Santa Fe Sport"
+        "ro": "780901",
+        "vehicle": "2013 Hyundai Sonata"
       },
       {
         "ro": "780810",
         "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780900",
+        "vehicle": "2023 Hyundai Palisade"
+      },
+      {
+        "ro": "780897",
+        "vehicle": "2015 Jeep Wrangler Unlimited"
+      },
+      {
+        "ro": "780858",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
       }
     ],
     "CORY": [
@@ -52,10 +38,6 @@
       {
         "ro": "780828",
         "vehicle": "2014 Chevrolet Impala"
-      },
-      {
-        "ro": "780781",
-        "vehicle": "2015 Chevrolet Colorado"
       },
       {
         "ro": "780764",
