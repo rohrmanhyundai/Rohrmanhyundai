@@ -803,8 +803,8 @@
         "hrsRo": 0.97
       },
       "2026-09-15": {
-        "hours": 111.1,
-        "hrsRo": 1,
+        "hours": 100.8,
+        "hrsRo": 0.97,
         "openRoCount": 20,
         "invoiced": "no",
         "customersUpdated": "yes",
