@@ -133,7 +133,7 @@ function AdvisorJobsPanel({ title, jobs, emptyText, showTech, showAdvisor, loadi
                   <div style={{ minWidth: 76, fontSize: 14, fontWeight: 800, color: '#6ee7f9', textTransform: 'uppercase', letterSpacing: .5 }}>{canonicalAdvisorFirst(j.advisor)}</div>
                 )}
                 {showTech && (
-                  <div style={{ minWidth: 80, fontSize: 11, fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
+                  <div style={{ minWidth: 80, fontSize: 14, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: .5 }}>{String(j.tech || '').trim().split(/\s+/)[0]}</div>
                 )}
                 <div style={{ flex: 1, minWidth: 120, fontSize: 13, color: '#e2e8f0', lineHeight: 1.4 }}>
                   {j.jobDesc || '—'}
