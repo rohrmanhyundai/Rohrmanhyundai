@@ -1,8 +1,36 @@
 {
-  "updatedAt": "2026-09-15T21:23:19.255Z",
+  "updatedAt": "2026-09-16T13:05:05.624Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "780874",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780872",
+        "vehicle": "2021 Hyundai Palisade"
+      },
+      {
+        "ro": "780870",
+        "vehicle": "2023 Hyundai Palisade"
+      },
+      {
+        "ro": "780858",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780873",
+        "vehicle": "2024 Hyundai Kona"
+      }
+    ],
     "DAVID": [
+      {
+        "ro": "780871",
+        "vehicle": "2026 Hyundai Tucson"
+      },
       {
         "ro": "780865",
         "vehicle": "2015 Hyundai Santa Fe Sport"
@@ -10,26 +38,6 @@
       {
         "ro": "780810",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "780858",
-        "vehicle": "2018 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "780784",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780782",
-        "vehicle": "2024 Hyundai Palisade"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780845",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
       }
     ],
     "CORY": [
