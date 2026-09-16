@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-16T16:23:54.452Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-09-16T16:23:53.262Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-15T22:15:14.569Z",
     "type": "page",
     "label": "advisor-goals"
@@ -714,40 +724,5 @@
     "at": "2026-08-17T20:23:13.394Z",
     "type": "page",
     "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-17T16:19:40.173Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T15:51:00.721Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-17T15:49:18.179Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T15:48:11.526Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T15:46:17.142Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T15:46:07.564Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T15:45:33.288Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
