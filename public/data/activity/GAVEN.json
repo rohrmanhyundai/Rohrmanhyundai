@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-16T17:14:41.044Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
     "at": "2026-09-16T13:34:17.970Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1224,20 +1229,5 @@
     "at": "2026-08-17T17:58:00.846Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-17T14:01:22.172Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-17T14:01:21.098Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-17T14:01:21.088Z",
-    "type": "page",
-    "label": "hot-repairs"
   }
 ]
