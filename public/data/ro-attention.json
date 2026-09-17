@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:32:09.725Z",
+  "updatedAt": "2026-09-17T21:33:02.636Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -34,6 +34,21 @@
       "flaggedAt": 1789668117412,
       "clearedBy": "SHAWN",
       "clearedAt": 1789668455013
+    },
+    "780381": {
+      "advisor": "DAVID",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61q9t8tgoy",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "WAITING ON BACK ORDER PARTS",
+          "at": 1789680782636
+        }
+      ],
+      "vehicle": "2026 Hyundai Santa Fe",
+      "lastSeenOpen": 1789680782635
     },
     "780481": {
       "advisor": "JORDAN",
