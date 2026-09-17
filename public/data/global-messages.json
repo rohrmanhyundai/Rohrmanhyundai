@@ -358,5 +358,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668815465
+  },
+  {
+    "id": "gm-mu5vmdpg0dvx",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "🚩 RO 780681 (2018 Hyundai Tucson) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789670523364
   }
 ]
