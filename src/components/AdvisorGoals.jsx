@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { safe } from '../utils/formatters';
 import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
-import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes, loadCompletedReviews } from '../utils/github';
+import { loadAdvisorGoals, saveAdvisorGoalsMonth, loadMissingNotes, loadCompletedReviews, loadDayEndQuestions, saveDayEndQuestions } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -21,6 +21,52 @@ function workingDates(year, month) {
 }
 
 const dKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+
+// ── Day End Reporting questions ──────────────────────────────────────────────
+// Managers edit the wording, order, type and count of questions in the Edit
+// Questions tab; the result is saved to data/day-end-questions.json and this
+// list is the default (and the fallback while that file doesn't exist).
+// Built-in keys store their answer on a named field of the day record (the
+// forecast math reads hours/hrsRo); custom questions store under answers[key].
+const BUILTIN_DE_FIELD = { openRo: 'openRoCount', invoiced: 'invoiced', cust: 'customersUpdated', notes: 'notesUpdated', afterCall: 'afterCallReviews', hours: 'hours', hrsro: 'hrsRo' };
+const DE_LOCKED = new Set(['hours', 'hrsro']);   // the forecast can't work without these
+const DE_COLORS = { hours: '#6ee7b7', hrsro: '#93c5fd' };
+const DE_KINDS = [['yn', 'Yes / No'], ['num', 'Number'], ['text', 'Text']];
+const DEFAULT_DE_STEPS = [
+  { key: 'openRo', kind: 'num', q: 'Open Repair Order Count', sub: '', placeholder: 'e.g. 12', required: true },
+  { key: 'invoiced', kind: 'yn', q: 'Are all available repair orders invoiced?', sub: '', required: true },
+  { key: 'cust', kind: 'yn', q: 'Are all customers updated on status?', sub: '', required: true },
+  { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', sub: '', required: true },
+  { key: 'afterCall', kind: 'yn', q: 'Did you complete after call reviews?', sub: '', required: true },
+  { key: 'hours', kind: 'num', q: 'Total Hours for the Month (MTD)', sub: 'Your month-to-date total from the DMS — the page figures today’s hours', placeholder: 'e.g. 82.5', required: true },
+  { key: 'hrsro', kind: 'num', q: 'Month Hrs/RO (MTD)', sub: 'Your month-to-date hrs/RO from the DMS', placeholder: 'e.g. 1.3', required: true },
+];
+const DEFAULT_AGREE_TEXT = `I certify that the information in this day-end report is accurate and complete to the best of my knowledge. I have reviewed all of my open repair orders, invoiced everything available, updated every customer on their status, and ensured each repair order has current notes as of the end of my business day.`;
+// What each built-in key does beyond storing an answer — shown in the editor so
+// a manager knows what they're rewording.
+const DE_KEY_NOTES = {
+  hours: 'Required — feeds the hours forecast, chart and Live Pay. Always a number.',
+  hrsro: 'Required — feeds the Hrs/RO gauge. Always a number.',
+  notes: 'Shows the advisor their ROs flagged without internal notes on this step.',
+  afterCall: 'Shows the advisor today’s after-call review count on this step.',
+  openRo: 'Stored as the day’s Open RO count.',
+};
+// Clean a loaded/edited config: valid kinds, unique keys, and the two locked
+// questions always present so a bad save can never break the forecast.
+function normalizeDeConfig(d) {
+  const seen = new Set();
+  const steps = [];
+  for (const raw of (Array.isArray(d && d.steps) ? d.steps : DEFAULT_DE_STEPS)) {
+    if (!raw || !raw.key || seen.has(raw.key)) continue;
+    const locked = DE_LOCKED.has(raw.key);
+    const kind = locked ? 'num' : (DE_KINDS.some(([k]) => k === raw.kind) ? raw.kind : 'yn');
+    seen.add(raw.key);
+    steps.push({ key: String(raw.key), kind, q: String(raw.q || ''), sub: String(raw.sub || ''), placeholder: String(raw.placeholder || ''), required: locked ? true : raw.required !== false });
+  }
+  for (const def of DEFAULT_DE_STEPS) if (DE_LOCKED.has(def.key) && !seen.has(def.key)) steps.push({ ...def });
+  return { steps, agreeText: String((d && d.agreeText) || DEFAULT_AGREE_TEXT), updatedAt: (d && d.updatedAt) || null, by: (d && d.by) || '' };
+}
+const newDeKey = () => 'q_' + Math.random().toString(36).slice(2, 8);
 
 // Derive everything for one month bucket. `offDates` is the set of YYYY-MM-DD
 // the advisor was scheduled off / on vacation / a holiday — those days are left
@@ -232,6 +278,24 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [edSaving, setEdSaving] = useState(false);
   const [edErr, setEdErr] = useState('');
   const [edMsg, setEdMsg] = useState('');
+
+  // The question list the Day End popup runs through (server-backed, manager
+  // editable) and this session's answers to any custom questions in it.
+  const [deConfig, setDeConfig] = useState(() => normalizeDeConfig(null));
+  const [deExtra, setDeExtra] = useState({});
+  useEffect(() => {
+    let cancelled = false;
+    loadDayEndQuestions().then(d => { if (!cancelled && d) setDeConfig(normalizeDeConfig(d)); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  // Edit Questions tab: a draft copy of the config until Save.
+  const [qDraft, setQDraft] = useState(null);
+  const [qSaving, setQSaving] = useState(false);
+  const [qErr, setQErr] = useState('');
+  const [qMsg, setQMsg] = useState('');
+  useEffect(() => {
+    if (view === 'editq') { setQDraft({ steps: deConfig.steps.map(x => ({ ...x })), agreeText: deConfig.agreeText }); setQErr(''); setQMsg(''); }
+  }, [view, deConfig]);
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -279,6 +343,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         if (todayRec.customersUpdated != null) setDeCust(todayRec.customersUpdated);
         if (todayRec.notesUpdated != null) setDeNotes(todayRec.notesUpdated);
         if (todayRec.afterCallReviews != null) setDeAfterCall(todayRec.afterCallReviews);
+        if (todayRec.answers && typeof todayRec.answers === 'object') setDeExtra({ ...todayRec.answers });
         setDeAlreadyReported(true);
       } else {
         setDeAlreadyReported(false);
@@ -293,7 +358,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeAfterCall(null); setDeHours(''); setDeHrsRo('');
     setDeAgree(false); setDeMsg(''); setDeStep(0); setDayEndOpen(true);
     setDeNoNotes([]); setDeNoNotesAt(''); setDeCopiedRo(''); setDeReviews({ total: 0, contacted: 0, voicemail: 0 });
-    setDeMissed([]); setDeMissedErr(''); setDeChoice(false); setDeAlreadyReported(false);
+    setDeMissed([]); setDeMissedErr(''); setDeChoice(false); setDeAlreadyReported(false); setDeExtra({});
     loadMissedDays();
     // ROs missing internal notes (from the latest open-RO upload) for the advisor
     // being viewed — so an advisor sees their own and a manager previewing an
@@ -481,6 +546,19 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     return () => { cancelled = true; };
   }, [selected, activeMk, refresh]);
 
+  // Custom (non built-in) questions in the current config, and the answers to
+  // them worth storing — blanks dropped, keys limited to questions that exist.
+  const customSteps = deConfig.steps.filter(st => !BUILTIN_DE_FIELD[st.key]);
+  function customAnswers(src) {
+    const out = {};
+    for (const st of customSteps) {
+      const v = src && src[st.key];
+      if (v == null || String(v).trim() === '') continue;
+      out[st.key] = st.kind === 'num' ? safe(v, 0) : (st.kind === 'yn' ? v : String(v).trim());
+    }
+    return out;
+  }
+
   // Submit the Day End Report into MY own goals file for today (skips Sunday).
   async function submitDayEnd() {
     setDeSaving(true); setDeMsg('');
@@ -503,6 +581,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         notesUpdated: deNotes,
         afterCallReviews: deAfterCall,
         afterCallContacted: deReviews.contacted,
+        answers: customAnswers(deExtra),
         agreed: deAgree,
         agreedBy: me,
         submittedAt: Date.now(),
@@ -518,7 +597,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         setBucket(norm);
       }
       setDeMsg(`✓ Day-end report saved for ${d.getMonth() + 1}/${d.getDate()}. Month-to-date total set to ${num(safe(deHours, 0), 1)} hrs at ${num(safe(deHrsRo, 0), 2)} hrs/RO.`);
-      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeAfterCall(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false);
+      setDeOpenRo(''); setDeInvoiced(null); setDeCust(null); setDeNotes(null); setDeAfterCall(null); setDeHours(''); setDeHrsRo(''); setDeAgree(false); setDeExtra({});
       setDayEndOpen(false);
       setView('current'); setGridOpen(true);
     } catch (e) {
@@ -614,11 +693,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   }
 
   // ── Manager/admin: edit a whole day-end report after the fact ─────────────
+  const qText = (key, fallback) => { const st = deConfig.steps.find(x => x.key === key); return st && st.q ? st.q : fallback; };
   const YN_FIELDS = [
-    ['invoiced', 'All available ROs invoiced?'],
-    ['customersUpdated', 'All customers updated on status?'],
-    ['notesUpdated', 'All ROs have new/updated notes?'],
-    ['afterCallReviews', 'After call reviews completed?'],
+    ['invoiced', qText('invoiced', 'All available ROs invoiced?')],
+    ['customersUpdated', qText('cust', 'All customers updated on status?')],
+    ['notesUpdated', qText('notes', 'All ROs have new/updated notes?')],
+    ['afterCallReviews', qText('afterCall', 'After call reviews completed?')],
   ];
   function openEditDay(k) {
     const rec = (bucket.days && bucket.days[k]) || {};
@@ -635,6 +715,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       missedReason: rec.missedReason || '',
       overridden: !!rec.overridden,
       overrideReason: rec.overrideReason || '',
+      answers: { ...((rec.answers && typeof rec.answers === 'object') ? rec.answers : {}) },
     });
     setEdDay(k); setEdErr(''); setEdMsg('');
   }
@@ -654,13 +735,15 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         const setYn = (field, v) => { if (v) rec[field] = v; else delete rec[field]; };
         if (excused) {
           // An excused day carries no production numbers — they'd count it as worked.
-          ['hours', 'hrsRo', 'openRoCount', 'afterCallContacted', 'invoiced', 'customersUpdated', 'notesUpdated', 'afterCallReviews', 'agreed', 'agreedBy', 'submittedAt', 'late', 'missedReason'].forEach(x => delete rec[x]);
+          ['hours', 'hrsRo', 'openRoCount', 'afterCallContacted', 'invoiced', 'customersUpdated', 'notesUpdated', 'afterCallReviews', 'answers', 'agreed', 'agreedBy', 'submittedAt', 'late', 'missedReason'].forEach(x => delete rec[x]);
           rec.overridden = true; rec.overrideReason = String(f.overrideReason).trim();
           if (!prev.overridden) { rec.overrideBy = me; rec.overrideAt = Date.now(); }
         } else {
           delete rec.overridden; delete rec.overrideReason; delete rec.overrideBy; delete rec.overrideAt;
           setNum('hours', f.hours); setNum('hrsRo', f.hrsRo); setNum('openRoCount', f.openRoCount); setNum('afterCallContacted', f.afterCallContacted);
           YN_FIELDS.forEach(([field]) => setYn(field, f[field]));
+          const ans = customAnswers(f.answers);
+          if (Object.keys(ans).length) rec.answers = ans; else delete rec.answers;
           if (f.late) { rec.late = true; rec.missedReason = String(f.missedReason).trim(); }
           else { delete rec.late; delete rec.missedReason; }
           if (!prev.submittedAt) rec.submittedAt = Date.now();
@@ -928,20 +1011,23 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
       ))}
     </div>
   );
-  // Day End Reporting popup — one question per step.
+  // Day End Reporting popup — one question per step, in the manager-set order.
+  // Built-in keys read/write their own state (stored on named day fields);
+  // custom questions read/write deExtra. The confirm step is always last.
+  const builtinGet = { openRo: () => deOpenRo, invoiced: () => deInvoiced, cust: () => deCust, notes: () => deNotes, afterCall: () => deAfterCall, hours: () => deHours, hrsro: () => deHrsRo };
+  const builtinSet = { openRo: setDeOpenRo, invoiced: setDeInvoiced, cust: setDeCust, notes: setDeNotes, afterCall: setDeAfterCall, hours: setDeHours, hrsro: setDeHrsRo };
   const DE_STEPS = [
-    { key: 'openRo', kind: 'num', q: 'Open Repair Order Count', placeholder: 'e.g. 12', get: () => deOpenRo, set: setDeOpenRo, color: '#e2e8f0' },
-    { key: 'invoiced', kind: 'yn', q: 'Are all available repair orders invoiced?', get: () => deInvoiced, set: setDeInvoiced },
-    { key: 'cust', kind: 'yn', q: 'Are all customers updated on status?', get: () => deCust, set: setDeCust },
-    { key: 'notes', kind: 'yn', q: 'Do all repair orders have new and updated notes?', get: () => deNotes, set: setDeNotes },
-    { key: 'afterCall', kind: 'yn', q: 'Did you complete after call reviews?', get: () => deAfterCall, set: setDeAfterCall },
-    { key: 'hours', kind: 'num', q: 'Total Hours for the Month (MTD)', sub: 'Your month-to-date total from the DMS — the page figures today’s hours', placeholder: 'e.g. 82.5', get: () => deHours, set: setDeHours, color: '#6ee7b7' },
-    { key: 'hrsro', kind: 'num', q: 'Month Hrs/RO (MTD)', sub: 'Your month-to-date hrs/RO from the DMS', placeholder: 'e.g. 1.3', get: () => deHrsRo, set: setDeHrsRo, color: '#93c5fd' },
-    { key: 'agree', kind: 'agree', q: 'Confirm & Submit' },
+    ...deConfig.steps.map(st => ({
+      ...st,
+      color: DE_COLORS[st.key] || '#e2e8f0',
+      get: builtinGet[st.key] || (() => (deExtra[st.key] == null ? (st.kind === 'yn' ? null : '') : deExtra[st.key])),
+      set: builtinSet[st.key] || ((v) => setDeExtra(x => ({ ...x, [st.key]: v }))),
+    })),
+    { key: 'agree', kind: 'agree', q: 'Confirm & Submit', required: true },
   ];
 
   // The attestation statement the advisor must agree to before submitting.
-  const AGREE_TEXT = `I certify that the information in this day-end report is accurate and complete to the best of my knowledge. I have reviewed all of my open repair orders, invoiced everything available, updated every customer on their status, and ensured each repair order has current notes as of the end of my business day.`;
+  const AGREE_TEXT = deConfig.agreeText || DEFAULT_AGREE_TEXT;
 
   // Shared modal shell for the pre-report gate screens (loading / error).
   function renderGateShell(children) {
@@ -1113,7 +1199,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     if (deChoice) return renderAfterMissedChoice();
     const step = DE_STEPS[deStep];
     const val = step.get ? step.get() : null;
-    const answered = step.kind === 'yn' ? !!val : step.kind === 'agree' ? deAgree : String(val ?? '').trim() !== '';
+    const filled = step.kind === 'yn' ? !!val : step.kind === 'agree' ? deAgree : String(val ?? '').trim() !== '';
+    const answered = filled || step.required === false;
     const isLast = deStep === DE_STEPS.length - 1;
     const goNext = () => { if (answered && !isLast) setDeStep(s => s + 1); };
     return (
@@ -1141,6 +1228,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           <div style={{ padding: '26px 22px 8px', minHeight: 150 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.35 }}>{step.q}</div>
             {step.sub && <div style={{ fontSize: 12, color: step.color || '#6ee7b7', fontWeight: 700, marginTop: 4 }}>→ {step.sub}</div>}
+            {step.required === false && step.kind !== 'agree' && <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, marginTop: 4 }}>Optional</div>}
             {step.key === 'notes' && deNoNotes.length > 0 && (
               <div style={{ marginTop: 14, background: 'rgba(167,139,250,.08)', border: '1px solid rgba(167,139,250,.35)', borderRadius: 12, padding: '12px 14px' }}>
                 <div style={{ fontSize: 12.5, fontWeight: 800, color: '#c4b5fd', marginBottom: 8 }}>
@@ -1190,8 +1278,8 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
               ) : step.kind === 'yn' ? (
                 <YesNo value={val} onChange={(v) => { step.set(v); setTimeout(() => setDeStep(s => Math.min(s + 1, DE_STEPS.length - 1)), 150); }} />
               ) : (
-                <input autoFocus type="number" inputMode="decimal" value={val}
-                  placeholder={step.placeholder}
+                <input autoFocus type={step.kind === 'text' ? 'text' : 'number'} inputMode={step.kind === 'text' ? 'text' : 'decimal'} value={val}
+                  placeholder={step.placeholder || (step.required === false ? 'Optional' : '')}
                   onChange={e => step.set(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') goNext(); }}
                   style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 10, padding: '12px 14px', fontSize: 20, fontWeight: 800, color: step.color || '#e2e8f0', width: '100%', boxSizing: 'border-box', outline: 'none' }} />
@@ -1381,6 +1469,17 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
                           {YN_FIELDS.map(([field, q]) => (
                             <div key={field} style={fld}><div style={lbl}>{q}</div><Tri value={edForm[field]} onChange={v => setEdForm(f => ({ ...f, [field]: v }))} /></div>
                           ))}
+                          {/* Custom questions from the Edit Questions tab */}
+                          {customSteps.map(st => {
+                            const v = (edForm.answers || {})[st.key];
+                            const setA = (val) => setEdForm(f => ({ ...f, answers: { ...(f.answers || {}), [st.key]: val } }));
+                            return (
+                              <div key={st.key} style={fld}><div style={lbl}>{st.q || st.key}</div>
+                                {st.kind === 'yn' ? <Tri value={v || null} onChange={setA} />
+                                  : <input type={st.kind === 'num' ? 'number' : 'text'} inputMode={st.kind === 'num' ? 'decimal' : 'text'} value={v == null ? '' : v} onChange={e => setA(e.target.value)} placeholder={st.placeholder || ''} style={txt} />}
+                              </div>
+                            );
+                          })}
                         </div>
                         <button type="button" onClick={() => setEdForm(f => ({ ...f, late: !f.late }))}
                           style={{ display: 'flex', alignItems: 'center', gap: 10, background: edForm.late ? 'rgba(251,191,36,.14)' : 'rgba(255,255,255,.04)', border: `1px solid ${edForm.late ? 'rgba(251,191,36,.5)' : 'rgba(255,255,255,.14)'}`, borderRadius: 10, padding: '9px 12px', cursor: 'pointer', textAlign: 'left', marginBottom: edForm.late ? 10 : 0 }}>
@@ -1410,6 +1509,124 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
             </div>
           );
         })}
+      </div>
+    );
+  };
+
+  // Manager/admin tab: edit the Day End Reporting questions themselves —
+  // wording, helper text, type, order, required, add/remove — plus the
+  // agreement statement. Saved server-side so every advisor gets the same flow.
+  const renderEditQuestions = () => {
+    if (!qDraft) return null;
+    const upd = (i, patch) => setQDraft(d => ({ ...d, steps: d.steps.map((st, j) => j === i ? { ...st, ...patch } : st) }));
+    const move = (i, dir) => setQDraft(d => {
+      const steps = d.steps.slice(); const j = i + dir;
+      if (j < 0 || j >= steps.length) return d;
+      [steps[i], steps[j]] = [steps[j], steps[i]];
+      return { ...d, steps };
+    });
+    const remove = (i) => setQDraft(d => ({ ...d, steps: d.steps.filter((_, j) => j !== i) }));
+    const add = () => setQDraft(d => ({ ...d, steps: [...d.steps, { key: newDeKey(), kind: 'yn', q: '', sub: '', placeholder: '', required: true }] }));
+    const resetDefaults = () => { if (window.confirm('Replace the current questions with the built-in defaults? (Nothing is saved until you click Save.)')) setQDraft({ steps: DEFAULT_DE_STEPS.map(x => ({ ...x })), agreeText: DEFAULT_AGREE_TEXT }); };
+    const save = async () => {
+      const blank = qDraft.steps.findIndex(st => !String(st.q).trim());
+      if (blank >= 0) { setQErr(`Question ${blank + 1} has no text.`); return; }
+      setQSaving(true); setQErr(''); setQMsg('');
+      try {
+        const payload = normalizeDeConfig({ ...qDraft, updatedAt: new Date().toISOString(), by: me });
+        await saveDayEndQuestions(payload);
+        setDeConfig(payload);
+        setQMsg('✓ Questions saved — every advisor’s next Day End Report uses this list.');
+      } catch (e) {
+        setQErr('Save failed: ' + (e.message || e));
+      } finally {
+        setQSaving(false);
+      }
+    };
+    const dirty = JSON.stringify({ s: qDraft.steps, a: qDraft.agreeText }) !== JSON.stringify({ s: deConfig.steps, a: deConfig.agreeText });
+    const lbl = { fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 5 };
+    const txt = { ...inpSt, width: '100%', boxSizing: 'border-box', textAlign: 'left', fontWeight: 600 };
+    const sel = { ...txt, cursor: 'pointer' };
+    const iconBtn = (disabled) => ({ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', color: disabled ? '#475569' : '#cbd5e1', borderRadius: 8, width: 30, height: 30, cursor: disabled ? 'default' : 'pointer', fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' });
+    return (
+      <div style={{ background: 'linear-gradient(160deg, rgba(251,146,60,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(251,146,60,.3)', borderRadius: 16, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', flexWrap: 'wrap', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+          <span style={{ fontSize: 14 }}>📝</span>
+          <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Edit Day End Reporting Questions</div>
+          <div style={{ flex: 1 }} />
+          {deConfig.updatedAt && <div style={{ fontSize: 11.5, color: '#64748b' }}>Last saved {new Date(deConfig.updatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}{deConfig.by ? ` by ${deConfig.by}` : ''}</div>}
+        </div>
+        <div style={{ padding: '14px 20px 6px', fontSize: 12.5, color: '#94a3b8', lineHeight: 1.5 }}>
+          These are the questions every advisor answers, one per screen, in this order. The confirm-and-agree screen is always last.
+          <span style={{ color: '#fdba74', fontWeight: 700 }}> MTD Hours and Hrs/RO can be reworded and moved but not removed — the forecast is built from them.</span>
+        </div>
+        {qMsg && <div style={{ margin: '8px 20px 0', padding: '9px 13px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{qMsg}</div>}
+        {qErr && <div style={{ margin: '8px 20px 0', padding: '9px 13px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#f87171', background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)' }}>{qErr}</div>}
+
+        <div style={{ display: 'grid', gap: 10, padding: '12px 20px' }}>
+          {qDraft.steps.map((st, i) => {
+            const locked = DE_LOCKED.has(st.key);
+            const builtin = !!BUILTIN_DE_FIELD[st.key];
+            const note = DE_KEY_NOTES[st.key];
+            return (
+              <div key={st.key} style={{ background: 'rgba(2,6,23,.5)', border: `1px solid ${locked ? 'rgba(52,211,153,.35)' : 'rgba(148,163,184,.25)'}`, borderRadius: 12, padding: '12px 14px', display: 'grid', gridTemplateColumns: '34px 1fr', gap: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: '#fdba74', marginBottom: 2 }}>{i + 1}</div>
+                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} title="Move up" style={iconBtn(i === 0)}>↑</button>
+                  <button type="button" onClick={() => move(i, 1)} disabled={i === qDraft.steps.length - 1} title="Move down" style={iconBtn(i === qDraft.steps.length - 1)}>↓</button>
+                </div>
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 150px', gap: 12, marginBottom: 10 }}>
+                    <div><div style={lbl}>Question</div>
+                      <input value={st.q} onChange={e => upd(i, { q: e.target.value })} placeholder="What should the advisor answer?" style={{ ...txt, fontSize: 15, fontWeight: 800, color: locked ? DE_COLORS[st.key] : '#e2e8f0' }} /></div>
+                    <div><div style={lbl}>Answer type</div>
+                      {locked
+                        ? <div style={{ ...txt, color: '#6ee7b7', background: 'rgba(52,211,153,.08)', border: '1px solid rgba(52,211,153,.3)' }}>Number 🔒</div>
+                        : <select value={st.kind} onChange={e => upd(i, { kind: e.target.value })} style={sel}>{DE_KINDS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>}
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: st.kind === 'yn' ? '1fr' : '1fr 200px', gap: 12, marginBottom: 10 }}>
+                    <div><div style={lbl}>Helper text (optional — shown under the question)</div>
+                      <input value={st.sub} onChange={e => upd(i, { sub: e.target.value })} placeholder="e.g. Your month-to-date total from the DMS" style={txt} /></div>
+                    {st.kind !== 'yn' && <div><div style={lbl}>Placeholder</div>
+                      <input value={st.placeholder} onChange={e => upd(i, { placeholder: e.target.value })} placeholder="e.g. 12" style={txt} /></div>}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <button type="button" onClick={() => !locked && upd(i, { required: !st.required })} disabled={locked}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, background: st.required ? 'rgba(251,191,36,.12)' : 'rgba(255,255,255,.04)', border: `1px solid ${st.required ? 'rgba(251,191,36,.45)' : 'rgba(255,255,255,.14)'}`, borderRadius: 8, padding: '6px 10px', cursor: locked ? 'default' : 'pointer', opacity: locked ? .7 : 1 }}>
+                      <span style={{ width: 16, height: 16, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: st.required ? '#fbbf24' : 'transparent', border: `2px solid ${st.required ? '#fbbf24' : 'rgba(148,163,184,.6)'}`, color: '#3b2a00', fontWeight: 900, fontSize: 11 }}>{st.required ? '✓' : ''}</span>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: st.required ? '#fcd34d' : '#cbd5e1' }}>Required</span>
+                    </button>
+                    {note && <span style={{ fontSize: 11.5, color: builtin ? '#6ee7b7' : '#94a3b8' }}>ℹ️ {note}</span>}
+                    {!builtin && <span style={{ fontSize: 11, color: '#64748b' }}>Custom question · stored under answers</span>}
+                    <div style={{ flex: 1 }} />
+                    {!locked && <button type="button" onClick={() => remove(i)} style={{ background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>🗑 Remove</button>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          <button type="button" onClick={add}
+            style={{ background: 'rgba(96,165,250,.12)', border: '1px dashed rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 12, padding: '12px', fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>＋ Add a question</button>
+
+          <div style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 12, padding: '12px 14px', marginTop: 6 }}>
+            <div style={lbl}>Confirm & Submit — agreement statement (final screen)</div>
+            <textarea value={qDraft.agreeText} onChange={e => setQDraft(d => ({ ...d, agreeText: e.target.value }))} rows={4}
+              style={{ ...txt, lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit' }} />
+            <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 6 }}>The advisor ticks “I agree — NAME” under this text before Submit is enabled.</div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px 18px' }}>
+          <button onClick={save} disabled={qSaving || !dirty}
+            style={{ background: dirty && !qSaving ? 'rgba(74,222,128,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${dirty && !qSaving ? 'rgba(74,222,128,.45)' : 'rgba(255,255,255,.12)'}`, color: dirty && !qSaving ? '#4ade80' : '#64748b', borderRadius: 8, padding: '9px 22px', cursor: dirty && !qSaving ? 'pointer' : 'default', fontWeight: 800, fontSize: 14 }}>{qSaving ? '⏳ Saving…' : '✓ Save questions'}</button>
+          <button onClick={() => { setQDraft({ steps: deConfig.steps.map(x => ({ ...x })), agreeText: deConfig.agreeText }); setQErr(''); setQMsg(''); }} disabled={qSaving || !dirty}
+            style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', color: dirty ? '#cbd5e1' : '#475569', borderRadius: 8, padding: '9px 16px', cursor: dirty ? 'pointer' : 'default', fontWeight: 700, fontSize: 13 }}>Discard changes</button>
+          <div style={{ flex: 1 }} />
+          {dirty && <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>Unsaved changes</span>}
+          <button onClick={resetDefaults} disabled={qSaving}
+            style={{ background: 'rgba(148,163,184,.12)', border: '1px solid rgba(148,163,184,.35)', color: '#cbd5e1', borderRadius: 8, padding: '9px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>↺ Reset to defaults</button>
+        </div>
       </div>
     );
   };
@@ -1452,7 +1669,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           { k: 'current', label: curLabel },
           ...(showNext ? [{ k: 'next', label: `🗓 ${nextLabel} · Prep`, prep: true }] : []),
           { k: 'history', label: '🗂 History' },
-          ...(isAdmin ? [{ k: 'editde', label: '✏️ Edit Day End Reports', edit: true }] : []),
+          ...(isAdmin ? [{ k: 'editde', label: '✏️ Edit Day End Reports', edit: true }, { k: 'editq', label: '📝 Edit Questions', edit: true }] : []),
         ].map(t => (
           <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); setEdDay(''); setEdForm(null); setEdMsg(''); setEdErr(''); }}
             style={t.edit
@@ -1488,6 +1705,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
               : view === 'editde' && isAdmin ? renderEditReports()
+              : view === 'editq' && isAdmin ? renderEditQuestions()
               : renderDetail(M, charts, { goals: canEditGoals, days: canEditDaysFor(selected) })}
         </div>
       </div>
