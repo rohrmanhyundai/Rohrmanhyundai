@@ -289,3 +289,7 @@ export default function RepairOrderProcess({ onBack, currentRole }) {
     </div>
   );
 }
+
+// The manager rules, shared with the Open RO Attention panel on the calendar so
+// both pages call out the same ROs the same way.
+export { evaluate as evaluateRo, ageOf as roAgeOf, prettyStatus as prettyRoStatus };
