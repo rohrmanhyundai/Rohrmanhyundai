@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:15:20.789Z",
+  "updatedAt": "2026-09-17T19:16:14.286Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -67,6 +67,21 @@
       "lastSeenOpen": 1789672520789,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789668683906
+    },
+    "780556": {
+      "advisor": "JORDAN",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu5wuc7imya0",
+          "by": "JORDAN",
+          "role": "manager",
+          "text": "gaven working on it now",
+          "at": 1789672574286
+        }
+      ],
+      "vehicle": "2015 Hyundai Sonata",
+      "lastSeenOpen": 1789672574286
     },
     "780672": {
       "advisor": "JORDAN",
