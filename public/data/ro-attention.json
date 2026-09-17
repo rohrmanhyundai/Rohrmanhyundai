@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T18:42:02.499Z",
+  "updatedAt": "2026-09-17T19:15:11.712Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -30,10 +30,17 @@
           "role": "manager",
           "text": "HAVE WE HEARD ANYTHING ABOUT THIS CAR?",
           "at": 1789668649582
+        },
+        {
+          "id": "rn-mu5wszxc0we1",
+          "by": "JORDAN",
+          "role": "manager",
+          "text": "nope",
+          "at": 1789672511712
         }
       ],
       "vehicle": "2020 Hyundai Palisade",
-      "lastSeenOpen": 1789668649582,
+      "lastSeenOpen": 1789672511712,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789668630628
     },
