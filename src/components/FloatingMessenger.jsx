@@ -163,6 +163,7 @@ export default function FloatingMessenger({
   }, [openSignal, onMarkSeen]);
 
   const composeRef = useRef(null);
+  const replyInputRef = useRef(null);   // the one open reply box, so a send can hand focus back
   const panelRef = useRef(null);
   const bubbleRef = useRef(null);
 
@@ -339,6 +340,10 @@ export default function FloatingMessenger({
       setStatus('⚠️ ' + (e.message || 'Reply failed'));
     } finally {
       setReplyingId('');
+      // The box stays open after a send so the conversation can keep going —
+      // closing it meant clicking Reply again for every follow-up. Clicking
+      // Send moved focus to the button, so hand it back to the input.
+      replyInputRef.current?.focus();
     }
   }
 
@@ -444,18 +449,21 @@ export default function FloatingMessenger({
                     )}
 
                     {/* The reply box is out of the way until it's wanted — a box
-                        under every message is most of what made this hard to read. */}
+                        under every message is most of what made this hard to read.
+                        Once open it stays open across sends (Escape or ✕ closes it),
+                        so a back-and-forth doesn't mean re-opening it every turn. */}
                     {open ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 9 }}>
                         <input
                           autoFocus
+                          ref={replyInputRef}
                           value={replyDrafts[m.id] || ''}
                           onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
                           onKeyDown={e => {
-                            if (e.key === 'Enter') { sendReply(m); setReplyOpenId(''); }
+                            if (e.key === 'Enter') sendReply(m);
                             if (e.key === 'Escape') setReplyOpenId('');
                           }}
-                          placeholder="Reply…"
+                          placeholder={replies.length ? 'Continue…' : 'Reply…'}
                           style={{
                             flex: 1, minWidth: 0, boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
                             border: '1px solid rgba(56,189,248,.45)', borderRadius: 8, color: '#e2e8f0',
@@ -464,9 +472,13 @@ export default function FloatingMessenger({
                         />
                         <EmojiPicker title="Add an emoji to your reply"
                           onPick={e => setReplyDrafts(d => ({ ...d, [m.id]: (d[m.id] || '') + e }))} />
-                        <button onClick={() => { sendReply(m); setReplyOpenId(''); }} disabled={replyingId === m.id}
+                        <button onClick={() => sendReply(m)} disabled={replyingId === m.id}
                           style={{ flexShrink: 0, background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: '#7dd3fc', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
                           {replyingId === m.id ? '…' : 'Send'}
+                        </button>
+                        <button type="button" onClick={() => setReplyOpenId('')} title="Close (Esc)"
+                          style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#7d8ba3', padding: '4px 2px', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1 }}>
+                          ✕
                         </button>
                       </div>
                     ) : (
@@ -475,7 +487,7 @@ export default function FloatingMessenger({
                           marginTop: 8, background: 'transparent', border: 'none', padding: 0,
                           color: '#7dd3fc', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
                         }}>
-                        ↩ Reply{replies.length ? ` · ${replies.length}` : ''}
+                        {replies.length ? `💬 Continue · ${replies.length}` : '↩ Reply'}
                       </button>
                     )}
                   </div>
