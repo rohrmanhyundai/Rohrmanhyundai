@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-17T15:05:23.254Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-17T15:05:23.253Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-09-17T15:05:21.570Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-16T17:26:19.827Z",
     "type": "page",
     "label": "tire-warranty"
@@ -1210,43 +1225,6 @@
   },
   {
     "at": "2026-08-18T17:02:45.238Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-18T11:30:19.794Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780070 tech GAVEN"
-  },
-  {
-    "at": "2026-08-18T11:30:07.459Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780061 tech GAVEN"
-  },
-  {
-    "at": "2026-08-18T11:29:48.460Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-18T11:29:47.059Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-18T11:29:46.055Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-08-17T17:58:01.613Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-17T17:58:00.846Z",
     "type": "page",
     "label": "tech-resources"
   }
