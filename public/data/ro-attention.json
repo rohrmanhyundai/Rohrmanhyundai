@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-09-17T18:06:57.434Z",
+  "updatedAt": "2026-09-17T18:07:35.013Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
-      "flagged": true,
+      "flagged": false,
       "notes": [
         {
           "id": "rn-mu5ud8re5thn",
@@ -14,9 +14,11 @@
         }
       ],
       "vehicle": "2022 Hyundai Palisade",
-      "lastSeenOpen": 1789668417434,
+      "lastSeenOpen": 1789668455013,
       "flaggedBy": "SHAWN",
-      "flaggedAt": 1789668117412
+      "flaggedAt": 1789668117412,
+      "clearedBy": "SHAWN",
+      "clearedAt": 1789668455013
     }
   }
 }
