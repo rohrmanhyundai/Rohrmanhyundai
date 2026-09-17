@@ -144,34 +144,6 @@
         "wed_raw": 3.1
       },
       {
-        "name": "WEI",
-        "goal": 42.5,
-        "mon": 5.24,
-        "tue": 4.5,
-        "wed": 3.46,
-        "thu": 0,
-        "fri": 0,
-        "sat": 0,
-        "total": 13.2,
-        "goal_pct": 0.3105882352941176,
-        "pacing": 21.999999999999996,
-        "certified": "—NO",
-        "trainings_due": "65",
-        "excel_training": "N/A",
-        "_hrsStamp": 1789644433158,
-        "total_raw": 10.4,
-        "sat_raw": 0,
-        "hoursOverride": {
-          "2026-09-12": true,
-          "2026-09-14": true,
-          "2026-09-15": true,
-          "2026-09-16": true
-        },
-        "mon_raw": 4,
-        "tue_raw": 3.3,
-        "wed_raw": 3.1
-      },
-      {
         "name": "BRYSON",
         "goal": 25.5,
         "mon": 0.42,
