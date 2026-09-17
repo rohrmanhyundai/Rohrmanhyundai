@@ -334,5 +334,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668698488
+  },
+  {
+    "id": "gm-mu5ulq4p25gc",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "🚩 RO 780672 (2013 Kia Soul) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668813193
   }
 ]
