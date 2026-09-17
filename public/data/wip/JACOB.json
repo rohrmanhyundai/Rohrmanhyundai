@@ -96,22 +96,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mu2yx6w3hvx5",
-    "ro": "780858",
-    "roDate": "2026-09-15",
-    "vehicle": "2018 Hyundai Santa Fe Sport",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu4lm5ha5324",
     "ro": "780897",
     "roDate": "2026-09-16",
