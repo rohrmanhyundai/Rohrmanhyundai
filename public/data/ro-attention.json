@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:17:55.823Z",
+  "updatedAt": "2026-09-17T19:18:09.634Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -22,7 +22,7 @@
     },
     "780481": {
       "advisor": "JORDAN",
-      "flagged": true,
+      "flagged": false,
       "notes": [
         {
           "id": "rn-mu5ui7vynqg1",
@@ -40,9 +40,11 @@
         }
       ],
       "vehicle": "2020 Hyundai Palisade",
-      "lastSeenOpen": 1789672511712,
+      "lastSeenOpen": 1789672689634,
       "flaggedBy": "SHAWN",
-      "flaggedAt": 1789668630628
+      "flaggedAt": 1789668630628,
+      "clearedBy": "JORDAN",
+      "clearedAt": 1789672689634
     },
     "780552": {
       "advisor": "JORDAN",
