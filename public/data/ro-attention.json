@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T18:11:37.377Z",
+  "updatedAt": "2026-09-17T18:13:32.494Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -53,6 +53,15 @@
       "lastSeenOpen": 1789668697377,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789668683906
+    },
+    "780672": {
+      "advisor": "JORDAN",
+      "flagged": true,
+      "notes": [],
+      "vehicle": "2013 Kia Soul",
+      "lastSeenOpen": 1789668812494,
+      "flaggedBy": "SHAWN",
+      "flaggedAt": 1789668812494
     }
   }
 }
