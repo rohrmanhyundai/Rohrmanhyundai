@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-09-17T12:57:08.048Z",
+    "type": "page",
+    "label": "live-pay-hub"
+  },
+  {
+    "at": "2026-09-17T12:57:03.239Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-17T12:56:54.382Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-17T12:56:50.346Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-17T12:56:29.253Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-16T19:52:17.747Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -1026,52 +1051,5 @@
     "at": "2026-08-18T14:16:49.310Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-18T11:59:45.969Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-18T11:59:39.657Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (3).xlsx"
-  },
-  {
-    "at": "2026-08-18T11:58:33.440Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-18T11:58:28.395Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (6).pdf"
-  },
-  {
-    "at": "2026-08-17T20:21:13.404Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T20:18:41.841Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-17T20:18:37.536Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-08-17T20:18:37.471Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-17T20:12:34.615Z",
-    "type": "page",
-    "label": "ro-upload"
   }
 ]
