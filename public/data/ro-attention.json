@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T18:10:49.582Z",
+  "updatedAt": "2026-09-17T18:11:23.906Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -36,6 +36,15 @@
       "lastSeenOpen": 1789668649582,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789668630628
+    },
+    "780552": {
+      "advisor": "JORDAN",
+      "flagged": true,
+      "notes": [],
+      "vehicle": "2019 Hyundai Tucson",
+      "lastSeenOpen": 1789668683906,
+      "flaggedBy": "SHAWN",
+      "flaggedAt": 1789668683906
     }
   }
 }
