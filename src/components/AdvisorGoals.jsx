@@ -223,6 +223,15 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   const [ovrReason, setOvrReason] = useState('');
   const [ovrSaving, setOvrSaving] = useState(false);
   const [ovrErr, setOvrErr] = useState('');
+
+  // Manager/admin "Edit Day End Reports" tab: every field an advisor's day-end
+  // report stores, editable after the fact. edMk picks a prior month.
+  const [edMk, setEdMk] = useState('');
+  const [edDay, setEdDay] = useState('');      // date key with its editor open
+  const [edForm, setEdForm] = useState(null);
+  const [edSaving, setEdSaving] = useState(false);
+  const [edErr, setEdErr] = useState('');
+  const [edMsg, setEdMsg] = useState('');
   function copyRo(ro) {
     const v = String(ro || '').trim();
     try { navigator.clipboard?.writeText(v); } catch {}
@@ -418,7 +427,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   // Which month is being edited/viewed. From the 25th, "next" is selectable so
   // next month's goals can be prepped early; it starts at 0 days completed.
   const isNext = showNext && view === 'next';
-  const activeMk = isNext ? nmk : mk;
+  const activeMk = isNext ? nmk : (view === 'editde' && edMk ? edMk : mk);
 
   const saveTimer = useRef(null);
   const bucketRef = useRef({ hoursGoal: 0, hrsRoGoal: 0, days: {} });
@@ -448,7 +457,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
   }, [isNext, activeMk, activeOffDates, bucket, todayKey]);
 
   // Switching advisor resets back to the current month.
-  useEffect(() => { setView('current'); setHistSel(null); }, [selected]);
+  useEffect(() => { setView('current'); setHistSel(null); setEdMk(''); setEdDay(''); setEdForm(null); setEdMsg(''); setEdErr(''); }, [selected]);
 
   // Load the active month's bucket (current or, when prepping, next month).
   useEffect(() => {
@@ -602,6 +611,82 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
         if (Object.keys(cur).length === 0) delete days[k]; else days[k] = cur;
       });
     } catch {}
+  }
+
+  // ── Manager/admin: edit a whole day-end report after the fact ─────────────
+  const YN_FIELDS = [
+    ['invoiced', 'All available ROs invoiced?'],
+    ['customersUpdated', 'All customers updated on status?'],
+    ['notesUpdated', 'All ROs have new/updated notes?'],
+    ['afterCallReviews', 'After call reviews completed?'],
+  ];
+  function openEditDay(k) {
+    const rec = (bucket.days && bucket.days[k]) || {};
+    setEdForm({
+      hours: rec.hours != null ? String(rec.hours) : '',
+      hrsRo: rec.hrsRo != null ? String(rec.hrsRo) : '',
+      openRoCount: rec.openRoCount != null ? String(rec.openRoCount) : '',
+      afterCallContacted: rec.afterCallContacted != null ? String(rec.afterCallContacted) : '',
+      invoiced: rec.invoiced || null,
+      customersUpdated: rec.customersUpdated || null,
+      notesUpdated: rec.notesUpdated || null,
+      afterCallReviews: rec.afterCallReviews || null,
+      late: !!rec.late,
+      missedReason: rec.missedReason || '',
+      overridden: !!rec.overridden,
+      overrideReason: rec.overrideReason || '',
+    });
+    setEdDay(k); setEdErr(''); setEdMsg('');
+  }
+  async function saveEditDay() {
+    const k = edDay; const f = edForm;
+    if (!k || !f) return;
+    const excused = !!f.overridden;
+    if (excused && !String(f.overrideReason).trim()) { setEdErr('Enter a reason for excusing this day.'); return; }
+    if (!excused && String(f.hours).trim() === '') { setEdErr('MTD Hours is required (or excuse the day instead).'); return; }
+    if (f.late && !String(f.missedReason).trim()) { setEdErr('Enter the reason the report was late.'); return; }
+    setEdSaving(true); setEdErr('');
+    try {
+      await persistSelectedDays(days => {
+        const prev = days[k] || {};
+        const rec = { ...prev, editedBy: me, editedAt: Date.now() };
+        const setNum = (field, v) => { if (String(v).trim() === '') delete rec[field]; else rec[field] = safe(v, 0); };
+        const setYn = (field, v) => { if (v) rec[field] = v; else delete rec[field]; };
+        if (excused) {
+          // An excused day carries no production numbers — they'd count it as worked.
+          ['hours', 'hrsRo', 'openRoCount', 'afterCallContacted', 'invoiced', 'customersUpdated', 'notesUpdated', 'afterCallReviews', 'agreed', 'agreedBy', 'submittedAt', 'late', 'missedReason'].forEach(x => delete rec[x]);
+          rec.overridden = true; rec.overrideReason = String(f.overrideReason).trim();
+          if (!prev.overridden) { rec.overrideBy = me; rec.overrideAt = Date.now(); }
+        } else {
+          delete rec.overridden; delete rec.overrideReason; delete rec.overrideBy; delete rec.overrideAt;
+          setNum('hours', f.hours); setNum('hrsRo', f.hrsRo); setNum('openRoCount', f.openRoCount); setNum('afterCallContacted', f.afterCallContacted);
+          YN_FIELDS.forEach(([field]) => setYn(field, f[field]));
+          if (f.late) { rec.late = true; rec.missedReason = String(f.missedReason).trim(); }
+          else { delete rec.late; delete rec.missedReason; }
+          if (!prev.submittedAt) rec.submittedAt = Date.now();
+        }
+        days[k] = rec;
+      });
+      setEdMsg(`✓ Saved ${selected}’s report for ${k.slice(5).replace('-', '/')}.`);
+      setEdDay(''); setEdForm(null);
+    } catch (e) {
+      setEdErr('Save failed: ' + (e.message || e));
+    } finally {
+      setEdSaving(false);
+    }
+  }
+  async function deleteEditDay(k) {
+    if (!window.confirm(`Delete ${selected}’s day-end report for ${k.slice(5).replace('-', '/')}? The day goes back to unreported.`)) return;
+    setEdSaving(true); setEdErr('');
+    try {
+      await persistSelectedDays(days => { delete days[k]; });
+      setEdMsg(`✓ Deleted the report for ${k.slice(5).replace('-', '/')}.`);
+      if (edDay === k) { setEdDay(''); setEdForm(null); }
+    } catch (e) {
+      setEdErr('Delete failed: ' + (e.message || e));
+    } finally {
+      setEdSaving(false);
+    }
   }
 
   // Debounced, conflict-aware save: reload the latest bucket and only overwrite
@@ -1191,6 +1276,144 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
     );
   };
 
+  // Manager/admin tab: the selected advisor's day-end reports, one row per
+  // working day, every stored field editable. Prior months via the picker.
+  const renderEditReports = () => {
+    const monthOpts = Array.from(new Set([mk, ...Object.keys(allMonths || {})]))
+      .filter(k => /^\d{4}-\d{2}$/.test(k) && k <= mk).sort().reverse();
+    const monthLabel = (k) => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }); };
+    const rows = M.rows.filter(r => activeMk < mk || r.k <= todayKey);
+    const days = bucket.days || {};
+    const Badge = ({ color, rgb, children, title }) => (
+      <span title={title} style={{ fontSize: 10, fontWeight: 800, color, background: `${rgb}.14)`, border: `1px solid ${rgb}.4)`, borderRadius: 999, padding: '2px 8px', whiteSpace: 'nowrap', cursor: title ? 'help' : 'default' }}>{children}</span>
+    );
+    const yn = (v) => v === 'yes' ? <span style={{ color: '#4ade80', fontWeight: 900 }}>Y</span> : v === 'no' ? <span style={{ color: '#f87171', fontWeight: 900 }}>N</span> : <span style={{ color: '#475569' }}>—</span>;
+    const fld = { display: 'grid', gap: 5 };
+    const lbl = { fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.04em' };
+    const txt = { ...inpSt, width: '100%', boxSizing: 'border-box', textAlign: 'left' };
+    const Tri = ({ value, onChange }) => (
+      <div style={{ display: 'flex', gap: 6 }}>
+        {[['yes', 'Yes', '#4ade80', 'rgba(74,222,128,'], ['no', 'No', '#f87171', 'rgba(248,113,113,'], [null, '—', '#94a3b8', 'rgba(148,163,184,']].map(([v, t, col, rgb]) => (
+          <button key={String(v)} type="button" onClick={() => onChange(v)}
+            style={{ flex: 1, background: value === v ? `${rgb}.22)` : 'rgba(255,255,255,.05)', border: `1px solid ${value === v ? `${rgb}.6)` : 'rgba(255,255,255,.12)'}`, color: value === v ? col : '#94a3b8', borderRadius: 8, padding: '7px 0', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t}</button>
+        ))}
+      </div>
+    );
+    const cols = '1fr 130px 90px 90px 80px 120px 150px 130px';
+    return (
+      <div style={{ background: 'linear-gradient(160deg, rgba(251,146,60,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(251,146,60,.3)', borderRadius: 16, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 14 }}>✏️</span>
+          <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Edit Day End Reports — {selected}</div>
+          <select value={activeMk} onChange={e => { setEdMk(e.target.value === mk ? '' : e.target.value); setEdDay(''); setEdForm(null); setEdMsg(''); setEdErr(''); }}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '6px 10px', fontSize: 13, fontWeight: 700, color: '#e2e8f0', outline: 'none' }}>
+            {monthOpts.map(k => <option key={k} value={k}>{monthLabel(k)}</option>)}
+          </select>
+          <div style={{ flex: 1 }} />
+          <div style={{ fontSize: 12, color: '#fdba74', fontWeight: 700 }}>Manager edit — changes save to {selected}’s file and show on their page immediately</div>
+        </div>
+        {edMsg && <div style={{ margin: '0 20px 10px', padding: '9px 13px', borderRadius: 10, fontSize: 13, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.35)' }}>{edMsg}</div>}
+        <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 8, padding: '10px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+          <div>Date</div><div>Status</div>
+          <div style={{ textAlign: 'right' }}>MTD Hrs</div><div style={{ textAlign: 'right' }}>Hrs/RO</div><div style={{ textAlign: 'right' }}>Open ROs</div>
+          <div title="Invoiced · Customers updated · Notes updated · After-call reviews (customers contacted)" style={{ cursor: "help" }}>Y/N Checks</div>
+          <div>Submitted</div><div />
+        </div>
+        {rows.length === 0 && <div style={{ padding: '18px 20px', color: '#64748b', fontSize: 13 }}>No working days yet this month.</div>}
+        {rows.map(r => {
+          const rec = days[r.k] || null;
+          const editing = edDay === r.k;
+          const dateLbl = `${DOW[r.dt.getDay()]} ${r.dt.getMonth() + 1}/${r.dt.getDate()}`;
+          const scheduledOff = r.off && !r.overridden;
+          return (
+            <div key={r.k} style={{ borderBottom: '1px solid rgba(148,163,184,.08)', background: editing ? 'rgba(251,146,60,.07)' : 'transparent' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 8, padding: '9px 20px', alignItems: 'center', fontSize: 13.5 }}>
+                <div style={{ color: scheduledOff ? '#64748b' : '#e2e8f0', fontWeight: 700 }}>{dateLbl}</div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {r.overridden ? <Badge color="#6ee7b7" rgb="rgba(52,211,153," title={`Excused by ${r.overrideBy || 'a manager'}${r.overrideReason ? ` — ${r.overrideReason}` : ''}`}>✓ EXCUSED</Badge>
+                    : scheduledOff ? <Badge color="#94a3b8" rgb="rgba(148,163,184,">OFF</Badge>
+                    : r.missed ? <Badge color="#fca5a5" rgb="rgba(248,113,113,">⚠️ MISSED</Badge>
+                    : r.has ? <Badge color="#6ee7b7" rgb="rgba(52,211,153,">REPORTED</Badge>
+                    : <Badge color="#94a3b8" rgb="rgba(148,163,184,">NOT YET</Badge>}
+                  {r.late && <Badge color="#fcd34d" rgb="rgba(251,191,36," title={r.missedReason ? `Late — ${r.missedReason}` : 'Late'}>LATE</Badge>}
+                  {rec && rec.editedBy && <Badge color="#fdba74" rgb="rgba(251,146,60," title={`Edited by ${rec.editedBy}${rec.editedAt ? ` · ${new Date(rec.editedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : ''}`}>EDITED</Badge>}
+                </div>
+                <div style={{ textAlign: 'right', fontWeight: 800, color: r.has ? '#6ee7b7' : '#475569' }}>{r.has ? num(r.hours, 1) : '—'}</div>
+                <div style={{ textAlign: 'right', fontWeight: 800, color: r.has ? '#93c5fd' : '#475569' }}>{r.has && r.hrsRo != null ? num(r.hrsRo, 2) : '—'}</div>
+                <div style={{ textAlign: 'right', fontWeight: 700, color: rec && rec.openRoCount != null ? '#e2e8f0' : '#475569' }}>{rec && rec.openRoCount != null ? rec.openRoCount : '—'}</div>
+                <div style={{ display: 'flex', gap: 10, fontSize: 13 }}>{yn(rec && rec.invoiced)}{yn(rec && rec.customersUpdated)}{yn(rec && rec.notesUpdated)}{yn(rec && rec.afterCallReviews)}{rec && rec.afterCallContacted != null && <span style={{ color: '#94a3b8', fontSize: 11 }} title="After-call customers contacted">({rec.afterCallContacted})</span>}</div>
+                <div style={{ fontSize: 11.5, color: '#94a3b8' }}>
+                  {rec && rec.submittedAt ? <>{new Date(rec.submittedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}{rec.agreedBy ? <div style={{ color: '#64748b' }}>by {rec.agreedBy}{rec.agreed ? ' ✓' : ''}</div> : null}</> : <span style={{ color: '#475569' }}>—</span>}
+                </div>
+                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                  {editing ? (
+                    <button onClick={() => { setEdDay(''); setEdForm(null); setEdErr(''); }} style={{ background: 'rgba(148,163,184,.12)', border: '1px solid rgba(148,163,184,.35)', color: '#cbd5e1', borderRadius: 8, padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>Close</button>
+                  ) : (
+                    <button onClick={() => openEditDay(r.k)} style={{ background: 'rgba(251,146,60,.16)', border: '1px solid rgba(251,146,60,.45)', color: '#fdba74', borderRadius: 8, padding: '5px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>{rec ? '✏️ Edit' : '+ Add'}</button>
+                  )}
+                  {rec && !editing && <button onClick={() => deleteEditDay(r.k)} disabled={edSaving} title="Delete this day's report" style={{ background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 8, padding: '5px 9px', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>🗑</button>}
+                </div>
+              </div>
+              {editing && edForm && (
+                <div style={{ padding: '6px 20px 18px' }}>
+                  <div style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(251,146,60,.35)', borderRadius: 12, padding: 16 }}>
+                    <div style={{ fontSize: 13, fontWeight: 900, color: '#fdba74', marginBottom: 12 }}>{selected} · {r.dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+
+                    {/* Excuse toggle — when on, the production fields are hidden because an excused day carries none. */}
+                    <button type="button" onClick={() => setEdForm(f => ({ ...f, overridden: !f.overridden }))}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, background: edForm.overridden ? 'rgba(52,211,153,.14)' : 'rgba(255,255,255,.04)', border: `1px solid ${edForm.overridden ? 'rgba(52,211,153,.5)' : 'rgba(255,255,255,.14)'}`, borderRadius: 10, padding: '9px 12px', cursor: 'pointer', textAlign: 'left', marginBottom: 14 }}>
+                      <span style={{ width: 18, height: 18, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: edForm.overridden ? '#34d399' : 'transparent', border: `2px solid ${edForm.overridden ? '#34d399' : 'rgba(148,163,184,.6)'}`, color: '#04201d', fontWeight: 900, fontSize: 12 }}>{edForm.overridden ? '✓' : ''}</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: edForm.overridden ? '#6ee7b7' : '#cbd5e1' }}>Excuse this day (not counted toward pace or goal)</span>
+                    </button>
+
+                    {edForm.overridden ? (
+                      <div style={fld}><div style={lbl}>Excuse reason</div>
+                        <input value={edForm.overrideReason} onChange={e => setEdForm(f => ({ ...f, overrideReason: e.target.value }))} placeholder="e.g. Out sick" style={txt} /></div>
+                    ) : (
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 14 }}>
+                          <div style={fld}><div style={lbl}>MTD Hours</div><input type="number" inputMode="decimal" value={edForm.hours} onChange={e => setEdForm(f => ({ ...f, hours: e.target.value }))} placeholder="e.g. 82.5" style={{ ...txt, color: '#6ee7b7' }} /></div>
+                          <div style={fld}><div style={lbl}>MTD Hrs/RO</div><input type="number" inputMode="decimal" value={edForm.hrsRo} onChange={e => setEdForm(f => ({ ...f, hrsRo: e.target.value }))} placeholder="e.g. 1.3" style={{ ...txt, color: '#93c5fd' }} /></div>
+                          <div style={fld}><div style={lbl}>Open RO count</div><input type="number" inputMode="numeric" value={edForm.openRoCount} onChange={e => setEdForm(f => ({ ...f, openRoCount: e.target.value }))} placeholder="e.g. 12" style={txt} /></div>
+                          <div style={fld}><div style={lbl}>After-call contacted</div><input type="number" inputMode="numeric" value={edForm.afterCallContacted} onChange={e => setEdForm(f => ({ ...f, afterCallContacted: e.target.value }))} placeholder="e.g. 4" style={txt} /></div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 14 }}>
+                          {YN_FIELDS.map(([field, q]) => (
+                            <div key={field} style={fld}><div style={lbl}>{q}</div><Tri value={edForm[field]} onChange={v => setEdForm(f => ({ ...f, [field]: v }))} /></div>
+                          ))}
+                        </div>
+                        <button type="button" onClick={() => setEdForm(f => ({ ...f, late: !f.late }))}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, background: edForm.late ? 'rgba(251,191,36,.14)' : 'rgba(255,255,255,.04)', border: `1px solid ${edForm.late ? 'rgba(251,191,36,.5)' : 'rgba(255,255,255,.14)'}`, borderRadius: 10, padding: '9px 12px', cursor: 'pointer', textAlign: 'left', marginBottom: edForm.late ? 10 : 0 }}>
+                          <span style={{ width: 18, height: 18, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: edForm.late ? '#fbbf24' : 'transparent', border: `2px solid ${edForm.late ? '#fbbf24' : 'rgba(148,163,184,.6)'}`, color: '#3b2a00', fontWeight: 900, fontSize: 12 }}>{edForm.late ? '✓' : ''}</span>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: edForm.late ? '#fcd34d' : '#cbd5e1' }}>Mark as a late / corrected report</span>
+                        </button>
+                        {edForm.late && (
+                          <div style={fld}><div style={lbl}>Reason it was late</div>
+                            <input value={edForm.missedReason} onChange={e => setEdForm(f => ({ ...f, missedReason: e.target.value }))} placeholder="e.g. Forgot to submit" style={txt} /></div>
+                        )}
+                      </>
+                    )}
+
+                    {edErr && <div style={{ marginTop: 12, fontSize: 13, color: '#f87171', fontWeight: 700 }}>{edErr}</div>}
+                    <div style={{ display: 'flex', gap: 10, marginTop: 16, alignItems: 'center' }}>
+                      <button onClick={saveEditDay} disabled={edSaving}
+                        style={{ background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.45)', color: '#4ade80', borderRadius: 8, padding: '9px 22px', cursor: edSaving ? 'default' : 'pointer', fontWeight: 800, fontSize: 14 }}>{edSaving ? '⏳ Saving…' : '✓ Save'}</button>
+                      <button onClick={() => { setEdDay(''); setEdForm(null); setEdErr(''); }} disabled={edSaving}
+                        style={{ background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', color: '#cbd5e1', borderRadius: 8, padding: '9px 16px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>Cancel</button>
+                      <div style={{ flex: 1 }} />
+                      {rec && <button onClick={() => deleteEditDay(r.k)} disabled={edSaving}
+                        style={{ background: 'rgba(248,113,113,.12)', border: '1px solid rgba(248,113,113,.4)', color: '#fca5a5', borderRadius: 8, padding: '9px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>🗑 Delete report</button>}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {renderDayEndModal()}
@@ -1229,9 +1452,12 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           { k: 'current', label: curLabel },
           ...(showNext ? [{ k: 'next', label: `🗓 ${nextLabel} · Prep`, prep: true }] : []),
           { k: 'history', label: '🗂 History' },
+          ...(isAdmin ? [{ k: 'editde', label: '✏️ Edit Day End Reports', edit: true }] : []),
         ].map(t => (
-          <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); }}
-            style={t.prep
+          <button key={t.k} onClick={() => { setView(t.k); setHistSel(null); setEdDay(''); setEdForm(null); setEdMsg(''); setEdErr(''); }}
+            style={t.edit
+              ? { background: view === t.k ? 'rgba(251,146,60,.22)' : 'rgba(251,146,60,.08)', border: `1px solid ${view === t.k ? 'rgba(251,146,60,.6)' : 'rgba(251,146,60,.3)'}`, color: view === t.k ? '#fdba74' : '#fb923c', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }
+              : t.prep
               ? { background: view === t.k ? 'rgba(251,191,36,.22)' : 'rgba(251,191,36,.08)', border: `1px solid ${view === t.k ? 'rgba(251,191,36,.6)' : 'rgba(251,191,36,.3)'}`, color: view === t.k ? '#fcd34d' : '#fbbf24', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }
               : { background: view === t.k ? 'rgba(110,231,249,.18)' : 'rgba(255,255,255,.04)', border: `1px solid ${view === t.k ? 'rgba(110,231,249,.5)' : 'rgba(255,255,255,.1)'}`, color: view === t.k ? '#6ee7f9' : '#94a3b8', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>{t.label}</button>
         ))}
@@ -1261,6 +1487,7 @@ export default function AdvisorGoals({ currentUser, currentRole, advisors = [], 
           )}
           {loading ? <div style={{ color: '#64748b', textAlign: 'center', padding: '40px 0' }}>Loading…</div>
             : view === 'history' ? renderHistory()
+              : view === 'editde' && isAdmin ? renderEditReports()
               : renderDetail(M, charts, { goals: canEditGoals, days: canEditDaysFor(selected) })}
         </div>
       </div>
