@@ -12,5 +12,21 @@
     "advisor": "DAVID RILEY",
     "partsArrived": true,
     "partsArrivedDate": "09/15/2026"
+  },
+  {
+    "id": "mu61n2qpuzhq",
+    "ro": "780924",
+    "roDate": "2026-09-17",
+    "vehicle": "2026 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES CEL ON",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER"
   }
 ]
