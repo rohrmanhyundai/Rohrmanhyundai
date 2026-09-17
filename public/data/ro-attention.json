@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:17:25.735Z",
+  "updatedAt": "2026-09-17T19:17:55.823Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -138,6 +138,21 @@
       "lastSeenOpen": 1789672645735,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789670522499
+    },
+    "780754": {
+      "advisor": "JORDAN",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu5wwijz1dsq",
+          "by": "JORDAN",
+          "role": "manager",
+          "text": "declined rec's engine not here until next week",
+          "at": 1789672675823
+        }
+      ],
+      "vehicle": "2011 Hyundai Sonata",
+      "lastSeenOpen": 1789672675823
     }
   }
 }
