@@ -382,5 +382,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789680783394
+  },
+  {
+    "id": "gm-mu61r5pbn971",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "📝 SHAWN on RO 780703: PARTS ARE HERE. WILL START ON THE CAR MONDAY. GAVEN IS OFF FRIDAY.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789680823967
   }
 ]
