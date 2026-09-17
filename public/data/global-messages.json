@@ -1,41 +1,5 @@
 [
   {
-    "id": "gm-mtuhiawkyz2k",
-    "from": "GAVEN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "ASR'S 780556?",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788981690548
-  },
-  {
-    "id": "gm-mtukayzks205",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "780684 is done not invoiced. is the customer been updated no notes? are they picking up tonight?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788986387360
-  },
-  {
-    "id": "gm-mtumborr5957",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "JORDAN 780871 PLEASE GET WITH ME. THIS RO IS MESSED UP",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1788989780007
-  },
-  {
     "id": "gm-mtvxqbjemblv",
     "from": "SHAWN",
     "to": [
@@ -298,5 +262,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789585991041
+  },
+  {
+    "id": "gm-mu5u6tuc3p99",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "🚩 RO 779828 (2022 Hyundai Palisade) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668118164
   }
 ]
