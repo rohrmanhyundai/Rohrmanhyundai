@@ -1,20 +1,5 @@
 [
   {
-    "id": "mu2yx81wniha",
-    "ro": "780847",
-    "roDate": "2026-09-15",
-    "vehicle": "2001 GMC Sierra 2500 HD",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mu4lm63twi40",
     "ro": "780890",
     "roDate": "2026-09-16",
