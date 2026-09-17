@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:33:02.636Z",
+  "updatedAt": "2026-09-17T21:33:43.197Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -176,6 +176,21 @@
       "flaggedAt": 1789670522499,
       "clearedBy": "JORDAN",
       "clearedAt": 1789672696665
+    },
+    "780703": {
+      "advisor": "DAVID",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61r53x8hys",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "PARTS ARE HERE. WILL START ON THE CAR MONDAY. GAVEN IS OFF FRIDAY.",
+          "at": 1789680823197
+        }
+      ],
+      "vehicle": "2012 Hyundai Sonata",
+      "lastSeenOpen": 1789680823197
     },
     "780754": {
       "advisor": "JORDAN",
