@@ -773,12 +773,21 @@ export function OpCodeGenerator({ items, onClose }) {
 // the other library still has gaps — and lists the ones the generator can't
 // produce an op code for (not excluded, no manual op data, and auto-read finds
 // nothing), each with a one-click button to open its editor and fix it.
-export function MissingOpCodesModal({ items, onFix, onClose }) {
+export function MissingOpCodesModal({ items, onFix, onIgnore, onClose }) {
   const [scanning, setScanning] = useState(true);
   const [progress, setProgress] = useState(0);
   const [missing, setMissing] = useState([]);
   const [counts, setCounts] = useState({ set: 0, auto: 0, missing: 0, excluded: 0 });
+  const [ignored, setIgnored] = useState(() => new Set());
+  const [busyId, setBusyId] = useState('');
+  const [err, setErr] = useState('');
   const total = (items || []).length;
+
+  // Rescan only when the SET of bulletins changes (the second library finishing
+  // its background load), not on every parent update. Ignoring a bulletin
+  // rewrites the index and hands back a new array with the same ids — without
+  // this the list would restart its scan and flicker on every click.
+  const idSig = (items || []).map(it => it.id).join(',');
 
   React.useEffect(() => {
     let cancelled = false;
@@ -805,7 +814,25 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
       if (!cancelled) setScanning(false);
     })();
     return () => { cancelled = true; };
-  }, [items]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idSig]);
+
+  // Ignore = the bulletin's opExcluded flag, the same switch the op code editor
+  // offers. Persist it, then drop the row locally so the list doesn't rescan.
+  async function ignore(it) {
+    if (!onIgnore || busyId) return;
+    setBusyId(it.id); setErr('');
+    try {
+      await onIgnore(it);
+      setIgnored(prev => new Set(prev).add(it.id));
+    } catch (e) {
+      setErr(`Couldn't ignore ${it.label} — ${e.message || String(e)}`);
+    } finally {
+      setBusyId('');
+    }
+  }
+
+  const shown = missing.filter(it => !ignored.has(it.id));
 
   return (
     <div onClick={onClose} style={overlay}>
@@ -823,21 +850,23 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12, color: '#cbd5e1', marginBottom: 14 }}>
           <span>✅ Auto-readable: <b style={{ color: '#4ade80' }}>{counts.auto}</b></span>
           <span>⚙️ Manually set: <b style={{ color: '#6ee7f9' }}>{counts.set}</b></span>
-          <span>🚫 Excluded: <b style={{ color: '#94a3b8' }}>{counts.excluded}</b></span>
-          <span>⚠️ Missing: <b style={{ color: '#fca5a5' }}>{counts.missing}</b></span>
+          <span>🚫 Excluded: <b style={{ color: '#94a3b8' }}>{counts.excluded + ignored.size}</b></span>
+          <span>⚠️ Missing: <b style={{ color: '#fca5a5' }}>{Math.max(0, counts.missing - ignored.size)}</b></span>
         </div>
 
-        {!scanning && missing.length === 0 ? (
+        {err && <div style={{ fontSize: 12, color: '#fca5a5', marginBottom: 10 }}>{err}</div>}
+
+        {!scanning && shown.length === 0 ? (
           <div style={{ color: '#4ade80', fontSize: 14, fontWeight: 700, padding: '12px 4px' }}>
             🎉 No missing op codes — every TSB and recall either has op codes or can be auto-read.
           </div>
         ) : (
           <>
             <div style={{ fontSize: 12, fontWeight: 800, color: '#fca5a5', marginBottom: 8 }}>
-              Bulletins with no op code {scanning ? 'so far' : ''} (click Fix to add):
+              Bulletins with no op code {scanning ? 'so far' : ''} — Fix to add one, Ignore if it never needs one:
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 420, overflowY: 'auto' }}>
-              {missing.map(it => (
+              {shown.map(it => (
                 <div key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(248,113,113,.06)', border: '1px solid rgba(248,113,113,.3)', borderRadius: 10, padding: '10px 14px' }}>
                   <span style={{ flex: 1, fontWeight: 700, color: '#e2e8f0', fontSize: 13 }}>{it.label}</span>
                   {it._kind && (
@@ -846,6 +875,14 @@ export function MissingOpCodesModal({ items, onFix, onClose }) {
                     </span>
                   )}
                   <button onClick={() => onFix(it)} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 8, padding: '6px 16px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>⚙️ Fix</button>
+                  {onIgnore && (
+                    <button
+                      onClick={() => ignore(it)}
+                      disabled={!!busyId}
+                      title="Leave this bulletin out of the Op Code Generator — it doesn't need an op code"
+                      style={{ background: 'rgba(148,163,184,.14)', border: '1px solid rgba(148,163,184,.4)', color: '#cbd5e1', borderRadius: 8, padding: '6px 16px', fontWeight: 800, fontSize: 13, cursor: busyId ? 'wait' : 'pointer', whiteSpace: 'nowrap', opacity: busyId && busyId !== it.id ? 0.5 : 1 }}
+                    >{busyId === it.id ? '⏳ Saving…' : '🚫 Ignore'}</button>
+                  )}
                 </div>
               ))}
             </div>
