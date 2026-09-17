@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:34:27.058Z",
+  "updatedAt": "2026-09-17T21:34:38.063Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -221,6 +221,21 @@
       ],
       "vehicle": "2015 Hyundai Santa Fe Sport",
       "lastSeenOpen": 1789680867058
+    },
+    "780890": {
+      "advisor": "DAVID",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61sbfzd50f",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "NO TECH YET",
+          "at": 1789680878063
+        }
+      ],
+      "vehicle": "2022 Hyundai Tucson Hybrid",
+      "lastSeenOpen": 1789680878063
     }
   }
 }
