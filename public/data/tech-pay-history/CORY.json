@@ -82,24 +82,24 @@
     "weekEnd": "2026-09-18",
     "days": {
       "mon": 17.2,
-      "tue": 0,
+      "tue": 9.94,
       "wed": 0,
       "thu": 0,
       "fri": 0,
       "sat": 6.78
     },
-    "hours": 23.98,
-    "payableHours": 23.98,
+    "hours": 33.92,
+    "payableHours": 33.92,
     "overridden": false,
     "adjustment": 0,
-    "boardHours": 23.98,
+    "boardHours": 33.92,
     "ptoHours": 0,
     "ptoPaid": true,
     "rate": 27,
     "tier": "Up to 50 hrs",
-    "pay": 647.46,
+    "pay": 915.84,
     "payType": "flat",
     "closed": false,
-    "updatedAt": "2026-09-16T09:03:47.031Z"
+    "updatedAt": "2026-09-17T08:03:05.830Z"
   }
 }
