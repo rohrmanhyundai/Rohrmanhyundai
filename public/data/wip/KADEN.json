@@ -32,20 +32,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mu16knkeq9s5",
-    "ro": "780799",
-    "roDate": "2026-09-14",
-    "vehicle": "2020 Hyundai Elantra",
-    "jobDesc": "CUSTOMER STATES- while driving car feels like it is reving without input form the throttle and rpms are jumping",
-    "notes": "waiting on asr",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
     "id": "mu1re82myl7s",
     "ro": "780804",
     "roDate": "2026-09-14",
