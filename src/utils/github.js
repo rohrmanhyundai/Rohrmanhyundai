@@ -1972,6 +1972,20 @@ export async function saveMissingNotes(data) {
   return data;
 }
 
+// ── Day End Reporting questions (manager/admin-editable) ─────────────────────
+// { updatedAt, by, steps: [{ key, kind: 'yn'|'num'|'text', q, sub, placeholder,
+// required }], agreeText }. Null when the file doesn't exist yet — the page
+// falls back to its built-in question list.
+const DAY_END_QUESTIONS_PATH = 'data/day-end-questions.json';
+export async function loadDayEndQuestions() {
+  const d = await loadGithubFile(DAY_END_QUESTIONS_PATH);
+  return (d && typeof d === 'object' && Array.isArray(d.steps)) ? d : null;
+}
+export async function saveDayEndQuestions(data) {
+  await saveGithubFile(DAY_END_QUESTIONS_PATH, data, `Day End Reporting questions ${new Date().toISOString()}`);
+  return data;
+}
+
 // ── Repair Order Process (status snapshot from the RO Upload report) ──────────
 // One JSON file holding every RO row from the last open-RO report, with its RO
 // Status / CP Status / warranty flag / age. Refreshed automatically on RO Upload
