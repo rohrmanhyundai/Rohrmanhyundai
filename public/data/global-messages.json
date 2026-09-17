@@ -234,7 +234,14 @@
     "text": "780752 YOU MAY NEED TO EMAIL THE GUY ON THIS CAR. I DONT THINK THE PHONE NUMBER IS WORKING. WE NEED TO INVOICE THE RO WE HAVE TO SUBMIT THE WARRANTY FOR HIM TO START THE BUYBACK FOR HIM",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mu5gwl91a6hu",
+        "from": "SHAWN",
+        "text": "Did you hear from this guy?",
+        "timestamp": 1789645805461
+      }
+    ],
     "timestamp": 1789562790642
   },
   {
