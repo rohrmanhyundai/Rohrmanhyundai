@@ -310,5 +310,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668650291
+  },
+  {
+    "id": "gm-mu5uiyx849iu",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "🚩 RO 780552 (2019 Hyundai Tucson) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668684620
   }
 ]
