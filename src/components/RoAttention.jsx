@@ -53,7 +53,18 @@ export default function RoAttention({ currentUser, currentRole, viewingAdvisor, 
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState('');           // ro number being written
   const [showClosed, setShowClosed] = useState(false);
+  const [copiedRo, setCopiedRo] = useState('');
   const lastLoad = useRef(0);
+
+  // Click the RO number → it's on the clipboard, ready to paste into the DMS.
+  // Stops the click from also toggling the row open/closed.
+  function copyRo(e, ro) {
+    e.stopPropagation();
+    const v = String(ro || '').trim();
+    try { navigator.clipboard?.writeText(v); } catch {}
+    setCopiedRo(v);
+    setTimeout(() => setCopiedRo(c => (c === v ? '' : c)), 1200);
+  }
 
   const load = useCallback(async (quiet) => {
     if (!quiet) setLoading(true);
@@ -240,7 +251,10 @@ export default function RoAttention({ currentUser, currentRole, viewingAdvisor, 
             <div key={x.ro} style={{ background: x.flagged ? 'rgba(248,113,113,.08)' : 'rgba(255,255,255,.04)', border: `1px solid ${border}`, borderRadius: 12, padding: '9px 11px' }}>
               <div onClick={() => { setOpenRo(isOpen ? '' : x.ro); setDraft(''); }} style={{ cursor: 'pointer', userSelect: 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontWeight: 900, fontSize: 14, letterSpacing: '.01em' }}>{x.ro}</span>
+                  <span onClick={e => copyRo(e, x.ro)} title="Click to copy RO number"
+                    style={{ fontWeight: 900, fontSize: 14, letterSpacing: '.01em', cursor: 'copy', color: copiedRo === x.ro ? '#6ee7b7' : '#e2e8f0', borderBottom: '1px dashed rgba(148,163,184,.45)', paddingBottom: 1 }}>
+                    {copiedRo === x.ro ? '✓ Copied' : x.ro}
+                  </span>
                   {x.r.warranty && <span title="Warranty (red flag)" style={{ fontSize: 11 }}>🚩</span>}
                   <span title={x.sev.msg || x.sev.tag} style={{ marginLeft: 'auto', fontSize: 10.5, fontWeight: 900, color: sevColor, background: `${sevColor}22`, border: `1px solid ${sevColor}66`, borderRadius: 999, padding: '2px 8px', whiteSpace: 'nowrap' }}>
                     {x.age == null ? '—' : `${x.age}d`}
@@ -300,7 +314,10 @@ export default function RoAttention({ currentUser, currentRole, viewingAdvisor, 
             {showClosed && closed.map(c => (
               <div key={c.ro} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: '8px 11px', marginTop: 6, opacity: .85 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontWeight: 900, fontSize: 13, color: '#cbd5e1' }}>{c.ro}</span>
+                  <span onClick={e => copyRo(e, c.ro)} title="Click to copy RO number"
+                    style={{ fontWeight: 900, fontSize: 13, cursor: 'copy', color: copiedRo === c.ro ? '#6ee7b7' : '#cbd5e1', borderBottom: '1px dashed rgba(148,163,184,.45)', paddingBottom: 1 }}>
+                    {copiedRo === c.ro ? '✓ Copied' : c.ro}
+                  </span>
                   <span style={{ fontSize: 10.5, color: '#6ee7b7', fontWeight: 800, marginLeft: 'auto' }}>✓ off the open list</span>
                 </div>
                 <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{c.a.vehicle || ''}{c.a.lastSeenOpen ? ` · last open ${when(c.a.lastSeenOpen)}` : ''}</div>
