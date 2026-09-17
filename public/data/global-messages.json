@@ -418,5 +418,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789680878807
+  },
+  {
+    "id": "gm-mu61t5shc635",
+    "from": "SHAWN",
+    "to": [
+      "CODY"
+    ],
+    "text": "📝 SHAWN on RO 780361: WAITING ON PARTS. NACK ORDER",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789680917393
   }
 ]
