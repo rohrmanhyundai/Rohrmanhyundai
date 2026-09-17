@@ -1986,10 +1986,10 @@ export async function saveDayEndQuestions(data) {
   return data;
 }
 
-// ── Repair Order Process (status snapshot from the RO Upload report) ──────────
+// ── Open RO status snapshot (from the RO Upload report) ──────────────────────
 // One JSON file holding every RO row from the last open-RO report, with its RO
 // Status / CP Status / warranty flag / age. Refreshed automatically on RO Upload
-// and read by the manager-only Repair Order Process page.
+// and read by the calendar's Open RO Attention panel.
 const RO_STATUS_PATH = 'data/ro-status.json';
 export async function loadRoStatusReport() {
   const d = await loadGithubFile(RO_STATUS_PATH);

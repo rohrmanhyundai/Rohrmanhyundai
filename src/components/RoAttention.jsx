@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { loadRoStatusReport, loadRoAttention, updateRoAttention, sendGlobalMessage } from '../utils/github';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT } from '../utils/pusher';
 import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
-import { evaluateRo, roAgeOf, prettyRoStatus } from './RepairOrderProcess';
+import { evaluateRo, roAgeOf, prettyRoStatus } from '../utils/roSeverity';
 
 /* Open Repair Order Attention — the right-hand column of the Appointment Prep
  * Calendar (where Advisor Chat used to sit; the chat bubble replaced it).

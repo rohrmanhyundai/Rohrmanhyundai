@@ -16,7 +16,7 @@ const FIELDS = [
   { key: 'tech',     label: 'Technician',      required: false, hints: ['technician', 'tech'] },
   { key: 'userFlag', label: 'User Flag',       required: true,  hints: ['user flag', 'flag', 'userflag'] },
   { key: 'internalNotes', label: 'Internal Notes', required: false, hints: ['internal notes', 'internal note', 'internal'] },
-  // Optional — power the manager-only Repair Order Process page. Not required to
+  // Optional — power the calendar's Open RO Attention panel. Not required to
   // run the WIP upload; captured for every RO row when present.
   { key: 'roStatus', label: 'RO Status',   required: false, hints: ['ro status', 'repair order status', 'ro state', 'status'] },
   { key: 'cpStatus', label: 'CP Status',   required: false, hints: ['cp status', 'customer pay status', 'pay status', 'cp'] },
@@ -46,8 +46,8 @@ function flagColor(v) {
   if (f.includes('purple')) return 'purple';
   return '';
 }
-// A RED User Flag marks the RO as warranty (used by the Repair Order Process
-// page). Red rows are NOT ingested into WIP — flagAllowed above still excludes
+// A RED User Flag marks the RO as warranty (used by the Open RO Attention
+// panel). Red rows are NOT ingested into WIP — flagAllowed above still excludes
 // them — this only tags the status snapshot.
 function isWarrantyFlag(v) { return norm(v).includes('red'); }
 
@@ -257,7 +257,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
     }).filter(o => o.ro && flagAllowed(o.userFlag));
   }, [dataRows, mapping]);
 
-  // Every RO row with its status columns → snapshot for the Repair Order Process
+  // Every RO row with its status columns → snapshot for the Open RO Attention
   // page. Independent of the purple/pink/green WIP filter: captures ALL rows
   // (including red/warranty), deduped by RO#. Needs RO Status mapped.
   const roStatusMapped = (mapping.roStatus ?? -1) >= 0;
@@ -592,7 +592,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
     setRoStatusSaving(true); setRoStatusSaved('');
     try {
       await saveRoStatusReport(roStatusRows, currentUser || '');
-      setRoStatusSaved(`✅ Repair Order Process updated — ${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'}.`);
+      setRoStatusSaved(`✅ Open RO Attention updated — ${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'}.`);
     } catch (e) {
       setRoStatusSaved('RO status save failed: ' + (e.message || e));
     } finally {
@@ -605,7 +605,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
     const parts = [];
     if (toAdd.length > 0) parts.push(`${toAdd.length} new RO${toAdd.length === 1 ? '' : 's'} to WIP`);
     if (hasNotesToSave) parts.push(`${missingTotal} missing-note RO${missingTotal === 1 ? '' : 's'} for Day End Reporting`);
-    if (hasRoStatusToSave) parts.push(`${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'} to Repair Order Process`);
+    if (hasRoStatusToSave) parts.push(`${roStatusRows.length} RO${roStatusRows.length === 1 ? '' : 's'} to Open RO Attention`);
     if (!window.confirm(`Save ${parts.join(' and ')}?`)) return;
     if (toAdd.length > 0) await handleSave(true);   // skip its own confirm
     if (hasNotesToSave) await saveMissingNotesList();
@@ -678,7 +678,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
               {/* Column mapping */}
               <div style={cardSt}>
                 <div style={{ fontWeight: 800, color: '#e2e8f0', marginBottom: 4 }}>Match the columns</div>
-                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required. Map <strong style={{ color: '#93c5fd' }}>RO Status</strong> (and CP Status / RO Age) to feed the manager <strong style={{ color: '#93c5fd' }}>Repair Order Process</strong> page. Saving <strong>replaces</strong> that list — any RO not on this report is removed.</div>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>Auto-detected from your headers — fix any that are wrong. RO # and User Flag are required. Map <strong style={{ color: '#93c5fd' }}>RO Status</strong> (and CP Status / RO Age) to feed the calendar's <strong style={{ color: '#93c5fd' }}>Open RO Attention</strong> panel. Saving <strong>replaces</strong> that list — any RO not on this report is removed.</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
                   {FIELDS.map(f => (
                     <div key={f.key}>
