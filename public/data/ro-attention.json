@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:18:09.634Z",
+  "updatedAt": "2026-09-17T19:18:11.693Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -48,7 +48,7 @@
     },
     "780552": {
       "advisor": "JORDAN",
-      "flagged": true,
+      "flagged": false,
       "notes": [
         {
           "id": "rn-mu5uj8rln9ho",
@@ -66,9 +66,11 @@
         }
       ],
       "vehicle": "2019 Hyundai Tucson",
-      "lastSeenOpen": 1789672520789,
+      "lastSeenOpen": 1789672691693,
       "flaggedBy": "SHAWN",
-      "flaggedAt": 1789668683906
+      "flaggedAt": 1789668683906,
+      "clearedBy": "JORDAN",
+      "clearedAt": 1789672691693
     },
     "780556": {
       "advisor": "JORDAN",
