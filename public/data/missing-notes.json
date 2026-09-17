@@ -1,8 +1,38 @@
 {
-  "updatedAt": "2026-09-16T21:14:13.447Z",
+  "updatedAt": "2026-09-17T15:59:17.673Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "780920",
+        "vehicle": "2017 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780915",
+        "vehicle": "2022 Hyundai Palisade"
+      },
+      {
+        "ro": "780907",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "780900",
+        "vehicle": "2023 Hyundai Palisade"
+      },
+      {
+        "ro": "780897",
+        "vehicle": "2015 Jeep Wrangler Unlimited"
+      }
+    ],
     "DAVID": [
+      {
+        "ro": "780919",
+        "vehicle": "2022 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780918",
+        "vehicle": "2024 Hyundai Palisade"
+      },
       {
         "ro": "780901",
         "vehicle": "2013 Hyundai Sonata"
@@ -12,21 +42,27 @@
         "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "780900",
-        "vehicle": "2023 Hyundai Palisade"
-      },
-      {
-        "ro": "780897",
-        "vehicle": "2015 Jeep Wrangler Unlimited"
-      },
-      {
-        "ro": "780858",
-        "vehicle": "2018 Hyundai Santa Fe Sport"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "780917",
+        "vehicle": "2020 Hyundai Elantra"
+      },
+      {
+        "ro": "780914",
+        "vehicle": "2015 Chevrolet Equinox"
+      },
+      {
+        "ro": "780913",
+        "vehicle": "2019 Hyundai Kona"
+      },
+      {
+        "ro": "780912",
+        "vehicle": "2005 Buick LaCrosse"
+      },
+      {
+        "ro": "780911",
+        "vehicle": "2021 Hyundai Tucson"
+      },
       {
         "ro": "780830",
         "vehicle": "2022 Chevrolet Equinox"
@@ -42,10 +78,6 @@
       {
         "ro": "780764",
         "vehicle": "2020 Ford EcoSport"
-      },
-      {
-        "ro": "780725",
-        "vehicle": "2022 Ford Escape"
       },
       {
         "ro": "780668",
