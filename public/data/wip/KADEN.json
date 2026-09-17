@@ -16,22 +16,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mu16kljnayqu",
-    "ro": "780802",
-    "roDate": "2026-09-14",
-    "vehicle": "2015 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES- return after service; car will not accelerate with power. Unsafe to drive at highway speed. Even at 5000rpm car struggles to move",
-    "notes": "waiting on asr",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu1re82myl7s",
     "ro": "780804",
     "roDate": "2026-09-14",
@@ -62,21 +46,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mu36hzuj6gcz",
-    "ro": "780853",
-    "roDate": "2026-09-15",
-    "vehicle": "2012 Hyundai Sonata",
-    "jobDesc": "replace gear shifter knob assembly",
-    "notes": "waiting on parts ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/17/2026",
-    "highPriority": false,
-    "advisor": "CODY TINCHER"
   }
 ]
