@@ -1,41 +1,11 @@
 {
-  "updatedAt": "2026-09-17T15:59:17.673Z",
+  "updatedAt": "2026-09-17T21:30:35.425Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "780920",
-        "vehicle": "2017 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780915",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "780907",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "780900",
-        "vehicle": "2023 Hyundai Palisade"
-      },
-      {
-        "ro": "780897",
-        "vehicle": "2015 Jeep Wrangler Unlimited"
-      }
-    ],
     "DAVID": [
       {
-        "ro": "780919",
-        "vehicle": "2022 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780918",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "780901",
-        "vehicle": "2013 Hyundai Sonata"
+        "ro": "780929",
+        "vehicle": "2026 Hyundai Palisade Hybrid"
       },
       {
         "ro": "780810",
