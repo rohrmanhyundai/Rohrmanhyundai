@@ -170,6 +170,22 @@
         "mon_raw": 0.3,
         "tue_raw": 2.7,
         "wed_raw": 1.5
+      },
+      {
+        "name": "CHRIS",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 0,
+        "goal_pct": 0,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
