@@ -1,17 +1,5 @@
 [
   {
-    "id": "gm-mtvxqbjemblv",
-    "from": "SHAWN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "780703 engine approved",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789069404650
-  },
-  {
     "id": "gm-mtwvidumnf41",
     "from": "SHAWN",
     "to": [
@@ -370,5 +358,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789670523364
+  },
+  {
+    "id": "gm-mu61p5x87g2y",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "📝 SHAWN on RO 779297: WAITING ON BACK ORDER PARTS",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789680730940
   }
 ]
