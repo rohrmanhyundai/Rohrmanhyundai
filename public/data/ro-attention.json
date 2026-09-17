@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:34:38.063Z",
+  "updatedAt": "2026-09-17T21:35:15.503Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -34,6 +34,21 @@
       "flaggedAt": 1789668117412,
       "clearedBy": "SHAWN",
       "clearedAt": 1789668455013
+    },
+    "780361": {
+      "advisor": "CODY",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61t4bz0e01",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "WAITING ON PARTS. NACK ORDER",
+          "at": 1789680915503
+        }
+      ],
+      "vehicle": "2025 Hyundai Santa Fe Hybrid",
+      "lastSeenOpen": 1789680915503
     },
     "780381": {
       "advisor": "DAVID",
