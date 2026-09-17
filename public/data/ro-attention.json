@@ -1,12 +1,20 @@
 {
-  "updatedAt": "2026-09-17T18:01:57.412Z",
+  "updatedAt": "2026-09-17T18:06:57.434Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
       "flagged": true,
-      "notes": [],
+      "notes": [
+        {
+          "id": "rn-mu5ud8re5thn",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "BODY SHOP CAR WAITING ON BODY SHOP BILL TO CLOSE",
+          "at": 1789668417434
+        }
+      ],
       "vehicle": "2022 Hyundai Palisade",
-      "lastSeenOpen": 1789668117412,
+      "lastSeenOpen": 1789668417434,
       "flaggedBy": "SHAWN",
       "flaggedAt": 1789668117412
     }
