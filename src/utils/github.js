@@ -2001,6 +2001,26 @@ export async function saveRoStatusReport(rows, by) {
   return payload;
 }
 
+// ── Open RO Attention (flags + note threads per open RO) ─────────────────────
+// { updatedAt, ros: { "780492": { advisor, flagged, flaggedBy, flaggedAt,
+// lastSeenOpen, notes: [{ id, by, role, text, at }] } } }. Keyed by RO number
+// so a thread survives every RO Upload; entries for ROs that have dropped off
+// the open list are pruned 30 days after they were last seen open.
+const RO_ATTENTION_PATH = 'data/ro-attention.json';
+export async function loadRoAttention() {
+  const d = await loadGithubFile(RO_ATTENTION_PATH);
+  return (d && typeof d === 'object' && d.ros && typeof d.ros === 'object') ? d : { updatedAt: null, ros: {} };
+}
+// Conflict-safe: reloads the file and applies `mutate(ros)` to the latest copy,
+// so two people noting different ROs at once can't overwrite each other.
+export async function updateRoAttention(mutate, message) {
+  return mutateGitHubJson(`public/${RO_ATTENTION_PATH}`, (cur) => {
+    const ros = { ...((cur && cur.ros && typeof cur.ros === 'object') ? cur.ros : {}) };
+    mutate(ros);
+    return { updatedAt: new Date().toISOString(), ros };
+  }, message || `RO attention ${new Date().toISOString()}`);
+}
+
 // ── Service Pricing Menu ─────────────────────────────────────────────────────
 // A manager/admin-editable menu of services + prices that all advisors can view.
 // Stored as one JSON file: { updatedAt, by, categories: [{ id, name, services:

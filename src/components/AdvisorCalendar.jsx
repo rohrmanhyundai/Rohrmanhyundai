@@ -5,7 +5,7 @@ import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import { ensureMtd, dailyPacing } from '../utils/advisorGoals';
-import Chat from './Chat';
+import RoAttention from './RoAttention';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
 
@@ -1045,12 +1045,14 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           />
           </>)}
         </div>
-        {/* Advisor Chat — right */}
+        {/* Open RO Attention — right (replaced Advisor Chat; the chat bubble
+            carries advisor messaging now) */}
         <div className="apt-chat-col" style={{ width: 300, flexShrink: 0 }}>
-          <Chat
+          <RoAttention
             currentUser={currentUser || ''}
             currentRole={currentRole}
-            hasChatAccess={chatUsers && chatUsers.map(u => u.toUpperCase()).includes((currentUser || '').toUpperCase())}
+            viewingAdvisor={viewingAdvisor}
+            refreshKey={refreshKey}
           />
         </div>
       </div>
