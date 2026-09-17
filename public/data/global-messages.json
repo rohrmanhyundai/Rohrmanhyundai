@@ -286,5 +286,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668418211
+  },
+  {
+    "id": "gm-mu5uhtvhxe3s",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "🚩 RO 780481 (2020 Hyundai Palisade) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668631421
   }
 ]
