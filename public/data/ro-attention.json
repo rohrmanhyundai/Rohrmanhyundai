@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:18:11.693Z",
+  "updatedAt": "2026-09-17T19:18:14.322Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -104,7 +104,7 @@
     },
     "780672": {
       "advisor": "JORDAN",
-      "flagged": true,
+      "flagged": false,
       "notes": [
         {
           "id": "rn-mu5ulr7y9z96",
@@ -122,9 +122,11 @@
         }
       ],
       "vehicle": "2013 Kia Soul",
-      "lastSeenOpen": 1789672597517,
+      "lastSeenOpen": 1789672694322,
       "flaggedBy": "SHAWN",
-      "flaggedAt": 1789668812494
+      "flaggedAt": 1789668812494,
+      "clearedBy": "JORDAN",
+      "clearedAt": 1789672694322
     },
     "780681": {
       "advisor": "JORDAN",
