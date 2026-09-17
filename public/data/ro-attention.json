@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T19:16:14.286Z",
+  "updatedAt": "2026-09-17T19:16:32.092Z",
   "ros": {
     "779828": {
       "advisor": "JORDAN",
@@ -82,6 +82,21 @@
       ],
       "vehicle": "2015 Hyundai Sonata",
       "lastSeenOpen": 1789672574286
+    },
+    "780583": {
+      "advisor": "JORDAN",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu5wupy4ouyf",
+          "by": "JORDAN",
+          "role": "manager",
+          "text": "kaden working on it now",
+          "at": 1789672592092
+        }
+      ],
+      "vehicle": "2018 Hyundai Tucson",
+      "lastSeenOpen": 1789672592092
     },
     "780672": {
       "advisor": "JORDAN",
