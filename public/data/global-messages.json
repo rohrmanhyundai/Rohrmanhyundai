@@ -274,5 +274,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668118164
+  },
+  {
+    "id": "gm-mu5ud9czj3in",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "📝 SHAWN on RO 779828: BODY SHOP CAR WAITING ON BODY SHOP BILL TO CLOSE",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668418211
   }
 ]
