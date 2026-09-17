@@ -1,6 +1,21 @@
 {
-  "updatedAt": "2026-09-17T19:18:16.665Z",
+  "updatedAt": "2026-09-17T21:32:09.725Z",
   "ros": {
+    "779297": {
+      "advisor": "DAVID",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61p4zhm0ki",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "WAITING ON BACK ORDER PARTS",
+          "at": 1789680729725
+        }
+      ],
+      "vehicle": "2018 Hyundai Santa Fe",
+      "lastSeenOpen": 1789680729725
+    },
     "779828": {
       "advisor": "JORDAN",
       "flagged": false,
