@@ -298,5 +298,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789668631421
+  },
+  {
+    "id": "gm-mu5ui8fns6uk",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "📝 SHAWN on RO 780481: HAVE WE HEARD ANYTHING ABOUT THIS CAR?",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789668650291
   }
 ]
