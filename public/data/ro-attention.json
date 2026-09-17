@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:33:43.197Z",
+  "updatedAt": "2026-09-17T21:34:27.058Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -206,6 +206,21 @@
       ],
       "vehicle": "2011 Hyundai Sonata",
       "lastSeenOpen": 1789672675823
+    },
+    "780865": {
+      "advisor": "DAVID",
+      "flagged": false,
+      "notes": [
+        {
+          "id": "rn-mu61s2ya25do",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "WAITING ON ENGINE",
+          "at": 1789680867058
+        }
+      ],
+      "vehicle": "2015 Hyundai Santa Fe Sport",
+      "lastSeenOpen": 1789680867058
     }
   }
 }
