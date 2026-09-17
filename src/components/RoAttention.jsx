@@ -248,7 +248,7 @@ export default function RoAttention({ currentUser, currentRole, viewingAdvisor, 
           const sevColor = x.sev.sev > 0 ? x.sev.color : '#64748b';
           const border = x.flagged ? 'rgba(248,113,113,.6)' : x.sev.sev >= 7 ? `${x.sev.color}80` : 'rgba(255,255,255,.1)';
           return (
-            <div key={x.ro} style={{ background: x.flagged ? 'rgba(248,113,113,.08)' : 'rgba(255,255,255,.04)', border: `1px solid ${border}`, borderRadius: 12, padding: '9px 11px' }}>
+            <div key={x.ro} className={x.flagged ? 'ro-flag-glow' : undefined} style={{ background: x.flagged ? 'rgba(248,113,113,.08)' : 'rgba(255,255,255,.04)', border: `1px solid ${border}`, borderRadius: 12, padding: '9px 11px' }}>
               <div onClick={() => { setOpenRo(isOpen ? '' : x.ro); setDraft(''); }} style={{ cursor: 'pointer', userSelect: 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span onClick={e => copyRo(e, x.ro)} title="Click to copy RO number"
