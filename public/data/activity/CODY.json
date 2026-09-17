@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-17T18:23:18.065Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
+    "at": "2026-09-17T18:23:15.244Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-17T15:28:03.231Z",
     "type": "page",
     "label": "work-in-progress"
@@ -669,10 +679,5 @@
     "at": "2026-08-18T21:19:39.658Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-18T15:32:52.149Z",
-    "type": "page",
-    "label": "service-pricing"
   }
 ]
