@@ -100,5 +100,20 @@
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mu5iz8s8muf",
+    "ro": "780860",
+    "roDate": "2026-09-15",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES INFO-TAINMENT SCREEN INTERMITTENTLY GOING OUT",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CODY TINCHER",
+    "notes": "",
+    "flag": "purple"
   }
 ]
