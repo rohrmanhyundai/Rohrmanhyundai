@@ -100,5 +100,21 @@
     "advisor": "DAVID",
     "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
     "flag": "purple"
+  },
+  {
+    "id": "mu5pt0fc6ojo",
+    "ro": "780902",
+    "roDate": "2026-09-17",
+    "vehicle": "2022 Hyundai Kona N",
+    "jobDesc": "CUSTOMER STATES CEL ON. RUNNING ROUGH. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
