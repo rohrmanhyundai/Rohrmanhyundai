@@ -430,5 +430,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1789680917393
+  },
+  {
+    "id": "gm-mu61tli4fjul",
+    "from": "SHAWN",
+    "to": [
+      "CODY"
+    ],
+    "text": "🚩 RO 780924 (2026 Hyundai Santa Fe) has been flagged — add a note on the calendar about why it's still open.",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1789680937756
   }
 ]
