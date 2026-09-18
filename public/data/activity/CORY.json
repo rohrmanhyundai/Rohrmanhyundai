@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-18T12:08:04.464Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-18T12:08:03.690Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-18T11:55:28.711Z",
     "type": "page",
     "label": "work-in-progress"
@@ -855,22 +865,6 @@
   },
   {
     "at": "2026-08-19T13:07:12.540Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-19T12:03:54.217Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780044 tech CORY"
-  },
-  {
-    "at": "2026-08-19T12:03:39.650Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-19T12:03:38.542Z",
     "type": "page",
     "label": "tech-resources"
   }
