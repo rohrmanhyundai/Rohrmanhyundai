@@ -1,4 +1,5 @@
 import React from 'react';
+import { contestStatus, standingsFor, prizeFor, daysLeft, STATUS } from '../utils/bigMoney';
 import { safe } from '../utils/formatters';
 import { buildGaugeData } from '../utils/calculations';
 import quotes from '../data/quotes';
@@ -60,9 +61,74 @@ function getDailyQuote() {
   return quotes[dayOfYear % quotes.length];
 }
 
-export default function Gauges({ data }) {
+// ── Big-Money LOF tile ────────────────────────────────────────────────────────
+// Takes over the quote slot while a contest is live (or just ended), so the
+// standings sit on the TV all day. Public information only — the lead-advisor
+// bonus never appears here. Sized for the 1920x1080 stage: ~386x228.
+function BigMoneyTile({ bigMoney, data }) {
+  const status = contestStatus(bigMoney);
+  const board = standingsFor(bigMoney, data.advisors || [], data);
+  const prizes = prizeFor(bigMoney);
+  const storeHit = !!(board.store && board.store.hit);
+  const left = daysLeft(bigMoney);
+  const leader = board.rows.find(r => r.leader) || null;
+  const rows = board.rows.slice(0, 4);
+  const more = board.rows.length - rows.length;
+  const pctS = (v) => (Number(v || 0) * 100).toFixed(0) + '%';
+  const n2 = (v) => Number(v || 0).toFixed(2);
+  const bar = (val, goal) => Math.max(0, Math.min(100, goal > 0 ? (val / goal) * 100 : 0));
+
+  return (
+    <div className="quote-card bml-tile">
+      <div className="bml-tile-shine" />
+      <div className="bml-tile-head">
+        <span className="bml-tile-title">💵 Big-Money LOF</span>
+        <span className={`bml-tile-pill ${status === STATUS.ENDED ? 'final' : ''}`}>
+          {status === STATUS.ENDED ? '🏁 FINAL' : left === 0 ? 'LAST DAY' : `${left} DAY${left === 1 ? '' : 'S'} LEFT`}
+        </span>
+      </div>
+      <div className="bml-tile-prize">
+        {status === STATUS.ENDED && leader ? (
+          <span className="win">🏆 {leader.display} wins ${(storeHit ? prizes.full : prizes.reduced).toLocaleString()}</span>
+        ) : (
+          <>
+            <span className="amt">${(storeHit ? prizes.full : prizes.reduced).toLocaleString()}</span>
+            <span className={`store ${storeHit ? 'hit' : 'miss'}`}>{storeHit ? '✓ store on goal — full prize' : `store under goal · $${prizes.full.toLocaleString()} if the team hits`}</span>
+          </>
+        )}
+      </div>
+      <div className="bml-tile-rows">
+        {rows.map(r => (
+          <div key={r.name} className={`bml-tile-row${r.leader ? ' leader' : ''}`}>
+            <span className="rk">{r.qualified && r.rank <= 3 ? ['🥇', '🥈', '🥉'][r.rank - 1] : `#${r.rank}`}</span>
+            <span className="nm">{r.display}</span>
+            <span className={`v ${r.hitRate ? 'hit' : 'miss'}`}>{pctS(r.rate)}</span>
+            <span className={`v ${r.hitHrs ? 'hit' : 'miss'}`}>{n2(r.hrsRo)}</span>
+            <span className="bd">{r.leader ? '🏆' : r.qualified ? '✅' : ''}</span>
+          </div>
+        ))}
+        {more > 0 && <div className="bml-tile-more">+{more} more</div>}
+      </div>
+      <div className="bml-tile-bars">
+        <div className="bml-tile-bar">
+          <span className="k">Store add rate</span>
+          <span className="track"><span className={`fill ${board.store && board.store.hitRate ? 'hit' : ''}`} style={{ width: `${bar(board.store ? board.store.rate : 0, board.goals.add_rate)}%` }} /></span>
+          <span className="n">{board.store ? pctS(board.store.rate) : '—'}<em>/{board.goals.add_rate > 0 ? pctS(board.goals.add_rate) : '—'}</em></span>
+        </div>
+        <div className="bml-tile-bar">
+          <span className="k">Store hrs/RO</span>
+          <span className="track"><span className={`fill ${board.store && board.store.hitHrs ? 'hit' : ''}`} style={{ width: `${bar(board.store ? board.store.hrsRo : 0, board.goals.hrs_ro)}%` }} /></span>
+          <span className="n">{board.store ? n2(board.store.hrsRo) : '—'}<em>/{board.goals.hrs_ro > 0 ? n2(board.goals.hrs_ro) : '—'}</em></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Gauges({ data, bigMoney }) {
   const gauges = buildGaugeData(data);
   const quote = getDailyQuote();
+  const contestOn = bigMoney && (contestStatus(bigMoney) === STATUS.LIVE || contestStatus(bigMoney) === STATUS.ENDED);
 
   return (
     <section className="card">
@@ -81,6 +147,7 @@ export default function Gauges({ data }) {
             <div className="gsub">{g.sub}</div>
           </div>
         ))}
+        {contestOn ? <BigMoneyTile bigMoney={bigMoney} data={data} /> : (
         <div className="quote-card">
           <div className="quote-icon">&#x201C;</div>
           {(() => {
@@ -93,6 +160,7 @@ export default function Gauges({ data }) {
             );
           })()}
         </div>
+        )}
       </div>
     </section>
   );

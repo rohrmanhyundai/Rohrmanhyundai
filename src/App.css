@@ -154,6 +154,41 @@ tr:last-child td{border-bottom:none}
 .quote-text{font-style:italic;line-height:1.3;color:var(--text);padding:0 10px}
 .quote-author{color:var(--cyan);font-weight:700;margin-top:4px}
 
+/* Big-Money LOF tile — replaces the quote while a contest is on. Fixed to the
+   TV slot; every size is absolute so nothing reflows on the 1920x1080 stage. */
+@keyframes bmlTileShine{0%{transform:translateX(-130%) skewX(-18deg)}100%{transform:translateX(260%) skewX(-18deg)}}
+@keyframes bmlTileGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(250,204,21,.35)}50%{box-shadow:inset 0 0 0 1px rgba(250,204,21,.8), 0 0 12px rgba(250,204,21,.25)}}
+.bml-tile{position:relative;justify-content:flex-start;align-items:stretch;text-align:left;padding:9px 12px 8px;gap:0;
+  border-color:rgba(250,204,21,.4);
+  background:radial-gradient(circle at 80% -20%, rgba(250,204,21,.22), transparent 42%), radial-gradient(circle at 0% 110%, rgba(16,185,129,.18), transparent 45%), linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02))}
+.bml-tile-shine{position:absolute;inset:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);animation:bmlTileShine 6s ease-in-out infinite;pointer-events:none}
+.bml-tile-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bml-tile-title{font-size:15px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#fde047}
+.bml-tile-pill{font-size:10px;font-weight:900;letter-spacing:.08em;border-radius:999px;padding:3px 8px;background:rgba(74,222,128,.18);color:#4ade80;white-space:nowrap}
+.bml-tile-pill.final{background:rgba(250,204,21,.2);color:#fde047}
+.bml-tile-prize{display:flex;align-items:baseline;gap:8px;margin-top:2px;white-space:nowrap;overflow:hidden}
+.bml-tile-prize .amt{font-size:26px;font-weight:1000;line-height:1.05;color:#facc15;text-shadow:0 0 14px rgba(250,204,21,.35)}
+.bml-tile-prize .store{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis}
+.bml-tile-prize .store.hit{color:#4ade80}.bml-tile-prize .store.miss{color:#fbbf24}
+.bml-tile-prize .win{font-size:17px;font-weight:1000;color:#fde047;line-height:1.2}
+.bml-tile-rows{display:flex;flex-direction:column;justify-content:center;gap:3px;margin-top:6px;flex:1;min-height:0}
+.bml-tile-row{display:grid;grid-template-columns:26px 1fr 46px 46px 20px;align-items:center;gap:4px;padding:3px 7px;border-radius:8px;background:rgba(2,6,23,.4);font-size:13px;line-height:1.1;flex:1;min-height:22px;max-height:36px}
+.bml-tile-row.leader{background:linear-gradient(90deg,rgba(250,204,21,.18),rgba(2,6,23,.4) 70%);animation:bmlTileGlow 2.2s ease-in-out infinite}
+.bml-tile-row .rk{font-size:13px;color:#94a3b8;font-weight:800;text-align:center}
+.bml-tile-row .nm{font-weight:900;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bml-tile-row .v{font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+.bml-tile-row .v.hit{color:#4ade80}.bml-tile-row .v.miss{color:#fb7185}
+.bml-tile-row .bd{text-align:center;font-size:13px}
+.bml-tile-more{font-size:10px;color:#94a3b8;text-align:center}
+.bml-tile-bars{display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.bml-tile-bar{display:grid;grid-template-columns:94px 1fr 64px;align-items:center;gap:6px;font-size:10px}
+.bml-tile-bar .k{color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.bml-tile-bar .track{height:6px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+.bml-tile-bar .fill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.bml-tile-bar .fill.hit{background:linear-gradient(90deg,#34d399,#4ade80)}
+.bml-tile-bar .n{text-align:right;font-weight:900;color:#e2e8f0;font-variant-numeric:tabular-nums}
+.bml-tile-bar .n em{font-style:normal;color:#64748b;font-weight:700}
+
 /* Admin panel */
 .admin{position:fixed;inset:0;display:none;z-index:100;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
 .admin.open{display:block}

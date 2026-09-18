@@ -1784,7 +1784,7 @@ export default function App() {
           <TechProduction data={data} />
           <TickerPanel data={data} vacations={vacations} />
           <AdvisorPerformance data={data} />
-          <Gauges data={data} />
+          <Gauges data={data} bigMoney={bigMoney} />
         </div>
       </div>
 
