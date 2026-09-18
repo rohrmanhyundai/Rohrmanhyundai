@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-18T12:19:45.856Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-17T19:06:17.062Z",
     "type": "page",
     "label": "hotRepairs"
@@ -328,10 +333,5 @@
     "at": "2026-08-20T12:13:00.298Z",
     "type": "page",
     "label": "dashboard"
-  },
-  {
-    "at": "2026-08-19T11:49:49.017Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
