@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-18T19:31:58.311Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-09-18T12:09:48.691Z",
     "type": "page",
     "label": "hotRepairs"
@@ -198,10 +203,5 @@
     "at": "2026-08-20T15:59:27.215Z",
     "type": "page",
     "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-19T13:47:20.817Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
