@@ -1,11 +1,35 @@
 {
-  "updatedAt": "2026-09-17T21:30:35.425Z",
+  "updatedAt": "2026-09-18T19:04:45.313Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "780953",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "780952",
+        "vehicle": "2020 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780949",
+        "vehicle": "2025 Hyundai Tucson"
+      },
+      {
+        "ro": "780944",
+        "vehicle": "2022 Ram 1500"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780948",
+        "vehicle": "2017 Hyundai Tucson"
+      }
+    ],
     "DAVID": [
       {
-        "ro": "780929",
-        "vehicle": "2026 Hyundai Palisade Hybrid"
+        "ro": "780939",
+        "vehicle": "2023 Hyundai Palisade"
       },
       {
         "ro": "780810",
