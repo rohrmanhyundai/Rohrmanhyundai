@@ -305,7 +305,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -316,12 +315,18 @@
         "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true,
+        "advisorRankBoard": false,
         "warrantyDashboard": true,
         "warrantyReports": false,
         "warrantyDocuments": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "email": "jerry.barkey@rohrmanauto.com",
+      "managementAccess": false
     },
     {
       "username": "Kai",
