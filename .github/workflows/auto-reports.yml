@@ -47,6 +47,16 @@ jobs:
           TZ: America/New_York
         run: node scripts/tech-pay-week.mjs
 
+      # Big-Money LOF: a fresh AI "Coach's Note" per advisor from tonight's
+      # snapshots, saved into big-money-lof.json via the API. Skips itself when
+      # no contest is live or OPENAI_API_KEY isn't set.
+      - name: Big-Money LOF coaching notes
+        env:
+          TZ: America/New_York
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/big-money-coaching.cjs
+
       - name: Commit and push report snapshots
         run: |
           git config user.name  "Auto Reports Bot"

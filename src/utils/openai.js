@@ -107,6 +107,24 @@ ${pdfText.slice(0, 8000)}`;
   }
 }
 
+// Big-Money LOF Coach's Note — the prompt is built by utils/bigMoneyCoach.mjs
+// (shared with the nightly Action); this just runs it with the browser's key.
+export async function generateBigMoneyCoaching(prompt) {
+  const key = getOpenAIKey();
+  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 400, temperature: 0.6 }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `OpenAI error ${res.status}`);
+  }
+  const data = await res.json();
+  return (data.choices?.[0]?.message?.content || '').trim();
+}
+
 export function getOpenAIKey() {
   return localStorage.getItem(OPENAI_KEY) || '';
 }

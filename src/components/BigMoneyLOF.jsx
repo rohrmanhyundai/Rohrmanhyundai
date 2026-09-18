@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { loadBigMoney, updateBigMoney } from '../utils/github';
+import { loadBigMoney, updateBigMoney, loadGithubFile } from '../utils/github';
+import { gamePlan, coachPrompt } from '../utils/bigMoneyCoach.mjs';
+import { generateBigMoneyCoaching, getOpenAIKey } from '../utils/openai';
 import { trackPage, trackAction } from '../utils/activityTracker';
 import { openBigMoneyFlyer } from '../utils/bigMoneyFlyer';
 import {
@@ -71,6 +73,39 @@ function Confetti() {
 
 const MEDAL = ['🥇', '🥈', '🥉'];
 
+// The Coach's Note is short Markdown: **Heading:** lines and "- " bullets.
+function NoteBody({ text }) {
+  const inline = (t) => t.split(/(\*\*[^*]+\*\*)/g).map((part, i) => part.startsWith('**') && part.endsWith('**')
+    ? <b key={i} style={{ color: '#fff' }}>{part.slice(2, -2)}</b> : <React.Fragment key={i}>{part}</React.Fragment>);
+  return (
+    <div style={{ display: 'grid', gap: 7, fontSize: 13.5, lineHeight: 1.55, color: '#e2e8f0' }}>
+      {String(text || '').split('\n').map(l => l.trim()).filter(Boolean).map((l, i) => {
+        if (/^[-•]\s+/.test(l)) return <div key={i} style={{ paddingLeft: 4 }}>{inline(l.replace(/^[-•]\s+/, ''))}</div>;
+        return <div key={i} style={{ marginTop: i ? 4 : 0 }}>{inline(l)}</div>;
+      })}
+    </div>
+  );
+}
+
+const TONE = { good: { c: '#4ade80', bg: 'rgba(74,222,128,.09)', b: 'rgba(74,222,128,.3)' }, push: { c: '#fbbf24', bg: 'rgba(251,191,36,.09)', b: 'rgba(251,191,36,.32)' }, info: { c: '#7dd3fc', bg: 'rgba(125,211,252,.08)', b: 'rgba(125,211,252,.28)' } };
+
+function GamePlanLines({ plan }) {
+  if (!plan || !plan.lines.length) return <div style={{ color: '#94a3b8', fontSize: 13 }}>Set both $50 goals in Edit Dashboard to get a game plan.</div>;
+  return (
+    <div style={{ display: 'grid', gap: 8 }}>
+      {plan.lines.map((l, i) => { const t = TONE[l.tone] || TONE.info; return (
+        <div key={i} style={{ display: 'grid', gridTemplateColumns: '30px 1fr', gap: 10, alignItems: 'start', background: t.bg, border: `1px solid ${t.b}`, borderRadius: 12, padding: '10px 12px' }}>
+          <div style={{ fontSize: 20, lineHeight: 1 }}>{l.icon}</div>
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 900, color: t.c }}>{l.title}</div>
+            <div style={{ fontSize: 12.5, color: '#cbd5e1', lineHeight: 1.5, marginTop: 2 }}>{l.text}</div>
+          </div>
+        </div>
+      ); })}
+    </div>
+  );
+}
+
 export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], data = {}, onBack, onContestChange }) {
   const me = firstName(currentUser);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -80,6 +115,10 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
   const [busy, setBusy] = useState('');
   const [draft, setDraft] = useState({ start: '', end: '', prize: DEFAULT_PRIZE, reducedPrize: DEFAULT_REDUCED_PRIZE, leadAdvisor: DEFAULT_LEAD_ADVISOR, leadBonus: DEFAULT_LEAD_BONUS });
   const bankingRef = useRef(false); // one banking write at a time
+  const [entriesByName, setEntriesByName] = useState({}); // daily snapshot history per advisor (for the game plan)
+  const [coachBusy, setCoachBusy] = useState('');
+  const [coachMsg, setCoachMsg] = useState('');
+  const [openCoach, setOpenCoach] = useState({}); // manager view: which advisor rows are expanded
 
   useEffect(() => { trackPage('big-money-lof'); }, []);
 
@@ -108,6 +147,48 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
   const leadView = isLeadViewer(file, currentUser, isManager);
   const leadPay = leadPayout(file, board);
   const iAmLead = me === lead.name;
+
+  // Snapshot history: the viewer's own (advisor) or everyone's (manager), for
+  // week-over-week trend lines in the game plan.
+  const namesKey = (isManager ? board.rows.map(r => r.name) : board.rows.filter(r => r.name === me).map(r => r.name)).join(',');
+  useEffect(() => {
+    const names = namesKey ? namesKey.split(',') : [];
+    if (!names.length) return;
+    let cancelled = false;
+    Promise.all(names.map(async n => {
+      try { const d = await loadGithubFile(`data/performance-reports/${n}.json`); return [n, (Array.isArray(d) ? d : []).filter(e => e && e.type === 'advisor')]; }
+      catch { return [n, []]; }
+    })).then(pairs => { if (!cancelled) setEntriesByName(Object.fromEntries(pairs)); });
+    return () => { cancelled = true; };
+  }, [namesKey]);
+
+  const extrasFor = (name) => { const a = (advisors || []).find(x => firstName(x.name) === name) || {}; return { align: a.align, tires: a.tires, asr: a.asr, ro_count: a.ro_count }; };
+  const planFor = (row) => row ? gamePlan({ row, board, contest: file && file.contest, entries: entriesByName[row.name] || [], extras: extrasFor(row.name) }) : null;
+  const noteFor = (name) => (file && file.coaching && file.coaching[name]) || null;
+
+  // Manager: write a fresh Coach's Note now with the browser's OpenAI key
+  // (the nightly Action does the same automatically while the contest is live).
+  async function generateNotes(rowsToDo) {
+    if (!getOpenAIKey()) { setCoachMsg('❌ No OpenAI key on this device — Admin Settings → OpenAI Settings.'); return; }
+    setCoachBusy('all'); setCoachMsg('');
+    const notes = {};
+    for (const row of rowsToDo) {
+      setCoachBusy(row.name);
+      try {
+        const text = await generateBigMoneyCoaching(coachPrompt({ row, board, contest: file && file.contest, entries: entriesByName[row.name] || [], extras: extrasFor(row.name), prizes }));
+        if (text) notes[row.name] = { text, generatedAt: new Date().toISOString(), date: todayKey(), by: currentUser || 'manager' };
+      } catch (e) { setCoachMsg(`❌ ${row.display}: ${e?.message || e}`); }
+    }
+    if (Object.keys(notes).length) {
+      try {
+        await updateBigMoney(f => ({ ...f, coaching: { ...(f.coaching || {}), ...notes } }));
+        setFile(f => ({ ...f, coaching: { ...((f && f.coaching) || {}), ...notes } }));
+        setCoachMsg(`✅ ${Object.keys(notes).length} coach's note${Object.keys(notes).length === 1 ? '' : 's'} saved.`);
+        trackAction('big-money-lof-coaching', { count: Object.keys(notes).length });
+      } catch (e) { setCoachMsg('❌ Could not save: ' + (e?.message || e)); }
+    }
+    setCoachBusy('');
+  }
 
   // Keep the shared snapshot current while live, and bank the final result the
   // first time anyone opens the page after the window closes. Whoever views it
@@ -429,6 +510,78 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
               </div>
             )}
           </div>
+
+          {/* Your game plan + coach's note (the advisor's own) */}
+          {myRow && !isManager && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 14 }}>
+              <div className="bml-card">
+                <div style={{ fontSize: 16, fontWeight: 1000, color: '#fff', marginBottom: 10 }}>🧭 Your game plan</div>
+                <GamePlanLines plan={planFor(myRow)} />
+              </div>
+              <div className="bml-card" style={{ borderColor: 'rgba(196,181,253,.4)', background: 'linear-gradient(180deg,rgba(139,92,246,.12),rgba(255,255,255,.02))' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
+                  <div style={{ fontSize: 16, fontWeight: 1000, color: '#fff' }}>🗣️ Coach's note</div>
+                  {noteFor(me) && <div style={{ fontSize: 11, color: '#a78bfa' }}>{new Date(noteFor(me).generatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</div>}
+                </div>
+                {noteFor(me)
+                  ? <NoteBody text={noteFor(me).text} />
+                  : <div style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>{status === STATUS.LIVE ? 'Your first note lands tomorrow morning, written from tonight\'s numbers.' : 'Notes start once the contest is live.'}</div>}
+              </div>
+            </div>
+          )}
+
+          {/* Manager: coaching for every advisor */}
+          {isManager && board.rows.length > 0 && (
+            <div className="bml-card" style={{ borderColor: 'rgba(196,181,253,.35)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
+                <div style={{ fontSize: 17, fontWeight: 1000, color: '#fff' }}>🧑‍🏫 Coaching</div>
+                <div style={{ fontSize: 12, color: '#94a3b8' }}>Game plan is live math off the dashboard · Coach's notes are written nightly at 11pm while the contest is live</div>
+                <div style={{ flex: 1 }} />
+                <button className="secondary" disabled={!!coachBusy || status !== STATUS.LIVE && status !== STATUS.UPCOMING} title="Write a fresh Coach's Note for every advisor now (uses this device's OpenAI key)"
+                  onClick={() => generateNotes(board.rows)} style={{ fontSize: 12.5, color: '#e9d5ff', borderColor: 'rgba(167,139,250,.5)' }}>
+                  {coachBusy ? `⏳ ${coachBusy === 'all' ? 'Starting…' : coachBusy}` : '✨ Generate all notes now'}
+                </button>
+              </div>
+              {coachMsg && <div style={{ fontSize: 12.5, fontWeight: 700, color: coachMsg.startsWith('❌') ? '#f87171' : '#6ee7b7', marginBottom: 8 }}>{coachMsg}</div>}
+              <div style={{ display: 'grid', gap: 8 }}>
+                {board.rows.map(r => {
+                  const open = !!openCoach[r.name];
+                  const note = noteFor(r.name);
+                  return (
+                    <div key={r.name} style={{ border: '1px solid rgba(148,163,184,.16)', borderRadius: 12, background: 'rgba(2,6,23,.4)' }}>
+                      <button onClick={() => setOpenCoach(o => ({ ...o, [r.name]: !open }))}
+                        style={{ width: '100%', background: 'transparent', border: 'none', color: '#f1f5f9', textAlign: 'left', padding: '11px 14px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', borderRadius: 12 }}>
+                        <span style={{ fontSize: 15, fontWeight: 900 }}>{r.display}</span>
+                        <span style={{ fontSize: 11.5, color: r.qualified ? '#4ade80' : '#fbbf24', fontWeight: 800 }}>{r.leader ? '🏆 leading' : r.qualified ? '✅ qualified' : 'chasing'}</span>
+                        <span style={{ fontSize: 11.5, color: '#94a3b8' }}>{pct(r.rate)} · {num2(r.hrsRo)}</span>
+                        <span style={{ flex: 1 }} />
+                        <span style={{ fontSize: 11, color: note ? '#a78bfa' : '#64748b' }}>{note ? `note ${new Date(note.generatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}` : 'no note yet'}</span>
+                        <span style={{ color: '#94a3b8' }}>{open ? '▾' : '▸'}</span>
+                      </button>
+                      {open && (
+                        <div style={{ padding: '0 14px 14px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+                          <div>
+                            <div className="bml-label" style={{ marginBottom: 6 }}>🧭 Game plan</div>
+                            <GamePlanLines plan={planFor(r)} />
+                          </div>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                              <div className="bml-label">🗣️ Coach's note</div>
+                              <div style={{ flex: 1 }} />
+                              <button className="secondary" disabled={!!coachBusy} onClick={() => generateNotes([r])} style={{ fontSize: 11, padding: '4px 9px', color: '#e9d5ff', borderColor: 'rgba(167,139,250,.5)' }}>
+                                {coachBusy === r.name ? '⏳' : note ? '↻ Rewrite' : '✨ Write note'}
+                              </button>
+                            </div>
+                            {note ? <NoteBody text={note.text} /> : <div style={{ color: '#64748b', fontSize: 12.5 }}>Nothing yet — the nightly run writes one, or click Write note.</div>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Leaderboard */}
           <div className="bml-card" style={{ padding: '18px 18px 14px' }}>
