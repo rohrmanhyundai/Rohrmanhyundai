@@ -99,7 +99,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -112,12 +111,14 @@
         "tireQuote": true,
         "atDiagWorksheet": true,
         "usedCarHub": true,
+        "advisorRankBoard": false,
         "hotRepairs": true
       },
       "chatAccess": false,
       "techChatAccess": true,
       "lastName": "Laughner",
-      "managementAccess": true
+      "managementAccess": true,
+      "email": "gaven.laughner@rohrmanauto.com"
     },
     {
       "username": "Austin",
