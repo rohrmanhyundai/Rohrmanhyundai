@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-18T21:20:38.372Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-09-18T21:08:53.417Z",
     "type": "page",
     "label": "big-money-lof"
