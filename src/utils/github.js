@@ -1874,6 +1874,19 @@ export async function updateCashDash(mutate) {
     `Cash Dash update ${new Date().toISOString()}`);
 }
 
+// ── Big-Money LOF ─────────────────────────────────────────────────────────────
+// Advisor contest on the two $50 add-on numbers. Shape documented in
+// utils/bigMoney.js: { contest: {start,end,prize}, latest: {...}, final: {...} }.
+const BIG_MONEY_PATH = 'public/data/big-money-lof.json';
+export async function loadBigMoney() {
+  try { const d = await readGitHubFile(authHeaders(), BIG_MONEY_PATH); if (d && typeof d === 'object') return d; } catch {}
+  return {};
+}
+export async function updateBigMoney(mutate) {
+  return mutateGitHubJson(BIG_MONEY_PATH, (cur) => mutate(cur && typeof cur === 'object' ? cur : {}),
+    `Big-Money LOF update ${new Date().toISOString()}`);
+}
+
 // Convenience: append-only helper that loads, prepends, and saves. Returns the
 // new full archive array.
 export async function appendRoArchive(entry) {

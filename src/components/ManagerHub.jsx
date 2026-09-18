@@ -150,6 +150,15 @@ const NAV_BUTTONS = [
     color: '#6ee7b7',
     prop: 'onCashDash',
   },
+  {
+    key: 'bigMoneyLof',
+    label: '💵 Big-Money LOF',
+    desc: 'Advisor contest on $50 Add\'l Hrs/RO and $50 Add Rate % — set the dates, the board runs itself',
+    bg: 'linear-gradient(135deg,rgba(250,204,21,.30),rgba(16,185,129,.18))',
+    border: 'rgba(250,204,21,.55)',
+    color: '#fde047',
+    prop: 'onBigMoneyLof',
+  },
 ];
 
 export default function ManagerHub({
@@ -158,14 +167,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay,
+  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay,
+    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof,
   };
 
   return (
