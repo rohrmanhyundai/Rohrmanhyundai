@@ -89,7 +89,8 @@
       "chatAccess": true,
       "techChatAccess": true,
       "lastName": "",
-      "managementAccess": false
+      "managementAccess": false,
+      "email": "david.riley@rohrmanauto.com"
     },
     {
       "username": "Gaven",
