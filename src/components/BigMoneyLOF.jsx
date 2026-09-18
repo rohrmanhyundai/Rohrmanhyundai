@@ -247,7 +247,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                   </div>
                   {leadView && (
                     <div style={{ color: '#c4b5fd', fontSize: 13, marginTop: 8, fontWeight: 800 }}>
-                      🎖️ Lead advisor {lead.name}: {money(leadPay.total)}{leadPay.wins ? (storeHit ? ` (${money(prizes.full)} win + ${money(lead.bonus)} store bonus)` : ' (won, but the store missed — no bonus)') : (storeHit ? ' store bonus' : ' — store missed, no bonus')}
+                      🎖️ Lead advisor {lead.name}: {money(leadPay.total)}{leadPay.wins ? (storeHit ? ` (${money(prizes.full)} win + ${money(lead.bonus)} — store met both goals)` : ' (won, but the store missed a goal — no bonus)') : (storeHit ? ' bonus — store met both goals' : ' — store missed a goal, no bonus')}
                     </div>
                   )}
                 </>
@@ -304,7 +304,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 </div>
                 <div style={{ fontSize: 12.5, color: '#cbd5e1', lineHeight: 1.6, flex: 1, minWidth: 240 }}>
                   🎖️ <span style={{ color: '#e9d5ff', fontWeight: 800 }}>Private to the lead advisor and managers.</span>{' '}
-                  Store hits both goals → <b style={{ color: '#fde047' }}>{money(lead.bonus)}</b> to the lead, win or lose. Win it too → full prize + bonus = <b style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</b>.
+                  The lead earns an extra <b style={{ color: '#fde047' }}>{money(lead.bonus)}</b> <b>only if the store average meets both goals</b> — win or lose. Store misses either → no bonus. Win it and the store hits → <b style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</b>.
                 </div>
               </div>
               <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 12, lineHeight: 1.7 }}>
@@ -351,8 +351,8 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 <div style={{ flex: 1, minWidth: 240 }}>
                   <div className="bml-label" style={{ color: '#c4b5fd' }}>Lead advisor bonus · {lead.name}{isManager && !iAmLead ? ' · manager view' : ''}</div>
                   <div style={{ fontSize: 19, fontWeight: 1000, color: '#e9d5ff', marginTop: 2 }}>
-                    {iAmLead ? 'You' : lead.name} {iAmLead ? 'get' : 'gets'} <span style={{ color: '#fde047' }}>{money(lead.bonus)}</span> when the store hits both goals — win or not.
-                    Win the contest too and it's <span style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</span>.
+                    Extra <span style={{ color: '#fde047' }}>{money(lead.bonus)}</span> for {iAmLead ? 'you' : lead.name} <u>only if the store meets both goals</u> — win or lose.
+                    Store misses either goal → no bonus. Win it <i>and</i> the store hits → <span style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</span>.
                   </div>
                   <div style={{ fontSize: 12, color: '#a78bfa', marginTop: 4 }}>Only {iAmLead ? 'you' : lead.name} and managers can see this.</div>
                 </div>
@@ -489,7 +489,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
               <li>Tied on hrs/RO? The higher <b>$50 Add Rate %</b> takes it.</li>
               <li>Numbers come straight from the dashboard and are judged as of the contest's last day. Dip under a goal and you're out until you're back over it.</li>
               {leadView && lead.bonus > 0 && (
-                <li style={{ color: '#e9d5ff' }}><b>🎖️ Lead advisor ({lead.name}):</b> receives <b>{money(lead.bonus)}</b> whenever the store hits both goals, win or not. Winning the contest with the store on goal pays <b>{money(prizes.full + lead.bonus)}</b> total. <span style={{ color: '#a78bfa' }}>(Visible only to the lead advisor and managers.)</span></li>
+                <li style={{ color: '#e9d5ff' }}><b>🎖️ Lead advisor ({lead.name}):</b> earns an extra <b>{money(lead.bonus)}</b> <b>only if the store average meets BOTH goals</b> on the contest's last day — it does not matter whether {lead.name} wins. If the store misses either goal, there is <b>no</b> bonus. Win the contest <i>and</i> the store hits both goals → <b>{money(prizes.full)} + {money(lead.bonus)} = {money(prizes.full + lead.bonus)}</b>. <span style={{ color: '#a78bfa' }}>(Visible only to the lead advisor and managers.)</span></li>
               )}
             </ol>
           </div>
