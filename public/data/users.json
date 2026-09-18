@@ -492,7 +492,6 @@
     {
       "username": "Cody",
       "lastName": "",
-      "password": "Cody2026",
       "role": "advisor",
       "canEditDashboard": false,
       "managementAccess": false,
@@ -513,7 +512,13 @@
         "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "passwordHash": {
+        "salt": "6226f927b952f47037c66c548e516d0f",
+        "hash": "2957b389940d8fed685d7cf77f844be33b5bcae76dad8ce60b3789e2495826df",
+        "iterations": 150000,
+        "setAt": "2026-09-18T21:08:50.535Z"
+      }
     },
     {
       "username": "Bryson",
