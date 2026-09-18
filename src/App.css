@@ -119,8 +119,8 @@ tr:last-child td{border-bottom:none}
 }
 .ticker-item .ticker-name{font-weight:800;color:var(--cyan)}
 .ticker-sep{color:var(--muted);font-size:20px;flex-shrink:0}
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-.kpi{border:1px solid var(--line);border-radius:12px;padding:7px;background:rgba(255,255,255,.03)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:5px 7px;background:rgba(255,255,255,.03)}
 .kpi .k{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .kpi .v{font-size:26px;font-weight:800;margin-top:2px}
 /* KPI tile under its minimum: amber border/glow + pulsing value (reuses the

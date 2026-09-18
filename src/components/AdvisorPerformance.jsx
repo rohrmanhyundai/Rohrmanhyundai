@@ -60,7 +60,11 @@ export default function AdvisorPerformance({ data }) {
     ['Avg CSI',        Math.round(safe(sum.csi)).toString(), started && under(sum.csi, G.csi)],
   ];
 
-  const thStyle = { fontSize: Math.round(fontSize * 0.85) };
+  // Header labels must stay on one line (plus the goal line) or the table grows
+  // past the card's fixed 248px TV row and clips the KPI tiles below it. The
+  // table is table-layout:fixed, so give the wide labels a bigger share.
+  const thStyle = { fontSize: Math.round(fontSize * 0.85), whiteSpace: 'nowrap' };
+  const COL_WIDTHS = ['9%', '7%', '7%', '6.5%', '8%', '6.5%', '8%', '10%', '9.5%', '5.5%', '6%', '6%', '11%'];
   const goalStyle = { color: '#95a9c6', fontSize: Math.round(fontSize * 0.7) };
   const tdStyle = { fontSize, padding: `${Math.max(3, fontSize * 0.35)}px 8px` };
 
@@ -79,6 +83,9 @@ export default function AdvisorPerformance({ data }) {
       </div>
       <div className="tableArea" style={{ height: 'auto' }}>
         <table>
+          <colgroup>
+            {COL_WIDTHS.map((w, i) => <col key={i} style={{ width: w }} />)}
+          </colgroup>
           <thead>
             <tr>
               <th style={thStyle}>Advisor</th>
