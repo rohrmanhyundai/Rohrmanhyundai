@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-18T21:27:12.978Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-18T21:27:12.976Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-18T21:27:11.267Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-18T21:27:09.695Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-18T21:20:38.372Z",
     "type": "action",
     "label": "logout"
