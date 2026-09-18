@@ -3,6 +3,7 @@ import { loadGithubFile, saveGithubFile, loadCoaching, loadDashboardData, loadUs
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 import { parseAdvisorSaTotalsPdf } from '../utils/advisorSaTotalsPdf';
 import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
+import { roh50Goals } from '../utils/calculations';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -88,7 +89,11 @@ function TrendIcon({ curr, prev, higher = true }) {
 // ─────────────────────────────────────────────────────────────
 // ADVISOR VIEW — daily snapshots grouped by month
 // ─────────────────────────────────────────────────────────────
-function AdvisorReport({ entries, username, canDelete = false, canUpload = false, onEntriesChange }) {
+function AdvisorReport({ entries, username, canDelete = false, canUpload = false, onEntriesChange, goals }) {
+  // $50 add-on goals come from Edit Dashboard (same numbers the TV shows).
+  const r50 = roh50Goals({ roh50_goals: goals });
+  const r50HrsGoal  = r50.hrs_ro > 0 ? `Goal ${num(r50.hrs_ro, 2)}` : 'No goal';
+  const r50RateGoal = r50.add_rate > 0 ? `Goal ${(r50.add_rate * 100).toFixed(0)}%` : 'No goal';
   // Coaching reports — same source as the tech view.
   const [coachingReports, setCoachingReports] = useState([]);
   const [coachingLoading, setCoachingLoading] = useState(false);
@@ -556,7 +561,8 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
                 return <>
                   <StatBox label="CSI · Goal 910"             value={latest?.csi || '—'}            color={c(latest?.csi, 910, '#4ade80')} />
                   <StatBox label="Hrs/RO · Goal 1.4"          value={num(latest?.hours_per_ro, 2)}  color={c(latest?.hours_per_ro, 1.4, '#6ee7f9')} />
-                  <StatBox label="$50 Add'l Hrs/RO · Goal 1.2"   value={num(latest?.roh50_hrs_ro, 2)}  color={c(latest?.roh50_hrs_ro, 1.2, '#6ee7f9')} />
+                  <StatBox label={`$50 Add'l Hrs/RO · ${r50HrsGoal}`} value={num(latest?.roh50_hrs_ro, 2)}  color={r50.hrs_ro > 0 ? c(latest?.roh50_hrs_ro, r50.hrs_ro, '#6ee7f9') : '#6ee7f9'} />
+                  <StatBox label={`$50 Add Rate · ${r50RateGoal}`}    value={pct(latest?.roh50_add_rate)}   color={r50.add_rate > 0 ? c(latest?.roh50_add_rate, r50.add_rate, '#6ee7f9') : '#6ee7f9'} />
                   <StatBox label="MTD Hrs · Goal 300"         value={num(latest?.mtd_hours, 1)}     color={c(latest?.mtd_hours, 300, '#6ee7f9')} />
                   <StatBox label="Daily Avg"                  value={num(latest?.daily_avg, 2)}     color="#c4b5fd" />
                   <StatBox label="Alignment · Goal 10%"       value={pct(latest?.align)}            color={c(latest?.align, 0.10, '#fbbf24')} />
@@ -593,7 +599,8 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>DATE</th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>CSI<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 910</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.4</span></th>
-                  <th style={{ minWidth: 110 }}>$50 ADD'L<br />HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 1.2</span></th>
+                  <th style={{ minWidth: 110 }}>$50 ADD'L<br />HRS/RO<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{r50HrsGoal}</span></th>
+                  <th style={{ minWidth: 110 }}>$50 ADD<br />RATE<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>{r50RateGoal}</span></th>
                   <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>MTD HRS<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 300</span></th>
                   <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>DAILY AVG</th>
                   <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>ALIGNMENT<br /><span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>Goal 10%</span></th>
@@ -618,6 +625,7 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
                       </td>
                       <td>{num(e.hours_per_ro, 2)}<TrendIcon curr={e.hours_per_ro} prev={prev?.hours_per_ro} /></td>
                       <td>{num(e.roh50_hrs_ro, 2)}<TrendIcon curr={e.roh50_hrs_ro} prev={prev?.roh50_hrs_ro} /></td>
+                      <td>{pct(e.roh50_add_rate)}<TrendIcon curr={e.roh50_add_rate} prev={prev?.roh50_add_rate} /></td>
                       <td style={{ color: '#6ee7f9' }}>{num(e.mtd_hours, 1)}<TrendIcon curr={e.mtd_hours} prev={prev?.mtd_hours} /></td>
                       <td>{num(e.daily_avg, 2)}<TrendIcon curr={e.daily_avg} prev={prev?.daily_avg} /></td>
                       <td>{pct(e.align)}<TrendIcon curr={e.align} prev={prev?.align} /></td>
@@ -637,7 +645,7 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
           </div>
 
           {/* Trending report */}
-          <TrendingReport entries={entries} selectedMonth={selectedMonth} />
+          <TrendingReport entries={entries} selectedMonth={selectedMonth} goals={r50} />
         </>
       )}
     </div>
@@ -647,10 +655,11 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
 // ─────────────────────────────────────────────────────────────
 // TRENDING REPORT — daily / weekly / month-over-month
 // ─────────────────────────────────────────────────────────────
-const TREND_METRICS = [
+const BASE_TREND_METRICS = [
   { key: 'csi',          label: 'CSI',           fmt: v => Math.round(v).toString(),    fmtDelta: d => Math.abs(Math.round(d)).toString(),         goal: 910,  isPct: false },
   { key: 'hours_per_ro', label: 'Hrs/RO',        fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.4,  isPct: false },
   { key: 'roh50_hrs_ro', label: "$50 Add'l Hrs/RO", fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: 1.2,  isPct: false },
+  { key: 'roh50_add_rate', label: '$50 Add Rate',  fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: null, isPct: true  },
   { key: 'mtd_hours',    label: 'MTD Hrs',       fmt: v => v.toFixed(1),                fmtDelta: d => Math.abs(d).toFixed(1),                     goal: 300,  isPct: false },
   { key: 'daily_avg',    label: 'Daily Avg',     fmt: v => v.toFixed(2),                fmtDelta: d => Math.abs(d).toFixed(2),                     goal: null, isPct: false },
   { key: 'align',        label: 'Alignment',     fmt: v => (v * 100).toFixed(1) + '%',  fmtDelta: d => (Math.abs(d) * 100).toFixed(1) + ' pts',    goal: 0.10, isPct: true  },
@@ -760,8 +769,15 @@ function TrendRow({ curr, prev, metric, sub, extra }) {
   );
 }
 
-function TrendingReport({ entries, selectedMonth }) {
+function TrendingReport({ entries, selectedMonth, goals }) {
   if (!entries || entries.length === 0) return null;
+
+  // The $50 add-on goals are set in Edit Dashboard; everything else is fixed.
+  const TREND_METRICS = BASE_TREND_METRICS.map(m => {
+    if (m.key === 'roh50_hrs_ro')   return { ...m, goal: goals && goals.hrs_ro   > 0 ? goals.hrs_ro   : null };
+    if (m.key === 'roh50_add_rate') return { ...m, goal: goals && goals.add_rate > 0 ? goals.add_rate : null };
+    return m;
+  });
 
   const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -1444,6 +1460,7 @@ function TechReport({ entries, username }) {
 export default function PerformanceReport({ currentUser, role, onBack, canDelete = false, canUpload = false }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [roh50GoalsData, setRoh50GoalsData] = useState(null);
 
   const username = (currentUser || '').toUpperCase();
   const isAdvisor = (role || '').toLowerCase() === 'advisor';
@@ -1453,8 +1470,10 @@ export default function PerformanceReport({ currentUser, role, onBack, canDelete
     setLoading(true);
     Promise.all([
       loadGithubFile(`data/performance-reports/${username}.json`).then(d => Array.isArray(d) ? d : []),
-      loadDashboardData().then(d => d?.data?.advisors || []).catch(() => []),
-    ]).then(([saved, advisors]) => {
+      loadDashboardData().then(d => d?.data || {}).catch(() => ({})),
+    ]).then(([saved, dash]) => {
+      const advisors = dash.advisors || [];
+      setRoh50GoalsData(dash.roh50_goals || null);
       // Pull a few fields straight from the live Advisor Performance editor
       // (where the manager edits them), so the latest snapshot in the report
       // always reflects the current dashboard — not just what was captured at
@@ -1473,6 +1492,9 @@ export default function PerformanceReport({ currentUser, role, onBack, canDelete
           coupon_labor:      liveCoupon ?? merged[0].coupon_labor,
           total_sales:       liveSales  ?? merged[0].total_sales,
           coupon_usage_pct:  liveUsage  ?? merged[0].coupon_usage_pct,
+          // Same idea for the two $50 add-on figures, entered on the advisor card.
+          roh50_hrs_ro:      me.roh50_hrs_ro   != null && me.roh50_hrs_ro   !== '' ? parseFloat(me.roh50_hrs_ro)   : merged[0].roh50_hrs_ro,
+          roh50_add_rate:    me.roh50_add_rate != null && me.roh50_add_rate !== '' ? parseFloat(me.roh50_add_rate) : merged[0].roh50_add_rate,
         };
       }
       setEntries(merged);
@@ -1509,7 +1531,7 @@ export default function PerformanceReport({ currentUser, role, onBack, canDelete
               </div>
             </div>
           ) : isAdvisor ? (
-            <AdvisorReport entries={entries} username={username} canDelete={canDelete} canUpload={canUpload} onEntriesChange={setEntries} />
+            <AdvisorReport entries={entries} username={username} canDelete={canDelete} canUpload={canUpload} onEntriesChange={setEntries} goals={roh50GoalsData} />
           ) : isTech ? (
             <TechReport entries={entries} username={username} />
           ) : (
