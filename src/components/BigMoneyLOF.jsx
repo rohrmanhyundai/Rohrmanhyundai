@@ -302,15 +302,16 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                   <div className="bml-label" style={{ marginBottom: 6 }} title="Paid to the lead advisor whenever the store hits both goals, win or not">Lead bonus $</div>
                   <input type="number" inputMode="numeric" className="bml-input" style={{ width: 100 }} value={draft.leadBonus} onChange={e => setDraft(d => ({ ...d, leadBonus: e.target.value }))} />
                 </div>
-                <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, flex: 1, minWidth: 240 }}>
-                  🎖️ Only the lead advisor and managers see this layer. Store hits both goals → lead gets the bonus win or lose; win it too → full prize + bonus ({money(prizes.full + lead.bonus)}).
+                <div style={{ fontSize: 12.5, color: '#cbd5e1', lineHeight: 1.6, flex: 1, minWidth: 240 }}>
+                  🎖️ <span style={{ color: '#e9d5ff', fontWeight: 800 }}>Private to the lead advisor and managers.</span>{' '}
+                  Store hits both goals → <b style={{ color: '#fde047' }}>{money(lead.bonus)}</b> to the lead, win or lose. Win it too → full prize + bonus = <b style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</b>.
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 12, lineHeight: 1.6 }}>
-                Runs itself off <b>Edit Dashboard → Advisor Performance</b> — each advisor's $50 Add'l Hrs/RO and $50 Add Rate %, judged against the goals set there.
-                Full prize needs the <b>store average</b> over goal on both; otherwise the winner gets the reduced amount.
-                Advisors see the tab on their Appointment Prep Calendar from the start date; results lock in the day after the end date.
-                {!live.goalsSet && <span style={{ color: '#fbbf24', fontWeight: 800 }}> ⚠️ Set BOTH $50 goals in Edit Dashboard or nobody can qualify.</span>}
+              <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 12, lineHeight: 1.7 }}>
+                <span style={{ color: '#67e8f9', fontWeight: 800 }}>⚙️ Runs itself</span> off <b style={{ color: '#f1f5f9' }}>Edit Dashboard → Advisor Performance</b> — each advisor's $50 Add'l Hrs/RO and $50 Add Rate %, judged against the goals set there.{' '}
+                <span style={{ color: '#4ade80', fontWeight: 800 }}>🤝 Team rule:</span> full prize needs the <b style={{ color: '#f1f5f9' }}>store average</b> over goal on both — otherwise the winner gets <b style={{ color: '#fde047' }}>{money(prizes.reduced)}</b>.{' '}
+                <span style={{ color: '#c4b5fd', fontWeight: 800 }}>📅 Timing:</span> advisors get the tab on their Appointment Prep Calendar from the start date; results lock in the day after the end date.
+                {!live.goalsSet && <div style={{ color: '#fbbf24', fontWeight: 800, marginTop: 6 }}>⚠️ Set BOTH $50 goals in Edit Dashboard or nobody can qualify.</div>}
               </div>
             </div>
           )}
