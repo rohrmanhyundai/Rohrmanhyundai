@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-18T20:38:16.009Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-18T20:38:08.663Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-17T19:44:54.802Z",
     "type": "page",
     "label": "advisor-goals"
@@ -898,178 +908,5 @@
     "at": "2026-08-20T11:50:37.663Z",
     "type": "action",
     "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T19:26:22.115Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T19:16:36.098Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-19T14:42:07.812Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:47:55.727Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-19T13:33:13.026Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:32:51.148Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-19T13:32:34.757Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:32:30.835Z",
-    "type": "action",
-    "label": "mark-parts-arrived",
-    "details": "RO 780108"
-  },
-  {
-    "at": "2026-08-19T13:32:20.900Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-19T13:32:06.435Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:31:29.688Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-19T13:31:22.278Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:27:24.052Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-19T13:26:42.469Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T13:25:06.939Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-19T13:25:05.677Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T12:05:19.865Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T12:05:17.133Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (4).xlsx"
-  },
-  {
-    "at": "2026-08-19T12:03:28.024Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-19T12:03:25.071Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T12:03:13.044Z",
-    "type": "action",
-    "label": "send-to-reports"
-  },
-  {
-    "at": "2026-08-19T12:03:09.160Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T12:03:06.022Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (7).pdf"
-  },
-  {
-    "at": "2026-08-19T11:55:56.394Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T11:54:39.805Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T11:53:09.661Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T11:52:41.020Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-19T11:46:46.557Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-19T11:46:30.244Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-18T22:13:31.655Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-08-18T20:29:19.396Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-18T20:29:17.824Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-18T20:17:05.606Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-18T20:16:42.042Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
