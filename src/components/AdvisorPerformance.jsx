@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
-import { advisorDailyAverage, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
+import { advisorDailyAverage, advisorsForDisplay, advisorMonthStarted, roh50Goals } from '../utils/calculations';
 
 const BASE_FONT = 15; // baseline td font size
 const BASE_ROWS = 3;  // baseline number of advisors
@@ -32,18 +32,20 @@ export default function AdvisorPerformance({ data }) {
   // TV. Rounding first keeps the highlight honest with what's on screen: 0.2496
   // prints as "25.0%", which reads as meeting a 25% goal, so it must not flag.
   // MTD Hrs is excluded on purpose — it's a cumulative monthly goal, so it's
-  // always "under" mid-month.
+  // always "under" mid-month. The two $50 add-on goals come from Edit Dashboard.
+  const r50 = roh50Goals(data);
   const G = {
     hpr:   [1.4,  2],
     align: [0.10, 3],
     tires: [0.15, 3],
     valv:  [0.25, 3],
-    roh50: [1.2,  2],
+    roh50: [r50.hrs_ro,   2],
+    r50rate: [r50.add_rate, 3],
     csi:   [910,  0],
     asr:   [0.21, 3],
     elr:   [0.88, 2],
   };
-  const under = (val, [goal, dec]) => Number(safe(val, 0).toFixed(dec)) < goal;
+  const under = (val, [goal, dec]) => goal > 0 && Number(safe(val, 0).toFixed(dec)) < goal;
   const low = (val, goal) => (under(val, goal) ? 'perf-low' : undefined);
   // An advisor held out of the averages isn't being measured yet, so don't
   // pulse their whole row red on the TV for missing goals they don't have.
@@ -86,7 +88,8 @@ export default function AdvisorPerformance({ data }) {
               <th style={thStyle}>Alignment %<br /><span style={goalStyle}>Goal 10%</span></th>
               <th style={thStyle}>Tires %<br /><span style={goalStyle}>Goal 15%</span></th>
               <th style={thStyle}>Valvoline %<br /><span style={goalStyle}>Goal 25%</span></th>
-              <th style={thStyle}>Roh$50 HRS/RO<br /><span style={goalStyle}>Goal 1.2</span></th>
+              <th style={thStyle}>$50 ADD'L HRS/RO<br /><span style={goalStyle}>Goal {r50.hrs_ro > 0 ? n(r50.hrs_ro, 2) : '—'}</span></th>
+              <th style={thStyle}>$50 ADD RATE %<br /><span style={goalStyle}>Goal {r50.add_rate > 0 ? pct(r50.add_rate, 0) : '—'}</span></th>
               <th style={thStyle}>CSI<br /><span style={goalStyle}>Goal 910</span></th>
               <th style={thStyle}>ASR %<br /><span style={goalStyle}>Goal 21%</span></th>
               <th style={thStyle}>ELR %<br /><span style={goalStyle}>Goal 88%</span></th>
@@ -112,6 +115,7 @@ export default function AdvisorPerformance({ data }) {
                 <td className={lowFor(a, a.tires, G.tires)} style={tdStyle}>{pct(a.tires, 1)}</td>
                 <td className={lowFor(a, a.valvoline, G.valv)} style={tdStyle}>{pct(a.valvoline, 1)}</td>
                 <td className={lowFor(a, a.roh50_hrs_ro, G.roh50)} style={tdStyle}>{n(a.roh50_hrs_ro, 2)}</td>
+                <td className={lowFor(a, a.roh50_add_rate, G.r50rate)} style={tdStyle}>{pct(a.roh50_add_rate, 1)}</td>
                 <td className={lowFor(a, a.csi, G.csi)} style={tdStyle}>{Math.round(safe(a.csi)).toString()}</td>
                 <td className={lowFor(a, a.asr, G.asr)} style={tdStyle}>{pct(a.asr, 1)}</td>
                 <td className={lowFor(a, a.elr, G.elr)} style={tdStyle}>{pct(a.elr, 0)}</td>
