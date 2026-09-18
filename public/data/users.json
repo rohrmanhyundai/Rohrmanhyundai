@@ -539,7 +539,8 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "email": "chris.foley@rohrmanauto.com"
     }
   ],
   "sharedSaveCode": "",
