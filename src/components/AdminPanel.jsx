@@ -419,8 +419,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       return;
     }
 
+    // Create intermediate objects as needed so a brand-new nested setting (e.g.
+    // roh50_goals.hrs_ro before roh50_goals exists) can be written on first use.
     let obj = newData;
     for (let i = 0; i < keys.length - 1; i++) {
+      if (obj[keys[i]] === undefined || obj[keys[i]] === null) obj[keys[i]] = {};
       obj = obj[keys[i]];
     }
     obj[keys[keys.length - 1]] = value;
