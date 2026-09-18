@@ -487,7 +487,6 @@
     {
       "username": "Cody",
       "lastName": "",
-      "password": "[REDACTED]",
       "role": "advisor",
       "canEditDashboard": false,
       "managementAccess": false,
@@ -508,7 +507,8 @@
         "usedCarHub": true
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "passwordHash": {}
     },
     {
       "username": "Bryson",
