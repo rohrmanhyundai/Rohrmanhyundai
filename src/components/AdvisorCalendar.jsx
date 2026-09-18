@@ -230,7 +230,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -598,6 +598,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               canSee(userPages, currentRole, 'surveyReports') && onSurveyReports && { key: 'surveyReports' },
               onMyReports && { key: 'myReports' },
               onCashDash && { key: 'cashDash' },
+              onBigMoneyLof && { key: 'bigMoneyLof' },
               onGoalsForecasting && { key: 'goalsForecasting' },
               canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && { key: 'workInProgress' },
               canSee(userPages, currentRole, 'tireQuote') && { key: 'tireQuote' },
@@ -693,6 +694,26 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   <button onClick={onLivePay} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
                     💵 Live Pay
                   </button>
+                );
+                // Big-Money LOF contest. The badge is the advisor's own standing:
+                // ✅ met both $50 goals (in the running), 🏆 leading the contest.
+                // Nothing while they're under a goal — it comes back when they are.
+                case 'bigMoneyLof': return (
+                  <>
+                    <style>{`@keyframes bmlTabGlow{0%,100%{box-shadow:0 0 10px 0 rgba(250,204,21,.5)}50%{box-shadow:0 0 20px 5px rgba(250,204,21,.8)}}@keyframes bmlBadgePop{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}`}</style>
+                    <span style={{ position: 'relative', display: 'inline-flex' }}>
+                      <button onClick={onBigMoneyLof}
+                        style={{ background: 'linear-gradient(180deg,#facc15,#f59e0b)', borderColor: '#fde68a', color: '#422006', fontWeight: 900, textShadow: '0 1px 0 rgba(255,255,255,.3)', animation: 'bmlTabGlow 1.8s ease-in-out infinite' }}>
+                        💵 Big-Money LOF
+                      </button>
+                      {bigMoneyBadge && (
+                        <span title={bigMoneyBadge === '🏆' ? "You're leading the Big-Money LOF contest!" : 'You qualify for the Big-Money LOF contest'}
+                          style={{ position: 'absolute', top: -9, right: -8, fontSize: 16, lineHeight: 1, animation: 'bmlBadgePop 1.6s ease-in-out infinite', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,.6))', pointerEvents: 'none' }}>
+                          {bigMoneyBadge}
+                        </span>
+                      )}
+                    </span>
+                  </>
                 );
                 case 'goalsForecasting': return (
                   <>

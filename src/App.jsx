@@ -34,6 +34,8 @@ import ManagerHub from './components/ManagerHub';
 import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
+import BigMoneyLOF from './components/BigMoneyLOF';
+import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
 import GoalForecast from './components/GoalForecast';
@@ -45,7 +47,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -193,6 +195,10 @@ export default function App() {
   // would leave no way to turn it back on.
   const [cashSeason, setCashSeason] = useState(SEASON.ACTIVE);
   useEffect(() => { loadCashDash().then(d => setCashSeason(seasonOf(d))).catch(() => {}); }, []);
+  // Big-Money LOF contest file — drives the advisor-calendar tab (shown from the
+  // start date until the manager turns it off) and its ✅/🏆 badge.
+  const [bigMoney, setBigMoney] = useState({});
+  useEffect(() => { loadBigMoney().then(setBigMoney).catch(() => {}); }, []);
 
   const loadDashboard = useCallback(async () => {
     try {
@@ -1201,6 +1207,7 @@ export default function App() {
         onAdvisorForecast={() => goTo('advisor-goals', 'manager-hub')}
         onGlobalMessage={() => goTo('global-message', 'manager-hub')}
         onCashDash={() => goTo('cash-dash', 'manager-hub')}
+        onBigMoneyLof={() => goTo('big-money-lof', 'manager-hub')}
         onEmployeeApplicants={() => goTo('employee-applicants', 'manager-hub')}
       />
     );
@@ -1227,6 +1234,19 @@ export default function App() {
         advisors={data.advisors || []}
         technicians={data.technicians || []}
         onSeasonChange={setCashSeason}
+        onBack={() => setPage(prevPage || 'dashboard')}
+      />
+    );
+  }
+
+  if (page === 'big-money-lof') {
+    return (
+      <BigMoneyLOF
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        advisors={data.advisors || []}
+        data={data}
+        onContestChange={setBigMoney}
         onBack={() => setPage(prevPage || 'dashboard')}
       />
     );
@@ -1384,6 +1404,8 @@ export default function App() {
         onServicePricing={() => goTo('service-pricing', 'advisor-calendar')}
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
+        onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
+        bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
         userPages={currentPages}
