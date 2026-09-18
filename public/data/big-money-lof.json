@@ -1,1 +1,12 @@
-{}
+{
+  "contest": {
+    "start": "2026-09-18",
+    "end": "2026-11-30",
+    "prize": 1000,
+    "reducedPrize": 500,
+    "leadAdvisor": "JORDAN",
+    "leadBonus": 500,
+    "updatedAt": 1789754142039,
+    "by": "SHAWN"
+  }
+}
