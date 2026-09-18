@@ -162,7 +162,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
     return () => { cancelled = true; };
   }, [namesKey]);
 
-  const extrasFor = (name) => { const a = (advisors || []).find(x => firstName(x.name) === name) || {}; return { align: a.align, tires: a.tires, asr: a.asr, ro_count: a.ro_count }; };
+  const extrasFor = (name) => { const a = (advisors || []).find(x => firstName(x.name) === name) || {}; return { align: a.align, tires: a.tires, asr: a.asr, ro_count: a.ro_count, tickets: a.lof_tickets, oil_only: a.lof_oil_only }; };
   const planFor = (row) => row ? gamePlan({ row, board, contest: file && file.contest, entries: entriesByName[row.name] || [], extras: extrasFor(row.name) }) : null;
   const noteFor = (name) => (file && file.coaching && file.coaching[name]) || null;
 

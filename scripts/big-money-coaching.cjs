@@ -99,7 +99,7 @@ async function writeContest(mutate) {
   for (const row of board.rows) {
     const adv = (data.advisors || []).find(a => firstName(a.name) === row.name) || {};
     const entries = readJSON(path.join(PUBLIC, 'performance-reports', `${row.name}.json`), []).filter(e => e && e.type === 'advisor');
-    const prompt = coachPrompt({ row, board, contest: c, entries, extras: { align: adv.align, tires: adv.tires, asr: adv.asr, ro_count: adv.ro_count }, prizes, today });
+    const prompt = coachPrompt({ row, board, contest: c, entries, extras: { align: adv.align, tires: adv.tires, asr: adv.asr, ro_count: adv.ro_count, tickets: adv.lof_tickets, oil_only: adv.lof_oil_only }, prizes, today });
     try {
       const text = await askOpenAI(prompt);
       if (text) { notes[row.name] = { text, generatedAt: new Date().toISOString(), date: t, by: 'auto' }; console.log(`✓ ${row.name}`); }
