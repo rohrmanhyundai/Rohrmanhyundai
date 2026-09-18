@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { loadBigMoney, updateBigMoney } from '../utils/github';
 import { trackPage, trackAction } from '../utils/activityTracker';
+import { openBigMoneyFlyer } from '../utils/bigMoneyFlyer';
 import {
   STATUS, DEFAULT_PRIZE, DEFAULT_REDUCED_PRIZE, DEFAULT_LEAD_ADVISOR, DEFAULT_LEAD_BONUS,
   prizeFor, leadFor, leadPayout, isLeadViewer, contestStatus, standingsFor, computeStandings,
@@ -194,8 +195,22 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
           </div>
         </div>
         <div style={{ flex: 1 }} />
+        {/* Printable program outlines. The lead-advisor sheet carries the
+            private bonus layer, so it's only offered to the lead and managers. */}
+        <button className="secondary" title="Print the advisor program sheet"
+          onClick={() => { trackAction('big-money-lof-print-advisor'); openBigMoneyFlyer({ variant: 'advisor', contest: file && file.contest, goals: board.goals, prizes, lead }); }}
+          style={{ background: 'linear-gradient(180deg,rgba(250,204,21,.28),rgba(245,158,11,.18))', borderColor: 'rgba(250,204,21,.5)', color: '#fde68a' }}>
+          🖨 Advisor PDF
+        </button>
+        {leadView && (
+          <button className="secondary" title="Print the lead-advisor program sheet (includes the bonus)"
+            onClick={() => { trackAction('big-money-lof-print-lead'); openBigMoneyFlyer({ variant: 'lead', contest: file && file.contest, goals: board.goals, prizes, lead }); }}
+            style={{ background: 'linear-gradient(180deg,rgba(167,139,250,.3),rgba(139,92,246,.18))', borderColor: 'rgba(167,139,250,.55)', color: '#e9d5ff' }}>
+            🎖️ Lead Advisor PDF
+          </button>
+        )}
         <span className="bml-pill" style={{ background: statusPill.bg, color: statusPill.color }}>{statusPill.text}</span>
-        <button className="secondary" onClick={onBack} style={{ marginLeft: 10 }}>← Back</button>
+        <button className="secondary" onClick={onBack} style={{ marginLeft: 6 }}>← Back</button>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px', position: 'relative' }}>
