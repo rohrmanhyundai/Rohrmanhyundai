@@ -226,7 +226,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -237,10 +236,16 @@
         "chargeAccountList": false,
         "partsHub": true,
         "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true,
+        "advisorRankBoard": true,
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "email": "carter.jean@rohrmanauto.com",
+      "managementAccess": false
     },
     {
       "username": "Jacob",
