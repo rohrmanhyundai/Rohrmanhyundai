@@ -229,6 +229,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   });
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserCode, setNewUserCode] = useState('');        // Employee Applicants code (blank = leave as-is)
   const [existingCode, setExistingCode] = useState(false);   // whether the selected user already has one
@@ -1757,8 +1758,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       ? { applicantCode: await hashAccessCode(newUserCode) }
       : (existing && existing.applicantCode ? { applicantCode: existing.applicantCode } : {});
     const updated = existing
-      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
+      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), email: newUserEmail.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
     // An advisor-role user must also live on the dashboard roster (data.advisors)
     // or they never render on the dashboard. Saving the user alone only writes
     // users.json, so auto-add them to the roster + training table and persist the
@@ -1819,7 +1820,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       .then(() => {
         onDataChange(newData, newVacations);
         onUsersChange(updated);
-        setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor');
+        setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor');
       })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
@@ -2723,7 +2724,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -2747,7 +2748,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
@@ -2764,6 +2765,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
           </div>
           <div className="form-grid" style={{ marginTop: 10 }}>
+            <div className="field">
+              <label title="The user's email address, for notifications and contact.">Email <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(optional)</span></label>
+              <input type="email" inputMode="email" autoComplete="off" value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} placeholder="e.g. david@rohrman.com" />
+            </div>
             <div className="field">
               <label title="Managers type this to open their Employee Applicants page. Stored hashed — it can't be read back, only replaced.">
                 Applicants Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits)</span>
