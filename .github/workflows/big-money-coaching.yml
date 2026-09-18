@@ -1,0 +1,40 @@
+name: Big-Money LOF coaching notes
+
+# Writes a fresh AI "Coach's Note" for every advisor in the Big-Money LOF
+# contest. Fired by the manager's "Send to Reports" in Edit Dashboard (a
+# repository_dispatch from the browser) so the notes reflect the numbers just
+# entered that morning; can also be run by hand from the Actions tab. Skips
+# itself when no contest is live.
+#
+# Needs repository secret OPENAI_API_KEY.
+
+on:
+  repository_dispatch:
+    types: [big-money-coaching]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: big-money-coaching
+  cancel-in-progress: true
+
+jobs:
+  coach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Write the coach's notes
+        env:
+          TZ: America/New_York
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/big-money-coaching.cjs

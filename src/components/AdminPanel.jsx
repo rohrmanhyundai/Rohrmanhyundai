@@ -7,7 +7,7 @@ import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { hashPassword, isHashed, passwordProblem } from '../utils/password';
 import { migrateAllPasswords } from './PasswordPages';
-import { requestPasswordReset } from '../utils/github';
+import { requestPasswordReset, requestBigMoneyCoaching } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -1549,6 +1549,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
       const total = (data.advisors || []).length + (data.technicians || []).length;
       setReportStatus(`✅ Sent! ${(data.advisors||[]).length} advisors (${advLabel}) · ${(data.technicians||[]).length} techs (${techWeek.label})`);
+      // Kick off the Big-Money LOF Coach's Notes on these fresh numbers. Best
+      // effort — the workflow skips itself when no contest is live.
+      requestBigMoneyCoaching(currentUser)
+        .then(() => setReportStatus(s => `${s} · 🗣️ Coach's notes writing (ready in ~2 min)`))
+        .catch(() => {});
       setTimeout(() => setReportStatus(''), 7000);
     } catch (e) {
       setReportStatus(`❌ ${e.message}`);
