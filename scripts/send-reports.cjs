@@ -193,6 +193,8 @@ function main() {
       hours_per_ro:     a.hours_per_ro,
       roh50_hrs_ro:     a.roh50_hrs_ro,
       roh50_add_rate:   a.roh50_add_rate,
+      lof_tickets:      a.lof_tickets,
+      lof_oil_only:     a.lof_oil_only,
       mtd_hours:        a.mtd_hours,
       daily_avg:        a.daily_avg,
       align:            a.align,

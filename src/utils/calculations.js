@@ -35,7 +35,7 @@ export function advisorMonthStarted() {
 }
 
 // Current-month cumulative fields that should read empty before the month starts.
-const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'roh50_add_rate', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
+const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'roh50_add_rate', 'lof_tickets', 'lof_oil_only', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
 
 // Advisors for display: before the month has started, zero the current-month
 // metrics (keep name + last_month_total) so a new month reads empty instead of

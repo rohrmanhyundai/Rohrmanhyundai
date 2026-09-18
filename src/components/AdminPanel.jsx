@@ -21,6 +21,7 @@ import { trackAction } from '../utils/activityTracker';
 import { hasExcelTraining } from '../utils/training';
 import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
+import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -38,6 +39,10 @@ const ADVISOR_IMPORT_FIELDS = [
   ['tires',            'Tires %',      'pct'],
   ['asr',              'ASR %',        'pct'],
   ['csi',              'CSI',          'num'],
+  ['roh50_hrs_ro',     "$50 Add'l Hrs/RO", 'num'],
+  ['roh50_add_rate',   '$50 Add Rate', 'pct'],
+  ['lof_tickets',      'Tickets',      'num'],
+  ['lof_oil_only',     'Oil-only Tkts','num'],
 ];
 
 const isBlankVal = v => v === undefined || v === null || v === '';
@@ -214,6 +219,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // preview. { source, newData, rows:[{name,changes:[{label,from,to}]}], notes:[], message }
   const [advisorUpload, setAdvisorUpload] = useState(null);
   const [advisorXlsxBusy, setAdvisorXlsxBusy] = useState(false);
+  const addOnInputRef = useRef(null);
+  const [addOnBusy, setAddOnBusy] = useState(false);
+  const [addOnStatus, setAddOnStatus] = useState('');
   // Technician "Flagged Hours" report upload (Technician Performance .xlsx).
   const techXlsxInputRef = useRef(null);
   const [techXlsxBusy, setTechXlsxBusy] = useState(false);
@@ -1185,6 +1193,39 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
+  // Screenshot of the Fixed Ops add-on rank board → $50 Add'l Hrs/RO, $50 Add
+  // Rate %, Tickets and Oil-only tickets per advisor, read by OpenAI vision.
+  // Same preview-then-apply flow as the other advisor imports.
+  async function handleAddOnScreenshot(file) {
+    if (!file) return;
+    trackAction('upload-addon-screenshot', file.name);
+    setAddOnBusy(true);
+    setAddOnStatus('👀 Reading the screenshot…');
+    try {
+      const { rows } = await parseAddOnScreenshot(file);
+      if (!rows.length) throw new Error('No advisor rows found in that image.');
+      const newData = structuredClone(data);
+      const { updated, skipped } = applyAddOnRows(newData.advisors, rows);
+      if (!updated.length) throw new Error(`Read ${rows.length} row(s) but none matched an advisor on the dashboard (${rows.map(r => r.name).join(', ')}).`);
+      const notes = [];
+      if (skipped.length) notes.push(`In the screenshot but not on the dashboard, skipped: ${skipped.join(', ')}`);
+      notes.push('Tickets and Oil-only tickets are stored for coaching only — they do not show on the TV dashboard.');
+      setAdvisorUpload({
+        source: 'Add-on board screenshot',
+        newData,
+        rows: advisorImportDiff(data.advisors, newData.advisors),
+        notes,
+        message: `✅ Updated ${updated.length} advisor${updated.length === 1 ? '' : 's'} from the add-on screenshot (${updated.join(', ')})`,
+      });
+      setAddOnStatus('');
+    } catch (err) {
+      setAddOnStatus('❌ ' + (err.message || err));
+    } finally {
+      setAddOnBusy(false);
+      if (addOnInputRef.current) addOnInputRef.current.value = '';
+    }
+  }
+
   // Commit a previewed advisor import. Still only touches the on-screen data —
   // the manager pushes it live with Save Changes, same as before.
   function applyAdvisorUpload() {
@@ -1418,7 +1459,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const entry = {
           date: advDate, label: advLabel, month: advMonthKey,
           type: 'advisor', savedAt: new Date().toISOString(),
-          csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro, roh50_add_rate: a.roh50_add_rate,
+          csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro, roh50_add_rate: a.roh50_add_rate, lof_tickets: a.lof_tickets, lof_oil_only: a.lof_oil_only,
           mtd_hours: a.mtd_hours,
           daily_avg: a.daily_avg, align: a.align, tires: a.tires,
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
@@ -2029,6 +2070,25 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           </div>
         </div>
 
+        {/* $50 add-on board — screenshot, read by OpenAI vision */}
+        <div className="upload-card" style={{ marginTop: 10 }}>
+          <div className="upload-title">
+            <span style={{ fontSize: 17 }}>📷</span>
+            <span>Upload $50 Add-on Board (screenshot)</span>
+          </div>
+          <div className="small" style={{ marginBottom: 12 }}>
+            Screenshot the advisor rows of the Fixed Ops add-on rank board (any image — screenshot or phone photo). Fills <strong>$50 Add'l Hrs/RO</strong>, <strong>$50 Add Rate %</strong>, plus <strong>Tickets</strong> and <strong>Oil-only tickets</strong> for coaching.
+            Matches by advisor first name. You'll see what it read before anything changes; click <em>Save Changes</em> after to push it live. Uses your OpenAI key.
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <input ref={addOnInputRef} type="file" accept="image/*" disabled={addOnBusy}
+              onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleAddOnScreenshot(f); }}
+              style={{ fontSize: 12, color: '#cbd5e1' }} />
+            {addOnBusy && <span style={{ fontSize: 12, color: '#fbbf24', fontWeight: 700 }}>⏳ Reading…</span>}
+            {addOnStatus && <span style={{ fontSize: 12, fontWeight: 700, color: addOnStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{addOnStatus}</span>}
+          </div>
+        </div>
+
         <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
         <div className="small" style={{ color: '#7dd3fc', marginTop: 2 }}>On <em>Save Changes</em>, each advisor's MTD Hrs &amp; Hrs/RO are written to their Goals/Forecasting for the previous working day (a day behind), overwriting their entry.</div>
         {reconcileMsg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#6ee7b7', fontWeight: 700, lineHeight: 1.4 }}>{reconcileMsg}</div>}
@@ -2080,8 +2140,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>Alignment %</label><input key={`aln-${a._lastImport || 0}-${a.align}`} defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
               <div className="field"><label>Tires %</label><input key={`tir-${a._lastImport || 0}-${a.tires}`} defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
               <div className="field"><label>Valvoline %</label><input key={`vlv-${a._lastImport || 0}-${a.valvoline}`} defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
-              <div className="field"><label>$50 Add'l Hrs/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
-              <div className="field"><label>$50 Add Rate %</label><input defaultValue={a.roh50_add_rate === undefined || a.roh50_add_rate === null ? '' : percentEditValue(a.roh50_add_rate)} onBlur={e => updateField(`advisors.${idx}.roh50_add_rate`, parsePercentInput(e.target.value, 0))} /></div>
+              <div className="field"><label>$50 Add'l Hrs/RO</label><input key={`r50h-${a._lastImport || 0}-${a.roh50_hrs_ro ?? ''}`} defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label>$50 Add Rate %</label><input key={`r50r-${a._lastImport || 0}-${a.roh50_add_rate ?? ''}`} defaultValue={a.roh50_add_rate === undefined || a.roh50_add_rate === null ? '' : percentEditValue(a.roh50_add_rate)} onBlur={e => updateField(`advisors.${idx}.roh50_add_rate`, parsePercentInput(e.target.value, 0))} /></div>
+              <div className="field"><label title="$50 oil-change tickets month-to-date, from the add-on board. Coaching only — not shown on the dashboard.">Tickets <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(coaching)</span></label><input key={`lt-${a._lastImport || 0}-${a.lof_tickets ?? ''}`} defaultValue={a.lof_tickets ?? ''} onBlur={e => updateField(`advisors.${idx}.lof_tickets`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label title="Oil-change tickets that left with no add-on line, month-to-date. Coaching only.">Oil-only Tkts <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(coaching)</span></label><input key={`lo-${a._lastImport || 0}-${a.lof_oil_only ?? ''}`} defaultValue={a.lof_oil_only ?? ''} onBlur={e => updateField(`advisors.${idx}.lof_oil_only`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
               <div className="field"><label title="Live Pay CSI bonus qualifier. If the advisor's CSI is below this number they don't earn the CSI bonus portion of commission. Leave blank/0 for no minimum.">Min CSI <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(Live Pay)</span></label><input defaultValue={a.min_csi ?? ''} onBlur={e => updateField(`advisors.${idx}.min_csi`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>ASR %</label><input key={`asr-${a._lastImport || 0}-${a.asr}`} defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
