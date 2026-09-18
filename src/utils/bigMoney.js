@@ -21,6 +21,35 @@ export const prizeFor = (file) => {
   return { full: Number(c.prize) || DEFAULT_PRIZE, reduced: c.reducedPrize != null && c.reducedPrize !== '' ? Number(c.reducedPrize) || 0 : DEFAULT_REDUCED_PRIZE };
 };
 
+// Lead advisor bonus — a private layer only the lead advisor and managers see.
+// The lead gets the bonus whenever the store hits both goals, win or not; if
+// they also win the contest it stacks on top of the full prize.
+export const DEFAULT_LEAD_ADVISOR = 'JORDAN';
+export const DEFAULT_LEAD_BONUS = 500;
+export const leadFor = (file) => {
+  const c = (file && file.contest) || {};
+  return {
+    name: firstName(c.leadAdvisor != null && c.leadAdvisor !== '' ? c.leadAdvisor : DEFAULT_LEAD_ADVISOR),
+    bonus: c.leadBonus != null && c.leadBonus !== '' ? Number(c.leadBonus) || 0 : DEFAULT_LEAD_BONUS,
+  };
+};
+export const isLeadViewer = (file, username, isManager) => isManager || firstName(username) === leadFor(file).name;
+
+// What the lead advisor takes home given the board's state.
+//   wins + store hits   → full prize + bonus
+//   wins + store misses → reduced prize (no bonus)
+//   loses + store hits  → bonus
+//   loses + store misses→ 0
+export function leadPayout(file, board) {
+  const { name, bonus } = leadFor(file);
+  const prizes = prizeFor(file);
+  const storeHit = !!(board && board.store && board.store.hit);
+  const row = (board && board.rows || []).find(r => r.name === name) || null;
+  const wins = !!(row && row.leader);
+  const total = wins ? (storeHit ? prizes.full + bonus : prizes.reduced) : (storeHit ? bonus : 0);
+  return { name, bonus, wins, storeHit, total, row };
+}
+
 export const STATUS = { OFF: 'off', UPCOMING: 'upcoming', LIVE: 'live', ENDED: 'ended' };
 
 const firstName = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();

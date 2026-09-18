@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { loadBigMoney, updateBigMoney } from '../utils/github';
 import { trackPage, trackAction } from '../utils/activityTracker';
 import {
-  STATUS, DEFAULT_PRIZE, DEFAULT_REDUCED_PRIZE, prizeFor, contestStatus, standingsFor, computeStandings,
+  STATUS, DEFAULT_PRIZE, DEFAULT_REDUCED_PRIZE, DEFAULT_LEAD_ADVISOR, DEFAULT_LEAD_BONUS,
+  prizeFor, leadFor, leadPayout, isLeadViewer, contestStatus, standingsFor, computeStandings,
   fmtContestDate, daysLeft, todayKey,
 } from '../utils/bigMoney';
 
@@ -76,7 +77,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
-  const [draft, setDraft] = useState({ start: '', end: '', prize: DEFAULT_PRIZE, reducedPrize: DEFAULT_REDUCED_PRIZE });
+  const [draft, setDraft] = useState({ start: '', end: '', prize: DEFAULT_PRIZE, reducedPrize: DEFAULT_REDUCED_PRIZE, leadAdvisor: DEFAULT_LEAD_ADVISOR, leadBonus: DEFAULT_LEAD_BONUS });
   const bankingRef = useRef(false); // one banking write at a time
 
   useEffect(() => { trackPage('big-money-lof'); }, []);
@@ -86,7 +87,8 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
       const f = await loadBigMoney();
       setFile(f);
       const c = f.contest || {};
-      setDraft({ start: c.start || '', end: c.end || '', prize: c.prize != null ? c.prize : DEFAULT_PRIZE, reducedPrize: c.reducedPrize != null ? c.reducedPrize : DEFAULT_REDUCED_PRIZE });
+      setDraft({ start: c.start || '', end: c.end || '', prize: c.prize != null ? c.prize : DEFAULT_PRIZE, reducedPrize: c.reducedPrize != null ? c.reducedPrize : DEFAULT_REDUCED_PRIZE,
+                 leadAdvisor: c.leadAdvisor || DEFAULT_LEAD_ADVISOR, leadBonus: c.leadBonus != null ? c.leadBonus : DEFAULT_LEAD_BONUS });
     } catch { setFile({}); }
     finally { setLoading(false); }
   }, []);
@@ -100,6 +102,11 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
   // Team goal decides the payout: store average over goal on both → full prize.
   const storeHit = !!(board.store && board.store.hit);
   const payout = storeHit ? prizes.full : prizes.reduced;
+  // Lead advisor layer — visible only to the lead advisor themselves and managers.
+  const lead = leadFor(file);
+  const leadView = isLeadViewer(file, currentUser, isManager);
+  const leadPay = leadPayout(file, board);
+  const iAmLead = me === lead.name;
 
   // Keep the shared snapshot current while live, and bank the final result the
   // first time anyone opens the page after the window closes. Whoever views it
@@ -136,7 +143,9 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
     setBusy('save');
     try {
       await updateBigMoney(f => {
-        const out = { ...f, contest: { start: draft.start, end: draft.end, prize: Number(draft.prize) || DEFAULT_PRIZE, reducedPrize: Number(draft.reducedPrize) || 0, updatedAt: Date.now(), by: currentUser || '' } };
+        const out = { ...f, contest: { start: draft.start, end: draft.end, prize: Number(draft.prize) || DEFAULT_PRIZE, reducedPrize: Number(draft.reducedPrize) || 0,
+                                       leadAdvisor: firstName(draft.leadAdvisor) || DEFAULT_LEAD_ADVISOR, leadBonus: Number(draft.leadBonus) || 0,
+                                       updatedAt: Date.now(), by: currentUser || '' } };
         // Dates changed → the old banked result no longer applies.
         const prev = f.contest || {};
         if (prev.start !== draft.start || prev.end !== draft.end) { delete out.final; delete out.latest; }
@@ -236,6 +245,11 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                   <div style={{ color: storeHit ? '#bbf7d0' : '#fde68a', fontSize: 13, marginTop: 8, fontWeight: 800 }}>
                     {storeHit ? '🤝 The store cleared both goals — full prize!' : `🤝 Store average fell short of goal, so the prize is ${money(prizes.reduced)} instead of ${money(prizes.full)}.`}
                   </div>
+                  {leadView && (
+                    <div style={{ color: '#c4b5fd', fontSize: 13, marginTop: 8, fontWeight: 800 }}>
+                      🎖️ Lead advisor {lead.name}: {money(leadPay.total)}{leadPay.wins ? (storeHit ? ` (${money(prizes.full)} win + ${money(lead.bonus)} store bonus)` : ' (won, but the store missed — no bonus)') : (storeHit ? ' store bonus' : ' — store missed, no bonus')}
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -277,6 +291,21 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                   </button>
                 )}
               </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, flexWrap: 'wrap', marginTop: 12, paddingTop: 12, borderTop: '1px dashed rgba(148,163,184,.2)' }}>
+                <div>
+                  <div className="bml-label" style={{ marginBottom: 6 }}>Lead advisor</div>
+                  <select className="bml-input" value={draft.leadAdvisor} onChange={e => setDraft(d => ({ ...d, leadAdvisor: e.target.value }))}>
+                    {[...new Set([draft.leadAdvisor, ...(advisors || []).map(a => firstName(a.name))].filter(Boolean))].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <div className="bml-label" style={{ marginBottom: 6 }} title="Paid to the lead advisor whenever the store hits both goals, win or not">Lead bonus $</div>
+                  <input type="number" inputMode="numeric" className="bml-input" style={{ width: 100 }} value={draft.leadBonus} onChange={e => setDraft(d => ({ ...d, leadBonus: e.target.value }))} />
+                </div>
+                <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, flex: 1, minWidth: 240 }}>
+                  🎖️ Only the lead advisor and managers see this layer. Store hits both goals → lead gets the bonus win or lose; win it too → full prize + bonus ({money(prizes.full + lead.bonus)}).
+                </div>
+              </div>
               <div style={{ fontSize: 12, color: '#64748b', marginTop: 12, lineHeight: 1.6 }}>
                 Runs itself off <b>Edit Dashboard → Advisor Performance</b> — each advisor's $50 Add'l Hrs/RO and $50 Add Rate %, judged against the goals set there.
                 Full prize needs the <b>store average</b> over goal on both; otherwise the winner gets the reduced amount.
@@ -309,6 +338,43 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                     <div className="bml-label">avg add rate · goal {board.goals.add_rate > 0 ? pct(board.goals.add_rate) : '—'}</div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Lead advisor bonus — private: lead advisor + managers only */}
+          {leadView && lead.bonus > 0 && (
+            <div className="bml-card" style={{ borderColor: 'rgba(167,139,250,.55)', background: 'linear-gradient(135deg,rgba(139,92,246,.18),rgba(236,72,153,.06))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                <div style={{ fontSize: 40 }}>🎖️</div>
+                <div style={{ flex: 1, minWidth: 240 }}>
+                  <div className="bml-label" style={{ color: '#c4b5fd' }}>Lead advisor bonus · {lead.name}{isManager && !iAmLead ? ' · manager view' : ''}</div>
+                  <div style={{ fontSize: 19, fontWeight: 1000, color: '#e9d5ff', marginTop: 2 }}>
+                    {iAmLead ? 'You' : lead.name} {iAmLead ? 'get' : 'gets'} <span style={{ color: '#fde047' }}>{money(lead.bonus)}</span> when the store hits both goals — win or not.
+                    Win the contest too and it's <span style={{ color: '#fde047' }}>{money(prizes.full + lead.bonus)}</span>.
+                  </div>
+                  <div style={{ fontSize: 12, color: '#a78bfa', marginTop: 4 }}>Only {iAmLead ? 'you' : lead.name} and managers can see this.</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '10px 18px', borderRadius: 14, background: 'rgba(0,0,0,.3)', border: '1px solid rgba(167,139,250,.4)' }}>
+                  <div className="bml-label" style={{ color: '#c4b5fd' }}>{status === STATUS.ENDED ? 'Final' : 'On track for'}</div>
+                  <div style={{ fontSize: 30, fontWeight: 1000, color: leadPay.total > 0 ? '#fde047' : '#94a3b8', lineHeight: 1.1 }}>{money(leadPay.total)}</div>
+                  <div style={{ fontSize: 11, color: '#c4b5fd', marginTop: 2 }}>
+                    {leadPay.wins ? '🏆 winning' : '— not winning'} · {storeHit ? '🤝 store on goal' : '🤝 store under goal'}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8, marginTop: 12 }}>
+                {[
+                  ['Wins · store hits',   prizes.full + lead.bonus, leadPay.wins && storeHit],
+                  ['Wins · store misses', prizes.reduced,           leadPay.wins && !storeHit],
+                  ['Loses · store hits',  lead.bonus,               !leadPay.wins && storeHit],
+                  ['Loses · store misses', 0,                       !leadPay.wins && !storeHit],
+                ].map(([k, v, on]) => (
+                  <div key={k} style={{ borderRadius: 10, padding: '8px 10px', background: on ? 'rgba(250,204,21,.16)' : 'rgba(0,0,0,.25)', border: `1px solid ${on ? 'rgba(250,204,21,.6)' : 'rgba(148,163,184,.15)'}` }}>
+                    <div className="bml-label" style={{ color: on ? '#fde68a' : '#94a3b8' }}>{k}{on ? ' · now' : ''}</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: on ? '#fde047' : '#cbd5e1' }}>{money(v)}</div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -421,6 +487,9 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
               <li><b>Team effort:</b> the winner takes home <b>{money(prizes.full)} cash</b> only if the <b>store average</b> is at or over goal on <b>both</b> numbers. If the store falls short, the winner gets <b>{money(prizes.reduced)}</b>. Everyone's numbers count toward the store average.</li>
               <li>Tied on hrs/RO? The higher <b>$50 Add Rate %</b> takes it.</li>
               <li>Numbers come straight from the dashboard and are judged as of the contest's last day. Dip under a goal and you're out until you're back over it.</li>
+              {leadView && lead.bonus > 0 && (
+                <li style={{ color: '#e9d5ff' }}><b>🎖️ Lead advisor ({lead.name}):</b> receives <b>{money(lead.bonus)}</b> whenever the store hits both goals, win or not. Winning the contest with the store on goal pays <b>{money(prizes.full + lead.bonus)}</b> total. <span style={{ color: '#a78bfa' }}>(Visible only to the lead advisor and managers.)</span></li>
+              )}
             </ol>
           </div>
 
