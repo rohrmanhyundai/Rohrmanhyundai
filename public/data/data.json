@@ -70,16 +70,16 @@
         "tue": 7.96,
         "wed": 4.68,
         "thu": 14.5,
-        "fri": 0,
+        "fri": 8,
         "sat": 0,
-        "total": 37.42,
-        "goal_pct": 0.8804705882352941,
-        "pacing": 46.775000000000006,
+        "total": 45.42,
+        "goal_pct": 1.0687058823529412,
+        "pacing": 45.42,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "85",
         "_hrsStamp": 1789729947677,
-        "total_raw": 31.900000000000002,
+        "total_raw": 39.900000000000006,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-09-12": true,
@@ -350,11 +350,11 @@
       "tue": 63.28,
       "wed": 25.339999999999996,
       "thu": 41.14000000000001,
-      "fri": 0,
+      "fri": 8,
       "sat": 18.240000000000002,
-      "week_total": 191.27999999999997,
-      "week_pct": 0.6699824868651487,
-      "shop_pacing": 235.82000000000002
+      "week_total": 199.27999999999997,
+      "week_pct": 0.6980035026269701,
+      "shop_pacing": 234.46500000000003
     },
     "grossGoal": 152561,
     "grossActual": 121097.4,
@@ -368,6 +368,13 @@
       "name": "JERRY",
       "dates": "Sep 17–18, 2026",
       "dateStart": "2026-09-17",
+      "dateEnd": "2026-09-18",
+      "status": "APPROVED"
+    },
+    {
+      "name": "GAVEN",
+      "dates": "Sep 18, 2026",
+      "dateStart": "2026-09-18",
       "dateEnd": "2026-09-18",
       "status": "APPROVED"
     }
