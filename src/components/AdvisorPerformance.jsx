@@ -69,7 +69,7 @@ export default function AdvisorPerformance({ data }) {
   const tdStyle = { fontSize, padding: `${Math.max(3, fontSize * 0.35)}px 8px` };
 
   return (
-    <section className="card">
+    <section className="card perf-card">
       <div className="panel-head">
         <div>
           <div className="title">Advisor Performance</div>

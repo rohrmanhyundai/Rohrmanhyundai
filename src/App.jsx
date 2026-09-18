@@ -706,14 +706,30 @@ export default function App() {
     };
   }, []);
 
+  // The dashboard is designed at 1920x1080 and scaled to fit. On a screen that
+  // isn't 16:9 (a laptop browser window, say) "fit" alone leaves empty bands
+  // above/below or beside it, so the stage is also stretched to cover the whole
+  // viewport in design pixels and the extra height/width is handed to the grid
+  // (see --stage-extra-h in App.css). On a real 16:9 TV the stage is exactly
+  // 1920x1080 and the extra is 0, so that layout is pixel-for-pixel unchanged.
   const fitStage = useCallback(() => {
     if (!stageRef.current) return;
     const baseW = 1920, baseH = 1080;
     const vw = window.innerWidth, vh = window.innerHeight;
     const scale = Math.min(vw / baseW, vh / baseH);
-    const left = Math.max(0, (vw - baseW * scale) / 2);
-    const top  = Math.max(0, (vh - baseH * scale) / 2);
-    stageRef.current.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+    // Cap the vertical stretch: a laptop window needs a few hundred px, but a
+    // portrait tablet would otherwise sprawl the rows apart. Past the cap the
+    // remainder is centred as before.
+    const maxExtraH = 480;
+    const stageW = Math.max(baseW, Math.round(vw / scale));
+    const stageH = Math.min(baseH + maxExtraH, Math.max(baseH, Math.round(vh / scale)));
+    const top = Math.max(0, (vh - stageH * scale) / 2);
+    const el = stageRef.current;
+    el.style.width  = `${stageW}px`;
+    el.style.height = `${stageH}px`;
+    el.style.setProperty('--stage-extra-h', `${stageH - baseH}px`);
+    el.classList.toggle('stage--stretched', stageH > baseH);
+    el.style.transform = `translate(0px, ${top}px) scale(${scale})`;
   }, []);
 
   useEffect(() => {
