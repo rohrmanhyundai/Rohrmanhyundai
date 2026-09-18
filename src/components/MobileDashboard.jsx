@@ -41,7 +41,7 @@ function GaugeBar({ label, actual, goal, prefix = '$' }) {
   );
 }
 
-export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onWorkSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload }) {
+export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onWorkSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload }) {
   const [showLogin, setShowLogin] = useState(false);
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
@@ -77,6 +77,7 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             {onRegistrationUpload && (
               <button onClick={onRegistrationUpload} style={btnStyle('#102a3a', '#38bdf8')}>🚗 Vehicle Registration Upload</button>
             )}
+            <button onClick={onChangePassword} style={btnStyle('#1e293b', '#fbbf24')} title="Change my password">🔑</button>
             <button onClick={onLogout} style={btnStyle('#2a1f1f', '#f87171')}>Logout</button>
           </>
         ) : (
@@ -92,6 +93,9 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             style={{ ...inputStyle, marginTop: 8 }} />
           <button onClick={() => { onLogin(loginUser, loginPass); setShowLogin(false); }} style={{ ...btnStyle('#1e3a5f', '#4fc3f7'), marginTop: 10, width: '100%' }}>
             Sign In
+          </button>
+          <button onClick={() => { setShowLogin(false); onForgotPassword && onForgotPassword(loginUser); }} style={{ ...btnStyle('#1e293b', '#94a3b8'), marginTop: 8, width: '100%' }}>
+            Forgot password?
           </button>
         </Card>
       )}

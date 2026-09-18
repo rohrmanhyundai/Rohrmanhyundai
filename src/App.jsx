@@ -35,6 +35,8 @@ import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
+import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
+import { verifyPassword, isHashed, withPassword } from './utils/password';
 import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
@@ -47,7 +49,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadBigMoney, loadUsers, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -744,9 +746,37 @@ export default function App() {
     return () => window.removeEventListener('resize', fitStage);
   }, [fitStage]);
 
-  function handleLogin(username, password) {
-    const match = users.find(u => u.username === username && u.password === password);
+  // Password-reset link from the email (?reset=TOKEN&u=USERNAME) and the two
+  // password modals. The reset page takes over the whole screen until done.
+  const [resetLink] = useState(() => {
+    const q = new URLSearchParams(window.location.search);
+    return q.get('reset') && q.get('u') ? { token: q.get('reset'), username: q.get('u') } : null;
+  });
+  const [showReset, setShowReset] = useState(() => !!resetLink);
+  const [showChangePw, setShowChangePw] = useState(false);
+  const [showForgotPw, setShowForgotPw] = useState(null); // null | { username }
+
+  async function handleLogin(username, password) {
+    const candidate = users.find(u => u.username === username);
+    const match = candidate && await verifyPassword(candidate, password) ? candidate : null;
     if (match) {
+      // Legacy plaintext record: now that we know the password, store it hashed
+      // so the public users.json stops carrying it in the clear. Best effort —
+      // login doesn't wait on it.
+      if (!isHashed(match) && match.password != null) {
+        (async () => {
+          try {
+            const loaded = await loadUsers();
+            const list = loaded && loaded.users ? loaded.users : null;
+            if (!list) return;
+            const i = list.findIndex(u => u.username === match.username);
+            if (i < 0 || isHashed(list[i])) return;
+            list[i] = await withPassword(list[i], password);
+            await saveUsersFile(list, loaded.sharedSaveCode);
+            setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list));
+          } catch {}
+        })();
+      }
       const role = effectiveRole(match);
       const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
       const pages = match.pages || null;
@@ -1697,6 +1727,8 @@ export default function App() {
           isLoggedIn={isLoggedIn} currentUser={currentUser}
           currentRole={currentRole} canEditDashboard={canEditDashboard}
           onLogin={handleLogin} onLogout={handleLogout}
+          onForgotPassword={(u) => setShowForgotPw({ username: u || '' })}
+          onChangePassword={() => setShowChangePw(true)}
           onEdit={() => setAdminOpen(true)}
           onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
           onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
@@ -1735,6 +1767,8 @@ export default function App() {
             canEditDashboard={canEditDashboard}
             onLogin={handleLogin}
             onLogout={handleLogout}
+            onForgotPassword={(u) => setShowForgotPw({ username: u || '' })}
+            onChangePassword={() => setShowChangePw(true)}
             onEdit={() => setAdminOpen(true)}
             onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); navTo('advisor-calendar'); }}
             onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); navTo('tech-resources'); }}
@@ -1793,5 +1827,15 @@ export default function App() {
       openSignal={messengerOpen}
     />, document.body) : null;
 
-  return (<>{mentionModal}{messenger}{renderPage()}</>);
+  if (showReset && resetLink) {
+    return <ResetPasswordPage token={resetLink.token} username={resetLink.username}
+      onDone={() => { window.history.replaceState(null, '', window.location.pathname); setShowReset(false); loadUsers().then(r => { if (r && r.users) { setUsers(r.users); localStorage.setItem(USERS_KEY, JSON.stringify(r.users)); } }).catch(() => {}); }} />;
+  }
+  const passwordModals = (
+    <>
+      {showChangePw && <ChangePasswordModal username={currentUser} onClose={() => setShowChangePw(false)} />}
+      {showForgotPw && <ForgotPasswordModal initialUsername={showForgotPw.username} onClose={() => setShowForgotPw(null)} />}
+    </>
+  );
+  return (<>{mentionModal}{messenger}{passwordModals}{renderPage()}</>);
 }

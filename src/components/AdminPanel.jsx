@@ -5,6 +5,9 @@ import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, 
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
+import { hashPassword, isHashed, passwordProblem } from '../utils/password';
+import { migrateAllPasswords } from './PasswordPages';
+import { requestPasswordReset } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -230,6 +233,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
+  const [pwToolBusy, setPwToolBusy] = useState('');
+  const [pwToolMsg, setPwToolMsg] = useState('');
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserCode, setNewUserCode] = useState('');        // Employee Applicants code (blank = leave as-is)
   const [existingCode, setExistingCode] = useState(false);   // whether the selected user already has one
@@ -1750,16 +1755,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   async function handleSaveUser() {
     if (!isAdminOrManager(currentRole)) { alert('Only admin or managers can manage users.'); return; }
-    if (!newUserName || !newUserPass) { alert('Enter username and password'); return; }
-    if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
-    // Hash a newly typed code; a blank box means "leave whatever they have".
     const existing = users.find(u => u.username === newUserName);
+    if (!newUserName || (!existing && !newUserPass)) { alert('Enter username and password'); return; }
+    if (newUserPass && passwordProblem(newUserPass)) { alert(passwordProblem(newUserPass)); return; }
+    if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
+    // Passwords are stored hashed (users.json is public). A typed password
+    // replaces whatever they had; a blank box on an existing user keeps it.
+    const pwPatch = newUserPass ? { passwordHash: await hashPassword(newUserPass) } : {};
+    const stripPlain = (u) => { const o = { ...u }; if (newUserPass) { delete o.password; delete o.passwordReset; } return o; };
+    // Hash a newly typed code; a blank box means "leave whatever they have".
     const codePatch = newUserCode
       ? { applicantCode: await hashAccessCode(newUserCode) }
       : (existing && existing.applicantCode ? { applicantCode: existing.applicantCode } : {});
     const updated = existing
-      ? users.map(u => u.username === newUserName ? { ...u, lastName: newUserLast.trim(), email: newUserEmail.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), password: newUserPass, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
+      ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
     // An advisor-role user must also live on the dashboard roster (data.advisors)
     // or they never render on the dashboard. Saving the user alone only writes
     // users.json, so auto-add them to the roster + training table and persist the
@@ -1770,7 +1780,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
-      .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
+      .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserPass(''); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
       .then(() => {
         if (!addedToRoster) return;
         onDataChange(rosterData, vacations);
@@ -2724,7 +2734,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserPass(u.password || ''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserPass(''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -2752,11 +2762,40 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           </div>
         </div>
         <div className="form-section">
-          <div className="title" style={{ marginBottom: 8 }}>Add / Edit User</div>
+          <div className="title" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span>Add / Edit User</span>
+            <div style={{ flex: 1 }} />
+            {(() => { const plain = users.filter(u => !isHashed(u) && u.password != null && u.password !== '').length; return plain > 0 ? (
+              <button className="secondary" disabled={!!pwToolBusy} title="users.json is public — this replaces every readable password with a hash. Logins keep working."
+                onClick={async () => { setPwToolBusy('hash'); try { const r = await migrateAllPasswords(); onUsersChange(r.users); setPwToolMsg(`🔒 Hashed ${r.changed} password${r.changed === 1 ? '' : 's'}.`); } catch (e) { setPwToolMsg('❌ ' + (e?.message || e)); } finally { setPwToolBusy(''); } }}
+                style={{ fontSize: 12, color: '#fbbf24', borderColor: 'rgba(251,191,36,.45)' }}>
+                {pwToolBusy === 'hash' ? '⏳ Hashing…' : `⚠️ Hash all passwords (${plain} plain text)`}
+              </button>
+            ) : <span style={{ fontSize: 11, color: '#4ade80', fontWeight: 800 }}>🔒 All passwords hashed</span>; })()}
+            {selectedUser && (
+              <button className="secondary" disabled={!!pwToolBusy || !(users.find(u => u.username === selectedUser) || {}).email}
+                title={(users.find(u => u.username === selectedUser) || {}).email ? 'Email this user a link to choose a new password' : 'Add an email to this user first'}
+                onClick={async () => { setPwToolBusy('reset'); try { await requestPasswordReset(selectedUser); setPwToolMsg(`📬 Reset link is on its way to ${selectedUser.toUpperCase()} (allow a minute or two).`); } catch (e) { setPwToolMsg('❌ ' + (e?.message || e)); } finally { setPwToolBusy(''); } }}
+                style={{ fontSize: 12, color: '#7dd3fc', borderColor: 'rgba(125,211,252,.45)' }}>
+                {pwToolBusy === 'reset' ? '⏳ Sending…' : '📧 Send reset email'}
+              </button>
+            )}
+          </div>
+          {pwToolMsg && <div className="small" style={{ marginBottom: 8, color: pwToolMsg.startsWith('❌') ? '#f87171' : '#6ee7b7', fontWeight: 700 }}>{pwToolMsg}</div>}
           <div className="form-grid">
             <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
             <div className="field"><label title="Used only for display — login is by username only.">Last Name <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(optional, only the first letter is shown)</span></label><input value={newUserLast} onChange={e => setNewUserLast(e.target.value)} placeholder="e.g. Laughner" /></div>
-            <div className="field"><label>Password</label><input type="password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} /></div>
+            <div className="field">
+              <label title="Stored hashed — it can't be read back, only replaced.">
+                {selectedUser ? 'New Password' : 'Password'}
+                {selectedUser && <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(leave blank to keep current)</span>}
+                {(() => { const u = users.find(x => x.username === selectedUser); if (!u) return null;
+                  return isHashed(u)
+                    ? <span style={{ marginLeft: 8, fontSize: 10, color: '#4ade80', fontWeight: 800 }}>🔒 hashed</span>
+                    : <span style={{ marginLeft: 8, fontSize: 10, color: '#fbbf24', fontWeight: 800 }} title="Still stored as plain text — save a new password or use Hash all passwords">⚠️ plain text</span>; })()}
+              </label>
+              <input type="password" autoComplete="new-password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} placeholder={selectedUser ? '••••••' : ''} />
+            </div>
             <div className="field">
               <label>Role</label>
               <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>

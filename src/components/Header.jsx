@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread, managerUnread }) {
+export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread, managerUnread }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -49,6 +49,7 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                   <input placeholder="user" style={{ width: 70 }} value={username} onChange={e => setUsername(e.target.value)} />
                   <input type="password" placeholder="pass" style={{ width: 80 }} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} />
                   <button onClick={handleLogin}>Login</button>
+                  <button className="secondary" title="Email me a link to reset my password" onClick={() => onForgotPassword && onForgotPassword(username)} style={{ padding: '4px 7px', fontSize: 11 }}>Forgot?</button>
                 </>
               ) : (
                 <>
@@ -100,6 +101,7 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                   {canEditDashboard && (
                     <button className="secondary" onClick={onEdit}>Edit Dashboard</button>
                   )}
+                  <button className="secondary" title="Change my password" onClick={onChangePassword} style={{ padding: '6px 8px' }}>🔑</button>
                   <button className="secondary" onClick={onLogout}>Logout</button>
                 </>
               )}
