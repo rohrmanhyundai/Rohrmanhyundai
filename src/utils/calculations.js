@@ -35,7 +35,7 @@ export function advisorMonthStarted() {
 }
 
 // Current-month cumulative fields that should read empty before the month starts.
-const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
+const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'roh50_add_rate', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
 
 // Advisors for display: before the month has started, zero the current-month
 // metrics (keep name + last_month_total) so a new month reads empty instead of
@@ -44,6 +44,17 @@ export function advisorsForDisplay(data) {
   const advisors = (data && data.advisors) || [];
   if (advisorMonthStarted()) return advisors;
   return advisors.map(a => { const c = { ...a }; MONTH_METRIC_FIELDS.forEach(f => { c[f] = 0; }); return c; });
+}
+
+// Dashboard-wide goals for the two $50 add-on columns. Set from the Edit
+// Dashboard → Advisor Performance section; a 0/blank goal means "no goal", so
+// the column shows "Goal —" and never flags anyone as under.
+export function roh50Goals(data) {
+  const g = (data && data.roh50_goals) || {};
+  return {
+    hrs_ro:   g.hrs_ro === undefined || g.hrs_ro === null ? 1.2 : safe(g.hrs_ro, 0),
+    add_rate: safe(g.add_rate, 0),
+  };
 }
 
 export function advisorDailyAverage(advisor, data) {

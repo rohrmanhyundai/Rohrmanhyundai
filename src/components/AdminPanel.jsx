@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
-import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, isScheduledOff } from '../utils/calculations';
+import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, isScheduledOff, roh50Goals } from '../utils/calculations';
 import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
@@ -1409,7 +1409,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         const entry = {
           date: advDate, label: advLabel, month: advMonthKey,
           type: 'advisor', savedAt: new Date().toISOString(),
-          csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro,
+          csi: a.csi, hours_per_ro: a.hours_per_ro, roh50_hrs_ro: a.roh50_hrs_ro, roh50_add_rate: a.roh50_add_rate,
           mtd_hours: a.mtd_hours,
           daily_avg: a.daily_avg, align: a.align, tires: a.tires,
           valvoline: a.valvoline, asr: a.asr, elr: a.elr,
@@ -1661,7 +1661,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if ((newData.advisors || []).some(a => (a.name || '').toUpperCase() === upper)) return false;
     (newData.advisors ||= []).push({
       name: upper, mtd_hours: 0, daily_avg: 0, hours_per_ro: 0,
-      align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0, ro_count: 0,
+      align: 0, tires: 0, valvoline: 0, roh50_hrs_ro: 0, roh50_add_rate: 0, csi: 0, asr: 0, elr: 0, last_month_total: 0, ro_count: 0,
     });
     (newData.advisorTraining ||= []).push({
       name: upper, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
@@ -2020,6 +2020,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 140, outline: 'none' }} />
           <span style={{ fontSize: 11, color: '#64748b' }}>Live Pay adjustment = (this ÷ {(data.advisors || []).length || 1} advisors) × 8%</span>
         </div>
+        {/* Dashboard-wide goals for the two $50 add-on columns. The column header
+            shows the goal and any advisor under it pulses red on the TV. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 4px', flexWrap: 'wrap' }}>
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Goal shown in the $50 ADD'L HRS/RO column header. Advisors under it are flagged on the dashboard.">$50 Add'l Hrs/RO Goal</label>
+          <input type="number" inputMode="decimal" step="0.01" defaultValue={roh50Goals(data).hrs_ro || ''} placeholder="e.g. 1.2"
+            onBlur={e => updateField('roh50_goals.hrs_ro', safe(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6, marginLeft: 12 }} title="Goal shown in the $50 ADD RATE % column header. Advisors under it are flagged on the dashboard.">$50 Add Rate % Goal</label>
+          <input inputMode="decimal" defaultValue={roh50Goals(data).add_rate ? percentEditValue(roh50Goals(data).add_rate) : ''} placeholder="e.g. 50%"
+            onBlur={e => updateField('roh50_goals.add_rate', parsePercentInput(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
+          <span style={{ fontSize: 11, color: '#64748b' }}>Leave blank for no goal</span>
+        </div>
         {data.advisors.map((a, idx) => (
           <div className="form-section" key={a.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2048,7 +2061,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="field"><label>Alignment %</label><input key={`aln-${a._lastImport || 0}-${a.align}`} defaultValue={percentEditValue(a.align)} onBlur={e => updateField(`advisors.${idx}.align`, parsePercentInput(e.target.value, a.align))} /></div>
               <div className="field"><label>Tires %</label><input key={`tir-${a._lastImport || 0}-${a.tires}`} defaultValue={percentEditValue(a.tires)} onBlur={e => updateField(`advisors.${idx}.tires`, parsePercentInput(e.target.value, a.tires))} /></div>
               <div className="field"><label>Valvoline %</label><input key={`vlv-${a._lastImport || 0}-${a.valvoline}`} defaultValue={percentEditValue(a.valvoline)} onBlur={e => updateField(`advisors.${idx}.valvoline`, parsePercentInput(e.target.value, a.valvoline))} /></div>
-              <div className="field"><label>Roh$50 HRS/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label>$50 Add'l Hrs/RO</label><input defaultValue={a.roh50_hrs_ro ?? ''} onBlur={e => updateField(`advisors.${idx}.roh50_hrs_ro`, safe(e.target.value, 0))} /></div>
+              <div className="field"><label>$50 Add Rate %</label><input defaultValue={a.roh50_add_rate === undefined || a.roh50_add_rate === null ? '' : percentEditValue(a.roh50_add_rate)} onBlur={e => updateField(`advisors.${idx}.roh50_add_rate`, parsePercentInput(e.target.value, 0))} /></div>
               <div className="field"><label>CSI</label><input defaultValue={a.csi} onBlur={e => updateField(`advisors.${idx}.csi`, safe(e.target.value, a.csi))} /></div>
               <div className="field"><label title="Live Pay CSI bonus qualifier. If the advisor's CSI is below this number they don't earn the CSI bonus portion of commission. Leave blank/0 for no minimum.">Min CSI <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(Live Pay)</span></label><input defaultValue={a.min_csi ?? ''} onBlur={e => updateField(`advisors.${idx}.min_csi`, safe(e.target.value, 0))} /></div>
               <div className="field"><label>ASR %</label><input key={`asr-${a._lastImport || 0}-${a.asr}`} defaultValue={percentEditValue(a.asr)} onBlur={e => updateField(`advisors.${idx}.asr`, parsePercentInput(e.target.value, a.asr))} /></div>
