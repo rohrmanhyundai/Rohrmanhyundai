@@ -185,7 +185,8 @@
         "pacing": 0,
         "certified": "—",
         "trainings_due": "—",
-        "excel_training": "—"
+        "excel_training": "—",
+        "total_raw": 0
       }
     ],
     "advisors": [
@@ -201,7 +202,7 @@
         "asr": 0.1219,
         "elr": 0.9178,
         "last_month_total": 335.2,
-        "roh50_hrs_ro": 0.64,
+        "roh50_hrs_ro": 0.63,
         "hidden": false,
         "ro_count": 126,
         "coupon_labor": 1627.54,
@@ -222,7 +223,7 @@
         "asr": 0.2161,
         "elr": 0.9271,
         "last_month_total": 320.4,
-        "roh50_hrs_ro": 0.87,
+        "roh50_hrs_ro": 0.84,
         "ro_count": 160,
         "coupon_labor": 1993.76,
         "_lastImport": 1789644284734,
@@ -238,7 +239,7 @@
         "align": 0.0588,
         "tires": 0.0196,
         "valvoline": 0.1961,
-        "roh50_hrs_ro": 0.73,
+        "roh50_hrs_ro": 0.71,
         "csi": 1000,
         "asr": 0.1701,
         "elr": 0.8891,
@@ -335,7 +336,7 @@
       "fri": 0,
       "sat": 18.240000000000002,
       "week_total": 150.14000000000001,
-      "week_pct": 0.6308403361344539,
+      "week_pct": 0.5258844133099826,
       "shop_pacing": 233.79333333333332
     },
     "grossGoal": 152561,
