@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { verifyPassword } from '../utils/password';
 import { loadUsers } from '../utils/github';
 import SalesDashboard from './SalesDashboard';
 import SalesAdmin from './SalesAdmin';
@@ -23,13 +24,12 @@ export default function SalesApp() {
     loadUsers().then(u => setUsers(u?.users || [])).catch(() => {});
   }, []);
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     setLoginErr('');
-    const found = users.find(u =>
-      u.username.toLowerCase() === loginUser.toLowerCase() &&
-      u.password === loginPass
-    );
+    // Passwords are stored hashed in users.json (legacy plaintext still verifies).
+    const cand = users.find(u => u.username.toLowerCase() === loginUser.toLowerCase());
+    const found = cand && await verifyPassword(cand, loginPass) ? cand : null;
     if (!found) { setLoginErr('Invalid username or password.'); return; }
     // Check if user has sales page access or is admin/manager
     if (!isAdminOrManager(found.role) && found.pages?.sales === false) {

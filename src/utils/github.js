@@ -1874,6 +1874,28 @@ export async function updateCashDash(mutate) {
     `Cash Dash update ${new Date().toISOString()}`);
 }
 
+// ── Password reset ────────────────────────────────────────────────────────────
+// The browser can't send email, so a reset is a repository_dispatch event: the
+// password-reset workflow generates the token, stores its hash on the user and
+// emails the link (see .github/workflows/password-reset.yml). Only the username
+// travels; whether it matched (or has an email) is never revealed here.
+export async function requestPasswordReset(username) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('The site is not connected to GitHub right now — ask a manager.');
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event_type: 'password-reset', client_payload: { username: String(username || '').trim() } }),
+  });
+  noteRateLimit(res);
+  if (res.status !== 204) {
+    let msg = `GitHub replied ${res.status}`;
+    try { const j = await res.json(); if (j && j.message) msg = j.message; } catch {}
+    throw new Error(msg);
+  }
+  return true;
+}
+
 // ── Big-Money LOF ─────────────────────────────────────────────────────────────
 // Advisor contest on the two $50 add-on numbers. Shape documented in
 // utils/bigMoney.js: { contest: {start,end,prize}, latest: {...}, final: {...} }.
