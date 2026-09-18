@@ -62,5 +62,25 @@
       "hit": false,
       "count": 3
     }
+  },
+  "coaching": {
+    "JORDAN": {
+      "text": "**Today's read:** You're currently at a 51.0% add rate and 0.57 add'l hrs/RO, holding strong but trending under goal.  \n- 💪 Your alignment upsell is at 8.6%, just shy of the 10% goal, showing potential for improvement.  \n- 🎯 You need to add-on on **3 more oil changes a day** to hit the 75.0% add rate goal with the remaining tickets.  \n- 🤝 This will boost the store average to 53.3%, which helps everyone and gets us closer to that $1000 prize!  \n**This week's challenge:** Focus on getting an add-on on the first $50 oil change every morning to set the tone for the day!",
+      "generatedAt": "2026-09-18T21:08:28.410Z",
+      "date": "2026-09-18",
+      "by": "auto"
+    },
+    "CODY": {
+      "text": "**Today's read:** You're at a 38.0% add rate and 0.41 add'l hrs/RO, but we need to ramp up!  \n- 💪 Your alignment upsell is showing promise at 7.0%, keep pushing that!  \n- 🎯 To qualify, you need an add-on on about 3 more oil changes a day for the rest of the month, aiming for 2.51 add'l hrs/RO.  \n- 🤝 Hitting the add rate goal would boost the store average to 57.7%, directly impacting our potential $1000 prize!  \n\n**This week's challenge:** Add-on on the first $50 oil change every morning to kickstart your numbers!",
+      "generatedAt": "2026-09-18T21:08:31.370Z",
+      "date": "2026-09-18",
+      "by": "auto"
+    },
+    "DAVID": {
+      "text": "**Today's read:** You're at 47.0% add rate and 0.35 add'l hrs/RO, still under goal but showing potential.  \n- 💪 Your alignment upsell is at 6.5%, just shy of the 10% goal, so there’s room to grow!  \n- 🎯 You need an add-on on 3 more oil changes a day to hit the remaining 2.60 add'l hrs per RO.  \n- 🤝 If you achieve this, the store average would rise to 54.7%, which helps us all get closer to that $1000 prize!  \n**This week's challenge:** Add-on on the first $50 oil change every morning to kickstart your day!",
+      "generatedAt": "2026-09-18T21:08:35.220Z",
+      "date": "2026-09-18",
+      "by": "auto"
+    }
   }
 }
