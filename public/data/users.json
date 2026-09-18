@@ -45,7 +45,6 @@
       "canEditDashboard": true,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -57,12 +56,14 @@
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": true
       },
       "chatAccess": true,
       "techChatAccess": true,
       "lastName": "",
-      "managementAccess": true
+      "managementAccess": true,
+      "email": "jordan.troxel@rohrmanauto.com"
     },
     {
       "username": "David",
