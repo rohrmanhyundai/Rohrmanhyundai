@@ -219,14 +219,15 @@
         "asr": 0.1213,
         "elr": 0.9121,
         "last_month_total": 335.2,
-        "roh50_hrs_ro": 0.63,
+        "roh50_hrs_ro": 0.36,
         "hidden": false,
         "ro_count": 141,
         "coupon_labor": 1858.26,
         "_lastImport": 1789729567138,
         "total_sales": 22453.12,
         "coupon_usage_pct": 0.0828,
-        "min_csi": 917
+        "min_csi": 917,
+        "roh50_add_rate": 0.47
       },
       {
         "name": "JORDAN",
@@ -240,13 +241,14 @@
         "asr": 0.2023,
         "elr": 0.9281,
         "last_month_total": 320.4,
-        "roh50_hrs_ro": 0.84,
+        "roh50_hrs_ro": 0.57,
         "ro_count": 170,
         "coupon_labor": 2178.76,
         "_lastImport": 1789729567138,
         "total_sales": 32817.53,
         "coupon_usage_pct": 0.0664,
-        "min_csi": 916
+        "min_csi": 916,
+        "roh50_add_rate": 0.51
       },
       {
         "name": "CODY",
@@ -256,7 +258,7 @@
         "align": 0.0702,
         "tires": 0.0175,
         "valvoline": 0.1754,
-        "roh50_hrs_ro": 0.71,
+        "roh50_hrs_ro": 0,
         "csi": 964,
         "asr": 0.1722,
         "elr": 0.8986,
@@ -267,7 +269,8 @@
         "coupon_labor": 1455.69,
         "total_sales": 13825.13,
         "coupon_usage_pct": 0.1053,
-        "min_csi": 917
+        "min_csi": 917,
+        "roh50_add_rate": 0.38
       }
     ],
     "advisorTraining": [
