@@ -363,7 +363,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -373,10 +372,16 @@
         "workInProgress": true,
         "chargeAccountList": true,
         "partsHub": true,
-        "tireQuote": true
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true,
+        "advisorRankBoard": false
       },
       "chatAccess": true,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "lastName": "",
+      "email": "seth.rosen@rohrmanauto.com",
+      "managementAccess": false
     },
     {
       "username": "Chapman",
