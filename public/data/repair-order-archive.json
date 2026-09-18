@@ -1,26 +1,5 @@
 [
   {
-    "id": "mtt4ummib7kz",
-    "ro": "780668",
-    "roDate": "2026-09-08",
-    "vehicle": "2020 Volkswagen Tiguan",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN",
-    "_archiveId": "mu70vj5wbzc",
-    "_archivedAt": "2026-09-18T13:56:54.596Z",
-    "_archivedBy": "JACOB",
-    "_source": "wip",
-    "_sourceTech": "JACOB"
-  },
-  {
     "id": "mu2yx6w3hvx5",
     "ro": "780858",
     "roDate": "2026-09-15",
