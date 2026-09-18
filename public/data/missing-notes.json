@@ -1,42 +1,38 @@
 {
-  "updatedAt": "2026-09-18T19:04:45.313Z",
+  "updatedAt": "2026-09-18T20:03:38.707Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
-      {
-        "ro": "780953",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      },
-      {
-        "ro": "780952",
-        "vehicle": "2020 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780949",
-        "vehicle": "2025 Hyundai Tucson"
-      },
-      {
-        "ro": "780944",
-        "vehicle": "2022 Ram 1500"
-      }
-    ],
     "CODY": [
+      {
+        "ro": "780961",
+        "vehicle": "2022 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780955",
+        "vehicle": "2023 Hyundai Palisade"
+      },
       {
         "ro": "780948",
         "vehicle": "2017 Hyundai Tucson"
       }
     ],
-    "DAVID": [
+    "CORY": [
       {
-        "ro": "780939",
-        "vehicle": "2023 Hyundai Palisade"
+        "ro": "780960",
+        "vehicle": "2017 Hyundai Santa Fe"
       },
       {
-        "ro": "780810",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
-    "CORY": [
+        "ro": "780959",
+        "vehicle": "2020 Kia Sportage"
+      },
+      {
+        "ro": "780958",
+        "vehicle": "2021 Nissan Kicks"
+      },
+      {
+        "ro": "780957",
+        "vehicle": "2023 Mazda CX-9"
+      },
       {
         "ro": "780917",
         "vehicle": "2020 Hyundai Elantra"
@@ -64,18 +60,26 @@
       {
         "ro": "780829",
         "vehicle": "2019 Subaru Crosstrek"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780956",
+        "vehicle": "2023 Hyundai Santa Fe"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "780954",
+        "vehicle": "1998 Chevrolet C/K 1500"
       },
       {
-        "ro": "780828",
-        "vehicle": "2014 Chevrolet Impala"
+        "ro": "780939",
+        "vehicle": "2023 Hyundai Palisade"
       },
       {
-        "ro": "780764",
-        "vehicle": "2020 Ford EcoSport"
-      },
-      {
-        "ro": "780668",
-        "vehicle": "2020 Volkswagen Tiguan"
+        "ro": "780810",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ]
   }
