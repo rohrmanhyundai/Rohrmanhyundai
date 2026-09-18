@@ -100,5 +100,21 @@
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mu7bvdlg52i8",
+    "ro": "780941",
+    "roDate": "2026-09-18",
+    "vehicle": "2017 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES- tow in for CEL, engine has a knock Reg photo in media",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
