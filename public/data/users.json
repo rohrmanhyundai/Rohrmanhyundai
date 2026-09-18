@@ -417,7 +417,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -430,10 +429,13 @@
         "tireQuote": true,
         "atDiagWorksheet": true,
         "usedCarHub": true,
+        "advisorRankBoard": false,
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "email": "kaden.wilson@rohrmanauto.com",
+      "managementAccess": false
     },
     {
       "username": "Emily",
