@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 // Big-Money LOF — nightly AI "Coach's Note" for every advisor in the contest.
 //
-// Runs in the auto-reports workflow right after the daily snapshots are taken,
-// so each morning every advisor opens the contest page to a fresh note written
-// from last night's numbers. Reads the dashboard + contest files from the
-// checkout (send-reports.cjs has just refreshed performance-reports/), asks
-// OpenAI for a short note per advisor, and writes them into
+// Runs in the big-money-coaching workflow, fired by the manager's morning
+// "Send to Reports" (see requestBigMoneyCoaching in utils/github.js), so every
+// advisor gets a note written from the numbers just entered. Reads the
+// dashboard + contest files from the checkout (the API writes that Send to
+// Reports made are already on main), asks OpenAI for a short note per advisor,
+// and writes them into
 // public/data/big-money-lof.json under `coaching` through the Contents API
 // (the app writes that file from the browser too, so no git commit here).
 //

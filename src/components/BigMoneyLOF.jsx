@@ -525,7 +525,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 </div>
                 {noteFor(me)
                   ? <NoteBody text={noteFor(me).text} />
-                  : <div style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>{status === STATUS.LIVE ? 'Your first note lands tomorrow morning, written from tonight\'s numbers.' : 'Notes start once the contest is live.'}</div>}
+                  : <div style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>{status === STATUS.LIVE ? 'Your first note lands after the next morning report is posted.' : 'Notes start once the contest is live.'}</div>}
               </div>
             </div>
           )}
@@ -535,7 +535,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
             <div className="bml-card" style={{ borderColor: 'rgba(196,181,253,.35)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
                 <div style={{ fontSize: 17, fontWeight: 1000, color: '#fff' }}>🧑‍🏫 Coaching</div>
-                <div style={{ fontSize: 12, color: '#94a3b8' }}>Game plan is live math off the dashboard · Coach's notes are written nightly at 11pm while the contest is live</div>
+                <div style={{ fontSize: 12, color: '#94a3b8' }}>Game plan is live math off the dashboard · Coach's notes are written automatically each time you click Send to Reports</div>
                 <div style={{ flex: 1 }} />
                 <button className="secondary" disabled={!!coachBusy || status !== STATUS.LIVE && status !== STATUS.UPCOMING} title="Write a fresh Coach's Note for every advisor now (uses this device's OpenAI key)"
                   onClick={() => generateNotes(board.rows)} style={{ fontSize: 12.5, color: '#e9d5ff', borderColor: 'rgba(167,139,250,.5)' }}>
@@ -572,7 +572,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                                 {coachBusy === r.name ? '⏳' : note ? '↻ Rewrite' : '✨ Write note'}
                               </button>
                             </div>
-                            {note ? <NoteBody text={note.text} /> : <div style={{ color: '#64748b', fontSize: 12.5 }}>Nothing yet — the nightly run writes one, or click Write note.</div>}
+                            {note ? <NoteBody text={note.text} /> : <div style={{ color: '#64748b', fontSize: 12.5 }}>Nothing yet — Send to Reports writes one, or click Write note.</div>}
                           </div>
                         </div>
                       )}

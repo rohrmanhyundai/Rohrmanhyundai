@@ -1879,13 +1879,13 @@ export async function updateCashDash(mutate) {
 // password-reset workflow generates the token, stores its hash on the user and
 // emails the link (see .github/workflows/password-reset.yml). Only the username
 // travels; whether it matched (or has an email) is never revealed here.
-export async function requestPasswordReset(username) {
+async function repositoryDispatch(eventType, payload = {}) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('The site is not connected to GitHub right now — ask a manager.');
   const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`, {
     method: 'POST',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event_type: 'password-reset', client_payload: { username: String(username || '').trim() } }),
+    body: JSON.stringify({ event_type: eventType, client_payload: payload }),
   });
   noteRateLimit(res);
   if (res.status !== 204) {
@@ -1894,6 +1894,16 @@ export async function requestPasswordReset(username) {
     throw new Error(msg);
   }
   return true;
+}
+export function requestPasswordReset(username) {
+  return repositoryDispatch('password-reset', { username: String(username || '').trim() });
+}
+
+// Big-Money LOF Coach's Notes are written by the big-money-coaching workflow
+// right after the manager's morning Send to Reports, so advisors get a note
+// built on the numbers just entered rather than last night's.
+export function requestBigMoneyCoaching(by) {
+  return repositoryDispatch('big-money-coaching', { by: String(by || '') });
 }
 
 // ── Big-Money LOF ─────────────────────────────────────────────────────────────
