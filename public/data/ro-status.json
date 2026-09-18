@@ -1,18 +1,102 @@
 {
-  "updatedAt": "2026-09-18T19:04:46.238Z",
+  "updatedAt": "2026-09-18T20:03:39.535Z",
   "by": "SHAWN",
   "rows": [
     {
-      "ro": "780953",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2017 Hyundai Santa Fe Sport",
+      "ro": "780961",
+      "advisor": "CODY TINCHER",
+      "vehicle": "2022 Hyundai Santa Fe",
       "tech": "CARTER JEAN",
       "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
-      "openDate": "Fri, Sep 18, 2026 2:29 PM"
+      "openDate": "Fri, Sep 18, 2026 3:40 PM"
+    },
+    {
+      "ro": "780960",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "2017 Hyundai Santa Fe",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:35 PM"
+    },
+    {
+      "ro": "780959",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "2020 Kia Sportage",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:35 PM"
+    },
+    {
+      "ro": "780958",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "2021 Nissan Kicks",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:35 PM"
+    },
+    {
+      "ro": "780957",
+      "advisor": "CORY CHAPMAN",
+      "vehicle": "2023 Mazda CX-9",
+      "tech": "JACOB KUNTZ",
+      "userFlag": "GREEN",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:35 PM"
+    },
+    {
+      "ro": "780956",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2023 Hyundai Santa Fe",
+      "tech": "BRYSON HUTSELL",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:30 PM"
+    },
+    {
+      "ro": "780955",
+      "advisor": "CODY TINCHER",
+      "vehicle": "2023 Hyundai Palisade",
+      "tech": "CARTER JEAN",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:27 PM"
+    },
+    {
+      "ro": "780954",
+      "advisor": "DAVID RILEY",
+      "vehicle": "1998 Chevrolet C/K 1500",
+      "tech": "",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Fri, Sep 18, 2026 3:04 PM"
     },
     {
       "ro": "780952",
@@ -287,7 +371,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 4,
+      "roAge": 5,
       "openDate": "Mon, Sep 14, 2026 3:22 PM"
     },
     {
@@ -310,18 +394,6 @@
       "userFlag": "GREEN",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 5,
-      "openDate": "Mon, Sep 14, 2026 2:44 PM"
-    },
-    {
-      "ro": "780828",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2014 Chevrolet Impala",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
       "roAge": 5,
       "openDate": "Mon, Sep 14, 2026 2:44 PM"
@@ -361,18 +433,6 @@
       "cpStatus": "NOT_STARTED",
       "roAge": 5,
       "openDate": "Mon, Sep 14, 2026 7:07 AM"
-    },
-    {
-      "ro": "780764",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2020 Ford EcoSport",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 8,
-      "openDate": "Fri, Sep 11, 2026 9:58 AM"
     },
     {
       "ro": "780755",
@@ -435,18 +495,6 @@
       "openDate": "Tue, Sep 8, 2026 1:10 PM"
     },
     {
-      "ro": "780668",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2020 Volkswagen Tiguan",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 11,
-      "openDate": "Tue, Sep 8, 2026 12:32 PM"
-    },
-    {
       "ro": "780583",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2018 Hyundai Tucson",
@@ -467,7 +515,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 16,
+      "roAge": 17,
       "openDate": "Wed, Sep 2, 2026 3:35 PM"
     },
     {
@@ -479,7 +527,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 18,
+      "roAge": 19,
       "openDate": "Mon, Aug 31, 2026 4:01 PM"
     },
     {
