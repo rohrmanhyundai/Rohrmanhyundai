@@ -10,7 +10,7 @@
     "by": "SHAWN"
   },
   "latest": {
-    "takenAt": 1789763866234,
+    "takenAt": 1789765705890,
     "date": "2026-09-18",
     "goals": {
       "hrs_ro": 1.3,
@@ -20,21 +20,21 @@
       {
         "name": "JORDAN",
         "display": "JORDAN",
-        "hrsRo": 1.57,
-        "rate": 0.81,
-        "hitHrs": true,
-        "hitRate": true,
-        "qualified": true,
+        "hrsRo": 0.57,
+        "rate": 0.51,
+        "hitHrs": false,
+        "hitRate": false,
+        "qualified": false,
         "inAvg": true,
         "rank": 1,
-        "leader": true
+        "leader": false
       },
       {
         "name": "CODY",
         "display": "CODY",
-        "hrsRo": 1.41,
-        "rate": 0.68,
-        "hitHrs": true,
+        "hrsRo": 0.41,
+        "rate": 0.38,
+        "hitHrs": false,
         "hitRate": false,
         "qualified": false,
         "inAvg": true,
@@ -44,9 +44,9 @@
       {
         "name": "DAVID",
         "display": "DAVID",
-        "hrsRo": 1.36,
+        "hrsRo": 0.35,
         "rate": 0.47,
-        "hitHrs": true,
+        "hitHrs": false,
         "hitRate": false,
         "qualified": false,
         "inAvg": true,
@@ -55,9 +55,9 @@
       }
     ],
     "store": {
-      "hrsRo": 1.45,
-      "rate": 0.653,
-      "hitHrs": true,
+      "hrsRo": 0.44,
+      "rate": 0.453,
+      "hitHrs": false,
       "hitRate": false,
       "hit": false,
       "count": 3
