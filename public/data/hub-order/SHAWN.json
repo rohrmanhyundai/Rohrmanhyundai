@@ -1,6 +1,7 @@
 {
   "managerHub": [
     "goalForecast",
+    "performanceReports",
     "chargeAccountList",
     "surveyReports",
     "advisorCalendar",
@@ -8,12 +9,13 @@
     "documentLibrary",
     "workSchedule",
     "employeeReview",
-    "performanceReports",
     "repairOrderDatabase",
     "advisorForecast",
     "userDataTracker",
     "globalMessage",
-    "cashDash"
+    "cashDash",
+    "employeeApplicants",
+    "livePay"
   ],
   "warrantyHub": [
     "aftermarketWarranty",
