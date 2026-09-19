@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-09-19T01:29:00.493Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
+    "at": "2026-09-19T01:28:57.960Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-19T01:28:18.595Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-19T01:28:18.593Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-19T01:28:15.643Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-19T01:28:14.278Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-18T21:54:00.003Z",
     "type": "page",
     "label": "advisor-goals"
@@ -707,16 +737,6 @@
   },
   {
     "at": "2026-08-20T13:06:44.996Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-19T22:02:34.901Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-19T22:02:33.219Z",
     "type": "page",
     "label": "advisor-calendar"
   }
