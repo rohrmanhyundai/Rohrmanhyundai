@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-19T11:56:49.953Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-19T11:56:49.038Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-19T11:56:46.301Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-19T11:56:45.836Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-18T20:38:16.009Z",
     "type": "page",
     "label": "advisor-goals"
@@ -865,48 +885,5 @@
     "at": "2026-08-20T18:39:53.395Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T11:55:37.761Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-20T11:55:33.297Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (7).xlsx"
-  },
-  {
-    "at": "2026-08-20T11:52:59.683Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-20T11:52:40.314Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-20T11:52:36.954Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (5).xlsx"
-  },
-  {
-    "at": "2026-08-20T11:51:55.419Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-20T11:51:52.787Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (7).pdf"
-  },
-  {
-    "at": "2026-08-20T11:50:37.663Z",
-    "type": "action",
-    "label": "save-dashboard"
   }
 ]
