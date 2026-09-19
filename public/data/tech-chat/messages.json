@@ -1,17 +1,5 @@
 [
   {
-    "id": "mt0d9cvnddi",
-    "username": "KAI",
-    "text": "RO 780107 parts have been received",
-    "timestamp": 1787160569459
-  },
-  {
-    "id": "mt0d9kqcmkm",
-    "username": "KAI",
-    "text": "battery here @cory",
-    "timestamp": 1787160579636
-  },
-  {
     "id": "mt30ce18u10",
     "username": "SETH",
     "text": "RO 780142 parts have been received",
@@ -361,5 +349,11 @@
     "username": "KAI",
     "text": "780810 @carter correct weather strip is here",
     "timestamp": 1789731866219
+  },
+  {
+    "id": "mu8c3u9sd2u",
+    "username": "SETH",
+    "text": "PART RECIEVED FOR RO 780810, ITS THE CORRECT WEATHER STRIP FOR SURE",
+    "timestamp": 1789819144192
   }
 ]
