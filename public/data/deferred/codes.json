@@ -1,1 +1,207 @@
-{}
+{
+  "VVIFL": {
+    "description": "FUEL INJECTION SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ALIGN": {
+    "description": "WHEEL ALIGNMENT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVBFL": {
+    "description": "BRAKE FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "CABIN": {
+    "description": "REPLACE CABIN AIR FILTER",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVACLEAN": {
+    "description": "AC EVAP SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "AIRFILTER": {
+    "description": "REPLACE ENGINE AIR FILTER",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ROTATE": {
+    "description": "TIRE ROTATION",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TUNEUP": {
+    "description": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVCFL": {
+    "description": "COOLANT FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "BELT": {
+    "description": "REPLACE SERPENTINE BELT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TIRE4": {
+    "description": "REPLACE FOUR TIRES",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VBFL": {
+    "description": "BRAKE FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVTFL": {
+    "description": "TRANSMISSION FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "RPADRESURF": {
+    "description": "Replace Rear Pads and Resurface Rotors",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VACLEAN": {
+    "description": "AC EVAP SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ENGBAS": {
+    "description": "ENGINE REPLACEMENT BASIC KIT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TUNEUPV6": {
+    "description": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "PADRESURF": {
+    "description": "Replace Front Pads and Resurface Rotors",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VIFL": {
+    "description": "FUEL INJECTION SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TIRE2": {
+    "description": "REPLACE TWO TIRES",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "RWIPER": {
+    "description": "INSTALL NEW REAR WIPER BLADE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "RPADROTOR": {
+    "description": "Replace Rear Pads and Rotors",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TIRE1": {
+    "description": "REPLACE ONE TIRE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVRDFL": {
+    "description": "REAR DIFFERENTIAL FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVTCFL": {
+    "description": "TRANSFER CASE SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ROHR50": {
+    "description": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "INTALIGN": {
+    "description": "Replace Front Pads and Rotors",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "PADROTOR": {
+    "description": "Replace Front Pads and Rotors",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ENGPLUS": {
+    "description": "ENGINE REPLACEMENT PLUS KIT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "ENGPREM": {
+    "description": "ENGINE REPLACEMENT PREMIUM KIT",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "TIRE3": {
+    "description": "REPLACE THREE TIRES",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "WIPER": {
+    "description": "INSTALL NEW FRONT WIPER BLADES",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "CABINAFTER": {
+    "description": "REPLACE CABIN AIR FILTER (NONOEM))",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "DECARB": {
+    "description": "Engine decarb service 4 cyl engines.",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VVEFL": {
+    "description": "ENGINE OIL CLEANING SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "AIRFILTERNONOEM": {
+    "description": "REPLACE ENGINE AIR FILTER NON OEM",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "FUELADD": {
+    "description": "FUEL ADDITIVE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "RPADRESURFNONOEM": {
+    "description": "Replace Rear Pads and Resurface Rotors NON OEM",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VBCLEAN": {
+    "description": "BATTERY SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VEFL": {
+    "description": "ENGINE OIL CLEANING SERVICE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  },
+  "VRDFL": {
+    "description": "REAR DIFFERENTIAL FLUID EXCHANGE",
+    "updatedAt": "2026-09-21T22:23:07.885Z",
+    "by": "SHAWN"
+  }
+}
