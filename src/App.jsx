@@ -1280,6 +1280,16 @@ export default function App() {
         data={data}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage(prevPage || 'manager-hub')}
+        // Setup's warranty ×1.4 switch is the same per-tech switch the Tech Hours
+        // card uses, so flipping it here is saved to the dashboard right away.
+        onSaveTechFlag={async (techName, patch) => {
+          const next = structuredClone(data);
+          const t = (next.technicians || []).find(x => (x.name || '').toUpperCase() === String(techName || '').toUpperCase());
+          if (!t) throw new Error('Technician not on the dashboard roster.');
+          Object.assign(t, patch);
+          setData(next);
+          await saveDashboardToGitHub({ data: next, vacations });
+        }}
       />
     );
   }

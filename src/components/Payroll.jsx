@@ -41,7 +41,7 @@ const CSS = `
 
 const emptyInputs = () => ({ frh: 0, school: '', pto: '', clockHours: '', otherBonus: '', otherNote: '' });
 
-export default function Payroll({ data, currentUser, onBack }) {
+export default function Payroll({ data, currentUser, onBack, onSaveTechFlag }) {
   const techs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
   const [tab, setTab] = useState('sheet');            // 'sheet' | 'setup' | 'history'
   const [plans, setPlans] = useState(null);           // tech-pay.json
@@ -325,7 +325,7 @@ ${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</
             </>
           )}
 
-          {tab === 'setup' && <SetupTab techs={techs} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} />}
+          {tab === 'setup' && <SetupTab techs={techs} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} onSaveTechFlag={onSaveTechFlag} />}
 
           {tab === 'history' && (
             <div className="pr-card">
@@ -356,13 +356,25 @@ ${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</
 // ── Setup: per-tech rates, tiers, pay type ────────────────────────────────────
 // Writes the same tech-pay.json plan Tech Live Pay reads, plus the payroll-only
 // bumpEligible flag, so the two screens can never disagree on a rate.
-function SetupTab({ techs, plans, onSaved }) {
+function SetupTab({ techs, plans, onSaved, onSaveTechFlag }) {
   const [sel, setSel] = useState(techs[0] ? firstWord(techs[0].name) : '');
   const stored = (plans || {})[sel] || null;
   const [form, setForm] = useState(() => formFrom(stored));
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   useEffect(() => { setForm(formFrom((plans || {})[sel] || null)); setMsg(''); }, [sel, plans]);
+  // Warranty ×1.4 lives on the dashboard tech record (undefined = ON), shared
+  // with the Tech Hours card — one switch, read by both screens.
+  const selTech = techs.find(t => firstWord(t.name) === sel) || null;
+  const multOn = !selTech || selTech.warrantyMultiplier !== false;
+  const [multBusy, setMultBusy] = useState(false);
+  async function toggleMult() {
+    if (!selTech || !onSaveTechFlag) return;
+    setMultBusy(true); setMsg('');
+    try { await onSaveTechFlag(selTech.name, { warrantyMultiplier: !multOn }); setMsg(`✅ Warranty ×1.4 turned ${multOn ? 'OFF' : 'ON'} for ${sel} — saved to the dashboard.`); trackAction('payroll-warranty-mult', `${sel}:${!multOn}`); }
+    catch (e) { setMsg('❌ ' + (e?.message || e)); }
+    finally { setMultBusy(false); }
+  }
 
   function formFrom(p) {
     const n = payrollPlan(p);
@@ -392,7 +404,7 @@ function SetupTab({ techs, plans, onSaved }) {
         {techs.map(t => { const k = firstWord(t.name); const p = payrollPlan((plans || {})[k]); const set_ = p.flatRate > 0 || (p.hybrid && p.clockRate > 0); return (
           <button key={k} onClick={() => setSel(k)} className="secondary" style={{ width: '100%', textAlign: 'left', marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: sel === k ? 'rgba(110,231,249,.14)' : 'transparent', borderColor: sel === k ? 'rgba(110,231,249,.5)' : 'transparent', color: sel === k ? '#67e8f9' : '#e2e8f0' }}>
             <span style={{ fontWeight: 800 }}>{t.name}</span>
-            <span style={{ fontSize: 10.5, color: set_ ? '#4ade80' : '#fca5a5' }}>{set_ ? `${p.hybrid ? 'FRH/HRLY' : 'FRH'} ${money(p.flatRate)}` : 'not set'}</span>
+            <span style={{ fontSize: 10.5, color: set_ ? '#4ade80' : '#fca5a5' }}>{set_ ? `${p.hybrid ? 'FRH/HRLY' : 'FRH'} ${money(p.flatRate)}` : 'not set'}{t.warrantyMultiplier === false ? <span style={{ color: '#94a3b8' }}> · no ×1.4</span> : ''}</span>
           </button>
         ); })}
       </div>
@@ -416,10 +428,19 @@ function SetupTab({ techs, plans, onSaved }) {
           )}
           <label className="pr-field"><span className="pr-label">Holiday / PTO hours paid?</span>
             <select value={form.eligiblePto ? 'yes' : 'no'} onChange={e => set('eligiblePto', e.target.value === 'yes')}><option value="yes">Yes</option><option value="no">No</option></select></label>
+          <div className="pr-field">
+            <span className="pr-label">Warranty multiplier</span>
+            <button type="button" onClick={toggleMult} disabled={multBusy || !selTech} title="ON: warranty hours count × 1.4 toward FRH turned. OFF: warranty hours count at face value. Same switch as the Tech Hours card — saves immediately."
+              style={{ padding: '8px 12px', fontSize: 13, fontWeight: 900, borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+                       background: multOn ? 'rgba(74,222,128,.16)' : 'rgba(148,163,184,.12)', border: `1px solid ${multOn ? 'rgba(74,222,128,.5)' : 'rgba(148,163,184,.35)'}`, color: multOn ? '#4ade80' : '#94a3b8' }}>
+              {multBusy ? '⏳' : multOn ? '⚡ Warranty ×1.4 ON' : '○ Warranty ×1.4 OFF'}
+            </button>
+          </div>
         </div>
         <div style={{ marginTop: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(110,231,249,.08)', border: '1px solid rgba(110,231,249,.25)', fontSize: 12.5, color: '#cbd5e1', lineHeight: 1.6 }}>
           <b style={{ color: '#67e8f9' }}>Check:</b> at 52 FRH this plan pays <b>{money(preview.weeklyRate)}/hr</b> → <b>{money(preview.frhPay)}</b>{preview.hourlyPay ? <> + hourly {money(preview.hourlyPay)}</> : null}.
           Bumps stack: base {money(numv(form.flatRate))} → {money(numv(form.flatRate) + numv(form.tier1Bump))} at {form.tier1Hours} hrs → {money(numv(form.flatRate) + numv(form.tier1Bump) + numv(form.tier2Bump))} at {form.tier2Hours} hrs.
+          {' '}Warranty hours {multOn ? <b style={{ color: '#4ade80' }}>× 1.4</b> : <b style={{ color: '#94a3b8' }}>at face value</b>} — e.g. 10 warranty hrs count as {multOn ? '14.0' : '10.0'} FRH.
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14 }}>
           <button onClick={save} disabled={busy || !sel} style={{ padding: '9px 18px', fontSize: 13.5 }}>{busy ? '⏳ Saving…' : '💾 Save pay plan'}</button>
