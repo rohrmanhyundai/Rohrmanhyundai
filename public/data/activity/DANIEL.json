@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-21T21:19:42.615Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-21T17:57:13.488Z",
     "type": "page",
     "label": "service-pricing"
