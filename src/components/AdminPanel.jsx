@@ -22,6 +22,8 @@ import { hasExcelTraining } from '../utils/training';
 import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
+import { encryptForVault } from '../utils/passwordVault';
+import PasswordVaultPanel from './PasswordVaultPanel';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -1819,8 +1821,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
     // Passwords are stored hashed (users.json is public). A typed password
     // replaces whatever they had; a blank box on an existing user keeps it.
-    const pwPatch = newUserPass ? { passwordHash: await hashPassword(newUserPass) } : {};
-    const stripPlain = (u) => { const o = { ...u }; if (newUserPass) { delete o.password; delete o.passwordReset; } return o; };
+    // With the admin vault set up, the typed password is also stored encrypted
+    // so it can be revealed later.
+    let pwPatch = {};
+    if (newUserPass) {
+      pwPatch = { passwordHash: await hashPassword(newUserPass) };
+      try {
+        const loaded = await loadUsers();
+        const encd = await encryptForVault(loaded && loaded.passwordVault, newUserPass);
+        if (encd) pwPatch.passwordEnc = encd;
+      } catch {}
+    }
+    const stripPlain = (u) => { const o = { ...u }; if (newUserPass) { delete o.password; delete o.passwordReset; delete o.passwordEnc; } return o; };
     // Hash a newly typed code; a blank box means "leave whatever they have".
     const codePatch = newUserCode
       ? { applicantCode: await hashAccessCode(newUserCode) }
@@ -2840,6 +2852,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
+        {currentRole === 'admin' && <PasswordVaultPanel users={users} onUsersChange={onUsersChange} currentUser={currentUser} />}
         <div className="form-section">
           <div className="title" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <span>Add / Edit User</span>

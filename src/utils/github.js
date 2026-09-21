@@ -443,12 +443,24 @@ function decodeSharedToken(stored) {
 // Parse users.json — handles both old array format and new {users, sharedSaveCode} format
 function parseUsersPayload(raw) {
   if (!raw) return null;
-  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '', awsAccessKeyId: '', awsSecretAccessKey: '' };
+  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '', awsAccessKeyId: '', awsSecretAccessKey: '', passwordVault: null };
   return {
     users: Array.isArray(raw.users) ? raw.users : [],
     sharedSaveCode: decodeSharedToken(raw.sharedSaveCode || ''),
     awsAccessKeyId: decodeSharedToken(raw.awsAccessKeyId || ''),
     awsSecretAccessKey: decodeSharedToken(raw.awsSecretAccessKey || ''),
+    // Admin password vault (utils/passwordVault.js) — public key + wrapped private key.
+    passwordVault: raw.passwordVault && typeof raw.passwordVault === 'object' ? raw.passwordVault : null,
+  };
+}
+
+// The users.json extras every writer below must carry forward, so a save from
+// one screen never drops what another screen stored.
+function usersFileExtras(parsed) {
+  return {
+    awsAccessKeyId: encodeSharedToken((parsed && parsed.awsAccessKeyId) || ''),
+    awsSecretAccessKey: encodeSharedToken((parsed && parsed.awsSecretAccessKey) || ''),
+    ...(parsed && parsed.passwordVault ? { passwordVault: parsed.passwordVault } : {}),
   };
 }
 
@@ -472,19 +484,30 @@ export async function saveUsers(users, sharedSaveCode) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  // Preserve any existing AWS creds in the file so this save doesn't wipe them.
-  let existingAwsKeyId = '', existingAwsSecret = '';
-  try {
-    const raw = await readGitHubFile(headers, 'public/data/users.json');
-    const parsed = parseUsersPayload(raw);
-    if (parsed) { existingAwsKeyId = parsed.awsAccessKeyId || ''; existingAwsSecret = parsed.awsSecretAccessKey || ''; }
-  } catch {}
+  // Preserve the AWS creds and the password vault so this save doesn't wipe them.
+  let existing = null;
+  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
   await saveGitHubFile(headers, 'public/data/users.json', {
     users,
     sharedSaveCode: encodeSharedToken(sharedSaveCode ?? ''),
-    awsAccessKeyId: encodeSharedToken(existingAwsKeyId),
-    awsSecretAccessKey: encodeSharedToken(existingAwsSecret),
+    ...usersFileExtras(existing),
   }, 'Update users');
+}
+
+// Write the admin password vault next to the users (optionally with an updated
+// user list in the same save, e.g. right after encrypting everyone).
+export async function savePasswordVault(vault, usersOverride) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  let existing = null;
+  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
+  await saveGitHubFile(headers, 'public/data/users.json', {
+    users: usersOverride || (existing ? existing.users : []),
+    sharedSaveCode: encodeSharedToken((existing && existing.sharedSaveCode) || ''),
+    ...usersFileExtras(existing),
+    passwordVault: vault,
+  }, 'Update password vault');
 }
 
 // Sync AWS credentials into users.json so ALL devices get them on next load
@@ -492,15 +515,12 @@ export async function saveSharedAwsCreds(accessKeyId, secretAccessKey) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  let users = [], sharedSaveCode = '';
-  try {
-    const raw = await readGitHubFile(headers, 'public/data/users.json');
-    const parsed = parseUsersPayload(raw);
-    if (parsed) { users = parsed.users; sharedSaveCode = parsed.sharedSaveCode; }
-  } catch {}
+  let existing = null;
+  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
   await saveGitHubFile(headers, 'public/data/users.json', {
-    users,
-    sharedSaveCode: encodeSharedToken(sharedSaveCode),
+    users: existing ? existing.users : [],
+    sharedSaveCode: encodeSharedToken((existing && existing.sharedSaveCode) || ''),
+    ...usersFileExtras(existing),
     awsAccessKeyId: encodeSharedToken(accessKeyId || ''),
     awsSecretAccessKey: encodeSharedToken(secretAccessKey || ''),
   }, 'Sync AWS credentials');
@@ -509,13 +529,13 @@ export async function saveSharedAwsCreds(accessKeyId, secretAccessKey) {
 // Sync a new GitHub token into users.json so ALL devices get it automatically on next load
 export async function saveSharedToken(newToken) {
   const headers = { Authorization: `Bearer ${newToken}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  let users = [];
-  try {
-    const raw = await readGitHubFile(headers, 'public/data/users.json');
-    const parsed = parseUsersPayload(raw);
-    if (parsed) users = parsed.users;
-  } catch {}
-  await saveGitHubFile(headers, 'public/data/users.json', { users, sharedSaveCode: encodeSharedToken(newToken) }, 'Sync shared save code');
+  let existing = null;
+  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
+  await saveGitHubFile(headers, 'public/data/users.json', {
+    users: existing ? existing.users : [],
+    sharedSaveCode: encodeSharedToken(newToken),
+    ...usersFileExtras(existing),
+  }, 'Sync shared save code');
 }
 
 // ── Document Library ──────────────────────────────────────────────────────────

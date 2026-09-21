@@ -11,6 +11,8 @@
 // user (`passwordReset.hash`) by the GitHub Action that emails it; the token
 // itself is only ever in the email. See scripts/password-reset-request.cjs.
 
+import { encryptForVault } from './passwordVault';
+
 const ITERATIONS = 150000;
 
 const bytesToHex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -54,25 +56,32 @@ export async function verifyPassword(user, password) {
 }
 
 // A copy of the user with the password replaced by its hash (and any pending
-// reset cleared, since a new password supersedes it).
-export async function withPassword(user, password) {
+// reset cleared, since a new password supersedes it). With a vault present the
+// password is also stored encrypted for admins (utils/passwordVault.js).
+export async function withPassword(user, password, vault = null) {
   const out = { ...user, passwordHash: await hashPassword(password) };
   delete out.password;
   delete out.passwordReset;
+  const encd = await encryptForVault(vault, password);
+  if (encd) out.passwordEnc = encd; else delete out.passwordEnc;
   return out;
 }
 
 // Migrate every legacy plaintext record. Returns [users, changedCount].
-export async function hashLegacyPasswords(users) {
+export async function hashLegacyPasswords(users, vault = null) {
   let changed = 0;
   const out = [];
   for (const u of users || []) {
     if (!isHashed(u) && u && u.password != null && String(u.password) !== '') {
-      out.push(await withPassword(u, u.password)); changed++;
+      out.push(await withPassword(u, u.password, vault)); changed++;
     } else out.push(u);
   }
   return [out, changed];
 }
+
+// True when a login just proved the password but the vault copy is missing or
+// from an older keypair — the caller can re-save it encrypted.
+export const needsVaultCopy = (user, vault) => !!(vault && vault.kid && (!user.passwordEnc || user.passwordEnc.kid !== vault.kid));
 
 // ── Reset links ──────────────────────────────────────────────────────────────
 export async function sha256Hex(text) {

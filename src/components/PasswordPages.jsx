@@ -37,7 +37,7 @@ async function commitNewPassword(username, password, { extraCheck } = {}) {
   const idx = users.findIndex(u => (u.username || '').toUpperCase() === String(username || '').toUpperCase());
   if (idx < 0) throw new Error('User not found.');
   if (extraCheck) await extraCheck(users[idx]);
-  users[idx] = await withPassword(users[idx], password);
+  users[idx] = await withPassword(users[idx], password, loaded.passwordVault);
   await saveUsers(users, loaded.sharedSaveCode);
   return users;
 }
@@ -211,7 +211,7 @@ export function ForgotPasswordModal({ initialUsername = '', onClose }) {
 export async function migrateAllPasswords() {
   const loaded = await loadUsers();
   if (!loaded) throw new Error('Could not load the user list.');
-  const [users, changed] = await hashLegacyPasswords(loaded.users || []);
+  const [users, changed] = await hashLegacyPasswords(loaded.users || [], loaded.passwordVault);
   if (changed > 0) await saveUsers(users, loaded.sharedSaveCode);
   return { users, changed };
 }

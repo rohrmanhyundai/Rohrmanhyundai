@@ -37,7 +37,7 @@ import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
-import { verifyPassword, isHashed, withPassword } from './utils/password';
+import { verifyPassword, isHashed, withPassword, needsVaultCopy } from './utils/password';
 import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
@@ -762,22 +762,23 @@ export default function App() {
     const match = candidate && await verifyPassword(candidate, password) ? candidate : null;
     if (match) {
       // Legacy plaintext record: now that we know the password, store it hashed
-      // so the public users.json stops carrying it in the clear. Best effort —
-      // login doesn't wait on it.
-      if (!isHashed(match) && match.password != null) {
-        (async () => {
-          try {
-            const loaded = await loadUsers();
-            const list = loaded && loaded.users ? loaded.users : null;
-            if (!list) return;
-            const i = list.findIndex(u => u.username === match.username);
-            if (i < 0 || isHashed(list[i])) return;
-            list[i] = await withPassword(list[i], password);
-            await saveUsersFile(list, loaded.sharedSaveCode);
-            setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list));
-          } catch {}
-        })();
-      }
+      // so the public users.json stops carrying it in the clear. Also tops up
+      // the admin vault copy when it's missing (a vault created after this
+      // password was set). Best effort — login doesn't wait on it.
+      (async () => {
+        try {
+          const loaded = await loadUsers();
+          const list = loaded && loaded.users ? loaded.users : null;
+          if (!list) return;
+          const i = list.findIndex(u => u.username === match.username);
+          if (i < 0) return;
+          const legacy = !isHashed(list[i]) && list[i].password != null;
+          if (!legacy && !needsVaultCopy(list[i], loaded.passwordVault)) return;
+          list[i] = await withPassword(list[i], password, loaded.passwordVault);
+          await saveUsersFile(list, loaded.sharedSaveCode);
+          setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list));
+        } catch {}
+      })();
       const role = effectiveRole(match);
       const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
       const pages = match.pages || null;
