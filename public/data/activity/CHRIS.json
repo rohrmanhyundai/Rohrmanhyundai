@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-09-21T18:12:09.050Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-21T18:12:07.563Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-21T18:12:03.652Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-21T18:12:00.951Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-21T18:11:55.158Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-21T17:04:57.267Z",
     "type": "action",
     "label": "password-reset-complete"
