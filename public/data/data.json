@@ -220,6 +220,23 @@
         "_hrsStamp": 1789990021919,
         "fri_raw": 3.1,
         "warrantyMultiplier": false
+      },
+      {
+        "name": "WEI",
+        "lastName": "Guo",
+        "goal": 47.5,
+        "mon": 0,
+        "tue": 0,
+        "wed": 0,
+        "thu": 0,
+        "fri": 0,
+        "sat": 0,
+        "total": 0,
+        "goal_pct": 0,
+        "pacing": 0,
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "advisors": [
