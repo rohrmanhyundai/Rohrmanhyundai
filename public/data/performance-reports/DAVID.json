@@ -1,5 +1,28 @@
 [
   {
+    "date": "2026-09-18",
+    "label": "September 18, 2026",
+    "month": "2026-09",
+    "type": "advisor",
+    "savedAt": "2026-09-21T08:16:39.776Z",
+    "autoSaved": true,
+    "csi": 966,
+    "hours_per_ro": 1,
+    "roh50_hrs_ro": 0.35,
+    "roh50_add_rate": 0.47,
+    "lof_tickets": 47,
+    "lof_oil_only": 25,
+    "mtd_hours": 141.7,
+    "daily_avg": 11.15,
+    "align": 0.0652,
+    "tires": 0.0978,
+    "valvoline": 0.0978,
+    "asr": 0.1213,
+    "elr": 0.9121,
+    "last_month_total": 335.2,
+    "ro_count": 141
+  },
+  {
     "date": "2026-09-17",
     "label": "September 17, 2026",
     "month": "2026-09",
