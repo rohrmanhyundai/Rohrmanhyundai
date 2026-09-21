@@ -230,7 +230,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -591,6 +591,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
               canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && { key: 'chargeList' },
               canSee(userPages, currentRole, 'servicePricing') && onServicePricing && { key: 'servicePricing' },
+              onDeferredService && { key: 'deferredService' },
               (canSee(userPages, currentRole, 'advisorSchedule') || canSee(userPages, currentRole, 'techSchedule')) && { key: 'workSchedule' },
               canSee(userPages, currentRole, 'aftermarketWarranty') && { key: 'aftermarketWarranty' },
               canSee(userPages, currentRole, 'originalOwner') && onOriginalOwner && { key: 'originalOwner' },
@@ -627,6 +628,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 case 'servicePricing': return (
                   <button onClick={onServicePricing} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
                     💲 Service Pricing Menu
+                  </button>
+                );
+                case 'deferredService': return (
+                  <button onClick={onDeferredService} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.28),rgba(234,88,12,.18))', borderColor: 'rgba(251,146,60,.4)' }}>
+                    🔧 Deferred Service
                   </button>
                 );
                 case 'workSchedule': return (

@@ -1983,6 +1983,26 @@ export async function savePayrollWeek(key, record, summary) {
   }, `Payroll index ${key}`);
 }
 
+// ── Deferred Service ──────────────────────────────────────────────────────────
+// public/data/deferred/rows.json  → { updatedAt, uploads: [{at, by, file, lastUpdate, rows}], byRo: { RO: row } }
+// public/data/deferred/codes.json → { CODE: { description, updatedAt, by } }
+export async function loadDeferredRows() {
+  try { const d = await loadGithubFile('data/deferred/rows.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { byRo: {}, uploads: [] };
+}
+export async function updateDeferredRows(mutate) {
+  return mutateGitHubJson('public/data/deferred/rows.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { byRo: {}, uploads: [] }),
+    `Deferred service upload ${new Date().toISOString()}`);
+}
+export async function loadDeferredCodes() {
+  try { const d = await loadGithubFile('data/deferred/codes.json'); if (d && typeof d === 'object') return d; } catch {}
+  return {};
+}
+export async function updateDeferredCodes(mutate) {
+  return mutateGitHubJson('public/data/deferred/codes.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : {}),
+    `Deferred op-code descriptions ${new Date().toISOString()}`);
+}
+
 // ── Big-Money LOF ─────────────────────────────────────────────────────────────
 // Advisor contest on the two $50 add-on numbers. Shape documented in
 // utils/bigMoney.js: { contest: {start,end,prize}, latest: {...}, final: {...} }.

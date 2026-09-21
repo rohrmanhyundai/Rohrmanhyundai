@@ -35,6 +35,7 @@ import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
+import DeferredService from './components/DeferredService';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
 import { verifyPassword, isHashed, withPassword, needsVaultCopy, hashLegacyPasswords } from './utils/password';
@@ -1385,6 +1386,16 @@ export default function App() {
     );
   }
 
+  if (page === 'deferred-service') {
+    return (
+      <DeferredService
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+      />
+    );
+  }
+
   if (page === 'big-money-lof') {
     return (
       <BigMoneyLOF
@@ -1551,6 +1562,7 @@ export default function App() {
         onChargeList={() => goTo('charge-account-list', 'advisor-calendar')}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
+        onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
