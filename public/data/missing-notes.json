@@ -1,19 +1,61 @@
 {
-  "updatedAt": "2026-09-21T15:42:58.123Z",
+  "updatedAt": "2026-09-21T21:13:57.368Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "780979",
+        "ro": "780999",
+        "vehicle": "2014 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "780997",
         "vehicle": "2021 Hyundai Tucson"
       },
       {
-        "ro": "780976",
-        "vehicle": "2021 Hyundai Santa Fe"
+        "ro": "780993",
+        "vehicle": "2016 Hyundai Sonata"
       },
       {
-        "ro": "780969",
-        "vehicle": "2026 Hyundai Sonata"
+        "ro": "780987",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780985",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780983",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780810",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "780998",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780989",
+        "vehicle": "2027 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780988",
+        "vehicle": "2027 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780986",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780984",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780982",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
         "ro": "780960",
@@ -48,22 +90,6 @@
       {
         "ro": "780829",
         "vehicle": "2019 Subaru Crosstrek"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "780970",
-        "vehicle": "2022 Hyundai Tucson"
-      },
-      {
-        "ro": "780810",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
-    "CODY": [
-      {
-        "ro": "780955",
-        "vehicle": "2023 Hyundai Palisade"
       }
     ]
   }
