@@ -1,21 +1,5 @@
 [
   {
-    "id": "mtlz8etvfdfa",
-    "ro": "780583",
-    "roDate": "2026-09-03",
-    "vehicle": "2018 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CEL FLASHING ENGINE KNOCKING. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/16/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu1re82myl7s",
     "ro": "780804",
     "roDate": "2026-09-14",
