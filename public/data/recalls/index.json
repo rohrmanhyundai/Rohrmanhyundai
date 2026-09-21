@@ -7,7 +7,44 @@
     "size": 284878,
     "uploadedBy": "SHAWN",
     "uploadedAt": "2026-09-21T13:55:03.453Z",
-    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  Campaign   21 - 01 - 049 H  DATE   MODEL(S)  June , 20 2 1   Tucson  (NX4 / NX4a)  SUBJECT:   OWNER’S MANUAL STICKER ATTACHMENT  (SERVICE CAMPAIGN   969 )  Description:   This bulletin describes the procedure to   correct   an   error   in the fuel requirements in   the  owner’s manual   of certain 2022MY Tucson (NX4/NX4a) vehicles.  Applicable Vehicles:   Certain   2022 MY   Tucson   ( NX4 /NX4a )   vehicles   produced between   January 23,  2021   –   April   2 1 ,   202 1  Parts Information:  PART NAME   PART NUMBER   FIGURE   REMARK  Owner’s Manual  Sticker   00305 - SC969  Sticker(s) will be provided in a  envelope labeled with the  sticker part number.  Note:   Dealers with affected dealer stock vehicles in their inventory were shipped stickers.   Dealers  without any inventory were also shipped one sticker. Additional stickers can be ordered through  dealer ’ s facing PDC .  Warranty Information :  MODEL   OP CODE   OPERATION   OP TIME   CAUSAL PART   NATURE  CODE  CAUSE  CODE  Tucson  (NX4)   10D078R2  Sticker Attachment   0. 2   M/H   00305 - SC969   B11   ZZ 7  Tucson  (NX4a)   10D078R3  Note 1:   Submit claim on Campaign Claim Entry Screen.  Note 2:   If a part   that is not covered by this campaign   is found in need of replacement while  performing Service Campaign   969   and the   affected part is still under warranty, submit a separate  claim using the same Repair Order. If the affected part is out of warranty, submit   a Prior Approval  Request for goodwill consideration prior to the repair.  *** Dealer Stock and Retail Vehicles ***  Dealers   must perform this Service Campaign on all affected vehicles prior to customer retail  delivery and whenever an affected vehicle is in the shop for any maintenance or repair.  When a vehicle arrives at the Service Department, access Hyundai Motor America's \" Vehicle  Information Screen (VIS)\" via WEBDCS to identify open Campaigns.     IMPORTANT OWNER’S MANUAL STICKER ATTACHMENT   (SERVICE CAMPAIGN   969 )  TSB #:   2 1 - 01 - 049 H   Page   2   of   2  SUBJECT:  SUBJECT:  Service Procedure:  1.   Attach the sticker over the specified text  inside the owner’s manual.  2.   The service procedure is now complete."
+    "searchText": " Circulate To: General Manager, Service Manager, Parts Manager ,   Warranty Manager,   Service  Advisors ,   Technicians , B ody Shop Manager ,   Fleet Repair  Technical Service Bulletin  GROUP   NUMBER  Campaign   21 - 01 - 049 H  DATE   MODEL(S)  June , 20 2 1   Tucson  (NX4 / NX4a)  SUBJECT:   OWNER’S MANUAL STICKER ATTACHMENT  (SERVICE CAMPAIGN   969 )  Description:   This bulletin describes the procedure to   correct   an   error   in the fuel requirements in   the  owner’s manual   of certain 2022MY Tucson (NX4/NX4a) vehicles.  Applicable Vehicles:   Certain   2022 MY   Tucson   ( NX4 /NX4a )   vehicles   produced between   January 23,  2021   –   April   2 1 ,   202 1  Parts Information:  PART NAME   PART NUMBER   FIGURE   REMARK  Owner’s Manual  Sticker   00305 - SC969  Sticker(s) will be provided in a  envelope labeled with the  sticker part number.  Note:   Dealers with affected dealer stock vehicles in their inventory were shipped stickers.   Dealers  without any inventory were also shipped one sticker. Additional stickers can be ordered through  dealer ’ s facing PDC .  Warranty Information :  MODEL   OP CODE   OPERATION   OP TIME   CAUSAL PART   NATURE  CODE  CAUSE  CODE  Tucson  (NX4)   10D078R2  Sticker Attachment   0. 2   M/H   00305 - SC969   B11   ZZ 7  Tucson  (NX4a)   10D078R3  Note 1:   Submit claim on Campaign Claim Entry Screen.  Note 2:   If a part   that is not covered by this campaign   is found in need of replacement while  performing Service Campaign   969   and the   affected part is still under warranty, submit a separate  claim using the same Repair Order. If the affected part is out of warranty, submit   a Prior Approval  Request for goodwill consideration prior to the repair.  *** Dealer Stock and Retail Vehicles ***  Dealers   must perform this Service Campaign on all affected vehicles prior to customer retail  delivery and whenever an affected vehicle is in the shop for any maintenance or repair.  When a vehicle arrives at the Service Department, access Hyundai Motor America's \" Vehicle  Information Screen (VIS)\" via WEBDCS to identify open Campaigns.     IMPORTANT OWNER’S MANUAL STICKER ATTACHMENT   (SERVICE CAMPAIGN   969 )  TSB #:   2 1 - 01 - 049 H   Page   2   of   2  SUBJECT:  SUBJECT:  Service Procedure:  1.   Attach the sticker over the specified text  inside the owner’s manual.  2.   The service procedure is now complete.",
+    "opData": {
+      "questions": [
+        {
+          "id": "model",
+          "label": "Model"
+        }
+      ],
+      "entries": [
+        {
+          "id": "mubb5hrzg8z9",
+          "answers": {
+            "model": "Tucson (NX4)"
+          },
+          "model": "Tucson (NX4)",
+          "opCode": "10D078R2",
+          "operation": "Sticker Attachment",
+          "opTime": "0.2 M/H",
+          "causalPart": "00305-SC969",
+          "natureCode": "B11",
+          "causeCode": "ZZ7"
+        },
+        {
+          "id": "mubb5hrz9uzc",
+          "answers": {
+            "model": "Tucson (NX4a)"
+          },
+          "model": "Tucson (NX4a)",
+          "opCode": "10D078R3",
+          "operation": "Sticker Attachment",
+          "opTime": "0.2 M/H",
+          "causalPart": "00305-SC969",
+          "natureCode": "B11",
+          "causeCode": "ZZ7"
+        }
+      ]
+    },
+    "opExcluded": false
   },
   {
     "id": "mu36nfrn5drd",
