@@ -82,12 +82,30 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
   const codeCounts = useMemo(() => { const m = {}; rows.forEach(r => (r.codes || []).forEach(c => { m[c] = (m[c] || 0) + 1; })); return m; }, [rows]);
   const advisorCounts = useMemo(() => { const m = {}; rows.forEach(r => { const a = r.advisor || '—'; m[a] = (m[a] || 0) + 1; }); return m; }, [rows]);
   const allCodes = useMemo(() => Object.keys(codeCounts).sort((a, b) => codeCounts[b] - codeCounts[a] || a.localeCompare(b)), [codeCounts]);
+  // Op codes that share a description are the same service (the DMS has
+  // several codes for one job), so the filter works on SERVICES: one chip per
+  // description, covering every code that carries it. A code with no
+  // description is its own service. Counts are ROs with any code in the group.
+  const services = useMemo(() => {
+    const norm = (t) => String(t || '').trim().replace(/\s+/g, ' ').toLowerCase();
+    const groups = new Map();   // key → { key, label, codes:Set }
+    for (const c of allCodes) {
+      const desc = codes[c] && codes[c].description ? codes[c].description.trim() : '';
+      const key = desc ? `d:${norm(desc)}` : `c:${c}`;
+      if (!groups.has(key)) groups.set(key, { key, label: desc || c, codes: new Set(), described: !!desc });
+      groups.get(key).codes.add(c);
+    }
+    const list = [...groups.values()];
+    for (const g of list) g.count = rows.filter(r => (r.codes || []).some(c => g.codes.has(c))).length;
+    return list.sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+  }, [allCodes, codes, rows]);
+  const serviceOfCode = useMemo(() => { const m = {}; services.forEach(g => g.codes.forEach(c => { m[c] = g; })); return m; }, [services]);
   const allAdvisors = useMemo(() => Object.keys(advisorCounts).sort(), [advisorCounts]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return rows.filter(r => {
-      if (selCodes.size && !(r.codes || []).some(c => selCodes.has(c))) return false;
+      if (selCodes.size && !(r.codes || []).some(c => serviceOfCode[c] && selCodes.has(serviceOfCode[c].key))) return false;
       if (selAdvisors.size && !selAdvisors.has(r.advisor || '—')) return false;
       if (from && (!r.date || r.date < from)) return false;
       if (to && (!r.date || r.date > to)) return false;
@@ -97,7 +115,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
       }
       return true;
     });
-  }, [rows, selCodes, selAdvisors, from, to, q]);
+  }, [rows, selCodes, selAdvisors, from, to, q, serviceOfCode]);
 
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
   const clearAll = () => { setSelCodes(new Set()); setSelAdvisors(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); };
@@ -149,7 +167,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
   }
 
   const uploads = (store && store.uploads) || [];
-  const visibleCodes = showAllCodes ? allCodes : allCodes.slice(0, 18);
+  const visibleServices = showAllCodes ? services : services.slice(0, 18);
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -197,12 +215,13 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                 <div>
                   <div className="ds-label" style={{ marginBottom: 6 }}>Service type <span style={{ color: '#64748b', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· click to filter, click again to remove</span></div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {visibleCodes.map(c => (
-                      <button key={c} className={`ds-chip${selCodes.has(c) ? ' on' : ''}`} onClick={() => toggle(selCodes, setSelCodes, c)} title={codes[c] && codes[c].description ? c : 'No description yet — set one in Settings'}>
-                        {CODE_LABEL(c, codes)} <span className="n">{codeCounts[c]}</span>
+                    {visibleServices.map(g => (
+                      <button key={g.key} className={`ds-chip${selCodes.has(g.key) ? ' on' : ''}`} onClick={() => toggle(selCodes, setSelCodes, g.key)}
+                        title={g.described ? `Op code${g.codes.size === 1 ? '' : 's'}: ${[...g.codes].join(', ')}` : 'No description yet — set one in Settings'}>
+                        {g.label} <span className="n">{g.count}</span>
                       </button>
                     ))}
-                    {allCodes.length > 18 && <button className="ds-chip" onClick={() => setShowAllCodes(v => !v)} style={{ color: '#67e8f9' }}>{showAllCodes ? 'Show fewer' : `+${allCodes.length - 18} more`}</button>}
+                    {services.length > 18 && <button className="ds-chip" onClick={() => setShowAllCodes(v => !v)} style={{ color: '#67e8f9' }}>{showAllCodes ? 'Show fewer' : `+${services.length - 18} more`}</button>}
                     {!allCodes.length && !loading && <span style={{ fontSize: 12.5, color: '#64748b' }}>No report uploaded yet.</span>}
                   </div>
                 </div>
@@ -223,7 +242,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
               <div className="ds-card" style={{ padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
                   <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>{anyFilter ? 'Matches' : 'All deferred work'}</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : `${filtered.length} of ${rows.length} repair orders`}{selCodes.size ? ` · ${[...selCodes].map(c => CODE_LABEL(c, codes)).join(', ')}` : ''}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : `${filtered.length} of ${rows.length} repair orders`}{selCodes.size ? ` · ${services.filter(g => selCodes.has(g.key)).map(g => g.label).join(', ')}` : ''}</div>
                   <div style={{ flex: 1 }} />
                   <div style={{ fontSize: 11.5, color: '#64748b' }}>Click a customer for the full line from the report</div>
                 </div>
@@ -263,7 +282,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                             <div className="k ds-label" style={{ marginTop: 12 }}>Deferred op codes</div>
                             <div>
                               {(r.codes || []).map((c, i) => (
-                                <span key={i} className="ds-code" style={selCodes.has(c) ? { background: 'rgba(110,231,249,.18)', borderColor: 'rgba(110,231,249,.6)', color: '#a5f3fc' } : {}}>
+                                <span key={i} className="ds-code" style={serviceOfCode[c] && selCodes.has(serviceOfCode[c].key) ? { background: 'rgba(110,231,249,.18)', borderColor: 'rgba(110,231,249,.6)', color: '#a5f3fc' } : {}}>
                                   {c}{codes[c] && codes[c].description ? <small>{codes[c].description}</small> : null}
                                 </span>
                               ))}
@@ -304,7 +323,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
               <div className="ds-card">
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
                   <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>🏷️ Deferred op codes</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{allCodes.length} codes seen on the reports · give each a description advisors will recognise</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{allCodes.length} codes seen on the reports · give each a description advisors will recognise. Codes with the <b>same description</b> are treated as one service (one filter chip).</div>
                   <div style={{ flex: 1 }} />
                   <button onClick={saveCodes} disabled={!!busy || !draftCodes} style={{ fontSize: 13 }}>{busy === 'codes' ? '⏳ Saving…' : '💾 Save descriptions'}</button>
                 </div>
@@ -316,7 +335,12 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                         <tr key={c}>
                           <td style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 800, color: '#e9d5ff' }}>{c}</td>
                           <td style={{ color: '#94a3b8' }}>{codeCounts[c]}</td>
-                          <td><input className="ds-in" style={{ width: '100%', padding: '6px 9px' }} placeholder="e.g. Cabin air filter" value={(draftCodes && draftCodes[c]) || ''} onChange={e => setDraftCodes(d => ({ ...(d || {}), [c]: e.target.value }))} /></td>
+                          <td>
+                            <input className="ds-in" style={{ width: '100%', padding: '6px 9px' }} placeholder="e.g. Cabin air filter" value={(draftCodes && draftCodes[c]) || ''} onChange={e => setDraftCodes(d => ({ ...(d || {}), [c]: e.target.value }))} />
+                            {serviceOfCode[c] && serviceOfCode[c].codes.size > 1 && (
+                              <div style={{ fontSize: 10.5, color: '#94a3b8', marginTop: 3 }}>Same service as {[...serviceOfCode[c].codes].filter(x => x !== c).join(', ')} — shown as one filter chip.</div>
+                            )}
+                          </td>
                         </tr>
                       ))}
                       {Object.keys(codes).filter(c => !codeCounts[c]).map(c => (
