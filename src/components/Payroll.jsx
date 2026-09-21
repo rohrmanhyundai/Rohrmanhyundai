@@ -163,29 +163,119 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
 
   // ── Print ────────────────────────────────────────────────────────────────
   function printSheet() {
-    const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    const trs = rows.map(r => `<tr>
-      <td class="l">${esc(r.name)}</td><td>${r.plan.hybrid ? 'FRH / HRLY' : 'FRH'}</td><td class="${r.plan.bumpEligible ? '' : 'no'}">${r.plan.bumpEligible ? 'YES' : 'NO'}</td>
-      <td>${h2(r.calc.frh)}</td><td>${money(r.plan.flatRate)}</td><td>${r.plan.bumpEligible ? money(r.plan.tier1Bump) : ''}</td>
-      <td>${r.plan.tier1Hours}</td><td>${r.calc.tier1 ? money(r.plan.tier1Bump) : '$0'}</td><td>${r.plan.tier2Hours}</td><td>${r.calc.tier2 ? money(r.plan.tier2Bump) : '$0'}</td>
-      <td><b>${money(r.calc.weeklyRate)}</b></td><td><b>${money(r.calc.frhPay)}</b></td>
-      <td>${r.calc.school || ''}</td><td>${r.calc.school ? money(r.calc.schoolPay) : ''}</td>
-      <td>${r.calc.pto || ''}</td><td>${r.calc.pto ? money(r.calc.ptoPay) : ''}</td>
-      <td>${r.calc.hourlyPay ? money(r.calc.hourlyPay) : ''}</td>
-      <td>${r.calc.otherBonus ? money(r.calc.otherBonus) : ''}</td><td><b>${money(r.calc.total)}</b></td></tr>`).join('');
-    const frhTrs = rows.map(r => { const d = r.frhDetail || { cp: 0, int: 0, war: 0, warX: 0, mult: 1, total: r.calc.frh }; return `<tr><td class="l">${esc(r.name)}</td><td>${h2(d.cp)}</td><td>${h2(d.int)}</td><td>${h2(d.war)}</td><td>${h2(d.warX)}</td><td><b>${h2(d.total)}</b></td></tr>`; }).join('');
-    const notes = rows.filter(r => r.calc.otherBonus || r.calc.otherNote).map(r => `<tr><td class="l">${esc(r.name)}</td><td class="l">${esc(r.calc.otherNote)}</td><td>${money(r.calc.otherBonus)}</td></tr>`).join('');
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Tech Payroll ${esc(fmtWeek(week))}</title>
-<style>body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:24px}h1{font-size:18px;margin:0 0 2px}h2{font-size:12px;margin:18px 0 6px;text-transform:uppercase;letter-spacing:.06em;color:#444}
-table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px 5px;text-align:right;white-space:nowrap}th{background:#e5e7eb;font-size:9.5px;text-transform:uppercase}td.l{text-align:left}td.no{background:#fecaca}
-tfoot td{font-weight:bold;background:#f3f4f6}.meta{color:#555;margin-bottom:12px}@page{size:letter landscape;margin:.4in}</style></head><body>
-<h1>Hyundai — Technician Payroll</h1><div class="meta">Payroll dates <b>${esc(fmtWeek(week))}</b> · ${reportName ? 'Report: ' + esc(reportName) + ' · ' : ''}Printed ${new Date().toLocaleString()}</div>
-<table><thead><tr><th>Tech</th><th>Type</th><th>Bump elig.</th><th>FRH turned</th><th>Base rate</th><th>$ / tier</th><th>Tier 1 FRH</th><th>Tier 1</th><th>Tier 2 FRH</th><th>Tier 2</th><th>Wkly rate</th><th>FRH pay</th><th>School hrs</th><th>School $</th><th>Vac/Hol/Sick hrs</th><th>Vac/Hol/Sick $</th><th>Hourly $</th><th>Other bonus</th><th>Total</th></tr></thead>
-<tbody>${trs}</tbody><tfoot><tr><td class="l" colspan="3">TOTAL SHOP</td><td>${h2(totals.frh)}</td><td colspan="7"></td><td>${money(totals.frhPay)}</td><td>${totals.school}</td><td>${money(totals.schoolPay)}</td><td>${totals.pto}</td><td>${money(totals.ptoPay)}</td><td>${money(totals.hourlyPay)}</td><td>${money(totals.otherBonus)}</td><td>${money(totals.total)}</td></tr></tfoot></table>
-<h2>Flat rate hours calc w/ warranty multiplier</h2>
-<table><thead><tr><th>Tech</th><th>CP FRH</th><th>INT FRH</th><th>WAR FRH</th><th>× 1.4</th><th>TTL FRH</th></tr></thead><tbody>${frhTrs}</tbody></table>
-${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</th><th>Bonus</th></tr></thead><tbody>${notes}</tbody></table>` : ''}
-<script>window.addEventListener('load',function(){setTimeout(function(){try{window.print()}catch(e){}},300)})</script></body></html>`;
+    const esc = (t) => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const logo = `${window.location.origin}/Rohrmanhyundai/hyundai-logo.png`;
+    const printed = new Date().toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const cell = (v, cls = '') => `<td class="${cls}">${v}</td>`;
+    const trs = rows.map(r => {
+      const p = r.plan, c = r.calc;
+      return `<tr>
+        ${cell(`<b>${esc(r.name)}</b>`, 'l')}
+        ${cell(`<span class="tag ${p.hybrid ? 'hy' : 'fr'}">${p.hybrid ? 'FRH / HRLY' : 'FRH'}</span>`, 'c')}
+        ${cell(`<span class="tag ${p.bumpEligible ? 'yes' : 'no'}">${p.bumpEligible ? 'YES' : 'NO'}</span>`, 'c')}
+        ${cell(`<b>${h2(c.frh)}</b>`, 'frh')}
+        ${cell(money(p.flatRate))}
+        ${cell(p.bumpEligible ? `${p.tier1Hours} / ${p.tier2Hours}` : '—', 'dim')}
+        ${cell(p.bumpEligible ? (c.tier1 ? `<b class="ok">+${money(p.tier1Bump)}</b>` : '<span class="dim">—</span>') : '<span class="dim">—</span>', 'c')}
+        ${cell(p.bumpEligible ? (c.tier2 ? `<b class="ok">+${money(p.tier2Bump)}</b>` : '<span class="dim">—</span>') : '<span class="dim">—</span>', 'c')}
+        ${cell(`<b>${money(c.weeklyRate)}</b>`)}
+        ${cell(`<b>${money(c.frhPay)}</b>`, 'pay')}
+        ${cell(c.school ? h2(c.school) : '', 'add')}${cell(c.school ? money(c.schoolPay) : '', 'add')}
+        ${cell(c.pto ? h2(c.pto) : '', 'add')}${cell(c.pto ? money(c.ptoPay) : '', 'add')}
+        ${cell(c.hourlyPay ? money(c.hourlyPay) : '', 'add')}
+        ${cell(c.otherBonus ? money(c.otherBonus) : '', 'add')}
+        ${cell(`<b>${money(c.total)}</b>`, 'tot')}
+      </tr>`;
+    }).join('');
+    const frhTrs = rows.map(r => { const d = r.frhDetail || { cp: 0, int: 0, war: 0, warX: 0, mult: 1, total: r.calc.frh }; return `<tr><td class="l"><b>${esc(r.name)}</b></td><td>${h2(d.cp)}</td><td>${h2(d.int)}</td><td>${h2(d.war)}</td><td>${d.mult > 1 ? h2(d.warX) : `<span class="dim">${h2(d.warX)} · off</span>`}</td><td class="frh"><b>${h2(d.total)}</b></td></tr>`; }).join('');
+    const noteRows = rows.filter(r => r.calc.otherBonus || r.calc.otherNote);
+    const notes = noteRows.map(r => `<tr><td class="l"><b>${esc(r.name)}</b></td><td class="l">${esc(r.calc.otherNote) || '<span class="dim">—</span>'}</td><td><b>${money(r.calc.otherBonus)}</b></td></tr>`).join('');
+    const withAdds = rows.filter(r => r.calc.school || r.calc.pto).length;
+
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Technician Payroll · ${esc(fmtWeek(week))}</title>
+<style>
+  *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:Inter,-apple-system,"Segoe UI",Arial,sans-serif;font-size:10.5px;color:#0f172a;margin:0;background:#f1f5f9}
+  .page{background:#fff;margin:14px auto;padding:22px 26px 20px;max-width:1500px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.12)}
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-radius:12px;color:#fff;
+    background:linear-gradient(110deg,#0b2540 0%,#0e3a5e 55%,#00a5c9 100%)}
+  .hero .brand{display:flex;align-items:center;gap:14px}
+  .hero img{height:30px;width:auto;background:#fff;border-radius:6px;padding:4px 9px}
+  .hero h1{margin:0;font-size:19px;font-weight:900;letter-spacing:-.2px}
+  .hero .sub{font-size:11px;opacity:.85;margin-top:2px}
+  .hero .period{text-align:right}
+  .hero .period .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+  .hero .period .v{font-size:15px;font-weight:900;margin-top:2px}
+  .hero .period .m{font-size:9.5px;opacity:.75;margin-top:3px}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 14px}
+  .stat{border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;background:#f8fafc}
+  .stat .k{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748b}
+  .stat .v{font-size:17px;font-weight:900;color:#0b2540;margin-top:2px}
+  .stat.total{background:linear-gradient(135deg,#ecfeff,#e0f2fe);border-color:#7dd3fc}.stat.total .v{color:#0369a1;font-size:19px}
+  h2{font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#334155;margin:16px 0 6px}
+  table{border-collapse:separate;border-spacing:0;width:100%;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+  th{background:#0b2540;color:#fff;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:7px 7px;text-align:right;white-space:nowrap}
+  th.grp{background:#0e3a5e;text-align:center;font-size:8.5px;letter-spacing:.12em;border-bottom:1px solid rgba(255,255,255,.18)}
+  th.grp.add{background:#0f766e}
+  td{padding:6px 7px;text-align:right;white-space:nowrap;border-bottom:1px solid #eef2f7;font-variant-numeric:tabular-nums}
+  tbody tr:nth-child(even) td{background:#f8fafc}
+  td.l,th.l{text-align:left}td.c,th.c{text-align:center}
+  td.frh{color:#0369a1}td.pay{color:#047857}td.tot{background:#fefce8 !important;color:#713f12;font-size:11.5px}
+  td.add{background:#f0fdfa !important}
+  .ok{color:#15803d}.dim{color:#94a3b8}
+  .tag{display:inline-block;border-radius:999px;padding:2px 7px;font-size:8.5px;font-weight:900;letter-spacing:.04em}
+  .tag.fr{background:#e0f2fe;color:#075985}.tag.hy{background:#ede9fe;color:#5b21b6}.tag.yes{background:#dcfce7;color:#166534}.tag.no{background:#fee2e2;color:#991b1b}
+  tfoot td{background:#0b2540 !important;color:#fff;font-weight:900;font-size:11px;padding:8px 7px;border:0}
+  tfoot td.tot{background:#facc15 !important;color:#422006}
+  .two{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start}
+  .fine{font-size:9px;color:#64748b;line-height:1.5;margin-top:10px}
+  .sign{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;margin-top:26px;padding-top:14px;border-top:1px solid #e2e8f0;page-break-inside:avoid}
+  .sign .line{border-bottom:1.5px solid #0f172a;height:30px}
+  .sign .lbl{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#475569;margin-top:5px}
+  .sign .who{font-size:9px;color:#94a3b8;margin-top:1px}
+  @page{size:letter landscape;margin:.35in}
+  @media print{body{background:#fff}.page{margin:0;padding:0;box-shadow:none;border-radius:0;max-width:none}}
+</style></head><body><div class="page">
+  <div class="hero">
+    <div class="brand"><img src="${logo}" alt=""/><div><h1>Technician Payroll</h1><div class="sub">Rohrman Hyundai · Service Department</div></div></div>
+    <div class="period"><div class="k">Payroll dates</div><div class="v">${esc(fmtWeek(week))}</div><div class="m">${reportName ? 'Report: ' + esc(reportName) + ' · ' : ''}Printed ${esc(printed)}</div></div>
+  </div>
+  <div class="stats">
+    <div class="stat total"><div class="k">Total shop payroll</div><div class="v">${money(totals.total)}</div></div>
+    <div class="stat"><div class="k">FRH turned</div><div class="v">${h2(totals.frh)}</div></div>
+    <div class="stat"><div class="k">FRH pay</div><div class="v">${money(totals.frhPay)}</div></div>
+    <div class="stat"><div class="k">Additional hours credit</div><div class="v">${money(totals.schoolPay + totals.ptoPay)}</div><div class="k" style="margin-top:2px;letter-spacing:0;text-transform:none">${totals.school || 0} school · ${totals.pto || 0} vac/hol/sick hrs</div></div>
+    <div class="stat"><div class="k">Techs · bonuses</div><div class="v">${rows.length} · ${money(totals.otherBonus + totals.hourlyPay)}</div></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th class="grp" colspan="3" style="background:#0b2540">Technician</th><th class="grp" colspan="7">Flat rate hours &amp; weekly rate</th><th class="grp add" colspan="4">Additional hours credit — paid at base rate</th><th class="grp" colspan="2" style="background:#4c1d95">Hybrid / bonus</th><th class="grp" style="background:#a16207">Pay</th></tr>
+      <tr><th class="l">Tech</th><th class="c">Type</th><th class="c">Bump elig.</th><th>FRH turned</th><th>Base rate</th><th>Tiers @</th><th class="c">Tier 1</th><th class="c">Tier 2</th><th>Wkly rate</th><th>FRH pay</th><th>School hrs</th><th>School $</th><th>Vac / Hol / Sick hrs</th><th>Vac / Hol / Sick $</th><th>Hourly $</th><th>Other bonus</th><th>Total</th></tr>
+    </thead>
+    <tbody>${trs}</tbody>
+    <tfoot><tr><td class="l" colspan="3">TOTAL SHOP</td><td>${h2(totals.frh)}</td><td colspan="5"></td><td>${money(totals.frhPay)}</td><td>${totals.school || ''}</td><td>${money(totals.schoolPay)}</td><td>${totals.pto || ''}</td><td>${money(totals.ptoPay)}</td><td>${money(totals.hourlyPay)}</td><td>${money(totals.otherBonus)}</td><td class="tot">${money(totals.total)}</td></tr></tfoot>
+  </table>
+
+  <div class="two" style="${rows.some(r => r.frhDetail) ? '' : 'grid-template-columns:1fr'}">
+    ${rows.some(r => r.frhDetail) ? `<div>
+      <h2>Flat rate hours calc w/ warranty multiplier</h2>
+      <table><thead><tr><th class="l">Tech</th><th>CP FRH</th><th>INT FRH</th><th>WAR FRH</th><th>× 1.4</th><th>TTL FRH</th></tr></thead><tbody>${frhTrs}</tbody></table>
+    </div>` : ''}
+    <div>
+      <h2>Other payplan notes</h2>
+      ${notes ? `<table><thead><tr><th class="l">Tech</th><th class="l">Note</th><th>Bonus</th></tr></thead><tbody>${notes}</tbody></table>` : '<div class="fine" style="margin-top:0">No other bonuses this week.</div>'}
+      <div class="fine">Weekly rate = base rate, +tier 1 bump at ${rows[0] ? rows[0].plan.tier1Hours : 50} FRH, +tier 2 at ${rows[0] ? rows[0].plan.tier2Hours : 60}; every hour that week pays the bumped rate. Techs not bump-eligible stay on base. School and Vacation / Holiday / Sick hours are paid at base rate${withAdds ? ` (${withAdds} tech${withAdds === 1 ? '' : 's'} this week)` : ''}. Warranty hours count × 1.4 toward FRH turned for techs with the multiplier on. Hourly $ applies to FRH / HRLY techs with an hourly rate on file.</div>
+    </div>
+  </div>
+
+  <div class="sign">
+    <div><div class="line"></div><div class="lbl">Service Manager signature</div><div class="who">Approved for payroll</div></div>
+    <div><div class="line"></div><div class="lbl">Date</div><div class="who">&nbsp;</div></div>
+    <div><div class="line"></div><div class="lbl">Prepared by</div><div class="who">${esc(currentUser || '')}</div></div>
+  </div>
+</div>
+<script>window.addEventListener('load',function(){setTimeout(function(){try{window.print()}catch(e){}},400)})</script></body></html>`;
     const win = window.open('', '_blank');
     if (!win) { alert('Allow pop-ups to print the payroll sheet.'); return; }
     win.document.open(); win.document.write(html); win.document.close();
