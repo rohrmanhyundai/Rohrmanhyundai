@@ -42,6 +42,13 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050b13;col
 .stage--stretched .perf-card{display:flex;flex-direction:column}
 .stage--stretched .perf-card .tableArea{flex:1;min-height:0}
 .stage--stretched .gsvg{height:auto;max-height:100%}
+/* The contest tile grows with its card on a stretched screen: taller rows and
+   bigger type so two or three advisors don't float in a hollow box. */
+.stage--stretched .bml-tile-row{max-height:64px;font-size:16px;padding:6px 10px}
+.stage--stretched .bml-tile-row .rk,.stage--stretched .bml-tile-row .bd{font-size:17px}
+.stage--stretched .bml-tile-rows{gap:6px}
+.stage--stretched .bml-tile-prize .amt{font-size:32px}
+.stage--stretched .bml-tile-bar{font-size:11.5px}.stage--stretched .bml-tile-bar .track{height:8px}
 .dashboard{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:90px calc(340px + var(--stage-extra-h) * .4) 86px calc(248px + var(--stage-extra-h) * .25) calc(270px + var(--stage-extra-h) * .35);gap:4px;box-sizing:border-box}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:14px;padding:7px 9px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.22)}
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:6px}

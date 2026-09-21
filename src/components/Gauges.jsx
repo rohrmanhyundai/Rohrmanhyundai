@@ -138,7 +138,10 @@ export default function Gauges({ data, bigMoney }) {
           <div className="note">Needle = percent to goal. Big number = projected monthly hours.</div>
         </div>
       </div>
-      <div className="gauges">
+      {/* One column per gauge plus the wider quote/contest slot — the count of
+          advisor gauges changes when someone is hidden, so the grid follows it
+          instead of assuming five. */}
+      <div className="gauges" style={{ gridTemplateColumns: `repeat(${Math.max(1, gauges.length)}, 1fr) 1.3fr` }}>
         {gauges.map(g => (
           <div className="gcard" key={g.label}>
             <div className="gtitle">{g.label}</div>
