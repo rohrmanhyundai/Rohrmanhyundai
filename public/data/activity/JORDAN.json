@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-21T11:23:43.558Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-09-19T15:53:17.876Z",
     "type": "page",
     "label": "recalls"
@@ -811,108 +816,6 @@
   },
   {
     "at": "2026-08-24T14:24:50.285Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T20:23:52.236Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T20:20:49.592Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-21T20:20:30.723Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T20:19:29.850Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-21T18:17:07.697Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T15:02:00.613Z",
-    "type": "page",
-    "label": "manager-hub"
-  },
-  {
-    "at": "2026-08-21T15:01:18.789Z",
-    "type": "page",
-    "label": "goal-forecast"
-  },
-  {
-    "at": "2026-08-21T12:35:04.507Z",
-    "type": "action",
-    "label": "send-to-reports"
-  },
-  {
-    "at": "2026-08-21T12:34:57.050Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-21T12:34:54.108Z",
-    "type": "action",
-    "label": "upload-advisor-xlsx",
-    "details": "Advisor Performance Report (8).xlsx"
-  },
-  {
-    "at": "2026-08-21T12:34:00.988Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-21T12:33:58.799Z",
-    "type": "action",
-    "label": "upload-advisor-pdf",
-    "details": "BOB ROHRMAN HYUNDAI SA TOTALS 202608.XLS (8).pdf"
-  },
-  {
-    "at": "2026-08-21T12:33:39.070Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-21T12:33:32.370Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T12:31:36.196Z",
-    "type": "action",
-    "label": "save-dashboard"
-  },
-  {
-    "at": "2026-08-20T20:28:01.724Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T20:23:48.635Z",
-    "type": "page",
-    "label": "ro-upload"
-  },
-  {
-    "at": "2026-08-20T20:23:06.987Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T20:22:14.180Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-20T18:39:53.395Z",
     "type": "page",
     "label": "advisor-calendar"
   }
