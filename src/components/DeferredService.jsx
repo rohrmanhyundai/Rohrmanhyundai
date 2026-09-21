@@ -67,6 +67,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
   const [q, setQ] = useState('');
   const [openRo, setOpenRo] = useState('');
   const [showAllCodes, setShowAllCodes] = useState(false);
+  const [onlyValvoline, setOnlyValvoline] = useState(false);
 
   useEffect(() => { trackPage('deferred-service'); }, []);
   useEffect(() => {
@@ -92,8 +93,9 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
     for (const c of allCodes) {
       const desc = codes[c] && codes[c].description ? codes[c].description.trim() : '';
       const key = desc ? `d:${norm(desc)}` : `c:${c}`;
-      if (!groups.has(key)) groups.set(key, { key, label: desc || c, codes: new Set(), described: !!desc });
+      if (!groups.has(key)) groups.set(key, { key, label: desc || c, codes: new Set(), described: !!desc, valvoline: false });
       groups.get(key).codes.add(c);
+      if (codes[c] && codes[c].valvoline) groups.get(key).valvoline = true;
     }
     const list = [...groups.values()];
     for (const g of list) g.count = rows.filter(r => (r.codes || []).some(c => g.codes.has(c))).length;
@@ -106,6 +108,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
     const needle = q.trim().toLowerCase();
     return rows.filter(r => {
       if (selCodes.size && !(r.codes || []).some(c => serviceOfCode[c] && selCodes.has(serviceOfCode[c].key))) return false;
+      if (onlyValvoline && !(r.codes || []).some(c => serviceOfCode[c] && serviceOfCode[c].valvoline)) return false;
       if (selAdvisors.size && !selAdvisors.has(r.advisor || '—')) return false;
       if (from && (!r.date || r.date < from)) return false;
       if (to && (!r.date || r.date > to)) return false;
@@ -115,11 +118,13 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
       }
       return true;
     });
-  }, [rows, selCodes, selAdvisors, from, to, q, serviceOfCode]);
+  }, [rows, selCodes, selAdvisors, from, to, q, serviceOfCode, onlyValvoline]);
 
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
-  const clearAll = () => { setSelCodes(new Set()); setSelAdvisors(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); };
-  const anyFilter = selCodes.size || selAdvisors.size || from || to || q.trim();
+  const clearAll = () => { setSelCodes(new Set()); setSelAdvisors(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); };
+  const anyFilter = selCodes.size || selAdvisors.size || from || to || q.trim() || onlyValvoline;
+  const valvolineCount = useMemo(() => rows.filter(r => (r.codes || []).some(c => serviceOfCode[c] && serviceOfCode[c].valvoline)).length, [rows, serviceOfCode]);
+  const hasValvoline = services.some(g => g.valvoline);
 
   // ── Upload (managers) ───────────────────────────────────────────────────
   async function handlePdf(file) {
@@ -145,17 +150,21 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
 
   // ── Op-code descriptions (managers) ─────────────────────────────────────
   const [draftCodes, setDraftCodes] = useState(null);   // { CODE: description } while editing
-  useEffect(() => { if (tab === 'settings') setDraftCodes(Object.fromEntries(Object.entries(codes).map(([k, v]) => [k, (v && v.description) || '']))); }, [tab, codes]);
+  const [draftValv, setDraftValv] = useState(null);     // { CODE: true } while editing
+  useEffect(() => { if (tab === 'settings') { setDraftCodes(Object.fromEntries(Object.entries(codes).map(([k, v]) => [k, (v && v.description) || '']))); setDraftValv(Object.fromEntries(Object.entries(codes).filter(([, v]) => v && v.valvoline).map(([k]) => [k, true]))); } }, [tab, codes]);
   async function saveCodes() {
     setBusy('codes'); setStatus('');
     try {
       const at = new Date().toISOString();
       await updateDeferredCodes(cur => {
         const out = { ...cur };
-        for (const [code, desc] of Object.entries(draftCodes || {})) {
-          const d = String(desc || '').trim();
-          if (!d) { delete out[code]; continue; }
-          if (!out[code] || out[code].description !== d) out[code] = { description: d, updatedAt: at, by: currentUser || '' };
+        const allKeys = new Set([...Object.keys(draftCodes || {}), ...Object.keys(draftValv || {}), ...Object.keys(out)]);
+        for (const code of allKeys) {
+          const d = String((draftCodes || {})[code] || '').trim();
+          const v = !!(draftValv || {})[code];
+          if (!d && !v) { delete out[code]; continue; }
+          const prev = out[code] || {};
+          if (prev.description !== d || !!prev.valvoline !== v) out[code] = { ...prev, description: d, valvoline: v, updatedAt: at, by: currentUser || '' };
         }
         return out;
       });
@@ -213,12 +222,20 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                 </div>
 
                 <div>
-                  <div className="ds-label" style={{ marginBottom: 6 }}>Service type <span style={{ color: '#64748b', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· click to filter, click again to remove</span></div>
+                  <div className="ds-label" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                    <span>Service type <span style={{ color: '#64748b', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· click to filter, click again to remove</span></span>
+                    {hasValvoline && (
+                      <button className={`ds-chip${onlyValvoline ? ' on' : ''}`} onClick={() => { setOnlyValvoline(v => !v); setOpenRo(''); }}
+                        style={onlyValvoline ? { background: 'rgba(239,68,68,.2)', borderColor: 'rgba(239,68,68,.7)', color: '#fca5a5' } : { borderColor: 'rgba(239,68,68,.4)', color: '#fca5a5' }} title="Only Valvoline services">
+                        🛢️ Valvoline only <span className="n">{valvolineCount}</span>
+                      </button>
+                    )}
+                  </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {visibleServices.map(g => (
                       <button key={g.key} className={`ds-chip${selCodes.has(g.key) ? ' on' : ''}`} onClick={() => toggle(selCodes, setSelCodes, g.key)}
                         title={g.described ? `Op code${g.codes.size === 1 ? '' : 's'}: ${[...g.codes].join(', ')}` : 'No description yet — set one in Settings'}>
-                        {g.label} <span className="n">{g.count}</span>
+                        {g.valvoline && <span style={{ color: '#f87171', fontSize: 11 }} title="Valvoline service">🛢️</span>}{g.label} <span className="n">{g.count}</span>
                       </button>
                     ))}
                     {services.length > 18 && <button className="ds-chip" onClick={() => setShowAllCodes(v => !v)} style={{ color: '#67e8f9' }}>{showAllCodes ? 'Show fewer' : `+${services.length - 18} more`}</button>}
@@ -325,11 +342,11 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                   <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>🏷️ Deferred op codes</div>
                   <div style={{ fontSize: 12, color: '#94a3b8' }}>{allCodes.length} codes seen on the reports · give each a description advisors will recognise. Codes with the <b>same description</b> are treated as one service (one filter chip).</div>
                   <div style={{ flex: 1 }} />
-                  <button onClick={saveCodes} disabled={!!busy || !draftCodes} style={{ fontSize: 13 }}>{busy === 'codes' ? '⏳ Saving…' : '💾 Save descriptions'}</button>
+                  <button onClick={saveCodes} disabled={!!busy || !draftCodes} style={{ fontSize: 13 }}>{busy === 'codes' ? '⏳ Saving…' : '💾 Save'}</button>
                 </div>
                 {!allCodes.length ? <div style={{ fontSize: 12.5, color: '#64748b' }}>Codes appear here after the first upload.</div> : (
                   <table className="ds-table">
-                    <thead><tr><th style={{ width: 150 }}>Op code</th><th style={{ width: 70 }}>ROs</th><th>Description shown to advisors</th></tr></thead>
+                    <thead><tr><th style={{ width: 150 }}>Op code</th><th style={{ width: 70 }}>ROs</th><th>Description shown to advisors</th><th style={{ width: 130 }}>Valvoline</th></tr></thead>
                     <tbody>
                       {allCodes.map(c => (
                         <tr key={c}>
@@ -341,6 +358,12 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                               <div style={{ fontSize: 10.5, color: '#94a3b8', marginTop: 3 }}>Same service as {[...serviceOfCode[c].codes].filter(x => x !== c).join(', ')} — shown as one filter chip.</div>
                             )}
                           </td>
+                          <td>
+                            <button className="ds-chip" onClick={() => setDraftValv(d => { const n = { ...(d || {}) }; if (n[c]) delete n[c]; else n[c] = true; return n; })}
+                              style={(draftValv || {})[c] ? { background: 'rgba(239,68,68,.2)', borderColor: 'rgba(239,68,68,.7)', color: '#fca5a5' } : {}} title="Mark this op code as a Valvoline service">
+                              {(draftValv || {})[c] ? '🛢️ Valvoline' : 'Valvoline'}
+                            </button>
+                          </td>
                         </tr>
                       ))}
                       {Object.keys(codes).filter(c => !codeCounts[c]).map(c => (
@@ -348,6 +371,7 @@ export default function DeferredService({ currentUser, currentRole, onBack, io }
                           <td style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 800, color: '#c4b5fd' }}>{c}</td>
                           <td style={{ color: '#64748b' }}>0</td>
                           <td><input className="ds-in" style={{ width: '100%', padding: '6px 9px' }} value={(draftCodes && draftCodes[c]) || ''} onChange={e => setDraftCodes(d => ({ ...(d || {}), [c]: e.target.value }))} /></td>
+                          <td>{(draftValv || {})[c] ? <span style={{ color: '#fca5a5', fontSize: 12 }}>🛢️ Valvoline</span> : ''}</td>
                         </tr>
                       ))}
                     </tbody>
