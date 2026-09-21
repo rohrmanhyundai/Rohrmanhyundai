@@ -565,7 +565,12 @@
       "chatAccess": false,
       "techChatAccess": true,
       "email": "chris.foley@rohrmanauto.com",
-      "passwordHash": {}
+      "passwordHash": {},
+      "passwordReset": {
+        "hash": "b49f5780615d71abd3fcea13e109cfd09d1dcabb25dfa42a28cc8d9362662668",
+        "expires": "2026-09-21T17:40:12.630Z",
+        "requestedAt": "2026-09-21T16:40:12.631Z"
+      }
     }
   ],
   "sharedSaveCode": "",
