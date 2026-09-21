@@ -1,21 +1,5 @@
 [
   {
-    "id": "mu1re7e2qn5a",
-    "ro": "780830",
-    "roDate": "2026-09-14",
-    "vehicle": "2022 Chevrolet Equinox",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mu1re7e2dsmx",
     "ro": "780829",
     "roDate": "2026-09-14",
