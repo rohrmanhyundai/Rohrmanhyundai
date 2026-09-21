@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-21T13:26:57.208Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-21T13:26:53.995Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-21T11:23:43.558Z",
     "type": "action",
     "label": "logout"
