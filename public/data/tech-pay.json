@@ -92,6 +92,7 @@
     "clockHours": 40,
     "clockMode": "add",
     "eligiblePto": true,
-    "updated": "2026-09-09T18:09:21.931Z"
+    "updated": "2026-09-21T12:45:56.228Z",
+    "bumpEligible": false
   }
 }
