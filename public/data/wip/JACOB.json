@@ -32,22 +32,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mu5pszgxs03t",
-    "ro": "780914",
-    "roDate": "2026-09-17",
-    "vehicle": "2015 Chevrolet Equinox",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mu5pszgx91wp",
     "ro": "780913",
     "roDate": "2026-09-17",
