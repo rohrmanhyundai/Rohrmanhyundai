@@ -496,7 +496,6 @@
       "managementAccess": false,
       "pages": {
         "advisorCalendar": true,
-        "advisorRankBoard": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -508,11 +507,14 @@
         "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": true
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "passwordHash": {}
+      "passwordHash": {},
+      "email": "",
+      "hidden": true
     },
     {
       "username": "Bryson",
