@@ -599,7 +599,12 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "passwordReset": {
+        "hash": "073e9febe30c4880e77b96d0ceffc0036ebc50c9f702fefaf7e5b0da5436a765",
+        "expires": "2026-09-21T18:19:43.612Z",
+        "requestedAt": "2026-09-21T17:19:43.613Z"
+      }
     }
   ],
   "sharedSaveCode": "",
