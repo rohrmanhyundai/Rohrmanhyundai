@@ -236,7 +236,8 @@
         "pacing": 0,
         "certified": "—",
         "trainings_due": "—",
-        "excel_training": "—"
+        "excel_training": "—",
+        "total_raw": 0
       }
     ],
     "advisors": [
@@ -310,6 +311,22 @@
         "roh50_add_rate": 0.38,
         "lof_tickets": 37,
         "lof_oil_only": 23
+      },
+      {
+        "name": "DANIEL",
+        "mtd_hours": 0,
+        "daily_avg": 0,
+        "hours_per_ro": 0,
+        "align": 0,
+        "tires": 0,
+        "valvoline": 0,
+        "roh50_hrs_ro": 0,
+        "roh50_add_rate": 0,
+        "csi": 0,
+        "asr": 0,
+        "elr": 0,
+        "last_month_total": 0,
+        "ro_count": 0
       }
     ],
     "advisorTraining": [
@@ -329,6 +346,12 @@
         "name": "CODY",
         "certified": "NO",
         "trainings_due": "32",
+        "excel_training": "—"
+      },
+      {
+        "name": "DANIEL",
+        "certified": "—",
+        "trainings_due": "—",
         "excel_training": "—"
       }
     ],
@@ -382,10 +405,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 421.1,
-      "align": 0.0727,
-      "tires": 0.0502,
-      "valvoline": 0.15603333333333333,
-      "csi": 950
+      "align": 0.054525000000000004,
+      "tires": 0.03765,
+      "valvoline": 0.11702499999999999,
+      "csi": 712.5
     },
     "techTotals": {
       "mon": 43.28,
@@ -395,7 +418,7 @@
       "fri": 39.08,
       "sat": 18.240000000000002,
       "week_total": 230.35999999999999,
-      "week_pct": 0.8068651488616462,
+      "week_pct": 0.6917717717717717,
       "shop_pacing": 246.765
     },
     "grossGoal": 152561,
