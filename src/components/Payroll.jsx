@@ -21,6 +21,7 @@ const CSS = `
 .pr-sheet th:first-child,.pr-sheet td:first-child{text-align:left}
 .pr-sheet td{padding:6px 6px;border-bottom:1px solid rgba(148,163,184,.1);text-align:right;white-space:nowrap;overflow:visible;text-overflow:clip;color:#e2e8f0;font-size:12.5px;line-height:1.3;font-variant-numeric:tabular-nums}
 .pr-sheet tr:hover td{background:rgba(255,255,255,.025)}
+.pr-sheet.pinned tbody tr:hover td:first-child,.pr-sheet.pinned tbody tr:hover td:last-child{background:#16213a}
 .pr-sheet td.name{font-weight:900;color:#f1f5f9}
 .pr-sheet td.sub{color:#94a3b8;font-size:11px}
 .pr-sheet td.calc{color:#cbd5e1}
@@ -29,6 +30,12 @@ const CSS = `
 .pr-sheet td.hit{color:#4ade80;font-weight:900}
 .pr-sheet td.miss{color:#475569}
 .pr-sheet tfoot td{border-top:2px solid rgba(250,204,21,.4);background:rgba(250,204,21,.06);font-weight:900;color:#fde047;padding:9px 6px}
+/* Pin the tech name (left) and the Total (right) so they never scroll away. */
+.pr-sheet.pinned th:first-child,.pr-sheet.pinned td:first-child{position:sticky;left:0;z-index:2;background:#0f172a;box-shadow:2px 0 0 rgba(148,163,184,.15)}
+.pr-sheet.pinned th:last-child,.pr-sheet.pinned td:last-child{position:sticky;right:0;z-index:2;background:#0f172a;box-shadow:-2px 0 0 rgba(148,163,184,.15);padding-left:14px}
+.pr-sheet.pinned th:first-child,.pr-sheet.pinned th:last-child{z-index:3}
+.pr-sheet.pinned tfoot td:first-child,.pr-sheet.pinned tfoot td:last-child{background:#1c1a0f}
+.pr-sheet.pinned td.total{font-size:14.5px}
 .pr-in{width:64px;background:rgba(2,6,23,.6);border:1px solid rgba(148,163,184,.3);border-radius:7px;padding:5px 6px;font-size:12.5px;font-weight:700;color:#e2e8f0;text-align:right;outline:none}
 .pr-in:focus{border-color:rgba(110,231,249,.6)}
 .pr-in.note{width:150px;text-align:left;font-weight:500}
@@ -249,7 +256,7 @@ ${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</
 
               {/* The sheet */}
               <div className="pr-card" style={{ padding: 0, overflow: 'auto' }}>
-                <table className="pr-sheet">
+                <table className="pr-sheet pinned">
                   <thead>
                     <tr>
                       <th>Tech</th><th>Type</th><th>Bump</th>
