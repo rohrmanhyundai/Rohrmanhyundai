@@ -78,6 +78,7 @@ function advisorImportDiff(oldAdvisors, newAdvisors) {
 }
 
 // ── Vacation → Schedule helpers ────────────────────────────────────────────
+const isoLocalDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const MONTH_ABBRS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
 function _parseSingleDate(token, defaultYear) {
@@ -351,10 +352,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   // Strip all 'vacation' marks for an employee, then re-apply from current approved vacation rows
+  // Rebuild an employee's 'vacation' marks from the vacation list. Only marks
+  // from today onward are cleared and re-derived: past marks are history and
+  // must survive the vacation row expiring off the list — the Monday tech-hours
+  // import and the weekly snapshot both read the schedule to know a day was
+  // PTO, and wiping the mark turned Gaven's approved Friday into 0 hours.
   function rebuildEmpSchedule(empKey, vacList, schedulesIn) {
     const emp = { ...(schedulesIn[empKey] || {}) };
+    const todayKey = isoLocalDate(new Date());
     for (const [date, val] of Object.entries(emp)) {
-      if (val === 'vacation') delete emp[date];
+      if (val === 'vacation' && date >= todayKey) delete emp[date];
     }
     getEmpVacationDaysFromList(empKey, vacList).forEach(d => { emp[d] = 'vacation'; });
     return { ...schedulesIn, [empKey]: emp };
