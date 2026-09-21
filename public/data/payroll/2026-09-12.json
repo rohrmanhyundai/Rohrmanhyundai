@@ -2,7 +2,7 @@
   "key": "2026-09-12",
   "start": "2026-09-12",
   "end": "2026-09-18",
-  "savedAt": "2026-09-21T14:42:17.228Z",
+  "savedAt": "2026-09-21T14:49:20.130Z",
   "by": "SHAWN",
   "report": "All Reports.html",
   "warnings": [],
@@ -386,7 +386,7 @@
         "frh": 13.2,
         "school": "",
         "pto": "",
-        "clockHours": "",
+        "clockHours": "0",
         "otherBonus": "",
         "otherNote": ""
       },
@@ -402,7 +402,7 @@
         "frh": 13.2,
         "school": 0,
         "pto": 0,
-        "clockHours": 40,
+        "clockHours": 0,
         "otherBonus": 0,
         "otherNote": "",
         "tier1": false,
@@ -411,8 +411,8 @@
         "frhPay": 198,
         "schoolPay": 0,
         "ptoPay": 0,
-        "hourlyPay": 400,
-        "total": 598
+        "hourlyPay": 0,
+        "total": 198
       }
     }
   ],
@@ -423,8 +423,8 @@
     "schoolPay": 13.5,
     "pto": 16,
     "ptoPay": 472,
-    "hourlyPay": 400,
+    "hourlyPay": 0,
     "otherBonus": 0,
-    "total": 6940.5
+    "total": 6540.5
   }
 }
