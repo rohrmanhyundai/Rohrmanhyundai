@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-21T17:26:56.721Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-21T17:26:46.229Z",
+    "type": "action",
+    "label": "password-reset-complete"
+  },
+  {
     "at": "2026-09-19T01:29:00.493Z",
     "type": "action",
     "label": "logout"
@@ -702,41 +712,6 @@
   },
   {
     "at": "2026-08-24T13:03:29.316Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T15:54:12.799Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-21T13:20:01.382Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-21T13:19:59.236Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T21:57:19.237Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-20T21:57:17.814Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T16:36:29.117Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-08-20T13:06:44.996Z",
     "type": "page",
     "label": "advisor-calendar"
   }
