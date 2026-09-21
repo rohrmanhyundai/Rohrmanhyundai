@@ -193,7 +193,8 @@
         "tue_raw": 2.7,
         "wed_raw": 1.5,
         "thu_raw": 4.2,
-        "fri_raw": 1.9
+        "fri_raw": 1.9,
+        "warrantyMultiplier": false
       },
       {
         "name": "CHRIS",
