@@ -1906,6 +1906,28 @@ export function requestBigMoneyCoaching(by) {
   return repositoryDispatch('big-money-coaching', { by: String(by || '') });
 }
 
+// ── Tech Payroll ──────────────────────────────────────────────────────────────
+// One file per Sat–Fri pay week keyed by the Saturday, plus an index so the
+// Payroll page can list saved weeks without walking the folder.
+//   public/data/payroll/index.json  → { weeks: { '2026-09-05': { start, end, savedAt, by, total, techs } } }
+//   public/data/payroll/2026-09-05.json → the full sheet
+export async function loadPayrollIndex() {
+  try { const d = await loadGithubFile('data/payroll/index.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { weeks: {} };
+}
+export async function loadPayrollWeek(key) {
+  try { const d = await loadGithubFile(`data/payroll/${key}.json`); if (d && typeof d === 'object') return d; } catch {}
+  return null;
+}
+export async function savePayrollWeek(key, record, summary) {
+  await saveGithubFile(`data/payroll/${key}.json`, record, `Payroll week ${key}`);
+  await mutateGitHubJson('public/data/payroll/index.json', (cur) => {
+    const idx = cur && typeof cur === 'object' ? { ...cur } : {};
+    idx.weeks = { ...(idx.weeks || {}), [key]: summary };
+    return idx;
+  }, `Payroll index ${key}`);
+}
+
 // ── Big-Money LOF ─────────────────────────────────────────────────────────────
 // Advisor contest on the two $50 add-on numbers. Shape documented in
 // utils/bigMoney.js: { contest: {start,end,prize}, latest: {...}, final: {...} }.

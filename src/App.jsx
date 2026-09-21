@@ -35,6 +35,7 @@ import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
+import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
 import { verifyPassword, isHashed, withPassword } from './utils/password';
 import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
@@ -1238,6 +1239,7 @@ export default function App() {
         onGlobalMessage={() => goTo('global-message', 'manager-hub')}
         onCashDash={() => goTo('cash-dash', 'manager-hub')}
         onBigMoneyLof={() => goTo('big-money-lof', 'manager-hub')}
+        onPayroll={() => goTo('payroll', 'manager-hub')}
         onEmployeeApplicants={() => goTo('employee-applicants', 'manager-hub')}
       />
     );
@@ -1265,6 +1267,19 @@ export default function App() {
         technicians={data.technicians || []}
         onSeasonChange={setCashSeason}
         onBack={() => setPage(prevPage || 'dashboard')}
+      />
+    );
+  }
+
+  if (page === 'payroll') {
+    // Admin and managers only — this page shows every technician's pay.
+    const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isMgr) { setPage('dashboard'); return null; }
+    return (
+      <Payroll
+        data={data}
+        currentUser={currentUser.toUpperCase()}
+        onBack={() => setPage(prevPage || 'manager-hub')}
       />
     );
   }

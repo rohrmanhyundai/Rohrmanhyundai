@@ -151,6 +151,15 @@ const NAV_BUTTONS = [
     prop: 'onCashDash',
   },
   {
+    key: 'payroll',
+    label: '💰 Payroll',
+    desc: 'Weekly technician pay sheet — upload the Tech Performance .html, add school / PTO / bonus, print, save to history',
+    bg: 'linear-gradient(135deg,rgba(74,222,128,.28),rgba(250,204,21,.16))',
+    border: 'rgba(74,222,128,.5)',
+    color: '#86efac',
+    prop: 'onPayroll',
+  },
+  {
     key: 'bigMoneyLof',
     label: '💵 Big-Money LOF',
     desc: 'Advisor contest on $50 Add\'l Hrs/RO and $50 Add Rate % — set the dates, the board runs itself',
@@ -167,14 +176,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof,
+  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof,
+    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll,
   };
 
   return (
