@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Header from './components/Header';
 import MobileDashboard from './components/MobileDashboard';
@@ -906,14 +906,26 @@ export default function App() {
   // pickers (WIP RO assignment, schedules, calendar, etc.). A user who manages
   // the department but is still an advisor keeps their advisor role here and is
   // granted manager access separately (see `managementAccess` / effectiveRole).
-  const advisorList = users.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
+  // A user marked Hidden (left mid-month, kept only for month-end reporting) is
+  // taken out of every roster, picker, tab and chat list below. They can still
+  // log in, and Manager Reports / Payroll history still see the full list.
+  const activeUsers = users.filter(u => !u.hidden);
+  // Same idea for the dashboard roster: pages that aren't reporting (Live Pay,
+  // Cash Dash, calendars, hubs) get a copy with hidden advisors/techs removed.
+  // The TV components and Edit Dashboard keep the full `data`.
+  const visibleData = useMemo(() => ({
+    ...data,
+    advisors: (data.advisors || []).filter(a => !a.hidden),
+    technicians: (data.technicians || []).filter(t => !t.hidden),
+  }), [data]);
+  const advisorList = activeUsers.filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
   // The Advisor Schedule roster also includes the service manager, who works
   // advisor shifts but isn't an advisor for survey/performance purposes — so this
   // is kept separate from `advisorList` (which seeds advisor pickers/reports).
-  const advisorScheduleList = users
+  const advisorScheduleList = activeUsers
     .filter(u => u.role === 'advisor' || u.role === 'lead advisor' || u.role === 'service manager')
     .map(u => u.username.toUpperCase());
-  const techList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
+  const techList = activeUsers.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
   // Which Goal Forecast a user owns is decided by WHO they are, not which page
   // they open — so a parts manager always sees parts and a service manager always
@@ -1175,7 +1187,7 @@ export default function App() {
         advisorList={advisorList}
         backLabel={wipBackLabel}
         onBack={() => { setWipInitialRO(null); navTo(prevPage || 'tech-resources'); }}
-        chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
+        chatUsers={activeUsers.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
         initialJob={wipInitialRO}
         onInitialJobConsumed={() => setWipInitialRO(null)}
       />
@@ -1307,8 +1319,8 @@ export default function App() {
       <CashDash
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
-        advisors={data.advisors || []}
-        technicians={data.technicians || []}
+        advisors={visibleData.advisors}
+        technicians={visibleData.technicians}
         onSeasonChange={setCashSeason}
         onBack={() => setPage(prevPage || 'dashboard')}
       />
@@ -1405,7 +1417,7 @@ export default function App() {
   }
 
   if (page === 'advisor-goals') {
-    const goalsRoster = users
+    const goalsRoster = activeUsers
       .filter(u => u.role === 'advisor' || u.role === 'lead advisor')
       .map(u => u.username.toUpperCase());
     return (
@@ -1547,9 +1559,9 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         schedules={schedules}
         vacations={vacations}
-        advisors={data.advisors || []}
-        chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
-        techChatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
+        advisors={visibleData.advisors}
+        chatUsers={activeUsers.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
+        techChatUsers={activeUsers.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
     );
   }
@@ -1650,7 +1662,7 @@ export default function App() {
     if (!canSeeTechPay) { setPage('dashboard'); return null; }
     return (
       <TechLivePay
-        data={data}
+        data={visibleData}
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         onBack={() => setPage(prevPage || 'live-pay-hub')}
@@ -1662,7 +1674,7 @@ export default function App() {
   if (page === 'live-pay') {
     return (
       <LivePay
-        data={data}
+        data={visibleData}
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         leadAdvisor={(users.find(u => (u.role || '').toLowerCase() === 'lead advisor') || {}).username || ''}
@@ -1923,7 +1935,7 @@ export default function App() {
     <FloatingMessenger
       currentUser={currentUser}
       currentRole={currentRole}
-      users={users}
+      users={activeUsers}
       messages={globalMessages}
       unread={globalUnread}
       canSend={canSendGlobal}
