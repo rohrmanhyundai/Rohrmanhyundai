@@ -540,7 +540,6 @@
     {
       "username": "Chris",
       "lastName": "",
-      "password": "[REDACTED]",
       "role": "technician",
       "canEditDashboard": false,
       "managementAccess": false,
@@ -561,7 +560,8 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "email": "chris.foley@rohrmanauto.com"
+      "email": "chris.foley@rohrmanauto.com",
+      "passwordHash": {}
     }
   ],
   "sharedSaveCode": "",
