@@ -566,10 +566,9 @@
       "techChatAccess": true,
       "email": "chris.foley@rohrmanauto.com",
       "passwordHash": {},
-      "passwordReset": {
-        "hash": "b49f5780615d71abd3fcea13e109cfd09d1dcabb25dfa42a28cc8d9362662668",
-        "expires": "2026-09-21T17:40:12.630Z",
-        "requestedAt": "2026-09-21T16:40:12.631Z"
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "IGWS70fgfCjHh5gE6fFNFxWJYaHuAiW8KmeVPx2qsRPyW6fHatPXtg8mWiGoCyi04YNQy80Zzem09Z8HILCZ0GQjihdl7OnYmW9WjZ353FzTr/eLkWwJ4tHGZ89JhHb9Wgwn9MxMoxJyaMHlLTZWr9saJd2io3xpdftA4LKHxDxj6BOMmJ17EcFJvU5rGORWm48qKBa4MnB/FnqjjkdJBoo2aaP/UJVFRAwLxKeFwq5pMBLnOF4/iRDIuu1bP/hrwKLcZ/42jZXgqVxMlCxSl7hXFEickqya43Mt9mVVnzZJDV4msC1VKSlmw+65qbceJBCNDiKMolc3HzrVYgzIwg=="
       }
     }
   ],
