@@ -1,25 +1,29 @@
 {
-  "updatedAt": "2026-09-18T20:03:38.707Z",
+  "updatedAt": "2026-09-21T15:42:58.123Z",
   "by": "SHAWN",
   "advisors": {
-    "CODY": [
+    "JORDAN": [
       {
-        "ro": "780961",
-        "vehicle": "2022 Hyundai Santa Fe"
+        "ro": "780979",
+        "vehicle": "2021 Hyundai Tucson"
       },
       {
-        "ro": "780955",
-        "vehicle": "2023 Hyundai Palisade"
+        "ro": "780976",
+        "vehicle": "2021 Hyundai Santa Fe"
       },
       {
-        "ro": "780948",
-        "vehicle": "2017 Hyundai Tucson"
+        "ro": "780969",
+        "vehicle": "2026 Hyundai Sonata"
+      },
+      {
+        "ro": "780960",
+        "vehicle": "2017 Hyundai Santa Fe"
       }
     ],
     "CORY": [
       {
-        "ro": "780960",
-        "vehicle": "2017 Hyundai Santa Fe"
+        "ro": "780978",
+        "vehicle": "2020 Kia Soul"
       },
       {
         "ro": "780959",
@@ -38,48 +42,28 @@
         "vehicle": "2020 Hyundai Elantra"
       },
       {
-        "ro": "780914",
-        "vehicle": "2015 Chevrolet Equinox"
-      },
-      {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
-      },
-      {
-        "ro": "780912",
-        "vehicle": "2005 Buick LaCrosse"
-      },
-      {
-        "ro": "780911",
-        "vehicle": "2021 Hyundai Tucson"
-      },
-      {
-        "ro": "780830",
-        "vehicle": "2022 Chevrolet Equinox"
       },
       {
         "ro": "780829",
         "vehicle": "2019 Subaru Crosstrek"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "780956",
-        "vehicle": "2023 Hyundai Santa Fe"
-      }
-    ],
     "DAVID": [
       {
-        "ro": "780954",
-        "vehicle": "1998 Chevrolet C/K 1500"
-      },
-      {
-        "ro": "780939",
-        "vehicle": "2023 Hyundai Palisade"
+        "ro": "780970",
+        "vehicle": "2022 Hyundai Tucson"
       },
       {
         "ro": "780810",
         "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "CODY": [
+      {
+        "ro": "780955",
+        "vehicle": "2023 Hyundai Palisade"
       }
     ]
   }
