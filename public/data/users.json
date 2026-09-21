@@ -601,7 +601,8 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "hidden": false
     }
   ],
   "sharedSaveCode": "",
