@@ -1207,14 +1207,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       const newData = structuredClone(data);
       const { updated, skipped } = applyAddOnRows(newData.advisors, rows);
       if (!updated.length) throw new Error(`Read ${rows.length} row(s) but none matched an advisor on the dashboard (${rows.map(r => r.name).join(', ')}).`);
+      const diffRows = advisorImportDiff(data.advisors, newData.advisors);
+      const changedNames = new Set(diffRows.map(r => r.name));
+      const unchanged = updated.filter(n => !changedNames.has(n));
       const notes = [`Read from the screenshot: ${rows.map(r => r.name).join(', ')}. Anyone missing here wasn't in (or wasn't readable in) the image — check the crop.`];
+      if (unchanged.length) notes.push(`✓ Already up to date, nothing to change: ${unchanged.join(', ')}`);
       if (skipped.length) notes.push(`In the screenshot but not on the dashboard, skipped: ${skipped.join(', ')}`);
       for (const w of warnings || []) notes.push(`⚠️ ${w}`);
       notes.push('Tickets and Oil-only tickets are stored for coaching only — they do not show on the TV dashboard.');
       setAdvisorUpload({
         source: 'Add-on board screenshot',
         newData,
-        rows: advisorImportDiff(data.advisors, newData.advisors),
+        rows: diffRows,
         notes,
         message: `✅ Updated ${updated.length} advisor${updated.length === 1 ? '' : 's'} from the add-on screenshot (${updated.join(', ')})`,
       });
