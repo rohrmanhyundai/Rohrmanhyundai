@@ -243,6 +243,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserHidden, setNewUserHidden] = useState(false);
   const [pwToolBusy, setPwToolBusy] = useState('');
   const [pwToolMsg, setPwToolMsg] = useState('');
   // Admin "Show password": the vault descriptor (public key id) from users.json,
@@ -1846,21 +1847,32 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       ? { applicantCode: await hashAccessCode(newUserCode) }
       : (existing && existing.applicantCode ? { applicantCode: existing.applicantCode } : {});
     const updated = existing
-      ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, ...codePatch }];
+      ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch }];
     // An advisor-role user must also live on the dashboard roster (data.advisors)
     // or they never render on the dashboard. Saving the user alone only writes
     // users.json, so auto-add them to the roster + training table and persist the
     // dashboard in the same action. "lead advisor" counts too (Jordan).
     const wantsRoster = (newUserRole || '').toLowerCase().includes('advisor');
-    const rosterData = wantsRoster ? structuredClone(data) : null;
-    const addedToRoster = rosterData ? addAdvisorToRoster(rosterData, newUserName) : false;
+    const rosterData = structuredClone(data);
+    const addedToRoster = wantsRoster ? addAdvisorToRoster(rosterData, newUserName) : false;
+    // "Hidden" on the user is mirrored onto their roster entry (advisor or
+    // tech), which is what the TV, Tech Hours, Payroll and contests read.
+    const fw = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+    let rosterHiddenChanged = false;
+    for (const list of [rosterData.advisors || [], rosterData.technicians || []]) {
+      for (const r of list) {
+        if (fw(r.name) !== fw(newUserName)) continue;
+        if (!!r.hidden !== !!newUserHidden) { r.hidden = !!newUserHidden; rosterHiddenChanged = true; }
+      }
+    }
+    const rosterChanged = addedToRoster || rosterHiddenChanged;
 
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserPass(''); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
       .then(() => {
-        if (!addedToRoster) return;
+        if (!rosterChanged) return;
         onDataChange(rosterData, vacations);
         return saveDashboardToGitHub({ data: rosterData, vacations });
       })
@@ -1908,7 +1920,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       .then(() => {
         onDataChange(newData, newVacations);
         onUsersChange(updated);
-        setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor');
+        setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserHidden(false); setNewUserPass(''); setNewUserRole('advisor');
       })
       .catch(err => alert('Failed to delete user: ' + err.message))
       .finally(() => setUserSaving(false));
@@ -2363,8 +2375,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         {data.technicians.map((t, idx) => (
           <div className="form-section" key={t.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
-              {t.name}
+              <span>
+                {t.name}
+                {t.hidden && <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', borderRadius: 6, padding: '2px 7px', verticalAlign: 'middle' }}>Hidden</span>}
+              </span>
               <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button className="secondary" style={t.hidden ? { color: '#f59e0b', borderColor: 'rgba(245,158,11,.4)' } : {}}
+                  title="Off the TV, shop totals and Payroll; hours and reports are kept for month-end. Same switch as Hide User in Users."
+                  onClick={() => updateField(`technicians.${idx}.hidden`, !t.hidden)}>
+                  {t.hidden ? 'Show on Dashboard' : 'Hide from Dashboard'}
+                </button>
                 <button
                   onClick={() => toggleTechMultiplier(idx)}
                   title={techMultiplierOn(t)
@@ -2833,7 +2853,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserPass(''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserHidden(!!u.hidden); setNewUserPass(''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -2841,6 +2861,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     {isBuiltinAdmin ? 'Admin' : (u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'No role assigned')}
                     {u.managementAccess && !isAdminOrManager(u.role) && <span className="user-edit-badge">🛠 Mgmt Access</span>}
                     {hasEditAccess && <span className="user-edit-badge">✎ Can Edit</span>}
+                    {u.hidden && <span className="user-edit-badge" style={{ color: '#fbbf24', borderColor: 'rgba(245,158,11,.4)', background: 'rgba(245,158,11,.12)' }}>🙈 Hidden</span>}
                   </div>
                 </div>
                 {!isBuiltinAdmin && (
@@ -2857,7 +2878,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserHidden(false); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
@@ -2958,6 +2979,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <input type="checkbox" checked={newUserManagementAccess} onChange={e => setNewUserManagementAccess(e.target.checked)} />
             <span>Management Access</span>
             <span className="user-edit-toggle-hint">Grants full manager access (Manager Hub + all manager features) on top of the user's role — for an advisor who also manages, e.g. a lead advisor. They keep appearing in all advisor areas.</span>
+          </label>
+          <label className="user-edit-toggle" style={newUserHidden ? { background: 'rgba(245,158,11,.08)', borderRadius: 8, padding: '6px 8px', margin: '2px -8px' } : {}}>
+            <input type="checkbox" checked={newUserHidden} onChange={e => setNewUserHidden(e.target.checked)} />
+            <span style={newUserHidden ? { color: '#fbbf24' } : {}}>Hide User {newUserHidden && <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(245,158,11,.2)', border: '1px solid rgba(245,158,11,.4)', borderRadius: 5, padding: '1px 6px', marginLeft: 6 }}>HIDDEN</span>}</span>
+            <span className="user-edit-toggle-hint">For someone who has left mid-month: takes them off the TV dashboard, Tech Hours / Payroll and any contest, but keeps their reports and history so month-end reporting still works. They can still log in. Remove the user once the month closes.</span>
           </label>
           <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>

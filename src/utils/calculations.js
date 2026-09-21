@@ -211,11 +211,12 @@ export function recalcTech(data, schedules) {
       const rawK = `${k}_raw`;
       const hasRaw = t[rawK] !== undefined && t[rawK] !== null && t[rawK] !== '';
       t.total_raw += hasRaw ? safe(t[rawK], 0) : t[k];
-      totals[k] += t[k];
+      // A hidden tech (left mid-month, kept for month-end reporting) keeps
+      // their own numbers but stays out of the shop totals and pacing.
+      if (!t.hidden) totals[k] += t[k];
     });
     t.goal = safe(t.goal, 0);
-    totalGoal += t.goal;
-    weekTotal += t.total;
+    if (!t.hidden) { totalGoal += t.goal; weekTotal += t.total; }
     t.goal_pct = t.goal > 0 ? t.total / t.goal : 0;
 
     // Count days this tech actually has hours entered — avoids calendar-day
@@ -230,7 +231,7 @@ export function recalcTech(data, schedules) {
   Object.assign(data.techTotals, totals);
   data.techTotals.week_total = weekTotal;
   data.techTotals.week_pct = totalGoal > 0 ? weekTotal / totalGoal : 0;
-  data.techTotals.shop_pacing = data.technicians.reduce((s, t) => s + safe(t.pacing, 0), 0);
+  data.techTotals.shop_pacing = data.technicians.reduce((s, t) => s + (t.hidden ? 0 : safe(t.pacing, 0)), 0);
 }
 
 export function recalcAdvisorSummary(data) {

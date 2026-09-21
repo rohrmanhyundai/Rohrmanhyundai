@@ -119,7 +119,7 @@ export default function Payroll(props) {
 
 function PayrollInner({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech, onRemoveTech, onLock }) {
   const allTechs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
-  const techs = useMemo(() => allTechs.filter(t => !t.payrollHidden), [allTechs]);   // hidden techs stay off the sheet
+  const techs = useMemo(() => allTechs.filter(t => !t.payrollHidden && !t.hidden), [allTechs]);   // hidden techs stay off the sheet
   const [tab, setTab] = useState('sheet');            // 'sheet' | 'setup' | 'history'
   const [plans, setPlans] = useState(null);           // tech-pay.json
   const [week, setWeek] = useState(() => lastCompletedPayWeek());

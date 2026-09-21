@@ -49,7 +49,7 @@ export default function TechProduction({ data }) {
             </tr>
           </thead>
           <tbody>
-            {data.technicians.map(t => {
+            {data.technicians.filter(t => !t.hidden).map(t => {
               const width = Math.max(0, Math.min(100, safe(t.goal_pct) * 100));
               const cls = safe(t.goal_pct) >= 0.9 ? 'good' : safe(t.goal_pct) >= 0.75 ? 'warn' : 'bad';
               return (
