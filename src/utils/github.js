@@ -1919,6 +1919,16 @@ export async function loadPayrollWeek(key) {
   try { const d = await loadGithubFile(`data/payroll/${key}.json`); if (d && typeof d === 'object') return d; } catch {}
   return null;
 }
+export async function deletePayrollWeek(key) {
+  await mutateGitHubJson('public/data/payroll/index.json', (cur) => {
+    const idx = cur && typeof cur === 'object' ? { ...cur } : {};
+    const weeks = { ...(idx.weeks || {}) };
+    delete weeks[key];
+    return { ...idx, weeks };
+  }, `Payroll index — remove ${key}`);
+  // The week file itself is kept (history is never really lost); it just
+  // leaves the list. Saving the same week again reinstates it.
+}
 export async function savePayrollWeek(key, record, summary) {
   await saveGithubFile(`data/payroll/${key}.json`, record, `Payroll week ${key}`);
   await mutateGitHubJson('public/data/payroll/index.json', (cur) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { loadTechPay, saveTechPayPlan, loadPayrollIndex, loadPayrollWeek, savePayrollWeek } from '../utils/github';
+import { loadTechPay, saveTechPayPlan, loadPayrollIndex, loadPayrollWeek, savePayrollWeek, deletePayrollWeek } from '../utils/github';
 import { parseTechReportHtml } from '../utils/techFlaggedReport';
 import { trackPage, trackAction } from '../utils/activityTracker';
 import { firstWord, r2, payWeekOf, lastCompletedPayWeek, fmtWeek, payrollPlan, frhFromRow, computePayrollRow, payrollTotals } from '../utils/payroll';
@@ -90,7 +90,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
 
   function setInput(key, field, value) {
     setInputs(prev => ({ ...prev, [key]: { ...(prev[key] || emptyInputs()), [field]: value } }));
-    setLoadedFrom('');
+    setLoadedFrom(f => (f === 'saved' || f === 'edited' ? 'edited' : ''));
   }
 
   // ── Upload the Tekion Tech Performance .html ─────────────────────────────
@@ -112,7 +112,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
       }
       // Techs on the roster but not on the report turned nothing this week.
       for (const t of techs) { const k = firstWord(t.name); if (!matched.includes(k)) { nextDetail[k] = { cp: 0, int: 0, war: 0, warX: 0, mult: multOn(t) ? 1.4 : 1, total: 0 }; nextInputs[k] = { ...(nextInputs[k] || emptyInputs()), frh: 0 }; } }
-      setInputs(nextInputs); setFrhDetail(nextDetail); setReportName(file.name); setLoadedFrom('');
+      setInputs(nextInputs); setFrhDetail(nextDetail); setReportName(file.name); setLoadedFrom(f => (f === 'saved' || f === 'edited' ? 'edited' : ''));
       const notes = [...(w || [])];
       if (unmatched.length) notes.push(`On the report but not on the tech roster (skipped): ${unmatched.join(', ')}`);
       setWarnings(notes);
@@ -153,6 +153,21 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
       setInputs(nextInputs); setFrhDetail(nextDetail); setReportName(rec.report || ''); setWarnings(rec.warnings || []);
       setLoadedFrom('saved'); setTab('sheet');
       setStatus(`📂 Opened saved payroll for ${fmtWeek(rec)} (saved ${new Date(rec.savedAt).toLocaleString()} by ${rec.by || '—'}).`);
+    } catch (e) { setStatus('❌ ' + (e?.message || e)); }
+    finally { setBusy(''); }
+  }
+
+  async function deleteWeek(key) {
+    const w = index.weeks && index.weeks[key];
+    if (!w) return;
+    if (!window.confirm(`Remove the saved payroll for ${fmtWeek(w)} from history?\n\nYou can rebuild and save it again any time.`)) return;
+    setBusy('delete'); setStatus('');
+    try {
+      await deletePayrollWeek(key);
+      setIndex(i => { const weeks = { ...(i.weeks || {}) }; delete weeks[key]; return { ...i, weeks }; });
+      if (week.key === key) setLoadedFrom('');
+      setStatus(`🗑 Removed ${fmtWeek(w)} from history.`);
+      trackAction('payroll-delete-week', key);
     } catch (e) { setStatus('❌ ' + (e?.message || e)); }
     finally { setBusy(''); }
   }
@@ -290,7 +305,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
       <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <div>
           <div className="adv-title">💰 Payroll</div>
-          <div className="adv-sub">Technicians · pay week {fmtWeek(week)}{loadedFrom === 'saved' ? ' · saved' : ''}</div>
+          <div className="adv-sub">Technicians · pay week {fmtWeek(week)}{loadedFrom === 'saved' ? ' · saved' : loadedFrom === 'edited' ? ' · editing saved week — unsaved changes' : ''}</div>
         </div>
         <div style={{ flex: 1 }} />
         <div style={{ display: 'flex', gap: 6, background: 'rgba(255,255,255,.04)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 999, padding: 4 }}>
@@ -329,12 +344,20 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button className="secondary" onClick={printSheet} disabled={!rows.length} style={{ padding: '9px 14px' }}>🖨 Print / PDF</button>
-                  <button onClick={saveWeek} disabled={!!busy || !rows.length} style={{ padding: '9px 16px', fontSize: 13.5 }}>
-                    {busy === 'save' ? '⏳ Saving…' : savedThisWeek ? '💾 Save again (overwrite)' : '💾 Save week to history'}
+                  <button onClick={saveWeek} disabled={!!busy || !rows.length}
+                    style={{ padding: '9px 16px', fontSize: 13.5, ...(loadedFrom === 'edited' ? { background: 'linear-gradient(180deg,#facc15,#f59e0b)', color: '#422006', borderColor: '#fde68a' } : {}) }}>
+                    {busy === 'save' ? '⏳ Saving…' : loadedFrom === 'edited' ? '💾 Save changes to this week' : savedThisWeek ? '💾 Save again (overwrite)' : '💾 Save week to history'}
                   </button>
                 </div>
               </div>
-              {status && <div style={{ fontSize: 13, fontWeight: 700, color: status.startsWith('❌') ? '#f87171' : status.startsWith('📂') ? '#7dd3fc' : '#6ee7b7' }}>{status}</div>}
+              {(loadedFrom === 'saved' || loadedFrom === 'edited') && (
+                <div style={{ background: loadedFrom === 'edited' ? 'rgba(250,204,21,.1)' : 'rgba(125,211,252,.08)', border: `1px solid ${loadedFrom === 'edited' ? 'rgba(250,204,21,.4)' : 'rgba(125,211,252,.3)'}`, borderRadius: 10, padding: '9px 14px', fontSize: 12.5, color: loadedFrom === 'edited' ? '#fde68a' : '#bae6fd', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span>{loadedFrom === 'edited' ? '✏️ You\'ve changed this saved week — click Save changes to keep them, or open it again from History to discard.' : '✏️ This is a saved week. Every box is editable — change anything, then click Save.'}</span>
+                  <span style={{ flex: 1 }} />
+                  <button className="secondary" onClick={() => deleteWeek(week.key)} disabled={!!busy} style={{ fontSize: 11.5, color: '#fca5a5', borderColor: 'rgba(248,113,113,.4)' }}>🗑 Remove from history</button>
+                </div>
+              )}
+              {status && <div style={{ fontSize: 13, fontWeight: 700, color: status.startsWith('❌') ? '#f87171' : status.startsWith('📂') || status.startsWith('🗑') ? '#7dd3fc' : '#6ee7b7' }}>{status}</div>}
               {warnings.length > 0 && (
                 <div style={{ background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.35)', borderRadius: 10, padding: '10px 14px', fontSize: 12.5, color: '#fde68a', lineHeight: 1.5 }}>
                   {warnings.map((w, i) => <div key={i}>⚠️ {w}</div>)}
@@ -444,13 +467,17 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
                       <tr key={key}>
                         <td className="name">{fmtWeek(w)}</td><td>{w.techs}</td><td>{h2(w.frh)}</td><td className="total">{money(w.total)}</td>
                         <td className="sub">{new Date(w.savedAt).toLocaleString()} · {w.by || '—'}</td>
-                        <td><button className="secondary" disabled={!!busy} onClick={() => openWeek(key)} style={{ fontSize: 11.5 }}>Open</button></td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          <button className="secondary" disabled={!!busy} onClick={() => openWeek(key)} style={{ fontSize: 11.5 }}>✏️ Open &amp; edit</button>
+                          <button className="secondary" disabled={!!busy} onClick={() => deleteWeek(key)} style={{ fontSize: 11.5, marginLeft: 6, color: '#fca5a5', borderColor: 'rgba(248,113,113,.4)' }}>🗑</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               )}
               {status && tab === 'history' && <div style={{ fontSize: 13, fontWeight: 700, marginTop: 10, color: status.startsWith('❌') ? '#f87171' : '#7dd3fc' }}>{status}</div>}
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 10 }}>Open a week to change any hours, bonus or note, then Save — it overwrites that week. Remove takes it off this list; saving the same week again brings it back.</div>
             </div>
           )}
         </div>
