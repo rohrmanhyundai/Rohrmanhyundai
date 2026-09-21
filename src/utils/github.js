@@ -1765,6 +1765,31 @@ async function saveFormerEmployees(list) {
   return list;
 }
 
+// Re-hire: take a name off the former-employees registry so the dashboard's
+// load-time scrub stops removing them from the roster. (Adding a tech who was
+// deleted earlier — Wei — saved fine and then vanished on the next load.)
+export async function rehireFormerEmployee(username) {
+  const u = String(username || '').trim().toUpperCase();
+  if (!u) return false;
+  const list = await loadFormerEmployees();
+  const next = list.filter(f => (f.username || '').toUpperCase() !== u);
+  if (next.length === list.length) return false;
+  await saveFormerEmployees(next);
+  return true;
+}
+
+// Registry-only removal (no file deletion): keeps a tech off the roster after
+// a Payroll "remove", leaving their reports and login alone.
+export async function markFormerEmployee(username, role) {
+  const u = String(username || '').trim().toUpperCase();
+  if (!u || u === 'ADMIN') return false;
+  const list = await loadFormerEmployees();
+  if (list.some(f => (f.username || '').toUpperCase() === u)) return false;
+  list.push({ username: u, role: role || '', deletedAt: new Date().toISOString() });
+  await saveFormerEmployees(list);
+  return true;
+}
+
 // List the file names inside a repo directory via the contents API. Returns []
 // if the directory does not exist. Used to wipe the advisor-notes/{NAME}/ dir.
 async function listDirFiles(dirPath) {

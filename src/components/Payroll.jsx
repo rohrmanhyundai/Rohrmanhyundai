@@ -57,8 +57,9 @@ function displayName(tech, users) {
   return last ? `${first} ${last.toUpperCase()}` : first;
 }
 
-export default function Payroll({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech }) {
-  const techs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
+export default function Payroll({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech, onRemoveTech }) {
+  const allTechs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
+  const techs = useMemo(() => allTechs.filter(t => !t.payrollHidden), [allTechs]);   // hidden techs stay off the sheet
   const [tab, setTab] = useState('sheet');            // 'sheet' | 'setup' | 'history'
   const [plans, setPlans] = useState(null);           // tech-pay.json
   const [week, setWeek] = useState(() => lastCompletedPayWeek());
@@ -461,7 +462,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
             </>
           )}
 
-          {tab === 'setup' && <SetupTab techs={techs} users={users} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} onSaveTechFlag={onSaveTechFlag} onAddTech={onAddTech} />}
+          {tab === 'setup' && <SetupTab techs={allTechs} users={users} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} onSaveTechFlag={onSaveTechFlag} onAddTech={onAddTech} onRemoveTech={onRemoveTech} />}
 
           {tab === 'history' && (
             <div className="pr-card">
@@ -496,7 +497,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
 // ── Setup: per-tech rates, tiers, pay type ────────────────────────────────────
 // Writes the same tech-pay.json plan Tech Live Pay reads, plus the payroll-only
 // bumpEligible flag, so the two screens can never disagree on a rate.
-function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech }) {
+function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech, onRemoveTech }) {
   const [sel, setSel] = useState(techs[0] ? firstWord(techs[0].name) : '');
   const stored = (plans || {})[sel] || null;
   const [form, setForm] = useState(() => formFrom(stored));
@@ -519,6 +520,22 @@ function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech
     try { const key = await onAddTech(newFirst, newLast); setSel(key); setAdding(false); setNewFirst(''); setNewLast(''); setMsg(`✅ ${key} added to the roster — now set their pay plan.`); trackAction('payroll-add-tech', key); }
     catch (e) { setMsg('❌ ' + (e?.message || e)); }
     finally { setAddBusy(false); }
+  }
+  const [rosterBusy, setRosterBusy] = useState(false);
+  async function toggleHidden() {
+    if (!selTech || !onSaveTechFlag) return;
+    setRosterBusy(true); setMsg('');
+    try { await onSaveTechFlag(selTech.name, { payrollHidden: !selTech.payrollHidden }); setMsg(selTech.payrollHidden ? `✅ ${sel} is back on the pay sheet.` : `✅ ${sel} hidden from the pay sheet (still on Tech Hours).`); }
+    catch (e) { setMsg('❌ ' + (e?.message || e)); }
+    finally { setRosterBusy(false); }
+  }
+  async function removeTech() {
+    if (!selTech || !onRemoveTech) return;
+    if (!window.confirm(`Remove ${displayName(selTech, users)} from the technician roster?\n\nThey come off Payroll and the Tech Hours board. Their login and past reports are kept — delete the user under Users if they've left for good. You can add them back any time.`)) return;
+    setRosterBusy(true); setMsg('');
+    try { await onRemoveTech(selTech.name); const rest = techs.filter(t => firstWord(t.name) !== sel); setSel(rest[0] ? firstWord(rest[0].name) : ''); setMsg(`🗑 ${sel} removed from the roster.`); trackAction('payroll-remove-tech', sel); }
+    catch (e) { setMsg('❌ ' + (e?.message || e)); }
+    finally { setRosterBusy(false); }
   }
   async function toggleMult() {
     if (!selTech || !onSaveTechFlag) return;
@@ -555,7 +572,7 @@ function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech
       <div className="pr-card" style={{ padding: 8 }}>
         {techs.map(t => { const k = firstWord(t.name); const p = payrollPlan((plans || {})[k]); const set_ = p.flatRate > 0 || (p.hybrid && p.clockRate > 0); return (
           <button key={k} onClick={() => setSel(k)} className="secondary" style={{ width: '100%', textAlign: 'left', marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6, background: sel === k ? 'rgba(110,231,249,.14)' : 'transparent', borderColor: sel === k ? 'rgba(110,231,249,.5)' : 'transparent', color: sel === k ? '#67e8f9' : '#e2e8f0' }}>
-            <span style={{ fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName(t, users)}</span>
+            <span style={{ fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', opacity: t.payrollHidden ? .5 : 1, textDecoration: t.payrollHidden ? 'line-through' : 'none' }}>{displayName(t, users)}</span>
             <span style={{ fontSize: 10.5, color: set_ ? '#4ade80' : '#fca5a5', whiteSpace: 'nowrap' }}>{set_ ? `${p.hybrid ? 'FRH/HRLY' : 'FRH'} ${money(p.flatRate)}` : 'not set'}{t.warrantyMultiplier === false ? <span style={{ color: '#94a3b8' }}> · no ×1.4</span> : ''}</span>
           </button>
         ); })}
@@ -608,10 +625,21 @@ function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech
           Bumps stack: base {money(numv(form.flatRate))} → {money(numv(form.flatRate) + numv(form.tier1Bump))} at {form.tier1Hours} hrs → {money(numv(form.flatRate) + numv(form.tier1Bump) + numv(form.tier2Bump))} at {form.tier2Hours} hrs.
           {' '}Warranty hours {multOn ? <b style={{ color: '#4ade80' }}>× 1.4</b> : <b style={{ color: '#94a3b8' }}>at face value</b>} — e.g. 10 warranty hrs count as {multOn ? '14.0' : '10.0'} FRH.
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14, flexWrap: 'wrap' }}>
           <button onClick={save} disabled={busy || !sel} style={{ padding: '9px 18px', fontSize: 13.5 }}>{busy ? '⏳ Saving…' : '💾 Save pay plan'}</button>
           {msg && <span style={{ fontSize: 13, fontWeight: 700, color: msg.startsWith('❌') ? '#f87171' : '#6ee7b7' }}>{msg}</span>}
           <span style={{ fontSize: 11.5, color: '#64748b' }}>Same plan Tech Live Pay uses — saving here updates both.</span>
+          <span style={{ flex: 1 }} />
+          {selTech && (
+            <>
+              <button className="secondary" onClick={toggleHidden} disabled={rosterBusy} title={selTech.payrollHidden ? 'Put them back on the pay sheet' : 'Keep them on Tech Hours but leave them off the pay sheet'} style={{ fontSize: 12, color: '#fbbf24', borderColor: 'rgba(251,191,36,.4)' }}>
+                {rosterBusy ? '⏳' : selTech.payrollHidden ? '👁 Show on pay sheet' : '🙈 Hide from pay sheet'}
+              </button>
+              <button className="secondary" onClick={removeTech} disabled={rosterBusy} title="Take them off the technician roster entirely" style={{ fontSize: 12, color: '#fca5a5', borderColor: 'rgba(248,113,113,.4)' }}>
+                {rosterBusy ? '⏳' : '🗑 Remove from roster'}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

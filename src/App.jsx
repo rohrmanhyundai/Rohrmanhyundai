@@ -50,7 +50,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -1300,6 +1300,10 @@ export default function App() {
           const next = structuredClone(data);
           next.technicians = next.technicians || [];
           if (next.technicians.some(t => (t.name || '').toUpperCase() === name)) throw new Error(`${name} is already on the roster.`);
+          // A name on the former-employees registry is scrubbed off the roster on
+          // every load — re-hire first or the add silently disappears.
+          await rehireFormerEmployee(name);
+          formerRef.current = { set: null, ts: 0 };
           next.technicians.push({
             name, lastName: String(lastName || '').trim(), goal: 47.5, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
             total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
@@ -1307,6 +1311,18 @@ export default function App() {
           setData(next);
           await saveDashboardToGitHub({ data: next, vacations });
           return name;
+        }}
+        // Remove from the roster (Tech Hours + Payroll). Registered as a former
+        // employee so the load-time scrub keeps them off; their login and
+        // reports are left alone — Users handles a full delete.
+        onRemoveTech={async (techName) => {
+          const name = String(techName || '').trim().toUpperCase();
+          const next = structuredClone(data);
+          next.technicians = (next.technicians || []).filter(t => (t.name || '').toUpperCase() !== name);
+          setData(next);
+          await saveDashboardToGitHub({ data: next, vacations });
+          await markFormerEmployee(name, 'technician');
+          formerRef.current = { set: null, ts: 0 };
         }}
       />
     );
