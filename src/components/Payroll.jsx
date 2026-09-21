@@ -150,7 +150,14 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
       setWeek({ key: rec.key, start: rec.start, end: rec.end });
       const nextInputs = {}, nextDetail = {};
       for (const r of rec.rows || []) { nextInputs[r.key] = { ...emptyInputs(), ...(r.inputs || {}) }; if (r.frhDetail) nextDetail[r.key] = r.frhDetail; }
-      setInputs(nextInputs); setFrhDetail(nextDetail); setReportName(rec.report || ''); setWarnings(rec.warnings || []);
+      setInputs(nextInputs); setFrhDetail(nextDetail); setReportName(rec.report || '');
+      // The saved warnings describe the roster as it was at upload time — a tech
+      // added since would be on the sheet now but still named here.
+      const missing = techs.filter(t => !nextDetail[firstWord(t.name)] && rec.report).map(t => firstWord(t.name));
+      setWarnings([
+        ...((rec.warnings || []).map(w => `At upload (${new Date(rec.savedAt).toLocaleDateString()}): ${w}`)),
+        ...(missing.length ? [`${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} on the roster now but ${missing.length === 1 ? 'has' : 'have'} no report hours in this saved week — re-upload the .html to fill them in.`] : []),
+      ]);
       setLoadedFrom('saved'); setTab('sheet');
       setStatus(`📂 Opened saved payroll for ${fmtWeek(rec)} (saved ${new Date(rec.savedAt).toLocaleString()} by ${rec.by || '—'}).`);
     } catch (e) { setStatus('❌ ' + (e?.message || e)); }
