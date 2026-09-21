@@ -2,12 +2,10 @@
   "key": "2026-09-12",
   "start": "2026-09-12",
   "end": "2026-09-18",
-  "savedAt": "2026-09-21T13:57:25.211Z",
+  "savedAt": "2026-09-21T14:42:17.228Z",
   "by": "SHAWN",
   "report": "All Reports.html",
-  "warnings": [
-    "On the report but not on the tech roster (skipped): WEI GUO"
-  ],
+  "warnings": [],
   "rows": [
     {
       "name": "JACOB KUNTZ",
@@ -365,17 +363,68 @@
         "hourlyPay": 0,
         "total": 0
       }
+    },
+    {
+      "name": "WEI GUO",
+      "key": "WEI",
+      "plan": {
+        "payType": "flat_clock",
+        "flatRate": 15,
+        "tier1Hours": 50,
+        "tier1Bump": 0,
+        "tier2Hours": 60,
+        "tier2Bump": 0,
+        "clockRate": 10,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": false,
+        "hybrid": true,
+        "bumpEligible": false,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 13.2,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 3.8,
+        "int": -0.4,
+        "war": 7,
+        "warX": 9.8,
+        "mult": 1.4,
+        "total": 13.2
+      },
+      "calc": {
+        "frh": 13.2,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 15,
+        "frhPay": 198,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 400,
+        "total": 598
+      }
     }
   ],
   "totals": {
-    "frh": 229.12,
-    "frhPay": 5857,
+    "frh": 242.32,
+    "frhPay": 6055,
     "school": 0.5,
     "schoolPay": 13.5,
     "pto": 16,
     "ptoPay": 472,
-    "hourlyPay": 0,
+    "hourlyPay": 400,
     "otherBonus": 0,
-    "total": 6342.5
+    "total": 6940.5
   }
 }
