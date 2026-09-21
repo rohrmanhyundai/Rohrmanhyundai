@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-21T17:04:57.267Z",
+    "type": "action",
+    "label": "password-reset-complete"
+  },
+  {
     "at": "2026-09-21T12:52:26.127Z",
     "type": "page",
     "label": "work-schedule"
