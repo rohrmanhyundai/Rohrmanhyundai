@@ -1141,8 +1141,10 @@ export default function App() {
       : page.startsWith('tech-') ? 'tech-resources'
       : (prevPage || 'advisor-calendar');
     // Someone allowed only one roster sees only that one — never zero tabs.
+    // A technician always gets the tech schedule — it's their own shifts —
+    // even if the Tech Schedule box was left unticked on their user (Chris).
     const mayAdvisor = canAccess('advisorSchedule');
-    const mayTech    = canAccess('techSchedule');
+    const mayTech    = canAccess('techSchedule') || jobRole === 'technician';
     return (
       <WorkScheduleTabs
         schedules={schedules}
