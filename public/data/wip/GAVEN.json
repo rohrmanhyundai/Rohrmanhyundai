@@ -46,22 +46,6 @@
     "advisor": "DAVID RILEY"
   },
   {
-    "id": "mu1re6pxi5hv",
-    "ro": "780832",
-    "roDate": "2026-09-14",
-    "vehicle": "2022 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES SHIFTER SYSTEM MALFUNCTION. SERVICE IMMEDIATELY MESSAGE ON DASH. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/17/2026",
-    "highPriority": true,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mtc0tz5p2hjr",
     "ro": "780381",
     "roDate": "2026-08-27",
