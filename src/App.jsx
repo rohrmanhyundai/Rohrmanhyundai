@@ -178,6 +178,8 @@ export default function App() {
   // just-applied values so a stale-replica read can't revert the gauges.
   const gaugeActualsRef = useRef(null); // { grossActual?, cpActual?, ts }
   const formerRef = useRef({ set: null, ts: 0 }); // cached former-employee first names (5-min TTL)
+  const usersRef = useRef([]);                     // latest user list, for the roster scrub in loadDashboard
+  useEffect(() => { usersRef.current = users; }, [users]);
   // @mention alert: a blocking popup when someone @tags the current user in chat.
   const [mention, setMention] = useState(null);    // { id, from, text, channel, type } showing now, or null
   const [replyDraft, setReplyDraft] = useState(''); // reply input inside a reply-required popup
@@ -237,9 +239,14 @@ export default function App() {
           }
           if (fr.set && fr.set.size) {
             const fw = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
-            d.technicians = (d.technicians || []).filter(t => !fr.set.has(fw(t.name)));
-            d.advisors = (d.advisors || []).filter(a => !fr.set.has(fw(a.name)));
-            d.advisorTraining = (d.advisorTraining || []).filter(a => !fr.set.has(fw(a.name)));
+            // Someone with a live user account is not a former employee, whatever
+            // the registry says — a re-hired name (Daniel, Wei) must not be
+            // scrubbed off the roster the moment they're added back.
+            const active = new Set((usersRef.current || []).map(u => fw(u.username)));
+            const gone = (name) => fr.set.has(fw(name)) && !active.has(fw(name));
+            d.technicians = (d.technicians || []).filter(t => !gone(t.name));
+            d.advisors = (d.advisors || []).filter(a => !gone(a.name));
+            d.advisorTraining = (d.advisorTraining || []).filter(a => !gone(a.name));
           }
         } catch { /* non-fatal — fall back to unfiltered roster */ }
         recalcTech(d, schedulesRef.current);

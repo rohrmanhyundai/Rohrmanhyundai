@@ -7,7 +7,7 @@ import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { hashPassword, isHashed, passwordProblem } from '../utils/password';
 import { migrateAllPasswords } from './PasswordPages';
-import { requestPasswordReset, requestBigMoneyCoaching } from '../utils/github';
+import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -1871,6 +1871,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setUserSaving(true);
     saveUsers(updated, sharedSaveCode || getGithubToken())
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserPass(''); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
+      // A saved user is a current employee: take them off the former-employees
+      // registry, or the dashboard's load-time scrub keeps removing them from
+      // the roster (Daniel, Wei). Best effort.
+      .then(() => rehireFormerEmployee(newUserName).catch(() => {}))
       .then(() => {
         if (!rosterChanged) return;
         onDataChange(rosterData, vacations);
