@@ -28,10 +28,5 @@
     "username": "JASON",
     "role": "admin",
     "deletedAt": "2026-09-04T11:48:04.170Z"
-  },
-  {
-    "username": "WEI",
-    "role": "technician",
-    "deletedAt": "2026-09-17T12:51:32.189Z"
   }
 ]
