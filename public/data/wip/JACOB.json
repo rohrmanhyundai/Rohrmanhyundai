@@ -48,22 +48,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mu7dz3tdoju0",
-    "ro": "780960",
-    "roDate": "2026-09-18",
-    "vehicle": "2017 Hyundai Santa Fe",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mu7dz3td2wxw",
     "ro": "780959",
     "roDate": "2026-09-18",
