@@ -41,7 +41,16 @@ const CSS = `
 
 const emptyInputs = () => ({ frh: 0, school: '', pto: '', clockHours: '', otherBonus: '', otherNote: '' });
 
-export default function Payroll({ data, currentUser, onBack, onSaveTechFlag }) {
+// Full name for the sheet: roster last name, else the user account's last name
+// (set in Edit Dashboard → Users), else just the roster name.
+function displayName(tech, users) {
+  const first = firstWord(tech.name);
+  const u = (users || []).find(x => (x.username || '').toUpperCase() === first);
+  const last = String(tech.lastName || (u && u.lastName) || '').trim();
+  return last ? `${first} ${last.toUpperCase()}` : first;
+}
+
+export default function Payroll({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech }) {
   const techs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
   const [tab, setTab] = useState('sheet');            // 'sheet' | 'setup' | 'history'
   const [plans, setPlans] = useState(null);           // tech-pay.json
@@ -67,8 +76,8 @@ export default function Payroll({ data, currentUser, onBack, onSaveTechFlag }) {
     const key = firstWord(t.name);
     const inp = inputs[key] || emptyInputs();
     const calc = computePayrollRow(planFor(t), inp);
-    return { key, name: t.name, tech: t, inp, calc, plan: calc.plan, frhDetail: frhDetail[key] || null };
-  }), [techs, inputs, frhDetail, planFor]);
+    return { key, name: displayName(t, users), tech: t, inp, calc, plan: calc.plan, frhDetail: frhDetail[key] || null };
+  }), [techs, users, inputs, frhDetail, planFor]);
   const totals = useMemo(() => payrollTotals(rows.map(r => r.calc)), [rows]);
   const savedThisWeek = index.weeks && index.weeks[week.key];
 
@@ -325,7 +334,7 @@ ${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</
             </>
           )}
 
-          {tab === 'setup' && <SetupTab techs={techs} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} onSaveTechFlag={onSaveTechFlag} />}
+          {tab === 'setup' && <SetupTab techs={techs} users={users} plans={plans} onSaved={(key, plan) => setPlans(p => ({ ...(p || {}), [key]: plan }))} onSaveTechFlag={onSaveTechFlag} onAddTech={onAddTech} />}
 
           {tab === 'history' && (
             <div className="pr-card">
@@ -356,7 +365,7 @@ ${notes ? `<h2>Other payplan notes</h2><table><thead><tr><th>Tech</th><th>Note</
 // ── Setup: per-tech rates, tiers, pay type ────────────────────────────────────
 // Writes the same tech-pay.json plan Tech Live Pay reads, plus the payroll-only
 // bumpEligible flag, so the two screens can never disagree on a rate.
-function SetupTab({ techs, plans, onSaved, onSaveTechFlag }) {
+function SetupTab({ techs, users = [], plans, onSaved, onSaveTechFlag, onAddTech }) {
   const [sel, setSel] = useState(techs[0] ? firstWord(techs[0].name) : '');
   const stored = (plans || {})[sel] || null;
   const [form, setForm] = useState(() => formFrom(stored));
@@ -368,6 +377,18 @@ function SetupTab({ techs, plans, onSaved, onSaveTechFlag }) {
   const selTech = techs.find(t => firstWord(t.name) === sel) || null;
   const multOn = !selTech || selTech.warrantyMultiplier !== false;
   const [multBusy, setMultBusy] = useState(false);
+  // Add a tech who isn't on the roster yet (no user account required).
+  const [adding, setAdding] = useState(false);
+  const [newFirst, setNewFirst] = useState('');
+  const [newLast, setNewLast] = useState('');
+  const [addBusy, setAddBusy] = useState(false);
+  async function addTech() {
+    if (!onAddTech) return;
+    setAddBusy(true); setMsg('');
+    try { const key = await onAddTech(newFirst, newLast); setSel(key); setAdding(false); setNewFirst(''); setNewLast(''); setMsg(`✅ ${key} added to the roster — now set their pay plan.`); trackAction('payroll-add-tech', key); }
+    catch (e) { setMsg('❌ ' + (e?.message || e)); }
+    finally { setAddBusy(false); }
+  }
   async function toggleMult() {
     if (!selTech || !onSaveTechFlag) return;
     setMultBusy(true); setMsg('');
@@ -402,14 +423,28 @@ function SetupTab({ techs, plans, onSaved, onSaveTechFlag }) {
     <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 16, alignItems: 'start' }}>
       <div className="pr-card" style={{ padding: 8 }}>
         {techs.map(t => { const k = firstWord(t.name); const p = payrollPlan((plans || {})[k]); const set_ = p.flatRate > 0 || (p.hybrid && p.clockRate > 0); return (
-          <button key={k} onClick={() => setSel(k)} className="secondary" style={{ width: '100%', textAlign: 'left', marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: sel === k ? 'rgba(110,231,249,.14)' : 'transparent', borderColor: sel === k ? 'rgba(110,231,249,.5)' : 'transparent', color: sel === k ? '#67e8f9' : '#e2e8f0' }}>
-            <span style={{ fontWeight: 800 }}>{t.name}</span>
-            <span style={{ fontSize: 10.5, color: set_ ? '#4ade80' : '#fca5a5' }}>{set_ ? `${p.hybrid ? 'FRH/HRLY' : 'FRH'} ${money(p.flatRate)}` : 'not set'}{t.warrantyMultiplier === false ? <span style={{ color: '#94a3b8' }}> · no ×1.4</span> : ''}</span>
+          <button key={k} onClick={() => setSel(k)} className="secondary" style={{ width: '100%', textAlign: 'left', marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6, background: sel === k ? 'rgba(110,231,249,.14)' : 'transparent', borderColor: sel === k ? 'rgba(110,231,249,.5)' : 'transparent', color: sel === k ? '#67e8f9' : '#e2e8f0' }}>
+            <span style={{ fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName(t, users)}</span>
+            <span style={{ fontSize: 10.5, color: set_ ? '#4ade80' : '#fca5a5', whiteSpace: 'nowrap' }}>{set_ ? `${p.hybrid ? 'FRH/HRLY' : 'FRH'} ${money(p.flatRate)}` : 'not set'}{t.warrantyMultiplier === false ? <span style={{ color: '#94a3b8' }}> · no ×1.4</span> : ''}</span>
           </button>
         ); })}
+        {onAddTech && (adding ? (
+          <div style={{ marginTop: 8, padding: 10, borderRadius: 10, background: 'rgba(110,231,249,.08)', border: '1px solid rgba(110,231,249,.3)', display: 'grid', gap: 8 }}>
+            <div className="pr-label">New technician</div>
+            <input className="pr-in" style={{ width: '100%', textAlign: 'left' }} placeholder="First name" value={newFirst} autoFocus onChange={e => setNewFirst(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTech()} />
+            <input className="pr-in" style={{ width: '100%', textAlign: 'left' }} placeholder="Last name (optional)" value={newLast} onChange={e => setNewLast(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTech()} />
+            <div style={{ fontSize: 10.5, color: '#94a3b8', lineHeight: 1.4 }}>Goes on the Tech Hours roster too. No login is created — add one under Users if they need the site.</div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button className="secondary" onClick={() => { setAdding(false); setNewFirst(''); setNewLast(''); }} style={{ flex: 1, fontSize: 12 }}>Cancel</button>
+              <button onClick={addTech} disabled={addBusy || !newFirst.trim()} style={{ flex: 1, fontSize: 12 }}>{addBusy ? '⏳' : 'Add'}</button>
+            </div>
+          </div>
+        ) : (
+          <button className="secondary" onClick={() => setAdding(true)} style={{ width: '100%', marginTop: 8, fontSize: 12, color: '#67e8f9', borderColor: 'rgba(110,231,249,.4)' }}>➕ Add technician</button>
+        ))}
       </div>
       <div className="pr-card">
-        <div style={{ fontSize: 17, fontWeight: 1000, color: '#fff', marginBottom: 14 }}>⚙️ {sel} — pay plan</div>
+        <div style={{ fontSize: 17, fontWeight: 1000, color: '#fff', marginBottom: 14 }}>⚙️ {selTech ? displayName(selTech, users) : sel} — pay plan</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
           <label className="pr-field"><span className="pr-label">Pay type</span>
             <select value={form.payType} onChange={e => set('payType', e.target.value)}><option value="flat">FRH — flat rate</option><option value="flat_clock">FRH / HRLY — hybrid (hourly + flat rate)</option></select></label>

@@ -1278,6 +1278,7 @@ export default function App() {
     return (
       <Payroll
         data={data}
+        users={users}
         currentUser={currentUser.toUpperCase()}
         onBack={() => setPage(prevPage || 'manager-hub')}
         // Setup's warranty ×1.4 switch is the same per-tech switch the Tech Hours
@@ -1289,6 +1290,23 @@ export default function App() {
           Object.assign(t, patch);
           setData(next);
           await saveDashboardToGitHub({ data: next, vacations });
+        }}
+        // Adding a tech from Payroll puts them on the dashboard roster (the same
+        // list Tech Hours uses) — no user account needed. Same shape as the
+        // Edit Dashboard "Add Technician" button.
+        onAddTech={async (firstName, lastName) => {
+          const name = String(firstName || '').trim().toUpperCase();
+          if (!name) throw new Error('Enter a first name.');
+          const next = structuredClone(data);
+          next.technicians = next.technicians || [];
+          if (next.technicians.some(t => (t.name || '').toUpperCase() === name)) throw new Error(`${name} is already on the roster.`);
+          next.technicians.push({
+            name, lastName: String(lastName || '').trim(), goal: 47.5, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
+            total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
+          });
+          setData(next);
+          await saveDashboardToGitHub({ data: next, vacations });
+          return name;
         }}
       />
     );
