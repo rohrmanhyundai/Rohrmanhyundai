@@ -218,7 +218,8 @@
           "2026-09-18": true
         },
         "_hrsStamp": 1789990021919,
-        "fri_raw": 3.1
+        "fri_raw": 3.1,
+        "warrantyMultiplier": false
       }
     ],
     "advisors": [
