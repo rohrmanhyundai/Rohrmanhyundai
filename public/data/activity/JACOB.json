@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-21T12:44:56.002Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-21T12:44:44.190Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-18T13:56:53.671Z",
     "type": "action",
     "label": "delete-wip-row",
