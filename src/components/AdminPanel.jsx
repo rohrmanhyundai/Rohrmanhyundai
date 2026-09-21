@@ -1202,13 +1202,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     setAddOnBusy(true);
     setAddOnStatus('👀 Reading the screenshot…');
     try {
-      const { rows } = await parseAddOnScreenshot(file);
+      const { rows, warnings } = await parseAddOnScreenshot(file);
       if (!rows.length) throw new Error('No advisor rows found in that image.');
       const newData = structuredClone(data);
       const { updated, skipped } = applyAddOnRows(newData.advisors, rows);
       if (!updated.length) throw new Error(`Read ${rows.length} row(s) but none matched an advisor on the dashboard (${rows.map(r => r.name).join(', ')}).`);
-      const notes = [];
+      const notes = [`Read from the screenshot: ${rows.map(r => r.name).join(', ')}. Anyone missing here wasn't in (or wasn't readable in) the image — check the crop.`];
       if (skipped.length) notes.push(`In the screenshot but not on the dashboard, skipped: ${skipped.join(', ')}`);
+      for (const w of warnings || []) notes.push(`⚠️ ${w}`);
       notes.push('Tickets and Oil-only tickets are stored for coaching only — they do not show on the TV dashboard.');
       setAdvisorUpload({
         source: 'Add-on board screenshot',

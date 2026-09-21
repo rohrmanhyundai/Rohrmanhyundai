@@ -24,20 +24,28 @@ const num = (v) => { const n = parseFloat(String(v == null ? '' : v).replace(/[^
 // "51%" or "51" → 0.51 ; 0.51 stays 0.51
 const rate = (v) => { const n = num(v); if (n == null) return null; return n > 1 ? n / 100 : n; };
 
-const PROMPT = `This is a screenshot of a service-advisor "add-on" rank board. Read EVERY row that is an individual advisor (a person's name — skip store/dealership rows like "FW Lexus" or "LAF Hyundai", skip headers and totals).
+const PROMPT = `This is a screenshot of a service-advisor "add-on" rank board table. Work carefully, column by column.
 
-For each advisor row return these columns exactly as printed (numbers only, no units):
-- name: the advisor's name as printed
-- tickets: the TICKETS column (whole number)
-- add_on_rate: the ADD-ON RATE percentage (e.g. 51 for "51%")
-- oil_only_tickets: the OIL-ONLY TKTS count (whole number, the large number — ignore the small percentage under it)
-- addl_hrs_ro: the ADD'L HRS / RO value (decimal, e.g. 0.57)
-- addl_gp_ticket: ADD'L GP / TICKET in dollars if present, else null
-- total_addl_gp: TOTAL ADD'L GP in dollars if present, else null
+STEP 1 — Read the header row and list the column titles left to right. The usual order is:
+RANK | STORE (or advisor name) | STORE SCORE | TICKETS | ADD-ON RATE | OIL-ONLY TKTS | ADD'L HRS / RO | ADD'L GP / TICKET | TOTAL ADD'L GP | +0.1HR UPSIDE
+(Some may be missing or the screenshot may be cropped — use what is actually there.)
 
-Ignore the small "pts" and "sales" sub-labels under the numbers. Return ONLY a JSON array, no markdown fences, no commentary:
-[{"name":"...","tickets":47,"add_on_rate":51,"oil_only_tickets":23,"addl_hrs_ro":0.57,"addl_gp_ticket":84,"total_addl_gp":3945}]
-If you cannot find any advisor rows return [].`;
+STEP 2 — Find EVERY row whose second column is a PERSON'S NAME (e.g. "JORDAN TROXEL", "DAVID RILEY"). Skip dealership/store rows like "FW Lexus" or "LAF Hyundai", headers, and totals. Do not stop early — count the person rows and return all of them, including the last one at the bottom edge.
+
+STEP 3 — For each person row, transcribe the BIG number in every column in order into "cells" (ignore the small grey sub-labels like "5 pts", "49%", "$938 sales" underneath). Then fill the named fields FROM those cells:
+- name: the name as printed
+- tickets: the TICKETS column (whole number, e.g. 47)
+- add_on_rate: ADD-ON RATE as printed, e.g. 51 for "51%"
+- oil_only_tickets: OIL-ONLY TKTS big number (whole number, e.g. 23). It is ALWAYS smaller than tickets. It is NOT a dollar amount.
+- addl_hrs_ro: ADD'L HRS / RO decimal, e.g. 0.57
+- addl_gp_ticket: ADD'L GP / TICKET dollars (e.g. 84 for "$84"), null if absent
+- total_addl_gp: TOTAL ADD'L GP dollars, null if absent
+
+Sanity rule: oil_only_tickets ≈ tickets × (1 − add_on_rate/100). If yours doesn't fit, re-read the columns.
+
+Return ONLY a JSON object, no markdown fences:
+{"columns":["RANK","STORE",...],"rows":[{"name":"JORDAN TROXEL","cells":["#14","JORDAN TROXEL","39.6","47","51%","23","0.57","$84","$3,945","+$697"],"tickets":47,"add_on_rate":51,"oil_only_tickets":23,"addl_hrs_ro":0.57,"addl_gp_ticket":84,"total_addl_gp":3945}]}
+If there are no person rows return {"columns":[],"rows":[]}.`;
 
 // → { rows: [{ name, first, tickets, add_on_rate(0-1), oil_only_tickets, addl_hrs_ro, addl_gp_ticket, total_addl_gp }], raw }
 export async function parseAddOnScreenshot(file) {
@@ -50,9 +58,11 @@ export async function parseAddOnScreenshot(file) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      // The full 4o model reads dense tables far more reliably than mini
+      // (mini slid columns and dropped rows). A screenshot is ~1–2¢.
+      model: 'gpt-4o',
       temperature: 0,
-      max_tokens: 900,
+      max_tokens: 1400,
       messages: [{ role: 'user', content: [
         { type: 'text', text: PROMPT },
         { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
@@ -68,22 +78,39 @@ export async function parseAddOnScreenshot(file) {
   const json = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
   let parsed;
   try { parsed = JSON.parse(json); } catch { throw new Error('Could not read a table from that image. Try a tighter, sharper screenshot of the advisor rows.'); }
-  if (!Array.isArray(parsed)) throw new Error('Unexpected reply from the reader — try again.');
+  const list = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.rows) ? parsed.rows : null);
+  if (!list) throw new Error('Unexpected reply from the reader — try again.');
 
-  const rows = parsed
+  const warnings = [];
+  const rows = list
     .filter(r => r && r.name)
-    .map(r => ({
-      name: String(r.name).trim(),
-      first: canonicalAdvisorFirst(r.name),
-      tickets: num(r.tickets),
-      add_on_rate: rate(r.add_on_rate),
-      oil_only_tickets: num(r.oil_only_tickets),
-      addl_hrs_ro: num(r.addl_hrs_ro),
-      addl_gp_ticket: num(r.addl_gp_ticket),
-      total_addl_gp: num(r.total_addl_gp),
-    }))
+    .map(r => {
+      const row = {
+        name: String(r.name).trim(),
+        first: canonicalAdvisorFirst(r.name),
+        tickets: num(r.tickets),
+        add_on_rate: rate(r.add_on_rate),
+        oil_only_tickets: num(r.oil_only_tickets),
+        addl_hrs_ro: num(r.addl_hrs_ro),
+        addl_gp_ticket: num(r.addl_gp_ticket),
+        total_addl_gp: num(r.total_addl_gp),
+      };
+      // Tickets and the add-on rate are the big, unambiguous numbers on the
+      // board and oil-only = tickets × (1 − rate) by definition. If the
+      // oil-only read doesn't agree (or exceeds tickets), derive it instead of
+      // storing a number pulled from the wrong column.
+      if (row.tickets != null && row.add_on_rate != null) {
+        const expect = Math.round(row.tickets * (1 - row.add_on_rate));
+        const got = row.oil_only_tickets;
+        if (got == null || got > row.tickets || Math.abs(got - expect) > Math.max(2, row.tickets * 0.06)) {
+          if (got != null) warnings.push(`${row.first}: oil-only read as ${got} but ${row.tickets} tickets at ${(row.add_on_rate * 100).toFixed(0)}% means ${expect} — used ${expect}.`);
+          row.oil_only_tickets = expect;
+        }
+      }
+      return row;
+    })
     .filter(r => r.first && (r.add_on_rate != null || r.addl_hrs_ro != null));
-  return { rows, raw: text };
+  return { rows, warnings, raw: text };
 }
 
 // Apply parsed rows onto a cloned advisor list. Returns { updated, skipped }.
