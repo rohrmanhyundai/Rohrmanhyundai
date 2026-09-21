@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-21T18:15:46.013Z",
+    "type": "action",
+    "label": "logout"
+  },
+  {
     "at": "2026-09-21T18:12:09.050Z",
     "type": "page",
     "label": "work-schedule"
