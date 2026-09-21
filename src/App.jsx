@@ -37,7 +37,8 @@ import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
-import { verifyPassword, isHashed, withPassword, needsVaultCopy } from './utils/password';
+import { verifyPassword, isHashed, withPassword, needsVaultCopy, hashLegacyPasswords } from './utils/password';
+import { vaultReady, createVaultFor, unlockVaultAs, repairWrappers } from './utils/passwordVault';
 import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
 import UserDataTracker from './components/UserDataTracker';
@@ -50,7 +51,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -756,28 +757,60 @@ export default function App() {
   const [showReset, setShowReset] = useState(() => !!resetLink);
   const [showChangePw, setShowChangePw] = useState(false);
   const [showForgotPw, setShowForgotPw] = useState(null); // null | { username }
+  // Admin password vault, unlocked by the admin's own login for this session
+  // only (memory, never stored). Lets Edit Dashboard → Users show passwords.
+  const [vaultAccess, setVaultAccess] = useState(null);
 
   async function handleLogin(username, password) {
     const candidate = users.find(u => u.username === username);
     const match = candidate && await verifyPassword(candidate, password) ? candidate : null;
     if (match) {
-      // Legacy plaintext record: now that we know the password, store it hashed
-      // so the public users.json stops carrying it in the clear. Also tops up
-      // the admin vault copy when it's missing (a vault created after this
-      // password was set). Best effort — login doesn't wait on it.
+      // After login, in the background (login doesn't wait on it):
+      //  • a legacy plaintext record is re-saved hashed;
+      //  • the user's vault copy is topped up if missing;
+      //  • an ADMIN's password unlocks the vault for this session — creating
+      //    it on the very first admin login (which also hashes + vaults every
+      //    remaining plaintext password) and repairing the other admins'
+      //    wrappers so their next login unlocks it too.
       (async () => {
         try {
           const loaded = await loadUsers();
-          const list = loaded && loaded.users ? loaded.users : null;
+          let list = loaded && loaded.users ? loaded.users : null;
           if (!list) return;
+          let vault = loaded.passwordVault || null;
+          let dirty = false, vaultDirty = false;
+          const isAdmin = effectiveRole(match) === 'admin';
+          let access = null;
+
+          if (isAdmin && !vaultReady(vault)) {
+            const i0 = list.findIndex(u => u.username === match.username);
+            // Hash this admin first so the wrapper is tied to the hash they log in with.
+            if (i0 >= 0 && !isHashed(list[i0])) { list[i0] = await withPassword(list[i0], password, null); }
+            const created = await createVaultFor(match.username, password, i0 >= 0 && list[i0].passwordHash ? list[i0].passwordHash.salt : '');
+            vault = created.vault; access = created.access; vaultDirty = true;
+            // Everyone still in plain text goes in now; hashed users fill in as they log in.
+            const [hashed] = await hashLegacyPasswords(list, vault);
+            list = hashed; dirty = true;
+          }
+
           const i = list.findIndex(u => u.username === match.username);
           if (i < 0) return;
           const legacy = !isHashed(list[i]) && list[i].password != null;
-          if (!legacy && !needsVaultCopy(list[i], loaded.passwordVault)) return;
-          list[i] = await withPassword(list[i], password, loaded.passwordVault);
-          await saveUsersFile(list, loaded.sharedSaveCode);
-          setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list));
-        } catch {}
+          if (legacy || needsVaultCopy(list[i], vault)) { list[i] = await withPassword(list[i], password, vault); dirty = true; }
+
+          if (isAdmin && vaultReady(vault)) {
+            if (!access) access = await unlockVaultAs(vault, match.username, password);
+            if (access) {
+              const repaired = await repairWrappers(vault, access, list);
+              if (repaired) { vault = repaired; vaultDirty = true; }
+              setVaultAccess(access);
+            }
+          }
+
+          if (vaultDirty) await savePasswordVault(vault, list);
+          else if (dirty) await saveUsersFile(list, loaded.sharedSaveCode);
+          if (dirty || vaultDirty) { setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list)); }
+        } catch (e) { console.warn('post-login vault/hash step failed', e); }
       })();
       const role = effectiveRole(match);
       const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
@@ -802,6 +835,7 @@ export default function App() {
   function handleLogout() {
     trackAction('logout');
     shutdownActivityTracker();
+    setVaultAccess(null);
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
@@ -1805,7 +1839,7 @@ export default function App() {
           data={data} vacations={vacations} isOpen={adminOpen}
           onClose={() => setAdminOpen(false)} onDataChange={handleDataChange}
           onRefresh={loadDashboard} currentUser={currentUser} currentRole={currentRole}
-          users={users} sharedSaveCode={sharedSaveCode}
+          users={users} sharedSaveCode={sharedSaveCode} vaultAccess={vaultAccess}
           onSharedSaveCodeChange={setSharedSaveCode}
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
@@ -1861,6 +1895,7 @@ export default function App() {
         currentRole={currentRole}
         users={users}
         sharedSaveCode={sharedSaveCode}
+        vaultAccess={vaultAccess}
         onSharedSaveCodeChange={setSharedSaveCode}
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
         schedules={schedules}

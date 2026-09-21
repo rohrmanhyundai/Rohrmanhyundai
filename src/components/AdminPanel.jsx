@@ -22,8 +22,7 @@ import { hasExcelTraining } from '../utils/training';
 import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
-import { encryptForVault } from '../utils/passwordVault';
-import PasswordVaultPanel from './PasswordVaultPanel';
+import { encryptForVault, decryptWithVault, inVault } from '../utils/passwordVault';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -175,7 +174,7 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, vaultAccess, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
   const [githubToken, setToken] = useState(getGithubToken());
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   const [awsKeyId, setAwsKeyIdState] = useState(getAwsCreds().accessKeyId);
@@ -246,6 +245,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserEmail, setNewUserEmail] = useState('');
   const [pwToolBusy, setPwToolBusy] = useState('');
   const [pwToolMsg, setPwToolMsg] = useState('');
+  // Admin "Show password": the vault descriptor (public key id) from users.json,
+  // plus which user's password is currently revealed on screen.
+  const [vaultInfo, setVaultInfo] = useState(null);
+  const [revealedPw, setRevealedPw] = useState(null);
+  const [revealedFor, setRevealedFor] = useState('');
+  useEffect(() => {
+    if (!isOpen || currentRole !== 'admin') return;
+    loadUsers().then(l => setVaultInfo(l && l.passwordVault ? l.passwordVault : null)).catch(() => {});
+  }, [isOpen, currentRole, users]);
   const [newUserPass, setNewUserPass] = useState('');
   const [newUserCode, setNewUserCode] = useState('');        // Employee Applicants code (blank = leave as-is)
   const [existingCode, setExistingCode] = useState(false);   // whether the selected user already has one
@@ -2852,7 +2860,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
-        {currentRole === 'admin' && <PasswordVaultPanel users={users} onUsersChange={onUsersChange} currentUser={currentUser} />}
         <div className="form-section">
           <div className="title" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <span>Add / Edit User</span>
@@ -2887,6 +2894,34 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     : <span style={{ marginLeft: 8, fontSize: 10, color: '#fbbf24', fontWeight: 800 }} title="Still stored as plain text — save a new password or use Hash all passwords">⚠️ plain text</span>; })()}
               </label>
               <input type="password" autoComplete="new-password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} placeholder={selectedUser ? '••••••' : ''} />
+              {/* Admin only: the user's CURRENT password, from the vault the
+                  admin's own login unlocked. Hidden until clicked. */}
+              {currentRole === 'admin' && selectedUser && (() => {
+                const u = users.find(x => x.username === selectedUser); if (!u) return null;
+                const plain = !isHashed(u) && u.password != null && u.password !== '';
+                const avail = plain || (vaultAccess && inVault(u, vaultInfo));
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, minHeight: 22 }}>
+                    <span style={{ fontSize: 10.5, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.06em' }}>Current password</span>
+                    {revealedPw != null && revealedFor === selectedUser ? (
+                      <>
+                        <code style={{ fontSize: 13.5, fontWeight: 800, color: '#fde047', background: 'rgba(250,204,21,.1)', border: '1px solid rgba(250,204,21,.35)', borderRadius: 6, padding: '2px 8px' }}>{revealedPw}</code>
+                        <button className="secondary" onClick={() => { setRevealedPw(null); setRevealedFor(''); }} style={{ fontSize: 11, padding: '3px 8px' }}>Hide</button>
+                      </>
+                    ) : avail ? (
+                      <button className="secondary" style={{ fontSize: 11, padding: '3px 9px', color: '#e9d5ff', borderColor: 'rgba(167,139,250,.5)' }}
+                        onClick={async () => {
+                          const pw = plain ? String(u.password) : await decryptWithVault(vaultAccess, u.passwordEnc);
+                          setRevealedPw(pw == null ? '(could not read)' : pw); setRevealedFor(selectedUser); trackAction('password-reveal', selectedUser);
+                        }}>👁 Show password</button>
+                    ) : (
+                      <span style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }} title={!vaultAccess ? 'Log out and back in to unlock the vault for this session' : 'Their password was set before the vault existed — it fills in the next time they log in or you set a new one'}>
+                        {!vaultAccess ? 'vault locked — log in again to unlock' : 'not available yet — fills in on their next login'}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
             <div className="field">
               <label>Role</label>

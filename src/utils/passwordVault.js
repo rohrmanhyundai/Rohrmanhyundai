@@ -1,23 +1,25 @@
-// Admin password vault.
+// Admin password vault — lets an admin see a user's password even though
+// logins are verified against a hash (which can't be shown back).
 //
-// Passwords are hashed for login (utils/password.js) — a hash can't be shown
-// back. Admins still need to look a password up for someone, so every password
-// is ALSO stored encrypted with a public key that lives in users.json:
+// Every password that gets set is ALSO stored encrypted with an RSA public key
+// kept in users.json (user.passwordEnc = { kid, data }). The matching private
+// key is stored beside it, wrapped once per admin under a key derived from
+// that admin's own login password:
 //
 //   users.json.passwordVault = {
-//     kid,                        // id of this keypair
-//     publicKey,                  // RSA-OAEP JWK — anyone can encrypt with it
-//     privateKeyWrapped: {        // PKCS8 private key, AES-GCM under a key
-//       salt, iv, data, iterations   derived (PBKDF2) from the vault passphrase
-//     },
+//     kid, publicKey (JWK),
+//     wrappers: { SHAWN: { salt, iv, data, iterations, pwSalt }, ADMIN: {…} },
 //     createdAt, by
 //   }
-//   user.passwordEnc = { kid, data }   // RSA-OAEP ciphertext of the password
 //
-// So a user resetting their own password (no passphrase on their device) still
-// gets it into the vault, and only someone who knows the vault passphrase can
-// unwrap the private key and read it. users.json is public: the passphrase is
-// the only secret, and it is never stored anywhere.
+// So when an admin logs in, their password unwraps the private key for that
+// session and every "Show password" just works — nothing extra to remember.
+// The first admin to log in creates the vault; an admin holding the key
+// wraps it for the other admins automatically (their passwords are in the
+// vault too), and re-wraps whenever an admin's password changes (pwSalt is
+// the salt of the passwordHash the wrapper was made against).
+// users.json is public: without an admin's login password the vault is just
+// ciphertext.
 
 const ITER = 200000;
 const enc = new TextEncoder();
@@ -25,69 +27,81 @@ const dec = new TextDecoder();
 const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const unb64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 const rand = (n) => crypto.getRandomValues(new Uint8Array(n));
+const up = (s) => String(s || '').trim().toUpperCase();
 
-async function wrapKeyFrom(passphrase, salt, iterations = ITER) {
-  const base = await crypto.subtle.importKey('raw', enc.encode(String(passphrase)), 'PBKDF2', false, ['deriveKey']);
+async function wrapKeyFrom(secret, salt, iterations = ITER) {
+  const base = await crypto.subtle.importKey('raw', enc.encode(String(secret)), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
 }
-
-async function wrapPkcs8(pkcs8, passphrase) {
+async function wrapPkcs8(pkcs8, secret, pwSalt) {
   const salt = rand(16), iv = rand(12);
-  const wrapKey = await wrapKeyFrom(passphrase, salt);
-  const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, wrapKey, pkcs8);
-  return { salt: b64(salt), iv: b64(iv), data: b64(data), iterations: ITER };
+  const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await wrapKeyFrom(secret, salt), pkcs8);
+  return { salt: b64(salt), iv: b64(iv), data: b64(data), iterations: ITER, pwSalt: pwSalt || '', at: new Date().toISOString() };
 }
-
-async function unwrapPkcs8(vault, passphrase) {
-  const w = vault.privateKeyWrapped;
-  const wrapKey = await wrapKeyFrom(passphrase, unb64(w.salt), w.iterations || ITER);
-  try { return await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(w.iv) }, wrapKey, unb64(w.data)); }
-  catch { throw new Error('That vault passphrase is wrong.'); }
+async function unwrapPkcs8(w, secret) {
+  const key = await wrapKeyFrom(secret, unb64(w.salt), w.iterations || ITER);
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(w.iv) }, key, unb64(w.data));
 }
+const importPriv = (pkcs8) => crypto.subtle.importKey('pkcs8', pkcs8, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['decrypt']);
 
-export const vaultReady = (vault) => !!(vault && vault.publicKey && vault.privateKeyWrapped && vault.privateKeyWrapped.data);
+export const vaultReady = (vault) => !!(vault && vault.publicKey && vault.kid);
+export const hasWrapper = (vault, username) => !!(vault && vault.wrappers && vault.wrappers[up(username)]);
+export const inVault = (user, vault) => !!(user && user.passwordEnc && user.passwordEnc.data && vault && user.passwordEnc.kid === vault.kid);
 
-// Create a brand-new vault from a passphrase.
-export async function createVault(passphrase, by) {
-  if (!passphrase || String(passphrase).length < 6) throw new Error('Use a vault passphrase of at least 6 characters.');
-  const pair = await crypto.subtle.generateKey({ name: 'RSA-OAEP', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['encrypt', 'decrypt']);
-  const publicKey = await crypto.subtle.exportKey('jwk', pair.publicKey);
-  const pkcs8 = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
-  return {
-    kid: b64(rand(9)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 10),
-    publicKey,
-    privateKeyWrapped: await wrapPkcs8(pkcs8, passphrase),
-    createdAt: new Date().toISOString(), by: by || '',
-  };
-}
-
-// Encrypt a password for the vault. Returns null when there's no vault yet.
+// Encrypt a password for the vault. Null when there's no vault yet.
 export async function encryptForVault(vault, text) {
   if (!vaultReady(vault)) return null;
   const pub = await crypto.subtle.importKey('jwk', vault.publicKey, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['encrypt']);
-  const data = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, enc.encode(String(text)));
-  return { kid: vault.kid, data: b64(data) };
+  return { kid: vault.kid, data: b64(await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, enc.encode(String(text)))) };
 }
 
-// Passphrase → private CryptoKey (throws on a wrong passphrase).
-export async function unlockVault(vault, passphrase) {
-  if (!vaultReady(vault)) throw new Error('No vault has been set up yet.');
-  const pkcs8 = await unwrapPkcs8(vault, passphrase);
-  return crypto.subtle.importKey('pkcs8', pkcs8, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['decrypt']);
-}
-
-export async function decryptWithVault(privateKey, passwordEnc) {
-  if (!privateKey || !passwordEnc || !passwordEnc.data) return null;
-  try { return dec.decode(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, privateKey, unb64(passwordEnc.data))); }
+export async function decryptWithVault(access, passwordEnc) {
+  if (!access || !access.privateKey || !passwordEnc || !passwordEnc.data) return null;
+  try { return dec.decode(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, access.privateKey, unb64(passwordEnc.data))); }
   catch { return null; }
 }
 
-// Change the passphrase: unwrap with the old one, wrap again with the new one.
-export async function rewrapVault(vault, oldPassphrase, newPassphrase) {
-  if (!newPassphrase || String(newPassphrase).length < 6) throw new Error('Use a new passphrase of at least 6 characters.');
-  const pkcs8 = await unwrapPkcs8(vault, oldPassphrase);
-  return { ...vault, privateKeyWrapped: await wrapPkcs8(pkcs8, newPassphrase), rewrappedAt: new Date().toISOString() };
+// Create a new vault, wrapped for the admin who is creating it.
+export async function createVaultFor(username, password, pwSalt) {
+  const pair = await crypto.subtle.generateKey({ name: 'RSA-OAEP', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['encrypt', 'decrypt']);
+  const publicKey = await crypto.subtle.exportKey('jwk', pair.publicKey);
+  const pkcs8 = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
+  const vault = {
+    kid: b64(rand(9)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 10),
+    publicKey,
+    wrappers: { [up(username)]: await wrapPkcs8(pkcs8, password, pwSalt) },
+    createdAt: new Date().toISOString(), by: up(username),
+  };
+  return { vault, access: { privateKey: await importPriv(pkcs8), pkcs8 } };
 }
 
-// Is this user's stored ciphertext readable by the current vault?
-export const inVault = (user, vault) => !!(user && user.passwordEnc && user.passwordEnc.data && vault && user.passwordEnc.kid === vault.kid);
+// An admin's login password → vault access for this session. Null if this
+// admin has no wrapper yet (another admin's session will add one).
+export async function unlockVaultAs(vault, username, password) {
+  const w = vault && vault.wrappers && vault.wrappers[up(username)];
+  if (!w) return null;
+  try { const pkcs8 = await unwrapPkcs8(w, password); return { privateKey: await importPriv(pkcs8), pkcs8 }; }
+  catch { return null; }
+}
+
+// With the key in hand, make sure every admin has a current wrapper: one made
+// against the passwordHash they log in with now. Their password comes out of
+// the vault itself. Returns the updated vault, or null if nothing changed.
+export async function repairWrappers(vault, access, users) {
+  if (!vaultReady(vault) || !access || !access.pkcs8) return null;
+  const wrappers = { ...(vault.wrappers || {}) };
+  let changed = false;
+  for (const u of users || []) {
+    if (String(u.role || '').toLowerCase() !== 'admin') continue;
+    const name = up(u.username);
+    const salt = u.passwordHash && u.passwordHash.salt;
+    const cur = wrappers[name];
+    if (cur && cur.pwSalt === salt) continue;              // already current
+    if (!inVault(u, vault)) continue;                      // don't know their password yet
+    const pw = await decryptWithVault(access, u.passwordEnc);
+    if (pw == null) continue;
+    wrappers[name] = await wrapPkcs8(access.pkcs8, pw, salt);
+    changed = true;
+  }
+  return changed ? { ...vault, wrappers } : null;
+}
