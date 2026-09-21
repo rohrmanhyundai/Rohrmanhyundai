@@ -1,5 +1,32 @@
 [
   {
+    "at": "2026-09-21T13:02:07.150Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-21T13:02:05.454Z",
+    "type": "page",
+    "label": "tech-self-review"
+  },
+  {
+    "at": "2026-09-21T13:02:02.705Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-21T13:01:21.900Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 780912 tech JACOB"
+  },
+  {
+    "at": "2026-09-21T13:01:14.868Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 780914 tech JACOB"
+  },
+  {
     "at": "2026-09-21T13:01:06.910Z",
     "type": "action",
     "label": "delete-wip-row",
