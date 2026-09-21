@@ -45,22 +45,6 @@
     "flag": "purple"
   },
   {
-    "id": "mu36hz7mve5s",
-    "ro": "780865",
-    "roDate": "2026-09-15",
-    "vehicle": "2015 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT FLASHING AND KNOCKING NOISE. CHECK AND ADVISE. TOWED IN.",
-    "notes": "Engine Approved",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/18/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mthoa4nkall",
     "ro": "780481",
     "roDate": "2026-08-31",
