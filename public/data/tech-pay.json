@@ -79,7 +79,8 @@
     "clockHours": 40,
     "clockMode": "add",
     "eligiblePto": false,
-    "updated": "2026-09-09T18:04:50.432Z"
+    "updated": "2026-09-21T13:02:35.812Z",
+    "bumpEligible": false
   },
   "BRYSON": {
     "payType": "flat_clock",
