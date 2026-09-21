@@ -1,0 +1,83 @@
+{
+  "id": "mubbgxdazxqi",
+  "createdAt": "2026-09-21T14:04:33.646Z",
+  "updatedAt": "2026-09-21T14:18:23.053Z",
+  "dealershipName": "Bob Rohrman Hyundai",
+  "customerName": "Crystal Burns",
+  "customerPhone": "(574) 581 - 2300",
+  "repairOrder": "780902",
+  "vin": "KM8KH3AC8NU004658",
+  "vehicleYear": "2022",
+  "vehicleMake": "HYUNDAI",
+  "vehicleModel": "Kona N",
+  "mileage": "104802",
+  "warrantyCompany": "CAR SHIELD WARRANTY",
+  "warrantyPhone": "800-823-2517",
+  "warrantyEmail": "payments@americanautoshield.com",
+  "claimNumber": "",
+  "authNumber": "",
+  "laborRate": "",
+  "laborTime": "",
+  "diagnosisTime": "",
+  "laborTotalOverride": "",
+  "parts": [
+    {
+      "id": "mubbgxdawtcs",
+      "partNumber": "430A1-2N060-RM",
+      "description": "TRANSMISSION ASSY-DCT( WITHO",
+      "qty": "1",
+      "price": "2746.18"
+    },
+    {
+      "id": "mubbnl39ogcb",
+      "partNumber": "00232-19063",
+      "description": "MTF-70W DUAL CLUTCH TRANS FLUI",
+      "qty": "2",
+      "price": "44.90"
+    },
+    {
+      "id": "mubbsdb96scq",
+      "partNumber": "25100-2GTC0",
+      "description": "PUMP ASSY-COOLANT",
+      "qty": "1",
+      "price": "400.76"
+    },
+    {
+      "id": "mubbtkokz1qb",
+      "partNumber": "25130-25002",
+      "description": "GASKET-WATER PUMP",
+      "qty": "1",
+      "price": "15.84"
+    },
+    {
+      "id": "mubbuizwg7qn",
+      "partNumber": "",
+      "description": "",
+      "qty": "1",
+      "price": ""
+    }
+  ],
+  "taxPct": "7",
+  "deductible": "",
+  "rental": null,
+  "towing": null,
+  "sublet": null,
+  "tireRepair": null,
+  "tireTax": null,
+  "tireDisposal": null,
+  "notes": "",
+  "approved": false,
+  "approvedDate": "",
+  "denied": false,
+  "deniedDate": "",
+  "waiting": false,
+  "waitingDate": "",
+  "paid": false,
+  "paymentDate": "",
+  "repairsFinished": false,
+  "repairsFinishedDate": "",
+  "readySubmission": false,
+  "readySubmissionDate": "",
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
+}
