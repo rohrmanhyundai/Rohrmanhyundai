@@ -570,6 +570,36 @@
         "kid": "YuwDZUlFIR",
         "data": "IGWS70fgfCjHh5gE6fFNFxWJYaHuAiW8KmeVPx2qsRPyW6fHatPXtg8mWiGoCyi04YNQy80Zzem09Z8HILCZ0GQjihdl7OnYmW9WjZ353FzTr/eLkWwJ4tHGZ89JhHb9Wgwn9MxMoxJyaMHlLTZWr9saJd2io3xpdftA4LKHxDxj6BOMmJ17EcFJvU5rGORWm48qKBa4MnB/FnqjjkdJBoo2aaP/UJVFRAwLxKeFwq5pMBLnOF4/iRDIuu1bP/hrwKLcZ/42jZXgqVxMlCxSl7hXFEickqya43Mt9mVVnzZJDV4msC1VKSlmw+65qbceJBCNDiKMolc3HzrVYgzIwg=="
       }
+    },
+    {
+      "username": "Daniel",
+      "lastName": "escalante",
+      "email": "daniel.escalante@rohrmanauto.com",
+      "passwordHash": {},
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "Q7Zb+SQaxX6+hnxPdHZClhaAQDyce3stDGhkhHDsnBr+efxBi867xbRUuBfNem8iEQA4061hOI9gi/L42j2Pb5DYOPXJ85rKcLN5V6fOdl/9KEhBYsNyrWX1uYsJJ34f3NcMgLfi68NrCHN8XnLsJIoD/eQ4guDRYK6ZlTcWwCtAkBVtCOy97IszjnEAk/x8pDLnEqUus+BiLNVET0IwZfA+aWD1RMMb852RgJyMjdP9GdcvSAwpnefs7KR64akHluR2fpsD+SqX+FS93WwUaPL4R5xFWHf2Ot7ci3NrgnC80+GrFpVkLyk+6Y+vkXIegBqBycusqrUhbZp+6uA8bA=="
+      },
+      "role": "advisor",
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "chargeAccountList": true,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true
     }
   ],
   "sharedSaveCode": "",
