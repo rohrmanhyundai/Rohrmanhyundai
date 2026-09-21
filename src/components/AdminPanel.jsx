@@ -2888,8 +2888,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <input type="email" inputMode="email" autoComplete="off" value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} placeholder="e.g. david@rohrman.com" />
             </div>
             <div className="field">
-              <label title="Managers type this to open their Employee Applicants page. Stored hashed — it can't be read back, only replaced.">
-                Applicants Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits)</span>
+              <label title="Managers type this to open their Employee Applicants page and Payroll. Stored hashed — it can't be read back, only replaced.">
+                Access Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits · Applicants &amp; Payroll)</span>
               </label>
               <input value={newUserCode} inputMode="numeric" type="password"
                 onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
@@ -2897,7 +2897,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="small" style={{ marginTop: 4 }}>
                 {existingCode
                   ? 'A code is set. Leave blank to keep it, or type a new one to replace it.'
-                  : 'Their Employee Applicants page stays locked until you set this.'}
+                  : 'Their Employee Applicants page and Payroll stay locked until you set this.'}
               </div>
             </div>
           </div>

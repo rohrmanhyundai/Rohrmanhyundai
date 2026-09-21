@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { loadTechPay, saveTechPayPlan, loadPayrollIndex, loadPayrollWeek, savePayrollWeek, deletePayrollWeek } from '../utils/github';
 import { parseTechReportHtml } from '../utils/techFlaggedReport';
 import { trackPage, trackAction } from '../utils/activityTracker';
+import { verifyAccessCode, hasAccessCode } from '../utils/accessCode';
 import { firstWord, r2, payWeekOf, lastCompletedPayWeek, fmtWeek, payrollPlan, frhFromRow, computePayrollRow, payrollTotals } from '../utils/payroll';
 
 // ── Tech Payroll ──────────────────────────────────────────────────────────────
@@ -57,7 +58,66 @@ function displayName(tech, users) {
   return last ? `${first} ${last.toUpperCase()}` : first;
 }
 
-export default function Payroll({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech, onRemoveTech }) {
+// Same lock as Employee Applicants: the manager's 4-digit access code (set in
+// Users, stored hashed). Payroll shows every tech's pay, so it asks every time
+// the page is opened — nothing is remembered between visits.
+function PayrollLock({ currentUser, currentUserRecord, onBack, onUnlock }) {
+  const codeSet = hasAccessCode(currentUserRecord);
+  const [codeInput, setCodeInput] = useState('');
+  const [codeErr, setCodeErr] = useState('');
+  const [checking, setChecking] = useState(false);
+  async function submit(e) {
+    e?.preventDefault?.();
+    setChecking(true); setCodeErr('');
+    try {
+      const ok = await verifyAccessCode(codeInput.trim(), currentUserRecord?.applicantCode);
+      if (ok) { trackAction('payroll-unlock'); onUnlock(); }
+      else setCodeErr('That code doesn\'t match. Ask an admin if you\'ve forgotten it.');
+    } catch { setCodeErr('Could not check the code on this device.'); }
+    finally { setChecking(false); }
+  }
+  const inputStyle = { width: '100%', background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 10, color: '#e2e8f0', outline: 'none', boxSizing: 'border-box' };
+  return (
+    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div><div className="adv-title">💰 Payroll</div><div className="adv-sub">{String(currentUser || '').toUpperCase()}</div></div>
+        <div style={{ flex: 1 }} />
+        <button className="secondary" onClick={onBack}>← Back</button>
+      </div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '60px 20px' }}>
+        <form onSubmit={submit} style={{ width: '100%', maxWidth: 380, textAlign: 'center', border: '1px solid rgba(148,163,184,.22)', borderRadius: 18, padding: '34px 28px', background: 'linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))' }}>
+          <div style={{ fontSize: 40 }}>🔒</div>
+          <div style={{ fontSize: 19, fontWeight: 900, color: '#e8f1ff', marginTop: 12 }}>Enter your code</div>
+          {codeSet ? (
+            <>
+              <div style={{ fontSize: 13, color: '#8296b4', marginTop: 8, lineHeight: 1.6 }}>Payroll shows every technician's pay. Enter your 4-digit code to open it.</div>
+              <input autoFocus value={codeInput} onChange={e => { setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 10)); setCodeErr(''); }}
+                type="password" inputMode="numeric" placeholder="••••" autoComplete="off"
+                style={{ ...inputStyle, marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
+              {codeErr && <div style={{ color: '#fca5a5', fontSize: 12.5, fontWeight: 700, marginTop: 10 }}>⚠ {codeErr}</div>}
+              <button type="submit" disabled={checking || !codeInput}
+                style={{ marginTop: 16, width: '100%', padding: 11, fontSize: 15, fontWeight: 800, background: (checking || !codeInput) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: (checking || !codeInput) ? '#7d8ba3' : '#93c5fd', borderRadius: 10 }}>
+                {checking ? 'Checking…' : 'Unlock'}
+              </button>
+            </>
+          ) : (
+            <div style={{ fontSize: 13.5, color: '#fdba74', marginTop: 12, lineHeight: 1.7 }}>
+              You don't have a code yet. An admin sets one for you in <strong>Edit Dashboard → Users → Access Code</strong> (the same code that opens Employee Applicants).
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default function Payroll(props) {
+  const [unlocked, setUnlocked] = useState(false);
+  if (!unlocked) return <PayrollLock currentUser={props.currentUser} currentUserRecord={props.currentUserRecord} onBack={props.onBack} onUnlock={() => setUnlocked(true)} />;
+  return <PayrollInner {...props} onLock={() => setUnlocked(false)} />;
+}
+
+function PayrollInner({ data, users = [], currentUser, onBack, onSaveTechFlag, onAddTech, onRemoveTech, onLock }) {
   const allTechs = useMemo(() => ((data && data.technicians) || []).filter(t => t && t.name), [data]);
   const techs = useMemo(() => allTechs.filter(t => !t.payrollHidden), [allTechs]);   // hidden techs stay off the sheet
   const [tab, setTab] = useState('sheet');            // 'sheet' | 'setup' | 'history'
@@ -324,6 +384,7 @@ export default function Payroll({ data, users = [], currentUser, onBack, onSaveT
             </button>
           ))}
         </div>
+        <button className="secondary" onClick={onLock} title="Lock this page again" style={{ marginLeft: 6 }}>🔒 Lock</button>
         <button className="secondary" onClick={onBack} style={{ marginLeft: 6 }}>← Back</button>
       </div>
 

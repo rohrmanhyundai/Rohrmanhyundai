@@ -1280,6 +1280,7 @@ export default function App() {
         data={data}
         users={users}
         currentUser={currentUser.toUpperCase()}
+        currentUserRecord={currentUserRecord}
         onBack={() => setPage(prevPage || 'manager-hub')}
         // Setup's warranty ×1.4 switch is the same per-tech switch the Tech Hours
         // card uses, so flipping it here is saved to the dashboard right away.
