@@ -57,7 +57,11 @@
         "setAt": "2026-09-09T12:34:01.926Z"
       },
       "email": "shawn.laughner@rohrmanauto.com",
-      "passwordHash": {}
+      "passwordHash": {},
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "bsFbMP+RK+kVBc2WmzhIT97LsJ1Goic15PI2KcXQxH5xj/2ouDjNRjpaVqq6IGWxMpB4FXQtNPiJ9p1TpXqvVY+RiOVWTaYjeAeVwUQ+zBgdSv/9/GUUbFCbSLkRI1+JdfBLm9Zfub1AYWGnnR9CAjeQW5rzC7angwFDZSyhDWX5g9dfcQotJaNs6KihpY/pGEud1FR3g0+f9sT0206386Swi6BClUiQTJhjThM0D26XMpHjhz2c8tbgyHKlDTGNCvsC+6DkmTXtAGXiF9aeLfeuG1IGHhLEb7FbdmIzHiFLJZBqGwhOTmchtrJtEftdWegbWSe7LGLcTLLGqLp8IQ=="
+      }
     },
     {
       "username": "Jordan",
@@ -566,5 +570,30 @@
   ],
   "sharedSaveCode": "",
   "awsAccessKeyId": "",
-  "awsSecretAccessKey": ""
+  "awsSecretAccessKey": "",
+  "passwordVault": {
+    "kid": "YuwDZUlFIR",
+    "publicKey": {
+      "alg": "RSA-OAEP-256",
+      "e": "AQAB",
+      "ext": true,
+      "key_ops": [
+        "encrypt"
+      ],
+      "kty": "RSA",
+      "n": "wFmli9h-zWSNT4U7yQndk1vQvZYsXvWIAcXHbqZVNj1evENyZ9VaID1GtNycjYPQKtIl4-J_n6WA3EJ3pDPBqFuKV3Dh4VuSuwKrE5-BLk3V3_-3KQUGmw-4HiYQnVi-RB8pJUc5xhxZ2lQGtkDkFe7fj_COCmMWj-gaZiBmfuyf67iHMZ0iOz68og64f4P4nJFqJj8XgUqkqxC9QMt7kSzGYr7LhxjaTzn6HK5m5OhXDhNeKDBUGDOyZfJS1z1RPrY84Tykx4lu4Ri8zsJ6YnutSTs58M0fS8h3Es8E-4DCms9ZCVJ80ixIc69y-0iggLbRnpKTB8sPxq7gdkY_tQ"
+    },
+    "wrappers": {
+      "SHAWN": {
+        "salt": "vuHfTdB2o5ibSHyjaBFXCA==",
+        "iv": "LLqznV2Fgt7GzsvG",
+        "data": "teF/bhZRDIQfnPmjBqogH5Sv7jbJREzPLuI1SBC9CU2WhKlJqLQlJMdpHzg3VND8VLSVBDylF4ftuIQoQYBiCqQ33Pld2KkkOdpjjE/QlkrpC9k3GpbL7k/Tr+2lyMVJL4sfylj4WC9Z4CXoVJzLeTjEDUIq0r53R6kH4ni+Q24ey9f0B9AeJbjM1fK/W/kM+FKspEeScJHpJL4eR9k9eBc1ueFNVzxio+FA8hbQGA5Idf9iHRiIYu5Mt1Hi0tL6wbn4LMNa48m+CMs+QMPODdRk9unpnyP2rv85RvR+UD+t6FAAirxCiYJ8NmKWOVpQ6ErmjOMxlTUhYoi9z/txv0+BN9nlzWWeFVfd6IkZ+/FAP7rwrXphiChpwHsZQp1iOSoAH1LiDzaZUAEqo2/OlFpaJN15morarYpCKoNG8xsksYa6bNzQUWwdqXuMiR+9Or1/u0UBPM/MQFvKhW2rjCJWq48d0VdXDk0VW6btNsTuHQVDqPmzttyl8RGMxoEd7IWV5mLfa1D0Mev+9hGQYl5LhUyxYhDp0ikaBSsVTcuMldtK/RfZDcojcbfDa0GLPz+xW5c3GBGRGXpGjQGD/xPifEXAEv3R8cvnnp7+A9GSL42Q2G3FbP0E9NlQC1i5sM3jwmtXmzgAu6IHyCaFtAlxelw4lIGM+g/+8S2wEycT72fQ6h+IkvDYUt5SI0SYP4+SrYEOCwsSgKdr6nfR0qmBu+tVTgSLuYl1LhdFgLQRdBCn3uZ/MdeJepzGNvnLeXElOfZB4zh92QJ2m5e0mI89776rWXYK7Bb+4zQ25JXFkBre+wGWfqlQw34EDC8Fi5/vJ9EJqNhp1NaikO2CXJ4WxGIvjulNKkyWZzQ4rS1UwfOTZLIcbfTIokPN8W1bvNq+X4p8hcbRX87+K6UWpefSJIGM+II2derhd8WWwdci7eUOXniC05JMseW/ojIZR4b9HbhZq1rd3bePZGL9tV7413WlcNgU9mBqa1cet9ZWGoOikaqqA+qCXCG8WAu6ykc8JVYA+UIan81ugto+BZW7qWv7hYt8vYXIGBfLtNV0UPhCbtMfXM/XMeJKS82s9MrWoC1uQYUkiydo6kED6vTwgx3gWm7jIdNlcZeKd4BtoQFbcHIjMERhuMN9YpBzFsYJ0YahWTavoYhqGy0XjAFwW7NJQuirCbQNn8t3tbbV3B/3zaCYXP7/Cp6OMHwubRXRBTVpDG0dnz8/nNlacE8ZxiAGECS87usD+uE+VqDVNGDOw7poO7AZvFszCkSuGU7e9IHsuBUx8UMKeVooudZswPJtWl7YbMUAw3Q5LMMC21qvap0pV/Um61yBmJfid3YjEaeSCooMDhM17p9mHesPQGAs6eK244nqlj+PLZCRllliA1FNS5V4/jBcOe7DeHMKQUXAFcqEC/pxn3QBAbNDFe3tvLDkOiOJTUaannhgTeukbXMNxqCDxii5adDX3GScjqZxlEol/8RXFCWNH+89vBK5UWZVrxZavgM3/EEaIluylduQ44SjVIGFh/kUa5uAR1nJPgPgYHJDpUeGKy1HRzXo6seStaDuG6X56uGy5m8g83fZ0GrhemRJhZMg96eiMtwcem1mIr28H/aqggPZZ4WQB8wLTf6c+1AfJCTM5os=",
+        "iterations": 200000,
+        "pwSalt": "d02b463183e9853771765ce77dd57aaf",
+        "at": "2026-09-21T16:39:47.924Z"
+      }
+    },
+    "createdAt": "2026-09-21T16:39:47.901Z",
+    "by": "SHAWN"
+  }
 }
