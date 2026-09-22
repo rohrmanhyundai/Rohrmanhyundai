@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-09-22T16:28:09.101Z",
+  "updatedAt": "2026-09-22T18:05:53.408Z",
   "days": {
     "2026-09-22": {
-      "generatedAt": "2026-09-22T16:26:23.751Z",
-      "by": "SHAWN",
+      "generatedAt": "2026-09-22T18:01:57.388Z",
+      "by": "manager",
       "trigger": "manual",
       "advisors": [
         "DAVID",
         "JORDAN",
         "DANIEL"
       ],
-      "hasManager": false
+      "hasManager": true
     }
   }
 }
