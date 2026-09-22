@@ -68,6 +68,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const [note, setNote] = useState('');
   const [apptDate, setApptDate] = useState('');
   const [apptTime, setApptTime] = useState('');
+  const [soldWithCoupon, setSoldWithCoupon] = useState(false);   // ticked on the appointment form
   const [onlyUncontacted, setOnlyUncontacted] = useState(false);
   const [showScheduled, setShowScheduled] = useState(false);   // home list: scheduled ROs instead of open ones
   const [store, setStore] = useState(null);          // rows.json
@@ -84,6 +85,9 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const [q, setQ] = useState('');
   const [openRo, setOpenRo] = useState('');
   const [advOpen, setAdvOpen] = useState(false);     // Advanced search panel (pick services)
+  // The promotion banner the manager writes in Settings — what's running right
+  // now, so an advisor has the offer in front of them while they make the call.
+  const [draftPromo, setDraftPromo] = useState(null);   // { title, text } while editing
   const [svcQ, setSvcQ] = useState('');               // find-a-service box inside it
   const [onlyValvoline, setOnlyValvoline] = useState(false);
 
@@ -98,6 +102,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   // Advisors whose deferred work is hidden from the list (former advisors etc.)
   // — chosen in Settings, keyed by the name printed on the report.
   const excluded = useMemo(() => new Set(Array.isArray(store && store.excludedAdvisors) ? store.excludedAdvisors : []), [store]);
+  const promo = (store && store.promotion) || null;
   const allRows = useMemo(() => Object.values((store && store.byRo) || {}), [store]);
   const reportAdvisorCounts = useMemo(() => { const m = {}; allRows.forEach(r => { const a = r.advisor || '—'; m[a] = (m[a] || 0) + 1; }); return m; }, [allRows]);
   const rows = useMemo(() => allRows.filter(r => !excluded.has(r.advisor || '—')).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.ro).localeCompare(String(a.ro)))), [allRows, excluded]);
@@ -148,11 +153,28 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     } catch (e) { setStatus('❌ ' + (e?.message || e)); }
     finally { setBusy(''); }
   }
+  async function savePromotion(next) {
+    setBusy('promo'); setStatus('');
+    try {
+      const value = next && String(next.text || '').trim()
+        ? { title: String(next.title || '').trim(), text: String(next.text).trim(), updatedAt: new Date().toISOString(), by: (currentUser || '').toUpperCase() }
+        : null;
+      await updateDeferredRows(c => ({ ...(c || {}), promotion: value }), value ? 'Deferred promotion updated' : 'Deferred promotion cleared');
+      setStore(c => ({ ...(c || {}), promotion: value }));
+      setStatus(value ? '✅ Promotion saved — advisors see it above the list.' : '✅ Promotion cleared.');
+      trackAction('deferred-promotion-save');
+    } catch (e) { setStatus('❌ ' + (e?.message || e)); }
+    finally { setBusy(''); }
+  }
+
   const latestOf = (ro, type) => (byRoActivity[ro] || []).find(e => e.type === type) || null;
   // The appointment that currently keeps this RO off the home list — null once
   // a manager has returned it (entries are newest first, so the last-logged of
   // appointment / returned wins).
   const activeAppt = (ro) => { const e = (byRoActivity[ro] || []).find(x => x.type === 'appointment' || x.type === 'returned'); return e && e.type === 'appointment' ? e : null; };
+  // Did this sale go out with the coupon? Either ticked on the appointment
+  // form, or marked afterwards with the button on the row.
+  const couponOn = (ro) => (byRoActivity[ro] || []).some(e => e.type === 'coupon' || (e.type === 'appointment' && e.coupon));
   const lastReturn = (ro) => { const e = (byRoActivity[ro] || []).find(x => x.type === 'appointment' || x.type === 'returned'); return e && e.type === 'returned' ? e : null; };
 
   const filtered = useMemo(() => {
@@ -181,7 +203,25 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   // ── Follow-up actions ───────────────────────────────────────────────────
   function openAction(ro, type) {
     if (type === 'returned' && !isManager) return;
-    setAction({ ro, type }); setNote(''); setApptDate(''); setApptTime('');
+    setAction({ ro, type }); setNote(''); setApptDate(''); setApptTime(''); setSoldWithCoupon(false);
+  }
+  // Mark (or unmark) a sale as sold on the coupon straight from the row, for
+  // when the appointment was already logged before the coupon came up.
+  async function toggleCoupon(ro) {
+    const existing = (byRoActivity[ro] || []).find(e => e.type === 'coupon');
+    setBusy('coupon'); setStatus('');
+    try {
+      if (existing) {
+        await updateDeferredActivity(cur => { const e = { ...(cur.entries || {}) }; delete e[existing.id]; return { ...cur, entries: e }; }, `Deferred coupon removed: RO ${ro}`);
+        setActivity(a => { const e = { ...(a.entries || {}) }; delete e[existing.id]; return { ...a, entries: e }; });
+      } else {
+        const entry = { id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, ro, type: 'coupon', by: (currentUser || '').toUpperCase(), at: new Date().toISOString(), note: '', coupon: true };
+        await updateDeferredActivity(cur => ({ ...cur, entries: { ...(cur.entries || {}), [entry.id]: entry } }), `Deferred coupon sale: RO ${ro} by ${entry.by}`);
+        setActivity(a => ({ ...a, entries: { ...(a.entries || {}), [entry.id]: entry } }));
+        trackAction('deferred-coupon', ro);
+      }
+    } catch (e) { setStatus('❌ ' + (e?.message || e)); }
+    finally { setBusy(''); }
   }
   async function saveAction() {
     if (!action) return;
@@ -191,7 +231,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     const entry = {
       id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
       ro: action.ro, type: action.type, by: (currentUser || '').toUpperCase(), at: new Date().toISOString(),
-      note: note.trim(), ...(action.type === 'appointment' ? { date: apptDate, time: apptTime } : {}),
+      note: note.trim(), ...(action.type === 'appointment' ? { date: apptDate, time: apptTime, coupon: soldWithCoupon } : {}),
     };
     try {
       await updateDeferredActivity(cur => ({ ...cur, entries: { ...(cur.entries || {}), [entry.id]: entry } }),
@@ -245,6 +285,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   // ── Op-code descriptions (managers) ─────────────────────────────────────
   const [draftCodes, setDraftCodes] = useState(null);   // { CODE: description } while editing
   const [draftValv, setDraftValv] = useState(null);     // { CODE: true } while editing
+  useEffect(() => { if (tab === 'settings') setDraftPromo({ title: (promo && promo.title) || '', text: (promo && promo.text) || '' }); }, [tab, promo]);
   useEffect(() => { if (tab === 'settings') { setDraftCodes(Object.fromEntries(Object.entries(codes).map(([k, v]) => [k, (v && v.description) || '']))); setDraftValv(Object.fromEntries(Object.entries(codes).filter(([, v]) => v && v.valvoline).map(([k]) => [k, true]))); } }, [tab, codes]);
   async function saveCodes() {
     setBusy('codes'); setStatus('');
@@ -273,13 +314,14 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
   const renderBadges = (ro) => {
     const c = latestOf(ro, 'contacted'), a = activeAppt(ro), ret = lastReturn(ro);
-    if (!c && !a && !ret) return null;
+    if (!c && !a && !ret && !couponOn(ro)) return null;
     return (
       <>
         <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 4 }}>
           {c && <span className="ds-pill" style={{ background: 'rgba(74,222,128,.14)', borderColor: 'rgba(74,222,128,.4)', color: '#4ade80' }}>📞 {fmtWhen(c.at)} · {firstWord(c.by)}</span>}
           {a && <span className="ds-pill" style={{ background: 'rgba(250,204,21,.14)', borderColor: 'rgba(250,204,21,.45)', color: '#fde047' }}>📅 {fmtApptDate(a.date, a.time)} · {firstWord(a.by)}</span>}
           {ret && <span className="ds-pill" style={{ background: 'rgba(251,146,60,.14)', borderColor: 'rgba(251,146,60,.45)', color: '#fdba74' }}>↩ Returned {fmtWhen(ret.at)} · {firstWord(ret.by)}</span>}
+          {couponOn(ro) && <span className="ds-pill" style={{ background: 'rgba(250,204,21,.18)', borderColor: 'rgba(250,204,21,.55)', color: '#fde047' }}>🎟️ 15% coupon</span>}
         </div>
         {ret && ret.note && <div style={{ fontSize: 12, color: '#fdba74', marginTop: 3, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{ret.note}</div>}
       </>
@@ -287,14 +329,14 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   };
   const renderEntry = (e, showCustomer) => {
     const r = rowByRo[e.ro];
-    const appt = e.type === 'appointment', ret = e.type === 'returned';
-    const color = appt ? '#fde047' : ret ? '#fdba74' : '#4ade80';
+    const appt = e.type === 'appointment', ret = e.type === 'returned', coup = e.type === 'coupon';
+    const color = appt || coup ? '#fde047' : ret ? '#fdba74' : '#4ade80';
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr auto', gap: 10, alignItems: 'start', padding: '10px 12px', borderRadius: 10, background: 'rgba(2,6,23,.4)', border: `1px solid ${appt ? 'rgba(250,204,21,.3)' : ret ? 'rgba(251,146,60,.35)' : 'rgba(74,222,128,.3)'}` }}>
-        <div style={{ fontSize: 18 }}>{appt ? '📅' : ret ? '↩' : '📞'}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr auto', gap: 10, alignItems: 'start', padding: '10px 12px', borderRadius: 10, background: 'rgba(2,6,23,.4)', border: `1px solid ${appt || coup ? 'rgba(250,204,21,.3)' : ret ? 'rgba(251,146,60,.35)' : 'rgba(74,222,128,.3)'}` }}>
+        <div style={{ fontSize: 18 }}>{appt ? '📅' : ret ? '↩' : coup ? '🎟️' : '📞'}</div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 900, color }}>
-            {appt ? `Appointment ${fmtApptDate(e.date, e.time)}` : ret ? 'Returned to list' : 'Contacted customer'}
+            {appt ? `Appointment ${fmtApptDate(e.date, e.time)}${e.coupon ? ' · sold with the 15% coupon' : ''}` : ret ? 'Returned to list' : coup ? 'Sold with the 15% coupon' : 'Contacted customer'}
             <span style={{ fontWeight: 600, color: '#94a3b8', marginLeft: 8, fontSize: 11.5 }}>logged {fmtWhen(e.at)} by {firstWord(e.by)}</span>
           </div>
           {showCustomer && r && <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 2 }}><b style={{ color: '#f1f5f9' }}>{r.customer || 'No name'}</b> · RO {r.ro} · {r.vehicle} · <span style={{ color: '#67e8f9' }}>{fmtPhone(r.phone)}</span></div>}
@@ -324,6 +366,12 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
             <label style={{ display: 'grid', gap: 3 }}><span className="ds-label">Appointment date</span><input type="date" className="ds-in" value={apptDate} min={isoToday()} autoFocus onChange={e => setApptDate(e.target.value)} /></label>
             <label style={{ display: 'grid', gap: 3 }}><span className="ds-label">Time <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500 }}>(optional)</span></span><input type="time" className="ds-in" value={apptTime} onChange={e => setApptTime(e.target.value)} /></label>
           </div>
+        )}
+        {appt && (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9, cursor: 'pointer', fontSize: 13, fontWeight: 800, color: soldWithCoupon ? '#fde047' : '#cbd5e1' }}>
+            <input type="checkbox" checked={soldWithCoupon} onChange={e => setSoldWithCoupon(e.target.checked)} style={{ width: 16, height: 16, accentColor: '#facc15' }} />
+            🎟️ Sold with the 15% coupon
+          </label>
         )}
         <textarea className="ds-in" rows={3} autoFocus={!appt} placeholder={appt ? 'Notes about the appointment — what they\'re coming in for, anything to prep…' : ret ? 'Why it\'s coming back — no-show, rescheduling, cancelled… (optional)' : 'What did the customer say?'} value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }} />
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
@@ -366,6 +414,14 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
         {isManager && activeAppt(r.ro) && (
           <button onClick={() => openAction(r.ro, 'returned')} title="Customer didn't show / cancelled — put them back on the home list" style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.28),rgba(234,88,12,.2))', borderColor: 'rgba(251,146,60,.5)', color: '#fed7aa', fontSize: 13 }}>↩ Return to list</button>
         )}
+        <div style={{ flex: 1 }} />
+        <button onClick={() => toggleCoupon(r.ro)} disabled={busy === 'coupon'}
+          title={couponOn(r.ro) ? 'Marked as sold with the 15% coupon — click to undo' : 'Click when the work sold with the 15% coupon'}
+          style={couponOn(r.ro)
+            ? { background: 'linear-gradient(180deg,#facc15,#f59e0b)', borderColor: '#fde68a', color: '#422006', fontSize: 13, fontWeight: 900 }
+            : { background: 'linear-gradient(180deg,rgba(250,204,21,.14),rgba(245,158,11,.1))', borderColor: 'rgba(250,204,21,.4)', color: '#fde047', fontSize: 13 }}>
+          {couponOn(r.ro) ? '🎟️ Sold with 15% coupon ✓' : '🎟️ Sold with 15% coupon'}
+        </button>
         {status && status.startsWith('❌') && <span style={{ fontSize: 12.5, color: '#f87171', fontWeight: 700, alignSelf: 'center' }}>{status}</span>}
       </div>
       {renderActionForm(r.ro)}
@@ -526,6 +582,20 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                 )}
               </div>
 
+              {/* What's running right now — written by a manager in Settings.
+                  Sits between the search and the list so the offer is in front
+                  of the advisor while they work the phone. */}
+              {promo && promo.text ? (
+                <div className="ds-card" style={{ background: 'linear-gradient(135deg,rgba(250,204,21,.16),rgba(245,158,11,.08))', borderColor: 'rgba(250,204,21,.45)', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                  <div style={{ fontSize: 26, lineHeight: 1 }}>📣</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 1000, color: '#fde047', marginBottom: 4 }}>{promo.title || 'Running now'}</div>
+                    <div style={{ fontSize: 13.5, color: '#fef3c7', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{promo.text}</div>
+                    {promo.updatedAt && <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, fontWeight: 700, opacity: .85 }}>Posted {new Date(promo.updatedAt).toLocaleDateString()}{promo.by ? ` by ${promo.by}` : ''}</div>}
+                  </div>
+                </div>
+              ) : null}
+
               {/* Preview list */}
               <div className="ds-card" style={{ padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
@@ -566,6 +636,39 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
           {tab === 'settings' && isManager && (
             <>
+              {/* What's running right now. Advisors can't edit it; they just
+                  see it sitting above the list while they work the phone. */}
+              <div className="ds-card" style={{ borderColor: 'rgba(250,204,21,.4)' }}>
+                <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 6 }}>📣 Promotion running now</div>
+                <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6, marginBottom: 10 }}>
+                  Shown to every advisor between the search and the list — the offer they should be leading with on these calls. Leave it empty to take the banner down.
+                </div>
+                <div style={{ display: 'grid', gap: 8 }}>
+                  <label style={{ display: 'grid', gap: 3 }}>
+                    <span className="ds-label">Heading <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500 }}>(optional)</span></span>
+                    <input className="ds-in" value={(draftPromo && draftPromo.title) || ''} placeholder="e.g. 15% off declined work — through Friday"
+                      onChange={e => setDraftPromo(d => ({ ...(d || {}), title: e.target.value }))} />
+                  </label>
+                  <label style={{ display: 'grid', gap: 3 }}>
+                    <span className="ds-label">What's running</span>
+                    <textarea className="ds-in" rows={4} value={(draftPromo && draftPromo.text) || ''}
+                      placeholder="What the offer is, who it applies to, and when it ends. This is what the advisor reads to the customer."
+                      onChange={e => setDraftPromo(d => ({ ...(d || {}), text: e.target.value }))}
+                      style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }} />
+                  </label>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button onClick={() => savePromotion(draftPromo)} disabled={busy === 'promo'} style={{ fontSize: 13 }}>
+                      {busy === 'promo' ? '⏳ Saving…' : 'Save promotion'}
+                    </button>
+                    {promo && promo.text && (
+                      <button className="secondary" disabled={busy === 'promo'} onClick={() => { if (window.confirm('Take the promotion banner down?')) { setDraftPromo({ title: '', text: '' }); savePromotion(null); } }}
+                        style={{ fontSize: 12.5, color: '#fca5a5', borderColor: 'rgba(248,113,113,.4)' }}>Take it down</button>
+                    )}
+                    {promo && promo.updatedAt && <span style={{ fontSize: 11.5, color: '#64748b' }}>Live since {new Date(promo.updatedAt).toLocaleString()}{promo.by ? ` · ${promo.by}` : ''}</span>}
+                  </div>
+                </div>
+              </div>
+
               <div className="ds-card">
                 <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 6 }}>📥 Upload Deferred Services report (.pdf)</div>
                 <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6, marginBottom: 10 }}>
