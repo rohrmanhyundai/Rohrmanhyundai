@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-09-22T18:05:53.408Z",
+  "updatedAt": "2026-09-22T20:25:41.448Z",
   "days": {
     "2026-09-22": {
-      "generatedAt": "2026-09-22T18:01:57.388Z",
-      "by": "manager",
+      "generatedAt": "2026-09-22T20:23:12.638Z",
+      "by": "SHAWN",
       "trigger": "manual",
       "advisors": [
         "DAVID",
