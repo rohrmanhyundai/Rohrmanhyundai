@@ -1,5 +1,116 @@
 [
   {
+    "at": "2026-09-22T00:48:11.138Z",
+    "type": "action",
+    "label": "deferred-contacted",
+    "details": "780480"
+  },
+  {
+    "at": "2026-09-22T00:47:43.749Z",
+    "type": "page",
+    "label": "deferred-service"
+  },
+  {
+    "at": "2026-09-22T00:47:43.747Z",
+    "type": "page",
+    "label": "deferred-service"
+  },
+  {
+    "at": "2026-09-22T00:47:41.454Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-22T00:47:39.943Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-22T00:47:35.239Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:35.071Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:34.889Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:34.737Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:34.555Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:34.112Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:33.814Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:33.646Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:33.504Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:33.179Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:32.737Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:32.288Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:31.787Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:31.279Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-22T00:47:30.754Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-22T00:47:30.097Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-22T00:47:26.799Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-21T21:56:02.166Z",
     "type": "page",
     "label": "advisor-goals"
