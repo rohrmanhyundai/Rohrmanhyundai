@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-09-22T14:27:55.089Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-22T14:27:55.080Z",
+    "type": "page",
+    "label": "big-money-lof"
+  },
+  {
+    "at": "2026-09-22T14:27:53.212Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-22T14:27:30.880Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-09-22T14:27:27.706Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-09-22T14:26:59.030Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-21T23:23:26.531Z",
     "type": "page",
     "label": "registration-upload"
