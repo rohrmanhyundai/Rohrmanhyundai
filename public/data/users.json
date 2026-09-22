@@ -592,6 +592,11 @@
       "chatAccess": false,
       "techChatAccess": true,
       "hidden": false
+    },
+    {
+      "username": "Trenton",
+      "role": "technician",
+      "email": "trenton.mcquinn@rohrmanauto.com"
     }
   ],
   "passwordVault": {
