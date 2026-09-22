@@ -85,21 +85,21 @@
       "tue": 23.1,
       "wed": 4.94,
       "thu": 4.28,
-      "fri": 0,
+      "fri": 5.5,
       "sat": 9.36
     },
-    "hours": 44.5,
-    "payableHours": 44.5,
+    "hours": 50,
+    "payableHours": 50,
     "overridden": false,
     "adjustment": 0,
-    "boardHours": 44.5,
+    "boardHours": 50,
     "ptoHours": 0,
     "ptoPaid": true,
-    "rate": 24,
-    "tier": "Up to 50 hrs",
-    "pay": 1068,
+    "rate": 26,
+    "tier": "50 – 60 hrs",
+    "pay": 1300,
     "payType": "flat",
     "closed": false,
-    "updatedAt": "2026-09-21T09:35:15.666Z"
+    "updatedAt": "2026-09-22T07:59:50.263Z"
   }
 }
