@@ -579,7 +579,7 @@
       "email": "daniel.escalante@rohrmanauto.com",
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
-        "data": "pyZXzTP4EfjBSJLTzL6p3ECH3W64TUJp9jbDjsm4AGZ7QQoac9bwmi/fw6fpcOnVkJEwGGG3yPnNQqVwgejugbt2RmK8AyXMryiHUHvjeLjfTFVgfcXQfdAkTGJ4ja/xptxfRQZR9OTJ2DtiHO5/WbprfTjAdhb5WbAVsCEo7eFwr81EJkc/TjfZiV3PBcX1PPFn3Iu2Ex6DH17/WWTUPVuDoC3/p7II7biE9GiCsTq+yOH2x+Vdhgbt8+qmvJQfDYx6lr+bhu5fIvYIKYjsKA8VyJnEWF4XmHPvIl5T9hjDGPaMvi1nrU8huP1z7VeFdd/AKjeWOA5EI8qun5f++w=="
+        "data": "Wpc0PchTskTzYT7FZ4M+U2BS2hTpx+ePuLDGttZ1jXC+WjMjkT1bfzzMdBq/mdhjBcsVa8+RxMI+TQrY2VXeXGeeLRCM2UOaOsdnknf2kVv3HjwEq87Ph8i6CplFrOwkK+gxICKC5CCeridiecIOWYlixQBZ4epAxz+HvsjRyYD2go1RmdkKcSTEzsThutJVHK4jQyA0zBl2iF6OP9KOfbDwy3o/yopRE4MGQU00goQxQPXiBcwdlLTCB64MFg72rFmzt6NwDslV1lqCWzbE4C/C9frEgTKG6fI3WgbkiWmIG6xAgbLD09rfhZRKQfspCbhcvE+YIPjgKC90DLgeEg=="
       },
       "role": "advisor",
       "canEditDashboard": false,
@@ -602,11 +602,7 @@
       "chatAccess": false,
       "techChatAccess": true,
       "hidden": false,
-      "passwordReset": {
-        "hash": "e50bcca8d4793525ef1e4897ddaa364c82fa9303dc938b5ee20f131ea0d45477",
-        "expires": "2026-09-22T15:21:55.286Z",
-        "requestedAt": "2026-09-22T14:21:55.286Z"
-      }
+      "pwSalt": "a10683b78a0d42e13fd7c683f3b4921a"
     },
     {
       "username": "Trenton",
