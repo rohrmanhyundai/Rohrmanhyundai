@@ -1,0 +1,1123 @@
+{
+  "date": "2026-09-22",
+  "generatedAt": "2026-09-22T16:26:23.751Z",
+  "by": "SHAWN",
+  "trigger": "manual",
+  "model": "gpt-5",
+  "reason": "manager pressed Generate",
+  "advisors": {
+    "DAVID": {
+      "error": "OpenAI returned an empty message",
+      "facts": {
+        "advisor": "DAVID",
+        "date": "2026-09-22",
+        "openRos": {
+          "total": 17,
+          "oldestDays": 68,
+          "averageDays": 9.2,
+          "buckets": {
+            "today": 0,
+            "days1to2": 8,
+            "days3to5": 3,
+            "days6plus": 6
+          },
+          "attention": [
+            {
+              "ro": "780890",
+              "vehicle": "2022 Hyundai Tucson Hybrid",
+              "tech": "",
+              "age": 6,
+              "status": "Ready for dispatch",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 9,
+              "reason": "Dispatch overdue",
+              "advice": "Get the car into the shop."
+            },
+            {
+              "ro": "779297",
+              "vehicle": "2018 Hyundai Santa Fe",
+              "tech": "GAVEN LAUGHNER",
+              "age": 68,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780381",
+              "vehicle": "2026 Hyundai Santa Fe",
+              "tech": "GAVEN LAUGHNER",
+              "age": 26,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780703",
+              "vehicle": "2012 Hyundai Sonata",
+              "tech": "GAVEN LAUGHNER",
+              "age": 13,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780755",
+              "vehicle": "2024 Hyundai Tucson Plug-In Hybrid",
+              "tech": "GAVEN LAUGHNER",
+              "age": 12,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780810",
+              "vehicle": "2027 Hyundai Palisade Hybrid",
+              "tech": "CARTER JEAN",
+              "age": 9,
+              "status": "Tech assigned",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780941",
+              "vehicle": "2017 Hyundai Tucson",
+              "tech": "CORY SWINDLE",
+              "age": 5,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 3,
+              "reason": "Open work — aging",
+              "advice": ""
+            },
+            {
+              "ro": "780924",
+              "vehicle": "2026 Hyundai Santa Fe",
+              "tech": "CARTER JEAN",
+              "age": 5,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 3,
+              "reason": "Open work — aging",
+              "advice": ""
+            },
+            {
+              "ro": "780999",
+              "vehicle": "2014 Hyundai Santa Fe Sport",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "780987",
+              "vehicle": "2026 Hyundai Tucson",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "780963",
+              "vehicle": "2021 Hyundai Sonata Hybrid",
+              "tech": "BRYSON HUTSELL",
+              "age": 4,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            }
+          ]
+        },
+        "stalled": [
+          {
+            "ro": "779297",
+            "vehicle": "2018 Hyundai Santa Fe",
+            "flagged": false,
+            "lastNote": "WAITING ON BACK ORDER PARTS",
+            "lastNoteBy": "SHAWN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780381",
+            "vehicle": "2026 Hyundai Santa Fe",
+            "flagged": false,
+            "lastNote": "WAITING ON BACK ORDER PARTS",
+            "lastNoteBy": "SHAWN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780703",
+            "vehicle": "2012 Hyundai Sonata",
+            "flagged": false,
+            "lastNote": "PARTS ARE HERE. WILL START ON THE CAR MONDAY. GAVEN IS OFF FRIDAY.",
+            "lastNoteBy": "SHAWN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780890",
+            "vehicle": "2022 Hyundai Tucson Hybrid",
+            "flagged": false,
+            "lastNote": "NO TECH YET",
+            "lastNoteBy": "SHAWN",
+            "daysSinceNote": 4
+          }
+        ],
+        "partsReady": [
+          {
+            "ro": "780810",
+            "vehicle": "2027 Hyundai Palisade Hybrid",
+            "tech": "CARTER",
+            "job": "CUSTOMER STATES WIND NOISE FROM THE DRIVER FRONT DOOR CHECK AND ADVISE",
+            "note": "WEATHER STRIP IS ON ORDER",
+            "arrived": "09/15/2026",
+            "highPriority": false
+          },
+          {
+            "ro": "780924",
+            "vehicle": "2026 Hyundai Santa Fe",
+            "tech": "CARTER",
+            "job": "CUSTOMER STATES CEL ON",
+            "note": "",
+            "arrived": "09/19/2026",
+            "highPriority": false
+          },
+          {
+            "ro": "780703",
+            "vehicle": "2012 Hyundai Sonata",
+            "tech": "GAVEN",
+            "job": "CUSTOMER STATES- engine knocking",
+            "note": "ENGINE APPROVED WAITING FOR ENGINE TO BE HERE ",
+            "arrived": "09/18/2026",
+            "highPriority": false
+          }
+        ],
+        "hours": {
+          "hasGoal": true,
+          "goal": 415,
+          "mtd": 170.1,
+          "hrsRoGoal": 1.5,
+          "yesterdayHours": 24.3,
+          "yesterdayHrsRo": 1.06,
+          "workingDaysTotal": 23,
+          "workingDaysElapsed": 15,
+          "workingDaysLeft": 8,
+          "dailyTarget": 18,
+          "expectedByNow": 270.7,
+          "aheadBy": -100.6,
+          "onPace": false,
+          "neededToday": 30.6,
+          "percentOfGoal": 41
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-09-22",
+          "endsOn": "2026-11-30",
+          "daysLeft": 70,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.53,
+              "rate": 0.54,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "DAVID",
+              "hrsRo": 0.37,
+              "rate": 0.46,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "DANIEL",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "DAVID",
+            "hrsRo": 0.37,
+            "rate": 0.46,
+            "qualified": false,
+            "rank": 2,
+            "hrsRoGap": 0.93,
+            "rateGap": 0.29,
+            "behindLeaderHrsRo": 0.16
+          }
+        },
+        "wins": [
+          {
+            "kind": "yesterday",
+            "detail": "Booked 24.3 hours yesterday against a 18 daily target"
+          }
+        ],
+        "penetration": {
+          "hrsRo": 1.06,
+          "align": 0.0693,
+          "tires": 0.0891,
+          "valvoline": 0.1287,
+          "asr": 0.129,
+          "csi": 966,
+          "roCount": 160
+        }
+      }
+    },
+    "JORDAN": {
+      "error": "OpenAI returned an empty message",
+      "facts": {
+        "advisor": "JORDAN",
+        "date": "2026-09-22",
+        "openRos": {
+          "total": 25,
+          "oldestDays": 48,
+          "averageDays": 8.6,
+          "buckets": {
+            "today": 0,
+            "days1to2": 11,
+            "days3to5": 3,
+            "days6plus": 11
+          },
+          "attention": [
+            {
+              "ro": "780583",
+              "vehicle": "2018 Hyundai Tucson",
+              "tech": "KADEN WILSON",
+              "age": 19,
+              "status": "Invoiced",
+              "cpStatus": "Invoiced",
+              "warranty": false,
+              "severity": 8,
+              "reason": "Invoiced — not paid",
+              "advice": "Billed but never collected — chase the payment."
+            },
+            {
+              "ro": "780361",
+              "vehicle": "2025 Hyundai Santa Fe Hybrid",
+              "tech": "CORY SWINDLE",
+              "age": 27,
+              "status": "In progress",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780481",
+              "vehicle": "2020 Hyundai Palisade",
+              "tech": "CORY SWINDLE",
+              "age": 22,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780754",
+              "vehicle": "2011 Hyundai Sonata",
+              "tech": "CORY SWINDLE",
+              "age": 12,
+              "status": "In progress",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780804",
+              "vehicle": "2023 Hyundai IONIQ 5",
+              "tech": "KADEN WILSON",
+              "age": 9,
+              "status": "In progress",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780861",
+              "vehicle": "2014 Hyundai Santa Fe Sport",
+              "tech": "KADEN WILSON; SHAWN LAUGHNER",
+              "age": 7,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "780952",
+              "vehicle": "2020 Hyundai Santa Fe",
+              "tech": "KADEN WILSON",
+              "age": 4,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 3,
+              "reason": "Open work — aging",
+              "advice": ""
+            },
+            {
+              "ro": "780969",
+              "vehicle": "2026 Hyundai Sonata",
+              "tech": "CORY SWINDLE",
+              "age": 3,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 3,
+              "reason": "Open work — aging",
+              "advice": ""
+            },
+            {
+              "ro": "780989",
+              "vehicle": "2027 Hyundai Santa Cruz",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "780988",
+              "vehicle": "2027 Hyundai Santa Fe",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "780984",
+              "vehicle": "2026 Hyundai Tucson",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "779828",
+              "vehicle": "2022 Hyundai Palisade",
+              "tech": "GAVEN LAUGHNER",
+              "age": 48,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            }
+          ]
+        },
+        "stalled": [
+          {
+            "ro": "779828",
+            "vehicle": "2022 Hyundai Palisade",
+            "flagged": false,
+            "lastNote": "BODY SHOP CAR WAITING ON BODY SHOP BILL TO CLOSE",
+            "lastNoteBy": "SHAWN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780481",
+            "vehicle": "2020 Hyundai Palisade",
+            "flagged": false,
+            "lastNote": "nope",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780552",
+            "vehicle": "2019 Hyundai Tucson",
+            "flagged": false,
+            "lastNote": "nope",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780583",
+            "vehicle": "2018 Hyundai Tucson",
+            "flagged": false,
+            "lastNote": "kaden working on it now",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780681",
+            "vehicle": "2018 Hyundai Tucson",
+            "flagged": false,
+            "lastNote": "they should be coming in soon to look at cars with aidan",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 4
+          },
+          {
+            "ro": "780754",
+            "vehicle": "2011 Hyundai Sonata",
+            "flagged": false,
+            "lastNote": "declined rec's engine not here until next week",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 4
+          }
+        ],
+        "partsReady": [
+          {
+            "ro": "780361",
+            "vehicle": "25 Santa Fe",
+            "tech": "CORY",
+            "job": "Tow in Hybrid Warning",
+            "note": "Techline advised replacing HPCU. Part ordered. On backorder. ",
+            "arrived": "09/22/2026",
+            "highPriority": false
+          },
+          {
+            "ro": "780754",
+            "vehicle": "11 Sonata",
+            "tech": "CORY",
+            "job": "CUSTOMER STATES ENGINE LOCKED UP. CHECK AND ADVISE.",
+            "note": "Engine Approved",
+            "arrived": "09/22/2026",
+            "highPriority": false
+          },
+          {
+            "ro": "780804",
+            "vehicle": "2023 Hyundai IONIQ 5",
+            "tech": "KADEN",
+            "job": "CUSTOMER STATES- Had wire harness replaced now car is showing multiple other warning.  (SOR)",
+            "note": "in the shop",
+            "arrived": "09/15/2026",
+            "highPriority": false
+          }
+        ],
+        "hours": {
+          "hasGoal": true,
+          "goal": 415,
+          "mtd": 199.3,
+          "hrsRoGoal": 1.5,
+          "yesterdayHours": 10.4,
+          "yesterdayHrsRo": 1.01,
+          "workingDaysTotal": 22,
+          "workingDaysElapsed": 15,
+          "workingDaysLeft": 7,
+          "dailyTarget": 18.9,
+          "expectedByNow": 283,
+          "aheadBy": -83.7,
+          "onPace": false,
+          "neededToday": 30.8,
+          "percentOfGoal": 48
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-09-22",
+          "endsOn": "2026-11-30",
+          "daysLeft": 70,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.53,
+              "rate": 0.54,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "DAVID",
+              "hrsRo": 0.37,
+              "rate": 0.46,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "DANIEL",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "JORDAN",
+            "hrsRo": 0.53,
+            "rate": 0.54,
+            "qualified": false,
+            "rank": 1,
+            "hrsRoGap": 0.77,
+            "rateGap": 0.21,
+            "behindLeaderHrsRo": 0
+          }
+        },
+        "wins": [
+          {
+            "kind": "contest",
+            "detail": "Leading the Big-Money board even though the goals are not both hit yet"
+          }
+        ],
+        "penetration": {
+          "hrsRo": 1.01,
+          "align": 0.0917,
+          "tires": 0.0367,
+          "valvoline": 0.211,
+          "asr": 0.192,
+          "csi": 920,
+          "roCount": 198
+        }
+      }
+    },
+    "DANIEL": {
+      "error": "OpenAI returned an empty message",
+      "facts": {
+        "advisor": "DANIEL",
+        "date": "2026-09-22",
+        "openRos": {
+          "total": 0,
+          "oldestDays": 0,
+          "averageDays": 0,
+          "buckets": {
+            "today": 0,
+            "days1to2": 0,
+            "days3to5": 0,
+            "days6plus": 0
+          },
+          "attention": []
+        },
+        "stalled": [],
+        "partsReady": [],
+        "hours": {
+          "goal": 0,
+          "mtd": 0,
+          "hasGoal": false
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-09-22",
+          "endsOn": "2026-11-30",
+          "daysLeft": 70,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.53,
+              "rate": 0.54,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "DAVID",
+              "hrsRo": 0.37,
+              "rate": 0.46,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "DANIEL",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "DANIEL",
+            "hrsRo": 0,
+            "rate": 0,
+            "qualified": false,
+            "rank": 3,
+            "hrsRoGap": 1.3,
+            "rateGap": 0.75,
+            "behindLeaderHrsRo": 0.53
+          }
+        },
+        "wins": [],
+        "penetration": {
+          "hrsRo": 0,
+          "align": 0,
+          "tires": 0,
+          "valvoline": 0,
+          "asr": 0,
+          "csi": 0,
+          "roCount": 0
+        }
+      }
+    }
+  },
+  "manager": {
+    "error": "OpenAI returned an empty message",
+    "facts": {
+      "date": "2026-09-22",
+      "shopOpenRos": {
+        "total": 56,
+        "oldestDays": 68,
+        "averageDays": 7.3,
+        "buckets": {
+          "today": 0,
+          "days1to2": 27,
+          "days3to5": 9,
+          "days6plus": 20
+        },
+        "attention": [
+          {
+            "ro": "780890",
+            "vehicle": "2022 Hyundai Tucson Hybrid",
+            "tech": "",
+            "age": 6,
+            "status": "Ready for dispatch",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 9,
+            "reason": "Dispatch overdue",
+            "advice": "Get the car into the shop."
+          },
+          {
+            "ro": "780583",
+            "vehicle": "2018 Hyundai Tucson",
+            "tech": "KADEN WILSON",
+            "age": 19,
+            "status": "Invoiced",
+            "cpStatus": "Invoiced",
+            "warranty": false,
+            "severity": 8,
+            "reason": "Invoiced — not paid",
+            "advice": "Billed but never collected — chase the payment."
+          },
+          {
+            "ro": "779297",
+            "vehicle": "2018 Hyundai Santa Fe",
+            "tech": "GAVEN LAUGHNER",
+            "age": 68,
+            "status": "Tech assigned",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780361",
+            "vehicle": "2025 Hyundai Santa Fe Hybrid",
+            "tech": "CORY SWINDLE",
+            "age": 27,
+            "status": "In progress",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780381",
+            "vehicle": "2026 Hyundai Santa Fe",
+            "tech": "GAVEN LAUGHNER",
+            "age": 26,
+            "status": "Tech assigned",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780481",
+            "vehicle": "2020 Hyundai Palisade",
+            "tech": "CORY SWINDLE",
+            "age": 22,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780703",
+            "vehicle": "2012 Hyundai Sonata",
+            "tech": "GAVEN LAUGHNER",
+            "age": 13,
+            "status": "Tech assigned",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780755",
+            "vehicle": "2024 Hyundai Tucson Plug-In Hybrid",
+            "tech": "GAVEN LAUGHNER",
+            "age": 12,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780754",
+            "vehicle": "2011 Hyundai Sonata",
+            "tech": "CORY SWINDLE",
+            "age": 12,
+            "status": "In progress",
+            "cpStatus": "Completed",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780810",
+            "vehicle": "2027 Hyundai Palisade Hybrid",
+            "tech": "CARTER JEAN",
+            "age": 9,
+            "status": "Tech assigned",
+            "cpStatus": "Completed",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780804",
+            "vehicle": "2023 Hyundai IONIQ 5",
+            "tech": "KADEN WILSON",
+            "age": 9,
+            "status": "In progress",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "780861",
+            "vehicle": "2014 Hyundai Santa Fe Sport",
+            "tech": "KADEN WILSON; SHAWN LAUGHNER",
+            "age": 7,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          }
+        ]
+      },
+      "stalledShopWide": [
+        {
+          "ro": "779297",
+          "vehicle": "2018 Hyundai Santa Fe",
+          "flagged": false,
+          "lastNote": "WAITING ON BACK ORDER PARTS",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "779828",
+          "vehicle": "2022 Hyundai Palisade",
+          "flagged": false,
+          "lastNote": "BODY SHOP CAR WAITING ON BODY SHOP BILL TO CLOSE",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780361",
+          "vehicle": "2025 Hyundai Santa Fe Hybrid",
+          "flagged": false,
+          "lastNote": "WAITING ON PARTS. NACK ORDER",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780381",
+          "vehicle": "2026 Hyundai Santa Fe",
+          "flagged": false,
+          "lastNote": "WAITING ON BACK ORDER PARTS",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780481",
+          "vehicle": "2020 Hyundai Palisade",
+          "flagged": false,
+          "lastNote": "nope",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780552",
+          "vehicle": "2019 Hyundai Tucson",
+          "flagged": false,
+          "lastNote": "nope",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780583",
+          "vehicle": "2018 Hyundai Tucson",
+          "flagged": false,
+          "lastNote": "kaden working on it now",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780681",
+          "vehicle": "2018 Hyundai Tucson",
+          "flagged": false,
+          "lastNote": "they should be coming in soon to look at cars with aidan",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780703",
+          "vehicle": "2012 Hyundai Sonata",
+          "flagged": false,
+          "lastNote": "PARTS ARE HERE. WILL START ON THE CAR MONDAY. GAVEN IS OFF FRIDAY.",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 4
+        },
+        {
+          "ro": "780754",
+          "vehicle": "2011 Hyundai Sonata",
+          "flagged": false,
+          "lastNote": "declined rec's engine not here until next week",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 4
+        }
+      ],
+      "partsReadyShopWide": 7,
+      "money": {
+        "forecast": 144974,
+        "earned": 76413.1,
+        "remaining": 68560.9,
+        "percentOfForecast": 53,
+        "workingDaysLeft": 8,
+        "workingDaysTotal": 26,
+        "neededPerDay": 8570.1,
+        "lastYear": 125910
+      },
+      "technicians": {
+        "list": [
+          {
+            "name": "JACOB",
+            "goal": 42.5,
+            "total": 24.18,
+            "pct": 57,
+            "pacing": 72.53999999999999
+          },
+          {
+            "name": "CARTER",
+            "goal": 42.5,
+            "total": 6.6,
+            "pct": 16,
+            "pacing": 33
+          },
+          {
+            "name": "GAVEN",
+            "goal": 42.5,
+            "total": 10.26,
+            "pct": 24,
+            "pacing": 51.3
+          },
+          {
+            "name": "CORY",
+            "goal": 42.5,
+            "total": 12.58,
+            "pct": 30,
+            "pacing": 62.9
+          },
+          {
+            "name": "KADEN",
+            "goal": 42.5,
+            "total": 2.28,
+            "pct": 5,
+            "pacing": 6.84
+          },
+          {
+            "name": "BRYSON",
+            "goal": 25.5,
+            "total": 6.3,
+            "pct": 25,
+            "pacing": 18.9
+          },
+          {
+            "name": "CHRIS",
+            "goal": 47.5,
+            "total": 1,
+            "pct": 2,
+            "pacing": 5
+          },
+          {
+            "name": "TRENTON",
+            "goal": 47.5,
+            "total": 0,
+            "pct": 0,
+            "pacing": 0
+          },
+          {
+            "name": "DERRICK",
+            "goal": 47.5,
+            "total": 0,
+            "pct": 0,
+            "pacing": 0
+          }
+        ],
+        "hoursTotal": 63.2,
+        "goalTotal": 380.5,
+        "behind": [
+          "CARTER",
+          "GAVEN",
+          "CORY",
+          "KADEN",
+          "BRYSON",
+          "CHRIS",
+          "TRENTON",
+          "DERRICK"
+        ]
+      },
+      "contest": {
+        "live": true,
+        "asOf": "2026-09-22",
+        "endsOn": "2026-11-30",
+        "daysLeft": 70,
+        "prize": 1000,
+        "reducedPrize": 500,
+        "goals": {
+          "hrsRo": 1.3,
+          "addRate": 0.75
+        },
+        "board": [
+          {
+            "name": "JORDAN",
+            "hrsRo": 0.53,
+            "rate": 0.54,
+            "qualified": false,
+            "rank": 1
+          },
+          {
+            "name": "DAVID",
+            "hrsRo": 0.37,
+            "rate": 0.46,
+            "qualified": false,
+            "rank": 2
+          },
+          {
+            "name": "DANIEL",
+            "hrsRo": 0,
+            "rate": 0,
+            "qualified": false,
+            "rank": 3
+          }
+        ],
+        "me": null
+      },
+      "advisors": [
+        {
+          "advisor": "DAVID",
+          "openRos": 17,
+          "oldestDays": 68,
+          "needsAttention": 11,
+          "stalled": 4,
+          "partsReady": 3,
+          "hours": {
+            "mtd": 170.1,
+            "goal": 415,
+            "onPace": false,
+            "aheadBy": -100.6,
+            "neededToday": 30.6,
+            "percentOfGoal": 41
+          },
+          "contestRank": 2,
+          "qualified": false
+        },
+        {
+          "advisor": "JORDAN",
+          "openRos": 25,
+          "oldestDays": 48,
+          "needsAttention": 12,
+          "stalled": 6,
+          "partsReady": 3,
+          "hours": {
+            "mtd": 199.3,
+            "goal": 415,
+            "onPace": false,
+            "aheadBy": -83.7,
+            "neededToday": 30.8,
+            "percentOfGoal": 48
+          },
+          "contestRank": 1,
+          "qualified": false
+        },
+        {
+          "advisor": "DANIEL",
+          "openRos": 0,
+          "oldestDays": 0,
+          "needsAttention": 0,
+          "stalled": 0,
+          "partsReady": 0,
+          "hours": null,
+          "contestRank": 3,
+          "qualified": false
+        }
+      ]
+    }
+  }
+}
