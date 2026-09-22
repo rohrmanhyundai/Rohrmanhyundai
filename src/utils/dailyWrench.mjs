@@ -100,7 +100,22 @@ export function partsFacts(wipByTech, advisorFirst) {
 // they need and hasn't bought yet — name, phone, hours and dollars, keyed to
 // the advisor who wrote the RO. It is the single richest source of "what could
 // you sell today" the shop has, so the briefing leads with it.
-export function deferredFacts(store, activity, advisorFirst, today = new Date()) {
+// What counts as the work we are pushing. Valvoline is whatever the manager
+// has flagged in Deferred Service → Settings (the same flag the Valvoline chip
+// uses). Brake work is read off the op-code description, because the codes are
+// not named consistently — INTALIGN is "Replace Front Pads and Rotors".
+const BRAKE_RE = /\bbrake|\bpad|\brotor/i;
+export function serviceKinds(roCodes, codes) {
+  const kinds = new Set();
+  for (const c of roCodes || []) {
+    const def = (codes && codes[c]) || {};
+    if (def.valvoline) kinds.add('Valvoline');
+    if (BRAKE_RE.test(def.description || '')) kinds.add('Brakes');
+  }
+  return [...kinds];
+}
+
+export function deferredFacts(store, activity, advisorFirst, today = new Date(), codes = {}) {
   const byRo = (store && store.byRo) || {};
   const contacted = new Set();
   for (const e of Object.values((activity && activity.entries) || {})) contacted.add(String(e.ro));
@@ -112,23 +127,35 @@ export function deferredFacts(store, activity, advisorFirst, today = new Date())
     if (!r || !r.ro) continue;
     if (advisorFirst && first(r.advisor) !== advisorFirst) continue;
     if (booked.has(String(r.ro))) continue;              // already coming in — not an opportunity
+    const kinds = serviceKinds(r.codes, codes);
     rows.push({
       ro: String(r.ro), customer: r.customer || '', phone: r.phone || '',
       vehicle: r.vehicle || '', hours: num(r.hours, 0), amount: num(r.amount, 0),
       lastSeen: r.date || '', codes: (r.codes || []).slice(0, 4),
+      services: (r.codes || []).map(c => (codes && codes[c] && codes[c].description) || c).slice(0, 4),
+      kinds,                                   // 'Valvoline' and/or 'Brakes'
       contacted: contacted.has(String(r.ro)),
     });
   }
   const totalAmount = rows.reduce((s, r) => s + r.amount, 0);
   const totalHours = rows.reduce((s, r) => s + r.hours, 0);
   const fresh = rows.filter(r => !r.contacted);
+  // The call list is Valvoline and brake work, biggest dollars first — that is
+  // what the shop is pushing. Only if nobody on the list has any does it fall
+  // back to the highest-value declined work of any kind, and the write-up is
+  // told which it got so it never claims a brake job that isn't there.
+  const targeted = fresh.filter(r => r.kinds.length).sort((a, b) => b.amount - a.amount);
+  const fallback = fresh.slice().sort((a, b) => b.amount - a.amount);
+  const focused = targeted.length >= 3 ? targeted : fallback;
   return {
     total: rows.length,
     neverContacted: fresh.length,
     totalAmount: Math.round(totalAmount),
     totalHours: round(totalHours),
-    // The calls worth making first: biggest money nobody has phoned yet.
-    top: fresh.sort((a, b) => b.amount - a.amount).slice(0, 6),
+    targetedCount: targeted.length,
+    targetedAmount: Math.round(targeted.reduce((s, r) => s + r.amount, 0)),
+    topIs: targeted.length >= 3 ? 'valvoline-and-brakes' : 'highest-value-any-service',
+    top: focused.slice(0, 6),
   };
 }
 
@@ -291,7 +318,7 @@ export function winFacts({ hours, contest, advisor, openRos }) {
 }
 
 // ── One advisor's pack ───────────────────────────────────────────────────────
-export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, today = new Date() }) {
+export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, deferredCodes, today = new Date() }) {
   const f = first(name);
   const rows = (roStatus && roStatus.rows) || [];
   const mine = rows.filter(r => first(r.advisor) === f);
@@ -304,7 +331,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
     openRos,
     stalled: stalledFacts(attention, mine, f),
     partsReady: partsFacts(wipByTech, f),
-    deferred: deferredFacts(deferred, deferredActivity, f, today),
+    deferred: deferredFacts(deferred, deferredActivity, f, today, deferredCodes),
     trend: trendFacts(goals, today),
     hours,
     contest,
@@ -320,7 +347,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
 // ── The shop pack a manager gets ─────────────────────────────────────────────
 // Everything an advisor sees, but across the floor, plus the money forecast and
 // the technician side — the full picture in one place.
-export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, deferred, deferredActivity, today = new Date() }) {
+export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, deferred, deferredActivity, deferredCodes, today = new Date() }) {
   const rows = (roStatus && roStatus.rows) || [];
   const shopOpen = openRoFacts(rows, null);
   const mk = monthKey(today);
@@ -350,7 +377,7 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
     shopOpenRos: shopOpen,
     stalledShopWide: stalledFacts(attention, rows, null),
     partsReadyShopWide: partsFacts(wipByTech, null).length,
-    deferredShopWide: deferredFacts(deferred, deferredActivity, null, today),
+    deferredShopWide: deferredFacts(deferred, deferredActivity, null, today, deferredCodes),
     money: {
       forecast: round(goal), earned: round(earned),
       remaining: round(Math.max(0, goal - earned)),
@@ -409,8 +436,12 @@ Write ${advisorDisplay || pack.advisor}'s briefing for ${weekday || 'today'}, ${
 
 HOW TO THINK ABOUT THIS ADVISOR'S DAY, in priority order:
 1. Deferred work is money a customer has ALREADY been told they need. The
-   biggest uncalled ones are the fastest hours on this list — lead with them,
-   by name, with the dollar figure and the phone number.
+   call list in the data is the work the shop is pushing — Valvoline services
+   and brake work — sorted biggest dollars first. Lead with those, by name,
+   with the dollar figure and the phone number. Say which service it is, in
+   the customer's words ("brake pads and rotors", "fuel injection service").
+   If deferred.topIs is "highest-value-any-service" there was not enough
+   Valvoline or brake work to fill the list, so do not call it either.
 2. Parts that have arrived are jobs that can be booked this morning.
 3. Repair orders that are stalled or overdue are hours that have stopped
    moving, and a customer who has not been called back.
@@ -429,15 +460,17 @@ Return ONLY a JSON object, no code fence:
   "moneyLine": "one sentence naming the total dollars of uncalled deferred work and what booking even a slice of it does for today's hours, or empty string if there is none",
   "wins": [{"title": "three or four words", "detail": "one sentence with the number"}],
   "plan": [{"when": "Before 10am", "what": "the action", "why": "what it is worth, in hours or dollars"}],
-  "callList": [{"name": "customer first name and last initial as given", "phone": "as given", "ro": "RO number", "why": "what they declined and what it is worth"}],
+  "callList": [{"name": "customer first name and last initial as given", "phone": "as given", "ro": "RO number", "why": "the service they declined, named plainly, and what it is worth"}],
   "watchlist": [{"ro": "RO number", "what": "what is wrong and how long", "action": "the next move"}],
   "contest": "two sentences on their Big-Money standing and the exact gap to close, or empty string if no contest is live",
   "coaching": "two or three sentences on the ONE habit that would change their month, tied to their weakest number against goal. Honest, specific, not a lecture.",
   "closing": "one sentence to send them out the door"
 }
 Rules for the arrays: at most three wins, four plan steps covering the shape of
-the day, five call-list names taken from the deferred data (highest value
-first), five watchlist rows. Return an empty array for anything the data does
+the day, five call-list names taken from the deferred call list in the
+data, in the order given (it is already Valvoline and brake work, highest
+dollars first — do not reorder it or substitute other customers), five
+watchlist rows. Return an empty array for anything the data does
 not support.`;
 }
 
