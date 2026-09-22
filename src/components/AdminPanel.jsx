@@ -7,7 +7,7 @@ import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import { hasCredential, passwordProblem, withPassword } from '../utils/password';
 import * as api from '../utils/api';
-import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee } from '../utils/github';
+import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -1700,6 +1700,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         catch (err) { alert(`${name} was removed, but some of their data could not be cleaned up: ` + (err.message || err)); }
       }
 
+      // Record them as a former employee. This is what keeps them off for
+      // good: every device scrubs the roster against this list on load, so a
+      // stale dashboard save from a TV or another manager can't put them back.
+      for (const key of keys) { try { await markFormerEmployee(key, role); } catch {} }
+
       // Persist immediately. Leaving the roster change for Save Changes would
       // desync it from the file deletions that already happened.
       await saveDashboardToGitHub({ data: newData, vacations: newVacations });
@@ -1720,6 +1725,69 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // Push a fresh advisor + training row onto a dashboard data object (mutates it).
   // Shared by the manual "Add Advisor" picker and the auto-add on user save so the
   // two paths can never drift apart. No-op if the advisor is already on the roster.
+  // ── Roster ↔ user list reconciliation ───────────────────────────────────
+  // The dashboard renders from data.advisors / data.technicians, the logins
+  // live in users.json, and the two drifted apart whenever one was edited
+  // without the other. Saving a user now adds them to the roster and deleting
+  // one records a former employee, but this catches anything already adrift
+  // (and anything an older version of the site left behind).
+  const rosterDrift = React.useMemo(() => {
+    const first = (v) => String(v || '').trim().split(/\s+/)[0].toUpperCase();
+    const onRoster = new Set([...(data.advisors || []), ...(data.technicians || [])].map(r => first(r.name)));
+    const activeUser = new Map((users || []).filter(u => !u.hidden).map(u => [first(u.username), u]));
+    const missing = (users || [])
+      .filter(u => !u.hidden)
+      .filter(u => { const r = (u.role || '').toLowerCase(); return r.includes('advisor') || r === 'technician'; })
+      .filter(u => !onRoster.has(first(u.username)));
+    const orphans = [
+      ...(data.advisors || []).map(a => ({ name: a.name, kind: 'advisor' })),
+      ...(data.technicians || []).map(t => ({ name: t.name, kind: 'technician' })),
+    ].filter(r => !activeUser.has(first(r.name)));
+    return { missing, orphans };
+  }, [data, users]);
+
+  const [fixingRoster, setFixingRoster] = useState(false);
+  async function fixRoster() {
+    const { missing, orphans } = rosterDrift;
+    if (!missing.length && !orphans.length) return;
+    const lines = [];
+    if (missing.length) lines.push(`Add to the dashboard: ${missing.map(u => u.username).join(', ')}`);
+    if (orphans.length) lines.push(`Remove from the dashboard (no login): ${orphans.map(o => o.name).join(', ')}`);
+    if (!confirm(`${lines.join('\n\n')}\n\nTheir logins and files are not touched — this only fixes the dashboard roster.`)) return;
+    setFixingRoster(true);
+    try {
+      const first = (v) => String(v || '').trim().split(/\s+/)[0].toUpperCase();
+      const newData = structuredClone(data);
+      for (const u of missing) {
+        if ((u.role || '').toLowerCase() === 'technician') addTechnicianToRoster(newData, u.username);
+        else addAdvisorToRoster(newData, u.username);
+      }
+      const gone = new Set(orphans.map(o => first(o.name)));
+      newData.advisors = (newData.advisors || []).filter(a => !gone.has(first(a.name)));
+      newData.technicians = (newData.technicians || []).filter(t => !gone.has(first(t.name)));
+      newData.advisorTraining = (newData.advisorTraining || []).filter(a => !gone.has(first(a.name)));
+      // Recorded as former employees so a stale save from another device can't
+      // bring them back — exactly what a proper delete does.
+      for (const o of orphans) { try { await markFormerEmployee(first(o.name), o.kind); } catch {} }
+      await saveDashboardToGitHub({ data: newData, vacations });
+      onDataChange(newData, vacations);
+    } catch (e) { alert('Could not fix the roster: ' + (e?.message || e)); }
+    finally { setFixingRoster(false); }
+  }
+
+  const rosterDriftBanner = (rosterDrift.missing.length || rosterDrift.orphans.length) ? (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10, padding: '9px 12px', borderRadius: 10, background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.4)' }}>
+      <span style={{ fontSize: 12.5, color: '#fcd34d', fontWeight: 700 }}>
+        ⚠️ The dashboard roster and the user list don't match.
+        {rosterDrift.missing.length ? ` Missing from the dashboard: ${rosterDrift.missing.map(u => u.username).join(', ')}.` : ''}
+        {rosterDrift.orphans.length ? ` On the dashboard with no login: ${rosterDrift.orphans.map(o => o.name).join(', ')}.` : ''}
+      </span>
+      <button className="secondary" disabled={fixingRoster} onClick={fixRoster} style={{ fontSize: 12, color: '#fcd34d', borderColor: 'rgba(251,191,36,.5)' }}>
+        {fixingRoster ? '⏳ Fixing…' : 'Fix roster'}
+      </button>
+    </div>
+  ) : null;
+
   // A technician saved in User Management only gets a login; the board reads
   // data.technicians, so put them on it too (same as advisors below).
   function addTechnicianToRoster(newData, name) {
@@ -1927,6 +1995,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       .then(() => deleteUserData(selectedUser, deletedRole).catch(err => {
         alert('User removed, but some of their data could not be cleaned up: ' + err.message);
       }))
+      // Same as removeEmployeeCompletely: without this, a stale dashboard save
+      // from another device puts them straight back on the roster.
+      .then(() => markFormerEmployee(selectedUser, deletedRole).catch(() => {}))
       .then(() => saveDashboardToGitHub({ data: newData, vacations: newVacations }))
       .then(() => {
         onDataChange(newData, newVacations);
@@ -2328,6 +2399,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
     if (openSection === 'technicians') return (
       <div className="group-body">
+        {rosterDriftBanner}
         {/* Upload the dealer's Technician Performance report to auto-fill one
             day's flagged hours for every tech. */}
         <div className="upload-card">
@@ -2898,6 +2970,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             )}
           </div>
           {pwToolMsg && <div className="small" style={{ marginBottom: 8, color: pwToolMsg.startsWith('❌') ? '#f87171' : '#6ee7b7', fontWeight: 700 }}>{pwToolMsg}</div>}
+          {rosterDriftBanner}
           <div className="form-grid">
             <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
             <div className="field"><label title="Used only for display — login is by username only.">Last Name <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(optional, only the first letter is shown)</span></label><input value={newUserLast} onChange={e => setNewUserLast(e.target.value)} placeholder="e.g. Laughner" /></div>
