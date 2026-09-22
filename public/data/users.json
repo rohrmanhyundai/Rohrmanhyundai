@@ -376,10 +376,10 @@
       "lastName": "",
       "email": "kai.roth@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "4f562ed42151c24db35681f03fd60381dca3e61d79f143245ae0ea17617a379c",
-        "expires": "2026-09-22T13:38:29.566Z",
-        "requestedAt": "2026-09-22T12:38:29.566Z"
+      "pwSalt": "c1547eb98f5ba759b8ac8c6674df4f1c",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "GoUvGAi+52BxpgnqSmktkBcUzzvDSfc2Hg3w+x2k2rFi/d01qmcB8h65fpu13F8DWW2lhAlztwDoxKhSmZ4ooEo0lfPaMNHTTMmTvklAL2+ilIKSdqKTBFK8geNTeZ9hW2tKHPw0HQKYxj1U5/0hHnUt3DSErWmdUcn+bUG1gLptF/Fs2/DazpUZKI5cwd9LXIL6p+iCGTtPnqe9sMV49Q1AGginDA8dRXeORCybeO7EWXic0+pDvSs9OBch/slJysP/OzeFcZoocBYqHIcXlLKLqCeHrp1aWeWnGLqSzb6Ozw1bUUQKw8cJs2/W0cNZWwKOIigEl9VEG5yr5dzOSg=="
       }
     },
     {
