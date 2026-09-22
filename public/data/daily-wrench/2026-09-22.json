@@ -1,13 +1,105 @@
 {
   "date": "2026-09-22",
-  "generatedAt": "2026-09-22T16:26:23.751Z",
-  "by": "SHAWN",
+  "generatedAt": "2026-09-22T18:01:57.388Z",
+  "by": "manager",
   "trigger": "manual",
   "model": "gpt-5",
-  "reason": "manager pressed Generate",
+  "reason": "",
   "advisors": {
     "DAVID": {
-      "error": "OpenAI returned an empty message",
+      "headline": "30.6 hours needed; start with five high-dollar defers",
+      "opening": "You’re at 170.1 hours MTD against 270.7 expected, behind by 100.6. Today needs 30.6 hours to get back on a track you can close. The fastest path is RO 779182 for Alexandrea Povpin at $22,229.82 and 31.4 hours.",
+      "moneyLine": "$703,304 of uncalled deferred work is open; booking 30.6 hours from it closes today’s need.",
+      "wins": [
+        {
+          "title": "Beat the target",
+          "detail": "Booked 24.3 hours yesterday against an 18.0 daily target."
+        }
+      ],
+      "plan": [
+        {
+          "when": "Before 10am",
+          "what": "Call Alexandrea Povpin (RO 779182) and close the 31.4 hours at $22,229.82",
+          "why": "31.4 hours covers today’s 30.6-hour need by itself."
+        },
+        {
+          "when": "Before 10am",
+          "what": "Call Rohan Sharma (RO 779733) and sell the 17.8 hours at $10,643.79",
+          "why": "17.8 hours puts you over halfway to today’s 30.6-hour need if Alexandrea passes."
+        },
+        {
+          "when": "10am–noon",
+          "what": "Call Gregorio Zarate Garcia (RO 780250) and close the 6.5 hours at $10,287.60",
+          "why": "Adds 6.5 hours; combined with Rohan it gets you to 24.3 hours before lunch."
+        },
+        {
+          "when": "Afternoon",
+          "what": "Call Hannah Weissenburger (RO 778506) and Davion Darlind (RO 778620) to book 23.4 hours at $10,087.63 and 24.9 hours at $9,570.44",
+          "why": "48.3 hours available; one yes ends the day above 30.6 and starts digging out of the -100.6 gap."
+        }
+      ],
+      "callList": [
+        {
+          "name": "Alexandrea P",
+          "phone": "6305288386",
+          "ro": "779182",
+          "why": "Deferred work — $22,229.82 for 31.4 hours"
+        },
+        {
+          "name": "Rohan S",
+          "phone": "6416407711",
+          "ro": "779733",
+          "why": "Deferred work — $10,643.79 for 17.8 hours"
+        },
+        {
+          "name": "Gregorio Z",
+          "phone": "5742978865",
+          "ro": "780250",
+          "why": "Deferred work — $10,287.60 for 6.5 hours"
+        },
+        {
+          "name": "Hannah W",
+          "phone": "7654136051",
+          "ro": "778506",
+          "why": "Deferred work — $10,087.63 for 23.4 hours"
+        },
+        {
+          "name": "Davion D",
+          "phone": "7655141242",
+          "ro": "778620",
+          "why": "Deferred work — $9,570.44 for 24.9 hours"
+        }
+      ],
+      "watchlist": [
+        {
+          "ro": "780890",
+          "what": "2022 Hyundai Tucson Hybrid is Ready for dispatch and has been idle 6 days",
+          "action": "Assign a tech now; last note was “NO TECH YET” 4 days ago."
+        },
+        {
+          "ro": "779297",
+          "what": "2018 Hyundai Santa Fe open 68 days; last note 4 days ago says WAITING ON BACK ORDER PARTS",
+          "action": "Call parts for ETA and call customer with an update today."
+        },
+        {
+          "ro": "780381",
+          "what": "2026 Hyundai Santa Fe open 26 days; last note 4 days ago says WAITING ON BACK ORDER PARTS",
+          "action": "Get current ETA from parts and update the customer today."
+        },
+        {
+          "ro": "780703",
+          "what": "2012 Hyundai Sonata open 13 days; parts arrived 09/18/2026; last note says start Monday",
+          "action": "Confirm Gaven starts today and give customer a same-day status call."
+        },
+        {
+          "ro": "780963",
+          "what": "2021 Hyundai Sonata Hybrid Ready for invoice for 4 days",
+          "action": "Accept the RO now and call for pickup."
+        }
+      ],
+      "contest": "You’re rank 2 with 0.37 hrs/RO and 0.46 add rate; the goals are 1.3 hrs/RO and 0.75. You need +0.93 hrs/RO and +0.29 add rate to qualify, and you’re 0.16 hrs/RO behind the leader.",
+      "coaching": "Your hrs/RO is 0.37 against a 1.3 goal; that gap is killing days like this. Present the full deferred line every time and ask for the “today” yes — the five calls above total 103.9 hours that fix both today’s 30.6 and your contest pace. One clean, priced summary and a same-day slot beats back-and-forth and lifts hrs/RO fast.",
+      "closing": "Start with Alexandrea, then Rohan — get 30.6 on the board before lunch.",
       "facts": {
         "advisor": "DAVID",
         "date": "2026-09-22",
@@ -219,6 +311,140 @@
             "highPriority": false
           }
         ],
+        "deferred": {
+          "total": 657,
+          "neverContacted": 657,
+          "totalAmount": 703304,
+          "totalHours": 3953.8,
+          "top": [
+            {
+              "ro": "779182",
+              "customer": "Alexandrea Povpin",
+              "phone": "6305288386",
+              "vehicle": "2018 Hyundai Tucson",
+              "hours": 31.4,
+              "amount": 22229.82,
+              "lastSeen": "2026-08-27",
+              "codes": [
+                "REC",
+                "REC"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779733",
+              "customer": "Rohan Sharma",
+              "phone": "6416407711",
+              "vehicle": "2025 hyundai Tucson",
+              "hours": 17.8,
+              "amount": 10643.79,
+              "lastSeen": "2026-08-03",
+              "codes": [
+                "ENGBAS",
+                "ALIGN",
+                "ENGBAS",
+                "TEK05051502"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "780250",
+              "customer": "Gregorio Zarate Garcia",
+              "phone": "5742978865",
+              "vehicle": "2015 hyundai Sonata",
+              "hours": 6.5,
+              "amount": 10287.6,
+              "lastSeen": "2026-08-25",
+              "codes": [
+                "REC"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "778506",
+              "customer": "Hannah Weissenburger",
+              "phone": "7654136051",
+              "vehicle": "2018 hyundai Elantra",
+              "hours": 23.4,
+              "amount": 10087.63,
+              "lastSeen": "2026-07-27",
+              "codes": [
+                "ALIGN",
+                "TEK02050101",
+                "ENGBAS",
+                "TEK05051502"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "778620",
+              "customer": "Davion Darlind",
+              "phone": "7655141242",
+              "vehicle": "2013 hyundai Azera",
+              "hours": 24.9,
+              "amount": 9570.44,
+              "lastSeen": "2026-06-23",
+              "codes": [
+                "REC",
+                "ALIGN",
+                "TIRE4",
+                "REC"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779771",
+              "customer": "Michael Egan",
+              "phone": "7656316229",
+              "vehicle": "2019 hyundai Elantra",
+              "hours": 20.2,
+              "amount": 9551.65,
+              "lastSeen": "2026-08-19",
+              "codes": [
+                "RPADRESURF",
+                "PADRESURF",
+                "TEK05051503",
+                "REC"
+              ],
+              "contacted": false
+            }
+          ]
+        },
+        "trend": {
+          "recentDays": [
+            {
+              "date": "2026-09-14",
+              "hours": 16.9,
+              "hrsRo": 0.97
+            },
+            {
+              "date": "2026-09-15",
+              "hours": 21.4,
+              "hrsRo": 1.07
+            },
+            {
+              "date": "2026-09-16",
+              "hours": 10.7,
+              "hrsRo": 1.05
+            },
+            {
+              "date": "2026-09-17",
+              "hours": 8.8,
+              "hrsRo": 1
+            },
+            {
+              "date": "2026-09-18",
+              "hours": 4.1,
+              "hrsRo": 0.99
+            },
+            {
+              "date": "2026-09-21",
+              "hours": 24.3,
+              "hrsRo": 1.06
+            }
+          ],
+          "recentAverage": 14.4
+        },
         "hours": {
           "hasGoal": true,
           "goal": 415,
@@ -299,7 +525,99 @@
       }
     },
     "JORDAN": {
-      "error": "OpenAI returned an empty message",
+      "headline": "HPCU and Sonata engine arrived; 30.8 hours needed",
+      "opening": "You’re at 199.3 hours MTD against 283 expected, down 83.7 with 7 working days left. Today needs 30.8 hours to get back on the month’s track. The biggest single win sitting here is RO 779269 — Joseph Rund at 33.6 hours and $13,191.92.",
+      "moneyLine": "$772,467 in uncalled deferred is on the table; booking Joseph Rund’s 33.6 hours today covers the 30.8 needed and puts you +2.8.",
+      "wins": [
+        {
+          "title": "Top of board",
+          "detail": "Rank 1 of 3 on the Big-Money board."
+        }
+      ],
+      "plan": [
+        {
+          "when": "Before 9am",
+          "what": "Call Joseph Rund (RO 779269) and close the full deferred package.",
+          "why": "Worth 33.6 hours and $13,191.92 — clears today’s 30.8."
+        },
+        {
+          "when": "Before 10am",
+          "what": "Call Pravin Gagare on both ROs (779918 and 779268) and book them together.",
+          "why": "Worth 57.8 hours and $18,779.38."
+        },
+        {
+          "when": "Before 11am",
+          "what": "Call Edwin Sixtos Ruiz (RO 779619) and set install date.",
+          "why": "Worth 28.7 hours and $9,064.63."
+        },
+        {
+          "when": "Before noon",
+          "what": "Call Daniel Williams (RO 777526) and lock in the work.",
+          "why": "Worth 9.1 hours and $9,034.8."
+        }
+      ],
+      "callList": [
+        {
+          "name": "Joseph R",
+          "phone": "2178203046",
+          "ro": "779269",
+          "why": "Deferred work at $13,191.92 for 33.6 hours"
+        },
+        {
+          "name": "Pravin G",
+          "phone": "7654090059",
+          "ro": "779918",
+          "why": "Deferred work at $9,494.85 for 30.3 hours"
+        },
+        {
+          "name": "Pravin G",
+          "phone": "7654090059",
+          "ro": "779268",
+          "why": "Deferred work at $9,284.53 for 27.5 hours"
+        },
+        {
+          "name": "Edwin S",
+          "phone": "5745354956",
+          "ro": "779619",
+          "why": "Deferred work at $9,064.63 for 28.7 hours"
+        },
+        {
+          "name": "Daniel W",
+          "phone": "4632612981",
+          "ro": "777526",
+          "why": "Deferred work at $9,034.8 for 9.1 hours"
+        }
+      ],
+      "watchlist": [
+        {
+          "ro": "780583",
+          "what": "Invoiced not paid for 19 days",
+          "action": "Call and collect payment today; close the RO."
+        },
+        {
+          "ro": "779828",
+          "what": "Ready for invoice 48 days; waiting on body shop bill",
+          "action": "Get the body shop bill, accept the RO, and close it."
+        },
+        {
+          "ro": "780361",
+          "what": "Stalled 27 days; HPCU arrived 09/22/2026",
+          "action": "Confirm install timing with tech and call the customer with ETA."
+        },
+        {
+          "ro": "780754",
+          "what": "In progress 12 days; engine arrived 09/22/2026",
+          "action": "Book the engine install and update the customer."
+        },
+        {
+          "ro": "780481",
+          "what": "Stalled 22 days; last note 4 days ago",
+          "action": "Find the holdup with the tech and set a finish time."
+        }
+      ],
+      "contest": "You’re leading the board, but you’re 0.77 Hrs/Ro and 0.21 add-rate short of qualifying (goal 1.3 Hrs/Ro and 0.75 add rate). Closing even one high-hour deferred RO today moves both metrics and keeps you in position for the $1,000 with 70 days left.",
+      "coaching": "Hrs/Ro at 1.01 against the 1.5 goal is the drag. Spend your first hour every day on the highest-hour deferred calls and convert one full-package job; that lifts Hrs/Ro fast and feeds the 30.8 you need today. Log every add line cleanly on the RO so the hours you sell post to your number.",
+      "closing": "Start with Joseph, then Pravin’s two — that’s your 30.8 before lunch.",
       "facts": {
         "advisor": "JORDAN",
         "date": "2026-09-22",
@@ -539,6 +857,144 @@
             "highPriority": false
           }
         ],
+        "deferred": {
+          "total": 790,
+          "neverContacted": 790,
+          "totalAmount": 772467,
+          "totalHours": 2818.7,
+          "top": [
+            {
+              "ro": "779269",
+              "customer": "Joseph Rund",
+              "phone": "2178203046",
+              "vehicle": "2018 hyundai Elantra",
+              "hours": 33.6,
+              "amount": 13191.92,
+              "lastSeen": "2026-07-16",
+              "codes": [
+                "VVTFL",
+                "ENGPREM",
+                "TIRE2",
+                "ENGBAS"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779918",
+              "customer": "Pravin Gagare",
+              "phone": "7654090059",
+              "vehicle": "2015 hyundai Elantra",
+              "hours": 30.3,
+              "amount": 9494.85,
+              "lastSeen": "2026-08-10",
+              "codes": [
+                "AIRFILTER",
+                "ALIGN",
+                "VVBFL",
+                "VVACLEAN"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779268",
+              "customer": "Pravin Gagare",
+              "phone": "7654090059",
+              "vehicle": "2015 hyundai Elantra",
+              "hours": 27.5,
+              "amount": 9284.53,
+              "lastSeen": "2026-07-16",
+              "codes": [
+                "ALIGN",
+                "ALIGN",
+                "ENGBAS",
+                "RPADRESURF"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779619",
+              "customer": "Edwin Sixtos Ruiz",
+              "phone": "5745354956",
+              "vehicle": "2017 hyundai Veloster",
+              "hours": 28.7,
+              "amount": 9064.63,
+              "lastSeen": "2026-08-07",
+              "codes": [
+                "ALIGN",
+                "ENGBAS",
+                "ENGBAS",
+                "REC"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "777526",
+              "customer": "Daniel Williams",
+              "phone": "4632612981",
+              "vehicle": "2019 hyundai Veloster",
+              "hours": 9.1,
+              "amount": 9034.8,
+              "lastSeen": "2026-05-14",
+              "codes": [
+                "VIFL",
+                "REC",
+                "ROTATE"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "777902",
+              "customer": "DANIEL PEARSON",
+              "phone": "7654147536",
+              "vehicle": "2016 hyundai Santa Fe",
+              "hours": 18.7,
+              "amount": 6523.34,
+              "lastSeen": "2026-06-03",
+              "codes": [
+                "REC",
+                "REC",
+                "REC",
+                "REC"
+              ],
+              "contacted": false
+            }
+          ]
+        },
+        "trend": {
+          "recentDays": [
+            {
+              "date": "2026-09-15",
+              "hours": 30.7,
+              "hrsRo": 1.05
+            },
+            {
+              "date": "2026-09-16",
+              "hours": 12,
+              "hrsRo": 1.05
+            },
+            {
+              "date": "2026-09-17",
+              "hours": 14.6,
+              "hrsRo": 1.07
+            },
+            {
+              "date": "2026-09-18",
+              "hours": 2,
+              "hrsRo": 1.21
+            },
+            {
+              "date": "2026-09-19",
+              "hours": 4.4,
+              "hrsRo": 1.04
+            },
+            {
+              "date": "2026-09-21",
+              "hours": 10.4,
+              "hrsRo": 1.01
+            }
+          ],
+          "recentAverage": 12.4
+        },
         "hours": {
           "hasGoal": true,
           "goal": 415,
@@ -619,7 +1075,37 @@
       }
     },
     "DANIEL": {
-      "error": "OpenAI returned an empty message",
+      "headline": "Zero ROs today; get on the board fast",
+      "opening": "Month-to-date is 0 hours with no goal posted. Today has to open and close real work and hit 1.3 hrs/RO and a 0.75 add rate from the first car. The biggest opportunity is the contest gap: close the 0.53 hrs/RO deficit to JORDAN by putting adds on the first tickets you touch.",
+      "moneyLine": "",
+      "wins": [],
+      "plan": [
+        {
+          "when": "Before 10am",
+          "what": "Be on the lane early and own the first write-up; price and present at least one clear add on that RO.",
+          "why": "Moves you toward 1.3 hrs/RO and a 0.75 add rate, which puts $1000 in reach."
+        },
+        {
+          "when": "Late morning",
+          "what": "On every RO, document tech findings, build the estimate, and present the add while the car is still in the shop.",
+          "why": "Same-day approvals are how you raise hrs/RO toward 1.3."
+        },
+        {
+          "when": "Early afternoon",
+          "what": "Call back any pending estimates from this morning and close the decisions the same day.",
+          "why": "Converts presented work into hours that count toward 1.3 hrs/RO and a 0.75 add rate."
+        },
+        {
+          "when": "4pm",
+          "what": "Review your tickets and log your adds and hours per RO.",
+          "why": "Keeps you pacing to qualify for $1000, or $500 at the reduced mark."
+        }
+      ],
+      "callList": [],
+      "watchlist": [],
+      "contest": "You are rank 3 with 0 hrs/RO and a 0 add rate; you need 1.3 hrs/RO and a 0.75 add rate to qualify. You are 0.53 hrs/RO behind JORDAN, with $1000 on the line ($500 reduced) and 70 days left.",
+      "coaching": "Your weakest number is add rate at 0. Build the habit of writing one specific, priced add on every estimate before you call the customer, every time. That single step moves your add rate toward 0.75 and lifts hrs/RO with it.",
+      "closing": "Start with the first RO, present a real add, and put numbers on the board today.",
       "facts": {
         "advisor": "DANIEL",
         "date": "2026-09-22",
@@ -637,6 +1123,17 @@
         },
         "stalled": [],
         "partsReady": [],
+        "deferred": {
+          "total": 0,
+          "neverContacted": 0,
+          "totalAmount": 0,
+          "totalHours": 0,
+          "top": []
+        },
+        "trend": {
+          "recentDays": [],
+          "recentAverage": 0
+        },
         "hours": {
           "goal": 0,
           "mtd": 0,
@@ -701,7 +1198,81 @@
     }
   },
   "manager": {
-    "error": "OpenAI returned an empty message",
+    "headline": "Money behind pace; hours sitting in defers",
+    "opening": "We are at $76,413.1 against a $144,974 forecast, 53% with 8 working days left. We need $8,570.1 per day to land it. Today has to produce $8,570.1 in sold-and-booked work. The biggest risk is 1,760 never-contacted deferred lines worth $1,794,799 and 7,894.6 hours sitting cold.",
+    "forecast": "Earned $76,413.1; $68,560.9 left; need $8,570.1 per day across the last 8 working days. That number lands only if we mine the 7,894.6 deferred hours and clear the aged ROs that are already in-process. The top six deferred jobs alone are $85,617.66 and 155.7 hours — that closes multiple days of the gap fast.",
+    "wins": [
+      {
+        "title": "Contest board lead",
+        "detail": "JORDAN is leading the board at 0.53 hrs/RO and a 0.54 add rate."
+      },
+      {
+        "title": "Parts on hand",
+        "detail": "7 ROs show parts ready to install."
+      }
+    ],
+    "priorities": [
+      {
+        "what": "Sell and book $8,570.1 today",
+        "why": "That is the daily nut to finish the $68,560.9 remaining; DAVID and JORDAN own it."
+      },
+      {
+        "what": "Call the top six deferred jobs now",
+        "why": "They total $85,617.66 and 155.7 hours; DAVID and JORDAN split the list and set appointments today."
+      },
+      {
+        "what": "DAVID and JORDAN each hit their hours need",
+        "why": "DAVID needs 30.6 hours today and JORDAN needs 30.8 hours today to stay in the fight."
+      }
+    ],
+    "advisorNotes": [
+      {
+        "advisor": "DAVID",
+        "note": "At 170.1 hours MTD on a 415 goal (41%); you are -100.6 hours off pace and need 30.6 hours today. Your biggest single opportunity is your uncalled deferred pool at $703,304 — work that list until you book 30.6 hours today. Push payment-ready and parts-ready closes first, then hammer high-dollar defers until the 30.6 hours is on the board."
+      },
+      {
+        "advisor": "JORDAN",
+        "note": "At 199.3 hours MTD on a 415 goal (48%); you are -83.7 hours off pace and need 30.8 hours today. Your biggest single opportunity is your uncalled deferred pool at $772,467 — convert that into 30.8 hours today. Start with the highest-dollar defers and any parts-ready ROs (3) until you’ve booked the 30.8 hours."
+      },
+      {
+        "advisor": "DANIEL",
+        "note": "No open ROs and no hours posted. Jump on the never-contacted deferred pool shop-wide worth $1,794,799 and 7,894.6 hours to set same-week appointments. Your push today is appointment setting from the top-dollar defers until DAVID and JORDAN each have their 30+ hours booked."
+      }
+    ],
+    "watchlist": [
+      {
+        "ro": "780583",
+        "what": "Invoiced — not paid for 19 days",
+        "action": "JORDAN to call and collect today; do not let it age another day."
+      },
+      {
+        "ro": "779297",
+        "what": "Open work 68 days; note says WAITING ON BACK ORDER PARTS (4 days old)",
+        "action": "SHAWN to get an ETA today and offer options; if parts are still no-ETA, pivot to alternative repair or partial release."
+      },
+      {
+        "ro": "780361",
+        "what": "Open work 27 days; note says WAITING ON PARTS. NACK ORDER (4 days old)",
+        "action": "SHAWN to confirm the NACK status and source alternatives today; update customer."
+      },
+      {
+        "ro": "780381",
+        "what": "Open work 26 days; note says WAITING ON BACK ORDER PARTS (4 days old)",
+        "action": "SHAWN to escalate with parts and give a documented ETA today."
+      },
+      {
+        "ro": "780703",
+        "what": "Age 13 days; note says PARTS ARE HERE, start Monday; GAVEN off Friday",
+        "action": "GAVEN to start the job today; advisor to update the customer with start time."
+      },
+      {
+        "ro": "780890",
+        "what": "Ready for dispatch 6 days; never got into the shop",
+        "action": "DAVID to dispatch it first hour and get it on a rack."
+      }
+    ],
+    "technicians": "We are at 63.2 hours produced against a 380.5 goal, with CARTER (6.6), GAVEN (10.26), CORY (12.58), and KADEN (2.28) all trailing their 42.5 goals. There is capacity to absorb booked work today — CHRIS is at 1.0/47.5, and TRENTON and DERRICK are at 0/47.5. Feed them: the constraint is not bays, it’s sold hours.",
+    "closing": "Hit the $8,570.1 today by calling the $85,617.66 in top deferred jobs and booking 30.6 and 30.8 hours for DAVID and JORDAN.",
     "facts": {
       "date": "2026-09-22",
       "shopOpenRos": {
@@ -944,6 +1515,105 @@
         }
       ],
       "partsReadyShopWide": 7,
+      "deferredShopWide": {
+        "total": 1760,
+        "neverContacted": 1760,
+        "totalAmount": 1794799,
+        "totalHours": 7894.6,
+        "top": [
+          {
+            "ro": "779182",
+            "customer": "Alexandrea Povpin",
+            "phone": "6305288386",
+            "vehicle": "2018 Hyundai Tucson",
+            "hours": 31.4,
+            "amount": 22229.82,
+            "lastSeen": "2026-08-27",
+            "codes": [
+              "REC",
+              "REC"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "778164",
+            "customer": "1722_BOB ROHRMAN HYUNDAI GENESIS LG1062",
+            "phone": "7654902754",
+            "vehicle": "2017 Ford Escape",
+            "hours": 48,
+            "amount": 16543.3,
+            "lastSeen": "2026-06-11",
+            "codes": [
+              "INTWIPERS",
+              "REC",
+              "INTRRBRAKESUR",
+              "INTALIGN"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "779269",
+            "customer": "Joseph Rund",
+            "phone": "2178203046",
+            "vehicle": "2018 hyundai Elantra",
+            "hours": 33.6,
+            "amount": 13191.92,
+            "lastSeen": "2026-07-16",
+            "codes": [
+              "VVTFL",
+              "ENGPREM",
+              "TIRE2",
+              "ENGBAS"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "778815",
+            "customer": "1722_BOB ROHRMAN HYUNDAI GENESIS LG1062",
+            "phone": "7654902754",
+            "vehicle": "2012 Ford Fiesta",
+            "hours": 18.4,
+            "amount": 12721.23,
+            "lastSeen": "2026-07-03",
+            "codes": [
+              "INTBELT",
+              "REC",
+              "INTWIPERS",
+              "TIRE4"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "779733",
+            "customer": "Rohan Sharma",
+            "phone": "6416407711",
+            "vehicle": "2025 hyundai Tucson",
+            "hours": 17.8,
+            "amount": 10643.79,
+            "lastSeen": "2026-08-03",
+            "codes": [
+              "ENGBAS",
+              "ALIGN",
+              "ENGBAS",
+              "TEK05051502"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "780250",
+            "customer": "Gregorio Zarate Garcia",
+            "phone": "5742978865",
+            "vehicle": "2015 hyundai Sonata",
+            "hours": 6.5,
+            "amount": 10287.6,
+            "lastSeen": "2026-08-25",
+            "codes": [
+              "REC"
+            ],
+            "contacted": false
+          }
+        ]
+      },
       "money": {
         "forecast": 144974,
         "earned": 76413.1,
@@ -1085,6 +1755,8 @@
             "neededToday": 30.6,
             "percentOfGoal": 41
           },
+          "deferredValue": 703304,
+          "deferredUncalled": 657,
           "contestRank": 2,
           "qualified": false
         },
@@ -1103,6 +1775,8 @@
             "neededToday": 30.8,
             "percentOfGoal": 48
           },
+          "deferredValue": 772467,
+          "deferredUncalled": 790,
           "contestRank": 1,
           "qualified": false
         },
@@ -1114,6 +1788,8 @@
           "stalled": 0,
           "partsReady": 0,
           "hours": null,
+          "deferredValue": 0,
+          "deferredUncalled": 0,
           "contestRank": 3,
           "qualified": false
         }
