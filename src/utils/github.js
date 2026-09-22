@@ -2003,6 +2003,16 @@ export async function updateDeferredCodes(mutate) {
     `Deferred op-code descriptions ${new Date().toISOString()}`);
 }
 
+// public/data/deferred/activity.json → { entries: { id: { id, ro, type: 'contacted'|'appointment', by, at, note, date, time } } }
+export async function loadDeferredActivity() {
+  try { const d = await loadGithubFile('data/deferred/activity.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { entries: {} };
+}
+export async function updateDeferredActivity(mutate, message) {
+  return mutateGitHubJson('public/data/deferred/activity.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { entries: {} }),
+    message || `Deferred service follow-up ${new Date().toISOString()}`);
+}
+
 // ── Big-Money LOF ─────────────────────────────────────────────────────────────
 // Advisor contest on the two $50 add-on numbers. Shape documented in
 // utils/bigMoney.js: { contest: {start,end,prize}, latest: {...}, final: {...} }.

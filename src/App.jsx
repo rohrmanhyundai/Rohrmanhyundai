@@ -1391,6 +1391,7 @@ export default function App() {
       <DeferredService
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
+        advisors={advisorList}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
