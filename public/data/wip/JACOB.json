@@ -1,21 +1,5 @@
 [
   {
-    "id": "mu1re7e2dsmx",
-    "ro": "780829",
-    "roDate": "2026-09-14",
-    "vehicle": "2019 Subaru Crosstrek",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mu5pszgx91wp",
     "ro": "780913",
     "roDate": "2026-09-17",
@@ -28,22 +12,6 @@
     "etaCompletion": "",
     "partsArrived": true,
     "partsArrivedDate": "09/19/2026",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mu7dz3td2wxw",
-    "ro": "780959",
-    "roDate": "2026-09-18",
-    "vehicle": "2020 Kia Sportage",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
   },
