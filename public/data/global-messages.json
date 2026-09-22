@@ -383,7 +383,14 @@
     "text": "KM8K62AB2PU934484 can you give me a price on a key and fob will need cut too",
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mucobdy7oj4e",
+        "from": "KAI",
+        "text": "$677.18 for the key, fob and key cut fee",
+        "timestamp": 1790081516383
+      }
+    ],
     "timestamp": 1790081164476
   }
 ]
