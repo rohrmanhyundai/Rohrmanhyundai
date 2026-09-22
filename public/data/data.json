@@ -135,9 +135,9 @@
         "total": 6.3,
         "goal_pct": 0.24705882352941175,
         "pacing": 18.9,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—",
+        "certified": "\u2014",
+        "trainings_due": "\u2014",
+        "excel_training": "\u2014",
         "_hrsStamp": 1790075178174,
         "total_raw": 6.3,
         "warrantyMultiplier": false,
@@ -160,9 +160,9 @@
         "total": 1,
         "goal_pct": 0.021052631578947368,
         "pacing": 5,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—",
+        "certified": "\u2014",
+        "trainings_due": "\u2014",
+        "excel_training": "\u2014",
         "total_raw": 1,
         "_hrsStamp": 1790075178174,
         "warrantyMultiplier": false,
@@ -174,8 +174,7 @@
         "mon_raw": 1
       },
       {
-        "name": "WEI",
-        "lastName": "Guo",
+        "name": "TRENTON",
         "goal": 47.5,
         "mon": 0,
         "tue": 0,
@@ -186,17 +185,9 @@
         "total": 0,
         "goal_pct": 0,
         "pacing": 0,
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—",
-        "total_raw": 0,
-        "_hrsStamp": 1790075178174,
-        "sat_raw": 0,
-        "hoursOverride": {
-          "2026-09-19": true,
-          "2026-09-21": true
-        },
-        "mon_raw": 0
+        "certified": "\u2014",
+        "trainings_due": "\u2014",
+        "excel_training": "\u2014"
       }
     ],
     "advisors": [
@@ -307,13 +298,13 @@
         "name": "CODY",
         "certified": "NO",
         "trainings_due": "32",
-        "excel_training": "—"
+        "excel_training": "\u2014"
       },
       {
         "name": "DANIEL",
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
+        "certified": "\u2014",
+        "trainings_due": "\u2014",
+        "excel_training": "\u2014"
       }
     ],
     "vacations": [
