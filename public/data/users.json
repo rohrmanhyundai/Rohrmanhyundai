@@ -595,8 +595,34 @@
     },
     {
       "username": "Trenton",
+      "lastName": "mcquinn",
+      "email": "trenton.mcquinn@rohrmanauto.com",
+      "pwSalt": "c715798c6020cf0df01347939d6bb811",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "AxVtJB23+XFK8FeYRlXl1G/tjfSrsnpnGqbfjTLXTK1A+8JL1MXeb3Al88pjTwEfqbUnxHDGKeNyEqe7VOGUQz2MCzLOU3x/suEiFIHlktmUO3N23T5+UkVNzEvhMY2Ay5cXSRC4GUb+KSAm2VTV6YLihgkNSG86BUWRZLWtnISm8KGLMXI4KSOsUVbyXHOXujSiu5OTBSHhWsoD5LHTpCY9oXfz98lPBai1ZaqkKOQW7sgu6FgAonraegz1DRThqI7LH6MA2/n/kPzsnBN1VWWfadk407Ec7dEa8FwW8uUIhFSvhk+cvyKTvrjIldcZBpmBHciFxLLNxzy9UBIXjw=="
+      },
       "role": "technician",
-      "email": "trenton.mcquinn@rohrmanauto.com"
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": false,
+        "originalOwner": false,
+        "workInProgress": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true,
+      "hidden": false
     }
   ],
   "passwordVault": {
