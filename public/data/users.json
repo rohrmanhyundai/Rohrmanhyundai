@@ -238,7 +238,12 @@
       "techChatAccess": true,
       "lastName": "Swindle",
       "email": "cory.swindle@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "passwordReset": {
+        "hash": "17122d23f1da7cf71f81d8d62e18e23ed74869e3b6b0840613db6b7b53291929",
+        "expires": "2026-09-22T12:55:44.792Z",
+        "requestedAt": "2026-09-22T11:55:44.792Z"
+      }
     },
     {
       "username": "Carter",
