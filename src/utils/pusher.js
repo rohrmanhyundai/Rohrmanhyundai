@@ -3,7 +3,7 @@ import { apiFetch } from './api.js';
 
 // The app key is public by design (it only lets a browser SUBSCRIBE). The app
 // secret, which lets you PUBLISH, lives on the worker — see triggerEvent.
-const KEY     = '459d9c0d3793fadfd5c0';
+const KEY     = '6c131faa1a5d46e69dca';
 const CLUSTER = 'us2';
 
 export const ADVISOR_CHANNEL = 'rohrman-advisor-chat';
