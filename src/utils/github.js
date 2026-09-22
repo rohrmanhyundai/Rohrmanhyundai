@@ -1903,6 +1903,25 @@ export function requestBigMoneyCoaching(by) {
   return repositoryDispatch('big-money-coaching', { by: String(by || '') });
 }
 
+// ── The Daily Wrench ──────────────────────────────────────────────────────────
+// One file per day written by the daily-wrench workflow (9am Eastern, or early
+// when a manager asks for it): every advisor's briefing plus the manager's own
+// shop-wide report. index.json lists the days so the page can offer history
+// without walking the folder.
+export async function loadDailyWrenchIndex() {
+  try { const d = await loadGithubFile('data/daily-wrench/index.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { days: {} };
+}
+export async function loadDailyWrench(dayKey) {
+  if (!dayKey) return null;
+  try { return await loadGithubFile(`data/daily-wrench/${dayKey}.json`); } catch { return null; }
+}
+// Managers only — fires the workflow that writes today's reports now. The app
+// polls for the file afterwards; the run takes a minute or so.
+export function requestDailyWrench(by, reason) {
+  return repositoryDispatch('daily-wrench', { by: String(by || '').toUpperCase(), reason: String(reason || '') });
+}
+
 // ── Tech Payroll ──────────────────────────────────────────────────────────────
 // One file per Sat–Fri pay week keyed by the Saturday, plus an index so the
 // Payroll page can list saved weeks without walking the folder.

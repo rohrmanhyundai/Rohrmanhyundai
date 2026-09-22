@@ -36,6 +36,7 @@ import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
 import DeferredService from './components/DeferredService';
+import DailyWrench from './components/DailyWrench';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
 import { withPassword, needsVaultCopy } from './utils/password';
@@ -1306,6 +1307,7 @@ export default function App() {
         onDocumentLibrary={() => goTo('document-library', 'manager-hub')}
         onWorkSchedule={() => goTo('work-schedule', 'manager-hub')}
         onLivePay={canSeeAnyPay ? () => { setLivePayFrom('manager-hub'); goTo('live-pay-hub', 'manager-hub'); } : undefined}
+        onDailyWrench={() => goTo('daily-wrench', 'manager-hub')}
         onChargeAccountList={() => goTo('charge-account-list', 'manager-hub')}
         onEmployeeReview={() => goTo('employee-review', 'manager-hub')}
         onPerformanceReports={() => goTo('mgr-performance-reports', 'manager-hub')}
@@ -1402,6 +1404,16 @@ export default function App() {
           await markFormerEmployee(name, 'technician');
           formerRef.current = { set: null, ts: 0 };
         }}
+      />
+    );
+  }
+
+  if (page === 'daily-wrench') {
+    return (
+      <DailyWrench
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
   }
@@ -1584,6 +1596,7 @@ export default function App() {
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
+        onDailyWrench={() => goTo('daily-wrench', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}

@@ -1,0 +1,49 @@
+name: The Daily Wrench
+
+# The morning briefing: one personal report per advisor plus the manager's own
+# shop-wide report, written from the live RO, hours and contest data.
+#
+# Runs at 9am Eastern (the two cron lines cover daylight saving either way —
+# the script stands down unless it really is 9am there), or early when a
+# manager presses "Generate report" in the app. A manager run before 9am
+# replaces that day's report and the 9am run then does nothing.
+#
+# Needs repository secrets: OPENAI_API_KEY (and the built-in GITHUB_TOKEN).
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 9am Eastern during daylight saving
+    - cron: '0 14 * * *'   # 9am Eastern in winter
+  repository_dispatch:
+    types: [daily-wrench]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-wrench
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Write the briefings
+        env:
+          TZ: America/New_York
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.DAILY_WRENCH_MODEL || 'gpt-5' }}
+          WRENCH_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+          WRENCH_BY: ${{ github.event.client_payload.by }}
+          WRENCH_REASON: ${{ github.event.client_payload.reason }}
+        run: node scripts/daily-wrench.cjs

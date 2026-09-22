@@ -41,7 +41,7 @@ const isAdminRole = (role) => String(role || '').toLowerCase() === 'admin';
 // Where the app is allowed to write. Everything else in the repo is code —
 // letting a session write src/ would let anyone logged in ship a new build.
 const WRITABLE_PREFIX = 'public/data/';
-const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching']);
+const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching', 'daily-wrench']);
 const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/'];
 const S3_MAX_BYTES = 25 * 1024 * 1024;
 const PUSHER_CHANNELS = new Set(['rohrman-advisor-chat', 'rohrman-tech-chat', 'rohrman-system', 'rohrman-global-msg']);

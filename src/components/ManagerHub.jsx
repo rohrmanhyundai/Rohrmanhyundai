@@ -160,6 +160,15 @@ const NAV_BUTTONS = [
     prop: 'onPayroll',
   },
   {
+    key: 'dailyWrench',
+    label: '🔧 The Daily Wrench',
+    desc: 'This morning\'s AI briefing — the shop\'s money position, every advisor\'s day, and the repair orders costing you hours',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(139,92,246,.18))',
+    border: 'rgba(125,211,252,.55)',
+    color: '#7dd3fc',
+    prop: 'onDailyWrench',
+  },
+  {
     key: 'bigMoneyLof',
     label: '💵 Big-Money LOF',
     desc: 'Advisor contest on $50 Add\'l Hrs/RO and $50 Add Rate % — set the dates, the board runs itself',
@@ -176,14 +185,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll,
+  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll,
+    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench,
   };
 
   return (

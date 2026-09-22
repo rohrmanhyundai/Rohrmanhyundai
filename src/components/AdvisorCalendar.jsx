@@ -230,7 +230,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, onDailyWrench, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -238,6 +238,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
   const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
   const eodUrgent = easternHour >= 15;
+  // The Daily Wrench button glows until it has been opened today — the report
+  // is the point of the morning, not something to hunt for.
+  const wrenchUnread = (() => {
+    try { return localStorage.getItem('dailyWrenchSeen') !== new Date(nowTick).toDateString(); } catch { return true; }
+  })();
 
   // Daily pacing badge for TODAY's cell: from the viewed advisor's monthly Hours
   // Goal (Goals/Forecasting) and their MTD hours (the morning upload), figure how
@@ -593,6 +598,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               canSee(userPages, currentRole, 'servicePricing') && onServicePricing && { key: 'servicePricing' },
               onDeferredService && { key: 'deferredService' },
               (canSee(userPages, currentRole, 'advisorSchedule') || canSee(userPages, currentRole, 'techSchedule')) && { key: 'workSchedule' },
+              onDailyWrench && { key: 'dailyWrench' },
               canSee(userPages, currentRole, 'aftermarketWarranty') && { key: 'aftermarketWarranty' },
               canSee(userPages, currentRole, 'originalOwner') && onOriginalOwner && { key: 'originalOwner' },
               onAfterCall && { key: 'afterCall' },
@@ -700,6 +706,21 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                   <button onClick={onLivePay} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
                     💵 Live Pay
                   </button>
+                );
+                // The morning briefing. Sits at the head of the strip because it is
+                // where the day starts; it glows until it has been opened today.
+                case 'dailyWrench': return (
+                  <>
+                    <style>{`@keyframes dwGlow{0%,100%{box-shadow:0 0 9px 0 rgba(125,211,252,.45)}50%{box-shadow:0 0 18px 4px rgba(125,211,252,.75)}}`}</style>
+                    <button onClick={() => { try { localStorage.setItem('dailyWrenchSeen', new Date().toDateString()); } catch {} onDailyWrench(); }}
+                      style={{
+                        background: 'linear-gradient(180deg,rgba(56,189,248,.35),rgba(139,92,246,.25))',
+                        borderColor: 'rgba(125,211,252,.6)', color: '#e0f2fe', fontWeight: 900,
+                        animation: wrenchUnread ? 'dwGlow 2s ease-in-out infinite' : 'none',
+                      }}>
+                      🔧 The Daily Wrench
+                    </button>
+                  </>
                 );
                 // Big-Money LOF contest. The badge is the advisor's own standing:
                 // ✅ met both $50 goals (in the running), 🏆 leading the contest.
