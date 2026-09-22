@@ -44,6 +44,17 @@ export async function ensureGithubToken() {
   return '';
 }
 
+// A device can be holding a save code that has since been rotated or revoked
+// (GitHub answers 401 "Bad credentials"). Drop it and re-pull the current one
+// from users.json; returns the fresh token only if it actually differs.
+async function recoverToken(oldToken) {
+  setGithubToken('');
+  const fresh = await ensureGithubToken();
+  if (fresh && fresh !== oldToken) return fresh;
+  if (oldToken) setGithubToken(oldToken);
+  return '';
+}
+
 // Read dashboard data directly from the GitHub API — instant, bypasses GitHub Pages rebuild delay.
 // Falls back to null if the API is unavailable (caller should fall back to GitHub Pages CDN).
 export async function loadDashboardData() {
@@ -88,11 +99,12 @@ export async function saveDashboardToGitHub(payload) {
     throw new Error('No GitHub token configured. Go to Admin > GitHub Settings and enter a Personal Access Token.');
   }
 
-  const headers = {
+  let headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
     'User-Agent': 'rohrman-dashboard',
   };
+  let recovered = false;
 
   const apiPath = GITHUB_PATH;
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}?ref=${GITHUB_BRANCH}`;
@@ -128,6 +140,11 @@ export async function saveDashboardToGitHub(payload) {
     noteRateLimit(putRes);
     let putJson = {}; try { putJson = await putRes.json(); } catch {}
     lastErr = new Error(putJson.message || `GitHub update failed (${putRes.status})`);
+    if (putRes.status === 401 && !recovered) {
+      recovered = true;
+      const fresh = await recoverToken(token);
+      if (fresh) { headers = { ...headers, Authorization: `Bearer ${fresh}` }; continue; }
+    }
     // Retry only conflicts / transient server errors; a 403/401/404 fails the
     // same every attempt, so stop rather than burn more of the shared quota.
     if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) break;
@@ -137,6 +154,7 @@ export async function saveDashboardToGitHub(payload) {
 }
 
 async function saveGitHubFile(headers, path, data, message) {
+  let recovered = false;
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
@@ -170,6 +188,11 @@ async function saveGitHubFile(headers, path, data, message) {
     noteRateLimit(putRes);
     let j = {}; try { j = await putRes.json(); } catch {}
     lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
+    if (putRes.status === 401 && !recovered) {
+      recovered = true;
+      const fresh = await recoverToken(getGithubToken());
+      if (fresh) { headers = { ...headers, Authorization: `Bearer ${fresh}` }; continue; }
+    }
     // Only conflicts / stale-sha / transient server errors are worth retrying.
     // Anything else (403 rate limit, 401 bad token, 404) will fail the same way
     // every attempt — retrying just burns more of the shared quota, so stop now.
@@ -196,7 +219,8 @@ async function mutateGitHubJson(path, mutate, message) {
   // Don't even try (and don't retry-hammer) while the shared quota is spent —
   // that only deepens the rate limit. Fail fast with a friendly message.
   if (isRateLimited()) throw new Error(`Too many requests right now — wait ${rateLimitResetSeconds()}s and resend.`);
-  const headers = authHeaders();
+  let headers = authHeaders();
+  let recovered = false;
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
   let lastErr = null;
@@ -231,6 +255,12 @@ async function mutateGitHubJson(path, mutate, message) {
         } catch { readOk = false; }
       } else if (getRes.status === 404) {
         fileExists = false; readOk = true; current = null; // genuinely new file
+      } else if (getRes.status === 401 && !recovered) {
+        recovered = true;
+        let j = {}; try { j = await getRes.json(); } catch {}
+        lastErr = new Error(j.message || 'GitHub read failed (401)');
+        if (await recoverToken(token)) { headers = authHeaders(); continue; }
+        break;
       } else {
         lastErr = new Error(`GitHub read failed (${getRes.status})`);
         await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
@@ -268,6 +298,10 @@ async function mutateGitHubJson(path, mutate, message) {
     noteRateLimit(putRes);
     let j = {}; try { j = await putRes.json(); } catch {}
     lastErr = new Error(j.message || `GitHub save failed (${putRes.status})`);
+    if (putRes.status === 401 && !recovered) {
+      recovered = true;
+      if (await recoverToken(token)) { headers = authHeaders(); continue; }
+    }
     // Stale-sha / transient: loop re-reads fresh content and re-applies mutate.
     if (![409, 422, 500, 502, 503, 504].includes(putRes.status)) break;
     await new Promise(r => setTimeout(r, 200 * (attempt + 1)));
