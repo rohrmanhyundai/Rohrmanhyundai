@@ -74,10 +74,36 @@ export function withinRetention(m, windowMs = RETENTION_MS) {
  * grew the layout shoved the Send button out of reach. Clicking outside or
  * pressing Escape closes it; picking one drops it in and closes it, because
  * hunting for the close button after every emoji is the annoying part.
+ *
+ * It is positioned fixed from the button's own rectangle and clamped to the
+ * window. Anchored inside the messenger it hung off the left edge of that
+ * narrow panel and got clipped — half the emoji were unreachable.
  */
+const EMOJI_PANEL_W = 250;
+
 function EmojiPicker({ onPick, title = 'Add an emoji' }) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState(null);      // { left, bottom, width } in viewport px
   const wrapRef = useRef(null);
+  const btnRef = useRef(null);
+
+  const place = React.useCallback(() => {
+    const b = btnRef.current;
+    if (!b) return;
+    const r = b.getBoundingClientRect();
+    const width = Math.min(EMOJI_PANEL_W, window.innerWidth - 16);
+    // Right-align with the button, then pull it back inside the window.
+    const left = Math.max(8, Math.min(r.right - width, window.innerWidth - width - 8));
+    setPos({ left, bottom: Math.max(8, window.innerHeight - r.top + 6), width });
+  }, []);
+
+  React.useLayoutEffect(() => { if (open) place(); }, [open, place]);
+  useEffect(() => {
+    if (!open) return;
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => { window.removeEventListener('resize', place); window.removeEventListener('scroll', place, true); };
+  }, [open, place]);
 
   useEffect(() => {
     if (!open) return;
@@ -94,6 +120,7 @@ function EmojiPicker({ onPick, title = 'Add an emoji' }) {
   return (
     <div ref={wrapRef} style={{ position: 'relative', flexShrink: 0 }}>
       <button
+        ref={btnRef}
         type="button"
         title={title}
         onClick={() => setOpen(o => !o)}
@@ -105,10 +132,11 @@ function EmojiPicker({ onPick, title = 'Add an emoji' }) {
         }}>
         😊
       </button>
-      {open && (
+      {open && pos && (
         <div style={{
-          position: 'absolute', bottom: '100%', right: 0, marginBottom: 6, zIndex: 30,
-          width: 250, background: '#1e293b', border: '1px solid rgba(255,255,255,0.14)',
+          position: 'fixed', left: pos.left, bottom: pos.bottom, zIndex: 2000,
+          width: pos.width, maxHeight: '45vh', overflowY: 'auto',
+          background: '#1e293b', border: '1px solid rgba(255,255,255,0.14)',
           borderRadius: 12, padding: 8, display: 'flex', flexWrap: 'wrap', gap: 2,
           boxShadow: '0 -8px 26px rgba(0,0,0,0.55)',
         }}>
