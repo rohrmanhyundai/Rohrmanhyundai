@@ -555,6 +555,11 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "IGWS70fgfCjHh5gE6fFNFxWJYaHuAiW8KmeVPx2qsRPyW6fHatPXtg8mWiGoCyi04YNQy80Zzem09Z8HILCZ0GQjihdl7OnYmW9WjZ353FzTr/eLkWwJ4tHGZ89JhHb9Wgwn9MxMoxJyaMHlLTZWr9saJd2io3xpdftA4LKHxDxj6BOMmJ17EcFJvU5rGORWm48qKBa4MnB/FnqjjkdJBoo2aaP/UJVFRAwLxKeFwq5pMBLnOF4/iRDIuu1bP/hrwKLcZ/42jZXgqVxMlCxSl7hXFEickqya43Mt9mVVnzZJDV4msC1VKSlmw+65qbceJBCNDiKMolc3HzrVYgzIwg=="
+      },
+      "passwordReset": {
+        "hash": "ecde81bc2b44bfb0b0db64c1a9126a82bae115d020b329688f650794822d604c",
+        "expires": "2026-09-22T12:09:55.128Z",
+        "requestedAt": "2026-09-22T11:09:55.128Z"
       }
     },
     {
