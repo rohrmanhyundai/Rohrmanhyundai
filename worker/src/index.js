@@ -241,7 +241,25 @@ async function route(request, env, url) {
   const p = url.pathname.replace(/\/+$/, '') || '/';
   const method = request.method;
 
-  if (p === '/health') return json({ ok: true, github: !!env.GITHUB_TOKEN, aws: !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY), pusher: !!env.PUSHER_SECRET, sessions: !!env.SESSION_SECRET });
+  if (p === '/health') {
+    const out = { ok: true, github: !!env.GITHUB_TOKEN, aws: !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY), pusher: !!env.PUSHER_SECRET, sessions: !!env.SESSION_SECRET };
+    // ?check=s3 makes a signed, harmless request to the bucket so a wrong or
+    // mistyped key shows up here (403) instead of only when someone uploads.
+    // Signed in only: it spends a real S3 call and reports key lengths.
+    if (url.searchParams.get('check') === 's3' && out.aws && await readSession(env, request)) {
+      try {
+        const res = await s3(env).fetch(`https://${env.S3_BUCKET}.s3.${env.S3_REGION}.amazonaws.com/?list-type=2&max-keys=1`, { method: 'GET' });
+        out.s3Status = res.status;
+        out.s3Ok = res.ok;
+        if (!res.ok) { const t = await res.text(); const m = t.match(/<Code>([^<]+)<\/Code>/); out.s3Error = m ? m[1] : `HTTP ${res.status}`; }
+      } catch (e) { out.s3Ok = false; out.s3Error = String(e && e.message || e); }
+      // Lengths only — never the values. An AWS key id is 20 chars, a secret 40,
+      // so a mixed-up paste shows up here immediately.
+      out.keyIdLen = String(env.AWS_ACCESS_KEY_ID || '').length;
+      out.secretLen = String(env.AWS_SECRET_ACCESS_KEY || '').length;
+    }
+    return json(out);
+  }
 
   // ── auth ──
   if (p === '/auth/login' && method === 'POST') {

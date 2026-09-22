@@ -181,7 +181,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [credentials, setCredentials] = useState(null);   // { USERNAME: { setAt } } | null
   useEffect(() => {
     if (!isOpen) return;
-    api.health().then(setBackendHealth);
+    api.apiJson('/health?check=s3').then(setBackendHealth).catch(() => api.health().then(setBackendHealth));
     api.listCredentials().then(setCredentials).catch(() => setCredentials(null));
   }, [isOpen]);
   const [saving, setSaving] = useState(false);
@@ -1969,6 +1969,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   {[['github', 'GitHub token'], ['aws', 'AWS keys'], ['pusher', 'Pusher secret'], ['sessions', 'Session secret']].map(([k, label]) => (
                     <span key={k} style={{ marginRight: 14, color: backendHealth[k] ? '#4ade80' : '#fbbf24', fontWeight: 800 }}>{backendHealth[k] ? '✅' : '⚠️'} {label}</span>
                   ))}
+                  {backendHealth.s3Ok !== undefined && (
+                    <span style={{ marginRight: 14, color: backendHealth.s3Ok ? '#4ade80' : '#f87171', fontWeight: 800 }} title="A signed test request to the S3 bucket">
+                      {backendHealth.s3Ok ? '✅' : '❌'} S3 uploads{backendHealth.s3Ok ? '' : ` (${backendHealth.s3Error || backendHealth.s3Status})`}
+                    </span>
+                  )}
                 </span>}
           </div>
         </div>
