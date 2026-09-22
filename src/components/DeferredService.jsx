@@ -72,7 +72,6 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
   // Filters
   const [selCodes, setSelCodes] = useState(new Set());
-  const [selAdvisors, setSelAdvisors] = useState(new Set());
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [q, setQ] = useState('');
@@ -97,7 +96,6 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
   // Counts for the chips (over everything, so a chip never disappears while you're using it)
   const codeCounts = useMemo(() => { const m = {}; rows.forEach(r => (r.codes || []).forEach(c => { m[c] = (m[c] || 0) + 1; })); return m; }, [rows]);
-  const advisorCounts = useMemo(() => { const m = {}; rows.forEach(r => { const a = r.advisor || '—'; m[a] = (m[a] || 0) + 1; }); return m; }, [rows]);
   const allCodes = useMemo(() => Object.keys(codeCounts).sort((a, b) => codeCounts[b] - codeCounts[a] || a.localeCompare(b)), [codeCounts]);
   // Op codes that share a description are the same service (the DMS has
   // several codes for one job), so the filter works on SERVICES: one chip per
@@ -118,7 +116,6 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     return list.sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   }, [allCodes, codes, rows]);
   const serviceOfCode = useMemo(() => { const m = {}; services.forEach(g => g.codes.forEach(c => { m[c] = g; })); return m; }, [services]);
-  const allAdvisors = useMemo(() => Object.keys(advisorCounts).sort(), [advisorCounts]);
 
   // Follow-up entries grouped by RO (newest first) and by the advisor who logged them.
   const entries = useMemo(() => Object.values(activity.entries || {}).sort((a, b) => (a.at < b.at ? 1 : -1)), [activity]);
@@ -152,7 +149,6 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       if (selCodes.size && !(r.codes || []).some(c => serviceOfCode[c] && selCodes.has(serviceOfCode[c].key))) return false;
       if (onlyValvoline && !(r.codes || []).some(c => serviceOfCode[c] && serviceOfCode[c].valvoline)) return false;
       if (onlyUncontacted && (byRoActivity[r.ro] || []).length) return false;
-      if (selAdvisors.size && !selAdvisors.has(r.advisor || '—')) return false;
       if (from && (!r.date || r.date < from)) return false;
       if (to && (!r.date || r.date > to)) return false;
       if (needle) {
@@ -161,11 +157,11 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       }
       return true;
     });
-  }, [rows, selCodes, selAdvisors, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, byRoActivity]);
+  }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, byRoActivity]);
 
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
-  const clearAll = () => { setSelCodes(new Set()); setSelAdvisors(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); };
-  const anyFilter = selCodes.size || selAdvisors.size || from || to || q.trim() || onlyValvoline || onlyUncontacted;
+  const clearAll = () => { setSelCodes(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); };
+  const anyFilter = selCodes.size || from || to || q.trim() || onlyValvoline || onlyUncontacted;
   const uncontactedCount = useMemo(() => rows.filter(r => !(byRoActivity[r.ro] || []).length).length, [rows, byRoActivity]);
 
   // ── Follow-up actions ───────────────────────────────────────────────────
@@ -409,16 +405,6 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                   </div>
                 </div>
 
-                <div>
-                  <div className="ds-label" style={{ marginBottom: 6 }}>Advisor</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {allAdvisors.map(a => (
-                      <button key={a} className={`ds-chip${selAdvisors.has(a) ? ' on' : ''}`} onClick={() => toggle(selAdvisors, setSelAdvisors, a)}>
-                        {a}{firstWord(a) === me ? ' (me)' : ''} <span className="n">{advisorCounts[a]}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
 
               {/* Preview list */}
