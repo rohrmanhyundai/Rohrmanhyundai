@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-09-22T00:48:34.760Z",
+    "type": "action",
+    "label": "deferred-appointment",
+    "details": "780479"
+  },
+  {
     "at": "2026-09-22T00:48:11.138Z",
     "type": "action",
     "label": "deferred-contacted",
