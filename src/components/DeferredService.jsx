@@ -11,6 +11,12 @@ import { trackPage, trackAction } from '../utils/activityTracker';
 // see a short preview list (customer + previous RO), and click a row for the
 // full line from the report. Settings is also where the manager gives each op
 // code a plain-English description, which the filter chips then show.
+//
+// Follow-ups: 📞 Contacted keeps the RO on the home list (it still needs
+// chasing). 📅 Appointment set takes it OFF the home list — it lives under the
+// 📅 Scheduled chip and in the advisor's own tab. A manager can ↩ Return it to
+// the list (no-show, cancelled…) with a note everyone can read; whichever of
+// appointment / return was logged last decides where the RO sits.
 
 const firstWord = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
 const money = (v) => (v == null ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
@@ -58,11 +64,12 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const [tab, setTab] = useState('list');            // 'list' | 'settings'
   const [view, setView] = useState('all');           // 'all' | ADVISOR — the tab strip
   const [activity, setActivity] = useState({ entries: {} });
-  const [action, setAction] = useState(null);        // { ro, type:'contacted'|'appointment' } — open form
+  const [action, setAction] = useState(null);        // { ro, type:'contacted'|'appointment'|'returned' } — open form
   const [note, setNote] = useState('');
   const [apptDate, setApptDate] = useState('');
   const [apptTime, setApptTime] = useState('');
   const [onlyUncontacted, setOnlyUncontacted] = useState(false);
+  const [showScheduled, setShowScheduled] = useState(false);   // home list: scheduled ROs instead of open ones
   const [store, setStore] = useState(null);          // rows.json
   const [codes, setCodes] = useState({});            // codes.json
   const [loading, setLoading] = useState(true);
@@ -142,7 +149,11 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     finally { setBusy(''); }
   }
   const latestOf = (ro, type) => (byRoActivity[ro] || []).find(e => e.type === type) || null;
-  const nextAppt = (ro) => { const t = isoToday(); const a = (byRoActivity[ro] || []).filter(e => e.type === 'appointment' && e.date >= t).sort((x, y) => (x.date < y.date ? -1 : 1)); return a[0] || latestOf(ro, 'appointment'); };
+  // The appointment that currently keeps this RO off the home list — null once
+  // a manager has returned it (entries are newest first, so the last-logged of
+  // appointment / returned wins).
+  const activeAppt = (ro) => { const e = (byRoActivity[ro] || []).find(x => x.type === 'appointment' || x.type === 'returned'); return e && e.type === 'appointment' ? e : null; };
+  const lastReturn = (ro) => { const e = (byRoActivity[ro] || []).find(x => x.type === 'appointment' || x.type === 'returned'); return e && e.type === 'returned' ? e : null; };
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -150,6 +161,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       if (selCodes.size && !(r.codes || []).some(c => serviceOfCode[c] && selCodes.has(serviceOfCode[c].key))) return false;
       if (onlyValvoline && !(r.codes || []).some(c => serviceOfCode[c] && serviceOfCode[c].valvoline)) return false;
       if (onlyUncontacted && (byRoActivity[r.ro] || []).length) return false;
+      if (!!activeAppt(r.ro) !== showScheduled) return false;
       if (from && (!r.date || r.date < from)) return false;
       if (to && (!r.date || r.date > to)) return false;
       if (needle) {
@@ -158,19 +170,22 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       }
       return true;
     });
-  }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, byRoActivity]);
+  }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, showScheduled, byRoActivity]);
 
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
-  const clearAll = () => { setSelCodes(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); };
-  const anyFilter = selCodes.size || from || to || q.trim() || onlyValvoline || onlyUncontacted;
-  const uncontactedCount = useMemo(() => rows.filter(r => !(byRoActivity[r.ro] || []).length).length, [rows, byRoActivity]);
+  const clearAll = () => { setSelCodes(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); setShowScheduled(false); };
+  const anyFilter = selCodes.size || from || to || q.trim() || onlyValvoline || onlyUncontacted || showScheduled;
+  const uncontactedCount = useMemo(() => rows.filter(r => !(byRoActivity[r.ro] || []).length && !activeAppt(r.ro)).length, [rows, byRoActivity]);
+  const scheduledCount = useMemo(() => rows.filter(r => activeAppt(r.ro)).length, [rows, byRoActivity]);
 
   // ── Follow-up actions ───────────────────────────────────────────────────
   function openAction(ro, type) {
+    if (type === 'returned' && !isManager) return;
     setAction({ ro, type }); setNote(''); setApptDate(''); setApptTime('');
   }
   async function saveAction() {
     if (!action) return;
+    if (action.type === 'returned' && !isManager) return;
     if (action.type === 'appointment' && !apptDate) { setStatus('❌ Pick the appointment date.'); return; }
     setBusy('action'); setStatus('');
     const entry = {
@@ -189,7 +204,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   }
   async function deleteEntry(entry) {
     if (!isManager) return;
-    if (!window.confirm(`Delete this ${entry.type === 'appointment' ? 'appointment' : 'contact'} entry for RO ${entry.ro} (logged by ${entry.by})?`)) return;
+    if (!window.confirm(`Delete this ${entry.type === 'appointment' ? 'appointment' : entry.type === 'returned' ? 'return-to-list' : 'contact'} entry for RO ${entry.ro} (logged by ${entry.by})?`)) return;
     setBusy('delete');
     try {
       await updateDeferredActivity(cur => { const e = { ...(cur.entries || {}) }; delete e[entry.id]; return { ...cur, entries: e }; }, `Deferred follow-up removed: ${entry.id}`);
@@ -257,24 +272,29 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const uploads = (store && store.uploads) || [];
 
   const renderBadges = (ro) => {
-    const c = latestOf(ro, 'contacted'), a = nextAppt(ro);
-    if (!c && !a) return null;
+    const c = latestOf(ro, 'contacted'), a = activeAppt(ro), ret = lastReturn(ro);
+    if (!c && !a && !ret) return null;
     return (
-      <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 4 }}>
-        {c && <span className="ds-pill" style={{ background: 'rgba(74,222,128,.14)', borderColor: 'rgba(74,222,128,.4)', color: '#4ade80' }}>📞 {fmtWhen(c.at)} · {firstWord(c.by)}</span>}
-        {a && <span className="ds-pill" style={{ background: 'rgba(250,204,21,.14)', borderColor: 'rgba(250,204,21,.45)', color: '#fde047' }}>📅 {fmtApptDate(a.date, a.time)} · {firstWord(a.by)}</span>}
-      </div>
+      <>
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 4 }}>
+          {c && <span className="ds-pill" style={{ background: 'rgba(74,222,128,.14)', borderColor: 'rgba(74,222,128,.4)', color: '#4ade80' }}>📞 {fmtWhen(c.at)} · {firstWord(c.by)}</span>}
+          {a && <span className="ds-pill" style={{ background: 'rgba(250,204,21,.14)', borderColor: 'rgba(250,204,21,.45)', color: '#fde047' }}>📅 {fmtApptDate(a.date, a.time)} · {firstWord(a.by)}</span>}
+          {ret && <span className="ds-pill" style={{ background: 'rgba(251,146,60,.14)', borderColor: 'rgba(251,146,60,.45)', color: '#fdba74' }}>↩ Returned {fmtWhen(ret.at)} · {firstWord(ret.by)}</span>}
+        </div>
+        {ret && ret.note && <div style={{ fontSize: 12, color: '#fdba74', marginTop: 3, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{ret.note}</div>}
+      </>
     );
   };
   const renderEntry = (e, showCustomer) => {
     const r = rowByRo[e.ro];
-    const appt = e.type === 'appointment';
+    const appt = e.type === 'appointment', ret = e.type === 'returned';
+    const color = appt ? '#fde047' : ret ? '#fdba74' : '#4ade80';
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr auto', gap: 10, alignItems: 'start', padding: '10px 12px', borderRadius: 10, background: 'rgba(2,6,23,.4)', border: `1px solid ${appt ? 'rgba(250,204,21,.3)' : 'rgba(74,222,128,.3)'}` }}>
-        <div style={{ fontSize: 18 }}>{appt ? '📅' : '📞'}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr auto', gap: 10, alignItems: 'start', padding: '10px 12px', borderRadius: 10, background: 'rgba(2,6,23,.4)', border: `1px solid ${appt ? 'rgba(250,204,21,.3)' : ret ? 'rgba(251,146,60,.35)' : 'rgba(74,222,128,.3)'}` }}>
+        <div style={{ fontSize: 18 }}>{appt ? '📅' : ret ? '↩' : '📞'}</div>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 900, color: appt ? '#fde047' : '#4ade80' }}>
-            {appt ? `Appointment ${fmtApptDate(e.date, e.time)}` : 'Contacted customer'}
+          <div style={{ fontSize: 13, fontWeight: 900, color }}>
+            {appt ? `Appointment ${fmtApptDate(e.date, e.time)}` : ret ? 'Returned to list' : 'Contacted customer'}
             <span style={{ fontWeight: 600, color: '#94a3b8', marginLeft: 8, fontSize: 11.5 }}>logged {fmtWhen(e.at)} by {firstWord(e.by)}</span>
           </div>
           {showCustomer && r && <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 2 }}><b style={{ color: '#f1f5f9' }}>{r.customer || 'No name'}</b> · RO {r.ro} · {r.vehicle} · <span style={{ color: '#67e8f9' }}>{fmtPhone(r.phone)}</span></div>}
@@ -282,7 +302,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
           {e.note && <div style={{ fontSize: 13, color: '#e2e8f0', marginTop: 4, whiteSpace: 'pre-wrap', lineHeight: 1.45 }}>{e.note}</div>}
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          {showCustomer && r && <button className="secondary" onClick={() => { setView('all'); setQ(r.ro); setOpenRo(r.ro); }} style={{ fontSize: 11, padding: '3px 8px' }}>Open</button>}
+          {showCustomer && r && <button className="secondary" onClick={() => { setOpenRo(r.ro); setAction(null); }} style={{ fontSize: 11, padding: '3px 8px' }}>Open</button>}
           {isManager && <button className="secondary" disabled={!!busy} onClick={() => deleteEntry(e)} title="Delete this entry (managers)" style={{ fontSize: 11, padding: '3px 8px', color: '#fca5a5', borderColor: 'rgba(248,113,113,.4)' }}>🗑</button>}
         </div>
       </div>
@@ -290,26 +310,74 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   };
   const renderActionForm = (ro) => {
     if (!action || action.ro !== ro) return null;
-    const appt = action.type === 'appointment';
+    const appt = action.type === 'appointment', ret = action.type === 'returned';
+    const color = appt ? '#fde047' : ret ? '#fdba74' : '#4ade80';
+    const tint = appt ? '250,204,21' : ret ? '251,146,60' : '74,222,128';
     return (
-      <div style={{ marginTop: 10, padding: 12, borderRadius: 10, background: appt ? 'rgba(250,204,21,.08)' : 'rgba(74,222,128,.08)', border: `1px solid ${appt ? 'rgba(250,204,21,.4)' : 'rgba(74,222,128,.4)'}` }}>
-        <div style={{ fontSize: 13, fontWeight: 900, color: appt ? '#fde047' : '#4ade80', marginBottom: 8 }}>
-          {appt ? '📅 Appointment set' : '📞 Contacted customer'} <span style={{ fontWeight: 600, color: '#94a3b8', fontSize: 11.5 }}>· {new Date().toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} · {(currentUser || '').toUpperCase()}</span>
+      <div style={{ marginTop: 10, padding: 12, borderRadius: 10, background: `rgba(${tint},.08)`, border: `1px solid rgba(${tint},.4)` }}>
+        <div style={{ fontSize: 13, fontWeight: 900, color, marginBottom: 8 }}>
+          {appt ? '📅 Appointment set' : ret ? '↩ Return to list' : '📞 Contacted customer'} <span style={{ fontWeight: 600, color: '#94a3b8', fontSize: 11.5 }}>· {new Date().toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} · {(currentUser || '').toUpperCase()}</span>
         </div>
+        {ret && <div style={{ fontSize: 12.5, color: '#cbd5e1', marginBottom: 8 }}>Puts this customer back on the home list for everyone. Your note shows on their row and in the history.</div>}
         {appt && (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
             <label style={{ display: 'grid', gap: 3 }}><span className="ds-label">Appointment date</span><input type="date" className="ds-in" value={apptDate} min={isoToday()} autoFocus onChange={e => setApptDate(e.target.value)} /></label>
             <label style={{ display: 'grid', gap: 3 }}><span className="ds-label">Time <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500 }}>(optional)</span></span><input type="time" className="ds-in" value={apptTime} onChange={e => setApptTime(e.target.value)} /></label>
           </div>
         )}
-        <textarea className="ds-in" rows={3} autoFocus={!appt} placeholder={appt ? 'Notes about the appointment — what they\'re coming in for, anything to prep…' : 'What did the customer say?'} value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }} />
+        <textarea className="ds-in" rows={3} autoFocus={!appt} placeholder={appt ? 'Notes about the appointment — what they\'re coming in for, anything to prep…' : ret ? 'Why it\'s coming back — no-show, rescheduling, cancelled… (optional)' : 'What did the customer say?'} value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }} />
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           <button className="secondary" onClick={() => setAction(null)} style={{ fontSize: 12 }}>Cancel</button>
-          <button onClick={saveAction} disabled={busy === 'action' || (appt && !apptDate)} style={{ fontSize: 12.5 }}>{busy === 'action' ? '⏳ Saving…' : 'Save'}</button>
+          <button onClick={saveAction} disabled={busy === 'action' || (appt && !apptDate)} style={{ fontSize: 12.5 }}>{busy === 'action' ? '⏳ Saving…' : ret ? '↩ Return to list' : 'Save'}</button>
         </div>
       </div>
     );
   };
+  // Full line from the report + follow-up controls — shown under a row on the
+  // home list, and on its own inside an advisor's tab.
+  const renderDetail = (r) => (
+    <div className="ds-detail">
+      <div className="ds-kv">
+        <div><div className="k">Customer</div><div className="v">{r.customer || '—'}</div></div>
+        <div><div className="k">Previous RO</div><div className="v">{r.ro}</div></div>
+        <div><div className="k">RO date</div><div className="v">{fmtDate(r.date)}</div></div>
+        <div><div className="k">Advisor</div><div className="v">{r.advisor || '—'}</div></div>
+        <div><div className="k">Phone</div><div className="v"><a href={`tel:${r.phone}`} style={{ color: '#67e8f9', textDecoration: 'none' }}>{fmtPhone(r.phone)}</a></div></div>
+        <div><div className="k">Email</div><div className="v">{r.email || '—'}</div></div>
+        <div><div className="k">Vehicle</div><div className="v">{r.vehicle || '—'}</div></div>
+        <div><div className="k">VIN</div><div className="v" style={{ fontFamily: 'ui-monospace, Menlo, monospace' }}>{r.vin || '—'}</div></div>
+        <div><div className="k">Hours</div><div className="v">{r.hours == null ? '—' : r.hours.toFixed(1)}</div></div>
+        <div><div className="k">Labor & parts</div><div className="v" style={{ color: '#6ee7b7' }}>{money(r.amount)}</div></div>
+        {r.uploadedAt && <div><div className="k">From upload</div><div className="v" style={{ color: '#94a3b8', fontWeight: 500 }}>{new Date(r.uploadedAt).toLocaleDateString()}</div></div>}
+      </div>
+      <div className="k ds-label" style={{ marginTop: 12 }}>Deferred op codes</div>
+      <div>
+        {(r.codes || []).map((c, i) => (
+          <span key={i} className="ds-code" style={serviceOfCode[c] && selCodes.has(serviceOfCode[c].key) ? { background: 'rgba(110,231,249,.18)', borderColor: 'rgba(110,231,249,.6)', color: '#a5f3fc' } : {}}>
+            {c}{codes[c] && codes[c].description ? <small>{codes[c].description}</small> : null}
+          </span>
+        ))}
+      </div>
+
+      {/* Follow-up: log a call or an appointment against this RO */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 14 }}>
+        <button onClick={() => openAction(r.ro, 'contacted')} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.28),rgba(22,163,74,.2))', borderColor: 'rgba(74,222,128,.5)', color: '#bbf7d0', fontSize: 13 }}>📞 Contacted customer</button>
+        <button onClick={() => openAction(r.ro, 'appointment')} style={{ background: 'linear-gradient(180deg,rgba(250,204,21,.28),rgba(245,158,11,.2))', borderColor: 'rgba(250,204,21,.5)', color: '#fef3c7', fontSize: 13 }}>📅 Appointment set</button>
+        {isManager && activeAppt(r.ro) && (
+          <button onClick={() => openAction(r.ro, 'returned')} title="Customer didn't show / cancelled — put them back on the home list" style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.28),rgba(234,88,12,.2))', borderColor: 'rgba(251,146,60,.5)', color: '#fed7aa', fontSize: 13 }}>↩ Return to list</button>
+        )}
+        {status && status.startsWith('❌') && <span style={{ fontSize: 12.5, color: '#f87171', fontWeight: 700, alignSelf: 'center' }}>{status}</span>}
+      </div>
+      {renderActionForm(r.ro)}
+      {activeAppt(r.ro) && <div style={{ marginTop: 10, fontSize: 12.5, color: '#fde047' }}>📅 Off the home list while this appointment stands{isManager ? ' — ↩ Return to list if the customer doesn\'t show.' : '.'}</div>}
+      {(byRoActivity[r.ro] || []).length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <div className="ds-label" style={{ marginBottom: 6 }}>Follow-up history</div>
+          <div style={{ display: 'grid', gap: 6 }}>{(byRoActivity[r.ro] || []).map(e => <React.Fragment key={e.id}>{renderEntry(e, false)}</React.Fragment>)}</div>
+        </div>
+      )}
+    </div>
+  );
   const svcMatches = useMemo(() => { const t = svcQ.trim().toLowerCase(); return t ? services.filter(g => g.label.toLowerCase().includes(t) || [...g.codes].some(c => c.toLowerCase().includes(t))) : services; }, [services, svcQ]);
   const selectedServices = services.filter(g => selCodes.has(g.key));
 
@@ -340,7 +408,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
           {tab === 'list' && (
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-              <button className={`ds-tab${view === 'all' ? ' on' : ''}`} onClick={() => setView('all')}>All deferred work</button>
+              <button className={`ds-tab${view === 'all' ? ' on' : ''}`} onClick={() => { setView('all'); setOpenRo(''); setAction(null); }}>All deferred work</button>
               {tabAdvisors.map(a => (
                 <button key={a} className={`ds-tab${view === a ? ' on' : ''}`} onClick={() => { setView(a); setOpenRo(''); setAction(null); }}>
                   {a}{a === me ? ' (me)' : ''}<span className="n">{(byAdvisorActivity[a] || []).length}</span>
@@ -349,7 +417,33 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
             </div>
           )}
 
-          {tab === 'list' && view !== 'all' && (
+          {/* Inside an advisor's tab, Open shows the customer right here — they
+              go back to their list when they choose, not before. */}
+          {tab === 'list' && view !== 'all' && openRo && rowByRo[openRo] && (() => {
+            const r = rowByRo[openRo];
+            return (
+              <div className="ds-card">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+                  <button className="secondary" onClick={() => { setOpenRo(''); setAction(null); }} style={{ fontSize: 12.5 }}>← Back to {view === me ? 'my' : `${view}'s`} list</button>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>Viewing one customer from {view === me ? 'your' : `${view}'s`} follow-ups</div>
+                </div>
+                <div className="ds-row open" style={{ cursor: 'default' }}>
+                  <div>
+                    <div style={{ fontSize: 14.5, fontWeight: 900, color: '#f1f5f9' }}>{r.customer || <span style={{ color: '#64748b', fontStyle: 'italic' }}>No name on report</span>}</div>
+                    <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{r.vehicle} · {(r.codes || []).length} deferred item{(r.codes || []).length === 1 ? '' : 's'}</div>
+                    {renderBadges(r.ro)}
+                  </div>
+                  <div className="ds-hide" style={{ fontSize: 14, fontWeight: 800, color: '#67e8f9' }}>RO {r.ro}</div>
+                  <div className="ds-hide" style={{ fontSize: 12.5, color: '#cbd5e1' }}>{r.advisor}</div>
+                  <div style={{ fontSize: 12.5, color: '#cbd5e1' }}>{fmtDate(r.date)}</div>
+                  <div style={{ color: '#94a3b8' }}>▾</div>
+                </div>
+                {renderDetail(r)}
+              </div>
+            );
+          })()}
+
+          {tab === 'list' && view !== 'all' && !(openRo && rowByRo[openRo]) && (
             <div className="ds-card">
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
                 <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>{view}{view === me ? ' — my follow-ups' : "'s follow-ups"}</div>
@@ -383,8 +477,12 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <button className={`ds-chip${onlyUncontacted ? ' on' : ''}`} onClick={() => { setOnlyUncontacted(v => !v); setOpenRo(''); }} title="Only customers nobody has contacted yet">
+                  <button className={`ds-chip${onlyUncontacted ? ' on' : ''}`} onClick={() => { setOnlyUncontacted(v => !v); setShowScheduled(false); setOpenRo(''); }} title="Only customers nobody has contacted yet">
                     ☎️ Not yet contacted <span className="n">{uncontactedCount}</span>
+                  </button>
+                  <button className={`ds-chip${showScheduled ? ' on' : ''}`} onClick={() => { setShowScheduled(v => !v); setOnlyUncontacted(false); setOpenRo(''); }} title="Customers with an appointment set — they come off the home list until a manager returns them"
+                    style={showScheduled ? { background: 'rgba(250,204,21,.18)', borderColor: 'rgba(250,204,21,.65)', color: '#fde047' } : { borderColor: 'rgba(250,204,21,.4)', color: '#fde047' }}>
+                    📅 Scheduled <span className="n">{scheduledCount}</span>
                   </button>
                   {hasValvoline && (
                     <button className={`ds-chip${onlyValvoline ? ' on' : ''}`} onClick={() => { setOnlyValvoline(v => !v); setOpenRo(''); }}
@@ -431,8 +529,8 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
               {/* Preview list */}
               <div className="ds-card" style={{ padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
-                  <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>{anyFilter ? 'Matches' : 'All deferred work'}</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : `${filtered.length} of ${rows.length} repair orders`}{selCodes.size ? ` · ${services.filter(g => selCodes.has(g.key)).map(g => g.label).join(', ')}` : ''}</div>
+                  <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff' }}>{showScheduled ? 'Scheduled' : anyFilter ? 'Matches' : 'All deferred work'}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : showScheduled ? `${filtered.length} of ${scheduledCount} with an appointment set` : `${filtered.length} of ${rows.length - scheduledCount} repair orders${scheduledCount ? ` · ${scheduledCount} scheduled` : ''}`}{selCodes.size ? ` · ${services.filter(g => selCodes.has(g.key)).map(g => g.label).join(', ')}` : ''}</div>
                   <div style={{ flex: 1 }} />
                   <div style={{ fontSize: 11.5, color: '#64748b' }}>Click a customer for the full line from the report</div>
                 </div>
@@ -455,45 +553,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                           <div style={{ fontSize: 12.5, color: '#cbd5e1' }}>{fmtDate(r.date)}</div>
                           <div style={{ color: '#94a3b8' }}>{open ? '▾' : '▸'}</div>
                         </div>
-                        {open && (
-                          <div className="ds-detail">
-                            <div className="ds-kv">
-                              <div><div className="k">Customer</div><div className="v">{r.customer || '—'}</div></div>
-                              <div><div className="k">Previous RO</div><div className="v">{r.ro}</div></div>
-                              <div><div className="k">RO date</div><div className="v">{fmtDate(r.date)}</div></div>
-                              <div><div className="k">Advisor</div><div className="v">{r.advisor || '—'}</div></div>
-                              <div><div className="k">Phone</div><div className="v"><a href={`tel:${r.phone}`} style={{ color: '#67e8f9', textDecoration: 'none' }}>{fmtPhone(r.phone)}</a></div></div>
-                              <div><div className="k">Email</div><div className="v">{r.email || '—'}</div></div>
-                              <div><div className="k">Vehicle</div><div className="v">{r.vehicle || '—'}</div></div>
-                              <div><div className="k">VIN</div><div className="v" style={{ fontFamily: 'ui-monospace, Menlo, monospace' }}>{r.vin || '—'}</div></div>
-                              <div><div className="k">Hours</div><div className="v">{r.hours == null ? '—' : r.hours.toFixed(1)}</div></div>
-                              <div><div className="k">Labor & parts</div><div className="v" style={{ color: '#6ee7b7' }}>{money(r.amount)}</div></div>
-                              {r.uploadedAt && <div><div className="k">From upload</div><div className="v" style={{ color: '#94a3b8', fontWeight: 500 }}>{new Date(r.uploadedAt).toLocaleDateString()}</div></div>}
-                            </div>
-                            <div className="k ds-label" style={{ marginTop: 12 }}>Deferred op codes</div>
-                            <div>
-                              {(r.codes || []).map((c, i) => (
-                                <span key={i} className="ds-code" style={serviceOfCode[c] && selCodes.has(serviceOfCode[c].key) ? { background: 'rgba(110,231,249,.18)', borderColor: 'rgba(110,231,249,.6)', color: '#a5f3fc' } : {}}>
-                                  {c}{codes[c] && codes[c].description ? <small>{codes[c].description}</small> : null}
-                                </span>
-                              ))}
-                            </div>
-
-                            {/* Follow-up: log a call or an appointment against this RO */}
-                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 14 }}>
-                              <button onClick={() => openAction(r.ro, 'contacted')} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.28),rgba(22,163,74,.2))', borderColor: 'rgba(74,222,128,.5)', color: '#bbf7d0', fontSize: 13 }}>📞 Contacted customer</button>
-                              <button onClick={() => openAction(r.ro, 'appointment')} style={{ background: 'linear-gradient(180deg,rgba(250,204,21,.28),rgba(245,158,11,.2))', borderColor: 'rgba(250,204,21,.5)', color: '#fef3c7', fontSize: 13 }}>📅 Appointment set</button>
-                              {status && status.startsWith('❌') && <span style={{ fontSize: 12.5, color: '#f87171', fontWeight: 700, alignSelf: 'center' }}>{status}</span>}
-                            </div>
-                            {renderActionForm(r.ro)}
-                            {(byRoActivity[r.ro] || []).length > 0 && (
-                              <div style={{ marginTop: 12 }}>
-                                <div className="ds-label" style={{ marginBottom: 6 }}>Follow-up history</div>
-                                <div style={{ display: 'grid', gap: 6 }}>{(byRoActivity[r.ro] || []).map(e => <React.Fragment key={e.id}>{renderEntry(e, false)}</React.Fragment>)}</div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                        {open && renderDetail(r)}
                       </div>
                     );
                   })}
