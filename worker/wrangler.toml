@@ -1,0 +1,29 @@
+# Rohrman dashboard API — Cloudflare Worker.
+# Holds the GitHub token and AWS keys as Worker secrets so they never reach the
+# browser, verifies logins against credentials kept in KV (not in the public
+# repo), and proxies the app's GitHub-contents writes and S3 uploads.
+#
+# Secrets (set once with `npx wrangler secret put NAME`):
+#   GITHUB_TOKEN           fine-grained PAT: this repo only, Contents read/write
+#   AWS_ACCESS_KEY_ID      IAM user scoped to the one S3 bucket
+#   AWS_SECRET_ACCESS_KEY
+#   PUSHER_SECRET          the Pusher app's secret (Channels → App Keys)
+#   SESSION_SECRET         random 32+ bytes — signs login sessions
+name = "rohrman-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[[kv_namespaces]]
+binding = "CREDS"
+id = "local-placeholder-0000000000000000"
+
+[vars]
+GITHUB_OWNER = "rohrmanhyundai"
+GITHUB_REPO = "Rohrmanhyundai"
+GITHUB_BRANCH = "main"
+S3_BUCKET = "rohrman-hyundai-files"
+S3_REGION = "us-east-2"
+PUSHER_APP_ID = "2148174"
+PUSHER_KEY = "459d9c0d3793fadfd5c0"
+PUSHER_CLUSTER = "us2"
+ALLOWED_ORIGINS = "https://rohrmanhyundai.github.io,http://localhost:5175,http://localhost:4173"

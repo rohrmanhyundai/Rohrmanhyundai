@@ -232,7 +232,7 @@ function AdvisorReport({ entries, username, canDelete = false, canUpload = false
       // Only people on the roster as advisors get written — the report can list
       // names that aren't ours, and a first name can collide with a technician.
       setUploadMsg('⏳ Matching advisors…');
-      // loadUsers() hands back { users, sharedSaveCode, ... }, not a bare array.
+      // loadUsers() hands back { users, passwordVault }, not a bare array.
       const loaded = await loadUsers().catch(() => null);
       const roster = (loaded?.users || [])
         .filter(u => u.role === 'advisor' || u.role === 'lead advisor')

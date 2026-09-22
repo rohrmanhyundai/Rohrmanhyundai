@@ -2,56 +2,36 @@ const GITHUB_OWNER = 'rohrmanhyundai';
 const GITHUB_REPO = 'Rohrmanhyundai';
 const GITHUB_BRANCH = 'main';
 const GITHUB_PATH = 'public/data/data.json';
-const TOKEN_KEY = 'rohrmanGithubToken';
 const BASE = import.meta.env.BASE_URL;
 
 import { uploadFileToS3, deleteFileFromS3, deleteS3ObjectByUrl, ensureAwsCreds } from './s3.js';
+import { API_URL, getSession, setSession } from './api.js';
 
+// ── Where requests go ─────────────────────────────────────────────────────────
+// Nothing in the browser holds a GitHub token any more. Signed-in requests go
+// to the worker (see worker/), which adds the token and forwards to GitHub;
+// anonymous reads (the login screen loading the user list) go straight to
+// GitHub's API, which serves a public repo without a token.
+const GH_DIRECT = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
+const ghBase = (headers) => (headers && headers.Authorization ? `${API_URL}/gh` : GH_DIRECT);
+
+// The "token" the rest of the app asks about is now the login session. The
+// names stayed so the many `if (!getGithubToken())` guards keep meaning "can
+// this device save?".
 export function getGithubToken() {
-  return localStorage.getItem(TOKEN_KEY) || '';
+  return getSession();
 }
-
+// Only '' (sign out / expired) or a real session is accepted — a save code
+// typed into an old prompt must not overwrite the session.
 export function setGithubToken(token) {
-  localStorage.setItem(TOKEN_KEY, token);
+  if (!token || /^v1\./.test(String(token))) setSession(token || '');
 }
-
-// Resolve a usable token. If localStorage is empty (fresh device / cleared
-// storage / race with App-level boot fetch), pull the shared save code from
-// users.json on demand and store it so the rest of the session works.
 export async function ensureGithubToken() {
-  let token = getGithubToken();
-  if (token) return token;
-  // Try GitHub API first
-  try {
-    const raw = await readGitHubFile(publicHeaders(), 'public/data/users.json');
-    const parsed = parseUsersPayload(raw);
-    if (parsed?.sharedSaveCode) {
-      setGithubToken(parsed.sharedSaveCode);
-      return parsed.sharedSaveCode;
-    }
-  } catch {}
-  // Fallback: GitHub Pages CDN copy
-  try {
-    const res = await fetch(`${BASE}data/users.json?v=${Date.now()}`, { cache: 'no-store' });
-    if (res.ok) {
-      const parsed = parseUsersPayload(await res.json());
-      if (parsed?.sharedSaveCode) {
-        setGithubToken(parsed.sharedSaveCode);
-        return parsed.sharedSaveCode;
-      }
-    }
-  } catch {}
-  return '';
+  return getSession();
 }
-
-// A device can be holding a save code that has since been rotated or revoked
-// (GitHub answers 401 "Bad credentials"). Drop it and re-pull the current one
-// from users.json; returns the fresh token only if it actually differs.
-async function recoverToken(oldToken) {
-  setGithubToken('');
-  const fresh = await ensureGithubToken();
-  if (fresh && fresh !== oldToken) return fresh;
-  if (oldToken) setGithubToken(oldToken);
+// A 401 now means the session is over; the worker path already told App to
+// sign the user out, so there is nothing to recover here.
+async function recoverToken() {
   return '';
 }
 
@@ -88,27 +68,21 @@ export async function loadForceRefresh() {
 
 export async function saveForceRefresh(ts, by) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token configured. Go to Admin > GitHub Settings and enter a Personal Access Token.');
+  if (!token) throw new Error('Please sign in again.');
   await saveGitHubFile(authHeaders(), FORCE_REFRESH_PATH,
     { ts, by: by || 'admin' }, `Force refresh signal ${new Date(ts).toISOString()}`);
 }
 
 export async function saveDashboardToGitHub(payload) {
   const token = await ensureGithubToken();
-  if (!token) {
-    throw new Error('No GitHub token configured. Go to Admin > GitHub Settings and enter a Personal Access Token.');
-  }
+  if (!token) throw new Error('Please sign in again.');
 
-  let headers = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github+json',
-    'User-Agent': 'rohrman-dashboard',
-  };
+  let headers = authHeaders();
   let recovered = false;
 
   const apiPath = GITHUB_PATH;
-  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}?ref=${GITHUB_BRANCH}`;
-  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${apiPath}`;
+  const getUrl = `${ghBase(headers)}/contents/${apiPath}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `${ghBase(headers)}/contents/${apiPath}`;
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
   // Retry on stale-sha/conflict so a concurrent save (another manager, the
@@ -156,8 +130,8 @@ export async function saveDashboardToGitHub(payload) {
 async function saveGitHubFile(headers, path, data, message) {
   let recovered = false;
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
-  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  const getUrl = `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `${ghBase(headers)}/contents/${path}`;
   // Read-sha then write-with-sha is optimistic locking: if the file changed
   // between the two (another client saving, the WIP poll on another device, or
   // GitHub replica lag) the PUT returns 409/422. Re-read the sha and retry so a
@@ -215,14 +189,14 @@ async function saveGitHubFile(headers, path, data, message) {
 // and returns the next value to write.
 async function mutateGitHubJson(path, mutate, message) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   // Don't even try (and don't retry-hammer) while the shared quota is spent —
   // that only deepens the rate limit. Fail fast with a friendly message.
   if (isRateLimited()) throw new Error(`Too many requests right now — wait ${rateLimitResetSeconds()}s and resend.`);
   let headers = authHeaders();
   let recovered = false;
-  const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
-  const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  const getUrl = `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const putUrl = `${ghBase(headers)}/contents/${path}`;
   let lastErr = null;
   for (let attempt = 0; attempt < 6; attempt++) {
     // If a prior attempt (or another caller) hit the quota, stop retrying into it.
@@ -318,7 +292,7 @@ async function mutateGitHubJson(path, mutate, message) {
 async function readGitHubFile(headers, path) {
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
       { headers: { ...headers, Accept: 'application/vnd.github.raw' }, cache: 'no-store' }
     );
     noteRateLimit(res);
@@ -377,7 +351,7 @@ async function conditionalReadGitHubFile(headers, path) {
   // Back off entirely while the shared quota is exhausted — hammering a 403
   // only keeps it exhausted (and trips GitHub's secondary rate limit harder).
   if (isRateLimited()) return { changed: false };
-  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`;
+  const url = `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}`;
   const etag = _etagCache[path];
   const reqHeaders = { ...headers };
   if (etag) reqHeaders['If-None-Match'] = etag;
@@ -401,19 +375,19 @@ async function conditionalReadGitHubFile(headers, path) {
 
 // Minimal headers for unauthenticated reads on a public repo
 function publicHeaders() {
-  return { Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  return { Accept: 'application/vnd.github+json' };
 }
 
 // Auth headers when we have a token, otherwise fall back to public read headers
 function authHeaders() {
   const token = getGithubToken();
-  if (token) return { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  if (token) return { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
   return publicHeaders();
 }
 
 export async function saveAdvisorNotes(advisorName, date, rows, afterCallRows) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
 
   await saveGitHubFile(headers, `public/data/advisor-notes/${advisorName}/${date}.json`,
@@ -449,59 +423,27 @@ export async function loadAdvisorNotes(advisorName, date) {
   } catch { return null; }
 }
 
-// XOR-scramble the token before base64 so the scanner can't recognize it even after decoding.
-const _XK = [0x4b, 0x72, 0x38, 0x51, 0x6d, 0x29, 0x5c, 0x13, 0x7a, 0x44, 0x61, 0x2f, 0x55, 0x19, 0x3e, 0x7d];
-function encodeSharedToken(token) {
-  if (!token) return '';
-  try {
-    const scrambled = Array.from(token).map((c, i) =>
-      String.fromCharCode(c.charCodeAt(0) ^ _XK[i % _XK.length])
-    ).join('');
-    return 'sc1:' + btoa(scrambled);
-  } catch { return ''; }
-}
-function decodeSharedToken(stored) {
-  if (!stored) return '';
-  if (stored.startsWith('sc1:')) {
-    try {
-      const scrambled = atob(stored.slice(4));
-      return Array.from(scrambled).map((c, i) =>
-        String.fromCharCode(c.charCodeAt(0) ^ _XK[i % _XK.length])
-      ).join('');
-    } catch {}
-  }
-  if (stored.startsWith('enc:')) { try { return atob(stored.slice(4)); } catch {} }
-  return stored; // backward-compat: plain token stored before encoding was added
-}
-
-// Parse users.json — handles both old array format and new {users, sharedSaveCode} format
+// Parse users.json — handles both the old bare-array format and {users, passwordVault}.
+// The shared GitHub token and AWS keys that used to ride along here now live
+// only on the worker; any leftover fields are ignored and dropped on save.
 function parseUsersPayload(raw) {
   if (!raw) return null;
-  if (Array.isArray(raw)) return { users: raw, sharedSaveCode: '', awsAccessKeyId: '', awsSecretAccessKey: '', passwordVault: null };
+  if (Array.isArray(raw)) return { users: raw, passwordVault: null };
   return {
     users: Array.isArray(raw.users) ? raw.users : [],
-    sharedSaveCode: decodeSharedToken(raw.sharedSaveCode || ''),
-    awsAccessKeyId: decodeSharedToken(raw.awsAccessKeyId || ''),
-    awsSecretAccessKey: decodeSharedToken(raw.awsSecretAccessKey || ''),
     // Admin password vault (utils/passwordVault.js) — public key + wrapped private key.
     passwordVault: raw.passwordVault && typeof raw.passwordVault === 'object' ? raw.passwordVault : null,
   };
 }
 
-// The users.json extras every writer below must carry forward, so a save from
-// one screen never drops what another screen stored.
-function usersFileExtras(parsed) {
-  return {
-    awsAccessKeyId: encodeSharedToken((parsed && parsed.awsAccessKeyId) || ''),
-    awsSecretAccessKey: encodeSharedToken((parsed && parsed.awsSecretAccessKey) || ''),
-    ...(parsed && parsed.passwordVault ? { passwordVault: parsed.passwordVault } : {}),
-  };
-}
+// Password material never belongs in the public file: the worker keeps the
+// real credential, the record only carries the vault copy + pwSalt marker.
+const scrubUser = (u) => { const o = { ...u }; delete o.password; delete o.passwordHash; return o; };
 
 export async function loadUsers() {
   // Try GitHub API first — returns the absolute freshest version
   try {
-    const raw = await readGitHubFile(publicHeaders(), 'public/data/users.json');
+    const raw = await readGitHubFile(authHeaders(), 'public/data/users.json');
     const parsed = parseUsersPayload(raw);
     if (parsed) return parsed;
   } catch {}
@@ -513,18 +455,18 @@ export async function loadUsers() {
   } catch { return null; }
 }
 
-// Save users list, always preserving the sharedSaveCode field (and any AWS creds previously stored)
-export async function saveUsers(users, sharedSaveCode) {
+// Save the user list, carrying the password vault forward so a save from one
+// screen never drops what another stored. (The second argument used to be the
+// shared save code; it is ignored now.)
+export async function saveUsers(users) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  // Preserve the AWS creds and the password vault so this save doesn't wipe them.
+  if (!token) throw new Error('Please sign in again.');
+  const headers = authHeaders();
   let existing = null;
   try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
   await saveGitHubFile(headers, 'public/data/users.json', {
-    users,
-    sharedSaveCode: encodeSharedToken(sharedSaveCode ?? ''),
-    ...usersFileExtras(existing),
+    users: (users || []).map(scrubUser),
+    ...(existing && existing.passwordVault ? { passwordVault: existing.passwordVault } : {}),
   }, 'Update users');
 }
 
@@ -532,44 +474,14 @@ export async function saveUsers(users, sharedSaveCode) {
 // user list in the same save, e.g. right after encrypting everyone).
 export async function savePasswordVault(vault, usersOverride) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  if (!token) throw new Error('Please sign in again.');
+  const headers = authHeaders();
   let existing = null;
   try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
   await saveGitHubFile(headers, 'public/data/users.json', {
-    users: usersOverride || (existing ? existing.users : []),
-    sharedSaveCode: encodeSharedToken((existing && existing.sharedSaveCode) || ''),
-    ...usersFileExtras(existing),
+    users: (usersOverride || (existing ? existing.users : [])).map(scrubUser),
     passwordVault: vault,
   }, 'Update password vault');
-}
-
-// Sync AWS credentials into users.json so ALL devices get them on next load
-export async function saveSharedAwsCreds(accessKeyId, secretAccessKey) {
-  const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  let existing = null;
-  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
-  await saveGitHubFile(headers, 'public/data/users.json', {
-    users: existing ? existing.users : [],
-    sharedSaveCode: encodeSharedToken((existing && existing.sharedSaveCode) || ''),
-    ...usersFileExtras(existing),
-    awsAccessKeyId: encodeSharedToken(accessKeyId || ''),
-    awsSecretAccessKey: encodeSharedToken(secretAccessKey || ''),
-  }, 'Sync AWS credentials');
-}
-
-// Sync a new GitHub token into users.json so ALL devices get it automatically on next load
-export async function saveSharedToken(newToken) {
-  const headers = { Authorization: `Bearer ${newToken}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
-  let existing = null;
-  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
-  await saveGitHubFile(headers, 'public/data/users.json', {
-    users: existing ? existing.users : [],
-    sharedSaveCode: encodeSharedToken(newToken),
-    ...usersFileExtras(existing),
-  }, 'Sync shared save code');
 }
 
 // ── Document Library ──────────────────────────────────────────────────────────
@@ -594,13 +506,13 @@ async function fileToBase64(file) {
 
 async function deleteGitHubFile(headers, path, message) {
   const getRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+    `${ghBase(headers)}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
     { headers, cache: 'no-store' }
   );
   if (!getRes.ok) return; // file already gone
   const { sha } = await getRes.json();
   await fetch(
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+    `${ghBase(headers)}/contents/${path}`,
     {
       method: 'DELETE',
       headers: { ...headers, 'Content-Type': 'application/json' },
@@ -627,7 +539,7 @@ export async function loadDocumentIndex() {
 
 export async function uploadDocument(file, label, uploaderName, allowedRoles) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -636,7 +548,7 @@ export async function uploadDocument(file, label, uploaderName, allowedRoles) {
 
   // Upload the file to S3 (bucket=rohrman-hyundai-files, prefix=pdf-reports/)
   if (!(await ensureAwsCreds())) {
-    throw new Error('AWS credentials are required to upload documents.');
+    throw new Error('Please sign in again.');
   }
   try {
     await uploadFileToS3(safeFilename, file);
@@ -663,7 +575,7 @@ export async function uploadDocument(file, label, uploaderName, allowedRoles) {
 
 export async function updateDocumentPermissions(docId, allowedRoles) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   const currentIndex = await loadDocumentIndex();
   const newIndex = currentIndex.map(d =>
@@ -675,12 +587,12 @@ export async function updateDocumentPermissions(docId, allowedRoles) {
 
 export async function deleteDocument(doc) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
 
   // Delete the actual file from S3
   if (!(await ensureAwsCreds())) {
-    throw new Error('AWS credentials are required to delete documents.');
+    throw new Error('Please sign in again.');
   }
   try {
     await deleteFileFromS3(doc.filename);
@@ -727,14 +639,14 @@ const MAX_SEARCH_TEXT = 200000;
 
 export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-repairs', searchText = '') {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const indexPath = bulletinIndexPath(kind);
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const safeFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
   if (!(await ensureAwsCreds())) {
-    throw new Error('AWS credentials are required to upload.');
+    throw new Error('Please sign in again.');
   }
   try {
     await uploadFileToS3(safeFilename, file);
@@ -765,7 +677,7 @@ export async function uploadHotRepair(file, label, uploaderName, kind = 'hot-rep
 // are updated; everything else is left untouched.
 export async function backfillHotRepairSearchText(textById, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   // Nothing to do → no write (avoids an empty commit and an extra API round-trip).
   const currentIndex = await loadHotRepairs(kind);
   if (!currentIndex.some(d => textById[d.id] != null)) return currentIndex;
@@ -782,8 +694,8 @@ export async function backfillHotRepairSearchText(textById, kind = 'hot-repairs'
 // S3 file. Only the PDF, its size, search text, and updated timestamp change.
 export async function updateHotRepairPdf(item, file, uploaderName, kind = 'hot-repairs', searchText = '') {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  if (!(await ensureAwsCreds())) throw new Error('AWS credentials are required to upload.');
+  if (!token) throw new Error('Please sign in again.');
+  if (!(await ensureAwsCreds())) throw new Error('Please sign in again.');
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const newFilename = `${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
@@ -862,7 +774,7 @@ export async function setHotRepairOpData(id, { opData, opExcluded } = {}, kind =
 // SOURCE index (what the current tab should now show).
 export async function moveHotRepair(item, fromKind, toKind) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const fromIndex = await loadHotRepairs(fromKind);
   const victim = fromIndex.find(d => d.id === item.id) || item;
   // Save the destination FIRST so a partial failure leaves a recoverable
@@ -891,7 +803,7 @@ export async function reorderHotRepairs(orderedIds, kind = 'hot-repairs') {
 
 export async function deleteHotRepair(item, kind = 'hot-repairs') {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
 
   if (await ensureAwsCreds()) {
     try {
@@ -925,7 +837,7 @@ export async function loadCompletedReviews(advisorName) {
 
 export async function saveCompletedReviews(advisorName, reviews) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   const path = `${COMPLETED_BASE}/${advisorName.toUpperCase()}.json`;
   await saveGitHubFile(headers, path, reviews, `Survey reviews updated: ${advisorName}`);
@@ -949,7 +861,7 @@ export async function loadServiceInvitations() {
 
 export async function saveServiceInvitations(rows) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   await saveGitHubFile(headers, SI_PATH, rows, 'Update service invitation data');
   return rows;
@@ -991,8 +903,8 @@ export async function loadSchedules() {
 
 export async function saveSchedules(schedules) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'rohrman-dashboard' };
+  if (!token) throw new Error('Please sign in again.');
+  const headers = authHeaders();
   await saveGitHubFile(headers, SCHEDULE_PATH, schedules, `Update work schedules ${new Date().toISOString()}`);
 }
 
@@ -1115,7 +1027,7 @@ export async function loadWarrantyContract(id) {
 
 export async function saveWarrantyContract(contract) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   // The per-contract file is keyed by a unique id, so a plain save is safe.
   await saveGitHubFile(authHeaders(), warrantyContractPath(contract.id), contract,
     `Warranty contract ${contract.id} - ${contract.customerName || 'unknown'}`);
@@ -1134,7 +1046,7 @@ export async function saveWarrantyContract(contract) {
 // is left in place — harmless, and it means a mis-click is recoverable.
 export async function removeWarrantyContract(contract) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const id = typeof contract === 'string' ? contract : contract.id;
   return mutateGitHubJson(WARRANTY_INDEX_PATH,
     (cur) => (Array.isArray(cur) ? cur : []).filter(c => c.id !== id),
@@ -1160,7 +1072,7 @@ export async function loadWarrantyCompanies() {
 
 export async function saveWarrantyCompanies(companies) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   await saveGitHubFile(authHeaders(), WARRANTY_COMPANIES_PATH, companies,
     `Update warranty company directory ${new Date().toISOString()}`);
   return companies;
@@ -1179,7 +1091,7 @@ export async function saveWarrantyCompanies(companies) {
  */
 export async function backfillWarrantyCompanyDetails(directory) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const dir = directory || {};
   let filled = 0;
   const updated = await mutateGitHubJson(WARRANTY_INDEX_PATH, (cur) => {
@@ -1227,7 +1139,7 @@ export async function loadTireWarrantyIndex() {
 // index instead, exactly like saveWarrantyContract.
 export async function saveTireWarrantyClaim(claim, index) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   // The per-claim file is keyed by a unique id, so a plain save is safe.
   await saveGitHubFile(headers, tireClaimPath(claim.id), claim,
@@ -1242,7 +1154,7 @@ export async function saveTireWarrantyClaim(claim, index) {
 
 export async function removeTireWarrantyClaim(claim) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const id = typeof claim === 'string' ? claim : claim.id;
   // Conflict-safe: drop this id from the freshest index rather than overwriting.
   await mutateGitHubJson(TIRE_INDEX_PATH,
@@ -1281,7 +1193,7 @@ export async function loadAdditionalTimeIndex() {
 // overwrite each other.
 export async function saveAdditionalTimeRequest(req) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     const i = arr.findIndex(r => r.id === req.id);
@@ -1296,7 +1208,7 @@ export async function saveAdditionalTimeRequest(req) {
 // still shows what was requested versus what was allowed.
 export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours, managerNote) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     return arr.map(r => (r.id === id
@@ -1317,7 +1229,7 @@ export async function approveAdditionalTimeRequest(id, approvedBy, approvedHours
 // the separate, deliberate action for a request that shouldn't exist at all.
 export async function declineAdditionalTimeRequest(id, declinedBy, managerNote) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     return arr.map(r => (r.id === id
@@ -1337,7 +1249,7 @@ export async function declineAdditionalTimeRequest(id, declinedBy, managerNote) 
 
 export async function removeAdditionalTimeRequest(id) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(ADDL_TIME_INDEX_PATH,
     (cur) => (Array.isArray(cur) ? cur : []).filter(r => r.id !== id),
     `Remove additional time request ${id}`);
@@ -1367,7 +1279,7 @@ export async function loadRegistrationIndex() {
 // would otherwise overwrite each other.
 export async function saveRegistrationUpload(rec) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(REGISTRATION_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     const i = arr.findIndex(r => r.id === rec.id);
@@ -1378,7 +1290,7 @@ export async function saveRegistrationUpload(rec) {
 
 export async function removeRegistrationUpload(id) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(REGISTRATION_INDEX_PATH,
     (cur) => (Array.isArray(cur) ? cur : []).filter(r => r.id !== id),
     `Remove registration upload ${id}`);
@@ -1410,7 +1322,7 @@ export async function loadApplicants(mgr) {
 // record either of them added.
 export async function saveApplicant(mgr, applicant) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(applicantsPath(mgr), (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     const i = arr.findIndex(a => a.id === applicant.id);
@@ -1423,7 +1335,7 @@ export async function saveApplicant(mgr, applicant) {
 // whereas a record pointing at a deleted file shows a broken link.
 export async function deleteApplicant(mgr, applicant) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const next = await mutateGitHubJson(applicantsPath(mgr),
     (cur) => (Array.isArray(cur) ? cur : []).filter(a => a.id !== applicant.id),
     `Remove applicant ${applicant.name || applicant.id}`);
@@ -1459,7 +1371,7 @@ export async function loadHubOrder(user) {
 // the Parts Hub can't wipe their Manager Hub layout.
 export async function saveHubOrder(user, hubKey, orderedIds) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(hubOrderPath(user), (cur) => ({
     ...(cur && typeof cur === 'object' && !Array.isArray(cur) ? cur : {}),
     [hubKey]: orderedIds,
@@ -1493,7 +1405,7 @@ export async function loadTirePromos() {
 // each other's promotion.
 export async function saveTirePromo(promo) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(TIRE_PROMO_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     const i = arr.findIndex(p => p.id === promo.id);
@@ -1507,7 +1419,7 @@ export async function saveTirePromo(promo) {
 // pointing at a deleted image, which is the worse of the two.
 export async function deleteTirePromo(promo) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const next = await mutateGitHubJson(TIRE_PROMO_INDEX_PATH,
     (cur) => (Array.isArray(cur) ? cur : []).filter(p => p.id !== promo.id),
     `Remove tire promo ${promo.label || promo.id}`);
@@ -1539,14 +1451,14 @@ export async function loadTirePromoNote() {
 
 export async function saveTirePromoNote(note) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(TIRE_PROMO_NOTE_PATH, () => note,
     note.text ? 'Update tire promo note' : 'Clear tire promo note');
 }
 
 export async function reorderTirePromos(orderedIds) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   return mutateGitHubJson(TIRE_PROMO_INDEX_PATH, (cur) => {
     const arr = Array.isArray(cur) ? cur : [];
     const byId = new Map(arr.map(p => [p.id, p]));
@@ -1574,7 +1486,7 @@ export async function loadWipData(techName) {
 
 export async function saveWipData(techName, rows) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   await saveGitHubFile(headers, `public/data/wip/${techName.toUpperCase()}.json`, rows, `WIP update: ${techName}`);
   return rows;
@@ -1646,7 +1558,7 @@ export async function loadCoaching(techName) {
 
 export async function saveCoaching(techName, reports) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const username = techName.toUpperCase();
   await saveGitHubFile(authHeaders(), `public/data/coaching/${username}.json`, reports, `Coaching report update: ${username}`);
   return reports;
@@ -1667,7 +1579,7 @@ export async function loadAwaitingData() {
 
 export async function saveAwaitingData(rows) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   await saveGitHubFile(authHeaders(), 'public/data/wip/AWAITING.json', rows, 'Update cars awaiting technician');
   return rows;
 }
@@ -1745,9 +1657,10 @@ export async function appendUserActivity(username, newEvents) {
 // Tracker so the sidebar covers everyone who has ever had activity recorded.
 export async function listActivityUsernames() {
   try {
+    const headers = authHeaders();
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/public/data/activity?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
-      { headers: authHeaders(), cache: 'no-store' }
+      `${ghBase(headers)}/contents/public/data/activity?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      { headers, cache: 'no-store' }
     );
     if (!res.ok) return [];
     const list = await res.json();
@@ -1848,9 +1761,10 @@ export async function markFormerEmployee(username, role) {
 // if the directory does not exist. Used to wipe the advisor-notes/{NAME}/ dir.
 async function listDirFiles(dirPath) {
   try {
+    const headers = authHeaders();
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dirPath}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
-      { headers: authHeaders(), cache: 'no-store' }
+      `${ghBase(headers)}/contents/${dirPath}?ref=${GITHUB_BRANCH}&_=${Date.now()}`,
+      { headers, cache: 'no-store' }
     );
     if (!res.ok) return [];
     const list = await res.json();
@@ -1868,7 +1782,7 @@ export async function deleteUserData(username, role) {
   const u = (username || '').toUpperCase();
   if (!u || u === 'ADMIN') return;
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
 
   // 1. Record them as a former employee (keep their performance reports alive).
   try {
@@ -1935,7 +1849,7 @@ export async function loadRoArchive() {
 
 export async function saveRoArchive(entries) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   await saveGitHubFile(authHeaders(), RO_ARCHIVE_PATH, entries, 'Update repair order archive');
   return entries;
 }
@@ -1960,8 +1874,8 @@ export async function updateCashDash(mutate) {
 // travels; whether it matched (or has an email) is never revealed here.
 async function repositoryDispatch(eventType, payload = {}) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('The site is not connected to GitHub right now — ask a manager.');
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`, {
+  if (!token) throw new Error('Please sign in again.');
+  const res = await fetch(`${API_URL}/gh/dispatches`, {
     method: 'POST',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ event_type: eventType, client_payload: payload }),
@@ -1974,8 +1888,12 @@ async function repositoryDispatch(eventType, payload = {}) {
   }
   return true;
 }
-export function requestPasswordReset(username) {
-  return repositoryDispatch('password-reset', { username: String(username || '').trim() });
+// Works signed out (the login screen's Forgot? link) — the worker fires the
+// workflow itself.
+export async function requestPasswordReset(username) {
+  const res = await fetch(`${API_URL}/auth/forgot`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: String(username || '').trim() }) });
+  if (!res.ok) { let msg = `Server replied ${res.status}`; try { const j = await res.json(); if (j && j.error) msg = j.error; } catch {} throw new Error(msg); }
+  return true;
 }
 
 // Big-Money LOF Coach's Notes are written by the big-money-coaching workflow
@@ -2086,7 +2004,7 @@ export async function loadChargeAccounts() {
 
 export async function saveChargeAccounts(accounts, uploadedAt) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const headers = authHeaders();
   await saveGitHubFile(headers, CHARGE_ACCOUNT_PATH, { accounts, uploadedAt, savedAt: new Date().toISOString() }, `Update charge account list ${new Date().toISOString()}`);
 }
@@ -2238,7 +2156,7 @@ export async function loadGithubFile(path) {
 
 export async function saveGithubFile(path, data, message) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   await saveGitHubFile(authHeaders(), `public/${path}`, data, message || `Update ${path}`);
   return data;
 }
@@ -2307,7 +2225,7 @@ export async function loadTechPay() {
 // different techs at the same time don't wipe each other out.
 export async function saveTechPayPlan(techName, plan) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const key = String(techName || '').trim().toUpperCase();
   if (!key) throw new Error('No technician selected.');
   return mutateGitHubJson(TECH_PAY_PATH, (current) => {
@@ -2343,7 +2261,7 @@ export async function loadTechPayHistory(techName) {
 // its closing figures unless this write is itself a close-out.
 export async function saveTechWeek(techName, record) {
   const token = await ensureGithubToken();
-  if (!token) throw new Error('No GitHub token. Go to Admin > GitHub Settings.');
+  if (!token) throw new Error('Please sign in again.');
   const key = String(techName || '').trim().toUpperCase();
   if (!key || !record || !record.weekStart) throw new Error('Nothing to store for this week.');
   const path = `public/data/tech-pay-history/${key}.json`;

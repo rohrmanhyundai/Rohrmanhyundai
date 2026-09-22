@@ -137,13 +137,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
     if (payload === lastSavedRef.current) return true;
     // Never prompt from an autosave: if this device has no save code yet, hold
     // the changes and let the Back button ask for it.
-    if (!getGithubToken()) {
-      try {
-        const r = await loadUsers();
-        if (r?.sharedSaveCode) setGithubToken(r.sharedSaveCode);
-      } catch {}
-      if (!getGithubToken()) { setSaveState('dirty'); return false; }
-    }
+    if (!getGithubToken()) { setSaveState('dirty'); return false; }
     setSaveState('saving');
     try {
       await saveAdvisorNotes(advisorName, date, currentRows, []);
@@ -219,17 +213,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   }
 
   // ── Ensure token ──────────────────────────────────────────────────────────
-  async function ensureToken(prompt_msg) {
-    if (!getGithubToken()) {
-      try {
-        const result = await loadUsers();
-        const shared = result?.sharedSaveCode;
-        if (shared) { setGithubToken(shared); return true; }
-      } catch {}
-      const code = prompt(prompt_msg || 'Enter save code:');
-      if (!code) return false;
-      setGithubToken(code.trim());
-    }
+  // A signed-in device can always save; a missing session means the login
+  // expired and App has already sent the user back to the login screen.
+  async function ensureToken() {
+    if (!getGithubToken()) { alert('Your sign-in has expired — please log in again.'); return false; }
     return true;
   }
 
@@ -320,19 +307,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
             try {
               await handleSave(); onBack();
             } catch (err) {
-              const isBad = /bad credentials|unauthorized|401/i.test(err.message);
-              if (isBad) {
-                setGithubToken('');
-                let ok = false;
-                try {
-                  const r = await loadUsers();
-                  if (r?.sharedSaveCode) { setGithubToken(r.sharedSaveCode); await handleSave(); onBack(); ok = true; }
-                } catch {}
-                if (!ok) {
-                  const c = prompt('Save code expired. Enter a new one:');
-                  if (c) { setGithubToken(c.trim()); try { await handleSave(); onBack(); } catch (e2) { alert('Save failed: ' + e2.message); } }
-                }
-              } else { alert('Save failed: ' + err.message); }
+              const isBad = /bad credentials|unauthorized|401|sign in again/i.test(err.message);
+              alert(isBad ? 'Your sign-in has expired — log in again and your notes will be here to save.' : 'Save failed: ' + err.message);
             }
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}

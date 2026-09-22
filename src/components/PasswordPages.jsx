@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loadUsers, saveUsers, requestPasswordReset } from '../utils/github';
-import { checkResetToken, withPassword, verifyPassword, passwordProblem, hashLegacyPasswords } from '../utils/password';
+import { checkResetToken, withPassword, passwordProblem } from '../utils/password';
+import * as api from '../utils/api';
 import { trackAction } from '../utils/activityTracker';
 
 // ── Shared bits ───────────────────────────────────────────────────────────────
@@ -28,18 +29,19 @@ function PasswordPair({ pw, setPw, pw2, setPw2, autoFocus }) {
   );
 }
 
-// Write one user's new password into users.json (fresh copy from GitHub so a
-// stale local list can't clobber someone else's changes).
-async function commitNewPassword(username, password, { extraCheck } = {}) {
-  const loaded = await loadUsers();
-  if (!loaded) throw new Error('Could not load the user list.');
-  const users = loaded.users || [];
-  const idx = users.findIndex(u => (u.username || '').toUpperCase() === String(username || '').toUpperCase());
-  if (idx < 0) throw new Error('User not found.');
-  if (extraCheck) await extraCheck(users[idx]);
-  users[idx] = await withPassword(users[idx], password, loaded.passwordVault);
-  await saveUsers(users, loaded.sharedSaveCode);
-  return users;
+// The worker has just accepted a new password (and given us pwSalt for it):
+// refresh the user's record in users.json — vault copy, pwSalt marker, any
+// pending reset cleared. Fresh copy from GitHub so a stale local list can't
+// clobber someone else's changes. Best effort: the password already works.
+async function recordNewPassword(username, password, pwSalt) {
+  try {
+    const loaded = await loadUsers();
+    const users = (loaded && loaded.users) || [];
+    const idx = users.findIndex(u => (u.username || '').toUpperCase() === String(username || '').toUpperCase());
+    if (idx < 0) return;
+    users[idx] = await withPassword(users[idx], password, loaded.passwordVault, pwSalt);
+    await saveUsers(users);
+  } catch (e) { console.warn('could not update the user record after a password change', e); }
 }
 
 // ── Reset page — opened from the emailed link (?reset=TOKEN&u=USERNAME) ───────
@@ -70,9 +72,11 @@ export function ResetPasswordPage({ token, username, onDone }) {
     if (pw !== pw2) { setErr("Passwords don't match."); return; }
     setErr(''); setState('saving');
     try {
-      // Re-check against the freshest record at save time: the link is single
-      // use, so a second visit after a successful reset must be refused.
-      await commitNewPassword(username, pw, { extraCheck: async (u) => { const r = await checkResetToken(u, token); if (!r.ok) throw new Error('This reset link is no longer valid.'); } });
+      // The worker checks the link again itself (single use) and, on success,
+      // signs this browser in so the record can be updated.
+      const r = await api.resetPassword(username, token, pw);
+      await recordNewPassword(username, pw, r.pwSalt);
+      api.logout();
       trackAction('password-reset-complete');
       setState('done');
     } catch (e) { setErr(e?.message || String(e)); setState('ready'); }
@@ -132,7 +136,8 @@ export function ChangePasswordModal({ username, onClose }) {
     if (pw !== pw2) { setErr("Passwords don't match."); return; }
     setErr(''); setBusy(true);
     try {
-      await commitNewPassword(username, pw, { extraCheck: async (u) => { if (!(await verifyPassword(u, cur))) throw new Error('Current password is wrong.'); } });
+      const r = await api.changePassword(cur, pw);
+      await recordNewPassword(username, pw, r.pwSalt);
       trackAction('password-changed');
       setDone(true);
     } catch (e) { setErr(e?.message || String(e)); }
@@ -205,13 +210,4 @@ export function ForgotPasswordModal({ initialUsername = '', onClose }) {
       )}
     </Overlay>
   );
-}
-
-// Admin helper: hash every legacy plaintext password in one save.
-export async function migrateAllPasswords() {
-  const loaded = await loadUsers();
-  if (!loaded) throw new Error('Could not load the user list.');
-  const [users, changed] = await hashLegacyPasswords(loaded.users || [], loaded.passwordVault);
-  if (changed > 0) await saveUsers(users, loaded.sharedSaveCode);
-  return { users, changed };
 }

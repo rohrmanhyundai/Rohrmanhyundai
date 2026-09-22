@@ -221,17 +221,10 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   }, [advisorName]);
 
   // ── Ensure token ──────────────────────────────────────────────────────────
-  async function ensureToken(prompt_msg) {
-    if (!getGithubToken()) {
-      try {
-        const result = await loadUsers();
-        const shared = result?.sharedSaveCode;
-        if (shared) { setGithubToken(shared); return true; }
-      } catch {}
-      const code = prompt(prompt_msg || 'Enter save code:');
-      if (!code) return false;
-      setGithubToken(code.trim());
-    }
+  // A signed-in device can always save; a missing session means the login
+  // expired and App has already sent the user back to the login screen.
+  async function ensureToken() {
+    if (!getGithubToken()) { alert('Your sign-in has expired — please log in again.'); return false; }
     return true;
   }
 

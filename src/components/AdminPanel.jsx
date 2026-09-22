@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { safe, parsePercentInput, percentEditValue, n } from '../utils/formatters';
 import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, isScheduledOff, roh50Goals } from '../utils/calculations';
-import { getGithubToken, setGithubToken, saveDashboardToGitHub, saveUsers, saveSharedToken, saveSchedules, loadGithubFile, saveGithubFile, saveSharedAwsCreds, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
+import { saveDashboardToGitHub, saveUsers, saveSchedules, loadGithubFile, saveGithubFile, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
-import { hashPassword, isHashed, passwordProblem } from '../utils/password';
-import { migrateAllPasswords } from './PasswordPages';
+import { hasCredential, passwordProblem, withPassword } from '../utils/password';
+import * as api from '../utils/api';
 import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
-import { getAwsCreds, setAwsCreds } from '../utils/s3';
 import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
 import AdditionalTimeReview from './AdditionalTimeReview';
@@ -22,7 +21,7 @@ import { hasExcelTraining } from '../utils/training';
 import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedReport';
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
-import { encryptForVault, decryptWithVault, inVault } from '../utils/passwordVault';
+import { decryptWithVault, inVault } from '../utils/passwordVault';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -174,12 +173,17 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, sharedSaveCode, vaultAccess, onSharedSaveCodeChange, onUsersChange, schedules, onSchedulesChange }) {
-  const [githubToken, setToken] = useState(getGithubToken());
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange }) {
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
-  const [awsKeyId, setAwsKeyIdState] = useState(getAwsCreds().accessKeyId);
-  const [awsSecret, setAwsSecretState] = useState(getAwsCreds().secretAccessKey);
-  const [awsSaving, setAwsSaving] = useState(false);
+  // Backend card: the worker's /health answer, and which users have a password
+  // set there (users.json no longer says).
+  const [backendHealth, setBackendHealth] = useState(undefined);
+  const [credentials, setCredentials] = useState(null);   // { USERNAME: { setAt } } | null
+  useEffect(() => {
+    if (!isOpen) return;
+    api.health().then(setBackendHealth);
+    api.listCredentials().then(setCredentials).catch(() => setCredentials(null));
+  }, [isOpen]);
   const [saving, setSaving] = useState(false);
   // "Daily Total Labor" — typed in the (service) Goal Gauges; on Save it's
   // written into today's Service Goal Forecast daily entry. Parts is entirely
@@ -1425,8 +1429,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  const [tokenSyncing, setTokenSyncing] = useState(false);
-
   // ── Send to Reports ───────────────────────────────────────────────────────
   const [sendingReports, setSendingReports] = useState(false);
   const [reportStatus,   setReportStatus]   = useState('');
@@ -1626,21 +1628,6 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
-  async function handleTokenSave() {
-    if (!githubToken) { alert('Enter a token first.'); return; }
-    setGithubToken(githubToken);
-    setTokenSyncing(true);
-    try {
-      await saveSharedToken(githubToken);
-      if (onSharedSaveCodeChange) onSharedSaveCodeChange(githubToken);
-      alert('Token saved and synced to all advisors. They will get it automatically on their next page load.');
-    } catch (err) {
-      alert('Token saved locally, but could not sync to GitHub: ' + err.message + '\n\nAdvisors may still need to enter it manually.');
-    } finally {
-      setTokenSyncing(false);
-    }
-  }
-
   function addTechnician() { setAddingTech(true); }
 
   function pickTechnician(username) {
@@ -1699,7 +1686,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
       if (account) {
         const updatedUsers = (users || []).filter(u => u.username !== account.username);
-        await saveUsers(updatedUsers, sharedSaveCode || getGithubToken());
+        await saveUsers(updatedUsers);
         onUsersChange(updatedUsers);
       }
 
@@ -1828,20 +1815,24 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!newUserName || (!existing && !newUserPass)) { alert('Enter username and password'); return; }
     if (newUserPass && passwordProblem(newUserPass)) { alert(passwordProblem(newUserPass)); return; }
     if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
-    // Passwords are stored hashed (users.json is public). A typed password
-    // replaces whatever they had; a blank box on an existing user keeps it.
-    // With the admin vault set up, the typed password is also stored encrypted
-    // so it can be revealed later.
+    // The password goes to the worker (users.json is public and never holds
+    // one). A typed password replaces whatever they had; a blank box on an
+    // existing user keeps it. The record gets the pwSalt marker back and, with
+    // the admin vault set up, an encrypted copy so it can be revealed later.
+    // A brand-new user has to exist in users.json before the worker accepts a
+    // password for them, so that save happens first.
     let pwPatch = {};
     if (newUserPass) {
-      pwPatch = { passwordHash: await hashPassword(newUserPass) };
+      setUserSaving(true);
       try {
+        if (!existing) await saveUsers([...users, { username: newUserName, role: newUserRole, email: newUserEmail.trim() }]);
+        const r = await api.setPasswordFor(newUserName, newUserPass);
         const loaded = await loadUsers();
-        const encd = await encryptForVault(loaded && loaded.passwordVault, newUserPass);
-        if (encd) pwPatch.passwordEnc = encd;
-      } catch {}
+        pwPatch = await withPassword({}, newUserPass, loaded && loaded.passwordVault, r.pwSalt);
+        setCredentials(c => ({ ...(c || {}), [newUserName.toUpperCase()]: { setAt: new Date().toISOString() } }));
+      } catch (e) { setUserSaving(false); alert('Could not set the password: ' + (e?.message || e)); return; }
     }
-    const stripPlain = (u) => { const o = { ...u }; if (newUserPass) { delete o.password; delete o.passwordReset; delete o.passwordEnc; } return o; };
+    const stripPlain = (u) => { const o = { ...u }; delete o.password; delete o.passwordHash; if (newUserPass) { delete o.passwordReset; delete o.passwordEnc; } return o; };
     // Hash a newly typed code; a blank box means "leave whatever they have".
     const codePatch = newUserCode
       ? { applicantCode: await hashAccessCode(newUserCode) }
@@ -1869,7 +1860,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const rosterChanged = addedToRoster || rosterHiddenChanged;
 
     setUserSaving(true);
-    saveUsers(updated, sharedSaveCode || getGithubToken())
+    saveUsers(updated)
       .then(() => { onUsersChange(updated); setSelectedUser(newUserName); setNewUserPass(''); setNewUserCode(''); setExistingCode(!!codePatch.applicantCode); })
       // A saved user is a current employee: take them off the former-employees
       // registry, or the dashboard's load-time scrub keeps removing them from
@@ -1916,7 +1907,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     // performance reports + chat), then drop them from the dashboard data. If a
     // later step fails the user is still removed — we surface the error but
     // don't roll back the user-list change.
-    saveUsers(updated, sharedSaveCode || getGithubToken())
+    saveUsers(updated)
       .then(() => deleteUserData(selectedUser, deletedRole).catch(err => {
         alert('User removed, but some of their data could not be cleaned up: ' + err.message);
       }))
@@ -1934,8 +1925,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Card definitions ──────────────────────────────────────────────────────────
   const ADMIN_CARDS = [
-    { id: 'github',     icon: '🔑', label: 'GitHub Settings',      desc: 'Sync your access token to all advisor devices',       color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
-    { id: 'aws',        icon: '☁️', label: 'AWS Settings',         desc: 'AWS keys for the Document Library (synced to all devices)', color: '#f59e0b', bg: 'rgba(245,158,11,.15)',  border: 'rgba(245,158,11,.35)'  },
+    { id: 'backend',    icon: '🔐', label: 'Backend',              desc: 'The worker that holds the GitHub, AWS and Pusher secrets', color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
     { id: 'gauges',     icon: '🎯', label: 'Goal Gauges',           desc: 'Set gross profit and customer pay targets',           color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  border: 'rgba(251,191,36,.35)'  },
@@ -1963,42 +1953,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Section body renderer ─────────────────────────────────────────────────────
   function renderSectionBody() {
-    if (openSection === 'github') return (
+    if (openSection === 'backend') return (
       <div className="group-body">
         <div className="form-section" style={{ marginTop: 0 }}>
-          <div className="small">Enter a GitHub Personal Access Token with repo scope. Saving here automatically syncs it to all advisor devices — they will never need to enter a save code manually.</div>
-          <div className="field" style={{ marginTop: 8 }}>
-            <label>GitHub Token</label>
-            <input type="password" value={githubToken} onChange={e => setToken(e.target.value)} />
-          </div>
-          <div className="actions"><button onClick={handleTokenSave} disabled={tokenSyncing}>{tokenSyncing ? 'Syncing to all advisors...' : 'Save Token & Sync to All Advisors'}</button></div>
-        </div>
-      </div>
-    );
-
-    if (openSection === 'aws') return (
-      <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0 }}>
-          <div className="small">Enter your AWS S3 credentials. Saving here syncs them to all devices so any user can upload/delete documents in the Document Library — they will never need to enter them manually.</div>
-          <div className="field" style={{ marginTop: 8 }}>
-            <label>AWS Access Key ID</label>
-            <input type="password" value={awsKeyId} onChange={e => setAwsKeyIdState(e.target.value)} placeholder="AKIA..." />
+          <div className="small">Saves, uploads and chat go through a small Cloudflare Worker (<code>worker/</code> in the repo) that holds the GitHub token, the AWS keys and the Pusher secret. Nothing secret is stored in the app or in users.json any more. To rotate a key, run <code>npx wrangler secret put NAME</code> in <code>worker/</code> — see <code>worker/README.md</code>.</div>
+          <div className="field" style={{ marginTop: 10 }}>
+            <label>Worker URL</label>
+            <code style={{ fontSize: 12.5 }}>{api.API_URL}</code>
           </div>
           <div className="field" style={{ marginTop: 8 }}>
-            <label>AWS Secret Access Key</label>
-            <input type="password" value={awsSecret} onChange={e => setAwsSecretState(e.target.value)} />
-          </div>
-          <div className="actions">
-            <button onClick={async () => {
-              if (!awsKeyId.trim() || !awsSecret.trim()) { alert('Both Access Key ID and Secret Access Key are required.'); return; }
-              setAwsSaving(true);
-              try {
-                setAwsCreds(awsKeyId.trim(), awsSecret.trim());
-                await saveSharedAwsCreds(awsKeyId.trim(), awsSecret.trim());
-                alert('AWS credentials saved and synced to all devices.');
-              } catch (err) { alert('Save failed: ' + err.message); }
-              finally { setAwsSaving(false); }
-            }} disabled={awsSaving}>{awsSaving ? 'Syncing to all devices...' : 'Save AWS Keys & Sync to All Devices'}</button>
+            <label>Status</label>
+            {backendHealth === undefined ? <span className="small">Checking…</span>
+              : !backendHealth ? <span style={{ color: '#f87171', fontWeight: 800 }}>❌ Not reachable</span>
+              : <span className="small">
+                  {[['github', 'GitHub token'], ['aws', 'AWS keys'], ['pusher', 'Pusher secret'], ['sessions', 'Session secret']].map(([k, label]) => (
+                    <span key={k} style={{ marginRight: 14, color: backendHealth[k] ? '#4ade80' : '#fbbf24', fontWeight: 800 }}>{backendHealth[k] ? '✅' : '⚠️'} {label}</span>
+                  ))}
+                </span>}
           </div>
         </div>
       </div>
@@ -2842,7 +2813,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               const newRole = hasAdminRole ? 'advisor' : 'admin';
               const updated = users.map(x => x.username === u.username ? { ...x, role: newRole, canEditDashboard: newRole === 'admin' ? true : x.canEditDashboard } : x);
               setUserSaving(true);
-              try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+              try { await saveUsers(updated); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
             }
 
             async function quickToggleEdit(e) {
@@ -2850,7 +2821,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               if (isAdminOrManager(u.role)) return;
               const updated = users.map(x => x.username === u.username ? { ...x, canEditDashboard: !x.canEditDashboard } : x);
               setUserSaving(true);
-              try { await saveUsers(updated, sharedSaveCode); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
+              try { await saveUsers(updated); onUsersChange(updated); } catch (err) { alert('Save failed: ' + err.message); } finally { setUserSaving(false); }
             }
 
             return (
@@ -2889,13 +2860,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="title" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <span>Add / Edit User</span>
             <div style={{ flex: 1 }} />
-            {(() => { const plain = users.filter(u => !isHashed(u) && u.password != null && u.password !== '').length; return plain > 0 ? (
-              <button className="secondary" disabled={!!pwToolBusy} title="users.json is public — this replaces every readable password with a hash. Logins keep working."
-                onClick={async () => { setPwToolBusy('hash'); try { const r = await migrateAllPasswords(); onUsersChange(r.users); setPwToolMsg(`🔒 Hashed ${r.changed} password${r.changed === 1 ? '' : 's'}.`); } catch (e) { setPwToolMsg('❌ ' + (e?.message || e)); } finally { setPwToolBusy(''); } }}
-                style={{ fontSize: 12, color: '#fbbf24', borderColor: 'rgba(251,191,36,.45)' }}>
-                {pwToolBusy === 'hash' ? '⏳ Hashing…' : `⚠️ Hash all passwords (${plain} plain text)`}
-              </button>
-            ) : <span style={{ fontSize: 11, color: '#4ade80', fontWeight: 800 }}>🔒 All passwords hashed</span>; })()}
+            {(() => {
+              if (!credentials) return null;
+              const missing = users.filter(u => !u.hidden && !credentials[String(u.username || '').toUpperCase()]);
+              return missing.length
+                ? <span style={{ fontSize: 11, color: '#fbbf24', fontWeight: 800 }} title={missing.map(u => u.username).join(', ')}>⚠️ {missing.length} user{missing.length === 1 ? ' has' : 's have'} no password yet — set one below or send a reset email</span>
+                : <span style={{ fontSize: 11, color: '#4ade80', fontWeight: 800 }}>🔒 Everyone has a password set</span>;
+            })()}
             {selectedUser && (
               <button className="secondary" disabled={!!pwToolBusy || !(users.find(u => u.username === selectedUser) || {}).email}
                 title={(users.find(u => u.username === selectedUser) || {}).email ? 'Email this user a link to choose a new password' : 'Add an email to this user first'}
@@ -2910,21 +2881,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <div className="field"><label>Username</label><input value={newUserName} onChange={e => setNewUserName(e.target.value)} /></div>
             <div className="field"><label title="Used only for display — login is by username only.">Last Name <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(optional, only the first letter is shown)</span></label><input value={newUserLast} onChange={e => setNewUserLast(e.target.value)} placeholder="e.g. Laughner" /></div>
             <div className="field">
-              <label title="Stored hashed — it can't be read back, only replaced.">
+              <label title="Kept on the backend — it can't be read back here, only replaced.">
                 {selectedUser ? 'New Password' : 'Password'}
                 {selectedUser && <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}>(leave blank to keep current)</span>}
                 {(() => { const u = users.find(x => x.username === selectedUser); if (!u) return null;
-                  return isHashed(u)
-                    ? <span style={{ marginLeft: 8, fontSize: 10, color: '#4ade80', fontWeight: 800 }}>🔒 hashed</span>
-                    : <span style={{ marginLeft: 8, fontSize: 10, color: '#fbbf24', fontWeight: 800 }} title="Still stored as plain text — save a new password or use Hash all passwords">⚠️ plain text</span>; })()}
+                  const set = credentials ? !!credentials[String(u.username || '').toUpperCase()] : hasCredential(u);
+                  return set
+                    ? <span style={{ marginLeft: 8, fontSize: 10, color: '#4ade80', fontWeight: 800 }}>🔒 set</span>
+                    : <span style={{ marginLeft: 8, fontSize: 10, color: '#fbbf24', fontWeight: 800 }} title="They can't log in until a password is set — type one here or send a reset email">⚠️ no password yet</span>; })()}
               </label>
               <input type="password" autoComplete="new-password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} placeholder={selectedUser ? '••••••' : ''} />
               {/* Admin only: the user's CURRENT password, from the vault the
                   admin's own login unlocked. Hidden until clicked. */}
               {currentRole === 'admin' && selectedUser && (() => {
                 const u = users.find(x => x.username === selectedUser); if (!u) return null;
-                const plain = !isHashed(u) && u.password != null && u.password !== '';
-                const avail = plain || (vaultAccess && inVault(u, vaultInfo));
+                const plain = false;
+                const avail = vaultAccess && inVault(u, vaultInfo);
                 return (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, minHeight: 22 }}>
                     <span style={{ fontSize: 10.5, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.06em' }}>Current password</span>

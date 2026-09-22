@@ -142,7 +142,7 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge
     setError('');
     setUploading(true);
     try {
-      if (!(await ensureAwsCreds())) { setError('AWS setup required.'); return; }
+      if (!(await ensureAwsCreds())) { setError('Please sign in again.'); return; }
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const filename = `${claimId}-${slotKey}-${Date.now()}.${ext}`;
       const url = await uploadTirePhotoToS3(filename, file);

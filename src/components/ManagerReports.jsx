@@ -326,16 +326,10 @@ export default function ManagerReports({ users, onBack }) {
   const isAdvisor = advisors.includes(selected);
   const fields    = isAdvisor ? ADVISOR_FIELDS : TECH_FIELDS;
 
+  // A signed-in device can always save; a missing session means the login
+  // expired and App has already sent the user back to the login screen.
   async function ensureToken() {
-    if (!getGithubToken()) {
-      try {
-        const result = await loadUsers();
-        if (result?.sharedSaveCode) { setGithubToken(result.sharedSaveCode); return true; }
-      } catch {}
-      const code = prompt('Enter save code:');
-      if (!code) return false;
-      setGithubToken(code.trim());
-    }
+    if (!getGithubToken()) { alert('Your sign-in has expired — please log in again.'); return false; }
     return true;
   }
 

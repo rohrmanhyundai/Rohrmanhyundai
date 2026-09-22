@@ -53,7 +53,7 @@ export default function AdditionalDiagTime({ currentUser, currentUserDisplay, on
     if (!file.type.startsWith('image/')) { setError('Please choose an image.'); return; }
     setError(''); setUploading(true);
     try {
-      if (!(await ensureAwsCreds())) { setError('AWS setup required — ask a manager.'); return; }
+      if (!(await ensureAwsCreds())) { setError('Please sign in again.'); return; }
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const url = await uploadAdditionalTimePhotoToS3(`diag-${idRef.current}-${Date.now()}.${ext}`, file);
       setPhotoUrl(url);

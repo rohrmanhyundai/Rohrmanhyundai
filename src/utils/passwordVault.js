@@ -17,7 +17,8 @@
 // The first admin to log in creates the vault; an admin holding the key
 // wraps it for the other admins automatically (their passwords are in the
 // vault too), and re-wraps whenever an admin's password changes (pwSalt is
-// the salt of the passwordHash the wrapper was made against).
+// the user's pwSalt marker — the salt of the credential the worker holds —
+// that the wrapper was made against).
 // users.json is public: without an admin's login password the vault is just
 // ciphertext.
 
@@ -85,7 +86,7 @@ export async function unlockVaultAs(vault, username, password) {
 }
 
 // With the key in hand, make sure every admin has a current wrapper: one made
-// against the passwordHash they log in with now. Their password comes out of
+// against the password they log in with now. Their password comes out of
 // the vault itself. Returns the updated vault, or null if nothing changed.
 export async function repairWrappers(vault, access, users) {
   if (!vaultReady(vault) || !access || !access.pkcs8) return null;
@@ -94,7 +95,8 @@ export async function repairWrappers(vault, access, users) {
   for (const u of users || []) {
     if (String(u.role || '').toLowerCase() !== 'admin') continue;
     const name = up(u.username);
-    const salt = u.passwordHash && u.passwordHash.salt;
+    const salt = u.pwSalt || '';
+    if (!salt) continue;                                    // no password set on the worker yet
     const cur = wrappers[name];
     if (cur && cur.pwSalt === salt) continue;              // already current
     if (!inVault(u, vault)) continue;                      // don't know their password yet

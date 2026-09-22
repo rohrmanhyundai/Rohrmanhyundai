@@ -1,60 +1,19 @@
-// Browser-side S3 helpers for the document library.
-// AWS keys are stored in localStorage (admin enters them once, per device).
-// IAM policy is scoped to a single bucket so blast radius is small.
+// S3 uploads for the document library, tire photos, registrations, resumes…
+// The browser never holds AWS keys: it hands the file to the worker (see
+// worker/), which signs the request with keys kept as Worker secrets and puts
+// the object in the bucket. Public URLs are unchanged.
 
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { apiFetch, hasSession } from './api.js';
 
 export const S3_BUCKET = 'rohrman-hyundai-files';
 export const S3_REGION = 'us-east-2';
 export const S3_DOCS_PREFIX = 'pdf-reports/';
 
-const KEY_ID  = 'rohrmanAwsAccessKeyId';
-const KEY_SEC = 'rohrmanAwsSecretAccessKey';
+const publicUrl = (key) => `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
 
-export function getAwsCreds() {
-  const accessKeyId     = localStorage.getItem(KEY_ID)  || '';
-  const secretAccessKey = localStorage.getItem(KEY_SEC) || '';
-  return { accessKeyId, secretAccessKey };
-}
-
-export function setAwsCreds(accessKeyId, secretAccessKey) {
-  localStorage.setItem(KEY_ID,  accessKeyId.trim());
-  localStorage.setItem(KEY_SEC, secretAccessKey.trim());
-}
-
-export function clearAwsCreds() {
-  localStorage.removeItem(KEY_ID);
-  localStorage.removeItem(KEY_SEC);
-}
-
+// "Can this device upload?" — it can whenever it is signed in.
 export async function ensureAwsCreds() {
-  let { accessKeyId, secretAccessKey } = getAwsCreds();
-  if (accessKeyId && secretAccessKey) return true;
-  // Try to fetch shared creds from users.json (set by admin in AdminPanel > AWS Settings)
-  try {
-    const { loadUsers } = await import('./github.js');
-    const result = await loadUsers();
-    if (result?.awsAccessKeyId && result?.awsSecretAccessKey) {
-      setAwsCreds(result.awsAccessKeyId, result.awsSecretAccessKey);
-      return true;
-    }
-  } catch {}
-  // Last resort: prompt this device
-  const id  = prompt('AWS upload setup (one-time).\n\nEnter the AWS Access Key ID:');
-  if (!id) return false;
-  const sec = prompt('Enter the AWS Secret Access Key:');
-  if (!sec) return false;
-  setAwsCreds(id, sec);
-  return true;
-}
-
-function s3Client() {
-  const { accessKeyId, secretAccessKey } = getAwsCreds();
-  if (!accessKeyId || !secretAccessKey) throw new Error('Missing AWS credentials');
-  return new S3Client({
-    region: S3_REGION,
-    credentials: { accessKeyId, secretAccessKey },
-  });
+  return hasSession();
 }
 
 function contentTypeFor(filename) {
@@ -65,111 +24,71 @@ function contentTypeFor(filename) {
   return 'application/octet-stream';
 }
 
+async function putObject(key, file, contentType) {
+  const res = await apiFetch(`/s3/object?key=${encodeURIComponent(key)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': contentType || 'application/octet-stream', 'X-Content-Disposition': 'inline' },
+    body: file,
+  });
+  if (!res.ok) {
+    let msg = `Upload failed (${res.status})`;
+    try { const j = await res.json(); if (j && j.error) msg = j.error; } catch {}
+    throw new Error(msg);
+  }
+  return publicUrl(key);
+}
+
+async function deleteObject(key) {
+  const res = await apiFetch(`/s3/object?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
+  if (!res.ok) {
+    let msg = `Delete failed (${res.status})`;
+    try { const j = await res.json(); if (j && j.error) msg = j.error; } catch {}
+    throw new Error(msg);
+  }
+}
+
 export async function uploadFileToS3(filename, file) {
-  const client = s3Client();
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: S3_DOCS_PREFIX + filename,
-    Body: body,
-    ContentType: contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
+  await putObject(S3_DOCS_PREFIX + filename, file, contentTypeFor(filename));
 }
 
 // Upload a tire warranty photo. Returns the public URL of the stored object.
-export async function uploadTirePhotoToS3(filename, file) {
-  const client = s3Client();
-  const key = 'tire-photos/' + filename;
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: file.type || contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
-  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+export function uploadTirePhotoToS3(filename, file) {
+  return putObject('tire-photos/' + filename, file, file.type || contentTypeFor(filename));
 }
 
 // Upload a warranty additional-time screenshot (the tech's Techline call).
 // Returns the public URL of the stored object.
-export async function uploadAdditionalTimePhotoToS3(filename, file) {
-  const client = s3Client();
-  const key = 'additional-time/' + filename;
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: file.type || contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
-  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+export function uploadAdditionalTimePhotoToS3(filename, file) {
+  return putObject('additional-time/' + filename, file, file.type || contentTypeFor(filename));
 }
 
 // Upload a vehicle registration photo. Returns the public URL of the stored
 // object. The submitter never sees it again — only the Warranty Hub reads
 // these back — so the key is opaque rather than named after the RO.
-export async function uploadRegistrationPhotoToS3(filename, file) {
-  const client = s3Client();
-  const key = 'registrations/' + filename;
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: file.type || contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
-  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+export function uploadRegistrationPhotoToS3(filename, file) {
+  return putObject('registrations/' + filename, file, file.type || contentTypeFor(filename));
 }
 
 // Upload a tire promotion image. Returns the public URL of the stored object —
 // the promo index stores that URL and the page renders it directly.
-export async function uploadTirePromoToS3(filename, file) {
-  const client = s3Client();
-  const key = 'tire-promos/' + filename;
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: file.type || contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
-  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+export function uploadTirePromoToS3(filename, file) {
+  return putObject('tire-promos/' + filename, file, file.type || contentTypeFor(filename));
 }
 
 // Upload an applicant's resume. The key is deliberately opaque — an applicant's
 // name has no business being guessable in a URL.
-export async function uploadResumeToS3(filename, file) {
-  const client = s3Client();
-  const key = 'applicant-resumes/' + filename;
-  const body = new Uint8Array(await file.arrayBuffer());
-  await client.send(new PutObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: file.type || contentTypeFor(filename),
-    ContentDisposition: 'inline',
-  }));
-  return `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
+export function uploadResumeToS3(filename, file) {
+  return putObject('applicant-resumes/' + filename, file, file.type || contentTypeFor(filename));
 }
 
 // Delete by full public URL — the registration index stores URLs, not keys.
 export async function deleteS3ObjectByUrl(url) {
-  const prefix = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/`;
+  const prefix = publicUrl('');
   if (!url || !url.startsWith(prefix)) return false;
-  const client = s3Client();
-  await client.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: url.slice(prefix.length) }));
+  await deleteObject(url.slice(prefix.length));
   return true;
 }
 
 export async function deleteFileFromS3(filename) {
-  const client = s3Client();
-  await client.send(new DeleteObjectCommand({
-    Bucket: S3_BUCKET,
-    Key: S3_DOCS_PREFIX + filename,
-  }));
+  await deleteObject(S3_DOCS_PREFIX + filename);
 }

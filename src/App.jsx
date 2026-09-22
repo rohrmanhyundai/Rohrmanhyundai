@@ -38,7 +38,8 @@ import BigMoneyLOF from './components/BigMoneyLOF';
 import DeferredService from './components/DeferredService';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
-import { verifyPassword, isHashed, withPassword, needsVaultCopy, hashLegacyPasswords } from './utils/password';
+import { withPassword, needsVaultCopy } from './utils/password';
+import * as api from './utils/api';
 import { vaultReady, createVaultFor, unlockVaultAs, repairWrappers } from './utils/passwordVault';
 import { contestStatus as bigMoneyStatus, STATUS as BIG_MONEY, tabBadgeFor as bigMoneyBadgeFor } from './utils/bigMoney';
 import RepairOrderDatabase from './components/RepairOrderDatabase';
@@ -52,7 +53,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, setGithubToken, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -98,8 +99,6 @@ const BACK_LABELS = {
 
 const AUTH_KEY = 'serviceDashboardAuthV1';
 const USERS_KEY = 'dashboardUsersV1';
-const DEFAULT_USERNAME = 'admin';
-const DEFAULT_PASSWORD = 'Hyundai2026';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -139,14 +138,13 @@ export default function App() {
     if (cached) {
       try { return JSON.parse(cached); } catch {}
     }
-    return [{ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }];
+    return [];
   });
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem(AUTH_KEY) === 'true');
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('currentUser') || '');
   const [currentRole, setCurrentRole] = useState(localStorage.getItem('currentRole') || '');
   const [canEditDashboard, setCanEditDashboard] = useState(localStorage.getItem('canEditDashboard') === 'true');
   const [currentPages, setCurrentPages] = useState(() => { try { const p = localStorage.getItem('currentPages'); return p ? JSON.parse(p) : null; } catch { return null; } });
-  const [sharedSaveCode, setSharedSaveCode] = useState('');
   const [adminOpen, setAdminOpen] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [prevPage, setPrevPage] = useState('dashboard');
@@ -679,16 +677,8 @@ export default function App() {
   useEffect(() => {
     loadUsers().then(result => {
       if (!result) return;
-      const { users: githubUsers, sharedSaveCode: code } = result;
-      // Auto-apply the shared save code so all advisor devices stay in sync —
-      // admin updates it once in GitHub Settings and everyone gets it automatically.
-      if (code) {
-        setGithubToken(code);
-        setSharedSaveCode(code);
-      }
+      const { users: githubUsers } = result;
       if (githubUsers && githubUsers.length > 0) {
-        const hasAdmin = githubUsers.find(u => u.username === DEFAULT_USERNAME);
-        if (!hasAdmin) githubUsers.push({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD });
         setUsers(githubUsers);
         localStorage.setItem(USERS_KEY, JSON.stringify(githubUsers));
         // Re-sync the logged-in user's role from the latest users list so role
@@ -770,80 +760,75 @@ export default function App() {
   const [vaultAccess, setVaultAccess] = useState(null);
 
   async function handleLogin(username, password) {
-    const candidate = users.find(u => u.username === username);
-    const match = candidate && await verifyPassword(candidate, password) ? candidate : null;
-    if (match) {
-      // After login, in the background (login doesn't wait on it):
-      //  • a legacy plaintext record is re-saved hashed;
-      //  • the user's vault copy is topped up if missing;
-      //  • an ADMIN's password unlocks the vault for this session — creating
-      //    it on the very first admin login (which also hashes + vaults every
-      //    remaining plaintext password) and repairing the other admins'
-      //    wrappers so their next login unlocks it too.
-      (async () => {
-        try {
-          const loaded = await loadUsers();
-          let list = loaded && loaded.users ? loaded.users : null;
-          if (!list) return;
-          let vault = loaded.passwordVault || null;
-          let dirty = false, vaultDirty = false;
-          const isAdmin = effectiveRole(match) === 'admin';
-          let access = null;
+    // The worker checks the password (see worker/) and hands back a session
+    // plus the user's record from users.json.
+    let r;
+    try { r = await api.login(username, password); }
+    catch (e) { alert(e && e.message ? e.message : 'Login failed.'); return; }
+    const match = r.user;
+    // Keep the local list current with whatever the worker just read.
+    setUsers(prev => { const i = prev.findIndex(u => (u.username || '').toUpperCase() === (match.username || '').toUpperCase()); const next = i >= 0 ? prev.map((u, k) => (k === i ? { ...u, ...match } : u)) : [...prev, match]; localStorage.setItem(USERS_KEY, JSON.stringify(next)); return next; });
+    // After login, in the background (login doesn't wait on it):
+    //  • the record's pwSalt marker / vault copy are topped up if missing;
+    //  • an ADMIN's password unlocks the vault for this session — creating
+    //    it on the very first admin login and repairing the other admins'
+    //    wrappers so their next login unlocks it too.
+    (async () => {
+      try {
+        const loaded = await loadUsers();
+        let list = loaded && loaded.users ? loaded.users : null;
+        if (!list) return;
+        let vault = loaded.passwordVault || null;
+        let dirty = false, vaultDirty = false;
+        const isAdmin = effectiveRole(match) === 'admin';
+        let access = null;
 
-          if (isAdmin && !vaultReady(vault)) {
-            const i0 = list.findIndex(u => u.username === match.username);
-            // Hash this admin first so the wrapper is tied to the hash they log in with.
-            if (i0 >= 0 && !isHashed(list[i0])) { list[i0] = await withPassword(list[i0], password, null); }
-            const created = await createVaultFor(match.username, password, i0 >= 0 && list[i0].passwordHash ? list[i0].passwordHash.salt : '');
-            vault = created.vault; access = created.access; vaultDirty = true;
-            // Everyone still in plain text goes in now; hashed users fill in as they log in.
-            const [hashed] = await hashLegacyPasswords(list, vault);
-            list = hashed; dirty = true;
+        const i = list.findIndex(u => u.username === match.username);
+        if (i < 0) return;
+        if (list[i].pwSalt !== r.pwSalt || list[i].password != null || list[i].passwordHash) { list[i] = await withPassword(list[i], password, vault, r.pwSalt); dirty = true; }
+
+        if (isAdmin && !vaultReady(vault)) {
+          const created = await createVaultFor(match.username, password, r.pwSalt);
+          vault = created.vault; access = created.access; vaultDirty = true;
+          list[i] = await withPassword(list[i], password, vault, r.pwSalt); dirty = true;
+        } else if (needsVaultCopy(list[i], vault)) { list[i] = await withPassword(list[i], password, vault, r.pwSalt); dirty = true; }
+
+        if (isAdmin && vaultReady(vault)) {
+          if (!access) access = await unlockVaultAs(vault, match.username, password);
+          if (access) {
+            const repaired = await repairWrappers(vault, access, list);
+            if (repaired) { vault = repaired; vaultDirty = true; }
+            setVaultAccess(access);
           }
+        }
 
-          const i = list.findIndex(u => u.username === match.username);
-          if (i < 0) return;
-          const legacy = !isHashed(list[i]) && list[i].password != null;
-          if (legacy || needsVaultCopy(list[i], vault)) { list[i] = await withPassword(list[i], password, vault); dirty = true; }
-
-          if (isAdmin && vaultReady(vault)) {
-            if (!access) access = await unlockVaultAs(vault, match.username, password);
-            if (access) {
-              const repaired = await repairWrappers(vault, access, list);
-              if (repaired) { vault = repaired; vaultDirty = true; }
-              setVaultAccess(access);
-            }
-          }
-
-          if (vaultDirty) await savePasswordVault(vault, list);
-          else if (dirty) await saveUsersFile(list, loaded.sharedSaveCode);
-          if (dirty || vaultDirty) { setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list)); }
-        } catch (e) { console.warn('post-login vault/hash step failed', e); }
-      })();
-      const role = effectiveRole(match);
-      const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
-      const pages = match.pages || null;
-      localStorage.setItem(AUTH_KEY, 'true');
-      localStorage.setItem('currentUser', match.username);
-      localStorage.setItem('currentRole', role);
-      localStorage.setItem('canEditDashboard', String(canEdit));
-      localStorage.setItem('currentPages', JSON.stringify(pages));
-      setIsLoggedIn(true);
-      setCurrentUser(match.username);
-      setCurrentRole(role);
-      setCanEditDashboard(canEdit);
-      setCurrentPages(pages);
-      initActivityTracker(match.username, role);
-      trackAction('login');
-    } else {
-      alert('Login failed.');
-    }
+        if (vaultDirty) await savePasswordVault(vault, list);
+        else if (dirty) await saveUsersFile(list);
+        if (dirty || vaultDirty) { setUsers(list); localStorage.setItem(USERS_KEY, JSON.stringify(list)); }
+      } catch (e) { console.warn('post-login vault step failed', e); }
+    })();
+    const role = effectiveRole(match);
+    const canEdit = role === 'admin' || role.includes('manager') || !!match.canEditDashboard;
+    const pages = match.pages || null;
+    localStorage.setItem(AUTH_KEY, 'true');
+    localStorage.setItem('currentUser', match.username);
+    localStorage.setItem('currentRole', role);
+    localStorage.setItem('canEditDashboard', String(canEdit));
+    localStorage.setItem('currentPages', JSON.stringify(pages));
+    setIsLoggedIn(true);
+    setCurrentUser(match.username);
+    setCurrentRole(role);
+    setCanEditDashboard(canEdit);
+    setCurrentPages(pages);
+    initActivityTracker(match.username, role);
+    trackAction('login');
   }
 
   function handleLogout() {
     trackAction('logout');
     shutdownActivityTracker();
     setVaultAccess(null);
+    api.logout();
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
@@ -858,6 +843,19 @@ export default function App() {
     setPage('dashboard');
     setViewingAdvisor('');
   }
+
+  // The worker answered 401: the session expired or the password changed on
+  // another device. Drop to the login screen rather than let saves fail.
+  useEffect(() => {
+    const onExpired = () => { if (localStorage.getItem(AUTH_KEY) === 'true') handleLogout(); };
+    window.addEventListener(api.SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(api.SESSION_EXPIRED_EVENT, onExpired);
+  });
+  // A device that still says "logged in" from before the worker existed has
+  // no session — it has to sign in again.
+  useEffect(() => {
+    if (localStorage.getItem(AUTH_KEY) === 'true' && !api.hasSession()) handleLogout();
+  }, []);
 
   function handleDataChange(newData, newVacations) {
     recalcTech(newData, schedulesRef.current);
@@ -1873,8 +1871,7 @@ export default function App() {
           data={data} vacations={vacations} isOpen={adminOpen}
           onClose={() => setAdminOpen(false)} onDataChange={handleDataChange}
           onRefresh={loadDashboard} currentUser={currentUser} currentRole={currentRole}
-          users={users} sharedSaveCode={sharedSaveCode} vaultAccess={vaultAccess}
-          onSharedSaveCodeChange={setSharedSaveCode}
+          users={users} vaultAccess={vaultAccess}
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
         />
@@ -1928,9 +1925,7 @@ export default function App() {
         currentUser={currentUser}
         currentRole={currentRole}
         users={users}
-        sharedSaveCode={sharedSaveCode}
         vaultAccess={vaultAccess}
-        onSharedSaveCodeChange={setSharedSaveCode}
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
         schedules={schedules}
         onSchedulesChange={setSchedules}

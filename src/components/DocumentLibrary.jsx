@@ -306,19 +306,10 @@ export default function DocumentLibrary({ currentUser, currentRole, onBack, back
     if (!label) setLabel(f.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' '));
   }
 
+  // A signed-in device can always save; a missing session means the login
+  // expired and App has already sent the user back to the login screen.
   async function ensureToken() {
-    if (!getGithubToken()) {
-      try {
-        const result = await loadUsers();
-        const shared = result?.sharedSaveCode;
-        if (shared) setGithubToken(shared);
-      } catch {}
-    }
-    if (!getGithubToken()) {
-      const code = prompt('This device needs a one-time save code to upload documents.\n\nEnter the save code (ask your admin for it):');
-      if (!code) return false;
-      setGithubToken(code.trim());
-    }
+    if (!getGithubToken()) { alert('Your sign-in has expired — please log in again.'); return false; }
     return true;
   }
 

@@ -1,35 +1,20 @@
 // User passwords.
 //
-// users.json is readable without logging in (public repo), so a password kept
-// in the clear there is public. Passwords are stored as a salted PBKDF2 hash —
-// the same scheme as the Applicants Code — under `passwordHash`; the legacy
-// plaintext `password` field is honoured at login until the record has been
-// migrated (either by the admin's "Hash all passwords" button or lazily on a
-// successful login).
+// The password itself is checked by the worker (worker/src/index.js), which
+// keeps a salted PBKDF2 hash in Cloudflare KV — nothing in the public
+// users.json can be used to log in or to crack a password. What the user
+// record here carries is:
+//   pwSalt       the salt of the credential the worker holds — a marker that
+//                changes whenever the password does, which the admin vault
+//                uses to notice an admin's wrapper is out of date;
+//   passwordEnc  the password encrypted for the admin vault (passwordVault.js).
 //
 // Password-reset links carry a random token whose SHA-256 is stored on the
 // user (`passwordReset.hash`) by the GitHub Action that emails it; the token
 // itself is only ever in the email. See scripts/password-reset-request.cjs.
-
 import { encryptForVault } from './passwordVault';
 
-const ITERATIONS = 150000;
-
 const bytesToHex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
-
-function randomSalt() {
-  const a = new Uint8Array(16);
-  crypto.getRandomValues(a);
-  return bytesToHex(a.buffer);
-}
-
-async function derive(password, salt, iterations = ITERATIONS) {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', enc.encode(String(password)), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode(salt), iterations, hash: 'SHA-256' }, key, 256);
-  return bytesToHex(bits);
-}
-
 const same = (a, b) => {
   if (!a || !b || a.length !== b.length) return false;
   let diff = 0;
@@ -37,46 +22,22 @@ const same = (a, b) => {
   return diff === 0;
 };
 
-// What gets stored on the user record.
-export async function hashPassword(password) {
-  const salt = randomSalt();
-  return { salt, hash: await derive(password, salt), iterations: ITERATIONS, setAt: new Date().toISOString() };
-}
+// True once the worker holds a password for this user (set through the admin
+// panel, a reset link or a login that topped the record up).
+export const hasCredential = (user) => !!(user && user.pwSalt);
 
-export const isHashed = (user) => !!(user && user.passwordHash && user.passwordHash.hash && user.passwordHash.salt);
-
-// True when `password` matches the user — hashed record or legacy plaintext.
-export async function verifyPassword(user, password) {
-  if (!user || password == null) return false;
-  if (isHashed(user)) {
-    const got = await derive(password, user.passwordHash.salt, user.passwordHash.iterations || ITERATIONS);
-    return same(got, user.passwordHash.hash);
-  }
-  return user.password != null && String(user.password) === String(password);
-}
-
-// A copy of the user with the password replaced by its hash (and any pending
-// reset cleared, since a new password supersedes it). With a vault present the
-// password is also stored encrypted for admins (utils/passwordVault.js).
-export async function withPassword(user, password, vault = null) {
-  const out = { ...user, passwordHash: await hashPassword(password) };
+// A copy of the user record after the worker accepted a new password: the
+// pwSalt marker it returned, the vault copy (when there is a vault), and no
+// legacy password material or pending reset.
+export async function withPassword(user, password, vault = null, pwSalt = '') {
+  const out = { ...user };
+  if (pwSalt) out.pwSalt = pwSalt;
   delete out.password;
+  delete out.passwordHash;
   delete out.passwordReset;
   const encd = await encryptForVault(vault, password);
   if (encd) out.passwordEnc = encd; else delete out.passwordEnc;
   return out;
-}
-
-// Migrate every legacy plaintext record. Returns [users, changedCount].
-export async function hashLegacyPasswords(users, vault = null) {
-  let changed = 0;
-  const out = [];
-  for (const u of users || []) {
-    if (!isHashed(u) && u && u.password != null && String(u.password) !== '') {
-      out.push(await withPassword(u, u.password, vault)); changed++;
-    } else out.push(u);
-  }
-  return [out, changed];
 }
 
 // True when a login just proved the password but the vault copy is missing or
@@ -89,7 +50,8 @@ export async function sha256Hex(text) {
   return bytesToHex(buf);
 }
 
-// Check a reset token from the emailed link against the user's pending reset.
+// Check a reset token from the emailed link against the user's pending reset
+// (a first look, for the page; the worker checks again when the password is set).
 //   → { ok: true } | { ok: false, reason: 'none' | 'expired' | 'mismatch' }
 export async function checkResetToken(user, token) {
   const pr = user && user.passwordReset;
