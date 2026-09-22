@@ -353,7 +353,12 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "jerry.barkey@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "passwordReset": {
+        "hash": "02cecb89bfb09088304b3f8f4129309631f84e7f1af975d674e0928d9be0c86e",
+        "expires": "2026-09-22T15:52:39.985Z",
+        "requestedAt": "2026-09-22T14:52:39.986Z"
+      }
     },
     {
       "username": "Kai",
