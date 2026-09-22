@@ -64,24 +64,54 @@ async function putFile(file, mutate, message) {
   throw new Error(`${file} kept changing — gave up`);
 }
 
-// Ask for the words. The model is told to answer with JSON; anything that
-// isn't parseable is dropped rather than shown half-rendered.
-async function askOpenAI(prompt, maxTokens) {
-  const body = { model: MODEL, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } };
-  // The gpt-5 family takes max_completion_tokens and fixes temperature at 1.
-  if (/^gpt-5|^gpt-6/.test(MODEL)) body.max_completion_tokens = maxTokens;
-  else { body.max_tokens = maxTokens; body.temperature = 0.7; }
+// Ask for the words.
+//
+// gpt-5 and gpt-6 are reasoning models: they spend tokens thinking before they
+// write, and that thinking comes out of max_completion_tokens. Give them a
+// budget that only covers the visible answer and the whole allowance goes on
+// reasoning — the message comes back EMPTY with finish_reason "length", which
+// is exactly what happened on the first live run. So: a low reasoning effort,
+// a budget several times the size of the answer we want, and one retry with
+// double the room if it still runs out. ('none' is deliberately not used —
+// it is ignored when max_completion_tokens is set.)
+const isReasoningModel = () => /^(gpt-5|gpt-6|o[1-9])/.test(MODEL);
 
+async function callOpenAI(prompt, maxTokens) {
+  const body = { model: MODEL, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } };
+  if (isReasoningModel()) {
+    body.max_completion_tokens = maxTokens;
+    body.reasoning_effort = process.env.WRENCH_REASONING || 'low';
+  } else {
+    body.max_tokens = maxTokens;
+    body.temperature = 0.7;
+  }
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const j = await res.json();
-  const text = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content || '').trim();
-  if (!text) throw new Error('OpenAI returned an empty message');
-  try { return JSON.parse(text.replace(/^```(?:json)?|```$/g, '').trim()); }
-  catch { throw new Error(`OpenAI did not return JSON: ${text.slice(0, 200)}`); }
+  const choice = (j.choices && j.choices[0]) || {};
+  const usage = j.usage || {};
+  return {
+    text: (choice.message && choice.message.content || '').trim(),
+    finish: choice.finish_reason || '',
+    // Reported in any error so a bad run says why instead of "empty message".
+    usage: `prompt ${usage.prompt_tokens || 0}, completion ${usage.completion_tokens || 0}` +
+           (usage.completion_tokens_details && usage.completion_tokens_details.reasoning_tokens != null
+             ? ` (reasoning ${usage.completion_tokens_details.reasoning_tokens})` : ''),
+  };
+}
+
+async function askOpenAI(prompt, maxTokens) {
+  let r = await callOpenAI(prompt, maxTokens);
+  if (!r.text && r.finish === 'length') {
+    console.warn(`  ran out of room (${r.usage}) — retrying with double the budget`);
+    r = await callOpenAI(prompt, maxTokens * 2);
+  }
+  if (!r.text) throw new Error(`OpenAI returned an empty message (finish_reason ${r.finish || 'none'}; ${r.usage})`);
+  try { return JSON.parse(r.text.replace(/^```(?:json)?|```$/g, '').trim()); }
+  catch { throw new Error(`OpenAI did not return JSON: ${r.text.slice(0, 200)}`); }
 }
 
 (async () => {
@@ -138,7 +168,7 @@ async function askOpenAI(prompt, maxTokens) {
     const user = users.find(u => firstName(u.username) === name);
     const display = user ? user.username : name;
     try {
-      const report = await askOpenAI(W.advisorPrompt(pack, { advisorDisplay: display, weekday: et.weekday }), 1400);
+      const report = await askOpenAI(W.advisorPrompt(pack, { advisorDisplay: display, weekday: et.weekday }), 6000);
       out.advisors[name] = { ...report, facts: pack };
       console.log(`✓ ${name}`);
     } catch (e) {
@@ -152,7 +182,7 @@ async function askOpenAI(prompt, maxTokens) {
   // ── The manager's own, deeper report ──────────────────────────────────────
   const mPack = W.managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks: packs, today: now });
   try {
-    const report = await askOpenAI(W.managerPrompt(mPack, { weekday: et.weekday }), 2200);
+    const report = await askOpenAI(W.managerPrompt(mPack, { weekday: et.weekday }), 9000);
     out.manager = { ...report, facts: mPack };
     console.log('✓ manager report');
   } catch (e) {

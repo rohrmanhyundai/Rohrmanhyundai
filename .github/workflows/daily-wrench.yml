@@ -43,6 +43,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.DAILY_WRENCH_MODEL || 'gpt-5' }}
+          # Reasoning models bill their thinking against the token budget; low
+          # keeps the spend sane for what is a writing job, not a puzzle.
+          WRENCH_REASONING: ${{ vars.DAILY_WRENCH_REASONING || 'low' }}
           WRENCH_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
           WRENCH_BY: ${{ github.event.client_payload.by }}
           WRENCH_REASON: ${{ github.event.client_payload.reason }}
