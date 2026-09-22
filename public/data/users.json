@@ -354,12 +354,12 @@
       "lastName": "",
       "email": "jerry.berkey@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "1c6fbaefc9e2311f86c3b55958dca649fd20a920ba995f6c04698aa766fe75c9",
-        "expires": "2026-09-22T16:25:04.890Z",
-        "requestedAt": "2026-09-22T15:25:04.890Z"
-      },
-      "hidden": false
+      "hidden": false,
+      "pwSalt": "f4d0175c951b3bae9e94a91356578f28",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "VgWNgo5stW6Mmhcxd0Vrw1BFUKAuxtzBFLJWeBZj2vtl1WKCGAZcxaO0ZVQejpTjTC31TKaBNxcYkg7ONZnxLdH8JCQwAwi1iIa/ymcDjuRI21SfhizkrujnN2h7rzSRVYqVIZ1F485o5HSSCJ5yfBe+CvoFPt4O9AwA1PYh1cffuzBAgPtGoglkzkemRvrj9YvgvfybZyrLMqZiiAUAP+LzZ1fzN59GTUlRDBNcL0ENpXEgLlShWDx3fTBSb3ql0dpGB3sS7lcKjSS/c1t/WK0yi0ZaCKr3h+CsYDo+5BBfPzD1okKpvm1a36jYOSZ8urG8c77QHvPIp5sIiHPSZw=="
+      }
     },
     {
       "username": "Kai",
