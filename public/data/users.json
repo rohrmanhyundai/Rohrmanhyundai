@@ -115,7 +115,11 @@
       "lastName": "",
       "managementAccess": false,
       "email": "david.riley@rohrmanauto.com",
-      "passwordHash": {}
+      "passwordHash": {},
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "uzxQH2j06wPSbqYVNf7j6khPeHzWZj08f/MnMpyZvMRbCXiUcolodY/tjO36aazohMHyNf+TYG4s4NXgnyG8QeKrKtvjh6lfBJ45n6g+r+sxoDY0GahIrh3FRn6LXOG4z6sGFy8rjjB8sk/oInoJ5da256KwfxrJNHVDb30bI/yrE5FxOU8pfbkQUuDRp7zFqXWwu3kCgdK+c7ZjVSzoNHC8TkLS0TWVpe+wzLQf9ZmOdYxBnBHgMSnnmFcC2IGmR+S0ACQ7ENGsERU74m0y6sDydcr4mgiWvFlB9BiVRNqqG3KttqDyKEPdj93tagAGYiZwf3YRzssZxvvgW1RD0w=="
+      }
     },
     {
       "username": "Gaven",
