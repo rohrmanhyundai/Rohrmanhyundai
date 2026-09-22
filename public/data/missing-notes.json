@@ -1,19 +1,15 @@
 {
-  "updatedAt": "2026-09-21T21:13:57.368Z",
+  "updatedAt": "2026-09-22T15:31:27.334Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "780999",
-        "vehicle": "2014 Hyundai Santa Fe Sport"
+        "ro": "781019",
+        "vehicle": "2018 Hyundai Sonata"
       },
       {
-        "ro": "780997",
-        "vehicle": "2021 Hyundai Tucson"
-      },
-      {
-        "ro": "780993",
-        "vehicle": "2016 Hyundai Sonata"
+        "ro": "781013",
+        "vehicle": "2021 Subaru WRX"
       },
       {
         "ro": "780987",
@@ -32,37 +28,35 @@
         "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ],
-    "JORDAN": [
-      {
-        "ro": "780998",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780989",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780988",
-        "vehicle": "2027 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780986",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780984",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780982",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780960",
-        "vehicle": "2017 Hyundai Santa Fe"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "781018",
+        "vehicle": "2013 Toyota Tundra 4WD Truck"
+      },
+      {
+        "ro": "781017",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "781016",
+        "vehicle": "2023 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781015",
+        "vehicle": "2024 Honda Pilot"
+      },
+      {
+        "ro": "781014",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781012",
+        "vehicle": "2016 Honda Odyssey"
+      },
+      {
+        "ro": "781011",
+        "vehicle": "2018 Subaru Forester"
+      },
       {
         "ro": "780978",
         "vehicle": "2020 Kia Soul"
@@ -90,6 +84,44 @@
       {
         "ro": "780829",
         "vehicle": "2019 Subaru Crosstrek"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781007",
+        "vehicle": "2009 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781005",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "780998",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780989",
+        "vehicle": "2027 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780988",
+        "vehicle": "2027 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780986",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780984",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780982",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780960",
+        "vehicle": "2017 Hyundai Santa Fe"
       }
     ]
   }
