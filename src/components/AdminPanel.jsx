@@ -1720,6 +1720,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // Push a fresh advisor + training row onto a dashboard data object (mutates it).
   // Shared by the manual "Add Advisor" picker and the auto-add on user save so the
   // two paths can never drift apart. No-op if the advisor is already on the roster.
+  // A technician saved in User Management only gets a login; the board reads
+  // data.technicians, so put them on it too (same as advisors below).
+  function addTechnicianToRoster(newData, name) {
+    const upper = (name || '').toUpperCase();
+    if (!upper) return false;
+    if ((newData.technicians || []).some(t => (t.name || '').toUpperCase() === upper)) return false;
+    (newData.technicians ||= []).push({
+      name: upper, goal: 47.5, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
+      total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
+    });
+    return true;
+  }
+
   function addAdvisorToRoster(newData, name) {
     const upper = (name || '').toUpperCase();
     if (!upper) return false;
@@ -1840,13 +1853,16 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const updated = existing
       ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch } : u)
       : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch }];
-    // An advisor-role user must also live on the dashboard roster (data.advisors)
-    // or they never render on the dashboard. Saving the user alone only writes
-    // users.json, so auto-add them to the roster + training table and persist the
-    // dashboard in the same action. "lead advisor" counts too (Jordan).
-    const wantsRoster = (newUserRole || '').toLowerCase().includes('advisor');
+    // An advisor or technician must also live on the dashboard roster
+    // (data.advisors / data.technicians) or they never render on the dashboard.
+    // Saving the user alone only writes users.json, so auto-add them to the
+    // roster and persist the dashboard in the same action. "lead advisor"
+    // counts too (Jordan).
+    const roleLower = (newUserRole || '').toLowerCase();
     const rosterData = structuredClone(data);
-    const addedToRoster = wantsRoster ? addAdvisorToRoster(rosterData, newUserName) : false;
+    const addedToRoster = roleLower.includes('advisor') ? addAdvisorToRoster(rosterData, newUserName)
+      : roleLower === 'technician' ? addTechnicianToRoster(rosterData, newUserName)
+      : false;
     // "Hidden" on the user is mirrored onto their roster entry (advisor or
     // tech), which is what the TV, Tech Hours, Payroll and contests read.
     const fw = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
