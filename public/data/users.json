@@ -23,8 +23,7 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": false,
-      "passwordHash": {}
+      "techChatAccess": false
     },
     {
       "username": "Shawn",
@@ -57,7 +56,6 @@
         "setAt": "2026-09-09T12:34:01.926Z"
       },
       "email": "shawn.laughner@rohrmanauto.com",
-      "passwordHash": {},
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "bsFbMP+RK+kVBc2WmzhIT97LsJ1Goic15PI2KcXQxH5xj/2ouDjNRjpaVqq6IGWxMpB4FXQtNPiJ9p1TpXqvVY+RiOVWTaYjeAeVwUQ+zBgdSv/9/GUUbFCbSLkRI1+JdfBLm9Zfub1AYWGnnR9CAjeQW5rzC7angwFDZSyhDWX5g9dfcQotJaNs6KihpY/pGEud1FR3g0+f9sT0206386Swi6BClUiQTJhjThM0D26XMpHjhz2c8tbgyHKlDTGNCvsC+6DkmTXtAGXiF9aeLfeuG1IGHhLEb7FbdmIzHiFLJZBqGwhOTmchtrJtEftdWegbWSe7LGLcTLLGqLp8IQ=="
@@ -87,8 +85,7 @@
       "techChatAccess": true,
       "lastName": "",
       "managementAccess": true,
-      "email": "jordan.troxel@rohrmanauto.com",
-      "passwordHash": {}
+      "email": "jordan.troxel@rohrmanauto.com"
     },
     {
       "username": "David",
@@ -115,7 +112,6 @@
       "lastName": "",
       "managementAccess": false,
       "email": "david.riley@rohrmanauto.com",
-      "passwordHash": {},
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "uzxQH2j06wPSbqYVNf7j6khPeHzWZj08f/MnMpyZvMRbCXiUcolodY/tjO36aazohMHyNf+TYG4s4NXgnyG8QeKrKtvjh6lfBJ45n6g+r+sxoDY0GahIrh3FRn6LXOG4z6sGFy8rjjB8sk/oInoJ5da256KwfxrJNHVDb30bI/yrE5FxOU8pfbkQUuDRp7zFqXWwu3kCgdK+c7ZjVSzoNHC8TkLS0TWVpe+wzLQf9ZmOdYxBnBHgMSnnmFcC2IGmR+S0ACQ7ENGsERU74m0y6sDydcr4mgiWvFlB9BiVRNqqG3KttqDyKEPdj93tagAGYiZwf3YRzssZxvvgW1RD0w=="
@@ -146,8 +142,7 @@
       "techChatAccess": true,
       "lastName": "Laughner",
       "managementAccess": true,
-      "email": "gaven.laughner@rohrmanauto.com",
-      "passwordHash": {}
+      "email": "gaven.laughner@rohrmanauto.com"
     },
     {
       "username": "Austin",
@@ -168,8 +163,7 @@
         "tireQuote": true
       },
       "chatAccess": true,
-      "techChatAccess": true,
-      "passwordHash": {}
+      "techChatAccess": true
     },
     {
       "username": "Brandon",
@@ -190,8 +184,7 @@
         "tireQuote": true
       },
       "chatAccess": true,
-      "techChatAccess": true,
-      "passwordHash": {}
+      "techChatAccess": true
     },
     {
       "username": "Devin",
@@ -217,8 +210,7 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "devin.drake@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Cory",
@@ -245,8 +237,7 @@
       "techChatAccess": true,
       "lastName": "Swindle",
       "email": "cory.swindle@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Carter",
@@ -273,8 +264,7 @@
       "techChatAccess": true,
       "lastName": "Jean",
       "email": "carter.jean@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Jacob",
@@ -301,8 +291,7 @@
       "techChatAccess": true,
       "lastName": "Kuntz",
       "email": "jacob.kuntz@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Derrick",
@@ -324,8 +313,7 @@
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true,
-      "passwordHash": {}
+      "techChatAccess": true
     },
     {
       "username": "Jerry",
@@ -354,8 +342,7 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "jerry.barkey@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Kai",
@@ -382,8 +369,7 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "kai.roth@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Seth",
@@ -409,8 +395,7 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "seth.rosen@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Chapman",
@@ -435,8 +420,7 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Kaden",
@@ -463,8 +447,7 @@
       "chatAccess": false,
       "techChatAccess": true,
       "email": "kaden.wilson@rohrmanauto.com",
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Emily",
@@ -489,8 +472,7 @@
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "managementAccess": false,
-      "passwordHash": {}
+      "managementAccess": false
     },
     {
       "username": "Cody",
@@ -516,7 +498,6 @@
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "passwordHash": {},
       "email": "",
       "hidden": true
     },
@@ -544,8 +525,7 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "email": "bryson.hutsell@rohrmanauto.com",
-      "passwordHash": {}
+      "email": "bryson.hutsell@rohrmanauto.com"
     },
     {
       "username": "Chris",
@@ -571,7 +551,6 @@
       "chatAccess": false,
       "techChatAccess": true,
       "email": "chris.foley@rohrmanauto.com",
-      "passwordHash": {},
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "IGWS70fgfCjHh5gE6fFNFxWJYaHuAiW8KmeVPx2qsRPyW6fHatPXtg8mWiGoCyi04YNQy80Zzem09Z8HILCZ0GQjihdl7OnYmW9WjZ353FzTr/eLkWwJ4tHGZ89JhHb9Wgwn9MxMoxJyaMHlLTZWr9saJd2io3xpdftA4LKHxDxj6BOMmJ17EcFJvU5rGORWm48qKBa4MnB/FnqjjkdJBoo2aaP/UJVFRAwLxKeFwq5pMBLnOF4/iRDIuu1bP/hrwKLcZ/42jZXgqVxMlCxSl7hXFEickqya43Mt9mVVnzZJDV4msC1VKSlmw+65qbceJBCNDiKMolc3HzrVYgzIwg=="
@@ -581,7 +560,6 @@
       "username": "Daniel",
       "lastName": "escalante",
       "email": "daniel.escalante@rohrmanauto.com",
-      "passwordHash": {},
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "pyZXzTP4EfjBSJLTzL6p3ECH3W64TUJp9jbDjsm4AGZ7QQoac9bwmi/fw6fpcOnVkJEwGGG3yPnNQqVwgejugbt2RmK8AyXMryiHUHvjeLjfTFVgfcXQfdAkTGJ4ja/xptxfRQZR9OTJ2DtiHO5/WbprfTjAdhb5WbAVsCEo7eFwr81EJkc/TjfZiV3PBcX1PPFn3Iu2Ex6DH17/WWTUPVuDoC3/p7II7biE9GiCsTq+yOH2x+Vdhgbt8+qmvJQfDYx6lr+bhu5fIvYIKYjsKA8VyJnEWF4XmHPvIl5T9hjDGPaMvi1nrU8huP1z7VeFdd/AKjeWOA5EI8qun5f++w=="
@@ -609,9 +587,6 @@
       "hidden": false
     }
   ],
-  "sharedSaveCode": "",
-  "awsAccessKeyId": "",
-  "awsSecretAccessKey": "",
   "passwordVault": {
     "kid": "YuwDZUlFIR",
     "publicKey": {
