@@ -89,20 +89,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mubqug4wf8r",
-    "ro": "780997",
-    "roDate": "2026-09-21",
-    "vehicle": "",
-    "jobDesc": "30K service",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "notes": "",
-    "flag": "purple"
   }
 ]
