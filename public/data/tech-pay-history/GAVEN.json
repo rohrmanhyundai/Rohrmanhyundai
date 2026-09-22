@@ -90,7 +90,7 @@
     },
     "hours": 37.42,
     "payableHours": 37.42,
-    "overridden": false,
+    "overridden": true,
     "adjustment": 0,
     "boardHours": 37.42,
     "ptoHours": 0,
@@ -99,7 +99,10 @@
     "tier": "Up to 50 hrs",
     "pay": 1047.76,
     "payType": "flat",
-    "closed": false,
-    "updatedAt": "2026-09-22T09:00:17.389Z"
+    "closed": true,
+    "updatedAt": "2026-09-22T11:04:35.234Z",
+    "adjustSource": "week-report",
+    "closedBy": "SHAWN",
+    "closedAt": "2026-09-22T11:04:35.234Z"
   }
 }
