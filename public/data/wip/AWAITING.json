@@ -72,36 +72,6 @@
     "isNew": true
   },
   {
-    "id": "mubqt3hugg7z",
-    "ro": "780986",
-    "roDate": "2026-09-21",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mubqt3hu8vib",
-    "ro": "780985",
-    "roDate": "2026-09-21",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "mubqt3hu9x35",
     "ro": "780984",
     "roDate": "2026-09-21",
@@ -112,21 +82,6 @@
     "usedCar": false,
     "highPriority": false,
     "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
-    "id": "mubqt3hus6xb",
-    "ro": "780983",
-    "roDate": "2026-09-21",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
