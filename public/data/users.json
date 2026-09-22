@@ -239,10 +239,10 @@
       "lastName": "Swindle",
       "email": "cory.swindle@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "17122d23f1da7cf71f81d8d62e18e23ed74869e3b6b0840613db6b7b53291929",
-        "expires": "2026-09-22T12:55:44.792Z",
-        "requestedAt": "2026-09-22T11:55:44.792Z"
+      "pwSalt": "538bf348d65a7fd329915c44235907ca",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "pXf7nR8K0d4OqzGtNUvlytVCZeSqK0DHIa0u1duswVJZP+FiiSkTORTj48dkJ4HI0qFf7SZG+eBGWLVeR7CV0fa3nTo2+Lk9wxOqGIJUOmLfT7rANV4VqWsOjGcyecpOoSL8PD8ZA8dWSeWqUR3xypZZnCnRg+Oen4eov7+imRkD7y6SR6fdGJI+ce/xHQqiiM38UzOpOGK3yJ5eebDWPGFRLUZJ17dPSnwzTMVhIVGfyfZBNIFM6wH58T0xdr+gt/8lowtX4BPYRm/icrkPkoRM0bSGitqgPegaw+iSZ+BcyGxNnev9iYyCKzhMnbDBdX7gbB0lBQE6Z6sfuYThXg=="
       }
     },
     {
