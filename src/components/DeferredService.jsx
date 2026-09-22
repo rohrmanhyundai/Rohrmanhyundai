@@ -88,7 +88,12 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       .finally(() => setLoading(false));
   }, []);
 
-  const rows = useMemo(() => Object.values((store && store.byRo) || {}).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.ro).localeCompare(String(a.ro)))), [store]);
+  // Advisors whose deferred work is hidden from the list (former advisors etc.)
+  // — chosen in Settings, keyed by the name printed on the report.
+  const excluded = useMemo(() => new Set(Array.isArray(store && store.excludedAdvisors) ? store.excludedAdvisors : []), [store]);
+  const allRows = useMemo(() => Object.values((store && store.byRo) || {}), [store]);
+  const reportAdvisorCounts = useMemo(() => { const m = {}; allRows.forEach(r => { const a = r.advisor || '—'; m[a] = (m[a] || 0) + 1; }); return m; }, [allRows]);
+  const rows = useMemo(() => allRows.filter(r => !excluded.has(r.advisor || '—')).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.ro).localeCompare(String(a.ro)))), [allRows, excluded]);
 
   // Counts for the chips (over everything, so a chip never disappears while you're using it)
   const codeCounts = useMemo(() => { const m = {}; rows.forEach(r => (r.codes || []).forEach(c => { m[c] = (m[c] || 0) + 1; })); return m; }, [rows]);
@@ -119,30 +124,22 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const entries = useMemo(() => Object.values(activity.entries || {}).sort((a, b) => (a.at < b.at ? 1 : -1)), [activity]);
   const byRoActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[e.ro] ||= []).push(e); }); return m; }, [entries]);
   const byAdvisorActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[firstWord(e.by)] ||= []).push(e); }); return m; }, [entries]);
-  // Every advisor name we know about: user accounts, names on the reports,
-  // and anyone who has logged a follow-up. Managers pick which of these get
-  // a tab on the main page (store.advisorTabs); until they do, all of them.
-  const knownAdvisors = useMemo(() => {
-    const set = new Set((advisors || []).map(firstWord));
-    Object.keys(advisorCounts).forEach(a => { if (a !== '—') set.add(firstWord(a)); });
-    Object.keys(byAdvisorActivity).forEach(a => set.add(a));
-    return [...set].filter(Boolean).sort();
-  }, [advisors, advisorCounts, byAdvisorActivity]);
-  const chosenTabs = store && Array.isArray(store.advisorTabs) ? store.advisorTabs : null;
+  // One tab per active advisor on the site (for recording follow-ups), plus
+  // anyone who already has entries so a log never disappears.
   const tabAdvisors = useMemo(() => {
-    const set = new Set(chosenTabs ? chosenTabs : knownAdvisors);
-    if (me && (byAdvisorActivity[me] || []).length) set.add(me);  // never hide someone's own log
+    const set = new Set((advisors || []).map(firstWord));
+    Object.keys(byAdvisorActivity).forEach(a => set.add(a));
     return [...set].filter(Boolean).sort((a, b) => (a === me ? -1 : b === me ? 1 : a.localeCompare(b)));
-  }, [chosenTabs, knownAdvisors, byAdvisorActivity, me]);
-  async function toggleAdvisorTab(name) {
-    const cur = new Set(chosenTabs ? chosenTabs : knownAdvisors);
+  }, [advisors, byAdvisorActivity, me]);
+  async function toggleExcluded(name) {
+    const cur = new Set(excluded);
     if (cur.has(name)) cur.delete(name); else cur.add(name);
     const next = [...cur].sort();
-    setBusy('tabs'); setStatus('');
+    setBusy('excl'); setStatus('');
     try {
-      await updateDeferredRows(c => ({ ...(c || {}), advisorTabs: next }), `Deferred advisor tabs: ${next.join(', ') || 'none'}`);
-      setStore(c => ({ ...(c || {}), advisorTabs: next }));
-      trackAction('deferred-advisor-tabs', name);
+      await updateDeferredRows(c => ({ ...(c || {}), excludedAdvisors: next }), `Deferred excluded advisors: ${next.join(', ') || 'none'}`);
+      setStore(c => ({ ...(c || {}), excludedAdvisors: next }));
+      trackAction('deferred-exclude-advisor', name);
     } catch (e) { setStatus('❌ ' + (e?.message || e)); }
     finally { setBusy(''); }
   }
@@ -522,22 +519,23 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
               </div>
 
               <div className="ds-card">
-                <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 6 }}>👤 Advisor tabs on the main page</div>
+                <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 6 }}>🚫 Exclude an advisor's deferred work</div>
                 <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6, marginBottom: 10 }}>
-                  Click a name to turn their tab on or off. Lit names show as a tab at the top of Deferred Work. Saves right away.
+                  Advisors as they appear on the report. Click a name and every repair order written by them is hidden from Deferred Work (former advisors, for example). Click again to bring them back. Saves right away — the tabs at the top are unaffected.
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {knownAdvisors.map(a => {
-                    const on = tabAdvisors.includes(a);
-                    const n = (byAdvisorActivity[a] || []).length;
+                  {Object.keys(reportAdvisorCounts).sort().map(a => {
+                    const off = excluded.has(a);
                     return (
-                      <button key={a} className={`ds-tab${on ? ' on' : ''}`} disabled={busy === 'tabs'} onClick={() => toggleAdvisorTab(a)} title={on ? 'Showing — click to hide the tab' : 'Hidden — click to show the tab'} style={on ? {} : { opacity: .55 }}>
-                        {on ? '✓ ' : ''}{a}{n ? <span className="n">{n}</span> : null}
+                      <button key={a} className="ds-tab" disabled={busy === 'excl'} onClick={() => toggleExcluded(a)} title={off ? 'Excluded — click to show their work again' : 'Showing — click to hide their work'}
+                        style={off ? { background: 'rgba(248,113,113,.16)', borderColor: 'rgba(248,113,113,.6)', color: '#fca5a5', textDecoration: 'line-through' } : {}}>
+                        {off ? '🚫 ' : ''}{a}<span className="n">{reportAdvisorCounts[a]}</span>
                       </button>
                     );
                   })}
-                  {!knownAdvisors.length && <span style={{ fontSize: 12.5, color: '#64748b' }}>No advisors yet — upload a report first.</span>}
+                  {!allRows.length && <span style={{ fontSize: 12.5, color: '#64748b' }}>No advisors yet — upload a report first.</span>}
                 </div>
+                {excluded.size > 0 && <div style={{ marginTop: 8, fontSize: 12, color: '#94a3b8' }}>Hiding {allRows.length - rows.length} of {allRows.length} repair orders.</div>}
                 {status && status.startsWith('❌') && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 700, color: '#f87171' }}>{status}</div>}
               </div>
 
