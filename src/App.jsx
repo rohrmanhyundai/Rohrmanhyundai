@@ -110,6 +110,18 @@ const BASE = import.meta.env.BASE_URL;
 // surveys, goals, schedules still list them as an advisor); only the logged-in
 // session's role string picks up a "manager" marker. `currentRole` is never
 // shown to the user, so this marker is invisible in the UI.
+// The admin vault can only be opened by a wrapper made against a password an
+// admin still has. When none of the wrappers match any admin's current pwSalt,
+// the private key is gone for good and the vault has to be rebuilt.
+function vaultUnrecoverable(vault, users) {
+  const wrappers = (vault && vault.wrappers) || {};
+  return !(users || []).some(u => {
+    if (String(u.role || '').toLowerCase() !== 'admin' || !u.pwSalt) return false;
+    const w = wrappers[String(u.username || '').trim().toUpperCase()];
+    return !!(w && w.pwSalt === u.pwSalt);
+  });
+}
+
 function effectiveRole(record) {
   const base = (record && record.role) || '';
   if (record && record.managementAccess && base !== 'admin' && !base.includes('manager')) {
@@ -795,6 +807,16 @@ export default function App() {
 
         if (isAdmin && vaultReady(vault)) {
           if (!access) access = await unlockVaultAs(vault, match.username, password);
+          if (!access && vaultUnrecoverable(vault, list)) {
+            // Every admin wrapper was made against a password nobody has any
+            // more (the 2026-09 reset), so the old vault can never be opened
+            // again. Start a fresh one; passwords fill back in as people log in
+            // or get a new one set.
+            const created = await createVaultFor(match.username, password, r.pwSalt);
+            vault = created.vault; access = created.access; vaultDirty = true;
+            list = await Promise.all(list.map(u => { const o = { ...u }; delete o.passwordEnc; return o; }));
+            list[i] = await withPassword(list[i], password, vault, r.pwSalt); dirty = true;
+          }
           if (access) {
             const repaired = await repairWrappers(vault, access, list);
             if (repaired) { vault = repaired; vaultDirty = true; }
