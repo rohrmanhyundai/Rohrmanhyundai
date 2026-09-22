@@ -601,7 +601,12 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "hidden": false
+      "hidden": false,
+      "passwordReset": {
+        "hash": "e50bcca8d4793525ef1e4897ddaa364c82fa9303dc938b5ee20f131ea0d45477",
+        "expires": "2026-09-22T15:21:55.286Z",
+        "requestedAt": "2026-09-22T14:21:55.286Z"
+      }
     },
     {
       "username": "Trenton",
