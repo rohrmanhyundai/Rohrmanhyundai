@@ -15,7 +15,7 @@ compatibility_date = "2026-09-01"
 
 [[kv_namespaces]]
 binding = "CREDS"
-id = "local-placeholder-0000000000000000"
+id = "b8a12629604f4bbc9ad5bd3206fbb032"
 
 [vars]
 GITHUB_OWNER = "rohrmanhyundai"

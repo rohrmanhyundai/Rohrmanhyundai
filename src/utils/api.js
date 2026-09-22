@@ -2,7 +2,7 @@
 // GitHub token and AWS keys, checks logins, and proxies the data writes. The
 // browser only ever holds a session: an opaque signed string the worker hands
 // back at login, kept in localStorage and sent as a Bearer header.
-export const API_URL = (import.meta.env.VITE_API_URL || 'https://rohrman-api.REPLACE_ME.workers.dev').replace(/\/+$/, '');
+export const API_URL = (import.meta.env.VITE_API_URL || 'https://rohrman-api.rohrman-api.workers.dev').replace(/\/+$/, '');
 
 const SESSION_KEY = 'rohrmanSession';
 
