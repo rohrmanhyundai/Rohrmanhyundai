@@ -375,7 +375,12 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "kai.roth@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "passwordReset": {
+        "hash": "4f562ed42151c24db35681f03fd60381dca3e61d79f143245ae0ea17617a379c",
+        "expires": "2026-09-22T13:38:29.566Z",
+        "requestedAt": "2026-09-22T12:38:29.566Z"
+      }
     },
     {
       "username": "Seth",
