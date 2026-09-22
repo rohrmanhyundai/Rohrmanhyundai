@@ -76,7 +76,8 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const [to, setTo] = useState('');
   const [q, setQ] = useState('');
   const [openRo, setOpenRo] = useState('');
-  const [showAllCodes, setShowAllCodes] = useState(false);
+  const [advOpen, setAdvOpen] = useState(false);     // Advanced search panel (pick services)
+  const [svcQ, setSvcQ] = useState('');               // find-a-service box inside it
   const [onlyValvoline, setOnlyValvoline] = useState(false);
 
   useEffect(() => { trackPage('deferred-service'); }, []);
@@ -309,7 +310,8 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       </div>
     );
   };
-  const visibleServices = showAllCodes ? services : services.slice(0, 18);
+  const svcMatches = useMemo(() => { const t = svcQ.trim().toLowerCase(); return t ? services.filter(g => g.label.toLowerCase().includes(t) || [...g.codes].some(c => c.toLowerCase().includes(t))) : services; }, [services, svcQ]);
+  const selectedServices = services.filter(g => selCodes.has(g.key));
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -380,31 +382,50 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                   {anyFilter ? <button className="secondary" onClick={clearAll} style={{ fontSize: 12 }}>✕ Clear</button> : null}
                 </div>
 
-                <div>
-                  <div className="ds-label" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    <span>Service type <span style={{ color: '#64748b', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· click to filter, click again to remove</span></span>
-                    <button className={`ds-chip${onlyUncontacted ? ' on' : ''}`} onClick={() => { setOnlyUncontacted(v => !v); setOpenRo(''); }} title="Only customers nobody has contacted yet">
-                      ☎️ Not yet contacted <span className="n">{uncontactedCount}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <button className={`ds-chip${onlyUncontacted ? ' on' : ''}`} onClick={() => { setOnlyUncontacted(v => !v); setOpenRo(''); }} title="Only customers nobody has contacted yet">
+                    ☎️ Not yet contacted <span className="n">{uncontactedCount}</span>
+                  </button>
+                  {hasValvoline && (
+                    <button className={`ds-chip${onlyValvoline ? ' on' : ''}`} onClick={() => { setOnlyValvoline(v => !v); setOpenRo(''); }}
+                      style={onlyValvoline ? { background: 'rgba(239,68,68,.2)', borderColor: 'rgba(239,68,68,.7)', color: '#fca5a5' } : { borderColor: 'rgba(239,68,68,.4)', color: '#fca5a5' }} title="Only Valvoline services">
+                      🛢️ Valvoline only <span className="n">{valvolineCount}</span>
                     </button>
-                    {hasValvoline && (
-                      <button className={`ds-chip${onlyValvoline ? ' on' : ''}`} onClick={() => { setOnlyValvoline(v => !v); setOpenRo(''); }}
-                        style={onlyValvoline ? { background: 'rgba(239,68,68,.2)', borderColor: 'rgba(239,68,68,.7)', color: '#fca5a5' } : { borderColor: 'rgba(239,68,68,.4)', color: '#fca5a5' }} title="Only Valvoline services">
-                        🛢️ Valvoline only <span className="n">{valvolineCount}</span>
-                      </button>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {visibleServices.map(g => (
-                      <button key={g.key} className={`ds-chip${selCodes.has(g.key) ? ' on' : ''}`} onClick={() => toggle(selCodes, setSelCodes, g.key)}
-                        title={g.described ? `Op code${g.codes.size === 1 ? '' : 's'}: ${[...g.codes].join(', ')}` : 'No description yet — set one in Settings'}>
-                        {g.valvoline && <span style={{ color: '#f87171', fontSize: 11 }} title="Valvoline service">🛢️</span>}{g.label} <span className="n">{g.count}</span>
-                      </button>
-                    ))}
-                    {services.length > 18 && <button className="ds-chip" onClick={() => setShowAllCodes(v => !v)} style={{ color: '#67e8f9' }}>{showAllCodes ? 'Show fewer' : `+${services.length - 18} more`}</button>}
-                    {!allCodes.length && !loading && <span style={{ fontSize: 12.5, color: '#64748b' }}>No report uploaded yet.</span>}
-                  </div>
+                  )}
+                  <button className={`ds-chip${advOpen || selCodes.size ? ' on' : ''}`} onClick={() => setAdvOpen(v => !v)} title="Pick the services you want to search for"
+                    style={{ borderColor: 'rgba(167,139,250,.6)', color: advOpen || selCodes.size ? '#c4b5fd' : '#a78bfa', background: advOpen || selCodes.size ? 'rgba(139,92,246,.2)' : 'rgba(139,92,246,.06)' }}>
+                    🔎 Advanced search{selCodes.size ? <span className="n" style={{ color: '#c4b5fd' }}>{selCodes.size}</span> : null} <span style={{ fontSize: 10 }}>{advOpen ? '▲' : '▼'}</span>
+                  </button>
+                  {!advOpen && selectedServices.map(g => (
+                    <button key={g.key} className="ds-chip on" onClick={() => toggle(selCodes, setSelCodes, g.key)} title="Click to remove this service from the search">
+                      {g.valvoline && <span style={{ color: '#f87171', fontSize: 11 }}>🛢️</span>}{g.label} <span className="n">{g.count}</span> <span style={{ color: '#94a3b8' }}>✕</span>
+                    </button>
+                  ))}
+                  {!advOpen && !selCodes.size && <span style={{ fontSize: 12, color: '#64748b' }}>All services</span>}
                 </div>
 
+                {advOpen && (
+                  <div style={{ padding: 12, borderRadius: 12, background: 'rgba(139,92,246,.07)', border: '1px solid rgba(167,139,250,.35)', display: 'grid', gap: 10 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div className="ds-label" style={{ color: '#c4b5fd' }}>Pick services <span style={{ color: '#64748b', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>· a customer shows when they have any of the ticked services</span></div>
+                      <input className="ds-in" style={{ flex: 1, minWidth: 200, padding: '6px 10px' }} placeholder="Find a service or op code…" value={svcQ} onChange={e => setSvcQ(e.target.value)} autoFocus />
+                      <button className="secondary" onClick={() => { setSelCodes(new Set([...selCodes, ...svcMatches.map(g => g.key)])); setOpenRo(''); }} style={{ fontSize: 11.5 }}>Tick all shown</button>
+                      <button className="secondary" onClick={() => { setSelCodes(new Set()); setOpenRo(''); }} disabled={!selCodes.size} style={{ fontSize: 11.5 }}>Untick all</button>
+                      <button onClick={() => { setAdvOpen(false); setSvcQ(''); }} style={{ fontSize: 12 }}>Done{selCodes.size ? ` · ${selCodes.size} selected` : ''}</button>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 320, overflowY: 'auto' }}>
+                      {svcMatches.map(g => (
+                        <button key={g.key} className={`ds-chip${selCodes.has(g.key) ? ' on' : ''}`} onClick={() => { toggle(selCodes, setSelCodes, g.key); setOpenRo(''); }}
+                          title={g.described ? `Op code${g.codes.size === 1 ? '' : 's'}: ${[...g.codes].join(', ')}` : 'No description yet — set one in Settings'}>
+                          <span style={{ width: 13, display: 'inline-block', textAlign: 'center' }}>{selCodes.has(g.key) ? '☑' : '☐'}</span>
+                          {g.valvoline && <span style={{ color: '#f87171', fontSize: 11 }} title="Valvoline service">🛢️</span>}{g.label} <span className="n">{g.count}</span>
+                        </button>
+                      ))}
+                      {!svcMatches.length && allCodes.length > 0 && <span style={{ fontSize: 12.5, color: '#64748b' }}>No service matches "{svcQ}".</span>}
+                      {!allCodes.length && !loading && <span style={{ fontSize: 12.5, color: '#64748b' }}>No report uploaded yet.</span>}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Preview list */}
