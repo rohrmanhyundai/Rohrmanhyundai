@@ -1,11 +1,45 @@
 {
-  "updatedAt": "2026-09-22T15:31:27.334Z",
+  "updatedAt": "2026-09-22T19:54:51.716Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "781027",
+        "vehicle": "2022 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780998",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "780989",
+        "vehicle": "2027 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "780988",
+        "vehicle": "2027 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780986",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780984",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780982",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "780960",
+        "vehicle": "2017 Hyundai Santa Fe"
+      }
+    ],
     "DAVID": [
       {
-        "ro": "781019",
-        "vehicle": "2018 Hyundai Sonata"
+        "ro": "781025",
+        "vehicle": "2026 Hyundai Palisade"
       },
       {
         "ro": "781013",
@@ -29,6 +63,10 @@
       }
     ],
     "CORY": [
+      {
+        "ro": "781022",
+        "vehicle": "2013 Nissan Murano"
+      },
       {
         "ro": "781018",
         "vehicle": "2013 Toyota Tundra 4WD Truck"
@@ -62,10 +100,6 @@
         "vehicle": "2020 Kia Soul"
       },
       {
-        "ro": "780959",
-        "vehicle": "2020 Kia Sportage"
-      },
-      {
         "ro": "780958",
         "vehicle": "2021 Nissan Kicks"
       },
@@ -74,54 +108,8 @@
         "vehicle": "2023 Mazda CX-9"
       },
       {
-        "ro": "780917",
-        "vehicle": "2020 Hyundai Elantra"
-      },
-      {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
-      },
-      {
-        "ro": "780829",
-        "vehicle": "2019 Subaru Crosstrek"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781007",
-        "vehicle": "2009 Hyundai Santa Fe"
-      },
-      {
-        "ro": "781005",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "780998",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "780989",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "780988",
-        "vehicle": "2027 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780986",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780984",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780982",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "780960",
-        "vehicle": "2017 Hyundai Santa Fe"
       }
     ]
   }
