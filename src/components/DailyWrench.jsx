@@ -97,6 +97,7 @@ function AdvisorReport({ report, name }) {
         <div className="dw-kicker">🔧 The Daily Wrench · {name}</div>
         <div className="dw-headline">{report.headline || `${name}'s day`}</div>
         {report.opening ? <div className="dw-open">{report.opening}</div> : null}
+        {report.moneyLine ? <div className="dw-open" style={{ marginTop: 10, color: '#86efac', fontWeight: 700 }}>{report.moneyLine}</div> : null}
         {report.error ? (
           <div className="dw-open" style={{ color: '#fcd34d' }}>
             The write-up didn't come through this morning, but the numbers below are today's.
@@ -116,6 +117,9 @@ function AdvisorReport({ report, name }) {
         )}
         <Stat k="Open ROs" v={ro.total || 0} s={ro.total ? `oldest ${ro.oldestDays} days · avg ${ro.averageDays}` : 'nothing open'} tone={(ro.buckets && ro.buckets.days6plus) ? 'warn' : 'good'} />
         {f.partsReady && f.partsReady.length ? <Stat k="Parts in, ready to book" v={f.partsReady.length} s="hours sitting on the shelf" tone="good" /> : null}
+        {f.deferred && f.deferred.total ? (
+          <Stat k="Declined work, never called" v={money(f.deferred.totalAmount)} s={`${f.deferred.neverContacted} customers · ${f.deferred.totalHours} hours`} tone="good" />
+        ) : null}
       </div>
 
       {wins.length ? (
@@ -129,12 +133,35 @@ function AdvisorReport({ report, name }) {
         </Section>
       ) : null}
 
-      {report.focus && report.focus.length ? (
+      {report.plan && report.plan.length ? (
+        <Section icon="🎯" title="Today's plan">
+          {report.plan.map((x, i) => (
+            <div className="dw-item" key={i}>
+              <span className="dw-pill" style={{ background: 'rgba(125,211,252,.14)', borderColor: 'rgba(125,211,252,.45)', color: '#7dd3fc', minWidth: 86, justifyContent: 'center' }}>{x.when}</span>
+              <div><div className="t">{x.what}</div><div className="d">{x.why}</div></div>
+            </div>
+          ))}
+        </Section>
+      ) : report.focus && report.focus.length ? (
         <Section icon="🎯" title="Where today gets won">
           {report.focus.map((x, i) => (
             <div className="dw-item" key={i}>
               <span style={{ fontSize: 15, fontWeight: 1000, color: '#7dd3fc', minWidth: 18 }}>{i + 1}</span>
               <div><div className="t">{x.title}</div><div className="d">{x.detail}</div></div>
+            </div>
+          ))}
+        </Section>
+      ) : null}
+
+      {report.callList && report.callList.length ? (
+        <Section icon="📞" title="Call these customers first" right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>work they already declined — biggest first</span>}>
+          {report.callList.map((c, i) => (
+            <div className="dw-ro" key={i}>
+              <div>
+                <div className="num">{c.ro ? `RO ${c.ro}` : ''}</div>
+                {c.phone ? <a href={`tel:${c.phone}`} style={{ fontSize: 12, color: '#86efac', textDecoration: 'none' }}>{String(c.phone).replace(/^(\d{3})(\d{3})(\d{4})$/, '($1) $2-$3')}</a> : null}
+              </div>
+              <div><div className="what">{c.name}</div><div className="act">{c.why}</div></div>
             </div>
           ))}
         </Section>
@@ -191,6 +218,12 @@ function AdvisorReport({ report, name }) {
         </Section>
       ) : null}
 
+      {report.coaching ? (
+        <Section icon="🧭" title="The one thing this month">
+          <div className="dw-quote" style={{ borderLeftColor: 'rgba(167,139,250,.7)' }}>{report.coaching}</div>
+        </Section>
+      ) : null}
+
       {report.closing ? (
         <div className="dw-card" style={{ background: 'linear-gradient(135deg,rgba(16,185,129,.12),rgba(56,189,248,.08))', borderColor: 'rgba(52,211,153,.35)' }}>
           <div className="dw-quote" style={{ borderLeftColor: 'rgba(52,211,153,.7)', color: '#d1fae5' }}>{report.closing}</div>
@@ -223,6 +256,9 @@ function ManagerReport({ report }) {
         <Stat k="Remaining" v={money(m.remaining)} s={m.lastYear ? `last year ${money(m.lastYear)}` : ''} />
         <Stat k="Open ROs" v={ro.total || 0} s={`oldest ${ro.oldestDays} days · ${(ro.buckets && ro.buckets.days6plus) || 0} over 6 days`} tone={(ro.buckets && ro.buckets.days6plus) > 5 ? 'warn' : 'good'} />
         <Stat k="Tech hours" v={t.hoursTotal || 0} s={`of ${t.goalTotal || 0} this week`} />
+        {f.deferredShopWide && f.deferredShopWide.total ? (
+          <Stat k="Declined work on the table" v={money(f.deferredShopWide.totalAmount)} s={`${f.deferredShopWide.neverContacted} never called`} tone="good" />
+        ) : null}
       </div>
 
       {report.forecast ? <Section icon="📈" title="Where the month lands"><div className="dw-quote">{report.forecast}</div></Section> : null}
@@ -233,6 +269,17 @@ function ManagerReport({ report }) {
             <div className="dw-item" key={i}>
               <span style={{ fontSize: 17 }}>✅</span>
               <div><div className="t">{w.title}</div><div className="d">{w.detail}</div></div>
+            </div>
+          ))}
+        </Section>
+      ) : null}
+
+      {report.priorities && report.priorities.length ? (
+        <Section icon="🎯" title="Move the month today">
+          {report.priorities.map((x, i) => (
+            <div className="dw-item" key={i}>
+              <span style={{ fontSize: 15, fontWeight: 1000, color: '#fde047', minWidth: 18 }}>{i + 1}</span>
+              <div><div className="t">{x.what}</div><div className="d">{x.why}</div></div>
             </div>
           ))}
         </Section>
@@ -250,7 +297,7 @@ function ManagerReport({ report }) {
                   {row ? (
                     <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 5 }}>
                       {row.hours ? `${row.hours.mtd}/${row.hours.goal} hrs (${row.hours.percentOfGoal}%) · needs ${row.hours.neededToday} today · ` : ''}
-                      {row.openRos} open{row.oldestDays ? `, oldest ${row.oldestDays}d` : ''}{row.stalled ? ` · ${row.stalled} stalled` : ''}{row.partsReady ? ` · ${row.partsReady} parts in` : ''}
+                      {row.openRos} open{row.oldestDays ? `, oldest ${row.oldestDays}d` : ''}{row.stalled ? ` · ${row.stalled} stalled` : ''}{row.partsReady ? ` · ${row.partsReady} parts in` : ''}{row.deferredValue ? ` · ${money(row.deferredValue)} declined, ${row.deferredUncalled} uncalled` : ''}
                     </div>
                   ) : null}
                 </div>

@@ -95,6 +95,59 @@ export function partsFacts(wipByTech, advisorFirst) {
   return ready.slice(0, 12);
 }
 
+// ── Money already on the table ───────────────────────────────────────────────
+// The deferred-service report is every job a customer has already been told
+// they need and hasn't bought yet — name, phone, hours and dollars, keyed to
+// the advisor who wrote the RO. It is the single richest source of "what could
+// you sell today" the shop has, so the briefing leads with it.
+export function deferredFacts(store, activity, advisorFirst, today = new Date()) {
+  const byRo = (store && store.byRo) || {};
+  const contacted = new Set();
+  for (const e of Object.values((activity && activity.entries) || {})) contacted.add(String(e.ro));
+  const booked = new Set();
+  for (const e of Object.values((activity && activity.entries) || {})) if (e.type === 'appointment') booked.add(String(e.ro));
+
+  const rows = [];
+  for (const r of Object.values(byRo)) {
+    if (!r || !r.ro) continue;
+    if (advisorFirst && first(r.advisor) !== advisorFirst) continue;
+    if (booked.has(String(r.ro))) continue;              // already coming in — not an opportunity
+    rows.push({
+      ro: String(r.ro), customer: r.customer || '', phone: r.phone || '',
+      vehicle: r.vehicle || '', hours: num(r.hours, 0), amount: num(r.amount, 0),
+      lastSeen: r.date || '', codes: (r.codes || []).slice(0, 4),
+      contacted: contacted.has(String(r.ro)),
+    });
+  }
+  const totalAmount = rows.reduce((s, r) => s + r.amount, 0);
+  const totalHours = rows.reduce((s, r) => s + r.hours, 0);
+  const fresh = rows.filter(r => !r.contacted);
+  return {
+    total: rows.length,
+    neverContacted: fresh.length,
+    totalAmount: Math.round(totalAmount),
+    totalHours: round(totalHours),
+    // The calls worth making first: biggest money nobody has phoned yet.
+    top: fresh.sort((a, b) => b.amount - a.amount).slice(0, 6),
+  };
+}
+
+// ── Momentum ─────────────────────────────────────────────────────────────────
+// The last few reported days as hours-closed-that-day, so the write-up can say
+// whether this week is building or sliding rather than only where the month is.
+export function trendFacts(goals, today = new Date()) {
+  const bucket = (goals && goals[monthKey(today)]) || {};
+  const days = bucket.days || {};
+  const keys = Object.keys(days).filter(k => k <= dayKey(today)).sort();
+  const out = [];
+  for (let i = 1; i < keys.length; i++) {
+    out.push({ date: keys[i], hours: round(num(days[keys[i]].hours, 0) - num(days[keys[i - 1]].hours, 0)), hrsRo: round(num(days[keys[i]].hrsRo, 0), 2) });
+  }
+  const last = out.slice(-6);
+  const avg = last.length ? round(last.reduce((s, d) => s + d.hours, 0) / last.length) : 0;
+  return { recentDays: last, recentAverage: avg };
+}
+
 // Which days this month don't count against an advisor's pace. Mirrors
 // advisorOffDates() in utils/calculations.js — that module is Vite-only (it
 // imports without file extensions), and the 9am Action runs in plain Node, so
@@ -238,7 +291,7 @@ export function winFacts({ hours, contest, advisor, openRos }) {
 }
 
 // ── One advisor's pack ───────────────────────────────────────────────────────
-export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, today = new Date() }) {
+export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, today = new Date() }) {
   const f = first(name);
   const rows = (roStatus && roStatus.rows) || [];
   const mine = rows.filter(r => first(r.advisor) === f);
@@ -251,6 +304,8 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
     openRos,
     stalled: stalledFacts(attention, mine, f),
     partsReady: partsFacts(wipByTech, f),
+    deferred: deferredFacts(deferred, deferredActivity, f, today),
+    trend: trendFacts(goals, today),
     hours,
     contest,
     wins: winFacts({ hours, contest, advisor: advisorRow, openRos }),
@@ -265,7 +320,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
 // ── The shop pack a manager gets ─────────────────────────────────────────────
 // Everything an advisor sees, but across the floor, plus the money forecast and
 // the technician side — the full picture in one place.
-export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, today = new Date() }) {
+export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, deferred, deferredActivity, today = new Date() }) {
   const rows = (roStatus && roStatus.rows) || [];
   const shopOpen = openRoFacts(rows, null);
   const mk = monthKey(today);
@@ -295,6 +350,7 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
     shopOpenRos: shopOpen,
     stalledShopWide: stalledFacts(attention, rows, null),
     partsReadyShopWide: partsFacts(wipByTech, null).length,
+    deferredShopWide: deferredFacts(deferred, deferredActivity, null, today),
     money: {
       forecast: round(goal), earned: round(earned),
       remaining: round(Math.max(0, goal - earned)),
@@ -315,6 +371,8 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
       openRos: p.openRos.total, oldestDays: p.openRos.oldestDays, needsAttention: p.openRos.attention.length,
       stalled: p.stalled.length, partsReady: p.partsReady.length,
       hours: p.hours.hasGoal ? { mtd: p.hours.mtd, goal: p.hours.goal, onPace: p.hours.onPace, aheadBy: p.hours.aheadBy, neededToday: p.hours.neededToday, percentOfGoal: p.hours.percentOfGoal } : null,
+      deferredValue: p.deferred ? p.deferred.totalAmount : 0,
+      deferredUncalled: p.deferred ? p.deferred.neverContacted : 0,
       contestRank: p.contest.live && p.contest.me ? p.contest.me.rank : null,
       qualified: p.contest.live && p.contest.me ? p.contest.me.qualified : null,
     })),
@@ -325,65 +383,98 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
 // The model returns JSON, not prose, so the page can lay it out properly and a
 // missing section never leaves a half-written sentence on screen.
 const VOICE = `You are the service manager's right hand at a Hyundai dealership, writing one
-advisor's morning briefing. You have been doing this job for twenty years: you
-are direct, you never pad, and you talk the way a good manager talks on the
-drive lane — plain words, specific numbers, no corporate filler and no
-cheerleading that isn't earned.
+advisor's morning briefing. Twenty years on the drive lane. You are direct, you
+never pad, and you write the way a good manager talks: plain words, exact
+numbers, no corporate filler, no cheerleading that isn't earned.
 
-Hard rules:
-- Use ONLY the numbers in the data given. Never estimate, never invent an RO
-  number, a customer, an hours figure or a rank. If something isn't there, say
-  nothing about it.
-- Be specific. "RO 780924 has sat six days waiting on a CEL diagnosis" beats
-  "some ROs are aging".
-- Coach, don't scold. Name the one or two things that would actually move the
-  day, and say why they matter in money or hours.
-- Wins are only wins if the data shows them. If there are none, skip the
-  praise entirely rather than manufacturing it.
-- No markdown, no emoji, no headings inside the text fields. Plain sentences.`;
+HARD RULES
+- Use ONLY the numbers, names, phone numbers and RO numbers in the data. Never
+  estimate, never round differently, never invent a customer or a job. If the
+  data doesn't have it, don't mention it.
+- Every claim carries its number. "RO 780890 has been ready for dispatch six
+  days" — not "some ROs are aging".
+- Say what to DO, in the order to do it, and what it is worth. An instruction
+  without a dollar figure or an hours figure is half an instruction.
+- Coach, don't scold. One honest sentence about a weak spot beats a paragraph
+  of it. If they are behind, say by how much and what closes it TODAY.
+- Wins must come from the data. No data, no wins section — silence is better
+  than manufactured praise.
+- Plain sentences. No markdown, no emoji, no headings inside fields. Never
+  start a sentence with "Remember to" or "Make sure to".`;
 
 export function advisorPrompt(pack, { advisorDisplay, weekday } = {}) {
   return `${VOICE}
 
 Write ${advisorDisplay || pack.advisor}'s briefing for ${weekday || 'today'}, ${pack.date}.
 
-DATA (JSON):
+HOW TO THINK ABOUT THIS ADVISOR'S DAY, in priority order:
+1. Deferred work is money a customer has ALREADY been told they need. The
+   biggest uncalled ones are the fastest hours on this list — lead with them,
+   by name, with the dollar figure and the phone number.
+2. Parts that have arrived are jobs that can be booked this morning.
+3. Repair orders that are stalled or overdue are hours that have stopped
+   moving, and a customer who has not been called back.
+4. Hours pace tells you how hard today has to work. neededToday is the real
+   target; dailyTarget is the flat average.
+5. The Big-Money contest is real money to them personally — mention the exact
+   gap, never vague encouragement.
+
+DATA (JSON — every number you may use):
 ${JSON.stringify(pack, null, 1)}
 
-Return ONLY a JSON object, no code fence, shaped exactly like this:
+Return ONLY a JSON object, no code fence:
 {
-  "headline": "six to ten words that set the tone for the day",
-  "opening": "two or three sentences: where they stand this morning and what today has to look like",
-  "wins": [{"title": "short", "detail": "one sentence, with the number"}],
-  "focus": [{"title": "short action", "detail": "one or two sentences saying exactly what to do and why it pays"}],
-  "watchlist": [{"ro": "RO number", "what": "what is wrong or waiting", "action": "the next move"}],
-  "contest": "two sentences on their Big-Money standing and the gap to close, or empty string if no contest is live",
+  "headline": "six to ten words, specific to today, no generic motivation",
+  "opening": "three sentences: where the month stands, what today has to produce, and the single biggest opportunity sitting in front of them right now",
+  "moneyLine": "one sentence naming the total dollars of uncalled deferred work and what booking even a slice of it does for today's hours, or empty string if there is none",
+  "wins": [{"title": "three or four words", "detail": "one sentence with the number"}],
+  "plan": [{"when": "Before 10am", "what": "the action", "why": "what it is worth, in hours or dollars"}],
+  "callList": [{"name": "customer first name and last initial as given", "phone": "as given", "ro": "RO number", "why": "what they declined and what it is worth"}],
+  "watchlist": [{"ro": "RO number", "what": "what is wrong and how long", "action": "the next move"}],
+  "contest": "two sentences on their Big-Money standing and the exact gap to close, or empty string if no contest is live",
+  "coaching": "two or three sentences on the ONE habit that would change their month, tied to their weakest number against goal. Honest, specific, not a lecture.",
   "closing": "one sentence to send them out the door"
 }
-At most three wins, three focus items and five watchlist rows. Skip any array that the data doesn't support by returning it empty.`;
+Rules for the arrays: at most three wins, four plan steps covering the shape of
+the day, five call-list names taken from the deferred data (highest value
+first), five watchlist rows. Return an empty array for anything the data does
+not support.`;
 }
 
 export function managerPrompt(pack, { weekday } = {}) {
   return `${VOICE}
 
 You are writing the SERVICE MANAGER's own morning report for ${weekday || 'today'}, ${pack.date}.
-This one is the whole floor, not one advisor: the money forecast, where the
-month lands if nothing changes, which advisors need a push and which repair
-orders are costing the shop hours right now.
+Not one advisor — the whole floor. He needs to walk in knowing three things:
+where the month's money lands, who needs pushing on what, and which repair
+orders are bleeding hours right now.
 
-DATA (JSON):
+HOW TO THINK ABOUT IT:
+1. Money first. Earned against forecast, what is left, what that means per day
+   against the days left, and whether that per-day number is realistic next to
+   what the shop has actually been averaging.
+2. Then people. For each advisor: their hours position, their biggest single
+   opportunity (usually uncalled deferred work), and the one thing to push
+   today. Be specific per advisor — never the same sentence twice.
+3. Then the floor. Repair orders stalled shop-wide, parts sitting, technician
+   hours against goal.
+4. Then priorities: the two or three things that, done today, move the month.
+
+DATA (JSON — every number you may use):
 ${JSON.stringify(pack, null, 1)}
 
-Return ONLY a JSON object, no code fence, shaped exactly like this:
+Return ONLY a JSON object, no code fence:
 {
-  "headline": "six to ten words on the state of the shop",
-  "opening": "three or four sentences: the month's money position, pace, and what today has to produce",
-  "forecast": "two or three sentences on the gross forecast — earned, remaining, per day needed, and whether that is realistic given the days left",
-  "wins": [{"title": "short", "detail": "one sentence with the number"}],
-  "advisorNotes": [{"advisor": "FIRSTNAME", "note": "one or two sentences: where they are and the one thing to push them on today"}],
-  "watchlist": [{"ro": "RO number", "what": "what is wrong", "action": "who needs to do what"}],
-  "technicians": "two sentences on tech hours and pacing, or empty string if there is nothing to say",
-  "closing": "one sentence on the priority for the day"
+  "headline": "six to ten words on the true state of the shop",
+  "opening": "four sentences: the money position, the pace, what today has to produce, and the biggest single risk to the month",
+  "forecast": "three sentences on the gross forecast — earned, remaining, per day needed, and an honest read on whether that lands",
+  "wins": [{"title": "three or four words", "detail": "one sentence with the number"}],
+  "priorities": [{"what": "the action", "why": "what it is worth and who owns it"}],
+  "advisorNotes": [{"advisor": "FIRSTNAME", "note": "two or three sentences: their hours position, their biggest opportunity with the dollar figure, and the one push for today"}],
+  "watchlist": [{"ro": "RO number", "what": "what is wrong and how long", "action": "who needs to do what"}],
+  "technicians": "two or three sentences on tech hours against goal and what that means for capacity today, or empty string",
+  "closing": "one sentence naming the priority for the day"
 }
-Cover every advisor in the data in advisorNotes. At most three wins and six watchlist rows.`;
+Cover every advisor in the data. At most three wins, three priorities, six
+watchlist rows.`;
 }
