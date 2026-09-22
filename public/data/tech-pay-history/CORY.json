@@ -88,18 +88,21 @@
       "fri": 4.84,
       "sat": 6.78
     },
-    "hours": 46.28,
+    "hours": 47.04,
     "payableHours": 46.28,
-    "overridden": false,
-    "adjustment": 0,
+    "overridden": true,
+    "adjustment": 0.76,
     "boardHours": 46.28,
     "ptoHours": 0,
     "ptoPaid": true,
     "rate": 27,
     "tier": "Up to 50 hrs",
-    "pay": 1249.56,
+    "pay": 1270.08,
     "payType": "flat",
-    "closed": false,
-    "updatedAt": "2026-09-22T09:00:17.390Z"
+    "closed": true,
+    "updatedAt": "2026-09-22T11:04:36.343Z",
+    "adjustSource": "week-report",
+    "closedBy": "SHAWN",
+    "closedAt": "2026-09-22T11:04:36.343Z"
   }
 }
