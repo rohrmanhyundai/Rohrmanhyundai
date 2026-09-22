@@ -119,11 +119,33 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const entries = useMemo(() => Object.values(activity.entries || {}).sort((a, b) => (a.at < b.at ? 1 : -1)), [activity]);
   const byRoActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[e.ro] ||= []).push(e); }); return m; }, [entries]);
   const byAdvisorActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[firstWord(e.by)] ||= []).push(e); }); return m; }, [entries]);
-  const tabAdvisors = useMemo(() => {
+  // Every advisor name we know about: user accounts, names on the reports,
+  // and anyone who has logged a follow-up. Managers pick which of these get
+  // a tab on the main page (store.advisorTabs); until they do, all of them.
+  const knownAdvisors = useMemo(() => {
     const set = new Set((advisors || []).map(firstWord));
+    Object.keys(advisorCounts).forEach(a => { if (a !== '—') set.add(firstWord(a)); });
     Object.keys(byAdvisorActivity).forEach(a => set.add(a));
+    return [...set].filter(Boolean).sort();
+  }, [advisors, advisorCounts, byAdvisorActivity]);
+  const chosenTabs = store && Array.isArray(store.advisorTabs) ? store.advisorTabs : null;
+  const tabAdvisors = useMemo(() => {
+    const set = new Set(chosenTabs ? chosenTabs : knownAdvisors);
+    if (me && (byAdvisorActivity[me] || []).length) set.add(me);  // never hide someone's own log
     return [...set].filter(Boolean).sort((a, b) => (a === me ? -1 : b === me ? 1 : a.localeCompare(b)));
-  }, [advisors, byAdvisorActivity, me]);
+  }, [chosenTabs, knownAdvisors, byAdvisorActivity, me]);
+  async function toggleAdvisorTab(name) {
+    const cur = new Set(chosenTabs ? chosenTabs : knownAdvisors);
+    if (cur.has(name)) cur.delete(name); else cur.add(name);
+    const next = [...cur].sort();
+    setBusy('tabs'); setStatus('');
+    try {
+      await updateDeferredRows(c => ({ ...(c || {}), advisorTabs: next }), `Deferred advisor tabs: ${next.join(', ') || 'none'}`);
+      setStore(c => ({ ...(c || {}), advisorTabs: next }));
+      trackAction('deferred-advisor-tabs', name);
+    } catch (e) { setStatus('❌ ' + (e?.message || e)); }
+    finally { setBusy(''); }
+  }
   const latestOf = (ro, type) => (byRoActivity[ro] || []).find(e => e.type === type) || null;
   const nextAppt = (ro) => { const t = isoToday(); const a = (byRoActivity[ro] || []).filter(e => e.type === 'appointment' && e.date >= t).sort((x, y) => (x.date < y.date ? -1 : 1)); return a[0] || latestOf(ro, 'appointment'); };
 
@@ -497,6 +519,26 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                       <tbody>{uploads.slice(0, 10).map((u, i) => <tr key={i}><td>{new Date(u.at).toLocaleString()}</td><td>{u.by}</td><td>{u.file}</td><td>{fmtDate(u.lastUpdate)}</td><td>{u.rows}</td></tr>)}</tbody></table>
                   </div>
                 )}
+              </div>
+
+              <div className="ds-card">
+                <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 6 }}>👤 Advisor tabs on the main page</div>
+                <div style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6, marginBottom: 10 }}>
+                  Click a name to turn their tab on or off. Lit names show as a tab at the top of Deferred Work. Saves right away.
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {knownAdvisors.map(a => {
+                    const on = tabAdvisors.includes(a);
+                    const n = (byAdvisorActivity[a] || []).length;
+                    return (
+                      <button key={a} className={`ds-tab${on ? ' on' : ''}`} disabled={busy === 'tabs'} onClick={() => toggleAdvisorTab(a)} title={on ? 'Showing — click to hide the tab' : 'Hidden — click to show the tab'} style={on ? {} : { opacity: .55 }}>
+                        {on ? '✓ ' : ''}{a}{n ? <span className="n">{n}</span> : null}
+                      </button>
+                    );
+                  })}
+                  {!knownAdvisors.length && <span style={{ fontSize: 12.5, color: '#64748b' }}>No advisors yet — upload a report first.</span>}
+                </div>
+                {status && status.startsWith('❌') && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 700, color: '#f87171' }}>{status}</div>}
               </div>
 
               <div className="ds-card">
