@@ -122,6 +122,18 @@ function AdvisorReport({ report, name }) {
         ) : null}
       </div>
 
+      {contest.live && contest.me ? (
+        <Section icon="💵" title="Big-Money LOF">
+          <div className="dw-stats" style={{ marginBottom: report.contest ? 14 : 0 }}>
+            <Stat k="Your rank" v={`#${contest.me.rank}`} s={contest.me.qualified ? 'qualified' : 'not qualified yet'} tone={contest.me.qualified ? 'good' : 'warn'} />
+            <Stat k="$50 Hrs/RO" v={contest.me.hrsRo} s={contest.me.hrsRoGap > 0 ? `${contest.me.hrsRoGap} under the ${contest.goals.hrsRo} goal` : `goal ${contest.goals.hrsRo} — hit`} tone={contest.me.hrsRoGap > 0 ? 'warn' : 'good'} />
+            <Stat k="$50 Add rate" v={`${Math.round(contest.me.rate * 100)}%`} s={contest.me.rateGap > 0 ? `${Math.round(contest.me.rateGap * 100)} points under goal` : 'goal hit'} tone={contest.me.rateGap > 0 ? 'warn' : 'good'} />
+            <Stat k="Days left" v={contest.daysLeft} s={contest.prize ? `${money(contest.prize)} on the line` : ''} />
+          </div>
+          {report.contest ? <div className="dw-quote">{report.contest}</div> : null}
+        </Section>
+      ) : null}
+
       {wins.length ? (
         <Section icon="🏆" title="Wins">
           {wins.map((w, i) => (
@@ -203,18 +215,6 @@ function AdvisorReport({ report, name }) {
               </div>
             </div>
           ))}
-        </Section>
-      ) : null}
-
-      {contest.live && contest.me ? (
-        <Section icon="💵" title="Big-Money LOF">
-          <div className="dw-stats" style={{ marginBottom: report.contest ? 14 : 0 }}>
-            <Stat k="Your rank" v={`#${contest.me.rank}`} s={contest.me.qualified ? 'qualified' : 'not qualified yet'} tone={contest.me.qualified ? 'good' : 'warn'} />
-            <Stat k="$50 Hrs/RO" v={contest.me.hrsRo} s={contest.me.hrsRoGap > 0 ? `${contest.me.hrsRoGap} under the ${contest.goals.hrsRo} goal` : `goal ${contest.goals.hrsRo} — hit`} tone={contest.me.hrsRoGap > 0 ? 'warn' : 'good'} />
-            <Stat k="$50 Add rate" v={`${Math.round(contest.me.rate * 100)}%`} s={contest.me.rateGap > 0 ? `${Math.round(contest.me.rateGap * 100)} points under goal` : 'goal hit'} tone={contest.me.rateGap > 0 ? 'warn' : 'good'} />
-            <Stat k="Days left" v={contest.daysLeft} s={contest.prize ? `${money(contest.prize)} on the line` : ''} />
-          </div>
-          {report.contest ? <div className="dw-quote">{report.contest}</div> : null}
         </Section>
       ) : null}
 
