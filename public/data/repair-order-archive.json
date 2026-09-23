@@ -21,25 +21,6 @@
     "_sourceTech": "GAVEN"
   },
   {
-    "id": "mubezfstgqbd",
-    "ro": "780969",
-    "roDate": "2026-09-21",
-    "vehicle": "2026 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "_archiveId": "mue1sz13h6z",
-    "_archivedAt": "2026-09-23T11:57:18.039Z",
-    "_archivedBy": "CORY",
-    "_source": "wip",
-    "_sourceTech": "CORY"
-  },
-  {
     "id": "mu5pszgxk5qz",
     "ro": "780912",
     "roDate": "2026-09-17",
