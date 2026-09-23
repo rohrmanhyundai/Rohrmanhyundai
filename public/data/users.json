@@ -476,7 +476,12 @@
       "chatAccess": false,
       "techChatAccess": true,
       "email": "kaden.wilson@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "passwordReset": {
+        "hash": "6e4f21ab98858f2771c48f0e32a957d5c015b2389625c011362568bee30ba7ce",
+        "expires": "2026-09-23T16:37:52.210Z",
+        "requestedAt": "2026-09-23T15:37:52.211Z"
+      }
     },
     {
       "username": "Emily",
