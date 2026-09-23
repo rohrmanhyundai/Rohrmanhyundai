@@ -363,10 +363,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 411.5,
-      "align": 0.05366666666666667,
-      "tires": 0.04193333333333333,
-      "valvoline": 0.11323333333333334,
-      "csi": 628.3333333333334
+      "align": 0.0805,
+      "tires": 0.0629,
+      "valvoline": 0.16985,
+      "csi": 942.5
     },
     "techTotals": {
       "mon": 47.49999999999999,
