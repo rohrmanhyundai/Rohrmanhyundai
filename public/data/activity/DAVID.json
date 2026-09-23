@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-09-23T15:00:16.117Z",
+    "type": "action",
+    "label": "deferred-contacted",
+    "details": "779904"
+  },
+  {
     "at": "2026-09-23T14:13:33.586Z",
     "type": "action",
     "label": "deferred-contacted",
@@ -766,10 +772,5 @@
     "at": "2026-08-24T16:28:36.169Z",
     "type": "page",
     "label": "work-schedule"
-  },
-  {
-    "at": "2026-08-24T14:50:22.685Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
