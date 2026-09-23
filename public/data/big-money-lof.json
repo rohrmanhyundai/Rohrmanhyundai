@@ -10,8 +10,8 @@
     "by": "SHAWN"
   },
   "latest": {
-    "takenAt": 1790087275278,
-    "date": "2026-09-22",
+    "takenAt": 1790169231579,
+    "date": "2026-09-23",
     "goals": {
       "hrs_ro": 1.3,
       "add_rate": 0.75
@@ -20,8 +20,8 @@
       {
         "name": "JORDAN",
         "display": "JORDAN",
-        "hrsRo": 0.53,
-        "rate": 0.54,
+        "hrsRo": 0.51,
+        "rate": 0.52,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -32,8 +32,8 @@
       {
         "name": "DAVID",
         "display": "DAVID",
-        "hrsRo": 0.37,
-        "rate": 0.46,
+        "hrsRo": 0.47,
+        "rate": 0.48,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -55,7 +55,7 @@
       }
     ],
     "store": {
-      "hrsRo": 0.3,
+      "hrsRo": 0.33,
       "rate": 0.333,
       "hitHrs": false,
       "hitRate": false,
