@@ -28,6 +28,7 @@ import AdditionalTimeMenu from './components/AdditionalTimeMenu';
 import AdditionalDiagTime from './components/AdditionalDiagTime';
 import RegistrationUpload from './components/RegistrationUpload';
 import RegistrationUploads from './components/RegistrationUploads';
+import MediaUpload from './components/MediaUpload';
 import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
@@ -1804,6 +1805,20 @@ export default function App() {
     );
   }
 
+  // Aftermarket warranty photos/videos from a phone, filed by RO number. Open to
+  // every logged-in user, like the registration upload — whoever has the car
+  // in front of them takes the pictures.
+  if (page === 'media-upload') {
+    if (!isLoggedIn) { setPage('dashboard'); return null; }
+    return (
+      <MediaUpload
+        currentUser={currentUser}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'dashboard')}
+      />
+    );
+  }
+
   if (page === 'registration-uploads') {
     if (!isLoggedIn) { setPage('dashboard'); return null; }
     return (
@@ -1901,6 +1916,7 @@ export default function App() {
             ? () => goTo('additional-time-menu', 'dashboard')
             : undefined}
           onRegistrationUpload={() => goTo('registration-upload', 'dashboard')}
+          onMediaUpload={() => goTo('media-upload', 'dashboard')}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}

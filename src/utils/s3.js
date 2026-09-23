@@ -3,7 +3,7 @@
 // worker/), which signs the request with keys kept as Worker secrets and puts
 // the object in the bucket. Public URLs are unchanged.
 
-import { apiFetch, hasSession } from './api.js';
+import { apiFetch, apiJson, hasSession } from './api.js';
 
 export const S3_BUCKET = 'rohrman-hyundai-files';
 export const S3_REGION = 'us-east-2';
@@ -67,6 +67,32 @@ export function uploadAdditionalTimePhotoToS3(filename, file) {
 // these back — so the key is opaque rather than named after the RO.
 export function uploadRegistrationPhotoToS3(filename, file) {
   return putObject('registrations/' + filename, file, file.type || contentTypeFor(filename));
+}
+
+// Upload an aftermarket-warranty photo or video (the phone Media Upload page).
+// Small files go through the worker like everything else. Phone videos blow
+// past the worker's 25 MB cap, so those get a short-lived signed URL and go
+// straight to the bucket, reporting progress (0–1) as they go.
+const PROXY_MAX = 20 * 1024 * 1024;
+export async function uploadWarrantyMediaToS3(filename, file, onProgress) {
+  const key = 'warranty-media/' + filename;
+  const type = file.type || 'application/octet-stream';
+  if (file.size <= PROXY_MAX) {
+    const url = await putObject(key, file, type);
+    if (onProgress) onProgress(1);
+    return url;
+  }
+  const { uploadUrl, url } = await apiJson(`/s3/presign?key=${encodeURIComponent(key)}`, { method: 'POST' });
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', uploadUrl);
+    xhr.setRequestHeader('Content-Type', type);
+    xhr.upload.onprogress = (e) => { if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total); };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`Upload failed (${xhr.status})`)));
+    xhr.onerror = () => reject(new Error('Upload failed — check the connection and try again.'));
+    xhr.send(file);
+  });
+  return url;
 }
 
 // Upload a tire promotion image. Returns the public URL of the stored object —

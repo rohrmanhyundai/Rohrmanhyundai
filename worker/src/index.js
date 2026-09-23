@@ -17,6 +17,9 @@
 //                                                        writes only under public/data/
 //   PUT  /s3/object?key=…       raw body               → { url }                    session
 //   DELETE /s3/object?key=…
+//   POST /s3/presign?key=…                               → { uploadUrl, url }          session;
+//                                                        warranty-media/ only (phone videos
+//                                                        outgrow the 25 MB proxy)
 //   POST /pusher/trigger        { channel, event, data } → publishes with the app secret; session
 //
 // Credentials live in KV as cred:<USERNAME> = { salt, hash, iterations, setAt }
@@ -42,7 +45,7 @@ const isAdminRole = (role) => String(role || '').toLowerCase() === 'admin';
 // letting a session write src/ would let anyone logged in ship a new build.
 const WRITABLE_PREFIX = 'public/data/';
 const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching', 'daily-wrench']);
-const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/'];
+const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/'];
 const S3_MAX_BYTES = 25 * 1024 * 1024;
 const PUSHER_CHANNELS = new Set(['rohrman-advisor-chat', 'rohrman-tech-chat', 'rohrman-system', 'rohrman-global-msg']);
 
@@ -381,6 +384,19 @@ async function route(request, env, url) {
       return json({ ok: true });
     }
     throw new HttpError(405, 'Method not allowed.');
+  }
+
+  // A short-lived signed PUT URL so the browser sends a big file straight to the
+  // bucket (its CORS allows PUT from the app) instead of through this worker,
+  // whose request body is capped. Only headers the browser can't vary are signed.
+  if (p === '/s3/presign' && method === 'POST') {
+    await requireSession(env, request);
+    const key = s3Key(env, url);
+    if (!key.startsWith('warranty-media/')) throw new HttpError(403, 'That S3 location is not allowed.');
+    const target = new URL(s3Url(env, key));
+    target.searchParams.set('X-Amz-Expires', '900');
+    const signed = await s3(env).sign(target.toString(), { method: 'PUT', aws: { signQuery: true } });
+    return json({ uploadUrl: signed.url, url: s3Url(env, key), key });
   }
 
   if (p === '/pusher/trigger' && method === 'POST') {

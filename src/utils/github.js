@@ -1296,6 +1296,49 @@ export async function removeRegistrationUpload(id) {
     `Remove registration upload ${id}`);
 }
 
+// ── Aftermarket warranty media (phone Media Upload) ─────────────────────────
+// One shared list of { id, ro, url, name, type, size, uploadedBy…, uploadedAt }.
+// Keyed by RO rather than written into a contract: the photos are often taken
+// before anyone has opened the contract, and they show up on it once one with
+// that RO exists.
+const WARRANTY_MEDIA_PATH = 'public/data/warranty/media.json';
+
+export const normalizeRo = (ro) => String(ro || '').trim().replace(/^#/, '').toUpperCase();
+
+export async function loadWarrantyMedia() {
+  try {
+    const data = await readGitHubFile(authHeaders(), WARRANTY_MEDIA_PATH);
+    if (Array.isArray(data)) return data;
+  } catch {}
+  try {
+    const res = await fetch(`${BASE}data/warranty/media.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json)) return json;
+    }
+  } catch {}
+  return [];
+}
+
+export async function addWarrantyMedia(items) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('Please sign in again.');
+  const list = Array.isArray(items) ? items : [items];
+  return mutateGitHubJson(WARRANTY_MEDIA_PATH, (cur) => {
+    const arr = Array.isArray(cur) ? cur : [];
+    const ids = new Set(list.map(m => m.id));
+    return [...list, ...arr.filter(m => !ids.has(m.id))];
+  }, `Warranty media - RO ${list[0]?.ro || 'unknown'} (${list.length})`);
+}
+
+export async function removeWarrantyMedia(id) {
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('Please sign in again.');
+  return mutateGitHubJson(WARRANTY_MEDIA_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).filter(m => m.id !== id),
+    `Remove warranty media ${id}`);
+}
+
 // ── Employee applicants ───────────────────────────────────────────────────────
 // One list per hiring manager: the parts manager's applicants are his, the
 // service manager's are his. The file is named by manager, so nobody's list is

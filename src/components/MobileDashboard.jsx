@@ -41,7 +41,7 @@ function GaugeBar({ label, actual, goal, prefix = '$' }) {
   );
 }
 
-export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onWorkSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload }) {
+export default function MobileDashboard({ data, vacations, isLoggedIn, currentUser, currentRole, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onWorkSchedule, onTireWarranty, onAdditionalTime, onRegistrationUpload, onMediaUpload }) {
   const [showLogin, setShowLogin] = useState(false);
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
@@ -76,6 +76,9 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
             )}
             {onRegistrationUpload && (
               <button onClick={onRegistrationUpload} style={btnStyle('#102a3a', '#38bdf8')}>🚗 Vehicle Registration Upload</button>
+            )}
+            {onMediaUpload && (
+              <button onClick={onMediaUpload} style={btnStyle('#0f2e2a', '#3dd6c3')}>📸 Media Upload</button>
             )}
             <button onClick={onChangePassword} style={btnStyle('#1e293b', '#fbbf24')} title="Change my password">🔑</button>
             <button onClick={onLogout} style={btnStyle('#2a1f1f', '#f87171')}>Logout</button>

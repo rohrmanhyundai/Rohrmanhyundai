@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, backfillWarrantyCompanyDetails, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, backfillWarrantyCompanyDetails, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim, loadWarrantyMedia, removeWarrantyMedia, normalizeRo } from '../utils/github';
+import { deleteS3ObjectByUrl } from '../utils/s3';
 import { extractLines } from '../utils/docxText';
 import { parseContactLines, mergeContacts } from '../utils/warrantyContacts';
 import { TireClaimDetail, flaggedWheels } from './TireWarranty';
@@ -1255,7 +1256,7 @@ function ContractLegend() {
 }
 
 // ── Contract List ─────────────────────────────────────────────────────────────
-function ContractList({ contracts, loading, onNew, onView }) {
+function ContractList({ contracts, loading, onNew, onView, mediaCounts = {} }) {
   const [search, setSearch] = useState('');
   const q = search.trim().toLowerCase();
   const filteredContracts = q
@@ -1361,7 +1362,12 @@ function ContractList({ contracts, loading, onNew, onView }) {
                       style={{ cursor: 'pointer', borderBottom: rowBorder, background: rowBg, transition: 'background .15s' }}
                       onMouseEnter={e => e.currentTarget.style.background = rowBgHover}
                       onMouseLeave={e => e.currentTarget.style.background = rowBg}>
-                      <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>{c.repairOrder || '—'}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#6ee7f9' }}>
+                        {c.repairOrder || '—'}
+                        {mediaCounts[normalizeRo(c.repairOrder)] > 0 && (
+                          <span title="Has media uploads" style={{ marginLeft: 6, fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#3dd6c3', whiteSpace: 'nowrap' }}>📸 {mediaCounts[normalizeRo(c.repairOrder)]}</span>
+                        )}
+                      </td>
                       <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{dateStr}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
                       <td style={{ padding: '12px 14px', fontSize: 13, color: '#94a3b8' }}>{c.vehicleYear} {c.vehicleMake} {c.vehicleModel}</td>
@@ -1816,6 +1822,155 @@ function EditRow({ row, setRow, onSave, onCancel, busy, input, cell }) {
   );
 }
 
+// ── Media Uploads (photos/videos sent from the phone Media Upload page) ──────
+// The S3 object is cross-origin, so a plain <a download> would just open it.
+// Pull the bytes down and hand the browser a blob it will actually save,
+// falling back to opening the file if the fetch is blocked.
+async function saveMediaToPc(url, filename) {
+  try {
+    const res = await fetch(url, { mode: 'cors', cache: 'no-store' });
+    if (!res.ok) throw new Error(String(res.status));
+    const blob = await res.blob();
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = href; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 10000);
+    return true;
+  } catch {
+    window.open(url, '_blank', 'noopener');
+    return false;
+  }
+}
+
+function mediaFilename(m, i) {
+  const ext = (String(m.url).split('?')[0].match(/\.([a-zA-Z0-9]{2,5})$/) || [])[1] || (m.kind === 'video' ? 'mov' : 'jpg');
+  return `RO-${m.ro}-${m.kind === 'video' ? 'video' : 'photo'}-${i + 1}.${ext.toLowerCase()}`;
+}
+
+function MediaPanel({ ro, media, currentRole, onRemoved }) {
+  const [viewing, setViewing] = useState(null);   // index into media
+  const [busy, setBusy] = useState('');
+  const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
+
+  useEffect(() => {
+    if (viewing === null) return;
+    function onKey(e) {
+      if (e.key === 'Escape') setViewing(null);
+      if (e.key === 'ArrowRight') setViewing(v => Math.min(media.length - 1, v + 1));
+      if (e.key === 'ArrowLeft') setViewing(v => Math.max(0, v - 1));
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [viewing, media.length]);
+
+  async function download(m, i) {
+    setBusy(m.id);
+    try { await saveMediaToPc(m.url, mediaFilename(m, i)); } finally { setBusy(''); }
+  }
+
+  async function downloadAll() {
+    setBusy('all');
+    try {
+      for (let i = 0; i < media.length; i++) {
+        await saveMediaToPc(media[i].url, mediaFilename(media[i], i));
+        await new Promise(r => setTimeout(r, 400));   // browsers drop back-to-back downloads
+      }
+    } finally { setBusy(''); }
+  }
+
+  async function remove(m) {
+    if (!window.confirm(`Delete this ${m.kind === 'video' ? 'video' : 'picture'} from RO ${m.ro}? This cannot be undone.`)) return;
+    setBusy(m.id);
+    try {
+      await removeWarrantyMedia(m.id);
+      try { await deleteS3ObjectByUrl(m.url); } catch {}
+      setViewing(null);
+      onRemoved(m.id);
+    } catch (err) {
+      window.alert(err.message || 'Delete failed');
+    } finally { setBusy(''); }
+  }
+
+  const btn = { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: '#cbd5e1', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 };
+  const cur = viewing !== null ? media[viewing] : null;
+
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px 60px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: '#3dd6c3', fontWeight: 800, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' }}>Media Uploads · RO {ro}</div>
+            <div style={{ color: '#64748b', fontSize: 12.5, marginTop: 3 }}>
+              Sent from the phone Media Upload page. Click one to view it, or save it to this computer.
+            </div>
+          </div>
+          {media.length > 1 && (
+            <button onClick={downloadAll} disabled={!!busy}
+              style={{ ...btn, color: '#3dd6c3', borderColor: 'rgba(61,214,195,0.35)', background: 'rgba(61,214,195,0.1)', fontSize: 13, padding: '8px 16px' }}>
+              {busy === 'all' ? '⏳ Saving…' : `⬇ Save All (${media.length})`}
+            </button>
+          )}
+        </div>
+
+        {media.length === 0 ? (
+          <div style={{ color: '#64748b', fontSize: 14, textAlign: 'center', padding: 40 }}>No media has been uploaded for this RO.</div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
+            {media.map((m, i) => (
+              <div key={m.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <button onClick={() => setViewing(i)} title="View"
+                  style={{ position: 'relative', display: 'block', width: '100%', aspectRatio: '4 / 3', padding: 0, border: 'none', background: '#000', cursor: 'zoom-in' }}>
+                  {m.kind === 'video'
+                    ? <video src={`${m.url}#t=0.5`} muted playsInline preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+                    : <img src={m.url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {m.kind === 'video' && (
+                    <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, color: '#fff', textShadow: '0 2px 8px rgba(0,0,0,.7)' }}>▶</span>
+                  )}
+                </button>
+                <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div style={{ fontSize: 11.5, color: '#94a3b8' }}>
+                    {m.kind === 'video' ? '🎥 Video' : '📷 Picture'} · {m.uploadedByDisplay || m.uploadedBy || '—'}
+                    {m.uploadedAt ? ` · ${new Date(m.uploadedAt).toLocaleDateString()}` : ''}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button onClick={() => download(m, i)} disabled={!!busy} style={{ ...btn, flex: 1, color: '#3dd6c3', borderColor: 'rgba(61,214,195,0.35)' }}>
+                      {busy === m.id ? '⏳' : '⬇ Save to PC'}
+                    </button>
+                    {canDelete && (
+                      <button onClick={() => remove(m)} disabled={!!busy} title="Delete" style={{ ...btn, color: '#f87171', borderColor: 'rgba(248,113,113,0.3)' }}>🗑</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {cur && (
+        <div onClick={() => setViewing(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(2,6,14,0.92)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div onClick={e => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: '#cbd5e1', fontSize: 13 }}>
+            <button onClick={() => setViewing(v => Math.max(0, v - 1))} disabled={viewing === 0} style={btn}>←</button>
+            <span>{viewing + 1} / {media.length} · {cur.kind === 'video' ? 'Video' : 'Picture'} · {cur.uploadedByDisplay || cur.uploadedBy || ''}</span>
+            <button onClick={() => setViewing(v => Math.min(media.length - 1, v + 1))} disabled={viewing === media.length - 1} style={btn}>→</button>
+            <button onClick={() => download(cur, viewing)} disabled={!!busy} style={{ ...btn, color: '#3dd6c3', borderColor: 'rgba(61,214,195,0.35)' }}>
+              {busy === cur.id ? '⏳ Saving…' : '⬇ Save to PC'}
+            </button>
+            <button onClick={() => setViewing(null)} style={btn}>✕ Close</button>
+          </div>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '92vw', maxHeight: '80vh', display: 'flex' }}>
+            {cur.kind === 'video'
+              ? <video key={cur.id} src={cur.url} controls autoPlay playsInline style={{ maxWidth: '92vw', maxHeight: '80vh', borderRadius: 8, background: '#000' }} />
+              : <img key={cur.id} src={cur.url} alt="" style={{ maxWidth: '92vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: 8 }} />}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel }) {
   const [mainTab, setMainTab] = useState('contracts');   // 'contracts' | 'tires'
   const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
@@ -1825,6 +1980,8 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
   const [activeContract, setActiveContract] = useState(null);
   const [editingContract, setEditingContract] = useState(null);
   const [saveError, setSaveError] = useState('');
+  const [media, setMedia] = useState([]);
+  const [contractTab, setContractTab] = useState('contract');   // 'contract' | 'media'
   const formRef = useRef(null);
 
   const loadContracts = useCallback(async () => {
@@ -1841,6 +1998,21 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
   }, []);
 
   useEffect(() => { loadContracts(); }, [loadContracts]);
+  useEffect(() => { loadWarrantyMedia().then(setMedia).catch(() => {}); }, []);
+
+  const mediaCounts = useMemo(() => {
+    const out = {};
+    for (const m of media) out[m.ro] = (out[m.ro] || 0) + 1;
+    return out;
+  }, [media]);
+
+  const openRo = normalizeRo(view === 'form' ? editingContract?.repairOrder : activeContract?.repairOrder);
+  const openMedia = useMemo(
+    () => (openRo ? media.filter(m => m.ro === openRo).sort((a, b) => String(a.uploadedAt).localeCompare(String(b.uploadedAt))) : []),
+    [media, openRo],
+  );
+  useEffect(() => { if (!openMedia.length) setContractTab('contract'); }, [openMedia.length]);
+  useEffect(() => { setContractTab('contract'); }, [view, activeContract?.id, editingContract?.id]);
 
   // Upsert a warranty company's name → phone into the shared directory so the
   // next claim auto-fills the phone when the name is typed. Loads the latest
@@ -1972,15 +2144,38 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
         </div>
       )}
 
+      {/* Contract / Media Uploads tabs — only when this RO has media */}
+      {mainTab === 'contracts' && view !== 'list' && openMedia.length > 0 && (
+        <div className="no-print amw-no-print" style={{ display: 'flex', gap: 8, padding: '10px 32px 0', flexShrink: 0 }}>
+          {[
+            { key: 'contract', label: '📄 Contract', color: '#6ee7f9', border: 'rgba(61,214,195,0.5)' },
+            { key: 'media', label: `📸 Media Uploads (${openMedia.length})`, color: '#3dd6c3', border: 'rgba(61,214,195,0.5)' },
+          ].map(t => {
+            const on = contractTab === t.key;
+            return (
+              <button key={t.key} onClick={() => setContractTab(t.key)}
+                style={{ background: on ? `${t.color}22` : 'transparent', border: `1px solid ${on ? t.border : 'rgba(255,255,255,0.1)'}`, color: on ? t.color : '#94a3b8', borderRadius: 9, padding: '8px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Content */}
+      {mainTab === 'contracts' && view !== 'list' && contractTab === 'media' && (
+        <MediaPanel ro={openRo} media={openMedia} currentRole={currentRole}
+          onRemoved={id => setMedia(prev => prev.filter(m => m.id !== id))} />
+      )}
       {mainTab === 'contacts' ? (
         <ContactsPanel />
       ) : mainTab === 'tires' ? (
         <TireClaimsPanel currentRole={currentRole} />
       ) : (
-        <>
+        // Hidden rather than unmounted on the media tab so an open edit survives.
+        <div style={{ display: view !== 'list' && contractTab === 'media' ? 'none' : 'contents' }}>
           {view === 'list' && (
-            <ContractList contracts={contracts} loading={loading} onNew={handleNew} onView={handleView} />
+            <ContractList contracts={contracts} loading={loading} onNew={handleNew} onView={handleView} mediaCounts={mediaCounts} />
           )}
           {view === 'form' && (
             <ContractForm
@@ -1996,7 +2191,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
           {view === 'detail' && activeContract && (
             <ContractDetail contract={activeContract} onEdit={handleEdit} onBack={() => setView('list')} />
           )}
-        </>
+        </div>
       )}
     </div>
   );
