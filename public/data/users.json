@@ -481,6 +481,11 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "iU5qom8JBogqhduFgEiYKOYMgJhx7uxJvnUtF+4wZ/CLNkh99RFUfgPaJbEDDpHR6ctgtzmK+hrL7dTpyY0JFqz9NpU6STggTSFCoMhICLR7MHYogQgiunA8ZHAlPuXl/QvNDolcQs8muTFSgL7WeCkXDPdLqx+p5hQqzxV0/fSL9aDkKK0Rr1tZeebSFhPdMVDZBQFMtrmLi2XSqfqdiSzCtWeJJfk1lObatMZVzZ1KzdwViiX46hgPwQ3kLdgS7b13duiKi7hPf1RV1bfLSYwcAOJ7VGf5qiXbpLBBU8Zo7oXj9QOmJeA1YYehzgejmU3CjpSZuwedRwTJLdA42A=="
+      },
+      "passwordReset": {
+        "hash": "cdb1d6049325408217d7709699b64d6f1459608bcf7395c76c5755ec90f13b62",
+        "expires": "2026-09-23T16:41:16.847Z",
+        "requestedAt": "2026-09-23T15:41:16.847Z"
       }
     },
     {
