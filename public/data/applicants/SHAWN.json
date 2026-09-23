@@ -136,8 +136,8 @@
     "position": "Advisor",
     "source": "Indeed",
     "interviewAt": "",
-    "interviewed": "",
-    "interviewedAt": "",
+    "interviewed": "yes",
+    "interviewedAt": "2026-09-23T17:01",
     "interviewNotes": "",
     "considerHire": "",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-mtu8ac13eeo0.pdf",
@@ -145,7 +145,7 @@
     "archived": false,
     "id": "ap-mtu8acbgpt2n",
     "appliedAt": "2026-09-09T15:03:22.588Z",
-    "updatedAt": "2026-09-09T15:03:33.676Z",
+    "updatedAt": "2026-09-23T21:01:29.024Z",
     "updatedBy": "SHAWN"
   },
   {
