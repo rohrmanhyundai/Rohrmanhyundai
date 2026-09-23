@@ -1,19 +1,5 @@
 [
   {
-    "id": "mubezfstgqbd",
-    "ro": "780969",
-    "roDate": "2026-09-21",
-    "vehicle": "2026 Hyundai Sonata",
-    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": ""
-  },
-  {
     "id": "mtbuplhzdha",
     "ro": "780361",
     "roDate": "2026-08-27",
