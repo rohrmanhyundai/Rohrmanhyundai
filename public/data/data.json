@@ -204,7 +204,8 @@
         "pacing": 0,
         "certified": "—",
         "trainings_due": "—",
-        "excel_training": "—"
+        "excel_training": "—",
+        "total_raw": 0
       }
     ],
     "advisors": [
@@ -342,11 +343,11 @@
     ],
     "advisorSummary": {
       "date": "March 27, 2026",
-      "total_hours": 457.9,
-      "align": 0.056925,
-      "tires": 0.035625,
-      "valvoline": 0.1266,
-      "csi": 712.5
+      "total_hours": 369.4,
+      "align": 0.05366666666666667,
+      "tires": 0.04193333333333333,
+      "valvoline": 0.11323333333333334,
+      "csi": 628.6666666666666
     },
     "techTotals": {
       "mon": 47.49999999999999,
@@ -356,7 +357,7 @@
       "fri": 0,
       "sat": 15.700000000000001,
       "week_total": 63.199999999999996,
-      "week_pct": 0.18978978978978978,
+      "week_pct": 0.16609724047306174,
       "shop_pacing": 250.48
     },
     "grossGoal": 152561,
