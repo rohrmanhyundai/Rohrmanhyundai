@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-23T21:24:07.437Z",
+  "updatedAt": "2026-09-23T21:42:21.326Z",
   "by": "SHAWN",
   "advisors": {
     "CORY": [
@@ -66,6 +66,10 @@
         "vehicle": "2015 Hyundai Tucson"
       },
       {
+        "ro": "781045",
+        "vehicle": "2026 Hyundai Elantra N"
+      },
+      {
         "ro": "781044",
         "vehicle": "2027 Hyundai Palisade Hybrid"
       },
@@ -94,12 +98,6 @@
       {
         "ro": "780810",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
-    "DANIEL": [
-      {
-        "ro": "781045",
-        "vehicle": "2026 Hyundai Elantra N"
       }
     ]
   }
