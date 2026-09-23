@@ -1,55 +1,7 @@
 {
-  "updatedAt": "2026-09-23T20:13:18.890Z",
+  "updatedAt": "2026-09-23T21:24:07.437Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781077",
-        "vehicle": "2025 Honda Civic Hatchback"
-      },
-      {
-        "ro": "781073",
-        "vehicle": "2021 Hyundai Kona"
-      },
-      {
-        "ro": "781061",
-        "vehicle": "2013 Hyundai Elantra"
-      },
-      {
-        "ro": "781046",
-        "vehicle": "2026 Hyundai Elantra N"
-      },
-      {
-        "ro": "781043",
-        "vehicle": "2027 Hyundai Kona"
-      },
-      {
-        "ro": "780810",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781076",
-        "vehicle": "2023 Chrysler Voyager"
-      },
-      {
-        "ro": "781072",
-        "vehicle": "2015 Hyundai Tucson"
-      },
-      {
-        "ro": "781044",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780988",
-        "vehicle": "2027 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780984",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
     "CORY": [
       {
         "ro": "781075",
@@ -100,10 +52,6 @@
         "vehicle": "2020 Kia Soul"
       },
       {
-        "ro": "780958",
-        "vehicle": "2021 Nissan Kicks"
-      },
-      {
         "ro": "780957",
         "vehicle": "2023 Mazda CX-9"
       },
@@ -112,14 +60,46 @@
         "vehicle": "2019 Hyundai Kona"
       }
     ],
-    "DANIEL": [
+    "JORDAN": [
       {
-        "ro": "781045",
+        "ro": "781072",
+        "vehicle": "2015 Hyundai Tucson"
+      },
+      {
+        "ro": "781044",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780988",
+        "vehicle": "2027 Hyundai Santa Fe"
+      },
+      {
+        "ro": "780984",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781046",
         "vehicle": "2026 Hyundai Elantra N"
+      },
+      {
+        "ro": "781043",
+        "vehicle": "2027 Hyundai Kona"
       },
       {
         "ro": "781042",
         "vehicle": "2027 Hyundai Kona"
+      },
+      {
+        "ro": "780810",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "DANIEL": [
+      {
+        "ro": "781045",
+        "vehicle": "2026 Hyundai Elantra N"
       }
     ]
   }
