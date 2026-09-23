@@ -120,13 +120,9 @@
       "email": "david.riley@rohrmanauto.com",
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
-        "data": "uzxQH2j06wPSbqYVNf7j6khPeHzWZj08f/MnMpyZvMRbCXiUcolodY/tjO36aazohMHyNf+TYG4s4NXgnyG8QeKrKtvjh6lfBJ45n6g+r+sxoDY0GahIrh3FRn6LXOG4z6sGFy8rjjB8sk/oInoJ5da256KwfxrJNHVDb30bI/yrE5FxOU8pfbkQUuDRp7zFqXWwu3kCgdK+c7ZjVSzoNHC8TkLS0TWVpe+wzLQf9ZmOdYxBnBHgMSnnmFcC2IGmR+S0ACQ7ENGsERU74m0y6sDydcr4mgiWvFlB9BiVRNqqG3KttqDyKEPdj93tagAGYiZwf3YRzssZxvvgW1RD0w=="
+        "data": "bTCmRKqytrpnUO5bTSh4OiQnHA5XZlC+UGfDSAzdk2M0AoUSw6hK1BmKOmP5guHVmtmXD0m1WT35ck4FU0PeqoDbWhU8Ih3jI26CuzPPauHDw5Bm+kGfujXJQVjj1H8XMoq3maUBSOBbLEvR4njUYMrm2ZNGxmsSGKi42v8cx25jprxRzTLqmclgRhIVgpCwULLu3PVeQ7+up+JKZMxp6sElWH1TMjeNDIKVG9Ctt+NvX8Bcsq39GGUg6x9oMXQAku7Ff78KXKfXXtgjOtwyQTodabm0rFAY1iiT9QWtlVO9Yeh2tot+mHOxI9cpSkU6WuvNL/PqILPdf8Df0cEa0w=="
       },
-      "passwordReset": {
-        "hash": "6641c966cf8e2ebd8e20e265c8a34d0be99328a91d02280012fbc005a4fcbd2c",
-        "expires": "2026-09-23T14:32:42.388Z",
-        "requestedAt": "2026-09-23T13:32:42.388Z"
-      }
+      "pwSalt": "6b0e08f79fdb9918bd927a0820483f30"
     },
     {
       "username": "Gaven",
