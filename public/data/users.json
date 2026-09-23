@@ -477,10 +477,10 @@
       "techChatAccess": true,
       "email": "kaden.wilson@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "8298e6ab5fb386a19e192434cfe49aea7d357075c4c55849e40935969bf1f799",
-        "expires": "2026-09-23T16:39:18.366Z",
-        "requestedAt": "2026-09-23T15:39:18.366Z"
+      "pwSalt": "2aa22cbdcb5957582dd422d8cc1810c4",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "iU5qom8JBogqhduFgEiYKOYMgJhx7uxJvnUtF+4wZ/CLNkh99RFUfgPaJbEDDpHR6ctgtzmK+hrL7dTpyY0JFqz9NpU6STggTSFCoMhICLR7MHYogQgiunA8ZHAlPuXl/QvNDolcQs8muTFSgL7WeCkXDPdLqx+p5hQqzxV0/fSL9aDkKK0Rr1tZeebSFhPdMVDZBQFMtrmLi2XSqfqdiSzCtWeJJfk1lObatMZVzZ1KzdwViiX46hgPwQ3kLdgS7b13duiKi7hPf1RV1bfLSYwcAOJ7VGf5qiXbpLBBU8Zo7oXj9QOmJeA1YYehzgejmU3CjpSZuwedRwTJLdA42A=="
       }
     },
     {
