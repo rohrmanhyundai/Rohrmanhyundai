@@ -1,13 +1,25 @@
 {
-  "updatedAt": "2026-09-23T20:11:24.985Z",
+  "updatedAt": "2026-09-23T20:13:19.875Z",
   "by": "SHAWN",
   "rows": [
+    {
+      "ro": "781077",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2025 Honda Civic Hatchback",
+      "tech": "",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Wed, Sep 23, 2026 4:10 PM"
+    },
     {
       "ro": "781076",
       "advisor": "JORDAN TROXEL",
       "vehicle": "2023 Chrysler Voyager",
       "tech": "",
-      "userFlag": "NO_LABEL",
+      "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
@@ -141,8 +153,8 @@
       "tech": "KADEN WILSON",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "IN_PROGRESS",
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
       "roAge": 1,
       "openDate": "Wed, Sep 23, 2026 2:09 PM"
     },
