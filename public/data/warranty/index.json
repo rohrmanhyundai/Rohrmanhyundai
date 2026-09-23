@@ -2,7 +2,7 @@
   {
     "id": "mud2oit1shgb",
     "createdAt": "2026-09-22T19:34:03.829Z",
-    "updatedAt": "2026-09-23T13:10:06.193Z",
+    "updatedAt": "2026-09-23T15:54:27.562Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Austin Faulkner",
     "customerPhone": "765-523-0060",
@@ -17,7 +17,7 @@
     "warrantyEmail": "",
     "claimNumber": "CNC0922268175178463",
     "authNumber": "",
-    "laborRate": "170",
+    "laborRate": "190.00",
     "laborTime": "3.9",
     "diagnosisTime": "1.0",
     "laborTotalOverride": "",
@@ -37,8 +37,8 @@
         "price": "13.54"
       }
     ],
-    "taxPct": "7",
-    "deductible": "",
+    "taxPct": "",
+    "deductible": "100.00",
     "rental": null,
     "towing": null,
     "sublet": null,
