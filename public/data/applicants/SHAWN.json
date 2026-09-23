@@ -164,10 +164,11 @@
     "archived": false,
     "id": "ap-mtu88qxbovx3",
     "appliedAt": "2026-09-09T15:02:08.207Z",
-    "updatedAt": "2026-09-23T20:59:35.943Z",
+    "updatedAt": "2026-09-23T20:59:48.902Z",
     "updatedBy": "SHAWN",
     "contacted": "yes",
-    "contactedAt": "2026-09-23T16:59"
+    "contactedAt": "2026-09-23T16:59",
+    "contactNotes": "left voicemail "
   },
   {
     "name": "Fawn Glover",
