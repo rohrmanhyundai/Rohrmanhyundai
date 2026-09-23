@@ -1,97 +1,5 @@
 [
   {
-    "id": "gm-mu2wnqt8clum",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "RO 780418 NOTHING ON THIS YET? RO IS 16 DAYS",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789490868092
-  },
-  {
-    "id": "gm-mu2wpxo8v315",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "STILL NO REGISTRATION FOR 780552?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789490970296
-  },
-  {
-    "id": "gm-mu2x2frz44w1",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "ON 780582 NO NOTES SINCE THE 9TH. WHERE DO WE STAND ON THIS?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789491553631
-  },
-  {
-    "id": "gm-mu2x4qxhxdgh",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "780681 WHERE DO WE STAND ON THIS?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789491661397
-  },
-  {
-    "id": "gm-mu30zfihm1mp",
-    "from": "SHAWN",
-    "to": [
-      "KAI"
-    ],
-    "text": "CAN YOU EMAIL ME THE SUBLET FOR 780582 FOR THE PAINT?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789498131785
-  },
-  {
-    "id": "gm-mu3509gs2ydi",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN",
-      "CORY"
-    ],
-    "text": "ENGINE APPROVED 780754",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789504889068
-  },
-  {
-    "id": "gm-mu43halu7adv",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "780752 YOU MAY NEED TO EMAIL THE GUY ON THIS CAR. I DONT THINK THE PHONE NUMBER IS WORKING. WE NEED TO INVOICE THE RO WE HAVE TO SUBMIT THE WARRANTY FOR HIM TO START THE BUYBACK FOR HIM",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mu5gwl91a6hu",
-        "from": "SHAWN",
-        "text": "Did you hear from this guy?",
-        "timestamp": 1789645805461
-      }
-    ],
-    "timestamp": 1789562790642
-  },
-  {
     "id": "gm-mu479vgmph4w",
     "from": "SHAWN",
     "to": [
@@ -428,5 +336,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790090038150
+  },
+  {
+    "id": "gm-mue453ln4mib",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "did you get a PO for 781024 so we can close it",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790168563067
   }
 ]
