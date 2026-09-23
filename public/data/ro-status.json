@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-23T21:24:08.413Z",
+  "updatedAt": "2026-09-23T21:42:22.291Z",
   "by": "SHAWN",
   "rows": [
     {
@@ -196,7 +196,7 @@
     },
     {
       "ro": "781045",
-      "advisor": "DANIEL ESCALANTE",
+      "advisor": "JORDAN TROXEL",
       "vehicle": "2026 Hyundai Elantra N",
       "tech": "",
       "userFlag": "PINK",
@@ -222,10 +222,10 @@
       "ro": "781043",
       "advisor": "DAVID RILEY",
       "vehicle": "2027 Hyundai Kona",
-      "tech": "",
-      "userFlag": "PINK",
+      "tech": "CARTER JEAN",
+      "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
+      "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
       "roAge": 1,
       "openDate": "Wed, Sep 23, 2026 10:11 AM"
