@@ -164,8 +164,10 @@
     "archived": false,
     "id": "ap-mtu88qxbovx3",
     "appliedAt": "2026-09-09T15:02:08.207Z",
-    "updatedAt": "2026-09-09T15:02:08.207Z",
-    "updatedBy": "SHAWN"
+    "updatedAt": "2026-09-23T20:59:28.248Z",
+    "updatedBy": "SHAWN",
+    "contacted": "no",
+    "contactedAt": ""
   },
   {
     "name": "Fawn Glover",
