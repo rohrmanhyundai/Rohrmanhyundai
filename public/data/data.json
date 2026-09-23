@@ -297,23 +297,6 @@
         "roh50_add_rate": 0.52,
         "lof_tickets": 58,
         "lof_oil_only": 28
-      },
-      {
-        "name": "DANIEL",
-        "mtd_hours": 0,
-        "daily_avg": 0,
-        "hours_per_ro": 0,
-        "align": 0,
-        "tires": 0,
-        "valvoline": 0,
-        "roh50_hrs_ro": 0,
-        "roh50_add_rate": 0,
-        "csi": 0,
-        "asr": 0,
-        "elr": 0,
-        "last_month_total": 0,
-        "ro_count": 0,
-        "_lastImport": 1790166409243
       }
     ],
     "advisorTraining": [
@@ -328,12 +311,6 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
-      },
-      {
-        "name": "DANIEL",
-        "certified": "—",
-        "trainings_due": "—",
-        "excel_training": "—"
       }
     ],
     "vacations": [
