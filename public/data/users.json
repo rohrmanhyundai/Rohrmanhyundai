@@ -149,12 +149,12 @@
       "lastName": "Laughner",
       "managementAccess": true,
       "email": "gavenlaughner@gmail.com",
-      "passwordReset": {
-        "hash": "19680e5da0eb5508097c8e087c70ee0fb06561beafa76d76a6b03704f28fc04c",
-        "expires": "2026-09-23T12:27:43.169Z",
-        "requestedAt": "2026-09-23T11:27:43.169Z"
-      },
-      "hidden": false
+      "hidden": false,
+      "pwSalt": "17a2fb25370d96d71cb370b1f295988d",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "mMmM5sFLdgTkhqMscDx8DAotf8SxyI2Q4W9YBks5PjMB4rq0mmW9hh0D2ywY4oKoEqPhlIdhJhY6tfdxcHgQRsU3TVjA86ZkxOKaNJKKsYKvyEvu54SnABALlqbUp3YnABsRgnPvnzLxTNfGE31hhHDqcxqzcW0VJQqkoVRJwcEKDE1QgTDO0VF6KRNDqPJvJEUveLUCLsHmAnpvm71LKJQolzq5IVpkENQbO9aPfFEWBJy/0WQuxbozqR4YnBl+mXeha59T2KsAMoML2+QdhGUbj8TP/jN+ZJhvyQa7prUF+e3mhCeKwg3K9r1t002QllEMeZeYQEKQS/NgdLwhhQ=="
+      }
     },
     {
       "username": "Austin",
