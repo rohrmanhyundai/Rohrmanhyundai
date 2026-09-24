@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-24T21:02:35.318Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
     "at": "2026-09-24T12:56:19.972Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -783,16 +788,6 @@
   },
   {
     "at": "2026-08-26T12:02:26.078Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-25T15:53:19.286Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-25T15:53:17.941Z",
     "type": "page",
     "label": "advisor-calendar"
   }
