@@ -30,5 +30,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mug1ncxk9m9d",
+    "ro": "781097",
+    "roDate": "2026-09-24",
+    "vehicle": "2013 Hyundai Elantra",
+    "jobDesc": "steering rack R&R",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
