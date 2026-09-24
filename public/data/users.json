@@ -310,7 +310,12 @@
       "lastName": "Kuntz",
       "email": "thatguyiam1686@gmail.com",
       "managementAccess": false,
-      "hidden": false
+      "hidden": false,
+      "passwordReset": {
+        "hash": "5d8d1a41e91caef9d71a94c8dc6a2fb2a1373530d8e6c858e145eec5ae34e8d7",
+        "expires": "2026-09-24T20:58:33.703Z",
+        "requestedAt": "2026-09-24T19:58:33.703Z"
+      }
     },
     {
       "username": "Derrick",
