@@ -89,5 +89,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "muejgcc1lv0k",
+    "ro": "781052",
+    "roDate": "2026-09-23",
+    "vehicle": "2018 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES TRANSMISSION DIAG. being towed in. has aftermarket warranty.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
