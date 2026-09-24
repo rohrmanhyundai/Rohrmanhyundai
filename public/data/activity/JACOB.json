@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-24T20:19:01.400Z",
+    "type": "page",
+    "label": "live-pay-hub"
+  },
+  {
+    "at": "2026-09-24T20:18:57.156Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-24T20:18:51.897Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-24T14:44:55.237Z",
     "type": "page",
     "label": "live-pay-hub"
@@ -637,66 +652,6 @@
   },
   {
     "at": "2026-08-26T11:10:45.722Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T19:20:43.388Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T19:17:26.903Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T19:16:46.147Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T19:16:44.631Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T19:11:40.206Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T19:11:39.288Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T17:57:52.605Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T17:57:51.492Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T17:36:22.698Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T17:36:21.582Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T17:36:19.548Z",
-    "type": "page",
-    "label": "tech-self-review"
-  },
-  {
-    "at": "2026-08-25T17:36:16.704Z",
     "type": "page",
     "label": "tech-resources"
   }
