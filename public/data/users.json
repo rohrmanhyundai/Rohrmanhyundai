@@ -311,10 +311,10 @@
       "email": "thatguyiam1686@gmail.com",
       "managementAccess": false,
       "hidden": false,
-      "passwordReset": {
-        "hash": "5d8d1a41e91caef9d71a94c8dc6a2fb2a1373530d8e6c858e145eec5ae34e8d7",
-        "expires": "2026-09-24T20:58:33.703Z",
-        "requestedAt": "2026-09-24T19:58:33.703Z"
+      "pwSalt": "dc99c30e68e9e253f9edc238a7ec9edc",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "ATkI5sdNOjZTu3lfBkF49Pp3OMpWo5Yii92xWjYY/OJwaTCrjc4EHvhADTR9ERug3kpmcl1pHNBXTTTWo35k0Q2pJuK7CNKpbDxKBfSe091YR87TuyeCMzafN0SB2oP0BUOwCdH51DRcH3PVZqLJzgIYENJMvpIb6JQ3VfDqDWo4GbmKG/X3wYZMeU5IaUhZFLTj3eXNT1J5UeSzO9V1K4ttdPuBf07Od/iS8HLyExS6egWRjXTPc0Zyu9Ossnlq4fY15eYiEnrUV1LgHh/VkTakTF+MpTSMEGN7WreMTtUnOk370lC4q26NVieLCsdNsoN7oMOG21wJG8AWvNyDRQ=="
       }
     },
     {
