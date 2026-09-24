@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-24T19:49:25.321Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-23T11:59:52.193Z",
     "type": "action",
     "label": "delete-wip-row",
@@ -1221,82 +1226,5 @@
     "at": "2026-08-26T11:37:28.958Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T18:07:20.151Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780279 tech GAVEN"
-  },
-  {
-    "at": "2026-08-25T18:07:12.817Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 779916 tech GAVEN"
-  },
-  {
-    "at": "2026-08-25T18:07:08.717Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-25T18:07:07.500Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T00:25:27.809Z",
-    "type": "page",
-    "label": "performance-report"
-  },
-  {
-    "at": "2026-08-25T00:25:24.610Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T00:25:09.778Z",
-    "type": "page",
-    "label": "tech-self-review"
-  },
-  {
-    "at": "2026-08-25T00:25:07.194Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T00:25:01.412Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-08-25T00:24:58.907Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-25T00:23:12.532Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-25T00:23:02.882Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-25T00:22:09.001Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T00:22:06.884Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T00:22:03.518Z",
-    "type": "action",
-    "label": "login"
   }
 ]
