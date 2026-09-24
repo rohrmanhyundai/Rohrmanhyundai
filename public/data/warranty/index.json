@@ -2,7 +2,7 @@
   {
     "id": "mufkvqv1lcg4",
     "createdAt": "2026-09-24T13:39:06.301Z",
-    "updatedAt": "2026-09-24T13:40:08.508Z",
+    "updatedAt": "2026-09-24T14:11:51.093Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Joanna Mccormick",
     "customerPhone": "352) 616 - 9633",
@@ -38,7 +38,7 @@
     "tireRepair": null,
     "tireTax": null,
     "tireDisposal": null,
-    "notes": "",
+    "notes": "TECH NOTES: customer STATES LIGHTS ON DASH, SCANNED CODES AND FOUND SEVERAL CODES FOR REAR LH WHEEL SPEED SENSOR. ALSO FOUND OIL LIGHT TO BE FLASHING. CLEARED CODES AND FOUND VEHICLE TO STALL OUT SEVERAL TIMES. ABS CODES NEVER CAME BACK. INSPECTED OIL LEVEL AND FOUND OIL LEVEL TO BE VERY LOW. WILL RECOMMEND ENGINE DECARB SERVICE DUE TO ENGINE BURNING OIL. INSPECTED REAR LH WHEEL SPEED SENSOR AND FOUND TO BE GOOD AND RESPONDING CORRECTLY. ",
     "approved": false,
     "approvedDate": "",
     "denied": false,
