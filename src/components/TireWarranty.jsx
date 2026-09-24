@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
 import { uploadTirePhotoToS3, ensureAwsCreds } from '../utils/s3';
 import { shrinkImage } from '../utils/imageShrink';
+import InPageCamera, { inPageCameraSupported } from './InPageCamera';
 
 const accent = '#fbbf24'; // amber — tire theme
 
@@ -144,20 +145,43 @@ function clearResume() {
   try { localStorage.removeItem(RESUME_KEY); } catch {}
 }
 const IMAGE_EXT = /\.(jpe?g|png|heic|heif|webp|gif)$/i;
+// Android gets the in-page camera: handing off to the camera app there reloads
+// the tab or loses the photo. iPhone's hand-off works, so it keeps the native camera.
+const USE_IN_PAGE_CAMERA = typeof navigator !== 'undefined'
+  && /Android/i.test(navigator.userAgent) && inPageCameraSupported();
 
 function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge }) {
   const inputRef = useRef(null);
+  const pickerRef = useRef(null); // no capture attribute: Android offers camera + gallery
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [cameraOpen, setCameraOpen] = useState(false);
 
-  async function handleFile(e) {
+  function openCamera() {
+    if (USE_IN_PAGE_CAMERA) { setCameraOpen(true); return; }
+    markResume();
+    inputRef.current?.click();
+  }
+
+  function openPicker() {
+    setCameraOpen(false);
+    markResume();
+    pickerRef.current?.click();
+  }
+
+  function handleFile(e) {
     clearResume();
     const picked = e.target.files?.[0];
+    e.target.value = '';
     if (!picked) return;
     // Some Android camera apps hand back a file with an empty type.
     if (!picked.type.startsWith('image/') && !(picked.type === '' && IMAGE_EXT.test(picked.name || ''))) {
       setError('Please choose an image.'); return;
     }
+    upload(picked);
+  }
+
+  async function upload(picked) {
     setError('');
     setUploading(true);
     try {
@@ -171,7 +195,6 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge
       setError('Upload failed: ' + (err.message || err));
     } finally {
       setUploading(false);
-      if (inputRef.current) inputRef.current.value = '';
     }
   }
 
@@ -187,6 +210,14 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge
       )}
       <input ref={inputRef} type="file" accept="image/*" capture="environment"
         onChange={handleFile} style={{ display: 'none' }} />
+      <input ref={pickerRef} type="file" accept="image/*"
+        onChange={handleFile} style={{ display: 'none' }} />
+      {cameraOpen && (
+        <InPageCamera label={label}
+          onCancel={() => setCameraOpen(false)}
+          onFallback={openPicker}
+          onCapture={file => { setCameraOpen(false); upload(file); }} />
+      )}
       {value ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <a href={value} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0 }}>
@@ -196,14 +227,14 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge
           <div style={{ flex: 1, minWidth: 0 }}>
             {compact && <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', marginBottom: 2 }}>{label}</div>}
             <div style={{ fontSize: 12, color: '#4ade80', fontWeight: 700, marginBottom: 6 }}>✓ Uploaded</div>
-            <button type="button" onClick={() => { markResume(); inputRef.current?.click(); }} disabled={uploading}
+            <button type="button" onClick={openCamera} disabled={uploading}
               style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
               {uploading ? 'Uploading…' : '📷 Retake'}
             </button>
           </div>
         </div>
       ) : (
-        <button type="button" onClick={() => { markResume(); inputRef.current?.click(); }} disabled={uploading}
+        <button type="button" onClick={openCamera} disabled={uploading}
           style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             background: 'rgba(251,191,36,0.08)', border: `1.5px dashed ${accent}66`, color: accent,
             borderRadius: 12, padding: compact ? '16px 12px' : '22px 12px', cursor: uploading ? 'wait' : 'pointer', fontSize: 15, fontWeight: 700 }}>
