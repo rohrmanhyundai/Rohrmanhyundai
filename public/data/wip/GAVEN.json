@@ -75,22 +75,6 @@
     "flag": "purple"
   },
   {
-    "id": "mu5pt0fc6ojo",
-    "ro": "780902",
-    "roDate": "2026-09-17",
-    "vehicle": "2022 Hyundai Kona N",
-    "jobDesc": "CUSTOMER STATES CEL ON. RUNNING ROUGH. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "muejgasn5vwk",
     "ro": "781013",
     "roDate": "2026-09-23",
