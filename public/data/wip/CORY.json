@@ -30,21 +30,6 @@
     "flag": "purple"
   },
   {
-    "id": "mu2px7cuwk8",
-    "ro": "780754",
-    "roDate": "2026-09-10",
-    "vehicle": "11 Sonata",
-    "jobDesc": "CUSTOMER STATES ENGINE LOCKED UP. CHECK AND ADVISE.",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/22/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "notes": "Engine Approved",
-    "flag": "purple"
-  },
-  {
     "id": "mthoa4nkall",
     "ro": "780481",
     "roDate": "2026-08-31",
