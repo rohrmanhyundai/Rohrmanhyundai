@@ -70,5 +70,35 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
+  },
+  {
+    "id": "mug1ndz1pqxe",
+    "ro": "781104",
+    "roDate": "2026-09-24",
+    "vehicle": "2021 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES- Driver front tire side wall damaged",
+    "notes": "CAR IS NOT HERE",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "DAVID RILEY",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
+  },
+  {
+    "id": "mug1ndz15xnz",
+    "ro": "781103",
+    "roDate": "2026-09-24",
+    "vehicle": "2025 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES RADIATOR LEAKING LEAKING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "isNew": true
   }
 ]
