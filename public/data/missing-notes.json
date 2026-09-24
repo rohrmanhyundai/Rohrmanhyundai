@@ -1,15 +1,29 @@
 {
-  "updatedAt": "2026-09-23T21:42:21.326Z",
+  "updatedAt": "2026-09-24T21:28:31.977Z",
   "by": "SHAWN",
   "advisors": {
-    "CORY": [
+    "DAVID": [
       {
-        "ro": "781075",
-        "vehicle": "2023 Hyundai Tucson"
+        "ro": "781104",
+        "vehicle": "2021 Hyundai Tucson"
       },
       {
-        "ro": "781074",
-        "vehicle": "2023 Hyundai Palisade"
+        "ro": "781097",
+        "vehicle": "2013 Hyundai Elantra"
+      },
+      {
+        "ro": "781046",
+        "vehicle": "2026 Hyundai Elantra N"
+      },
+      {
+        "ro": "781017",
+        "vehicle": "2017 Hyundai Tucson"
+      }
+    ],
+    "CORY": [
+      {
+        "ro": "781101",
+        "vehicle": "2024 Hyundai IONIQ 5"
       },
       {
         "ro": "781071",
@@ -24,16 +38,8 @@
         "vehicle": "2019 Hyundai Santa Fe"
       },
       {
-        "ro": "781067",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
         "ro": "781022",
         "vehicle": "2013 Nissan Murano"
-      },
-      {
-        "ro": "781017",
-        "vehicle": "2017 Hyundai Tucson"
       },
       {
         "ro": "781015",
@@ -42,14 +48,6 @@
       {
         "ro": "781012",
         "vehicle": "2016 Honda Odyssey"
-      },
-      {
-        "ro": "781011",
-        "vehicle": "2018 Subaru Forester"
-      },
-      {
-        "ro": "780978",
-        "vehicle": "2020 Kia Soul"
       },
       {
         "ro": "780957",
@@ -76,28 +74,6 @@
       {
         "ro": "780988",
         "vehicle": "2027 Hyundai Santa Fe"
-      },
-      {
-        "ro": "780984",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781046",
-        "vehicle": "2026 Hyundai Elantra N"
-      },
-      {
-        "ro": "781043",
-        "vehicle": "2027 Hyundai Kona"
-      },
-      {
-        "ro": "781042",
-        "vehicle": "2027 Hyundai Kona"
-      },
-      {
-        "ro": "780810",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
       }
     ]
   }
