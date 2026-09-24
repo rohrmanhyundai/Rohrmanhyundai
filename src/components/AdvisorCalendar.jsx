@@ -649,7 +649,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 );
                 case 'aftermarketWarranty': return (
                   <button onClick={onAftermarketWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.25),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.35)' }}>
-                    🛡 After Market Warranty
+                    🛡 After Market Warranty/Tire Warranty
                   </button>
                 );
                 case 'originalOwner': return (

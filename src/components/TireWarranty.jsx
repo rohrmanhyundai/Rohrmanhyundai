@@ -850,9 +850,13 @@ function clearDraft() {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function TireWarranty({ currentUser, currentRole, onBack, backLabel }) {
-  const [draft] = useState(loadDraft);
-  const [view, setView] = useState(draft ? 'form' : 'list');    // 'list' | 'form' | 'detail'
+// `embedded` is the + New claim flow inside After Market Warranty/Tire Warranty:
+// it opens straight on the form, has no top bar of its own, and calls
+// onDone(saved) when the claim is saved or cancelled. The phone page (not
+// embedded) is the only one that keeps a draft across reloads.
+export default function TireWarranty({ currentUser, currentRole, onBack, backLabel, embedded, onDone }) {
+  const [draft] = useState(() => (embedded ? null : loadDraft()));
+  const [view, setView] = useState(draft || embedded ? 'form' : 'list');    // 'list' | 'form' | 'detail'
   const [step, setStep] = useState(draft?.step || 1);            // 1 | 2 | 3 (within 'form')
   const [restored, setRestored] = useState(!!draft);
   const [claims, setClaims] = useState([]);
@@ -860,7 +864,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedOk, setSavedOk] = useState(false);
-  const [form, setForm] = useState(() => draft ? { ...emptyForm(), ...draft.form } : emptyForm());
+  const [form, setForm] = useState(() => draft ? { ...emptyForm(), ...draft.form } : { ...emptyForm(), createdBy: currentUser || '' });
   const [activeClaim, setActiveClaim] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -879,7 +883,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
   useEffect(() => { loadClaims(); }, [loadClaims]);
 
   useEffect(() => {
-    if (view !== 'form') return;
+    if (embedded || view !== 'form') return;
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step, ts: Date.now() })); } catch {}
   }, [view, form, step]);
 
@@ -909,6 +913,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
       clearDraft();
       setRestored(false);
       setClaims(next);
+      if (embedded) { onDone?.(true); return; }
       setSavedOk(true);
       setView('list');
     } catch (err) {
@@ -952,13 +957,22 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
   }
 
   function topBack() {
+    if (embedded) { onDone?.(false); return; }
     if (view === 'form') { clearDraft(); setRestored(false); setView('list'); return; }
     if (view === 'detail') { setView('list'); return; }
     onBack();
   }
 
   return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0d1627' }}>
+    <div className={embedded ? undefined : 'adv-page'} style={embedded
+      ? { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }
+      : { display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0d1627' }}>
+      {embedded ? (
+        <div className="no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px 0', maxWidth: 720, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+          <button className="secondary" onClick={topBack} disabled={saving}>← Tire Claims</button>
+          <span style={{ fontWeight: 800, fontSize: 16, color: accent }}>🛞 New Tire Claim</span>
+        </div>
+      ) : (
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0, position: 'sticky', top: 0, zIndex: 20 }}>
         <button className="secondary" onClick={topBack} disabled={saving}>
           {view === 'list' ? (backLabel || '← Back') : '← Claims'}
@@ -971,6 +985,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
           </button>
         )}
       </div>
+      )}
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', maxWidth: 720, width: '100%', margin: '0 auto' }}>
         {savedOk && view === 'list' && (

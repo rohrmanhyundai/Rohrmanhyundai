@@ -19,7 +19,7 @@ const NAV_BUTTONS = [
   },
   {
     key: 'aftermarketWarranty',
-    label: '🛡 After Market Warranty',
+    label: '🛡 After Market Warranty/Tire Warranty',
     desc: 'View and manage warranty claims',
     bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(16,185,129,.18))',
     border: 'rgba(52,211,153,.45)',
@@ -43,15 +43,6 @@ const NAV_BUTTONS = [
     border: 'rgba(110,231,249,.45)',
     color: '#6ee7f9',
     prop: 'onDocumentLibrary',
-  },
-  {
-    key: 'tireWarranty',
-    label: '🛞 Tire Warranty',
-    desc: 'Start and manage tire warranty claims',
-    bg: 'linear-gradient(135deg,rgba(251,191,36,.28),rgba(245,158,11,.18))',
-    border: 'rgba(251,191,36,.45)',
-    color: '#fde68a',
-    prop: 'onTireWarranty',
   },
   {
     key: 'tireQuote',
@@ -93,10 +84,10 @@ const NAV_BUTTONS = [
 
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
-  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onTireQuote, onNttAttWorksheet, onHotRepairs,
+  onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
   onRegistrationUploads,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireWarranty, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads };
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
 
   return (

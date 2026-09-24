@@ -1289,7 +1289,6 @@ export default function App() {
         userPages={currentPages}
         onBack={() => setPage('dashboard')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
-        onTireWarranty={() => goTo('tire-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}

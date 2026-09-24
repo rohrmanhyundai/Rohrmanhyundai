@@ -161,7 +161,7 @@ const PAGE_ACCESS = [
   { key: 'advisorSchedule',    label: '📅 Advisor Schedule',        group: 'Shared' },
   { key: 'techSchedule',       label: '🔧 Tech Schedule',           group: 'Shared' },
   { key: 'documentLibrary',    label: '📁 Document Library',        group: 'Shared' },
-  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty',   group: 'Warranty' },
+  { key: 'aftermarketWarranty',label: '🛡 After Market Warranty/Tire Warranty',   group: 'Warranty' },
   { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Warranty' },
   { key: 'workInProgress',     label: '🔧 Work in Progress',         group: 'Tech' },
   { key: 'chargeAccountList', label: '💳 Charge Account List',      group: 'Manager', defaultOff: true },

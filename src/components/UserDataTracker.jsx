@@ -7,7 +7,7 @@ const PAGE_LABELS = {
   'tv-mode': 'TV Mode',
   'tech-resources': 'Tech Resources',
   'work-in-progress': 'Work In Progress',
-  'aftermarket-warranty': 'Aftermarket Warranty',
+  'aftermarket-warranty': 'After Market Warranty/Tire Warranty',
   'tire-warranty': 'Tire Warranty',
   'document-library': 'Document Library',
   'work-schedule': 'Work Schedule',

@@ -31,7 +31,7 @@ const NAV_BUTTONS = [
   },
   {
     key: 'aftermarketWarranty',
-    label: '🛡 After Market Warranty',
+    label: '🛡 After Market Warranty/Tire Warranty',
     desc: 'View and manage warranty claims',
     bg: 'linear-gradient(135deg,rgba(52,211,153,.28),rgba(16,185,129,.18))',
     border: 'rgba(52,211,153,.45)',

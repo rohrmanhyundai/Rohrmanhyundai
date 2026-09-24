@@ -5,7 +5,7 @@ import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWa
 import { deleteS3ObjectByUrl } from '../utils/s3';
 import { extractLines } from '../utils/docxText';
 import { parseContactLines, mergeContacts } from '../utils/warrantyContacts';
-import { TireClaimDetail, flaggedWheels } from './TireWarranty';
+import TireWarranty, { TireClaimDetail, flaggedWheels, missingOptionalPhotos } from './TireWarranty';
 
 const NHTSA = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues';
 
@@ -1415,7 +1415,9 @@ function tireStatusLabel(c) {
   ].filter(Boolean).join(' · ');
 }
 
-function TireClaimsPanel({ currentRole }) {
+function TireClaimsPanel({ currentUser, currentRole }) {
+  const [creating, setCreating] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(null);
@@ -1433,7 +1435,7 @@ function TireClaimsPanel({ currentRole }) {
       } catch { setClaims([]); }
       finally { setLoading(false); }
     })();
-  }, []);
+  }, [reloadKey]);
 
   function openClaim(c) { setActive(c); setSaveError(''); setSavedTick(false); }
 
@@ -1459,6 +1461,23 @@ function TireClaimsPanel({ currentRole }) {
     }
   }
 
+  // Upload a missing optional photo from the claim view (CameraButton has
+  // already put the image on S3) and save it to the claim.
+  async function handleOptionalUpload(key, url) {
+    if (!active || !url) return;
+    const updated = { ...active, [key]: url, updatedAt: new Date().toISOString() };
+    const next = claims.map(c => (c.id === updated.id ? updated : c))
+      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    setSaveError('');
+    try {
+      await saveTireWarrantyClaim(updated, next);
+      setActive(updated);
+      setClaims(next);
+    } catch (err) {
+      setSaveError(err.message || 'Could not save the photo. Try again.');
+    }
+  }
+
   async function handleDelete() {
     if (!active) return;
     const who = active.customerName || active.repairOrder || 'this claim';
@@ -1480,6 +1499,15 @@ function TireClaimsPanel({ currentRole }) {
     ? claims.filter(c => String(c.customerName || '').toLowerCase().includes(q) || String(c.repairOrder || '').toLowerCase().includes(q))
     : claims;
 
+  if (creating) {
+    return (
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        <TireWarranty embedded currentUser={currentUser} currentRole={currentRole}
+          onDone={saved => { setCreating(false); if (saved) setReloadKey(k => k + 1); }} />
+      </div>
+    );
+  }
+
   if (active) {
     const hasPhotos = active.repairOrderPhoto || active.originalPurchasePhoto ||
       active.replacementQuotePhoto || flaggedWheels(active).length > 0;
@@ -1499,7 +1527,7 @@ function TireClaimsPanel({ currentRole }) {
               <div style={{ fontSize: 12, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 14 }}>
                 🛞 Photos & Documents — submitted from mobile{active.createdBy ? ` by ${active.createdBy}` : ''}
               </div>
-              <TireClaimDetail claim={active} hideInfo />
+              <TireClaimDetail claim={active} hideInfo onOptionalUpload={handleOptionalUpload} />
             </div>
           )}
 
@@ -1521,18 +1549,24 @@ function TireClaimsPanel({ currentRole }) {
   return (
     <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        {!loading && claims.length > 0 && (
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search by RO # or customer name…"
-            style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: '#e2e8f0', fontSize: 14, outline: 'none', marginBottom: 16 }} />
-        )}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16 }}>
+          {!loading && claims.length > 0 && (
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search by RO # or customer name…"
+              style={{ flex: 1, minWidth: 0, boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: '#e2e8f0', fontSize: 14, outline: 'none' }} />
+          )}
+          <button onClick={() => setCreating(true)}
+            style={{ marginLeft: 'auto', flexShrink: 0, background: 'linear-gradient(135deg,rgba(251,191,36,0.35),rgba(245,158,11,0.25))', border: '1px solid rgba(251,191,36,0.4)', color: '#fbbf24', borderRadius: 8, padding: '9px 18px', cursor: 'pointer', fontWeight: 700 }}>
+            + New Tire Claim
+          </button>
+        </div>
         {loading ? (
           <div style={{ textAlign: 'center', color: '#64748b', padding: 60 }}>Loading tire claims…</div>
         ) : claims.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 60 }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>🛞</div>
             <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>No tire claims yet</div>
-            <div style={{ color: '#64748b', fontSize: 14 }}>Tire warranty claims started on mobile appear here.</div>
+            <div style={{ color: '#64748b', fontSize: 14 }}>Claims started on a phone or with + New Tire Claim appear here.</div>
           </div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -1549,13 +1583,21 @@ function TireClaimsPanel({ currentRole }) {
               ) : filtered.map(c => {
                 const { totalClaim } = calcTotals(c);
                 const status = tireStatusLabel(c);
+                const missOpt = missingOptionalPhotos(c);
                 return (
                   <tr key={c.id} onClick={() => openClaim(c)}
                     style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
                     onMouseLeave={e => e.currentTarget.style.background = ''}>
                     <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—'}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>{c.customerName || '—'}</td>
+                    <td style={{ padding: '12px 14px', fontSize: 13, color: '#e2e8f0', fontWeight: 600 }}>
+                      {c.customerName || '—'}
+                      {missOpt.length > 0 && (
+                        <div style={{ fontSize: 11, color: '#fb923c', fontWeight: 700, marginTop: 3 }}>
+                          ⚠️ {missOpt.length} optional photo{missOpt.length > 1 ? 's' : ''} missing — advisor must complete before submit
+                        </div>
+                      )}
+                    </td>
                     <td style={{ padding: '12px 14px', fontSize: 13, fontFamily: 'monospace', color: '#94a3b8' }}>{c.repairOrder || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{flaggedWheels(c).map(w => w.key).join(', ') || '—'}</td>
                     <td style={{ padding: '12px 14px', fontSize: 13, color: '#3dd6c3', fontWeight: 700 }}>{totalClaim > 0 ? fmtDol(totalClaim) : '—'}</td>
@@ -2113,7 +2155,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
         }}>
           {view === 'list' ? (mainTab === 'contracts' ? (backLabel || '← Back') : (mainTab === 'tires' ? '← Contracts' : (backLabel || '← Back'))) : '← Contracts'}
         </button>
-        <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty</span>
+        <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty/Tire Warranty</span>
 
         {mainTab === 'contracts' && view === 'list' && (
           <button onClick={handleNew}
@@ -2170,7 +2212,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       {mainTab === 'contacts' ? (
         <ContactsPanel />
       ) : mainTab === 'tires' ? (
-        <TireClaimsPanel currentRole={currentRole} />
+        <TireClaimsPanel currentUser={currentUser} currentRole={currentRole} />
       ) : (
         // Hidden rather than unmounted on the media tab so an open edit survives.
         <div style={{ display: view !== 'list' && contractTab === 'media' ? 'none' : 'contents' }}>
