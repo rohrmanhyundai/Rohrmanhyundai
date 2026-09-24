@@ -1,7 +1,7 @@
 {
   "id": "mufkvqv1lcg4",
   "createdAt": "2026-09-24T13:39:06.301Z",
-  "updatedAt": "2026-09-24T14:11:51.093Z",
+  "updatedAt": "2026-09-24T14:18:12.828Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Joanna Mccormick",
   "customerPhone": "352) 616 - 9633",
@@ -23,8 +23,29 @@
   "parts": [
     {
       "id": "mufkvqv12uc2",
-      "partNumber": "",
-      "description": "",
+      "partNumber": "00232-19115",
+      "description": " ENGINE COMBUSTION CHAMBER CLEA",
+      "qty": "1",
+      "price": ""
+    },
+    {
+      "id": "mufm2thp831o",
+      "partNumber": "26300-35505",
+      "description": "FILTER ASSY-ENGINE OIL",
+      "qty": "1",
+      "price": ""
+    },
+    {
+      "id": "mufm3y5pyiz2",
+      "partNumber": "21513-23001",
+      "description": "GASKET-ENGINE OIL PLUG",
+      "qty": "1",
+      "price": ""
+    },
+    {
+      "id": "mufm4a91ebl6",
+      "partNumber": "530V",
+      "description": "VALVOLINE ADVANCED PROTECTION FULL SYN",
       "qty": "1",
       "price": ""
     }
@@ -37,7 +58,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "TECH NOTES: customer STATES LIGHTS ON DASH, SCANNED CODES AND FOUND SEVERAL CODES FOR REAR LH WHEEL SPEED SENSOR. ALSO FOUND OIL LIGHT TO BE FLASHING. CLEARED CODES AND FOUND VEHICLE TO STALL OUT SEVERAL TIMES. ABS CODES NEVER CAME BACK. INSPECTED OIL LEVEL AND FOUND OIL LEVEL TO BE VERY LOW. WILL RECOMMEND ENGINE DECARB SERVICE DUE TO ENGINE BURNING OIL. INSPECTED REAR LH WHEEL SPEED SENSOR AND FOUND TO BE GOOD AND RESPONDING CORRECTLY. ",
+  "notes": "TECH NOTES: customer STATES LIGHTS ON DASH, SCANNED CODES AND FOUND SEVERAL CODES FOR REAR LH WHEEL SPEED SENSOR. ALSO FOUND OIL LIGHT TO BE FLASHING. CLEARED CODES AND FOUND VEHICLE TO STALL OUT SEVERAL TIMES. ABS CODES NEVER CAME BACK. INSPECTED OIL LEVEL AND FOUND OIL LEVEL TO BE VERY LOW. WILL RECOMMEND ENGINE DECARB SERVICE DUE TO ENGINE BURNING OIL. INSPECTED REAR LH WHEEL SPEED SENSOR AND FOUND TO BE GOOD AND RESPONDING CORRECTLY. DECARB NOT COVERED BY WARRANTY (MAINTANCE ITEM).",
   "approved": false,
   "approvedDate": "",
   "denied": false,
