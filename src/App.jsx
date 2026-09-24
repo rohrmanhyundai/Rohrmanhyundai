@@ -160,7 +160,16 @@ export default function App() {
   const [canEditDashboard, setCanEditDashboard] = useState(localStorage.getItem('canEditDashboard') === 'true');
   const [currentPages, setCurrentPages] = useState(() => { try { const p = localStorage.getItem('currentPages'); return p ? JSON.parse(p) : null; } catch { return null; } });
   const [adminOpen, setAdminOpen] = useState(false);
-  const [page, setPage] = useState('dashboard');
+  // A page can ask to be reopened after an unexpected reload — Android kills the
+  // tab while the camera app is open (see TireWarranty's CameraButton).
+  const [page, setPage] = useState(() => {
+    try {
+      const r = JSON.parse(localStorage.getItem('resumePage') || 'null');
+      localStorage.removeItem('resumePage');
+      if (r && r.page && Date.now() - r.ts < 10 * 60 * 1000 && localStorage.getItem(AUTH_KEY) === 'true') return r.page;
+    } catch {}
+    return 'dashboard';
+  });
   const [prevPage, setPrevPage] = useState('dashboard');
 
   // Navigate to a page while remembering where we came from

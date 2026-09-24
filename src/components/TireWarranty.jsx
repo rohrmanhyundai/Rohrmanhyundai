@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim } from '../utils/github';
 import { uploadTirePhotoToS3, ensureAwsCreds } from '../utils/s3';
+import { shrinkImage } from '../utils/imageShrink';
 
 const accent = '#fbbf24'; // amber — tire theme
 
@@ -130,19 +131,38 @@ const primaryBtn = (enabled) => ({
 // ── Camera / photo capture button ─────────────────────────────────────────────
 // On phones, accept="image/*" + capture="environment" opens the rear camera
 // directly. The captured image uploads to S3 immediately and stores its URL.
+//
+// Android often kills the browser tab while the camera app is open (low memory),
+// and the site reloads when the user comes back. Before opening the camera we
+// leave a note so App reopens this page, and the in-progress claim is kept as a
+// draft (see DRAFT_KEY) so nothing typed so far is lost.
+export const RESUME_KEY = 'resumePage';
+function markResume() {
+  try { localStorage.setItem(RESUME_KEY, JSON.stringify({ page: 'tire-warranty', ts: Date.now() })); } catch {}
+}
+function clearResume() {
+  try { localStorage.removeItem(RESUME_KEY); } catch {}
+}
+const IMAGE_EXT = /\.(jpe?g|png|heic|heif|webp|gif)$/i;
+
 function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleFile(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Please choose an image.'); return; }
+    clearResume();
+    const picked = e.target.files?.[0];
+    if (!picked) return;
+    // Some Android camera apps hand back a file with an empty type.
+    if (!picked.type.startsWith('image/') && !(picked.type === '' && IMAGE_EXT.test(picked.name || ''))) {
+      setError('Please choose an image.'); return;
+    }
     setError('');
     setUploading(true);
     try {
       if (!(await ensureAwsCreds())) { setError('Please sign in again.'); return; }
+      const file = await shrinkImage(picked);
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const filename = `${claimId}-${slotKey}-${Date.now()}.${ext}`;
       const url = await uploadTirePhotoToS3(filename, file);
@@ -176,14 +196,14 @@ function CameraButton({ label, value, onChange, claimId, slotKey, compact, badge
           <div style={{ flex: 1, minWidth: 0 }}>
             {compact && <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0', marginBottom: 2 }}>{label}</div>}
             <div style={{ fontSize: 12, color: '#4ade80', fontWeight: 700, marginBottom: 6 }}>✓ Uploaded</div>
-            <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
+            <button type="button" onClick={() => { markResume(); inputRef.current?.click(); }} disabled={uploading}
               style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
               {uploading ? 'Uploading…' : '📷 Retake'}
             </button>
           </div>
         </div>
       ) : (
-        <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
+        <button type="button" onClick={() => { markResume(); inputRef.current?.click(); }} disabled={uploading}
           style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             background: 'rgba(251,191,36,0.08)', border: `1.5px dashed ${accent}66`, color: accent,
             borderRadius: 12, padding: compact ? '16px 12px' : '22px 12px', cursor: uploading ? 'wait' : 'pointer', fontSize: 15, fontWeight: 700 }}>
@@ -782,16 +802,34 @@ function ClaimList({ claims, loading, onNew, onView }) {
   );
 }
 
+// In-progress claim, kept on the device so an Android tab reload (see
+// CameraButton) drops the user back where they were. Cleared on save or when
+// they leave the form.
+const DRAFT_KEY = 'tireWarrantyDraft';
+const DRAFT_MAX_AGE = 24 * 60 * 60 * 1000;
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    if (d && d.form && Date.now() - d.ts < DRAFT_MAX_AGE) return d;
+  } catch {}
+  return null;
+}
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function TireWarranty({ currentUser, currentRole, onBack, backLabel }) {
-  const [view, setView] = useState('list');    // 'list' | 'form' | 'detail'
-  const [step, setStep] = useState(1);          // 1 | 2 | 3 (within 'form')
+  const [draft] = useState(loadDraft);
+  const [view, setView] = useState(draft ? 'form' : 'list');    // 'list' | 'form' | 'detail'
+  const [step, setStep] = useState(draft?.step || 1);            // 1 | 2 | 3 (within 'form')
+  const [restored, setRestored] = useState(!!draft);
   const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedOk, setSavedOk] = useState(false);
-  const [form, setForm] = useState(emptyForm());
+  const [form, setForm] = useState(() => draft ? { ...emptyForm(), ...draft.form } : emptyForm());
   const [activeClaim, setActiveClaim] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -809,6 +847,11 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
 
   useEffect(() => { loadClaims(); }, [loadClaims]);
 
+  useEffect(() => {
+    if (view !== 'form') return;
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step, ts: Date.now() })); } catch {}
+  }, [view, form, step]);
+
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
   const setWheel = (wheelKey, val) =>
     setForm(f => ({ ...f, wheels: { ...f.wheels, [wheelKey]: { ...f.wheels[wheelKey], ...val } } }));
@@ -820,6 +863,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
     setStep(1);
     setSaveError('');
     setSavedOk(false);
+    setRestored(false);
     setView('form');
   }
 
@@ -831,6 +875,8 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
       let next = exists >= 0 ? claims.map(c => c.id === finalForm.id ? finalForm : c) : [finalForm, ...claims];
       next.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
       await saveTireWarrantyClaim(finalForm, next);
+      clearDraft();
+      setRestored(false);
       setClaims(next);
       setSavedOk(true);
       setView('list');
@@ -875,7 +921,7 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
   }
 
   function topBack() {
-    if (view === 'form') { setView('list'); return; }
+    if (view === 'form') { clearDraft(); setRestored(false); setView('list'); return; }
     if (view === 'detail') { setView('list'); return; }
     onBack();
   }
@@ -905,6 +951,12 @@ export default function TireWarranty({ currentUser, currentRole, onBack, backLab
         {view === 'list' && (
           <ClaimList claims={claims} loading={loading} onNew={startNew}
             onView={c => { setActiveClaim(c); setView('detail'); }} />
+        )}
+
+        {restored && view === 'form' && (
+          <div style={{ margin: '14px 16px 0', padding: '12px 16px', background: 'rgba(251,191,36,0.1)', border: `1px solid ${accent}66`, borderRadius: 12, color: accent, fontSize: 13, fontWeight: 600, textAlign: 'center' }}>
+            Picked up your claim where you left off. If your last photo isn't showing, take it again.
+          </div>
         )}
 
         {view === 'form' && step === 1 && (
