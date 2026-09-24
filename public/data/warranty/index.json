@@ -140,7 +140,7 @@
   {
     "id": "mubbgxdazxqi",
     "createdAt": "2026-09-21T14:04:33.646Z",
-    "updatedAt": "2026-09-24T11:59:07.195Z",
+    "updatedAt": "2026-09-24T19:42:58.877Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "Crystal Burns",
     "customerPhone": "(574) 581 - 2300",
@@ -153,11 +153,11 @@
     "warrantyCompany": "CAR SHIELD WARRANTY",
     "warrantyPhone": "800-823-2517",
     "warrantyEmail": "payments@americanautoshield.com",
-    "claimNumber": "",
-    "authNumber": "",
-    "laborRate": "",
-    "laborTime": "",
-    "diagnosisTime": "",
+    "claimNumber": "2931080",
+    "authNumber": "A301457442",
+    "laborRate": "170",
+    "laborTime": "8.9",
+    "diagnosisTime": ".9",
     "laborTotalOverride": "",
     "parts": [
       {
@@ -165,21 +165,21 @@
         "partNumber": "430A1-2N060-RM",
         "description": "TRANSMISSION ASSY-DCT( WITHO",
         "qty": "1",
-        "price": "2746.18"
+        "price": "1824.00"
       },
       {
         "id": "mubbnl39ogcb",
         "partNumber": "00232-19063",
         "description": "MTF-70W DUAL CLUTCH TRANS FLUI",
         "qty": "2",
-        "price": "44.90"
+        "price": "31.90"
       },
       {
         "id": "mubbsdb96scq",
         "partNumber": "25100-2GTC0",
         "description": "PUMP ASSY-COOLANT",
         "qty": "1",
-        "price": "400.76"
+        "price": "77.16"
       },
       {
         "id": "mubbtkokz1qb",
@@ -190,14 +190,14 @@
       },
       {
         "id": "mubbuizwg7qn",
-        "partNumber": "",
-        "description": "",
+        "partNumber": "COOLANT ",
+        "description": "COOLANT ",
         "qty": "1",
-        "price": ""
+        "price": "19.99"
       }
     ],
     "taxPct": "7",
-    "deductible": "",
+    "deductible": "1000",
     "rental": null,
     "towing": null,
     "sublet": null,
