@@ -6,6 +6,7 @@ import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import { ensureMtd, dailyPacing } from '../utils/advisorGoals';
 import RoAttention from './RoAttention';
+import CompletedTime from './CompletedTime';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
 
@@ -330,6 +331,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     return () => { cancelled = true; };
   }, [eodUrgent, currentUser, refreshKey]);
   const afterCallDue = pendingCallCount > 0;
+  const [showCompletedTime, setShowCompletedTime] = useState(false);
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [noteDates, setNoteDates] = useState(new Set());
@@ -576,6 +578,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       {showPartsReceived && (
         <PartsReceived currentUser={currentUser || ''} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
       )}
+      {showCompletedTime && <CompletedTime onClose={() => setShowCompletedTime(false)} />}
       <div className="adv-topbar">
         <div>
           <div className="adv-title">Appointment Prep Calendar</div>
@@ -592,6 +595,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             hubKey="advisorCalendar"
             currentUser={currentUser}
             items={[
+              { key: 'completedTime' },
               canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && { key: 'hotRepairs' },
               canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
               canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && { key: 'chargeList' },
@@ -616,6 +620,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           >
             {btn => {
               switch (btn.key) {
+                case 'completedTime': return (
+                  <button onClick={() => setShowCompletedTime(true)} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.30),rgba(243,111,20,.20))', borderColor: 'rgba(251,146,60,.45)' }}>
+                    ⏰ Completed Time
+                  </button>
+                );
                 case 'hotRepairs': return (
                   <button onClick={onHotRepairs} style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.25),rgba(239,68,68,.18))', borderColor: 'rgba(248,113,113,.35)' }}>
                     🔧 Recalls/TSB Bulletins
