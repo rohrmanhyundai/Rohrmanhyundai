@@ -375,18 +375,22 @@ export default function DailyWrench({ currentUser, currentRole, onBack }) {
   }, []);
   useEffect(() => { fetchDay(day); }, [day, fetchDay]);
 
-  // The workflow takes a minute or so; poll until the file for today appears
-  // with a newer timestamp than the one we already have.
+  // The workflow takes a couple of minutes; poll until the file for today
+  // appears with a newer timestamp than the one we already have. Keep going for
+  // up to 12 minutes so a slow run still opens by itself, no refresh needed.
   async function generate() {
     if (!isManager || busy) return;
     const before = doc && doc.generatedAt;
-    setBusy(true); setStatus('📝 Writing this morning\'s reports — about a minute…');
+    setBusy(true); setStatus('📝 Writing this morning\'s reports — usually about 2 minutes…');
     try {
       await requestDailyWrench(currentUser, 'manager pressed Generate');
       trackAction('daily-wrench-generate');
       const key = todayKey();
-      for (let i = 0; i < 40; i++) {
-        await new Promise(r => setTimeout(r, 6000));
+      const started = Date.now();
+      while (Date.now() - started < 12 * 60 * 1000) {
+        await new Promise(r => setTimeout(r, 10000));
+        const mins = Math.floor((Date.now() - started) / 60000);
+        if (mins >= 2) setStatus(`📝 Still writing — ${mins} min so far. It will open here by itself.`);
         const fresh = await loadDailyWrench(key);
         if (fresh && fresh.generatedAt && fresh.generatedAt !== before) {
           setDay(key); setDoc(fresh); setStatus('✅ Fresh reports are up.');
@@ -394,7 +398,7 @@ export default function DailyWrench({ currentUser, currentRole, onBack }) {
           return;
         }
       }
-      setStatus('⏳ Still running — it will appear here shortly. Refresh in a minute.');
+      setStatus('⏳ This is taking longer than usual. Refresh in a few minutes, or press Generate again.');
     } catch (e) {
       setStatus('❌ ' + (e?.message || e));
     } finally { setBusy(false); }

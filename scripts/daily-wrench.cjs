@@ -161,6 +161,9 @@ async function askOpenAI(prompt, maxTokens) {
   const out = { date: today, generatedAt: new Date().toISOString(), by: manual ? (REQUESTED_BY || 'manager') : 'auto', trigger: TRIGGER, model: MODEL, reason: REASON, advisors: {}, manager: null };
   const packs = [];
 
+  // Every briefing is a slow model call; one after another they took 5+
+  // minutes, so they all run at once and we wait for the lot.
+  const jobs = [];
   for (const a of advisors) {
     const name = firstName(a.name);
     const goals = readJSON(`advisor-goals/${name}.json`, {});
@@ -170,28 +173,34 @@ async function askOpenAI(prompt, maxTokens) {
 
     const user = users.find(u => firstName(u.username) === name);
     const display = user ? user.username : name;
-    try {
-      const report = await askOpenAI(W.advisorPrompt(pack, { advisorDisplay: display, weekday: et.weekday }), 6000);
-      out.advisors[name] = { ...report, facts: pack };
-      console.log(`✓ ${name}`);
-    } catch (e) {
-      // A failed write-up shouldn't cost them the numbers — the page renders
-      // the facts on their own and says the words are missing.
-      out.advisors[name] = { error: e.message, facts: pack };
-      console.warn(`✗ ${name}: ${e.message}`);
-    }
+    out.advisors[name] = null; // reserve the slot so advisor order stays stable
+    jobs.push((async () => {
+      try {
+        const report = await askOpenAI(W.advisorPrompt(pack, { advisorDisplay: display, weekday: et.weekday }), 6000);
+        out.advisors[name] = { ...report, facts: pack };
+        console.log(`✓ ${name}`);
+      } catch (e) {
+        // A failed write-up shouldn't cost them the numbers — the page renders
+        // the facts on their own and says the words are missing.
+        out.advisors[name] = { error: e.message, facts: pack };
+        console.warn(`✗ ${name}: ${e.message}`);
+      }
+    })());
   }
 
   // ── The manager's own, deeper report ──────────────────────────────────────
   const mPack = W.managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks: packs, deferred, deferredActivity, deferredCodes, today: now });
-  try {
-    const report = await askOpenAI(W.managerPrompt(mPack, { weekday: et.weekday }), 9000);
-    out.manager = { ...report, facts: mPack };
-    console.log('✓ manager report');
-  } catch (e) {
-    out.manager = { error: e.message, facts: mPack };
-    console.warn(`✗ manager report: ${e.message}`);
-  }
+  jobs.push((async () => {
+    try {
+      const report = await askOpenAI(W.managerPrompt(mPack, { weekday: et.weekday }), 9000);
+      out.manager = { ...report, facts: mPack };
+      console.log('✓ manager report');
+    } catch (e) {
+      out.manager = { error: e.message, facts: mPack };
+      console.warn(`✗ manager report: ${e.message}`);
+    }
+  })());
+  await Promise.all(jobs);
 
   await putFile(`${today}.json`, () => out, `Daily Wrench ${today}${manual ? ` (early, ${REQUESTED_BY || 'manager'})` : ''}`);
   await putFile('index.json', (cur) => {
