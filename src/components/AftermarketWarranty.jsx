@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, useImperativeHandle, forwardRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, backfillWarrantyCompanyDetails, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim, loadWarrantyMedia, removeWarrantyMedia, normalizeRo } from '../utils/github';
+import { loadWarrantyIndex, loadWarrantyContract, saveWarrantyContract, removeWarrantyContract, loadWarrantyCompanies, saveWarrantyCompanies, backfillWarrantyCompanyDetails, loadTireWarrantyIndex, saveTireWarrantyClaim, removeTireWarrantyClaim, loadWarrantyMedia, removeWarrantyMedia, renameWarrantyMediaRo, normalizeRo } from '../utils/github';
 import { deleteS3ObjectByUrl } from '../utils/s3';
 import { extractLines } from '../utils/docxText';
 import { parseContactLines, mergeContacts } from '../utils/warrantyContacts';
@@ -1894,9 +1894,39 @@ function mediaFilename(m, i) {
 // Phone Media Upload files everything by RO. When no contract has that RO yet
 // the files land here, one row per RO. As soon as a contract with the RO is
 // saved they show on that contract instead and drop off this list.
-function UnmatchedMediaPanel({ media, currentRole, onRemoved, onStartContract }) {
+function UnmatchedMediaPanel({ media, contractRos, currentRole, onRemoved, onRenamed, onStartContract }) {
   const [openRo, setOpenRo] = useState(null);
   const [search, setSearch] = useState('');
+  const [editRo, setEditRo] = useState(null);   // null = not editing, else the draft RO
+  const [renaming, setRenaming] = useState(false);
+  const [renameError, setRenameError] = useState('');
+  const [notice, setNotice] = useState('');
+
+  useEffect(() => { setEditRo(null); setRenameError(''); }, [openRo]);
+
+  // Fix a mistyped RO: re-file every upload under the new number. If a
+  // contract already has that RO the media moves onto it (and off this tab).
+  async function saveRo() {
+    const from = openRo, to = normalizeRo(editRo);
+    if (!to) { setRenameError('Enter an RO number.'); return; }
+    if (to === from) { setEditRo(null); return; }
+    setRenaming(true); setRenameError('');
+    try {
+      await renameWarrantyMediaRo(from, to);
+      onRenamed(from, to);
+      if (contractRos.has(to)) {
+        setOpenRo(null);
+        setNotice(`RO ${from} changed to ${to}. That RO has a contract, so the media is now on the contract.`);
+      } else {
+        setOpenRo(to);
+        setNotice(`RO ${from} changed to ${to}.`);
+      }
+    } catch (err) {
+      setRenameError(err.message || 'Could not change the RO.');
+    } finally {
+      setRenaming(false);
+    }
+  }
 
   const groups = useMemo(() => {
     const by = {};
@@ -1922,9 +1952,30 @@ function UnmatchedMediaPanel({ media, currentRole, onRemoved, onStartContract })
     return (
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div className="no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '14px 32px 0' }}>
-          <button className="secondary" onClick={() => setOpenRo(null)}>← Media Uploads</button>
-          <span style={{ fontWeight: 800, fontSize: 16, color: '#3dd6c3' }}>RO <span style={{ fontFamily: 'monospace' }}>{open.ro}</span></span>
+          <button className="secondary" onClick={() => { setOpenRo(null); setNotice(''); }}>← Media Uploads</button>
+          {editRo === null ? (
+            <>
+              <span style={{ fontWeight: 800, fontSize: 16, color: '#3dd6c3' }}>RO <span style={{ fontFamily: 'monospace' }}>{open.ro}</span></span>
+              <button onClick={() => { setEditRo(open.ro); setNotice(''); }} title="Change the RO number"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', borderRadius: 7, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                ✏️ Edit RO
+              </button>
+            </>
+          ) : (
+            <form onSubmit={e => { e.preventDefault(); saveRo(); }} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontWeight: 800, fontSize: 16, color: '#3dd6c3' }}>RO</span>
+              <input autoFocus value={editRo} onChange={e => setEditRo(e.target.value)} disabled={renaming}
+                style={{ width: 130, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(61,214,195,0.5)', borderRadius: 7, color: '#e2e8f0', padding: '6px 10px', fontSize: 15, fontFamily: 'monospace', fontWeight: 700, outline: 'none' }} />
+              <button type="submit" disabled={renaming}
+                style={{ background: 'rgba(61,214,195,0.25)', border: '1px solid rgba(61,214,195,0.5)', color: '#6ee7f9', borderRadius: 7, padding: '6px 14px', cursor: renaming ? 'wait' : 'pointer', fontSize: 13, fontWeight: 800 }}>
+                {renaming ? 'Saving…' : 'Save'}
+              </button>
+              <button type="button" className="secondary" onClick={() => { setEditRo(null); setRenameError(''); }} disabled={renaming}>Cancel</button>
+            </form>
+          )}
           <span style={{ fontSize: 12, color: '#f59e0b', fontWeight: 700 }}>No contract yet</span>
+          {renameError && <span style={{ fontSize: 12, color: '#f87171' }}>{renameError}</span>}
+          {notice && <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 700 }}>✓ {notice}</span>}
           <div style={{ flex: 1 }} />
           <button onClick={() => onStartContract(open.ro)}
             style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 700 }}>
@@ -1944,6 +1995,11 @@ function UnmatchedMediaPanel({ media, currentRole, onRemoved, onStartContract })
   return (
     <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        {notice && (
+          <div style={{ marginBottom: 14, padding: '10px 14px', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.4)', borderRadius: 10, color: '#4ade80', fontSize: 13, fontWeight: 700 }}>
+            ✓ {notice}
+          </div>
+        )}
         <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 14 }}>
           Photos and videos sent from a phone for an RO that has no contract yet. Once a contract with that RO is saved, they move onto it automatically.
         </div>
@@ -2153,6 +2209,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
     return media.filter(m => !ros.has(m.ro));
   }, [media, contracts]);
   const unmatchedRoCount = useMemo(() => new Set(unmatchedMedia.map(m => m.ro)).size, [unmatchedMedia]);
+  const contractRos = useMemo(() => new Set(contracts.map(c => normalizeRo(c.repairOrder)).filter(Boolean)), [contracts]);
 
   const openRo = normalizeRo(view === 'form' ? (editingContract || newPrefill)?.repairOrder : activeContract?.repairOrder);
   const openMedia = useMemo(
@@ -2327,8 +2384,9 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
           onRemoved={id => setMedia(prev => prev.filter(m => m.id !== id))} />
       )}
       {mainTab === 'media' ? (
-        <UnmatchedMediaPanel media={unmatchedMedia} currentRole={currentRole}
+        <UnmatchedMediaPanel media={unmatchedMedia} contractRos={contractRos} currentRole={currentRole}
           onRemoved={id => setMedia(prev => prev.filter(m => m.id !== id))}
+          onRenamed={(from, to) => setMedia(prev => prev.map(m => (m.ro === from ? { ...m, ro: to } : m)))}
           onStartContract={startContractForRo} />
       ) : mainTab === 'contacts' ? (
         <ContactsPanel />

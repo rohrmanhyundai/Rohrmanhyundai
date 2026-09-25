@@ -1331,6 +1331,18 @@ export async function addWarrantyMedia(items) {
   }, `Warranty media - RO ${list[0]?.ro || 'unknown'} (${list.length})`);
 }
 
+// Re-file every upload under one RO to another (a mistyped RO on the phone).
+// Only the record's RO changes; the files stay where they are in S3.
+export async function renameWarrantyMediaRo(fromRo, toRo) {
+  const from = normalizeRo(fromRo), to = normalizeRo(toRo);
+  if (!from || !to || from === to) return;
+  const token = await ensureGithubToken();
+  if (!token) throw new Error('Please sign in again.');
+  return mutateGitHubJson(WARRANTY_MEDIA_PATH,
+    (cur) => (Array.isArray(cur) ? cur : []).map(m => (m.ro === from ? { ...m, ro: to } : m)),
+    `Warranty media - RO ${from} → ${to}`);
+}
+
 export async function removeWarrantyMedia(id) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('Please sign in again.');
