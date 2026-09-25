@@ -1,48 +1,16 @@
 {
-  "updatedAt": "2026-09-25T16:02:29.309Z",
+  "updatedAt": "2026-09-25T17:56:35.052Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781120",
-        "vehicle": "2021 Hyundai Sonata"
-      },
-      {
-        "ro": "781118",
-        "vehicle": "2014 Hyundai Sonata"
-      },
-      {
-        "ro": "781117",
-        "vehicle": "2023 Hyundai Elantra"
-      },
-      {
-        "ro": "781046",
-        "vehicle": "2026 Hyundai Elantra N"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781119",
-        "vehicle": "2020 Hyundai Tucson"
-      },
-      {
-        "ro": "781115",
-        "vehicle": "2014 Nissan Rogue Select"
-      },
-      {
-        "ro": "781072",
-        "vehicle": "2015 Hyundai Tucson"
-      },
-      {
-        "ro": "781044",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "780988",
-        "vehicle": "2027 Hyundai Santa Fe"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "781126",
+        "vehicle": "2022 Jeep Gladiator"
+      },
+      {
+        "ro": "781125",
+        "vehicle": "2013 Ford Focus"
+      },
       {
         "ro": "781101",
         "vehicle": "2024 Hyundai IONIQ 5"
@@ -60,14 +28,6 @@
         "vehicle": "2019 Hyundai Santa Fe"
       },
       {
-        "ro": "781022",
-        "vehicle": "2013 Nissan Murano"
-      },
-      {
-        "ro": "781015",
-        "vehicle": "2024 Honda Pilot"
-      },
-      {
         "ro": "781012",
         "vehicle": "2016 Honda Odyssey"
       },
@@ -78,6 +38,50 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781124",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "781123",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "781122",
+        "vehicle": "2017 Hyundai Sonata"
+      },
+      {
+        "ro": "781120",
+        "vehicle": "2021 Hyundai Sonata"
+      },
+      {
+        "ro": "781046",
+        "vehicle": "2026 Hyundai Elantra N"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781121",
+        "vehicle": "2017 BMW 430i xDrive"
+      },
+      {
+        "ro": "781119",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "781072",
+        "vehicle": "2015 Hyundai Tucson"
+      },
+      {
+        "ro": "781044",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      },
+      {
+        "ro": "780988",
+        "vehicle": "2027 Hyundai Santa Fe"
       }
     ]
   }
