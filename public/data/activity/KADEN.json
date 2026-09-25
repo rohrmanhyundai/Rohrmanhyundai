@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-25T11:18:35.778Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-09-23T20:46:00.968Z",
     "type": "page",
     "label": "hotRepairs"
@@ -889,71 +894,5 @@
     "at": "2026-08-26T18:56:02.192Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-25T21:22:27.554Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-25T21:22:27.553Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-25T21:22:24.521Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-25T21:22:17.489Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-25T21:08:48.114Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-25T18:10:01.398Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-25T18:10:01.395Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-25T14:03:56.115Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-25T14:03:56.113Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-25T14:03:53.624Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-24T22:01:14.047Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780162 tech KADEN"
-  },
-  {
-    "at": "2026-08-24T22:01:09.393Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-24T21:46:40.654Z",
-    "type": "page",
-    "label": "cash-dash"
   }
 ]
