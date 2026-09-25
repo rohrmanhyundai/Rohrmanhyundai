@@ -431,10 +431,10 @@
       "lastName": "",
       "email": "seth.rosen@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "65b89dd798fc8b3e5f816c8fafdf63a195dc46f3b27a1b7c05e8b4656ff83f34",
-        "expires": "2026-09-25T18:49:11.568Z",
-        "requestedAt": "2026-09-25T17:49:11.569Z"
+      "pwSalt": "fc91a7b627978ef6c7365abc93445a2b",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "Tv77e49ii6VathMs5713KoSUqHa8iWRd36YObkdtVmUjp1TntoJrdCyYrjHPOxlTuut0QELHYUcko4OkkysOdWPnHqdeM3Do6ZX6pC55GCeU1td7RkzQRngDQAFXsD6GHXeoLZiy2Kzweu2HyXiMhwhBgL/ZBHnKbZuZGZa8uDastn+J5x07KD6sgwnHRcdDZduPAxN1AG63ya5mt2XnoD5zgSpwg+7G6C14nfsJ7+X1BF7fp0Qq1K+XMU0eIwUhYH+DRmSPAjupyV9fWQT+Dm8aIzwcsfZRXM+L4TQI19ZDYHuXCNPpH1n5RxR1fxe82WEv/oK1f88X66shBmyGCg=="
       }
     },
     {
