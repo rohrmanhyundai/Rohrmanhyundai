@@ -40,20 +40,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mug1ndz15xnz",
-    "ro": "781103",
-    "roDate": "2026-09-24",
-    "vehicle": "2025 Hyundai Tucson Hybrid",
-    "jobDesc": "CUSTOMER STATES RADIATOR LEAKING LEAKING. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
   }
 ]
