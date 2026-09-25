@@ -47,8 +47,9 @@
     "jobDesc": "CUSTOMER STATES VEHICLE CRANK NO START. CHECK AND ADVISE.",
     "highPriority": false,
     "advisor": "JORDAN",
-    "notes": "",
+    "notes": "Recommended both batteries. ",
     "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrivedDate": "",
+    "vehicle": "Voyager"
   }
 ]
