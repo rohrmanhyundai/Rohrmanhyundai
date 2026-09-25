@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-09-25T17:54:14.588Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-25T17:54:12.408Z",
+    "type": "page",
+    "label": "parts-hub"
+  },
+  {
+    "at": "2026-09-25T17:54:08.298Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-19T12:02:50.992Z",
     "type": "page",
     "label": "big-money-lof"
@@ -176,58 +191,6 @@
   },
   {
     "at": "2026-08-28T14:32:57.306Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-22T13:07:08.350Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-22T13:07:08.342Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-22T11:13:47.947Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780132"
-  },
-  {
-    "at": "2026-08-22T10:48:04.668Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-21T20:04:57.029Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-08-21T13:51:15.221Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780142"
-  },
-  {
-    "at": "2026-08-21T12:00:19.964Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T16:21:13.283Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-20T15:59:27.218Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-20T15:59:27.215Z",
     "type": "page",
     "label": "hot-repairs"
   }
