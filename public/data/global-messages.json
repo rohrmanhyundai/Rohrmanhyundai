@@ -1,101 +1,5 @@
 [
   {
-    "id": "gm-mu61p5x87g2y",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "📝 SHAWN on RO 779297: WAITING ON BACK ORDER PARTS",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680730940
-  },
-  {
-    "id": "gm-mu61qaeab6cw",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "📝 SHAWN on RO 780381: WAITING ON BACK ORDER PARTS",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680783394
-  },
-  {
-    "id": "gm-mu61r5pbn971",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "📝 SHAWN on RO 780703: PARTS ARE HERE. WILL START ON THE CAR MONDAY. GAVEN IS OFF FRIDAY.",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680823967
-  },
-  {
-    "id": "gm-mu61s3pnt9nq",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "📝 SHAWN on RO 780865: WAITING ON ENGINE",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680868043
-  },
-  {
-    "id": "gm-mu61sc0nl8g3",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "📝 SHAWN on RO 780890: NO TECH YET",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680878807
-  },
-  {
-    "id": "gm-mu61t5shc635",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "📝 SHAWN on RO 780361: WAITING ON PARTS. NACK ORDER",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680917393
-  },
-  {
-    "id": "gm-mu61tli4fjul",
-    "from": "SHAWN",
-    "to": [
-      "CODY"
-    ],
-    "text": "🚩 RO 780924 (2026 Hyundai Santa Fe) has been flagged — add a note on the calendar about why it's still open.",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789680937756
-  },
-  {
-    "id": "gm-mu73engozx9z",
-    "from": "SHAWN",
-    "to": [
-      "CARTER"
-    ],
-    "text": "on your gas tank car if you could bring it in so i can take pictures of the gas tank. canister is approved still working on the fuel tank",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1789744065864
-  },
-  {
     "id": "gm-mube1pn9gemu",
     "from": "SHAWN",
     "to": [
@@ -197,5 +101,18 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790281705453
+  },
+  {
+    "id": "gm-muhehy77qtn8",
+    "from": "SHAWN",
+    "to": [
+      "KAI",
+      "JORDAN"
+    ],
+    "text": "engine approved",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790367357283
   }
 ]
