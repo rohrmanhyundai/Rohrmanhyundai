@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-09-25T13:50:36.004Z",
+    "type": "page",
+    "label": "registration-upload"
+  },
+  {
+    "at": "2026-09-25T13:50:30.305Z",
+    "type": "page",
+    "label": "media-upload"
+  },
+  {
+    "at": "2026-09-25T13:50:28.039Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-25T13:50:22.603Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-25T13:50:21.529Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-25T13:50:09.464Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-24T19:58:11.431Z",
     "type": "page",
     "label": "advisor-goals"
@@ -968,20 +998,5 @@
     "at": "2026-08-26T16:27:33.726Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-25T20:02:58.226Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-25T20:01:54.410Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-08-25T20:01:52.701Z",
-    "type": "page",
-    "label": "advisor-goals"
   }
 ]
