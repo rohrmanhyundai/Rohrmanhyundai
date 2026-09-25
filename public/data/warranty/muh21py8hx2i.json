@@ -1,7 +1,7 @@
 {
   "id": "muh21py8hx2i",
   "createdAt": "2026-09-25T14:27:24.704Z",
-  "updatedAt": "2026-09-25T14:57:02.768Z",
+  "updatedAt": "2026-09-25T18:08:15.394Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Kyler Spencer",
   "customerPhone": "(574) 382 - 0401",
@@ -37,7 +37,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "customer pays diag, tax,fluid & shop supplies. tax $144.02, diag $190.00, shop supplies $13.30, $51.86 x 8 = $414.88 for a total customer pay of $762.20",
+  "notes": "customer pays diag, tax,fluid & shop supplies. tax $144.02, diag $190.00, shop supplies $13.30, $51.86 x 8 = $414.88 for a total customer pay of $762.20.  CUSTOMER CALLED BACK 09/25/2026 @ 2:05PM AND APPROVED MOVING FORWARD.",
   "approved": true,
   "approvedDate": "2026-09-25",
   "denied": false,
