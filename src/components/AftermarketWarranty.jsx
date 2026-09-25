@@ -1890,6 +1890,104 @@ function mediaFilename(m, i) {
   return `RO-${m.ro}-${m.kind === 'video' ? 'video' : 'photo'}-${i + 1}.${ext.toLowerCase()}`;
 }
 
+// ── Media Uploads tab ─────────────────────────────────────────────────────────
+// Phone Media Upload files everything by RO. When no contract has that RO yet
+// the files land here, one row per RO. As soon as a contract with the RO is
+// saved they show on that contract instead and drop off this list.
+function UnmatchedMediaPanel({ media, currentRole, onRemoved, onStartContract }) {
+  const [openRo, setOpenRo] = useState(null);
+  const [search, setSearch] = useState('');
+
+  const groups = useMemo(() => {
+    const by = {};
+    for (const m of media) (by[m.ro] = by[m.ro] || []).push(m);
+    return Object.entries(by).map(([ro, items]) => {
+      items.sort((a, b) => String(a.uploadedAt).localeCompare(String(b.uploadedAt)));
+      const last = items[items.length - 1];
+      const who = [...new Set(items.map(m => m.uploadedByDisplay || m.uploadedBy).filter(Boolean))];
+      return {
+        ro, items, who,
+        photos: items.filter(m => m.kind !== 'video').length,
+        videos: items.filter(m => m.kind === 'video').length,
+        lastAt: last?.uploadedAt || '',
+      };
+    }).sort((a, b) => String(b.lastAt).localeCompare(String(a.lastAt)));
+  }, [media]);
+
+  const open = groups.find(g => g.ro === openRo);
+  // Back to the list once the last file for the open RO is deleted.
+  useEffect(() => { if (openRo && !open) setOpenRo(null); }, [openRo, open]);
+
+  if (open) {
+    return (
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <div className="no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '14px 32px 0' }}>
+          <button className="secondary" onClick={() => setOpenRo(null)}>← Media Uploads</button>
+          <span style={{ fontWeight: 800, fontSize: 16, color: '#3dd6c3' }}>RO <span style={{ fontFamily: 'monospace' }}>{open.ro}</span></span>
+          <span style={{ fontSize: 12, color: '#f59e0b', fontWeight: 700 }}>No contract yet</span>
+          <div style={{ flex: 1 }} />
+          <button onClick={() => onStartContract(open.ro)}
+            style={{ background: 'linear-gradient(135deg,rgba(61,214,195,0.3),rgba(110,231,249,0.2))', border: '1px solid rgba(61,214,195,0.4)', color: '#6ee7f9', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 700 }}>
+            + Start Contract for this RO
+          </button>
+        </div>
+        <MediaPanel ro={open.ro} media={open.items} currentRole={currentRole} onRemoved={onRemoved} />
+      </div>
+    );
+  }
+
+  const q = search.trim().toUpperCase();
+  const shown = q ? groups.filter(g => g.ro.includes(q) || g.who.some(w => String(w).toUpperCase().includes(q))) : groups;
+  const th = { padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.08)' };
+  const td = { padding: '12px 14px', fontSize: 13 };
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 32px 40px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 14 }}>
+          Photos and videos sent from a phone for an RO that has no contract yet. Once a contract with that RO is saved, they move onto it automatically.
+        </div>
+        {groups.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 60 }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>📸</div>
+            <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Nothing waiting</div>
+            <div style={{ color: '#64748b', fontSize: 14 }}>Every media upload matches a contract.</div>
+          </div>
+        ) : (
+          <>
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search by RO # or who uploaded…"
+              style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: '#e2e8f0', fontSize: 14, outline: 'none', marginBottom: 16 }} />
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>{['RO #', 'Files', 'Uploaded By', 'Last Upload', ''].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {shown.length === 0 ? (
+                  <tr><td colSpan={5} style={{ textAlign: 'center', color: '#64748b', padding: 40, fontSize: 13 }}>No uploads match "{search}"</td></tr>
+                ) : shown.map(g => (
+                  <tr key={g.ro} onClick={() => setOpenRo(g.ro)}
+                    style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                    onMouseLeave={e => e.currentTarget.style.background = ''}>
+                    <td style={{ ...td, fontFamily: 'monospace', color: '#6ee7f9', fontWeight: 700 }}>{g.ro}</td>
+                    <td style={{ ...td, color: '#3dd6c3', fontWeight: 700 }}>
+                      {[g.photos && `📷 ${g.photos}`, g.videos && `🎥 ${g.videos}`].filter(Boolean).join('  ')}
+                    </td>
+                    <td style={{ ...td, color: '#e2e8f0' }}>{g.who.join(', ') || '—'}</td>
+                    <td style={{ ...td, fontSize: 12, color: '#94a3b8' }}>{g.lastAt ? new Date(g.lastAt).toLocaleString() : '—'}</td>
+                    <td style={{ ...td, textAlign: 'right' }}><span style={{ fontSize: 12, color: '#3dd6c3', fontWeight: 600 }}>View →</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MediaPanel({ ro, media, currentRole, onRemoved }) {
   const [viewing, setViewing] = useState(null);   // index into media
   const [busy, setBusy] = useState('');
@@ -2024,6 +2122,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
   const [saveError, setSaveError] = useState('');
   const [media, setMedia] = useState([]);
   const [contractTab, setContractTab] = useState('contract');   // 'contract' | 'media'
+  const [newPrefill, setNewPrefill] = useState(null);   // new contract started from a Media Uploads RO
   const formRef = useRef(null);
 
   const loadContracts = useCallback(async () => {
@@ -2048,7 +2147,14 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
     return out;
   }, [media]);
 
-  const openRo = normalizeRo(view === 'form' ? editingContract?.repairOrder : activeContract?.repairOrder);
+  // Media whose RO no contract has yet — the Media Uploads tab.
+  const unmatchedMedia = useMemo(() => {
+    const ros = new Set(contracts.map(c => normalizeRo(c.repairOrder)).filter(Boolean));
+    return media.filter(m => !ros.has(m.ro));
+  }, [media, contracts]);
+  const unmatchedRoCount = useMemo(() => new Set(unmatchedMedia.map(m => m.ro)).size, [unmatchedMedia]);
+
+  const openRo = normalizeRo(view === 'form' ? (editingContract || newPrefill)?.repairOrder : activeContract?.repairOrder);
   const openMedia = useMemo(
     () => (openRo ? media.filter(m => m.ro === openRo).sort((a, b) => String(a.uploadedAt).localeCompare(String(b.uploadedAt))) : []),
     [media, openRo],
@@ -2107,6 +2213,16 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
 
   function handleNew() {
     setEditingContract(null);
+    setNewPrefill(null);
+    setView('form');
+  }
+
+  // From the Media Uploads tab: a new contract with the RO already filled in.
+  function startContractForRo(ro) {
+    setEditingContract(null);
+    setActiveContract(null);
+    setNewPrefill({ ...emptyForm(), repairOrder: ro });
+    setMainTab('contracts');
     setView('form');
   }
 
@@ -2144,7 +2260,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={async () => {
           if (view === 'list') {
-            if (mainTab === 'tires' || mainTab === 'contacts') { setMainTab('contracts'); return; }
+            if (mainTab === 'tires' || mainTab === 'contacts' || mainTab === 'media') { setMainTab('contracts'); return; }
             onBack(); return;
           }
           if (view === 'form' && formRef.current) {
@@ -2153,7 +2269,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
             setView('list');
           }
         }}>
-          {view === 'list' ? (mainTab === 'contracts' ? (backLabel || '← Back') : (mainTab === 'tires' ? '← Contracts' : (backLabel || '← Back'))) : '← Contracts'}
+          {view === 'list' ? (mainTab === 'contracts' ? (backLabel || '← Back') : (mainTab === 'tires' || mainTab === 'media' ? '← Contracts' : (backLabel || '← Back'))) : '← Contracts'}
         </button>
         <span style={{ fontWeight: 800, fontSize: 18, color: '#6ee7f9', flex: 1 }}>🛡 After Market Warranty/Tire Warranty</span>
 
@@ -2174,6 +2290,7 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
             { key: 'contracts', label: '🛡 Contracts', color: '#6ee7f9', border: 'rgba(61,214,195,0.5)' },
             { key: 'tires', label: '🛞 Tire Warranty', color: '#fbbf24', border: 'rgba(251,191,36,0.5)' },
             { key: 'contacts', label: '📇 Aftermarket Warranty Contacts', color: '#c4b5fd', border: 'rgba(167,139,250,0.5)' },
+            { key: 'media', label: `📸 Media Uploads${unmatchedRoCount ? ` (${unmatchedRoCount})` : ''}`, color: '#3dd6c3', border: 'rgba(61,214,195,0.5)' },
           ].map(t => {
             const on = mainTab === t.key;
             return (
@@ -2209,7 +2326,11 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
         <MediaPanel ro={openRo} media={openMedia} currentRole={currentRole}
           onRemoved={id => setMedia(prev => prev.filter(m => m.id !== id))} />
       )}
-      {mainTab === 'contacts' ? (
+      {mainTab === 'media' ? (
+        <UnmatchedMediaPanel media={unmatchedMedia} currentRole={currentRole}
+          onRemoved={id => setMedia(prev => prev.filter(m => m.id !== id))}
+          onStartContract={startContractForRo} />
+      ) : mainTab === 'contacts' ? (
         <ContactsPanel />
       ) : mainTab === 'tires' ? (
         <TireClaimsPanel currentUser={currentUser} currentRole={currentRole} />
@@ -2222,7 +2343,8 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
           {view === 'form' && (
             <ContractForm
               ref={formRef}
-              initial={editingContract}
+              key={editingContract?.id || newPrefill?.id || 'new'}
+              initial={editingContract || newPrefill}
               onSave={handleSave}
               onCancel={() => setView(activeContract ? 'detail' : 'list')}
               onDelete={editingContract ? handleDelete : null}

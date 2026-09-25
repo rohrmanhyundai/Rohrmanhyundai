@@ -185,7 +185,7 @@ export default function MediaUpload({ currentUser, currentUserDisplay, onBack })
           <div style={{ fontWeight: 800, fontSize: 16, color: '#4ade80', marginBottom: 6 }}>Submitted</div>
           <div style={{ color: '#cbd5e1', fontSize: 14, lineHeight: 1.5 }}>
             {done.count} file{done.count === 1 ? '' : 's'} for RO <strong>{done.ro}</strong> {done.count === 1 ? 'was' : 'were'} sent to the After Market Warranty page.
-            {!done.hasContract && ' There is no contract for this RO yet — the media will show on it as soon as one is created.'}
+            {!done.hasContract && ' There is no contract for this RO yet, so it was saved under the Media Uploads tab — it will move onto the contract as soon as one is created.'}
           </div>
         </div>
       )}
@@ -228,7 +228,7 @@ export default function MediaUpload({ currentUser, currentUserDisplay, onBack })
           </div>
         ) : (
           <div style={{ color: '#fbbf24', fontSize: 12.5, marginTop: 6, fontWeight: 600 }}>
-            No contract with this RO yet — double-check the number. It's fine to upload now; it will attach when the contract is created.
+            No contract with this RO yet — double-check the number. It's fine to upload now — it goes to the Media Uploads tab and moves onto the contract when one is created.
           </div>
         )}
       </div>
