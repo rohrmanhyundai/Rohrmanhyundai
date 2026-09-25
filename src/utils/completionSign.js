@@ -1,8 +1,8 @@
 // "Estimated Completion Time" sign — a full-page, color sign an advisor prints
 // and puts on/in the car so the tech sees when it's promised.
 //
-// Same approach as the package flyer: a self-contained HTML page in a new
-// window that prints itself. The sign is one SVG sized to a Letter page; the
+// A self-contained HTML page loaded into a hidden frame on the current page,
+// which prints itself — no pop-up window. The sign is one SVG sized to a Letter page; the
 // clock hands point at the chosen time. Long text (e.g. "12:45 PM", long day
 // names) is scaled down in the page to fit before printing.
 
@@ -182,16 +182,23 @@ export function completionSignHtml({ date, time }) {
 </body></html>`;
 }
 
-// Open the sign in a new window; it prints itself once the font is in.
-// Must be called straight from a click so the pop-up isn't blocked.
+// Load the sign into an off-screen frame; it opens the print dialog itself once
+// the font is in. The frame is laid out at full page size (just off-screen, not
+// display:none) so the text can be measured, and removed after printing.
+const FRAME_ID = 'completion-sign-frame';
 export function printCompletionSign({ date, time }) {
-  const win = window.open('', '_blank');
-  if (!win) {
-    alert('Please allow pop-ups for this site to print the completion time sign.');
-    return false;
-  }
+  document.getElementById(FRAME_ID)?.remove();
+  const frame = document.createElement('iframe');
+  frame.id = FRAME_ID;
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:8.5in;height:11in;border:0;';
+  document.body.appendChild(frame);
+  const win = frame.contentWindow;
   win.document.open();
   win.document.write(completionSignHtml({ date, time }));
   win.document.close();
+  const cleanup = () => setTimeout(() => frame.remove(), 500);
+  win.addEventListener('afterprint', cleanup);
+  setTimeout(() => frame.isConnected && frame.remove(), 5 * 60 * 1000);
   return true;
 }
