@@ -430,7 +430,12 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "seth.rosen@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "passwordReset": {
+        "hash": "14d59990974287ae05fa1e1740dd399adeb968a656878bbbb95b26a380290a46",
+        "expires": "2026-09-25T18:48:43.349Z",
+        "requestedAt": "2026-09-25T17:48:43.349Z"
+      }
     },
     {
       "username": "Chapman",
