@@ -21,6 +21,11 @@ export default function CompletedTime({ onClose }) {
     if (printCompletionSign({ date, time })) onClose();
   }
 
+  // Customer Waiting ignores the fields: ASAP, stamped with right now.
+  function waiting() {
+    if (printCompletionSign({ ...nowParts(), waiting: true })) onClose();
+  }
+
   const field = {
     width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
     border: '1px solid rgba(255,255,255,0.18)', borderRadius: 10, color: '#e2e8f0',
@@ -48,6 +53,11 @@ export default function CompletedTime({ onClose }) {
             <div style={{ color: '#fff', fontSize: 12, fontWeight: 800, letterSpacing: 0.5, marginTop: 2 }}>{formatSignDate(date)}</div>
           </div>
         )}
+
+        <button type="button" onClick={waiting}
+          style={{ width: '100%', marginBottom: 10, background: 'linear-gradient(135deg,#facc15,#eab308)', color: '#1a1205', border: 0, borderRadius: 10, padding: '12px 16px', fontSize: 16, fontWeight: 900, cursor: 'pointer' }}>
+          🚨 Customer Waiting — Print ASAP
+        </button>
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button type="button" className="secondary" onClick={onClose} style={{ flex: '0 0 auto' }}>Cancel</button>

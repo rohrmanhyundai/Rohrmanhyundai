@@ -103,17 +103,17 @@ function hazard(y) {
   return out;
 }
 
-function signSvg(timeLabel, h, m, dateLabel) {
+function signSvg({ top, sub, big, bigSize = 420, h, m, dateLabel }) {
   const font = `font-family="Anton, Impact, 'Arial Narrow', sans-serif"`;
   return `
 <svg class="sign" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${W}" height="${H}" fill="${ORANGE}"/>
   ${bursts()}
   <g transform="translate(550 255) skewX(-8)">
-    <g data-fit="930"><text ${font} font-size="235" text-anchor="middle" fill="#ffffff" stroke="${INK}" stroke-width="24" stroke-linejoin="round" paint-order="stroke">ESTIMATED</text></g>
+    <g data-fit="930"><text ${font} font-size="235" text-anchor="middle" fill="#ffffff" stroke="${INK}" stroke-width="24" stroke-linejoin="round" paint-order="stroke">${esc(top)}</text></g>
   </g>
   <g transform="translate(550 440)">
-    <g data-fit="1010"><text ${font} font-size="178" text-anchor="middle" fill="${YELLOW}" stroke="${INK}" stroke-width="22" stroke-linejoin="round" paint-order="stroke">COMPLETION TIME</text></g>
+    <g data-fit="1010"><text ${font} font-size="178" text-anchor="middle" fill="${YELLOW}" stroke="${INK}" stroke-width="22" stroke-linejoin="round" paint-order="stroke">${esc(sub)}</text></g>
   </g>
 
   <rect x="0" y="480" width="${W}" height="690" fill="${INK}"/>
@@ -122,8 +122,8 @@ function signSvg(timeLabel, h, m, dateLabel) {
 
   <g transform="translate(550 1118)">
     <g data-fit="1020">
-      <text ${font} font-size="420" text-anchor="middle" fill="none" stroke="#ffffff" stroke-width="60" stroke-linejoin="round">${esc(timeLabel)}</text>
-      <text ${font} font-size="420" text-anchor="middle" fill="${YELLOW}" stroke="${INK}" stroke-width="28" stroke-linejoin="round" paint-order="stroke">${esc(timeLabel)}</text>
+      <text ${font} font-size="${bigSize}" text-anchor="middle" fill="none" stroke="#ffffff" stroke-width="60" stroke-linejoin="round">${esc(big)}</text>
+      <text ${font} font-size="${bigSize}" text-anchor="middle" fill="${YELLOW}" stroke="${INK}" stroke-width="28" stroke-linejoin="round" paint-order="stroke">${esc(big)}</text>
     </g>
   </g>
 
@@ -137,12 +137,17 @@ function signSvg(timeLabel, h, m, dateLabel) {
 </svg>`;
 }
 
-export function completionSignHtml({ date, time }) {
+// waiting: the "Customer Waiting" version — ASAP instead of a time, today's
+// date, and the clock hands on the time it was printed.
+export function completionSignHtml({ date, time, waiting }) {
   const t = formatSignTime(time);
   const d = formatSignDate(date);
+  const sign = waiting
+    ? { top: 'CUSTOMER', sub: 'WAITING', big: 'ASAP', bigSize: 350, title: 'Customer Waiting' }
+    : { top: 'ESTIMATED', sub: 'COMPLETION TIME', big: t.label, title: `Estimated Completion ${t.label}` };
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8" />
-<title>Estimated Completion ${esc(t.label)}</title>
+<title>${esc(sign.title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=block" rel="stylesheet" />
@@ -162,7 +167,7 @@ export function completionSignHtml({ date, time }) {
 </style></head>
 <body>
   <div class="toolbar"><button onclick="window.print()">🖨 Print again</button></div>
-  ${signSvg(t.label, t.h, t.m, d)}
+  ${signSvg({ ...sign, h: t.h, m: t.m, dateLabel: d })}
   <script>
     function fit() {
       document.querySelectorAll('[data-fit]').forEach(function (g) {
@@ -186,7 +191,7 @@ export function completionSignHtml({ date, time }) {
 // the font is in. The frame is laid out at full page size (just off-screen, not
 // display:none) so the text can be measured, and removed after printing.
 const FRAME_ID = 'completion-sign-frame';
-export function printCompletionSign({ date, time }) {
+export function printCompletionSign({ date, time, waiting }) {
   document.getElementById(FRAME_ID)?.remove();
   const frame = document.createElement('iframe');
   frame.id = FRAME_ID;
@@ -195,7 +200,7 @@ export function printCompletionSign({ date, time }) {
   document.body.appendChild(frame);
   const win = frame.contentWindow;
   win.document.open();
-  win.document.write(completionSignHtml({ date, time }));
+  win.document.write(completionSignHtml({ date, time, waiting }));
   win.document.close();
   const cleanup = () => setTimeout(() => frame.remove(), 500);
   win.addEventListener('afterprint', cleanup);
