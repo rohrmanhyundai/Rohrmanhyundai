@@ -9,7 +9,7 @@
     "etaCompletion": "",
     "partsArrived": true,
     "partsArrivedDate": "09/22/2026",
-    "highPriority": false,
+    "highPriority": true,
     "advisor": "JORDAN TROXEL",
     "notes": "Techline advised replacing HPCU. Part ordered. On backorder. ",
     "flag": "purple"
