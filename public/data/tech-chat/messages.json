@@ -1,11 +1,5 @@
 [
   {
-    "id": "mtbg43v3gc4",
-    "username": "KAI",
-    "text": "RO 780313 parts have been received",
-    "timestamp": 1787830491279
-  },
-  {
     "id": "mtbg4u2jgaq",
     "username": "KAI",
     "text": "parts received for ro 780325",
@@ -390,5 +384,11 @@
     "username": "SETH",
     "text": "@DAVID @KADEN RO 781120 parts have been received",
     "timestamp": 1790421718192
+  },
+  {
+    "id": "muibc6lrzw3",
+    "username": "SETH",
+    "text": "@JORDAN @CORY RO 780481 parts have been received",
+    "timestamp": 1790422515567
   }
 ]
