@@ -37,7 +37,7 @@
     "highPriority": false,
     "advisor": "JORDAN",
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
+    "partsArrived": true,
+    "partsArrivedDate": "09/26/2026"
   }
 ]
