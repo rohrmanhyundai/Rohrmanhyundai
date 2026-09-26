@@ -39,6 +39,7 @@ function parseXlsxRows(rawRows) {
       customerName:   fullName,
       repairOrder:    findCol(row, 'RO Number', 'R/O Number', 'Repair Order', 'RO#', 'R/O No.', 'RO No', 'Repair Order Number', 'RO'),
       vin:            findCol(row, 'VIN', 'VIN Number', 'Vin'),
+      email:          findCol(row, 'Email Address', 'Email', 'E-mail Address', 'E-mail', 'Customer Email', 'Customer Email Address'),
       model:          findCol(row, 'Model', 'Model Name', 'Vehicle Model', 'Year Model', 'Make Model', 'Vehicle Description', 'Model Year'),
       serviceDate:         findCol(row, 'Service Date', 'RO Close Date', 'Close Date', 'Repair Order Date', 'RO Date', 'Completed Date', 'In Service Date'),
       invitationDate:      findCol(row, 'Invitation Date', 'Survey Date', 'Survey Sent Date', 'Sent Date', 'Delivery Date', 'Email Date'),
@@ -300,6 +301,16 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   const pendingSurveys = pendingSurveysFor(siData, completedReviews, advisorName);
 
   // Survey Uploads = completed reviews newest first, excluding manager-deleted.
+  // Email for a row. Reviews submitted before emails were read from the upload
+  // don't carry one, so fall back to the latest upload by RO.
+  const emailByRo = {};
+  siData.forEach(r => { if (r && r.repairOrder && r.email) emailByRo[String(r.repairOrder)] = r.email; });
+  const emailOf = (r) => (r && (r.email || emailByRo[String(r.repairOrder)])) || '';
+  const emailCell = (r) => {
+    const e = emailOf(r);
+    return e ? <a href={`mailto:${e}`} style={{ color: '#a5b4fc', textDecoration: 'none', fontSize: 13 }}>{e}</a> : <span style={{ color: '#475569' }}>—</span>;
+  };
+
   const sortedCompleted = [...completedReviews]
     .filter(r => !r.managerDeleted)
     .sort((a, b) => parseDateVal(b.submittedAt) - parseDateVal(a.submittedAt));
@@ -375,11 +386,12 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
                 {siUploadedAt && <span style={{ fontSize: 12, color: '#475569' }}>Data as of {new Date(siUploadedAt).toLocaleDateString()}</span>}
               </div>
               <table className="adv-table">
-                <thead><tr><th>CUSTOMER NAME</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th><th>DELIVERY IN PROGRESS</th><th>DELIVERED</th></tr></thead>
+                <thead><tr><th>CUSTOMER NAME</th><th>EMAIL ADDRESS</th><th>REPAIR ORDER</th><th>VIN</th><th>MODEL</th><th>SERVICE DATE</th><th>INVITATION DATE</th><th>DELIVERY IN PROGRESS</th><th>DELIVERED</th></tr></thead>
                 <tbody>
                   {pendingSurveys.map((row, idx) => (
                     <tr key={idx}>
                       <td style={{ fontWeight: 600, color: '#e2e8f0' }}>{row.customerName || '—'}</td>
+                      <td style={{ wordBreak: 'break-all' }}>{emailCell(row)}</td>
                       <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9' }}>{row.repairOrder || '—'}</td>
                       <td style={{ fontFamily: 'monospace', fontSize: 12, color: '#94a3b8' }}>{row.vin || '—'}</td>
                       <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
@@ -436,6 +448,7 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
                     {/* Survey info */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '4px 20px', marginBottom: 16 }}>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Customer</div><div style={{ fontWeight: 800, color: '#f1f5f9', fontSize: 14 }}>{survey.customerName || '—'}</div></div>
+                      <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Email Address</div><div style={{ wordBreak: 'break-all' }}>{emailCell(survey)}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>RO #</div><div style={{ fontFamily: 'monospace', color: '#6ee7f9', fontSize: 13, fontWeight: 700 }}>{survey.repairOrder || '—'}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Model</div><div style={{ color: '#e2e8f0', fontSize: 13, fontWeight: 600 }}>{survey.model || '—'}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>
@@ -557,6 +570,7 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
                   <thead>
                     <tr>
                       <th>CUSTOMER NAME</th>
+                      <th>EMAIL ADDRESS</th>
                       <th>REPAIR ORDER</th>
                       <th>MODEL</th>
                       <th>SERVICE DATE</th>
@@ -571,6 +585,7 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
                     {sortedCompleted.map((row, idx) => (
                       <tr key={idx}>
                         <td style={{ fontWeight: 600, color: '#e2e8f0' }}>{row.customerName || '—'}</td>
+                        <td style={{ wordBreak: 'break-all' }}>{emailCell(row)}</td>
                         <td style={{ fontFamily: 'monospace', fontSize: 13, color: '#6ee7f9' }}>{row.repairOrder || '—'}</td>
                         <td style={{ color: '#cbd5e1' }}>{row.model || '—'}</td>
                         <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{fmtDate(row.serviceDate)}</td>
