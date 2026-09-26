@@ -9,29 +9,31 @@
         "tue": 12.7,
         "wed": 11.6,
         "thu": 24.14,
-        "fri": 0,
+        "fri": 3.1,
         "sat": 12,
-        "total": 72.62,
-        "goal_pct": 1.7087058823529413,
-        "pacing": 87.144,
+        "total": 75.72,
+        "goal_pct": 1.7816470588235294,
+        "pacing": 75.72,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "12",
-        "_hrsStamp": 1790334282771,
+        "_hrsStamp": 1790446114011,
         "warrantyMultiplier": true,
-        "total_raw": 71.5,
+        "total_raw": 74.6,
         "sat_raw": 12,
         "hoursOverride": {
           "2026-09-19": true,
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 11.5,
         "wed_raw": 11.6,
         "tue_raw": 12.7,
-        "thu_raw": 23.7
+        "thu_raw": 23.7,
+        "fri_raw": 3.1
       },
       {
         "name": "CARTER",
@@ -40,28 +42,30 @@
         "tue": 8.92,
         "wed": 5.66,
         "thu": 2.3,
-        "fri": 0,
+        "fri": 11.06,
         "sat": 0,
-        "total": 23.48,
-        "goal_pct": 0.5524705882352942,
-        "pacing": 29.35,
+        "total": 34.54,
+        "goal_pct": 0.8127058823529412,
+        "pacing": 34.54,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "NA",
-        "_hrsStamp": 1790334282771,
-        "total_raw": 20.2,
+        "_hrsStamp": 1790446114011,
+        "total_raw": 29.1,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-09-19": true,
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 5,
         "wed_raw": 4.9,
         "tue_raw": 8,
-        "thu_raw": 2.3
+        "thu_raw": 2.3,
+        "fri_raw": 8.9
       },
       {
         "name": "GAVEN",
@@ -70,28 +74,30 @@
         "tue": 19.8,
         "wed": 1.5,
         "thu": 21.06,
-        "fri": 0,
+        "fri": 4.38,
         "sat": 0,
-        "total": 52.620000000000005,
-        "goal_pct": 1.2381176470588235,
-        "pacing": 65.775,
+        "total": 57.00000000000001,
+        "goal_pct": 1.3411764705882354,
+        "pacing": 57.000000000000014,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "85",
-        "_hrsStamp": 1790334282771,
-        "total_raw": 48.099999999999994,
+        "_hrsStamp": 1790446114011,
+        "total_raw": 51.99999999999999,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-09-19": true,
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 9.1,
         "wed_raw": 1.5,
         "tue_raw": 19.8,
-        "thu_raw": 17.7
+        "thu_raw": 17.7,
+        "fri_raw": 3.9
       },
       {
         "name": "CORY",
@@ -100,28 +106,30 @@
         "tue": 3.26,
         "wed": 1.2,
         "thu": 11.04,
-        "fri": 0,
+        "fri": 8.1,
         "sat": 0,
-        "total": 28.08,
-        "goal_pct": 0.6607058823529411,
-        "pacing": 35.099999999999994,
+        "total": 36.18,
+        "goal_pct": 0.8512941176470589,
+        "pacing": 36.18,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "126",
-        "_hrsStamp": 1790334282771,
-        "total_raw": 22.6,
+        "_hrsStamp": 1790446114011,
+        "total_raw": 30.700000000000003,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-09-19": true,
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 9.9,
         "wed_raw": 1.2,
         "tue_raw": 3.1,
-        "thu_raw": 8.4
+        "thu_raw": 8.4,
+        "fri_raw": 8.1
       },
       {
         "name": "KADEN",
@@ -130,28 +138,30 @@
         "tue": 9.5,
         "wed": 3.6,
         "thu": 4.78,
-        "fri": 0,
+        "fri": 9.5,
         "sat": 0.3,
-        "total": 20.16,
-        "goal_pct": 0.4743529411764706,
-        "pacing": 24.192,
+        "total": 29.66,
+        "goal_pct": 0.6978823529411765,
+        "pacing": 29.66,
         "certified": "NO",
         "trainings_due": "65",
         "excel_training": "NA",
-        "_hrsStamp": 1790334282771,
-        "total_raw": 18.400000000000002,
+        "_hrsStamp": 1790446114011,
+        "total_raw": 27.3,
         "sat_raw": 0.3,
         "hoursOverride": {
           "2026-09-19": true,
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 1.5,
         "wed_raw": 2.8,
         "tue_raw": 9.5,
-        "thu_raw": 4.3
+        "thu_raw": 4.3,
+        "fri_raw": 8.9
       },
       {
         "name": "BRYSON",
@@ -160,16 +170,16 @@
         "tue": 5,
         "wed": 3.9,
         "thu": 3.2,
-        "fri": 0,
+        "fri": 2.8,
         "sat": 3.4,
-        "total": 18.4,
-        "goal_pct": 0.7215686274509804,
-        "pacing": 22.08,
+        "total": 21.2,
+        "goal_pct": 0.8313725490196078,
+        "pacing": 21.2,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
-        "_hrsStamp": 1790334282771,
-        "total_raw": 18.4,
+        "_hrsStamp": 1790446114011,
+        "total_raw": 21.2,
         "warrantyMultiplier": false,
         "sat_raw": 3.4,
         "hoursOverride": {
@@ -177,12 +187,14 @@
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 2.9,
         "wed_raw": 3.9,
         "tue_raw": 5,
-        "thu_raw": 3.2
+        "thu_raw": 3.2,
+        "fri_raw": 2.8
       },
       {
         "name": "CHRIS",
@@ -191,16 +203,16 @@
         "tue": 1.7,
         "wed": 4.2,
         "thu": 1.8,
-        "fri": 0,
+        "fri": 3,
         "sat": 0,
-        "total": 8.700000000000001,
-        "goal_pct": 0.18315789473684213,
-        "pacing": 10.875000000000002,
+        "total": 11.700000000000001,
+        "goal_pct": 0.24631578947368424,
+        "pacing": 11.700000000000001,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
-        "total_raw": 8.700000000000001,
-        "_hrsStamp": 1790334282771,
+        "total_raw": 11.700000000000001,
+        "_hrsStamp": 1790446114011,
         "warrantyMultiplier": false,
         "sat_raw": 0,
         "hoursOverride": {
@@ -208,12 +220,14 @@
           "2026-09-21": true,
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
         "mon_raw": 1,
         "wed_raw": 4.2,
         "tue_raw": 1.7,
-        "thu_raw": 1.8
+        "thu_raw": 1.8,
+        "fri_raw": 3
       },
       {
         "name": "TRENTON",
@@ -222,24 +236,26 @@
         "tue": 2.26,
         "wed": 2.16,
         "thu": 3.02,
-        "fri": 0,
+        "fri": 1.12,
         "sat": 0,
-        "total": 7.4399999999999995,
-        "goal_pct": 0.1566315789473684,
-        "pacing": 12.4,
+        "total": 8.559999999999999,
+        "goal_pct": 0.18021052631578946,
+        "pacing": 10.7,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
-        "total_raw": 6.8,
+        "total_raw": 7.6,
         "wed_raw": 2,
         "hoursOverride": {
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
-        "_hrsStamp": 1790334282771,
+        "_hrsStamp": 1790446114011,
         "tue_raw": 1.9,
-        "thu_raw": 2.9
+        "thu_raw": 2.9,
+        "fri_raw": 0.8
       },
       {
         "name": "DERRICK",
@@ -261,12 +277,14 @@
         "hoursOverride": {
           "2026-09-23": true,
           "2026-09-22": true,
-          "2026-09-24": true
+          "2026-09-24": true,
+          "2026-09-25": true
         },
-        "_hrsStamp": 1790334282771,
+        "_hrsStamp": 1790446114011,
         "tue_raw": 0,
         "hidden": true,
-        "thu_raw": 0
+        "thu_raw": 0,
+        "fri_raw": 0
       }
     ],
     "advisors": [
@@ -392,11 +410,11 @@
       "tue": 63.14,
       "wed": 33.81999999999999,
       "thu": 71.33999999999999,
-      "fri": 0,
+      "fri": 43.059999999999995,
       "sat": 15.700000000000001,
-      "week_total": 231.5,
-      "week_pct": 0.6951951951951952,
-      "shop_pacing": 286.916
+      "week_total": 274.56,
+      "week_pct": 0.8245045045045045,
+      "shop_pacing": 276.7
     },
     "grossGoal": 152561,
     "grossActual": 119599.17,
