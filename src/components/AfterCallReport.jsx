@@ -185,6 +185,8 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   const canUpload = canEditDashboard || currentRole === 'admin' || (currentRole || '').includes('manager');
 
   const [afterCallTab, setAfterCallTab] = useState('report'); // 'report'|'complete'|'uploads'|'upload'
+  const [emailPop, setEmailPop] = useState(null);   // { email, name } — the click-to-view email popup
+  const [emailCopied, setEmailCopied] = useState(false);
 
   // ── Service invitation data ───────────────────────────────────────────────
   const [siData, setSiData]               = useState([]);
@@ -306,10 +308,28 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
   const emailByRo = {};
   siData.forEach(r => { if (r && r.repairOrder && r.email) emailByRo[String(r.repairOrder)] = r.email; });
   const emailOf = (r) => (r && (r.email || emailByRo[String(r.repairOrder)])) || '';
+  // Click an email to open a small popup with the full address and Copy.
   const emailCell = (r) => {
     const e = emailOf(r);
-    return e ? <a href={`mailto:${e}`} style={{ color: '#a5b4fc', textDecoration: 'none', fontSize: 13 }}>{e}</a> : <span style={{ color: '#475569' }}>—</span>;
+    if (!e) return <span style={{ color: '#475569' }}>—</span>;
+    return (
+      <button type="button" title="Click to view / copy" onClick={() => { setEmailCopied(false); setEmailPop({ email: e, name: r.customerName || '' }); }}
+        style={{ background: 'none', border: 'none', padding: 0, margin: 0, cursor: 'pointer', color: '#a5b4fc', fontSize: 13, textAlign: 'left', maxWidth: 230, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', font: 'inherit' }}>
+        {e}
+      </button>
+    );
   };
+  async function copyEmail(text) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch {}
+      ta.remove();
+    }
+    setEmailCopied(true);
+  }
 
   const sortedCompleted = [...completedReviews]
     .filter(r => !r.managerDeleted)
@@ -327,6 +347,31 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
     // Same shell every other advisor page uses, so the top bar matches the rest
     // of the app instead of a pair of loose buttons stacked in the corner.
     <div className="adv-page adv-form-page">
+      {emailPop && (
+        <div className="no-print" onClick={() => setEmailPop(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: 420, background: '#111827', border: '1px solid rgba(165,180,252,0.45)', borderRadius: 14, padding: 18, boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+              <div style={{ flex: 1, fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+                ✉️ Email Address{emailPop.name ? ` · ${emailPop.name}` : ''}
+              </div>
+              <button type="button" onClick={() => setEmailPop(null)} aria-label="Close"
+                style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 18, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: '12px 14px', color: '#e2e8f0', fontSize: 16, fontWeight: 700, wordBreak: 'break-all', userSelect: 'all', marginBottom: 14 }}>
+              {emailPop.email}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button type="button" onClick={() => copyEmail(emailPop.email)}
+                style={{ flex: 1, background: emailCopied ? 'rgba(74,222,128,0.2)' : 'linear-gradient(135deg,rgba(165,180,252,0.35),rgba(129,140,248,0.25))', border: `1px solid ${emailCopied ? 'rgba(74,222,128,0.5)' : 'rgba(165,180,252,0.5)'}`, color: emailCopied ? '#86efac' : '#e0e7ff', borderRadius: 9, padding: '10px 14px', fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
+                {emailCopied ? '✓ Copied' : '📋 Copy Email'}
+              </button>
+              <button type="button" className="secondary" onClick={() => setEmailPop(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           <button className="secondary" onClick={onBack}>← Back to Calendar</button>
