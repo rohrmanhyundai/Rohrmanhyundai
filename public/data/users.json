@@ -283,10 +283,10 @@
       "lastName": "Jean",
       "email": "carter.jean@rohrmanauto.com",
       "managementAccess": false,
-      "passwordReset": {
-        "hash": "e4943b651f64d60957040893a72f88984999b24ee356709e5b6cad098cb74cf4",
-        "expires": "2026-09-26T18:30:17.085Z",
-        "requestedAt": "2026-09-26T17:30:17.085Z"
+      "pwSalt": "43bc1cbe28d2683f5fcce827da4bf56a",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "c0Jm3aCDbfjEtJNCvawNtJJxPTs0BbENTFNZVqbUHK71CCz3Tz2/c6pEpw11a1LFw8YPMTXMBz2Cdfnqv7CA9WalaVicbVFeH09zXQXk2voxSnpE70+WRlf0bUqs8QqTO5CXhQgGAdV1rliIzDS8NhFw5TMbYsCy0Qis9jP+DotiuNkkx0Jby9/0L46MMLB0ijDNLQsvxaoqejyA/LKvCweQWK9+2Z7ggKzgxTfqTaZFU72puu7Cqc1pTdo/6VrOzI8LF/QiImAOINbDebpm9cM5Szxh9XO4XmfxKc2lBNbdqhMir9tSwr086Ce7z2+tImUdXdgJMjNhS4fhqAK2Kw=="
       }
     },
     {
