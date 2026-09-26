@@ -1,0 +1,63 @@
+{
+  "advisorName": "SHAWN",
+  "date": "2026-09-14",
+  "rows": [
+    {
+      "id": "rmuinpokix48c",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmuinpoki8p95",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmuinpokidyh6",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmuinpokihwuc",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmuinpoki62rs",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-09-26T17:21:42.001Z"
+}
