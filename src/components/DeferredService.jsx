@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import * as github from '../utils/github';
 import { parseDeferredPdf, mergeRows } from '../utils/deferredReport';
+import { newestPerVehicle } from '../utils/deferredVehicles';
 import { trackPage, trackAction } from '../utils/activityTracker';
 
 // ── Deferred Service ──────────────────────────────────────────────────────────
@@ -103,7 +104,12 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   // — chosen in Settings, keyed by the name printed on the report.
   const excluded = useMemo(() => new Set(Array.isArray(store && store.excludedAdvisors) ? store.excludedAdvisors : []), [store]);
   const promo = (store && store.promotion) || null;
-  const allRows = useMemo(() => Object.values((store && store.byRo) || {}), [store]);
+  // One row per vehicle: a car on several ROs (it's been in more than once) is
+  // listed once, from its newest visit, and the row opens to every visit. An RO
+  // number is only ever stored once. Follow-ups logged on older ROs still count
+  // (see byRoActivity).
+  const vehicles = useMemo(() => newestPerVehicle(Object.values((store && store.byRo) || {})), [store]);
+  const allRows = vehicles.rows;
   const reportAdvisorCounts = useMemo(() => { const m = {}; allRows.forEach(r => { const a = r.advisor || '—'; m[a] = (m[a] || 0) + 1; }); return m; }, [allRows]);
   const rows = useMemo(() => allRows.filter(r => !excluded.has(r.advisor || '—')).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.ro).localeCompare(String(a.ro)))), [allRows, excluded]);
 
@@ -132,7 +138,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
 
   // Follow-up entries grouped by RO (newest first) and by the advisor who logged them.
   const entries = useMemo(() => Object.values(activity.entries || {}).sort((a, b) => (a.at < b.at ? 1 : -1)), [activity]);
-  const byRoActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[e.ro] ||= []).push(e); }); return m; }, [entries]);
+  const byRoActivity = useMemo(() => { const m = {}; entries.forEach(e => { const ro = vehicles.aliasOf[String(e.ro)] || e.ro; (m[ro] ||= []).push(e); }); return m; }, [entries, vehicles]);
   const byAdvisorActivity = useMemo(() => { const m = {}; entries.forEach(e => { (m[firstWord(e.by)] ||= []).push(e); }); return m; }, [entries]);
   // One tab per active advisor on the site (for recording follow-ups), plus
   // anyone who already has entries so a log never disappears.
@@ -187,12 +193,13 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       if (from && (!r.date || r.date < from)) return false;
       if (to && (!r.date || r.date > to)) return false;
       if (needle) {
-        const hay = [r.customer, r.ro, r.phone, r.email, r.vin, r.vehicle, r.advisor, (r.codes || []).join(' ')].join(' ').toLowerCase();
+        const older = vehicles.olderOf[r.ro] || [];
+        const hay = [r.customer, r.ro, r.phone, r.email, r.vin, r.vehicle, r.advisor, (r.codes || []).join(' '), ...older.map(o => `${o.ro} ${o.customer || ''}`)].join(' ').toLowerCase();
         if (!hay.includes(needle)) return false;
       }
       return true;
     });
-  }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, showScheduled, byRoActivity]);
+  }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, showScheduled, byRoActivity, vehicles]);
 
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
   const clearAll = () => { setSelCodes(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); setShowScheduled(false); };
@@ -407,6 +414,31 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
         ))}
       </div>
 
+      {/* Every time this vehicle was in with deferred work — newest first */}
+      {vehicles.olderOf[r.ro] && (
+        <div style={{ marginTop: 14 }}>
+          <div className="ds-label" style={{ marginBottom: 6 }}>🔁 Every visit — {vehicles.olderOf[r.ro].length + 1} ROs for this vehicle</div>
+          <div style={{ display: 'grid', gap: 6 }}>
+            {[r, ...vehicles.olderOf[r.ro]].map((v, i) => (
+              <div key={v.ro} style={{ border: `1px solid ${i === 0 ? 'rgba(110,231,249,.45)' : 'rgba(148,163,184,.2)'}`, background: i === 0 ? 'rgba(110,231,249,.06)' : 'rgba(255,255,255,.02)', borderRadius: 10, padding: '8px 12px' }}>
+                <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'baseline', fontSize: 12.5 }}>
+                  <span style={{ fontWeight: 900, color: '#67e8f9' }}>RO {v.ro}</span>
+                  <span style={{ color: '#cbd5e1' }}>{fmtDate(v.date)}</span>
+                  <span style={{ color: '#cbd5e1' }}>{v.advisor || '—'}</span>
+                  {v.customer && v.customer !== r.customer && <span style={{ color: '#94a3b8' }}>{v.customer}</span>}
+                  <span style={{ color: '#94a3b8' }}>{v.hours == null ? '—' : v.hours.toFixed(1)} hrs</span>
+                  <span style={{ color: '#6ee7b7', fontWeight: 700 }}>{money(v.amount)}</span>
+                  {i === 0 && <span style={{ fontSize: 10.5, fontWeight: 900, color: '#a5f3fc', background: 'rgba(110,231,249,.15)', borderRadius: 999, padding: '1px 8px' }}>LATEST</span>}
+                </div>
+                <div style={{ marginTop: 4, fontSize: 11.5, color: '#94a3b8' }}>
+                  {(v.codes || []).map(c => (codes[c] && codes[c].description) || c).join(' · ') || 'No op codes'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Follow-up: log a call or an appointment against this RO */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 14 }}>
         <button onClick={() => openAction(r.ro, 'contacted')} style={{ background: 'linear-gradient(180deg,rgba(74,222,128,.28),rgba(22,163,74,.2))', borderColor: 'rgba(74,222,128,.5)', color: '#bbf7d0', fontSize: 13 }}>📞 Contacted customer</button>
@@ -486,7 +518,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                 <div className="ds-row open" style={{ cursor: 'default' }}>
                   <div>
                     <div style={{ fontSize: 14.5, fontWeight: 900, color: '#f1f5f9' }}>{r.customer || <span style={{ color: '#64748b', fontStyle: 'italic' }}>No name on report</span>}</div>
-                    <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{r.vehicle} · {(r.codes || []).length} deferred item{(r.codes || []).length === 1 ? '' : 's'}</div>
+                    <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{r.vehicle} · {(r.codes || []).length} deferred item{(r.codes || []).length === 1 ? '' : 's'}{vehicles.olderOf[r.ro] ? <span style={{ color: '#fbbf24', fontWeight: 700 }}> · {vehicles.olderOf[r.ro].length + 1} visits</span> : null}</div>
                     {renderBadges(r.ro)}
                   </div>
                   <div className="ds-hide" style={{ fontSize: 14, fontWeight: 800, color: '#67e8f9' }}>RO {r.ro}</div>
@@ -615,7 +647,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                         <div className={`ds-row${open ? ' open' : ''}`} onClick={() => setOpenRo(open ? '' : r.ro)}>
                           <div>
                             <div style={{ fontSize: 14.5, fontWeight: 900, color: '#f1f5f9' }}>{r.customer || <span style={{ color: '#64748b', fontStyle: 'italic' }}>No name on report</span>}</div>
-                            <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{r.vehicle} · {(r.codes || []).length} deferred item{(r.codes || []).length === 1 ? '' : 's'}</div>
+                            <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2 }}>{r.vehicle} · {(r.codes || []).length} deferred item{(r.codes || []).length === 1 ? '' : 's'}{vehicles.olderOf[r.ro] ? <span style={{ color: '#fbbf24', fontWeight: 700 }}> · {vehicles.olderOf[r.ro].length + 1} visits</span> : null}</div>
                             {renderBadges(r.ro)}
                           </div>
                           <div className="ds-hide" style={{ fontSize: 14, fontWeight: 800, color: '#67e8f9' }}>RO {r.ro}</div>

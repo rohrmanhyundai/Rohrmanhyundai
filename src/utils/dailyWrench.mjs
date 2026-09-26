@@ -10,6 +10,7 @@
 // if a screen ever wants the same numbers without the prose.
 
 import { evaluateRo, roAgeOf, prettyRoStatus } from './roSeverity.js';
+import { newestPerVehicle } from './deferredVehicles.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 export const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -116,14 +117,17 @@ export function serviceKinds(roCodes, codes) {
 }
 
 export function deferredFacts(store, activity, advisorFirst, today = new Date(), codes = {}) {
-  const byRo = (store && store.byRo) || {};
+  // Same list the Deferred Service page shows: one row per vehicle (its newest
+  // RO), with follow-ups on older ROs counted against it.
+  const { rows: latest, aliasOf } = newestPerVehicle(Object.values((store && store.byRo) || {}));
+  const ro = (x) => aliasOf[String(x)] || String(x);
   const contacted = new Set();
-  for (const e of Object.values((activity && activity.entries) || {})) contacted.add(String(e.ro));
+  for (const e of Object.values((activity && activity.entries) || {})) contacted.add(ro(e.ro));
   const booked = new Set();
-  for (const e of Object.values((activity && activity.entries) || {})) if (e.type === 'appointment') booked.add(String(e.ro));
+  for (const e of Object.values((activity && activity.entries) || {})) if (e.type === 'appointment') booked.add(ro(e.ro));
 
   const rows = [];
-  for (const r of Object.values(byRo)) {
+  for (const r of latest) {
     if (!r || !r.ro) continue;
     if (advisorFirst && first(r.advisor) !== advisorFirst) continue;
     if (booked.has(String(r.ro))) continue;              // already coming in — not an opportunity
