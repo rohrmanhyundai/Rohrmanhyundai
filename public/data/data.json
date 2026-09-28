@@ -427,5 +427,34 @@
       "add_rate": 0.75
     }
   },
-  "vacations": []
+  "vacations": [
+    {
+      "name": "JACOB",
+      "dates": "Oct 9, 2026",
+      "dateStart": "2026-10-09",
+      "dateEnd": "2026-10-09",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "Oct 23, 2026",
+      "dateStart": "2026-10-23",
+      "dateEnd": "2026-10-23",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "Oct 29–30, 2026",
+      "dateStart": "2026-10-29",
+      "dateEnd": "2026-10-30",
+      "status": "APPROVED"
+    },
+    {
+      "name": "JACOB",
+      "dates": "Nov 26–27, 2026",
+      "dateStart": "2026-11-26",
+      "dateEnd": "2026-11-27",
+      "status": "APPROVED"
+    }
+  ]
 }
