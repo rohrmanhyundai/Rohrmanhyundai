@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import { canonicalAdvisorFirst } from './advisorAliases';
 import { newestPerVehicle } from './deferredVehicles';
-import { loadDeferredRows, loadDeferredCodes, updateAppointmentList } from './github';
+import { loadDeferredRows, loadDeferredCodes, updateAppointmentList, loadServicePricing } from './github';
 
 // DMS "Appointment List" export → the day's appointments, for the prep sheet.
 //
@@ -162,7 +162,7 @@ const modelWord = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, '
 
 // deferredRows: rows.json byRo values; codes: codes.json ({ CODE: { description } }).
 // Returns a Map apptNo → deferred snapshot (stored on the appointment).
-export function matchDeferred(appts, deferredRows, codes) {
+export function matchDeferred(appts, deferredRows, codes, codeHours = {}) {
   const { rows } = newestPerVehicle(deferredRows || []);
   const byName = new Map();
   for (const r of rows) {
@@ -185,6 +185,20 @@ export function matchDeferred(appts, deferredRows, codes) {
       if (ex) ex.count++;
       else items.push({ code: c, desc: (codes && codes[c] && codes[c].description) || '', count: 1 });
     }
+    // Hours per service (for "sell X to hit the goal"): menu / learned hours,
+    // else an even share of what the RO total leaves over (marked estimated).
+    // A line with no description ("REC") varies RO to RO, so it only ever
+    // gets the leftover share; a one-service RO simply is its total.
+    const hoursOf = (i) => (i.desc ? codeHours[i.code] || 0 : 0);
+    const single = items.length === 1 && items[0].count === 1 && hit.hours > 0;
+    const known = items.reduce((n, i) => n + hoursOf(i) * i.count, 0);
+    const unknownCount = items.reduce((n, i) => n + (hoursOf(i) ? 0 : i.count), 0);
+    const share = unknownCount && hit.hours > 0 ? Math.max(0, hit.hours - known) / unknownCount : 0;
+    for (const i of items) {
+      if (single) i.h = hit.hours;
+      else if (hoursOf(i)) i.h = hoursOf(i);
+      else if (share > 0) { i.h = Math.round(share * 10) / 10; i.est = true; }
+    }
     out.set(a.apptNo, {
       ro: hit.ro, date: hit.date || '', advisorFull: hit.advisor || '', advisor: canonicalAdvisorFirst(hit.advisor),
       amount: hit.amount ?? null, hours: hit.hours ?? null, phone: hit.phone || '', vin: hit.vin || '', items,
@@ -206,15 +220,16 @@ export async function uploadAppointmentFile(file, { advisorList = [], by = '' } 
   const dates = Object.keys(byDate).sort();
   if (dates.length === 0) throw new Error('No appointments found in that file.');
   // A failed deferred read just means no matches this time — the list still uploads.
-  const [defRows, defCodes] = await Promise.all([
-    loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null),
+  const [defRows, defCodes, pricing] = await Promise.all([
+    loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null), loadServicePricing().catch(() => null),
   ]);
   const deferredRows = Object.values((defRows && defRows.byRo) || {});
+  const codeHours = learnCodeHours(deferredRows, hoursByOpCode(pricing));
   const roster = new Set((advisorList || []).map(n => String(n || '').trim().split(/\s+/)[0].toUpperCase()));
   const saved = {};
   let autoCount = 0, defCount = 0;
   for (const d of dates) {
-    const matches = matchDeferred(byDate[d], deferredRows, defCodes || {});
+    const matches = matchDeferred(byDate[d], deferredRows, defCodes || {}, codeHours);
     const appts = byDate[d].map(a => (matches.has(a.apptNo) ? { ...a, deferred: matches.get(a.apptNo) } : a));
     defCount += matches.size;
     let auto = 0;
@@ -236,3 +251,85 @@ export async function uploadAppointmentFile(file, { advisorList = [], by = '' } 
 }
 
 export const shortMD = (iso) => { const [, m, d] = String(iso).split('-'); return `${+m}/${+d}`; };
+
+// ── Sell to goal ─────────────────────────────────────────────────────────────
+// Which deferred services, sold on this visit, get the RO to the Add'l Hrs/RO
+// goal (dashboard → $50 add-on goals). Hours per service come from the Service
+// Pricing Menu's op codes; a code the menu doesn't price gets an even share of
+// whatever the report's RO total leaves over, and is flagged as an estimate.
+// Fewest services wins (biggest first); vague lines with no description (e.g.
+// "REC") are only used when nothing else will do.
+
+// Service Pricing Menu → { OPCODE: hours }
+export function hoursByOpCode(pricing) {
+  const out = {};
+  for (const c of (pricing && pricing.categories) || []) {
+    for (const s of c.services || []) {
+      const code = String(s.opCode || '').trim().toUpperCase();
+      const h = parseFloat(s.laborHours);
+      if (code && Number.isFinite(h) && h > 0) out[code] = h;
+    }
+  }
+  return out;
+}
+
+// Menu hours plus hours learned from the deferred report itself: on any RO
+// where exactly one op code isn't known yet, the RO's total minus the known
+// hours is that code's hours. The median of those (3+ ROs) is kept, and a few
+// passes let each learned code unlock more. These come out very steady —
+// ALIGN 1.0, TUNEUP 1.5, TUNEUPV6 3.5, BELT 1.0, TIRE4 1.2.
+export function learnCodeHours(deferredRows, menuHours = {}) {
+  const hours = { ...menuHours };
+  for (let pass = 0; pass < 3; pass++) {
+    const obs = {};
+    for (const r of deferredRows || []) {
+      if (!(r && r.hours > 0) || !Array.isArray(r.codes)) continue;
+      const unknown = r.codes.filter(c => !hours[c]);
+      if (unknown.length !== 1 || r.codes.filter(c => c === unknown[0]).length !== 1) continue;
+      const rest = r.hours - r.codes.reduce((n, c) => n + (hours[c] || 0), 0);
+      if (rest > 0) (obs[unknown[0]] = obs[unknown[0]] || []).push(rest);
+    }
+    let added = 0;
+    for (const [code, v] of Object.entries(obs)) {
+      if (v.length < 3) continue;
+      v.sort((a, b) => a - b);
+      hours[code] = Math.round(v[Math.floor(v.length / 2)] * 10) / 10;
+      added++;
+    }
+    if (!added) break;
+  }
+  return hours;
+}
+
+export function sellToGoal(d, hoursByCode, goal) {
+  if (!d || !(goal > 0)) return null;
+  const inst = [];
+  for (const i of d.items || []) {
+    for (let k = 0; k < (i.count || 1); k++) {
+      // Hours worked out at upload win; older uploads fall back to the menu.
+      const h = i.h > 0 ? i.h : (hoursByCode || {})[String(i.code).toUpperCase()];
+      inst.push({ code: i.code, label: i.desc || i.code, vague: !i.desc, h: h > 0 ? h : null, est: !!(i.h > 0 && i.est) });
+    }
+  }
+  const unknown = inst.filter(x => x.h == null);
+  if (unknown.length && d.hours > 0) {
+    const known = inst.reduce((s, x) => s + (x.h || 0), 0);
+    const each = Math.max(0, d.hours - known) / unknown.length;
+    if (each > 0) unknown.forEach(x => { x.h = each; x.est = true; });
+  }
+  const usable = inst.filter(x => x.h > 0)
+    .sort((a, b) => (a.vague - b.vague) || (b.h - a.h));
+  if (!usable.length) return null;
+  const pick = [];
+  let sum = 0;
+  for (const x of usable) {
+    if (sum >= goal - 1e-9) break;
+    pick.push(x); sum += x.h;
+  }
+  const r1 = (n) => Math.round(n * 10) / 10;
+  return {
+    goal, reached: sum >= goal - 1e-9, sum: r1(sum),
+    pick: pick.map(x => ({ ...x, h: r1(x.h) })), est: pick.some(x => x.est),
+    short: r1(Math.max(0, goal - sum)), all: pick.length === usable.length,
+  };
+}

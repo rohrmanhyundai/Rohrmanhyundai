@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   saveAdvisorNotes, loadAdvisorNotes,
   loadUsers, getGithubToken, setGithubToken,
-  loadAppointmentList, updateAppointmentList,
+  loadAppointmentList, updateAppointmentList, loadServicePricing,
 } from '../utils/github';
-import { uploadAppointmentFile, shortMD, apptTags, ownerOf } from '../utils/appointmentList';
+import { uploadAppointmentFile, shortMD, apptTags, ownerOf, hoursByOpCode, sellToGoal } from '../utils/appointmentList';
 import { firstNameUpper } from '../utils/advisorAliases';
 
 // Appointment prep for one calendar day. The After Call Report used to live at
@@ -130,7 +130,33 @@ const shortDate = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-
 
 // The deferred work waiting on this customer's car — the reason to call it out
 // at write-up. Matched from the Deferred Service report at upload time.
-function DeferredBox({ d, compact }) {
+// "Sell these to hit the goal" strip inside the deferred box.
+function GoalPlan({ plan }) {
+  if (!plan) return null;
+  const n = plan.pick.length;
+  const ok = plan.reached;
+  return (
+    <div style={{
+      margin: '6px 0 5px', padding: '6px 9px', borderRadius: 7,
+      background: ok ? 'rgba(34,197,94,.13)' : 'rgba(250,204,21,.10)',
+      border: `1px solid ${ok ? 'rgba(74,222,128,.5)' : 'rgba(250,204,21,.45)'}`,
+    }}>
+      <div style={{ fontSize: 11.5, fontWeight: 900, color: ok ? '#86efac' : '#fde047' }}>
+        🎯 {ok
+          ? `Sell ${n} ${n === 1 ? 'service' : 'services'} → this RO hits the ${plan.goal} hrs/RO goal`
+          : `Sell ${plan.all && n > 1 ? `all ${n}` : n === 1 ? 'it' : n} → ${plan.sum} hrs, ${plan.short} short of the ${plan.goal} hrs/RO goal`}
+      </div>
+      <div style={{ fontSize: 11.5, color: '#e2e8f0', marginTop: 2, lineHeight: 1.4 }}>
+        {plan.pick.map((x, i) => (
+          <span key={i}>{i > 0 && ' + '}{x.label} <span style={{ color: '#94a3b8' }}>({x.est ? '≈' : ''}{x.h} hr)</span></span>
+        ))}
+        {n > 1 && <span style={{ fontWeight: 800 }}> = {plan.sum} hrs</span>}
+      </div>
+    </div>
+  );
+}
+
+function DeferredBox({ d, compact, plan }) {
   if (!d) return null;
   const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
   return (
@@ -149,6 +175,7 @@ function DeferredBox({ d, compact }) {
           <li key={i.code}>{i.desc || i.code}{i.count > 1 ? ` ×${i.count}` : ''}{i.desc && <span style={{ color: '#94a3b8', fontSize: 10.5 }}> · {i.code}</span>}</li>
         ))}
       </ul>
+      <GoalPlan plan={plan} />
       <div style={{ fontSize: 11, color: '#94a3b8' }}>
         RO {d.ro}{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
       </div>
@@ -156,7 +183,11 @@ function DeferredBox({ d, compact }) {
   );
 }
 
-export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, currentRole, advisorList = [] }) {
+export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, currentRole, advisorList = [], hrsRoGoal = 0 }) {
+  // Menu hours for deferred lists uploaded before per-service hours were stored.
+  const [menuHours, setMenuHours] = useState({});
+  useEffect(() => { loadServicePricing().then(p => setMenuHours(hoursByOpCode(p))).catch(() => {}); }, []);
+  const planFor = (d) => (d ? sellToGoal(d, menuHours, hrsRoGoal) : null);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const viewingOwn = firstNameUpper(advisorName) === firstNameUpper(ownAdvisor);
   // Advisors move appointments onto their own sheet; a manager can place one on
@@ -655,7 +686,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <td><input className="adv-cell-input" value={row.vehicle || ''} onChange={e => updateRow(row.id, 'vehicle', e.target.value)} placeholder="Vehicle / reason for visit" /></td>
                     </>)}
                     <td style={{ overflowWrap: 'anywhere', verticalAlign: row.deferred ? 'top' : undefined }}>
-                      <DeferredBox d={row.deferred} />
+                      <DeferredBox d={row.deferred} plan={planFor(row.deferred)} />
                       <input className="adv-cell-input" value={row.criticalDeferredService} onChange={e => updateRow(row.id, 'criticalDeferredService', e.target.value)} placeholder={row.deferred ? 'Your plan for the deferred work…' : 'Deferred service notes'} />
                     </td>
                     {renderNotesCell(row)}
@@ -713,7 +744,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
                   <div>{apptTags(a).map(t => <Tag key={t.key} t={t} />)}</div>
-                  {a.deferred ? <DeferredBox d={a.deferred} compact /> : (
+                  {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)} /> : (
                     <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>
                   )}
                   {a.deferred && a.deferred.advisor && !rosterSet.has(a.deferred.advisor) && (

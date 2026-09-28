@@ -53,7 +53,7 @@ import EmployeeReviewHub from './components/EmployeeReviewHub';
 import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
 import ChargeAccountList from './components/ChargeAccountList';
-import { recalcTech, recalcAdvisorSummary } from './utils/calculations';
+import { recalcTech, recalcAdvisorSummary, roh50Goals } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
 import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
@@ -1727,6 +1727,7 @@ export default function App() {
         date={selectedDay}
         currentRole={currentRole}
         advisorList={advisorList}
+        hrsRoGoal={roh50Goals(data).hrs_ro}
         onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
       />
     );
