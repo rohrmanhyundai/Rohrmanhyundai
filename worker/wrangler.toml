@@ -27,3 +27,7 @@ PUSHER_APP_ID = "2148174"
 PUSHER_KEY = "6c131faa1a5d46e69dca"
 PUSHER_CLUSTER = "us2"
 ALLOWED_ORIGINS = "https://rohrmanhyundai.github.io,http://localhost:5175,http://localhost:4173"
+
+# Daily Wrench at 9am Eastern (see scheduled() in src/index.js)
+[triggers]
+crons = ["0 13 * * *", "0 14 * * *"]

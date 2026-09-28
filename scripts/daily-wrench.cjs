@@ -122,9 +122,11 @@ async function askOpenAI(prompt, maxTokens) {
   const today = et.date;
   const manual = TRIGGER === 'manual';
 
-  // The schedule fires twice (13:00 and 14:00 UTC) so one of them is 9am
-  // Eastern year round; the other one stands down here.
-  if (!manual && et.hour !== 9) { console.log(`Scheduled run at ${et.hour}:00 Eastern — not 9am, nothing to do.`); return; }
+  // Scheduled runs come at 13:00 and 14:00 UTC (one is 9am Eastern whatever
+  // the season) from the Worker, plus GitHub's own schedule, which fires hours
+  // late. Before 9am Eastern: stand down. After: write the day's report unless
+  // one already exists (checked just below).
+  if (!manual && et.hour < 9) { console.log(`Scheduled run at ${et.hour}:00 Eastern — before 9am, nothing to do.`); return; }
 
   const existing = await getFile(`${today}.json`);
   if (!manual && existing.json && existing.json.advisors && Object.keys(existing.json.advisors).length) {

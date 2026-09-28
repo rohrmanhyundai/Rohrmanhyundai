@@ -889,6 +889,16 @@ export default function App() {
   useEffect(() => {
     if (localStorage.getItem(AUTH_KEY) === 'true' && !api.hasSession()) handleLogout();
   }, []);
+  // Signing out (or a session ending) in another tab clears the shared session;
+  // follow it here instead of carrying on "logged in" and failing with "Please
+  // sign in again." Also re-check whenever the tab comes back into view.
+  useEffect(() => {
+    const check = () => { if (localStorage.getItem(AUTH_KEY) === 'true' && !api.hasSession()) handleLogout(); };
+    const onVisible = () => { if (document.visibilityState === 'visible') check(); };
+    window.addEventListener('storage', check);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { window.removeEventListener('storage', check); document.removeEventListener('visibilitychange', onVisible); };
+  });
 
   function handleDataChange(newData, newVacations) {
     recalcTech(newData, schedulesRef.current);

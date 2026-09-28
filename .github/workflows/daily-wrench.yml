@@ -3,8 +3,10 @@ name: The Daily Wrench
 # The morning briefing: one personal report per advisor plus the manager's own
 # shop-wide report, written from the live RO, hours and contest data.
 #
-# Runs at 9am Eastern (the two cron lines cover daylight saving either way —
-# the script stands down unless it really is 9am there), or early when a
+# Runs at 9am Eastern — started by the Cloudflare Worker's cron (worker/
+# wrangler.toml), because GitHub's own schedule below fires hours late and is
+# only a backup now: a scheduled run any time after 9am writes the day's report
+# if there isn't one yet, otherwise it stands down. Or early when a
 # manager presses "Generate report" in the app. A manager run before 9am
 # replaces that day's report and the 9am run then does nothing.
 #
@@ -46,7 +48,7 @@ jobs:
           # Reasoning models bill their thinking against the token budget; low
           # keeps the spend sane for what is a writing job, not a puzzle.
           WRENCH_REASONING: ${{ vars.DAILY_WRENCH_REASONING || 'low' }}
-          WRENCH_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+          WRENCH_TRIGGER: ${{ (github.event_name == 'schedule' || github.event.client_payload.trigger == 'auto') && 'schedule' || 'manual' }}
           WRENCH_BY: ${{ github.event.client_payload.by }}
           WRENCH_REASON: ${{ github.event.client_payload.reason }}
         run: node scripts/daily-wrench.cjs

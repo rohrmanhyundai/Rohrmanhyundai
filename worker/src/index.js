@@ -427,4 +427,12 @@ export default {
     for (const [k, v] of Object.entries(cors)) headers.set(k, v);
     return new Response(res.body, { status: res.status, headers });
   },
+
+  // Cron (wrangler.toml [triggers]): 13:00 and 14:00 UTC, so one is 9am Eastern
+  // in summer and the other in winter. GitHub's own schedule starts hours late,
+  // so the Worker kicks the Daily Wrench workflow on time; the script works out
+  // which of the two is 9am and skips a day that already has a report.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(repositoryDispatch(env, 'daily-wrench', { trigger: 'auto', by: '', reason: 'worker cron' }));
+  },
 };
