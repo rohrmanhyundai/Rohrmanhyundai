@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-09-28T21:34:06.391Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-09-28T21:33:59.645Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-28T21:33:59.643Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-09-28T21:33:58.119Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-28T21:33:45.645Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-09-28T21:33:25.686Z",
+    "type": "page",
+    "label": "live-pay-hub"
+  },
+  {
     "at": "2026-09-28T20:57:02.567Z",
     "type": "action",
     "label": "delete-wip-row",
