@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-09-28T13:38:37.463Z",
+  "updatedAt": "2026-09-28T19:37:36.394Z",
   "by": "SHAWN",
   "advisors": {
     "CORY": [
+      {
+        "ro": "781173",
+        "vehicle": "2013 Kia Soul"
+      },
+      {
+        "ro": "781170",
+        "vehicle": "2019 Kia Sorento"
+      },
+      {
+        "ro": "781158",
+        "vehicle": "2021 Hyundai Elantra"
+      },
       {
         "ro": "781154",
         "vehicle": "2016 Honda Pilot"
@@ -40,22 +52,32 @@
         "vehicle": "2016 Honda Odyssey"
       },
       {
-        "ro": "780957",
-        "vehicle": "2023 Mazda CX-9"
-      },
-      {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
       }
     ],
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "781152",
-        "vehicle": "2022 Hyundai Palisade"
+        "ro": "781171",
+        "vehicle": "2024 Hyundai Tucson"
       },
       {
-        "ro": "781150",
-        "vehicle": "2017 Hyundai Tucson"
+        "ro": "781166",
+        "vehicle": "2019 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781164",
+        "vehicle": "2026 Hyundai Sonata"
+      },
+      {
+        "ro": "781160",
+        "vehicle": "2023 Hyundai Sonata Hybrid"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781167",
+        "vehicle": "2023 Hyundai Santa Cruz"
       },
       {
         "ro": "781149",
@@ -66,30 +88,12 @@
         "vehicle": "2025 Hyundai Santa Fe"
       },
       {
-        "ro": "781146",
-        "vehicle": "2020 Hyundai Tucson"
-      },
-      {
-        "ro": "781145",
-        "vehicle": "2020 Chevrolet Silverado 1500"
-      },
-      {
         "ro": "781144",
         "vehicle": "2019 Hyundai Sonata"
       },
       {
-        "ro": "781143",
-        "vehicle": "2018 Hyundai Santa Fe Sport"
-      },
-      {
         "ro": "781072",
         "vehicle": "2015 Hyundai Tucson"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781151",
-        "vehicle": "2014 Hyundai Sonata"
       }
     ]
   }
