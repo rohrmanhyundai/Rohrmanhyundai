@@ -1024,3 +1024,17 @@ html, body {
 .goal-glow-green  { animation: goalGlowGreen 2.4s ease-in-out infinite; }
 .goal-glow-yellow { animation: goalGlowYellow 2.4s ease-in-out infinite; }
 @media print { .goal-glow-green, .goal-glow-yellow { animation: none; box-shadow: none; } }
+
+/* Big-Money LOF callout on the prep sheet ($50 oil-change tickets). */
+@keyframes bmlPoint { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+@keyframes bmlGold { 0%,100% { box-shadow: 0 0 8px 1px rgba(250,204,21,.45), inset 0 0 8px rgba(250,204,21,.12); } 50% { box-shadow: 0 0 20px 5px rgba(250,204,21,.8), inset 0 0 10px rgba(250,204,21,.2); } }
+@keyframes bmlGoldHot { 0%,100% { box-shadow: 0 0 12px 2px rgba(250,204,21,.6), 0 0 0 1px rgba(253,224,71,.6); } 50% { box-shadow: 0 0 30px 9px rgba(250,204,21,.95), 0 0 0 2px rgba(253,224,71,.9); } }
+.bml-point { display: inline-block; animation: bmlPoint .9s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(250,204,21,.8)); }
+.bml-banner { flex: 1; min-width: 0; border-radius: 10px; padding: 6px 11px; color: #422006;
+  background: linear-gradient(135deg, #fde047, #facc15 45%, #f59e0b); border: 1px solid #fef08a;
+  text-shadow: 0 1px 0 rgba(255,255,255,.35); animation: bmlGold 1.8s ease-in-out infinite; }
+.bml-banner--hot { background: linear-gradient(135deg, #fef08a, #facc15 35%, #f97316); animation: bmlGoldHot 1.3s ease-in-out infinite; }
+/* The $50 LOF + declined-work row: the whole row lit gold. */
+.adv-prep-table tr.bml-hot-row td { background: linear-gradient(180deg, rgba(250,204,21,.13), rgba(250,204,21,.05)) !important; border-top: 1px solid rgba(250,204,21,.55); border-bottom: 1px solid rgba(250,204,21,.55); }
+.adv-prep-table tr.bml-hot-row td:first-child { box-shadow: inset 5px 0 0 #facc15; }
+@media print { .bml-point, .bml-banner { animation: none; } }

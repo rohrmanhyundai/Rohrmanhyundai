@@ -181,6 +181,31 @@ function CopyRo({ ro, label = 'Last RO', subtle }) {
   );
 }
 
+// ── Big-Money LOF callout ────────────────────────────────────────────────────
+// $50 oil-change tickets are the ones the Big-Money contest scores (Add-on
+// Rate + Add'l Hrs/RO), so they get a glowing gold banner with a pointing hand.
+// A $50 LOF whose car ALSO has declined work on file is the best shot of the
+// day — bigger banner, the dollars on it, and the whole row lit gold.
+function BigMoneyBanner({ deferred, compact }) {
+  const hot = !!deferred;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: compact ? '6px 0 2px' : '8px 0 4px' }}>
+      <span className="bml-point" style={{ fontSize: hot ? 26 : 22, lineHeight: 1 }}>👉</span>
+      <div className={hot ? 'bml-banner bml-banner--hot' : 'bml-banner'}>
+        <div style={{ fontSize: hot ? 13.5 : 12.5, fontWeight: 1000, letterSpacing: '.05em' }}>
+          {hot ? '💰 BIG-MONEY OPPORTUNITY' : '💵 BIG-MONEY $50 LOF'}
+        </div>
+        <div style={{ fontSize: 11, fontWeight: 700, opacity: .9, marginTop: 1 }}>
+          {hot
+            ? `$50 LOF + ${money(deferred.amount)} declined work — sell it here, it counts on the Big-Money board`
+            : 'Every add-on sold on this ticket counts on the Big-Money board'}
+        </div>
+      </div>
+    </div>
+  );
+}
+const isLof50 = (a) => !!a && apptTags(a).some(t => t.key === 'lof50');
+
 function DeferredBox({ d, compact, plan }) {
   if (!d) return null;
   const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
@@ -696,10 +721,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
             <tbody>
               {rows.map((row) => {
                 const st = statusMeta(row.status);
+                const rowAppt = row.apptNo ? (apptByNo.get(row.apptNo) || { services: row.services, comments: row.comments, vehicle: row.vehicle }) : null;
+                const lof = isLof50(rowAppt);
                 const isDone = row.status === 'done';
                 return (
                   <tr key={row.id}
-                      className={parseNotesField(row.notes).length > 0 ? 'adv-row-has-notes' : ''}
+                      className={[parseNotesField(row.notes).length > 0 ? 'adv-row-has-notes' : '', lof && row.deferred ? 'bml-hot-row' : ''].filter(Boolean).join(' ')}
                       style={isDone ? { opacity: 0.5 } : undefined}>
                     <td>
                       <button
@@ -735,11 +762,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       </td>
                       <td style={{ overflowWrap: 'anywhere' }}>
                         <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{row.vehicle}</div>
+                        {lof && <BigMoneyBanner deferred={row.deferred} />}
                         {row.deferred && <div><CopyRo ro={row.deferred.ro} /></div>}
                         {(row.services || []).map((s, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
                         ))}
-                        <div>{apptTags(apptByNo.get(row.apptNo) || { services: row.services, comments: row.comments, vehicle: row.vehicle }).map(t => <Tag key={t.key} t={t} />)}</div>
+                        <div>{apptTags(rowAppt).filter(t => t.key !== 'lof50').map(t => <Tag key={t.key} t={t} />)}</div>
                       </td>
                     </>) : (<>
                       <td><input className="adv-cell-input" value={row.customerName} onChange={e => updateRow(row.id, 'customerName', e.target.value)} placeholder="Customer name" /></td>
@@ -801,11 +829,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     )}
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#cbd5e1' }}>{a.vehicle}</div>
+                  {isLof50(a) && <BigMoneyBanner deferred={a.deferred} compact />}
                   {a.deferred && <div><CopyRo ro={a.deferred.ro} /></div>}
                   {(a.services || []).map((s, i) => (
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
-                  <div>{apptTags(a).map(t => <Tag key={t.key} t={t} />)}</div>
+                  <div>{apptTags(a).filter(t => t.key !== 'lof50').map(t => <Tag key={t.key} t={t} />)}</div>
                   {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)} /> : (
                     <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>
                   )}
