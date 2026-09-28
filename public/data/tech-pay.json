@@ -97,7 +97,7 @@
     "bumpEligible": false
   },
   "CHRIS": {
-    "payType": "flat",
+    "payType": "flat_clock",
     "bumpEligible": false,
     "flatRate": 0,
     "tier1Hours": 50,
@@ -108,6 +108,6 @@
     "clockHours": 40,
     "clockMode": "add",
     "eligiblePto": true,
-    "updated": "2026-09-21T12:46:48.397Z"
+    "updated": "2026-09-28T11:41:21.766Z"
   }
 }
