@@ -1016,3 +1016,11 @@ html, body {
 @media (max-width: 700px) {
   .gm-browser { grid-template-columns: 1fr !important; }
 }
+
+/* Prep sheet deferred box: the "sell these → hits the hrs/RO goal" strip gets
+   a soft breathing glow so it catches the eye at write-up. */
+@keyframes goalGlowGreen { 0%,100% { box-shadow: 0 0 6px 0 rgba(74,222,128,.35); } 50% { box-shadow: 0 0 14px 3px rgba(74,222,128,.6); } }
+@keyframes goalGlowYellow { 0%,100% { box-shadow: 0 0 6px 0 rgba(250,204,21,.3); } 50% { box-shadow: 0 0 13px 3px rgba(250,204,21,.5); } }
+.goal-glow-green  { animation: goalGlowGreen 2.4s ease-in-out infinite; }
+.goal-glow-yellow { animation: goalGlowYellow 2.4s ease-in-out infinite; }
+@media print { .goal-glow-green, .goal-glow-yellow { animation: none; box-shadow: none; } }

@@ -224,7 +224,7 @@ function DeferredBox({ d, compact, plan }) {
       </div>
 
       {plan && (
-        <div style={{
+        <div className={plan.reached ? 'goal-glow-green' : 'goal-glow-yellow'} style={{
           marginTop: 7, padding: '6px 9px', borderRadius: 7, fontSize: 12, fontWeight: 800, lineHeight: 1.35,
           background: plan.reached ? 'rgba(34,197,94,.14)' : 'rgba(250,204,21,.10)',
           border: `1px solid ${plan.reached ? 'rgba(74,222,128,.45)' : 'rgba(250,204,21,.4)'}`,
