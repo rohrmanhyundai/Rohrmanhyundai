@@ -284,7 +284,8 @@
         "tue_raw": 0,
         "hidden": true,
         "thu_raw": 0,
-        "fri_raw": 0
+        "fri_raw": 0,
+        "payrollHidden": true
       }
     ],
     "advisors": [
