@@ -1,8 +1,16 @@
 {
-  "updatedAt": "2026-09-25T21:03:42.025Z",
+  "updatedAt": "2026-09-28T13:35:59.944Z",
   "by": "SHAWN",
   "advisors": {
     "CORY": [
+      {
+        "ro": "781154",
+        "vehicle": "2016 Honda Pilot"
+      },
+      {
+        "ro": "781153",
+        "vehicle": "2024 Hyundai IONIQ 5"
+      },
       {
         "ro": "781126",
         "vehicle": "2022 Jeep Gladiator"
@@ -40,16 +48,48 @@
         "vehicle": "2019 Hyundai Kona"
       }
     ],
-    "DAVID": [
-      {
-        "ro": "781120",
-        "vehicle": "2021 Hyundai Sonata"
-      }
-    ],
     "JORDAN": [
+      {
+        "ro": "781152",
+        "vehicle": "2022 Hyundai Palisade"
+      },
+      {
+        "ro": "781150",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "781149",
+        "vehicle": "2027 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781148",
+        "vehicle": "2025 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781146",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "781145",
+        "vehicle": "2020 Chevrolet Silverado 1500"
+      },
+      {
+        "ro": "781144",
+        "vehicle": "2019 Hyundai Sonata"
+      },
+      {
+        "ro": "781143",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      },
       {
         "ro": "781072",
         "vehicle": "2015 Hyundai Tucson"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781151",
+        "vehicle": "2014 Hyundai Sonata"
       }
     ]
   }
