@@ -30,5 +30,19 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mulaj3gnw7t9",
+    "ro": "781143",
+    "roDate": "2026-09-28",
+    "vehicle": "2018 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES Vehicle is burning 4 quarts of oil between oil changes. And making a ticking noise. When operating vehicle I can smell burning oil.  CHECK AND ADVISE",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL",
+    "partsArrived": null,
+    "partsArrivedDate": ""
   }
 ]
