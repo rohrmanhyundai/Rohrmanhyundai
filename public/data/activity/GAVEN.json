@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-09-28T14:49:49.613Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-28T14:49:48.382Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-09-28T14:49:47.555Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-28T14:49:47.546Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-09-28T14:49:46.595Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-28T14:49:42.466Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-09-24T19:49:41.058Z",
     "type": "page",
     "label": "hotRepairs"
@@ -1034,206 +1064,6 @@
   },
   {
     "at": "2026-08-31T11:25:32.044Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-28T19:50:48.790Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-28T19:50:47.908Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-28T19:50:47.906Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-28T19:50:46.289Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-28T18:53:11.489Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-28T18:51:57.873Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-28T18:51:56.890Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-28T11:52:52.598Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-28T11:52:51.532Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-28T11:52:51.529Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-28T11:52:50.916Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-28T11:52:47.545Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-28T11:52:46.662Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-27T12:04:24.843Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-27T12:03:32.438Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-08-27T11:20:18.388Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-27T11:20:17.576Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-27T11:20:17.571Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-27T11:20:16.337Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-27T01:10:05.131Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-08-27T01:09:58.798Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-08-27T01:09:52.669Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-08-27T01:09:45.182Z",
-    "type": "page",
-    "label": "live-pay"
-  },
-  {
-    "at": "2026-08-27T01:09:40.799Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-27T01:09:37.182Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-27T01:09:28.086Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-27T01:09:02.116Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-27T01:06:55.235Z",
-    "type": "page",
-    "label": "survey-reports"
-  },
-  {
-    "at": "2026-08-27T01:05:44.420Z",
-    "type": "page",
-    "label": "global-message"
-  },
-  {
-    "at": "2026-08-27T01:02:48.423Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-08-27T00:59:43.809Z",
-    "type": "page",
-    "label": "goal-forecast"
-  },
-  {
-    "at": "2026-08-26T13:27:58.176Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-26T13:27:57.176Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-26T13:27:57.175Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-26T13:13:12.663Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-26T11:37:32.153Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-26T11:37:31.511Z",
-    "type": "page",
-    "label": "recalls"
-  },
-  {
-    "at": "2026-08-26T11:37:30.595Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-26T11:37:30.592Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-26T11:37:28.958Z",
     "type": "page",
     "label": "tech-resources"
   }
