@@ -796,6 +796,11 @@ html, body {
 .pace-ahead  { animation: paceGreenGlow 1.5s ease-in-out infinite; }
 /* Hyundai H watermark behind the calendar, sized to the grid */
 .apt-prep-bg .adv-cal-grid { position: relative; }
+/* Prep calendar: use the whole middle column (chat on the left, Open RO
+   Attention on the right) — bigger day cells for the goal/possible badges. */
+.apt-prep-bg .adv-cal-wrap { padding: 12px 4px 16px; }
+.apt-prep-bg .adv-cal-grid { max-width: none; gap: 10px; }
+.apt-prep-bg .adv-cal-day { min-height: 140px; }
 .apt-prep-bg .adv-cal-grid::before {
   content: '';
   position: absolute;

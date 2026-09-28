@@ -64,3 +64,19 @@ export function sellToGoal(d, hoursByCode, goal) {
     short: r1(Math.max(0, goal - sum)), all: pick.length === usable.length,
   };
 }
+
+// Deferred work on one day's book: every car with declined work on file and
+// its hours — what's possible on top of the day's hours if it all sells.
+// advisorFirst = null → the whole shop.
+export function deferredPossible(list, advisorFirst) {
+  const claims = (list && list.claims) || {};
+  let cars = 0, hours = 0, amount = 0;
+  for (const a of (list && list.appts) || []) {
+    if (!a.deferred) continue;
+    if (advisorFirst && ownerOf(a, claims) !== advisorFirst) continue;
+    cars += 1;
+    hours += Number(a.deferred.hours) || 0;
+    amount += Number(a.deferred.amount) || 0;
+  }
+  return { cars, hours: Math.round(hours * 10) / 10, amount: Math.round(amount) };
+}

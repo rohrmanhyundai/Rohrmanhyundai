@@ -2206,6 +2206,12 @@ export async function updateRoAttention(mutate, message) {
 // each other.
 const apptListPath = (date) => `data/appointments/${date}.json`;
 const emptyApptList = (date) => ({ date, uploadedAt: null, uploadedBy: '', appts: [], claims: {} });
+// Dates (YYYY-MM-DD) that have an uploaded appointment list — one directory
+// read, so the calendar only fetches the days that exist.
+export async function listAppointmentDates() {
+  const files = await listDirFiles('public/data/appointments');
+  return files.map(f => (f.match(/^(\d{4}-\d{2}-\d{2})\.json$/) || [])[1]).filter(Boolean).sort();
+}
 export async function loadAppointmentList(date) {
   const d = await loadGithubFile(apptListPath(date));
   if (!d || typeof d !== 'object' || !Array.isArray(d.appts)) return emptyApptList(date);

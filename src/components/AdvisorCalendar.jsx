@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import SortableTiles from './SortableTiles';
-import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews } from '../utils/github';
+import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews, listAppointmentDates, loadAppointmentList } from '../utils/github';
+import { deferredPossible } from '../utils/apptMath.mjs';
 import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
@@ -546,6 +547,27 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     }).catch(() => {});
   }, [refreshKey]);
 
+  // "Possible" hours per day: deferred work on the viewed advisor's booked
+  // appointments (DMS list on the prep calendar), today onward in the month on
+  // screen. The manager tab (not an advisor) shows the whole shop.
+  const [possibleByDay, setPossibleByDay] = useState({});
+  useEffect(() => {
+    let cancelled = false;
+    const adv = (viewingAdvisor || '').toUpperCase().split(/\s+/)[0];
+    const isAdvisor = (advisorList || []).some(n => (n || '').toUpperCase().split(/\s+/)[0] === adv);
+    const t = new Date();
+    const todayK = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+    listAppointmentDates()
+      .then(dates => Promise.all(dates
+        .filter(d => d.startsWith(monthPrefix) && d >= todayK)
+        .map(d => loadAppointmentList(d).then(list => [d, deferredPossible(list, isAdvisor ? adv : null)]))))
+      .then(pairs => { if (!cancelled) setPossibleByDay(Object.fromEntries(pairs.filter(([, p]) => p.cars > 0))); })
+      .catch(() => { if (!cancelled) setPossibleByDay({}); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewingAdvisor, year, month, refreshKey]);
+
   useEffect(() => {
     setLoading(true);
     loadAdvisorNoteIndex(viewingAdvisor).then(dates => {
@@ -907,6 +929,26 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                         </div>
                       </div>
                     )}
+                    {possibleByDay[dateStr] && (() => {
+                      const p = possibleByDay[dateStr];
+                      // On today, say so when the deferred work alone would cover the hours still needed.
+                      const covers = isToday && pacing && pacing.mode === 'behind' && p.hours >= pacing.value;
+                      return (
+                        <div title={`${p.cars} booked car${p.cars === 1 ? '' : 's'} with declined work on file — $${p.amount.toLocaleString()} · open the day to see what to sell`}
+                          style={{
+                            marginTop: 5, borderRadius: 9, padding: '5px 9px', lineHeight: 1.15,
+                            background: 'linear-gradient(180deg, rgba(249,115,22,.30), rgba(154,52,18,.20))',
+                            border: `1px solid ${covers ? 'rgba(74,222,128,.9)' : 'rgba(251,146,60,.9)'}`,
+                          }}>
+                          <div style={{ fontSize: 13.5, fontWeight: 900, color: '#fed7aa', textShadow: '0 1px 3px rgba(0,0,0,.5)' }}>
+                            🔧 {p.hours.toFixed(1)} hrs
+                          </div>
+                          <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', color: covers ? '#86efac' : '#fdba74' }}>
+                            {covers ? 'possible · covers goal' : `possible · ${p.cars} car${p.cars === 1 ? '' : 's'}`}
+                          </div>
+                        </div>
+                      );
+                    })()}
                     {events.length > 0 && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, alignItems: 'flex-start' }}>
                         {events.map((ev, j) => {
