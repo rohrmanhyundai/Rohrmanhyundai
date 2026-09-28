@@ -2199,6 +2199,28 @@ export async function updateRoAttention(mutate, message) {
   }, message || `RO attention ${new Date().toISOString()}`);
 }
 
+// ── DMS appointment list (Appointment Prep) ──────────────────────────────────
+// One file per day: { date, uploadedAt, uploadedBy, appts, claims }. See
+// utils/appointmentList.js. Written with the conflict-safe mutate so a re-upload
+// and an advisor claiming an appointment at the same moment can't clobber
+// each other.
+const apptListPath = (date) => `data/appointments/${date}.json`;
+const emptyApptList = (date) => ({ date, uploadedAt: null, uploadedBy: '', appts: [], claims: {} });
+export async function loadAppointmentList(date) {
+  const d = await loadGithubFile(apptListPath(date));
+  if (!d || typeof d !== 'object' || !Array.isArray(d.appts)) return emptyApptList(date);
+  return { ...emptyApptList(date), ...d, claims: (d.claims && typeof d.claims === 'object') ? d.claims : {} };
+}
+// `mutate(list)` returns the next list; throwing inside it aborts the write.
+export async function updateAppointmentList(date, mutate, message) {
+  return mutateGitHubJson(`public/${apptListPath(date)}`, (cur) => {
+    const base = (cur && Array.isArray(cur.appts))
+      ? { ...emptyApptList(date), ...cur, claims: { ...(cur.claims || {}) } }
+      : emptyApptList(date);
+    return mutate(base);
+  }, message || `Appointments ${date}`);
+}
+
 // ── Service Pricing Menu ─────────────────────────────────────────────────────
 // A manager/admin-editable menu of services + prices that all advisors can view.
 // Stored as one JSON file: { updatedAt, by, categories: [{ id, name, services:

@@ -1648,6 +1648,8 @@ export default function App() {
         advisorName={activeAdvisor}
         ownAdvisor={ownAdvisor}
         date={selectedDay}
+        currentRole={currentRole}
+        advisorList={advisorList}
         onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
       />
     );

@@ -2,7 +2,10 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   saveAdvisorNotes, loadAdvisorNotes,
   loadUsers, getGithubToken, setGithubToken,
+  loadAppointmentList, updateAppointmentList, loadDeferredRows, loadDeferredCodes,
 } from '../utils/github';
+import { parseAppointmentFile, apptTags, ownerOf, matchDeferred } from '../utils/appointmentList';
+import { firstNameUpper } from '../utils/advisorAliases';
 
 // Appointment prep for one calendar day. The After Call Report used to live at
 // the bottom of this page; it is now its own page (AfterCallReport.jsx), reached
@@ -75,7 +78,97 @@ function parseNotesField(notes) {
 
 const SAVE_IDLE_MS = 4000; // quiet period before an autosave fires
 
-export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }) {
+// ── DMS appointments → prep rows ─────────────────────────────────────────────
+// A row that came from the DMS carries its appointment number; the DMS owns
+// customer / time / vehicle / services, the advisor owns everything else
+// (status, tech, deferred, notes), and a re-upload only refreshes the DMS half.
+const dmsFields = (a) => ({
+  apptNo: a.apptNo, customerName: a.customer, appointmentTime: a.time,
+  vehicle: a.vehicle, services: a.services || [], comments: a.comments || '', transport: a.transport || '',
+  deferred: a.deferred || null,
+});
+const isBlankRow = (r) => !r.apptNo
+  && !(r.customerName || '').trim() && !(r.appointmentTime || '').trim()
+  && !(r.criticalDeferredService || '').trim() && !(r.technician || '').trim()
+  && !(r.vehicle || '').trim() && parseNotesField(r.notes).length === 0;
+
+function mergeAppointments(rows, list, advisorName) {
+  if (!list || !Array.isArray(list.appts) || list.appts.length === 0) return rows;
+  const me = firstNameUpper(advisorName);
+  const byNo = new Map(list.appts.map(a => [a.apptNo, a]));
+  const mine = list.appts.filter(a => ownerOf(a, list.claims) === me);
+  const mineNos = new Set(mine.map(a => a.apptNo));
+  // Drop rows that now belong to someone else (returned to the pool, or
+  // reassigned in the DMS). Rows whose appointment vanished from the list stay,
+  // flagged on screen, so nothing typed on them is lost to a cancellation.
+  let out = rows
+    .filter(r => !r.apptNo || !byNo.has(r.apptNo) || mineNos.has(r.apptNo))
+    .map(r => (r.apptNo && byNo.has(r.apptNo) ? { ...r, ...dmsFields(byNo.get(r.apptNo)) } : r));
+  const have = new Set(out.map(r => r.apptNo).filter(Boolean));
+  const added = mine.filter(a => !have.has(a.apptNo)).map(a => ({
+    ...EMPTY_ROW(), ...dmsFields(a),
+    waiter: a.transport === 'WAIT', dropOff: !!a.transport && a.transport !== 'WAIT',
+  }));
+  if (added.length) out = [...out.filter(r => !isBlankRow(r)), ...added];
+  if (out.length === 0) out = [EMPTY_ROW()];
+  const sorted = sortRows(out);
+  return JSON.stringify(sorted) === JSON.stringify(rows) ? rows : sorted;
+}
+
+function Tag({ t }) {
+  return (
+    <span title={t.title || ''} style={{
+      display: 'inline-block', fontSize: 11, fontWeight: 800, color: t.color,
+      background: 'rgba(2,6,23,.45)', border: `1px solid ${t.color}66`,
+      borderRadius: 999, padding: '2px 8px', marginRight: 4, marginTop: 4, whiteSpace: 'nowrap',
+    }}>{t.label}</span>
+  );
+}
+
+const money = (v) => (v == null ? '' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const shortDate = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-').map(Number); return `${m}/${d}/${String(y).slice(2)}`; };
+
+// The deferred work waiting on this customer's car — the reason to call it out
+// at write-up. Matched from the Deferred Service report at upload time.
+function DeferredBox({ d, compact }) {
+  if (!d) return null;
+  const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
+  return (
+    <div style={{
+      background: 'linear-gradient(180deg, rgba(249,115,22,.14), rgba(234,88,12,.07))',
+      border: '1px solid rgba(251,146,60,.5)', borderLeft: '4px solid #f97316',
+      borderRadius: 9, padding: compact ? '7px 10px' : '8px 11px', margin: '4px 0',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, fontWeight: 900, color: '#fdba74', letterSpacing: '.04em' }}>🔧 DEFERRED WORK</span>
+        {d.amount != null && <span style={{ fontSize: 15, fontWeight: 900, color: '#fed7aa' }}>{money(d.amount)}</span>}
+        {d.hours != null && <span style={{ fontSize: 11.5, fontWeight: 700, color: '#fdba74' }}>{d.hours} hrs</span>}
+      </div>
+      <ul style={{ margin: '5px 0 4px', paddingLeft: 18, fontSize: 12.5, color: '#f1f5f9', lineHeight: 1.45 }}>
+        {(d.items || []).map(i => (
+          <li key={i.code}>{i.desc || i.code}{i.count > 1 ? ` ×${i.count}` : ''}{i.desc && <span style={{ color: '#94a3b8', fontSize: 10.5 }}> · {i.code}</span>}</li>
+        ))}
+      </ul>
+      <div style={{ fontSize: 11, color: '#94a3b8' }}>
+        RO {d.ro}{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
+      </div>
+    </div>
+  );
+}
+
+export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, currentRole, advisorList = [] }) {
+  const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const viewingOwn = firstNameUpper(advisorName) === firstNameUpper(ownAdvisor);
+  // Advisors move appointments onto their own sheet; a manager can place one on
+  // whichever advisor's sheet they're looking at.
+  const canClaim = viewingOwn || isManager;
+
+  // ── DMS appointment list for this day ─────────────────────────────────────
+  const [apptList, setApptList]   = useState(null);
+  const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState('');
+  const [claimingNo, setClaimingNo] = useState('');
+  const fileRef = useRef(null);
   // ── Appointment prep ──────────────────────────────────────────────────────
   const [rows, setRows]     = useState(() => Array.from({ length: 5 }, EMPTY_ROW));
   const [saving, setSaving] = useState(false);
@@ -102,22 +195,140 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   useEffect(() => {
     let cancelled = false;
     loadedRef.current = false;
-    loadAdvisorNotes(advisorName, date).then(data => {
+    Promise.all([
+      loadAdvisorNotes(advisorName, date).catch(() => null),
+      loadAppointmentList(date).catch(() => null),
+    ]).then(([data, list]) => {
       if (cancelled) return;
+      let base = rowsRef.current;
       if (data && Array.isArray(data.rows) && data.rows.length > 0) {
-        const loaded = sortRows(data.rows.map(r => ({
+        base = sortRows(data.rows.map(r => ({
           ...EMPTY_ROW(), ...r,
           id: r.id || genRowId(),
           status: r.status || 'scheduled',
           notes: parseNotesField(r.notes),
         })));
-        setRows(loaded);
-        lastSavedRef.current = JSON.stringify(loaded);
+        lastSavedRef.current = JSON.stringify(base);
       }
+      setApptList(list);
+      // Any new DMS appointments land as rows here; the autosave then writes them.
+      setRows(mergeAppointments(base, list, advisorName));
       loadedRef.current = true;
-    }).catch(() => { loadedRef.current = true; });
+    });
     return () => { cancelled = true; };
   }, [advisorName, date]);
+
+  // Pick up claims / re-uploads made on other screens when this tab comes back.
+  async function refreshList() {
+    try {
+      const list = await loadAppointmentList(date);
+      setApptList(list);
+      if (loadedRef.current) setRows(prev => mergeAppointments(prev, list, advisorName));
+    } catch {}
+  }
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === 'visible') refreshList(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [advisorName, date]);
+
+  // ── Upload the DMS Appointment List ───────────────────────────────────────
+  // Each day in the file replaces that day's list. Claims on appointments that
+  // are still listed are kept, so re-uploading later in the day is safe.
+  async function handleUpload(file) {
+    if (!file) return;
+    setUploadMsg(''); setUploadBusy(true);
+    try {
+      const { byDate } = await parseAppointmentFile(file);
+      const dates = Object.keys(byDate).sort();
+      if (dates.length === 0) throw new Error('No appointments found in that file.');
+      // Match each appointment to deferred work on the same car. A failed read
+      // just means no matches this time — the list still uploads.
+      const [defRows, defCodes] = await Promise.all([
+        loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null),
+      ]);
+      const roster = new Set((advisorList || []).map(firstNameUpper));
+      let autoCount = 0, defCount = 0;
+      for (const d of dates) {
+        const matches = matchDeferred(byDate[d], Object.values((defRows && defRows.byRo) || {}), defCodes || {});
+        const appts = byDate[d].map(a => (matches.has(a.apptNo) ? { ...a, deferred: matches.get(a.apptNo) } : a));
+        defCount += matches.size;
+        const next = await updateAppointmentList(d, (cur) => {
+          const keep = new Set(appts.map(a => a.apptNo));
+          const claims = Object.fromEntries(Object.entries(cur.claims).filter(([k]) => keep.has(k)));
+          // No advisor in the DMS but deferred work on the car → it goes to the
+          // advisor who wrote that deferred RO, if they still work here. Never
+          // overrides a claim, and never re-assigns one sent back to the pool.
+          for (const a of appts) {
+            const who = a.deferred && a.deferred.advisor;
+            if (a.advisor || claims[a.apptNo] || !who || !roster.has(who)) continue;
+            claims[a.apptNo] = { advisor: who, by: 'AUTO', reason: 'deferred', at: new Date().toISOString() };
+            autoCount++;
+          }
+          return { ...cur, date: d, appts, claims, uploadedAt: new Date().toISOString(), uploadedBy: ownAdvisor };
+        }, `Appointment list ${d}: ${appts.length} appts (${ownAdvisor})`);
+        if (d === date) {
+          setApptList(next);
+          setRows(prev => mergeAppointments(prev, next, advisorName));
+        }
+      }
+      const fmt = (d) => { const [, m, dd] = d.split('-'); return `${+m}/${+dd}`; };
+      const here = byDate[date];
+      setUploadMsg(here
+        ? `✓ ${here.length} appointments loaded for ${fmt(date)}`
+          + (defCount ? ` · ${defCount} with deferred work` : '')
+          + (autoCount ? ` · ${autoCount} auto-assigned to the deferred advisor` : '')
+          + (dates.length > 1 ? ` · also saved ${dates.filter(d => d !== date).map(fmt).join(', ')}` : '')
+        : `✓ Saved appointments for ${dates.map(fmt).join(', ')} — open that day on the calendar to see them.`);
+    } catch (e) {
+      setUploadMsg('⚠️ ' + (e.message || 'Upload failed'));
+    } finally {
+      setUploadBusy(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  // ── Open pool: move an "Any Service Advisor" appointment onto this sheet ──
+  async function claimAppt(a) {
+    const target = firstNameUpper(advisorName);
+    setClaimingNo(a.apptNo);
+    try {
+      const next = await updateAppointmentList(date, (cur) => {
+        const live = cur.appts.find(x => x.apptNo === a.apptNo);
+        if (!live) throw new Error('That appointment is no longer on the list.');
+        const owner = ownerOf(live, cur.claims);
+        if (owner && owner !== target) throw new Error(`${owner} already took ${live.customer}.`);
+        return { ...cur, claims: { ...cur.claims, [a.apptNo]: { advisor: target, by: ownAdvisor, at: new Date().toISOString() } } };
+      }, `Appointment ${a.apptNo} → ${target}`);
+      setApptList(next);
+      setRows(prev => mergeAppointments(prev, next, advisorName));
+    } catch (e) {
+      alert(e.message || 'Could not move that appointment.');
+      refreshList();
+    } finally { setClaimingNo(''); }
+  }
+
+  async function returnToPool(row) {
+    if (!window.confirm(`Put ${row.customerName || 'this appointment'} back in the open pool?\n\nAnything typed on this row (tech, notes, status) goes with it.`)) return;
+    const target = firstNameUpper(advisorName);
+    setClaimingNo(row.apptNo);
+    try {
+      const next = await updateAppointmentList(date, (cur) => {
+        const claims = { ...cur.claims };
+        // Left as a blank "released" claim so the next upload's deferred
+        // auto-assign doesn't put it straight back.
+        if (claims[row.apptNo] && claims[row.apptNo].advisor === target) {
+          claims[row.apptNo] = { advisor: '', released: true, by: ownAdvisor, at: new Date().toISOString() };
+        }
+        return { ...cur, claims };
+      }, `Appointment ${row.apptNo} back to pool`);
+      setApptList(next);
+      setRows(prev => mergeAppointments(prev, next, advisorName));
+    } catch (e) {
+      alert(e.message || 'Could not return that appointment.');
+    } finally { setClaimingNo(''); }
+  }
 
   // ── Notes modal close on outside click ───────────────────────────────────
   useEffect(() => {
@@ -252,6 +463,17 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
   });
   const openModalRow = notesOpen !== null ? rows.find(r => r.id === notesOpen) : null;
 
+  const rosterSet = useMemo(() => new Set((advisorList || []).map(firstNameUpper)), [advisorList]);
+  const apptByNo = useMemo(() => new Map((apptList?.appts || []).map(a => [a.apptNo, a])), [apptList]);
+  const pool = useMemo(
+    () => sortRows((apptList?.appts || []).filter(a => !ownerOf(a, apptList.claims))
+      .map(a => ({ ...a, appointmentTime: a.time }))),
+    [apptList],
+  );
+  const uploadedLabel = apptList?.uploadedAt
+    ? `DMS list uploaded ${new Date(apptList.uploadedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}${apptList.uploadedBy ? ` by ${apptList.uploadedBy}` : ''}`
+    : '';
+
   const tally = useMemo(() => {
     const filled = rows.filter(r => (r.customerName || '').trim() || (r.appointmentTime || '').trim());
     const by = k => filled.filter(r => (r.status || 'scheduled') === k).length;
@@ -320,7 +542,16 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
             <span style={{ fontSize: 12.5, fontWeight: 700, color: saveColor }}>{saveLabel}</span>
           )}
         </div>
-        <button className="secondary" onClick={() => window.print()}>Print</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: 'none' }}
+            onChange={e => handleUpload(e.target.files && e.target.files[0])} />
+          <button onClick={() => fileRef.current && fileRef.current.click()} disabled={uploadBusy}
+            title="Upload the Appointment List export from the DMS"
+            style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.28),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.5)' }}>
+            {uploadBusy ? '⏳ Uploading…' : '📤 Upload DMS Appointments'}
+          </button>
+          <button className="secondary" onClick={() => window.print()}>Print</button>
+        </div>
       </div>
 
       <div className="adv-form-wrap">
@@ -333,6 +564,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
               <span>Advisor Name: <strong>{advisorName}</strong></span>
               <span>Date: <strong>{displayDate}</strong></span>
             </div>
+            {(uploadMsg || uploadedLabel) && (
+              <div className="no-print" style={{ textAlign: 'center', marginTop: 6, fontSize: 12.5, fontWeight: 700,
+                color: uploadMsg.startsWith('⚠') ? '#fca5a5' : uploadMsg ? '#4ade80' : '#7a92b8' }}>
+                {uploadMsg || uploadedLabel}
+              </div>
+            )}
           </div>
 
           {/* Where the day stands, at a glance */}
@@ -351,7 +588,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
             <thead>
               <tr>
                 <th>STATUS</th>
-                <th>CUSTOMER NAME</th><th>APPOINTMENT TIME</th><th>CRITICAL DEFERRED SERVICE</th>
+                <th>CUSTOMER NAME</th><th>APPOINTMENT TIME</th><th>VEHICLE / SERVICES</th><th>CRITICAL DEFERRED SERVICE</th>
                 <th>WAITER / DROP OFF</th><th>TECHNICIAN</th><th className="no-print adv-action-col"></th>
               </tr>
             </thead>
@@ -376,9 +613,36 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                         {st.label}
                       </button>
                     </td>
-                    <td><input className="adv-cell-input" value={row.customerName} onChange={e => updateRow(row.id, 'customerName', e.target.value)} placeholder="Customer name" /></td>
-                    <td><input className="adv-cell-input" value={row.appointmentTime} onChange={e => updateRow(row.id, 'appointmentTime', e.target.value)} onBlur={resort} placeholder="e.g. 9:00 AM" /></td>
-                    <td><input className="adv-cell-input" value={row.criticalDeferredService} onChange={e => updateRow(row.id, 'criticalDeferredService', e.target.value)} placeholder="Deferred service notes" /></td>
+                    {row.apptNo ? (<>
+                      <td>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', padding: '4px 2px 0' }}>{row.customerName}</div>
+                        <div style={{ fontSize: 11, color: '#7a92b8', padding: '0 2px 4px' }}>
+                          Appt #{row.apptNo}
+                          {apptList && !apptByNo.has(row.apptNo) && <span style={{ color: '#fca5a5', fontWeight: 800 }}> · ⚠ not on latest DMS list</span>}
+                          {apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor && (
+                            apptList.claims[row.apptNo]?.by === 'AUTO'
+                              ? <span style={{ color: '#fdba74' }}> · auto-assigned (your deferred work)</span>
+                              : <span style={{ color: '#fbbf24' }}> · from open pool</span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>{row.appointmentTime}</td>
+                      <td style={{ minWidth: 240 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{row.vehicle}</div>
+                        {(row.services || []).map((s, i) => (
+                          <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
+                        ))}
+                        <div>{apptTags(apptByNo.get(row.apptNo) || { services: row.services, comments: row.comments, vehicle: row.vehicle }).map(t => <Tag key={t.key} t={t} />)}</div>
+                      </td>
+                    </>) : (<>
+                      <td><input className="adv-cell-input" value={row.customerName} onChange={e => updateRow(row.id, 'customerName', e.target.value)} placeholder="Customer name" /></td>
+                      <td><input className="adv-cell-input" value={row.appointmentTime} onChange={e => updateRow(row.id, 'appointmentTime', e.target.value)} onBlur={resort} placeholder="e.g. 9:00 AM" /></td>
+                      <td><input className="adv-cell-input" value={row.vehicle || ''} onChange={e => updateRow(row.id, 'vehicle', e.target.value)} placeholder="Vehicle / reason for visit" /></td>
+                    </>)}
+                    <td style={row.deferred ? { minWidth: 260, verticalAlign: 'top' } : undefined}>
+                      <DeferredBox d={row.deferred} />
+                      <input className="adv-cell-input" value={row.criticalDeferredService} onChange={e => updateRow(row.id, 'criticalDeferredService', e.target.value)} placeholder={row.deferred ? 'Your plan for the deferred work…' : 'Deferred service notes'} />
+                    </td>
                     <td className="adv-waiter-cell">
                       <div className="adv-check-pair">
                         <label className="adv-check-label"><input type="checkbox" className="adv-checkbox" checked={row.waiter} onChange={e => updateRow(row.id, 'waiter', e.target.checked)} /><span>Waiter</span></label>
@@ -389,7 +653,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
                     <td className="no-print adv-action-col">
                       <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
                         <NotesBtn row={row} />
-                        <button className="secondary adv-del-btn" onClick={() => removeRow(row.id)} disabled={rows.length <= 1}>×</button>
+                        {row.apptNo && apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor ? (
+                          <button className="secondary adv-del-btn" title="Put back in the open pool"
+                            onClick={() => returnToPool(row)} disabled={!canClaim || claimingNo === row.apptNo}>↩</button>
+                        ) : row.apptNo && apptByNo.has(row.apptNo) ? (
+                          <button className="secondary adv-del-btn" disabled title="Assigned to this advisor in the DMS">×</button>
+                        ) : (
+                          <button className="secondary adv-del-btn" onClick={() => removeRow(row.id)} disabled={rows.length <= 1}>×</button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -401,6 +672,53 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack }
             <button onClick={addRow}>+ Add Row</button>
           </div>
         </div>
+
+        {/* ── Open pool: DMS "Any Service Advisor" appointments ── */}
+        {pool.length > 0 && (
+          <div className="adv-section no-print" style={{ marginTop: 28 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', marginBottom: 4 }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900, color: '#fbbf24', letterSpacing: '.05em', textTransform: 'uppercase' }}>
+                Open Appointments — Any Service Advisor ({pool.length})
+              </h3>
+              <span style={{ fontSize: 12.5, color: '#7a92b8' }}>
+                {pool.filter(a => a.transport === 'WAIT').length} waiters
+              </span>
+            </div>
+            <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12 }}>
+              Not assigned to anyone in the DMS. Move one up and it goes onto {viewingOwn ? 'your' : `${advisorName}'s`} prep sheet and drops off everyone else's list.
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 10 }}>
+              {pool.map(a => (
+                <div key={a.apptNo} style={{
+                  background: 'rgba(255,255,255,.03)', border: '1px solid rgba(251,191,36,.28)', borderLeft: '4px solid #fbbf24',
+                  borderRadius: 10, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 4,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span style={{ fontSize: 15, fontWeight: 900, color: '#fde68a', whiteSpace: 'nowrap' }}>{a.time}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 800, color: '#e2e8f0', flex: 1, minWidth: 0 }}>{a.customer}</span>
+                    {a.transport === 'WAIT' && (
+                      <span style={{ fontSize: 10.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '1px 7px' }}>WAITER</span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#cbd5e1' }}>{a.vehicle}</div>
+                  {(a.services || []).map((s, i) => (
+                    <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
+                  ))}
+                  <div>{apptTags(a).map(t => <Tag key={t.key} t={t} />)}</div>
+                  {a.deferred && <DeferredBox d={a.deferred} compact />}
+                  {a.deferred && a.deferred.advisor && !rosterSet.has(a.deferred.advisor) && (
+                    <div style={{ fontSize: 11, color: '#94a3b8' }}>Deferred by {a.deferred.advisorFull || a.deferred.advisor} — not on the current advisor roster, so it wasn't auto-assigned.</div>
+                  )}
+                  <button onClick={() => claimAppt(a)} disabled={!canClaim || !!claimingNo}
+                    title={canClaim ? '' : 'Only this advisor or a manager can move appointments here'}
+                    style={{ marginTop: 6, alignSelf: 'flex-start', background: 'linear-gradient(180deg,rgba(251,191,36,.3),rgba(245,158,11,.2))', borderColor: 'rgba(251,191,36,.55)', color: '#fef3c7', fontWeight: 800 }}>
+                    {claimingNo === a.apptNo ? '⏳ Moving…' : `⬆ Move to ${viewingOwn ? 'my' : `${advisorName}'s`} calendar`}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
 
