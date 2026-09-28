@@ -14,5 +14,21 @@
     "partsArrivedDate": "09/19/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mulaj2oeb9wd",
+    "ro": "781146",
+    "roDate": "2026-09-28",
+    "vehicle": "2020 Hyundai Tucson",
+    "jobDesc": "CUSTOMER STATES cel is flashing. check and advise",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
