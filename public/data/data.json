@@ -296,7 +296,7 @@
         "align": 0.0704,
         "tires": 0.0634,
         "valvoline": 0.169,
-        "csi": 962,
+        "csi": 958,
         "asr": 0.1383,
         "elr": 0.9084,
         "last_month_total": 335.2,
@@ -320,7 +320,7 @@
         "align": 0.0909,
         "tires": 0.049,
         "valvoline": 0.2238,
-        "csi": 926,
+        "csi": 929,
         "asr": 0.1924,
         "elr": 0.9319,
         "last_month_total": 320.4,
@@ -330,7 +330,7 @@
         "_lastImport": 1790594210857,
         "total_sales": 49431.01,
         "coupon_usage_pct": 0.0702,
-        "min_csi": 916,
+        "min_csi": 917,
         "roh50_add_rate": 0.57,
         "lof_tickets": 76,
         "lof_oil_only": 33
@@ -403,7 +403,7 @@
       "align": 0.08065,
       "tires": 0.0562,
       "valvoline": 0.19640000000000002,
-      "csi": 944
+      "csi": 943.5
     },
     "techTotals": {
       "mon": 47.49999999999999,
