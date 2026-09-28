@@ -1,0 +1,101 @@
+{
+  "updatedAt": "2026-09-28T23:51:45.384Z",
+  "by": "SHAWN",
+  "tabs": {
+    "completedTime": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "hotRepairs": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "documentLibrary": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "chargeList": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "servicePricing": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "deferredService": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "workSchedule": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "dailyWrench": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "aftermarketWarranty": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "originalOwner": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "afterCall": {
+      "show": true,
+      "from": "15:30",
+      "to": "21:00"
+    },
+    "surveyReports": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "myReports": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "cashDash": {
+      "show": false,
+      "from": "",
+      "to": ""
+    },
+    "bigMoneyLof": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "goalsForecasting": {
+      "show": true,
+      "from": "15:29",
+      "to": "21:00"
+    },
+    "workInProgress": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "tireQuote": {
+      "show": true,
+      "from": "",
+      "to": ""
+    },
+    "livePay": {
+      "show": false,
+      "from": "",
+      "to": ""
+    }
+  }
+}
