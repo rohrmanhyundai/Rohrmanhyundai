@@ -1045,3 +1045,13 @@ html, body {
 .apt-prep-bg .apt-month-nav { gap: 16px; }
 .apt-prep-bg .apt-month-nav .adv-cal-month { font-size: 24px; min-width: 250px; letter-spacing: .14em; }
 .apt-prep-bg .apt-month-nav .adv-nav-btn { width: 36px; height: 36px; font-size: 19px; border-radius: 10px; }
+
+/* Prep calendar: 🧰 All Tools box (top left) and the All Tools page grid. */
+.apt-tools-box { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 12px; text-align: left; line-height: 1.15;
+  background: linear-gradient(135deg, rgba(110,231,249,.28), rgba(139,92,246,.22)); border: 1px solid rgba(110,231,249,.6); color: #e0f2fe;
+  box-shadow: 0 0 14px rgba(110,231,249,.28); }
+.apt-tools-box:hover { box-shadow: 0 0 22px rgba(110,231,249,.5); transform: translateY(-1px); }
+.adv-tool-cell { height: 100%; }
+.adv-tool-cell > button, .adv-tool-cell > span { width: 100%; }
+.adv-tool-cell > span { display: flex !important; }
+.adv-tool-cell button { width: 100%; min-height: 64px; font-size: 15px; justify-content: center; }

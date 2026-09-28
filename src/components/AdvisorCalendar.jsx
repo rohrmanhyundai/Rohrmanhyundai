@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import SortableTiles from './SortableTiles';
 import { loadAdvisorNoteIndex, loadSchedules, loadWipData, saveWipData, loadAwaitingData, saveAwaitingData, loadDashboardData, appendRoArchive, loadAdvisorGoals, loadServiceInvitations, loadCompletedReviews, listAppointmentDates, loadAppointmentList } from '../utils/github';
 import { deferredPossible } from '../utils/apptMath.mjs';
+import { loadGithubFile, saveGithubFile } from '../utils/github';
 import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
@@ -12,6 +13,103 @@ import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// ── Toolbar setup ─────────────────────────────────────────────────────────────
+// data/advisor-toolbar.json: { updatedAt, by, tabs: { [toolKey]: { show, from, to } } }
+// from / to are "HH:MM" (24h) Eastern. Blank = no limit that side; from after
+// to wraps past midnight. A tool with no entry shows (so new tools appear).
+const TOOLBAR_PATH = 'data/advisor-toolbar.json';
+const TOOL_LABELS = {
+  completedTime: '⏰ Completed Time', hotRepairs: '🔧 Recalls/TSB Bulletins', documentLibrary: '📁 Document Library',
+  chargeList: '💳 Charge List', servicePricing: '💲 Service Pricing Menu', deferredService: '🔧 Deferred Service',
+  workSchedule: '📅 Work Schedule', dailyWrench: '🔧 The Daily Wrench', aftermarketWarranty: '🛡 After Market Warranty/Tire Warranty',
+  originalOwner: '📋 Original Owner', afterCall: '📞 After Call Reviews', surveyReports: '📊 Survey Reports',
+  myReports: '📈 My Reports', cashDash: '💰 Cash Dash', bigMoneyLof: '💵 Big-Money LOF',
+  goalsForecasting: '🎯 End of Day Reporting', workInProgress: '🔧 Work in Progress', tireQuote: '🛞 Tire Quote', livePay: '💵 Live Pay',
+};
+const hhmm = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(v || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+function toolShowing(cfg, key, mins) {
+  const t = cfg && cfg.tabs && cfg.tabs[key];
+  if (!t) return true;
+  if (t.show === false) return false;
+  const a = hhmm(t.from), b = hhmm(t.to);
+  if (a == null && b == null) return true;
+  if (b == null) return mins >= a;
+  if (a == null) return mins < b;
+  return a <= b ? (mins >= a && mins < b) : (mins >= a || mins < b);
+}
+const fmt12 = (v) => { const m = hhmm(v); if (m == null) return ''; const h = Math.floor(m / 60), mi = m % 60; return `${h % 12 || 12}:${String(mi).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; };
+
+// Manager / admin: pick which tools sit along the top of the prep calendar and
+// when (Eastern). Everyone still has every tool on the All Tools page.
+function ToolbarSetup({ toolbar, currentUser, nowMins, onSaved }) {
+  const [draft, setDraft] = useState(() => Object.fromEntries(Object.keys(TOOL_LABELS).map(k => [k, { show: true, from: '', to: '', ...(((toolbar && toolbar.tabs) || {})[k] || {}) }])));
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const set = (k, patch) => { setDraft(d => ({ ...d, [k]: { ...d[k], ...patch } })); setMsg(''); };
+  const setAll = (show) => { setDraft(d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, { ...v, show }]))); setMsg(''); };
+  async function save() {
+    setBusy(true); setMsg('');
+    try {
+      const cfg = { updatedAt: new Date().toISOString(), by: currentUser || '', tabs: draft };
+      await saveGithubFile(TOOLBAR_PATH, cfg, `Advisor toolbar setup (${currentUser || 'manager'})`);
+      onSaved(cfg);
+      setMsg('✓ Saved — the calendar updates for everyone on their next refresh');
+    } catch (e) { setMsg('⚠️ ' + (e.message || 'Save failed')); }
+    finally { setBusy(false); }
+  }
+  const input = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '6px 8px', color: '#e2e8f0', fontSize: 13, colorScheme: 'dark', fontFamily: 'inherit' };
+  return (
+    <div style={{ maxWidth: 980, margin: '0 auto' }}>
+      <div style={{ fontSize: 13.5, color: '#cbd5e1', lineHeight: 1.55, marginBottom: 14 }}>
+        Tick the tools that should sit along the top of the Appointment Prep Calendar. Add a time window to make one
+        pop up only during those hours — <b>Eastern time</b>. Leave the times blank to show it all day.
+        Every tool stays on the All Tools page no matter what.
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+        <button className="secondary" onClick={() => setAll(true)}>Show all</button>
+        <button className="secondary" onClick={() => setAll(false)}>Hide all</button>
+        <div style={{ flex: 1 }} />
+        {msg && <span style={{ fontSize: 12.5, fontWeight: 700, color: msg.startsWith('⚠') ? '#fca5a5' : '#4ade80' }}>{msg}</span>}
+        <button onClick={save} disabled={busy} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.35),rgba(16,185,129,.22))', borderColor: 'rgba(52,211,153,.6)', fontWeight: 900 }}>
+          {busy ? '⏳ Saving…' : '💾 Save setup'}
+        </button>
+      </div>
+      <div style={{ display: 'grid', gap: 8 }}>
+        {Object.entries(TOOL_LABELS).map(([k, label]) => {
+          const t = draft[k];
+          const live = toolShowing({ tabs: draft }, k, nowMins);
+          return (
+            <div key={k} style={{
+              display: 'grid', gridTemplateColumns: 'minmax(220px,1.4fr) auto auto auto minmax(120px,.8fr)', gap: 12, alignItems: 'center',
+              padding: '10px 14px', borderRadius: 12, border: '1px solid rgba(148,163,184,.2)',
+              background: t.show ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.015)', opacity: t.show ? 1 : .7,
+            }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{label}</div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 800, color: t.show ? '#6ee7b7' : '#94a3b8', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                <input type="checkbox" checked={t.show} onChange={e => set(k, { show: e.target.checked })} style={{ width: 17, height: 17, accentColor: '#34d399' }} />
+                Show on calendar
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                From <input type="time" value={t.from} disabled={!t.show} onChange={e => set(k, { from: e.target.value })} style={input} />
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                To <input type="time" value={t.to} disabled={!t.show} onChange={e => set(k, { to: e.target.value })} style={input} />
+                {(t.from || t.to) && <button className="secondary" title="Clear times (all day)" onClick={() => set(k, { from: '', to: '' })} style={{ padding: '3px 8px', fontSize: 12 }}>×</button>}
+              </label>
+              <div style={{ fontSize: 11.5, fontWeight: 800, textAlign: 'right', color: live ? '#4ade80' : '#64748b' }}>
+                {live ? '● Showing now' : '○ Hidden now'}
+                <div style={{ fontWeight: 600, color: '#64748b', marginTop: 2 }}>
+                  {!t.show ? 'off' : (t.from || t.to) ? `${t.from ? fmt12(t.from) : 'open'} – ${t.to ? fmt12(t.to) : 'close'} ET` : 'all day'}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 // Keys that are OFF by default — must be explicitly granted in user pages settings
@@ -237,6 +335,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
   const [nowTick, setNowTick] = useState(Date.now());
+  // 'calendar' | 'tools' (the All Tools page), and which tab of it.
+  const [view, setView] = useState('calendar');
+  const [toolsTab, setToolsTab] = useState('all');
+  const [toolbar, setToolbar] = useState(null);
+  useEffect(() => {
+    loadGithubFile(TOOLBAR_PATH).then(d => setToolbar(d && d.tabs ? d : null)).catch(() => {});
+  }, []);
   useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
   const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
   const eodUrgent = easternHour >= 15;
@@ -593,30 +698,12 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  const isViewingOwn = viewingAdvisor === ownAdvisor;
-
-  return (
-    <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {showPartsReceived && (
-        <PartsReceived currentUser={currentUser || ''} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
-      )}
-      {showCompletedTime && <CompletedTime onClose={() => setShowCompletedTime(false)} />}
-      <div className="adv-topbar">
-        <div>
-          <div className="adv-title">Appointment Prep Calendar</div>
-          <div className="adv-sub">
-            {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Same buttons as ever, just held in a list so each advisor can press
-              and hold to arrange them the way they work. `display: contents`
-              keeps them as direct children of this row, so the layout is
-              unchanged. Back stays pinned at the end — it isn't a feature. */}
-          <SortableTiles
-            hubKey="advisorCalendar"
-            currentUser={currentUser}
-            items={[
+  // ── Tools (the buttons along the top) ─────────────────────────────────────
+  // Every tool lives on the 🧰 All Tools page. Which ones also sit along the top
+  // of this calendar — and during what hours, Eastern — is set by a manager on
+  // that page's Setup tab (data/advisor-toolbar.json). No setup saved yet →
+  // every tool shows, as before.
+  const allTools = [
               { key: 'completedTime' },
               canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && { key: 'hotRepairs' },
               canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
@@ -636,12 +723,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               canSee(userPages, currentRole, 'workInProgress') && onWorkInProgress && { key: 'workInProgress' },
               canSee(userPages, currentRole, 'tireQuote') && { key: 'tireQuote' },
               onLivePay && { key: 'livePay' },
-            ].filter(Boolean)}
-            style={{ display: 'contents' }}
-            hint="compact"
-          >
-            {btn => {
-              switch (btn.key) {
+            ].filter(Boolean);
+  const renderTool = (key) => {
+              switch (key) {
                 case 'completedTime': return (
                   <button onClick={() => setShowCompletedTime(true)} style={{ background: 'linear-gradient(180deg,rgba(251,146,60,.30),rgba(243,111,20,.20))', borderColor: 'rgba(251,146,60,.45)' }}>
                     ⏰ Completed Time
@@ -815,7 +899,97 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 );
                 default: return null;
               }
-            }}
+  };
+  const easternMinutes = (() => {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric', hour12: false })
+      .formatToParts(new Date(nowTick)).map(x => [x.type, x.value]));
+    return (parseInt(p.hour, 10) % 24) * 60 + parseInt(p.minute, 10);
+  })();
+  const shownTools = allTools.filter(t => toolShowing(toolbar, t.key, easternMinutes));
+
+  const isViewingOwn = viewingAdvisor === ownAdvisor;
+  const canSetupTools = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const hiddenCount = allTools.length - shownTools.length;
+
+  const modals = (<>
+    {showPartsReceived && (
+      <PartsReceived currentUser={currentUser || ''} onPosted={() => setTechChatRefresh(n => n + 1)} onClose={() => setShowPartsReceived(false)} />
+    )}
+    {showCompletedTime && <CompletedTime onClose={() => setShowCompletedTime(false)} />}
+  </>);
+
+  // ── All Tools page ──
+  if (view === 'tools') {
+    const tabBtn = (key, label) => (
+      <button onClick={() => setToolsTab(key)} className={toolsTab === key ? '' : 'secondary'}
+        style={toolsTab === key ? { background: 'linear-gradient(180deg,rgba(110,231,249,.35),rgba(56,189,248,.2))', borderColor: 'rgba(110,231,249,.7)', fontWeight: 900 } : undefined}>{label}</button>
+    );
+    return (
+      <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {modals}
+        <div className="adv-topbar">
+          <div>
+            <div className="adv-title">🧰 Advisor Tools</div>
+            <div className="adv-sub">Every tool in one place · press and hold to rearrange</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            {tabBtn('all', `All Tools (${allTools.length})`)}
+            {canSetupTools && tabBtn('setup', '⚙ Setup')}
+            <button className="secondary" onClick={() => setView('calendar')}>← Back to Calendar</button>
+          </div>
+        </div>
+        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 32px' }}>
+          {toolsTab === 'setup' && canSetupTools ? (
+            <ToolbarSetup toolbar={toolbar} currentUser={(currentUser || '').toUpperCase()} nowMins={easternMinutes}
+              onSaved={cfg => setToolbar(cfg)} />
+          ) : (
+            <SortableTiles
+              hubKey="advisorTools"
+              currentUser={currentUser}
+              items={allTools}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14, maxWidth: 1200, margin: '0 auto' }}
+            >
+              {btn => <div className="adv-tool-cell">{renderTool(btn.key)}</div>}
+            </SortableTiles>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {modals}
+      <div className="adv-topbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div>
+            <div className="adv-title">Appointment Prep Calendar</div>
+            <div className="adv-sub">
+              {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
+            </div>
+          </div>
+          <button className="apt-tools-box" onClick={() => { setToolsTab('all'); setView('tools'); }}
+            title="Every tool in one place">
+            <span style={{ fontSize: 20 }}>🧰</span>
+            <span>
+              <span style={{ display: 'block', fontSize: 14, fontWeight: 900 }}>All Tools</span>
+              <span style={{ display: 'block', fontSize: 10.5, fontWeight: 700, opacity: .8 }}>{allTools.length} tools{hiddenCount ? ` · ${hiddenCount} tucked away` : ''}</span>
+            </span>
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Same buttons as ever, just held in a list so each advisor can press
+              and hold to arrange them the way they work. `display: contents`
+              keeps them as direct children of this row, so the layout is
+              unchanged. Back stays pinned at the end — it isn't a feature. */}
+          <SortableTiles
+            hubKey="advisorCalendar"
+            currentUser={currentUser}
+            items={shownTools}
+            style={{ display: 'contents' }}
+            hint="compact"
+          >
+            {btn => renderTool(btn.key)}
           </SortableTiles>
           <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
