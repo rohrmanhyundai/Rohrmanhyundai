@@ -68,19 +68,23 @@
         "vin": "5NMS2DAJ5PH633086",
         "items": [
           {
-            "code": "ALIGN",
-            "desc": "WHEEL ALIGNMENT",
-            "count": 1
-          },
-          {
             "code": "REC",
             "desc": "",
-            "count": 1
+            "count": 1,
+            "h": 1,
+            "est": true
           },
           {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
-            "count": 1
+            "count": 1,
+            "h": 0.8
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1
           }
         ]
       }
@@ -115,12 +119,14 @@
           {
             "code": "VACLEAN",
             "desc": "AC EVAP SERVICE",
-            "count": 1
+            "count": 1,
+            "h": 0.3
           },
           {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
-            "count": 1
+            "count": 1,
+            "h": 0.8
           }
         ]
       }
@@ -155,17 +161,20 @@
           {
             "code": "PADRESURF",
             "desc": "Replace Front Pads and Resurface Rotors",
-            "count": 1
+            "count": 1,
+            "h": 1.8
           },
           {
             "code": "VVBFL",
             "desc": "BRAKE FLUID EXCHANGE",
-            "count": 1
+            "count": 1,
+            "h": 0.7
           },
           {
             "code": "RPADRESURF",
             "desc": "Replace Rear Pads and Resurface Rotors",
-            "count": 1
+            "count": 1,
+            "h": 1.8
           }
         ]
       }
@@ -202,22 +211,26 @@
           {
             "code": "AIRFILTER",
             "desc": "REPLACE ENGINE AIR FILTER",
-            "count": 1
+            "count": 1,
+            "h": 0.2
           },
           {
             "code": "BELT",
             "desc": "REPLACE SERPENTINE BELT",
-            "count": 1
+            "count": 1,
+            "h": 1
           },
           {
             "code": "VVCFL",
             "desc": "COOLANT FLUID EXCHANGE",
-            "count": 1
+            "count": 1,
+            "h": 0.9
           },
           {
             "code": "TUNEUPV6",
             "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
-            "count": 1
+            "count": 1,
+            "h": 3.5
           }
         ]
       }
@@ -269,24 +282,27 @@
         "vin": "KMHRC8A34NU142773",
         "items": [
           {
-            "code": "TUNEUP",
-            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
-            "count": 1
-          },
-          {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
-            "count": 1
+            "count": 1,
+            "h": 0.8
           },
           {
             "code": "ALIGN",
             "desc": "WHEEL ALIGNMENT",
-            "count": 1
+            "count": 1,
+            "h": 1
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5
           }
         ]
       }
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-09-28T21:10:46.695Z"
+  "savedAt": "2026-09-28T22:10:46.486Z"
 }
