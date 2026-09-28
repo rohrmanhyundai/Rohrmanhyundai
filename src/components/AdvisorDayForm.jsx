@@ -175,21 +175,19 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const [saveState, setSaveState] = useState('idle'); // idle | dirty | saving | saved | error
   const [saveError, setSaveError] = useState('');
 
-  // ── Notes modal ───────────────────────────────────────────────────────────
-  const [notesOpen, setNotesOpen]       = useState(null); // row id
-  const [notesEntries, setNotesEntries] = useState([]);
-  const [newNoteDraft, setNewNoteDraft] = useState('');
+  // ── Row notes: a thread shown right in the row; one composer open at a time
+  const [noteRowId, setNoteRowId] = useState(null);
+  const [noteDraft, setNoteDraft] = useState('');
 
-  const notesRef         = useRef(null);
   const rowsRef          = useRef(rows);
-  const notesEntriesRef  = useRef(notesEntries);
-  const newNoteDraftRef  = useRef(newNoteDraft);
+  const noteRowIdRef     = useRef(noteRowId);
+  const noteDraftRef     = useRef(noteDraft);
   const loadedRef        = useRef(false);   // don't autosave the initial load
   const lastSavedRef     = useRef('');      // serialized rows as last written
   const saveTimerRef     = useRef(null);
   rowsRef.current        = rows;
-  notesEntriesRef.current = notesEntries;
-  newNoteDraftRef.current = newNoteDraft;
+  noteRowIdRef.current   = noteRowId;
+  noteDraftRef.current   = noteDraft;
 
   // ── Load prep notes ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -330,15 +328,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     } finally { setClaimingNo(''); }
   }
 
-  // ── Notes modal close on outside click ───────────────────────────────────
-  useEffect(() => {
-    function handleClick(e) {
-      if (notesOpen !== null && notesRef.current && !notesRef.current.contains(e.target)) commitNotes();
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [notesOpen, notesEntries, newNoteDraft]);
-
   // ── Autosave ──────────────────────────────────────────────────────────────
   // The page used to save only when you pressed Back, so a closed tab — or an
   // admin's "Force Refresh All Users", which reloads every browser — threw the
@@ -390,24 +379,22 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [advisorName, date]);
 
-  function openNotes(id) {
-    const row = rowsRef.current.find(r => r.id === id);
-    setNotesEntries(parseNotesField(row?.notes));
-    setNewNoteDraft('');
-    setNotesOpen(id);
+  // Notes append to the row's thread and ride the normal autosave.
+  const withNote = (list, id, text) => list.map(r => (r.id === id
+    ? { ...r, notes: [...parseNotesField(r.notes), { author: ownAdvisor, text, at: Date.now() }] }
+    : r));
+  function openComposer(id) { setNoteRowId(id); setNoteDraft(''); }
+  function closeComposer()  { setNoteRowId(null); setNoteDraft(''); }
+  function addNote(id) {
+    const text = noteDraft.trim();
+    if (!text) return;
+    setRows(prev => withNote(prev, id, text));
+    closeComposer();
   }
-
-  function commitNotes() {
-    if (notesOpen !== null) {
-      const entries = [...notesEntriesRef.current];
-      const draft = newNoteDraftRef.current.trim();
-      if (draft) entries.push({ author: ownAdvisor, text: draft });
-      setRows(prev => prev.map(r => r.id === notesOpen ? { ...r, notes: entries } : r));
-    }
-    setNotesOpen(null); setNotesEntries([]); setNewNoteDraft('');
+  function deleteNote(id, idx) {
+    if (!window.confirm('Delete this note?')) return;
+    setRows(prev => prev.map(r => (r.id === id ? { ...r, notes: parseNotesField(r.notes).filter((_, j) => j !== idx) } : r)));
   }
-
-  function deleteEntry(i) { setNotesEntries(prev => prev.filter((_, j) => j !== i)); }
 
   // ── Prep row helpers ──────────────────────────────────────────────────────
   // Rows are addressed by id, never by index — the list reorders itself.
@@ -435,13 +422,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   async function handleSave() {
     clearTimeout(saveTimerRef.current);
     let currentRows = rowsRef.current;
-    if (notesOpen !== null) {
-      const entries = [...notesEntriesRef.current];
-      const draft = newNoteDraftRef.current.trim();
-      if (draft) entries.push({ author: ownAdvisor, text: draft });
-      currentRows = rowsRef.current.map(r => r.id === notesOpen ? { ...r, notes: entries } : r);
+    // A note typed but not added yet still gets saved on the way out.
+    if (noteRowIdRef.current !== null && noteDraftRef.current.trim()) {
+      currentRows = withNote(currentRows, noteRowIdRef.current, noteDraftRef.current.trim());
       setRows(currentRows);
-      setNotesOpen(null); setNotesEntries([]); setNewNoteDraft('');
+      closeComposer();
     }
     if (JSON.stringify(currentRows) === lastSavedRef.current) return;
     if (!await ensureToken('This device needs a one-time save code.\n\nEnter the save code (ask your admin for it):')) return;
@@ -461,7 +446,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const displayDate = new Date(+y, +m - 1, +d).toLocaleDateString(undefined, {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
-  const openModalRow = notesOpen !== null ? rows.find(r => r.id === notesOpen) : null;
 
   const rosterSet = useMemo(() => new Set((advisorList || []).map(firstNameUpper)), [advisorList]);
   const apptByNo = useMemo(() => new Map((apptList?.appts || []).map(a => [a.apptNo, a])), [apptList]);
@@ -494,17 +478,61 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     : saveState === 'error' ? '#fca5a5'
     : saveState === 'dirty' ? '#fbbf24' : '#7a92b8';
 
-  function NotesBtn({ row }) {
-    const entries = parseNotesField(row.notes);
-    const hasNotes = entries.length > 0;
-    const hasOther = entries.some(e => e.author && e.author !== ownAdvisor);
+  const noteWhen = (t) => (t ? new Date(t).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '');
+
+  // Notes column: every note stays on screen (and on the printout), styled like
+  // the Open RO Attention threads. Click the cell / "+ Add note" to write one.
+  function renderNotesCell(row) {
+    const notes = parseNotesField(row.notes);
+    const composing = noteRowId === row.id;
     return (
-      <button
-        className={`secondary adv-notes-btn${hasNotes ? ' adv-notes-btn--active' : ''}${hasOther ? ' adv-notes-btn--other' : ''}`}
-        onClick={() => openNotes(row.id)}
-      >
-        Notes{hasNotes ? ` (${entries.length})` : ''}
-      </button>
+      <td style={{ minWidth: 230, verticalAlign: 'top', cursor: composing ? 'default' : 'pointer' }}
+        onClick={() => { if (!composing) openComposer(row.id); }}>
+        {notes.length > 0 && (
+          <div style={{ display: 'grid', gap: 5, margin: '2px 0 4px' }}>
+            {notes.map((n, i) => {
+              const mine = !n.author || n.author === ownAdvisor;
+              return (
+                <div key={i} style={{ position: 'relative', background: mine ? 'rgba(56,189,248,.08)' : 'rgba(251,191,36,.08)', border: `1px solid ${mine ? 'rgba(56,189,248,.3)' : 'rgba(251,191,36,.3)'}`, borderRadius: 9, padding: '5px 22px 5px 9px' }}>
+                  {(n.author || n.at) && (
+                    <div style={{ fontSize: 10.5, fontWeight: 800, color: mine ? '#7dd3fc' : '#fcd34d' }}>
+                      {n.author ? (n.author === ownAdvisor ? 'You' : n.author) : ''}
+                      {n.at && <span style={{ color: '#64748b', fontWeight: 600 }}> · {noteWhen(n.at)}</span>}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 12.5, lineHeight: 1.4, color: '#e2e8f0', whiteSpace: 'pre-wrap' }}>{n.text || n.body}</div>
+                  {mine && (
+                    <button className="no-print" title="Delete note" onClick={e => { e.stopPropagation(); deleteNote(row.id, i); }}
+                      style={{ position: 'absolute', top: 3, right: 4, background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 12, padding: 2, lineHeight: 1 }}>×</button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {composing ? (
+          <div className="no-print" onClick={e => e.stopPropagation()}>
+            <textarea autoFocus rows={2} value={noteDraft} onChange={e => setNoteDraft(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(row.id); }
+                if (e.key === 'Escape') closeComposer();
+              }}
+              placeholder="Add a note… (Enter to save)"
+              style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,.07)', border: '1px solid rgba(56,189,248,.4)', borderRadius: 8, color: '#e2e8f0', padding: '6px 8px', fontSize: 12.5, fontFamily: 'inherit', outline: 'none', resize: 'vertical' }} />
+            <div style={{ display: 'flex', gap: 6, marginTop: 5 }}>
+              <button onClick={() => addNote(row.id)} disabled={!noteDraft.trim()}
+                style={{ background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: noteDraft.trim() ? '#7dd3fc' : '#64748b', borderRadius: 8, padding: '4px 11px', fontSize: 12, fontWeight: 800, cursor: noteDraft.trim() ? 'pointer' : 'default', fontFamily: 'inherit' }}>
+                Add note
+              </button>
+              <button className="secondary" onClick={closeComposer} style={{ padding: '4px 10px', fontSize: 12 }}>Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <div className="no-print" style={{ fontSize: 12, fontWeight: 700, color: notes.length ? '#64748b' : 'rgba(149,169,198,.55)', padding: '3px 2px' }}>
+            + Add note
+          </div>
+        )}
+      </td>
     );
   }
 
@@ -589,7 +617,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
               <tr>
                 <th>STATUS</th>
                 <th>CUSTOMER NAME</th><th>APPOINTMENT TIME</th><th>VEHICLE / SERVICES</th><th>CRITICAL DEFERRED SERVICE</th>
-                <th>WAITER / DROP OFF</th><th>TECHNICIAN</th><th className="no-print adv-action-col"></th>
+                <th>WAITER / DROP OFF</th><th>NOTES</th><th className="no-print adv-action-col"></th>
               </tr>
             </thead>
             <tbody>
@@ -649,10 +677,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         <label className="adv-check-label"><input type="checkbox" className="adv-checkbox" checked={row.dropOff} onChange={e => updateRow(row.id, 'dropOff', e.target.checked)} /><span>Drop Off</span></label>
                       </div>
                     </td>
-                    <td><input className="adv-cell-input" value={row.technician} onChange={e => updateRow(row.id, 'technician', e.target.value)} placeholder="Tech name" /></td>
+                    {renderNotesCell(row)}
                     <td className="no-print adv-action-col">
                       <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                        <NotesBtn row={row} />
                         {row.apptNo && apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor ? (
                           <button className="secondary adv-del-btn" title="Put back in the open pool"
                             onClick={() => returnToPool(row)} disabled={!canClaim || claimingNo === row.apptNo}>↩</button>
@@ -721,40 +748,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         )}
 
       </div>
-
-      {/* ── Notes Modal (Appointment Prep) ── */}
-      {notesOpen !== null && (
-        <div className="adv-notes-overlay no-print">
-          <div className="adv-notes-modal" ref={notesRef}>
-            <div className="adv-notes-modal-header">
-              <span>Notes — {openModalRow?.customerName || 'appointment'}</span>
-              <button className="secondary adv-del-btn" onClick={commitNotes}>×</button>
-            </div>
-            <div className="adv-notes-entries">
-              {notesEntries.length === 0 ? (
-                <div className="adv-notes-empty">No notes yet — add one below.</div>
-              ) : notesEntries.map((entry, i) => (
-                <div key={i} className="adv-notes-entry">
-                  <div className="adv-notes-entry-body">
-                    {entry.author && <span className={entry.author !== ownAdvisor ? 'adv-notes-entry-author adv-notes-entry-author--other' : 'adv-notes-entry-author'}>{entry.author}&mdash;&nbsp;</span>}
-                    <span className="adv-notes-entry-text">{entry.text}</span>
-                  </div>
-                  {(!entry.author || entry.author === ownAdvisor) && (
-                    <button className="secondary adv-del-btn adv-notes-entry-del" onClick={() => deleteEntry(i)}>×</button>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="adv-notes-add-row">
-              <span className="adv-notes-add-who">{ownAdvisor}—</span>
-              <textarea className="adv-notes-textarea adv-notes-new-input" autoFocus value={newNoteDraft} onChange={e => setNewNoteDraft(e.target.value)} placeholder="Type your note here..." rows={3} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-              <button onClick={commitNotes}>Done</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
