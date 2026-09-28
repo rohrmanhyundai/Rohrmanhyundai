@@ -11,6 +11,7 @@
 
 import { evaluateRo, roAgeOf, prettyRoStatus } from './roSeverity.js';
 import { newestPerVehicle } from './deferredVehicles.js';
+import { ownerOf, apptTags, sellToGoal } from './apptMath.mjs';
 
 const pad = (n) => String(n).padStart(2, '0');
 export const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -321,8 +322,72 @@ export function winFacts({ hours, contest, advisor, openRos }) {
   return wins.slice(0, 5);
 }
 
+// ── Today's appointments (Appointment Prep Calendar) ─────────────────────────
+// The DMS Appointment List uploaded the day before (data/appointments/DAY.json).
+// The customers walking in today who already have deferred work are the
+// easiest money of the day: `pickup` lists them in appointment order with the
+// services that get the RO to the Add'l Hrs/RO goal (same math as the prep
+// sheet). advisorFirst = null → the whole shop, with each row's owner.
+const niceCase = (t) => {
+  const s = String(t || '');
+  return s !== s.toUpperCase() ? s : s.toLowerCase().replace(/\b([a-z])/g, c => c.toUpperCase())
+    .replace(/\b(Ac|Pcv|Oem|V6|V8|Awd|Cvt)\b/gi, w => w.toUpperCase());
+};
+export function appointmentFacts(list, advisorFirst, hrsRoGoal) {
+  const appts = (list && Array.isArray(list.appts)) ? list.appts : [];
+  if (!appts.length) return null;
+  const claims = list.claims || {};
+  const owned = appts.map(a => ({ a, owner: ownerOf(a, claims) || '' }));
+  const mine = advisorFirst ? owned.filter(x => x.owner === advisorFirst) : owned;
+  const rows = mine.map(({ a, owner }) => {
+    const d = a.deferred;
+    const plan = d ? sellToGoal(d, {}, hrsRoGoal) : null;
+    return {
+      time: a.time, customer: a.customer, vehicle: a.vehicle, owner: owner || 'OPEN',
+      waiter: a.transport === 'WAIT',
+      visit: (a.services || []).slice(0, 2).join(' / '),
+      tags: apptTags(a).map(t => t.key).filter(k => k !== 'comment'),
+      deferred: d ? {
+        ro: d.ro, amount: round(num(d.amount, 0), 2), hours: num(d.hours, 0), deferredBy: d.advisor || '',
+        services: (d.items || []).map(i => niceCase(i.desc || i.code) + (i.count > 1 ? ` x${i.count}` : '')),
+      } : null,
+      sell: plan && plan.pick.length ? {
+        services: plan.pick.map(x => niceCase(x.label)), hours: plan.sum,
+        reachesGoal: plan.reached, shortBy: plan.reached ? 0 : plan.short,
+      } : null,
+    };
+  });
+  const pickup = rows.filter(r => r.deferred);
+  const byOwner = {};
+  for (const r of rows) {
+    const o = byOwner[r.owner] || (byOwner[r.owner] = { appointments: 0, withDeferred: 0, deferredAmount: 0, goalHours: 0 });
+    o.appointments += 1;
+    if (r.deferred) { o.withDeferred += 1; o.deferredAmount = round(o.deferredAmount + r.deferred.amount, 2); }
+    if (r.sell) o.goalHours = round(o.goalHours + r.sell.hours);
+  }
+  return {
+    date: list.date || '',
+    hrsRoGoal,
+    total: rows.length,
+    waiters: rows.filter(r => r.waiter).length,
+    lof50: rows.filter(r => r.tags.includes('lof50')).length,
+    campaigns: rows.filter(r => r.tags.includes('campaign')).length,
+    partsInSop: rows.filter(r => r.tags.includes('sop')).length,
+    diagnosis: rows.filter(r => r.tags.includes('diag')).length,
+    withDeferred: pickup.length,
+    deferredAmount: round(pickup.reduce((n, r) => n + r.deferred.amount, 0), 2),
+    deferredHours: round(pickup.reduce((n, r) => n + r.deferred.hours, 0)),
+    // Hours if every "sell these" pick lands — the realistic pickup, not the whole list.
+    goalHours: round(pickup.reduce((n, r) => n + (r.sell ? r.sell.hours : 0), 0)),
+    reachGoal: pickup.filter(r => r.sell && r.sell.reachesGoal).length,
+    openPool: advisorFirst ? undefined : rows.filter(r => r.owner === 'OPEN').length,
+    byOwner: advisorFirst ? undefined : byOwner,
+    pickup,
+  };
+}
+
 // ── One advisor's pack ───────────────────────────────────────────────────────
-export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, deferredCodes, today = new Date() }) {
+export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today = new Date() }) {
   const f = first(name);
   const rows = (roStatus && roStatus.rows) || [];
   const mine = rows.filter(r => first(r.advisor) === f);
@@ -335,6 +400,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
     openRos,
     stalled: stalledFacts(attention, mine, f),
     partsReady: partsFacts(wipByTech, f),
+    appointments: appointmentFacts(apptList, f, hrsRoGoal),
     deferred: deferredFacts(deferred, deferredActivity, f, today, deferredCodes),
     trend: trendFacts(goals, today),
     hours,
@@ -351,7 +417,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
 // ── The shop pack a manager gets ─────────────────────────────────────────────
 // Everything an advisor sees, but across the floor, plus the money forecast and
 // the technician side — the full picture in one place.
-export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, deferred, deferredActivity, deferredCodes, today = new Date() }) {
+export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today = new Date() }) {
   const rows = (roStatus && roStatus.rows) || [];
   const shopOpen = openRoFacts(rows, null);
   const mk = monthKey(today);
@@ -382,6 +448,7 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
     stalledShopWide: stalledFacts(attention, rows, null),
     partsReadyShopWide: partsFacts(wipByTech, null).length,
     deferredShopWide: deferredFacts(deferred, deferredActivity, null, today, deferredCodes),
+    appointments: appointmentFacts(apptList, null, hrsRoGoal),
     money: {
       forecast: round(goal), earned: round(earned),
       remaining: round(Math.max(0, goal - earned)),
@@ -439,6 +506,13 @@ export function advisorPrompt(pack, { advisorDisplay, weekday } = {}) {
 Write ${advisorDisplay || pack.advisor}'s briefing for ${weekday || 'today'}, ${pack.date}.
 
 HOW TO THINK ABOUT THIS ADVISOR'S DAY, in priority order:
+0. TODAY'S APPOINTMENTS (appointments in the data) come first when present.
+   appointments.pickup is every customer on their schedule today who already
+   has declined work on that car — they are walking in, so this is the easiest
+   money of the day. For each, sell.services is exactly what to present at
+   write-up and sell.hours what it adds; reachesGoal means that RO hits the
+   hrs/RO goal. Name the time, the customer and the services. The first plan
+   step should be prepping these before the first appointment.
 1. Deferred work is money a customer has ALREADY been told they need. The
    call list in the data is the work the shop is pushing — Valvoline services
    and brake work — sorted biggest dollars first. Lead with those, by name,
@@ -461,6 +535,7 @@ Return ONLY a JSON object, no code fence:
 {
   "headline": "six to ten words, specific to today, no generic motivation",
   "opening": "three sentences: where the month stands, what today has to produce, and the single biggest opportunity sitting in front of them right now",
+  "pickupLine": "one sentence on today's appointments: how many already have declined work, the dollars on those cars, and the hours if the suggested services sell — or empty string if appointments is null or has no pickup",
   "moneyLine": "one sentence naming the total dollars of uncalled deferred work and what booking even a slice of it does for today's hours, or empty string if there is none",
   "wins": [{"title": "three or four words", "detail": "one sentence with the number"}],
   "plan": [{"when": "Before 10am", "what": "the action", "why": "what it is worth, in hours or dollars"}],
@@ -493,9 +568,14 @@ HOW TO THINK ABOUT IT:
 2. Then people. For each advisor: their hours position, their biggest single
    opportunity (usually uncalled deferred work), and the one thing to push
    today. Be specific per advisor — never the same sentence twice.
-3. Then the floor. Repair orders stalled shop-wide, parts sitting, technician
+3. Today's appointments (appointments in the data): how many are booked,
+   how many waiters, how many cars walking in with declined work and the
+   dollars and hours on them (goalHours is the realistic pickup), and any
+   appointments still in the open pool (openPool) with no advisor. Name who
+   owns the biggest pickups (appointments.byOwner).
+4. Then the floor. Repair orders stalled shop-wide, parts sitting, technician
    hours against goal.
-4. Then priorities: the two or three things that, done today, move the month.
+5. Then priorities: the two or three things that, done today, move the month.
 
 DATA (JSON — every number you may use):
 ${JSON.stringify(pack, null, 1)}
@@ -504,6 +584,7 @@ Return ONLY a JSON object, no code fence:
 {
   "headline": "six to ten words on the true state of the shop",
   "opening": "four sentences: the money position, the pace, what today has to produce, and the biggest single risk to the month",
+  "appointmentsLine": "two sentences on today's appointment book and where the pickup is, or empty string if appointments is null",
   "forecast": "three sentences on the gross forecast — earned, remaining, per day needed, and an honest read on whether that lands",
   "wins": [{"title": "three or four words", "detail": "one sentence with the number"}],
   "priorities": [{"what": "the action", "why": "what it is worth and who owns it"}],

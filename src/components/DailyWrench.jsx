@@ -82,6 +82,57 @@ function Section({ icon, title, children, right }) {
   );
 }
 
+// ── Today's appointments: where the pickup is ─────────────────────────────────
+// Straight from the facts (the prep calendar's DMS list), not the AI: every car
+// walking in today that already has declined work, in appointment order, with
+// the services that get that RO to the hrs/RO goal. `shop` adds who owns it.
+const TAG_LABEL = { campaign: '⚠ Campaign', sop: '📦 Parts in', diag: '🔍 Diag', warranty: '🛡 Warranty', lof50: '💵 $50 LOF', tow: '🚚 Tow', prepay: '💳 Prepaid', nonhyundai: '🚙 Non-Hyundai' };
+function PickupSection({ appts, line, shop }) {
+  if (!appts || !appts.total) return null;
+  const hrs = (n) => `${Number(n || 0).toFixed(1)} hrs`;
+  return (
+    <Section icon="📅" title="Today's appointments — where the pickup is"
+      right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>from the Appointment Prep Calendar</span>}>
+      <div className="dw-stats" style={{ marginBottom: 14 }}>
+        <Stat k="Appointments" v={appts.total} s={`${appts.waiters} waiter${appts.waiters === 1 ? '' : 's'}${appts.lof50 ? ` · ${appts.lof50} $50 LOF` : ''}`} />
+        <Stat k="With declined work" v={appts.withDeferred} s={appts.withDeferred ? `${money(appts.deferredAmount)} on those cars` : 'none today'} tone={appts.withDeferred ? 'good' : undefined} />
+        <Stat k="Pickup if they sell" v={hrs(appts.goalHours)} s={`${appts.reachGoal} RO${appts.reachGoal === 1 ? '' : 's'} hit the ${appts.hrsRoGoal} hrs/RO goal`} tone={appts.goalHours ? 'good' : undefined} />
+        {shop && appts.openPool ? <Stat k="Still unassigned" v={appts.openPool} s="in the open pool" tone="warn" /> : null}
+        {!shop && (appts.campaigns || appts.partsInSop) ? <Stat k="Prep before they arrive" v={appts.campaigns + appts.partsInSop} s={[appts.campaigns && `${appts.campaigns} campaign`, appts.partsInSop && `${appts.partsInSop} parts in`].filter(Boolean).join(' · ')} tone="warn" /> : null}
+      </div>
+      {line ? <div className="dw-quote" style={{ marginBottom: 12 }}>{line}</div> : null}
+      {appts.pickup.length ? appts.pickup.map((p, i) => (
+        <div className="dw-ro" key={i} style={{ gridTemplateColumns: '86px 1fr auto' }}>
+          <div>
+            <div className="num">{p.time}</div>
+            {p.waiter ? <div style={{ fontSize: 10.5, fontWeight: 900, color: '#fdba74', marginTop: 2 }}>WAITER</div> : null}
+          </div>
+          <div>
+            <div className="what">
+              {p.customer} <span style={{ color: '#94a3b8', fontWeight: 500 }}>· {p.vehicle}</span>
+              {shop ? <span className="dw-pill" style={{ marginLeft: 8, background: 'rgba(125,211,252,.12)', borderColor: 'rgba(125,211,252,.4)', color: '#7dd3fc' }}>{p.owner}</span> : null}
+            </div>
+            {p.visit ? <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>In for: {p.visit}</div> : null}
+            {p.sell ? (
+              <div style={{ fontSize: 13, marginTop: 4, color: p.sell.reachesGoal ? '#86efac' : '#fde047', fontWeight: 700 }}>
+                🎯 Sell {p.sell.services.join(' + ')} · {hrs(p.sell.hours)}{p.sell.reachesGoal ? ` → hits ${appts.hrsRoGoal} hrs/RO` : ` · ${p.sell.shortBy.toFixed(1)} short of goal`}
+              </div>
+            ) : null}
+            <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 3 }}>
+              Declined: {p.deferred.services.join(', ')} · RO {p.deferred.ro}{p.deferred.deferredBy ? ` · ${p.deferred.deferredBy}` : ''}
+              {p.tags.length ? ` · ${p.tags.map(t => TAG_LABEL[t] || t).join(' ')}` : ''}
+            </div>
+          </div>
+          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 15, fontWeight: 900, color: '#fed7aa' }}>{money(p.deferred.amount)}</div>
+            <div style={{ fontSize: 11.5, color: '#94a3b8' }}>{hrs(p.deferred.hours)}</div>
+          </div>
+        </div>
+      )) : <div style={{ fontSize: 13, color: '#94a3b8' }}>No customer on today's book has declined work on file.</div>}
+    </Section>
+  );
+}
+
 // ── One advisor's briefing ───────────────────────────────────────────────────
 function AdvisorReport({ report, name }) {
   if (!report) return null;
@@ -104,6 +155,8 @@ function AdvisorReport({ report, name }) {
           </div>
         ) : null}
       </div>
+
+      <PickupSection appts={f.appointments} line={report.pickupLine} />
 
       {contest.live ? (
         <Section icon="💵" title="Big-Money LOF">
@@ -270,6 +323,8 @@ function ManagerReport({ report }) {
           <Stat k="Declined work on the table" v={money(f.deferredShopWide.totalAmount)} s={`${f.deferredShopWide.neverContacted} never called`} tone="good" />
         ) : null}
       </div>
+
+      <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
 
       {report.forecast ? <Section icon="📈" title="Where the month lands"><div className="dw-quote">{report.forecast}</div></Section> : null}
 

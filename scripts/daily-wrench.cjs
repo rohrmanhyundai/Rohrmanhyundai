@@ -147,6 +147,11 @@ async function askOpenAI(prompt, maxTokens) {
   const deferredActivity = readJSON('deferred/activity.json', { entries: {} });
   const deferredCodes = readJSON('deferred/codes.json', {});
   const users = (readJSON('users.json', { users: [] }).users) || [];
+  // Today's DMS appointment list (uploaded the day before) and the Add'l
+  // Hrs/RO goal the prep sheet measures "sell these" against.
+  const apptList = readJSON(`appointments/${today}.json`, null);
+  const g = (data && data.roh50_goals) || {};
+  const hrsRoGoal = g.hrs_ro == null ? 1.2 : Number(g.hrs_ro) || 0;
 
   const wipByTech = {};
   try {
@@ -170,7 +175,7 @@ async function askOpenAI(prompt, maxTokens) {
     const name = firstName(a.name);
     const goals = readJSON(`advisor-goals/${name}.json`, {});
     const offKeys = W.offDatesFor(name, now.getFullYear(), now.getMonth(), schedules, vacations);
-    const pack = W.advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow: a, deferred, deferredActivity, deferredCodes, today: now });
+    const pack = W.advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow: a, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today: now });
     packs.push(pack);
 
     const user = users.find(u => firstName(u.username) === name);
@@ -191,7 +196,7 @@ async function askOpenAI(prompt, maxTokens) {
   }
 
   // ── The manager's own, deeper report ──────────────────────────────────────
-  const mPack = W.managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks: packs, deferred, deferredActivity, deferredCodes, today: now });
+  const mPack = W.managerPack({ roStatus, attention, wipByTech, bigMoney, data, forecast, advisorPacks: packs, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today: now });
   jobs.push((async () => {
     try {
       const report = await askOpenAI(W.managerPrompt(mPack, { weekday: et.weekday }), 9000);
