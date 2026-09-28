@@ -142,6 +142,45 @@ const niceCase = (t) => {
 // at write-up. Matched from the Deferred Service report at upload time.
 // Each service shows its hours; the ones that get this RO to the Add'l Hrs/RO
 // goal carry a green check, and the strip underneath says what that adds up to.
+// Click → the RO number is on the clipboard, ready to paste into Tekion.
+function copyText(text) {
+  const v = String(text || '').trim();
+  if (!v) return Promise.resolve(false);
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(v).then(() => true).catch(() => false);
+  const ta = document.createElement('textarea');
+  ta.value = v; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch {}
+  document.body.removeChild(ta);
+  return Promise.resolve(ok);
+}
+function CopyRo({ ro, label = 'Last RO', subtle }) {
+  const [copied, setCopied] = useState(false);
+  if (!ro) return null;
+  const click = (e) => {
+    e.stopPropagation();
+    copyText(ro).then(ok => { if (ok) { setCopied(true); setTimeout(() => setCopied(false), 1400); } });
+  };
+  if (subtle) {
+    return (
+      <span onClick={click} title="Click to copy the RO number" style={{ cursor: 'copy', color: copied ? '#4ade80' : '#cbd5e1', fontWeight: 800, borderBottom: '1px dashed rgba(148,163,184,.5)' }}>
+        {copied ? '✓ Copied' : `RO ${ro}`}
+      </span>
+    );
+  }
+  return (
+    <button type="button" onClick={click} title="Copy the RO number — paste it into Tekion to open that repair order"
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 6, padding: '4px 10px', borderRadius: 999,
+        fontSize: 12, fontWeight: 800, cursor: 'copy', fontFamily: 'inherit',
+        background: copied ? 'rgba(34,197,94,.18)' : 'rgba(103,232,249,.10)',
+        border: `1px solid ${copied ? 'rgba(74,222,128,.7)' : 'rgba(103,232,249,.45)'}`,
+        color: copied ? '#86efac' : '#67e8f9',
+      }}>
+      {copied ? '✓ Copied — paste in Tekion' : <>📋 {label} <span style={{ color: '#e2e8f0', letterSpacing: '.02em' }}>{ro}</span></>}
+    </button>
+  );
+}
+
 function DeferredBox({ d, compact, plan }) {
   if (!d) return null;
   const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
@@ -198,7 +237,7 @@ function DeferredBox({ d, compact, plan }) {
       )}
 
       <div style={{ fontSize: 11, color: '#8193ab', marginTop: 6 }}>
-        RO {d.ro}{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
+        <CopyRo ro={d.ro} subtle />{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
       </div>
     </div>
   );
@@ -696,6 +735,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       </td>
                       <td style={{ overflowWrap: 'anywhere' }}>
                         <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{row.vehicle}</div>
+                        {row.deferred && <div><CopyRo ro={row.deferred.ro} /></div>}
                         {(row.services || []).map((s, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
                         ))}
@@ -761,6 +801,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     )}
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#cbd5e1' }}>{a.vehicle}</div>
+                  {a.deferred && <div><CopyRo ro={a.deferred.ro} /></div>}
                   {(a.services || []).map((s, i) => (
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
