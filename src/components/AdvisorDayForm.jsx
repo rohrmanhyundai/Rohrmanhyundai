@@ -742,7 +742,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
                   <div>{apptTags(a).map(t => <Tag key={t.key} t={t} />)}</div>
-                  {a.deferred && <DeferredBox d={a.deferred} compact />}
+                  {a.deferred ? <DeferredBox d={a.deferred} compact /> : (
+                    <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>
+                  )}
                   {a.deferred && a.deferred.advisor && !rosterSet.has(a.deferred.advisor) && (
                     <div style={{ fontSize: 11, color: '#94a3b8' }}>Deferred by {a.deferred.advisorFull || a.deferred.advisor} — not on the current advisor roster, so it wasn't auto-assigned.</div>
                   )}
