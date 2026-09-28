@@ -109,5 +109,19 @@
     "clockMode": "add",
     "eligiblePto": true,
     "updated": "2026-09-28T11:41:21.766Z"
+  },
+  "TRENTON": {
+    "payType": "flat",
+    "bumpEligible": true,
+    "flatRate": 27,
+    "tier1Hours": 50,
+    "tier1Bump": 0,
+    "tier2Hours": 60,
+    "tier2Bump": 0,
+    "clockRate": 0,
+    "clockHours": 40,
+    "clockMode": "add",
+    "eligiblePto": true,
+    "updated": "2026-09-28T11:42:43.473Z"
   }
 }
