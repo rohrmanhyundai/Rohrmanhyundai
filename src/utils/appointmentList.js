@@ -327,8 +327,12 @@ export function sellToGoal(d, hoursByCode, goal) {
     pick.push(x); sum += x.h;
   }
   const r1 = (n) => Math.round(n * 10) / 10;
+  // Per service line: its hours (each) and how many of it are in the pick.
+  const perItem = {};
+  for (const x of inst) if (x.h > 0) perItem[x.code] = { h: r1(x.h), est: x.est, picked: 0 };
+  for (const x of pick) perItem[x.code].picked++;
   return {
-    goal, reached: sum >= goal - 1e-9, sum: r1(sum),
+    goal, reached: sum >= goal - 1e-9, sum: r1(sum), perItem,
     pick: pick.map(x => ({ ...x, h: r1(x.h) })), est: pick.some(x => x.est),
     short: r1(Math.max(0, goal - sum)), all: pick.length === usable.length,
   };

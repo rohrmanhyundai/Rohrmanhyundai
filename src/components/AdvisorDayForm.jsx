@@ -130,53 +130,74 @@ const shortDate = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-
 
 // The deferred work waiting on this customer's car — the reason to call it out
 // at write-up. Matched from the Deferred Service report at upload time.
-// "Sell these to hit the goal" strip inside the deferred box.
-function GoalPlan({ plan }) {
-  if (!plan) return null;
-  const n = plan.pick.length;
-  const ok = plan.reached;
-  return (
-    <div style={{
-      margin: '6px 0 5px', padding: '6px 9px', borderRadius: 7,
-      background: ok ? 'rgba(34,197,94,.13)' : 'rgba(250,204,21,.10)',
-      border: `1px solid ${ok ? 'rgba(74,222,128,.5)' : 'rgba(250,204,21,.45)'}`,
-    }}>
-      <div style={{ fontSize: 11.5, fontWeight: 900, color: ok ? '#86efac' : '#fde047' }}>
-        🎯 {ok
-          ? `Sell ${n} ${n === 1 ? 'service' : 'services'} → this RO hits the ${plan.goal} hrs/RO goal`
-          : `Sell ${plan.all && n > 1 ? `all ${n}` : n === 1 ? 'it' : n} → ${plan.sum} hrs, ${plan.short} short of the ${plan.goal} hrs/RO goal`}
-      </div>
-      <div style={{ fontSize: 11.5, color: '#e2e8f0', marginTop: 2, lineHeight: 1.4 }}>
-        {plan.pick.map((x, i) => (
-          <span key={i}>{i > 0 && ' + '}{x.label} <span style={{ color: '#94a3b8' }}>({x.est ? '≈' : ''}{x.h} hr)</span></span>
-        ))}
-        {n > 1 && <span style={{ fontWeight: 800 }}> = {plan.sum} hrs</span>}
-      </div>
-    </div>
-  );
-}
+// ALL-CAPS report text → "Replace Serpentine Belt". Mixed case is left alone.
+const niceCase = (t) => {
+  const s = String(t || '');
+  if (s !== s.toUpperCase()) return s;
+  return s.toLowerCase().replace(/\b([a-z])/g, c => c.toUpperCase())
+    .replace(/\b(Ac|Pcv|Cel|Tpms|Oem|Abs|Cvt|Ev|Hv|V6|V8|4wd|Awd)\b/gi, w => w.toUpperCase());
+};
 
+// The deferred work waiting on this customer's car — the reason to call it out
+// at write-up. Matched from the Deferred Service report at upload time.
+// Each service shows its hours; the ones that get this RO to the Add'l Hrs/RO
+// goal carry a green check, and the strip underneath says what that adds up to.
 function DeferredBox({ d, compact, plan }) {
   if (!d) return null;
   const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
+  const per = (plan && plan.perItem) || {};
+  const n = plan ? plan.pick.length : 0;
   return (
     <div style={{
-      background: 'linear-gradient(180deg, rgba(249,115,22,.14), rgba(234,88,12,.07))',
-      border: '1px solid rgba(251,146,60,.5)', borderLeft: '4px solid #f97316',
-      borderRadius: 9, padding: compact ? '7px 10px' : '8px 11px', margin: '4px 0',
+      background: 'linear-gradient(180deg, rgba(249,115,22,.13), rgba(234,88,12,.06))',
+      border: '1px solid rgba(251,146,60,.45)', borderLeft: '4px solid #f97316',
+      borderRadius: 10, padding: compact ? '8px 10px' : '10px 12px', margin: '2px 0 6px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 12, fontWeight: 900, color: '#fdba74', letterSpacing: '.04em' }}>🔧 DEFERRED WORK</span>
-        {d.amount != null && <span style={{ fontSize: 15, fontWeight: 900, color: '#fed7aa' }}>{money(d.amount)}</span>}
-        {d.hours != null && <span style={{ fontSize: 11.5, fontWeight: 700, color: '#fdba74' }}>{d.hours} hrs</span>}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+        <span style={{ fontSize: 11.5, fontWeight: 900, color: '#fdba74', letterSpacing: '.06em' }}>🔧 DEFERRED WORK</span>
+        <span style={{ marginLeft: 'auto', whiteSpace: 'nowrap' }}>
+          {d.amount != null && <span style={{ fontSize: 15, fontWeight: 900, color: '#fed7aa' }}>{money(d.amount)}</span>}
+          {d.hours != null && <span style={{ fontSize: 11.5, fontWeight: 700, color: '#fdba74' }}> · {d.hours} hrs</span>}
+        </span>
       </div>
-      <ul style={{ margin: '5px 0 4px', paddingLeft: 18, fontSize: 12.5, color: '#f1f5f9', lineHeight: 1.45 }}>
-        {(d.items || []).map(i => (
-          <li key={i.code}>{i.desc || i.code}{i.count > 1 ? ` ×${i.count}` : ''}{i.desc && <span style={{ color: '#94a3b8', fontSize: 10.5 }}> · {i.code}</span>}</li>
-        ))}
-      </ul>
-      <GoalPlan plan={plan} />
-      <div style={{ fontSize: 11, color: '#94a3b8' }}>
+
+      <div style={{ display: 'grid', gap: 3 }}>
+        {(d.items || []).map(i => {
+          const p = per[i.code];
+          const picked = p && p.picked > 0;
+          return (
+            <div key={i.code} style={{
+              display: 'grid', gridTemplateColumns: '16px 1fr auto', gap: 6, alignItems: 'start',
+              padding: '3px 6px', borderRadius: 6,
+              background: picked ? 'rgba(34,197,94,.12)' : 'transparent',
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 900, color: '#4ade80', lineHeight: 1.35 }}>{picked ? '✓' : ''}</span>
+              <span style={{ fontSize: 12.5, lineHeight: 1.35, color: picked ? '#f0fdf4' : '#e2e8f0', fontWeight: picked ? 700 : 500 }}>
+                {niceCase(i.desc || i.code)}{i.count > 1 ? ` ×${i.count}` : ''}
+                {i.desc && <span style={{ color: '#7c8aa0', fontSize: 10.5, fontWeight: 600 }}> · {i.code}</span>}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: '#94a3b8', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
+                {p ? `${p.est ? '≈' : ''}${p.h.toFixed(1)} hr` : ''}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {plan && (
+        <div style={{
+          marginTop: 7, padding: '6px 9px', borderRadius: 7, fontSize: 12, fontWeight: 800, lineHeight: 1.35,
+          background: plan.reached ? 'rgba(34,197,94,.14)' : 'rgba(250,204,21,.10)',
+          border: `1px solid ${plan.reached ? 'rgba(74,222,128,.45)' : 'rgba(250,204,21,.4)'}`,
+          color: plan.reached ? '#86efac' : '#fde047',
+        }}>
+          🎯 {plan.reached
+            ? `Sell the ${n === 1 ? '✓ service' : `${n} ✓ services`} (${plan.sum.toFixed(1)} hrs) → this RO hits the ${plan.goal} hrs/RO goal`
+            : `Selling ${plan.all && n > 1 ? `all ${n}` : n === 1 ? 'it' : `the ${n} ✓`} = ${plan.sum.toFixed(1)} hrs — ${plan.short.toFixed(1)} short of the ${plan.goal} hrs/RO goal`}
+        </div>
+      )}
+
+      <div style={{ fontSize: 11, color: '#8193ab', marginTop: 6 }}>
         RO {d.ro}{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
       </div>
     </div>
@@ -616,7 +637,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
 
           {/* Fixed layout: Status and Time stay narrow and the room goes to
               Vehicle / Services and Deferred, which wrap instead of clipping. */}
-          <table className="adv-table" style={{ tableLayout: 'fixed' }}>
+          <table className="adv-table adv-prep-table" style={{ tableLayout: 'fixed' }}>
             <colgroup>
               <col style={{ width: 96 }} />
               <col style={{ width: '14%' }} />
