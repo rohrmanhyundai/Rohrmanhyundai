@@ -13,7 +13,8 @@
     "partsArrived": true,
     "partsArrivedDate": "09/19/2026",
     "highPriority": false,
-    "advisor": "DAVID RILEY"
+    "advisor": "DAVID RILEY",
+    "flagged": true
   },
   {
     "id": "mulaj2oeb9wd",
