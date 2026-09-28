@@ -204,6 +204,19 @@ function BigMoneyBanner({ deferred, compact }) {
     </div>
   );
 }
+// What the customer typed when they booked online — shown in their own words.
+function CustomerComment({ text }) {
+  if (!text || !String(text).trim()) return null;
+  return (
+    <div style={{
+      marginTop: 6, padding: '6px 9px', borderRadius: 8, fontSize: 12, lineHeight: 1.4, color: '#dbeafe',
+      background: 'rgba(96,165,250,.12)', border: '1px solid rgba(147,197,253,.45)', borderLeft: '3px solid #60a5fa',
+    }}>
+      <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.06em', color: '#93c5fd', marginBottom: 2 }}>💬 CUSTOMER COMMENT</div>
+      <span style={{ fontStyle: 'italic' }}>“{String(text).trim()}”</span>
+    </div>
+  );
+}
 const isLof50 = (a) => !!a && apptTags(a).some(t => t.key === 'lof50');
 
 function DeferredBox({ d, compact, plan }) {
@@ -753,6 +766,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                               : <span style={{ color: '#fbbf24' }}> · from open pool</span>
                           )}
                         </div>
+                        <CustomerComment text={row.comments} />
                       </td>
                       <td style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
                         {row.appointmentTime}
@@ -767,7 +781,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         {(row.services || []).map((s, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
                         ))}
-                        <div>{apptTags(rowAppt).filter(t => t.key !== 'lof50').map(t => <Tag key={t.key} t={t} />)}</div>
+                        <div>{apptTags(rowAppt).filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
                       </td>
                     </>) : (<>
                       <td><input className="adv-cell-input" value={row.customerName} onChange={e => updateRow(row.id, 'customerName', e.target.value)} placeholder="Customer name" /></td>
@@ -828,13 +842,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <span style={{ fontSize: 10.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '1px 7px' }}>WAITER</span>
                     )}
                   </div>
+                  <CustomerComment text={a.comments} />
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#cbd5e1' }}>{a.vehicle}</div>
                   {isLof50(a) && <BigMoneyBanner deferred={a.deferred} compact />}
                   {a.deferred && <div><CopyRo ro={a.deferred.ro} /></div>}
                   {(a.services || []).map((s, i) => (
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
-                  <div>{apptTags(a).filter(t => t.key !== 'lof50').map(t => <Tag key={t.key} t={t} />)}</div>
+                  <div>{apptTags(a).filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
                   {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)} /> : (
                     <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>
                   )}
