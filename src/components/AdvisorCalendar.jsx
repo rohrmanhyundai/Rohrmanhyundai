@@ -821,9 +821,10 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         </div>
       </div>
 
-      {/* Advisor switcher tabs */}
-      {advisorList.length > 0 && (
-        <div className="adv-advisor-tabs">
+      {/* Advisor switcher tabs (left) + the month switcher (centre) share one
+          row, so the calendar below gets the full height. */}
+      <div className="adv-advisor-tabs apt-tabs-row">
+        <div className="apt-tabs-left">
           {advisorList.map(name => {
             return (
               <button
@@ -849,7 +850,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
             </span>
           </button>
         </div>
-      )}
+        <div className="adv-cal-nav apt-month-nav">
+          <button className="secondary adv-nav-btn" onClick={prevMonth}>‹</button>
+          <span className="adv-cal-month">{MONTH_NAMES[month]} {year}</span>
+          <button className="secondary adv-nav-btn" onClick={nextMonth}>›</button>
+        </div>
+        <div />
+      </div>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 16, padding: '8px 16px 16px', overflow: 'hidden' }}>
         {/* Tech Chat — left */}
@@ -864,11 +871,6 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         {/* Calendar — middle */}
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
           <div className="adv-cal-wrap">
-            <div className="adv-cal-nav">
-              <button className="secondary adv-nav-btn" onClick={prevMonth}>‹</button>
-              <span className="adv-cal-month">{MONTH_NAMES[month]} {year}</span>
-              <button className="secondary adv-nav-btn" onClick={nextMonth}>›</button>
-            </div>
 
             <div className="adv-cal-grid">
               {DAY_NAMES.map((d, i) => (
