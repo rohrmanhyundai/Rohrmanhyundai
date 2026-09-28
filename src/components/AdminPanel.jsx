@@ -348,22 +348,26 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }, [isOpen]);
 
+  // Working days one vacation row covers (picker dates first, else the text).
+  function vacRowDays(v) {
+    let range;
+    if (v && v.dateStart) {
+      const s = new Date(v.dateStart + 'T00:00:00');
+      const e = v.dateEnd ? new Date(v.dateEnd + 'T00:00:00') : s;
+      range = { start: s, end: e };
+    } else {
+      range = parseDateRange(v && v.dates);
+    }
+    return range ? getWorkingDays(range.start, range.end) : [];
+  }
+
   // Collect the vacation days (working days only) for one employee across all approved vacation rows
   function getEmpVacationDaysFromList(empKey, vacList) {
     const days = new Set();
     for (const v of (vacList || [])) {
       if ((v.status || '').toUpperCase() !== 'APPROVED') continue;
       if (matchEmployeeName(v.name, users) !== empKey) continue;
-      let range;
-      if (v.dateStart) {
-        const s = new Date(v.dateStart + 'T00:00:00');
-        const e = v.dateEnd ? new Date(v.dateEnd + 'T00:00:00') : s;
-        range = { start: s, end: e };
-      } else {
-        range = parseDateRange(v.dates);
-      }
-      if (!range) continue;
-      getWorkingDays(range.start, range.end).forEach(d => days.add(d));
+      vacRowDays(v).forEach(d => days.add(d));
     }
     return days;
   }
@@ -374,11 +378,18 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // must survive the vacation row expiring off the list — the Monday tech-hours
   // import and the weekly snapshot both read the schedule to know a day was
   // PTO, and wiping the mark turned Gaven's approved Friday into 0 hours.
-  function rebuildEmpSchedule(empKey, vacList, schedulesIn) {
+  //
+  // `alsoClear` is the exception: the days a row covered BEFORE the edit being
+  // saved. Editing a row's dates saves on every change, so a half-typed range
+  // (start moved before end was) used to mark a month of past days that the
+  // today-onward cleanup could never take back — Jacob, 9/28, got Aug 24–Sep 23.
+  // Days the edited row no longer covers are cleared whatever their date.
+  function rebuildEmpSchedule(empKey, vacList, schedulesIn, alsoClear = []) {
     const emp = { ...(schedulesIn[empKey] || {}) };
     const todayKey = isoLocalDate(new Date());
+    const clear = new Set(alsoClear);
     for (const [date, val] of Object.entries(emp)) {
-      if (val === 'vacation' && date >= todayKey) delete emp[date];
+      if (val === 'vacation' && (date >= todayKey || clear.has(date))) delete emp[date];
     }
     getEmpVacationDaysFromList(empKey, vacList).forEach(d => { emp[d] = 'vacation'; });
     return { ...schedulesIn, [empKey]: emp };
@@ -392,15 +403,24 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const trimmed = value.trim() || '\u2014';
     updateVacEdit(idx, field, trimmed);
     updateField(`vacations.${idx}.${field}`, trimmed);
-    // Auto-sync to work schedule whenever status is set to APPROVED
-    if (field === 'status' && trimmed.toUpperCase() === 'APPROVED') {
-      const vac = { ...vacEdit[idx], [field]: trimmed };
-      const newList = vacEdit.map((v, i) => i === idx ? vac : v);
-      syncVacationToSchedule(idx, vac, newList);
+    if (field !== 'status' && field !== 'name') return;
+    const oldRow = vacEdit[idx];
+    const vac = { ...oldRow, [field]: trimmed };
+    const newList = vacEdit.map((v, i) => i === idx ? vac : v);
+    // Approved (or an approved row changing employee) → sync to the schedule.
+    if ((vac.status || '').toUpperCase() === 'APPROVED') {
+      if (vac.name && vac.name !== '\u2014') syncVacationToSchedule(idx, vac, newList, oldRow);
+      return;
+    }
+    // Was approved, now pending/denied → take its days back off the schedule.
+    const oldKey = (oldRow.status || '').toUpperCase() === 'APPROVED' ? matchEmployeeName(oldRow.name, users) : null;
+    if (oldKey) {
+      const updated = rebuildEmpSchedule(oldKey, newList, schedules, vacRowDays(oldRow));
+      saveSchedules(updated).then(() => onSchedulesChange(updated)).catch(() => {});
     }
   }
 
-  async function syncVacationToSchedule(idx, vac, vacList) {
+  async function syncVacationToSchedule(idx, vac, vacList, oldRow) {
     const list = vacList || vacations.map((v, i) => i === idx ? vac : v);
     const empKey = matchEmployeeName(vac.name, users);
     if (!empKey) {
@@ -427,8 +447,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
     setVacSyncStatus(s => ({ ...s, [idx]: 'syncing' }));
     try {
-      // Rebuild from the full vacation list so old/removed days are cleared
-      const updated = rebuildEmpSchedule(empKey, list, schedules);
+      // Rebuild from the full vacation list so old/removed days are cleared —
+      // including whatever this row covered before the edit (see rebuildEmpSchedule).
+      const oldKey = oldRow ? matchEmployeeName(oldRow.name, users) : null;
+      const oldDays = oldRow && (oldRow.status || '').toUpperCase() === 'APPROVED' ? vacRowDays(oldRow) : [];
+      let updated = rebuildEmpSchedule(empKey, list, schedules, oldKey === empKey ? oldDays : []);
+      // Row moved to a different employee: take it off the previous one too.
+      if (oldKey && oldKey !== empKey) updated = rebuildEmpSchedule(oldKey, list, updated, oldDays);
       await saveSchedules(updated);
       onSchedulesChange(updated);
       setVacSyncStatus(s => ({ ...s, [idx]: `ok:${days.length} day${days.length !== 1 ? 's' : ''} marked vacation for ${empKey}` }));
@@ -1869,7 +1894,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     onDataChange(newData, newVac);
     // Auto-sync if status is already APPROVED and we have both dates
     if ((updated.status || '').toUpperCase() === 'APPROVED' && updated.dateStart && updated.dateEnd) {
-      syncVacationToSchedule(idx, updated, newVac);
+      syncVacationToSchedule(idx, updated, newVac, vacEdit[idx]);
     }
   }
 
