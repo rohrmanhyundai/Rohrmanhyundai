@@ -1,0 +1,251 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-09-29",
+  "rows": [
+    {
+      "id": "rmulqsw9sqj74",
+      "customerName": "Nathaniel Ray",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43239",
+      "vehicle": "2012 Hyundai Accent",
+      "services": [
+        "CUSTOMER STATES- Timing job pre pay SOR- #12785",
+        "CUSTOMER STATES- Quote oil pan was damaged in accident- Tow in"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780862",
+        "date": "2026-09-15",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1408.25,
+        "hours": 5.9,
+        "phone": "7652699554",
+        "vin": "KMHCU4AE4CU186119",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 2
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmulqsw9tg9h5",
+      "customerName": "Joshua Widhalm",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43228",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "CUSTOMER STATES REAR RIGHT TIRE KEEPS GOING LOW",
+        "CUSTOMER STATES WINDSHEILD WASHER IS NOT WORKING"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778896",
+        "date": "2026-07-02",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 807.92,
+        "hours": 2.9,
+        "phone": "4029100184",
+        "vin": "5NMZUDLB4JH062339",
+        "items": [
+          {
+            "code": "VVRDFL",
+            "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
+            "count": 1
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1
+          },
+          {
+            "code": "VVEFL",
+            "desc": "ENGINE OIL CLEANING SERVICE",
+            "count": 1
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmulqsw9t4d8y",
+      "customerName": "Nancy Sanders",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "42942",
+      "vehicle": "2025 Hyundai Palisade",
+      "services": [
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "PERFORM LOF ROTATION (WARRANTY)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777271",
+        "date": "2026-05-05",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 95,
+        "hours": 0.5,
+        "phone": "7653373997",
+        "vin": "KM8R4DGE3SU818611",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmulqsw9tmzlx",
+      "customerName": "Christy Shillings",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43214",
+      "vehicle": "2024 Hyundai Palisade",
+      "services": [
+        "CUSTOMER STATES check engine light is on",
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmulqsw9t2pxu",
+      "customerName": "David Mee",
+      "appointmentTime": "2:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43181",
+      "vehicle": "2021 Hyundai Sonata",
+      "services": [
+        "CUSTOMER STATES CAR WILL NOT START AT TIMES WITH PUSHING THE BRAKE TO START CAR.",
+        "CUSTOMER STATES SEAT BACK WILL NOT MOVE BACK UP AT TIMES CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmulqsw9t7bpj",
+      "customerName": "Bobbie Mayle",
+      "appointmentTime": "3:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43141",
+      "vehicle": "2019 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES MULTIPLE LIGHTS ON DASH. CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "776625",
+        "date": "2026-05-15",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 3794.2,
+        "hours": 11.7,
+        "phone": "2192080866",
+        "vin": "KM8J2CA42KU062363",
+        "items": [
+          {
+            "code": "VVRDFL",
+            "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
+            "count": 1
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1
+          },
+          {
+            "code": "ENGPREM",
+            "desc": "ENGINE REPLACEMENT PREMIUM KIT",
+            "count": 1
+          },
+          {
+            "code": "VVTCFL",
+            "desc": "TRANSFER CASE SERVICE",
+            "count": 1
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 2
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-09-28T21:11:32.115Z"
+}
