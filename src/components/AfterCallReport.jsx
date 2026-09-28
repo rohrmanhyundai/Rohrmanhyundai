@@ -181,10 +181,10 @@ export function pendingSurveysFor(siRows, completedReviews, advisorName) {
     .sort((a, b) => parseDateVal(b.serviceDate) - parseDateVal(a.serviceDate));
 }
 
-export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, canEditDashboard, onBack }) {
+export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, canEditDashboard, onBack, initialTab, backLabel = '← Back to Calendar' }) {
   const canUpload = canEditDashboard || currentRole === 'admin' || (currentRole || '').includes('manager');
 
-  const [afterCallTab, setAfterCallTab] = useState('report'); // 'report'|'complete'|'uploads'|'upload'
+  const [afterCallTab, setAfterCallTab] = useState(() => (initialTab === 'upload' && canUpload ? 'upload' : 'report')); // 'report'|'complete'|'uploads'|'upload'
   const [emailPop, setEmailPop] = useState(null);   // { email, name } — the click-to-view email popup
   const [emailCopied, setEmailCopied] = useState(false);
 
@@ -374,7 +374,7 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
       )}
       <div className="adv-topbar no-print">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          <button className="secondary" onClick={onBack}>← Back to Calendar</button>
+          <button className="secondary" onClick={onBack}>{backLabel}</button>
           <div>
             <div className="adv-title">📞 After Call Reviews</div>
             <div className="adv-sub">

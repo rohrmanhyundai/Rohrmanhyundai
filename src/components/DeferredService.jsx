@@ -57,12 +57,12 @@ const CSS = `
 
 const CODE_LABEL = (code, codes) => (codes && codes[code] && codes[code].description) ? codes[code].description : code;
 
-export default function DeferredService({ currentUser, currentRole, advisors = [], onBack, io }) {
+export default function DeferredService({ currentUser, currentRole, advisors = [], onBack, io, initialTab }) {
   // Storage functions — swappable (tests pass an in-memory version).
   const { loadDeferredRows, updateDeferredRows, loadDeferredCodes, updateDeferredCodes, loadDeferredActivity, updateDeferredActivity } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const me = firstWord(currentUser);
-  const [tab, setTab] = useState('list');            // 'list' | 'settings'
+  const [tab, setTab] = useState(initialTab === 'settings' ? 'settings' : 'list'); // 'list' | 'settings'
   const [view, setView] = useState('all');           // 'all' | ADVISOR — the tab strip
   const [activity, setActivity] = useState({ entries: {} });
   const [action, setAction] = useState(null);        // { ro, type:'contacted'|'appointment'|'returned' } — open form

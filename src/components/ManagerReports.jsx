@@ -206,7 +206,7 @@ function blankEntry(fields) {
   return e;
 }
 
-export default function ManagerReports({ users, onBack }) {
+export default function ManagerReports({ users, onBack, openBackfill = false }) {
   const advisors = (users || []).filter(u => u.role === 'advisor' || u.role === 'lead advisor').map(u => u.username.toUpperCase());
   const techs    = (users || []).filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const allUsers = [...advisors, ...techs];
@@ -229,7 +229,7 @@ export default function ManagerReports({ users, onBack }) {
   const [aiPickerSelected, setAiPickerSelected] = useState(() => new Set());
   const [aiPickerMode, setAiPickerMode] = useState('tech'); // 'tech' | 'advisor'
   // Historical-backfill upload modal state.
-  const [backfillOpen, setBackfillOpen] = useState(false);
+  const [backfillOpen, setBackfillOpen] = useState(openBackfill);
   const [backfillBusy, setBackfillBusy] = useState(false);
   const [backfillStatus, setBackfillStatus] = useState('');
   const [backfillDate, setBackfillDate] = useState(() => {

@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import { canonicalAdvisorFirst } from './advisorAliases';
 import { newestPerVehicle } from './deferredVehicles';
+import { loadDeferredRows, loadDeferredCodes, updateAppointmentList } from './github';
 
 // DMS "Appointment List" export → the day's appointments, for the prep sheet.
 //
@@ -191,3 +192,47 @@ export function matchDeferred(appts, deferredRows, codes) {
   }
   return out;
 }
+
+// ── Upload ───────────────────────────────────────────────────────────────────
+// Parse the export, match deferred work, and save each day it covers. Used by
+// the prep sheet and by Manager Hub → Upload Reports.
+// Each day in the file replaces that day's list. Claims on appointments still
+// listed are kept, so re-uploading later in the day is safe. An "Any Service
+// Advisor" appointment with deferred work goes to the advisor who wrote that
+// deferred RO — if they're still on the roster — but never overrides a claim
+// and never re-assigns one sent back to the pool.
+export async function uploadAppointmentFile(file, { advisorList = [], by = '' } = {}) {
+  const { byDate } = await parseAppointmentFile(file);
+  const dates = Object.keys(byDate).sort();
+  if (dates.length === 0) throw new Error('No appointments found in that file.');
+  // A failed deferred read just means no matches this time — the list still uploads.
+  const [defRows, defCodes] = await Promise.all([
+    loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null),
+  ]);
+  const deferredRows = Object.values((defRows && defRows.byRo) || {});
+  const roster = new Set((advisorList || []).map(n => String(n || '').trim().split(/\s+/)[0].toUpperCase()));
+  const saved = {};
+  let autoCount = 0, defCount = 0;
+  for (const d of dates) {
+    const matches = matchDeferred(byDate[d], deferredRows, defCodes || {});
+    const appts = byDate[d].map(a => (matches.has(a.apptNo) ? { ...a, deferred: matches.get(a.apptNo) } : a));
+    defCount += matches.size;
+    let auto = 0;
+    saved[d] = await updateAppointmentList(d, (cur) => {
+      auto = 0; // the mutate can retry on a conflict — count the attempt that lands
+      const keep = new Set(appts.map(a => a.apptNo));
+      const claims = Object.fromEntries(Object.entries(cur.claims).filter(([k]) => keep.has(k)));
+      for (const a of appts) {
+        const who = a.deferred && a.deferred.advisor;
+        if (a.advisor || claims[a.apptNo] || !who || !roster.has(who)) continue;
+        claims[a.apptNo] = { advisor: who, by: 'AUTO', reason: 'deferred', at: new Date().toISOString() };
+        auto++;
+      }
+      return { ...cur, date: d, appts, claims, uploadedAt: new Date().toISOString(), uploadedBy: by };
+    }, `Appointment list ${d}: ${appts.length} appts (${by})`);
+    autoCount += auto;
+  }
+  return { dates, byDate, saved, defCount, autoCount };
+}
+
+export const shortMD = (iso) => { const [, m, d] = String(iso).split('-'); return `${+m}/${+d}`; };

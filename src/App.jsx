@@ -32,6 +32,7 @@ import MediaUpload from './components/MediaUpload';
 import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
+import UploadReports from './components/UploadReports';
 import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
@@ -95,6 +96,7 @@ const BACK_LABELS = {
   'parts-hub': '← Parts Hub',
   'warranty-hub': '← Warranty Hub',
   'manager-hub': '← Manager Hub',
+  'upload-reports': '← Upload Reports',
   'live-pay-hub': '← Live Pay',
   'dashboard': '← Dashboard',
 };
@@ -180,6 +182,45 @@ export default function App() {
     trackPage(dest);
   }
   function navTo(dest) { pageRef.current = dest; setPage(dest); trackPage(dest); }
+
+  // ── Upload Reports launcher ──
+  // A card on Manager Hub → Upload Reports opens the page that takes that
+  // report (on the right tab), and that page's Back returns to Upload Reports.
+  // `uploadLaunch` remembers the trip; it's dropped as soon as the manager
+  // wanders anywhere else, so a later visit to the same page backs out normally.
+  // The dashboard's Advisors / Technicians uploads live in the Edit Dashboard
+  // panel, which Upload Reports opens in place.
+  const [uploadLaunch, setUploadLaunch] = useState(null);   // { page, tab }
+  const [adminSection, setAdminSection] = useState(null);
+  useEffect(() => {
+    if (uploadLaunch && page !== uploadLaunch.page && page !== 'upload-reports') setUploadLaunch(null);
+  }, [page, uploadLaunch]);
+  const UPLOAD_LAUNCH = {
+    advisorPerf:      { admin: 'advisors' },
+    techHours:        { admin: 'technicians' },
+    weekCloseout:     { admin: 'technicians' },
+    roUpload:         { page: 'ro-upload' },
+    deferred:         { page: 'deferred-service', tab: 'settings' },
+    grossReport:      { page: 'goal-forecast' },
+    advisorGoals:     { page: 'advisor-goals' },
+    surveys:          { page: 'after-call', tab: 'upload' },
+    payroll:          { page: 'payroll' },
+    cashDash:         { page: 'cash-dash' },
+    histReports:      { page: 'mgr-performance-reports', tab: 'backfill' },
+    chargeAccounts:   { page: 'charge-account-list' },
+    hotRepairs:       { page: 'hot-repairs' },
+    warrantyContacts: { page: 'aftermarket-warranty', tab: 'contacts' },
+    documents:        { page: 'document-library' },
+    reviewForm:       { page: 'tech-review' },
+  };
+  function openUpload(key) {
+    const t = UPLOAD_LAUNCH[key];
+    if (!t) return;
+    if (t.admin) { setAdminSection(t.admin); setAdminOpen(true); return; }
+    setUploadLaunch({ page: t.page, tab: t.tab || null });
+    goTo(t.page, 'upload-reports');
+  }
+  function backToUploads() { setUploadLaunch(null); navTo('upload-reports'); }
   const [schedules, setSchedules] = useState({});
   const schedulesRef = useRef({});
   useEffect(() => { schedulesRef.current = schedules; }, [schedules]);
@@ -1079,6 +1120,9 @@ export default function App() {
   ) : null;
 
   const renderPage = () => {
+  // True when this page was opened from Upload Reports (see openUpload).
+  const launched = !!uploadLaunch && uploadLaunch.page === page;
+  const UP = '← Upload Reports';
   // Technician pages
   if (page === 'tech-resources') {
     return (
@@ -1339,7 +1383,34 @@ export default function App() {
         onBigMoneyLof={() => goTo('big-money-lof', 'manager-hub')}
         onPayroll={() => goTo('payroll', 'manager-hub')}
         onEmployeeApplicants={() => goTo('employee-applicants', 'manager-hub')}
+        onUploadReports={() => goTo('upload-reports', 'manager-hub')}
       />
+    );
+  }
+
+  // Upload Reports — every report upload on the site, one card each.
+  if (page === 'upload-reports') {
+    const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isManager) { setPage('dashboard'); return null; }
+    return (
+      <>
+        <UploadReports
+          currentUser={currentUser.toUpperCase()}
+          advisorList={advisorList}
+          onBack={() => navTo('manager-hub')}
+          onOpen={openUpload}
+        />
+        <AdminPanel
+          data={data} vacations={vacations} isOpen={adminOpen}
+          onClose={() => { setAdminOpen(false); setAdminSection(null); }}
+          onDataChange={handleDataChange}
+          onRefresh={loadDashboard} currentUser={currentUser} currentRole={currentRole}
+          users={users} vaultAccess={vaultAccess}
+          onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
+          schedules={schedules} onSchedulesChange={setSchedules}
+          initialSection={adminSection}
+        />
+      </>
     );
   }
 
@@ -1364,7 +1435,7 @@ export default function App() {
         advisors={visibleData.advisors}
         technicians={visibleData.technicians}
         onSeasonChange={setCashSeason}
-        onBack={() => setPage(prevPage || 'dashboard')}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'dashboard')}
       />
     );
   }
@@ -1379,7 +1450,7 @@ export default function App() {
         users={users}
         currentUser={currentUser.toUpperCase()}
         currentUserRecord={currentUserRecord}
-        onBack={() => setPage(prevPage || 'manager-hub')}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'manager-hub')}
         // Setup's warranty ×1.4 switch is the same per-tech switch the Tech Hours
         // card uses, so flipping it here is saved to the dashboard right away.
         onSaveTechFlag={async (techName, patch) => {
@@ -1443,7 +1514,8 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         advisors={advisorList}
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        initialTab={launched ? uploadLaunch.tab : undefined}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
       />
     );
   }
@@ -1474,7 +1546,8 @@ export default function App() {
         deptLabel={partsDept ? 'Parts Department' : 'Service Department'}
         storagePrefix={partsDept ? 'partsGoalForecast' : 'goalForecast'}
         onGaugeActuals={handleGaugeActuals}
-        onBack={() => navTo(prevPage || 'manager-hub')}
+        onBack={launched ? backToUploads : () => navTo(prevPage || 'manager-hub')}
+        backLabel={launched ? UP : undefined}
       />
     );
   }
@@ -1490,8 +1563,8 @@ export default function App() {
         advisors={goalsRoster}
         schedules={schedules}
         vacations={vacations}
-        onBack={() => navTo(prevPage === 'manager-hub' ? 'manager-hub' : 'advisor-calendar')}
-        backLabel={prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
+        onBack={launched ? backToUploads : () => navTo(prevPage === 'manager-hub' ? 'manager-hub' : 'advisor-calendar')}
+        backLabel={launched ? UP : prevPage === 'manager-hub' ? '← Manager Hub' : '← Appointment Prep Calendar'}
         onLivePay={(adv) => { setLivePayFocus(adv || ''); goTo('live-pay', 'advisor-goals'); }}
       />
     );
@@ -1507,7 +1580,9 @@ export default function App() {
     // Managers + lead advisors can bulk-upload ROs.
     const canUpload = currentRole === 'admin' || (currentRole || '').includes('manager') || currentRole === 'lead advisor';
     if (!canUpload) { setPage('dashboard'); return null; }
-    return <RoUpload currentUser={currentUser.toUpperCase()} techList={techList} onBack={() => navTo(prevPage || 'advisor-calendar')} />;
+    return <RoUpload currentUser={currentUser.toUpperCase()} techList={techList}
+      onBack={launched ? backToUploads : () => navTo(prevPage || 'advisor-calendar')}
+      backLabel={launched ? UP : undefined} />;
   }
 
   if (page === 'repair-order-database') {
@@ -1523,7 +1598,7 @@ export default function App() {
 
   if (page === 'charge-account-list') {
     if (!canAccess('chargeAccountList')) { setPage('dashboard'); return null; }
-    return <ChargeAccountList onBack={() => setPage(prevPage || 'manager-hub')} />;
+    return <ChargeAccountList onBack={launched ? backToUploads : () => setPage(prevPage || 'manager-hub')} backLabel={launched ? UP : undefined} />;
   }
 
   if (page === 'employee-review') {
@@ -1564,7 +1639,8 @@ export default function App() {
     return (
       <ManagerReports
         users={users}
-        onBack={() => navTo('manager-hub')}
+        openBackfill={launched && uploadLaunch.tab === 'backfill'}
+        onBack={launched ? backToUploads : () => navTo('manager-hub')}
       />
     );
   }
@@ -1574,7 +1650,8 @@ export default function App() {
       <TechReview
         currentUser={currentUser.toUpperCase()}
         techList={techList}
-        onBack={() => navTo('employee-review')}
+        onBack={launched ? backToUploads : () => navTo('employee-review')}
+        backLabel={launched ? UP : undefined}
       />
     );
   }
@@ -1663,7 +1740,9 @@ export default function App() {
         ownAdvisor={ownAdvisor}
         currentRole={currentRole}
         canEditDashboard={canEditDashboard}
-        onBack={() => navTo('advisor-calendar')}
+        initialTab={launched ? uploadLaunch.tab : undefined}
+        onBack={launched ? backToUploads : () => navTo('advisor-calendar')}
+        backLabel={launched ? UP : undefined}
       />
     );
   }
@@ -1674,12 +1753,12 @@ export default function App() {
       'tech-resources': '← Tech Resources',
       'advisor-calendar': '← Advisor Calendar',
     };
-    const dlBackLabel = dlBackLabels[prevPage] || '← Back';
+    const dlBackLabel = launched ? UP : (dlBackLabels[prevPage] || '← Back');
     return (
       <DocumentLibrary
         currentUser={currentUser}
         currentRole={currentRole}
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={dlBackLabel}
       />
     );
@@ -1776,8 +1855,8 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
-        onBack={() => setPage(prevPage || 'tech-resources')}
-        backLabel={hrBackLabels[prevPage] || '← Back'}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'tech-resources')}
+        backLabel={launched ? UP : (hrBackLabels[prevPage] || '← Back')}
       />
     );
   }
@@ -1789,8 +1868,9 @@ export default function App() {
       <AftermarketWarranty
         currentUser={currentUser}
         currentRole={currentRole}
-        onBack={() => setPage(prevPage || 'advisor-calendar')}
-        backLabel={awBackLabel}
+        initialTab={launched ? uploadLaunch.tab : undefined}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
+        backLabel={launched ? UP : awBackLabel}
       />
     );
   }

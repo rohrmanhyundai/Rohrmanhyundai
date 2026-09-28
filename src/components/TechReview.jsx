@@ -84,7 +84,7 @@ function PreviewModal({ formDef, onClose }) {
   );
 }
 
-export default function TechReview({ onBack, techList, currentUser }) {
+export default function TechReview({ onBack, techList, currentUser, backLabel = '← Employee Review' }) {
   const [view, setView] = useState('list');          // 'list' | 'tech' | 'edit-tech' | 'edit-mgr'
   const [savingForm, setSavingForm] = useState(false);
   const [techTab, setTechTab] = useState('tech');    // 'tech' | 'manager' | 'report'
@@ -337,7 +337,7 @@ export default function TechReview({ onBack, techList, currentUser }) {
             <div className="adv-title">🔧 Technician Reviews</div>
             <div className="adv-sub">Upload a review form, then select a technician</div>
           </div>
-          <button className="secondary" onClick={onBack}>← Employee Review</button>
+          <button className="secondary" onClick={onBack}>{backLabel}</button>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>

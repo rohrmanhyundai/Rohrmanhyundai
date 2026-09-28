@@ -108,7 +108,7 @@ function parseAccounts(lines) {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function ChargeAccountList({ onBack }) {
+export default function ChargeAccountList({ onBack, backLabel = '← Parts Hub' }) {
   const [accounts, setAccounts]   = useState([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
@@ -224,7 +224,7 @@ export default function ChargeAccountList({ onBack }) {
             🗑 Clear List
           </button>
         )}
-        <button className="secondary" onClick={onBack}>← Parts Hub</button>
+        <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>

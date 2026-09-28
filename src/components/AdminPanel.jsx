@@ -173,7 +173,7 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection }) {
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   // Backend card: the worker's /health answer, and which users have a password
   // set there (users.json no longer says).
@@ -269,6 +269,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState(null);
+  // Upload Reports opens the panel straight onto the section that takes a file.
+  useEffect(() => { if (isOpen && initialSection) setOpenSection(initialSection); }, [isOpen, initialSection]);
 
   // How many additional-time requests are waiting on a manager. Drives the badge
   // on the Additional Time Approval card so pending work is visible from the grid

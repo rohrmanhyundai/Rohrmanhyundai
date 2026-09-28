@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   saveAdvisorNotes, loadAdvisorNotes,
   loadUsers, getGithubToken, setGithubToken,
-  loadAppointmentList, updateAppointmentList, loadDeferredRows, loadDeferredCodes,
+  loadAppointmentList, updateAppointmentList,
 } from '../utils/github';
-import { parseAppointmentFile, apptTags, ownerOf, matchDeferred } from '../utils/appointmentList';
+import { uploadAppointmentFile, shortMD, apptTags, ownerOf } from '../utils/appointmentList';
 import { firstNameUpper } from '../utils/advisorAliases';
 
 // Appointment prep for one calendar day. The After Call Report used to live at
@@ -238,47 +238,18 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     if (!file) return;
     setUploadMsg(''); setUploadBusy(true);
     try {
-      const { byDate } = await parseAppointmentFile(file);
-      const dates = Object.keys(byDate).sort();
-      if (dates.length === 0) throw new Error('No appointments found in that file.');
-      // Match each appointment to deferred work on the same car. A failed read
-      // just means no matches this time — the list still uploads.
-      const [defRows, defCodes] = await Promise.all([
-        loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null),
-      ]);
-      const roster = new Set((advisorList || []).map(firstNameUpper));
-      let autoCount = 0, defCount = 0;
-      for (const d of dates) {
-        const matches = matchDeferred(byDate[d], Object.values((defRows && defRows.byRo) || {}), defCodes || {});
-        const appts = byDate[d].map(a => (matches.has(a.apptNo) ? { ...a, deferred: matches.get(a.apptNo) } : a));
-        defCount += matches.size;
-        const next = await updateAppointmentList(d, (cur) => {
-          const keep = new Set(appts.map(a => a.apptNo));
-          const claims = Object.fromEntries(Object.entries(cur.claims).filter(([k]) => keep.has(k)));
-          // No advisor in the DMS but deferred work on the car → it goes to the
-          // advisor who wrote that deferred RO, if they still work here. Never
-          // overrides a claim, and never re-assigns one sent back to the pool.
-          for (const a of appts) {
-            const who = a.deferred && a.deferred.advisor;
-            if (a.advisor || claims[a.apptNo] || !who || !roster.has(who)) continue;
-            claims[a.apptNo] = { advisor: who, by: 'AUTO', reason: 'deferred', at: new Date().toISOString() };
-            autoCount++;
-          }
-          return { ...cur, date: d, appts, claims, uploadedAt: new Date().toISOString(), uploadedBy: ownAdvisor };
-        }, `Appointment list ${d}: ${appts.length} appts (${ownAdvisor})`);
-        if (d === date) {
-          setApptList(next);
-          setRows(prev => mergeAppointments(prev, next, advisorName));
-        }
+      const { dates, byDate, saved, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: ownAdvisor });
+      if (saved[date]) {
+        setApptList(saved[date]);
+        setRows(prev => mergeAppointments(prev, saved[date], advisorName));
       }
-      const fmt = (d) => { const [, m, dd] = d.split('-'); return `${+m}/${+dd}`; };
       const here = byDate[date];
       setUploadMsg(here
-        ? `✓ ${here.length} appointments loaded for ${fmt(date)}`
+        ? `✓ ${here.length} appointments loaded for ${shortMD(date)}`
           + (defCount ? ` · ${defCount} with deferred work` : '')
           + (autoCount ? ` · ${autoCount} auto-assigned to the deferred advisor` : '')
-          + (dates.length > 1 ? ` · also saved ${dates.filter(d => d !== date).map(fmt).join(', ')}` : '')
-        : `✓ Saved appointments for ${dates.map(fmt).join(', ')} — open that day on the calendar to see them.`);
+          + (dates.length > 1 ? ` · also saved ${dates.filter(d => d !== date).map(shortMD).join(', ')}` : '')
+        : `✓ Saved appointments for ${dates.map(shortMD).join(', ')} — open that day on the calendar to see them.`);
     } catch (e) {
       setUploadMsg('⚠️ ' + (e.message || 'Upload failed'));
     } finally {

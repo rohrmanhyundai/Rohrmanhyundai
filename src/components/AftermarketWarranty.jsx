@@ -2167,8 +2167,8 @@ function MediaPanel({ ro, media, currentRole, onRemoved }) {
   );
 }
 
-export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel }) {
-  const [mainTab, setMainTab] = useState('contracts');   // 'contracts' | 'tires'
+export default function AftermarketWarranty({ currentUser, currentRole, onBack, backLabel, initialTab }) {
+  const [mainTab, setMainTab] = useState(initialTab || 'contracts');   // 'contracts' | 'tires'
   const [view, setView] = useState('list');       // 'list' | 'form' | 'detail'
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -2317,7 +2317,8 @@ export default function AftermarketWarranty({ currentUser, currentRole, onBack, 
       <div className="adv-topbar no-print" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
         <button className="secondary" onClick={async () => {
           if (view === 'list') {
-            if (mainTab === 'tires' || mainTab === 'contacts' || mainTab === 'media') { setMainTab('contracts'); return; }
+            // Opened straight onto a tab (Upload Reports) → Back leaves the page.
+            if (mainTab !== initialTab && (mainTab === 'tires' || mainTab === 'contacts' || mainTab === 'media')) { setMainTab('contracts'); return; }
             onBack(); return;
           }
           if (view === 'form' && formRef.current) {

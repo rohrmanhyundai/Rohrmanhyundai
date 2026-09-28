@@ -3,6 +3,15 @@ import SortableTiles from './SortableTiles';
 
 const NAV_BUTTONS = [
   {
+    key: 'uploadReports',
+    label: '📤 Upload Reports',
+    desc: 'Every report upload in one place — RO, appointments, payroll, tech hours, deferred and more',
+    bg: 'linear-gradient(135deg,rgba(52,211,153,.30),rgba(59,130,246,.18))',
+    border: 'rgba(52,211,153,.55)',
+    color: '#6ee7b7',
+    prop: 'onUploadReports',
+  },
+  {
     key: 'chargeAccountList',
     label: '💳 Charge Account List',
     desc: 'View approved charge accounts, customer IDs, and tax exempt status',
@@ -185,14 +194,14 @@ export default function ManagerHub({
   onDocumentLibrary, onWorkSchedule,
   onChargeAccountList, onEmployeeReview, onPerformanceReports,
   onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench,
+  onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench, onUploadReports,
 }) {
   const handlers = {
     onSurveyReports, onAdvisorCalendar, onAftermarketWarranty,
     onDocumentLibrary, onWorkSchedule,
     onChargeAccountList, onEmployeeReview, onPerformanceReports,
     onRepairOrderDatabase, onUserDataTracker, onGoalForecast, onAdvisorForecast,
-    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench,
+    onGlobalMessage, onCashDash, onEmployeeApplicants, onLivePay, onBigMoneyLof, onPayroll, onDailyWrench, onUploadReports,
   };
 
   return (

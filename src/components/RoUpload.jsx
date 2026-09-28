@@ -81,7 +81,7 @@ function autoMap(headers) {
   return map;
 }
 
-export default function RoUpload({ onBack, currentUser, techList = [] }) {
+export default function RoUpload({ onBack, currentUser, techList = [], backLabel = '← Advisor Calendar' }) {
   // Resolve a report's technician name (often a full "FIRST LAST") to the WIP
   // tab username (usually just "FIRST"). Returns '' if no tech tab matches, in
   // which case the RO goes to Cars Awaiting.
@@ -627,7 +627,7 @@ export default function RoUpload({ onBack, currentUser, techList = [] }) {
         </div>
         <div style={{ flex: 1 }} />
         {(headers.length > 0 || fileName) && <button className="secondary" onClick={reset} style={{ marginRight: 10 }}>↺ Start Over</button>}
-        <button className="secondary" onClick={onBack}>← Advisor Calendar</button>
+        <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '32px 40px' }}>
