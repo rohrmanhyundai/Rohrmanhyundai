@@ -486,7 +486,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     const notes = parseNotesField(row.notes);
     const composing = noteRowId === row.id;
     return (
-      <td style={{ minWidth: 230, verticalAlign: 'top', cursor: composing ? 'default' : 'pointer' }}
+      <td style={{ verticalAlign: 'top', overflowWrap: 'anywhere', cursor: composing ? 'default' : 'pointer' }}
         onClick={() => { if (!composing) openComposer(row.id); }}>
         {notes.length > 0 && (
           <div style={{ display: 'grid', gap: 5, margin: '2px 0 4px' }}>
@@ -612,12 +612,23 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
             </div>
           )}
 
-          <table className="adv-table">
+          {/* Fixed layout: Status and Time stay narrow and the room goes to
+              Vehicle / Services and Deferred, which wrap instead of clipping. */}
+          <table className="adv-table" style={{ tableLayout: 'fixed' }}>
+            <colgroup>
+              <col style={{ width: 96 }} />
+              <col style={{ width: '14%' }} />
+              <col style={{ width: 84 }} />
+              <col style={{ width: '27%' }} />
+              <col style={{ width: '28%' }} />
+              <col />
+              <col className="no-print" style={{ width: 56 }} />
+            </colgroup>
             <thead>
               <tr>
-                <th>STATUS</th>
-                <th>CUSTOMER NAME</th><th>APPOINTMENT TIME</th><th>VEHICLE / SERVICES</th><th>CRITICAL DEFERRED SERVICE</th>
-                <th>WAITER / DROP OFF</th><th>NOTES</th><th className="no-print adv-action-col"></th>
+                <th style={{ padding: '10px 8px' }}>STATUS</th>
+                <th>CUSTOMER</th><th style={{ padding: '10px 8px' }}>TIME</th><th>VEHICLE / SERVICES</th><th>CRITICAL DEFERRED SERVICE</th>
+                <th>NOTES</th><th className="no-print" style={{ padding: 0 }}></th>
               </tr>
             </thead>
             <tbody>
@@ -634,8 +645,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         title="Tap to move it forward"
                         style={{
                           width: '100%', background: st.bg, border: `1px solid ${st.line}`,
-                          color: st.fg, borderRadius: 999, padding: '6px 10px',
-                          fontSize: 12, fontWeight: 800, cursor: 'pointer',
+                          color: st.fg, borderRadius: 999, padding: '4px 4px',
+                          fontSize: 11, fontWeight: 800, cursor: 'pointer',
                           whiteSpace: 'nowrap', fontFamily: 'inherit',
                         }}>
                         {st.label}
@@ -654,8 +665,13 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                           )}
                         </div>
                       </td>
-                      <td style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>{row.appointmentTime}</td>
-                      <td style={{ minWidth: 240 }}>
+                      <td style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                        {row.appointmentTime}
+                        {row.transport === 'WAIT' && (
+                          <div style={{ marginTop: 3, display: 'inline-block', fontSize: 9.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '0 6px' }}>WAITER</div>
+                        )}
+                      </td>
+                      <td style={{ overflowWrap: 'anywhere' }}>
                         <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{row.vehicle}</div>
                         {(row.services || []).map((s, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
@@ -667,18 +683,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <td><input className="adv-cell-input" value={row.appointmentTime} onChange={e => updateRow(row.id, 'appointmentTime', e.target.value)} onBlur={resort} placeholder="e.g. 9:00 AM" /></td>
                       <td><input className="adv-cell-input" value={row.vehicle || ''} onChange={e => updateRow(row.id, 'vehicle', e.target.value)} placeholder="Vehicle / reason for visit" /></td>
                     </>)}
-                    <td style={row.deferred ? { minWidth: 260, verticalAlign: 'top' } : undefined}>
+                    <td style={{ overflowWrap: 'anywhere', verticalAlign: row.deferred ? 'top' : undefined }}>
                       <DeferredBox d={row.deferred} />
                       <input className="adv-cell-input" value={row.criticalDeferredService} onChange={e => updateRow(row.id, 'criticalDeferredService', e.target.value)} placeholder={row.deferred ? 'Your plan for the deferred work…' : 'Deferred service notes'} />
                     </td>
-                    <td className="adv-waiter-cell">
-                      <div className="adv-check-pair">
-                        <label className="adv-check-label"><input type="checkbox" className="adv-checkbox" checked={row.waiter} onChange={e => updateRow(row.id, 'waiter', e.target.checked)} /><span>Waiter</span></label>
-                        <label className="adv-check-label"><input type="checkbox" className="adv-checkbox" checked={row.dropOff} onChange={e => updateRow(row.id, 'dropOff', e.target.checked)} /><span>Drop Off</span></label>
-                      </div>
-                    </td>
                     {renderNotesCell(row)}
-                    <td className="no-print adv-action-col">
+                    <td className="no-print" style={{ padding: '6px 2px', textAlign: 'center' }}>
                       <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
                         {row.apptNo && apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor ? (
                           <button className="secondary adv-del-btn" title="Put back in the open pool"
