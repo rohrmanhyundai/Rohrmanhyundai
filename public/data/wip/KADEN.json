@@ -46,21 +46,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "muhg7b3pgv5s",
-    "ro": "781120",
-    "roDate": "2026-09-25",
-    "vehicle": "2021 Hyundai Sonata",
-    "jobDesc": "throttle body r&R",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/26/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
