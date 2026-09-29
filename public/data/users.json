@@ -50,17 +50,18 @@
       "lastName": "",
       "managementAccess": false,
       "applicantCode": {
-        "salt": "03ff0876f81fdf04c8eee65e83b0bbe2",
-        "hash": "bb8bceca532bd348e7da6be5b211ae51c7fd0f5f6b59f68ca4d9110f2e33c9f4",
+        "salt": "0c90e8deef80004f9eb1d694d584c47b",
+        "hash": "10e13a3b214c07d631c3038446e7218c9ef862c934a7afd069049b326a34670f",
         "iterations": 150000,
-        "setAt": "2026-09-09T12:34:01.926Z"
+        "setAt": "2026-09-29T01:26:54.009Z"
       },
       "email": "shawn.laughner@rohrmanauto.com",
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "CSEb61gnBxqAUIT+hq8/bTYCjbzjTRI8E3FdpkEYwqNHKGw4gWiXpDakP0Wys8nMl63NRbfrtMTscIMPlzU37ZLxVAQRMPZjy6RWS8kg6mui3toefi8tTiAAyaVs10YlTS01kmBKXWYrt/77mimsIR1D0RKHb45VthWJwKcgcBFUNyOhQwuA4FOmPhPt94bqWYGDkzO55ktA3lmRj2tik4rS9MySypoHeODAohhoMEr1bjgOJikLeasfsqZsLK3+SLtYDgYy/I2Th6/A8vnC+Og3r6uJR8Xne1g6H+mY/baPDpGCi7OSe1mxnyW1EhxLmmzTOVqYgwUSDqNIt3L3+A=="
       },
-      "pwSalt": "b46fb4141ae747c43e464f3fd80703b3"
+      "pwSalt": "b46fb4141ae747c43e464f3fd80703b3",
+      "hidden": false
     },
     {
       "username": "Jordan",
