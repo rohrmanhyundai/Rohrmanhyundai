@@ -117,6 +117,33 @@ function mergeAppointments(rows, list, advisorName) {
   return JSON.stringify(sorted) === JSON.stringify(rows) ? rows : sorted;
 }
 
+// ── Manager view: every advisor's sheet at once ──────────────────────────────
+// Rows carry `_owner` (the advisor whose sheet they live on). Each owner's rows
+// are merged exactly like their own sheet would be, so moving an appointment
+// between advisors drops it from one group and adds it to the other.
+const normalizeLoaded = (rows) => sortRows((rows || []).map(r => ({
+  ...EMPTY_ROW(), ...r,
+  id: r.id || genRowId(),
+  status: r.status || 'scheduled',
+  notes: parseNotesField(r.notes),
+})));
+const stripOwner = ({ _owner, ...r }) => r;
+const ownerRows = (rows, o) => sortRows(rows.filter(r => r._owner === o).map(stripOwner));
+function mergeAll(rows, list, owners) {
+  const appts = (list && list.appts) || [];
+  const all = new Set([...(owners || []), ...rows.map(r => r._owner).filter(Boolean),
+    ...appts.map(a => ownerOf(a, list.claims)).filter(Boolean)]);
+  const out = [];
+  for (const o of all) {
+    const mine = ownerRows(rows, o);
+    // An advisor with no sheet and nothing booked isn't given an empty one.
+    if (!mine.length && !appts.some(a => ownerOf(a, list.claims) === o)) continue;
+    for (const r of mergeAppointments(mine, list, o)) out.push({ ...r, _owner: o });
+  }
+  const sorted = sortRows(out);
+  return JSON.stringify(sorted) === JSON.stringify(rows) ? rows : sorted;
+}
+
 function Tag({ t }) {
   return (
     <span title={t.title || ''} style={{
@@ -289,6 +316,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   useEffect(() => { loadServicePricing().then(p => setMenuHours(hoursByOpCode(p))).catch(() => {}); }, []);
   const planFor = (d) => (d ? sellToGoal(d, menuHours, hrsRoGoal) : null);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+  // The manager tab (a manager's own name, not an advisor on the roster) shows
+  // EVERY advisor's appointments, fully editable, each saved to its own sheet.
+  const rosterFirsts = (advisorList || []).map(firstNameUpper).filter(Boolean);
+  const shopView = isManager && !rosterFirsts.includes(firstNameUpper(advisorName));
   const viewingOwn = firstNameUpper(advisorName) === firstNameUpper(ownAdvisor);
   // Advisors move appointments onto their own sheet; a manager can place one on
   // whichever advisor's sheet they're looking at.
@@ -315,8 +346,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const noteDraftRef     = useRef(noteDraft);
   const loadedRef        = useRef(false);   // don't autosave the initial load
   const lastSavedRef     = useRef('');      // serialized rows as last written
+  const savedByOwnerRef  = useRef({});      // manager view: { ADVISOR: serialized rows as last written }
   const saveTimerRef     = useRef(null);
   rowsRef.current        = rows;
+  // One merge / dirty / save path for both the advisor sheet and the manager view.
+  const remerge = (prev, l) => (shopView ? mergeAll(prev, l, rosterFirsts) : mergeAppointments(prev, l, advisorName));
+  const dirtyOwners = (rs) => [...new Set([...rs.map(r => r._owner), ...Object.keys(savedByOwnerRef.current)])]
+    .filter(o => o && JSON.stringify(ownerRows(rs, o)) !== (savedByOwnerRef.current[o] || (ownerRows(rs, o).length ? '' : '[]')));
+  const isDirty = (rs) => (shopView ? dirtyOwners(rs).length > 0 : JSON.stringify(rs) !== lastSavedRef.current);
   noteRowIdRef.current   = noteRowId;
   noteDraftRef.current   = noteDraft;
 
@@ -324,6 +361,30 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   useEffect(() => {
     let cancelled = false;
     loadedRef.current = false;
+    if (shopView) {
+      // Manager view: the day's list + every advisor's sheet.
+      loadAppointmentList(date).catch(() => null).then(async (list) => {
+        if (cancelled) return;
+        const owners = [...new Set([...rosterFirsts, ...((list && list.appts) || []).map(a => ownerOf(a, list.claims)).filter(Boolean)])];
+        const sheets = await Promise.all(owners.map(o => loadAdvisorNotes(o, date).catch(() => null)));
+        if (cancelled) return;
+        const base = [];
+        const saved = {};
+        owners.forEach((o, i) => {
+          const d = sheets[i];
+          if (d && Array.isArray(d.rows) && d.rows.length) {
+            const rs = normalizeLoaded(d.rows);
+            saved[o] = JSON.stringify(rs);
+            base.push(...rs.map(r => ({ ...r, _owner: o })));
+          }
+        });
+        savedByOwnerRef.current = saved;
+        setApptList(list);
+        setRows(mergeAll(base, list, rosterFirsts));
+        loadedRef.current = true;
+      });
+      return () => { cancelled = true; };
+    }
     Promise.all([
       loadAdvisorNotes(advisorName, date).catch(() => null),
       loadAppointmentList(date).catch(() => null),
@@ -331,12 +392,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       if (cancelled) return;
       let base = rowsRef.current;
       if (data && Array.isArray(data.rows) && data.rows.length > 0) {
-        base = sortRows(data.rows.map(r => ({
-          ...EMPTY_ROW(), ...r,
-          id: r.id || genRowId(),
-          status: r.status || 'scheduled',
-          notes: parseNotesField(r.notes),
-        })));
+        base = normalizeLoaded(data.rows);
         lastSavedRef.current = JSON.stringify(base);
       }
       setApptList(list);
@@ -352,7 +408,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     try {
       const list = await loadAppointmentList(date);
       setApptList(list);
-      if (loadedRef.current) setRows(prev => mergeAppointments(prev, list, advisorName));
+      if (loadedRef.current) setRows(prev => remerge(prev, list));
     } catch {}
   }
   useEffect(() => {
@@ -372,7 +428,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       const { dates, byDate, saved, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: ownAdvisor });
       if (saved[date]) {
         setApptList(saved[date]);
-        setRows(prev => mergeAppointments(prev, saved[date], advisorName));
+        setRows(prev => remerge(prev, saved[date]));
       }
       const here = byDate[date];
       setUploadMsg(here
@@ -402,7 +458,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         return { ...cur, claims: { ...cur.claims, [a.apptNo]: { advisor: target, by: ownAdvisor, at: new Date().toISOString() } } };
       }, `Appointment ${a.apptNo} → ${target}`);
       setApptList(next);
-      setRows(prev => mergeAppointments(prev, next, advisorName));
+      setRows(prev => remerge(prev, next));
     } catch (e) {
       alert(e.message || 'Could not move that appointment.');
       refreshList();
@@ -426,7 +482,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         return { ...cur, claims: { ...cur.claims, [row.apptNo]: { advisor: target, by: ownAdvisor, at: new Date().toISOString(), override: true, carry } } };
       }, `Appointment ${row.apptNo} reassigned → ${target} (${ownAdvisor})`);
       setApptList(next);
-      setRows(prev => mergeAppointments(prev, next, advisorName));
+      setRows(prev => remerge(prev, next));
     } catch (e) {
       alert(e.message || 'Could not move that appointment.');
       refreshList();
@@ -435,7 +491,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
 
   async function returnToPool(row) {
     if (!window.confirm(`Put ${row.customerName || 'this appointment'} back in the open pool?\n\nAnything typed on this row (tech, notes, status) goes with it.`)) return;
-    const target = firstNameUpper(advisorName);
+    const target = row._owner || firstNameUpper(advisorName);
     setClaimingNo(row.apptNo);
     try {
       const next = await updateAppointmentList(date, (cur) => {
@@ -448,7 +504,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         return { ...cur, claims };
       }, `Appointment ${row.apptNo} back to pool`);
       setApptList(next);
-      setRows(prev => mergeAppointments(prev, next, advisorName));
+      setRows(prev => remerge(prev, next));
     } catch (e) {
       alert(e.message || 'Could not return that appointment.');
     } finally { setClaimingNo(''); }
@@ -459,6 +515,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   // admin's "Force Refresh All Users", which reloads every browser — threw the
   // day away. Now it writes itself after a short quiet period.
   async function persist(currentRows) {
+    if (shopView) return persistOwners(currentRows);
     const payload = JSON.stringify(currentRows);
     if (payload === lastSavedRef.current) return true;
     // Never prompt from an autosave: if this device has no save code yet, hold
@@ -479,9 +536,30 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     }
   }
 
+  // Manager view: write only the advisors whose rows changed, each to their own sheet.
+  async function persistOwners(currentRows) {
+    const owners = dirtyOwners(currentRows);
+    if (!owners.length) return true;
+    if (!getGithubToken()) { setSaveState('dirty'); return false; }
+    setSaveState('saving');
+    try {
+      for (const o of owners) {
+        const rs = ownerRows(currentRows, o);
+        await saveAdvisorNotes(o, date, rs, []);
+        savedByOwnerRef.current = { ...savedByOwnerRef.current, [o]: JSON.stringify(rs) };
+      }
+      setSaveState('saved'); setSaveError('');
+      return true;
+    } catch (err) {
+      if (/bad credentials|unauthorized|401/i.test(err.message || '')) setGithubToken('');
+      setSaveState('error'); setSaveError(err.message || 'Save failed');
+      return false;
+    }
+  }
+
   useEffect(() => {
     if (!loadedRef.current) return;
-    if (JSON.stringify(rows) === lastSavedRef.current) return;
+    if (!isDirty(rows)) return;
     setSaveState(s => (s === 'saving' ? s : 'dirty'));
     clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => { persist(rowsRef.current); }, SAVE_IDLE_MS);
@@ -493,7 +571,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   // request outlive the page; it's best effort on top of the idle save.
   useEffect(() => {
     const flush = () => {
-      if (JSON.stringify(rowsRef.current) !== lastSavedRef.current) persist(rowsRef.current);
+      if (isDirty(rowsRef.current)) persist(rowsRef.current);
     };
     const onHide = () => { if (document.visibilityState === 'hidden') flush(); };
     document.addEventListener('visibilitychange', onHide);
@@ -554,8 +632,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       setRows(currentRows);
       closeComposer();
     }
-    if (JSON.stringify(currentRows) === lastSavedRef.current) return;
+    if (!isDirty(currentRows)) return;
     if (!await ensureToken('This device needs a one-time save code.\n\nEnter the save code (ask your admin for it):')) return;
+    if (shopView) {
+      setSaving(true);
+      try { if (!(await persistOwners(currentRows))) throw new Error(saveError || 'Save failed'); }
+      finally { setSaving(false); }
+      return;
+    }
     setSaving(true);
     try {
       await saveAdvisorNotes(advisorName, date, currentRows, []);
@@ -722,7 +806,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
           <div className="adv-form-header">
             <h2 className="adv-form-title">ADVISOR NEXT DAY APPOINTMENT PREPARATION</h2>
             <div className="adv-form-meta">
-              <span>Advisor Name: <strong>{advisorName}</strong></span>
+              <span>Advisor Name: <strong>{shopView ? 'ALL ADVISORS' : advisorName}</strong>{shopView && <span style={{ color: '#f9a8d4', fontWeight: 800 }}> · manager view</span>}</span>
               <span>Date: <strong>{displayDate}</strong></span>
             </div>
             {(uploadMsg || uploadedLabel) && (
@@ -765,7 +849,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => {
+              {(shopView ? rows.filter(r => !isBlankRow(r)) : rows).map((row) => {
                 const st = statusMeta(row.status);
                 const rowAppt = row.apptNo ? (apptByNo.get(row.apptNo) || { services: row.services, comments: row.comments, vehicle: row.vehicle }) : null;
                 const lof = isLof50(rowAppt);
@@ -796,7 +880,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                             appearance: 'none', WebkitAppearance: 'none', textAlign: 'center', textAlignLast: 'center',
                           }}>
                           <option value="">{claimingNo === row.apptNo ? 'Moving…' : '👤 Advisor'}</option>
-                          {advisorChoices.filter(n => n !== firstNameUpper(advisorName)).map(n => <option key={n} value={n}>→ {n}</option>)}
+                          {advisorChoices.filter(n => n !== (row._owner || firstNameUpper(advisorName))).map(n => <option key={n} value={n}>→ {n}</option>)}
                         </select>
                       )}
                     </td>
@@ -804,6 +888,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <td>
                         <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', padding: '4px 2px 0' }}>{row.customerName}</div>
                         <div style={{ fontSize: 11, color: '#7a92b8', padding: '0 2px 4px' }}>
+                          {shopView && row._owner && <span style={{ display: 'inline-block', marginRight: 6, padding: '0 7px', borderRadius: 999, fontSize: 10.5, fontWeight: 900, color: '#a5f3fc', background: 'rgba(56,189,248,.14)', border: '1px solid rgba(125,211,252,.45)' }}>{row._owner}</span>}
                           Appt #{row.apptNo}
                           {apptList && !apptByNo.has(row.apptNo) && <span style={{ color: '#fca5a5', fontWeight: 800 }}> · ⚠ not on latest DMS list</span>}
                           {apptList && apptList.claims[row.apptNo]?.override && (
@@ -860,7 +945,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
             </tbody>
           </table>
           <div className="no-print" style={{ marginTop: 14 }}>
-            <button onClick={addRow}>+ Add Row</button>
+            {!shopView && <button onClick={addRow}>+ Add Row</button>}
           </div>
         </div>
 
