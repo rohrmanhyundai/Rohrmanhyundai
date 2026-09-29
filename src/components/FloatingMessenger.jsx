@@ -37,7 +37,7 @@ const toSummary = (to = []) => {
 
 const BUBBLE = 56;
 const PANEL_W = 340;
-const PANEL_H = 560;   // roomy enough for the roster; clamped to the window below
+const PANEL_H = 720;   // roster + message + media; clamped to the window below
 const DRAG_SLOP = 4; // px of movement before a press counts as a drag, not a click
 
 function clampToScreen(x, y, w, h) {
@@ -648,10 +648,19 @@ export default function FloatingMessenger({
               staff list, and the button was ending up below the fold. */}
           {tab === 'send' && (
             <div style={{ flexShrink: 0, padding: '8px 12px 10px', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(2,6,23,.35)' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '2px 0 8px', color: '#cbd5e1', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
-                <input type="checkbox" checked={alert} onChange={e => setAlert(e.target.checked)} />
-                🚨 Mark as an alert
-              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '2px 0 8px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#cbd5e1', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+                  <input type="checkbox" checked={alert} onChange={e => setAlert(e.target.checked)} />
+                  🚨 Mark as an alert
+                </label>
+                <div style={{ flex: 1 }} />
+                {/* Always in view, even when the roster pushes the drop zone below the fold. */}
+                <button onClick={() => mediaInputRef.current && mediaInputRef.current.click()} title="Attach a picture or screenshot"
+                  onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); addMedia(e.dataTransfer.files); }}
+                  style={{ background: attachments.length ? 'rgba(56,189,248,.2)' : 'rgba(255,255,255,.06)', border: `1px solid ${attachments.length ? 'rgba(125,211,252,.6)' : 'rgba(255,255,255,.18)'}`, color: '#e0f2fe', borderRadius: 999, padding: '4px 11px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                  📎 {attachments.length ? `${attachments.length} picture${attachments.length === 1 ? '' : 's'}` : 'Add picture'}
+                </button>
+              </div>
               <button onClick={handleSend} disabled={sending}
                 style={{
                   width: '100%', background: sending ? 'rgba(255,255,255,.06)' : 'linear-gradient(180deg,#38bdf8,#0284c7)',
