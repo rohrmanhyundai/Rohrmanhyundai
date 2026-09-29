@@ -27,6 +27,23 @@ const TOOL_LABELS = {
   myReports: '📈 My Reports', cashDash: '💰 Cash Dash', bigMoneyLof: '💵 Big-Money LOF',
   goalsForecasting: '🎯 End of Day Reporting', workInProgress: '🔧 Work in Progress', tireQuote: '🛞 Tire Quote', livePay: '💵 Live Pay',
 };
+// The last toolbar setup seen, kept in memory and on the device. Leaving the
+// calendar unmounts it; without this, coming back showed every tab for a split
+// second (no setup yet → "show all") until the file loaded again.
+const TOOLBAR_CACHE_KEY = 'advisorToolbarCache';
+let toolbarMem; // undefined = never loaded this session
+function cachedToolbar() {
+  if (toolbarMem !== undefined) return { cfg: toolbarMem, known: true };
+  try {
+    const raw = localStorage.getItem(TOOLBAR_CACHE_KEY);
+    if (raw) return { cfg: JSON.parse(raw), known: true };   // 'null' = "no setup saved"
+  } catch {}
+  return { cfg: null, known: false };
+}
+function rememberToolbar(cfg) {
+  toolbarMem = cfg;
+  try { localStorage.setItem(TOOLBAR_CACHE_KEY, JSON.stringify(cfg)); } catch {}
+}
 const hhmm = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(v || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
 function toolShowing(cfg, key, mins) {
   const t = cfg && cfg.tabs && cfg.tabs[key];
@@ -338,9 +355,15 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // 'calendar' | 'tools' (the All Tools page), and which tab of it.
   const [view, setView] = useState('calendar');
   const [toolsTab, setToolsTab] = useState('all');
-  const [toolbar, setToolbar] = useState(null);
+  const [toolbar, setToolbarState] = useState(() => cachedToolbar().cfg);
+  // False only on a device's very first visit, before the setup has loaded —
+  // the tool buttons wait rather than flash every tab.
+  const [toolbarKnown, setToolbarKnown] = useState(() => cachedToolbar().known);
+  const setToolbar = (cfg) => { rememberToolbar(cfg); setToolbarState(cfg); setToolbarKnown(true); };
   useEffect(() => {
-    loadGithubFile(TOOLBAR_PATH).then(d => setToolbar(d && d.tabs ? d : null)).catch(() => {});
+    loadGithubFile(TOOLBAR_PATH)
+      .then(d => setToolbar(d && d.tabs ? d : null))
+      .catch(() => setToolbarKnown(true));
   }, []);
   useEffect(() => { const id = setInterval(() => setNowTick(Date.now()), 60000); return () => clearInterval(id); }, []);
   const easternHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(new Date(nowTick)), 10) % 24;
@@ -905,11 +928,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       .formatToParts(new Date(nowTick)).map(x => [x.type, x.value]));
     return (parseInt(p.hour, 10) % 24) * 60 + parseInt(p.minute, 10);
   })();
-  const shownTools = allTools.filter(t => toolShowing(toolbar, t.key, easternMinutes));
+  const shownTools = toolbarKnown ? allTools.filter(t => toolShowing(toolbar, t.key, easternMinutes)) : [];
 
   const isViewingOwn = viewingAdvisor === ownAdvisor;
   const canSetupTools = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const hiddenCount = allTools.length - shownTools.length;
+  const hiddenCount = toolbarKnown ? allTools.length - shownTools.length : 0;
 
   const modals = (<>
     {showPartsReceived && (
