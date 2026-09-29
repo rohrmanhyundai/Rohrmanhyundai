@@ -55,6 +55,36 @@ function timeToMinutes(raw) {
   return h * 60 + min;
 }
 
+// ── Appointment clock ─────────────────────────────────────────────────────────
+// On today's sheet a row lights up 15 minutes before its time and stays lit
+// until 30 minutes after, so the list reads like a clock.
+const CLOCK_BEFORE = 15, CLOCK_AFTER = 30;
+const isoToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+function apptClock(dateIso, timeRaw, now = Date.now()) {
+  if (dateIso !== isoToday()) return null;
+  const at = timeToMinutes(timeRaw);
+  if (at == null) return null;
+  const d = new Date(now);
+  const diff = at - (d.getHours() * 60 + d.getMinutes());   // minutes until the appointment
+  if (diff > CLOCK_BEFORE || diff < -CLOCK_AFTER) return null;
+  return diff > 0 ? { phase: 'soon', mins: diff } : { phase: 'now', mins: -diff };
+}
+function ClockChip({ clock }) {
+  if (!clock) return null;
+  const soon = clock.phase === 'soon';
+  return (
+    <div className={soon ? 'appt-chip-soon' : 'appt-chip-now'} style={{
+      marginTop: 5, width: 'fit-content', fontSize: 10.5, fontWeight: 900, whiteSpace: 'nowrap',
+      borderRadius: 999, padding: '1px 8px',
+      color: soon ? '#e0f2fe' : '#fef9c3',
+      background: soon ? 'rgba(56,189,248,.28)' : 'rgba(250,204,21,.25)',
+      border: `1px solid ${soon ? 'rgba(125,211,252,.8)' : 'rgba(253,224,71,.8)'}`,
+    }}>
+      {soon ? `⏰ in ${clock.mins} min` : clock.mins === 0 ? '🔔 now' : `🔔 now · ${clock.mins} min`}
+    </div>
+  );
+}
+
 function sortRows(rows) {
   return rows
     .map((r, i) => ({ r, i, t: timeToMinutes(r.appointmentTime) }))
@@ -315,6 +345,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const [menuHours, setMenuHours] = useState({});
   useEffect(() => { loadServicePricing().then(p => setMenuHours(hoursByOpCode(p))).catch(() => {}); }, []);
   const planFor = (d) => (d ? sellToGoal(d, menuHours, hrsRoGoal) : null);
+  // Ticks the appointment clock (row highlight + countdown chip).
+  const [clockNow, setClockNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setClockNow(Date.now()), 30000); return () => clearInterval(id); }, []);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   // The manager tab (a manager's own name, not an advisor on the roster) shows
   // EVERY advisor's appointments, fully editable, each saved to its own sheet.
@@ -886,10 +919,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                 const st = statusMeta(row.status);
                 const rowAppt = row.apptNo ? (apptByNo.get(row.apptNo) || { services: row.services, comments: row.comments, vehicle: row.vehicle }) : null;
                 const lof = isLof50(rowAppt);
+                const rowClock = row.status === 'done' ? null : apptClock(date, row.appointmentTime, clockNow);
                 const isDone = row.status === 'done';
                 return (
                   <tr key={row.id}
-                      className={[parseNotesField(row.notes).length > 0 ? 'adv-row-has-notes' : '', lof && row.deferred ? 'bml-hot-row' : ''].filter(Boolean).join(' ')}
+                      className={[parseNotesField(row.notes).length > 0 ? 'adv-row-has-notes' : '', lof && row.deferred ? 'bml-hot-row' : '', rowClock ? `appt-clock-${rowClock.phase}` : ''].filter(Boolean).join(' ')}
                       style={isDone ? { opacity: 0.5 } : undefined}>
                     <td>
                       <button
@@ -938,8 +972,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <td style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
                         {row.appointmentTime}
                         {row.transport === 'WAIT' && (
-                          <div style={{ marginTop: 3, display: 'inline-block', fontSize: 9.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '0 6px' }}>WAITER</div>
+                          <div style={{ marginTop: 4, width: 'fit-content', fontSize: 9.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '0 6px' }}>WAITER</div>
                         )}
+                        <ClockChip clock={rowClock} />
                       </td>
                       <td style={{ overflowWrap: 'anywhere' }}>
                         <div style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{row.vehicle}</div>
@@ -1053,4 +1088,4 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
 }
 
 // Shared with the read-only Shop Appointments page (tech / parts view).
-export { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50 };
+export { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50, apptClock, ClockChip };

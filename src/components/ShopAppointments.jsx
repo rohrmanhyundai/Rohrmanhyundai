@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { loadAppointmentList, loadAdvisorNotes } from '../utils/github';
 import { apptTags, ownerOf, shortMD } from '../utils/appointmentList';
-import { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50 } from './AdvisorDayForm';
+import { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50, apptClock, ClockChip } from './AdvisorDayForm';
 
 // ── Shop Appointments ─────────────────────────────────────────────────────────
 // The Appointment Prep sheet, read-only, for every advisor at once — so techs
@@ -39,6 +39,8 @@ export default function ShopAppointments({ onBack, backLabel = '← Back' }) {
   const [filter, setFilter] = useState('all');
   const [advisor, setAdvisor] = useState('ALL');
   const [q, setQ] = useState('');
+  const [clockNow, setClockNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setClockNow(Date.now()), 30000); return () => clearInterval(id); }, []);
 
   useEffect(() => {
     let alive = true;
@@ -144,15 +146,17 @@ export default function ShopAppointments({ onBack, backLabel = '← Back' }) {
               <tbody>
                 {shown.map(({ a, owner, tags, prep }) => {
                   const st = statusMeta(prep && prep.status);
+                  const clock = prep && prep.status === 'done' ? null : apptClock(date, a.time, clockNow);
                   const notes = (prep && Array.isArray(prep.notes)) ? prep.notes.filter(n => n && (n.text || n.body)) : [];
                   return (
-                    <tr key={a.apptNo} className={isLof50(a) && a.deferred ? 'bml-hot-row' : ''} style={prep && prep.status === 'done' ? { opacity: .55 } : undefined}>
+                    <tr key={a.apptNo} className={[isLof50(a) && a.deferred ? 'bml-hot-row' : '', clock ? `appt-clock-${clock.phase}` : ''].filter(Boolean).join(' ')} style={prep && prep.status === 'done' ? { opacity: .55 } : undefined}>
                       <td>
                         <span style={{ display: 'inline-block', width: '100%', textAlign: 'center', background: st.bg, border: `1px solid ${st.line}`, color: st.fg, borderRadius: 999, padding: '4px 4px', fontSize: 11, fontWeight: 800 }}>{st.label}</span>
                       </td>
                       <td style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap' }}>
                         {a.time}
-                        {a.transport === 'WAIT' && <div style={{ marginTop: 3, display: 'inline-block', fontSize: 9.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '0 6px' }}>WAITER</div>}
+                        {a.transport === 'WAIT' && <div style={{ marginTop: 4, width: 'fit-content', fontSize: 9.5, fontWeight: 900, color: '#fdba74', border: '1px solid rgba(249,115,22,.6)', borderRadius: 999, padding: '0 6px' }}>WAITER</div>}
+                        <ClockChip clock={clock} />
                       </td>
                       <td>
                         <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{a.customer}</div>
