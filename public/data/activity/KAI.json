@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-29T11:47:07.934Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
     "at": "2026-09-29T11:41:53.077Z",
     "type": "action",
     "label": "login"
