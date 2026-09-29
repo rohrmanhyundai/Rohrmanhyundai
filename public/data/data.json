@@ -282,7 +282,7 @@
         },
         "_hrsStamp": 1790446114011,
         "tue_raw": 0,
-        "hidden": true,
+        "hidden": false,
         "thu_raw": 0,
         "fri_raw": 0,
         "payrollHidden": true
@@ -414,7 +414,7 @@
       "fri": 43.059999999999995,
       "sat": 15.700000000000001,
       "week_total": 274.56,
-      "week_pct": 0.8245045045045045,
+      "week_pct": 0.7215768725361367,
       "shop_pacing": 276.7
     },
     "grossGoal": 152561,
