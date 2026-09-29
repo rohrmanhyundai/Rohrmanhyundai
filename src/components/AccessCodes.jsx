@@ -81,7 +81,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
             {busy ? '⏳ Saving…' : dirty ? '💾 Save' : '✓ Saved'}
           </button>
         )}
-        <button className="secondary" onClick={onBack}>← Back</button>
+        <button className="secondary" onClick={onBack}>← User Management</button>
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '22px 32px' }}>

@@ -5,6 +5,7 @@ import { advisorDailyAverage, currentWeekDates, reportDateFor, advisorOffDates, 
 import { saveDashboardToGitHub, saveUsers, saveSchedules, loadGithubFile, saveGithubFile, loadUsers, deleteUserData, setGoalForecastDaily, saveForceRefresh, loadAdvisorGoals, saveAdvisorGoalsMonth, loadAdditionalTimeIndex } from '../utils/github';
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
+import AccessGate from './AccessGate';
 import { hasCredential, passwordProblem, withPassword } from '../utils/password';
 import * as api from '../utils/api';
 import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
@@ -173,7 +174,7 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes, accessLock }) {
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   // Backend card: the worker's /health answer, and which users have a password
   // set there (users.json no longer says).
@@ -271,6 +272,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [openSection, setOpenSection] = useState(null);
   // Upload Reports opens the panel straight onto the section that takes a file.
   useEffect(() => { if (isOpen && initialSection) setOpenSection(initialSection); }, [isOpen, initialSection]);
+  // User Management can be locked on the Access Codes screen. Like every other
+  // locked page, the 10-minute unlock is judged when the section is opened,
+  // never while someone is mid-edit.
+  const usersArrival = useRef({ open: false, at: 0 });
+  const inUsers = isOpen && openSection === 'users';
+  if (inUsers && !usersArrival.current.open) usersArrival.current = { open: true, at: Date.now() };
+  if (!inUsers && usersArrival.current.open) usersArrival.current = { open: false, at: 0 };
+  const usersGated = !!(accessLock && accessLock.locked &&
+    (!accessLock.unlockedAt || usersArrival.current.at - accessLock.unlockedAt > 10 * 60 * 1000));
 
   // How many additional-time requests are waiting on a manager. Drives the badge
   // on the Additional Time Approval card so pending work is visible from the grid
@@ -2920,6 +2930,11 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         </div>
     );
 
+    if (openSection === 'users' && usersGated) return (
+      <AccessGate inline page="user-management" allowed={accessLock.allowed}
+        currentUser={accessLock.currentUser} currentUserRecord={accessLock.currentUserRecord}
+        onUnlock={accessLock.onUnlock} />
+    );
     if (openSection === 'users') return (
       <div className="group-body">
         <div className="small">Click a user to load them into the form.</div>

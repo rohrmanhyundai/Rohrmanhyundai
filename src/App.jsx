@@ -1161,7 +1161,11 @@ export default function App() {
         currentUser={currentUser}
         currentRole={currentRole}
         onSaved={cfg => setAccessCfg(cfg)}
-        onBack={() => navTo(prevPage && prevPage !== 'access-codes' ? prevPage : 'dashboard')}
+        // Opened from Edit Dashboard → Users, so Back goes straight back there.
+        onBack={() => {
+          navTo(prevPage && prevPage !== 'access-codes' ? prevPage : 'dashboard');
+          setAdminSection('users'); setAdminOpen(true);
+        }}
       />
     );
   }
@@ -1454,7 +1458,14 @@ export default function App() {
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
           initialSection={adminSection}
-          onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
+          onOpenAccessCodes={() => { setAdminOpen(false); setAdminSection(null); goTo('access-codes', page); }}
+          accessLock={{
+            locked: isLocked(accessCfg, 'user-management'),
+            allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
+            unlockedAt: accessUnlocked['user-management'] || 0,
+            onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
+            currentUser, currentUserRecord,
+          }}
         />
       </>
     );
@@ -2067,12 +2078,20 @@ export default function App() {
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}
-          onClose={() => setAdminOpen(false)} onDataChange={handleDataChange}
+          onClose={() => { setAdminOpen(false); setAdminSection(null); }} onDataChange={handleDataChange}
+          initialSection={adminSection}
           onRefresh={loadDashboard} currentUser={currentUser} currentRole={currentRole}
           users={users} vaultAccess={vaultAccess}
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
-          onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
+          onOpenAccessCodes={() => { setAdminOpen(false); setAdminSection(null); goTo('access-codes', page); }}
+          accessLock={{
+            locked: isLocked(accessCfg, 'user-management'),
+            allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
+            unlockedAt: accessUnlocked['user-management'] || 0,
+            onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
+            currentUser, currentUserRecord,
+          }}
         />
       </>
     );
@@ -2118,7 +2137,8 @@ export default function App() {
         data={data}
         vacations={vacations}
         isOpen={adminOpen}
-        onClose={() => setAdminOpen(false)}
+        onClose={() => { setAdminOpen(false); setAdminSection(null); }}
+        initialSection={adminSection}
         onDataChange={handleDataChange}
         onRefresh={loadDashboard}
         currentUser={currentUser}
@@ -2128,7 +2148,14 @@ export default function App() {
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
         schedules={schedules}
         onSchedulesChange={setSchedules}
-        onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
+        onOpenAccessCodes={() => { setAdminOpen(false); setAdminSection(null); goTo('access-codes', page); }}
+          accessLock={{
+            locked: isLocked(accessCfg, 'user-management'),
+            allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
+            unlockedAt: accessUnlocked['user-management'] || 0,
+            onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
+            currentUser, currentUserRecord,
+          }}
       />
     </div>
   );

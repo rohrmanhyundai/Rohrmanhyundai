@@ -23,7 +23,7 @@ export const DEFAULT_LOCKED = { payroll: true, 'employee-applicants': true };
 // everyone out of the site.
 export const PAGE_GROUPS = [
   { group: 'Manager', pages: [
-    ['manager-hub', 'Manager Hub'], ['upload-reports', 'Upload Reports'], ['payroll', 'Payroll'],
+    ['manager-hub', 'Manager Hub'], ['user-management', 'User Management (Edit Dashboard)'], ['upload-reports', 'Upload Reports'], ['payroll', 'Payroll'],
     ['employee-applicants', 'Employee Applicants'], ['employee-review', 'Employee Review'], ['tech-review', 'Tech Review Forms'],
     ['advisor-review', 'Advisor Review'], ['mgr-performance-reports', 'Performance Reports (all advisors)'],
     ['goal-forecast', 'Goal Forecast'], ['advisor-goals', 'Advisor Forecast / End of Day Reporting'],
@@ -69,7 +69,8 @@ export function mayOpen(cfg, page, username, role) {
 }
 
 // Shown in place of a locked page: "no access", or the code prompt.
-export default function AccessGate({ page, allowed, currentUser, currentUserRecord, onUnlock, onBack }) {
+// `inline` = just the prompt card, for use inside another screen (Edit Dashboard).
+export default function AccessGate({ page, allowed, currentUser, currentUserRecord, onUnlock, onBack, inline }) {
   const label = PAGE_LABEL[page] || page;
   const codeSet = hasAccessCode(currentUserRecord);
   const [code, setCode] = useState('');
@@ -88,14 +89,7 @@ export default function AccessGate({ page, allowed, currentUser, currentUserReco
   }
 
   const input = { width: '100%', background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 10, color: '#e2e8f0', outline: 'none', boxSizing: 'border-box' };
-  return (
-    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div><div className="adv-title">🔒 {label}</div><div className="adv-sub">{up(currentUser)}</div></div>
-        <div style={{ flex: 1 }} />
-        <button className="secondary" onClick={onBack}>← Back</button>
-      </div>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '60px 20px' }}>
+  const card = (
         <form onSubmit={submit} style={{ width: '100%', maxWidth: 400, textAlign: 'center', border: '1px solid rgba(148,163,184,.22)', borderRadius: 18, padding: '34px 28px', background: 'linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))' }}>
           <div style={{ fontSize: 40 }}>{allowed ? '🔒' : '⛔'}</div>
           {!allowed ? (
@@ -127,6 +121,17 @@ export default function AccessGate({ page, allowed, currentUser, currentUserReco
             </>
           )}
         </form>
+  );
+  if (inline) return <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 12px' }}>{card}</div>;
+  return (
+    <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="adv-topbar" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div><div className="adv-title">🔒 {label}</div><div className="adv-sub">{up(currentUser)}</div></div>
+        <div style={{ flex: 1 }} />
+        <button className="secondary" onClick={onBack}>← Back</button>
+      </div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '60px 20px' }}>
+        {card}
       </div>
     </div>
   );
