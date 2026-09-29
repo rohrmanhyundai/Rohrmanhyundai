@@ -790,8 +790,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         <select className="no-print" value="" disabled={claimingNo === row.apptNo}
                           onChange={e => reassign(row, e.target.value)}
                           title="Hand this appointment to another advisor"
-                          style={{ marginTop: 6, width: '100%', background: '#0f172a', border: '1px solid rgba(148,163,184,.35)', color: '#cbd5e1', borderRadius: 999, padding: '3px 4px', fontSize: 10.5, fontWeight: 800, cursor: 'pointer' }}>
-                          <option value="">{claimingNo === row.apptNo ? 'Moving…' : 'Change advisor'}</option>
+                          style={{
+                            marginTop: 6, width: '100%', background: 'rgba(56,189,248,.12)', border: '1px solid rgba(125,211,252,.45)',
+                            color: '#bae6fd', borderRadius: 999, padding: '4px 6px', fontSize: 11, fontWeight: 800, cursor: 'pointer',
+                            appearance: 'none', WebkitAppearance: 'none', textAlign: 'center', textAlignLast: 'center',
+                          }}>
+                          <option value="">{claimingNo === row.apptNo ? 'Moving…' : '👤 Advisor'}</option>
                           {advisorChoices.filter(n => n !== firstNameUpper(advisorName)).map(n => <option key={n} value={n}>→ {n}</option>)}
                         </select>
                       )}
