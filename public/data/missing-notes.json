@@ -1,11 +1,33 @@
 {
-  "updatedAt": "2026-09-28T19:37:36.394Z",
+  "updatedAt": "2026-09-29T17:55:53.562Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "781199",
+        "vehicle": "2012 Hyundai Sonata"
+      },
+      {
+        "ro": "781196",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781190",
+        "vehicle": "2012 Hyundai Accent"
+      },
+      {
+        "ro": "781178",
+        "vehicle": "2018 Hyundai Sonata"
+      }
+    ],
     "CORY": [
       {
-        "ro": "781173",
-        "vehicle": "2013 Kia Soul"
+        "ro": "781198",
+        "vehicle": "2016 Buick Encore"
+      },
+      {
+        "ro": "781197",
+        "vehicle": "2019 Kia Optima"
       },
       {
         "ro": "781170",
@@ -22,10 +44,6 @@
       {
         "ro": "781153",
         "vehicle": "2024 Hyundai IONIQ 5"
-      },
-      {
-        "ro": "781126",
-        "vehicle": "2022 Jeep Gladiator"
       },
       {
         "ro": "781125",
@@ -48,48 +66,26 @@
         "vehicle": "2019 Hyundai Santa Fe"
       },
       {
-        "ro": "781012",
-        "vehicle": "2016 Honda Odyssey"
-      },
-      {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
       }
     ],
-    "DAVID": [
-      {
-        "ro": "781171",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781166",
-        "vehicle": "2019 Hyundai Santa Fe"
-      },
-      {
-        "ro": "781164",
-        "vehicle": "2026 Hyundai Sonata"
-      },
-      {
-        "ro": "781160",
-        "vehicle": "2023 Hyundai Sonata Hybrid"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "781167",
-        "vehicle": "2023 Hyundai Santa Cruz"
+        "ro": "781195",
+        "vehicle": "2022 Hyundai Tucson"
       },
       {
-        "ro": "781149",
-        "vehicle": "2027 Hyundai Santa Fe"
+        "ro": "781194",
+        "vehicle": "2017 Hyundai Sonata Hybrid"
       },
       {
-        "ro": "781148",
-        "vehicle": "2025 Hyundai Santa Fe"
+        "ro": "781179",
+        "vehicle": "2024 Hyundai Elantra Hybrid"
       },
       {
-        "ro": "781144",
-        "vehicle": "2019 Hyundai Sonata"
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
       },
       {
         "ro": "781072",
