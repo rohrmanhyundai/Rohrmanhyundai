@@ -839,11 +839,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
-          <button className="secondary" disabled={saving || switchingMode} onClick={toggleAllMode}
+          {/* Advisors' sheets only — the manager tab is always the all-advisors view. */}
+          {!managerTab && <button className="secondary" disabled={saving || switchingMode} onClick={toggleAllMode}
             title={shopView ? 'Back to just this sheet' : "Every advisor's appointments for this day, all editable"}
             style={{ fontWeight: 900, background: shopView ? 'rgba(56,189,248,.14)' : 'linear-gradient(180deg,rgba(244,114,182,.28),rgba(168,85,247,.18))', borderColor: shopView ? 'rgba(125,211,252,.5)' : 'rgba(244,114,182,.55)' }}>
             {switchingMode ? '⏳ Saving…' : shopView ? `👤 View ${viewingOwn ? 'your' : `${advisorName}'s`} appointments` : '👥 View all appointments'}
-          </button>
+          </button>}
           {shopView ? (
             <span style={{ fontSize: 13, color: '#f9a8d4', fontWeight: 700 }}>Viewing all advisors</span>
           ) : advisorName !== ownAdvisor && (
