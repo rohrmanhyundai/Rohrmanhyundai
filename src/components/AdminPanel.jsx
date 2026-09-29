@@ -172,6 +172,12 @@ const PAGE_ACCESS = [
   { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },
   { key: 'atDiagWorksheet',   label: '⚙️ AT Diag Worksheet',       group: 'Tech' },
   { key: 'usedCarHub',         label: '🚗 Used Car Hub',            group: 'Used Cars' },
+  // The tiles on the phone view (MobileDashboard). On by default for everyone.
+  { key: 'mobileWorkSchedule',       label: '📅 Work Schedule',                  group: 'Mobile' },
+  { key: 'mobileTireWarranty',       label: '🛞 Tire Warranty',                  group: 'Mobile' },
+  { key: 'mobileAdditionalTime',     label: '⏱️ Warranty Additional Time (techs)', group: 'Mobile' },
+  { key: 'mobileRegistrationUpload', label: '🚗 Vehicle Registration Upload',    group: 'Mobile' },
+  { key: 'mobileMediaUpload',        label: '📸 Media Upload',                   group: 'Mobile' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));

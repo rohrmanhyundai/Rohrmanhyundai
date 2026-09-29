@@ -2142,13 +2142,14 @@ export default function App() {
           onAdvisor={() => { localStorage.setItem('advisorChatLastSeen', Date.now().toString()); setAdvisorUnread(0); setPage('advisor-calendar'); }}
           onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); setPage('tech-resources'); }}
           advisorUnread={advisorUnread} techUnread={techUnread} managerUnread={globalUnread}
-          onWorkSchedule={() => goTo('work-schedule', 'dashboard')}
-          onTireWarranty={() => goTo('tire-warranty', 'dashboard')}
-          onAdditionalTime={jobRole === 'technician'
+          // Phone tiles follow page access → Mobile (Role Setup / per user).
+          onWorkSchedule={canAccess('mobileWorkSchedule') ? () => goTo('work-schedule', 'dashboard') : undefined}
+          onTireWarranty={canAccess('mobileTireWarranty') ? () => goTo('tire-warranty', 'dashboard') : undefined}
+          onAdditionalTime={jobRole === 'technician' && canAccess('mobileAdditionalTime')
             ? () => goTo('additional-time-menu', 'dashboard')
             : undefined}
-          onRegistrationUpload={() => goTo('registration-upload', 'dashboard')}
-          onMediaUpload={() => goTo('media-upload', 'dashboard')}
+          onRegistrationUpload={canAccess('mobileRegistrationUpload') ? () => goTo('registration-upload', 'dashboard') : undefined}
+          onMediaUpload={canAccess('mobileMediaUpload') ? () => goTo('media-upload', 'dashboard') : undefined}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}

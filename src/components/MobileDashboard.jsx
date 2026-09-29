@@ -69,8 +69,9 @@ export default function MobileDashboard({ data, vacations, isLoggedIn, currentUs
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {isLoggedIn ? (
           <>
-            <button onClick={onWorkSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Work Schedule</button>
-            <button onClick={onTireWarranty} style={btnStyle('#2e2410', '#fbbf24')}>🛞 Tire Warranty</button>
+            {/* Each tile shows when App passes its handler (page access → Mobile). */}
+            {onWorkSchedule && <button onClick={onWorkSchedule} style={btnStyle('#1a2e3a', '#38bdf8')}>📅 Work Schedule</button>}
+            {onTireWarranty && <button onClick={onTireWarranty} style={btnStyle('#2e2410', '#fbbf24')}>🛞 Tire Warranty</button>}
             {onAdditionalTime && (
               <button onClick={onAdditionalTime} style={btnStyle('#2b1f3a', '#c084fc')}>⏱️ Warranty Additional Time</button>
             )}
