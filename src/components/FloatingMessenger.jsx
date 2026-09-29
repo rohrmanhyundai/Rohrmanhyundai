@@ -285,8 +285,10 @@ export default function FloatingMessenger({
     // the top, which is where you look for what just came in.
     .sort((a, b) => lastActivity(b) - lastActivity(a)), [messages, me]);
 
+  // Every user in the system until they're deleted — hidden ones included.
+  // Only the sender is left out.
   const roster = useMemo(() => (users || [])
-    .filter(u => u.username && u.username.toLowerCase() !== 'admin')
+    .filter(u => u.username)
     .map(u => ({ name: u.username.toUpperCase(), role: (u.role || '').toLowerCase() }))
     .filter(u => u.name !== me)
     .sort((a, b) => a.name.localeCompare(b.name)), [users, me]);

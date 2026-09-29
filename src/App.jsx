@@ -2262,7 +2262,9 @@ export default function App() {
     <FloatingMessenger
       currentUser={currentUser}
       currentRole={currentRole}
-      users={activeUsers}
+      // Everyone who can log in — "Hide User" only takes someone off the TV,
+      // payroll and contests; they still log in, so they can still be messaged.
+      users={users}
       messages={globalMessages}
       unread={globalUnread}
       canSend={canSendGlobal}
