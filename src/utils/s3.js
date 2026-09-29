@@ -118,3 +118,12 @@ export async function deleteS3ObjectByUrl(url) {
 export async function deleteFileFromS3(filename) {
   await deleteObject(S3_DOCS_PREFIX + filename);
 }
+
+// A picture or screenshot attached to a message (FloatingMessenger → Send).
+// Returns the public URL. Goes through the worker like the other photos.
+export const MESSAGE_MEDIA_MAX = 20 * 1024 * 1024;
+export function uploadMessageMediaToS3(file) {
+  const ext = (String(file.name || '').split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+  const key = `message-media/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  return putObject(key, file, file.type || 'image/png');
+}

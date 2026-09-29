@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EMOJIS } from '../utils/emoji';
 import { sendGlobalMessage, replyToGlobalMessage, deleteGlobalMessage } from '../utils/github';
+import { uploadMessageMediaToS3, MESSAGE_MEDIA_MAX } from '../utils/s3';
 import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, GLOBAL_REPLY_EVENT } from '../utils/pusher';
 
 const uid = () => `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -80,6 +81,22 @@ export function withinRetention(m, windowMs = RETENTION_MS) {
  * narrow panel and got clipped — half the emoji were unreachable.
  */
 const EMOJI_PANEL_W = 250;
+
+// Pictures attached to a message ({ url, name, type }). Click one to open it
+// full size in a new tab. Also used by the message pop-up in App.jsx.
+export function MessageMedia({ media, size = 110 }) {
+  if (!Array.isArray(media) || !media.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+      {media.map((m, i) => (
+        <a key={i} href={m.url} target="_blank" rel="noreferrer" title={m.name || 'Open picture'}
+          style={{ display: 'block', width: size, height: size, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(148,163,184,.35)', background: 'rgba(2,6,23,.5)' }}>
+          <img src={m.url} alt={m.name || 'picture'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 function EmojiPicker({ onPick, title = 'Add an emoji' }) {
   const [open, setOpen] = useState(false);
@@ -176,6 +193,11 @@ export default function FloatingMessenger({
   const [replyOpenId, setReplyOpenId] = useState('');   // which message has its reply box open
   const [selected, setSelected] = useState(() => new Set());
   const [text, setText] = useState('');
+  // 📎 Send media: pictures / screenshots waiting to go with the message.
+  // Picked, dragged in, or pasted (⌘/Ctrl+V); uploaded when Send is pressed.
+  const [attachments, setAttachments] = useState([]);   // [{ id, file, preview }]
+  const [dragOver, setDragOver] = useState(false);
+  const mediaInputRef = useRef(null);
   const [alert, setAlert] = useState(false);
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState('');
@@ -301,17 +323,45 @@ export default function FloatingMessenger({
     setTimeout(() => { el.selectionStart = el.selectionEnd = start + emoji.length; el.focus(); }, 0);
   }
 
+  function addMedia(fileList) {
+    const files = [...(fileList || [])];
+    const pics = files.filter(f => /^image\//.test(f.type || ''));
+    const tooBig = pics.filter(f => f.size > MESSAGE_MEDIA_MAX);
+    const ok = pics.filter(f => f.size <= MESSAGE_MEDIA_MAX);
+    if (files.length && !pics.length) setStatus('⚠️ Only pictures and screenshots can be sent.');
+    else if (tooBig.length) setStatus(`⚠️ ${tooBig.length === 1 ? 'That picture is' : `${tooBig.length} pictures are`} over 20 MB.`);
+    else setStatus('');
+    if (ok.length) setAttachments(a => [...a, ...ok.map(f => ({ id: uid(), file: f, preview: URL.createObjectURL(f) }))].slice(0, 6));
+  }
+  function removeMedia(id) {
+    setAttachments(a => { const x = a.find(m => m.id === id); if (x) URL.revokeObjectURL(x.preview); return a.filter(m => m.id !== id); });
+  }
+  function onPasteMedia(e) {
+    const files = [...((e.clipboardData && e.clipboardData.files) || [])];
+    if (files.some(f => /^image\//.test(f.type || ''))) { e.preventDefault(); addMedia(files); }
+  }
+
   const handleSend = useCallback(async () => {
     if (sending) return;
     if (!selected.size) { setStatus('⚠️ Pick who it goes to.'); return; }
-    if (!text.trim()) { setStatus('⚠️ Type a message first.'); return; }
+    if (!text.trim() && !attachments.length) { setStatus('⚠️ Type a message or add a picture first.'); return; }
     setSending(true); setStatus('');
     try {
-      const entry = { id: uid(), from: me, to: [...selected], text: text.trim(), alert, requireReply: false, replies: [], timestamp: Date.now() };
+      const media = [];
+      for (let i = 0; i < attachments.length; i++) {
+        setStatus(`⏳ Uploading picture ${i + 1} of ${attachments.length}…`);
+        const f = attachments[i].file;
+        media.push({ url: await uploadMessageMediaToS3(f), name: f.name || 'screenshot.png', type: f.type || 'image/png' });
+      }
+      setStatus('');
+      // A picture on its own still needs text — the pop-up and inbox key off it.
+      const body = text.trim() || (media.length === 1 ? '📷 Sent a picture' : `📷 Sent ${media.length} pictures`);
+      const entry = { id: uid(), from: me, to: [...selected], text: body, ...(media.length ? { media } : {}), alert, requireReply: false, replies: [], timestamp: Date.now() };
       const next = await sendGlobalMessage(entry);
       try { await triggerEvent(GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, entry); } catch {}
       onMessagesChange?.(Array.isArray(next) ? next : [...(messages || []), entry]);
       setText(''); setSelected(new Set()); setAlert(false);
+      attachments.forEach(a => URL.revokeObjectURL(a.preview)); setAttachments([]);
       setStatus(`✅ Sent to ${entry.to.length} user${entry.to.length === 1 ? '' : 's'}`);
       setTimeout(() => setStatus(s => (s && s.startsWith('✅')) ? '' : s), 4000);
       // Sending is the end of the job — get the panel out of the way rather
@@ -323,7 +373,7 @@ export default function FloatingMessenger({
     } finally {
       setSending(false);
     }
-  }, [sending, selected, text, alert, me, messages, onMessagesChange]);
+  }, [sending, selected, text, attachments, alert, me, messages, onMessagesChange]);
 
   // Managers and admins can take a message down for everyone. Optimistic: the
   // row goes immediately and comes back if the write fails, so a slow token
@@ -461,6 +511,7 @@ export default function FloatingMessenger({
                     </div>
 
                     <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 6, whiteSpace: 'pre-wrap' }}>{m.text}</div>
+                    <MessageMedia media={m.media} />
 
                     {replies.length > 0 && (
                       <div style={{ marginTop: 9, borderLeft: '2px solid rgba(125,211,252,.35)', paddingLeft: 10, display: 'grid', gap: 7 }}>
@@ -544,6 +595,7 @@ export default function FloatingMessenger({
                   ref={composeRef}
                   value={text}
                   onChange={e => setText(e.target.value)}
+                  onPaste={onPasteMedia}
                   rows={4}
                   placeholder="Type your message…"
                   style={{
@@ -557,6 +609,35 @@ export default function FloatingMessenger({
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
                   <EmojiPicker onPick={insertIntoCompose} />
                 </div>
+                {/* 📎 Send media — click, drag a picture in, or paste a screenshot. */}
+                <input ref={mediaInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }}
+                  onChange={e => { addMedia(e.target.files); e.target.value = ''; }} />
+                <div
+                  onClick={() => mediaInputRef.current && mediaInputRef.current.click()}
+                  onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={e => { e.preventDefault(); setDragOver(false); addMedia(e.dataTransfer.files); }}
+                  onPaste={onPasteMedia}
+                  tabIndex={0}
+                  style={{
+                    marginTop: 8, padding: '12px 10px', borderRadius: 10, cursor: 'pointer', textAlign: 'center',
+                    border: `1.5px dashed ${dragOver ? 'rgba(56,189,248,.9)' : 'rgba(148,163,184,.4)'}`,
+                    background: dragOver ? 'rgba(56,189,248,.12)' : 'rgba(255,255,255,.03)',
+                    color: dragOver ? '#7dd3fc' : '#94a3b8', fontSize: 12.5, fontWeight: 700,
+                  }}>
+                  📎 <span style={{ color: '#e2e8f0' }}>Send media</span> — click, drag a picture here, or paste a screenshot
+                </div>
+                {attachments.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                    {attachments.map(a => (
+                      <div key={a.id} style={{ position: 'relative', width: 72, height: 72, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(148,163,184,.4)' }}>
+                        <img src={a.preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        <button onClick={() => removeMedia(a.id)} title="Remove"
+                          style={{ position: 'absolute', top: 2, right: 2, width: 20, height: 20, padding: 0, borderRadius: 999, fontSize: 12, lineHeight: '18px', background: 'rgba(2,6,23,.85)', border: '1px solid rgba(255,255,255,.3)', color: '#f1f5f9', cursor: 'pointer' }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>

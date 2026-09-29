@@ -47,7 +47,7 @@ const isAdminRole = (role) => String(role || '').toLowerCase() === 'admin';
 // letting a session write src/ would let anyone logged in ship a new build.
 const WRITABLE_PREFIX = 'public/data/';
 const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching', 'daily-wrench']);
-const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/'];
+const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/', 'message-media/'];
 const S3_MAX_BYTES = 25 * 1024 * 1024;
 // Models the app asks for (add-on screenshot reader = gpt-4o; the rest mini).
 const OPENAI_MODELS = new Set(['gpt-4o', 'gpt-4o-mini']);

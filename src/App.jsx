@@ -38,7 +38,7 @@ import AccessCodes from './components/AccessCodes';
 import ShopAppointments from './components/ShopAppointments';
 import { ROLE_ACCESS_PATH, resolvePages } from './utils/roleAccess';
 import GlobalMessage from './components/GlobalMessage';
-import FloatingMessenger from './components/FloatingMessenger';
+import FloatingMessenger, { MessageMedia } from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
 import DeferredService from './components/DeferredService';
@@ -538,7 +538,7 @@ export default function App() {
         return;
       }
       // requireReply → the recipient must type a reply to close (no plain OK).
-      mentionQueueRef.current.push({ id: msg.id, type: msg.requireReply ? 'reply-required' : 'global', from: msg.from || 'Management', text: String(msg.text), channel: 'Global Message', isAlert });
+      mentionQueueRef.current.push({ id: msg.id, type: msg.requireReply ? 'reply-required' : 'global', from: msg.from || 'Management', text: String(msg.text), media: msg.media, channel: 'Global Message', isAlert });
       setMention(cur => cur || mentionQueueRef.current[0]);
       // Inside the dedupe guards above, so the bell rings once per message even
       // when the Pusher event and the poll both find it.
@@ -1162,6 +1162,7 @@ export default function App() {
               </div>
               <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 14, lineHeight: 1.45, textAlign: 'left' }}>
                 {mention.text}
+                <MessageMedia media={mention.media} size={120} />
               </div>
               <textarea value={replyDraft} onChange={e => setReplyDraft(e.target.value)} rows={3} autoFocus placeholder="Type your reply to close this…"
                 style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#f1f5f9', padding: '10px 12px', fontSize: 15, fontFamily: 'inherit', resize: 'vertical', outline: 'none', marginBottom: replyErr ? 8 : 14, textAlign: 'left' }} />
@@ -1182,6 +1183,7 @@ export default function App() {
               </div>
               <div style={{ fontSize: 15, color: '#e2e8f0', background: 'rgba(255,255,255,.05)', border: `1px solid ${mention.isAlert ? 'rgba(248,113,113,.4)' : 'rgba(148,163,184,.22)'}`, borderRadius: 12, padding: '13px 15px', marginBottom: 22, lineHeight: 1.45, textAlign: 'left' }}>
                 {mention.text}
+                <MessageMedia media={mention.media} size={120} />
               </div>
               <button onClick={dismissMention} autoFocus
                 style={{
