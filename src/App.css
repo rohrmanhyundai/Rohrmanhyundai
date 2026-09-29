@@ -1055,3 +1055,15 @@ html, body {
 .adv-tool-cell > button, .adv-tool-cell > span { width: 100%; }
 .adv-tool-cell > span { display: flex !important; }
 .adv-tool-cell button { width: 100%; min-height: 64px; font-size: 15px; justify-content: center; }
+
+/* Waffle button (All Tools) — 3×3 grid of rounded squares, top left. */
+.apt-waffle { position: relative; flex-shrink: 0; width: 50px; height: 50px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 14px; background: linear-gradient(145deg, rgba(110,231,249,.22), rgba(139,92,246,.18)); border: 1px solid rgba(110,231,249,.55);
+  box-shadow: 0 0 12px rgba(110,231,249,.22); transition: transform .15s, box-shadow .15s; }
+.apt-waffle:hover { transform: translateY(-1px) scale(1.04); box-shadow: 0 0 20px rgba(110,231,249,.5); }
+.apt-waffle-grid { display: grid; grid-template-columns: repeat(3, 7px); gap: 4px; }
+.apt-waffle-grid i { width: 7px; height: 7px; border-radius: 2px; background: #cffafe; box-shadow: 0 0 4px rgba(165,243,252,.7); }
+.apt-waffle:hover .apt-waffle-grid i { background: #fff; }
+.apt-waffle-count { position: absolute; top: -7px; right: -7px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 900; color: #0c4a6e;
+  background: #a5f3fc; border: 2px solid #0b1220; }

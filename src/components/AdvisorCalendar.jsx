@@ -961,23 +961,14 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
     <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {modals}
       <div className="adv-topbar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div>
-            <div className="adv-title">Appointment Prep Calendar</div>
-            <div className="adv-sub">
-              {isViewingOwn ? `${viewingAdvisor} (My Calendar)` : `Viewing: ${viewingAdvisor}`}
-            </div>
-          </div>
-          <button className="apt-tools-box" onClick={() => { setToolsTab('all'); setView('tools'); }}
-            title="Every tool in one place">
-            <span style={{ fontSize: 20 }}>🧰</span>
-            <span>
-              <span style={{ display: 'block', fontSize: 14, fontWeight: 900 }}>All Tools</span>
-              <span style={{ display: 'block', fontSize: 10.5, fontWeight: 700, opacity: .8 }}>{allTools.length} tools{hiddenCount ? ` · ${hiddenCount} tucked away` : ''}</span>
-            </span>
-          </button>
-        </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* Waffle: opens the All Tools page. The page title is gone — the
+            calendar and the advisor tabs say where you are. */}
+        <button className="apt-waffle" onClick={() => { setToolsTab('all'); setView('tools'); }}
+          title={`All Tools — ${allTools.length} tools${hiddenCount ? `, ${hiddenCount} not on this bar` : ''}`}>
+          <span className="apt-waffle-grid">{Array.from({ length: 9 }, (_, i) => <i key={i} />)}</span>
+          {hiddenCount > 0 && <span className="apt-waffle-count">{hiddenCount}</span>}
+        </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', flex: 1, minWidth: 0 }}>
           {/* Same buttons as ever, just held in a list so each advisor can press
               and hold to arrange them the way they work. `display: contents`
               keeps them as direct children of this row, so the layout is
