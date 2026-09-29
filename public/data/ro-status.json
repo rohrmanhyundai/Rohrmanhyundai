@@ -1,18 +1,30 @@
 {
-  "updatedAt": "2026-09-29T17:55:55.300Z",
+  "updatedAt": "2026-09-29T19:37:03.382Z",
   "by": "SHAWN",
   "rows": [
     {
-      "ro": "781199",
+      "ro": "781202",
       "advisor": "DAVID RILEY",
-      "vehicle": "2012 Hyundai Sonata",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
       "tech": "",
-      "userFlag": "NO_LABEL",
+      "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
-      "openDate": "Tue, Sep 29, 2026 1:45 PM"
+      "openDate": "Tue, Sep 29, 2026 3:18 PM"
+    },
+    {
+      "ro": "781200",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2023 Hyundai IONIQ 5",
+      "tech": "CORY SWINDLE",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Tue, Sep 29, 2026 1:57 PM"
     },
     {
       "ro": "781198",
@@ -49,18 +61,6 @@
       "cpStatus": "NOT_STARTED",
       "roAge": 1,
       "openDate": "Tue, Sep 29, 2026 12:41 PM"
-    },
-    {
-      "ro": "781195",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2022 Hyundai Tucson",
-      "tech": "CHRIS FOLEY",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "IN_PROGRESS",
-      "roAge": 1,
-      "openDate": "Tue, Sep 29, 2026 12:23 PM"
     },
     {
       "ro": "781194",
@@ -133,18 +133,6 @@
       "cpStatus": "NA",
       "roAge": 1,
       "openDate": "Tue, Sep 29, 2026 8:50 AM"
-    },
-    {
-      "ro": "781185",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2023 Hyundai Santa Cruz",
-      "tech": "CHRIS FOLEY",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "INVOICED",
-      "roAge": 1,
-      "openDate": "Tue, Sep 29, 2026 8:42 AM"
     },
     {
       "ro": "781184",
@@ -227,7 +215,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_DISPATCH",
       "cpStatus": "NOT_STARTED",
-      "roAge": 1,
+      "roAge": 2,
       "openDate": "Mon, Sep 28, 2026 3:03 PM"
     },
     {
@@ -239,7 +227,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 1,
+      "roAge": 2,
       "openDate": "Mon, Sep 28, 2026 2:48 PM"
     },
     {
@@ -375,18 +363,6 @@
       "openDate": "Thu, Sep 24, 2026 4:56 PM"
     },
     {
-      "ro": "781101",
-      "advisor": "CORY CHAPMAN",
-      "vehicle": "2024 Hyundai IONIQ 5",
-      "tech": "JACOB KUNTZ",
-      "userFlag": "GREEN",
-      "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 5,
-      "openDate": "Thu, Sep 24, 2026 2:29 PM"
-    },
-    {
       "ro": "781097",
       "advisor": "DAVID RILEY",
       "vehicle": "2013 Hyundai Elantra",
@@ -395,7 +371,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 5,
+      "roAge": 6,
       "openDate": "Thu, Sep 24, 2026 2:02 PM"
     },
     {
@@ -419,7 +395,7 @@
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "NA",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Wed, Sep 23, 2026 3:20 PM"
     },
     {
@@ -431,7 +407,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Wed, Sep 23, 2026 3:19 PM"
     },
     {
@@ -443,7 +419,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Wed, Sep 23, 2026 3:18 PM"
     },
     {
@@ -455,7 +431,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 6,
+      "roAge": 7,
       "openDate": "Wed, Sep 23, 2026 3:18 PM"
     },
     {
@@ -479,7 +455,7 @@
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
-      "roAge": 7,
+      "roAge": 8,
       "openDate": "Tue, Sep 22, 2026 3:15 PM"
     },
     {
@@ -490,7 +466,7 @@
       "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "cpStatus": "COMPLETED",
       "roAge": 8,
       "openDate": "Mon, Sep 21, 2026 4:04 PM"
     },
@@ -503,7 +479,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "COMPLETED",
-      "roAge": 11,
+      "roAge": 12,
       "openDate": "Fri, Sep 18, 2026 2:13 PM"
     },
     {
@@ -527,7 +503,7 @@
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
-      "roAge": 12,
+      "roAge": 13,
       "openDate": "Thu, Sep 17, 2026 2:43 PM"
     },
     {
