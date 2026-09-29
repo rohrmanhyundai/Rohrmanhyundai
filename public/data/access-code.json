@@ -1,0 +1,18 @@
+{
+  "updatedAt": "2026-09-29T01:21:24.296Z",
+  "by": "SHAWN",
+  "locked": {
+    "payroll": true,
+    "employee-applicants": true,
+    "live-pay-hub": true,
+    "live-pay": true,
+    "after-call": true,
+    "deferred-service": true,
+    "charge-account-list": true,
+    "registration-uploads": true,
+    "original-owner": true,
+    "employee-review": true,
+    "user-data-tracker": true
+  },
+  "users": {}
+}
