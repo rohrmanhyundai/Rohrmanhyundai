@@ -107,7 +107,9 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   const me = (currentUser || '').toUpperCase();
   const codeSet = hasAccessCode(currentUserRecord);
 
-  const [unlocked, setUnlocked] = useState(false);
+  // The app-wide AccessGate asks for the code before this page opens; this
+  // page's own prompt only comes back if someone presses 🔒 Lock.
+  const [unlocked, setUnlocked] = useState(true);
   const [codeInput, setCodeInput] = useState('');
   const [codeErr, setCodeErr] = useState('');
   const [checking, setChecking] = useState(false);

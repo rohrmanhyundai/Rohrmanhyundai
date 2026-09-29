@@ -111,8 +111,10 @@ function PayrollLock({ currentUser, currentUserRecord, onBack, onUnlock }) {
   );
 }
 
+// The code is asked by the app-wide AccessGate now (Payroll is locked by
+// default there); this page's own prompt only returns if someone presses Lock.
 export default function Payroll(props) {
-  const [unlocked, setUnlocked] = useState(false);
+  const [unlocked, setUnlocked] = useState(true);
   if (!unlocked) return <PayrollLock currentUser={props.currentUser} currentUserRecord={props.currentUserRecord} onBack={props.onBack} onUnlock={() => setUnlocked(true)} />;
   return <PayrollInner {...props} onLock={() => setUnlocked(false)} />;
 }

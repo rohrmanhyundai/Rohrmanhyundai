@@ -173,7 +173,7 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes }) {
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   // Backend card: the worker's /health answer, and which users have a password
   // set there (users.json no longer says).
@@ -3057,7 +3057,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="field">
               <label title="Managers type this to open their Employee Applicants page and Payroll. Stored hashed — it can't be read back, only replaced.">
-                Access Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits · Applicants &amp; Payroll)</span>
+                Access Code <span style={{ color: '#64748b', fontWeight: 500, fontSize: 10, marginLeft: 4 }}>(4 digits · locked pages)</span>
+                {onOpenAccessCodes && (
+                  <button type="button" onClick={onOpenAccessCodes} title="Choose which pages need the code, and who may open each"
+                    style={{ marginLeft: 8, padding: '2px 10px', fontSize: 11, fontWeight: 900, borderRadius: 999, background: 'linear-gradient(180deg,rgba(248,113,113,.28),rgba(239,68,68,.16))', border: '1px solid rgba(248,113,113,.55)', color: '#fecaca', verticalAlign: 'middle' }}>
+                    🔐 Access Codes →
+                  </button>
+                )}
               </label>
               <input value={newUserCode} inputMode="numeric" type="password"
                 onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
@@ -3065,7 +3071,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div className="small" style={{ marginTop: 4 }}>
                 {existingCode
                   ? 'A code is set. Leave blank to keep it, or type a new one to replace it.'
-                  : 'Their Employee Applicants page and Payroll stay locked until you set this.'}
+                  : 'Locked pages stay closed to them until you set this.'}
               </div>
             </div>
           </div>

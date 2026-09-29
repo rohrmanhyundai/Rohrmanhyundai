@@ -33,6 +33,8 @@ import AdditionalTimeReview from './components/AdditionalTimeReview';
 import OriginalOwnerAffidavit from './components/OriginalOwnerAffidavit';
 import ManagerHub from './components/ManagerHub';
 import UploadReports from './components/UploadReports';
+import AccessGate, { ACCESS_PATH, isLocked, mayOpen } from './components/AccessGate';
+import AccessCodes from './components/AccessCodes';
 import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
@@ -56,7 +58,7 @@ import ChargeAccountList from './components/ChargeAccountList';
 import { recalcTech, recalcAdvisorSummary, roh50Goals } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
-import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages } from './utils/github';
+import { loadCashDash, loadBigMoney, loadUsers, saveUsers as saveUsersFile, saveUsers, savePasswordVault, loadDashboardData, saveDashboardToGitHub, loadSchedules, loadChatMessages, loadTechChatMessages, loadForceRefresh, loadFormerEmployees, rehireFormerEmployee, markFormerEmployee, pollChatMessages, pollTechChatMessages, pollGlobalMessages, replyToGlobalMessage, loadGlobalMessages, loadGithubFile } from './utils/github';
 import WorkScheduleTabs from './components/WorkScheduleTabs';
 import TireQuote from './components/TireQuote';
 import EmployeeApplicants from './components/EmployeeApplicants';
@@ -267,6 +269,19 @@ export default function App() {
   // Big-Money LOF contest file — drives the advisor-calendar tab (shown from the
   // start date until the manager turns it off) and its ✅/🏆 badge.
   const [bigMoney, setBigMoney] = useState({});
+  // Access codes (see components/AccessGate.jsx): which pages are locked and
+  // who may open them. null = never set up → the old Payroll/Applicants lock.
+  // An unlock lasts 10 minutes on this tab (memory only — a refresh re-asks).
+  const [accessCfg, setAccessCfg] = useState(null);
+  const [accessUnlocked, setAccessUnlocked] = useState({});
+  useEffect(() => {
+    if (!isLoggedIn) { setAccessUnlocked({}); return; }
+    loadGithubFile(ACCESS_PATH).then(d => setAccessCfg(d && d.locked ? d : null)).catch(() => {});
+  }, [isLoggedIn]);
+  // The 10 minutes are judged when you ARRIVE on a page, never mid-page, so
+  // nobody is thrown out of Payroll halfway through a week.
+  const pageArrival = useRef({ page: null, at: 0 });
+  if (pageArrival.current.page !== page) pageArrival.current = { page, at: Date.now() };
   useEffect(() => { loadBigMoney().then(setBigMoney).catch(() => {}); }, []);
 
   const loadDashboard = useCallback(async () => {
@@ -1120,6 +1135,36 @@ export default function App() {
   ) : null;
 
   const renderPage = () => {
+  // ── Access-code lock ── any page an admin has locked asks for the code first.
+  if (page !== 'dashboard' && page !== 'access-codes' && isLocked(accessCfg, page)) {
+    const at = accessUnlocked[page];
+    if (!at || pageArrival.current.at - at > 10 * 60 * 1000) {
+      return (
+        <AccessGate
+          page={page}
+          allowed={mayOpen(accessCfg, page, currentUser, currentRole)}
+          currentUser={currentUser}
+          currentUserRecord={currentUserRecord}
+          onUnlock={() => setAccessUnlocked(u => ({ ...u, [page]: Date.now() }))}
+          onBack={() => navTo(prevPage && prevPage !== page ? prevPage : 'dashboard')}
+        />
+      );
+    }
+  }
+  if (page === 'access-codes') {
+    const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
+    if (!isMgr) { setPage('dashboard'); return null; }
+    return (
+      <AccessCodes
+        users={users}
+        cfg={accessCfg}
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onSaved={cfg => setAccessCfg(cfg)}
+        onBack={() => navTo(prevPage && prevPage !== 'access-codes' ? prevPage : 'dashboard')}
+      />
+    );
+  }
   // True when this page was opened from Upload Reports (see openUpload).
   const launched = !!uploadLaunch && uploadLaunch.page === page;
   const UP = '← Upload Reports';
@@ -1409,6 +1454,7 @@ export default function App() {
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
           initialSection={adminSection}
+          onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
         />
       </>
     );
@@ -2026,6 +2072,7 @@ export default function App() {
           users={users} vaultAccess={vaultAccess}
           onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
           schedules={schedules} onSchedulesChange={setSchedules}
+          onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
         />
       </>
     );
@@ -2081,6 +2128,7 @@ export default function App() {
         onUsersChange={updated => { setUsers(updated); localStorage.setItem(USERS_KEY, JSON.stringify(updated)); }}
         schedules={schedules}
         onSchedulesChange={setSchedules}
+        onOpenAccessCodes={() => { setAdminOpen(false); goTo('access-codes', page); }}
       />
     </div>
   );
