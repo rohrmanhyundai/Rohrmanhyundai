@@ -312,6 +312,25 @@
       "deferred": null
     },
     {
+      "id": "rmumlexh7h8fn",
+      "customerName": "Krista Steinmetz",
+      "appointmentTime": "2:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43232",
+      "vehicle": "2023 Hyundai IONIQ 5",
+      "services": [
+        "parts in sop"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
       "id": "rmulqrx80h7zj",
       "customerName": "Mollie Mongson",
       "appointmentTime": "4:00 PM",
@@ -361,5 +380,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-09-29T11:27:33.962Z"
+  "savedAt": "2026-09-29T11:28:28.580Z"
 }
