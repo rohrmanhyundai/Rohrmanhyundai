@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T21:35:37.195Z",
+  "updatedAt": "2026-09-29T03:56:29.015Z",
   "ros": {
     "779297": {
       "advisor": "DAVID",
@@ -11,10 +11,17 @@
           "role": "manager",
           "text": "WAITING ON BACK ORDER PARTS",
           "at": 1789680729725
+        },
+        {
+          "id": "rn-mum59qzblrx1",
+          "by": "SHAWN",
+          "role": "manager",
+          "text": "in the shop now",
+          "at": 1790654189015
         }
       ],
       "vehicle": "2018 Hyundai Santa Fe",
-      "lastSeenOpen": 1789680729725
+      "lastSeenOpen": 1790654189015
     },
     "779828": {
       "advisor": "JORDAN",
