@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-29T17:55:53.562Z",
+  "updatedAt": "2026-09-29T19:37:01.998Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781199",
-        "vehicle": "2012 Hyundai Sonata"
+        "ro": "781202",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
       },
       {
         "ro": "781196",
@@ -18,6 +18,20 @@
       {
         "ro": "781178",
         "vehicle": "2018 Hyundai Sonata"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781200",
+        "vehicle": "2023 Hyundai IONIQ 5"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      },
+      {
+        "ro": "781072",
+        "vehicle": "2015 Hyundai Tucson"
       }
     ],
     "CORY": [
@@ -50,10 +64,6 @@
         "vehicle": "2013 Ford Focus"
       },
       {
-        "ro": "781101",
-        "vehicle": "2024 Hyundai IONIQ 5"
-      },
-      {
         "ro": "781071",
         "vehicle": "2020 Ford Explorer"
       },
@@ -68,28 +78,6 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781195",
-        "vehicle": "2022 Hyundai Tucson"
-      },
-      {
-        "ro": "781194",
-        "vehicle": "2017 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "781179",
-        "vehicle": "2024 Hyundai Elantra Hybrid"
-      },
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
-      },
-      {
-        "ro": "781072",
-        "vehicle": "2015 Hyundai Tucson"
       }
     ]
   }
