@@ -215,7 +215,7 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "",
-      "managementAccess": false,
+      "managementAccess": true,
       "hidden": false
     },
     {
