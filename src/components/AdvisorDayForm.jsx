@@ -319,7 +319,12 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   // The manager tab (a manager's own name, not an advisor on the roster) shows
   // EVERY advisor's appointments, fully editable, each saved to its own sheet.
   const rosterFirsts = (advisorList || []).map(firstNameUpper).filter(Boolean);
-  const shopView = isManager && !rosterFirsts.includes(firstNameUpper(advisorName));
+  const managerTab = isManager && !rosterFirsts.includes(firstNameUpper(advisorName));
+  // "👥 View all appointments" ↔ "👤 View your appointments". The manager tab
+  // opens on all; an advisor's sheet opens on their own.
+  const [allMode, setAllMode] = useState(managerTab);
+  useEffect(() => { setAllMode(managerTab); }, [managerTab, advisorName]);
+  const shopView = allMode;
   const viewingOwn = firstNameUpper(advisorName) === firstNameUpper(ownAdvisor);
   // Advisors move appointments onto their own sheet; a manager can place one on
   // whichever advisor's sheet they're looking at.
@@ -361,6 +366,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   useEffect(() => {
     let cancelled = false;
     loadedRef.current = false;
+    lastSavedRef.current = '';
+    savedByOwnerRef.current = {};
     if (shopView) {
       // Manager view: the day's list + every advisor's sheet.
       loadAppointmentList(date).catch(() => null).then(async (list) => {
@@ -390,7 +397,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       loadAppointmentList(date).catch(() => null),
     ]).then(([data, list]) => {
       if (cancelled) return;
-      let base = rowsRef.current;
+      let base = Array.from({ length: 5 }, EMPTY_ROW);
       if (data && Array.isArray(data.rows) && data.rows.length > 0) {
         base = normalizeLoaded(data.rows);
         lastSavedRef.current = JSON.stringify(base);
@@ -401,7 +408,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       loadedRef.current = true;
     });
     return () => { cancelled = true; };
-  }, [advisorName, date]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [advisorName, date, shopView]);
 
   // Pick up claims / re-uploads made on other screens when this tab comes back.
   async function refreshList() {
@@ -614,6 +622,24 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     setRows(prev => prev.map(r => r.id === id ? { ...r, status: nextStatus(r.status) } : r));
   }
 
+  // Switch between this sheet and all advisors — save anything pending first.
+  const [switchingMode, setSwitchingMode] = useState(false);
+  async function toggleAllMode() {
+    clearTimeout(saveTimerRef.current);
+    setSwitchingMode(true);
+    try {
+      let current = rowsRef.current;
+      if (noteRowIdRef.current !== null && noteDraftRef.current.trim()) {
+        current = withNote(current, noteRowIdRef.current, noteDraftRef.current.trim());
+        closeComposer();
+      }
+      if (loadedRef.current && isDirty(current) && !(await persist(current))) {
+        if (!window.confirm("Your last changes didn't save. Switch anyway and lose them?")) return;
+      }
+      setAllMode(v => !v);
+    } finally { setSwitchingMode(false); }
+  }
+
   // ── Ensure token ──────────────────────────────────────────────────────────
   // A signed-in device can always save; a missing session means the login
   // expired and App has already sent the user back to the login screen.
@@ -780,7 +806,14 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
           }}>
             {saving ? 'Saving...' : '← Back to Calendar'}
           </button>
-          {advisorName !== ownAdvisor && (
+          <button className="secondary" disabled={saving || switchingMode} onClick={toggleAllMode}
+            title={shopView ? 'Back to just this sheet' : "Every advisor's appointments for this day, all editable"}
+            style={{ fontWeight: 900, background: shopView ? 'rgba(56,189,248,.14)' : 'linear-gradient(180deg,rgba(244,114,182,.28),rgba(168,85,247,.18))', borderColor: shopView ? 'rgba(125,211,252,.5)' : 'rgba(244,114,182,.55)' }}>
+            {switchingMode ? '⏳ Saving…' : shopView ? `👤 View ${viewingOwn ? 'your' : `${advisorName}'s`} appointments` : '👥 View all appointments'}
+          </button>
+          {shopView ? (
+            <span style={{ fontSize: 13, color: '#f9a8d4', fontWeight: 700 }}>Viewing all advisors</span>
+          ) : advisorName !== ownAdvisor && (
             <span style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 700 }}>Editing: {advisorName}'s Calendar</span>
           )}
           {saveLabel && (
