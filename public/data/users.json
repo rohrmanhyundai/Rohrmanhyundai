@@ -169,10 +169,15 @@
         "workInProgress": true,
         "shopAppointments": true,
         "chargeAccountList": false,
-        "partsHub": true,
+        "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true
+        "usedCarHub": false,
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": true,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": true,
+        "mobileMediaUpload": true
       },
       "chatAccess": false,
       "techChatAccess": true,
@@ -188,6 +193,12 @@
       "pageOverrides": {
         "advisorCalendar": true,
         "originalOwner": true
+      },
+      "applicantCode": {
+        "salt": "92bec84fc5ab4bdcfe2046089b5b455b",
+        "hash": "ada233355f245a7821ce64809d039e0648a37b06d67b67970428da00a74e5a1f",
+        "iterations": 150000,
+        "setAt": "2026-09-29T12:19:50.713Z"
       }
     },
     {
