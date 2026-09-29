@@ -458,15 +458,38 @@ export async function loadUsers() {
 // Save the user list, carrying the password vault forward so a save from one
 // screen never drops what another stored. (The second argument used to be the
 // shared save code; it is ignored now.)
+// Reset links are minted by the password-reset Action, which writes the token
+// hash onto the user in users.json. The app saves the whole user list from
+// what it loaded earlier, so a save made after the email went out used to
+// erase the pending reset (9/28: admin's link died 15 seconds after it was
+// sent). Keep the site's pending reset unless this save set a new password for
+// that user (new pwSalt — both "set password" paths clear it on purpose) or it
+// has expired.
+function keepPendingResets(incoming, existingUsers) {
+  const byName = new Map((existingUsers || []).map(u => [String(u.username || '').toUpperCase(), u]));
+  return (incoming || []).map(u => {
+    const out = scrubUser(u);
+    const ex = byName.get(String(u.username || '').toUpperCase());
+    const pr = ex && ex.passwordReset;
+    if (!pr || !pr.hash) return out;
+    if ((ex.pwSalt || '') !== (out.pwSalt || '')) return out;                       // password just changed
+    if (pr.expires && Date.parse(pr.expires) < Date.now()) return out;              // expired anyway
+    const mine = out.passwordReset;
+    if (!mine || String(pr.requestedAt || '') > String(mine.requestedAt || '')) out.passwordReset = pr;
+    return out;
+  });
+}
+
+// Conflict-safe: merged against the latest users.json right before writing.
 export async function saveUsers(users) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('Please sign in again.');
-  const headers = authHeaders();
-  let existing = null;
-  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
-  await saveGitHubFile(headers, 'public/data/users.json', {
-    users: (users || []).map(scrubUser),
-    ...(existing && existing.passwordVault ? { passwordVault: existing.passwordVault } : {}),
+  await mutateGitHubJson('public/data/users.json', (cur) => {
+    const existing = parseUsersPayload(cur);
+    return {
+      users: keepPendingResets(users, existing && existing.users),
+      ...(existing && existing.passwordVault ? { passwordVault: existing.passwordVault } : {}),
+    };
   }, 'Update users');
 }
 
@@ -475,12 +498,13 @@ export async function saveUsers(users) {
 export async function savePasswordVault(vault, usersOverride) {
   const token = await ensureGithubToken();
   if (!token) throw new Error('Please sign in again.');
-  const headers = authHeaders();
-  let existing = null;
-  try { existing = parseUsersPayload(await readGitHubFile(headers, 'public/data/users.json')); } catch {}
-  await saveGitHubFile(headers, 'public/data/users.json', {
-    users: (usersOverride || (existing ? existing.users : [])).map(scrubUser),
-    passwordVault: vault,
+  await mutateGitHubJson('public/data/users.json', (cur) => {
+    const existing = parseUsersPayload(cur);
+    const base = existing ? existing.users : [];
+    return {
+      users: usersOverride ? keepPendingResets(usersOverride, base) : base.map(scrubUser),
+      passwordVault: vault,
+    };
   }, 'Update password vault');
 }
 
