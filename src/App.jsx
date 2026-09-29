@@ -852,6 +852,14 @@ export default function App() {
     window.addEventListener('resize', fitStage);
     return () => window.removeEventListener('resize', fitStage);
   }, [fitStage]);
+  // The stage is rebuilt every time you come back to the dashboard from another
+  // page, and a fresh stage is 1920x1080 unscaled — too big for anything but
+  // the TV — until the next resize. Scale it the moment it mounts, before it
+  // paints. Same maths as always, so the shop TV looks exactly the same.
+  const setStageEl = useCallback((el) => {
+    stageRef.current = el;
+    if (el) fitStage();
+  }, [fitStage]);
 
   // Password-reset link from the email (?reset=TOKEN&u=USERNAME) and the two
   // password modals. The reset page takes over the whole screen until done.
@@ -2178,7 +2186,7 @@ export default function App() {
 
   return (
     <div className="viewport">
-      <div className="stage" ref={stageRef}>
+      <div className="stage" ref={setStageEl}>
         <div className="dashboard">
           <Header
             data={data}
