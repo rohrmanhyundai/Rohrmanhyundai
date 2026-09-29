@@ -22,25 +22,6 @@
       "deferred": null
     },
     {
-      "id": "rmum2akqb2p3v",
-      "customerName": "Jackson Grimes",
-      "appointmentTime": "7:20 AM",
-      "criticalDeferredService": "",
-      "waiter": true,
-      "dropOff": false,
-      "technician": "",
-      "notes": [],
-      "status": "scheduled",
-      "apptNo": "43153",
-      "vehicle": "2023 Hyundai Elantra",
-      "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
-      ],
-      "comments": "",
-      "transport": "WAIT",
-      "deferred": null
-    },
-    {
       "id": "rmulqrx80xmw5",
       "customerName": "Jennifer McCurry",
       "appointmentTime": "7:40 AM",
@@ -72,7 +53,7 @@
       "apptNo": "43175",
       "vehicle": "2023 Hyundai Santa Fe",
       "services": [
-        "PARTS IN SOP"
+        "CUSTOMER STATES WHEN TAKING OFF FROM A START OR SLOW TURNING CAN HEAR A THUMPING NOISE.     (SOR)"
       ],
       "comments": "",
       "transport": "SELF",
@@ -107,6 +88,44 @@
           }
         ]
       }
+    },
+    {
+      "id": "rmumldrc7fzw6",
+      "customerName": "Luisa White",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43237",
+      "vehicle": "2026 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES CEL ON. CHECK AND ADVISE.    (SOR)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmum2akqb2p3v",
+      "customerName": "Jackson Grimes",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43153",
+      "vehicle": "2023 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
     },
     {
       "id": "rmulqrx805gwq",
@@ -163,7 +182,7 @@
       "apptNo": "43248",
       "vehicle": "2023 Hyundai Santa Cruz",
       "services": [
-        "Oil & Filter change with Tire Rotation"
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
       ],
       "comments": "",
       "transport": "SELF",
@@ -197,6 +216,25 @@
           }
         ]
       }
+    },
+    {
+      "id": "rmumldrc74mi8",
+      "customerName": "Thomas Hughes",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43233",
+      "vehicle": "2022 Hyundai Santa Cruz",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
     },
     {
       "id": "rmulqrx80nd7z",
@@ -323,5 +361,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-09-29T03:33:15.226Z"
+  "savedAt": "2026-09-29T11:27:33.962Z"
 }
