@@ -108,6 +108,8 @@ function mergeAppointments(rows, list, advisorName) {
   const added = mine.filter(a => !have.has(a.apptNo)).map(a => ({
     ...EMPTY_ROW(), ...dmsFields(a),
     waiter: a.transport === 'WAIT', dropOff: !!a.transport && a.transport !== 'WAIT',
+    // Handed over from another advisor: bring their status / notes / plan along.
+    ...(((list.claims || {})[a.apptNo] || {}).carry || {}),
   }));
   if (added.length) out = [...out.filter(r => !isBlankRow(r)), ...added];
   if (out.length === 0) out = [EMPTY_ROW()];
@@ -388,8 +390,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   }
 
   // ── Open pool: move an "Any Service Advisor" appointment onto this sheet ──
-  async function claimAppt(a) {
-    const target = firstNameUpper(advisorName);
+  async function claimAppt(a, to) {
+    const target = to || firstNameUpper(advisorName);
     setClaimingNo(a.apptNo);
     try {
       const next = await updateAppointmentList(date, (cur) => {
@@ -399,6 +401,30 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         if (owner && owner !== target) throw new Error(`${owner} already took ${live.customer}.`);
         return { ...cur, claims: { ...cur.claims, [a.apptNo]: { advisor: target, by: ownAdvisor, at: new Date().toISOString() } } };
       }, `Appointment ${a.apptNo} → ${target}`);
+      setApptList(next);
+      setRows(prev => mergeAppointments(prev, next, advisorName));
+    } catch (e) {
+      alert(e.message || 'Could not move that appointment.');
+      refreshList();
+    } finally { setClaimingNo(''); }
+  }
+
+  // "Change advisor" on a row: hand the appointment to another advisor. Works
+  // on DMS-assigned appointments too (override), and carries what was typed on
+  // the row across to their sheet.
+  async function reassign(row, target) {
+    if (!target || !row.apptNo) return;
+    if (!window.confirm(`Move ${row.customerName || 'this appointment'} to ${target}'s calendar?\n\nIts status, notes and plan go with it.`)) return;
+    const carry = {
+      status: row.status || 'scheduled', notes: parseNotesField(row.notes),
+      criticalDeferredService: row.criticalDeferredService || '', technician: row.technician || '',
+    };
+    setClaimingNo(row.apptNo);
+    try {
+      const next = await updateAppointmentList(date, (cur) => {
+        if (!cur.appts.some(x => x.apptNo === row.apptNo)) throw new Error('That appointment is no longer on the DMS list.');
+        return { ...cur, claims: { ...cur.claims, [row.apptNo]: { advisor: target, by: ownAdvisor, at: new Date().toISOString(), override: true, carry } } };
+      }, `Appointment ${row.apptNo} reassigned → ${target} (${ownAdvisor})`);
       setApptList(next);
       setRows(prev => mergeAppointments(prev, next, advisorName));
     } catch (e) {
@@ -548,6 +574,13 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   });
 
   const rosterSet = useMemo(() => new Set((advisorList || []).map(firstNameUpper)), [advisorList]);
+  // Every advisor on the roster (plus whoever's sheet this is) — the "Move to"
+  // buttons on pool cards and the "Change advisor" list on each row.
+  const advisorChoices = useMemo(() => {
+    const set = new Set((advisorList || []).map(firstNameUpper).filter(Boolean));
+    if (advisorName) set.add(firstNameUpper(advisorName));
+    return [...set].sort();
+  }, [advisorList, advisorName]);
   const apptByNo = useMemo(() => new Map((apptList?.appts || []).map(a => [a.apptNo, a])), [apptList]);
   const pool = useMemo(
     () => sortRows((apptList?.appts || []).filter(a => !ownerOf(a, apptList.claims))
@@ -753,6 +786,15 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         }}>
                         {st.label}
                       </button>
+                      {row.apptNo && apptByNo.has(row.apptNo) && advisorChoices.length > 0 && (
+                        <select className="no-print" value="" disabled={claimingNo === row.apptNo}
+                          onChange={e => reassign(row, e.target.value)}
+                          title="Hand this appointment to another advisor"
+                          style={{ marginTop: 6, width: '100%', background: '#0f172a', border: '1px solid rgba(148,163,184,.35)', color: '#cbd5e1', borderRadius: 999, padding: '3px 4px', fontSize: 10.5, fontWeight: 800, cursor: 'pointer' }}>
+                          <option value="">{claimingNo === row.apptNo ? 'Moving…' : 'Change advisor'}</option>
+                          {advisorChoices.filter(n => n !== firstNameUpper(advisorName)).map(n => <option key={n} value={n}>→ {n}</option>)}
+                        </select>
+                      )}
                     </td>
                     {row.apptNo ? (<>
                       <td>
@@ -760,7 +802,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                         <div style={{ fontSize: 11, color: '#7a92b8', padding: '0 2px 4px' }}>
                           Appt #{row.apptNo}
                           {apptList && !apptByNo.has(row.apptNo) && <span style={{ color: '#fca5a5', fontWeight: 800 }}> · ⚠ not on latest DMS list</span>}
-                          {apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor && (
+                          {apptList && apptList.claims[row.apptNo]?.override && (
+                            <span style={{ color: '#93c5fd' }}> · handed over by {apptList.claims[row.apptNo].by}</span>
+                          )}
+                          {apptByNo.get(row.apptNo) && !apptByNo.get(row.apptNo).advisor && !apptList.claims[row.apptNo]?.override && (
                             apptList.claims[row.apptNo]?.by === 'AUTO'
                               ? <span style={{ color: '#fdba74' }}> · auto-assigned (your deferred work)</span>
                               : <span style={{ color: '#fbbf24' }}> · from open pool</span>
@@ -827,7 +872,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
               </span>
             </div>
             <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12 }}>
-              Not assigned to anyone in the DMS. Move one up and it goes onto {viewingOwn ? 'your' : `${advisorName}'s`} prep sheet and drops off everyone else's list.
+              Not assigned to anyone in the DMS. Tap an advisor's name to put it on their prep sheet — it drops off everyone else's list.
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 10 }}>
               {pool.map(a => (
@@ -856,11 +901,24 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                   {a.deferred && a.deferred.advisor && !rosterSet.has(a.deferred.advisor) && (
                     <div style={{ fontSize: 11, color: '#94a3b8' }}>Deferred by {a.deferred.advisorFull || a.deferred.advisor} — not on the current advisor roster, so it wasn't auto-assigned.</div>
                   )}
-                  <button onClick={() => claimAppt(a)} disabled={!canClaim || !!claimingNo}
-                    title={canClaim ? '' : 'Only this advisor or a manager can move appointments here'}
-                    style={{ marginTop: 6, alignSelf: 'flex-start', background: 'linear-gradient(180deg,rgba(251,191,36,.3),rgba(245,158,11,.2))', borderColor: 'rgba(251,191,36,.55)', color: '#fef3c7', fontWeight: 800 }}>
-                    {claimingNo === a.apptNo ? '⏳ Moving…' : `⬆ Move to ${viewingOwn ? 'my' : `${advisorName}'s`} calendar`}
-                  </button>
+                  <div style={{ marginTop: 6 }}>
+                    <div style={{ fontSize: 10.5, fontWeight: 900, letterSpacing: '.06em', color: '#fcd34d', marginBottom: 5 }}>⬆ MOVE TO</div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {advisorChoices.map(n => {
+                        const mine = n === firstNameUpper(advisorName);
+                        return (
+                          <button key={n} onClick={() => claimAppt(a, n)} disabled={!!claimingNo}
+                            style={{
+                              padding: '5px 12px', fontSize: 12.5, fontWeight: 900, borderRadius: 999,
+                              background: mine ? 'linear-gradient(180deg,rgba(251,191,36,.45),rgba(245,158,11,.3))' : 'linear-gradient(180deg,rgba(251,191,36,.2),rgba(245,158,11,.12))',
+                              border: `1px solid ${mine ? 'rgba(253,224,71,.8)' : 'rgba(251,191,36,.45)'}`, color: '#fef3c7',
+                            }}>
+                            {claimingNo === a.apptNo ? '⏳' : n}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

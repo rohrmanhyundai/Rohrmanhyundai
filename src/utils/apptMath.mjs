@@ -1,11 +1,15 @@
 // Pure prep-sheet math — no imports, so the Daily Wrench script (Node, 9am)
 // can use it as well as the app. appointmentList.js re-exports all of it.
 
-// Who an appointment belongs to: its DMS advisor, else whoever claimed it,
-// else nobody ('' = still in the open pool).
+// Who an appointment belongs to. A reassignment on the prep sheet ("Change
+// advisor" — claim with override) wins, then the DMS advisor, then whoever
+// moved it out of the open pool; '' = still in the open pool. Claims survive a
+// re-upload, so a reassignment sticks.
 export function ownerOf(appt, claims) {
+  const c = claims && claims[appt.apptNo];
+  if (c && c.override && c.advisor) return c.advisor;
   if (appt.advisor) return appt.advisor;
-  return (claims && claims[appt.apptNo] && claims[appt.apptNo].advisor) || '';
+  return (c && c.advisor) || '';
 }
 
 // Prep flags read out of the services / vehicle text.
