@@ -1,5 +1,30 @@
 [
   {
+    "at": "2026-09-29T12:01:17.447Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-09-29T12:01:17.442Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-09-29T12:01:16.557Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-09-29T12:01:15.283Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-29T12:01:12.088Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-29T11:28:04.720Z",
     "type": "page",
     "label": "advisor-calendar"
