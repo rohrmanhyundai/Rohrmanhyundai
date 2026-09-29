@@ -89,5 +89,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mumz965rg8m1",
+    "ro": "781176",
+    "roDate": "2026-09-29",
+    "vehicle": "2013 Hyundai Sonata",
+    "jobDesc": "CUSTOMER STATES CAR STALLED. CHECK AND ADVISE.",
+    "notes": "WORKING ON P/A",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
