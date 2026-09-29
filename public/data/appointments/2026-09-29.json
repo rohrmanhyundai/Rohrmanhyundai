@@ -1,6 +1,6 @@
 {
   "date": "2026-09-29",
-  "uploadedAt": "2026-09-29T11:27:29.096Z",
+  "uploadedAt": "2026-09-29T22:11:58.718Z",
   "uploadedBy": "SHAWN",
   "appts": [
     {
@@ -97,10 +97,25 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Sep 28 2026 10:50 PM"
+    },
+    {
+      "apptNo": "43153",
+      "time": "7:40 AM",
+      "customer": "Jackson Grimes",
+      "vehicle": "2023 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Integration",
+      "createdAt": "Wed Sep 23 2026 8:07 PM"
     },
     {
       "apptNo": "43244",
@@ -119,7 +134,7 @@
     },
     {
       "apptNo": "43228",
-      "time": "8:00 AM",
+      "time": "7:40 AM",
       "customer": "Joshua Widhalm",
       "vehicle": "2018 Hyundai Santa Fe Sport",
       "services": [
@@ -186,6 +201,21 @@
       }
     },
     {
+      "apptNo": "43237",
+      "time": "8:00 AM",
+      "customer": "Luisa White",
+      "vehicle": "2026 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES CEL ON. CHECK AND ADVISE.    (SOR)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Sep 28 2026 9:42 AM"
+    },
+    {
       "apptNo": "43175",
       "time": "8:00 AM",
       "customer": "Rollin McCoart",
@@ -238,53 +268,98 @@
       }
     },
     {
-      "apptNo": "43237",
-      "time": "8:20 AM",
-      "customer": "Luisa White",
-      "vehicle": "2026 Hyundai Tucson",
-      "services": [
-        "CUSTOMER STATES CEL ON. CHECK AND ADVISE.    (SOR)"
-      ],
+      "apptNo": "43263",
+      "time": "8:08 AM",
+      "customer": "Ron Propes",
+      "vehicle": "2017 Hyundai Santa Fe Sport",
+      "services": [],
       "comments": "",
       "transport": "SELF",
       "advisorRaw": "JORDAN TROXEL",
       "advisor": "JORDAN",
-      "source": "BDC Scheduling",
-      "createdAt": "Mon Sep 28 2026 9:42 AM"
-    },
-    {
-      "apptNo": "43153",
-      "time": "8:40 AM",
-      "customer": "Jackson Grimes",
-      "vehicle": "2023 Hyundai Elantra",
-      "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
-      ],
-      "comments": "",
-      "transport": "WAIT",
-      "advisorRaw": "JORDAN TROXEL",
-      "advisor": "JORDAN",
-      "source": "Integration",
-      "createdAt": "Wed Sep 23 2026 8:07 PM"
-    },
-    {
-      "apptNo": "43231",
-      "time": "8:40 AM",
-      "customer": "Scott Bolton",
-      "vehicle": "2023 Genesis GV80",
-      "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
-      ],
-      "comments": "",
-      "transport": "SELF",
-      "advisorRaw": "DAVID RILEY",
-      "advisor": "DAVID",
-      "source": "BDC Scheduling",
-      "createdAt": "Mon Sep 28 2026 8:23 AM"
+      "source": "Walk-in",
+      "createdAt": "Tue Sep 29 2026 8:08 AM",
+      "deferred": {
+        "ro": "778045",
+        "date": "2026-06-02",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1318.55,
+        "hours": 5.3,
+        "phone": "7654141005",
+        "vin": "5NMZUDLB0HH025962",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 108.99,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 289.68,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.95,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 0.9,
+            "est": true,
+            "price": 262.01,
+            "priceEst": true
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
     },
     {
       "apptNo": "43080",
-      "time": "9:00 AM",
+      "time": "8:40 AM",
       "customer": "John Sieber",
       "vehicle": "2025 Hyundai Palisade",
       "services": [
@@ -327,7 +402,7 @@
     },
     {
       "apptNo": "42942",
-      "time": "9:00 AM",
+      "time": "8:40 AM",
       "customer": "Nancy Sanders",
       "vehicle": "2025 Hyundai Palisade",
       "services": [
@@ -362,23 +437,23 @@
       }
     },
     {
-      "apptNo": "43233",
-      "time": "9:20 AM",
-      "customer": "Thomas Hughes",
-      "vehicle": "2022 Hyundai Santa Cruz",
+      "apptNo": "43231",
+      "time": "8:40 AM",
+      "customer": "Scott Bolton",
+      "vehicle": "2023 Genesis GV80",
       "services": [
         "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "JORDAN TROXEL",
-      "advisor": "JORDAN",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
-      "createdAt": "Mon Sep 28 2026 9:05 AM"
+      "createdAt": "Mon Sep 28 2026 8:23 AM"
     },
     {
       "apptNo": "43248",
-      "time": "9:20 AM",
+      "time": "8:40 AM",
       "customer": "David Quillen",
       "vehicle": "2023 Hyundai Santa Cruz",
       "services": [
@@ -386,8 +461,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Sep 28 2026 12:54 PM",
       "deferred": {
@@ -428,6 +503,21 @@
       }
     },
     {
+      "apptNo": "43233",
+      "time": "9:00 AM",
+      "customer": "Thomas Hughes",
+      "vehicle": "2022 Hyundai Santa Cruz",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Sep 28 2026 9:05 AM"
+    },
+    {
       "apptNo": "43099",
       "time": "10:20 AM",
       "customer": "Christine Pangle",
@@ -439,8 +529,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Tue Sep 22 2026 1:28 PM",
       "deferred": {
@@ -490,7 +580,7 @@
     },
     {
       "apptNo": "43243",
-      "time": "11:00 AM",
+      "time": "10:40 AM",
       "customer": "Cristbol Martin",
       "vehicle": "2025 Hyundai Santa Cruz",
       "services": [
@@ -504,8 +594,69 @@
       "createdAt": "Mon Sep 28 2026 12:01 PM"
     },
     {
+      "apptNo": "43273",
+      "time": "10:59 AM",
+      "customer": "Julie Kerkhoff",
+      "vehicle": "2026 Hyundai Palisade Hybrid",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "Walk-in",
+      "createdAt": "Tue Sep 29 2026 10:59 AM",
+      "deferred": {
+        "ro": "779222",
+        "date": "2026-07-14",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 139.95,
+        "hours": 1,
+        "phone": "7655865978",
+        "vin": "KM8RM5SA5TU046835",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43275",
+      "time": "11:50 AM",
+      "customer": "Nathan Hodge",
+      "vehicle": "2017 Hyundai Sonata Hybrid",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Walk-in",
+      "createdAt": "Tue Sep 29 2026 11:50 AM"
+    },
+    {
+      "apptNo": "43268",
+      "time": "12:20 PM",
+      "customer": "David McGaughey",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "I also need to get the carbon cleaned from engine.",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Integration",
+      "createdAt": "Tue Sep 29 2026 9:55 AM"
+    },
+    {
       "apptNo": "43214",
-      "time": "1:00 PM",
+      "time": "12:40 PM",
       "customer": "Christy Shillings",
       "vehicle": "2024 Hyundai Palisade",
       "services": [
@@ -518,6 +669,79 @@
       "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Sat Sep 26 2026 12:27 PM"
+    },
+    {
+      "apptNo": "43281",
+      "time": "1:39 PM",
+      "customer": "Jeremy Deboise",
+      "vehicle": "2012 Hyundai Sonata",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "Walk-in",
+      "createdAt": "Tue Sep 29 2026 1:39 PM",
+      "deferred": {
+        "ro": "780703",
+        "date": "2026-09-26",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1236.89,
+        "hours": 9.1,
+        "phone": "7653372523",
+        "vin": "5NPEC4AB7CH458761",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "ENGPREM",
+            "desc": "ENGINE REPLACEMENT PREMIUM KIT",
+            "count": 1,
+            "h": 6.2,
+            "est": true,
+            "price": 494.28,
+            "priceEst": true
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1,
+            "h": 1,
+            "price": 382.67,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 219.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43232",
+      "time": "1:40 PM",
+      "customer": "Krista Steinmetz",
+      "vehicle": "2023 Hyundai IONIQ 5",
+      "services": [
+        "parts in sop"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Sep 28 2026 8:54 AM"
     },
     {
       "apptNo": "43181",
@@ -536,23 +760,8 @@
       "createdAt": "Thu Sep 24 2026 3:42 PM"
     },
     {
-      "apptNo": "43232",
-      "time": "2:00 PM",
-      "customer": "Krista Steinmetz",
-      "vehicle": "2023 Hyundai IONIQ 5",
-      "services": [
-        "parts in sop"
-      ],
-      "comments": "",
-      "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
-      "source": "BDC Scheduling",
-      "createdAt": "Mon Sep 28 2026 8:54 AM"
-    },
-    {
       "apptNo": "43256",
-      "time": "3:00 PM",
+      "time": "2:20 PM",
       "customer": "Jake Zuckerman",
       "vehicle": "2022 Hyundai Elantra Hybrid",
       "services": [
@@ -560,79 +769,53 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Sep 28 2026 4:26 PM"
     },
     {
-      "apptNo": "43141",
+      "apptNo": "43285",
+      "time": "3:16 PM",
+      "customer": "Roman collision repair Rohrman",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "Walk-in",
+      "createdAt": "Tue Sep 29 2026 3:16 PM"
+    },
+    {
+      "apptNo": "43257",
       "time": "3:20 PM",
-      "customer": "Bobbie Mayle",
-      "vehicle": "2019 Hyundai Tucson",
+      "customer": "Megan Cunningham",
+      "vehicle": "2021 Hyundai Kona",
       "services": [
-        "CUSTOMER STATES MULTIPLE LIGHTS ON DASH. CHECK AND ADVISE."
+        "CUSTOMER STATES NOISE FROM BUZZING NOISE WHEN DRIVING FROM UNDER THE CAR WHEN DRIVING."
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
-      "createdAt": "Wed Sep 23 2026 3:56 PM",
-      "deferred": {
-        "ro": "776625",
-        "date": "2026-05-15",
-        "advisorFull": "DAVID RILEY",
-        "advisor": "DAVID",
-        "amount": 3794.2,
-        "hours": 11.7,
-        "phone": "2192080866",
-        "vin": "KM8J2CA42KU062363",
-        "items": [
-          {
-            "code": "VVRDFL",
-            "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
-            "count": 1,
-            "h": 0.5,
-            "price": 100.71,
-            "priceEst": false
-          },
-          {
-            "code": "VVTFL",
-            "desc": "TRANSMISSION FLUID EXCHANGE",
-            "count": 1,
-            "h": 1,
-            "price": 382.67,
-            "priceEst": false
-          },
-          {
-            "code": "ENGPREM",
-            "desc": "ENGINE REPLACEMENT PREMIUM KIT",
-            "count": 1,
-            "h": 3.2,
-            "est": true,
-            "price": 1071.33,
-            "priceEst": true
-          },
-          {
-            "code": "VVTCFL",
-            "desc": "TRANSFER CASE SERVICE",
-            "count": 1,
-            "h": 0.5,
-            "price": 96.84,
-            "priceEst": false
-          },
-          {
-            "code": "REC",
-            "desc": "",
-            "count": 2,
-            "h": 3.2,
-            "est": true,
-            "price": 2142.65,
-            "priceEst": true
-          }
-        ]
-      }
+      "createdAt": "Mon Sep 28 2026 5:30 PM"
+    },
+    {
+      "apptNo": "43210",
+      "time": "3:20 PM",
+      "customer": "Diane Hoagland",
+      "vehicle": "2021 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Integration",
+      "createdAt": "Fri Sep 25 2026 7:59 PM"
     },
     {
       "apptNo": "43258",
@@ -646,25 +829,10 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Sep 28 2026 6:32 PM"
-    },
-    {
-      "apptNo": "43210",
-      "time": "3:40 PM",
-      "customer": "Diane Hoagland",
-      "vehicle": "2021 Hyundai Santa Fe",
-      "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
-      ],
-      "comments": "",
-      "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
-      "source": "Integration",
-      "createdAt": "Fri Sep 25 2026 7:59 PM"
     },
     {
       "apptNo": "43236",
@@ -676,61 +844,10 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Mon Sep 28 2026 9:17 AM"
-    },
-    {
-      "apptNo": "43194",
-      "time": "4:00 PM",
-      "customer": "Mollie Mongson",
-      "vehicle": "2022 Hyundai Venue",
-      "services": [
-        "CUSTOMER STATES- cust states failed cat."
-      ],
-      "comments": "",
-      "transport": "SELF",
-      "advisorRaw": "JORDAN TROXEL",
-      "advisor": "JORDAN",
-      "source": "BDC Scheduling",
-      "createdAt": "Fri Sep 25 2026 11:34 AM",
-      "deferred": {
-        "ro": "780892",
-        "date": "2026-09-16",
-        "advisorFull": "JORDAN TROXEL",
-        "advisor": "JORDAN",
-        "amount": 744.9,
-        "hours": 3.3,
-        "phone": "7653362991",
-        "vin": "KMHRC8A34NU142773",
-        "items": [
-          {
-            "code": "VVIFL",
-            "desc": "FUEL INJECTION SERVICE",
-            "count": 1,
-            "h": 0.8,
-            "price": 191.95,
-            "priceEst": false
-          },
-          {
-            "code": "ALIGN",
-            "desc": "WHEEL ALIGNMENT",
-            "count": 1,
-            "h": 1,
-            "price": 127.93,
-            "priceEst": false
-          },
-          {
-            "code": "TUNEUP",
-            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
-            "count": 1,
-            "h": 1.5,
-            "price": 425.02,
-            "priceEst": false
-          }
-        ]
-      }
     },
     {
       "apptNo": "43234",
@@ -742,8 +859,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Mon Sep 28 2026 9:06 AM"
     }
@@ -751,12 +868,6 @@
   "claims": {
     "43099": {
       "advisor": "JORDAN",
-      "by": "AUTO",
-      "reason": "deferred",
-      "at": "2026-09-28T21:10:33.325Z"
-    },
-    "43141": {
-      "advisor": "DAVID",
       "by": "AUTO",
       "reason": "deferred",
       "at": "2026-09-28T21:10:33.325Z"
