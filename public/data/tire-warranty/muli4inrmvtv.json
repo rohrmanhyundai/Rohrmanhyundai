@@ -1,7 +1,7 @@
 {
   "id": "muli4inrmvtv",
   "createdAt": "2026-09-28T17:08:33.783Z",
-  "updatedAt": "2026-09-28T18:11:03.065Z",
+  "updatedAt": "2026-09-29T11:53:54.143Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Christopher Brooks",
   "customerPhone": "",
@@ -26,7 +26,7 @@
       "partNumber": "3445900",
       "description": "pirelli p zero all season",
       "qty": "1",
-      "price": ""
+      "price": "159.99"
     }
   ],
   "taxPct": "7",
