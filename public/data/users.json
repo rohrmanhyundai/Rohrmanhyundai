@@ -4,7 +4,7 @@
       "username": "admin",
       "role": "admin",
       "lastName": "",
-      "email": "shawn.laughner@rohrmanauto.com",
+      "email": "sl.rohrmanhyundai@gmail.com",
       "canEditDashboard": false,
       "managementAccess": false,
       "pages": {
@@ -23,7 +23,8 @@
         "usedCarHub": true
       },
       "chatAccess": false,
-      "techChatAccess": false
+      "techChatAccess": false,
+      "hidden": false
     },
     {
       "username": "Shawn",
