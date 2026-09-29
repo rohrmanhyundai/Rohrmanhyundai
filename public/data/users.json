@@ -5,8 +5,8 @@
       "role": "admin",
       "lastName": "",
       "email": "sl.rohrmanhyundai@gmail.com",
-      "canEditDashboard": false,
-      "managementAccess": false,
+      "canEditDashboard": true,
+      "managementAccess": true,
       "pages": {
         "advisorCalendar": true,
         "surveyReports": false,
@@ -24,12 +24,7 @@
       },
       "chatAccess": false,
       "techChatAccess": false,
-      "hidden": false,
-      "passwordReset": {
-        "hash": "ef63049b8ecfaf54f4173e1c0a6d8459e19435edec16129928bbdc2b0b5803f6",
-        "expires": "2026-09-29T02:35:25.379Z",
-        "requestedAt": "2026-09-29T01:35:25.380Z"
-      }
+      "hidden": true
     },
     {
       "username": "Shawn",
