@@ -164,5 +164,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790686702464
+  },
+  {
+    "id": "gm-mumrdjffx999",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "📷 Sent a picture",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mumrdj5h-k2tsfj.png",
+        "name": "Screenshot 2026-09-29 at 10.14.54 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790691317403
   }
 ]
