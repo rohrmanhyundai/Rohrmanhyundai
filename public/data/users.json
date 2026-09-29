@@ -111,7 +111,8 @@
         "hash": "883cd7a0f56811dae33d114ce47ac698659098272d8d5f9a490b78f6b920b533",
         "iterations": 150000,
         "setAt": "2026-09-29T01:23:58.467Z"
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "David",
@@ -149,7 +150,8 @@
         "hash": "b3aedd7975124e65c126e00a50aac8eece1c358baa0d6c4263883a7ba4a3fbcb",
         "iterations": 150000,
         "setAt": "2026-09-29T01:44:06.572Z"
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Gaven",
@@ -182,7 +184,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "mMmM5sFLdgTkhqMscDx8DAotf8SxyI2Q4W9YBks5PjMB4rq0mmW9hh0D2ywY4oKoEqPhlIdhJhY6tfdxcHgQRsU3TVjA86ZkxOKaNJKKsYKvyEvu54SnABALlqbUp3YnABsRgnPvnzLxTNfGE31hhHDqcxqzcW0VJQqkoVRJwcEKDE1QgTDO0VF6KRNDqPJvJEUveLUCLsHmAnpvm71LKJQolzq5IVpkENQbO9aPfFEWBJy/0WQuxbozqR4YnBl+mXeha59T2KsAMoML2+QdhGUbj8TP/jN+ZJhvyQa7prUF+e3mhCeKwg3K9r1t002QllEMeZeYQEKQS/NgdLwhhQ=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Austin",
@@ -250,7 +253,8 @@
       "techChatAccess": true,
       "lastName": "",
       "email": "devin.drake@rohrmanauto.com",
-      "managementAccess": false
+      "managementAccess": false,
+      "pageOverrides": {}
     },
     {
       "username": "Cory",
@@ -282,7 +286,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "pXf7nR8K0d4OqzGtNUvlytVCZeSqK0DHIa0u1duswVJZP+FiiSkTORTj48dkJ4HI0qFf7SZG+eBGWLVeR7CV0fa3nTo2+Lk9wxOqGIJUOmLfT7rANV4VqWsOjGcyecpOoSL8PD8ZA8dWSeWqUR3xypZZnCnRg+Oen4eov7+imRkD7y6SR6fdGJI+ce/xHQqiiM38UzOpOGK3yJ5eebDWPGFRLUZJ17dPSnwzTMVhIVGfyfZBNIFM6wH58T0xdr+gt/8lowtX4BPYRm/icrkPkoRM0bSGitqgPegaw+iSZ+BcyGxNnev9iYyCKzhMnbDBdX7gbB0lBQE6Z6sfuYThXg=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Carter",
@@ -314,7 +319,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "c0Jm3aCDbfjEtJNCvawNtJJxPTs0BbENTFNZVqbUHK71CCz3Tz2/c6pEpw11a1LFw8YPMTXMBz2Cdfnqv7CA9WalaVicbVFeH09zXQXk2voxSnpE70+WRlf0bUqs8QqTO5CXhQgGAdV1rliIzDS8NhFw5TMbYsCy0Qis9jP+DotiuNkkx0Jby9/0L46MMLB0ijDNLQsvxaoqejyA/LKvCweQWK9+2Z7ggKzgxTfqTaZFU72puu7Cqc1pTdo/6VrOzI8LF/QiImAOINbDebpm9cM5Szxh9XO4XmfxKc2lBNbdqhMir9tSwr086Ce7z2+tImUdXdgJMjNhS4fhqAK2Kw=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Jacob",
@@ -347,7 +353,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "ATkI5sdNOjZTu3lfBkF49Pp3OMpWo5Yii92xWjYY/OJwaTCrjc4EHvhADTR9ERug3kpmcl1pHNBXTTTWo35k0Q2pJuK7CNKpbDxKBfSe091YR87TuyeCMzafN0SB2oP0BUOwCdH51DRcH3PVZqLJzgIYENJMvpIb6JQ3VfDqDWo4GbmKG/X3wYZMeU5IaUhZFLTj3eXNT1J5UeSzO9V1K4ttdPuBf07Od/iS8HLyExS6egWRjXTPc0Zyu9Ossnlq4fY15eYiEnrUV1LgHh/VkTakTF+MpTSMEGN7WreMTtUnOk370lC4q26NVieLCsdNsoN7oMOG21wJG8AWvNyDRQ=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Derrick",
@@ -369,7 +376,8 @@
         "hotRepairs": true
       },
       "chatAccess": false,
-      "techChatAccess": true
+      "techChatAccess": true,
+      "pageOverrides": {}
     },
     {
       "username": "Jerry",
@@ -404,7 +412,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "VgWNgo5stW6Mmhcxd0Vrw1BFUKAuxtzBFLJWeBZj2vtl1WKCGAZcxaO0ZVQejpTjTC31TKaBNxcYkg7ONZnxLdH8JCQwAwi1iIa/ymcDjuRI21SfhizkrujnN2h7rzSRVYqVIZ1F485o5HSSCJ5yfBe+CvoFPt4O9AwA1PYh1cffuzBAgPtGoglkzkemRvrj9YvgvfybZyrLMqZiiAUAP+LzZ1fzN59GTUlRDBNcL0ENpXEgLlShWDx3fTBSb3ql0dpGB3sS7lcKjSS/c1t/WK0yi0ZaCKr3h+CsYDo+5BBfPzD1okKpvm1a36jYOSZ8urG8c77QHvPIp5sIiHPSZw=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Kai",
@@ -443,7 +452,8 @@
         "hash": "7fe4275c69c8a299038bf40466830c872c12d4a3fcf4c91ce4d1593c63b4415f",
         "iterations": 150000,
         "setAt": "2026-09-29T01:23:12.477Z"
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Seth",
@@ -474,7 +484,8 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "Tv77e49ii6VathMs5713KoSUqHa8iWRd36YObkdtVmUjp1TntoJrdCyYrjHPOxlTuut0QELHYUcko4OkkysOdWPnHqdeM3Do6ZX6pC55GCeU1td7RkzQRngDQAFXsD6GHXeoLZiy2Kzweu2HyXiMhwhBgL/ZBHnKbZuZGZa8uDastn+J5x07KD6sgwnHRcdDZduPAxN1AG63ya5mt2XnoD5zgSpwg+7G6C14nfsJ7+X1BF7fp0Qq1K+XMU0eIwUhYH+DRmSPAjupyV9fWQT+Dm8aIzwcsfZRXM+L4TQI19ZDYHuXCNPpH1n5RxR1fxe82WEv/oK1f88X66shBmyGCg=="
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Chapman",
@@ -501,7 +512,8 @@
       "techChatAccess": true,
       "managementAccess": false,
       "email": "",
-      "hidden": true
+      "hidden": true,
+      "pageOverrides": {}
     },
     {
       "username": "Kaden",
@@ -538,7 +550,8 @@
         "hash": "cdb1d6049325408217d7709699b64d6f1459608bcf7395c76c5755ec90f13b62",
         "expires": "2026-09-23T16:41:16.847Z",
         "requestedAt": "2026-09-23T15:41:16.847Z"
-      }
+      },
+      "pageOverrides": {}
     },
     {
       "username": "Emily",
@@ -563,7 +576,8 @@
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "managementAccess": false
+      "managementAccess": false,
+      "pageOverrides": {}
     },
     {
       "username": "Cody",
@@ -590,7 +604,8 @@
       "chatAccess": true,
       "techChatAccess": true,
       "email": "",
-      "hidden": true
+      "hidden": true,
+      "pageOverrides": {}
     },
     {
       "username": "Bryson",
@@ -616,7 +631,8 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "email": "bryson.hutsell@rohrmanauto.com"
+      "email": "bryson.hutsell@rohrmanauto.com",
+      "pageOverrides": {}
     },
     {
       "username": "Chris",
@@ -646,7 +662,8 @@
         "kid": "YuwDZUlFIR",
         "data": "SLRG3cW8CiMh3WV6DoXQsZorP375ol272ti2OAEv9EEcKxe8uJhSM0c12AagF7e17sK1dJENb2JL+yAoNOTTWgaf+/lRN3G7CwDFCYdCj9y3HD4w+PuzjV1oYd0i8rZ5k13TDNpkFIrL9/HqinvAgMIJjL2ONa639nlZW/ybRd0Y0tKLAeuemb2UoWebrYHxWIWpiFIyEzhVFdIHAZxHn7vF6a6OfrTq3z93cI4U4R9Z4YS2hef9ozacf7tQGkSrB23NaDTRvmgsEx5RDtiFs6MtRNib6NyiV4iAIdx60wHAYRtuva74Kqxv07h8nNYdWQtVYytDZHSl3ZpRwyr1RA=="
       },
-      "pwSalt": "59a86dabfb9fd6429a7d5ca009530c89"
+      "pwSalt": "59a86dabfb9fd6429a7d5ca009530c89",
+      "pageOverrides": {}
     },
     {
       "username": "Trenton",
@@ -677,7 +694,8 @@
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "hidden": false
+      "hidden": false,
+      "pageOverrides": {}
     }
   ],
   "passwordVault": {
