@@ -383,6 +383,9 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const noteRowIdRef     = useRef(noteRowId);
   const noteDraftRef     = useRef(noteDraft);
   const loadedRef        = useRef(false);   // don't autosave the initial load
+  // Drives what's on screen: until the day's list and notes are in, show a
+  // short "Loading…" instead of five blank rows that then jump to the real ones.
+  const [loaded, setLoaded] = useState(false);
   const lastSavedRef     = useRef('');      // serialized rows as last written
   const savedByOwnerRef  = useRef({});      // manager view: { ADVISOR: serialized rows as last written }
   const saveTimerRef     = useRef(null);
@@ -399,6 +402,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   useEffect(() => {
     let cancelled = false;
     loadedRef.current = false;
+    setLoaded(false);
     lastSavedRef.current = '';
     savedByOwnerRef.current = {};
     if (shopView) {
@@ -422,6 +426,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
         setApptList(list);
         setRows(mergeAll(base, list, rosterFirsts));
         loadedRef.current = true;
+        setLoaded(true);
       });
       return () => { cancelled = true; };
     }
@@ -439,6 +444,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
       // Any new DMS appointments land as rows here; the autosave then writes them.
       setRows(mergeAppointments(base, list, advisorName));
       loadedRef.current = true;
+      setLoaded(true);
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -884,6 +890,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
             )}
           </div>
 
+          {!loaded ? (
+            <div style={{ padding: '60px 0', textAlign: 'center', color: '#7a92b8', fontSize: 15, fontWeight: 700 }}>
+              Loading {shopView ? "everyone's" : `${advisorName}'s`} appointments…
+            </div>
+          ) : (<>
           {/* Where the day stands, at a glance */}
           {tally.total > 0 && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', margin: '0 0 16px' }}>
@@ -1016,10 +1027,11 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
           <div className="no-print" style={{ marginTop: 14 }}>
             {!shopView && <button onClick={addRow}>+ Add Row</button>}
           </div>
+          </>)}
         </div>
 
         {/* ── Open pool: DMS "Any Service Advisor" appointments ── */}
-        {pool.length > 0 && (
+        {loaded && pool.length > 0 && (
           <div className="adv-section no-print" style={{ marginTop: 28 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', marginBottom: 4 }}>
               <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900, color: '#fbbf24', letterSpacing: '.05em', textTransform: 'uppercase' }}>
