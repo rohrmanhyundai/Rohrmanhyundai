@@ -157,5 +157,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790627592343
+  },
+  {
+    "id": "gm-mum59rvsw1qg",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "📝 SHAWN on RO 779297: in the shop now",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790654190184
   }
 ]
