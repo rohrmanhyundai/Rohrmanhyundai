@@ -6,7 +6,7 @@ import { saveDashboardToGitHub, saveUsers, saveSchedules, loadGithubFile, saveGi
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import AccessGate from './AccessGate';
-import { ROLE_ACCESS_PATH, samePages } from '../utils/roleAccess';
+import { ROLE_ACCESS_PATH, pageOn, overridesFrom } from '../utils/roleAccess';
 import { hasCredential, passwordProblem, withPassword } from '../utils/password';
 import * as api from '../utils/api';
 import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
@@ -166,6 +166,7 @@ const PAGE_ACCESS = [
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty/Tire Warranty',   group: 'Warranty' },
   { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Warranty' },
   { key: 'workInProgress',     label: '🔧 Work in Progress',         group: 'Tech' },
+  { key: 'shopAppointments',   label: '📅 Shop Appointments',       group: 'Shared' },
   { key: 'chargeAccountList', label: '💳 Charge Account List',      group: 'Manager', defaultOff: true },
   { key: 'partsHub',           label: '📦 Parts Hub',               group: 'Parts' },
   { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },
@@ -182,9 +183,9 @@ const roleIsFull = (r) => r === 'admin' || String(r || '').includes('manager');
 
 // ── 🧩 Role Setup ─────────────────────────────────────────────────────────────
 // Page access per role (utils/roleAccess.js). First time in, each role starts
-// from what most of its users already have. Saving also marks anyone whose own
-// boxes differ from their role as "custom", so nobody's access changes by
-// surprise; everyone else follows the role from then on.
+// from what most of its users already have, and you choose whether people whose
+// boxes differ follow the role or keep those boxes as their own special
+// settings (per box — the rest of their boxes still follow the role).
 function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
   const editable = roles.filter(r => !roleIsFull(r));
   const [draft, setDraft] = useState(() => {
@@ -206,13 +207,13 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
   const [msg, setMsg] = useState('');
   const pretty = (r) => r.replace(/\b\w/g, c => c.toUpperCase());
   const members = (r) => (users || []).filter(u => (u.role || '') === r);
-  const following = (r) => members(r).filter(u => !u.customPages).length;
-  const onOf = (m, k) => (DEFAULT_OFF_SET.has(k) ? !!(m && m[k] === true) : !(m && m[k] === false));
+  const special = (r) => members(r).filter(u => u.pageOverrides && Object.keys(u.pageOverrides).length).length;
+  const onOf = (m, k) => pageOn(m, k, DEFAULT_OFF_SET);
   const labelOf = (k) => (PAGE_ACCESS.find(p => p.key === k) || {}).label || k;
-  // Users not yet sorted into role / custom whose own boxes differ from their role.
+  // First time only: users not yet on roles whose own boxes differ from their role.
   const differs = (users || [])
-    .filter(u => u.customPages === undefined && !roleIsFull(u.role) && draft[u.role] && u.pages
-      && !samePages(u.pages, draft[u.role], PAGE_KEYS, DEFAULT_OFF_SET))
+    .filter(u => u.pageOverrides === undefined && !roleIsFull(u.role) && draft[u.role] && u.pages
+      && Object.keys(overridesFrom(u.pages, draft[u.role], PAGE_KEYS, DEFAULT_OFF_SET)).length)
     .map(u => ({
       u,
       gain: PAGE_KEYS.filter(k => !onOf(u.pages, k) && onOf(draft[u.role], k)).map(labelOf),
@@ -223,12 +224,15 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
     setBusy(true); setMsg('');
     try {
       const cfg = { updatedAt: new Date().toISOString(), by: String(currentUser || '').toUpperCase(), roles: draft };
-      // Users never sorted yet: keep their exact access if it differs from the role.
+      // First time a user is put on roles: either they simply follow it, or
+      // their differing boxes become their special (per-box) settings.
       let changed = false;
       const updated = (users || []).map(u => {
-        if (u.customPages !== undefined || roleIsFull(u.role) || !draft[u.role]) return u;
+        if (u.pageOverrides !== undefined || roleIsFull(u.role) || !draft[u.role]) return u;
         changed = true;
-        return { ...u, customPages: applyMode === 'keep' && !!u.pages && !samePages(u.pages, draft[u.role], PAGE_KEYS, DEFAULT_OFF_SET) };
+        const pageOverrides = applyMode === 'keep' && u.pages ? overridesFrom(u.pages, draft[u.role], PAGE_KEYS, DEFAULT_OFF_SET) : {};
+        const { customPages, ...rest } = u;
+        return { ...rest, pageOverrides };
       });
       await saveGithubFile(ROLE_ACCESS_PATH, cfg, `Role access setup (${cfg.by})`);
       onSaved(cfg, changed ? updated : null);
@@ -242,7 +246,7 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
     <div className="group-body">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
         <div style={{ fontSize: 17, fontWeight: 900, color: '#e2e8f0' }}>🧩 Role Setup</div>
-        <div style={{ fontSize: 12.5, color: '#94a3b8' }}>Pick a role, tick what it can open. Everyone in that role follows it unless they're set to custom.</div>
+        <div style={{ fontSize: 12.5, color: '#94a3b8' }}>Pick a role, tick what it can open. Everyone in that role gets it — except where a user has their own special setting for that box.</div>
         <div style={{ flex: 1 }} />
         {msg && <span style={{ fontSize: 12.5, fontWeight: 800, color: msg.startsWith('⚠') ? '#fca5a5' : '#4ade80' }}>{msg}</span>}
         <button onClick={save} disabled={busy} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.4),rgba(16,185,129,.25))', borderColor: 'rgba(52,211,153,.6)', fontWeight: 900 }}>{busy ? '⏳ Saving…' : '💾 Save roles'}</button>
@@ -258,7 +262,7 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
             <input type="radio" checked={applyMode === 'role'} onChange={() => setApplyMode('role')} /> <b>Everyone follows their role</b> <span style={{ color: '#94a3b8' }}>— their access changes as listed</span>
           </label>
           <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, color: '#e2e8f0', cursor: 'pointer', marginTop: 4 }}>
-            <input type="radio" checked={applyMode === 'keep'} onChange={() => setApplyMode('keep')} /> <b>Keep their own boxes</b> <span style={{ color: '#94a3b8' }}>— they're marked custom and don't follow the role</span>
+            <input type="radio" checked={applyMode === 'keep'} onChange={() => setApplyMode('keep')} /> <b>Keep their own boxes</b> <span style={{ color: '#94a3b8' }}>— just those boxes become special for them; everything else follows the role</span>
           </label>
           <div style={{ marginTop: 8, display: 'grid', gap: 3, maxHeight: 180, overflowY: 'auto' }}>
             {differs.map(({ u, gain, lose }) => (
@@ -280,7 +284,7 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
               border: `1px solid ${sel === r ? 'rgba(61,214,195,.6)' : 'rgba(148,163,184,.18)'}`, color: '#e2e8f0',
             }}>
               <div style={{ fontSize: 13.5, fontWeight: 800 }}>{pretty(r)}</div>
-              <div style={{ fontSize: 11, color: '#64748b' }}>{members(r).length} user{members(r).length === 1 ? '' : 's'}{members(r).length ? ` · ${following(r)} following` : ''}</div>
+              <div style={{ fontSize: 11, color: '#64748b' }}>{members(r).length} user{members(r).length === 1 ? '' : 's'}{special(r) ? ` · ${special(r)} with special boxes` : ''}</div>
             </button>
           ))}
           <div style={{ fontSize: 11, color: '#64748b', marginTop: 4, lineHeight: 1.45 }}>
@@ -412,8 +416,23 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // Role Setup screen open, and whether the user in the form has their own
   // page boxes (custom) or follows their role's template.
   const [showRoleSetup, setShowRoleSetup] = useState(false);
-  const [newUserCustom, setNewUserCustom] = useState(false);
+  // Special boxes for the user in the form (per page; the rest follow the role).
+  const [newUserOverrides, setNewUserOverrides] = useState({});
   const roleTemplate = (r) => (roleCfg && roleCfg.roles && roleCfg.roles[r]) ? { ...DEFAULT_PAGES, ...roleCfg.roles[r] } : null;
+  // Once roles are set up, the form shows role boxes + this user's special
+  // boxes; ticking a box to differ from the role makes just that box special.
+  const usingRoles = !!(roleCfg && !roleIsFull(newUserRole) && roleTemplate(newUserRole));
+  const shownPages = usingRoles ? { ...roleTemplate(newUserRole), ...newUserOverrides } : newUserPages;
+  const setBox = (k, val) => {
+    if (!usingRoles) { setNewUserPages(p => ({ ...p, [k]: val })); return; }
+    const roleVal = pageOn(roleTemplate(newUserRole), k, DEFAULT_OFF_SET);
+    setNewUserOverrides(o => { const n = { ...o }; if (val === roleVal) delete n[k]; else n[k] = val; return n; });
+  };
+  const setAllBoxes = (val) => {
+    if (!usingRoles) { setNewUserPages(val ? { ...DEFAULT_PAGES, ...Object.fromEntries(PAGE_KEYS.map(k => [k, true])) } : Object.fromEntries(PAGE_KEYS.map(k => [k, false]))); return; }
+    const tpl = roleTemplate(newUserRole);
+    setNewUserOverrides(Object.fromEntries(PAGE_KEYS.filter(k => pageOn(tpl, k, DEFAULT_OFF_SET) !== val).map(k => [k, val])));
+  };
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState(null);
@@ -2102,14 +2121,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         setCredentials(c => ({ ...(c || {}), [newUserName.toUpperCase()]: { setAt: new Date().toISOString() } }));
       } catch (e) { setUserSaving(false); alert('Could not set the password: ' + (e?.message || e)); return; }
     }
-    const stripPlain = (u) => { const o = { ...u }; delete o.password; delete o.passwordHash; if (newUserPass) { delete o.passwordReset; delete o.passwordEnc; } return o; };
+    const stripPlain = (u) => { const o = { ...u }; delete o.password; delete o.passwordHash; delete o.customPages; if (newUserPass) { delete o.passwordReset; delete o.passwordEnc; } return o; };
     // Hash a newly typed code; a blank box means "leave whatever they have".
     const codePatch = newUserCode
       ? { applicantCode: await hashAccessCode(newUserCode) }
       : (existing && existing.applicantCode ? { applicantCode: existing.applicantCode } : {});
     const updated = existing
-      ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, ...(roleCfg ? { customPages: !!newUserCustom } : {}), chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch } : u)
-      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: newUserPages, ...(roleCfg ? { customPages: !!newUserCustom } : {}), chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch }];
+      ? users.map(u => u.username === newUserName ? { ...stripPlain(u), lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: shownPages, ...(usingRoles ? { pageOverrides: newUserOverrides } : {}), chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch } : u)
+      : [...users, { username: newUserName, lastName: newUserLast.trim(), email: newUserEmail.trim(), ...pwPatch, role: newUserRole, canEditDashboard: newUserCanEdit, managementAccess: newUserManagementAccess, pages: shownPages, ...(usingRoles ? { pageOverrides: newUserOverrides } : {}), chatAccess: newUserChatAccess, techChatAccess: newUserTechChatAccess, hidden: !!newUserHidden, ...codePatch }];
     // An advisor or technician must also live on the dashboard roster
     // (data.advisors / data.technicians) or they never render on the dashboard.
     // Saving the user alone only writes users.json, so auto-add them to the
@@ -3123,7 +3142,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               <div
                 key={u.username}
                 className={`user-row-item${selectedUser === u.username ? ' selected' : ''}`}
-                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserHidden(!!u.hidden); setNewUserPass(''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserCustom(!!u.customPages); setNewUserPages((!u.customPages && roleTemplate(u.role || 'advisor')) || { ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
+                onClick={() => { setSelectedUser(u.username); setNewUserName(u.username); setNewUserLast(u.lastName || ''); setNewUserEmail(u.email || ''); setNewUserHidden(!!u.hidden); setNewUserPass(''); setNewUserRole(u.role || 'advisor'); setNewUserCanEdit(u.canEditDashboard || false); setNewUserManagementAccess(!!u.managementAccess); setNewUserOverrides({ ...(u.pageOverrides || {}) }); setNewUserPages({ ...DEFAULT_PAGES, ...(u.pages || {}) }); setNewUserChatAccess(!!u.chatAccess); setNewUserTechChatAccess(!!u.techChatAccess); setNewUserCode(''); setExistingCode(!!(u.applicantCode && u.applicantCode.hash)); }}
               >
                 <div>
                   <div className="user-row-name">{u.username}</div>
@@ -3148,7 +3167,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small">{selectedUser ? `Editing: ${selectedUser}` : 'No user selected'}</div>
           <div className="actions">
             <button className="secondary" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={handleDeleteUser}>Delete Selected User</button>
-            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserHidden(false); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserCustom(false); setNewUserPages(roleTemplate('advisor') || { ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
+            <button className="secondary" onClick={() => { setSelectedUser(''); setNewUserName(''); setNewUserLast(''); setNewUserEmail(''); setNewUserHidden(false); setNewUserPass(''); setNewUserRole('advisor'); setNewUserCanEdit(false); setNewUserManagementAccess(false); setNewUserOverrides({}); setNewUserPages({ ...DEFAULT_PAGES }); setNewUserChatAccess(false); setNewUserCode(''); setExistingCode(false); }}>Clear</button>
           </div>
         </div>
         <div className="form-section">
@@ -3222,7 +3241,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="field">
               <label>Role</label>
-              <select value={newUserRole} onChange={e => { const r = e.target.value; setNewUserRole(r); if (!newUserCustom && roleTemplate(r)) setNewUserPages(roleTemplate(r)); }} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
+              <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 8, padding: '5px 6px', fontSize: 13 }}>
                 {ROLES.map(r => <option key={r} value={r}>{r.replace(/\b\w/g, c => c.toUpperCase())}</option>)}
               </select>
             </div>
@@ -3271,32 +3290,42 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
               Page Access
               <span style={{ fontWeight: 400, fontSize: 11, color: '#475569', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>— admins &amp; managers always have full access</span>
-              {roleCfg && !roleIsFull(newUserRole) && (
-                <span style={{ marginLeft: 10, fontSize: 10.5, fontWeight: 900, letterSpacing: 0, textTransform: 'none', padding: '2px 9px', borderRadius: 999,
-                  color: newUserCustom ? '#fcd34d' : '#6ee7b7', background: newUserCustom ? 'rgba(250,204,21,.12)' : 'rgba(52,211,153,.12)', border: `1px solid ${newUserCustom ? 'rgba(250,204,21,.45)' : 'rgba(52,211,153,.45)'}` }}>
-                  {newUserCustom ? '✎ Custom for this user' : `🧩 Follows ${newUserRole.replace(/\b\w/g, c => c.toUpperCase())} role`}
-                </span>
-              )}
+              {usingRoles && (() => {
+                const n = Object.keys(newUserOverrides).length;
+                return (
+                  <span style={{ marginLeft: 10, fontSize: 10.5, fontWeight: 900, letterSpacing: 0, textTransform: 'none', padding: '2px 9px', borderRadius: 999,
+                    color: n ? '#fcd34d' : '#6ee7b7', background: n ? 'rgba(250,204,21,.12)' : 'rgba(52,211,153,.12)', border: `1px solid ${n ? 'rgba(250,204,21,.45)' : 'rgba(52,211,153,.45)'}` }}>
+                    🧩 {newUserRole.replace(/\b\w/g, c => c.toUpperCase())} role{n ? ` + ${n} special box${n === 1 ? '' : 'es'}` : ''}
+                  </span>
+                );
+              })()}
             </div>
-            {['Advisor', 'Shared', 'Warranty', 'Tech', 'Manager', 'Parts'].map(group => (
+            {PAGE_GROUP_ORDER.map(group => (
               <div key={group} style={{ marginBottom: 10 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>{group}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
                   {PAGE_ACCESS.filter(p => p.group === group).map(p => (
-                    <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: newUserPages[p.key] !== false ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
-                      <input type="checkbox" checked={newUserPages[p.key] !== false} onChange={e => { setNewUserPages(prev => ({ ...prev, [p.key]: e.target.checked })); if (roleCfg) setNewUserCustom(true); }} style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }} />
+                    <label key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: pageOn(shownPages, p.key, DEFAULT_OFF_SET) ? '#e2e8f0' : '#475569', userSelect: 'none' }}>
+                      <input type="checkbox" checked={pageOn(shownPages, p.key, DEFAULT_OFF_SET)} onChange={e => setBox(p.key, e.target.checked)} style={{ accentColor: '#3dd6c3', width: 14, height: 14, flexShrink: 0 }} />
                       <span>{p.label}</span>
+                      {usingRoles && p.key in newUserOverrides && (
+                        <>
+                          <span title="Special setting just for this user — the role says otherwise" style={{ fontSize: 10, fontWeight: 900, color: '#fcd34d', background: 'rgba(250,204,21,.12)', border: '1px solid rgba(250,204,21,.45)', borderRadius: 999, padding: '0 6px' }}>✎ special</span>
+                          <button type="button" title="Put this box back to the role's setting" onClick={e => { e.preventDefault(); setNewUserOverrides(o => { const n = { ...o }; delete n[p.key]; return n; }); }}
+                            style={{ padding: '0 6px', fontSize: 11, lineHeight: '16px', borderRadius: 999, background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.18)', color: '#cbd5e1' }}>↺</button>
+                        </>
+                      )}
                     </label>
                   ))}
                 </div>
               </div>
             ))}
             <div style={{ marginTop: 8 }}>
-              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => { setNewUserPages({ ...DEFAULT_PAGES }); if (roleCfg) setNewUserCustom(true); }}>Check All</button>
+              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => setAllBoxes(true)}>Check All</button>
               {' '}
-              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => { setNewUserPages(Object.fromEntries(PAGE_ACCESS.map(p => [p.key, false]))); if (roleCfg) setNewUserCustom(true); }}>Uncheck All</button>
-              {roleCfg && newUserCustom && roleTemplate(newUserRole) && (
-                <>{' '}<button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => { setNewUserCustom(false); setNewUserPages(roleTemplate(newUserRole)); }}>↺ Use role defaults</button></>
+              <button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => setAllBoxes(false)}>Uncheck All</button>
+              {usingRoles && Object.keys(newUserOverrides).length > 0 && (
+                <>{' '}<button className="secondary" style={{ fontSize: 11, padding: '3px 10px' }} onClick={() => setNewUserOverrides({})}>↺ All back to role</button></>
               )}
             </div>
           </div>

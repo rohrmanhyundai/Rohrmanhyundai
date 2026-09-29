@@ -1253,7 +1253,7 @@ export default function App() {
         onMyReports={() => goTo('performance-report', 'tech-resources')}
         onAdditionalTimeReview={() => goTo('additional-time-review', 'tech-resources')}
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'tech-resources') : undefined}
-        onShopAppointments={() => goTo('shop-appointments', 'tech-resources')}
+        onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'tech-resources') : undefined}
         onBack={() => setPage('dashboard')}
       />
     );
@@ -1392,9 +1392,11 @@ export default function App() {
   }
 
   // Parts Hub
-  // Shop Appointments — the prep sheets, read-only, for techs / parts. Anyone
-  // who can open Technician Resources or the Parts Hub gets it there.
+  // Shop Appointments — the prep sheets, read-only, for techs / parts. On by
+  // default for every role (page access 'shopAppointments'); untick it per
+  // role in Role Setup or per user.
   if (page === 'shop-appointments') {
+    if (!canAccess('shopAppointments')) { setPage('dashboard'); return null; }
     return <ShopAppointments onBack={() => navTo(prevPage && prevPage !== 'shop-appointments' ? prevPage : 'dashboard')} backLabel={BACK_LABELS[prevPage] || '← Back'} />;
   }
 
@@ -1415,7 +1417,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'parts-hub')}
         onGoalForecast={() => goTo('parts-goal-forecast', 'parts-hub')}
         onGlobalMessage={() => goTo('global-message', 'parts-hub')}
-        onShopAppointments={() => goTo('shop-appointments', 'parts-hub')}
+        onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'parts-hub') : undefined}
       />
     );
   }
