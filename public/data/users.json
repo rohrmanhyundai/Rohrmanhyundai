@@ -379,22 +379,43 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
-        "documentLibrary": true,
+        "documentLibrary": false,
         "aftermarketWarranty": false,
         "originalOwner": false,
         "workInProgress": false,
+        "shopAppointments": false,
         "chargeAccountList": false,
         "partsHub": false,
-        "tireQuote": true,
-        "hotRepairs": true
+        "tireQuote": false,
+        "atDiagWorksheet": false,
+        "usedCarHub": false,
+        "mobileWorkSchedule": false,
+        "mobileTireWarranty": false,
+        "mobileAdditionalTime": false,
+        "mobileRegistrationUpload": false,
+        "mobileMediaUpload": false
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "pageOverrides": {}
+      "pageOverrides": {
+        "documentLibrary": false,
+        "tireQuote": false,
+        "workInProgress": false,
+        "mobileWorkSchedule": false,
+        "mobileAdditionalTime": false,
+        "mobileMediaUpload": false,
+        "shopAppointments": false,
+        "atDiagWorksheet": false,
+        "mobileTireWarranty": false,
+        "mobileRegistrationUpload": false
+      },
+      "lastName": "",
+      "email": "",
+      "managementAccess": false,
+      "hidden": false
     },
     {
       "username": "Jerry",
