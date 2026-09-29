@@ -27,5 +27,25 @@
     "tireQuote",
     "nttAttWorksheet",
     "registrationUploads"
+  ],
+  "advisorTools": [
+    "completedTime",
+    "hotRepairs",
+    "documentLibrary",
+    "chargeList",
+    "servicePricing",
+    "deferredService",
+    "workSchedule",
+    "dailyWrench",
+    "aftermarketWarranty",
+    "originalOwner",
+    "afterCall",
+    "surveyReports",
+    "myReports",
+    "bigMoneyLof",
+    "goalsForecasting",
+    "workInProgress",
+    "tireQuote",
+    "livePay"
   ]
 }
