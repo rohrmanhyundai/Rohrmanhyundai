@@ -1050,6 +1050,8 @@ export default function App() {
   // A user marked Hidden (left mid-month, kept only for month-end reporting) is
   // taken out of every roster, picker, tab and chat list below. They can still
   // log in, and Manager Reports / Payroll history still see the full list.
+  // Hidden users (left mid-month) come off the reporting rosters below, but
+  // they still log in — chat access and messages use the full `users` list.
   const activeUsers = users.filter(u => !u.hidden);
   // Same idea for the dashboard roster: pages that aren't reporting (Live Pay,
   // Cash Dash, calendars, hubs) get a copy with hidden advisors/techs removed.
@@ -1394,7 +1396,7 @@ export default function App() {
         advisorList={advisorList}
         backLabel={wipBackLabel}
         onBack={() => { setWipInitialRO(null); navTo(prevPage || 'tech-resources'); }}
-        chatUsers={activeUsers.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
+        chatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
         initialJob={wipInitialRO}
         onInitialJobConsumed={() => setWipInitialRO(null)}
       />
@@ -1844,8 +1846,8 @@ export default function App() {
         schedules={schedules}
         vacations={vacations}
         advisors={visibleData.advisors}
-        chatUsers={activeUsers.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
-        techChatUsers={activeUsers.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
+        chatUsers={users.filter(u => u.chatAccess).map(u => u.username.toUpperCase())}
+        techChatUsers={users.filter(u => u.techChatAccess).map(u => u.username.toUpperCase())}
       />
     );
   }
