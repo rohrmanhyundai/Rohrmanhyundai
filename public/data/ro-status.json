@@ -1,7 +1,55 @@
 {
-  "updatedAt": "2026-09-29T19:37:03.382Z",
+  "updatedAt": "2026-09-29T20:33:47.569Z",
   "by": "SHAWN",
   "rows": [
+    {
+      "ro": "781206",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2016 Honda Pilot",
+      "tech": "CHRIS FOLEY",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Tue, Sep 29, 2026 4:20 PM"
+    },
+    {
+      "ro": "781205",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2025 Hyundai Palisade",
+      "tech": "TRENTON MCQUINN",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Tue, Sep 29, 2026 3:42 PM"
+    },
+    {
+      "ro": "781204",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2021 Hyundai Kona",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "IN_PROGRESS",
+      "roAge": 1,
+      "openDate": "Tue, Sep 29, 2026 3:37 PM"
+    },
+    {
+      "ro": "781203",
+      "advisor": "JORDAN TROXEL",
+      "vehicle": "2021 Hyundai Santa Fe",
+      "tech": "BRYSON HUTSELL",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
+      "roAge": 1,
+      "openDate": "Tue, Sep 29, 2026 3:36 PM"
+    },
     {
       "ro": "781202",
       "advisor": "DAVID RILEY",
@@ -22,7 +70,7 @@
       "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "cpStatus": "COMPLETED",
       "roAge": 1,
       "openDate": "Tue, Sep 29, 2026 1:57 PM"
     },
@@ -57,8 +105,8 @@
       "tech": "CORY SWINDLE",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "roStatus": "INVOICED",
+      "cpStatus": "CLOSED",
       "roAge": 1,
       "openDate": "Tue, Sep 29, 2026 12:41 PM"
     },
@@ -203,7 +251,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 1,
+      "roAge": 2,
       "openDate": "Mon, Sep 28, 2026 4:10 PM"
     },
     {
@@ -238,7 +286,7 @@
       "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
+      "cpStatus": "IN_PROGRESS",
       "roAge": 2,
       "openDate": "Mon, Sep 28, 2026 1:46 PM"
     },
@@ -289,18 +337,6 @@
       "cpStatus": "COMPLETED",
       "roAge": 2,
       "openDate": "Mon, Sep 28, 2026 9:18 AM"
-    },
-    {
-      "ro": "781146",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2020 Hyundai Tucson",
-      "tech": "CARTER JEAN",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "INVOICED",
-      "roAge": 2,
-      "openDate": "Mon, Sep 28, 2026 7:51 AM"
     },
     {
       "ro": "781143",
@@ -466,8 +502,8 @@
       "userFlag": "PURPLE",
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
-      "roAge": 8,
+      "cpStatus": "NOT_STARTED",
+      "roAge": 9,
       "openDate": "Mon, Sep 21, 2026 4:04 PM"
     },
     {
@@ -539,7 +575,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 19,
+      "roAge": 20,
       "openDate": "Thu, Sep 10, 2026 4:27 PM"
     },
     {
@@ -551,7 +587,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 21,
+      "roAge": 22,
       "openDate": "Tue, Sep 8, 2026 4:08 PM"
     },
     {
@@ -563,7 +599,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 27,
+      "roAge": 28,
       "openDate": "Wed, Sep 2, 2026 3:35 PM"
     },
     {
@@ -575,7 +611,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 29,
+      "roAge": 30,
       "openDate": "Mon, Aug 31, 2026 4:01 PM"
     },
     {
@@ -587,7 +623,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NOT_STARTED",
-      "roAge": 33,
+      "roAge": 34,
       "openDate": "Thu, Aug 27, 2026 4:22 PM"
     },
     {
