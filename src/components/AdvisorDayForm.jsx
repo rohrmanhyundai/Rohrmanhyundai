@@ -481,7 +481,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     if (!file) return;
     setUploadMsg(''); setUploadBusy(true);
     try {
-      const { dates, byDate, saved, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: ownAdvisor });
+      const { dates, byDate, saved, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: ownAdvisor, confirmStale: (msg) => window.confirm(msg) });
       if (saved[date]) {
         setApptList(saved[date]);
         setRows(prev => remerge(prev, saved[date]));

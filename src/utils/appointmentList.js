@@ -197,10 +197,28 @@ export function matchDeferred(appts, deferredRows, codes, codeHours = {}, codePr
 // Advisor" appointment with deferred work goes to the advisor who wrote that
 // deferred RO — if they're still on the roster — but never overrides a claim
 // and never re-assigns one sent back to the pool.
-export async function uploadAppointmentFile(file, { advisorList = [], by = '' } = {}) {
+// The appointment list is normally tomorrow's. A DMS export left on today's
+// date files itself on today (the dates in the report decide), so if nothing
+// in the file is after today the uploader is asked first — 9/29 an evening
+// export of today's list was taken for tomorrow's.
+export function staleDatesWarning(dates, now = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  if (!dates.length || dates.some(d => d > today)) return '';
+  const pretty = dates.map(d => {
+    const [y, m, dd] = d.split('-').map(Number);
+    const label = new Date(y, m - 1, dd).toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+    return d === today ? `${label} (today)` : `${label} (past)`;
+  }).join(', ');
+  return `This report is for ${pretty} — not tomorrow.\n\nIf you meant tomorrow's appointments, cancel and re-run the DMS report with tomorrow's date.\n\nUpload it to ${dates.length === 1 ? 'that day' : 'those days'} anyway? (It replaces that day's list; moves and notes are kept.)`;
+}
+
+export async function uploadAppointmentFile(file, { advisorList = [], by = '', confirmStale } = {}) {
   const { byDate } = await parseAppointmentFile(file);
   const dates = Object.keys(byDate).sort();
   if (dates.length === 0) throw new Error('No appointments found in that file.');
+  const warn = staleDatesWarning(dates);
+  if (warn && confirmStale && !(await confirmStale(warn))) throw new Error('Upload cancelled — nothing was changed.');
   // A failed deferred read just means no matches this time — the list still uploads.
   const [defRows, defCodes, pricing] = await Promise.all([
     loadDeferredRows().catch(() => null), loadDeferredCodes().catch(() => null), loadServicePricing().catch(() => null),

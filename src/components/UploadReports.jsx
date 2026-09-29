@@ -117,7 +117,7 @@ export default function UploadReports({ currentUser, advisorList = [], onBack, o
     if (!file) return;
     setApptMsg(''); setApptBusy(true);
     try {
-      const { dates, byDate, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: currentUser });
+      const { dates, byDate, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: currentUser, confirmStale: (msg) => window.confirm(msg) });
       const total = dates.reduce((n, d) => n + byDate[d].length, 0);
       setApptMsg(`✓ ${total} appointments for ${dates.map(shortMD).join(', ')}`
         + (defCount ? ` · ${defCount} with deferred work` : '')
