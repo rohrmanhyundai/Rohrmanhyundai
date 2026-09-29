@@ -1077,3 +1077,7 @@ html, body {
 .adv-prep-table tr.appt-clock-now td { background: linear-gradient(180deg, rgba(250,204,21,.17), rgba(250,204,21,.06)) !important; border-top: 1px solid rgba(253,224,71,.6); border-bottom: 1px solid rgba(253,224,71,.6); }
 .adv-prep-table tr.appt-clock-now td:first-child { box-shadow: inset 5px 0 0 #facc15; }
 @media print { .adv-prep-table tr.appt-clock-soon td:first-child { animation: none; } }
+
+/* All Tools page: a card that needs doing (calls owed, reporting due) pulses red. */
+@keyframes toolCardAlert { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.35); } 50% { box-shadow: 0 0 18px 4px rgba(239,68,68,.55); } }
+.tool-card-alert { animation: toolCardAlert 1.6s ease-in-out infinite; }

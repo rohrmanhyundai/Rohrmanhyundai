@@ -44,6 +44,29 @@ function rememberToolbar(cfg) {
   toolbarMem = cfg;
   try { localStorage.setItem(TOOLBAR_CACHE_KEY, JSON.stringify(cfg)); } catch {}
 }
+// Advisor Tools page cards — same look as the Manager Hub tiles.
+const card = (rgbA, rgbB, color) => ({ bg: `linear-gradient(135deg,rgba(${rgbA},.28),rgba(${rgbB},.18))`, border: `rgba(${rgbA},.45)`, color });
+const TOOL_CARDS = {
+  completedTime:       { icon: '⏰', label: 'Completed Time',          desc: 'Jobs the techs have finished today',            ...card('251,146,60', '243,111,20', '#fdba74') },
+  hotRepairs:          { icon: '🔧', label: 'Recalls/TSB Bulletins',   desc: 'Recall and TSB bulletin releases',              ...card('248,113,113', '239,68,68', '#fca5a5') },
+  documentLibrary:     { icon: '📁', label: 'Document Library',        desc: 'Forms and reference documents',                 ...card('110,231,249', '61,214,195', '#6ee7f9') },
+  chargeList:          { icon: '💳', label: 'Charge List',             desc: 'Approved charge accounts and tax-exempt status', ...card('99,102,241', '79,70,229', '#a5b4fc') },
+  servicePricing:      { icon: '💲', label: 'Service Pricing Menu',    desc: 'Services, prices and packages',                 ...card('52,211,153', '16,185,129', '#6ee7b7') },
+  deferredService:     { icon: '🔧', label: 'Deferred Service',        desc: 'Declined work to follow up and book',           ...card('251,146,60', '234,88,12', '#fdba74') },
+  workSchedule:        { icon: '📅', label: 'Work Schedule',           desc: 'Advisor and technician schedules',              ...card('167,139,250', '139,92,246', '#c4b5fd') },
+  dailyWrench:         { icon: '🔧', label: 'The Daily Wrench',        desc: 'This morning\'s briefing — your day, your pickup', ...card('56,189,248', '139,92,246', '#7dd3fc') },
+  aftermarketWarranty: { icon: '🛡', label: 'After Market Warranty/Tire Warranty', desc: 'Warranty contracts and claims',   ...card('52,211,153', '16,185,129', '#6ee7b7') },
+  originalOwner:       { icon: '📋', label: 'Original Owner',          desc: '10yr/100k original owner affidavit',            ...card('251,191,36', '245,158,11', '#fcd34d') },
+  afterCall:           { icon: '📞', label: 'After Call Reviews',      desc: 'Survey customers still to call',                ...card('52,211,153', '16,185,129', '#6ee7b7') },
+  surveyReports:       { icon: '📊', label: 'Survey Reports',          desc: 'Survey review history',                         ...card('167,139,250', '139,92,246', '#c4b5fd') },
+  myReports:           { icon: '📈', label: 'My Reports',              desc: 'Your monthly performance reports',              ...card('61,214,195', '110,231,249', '#5eead4') },
+  cashDash:            { icon: '💰', label: 'Cash Dash',               desc: 'Seasonal pull board',                           ...card('34,197,94', '5,150,105', '#86efac') },
+  bigMoneyLof:         { icon: '💵', label: 'Big-Money LOF',           desc: '$50 add-on contest — where you stand',          ...card('250,204,21', '245,158,11', '#fde047') },
+  goalsForecasting:    { icon: '🎯', label: 'End of Day Reporting',    desc: 'Report today\'s hours and HRS/RO',              ...card('239,68,68', '249,115,22', '#fca5a5') },
+  workInProgress:      { icon: '🔧', label: 'Work in Progress',        desc: 'Every RO in the shop and cars awaiting a tech', ...card('251,146,60', '249,115,22', '#fb923c') },
+  tireQuote:           { icon: '🛞', label: 'Tire Quote',              desc: 'Quote tires from Hyundai Tire Center',          ...card('74,222,128', '34,197,94', '#86efac') },
+  livePay:             { icon: '💵', label: 'Live Pay',                desc: 'Your commission, banked and pacing',            ...card('52,211,153', '16,185,129', '#6ee7b7') },
+};
 const hhmm = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(v || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
 function toolShowing(cfg, key, mins) {
   const t = cfg && cfg.tabs && cfg.tabs[key];
@@ -928,6 +951,40 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
       .formatToParts(new Date(nowTick)).map(x => [x.type, x.value]));
     return (parseInt(p.hour, 10) % 24) * 60 + parseInt(p.minute, 10);
   })();
+  // A Manager-Hub-style card for the All Tools page. Same click as the top-bar
+  // button; the live badges ride along as a corner chip.
+  const toolClick = {
+    completedTime: () => setShowCompletedTime(true), hotRepairs: onHotRepairs, documentLibrary: onDocumentLibrary,
+    chargeList: onChargeList, servicePricing: onServicePricing, deferredService: onDeferredService, workSchedule: onWorkSchedule,
+    dailyWrench: onDailyWrench ? () => { try { localStorage.setItem('dailyWrenchSeen', new Date().toDateString()); } catch {} onDailyWrench(); } : undefined,
+    aftermarketWarranty: onAftermarketWarranty, originalOwner: onOriginalOwner, afterCall: onAfterCall, surveyReports: onSurveyReports,
+    myReports: onMyReports, cashDash: onCashDash, bigMoneyLof: onBigMoneyLof, goalsForecasting: onGoalsForecasting,
+    workInProgress: onWorkInProgress, tireQuote: onTireQuote, livePay: onLivePay,
+  };
+  const renderToolCard = (key) => {
+    const c = TOOL_CARDS[key];
+    if (!c) return renderTool(key);
+    const badge = key === 'afterCall' && afterCallDue ? { text: String(pendingCallCount), color: '#064e3b', bg: '#a7f3d0', title: `${pendingCallCount} customers to call` }
+      : key === 'goalsForecasting' && eodMissed ? { text: `📌 ${missedEodCount} missed`, color: '#7c2d12', bg: '#fbbf24' }
+      : key === 'goalsForecasting' && eodUrgent ? { text: 'due today', color: '#7c2d12', bg: '#fdba74' }
+      : key === 'bigMoneyLof' && bigMoneyBadge ? { text: bigMoneyBadge, color: '#422006', bg: '#fde68a' }
+      : key === 'dailyWrench' && wrenchUnread ? { text: 'new', color: '#0c4a6e', bg: '#a5f3fc' }
+      : null;
+    const alert = (key === 'afterCall' && afterCallDue) || (key === 'goalsForecasting' && (eodMissed || eodUrgent));
+    return (
+      <button onClick={toolClick[key]} className={alert ? 'tool-card-alert' : undefined}
+        style={{ position: 'relative', width: '100%', height: '100%', background: c.bg, border: `1px solid ${c.border}`, borderRadius: 16, padding: '28px 24px', cursor: 'pointer', textAlign: 'left', transition: 'transform .15s, box-shadow .15s' }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}>
+        {badge && (
+          <span title={badge.title || ''} style={{ position: 'absolute', top: 12, right: 12, padding: '2px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: badge.color, background: badge.bg, border: '2px solid #0b1220' }}>{badge.text}</span>
+        )}
+        <div style={{ fontSize: 28, marginBottom: 12 }}>{c.icon}</div>
+        <div style={{ fontWeight: 800, fontSize: 16, color: c.color, marginBottom: 6 }}>{c.label}</div>
+        <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{c.desc}</div>
+      </button>
+    );
+  };
   const shownTools = toolbarKnown ? allTools.filter(t => toolShowing(toolbar, t.key, easternMinutes)) : [];
 
   const isViewingOwn = viewingAdvisor === ownAdvisor;
@@ -948,7 +1005,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
         style={toolsTab === key ? { background: 'linear-gradient(180deg,rgba(110,231,249,.35),rgba(56,189,248,.2))', borderColor: 'rgba(110,231,249,.7)', fontWeight: 900 } : undefined}>{label}</button>
     );
     return (
-      <div className="adv-page apt-prep-bg" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div className="adv-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {modals}
         <div className="adv-topbar">
           <div>
@@ -970,9 +1027,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
               hubKey="advisorTools"
               currentUser={currentUser}
               items={allTools}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14, maxWidth: 1200, margin: '0 auto' }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20, maxWidth: 1100, margin: '0 auto' }}
             >
-              {btn => <div className="adv-tool-cell">{renderTool(btn.key)}</div>}
+              {btn => renderToolCard(btn.key)}
             </SortableTiles>
           )}
         </div>
