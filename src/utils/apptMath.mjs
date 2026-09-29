@@ -84,3 +84,47 @@ export function deferredPossible(list, advisorFirst) {
   }
   return { cars, hours: Math.round(hours * 10) / 10, amount: Math.round(amount) };
 }
+
+// ── Price per deferred service ────────────────────────────────────────────────
+// The deferred report only has one total per RO. Split it into a price per
+// service line so the customer printout can show a breakdown that adds up:
+//   • a service with a usual price (codePrices: learned from past ROs, or the
+//     Service Pricing Menu) gets that price;
+//   • vague lines ("REC") share whatever the RO total leaves over;
+//   • then everything is nudged in proportion so the lines sum exactly to the
+//     RO total (70% of ROs are already within 5% before the nudge).
+// Sets item.price (for the whole line, count included) and item.priceEst.
+export function allocatePrices(items, total, codePrices = {}) {
+  const amt = Number(total) || 0;
+  if (!(amt > 0) || !items || !items.length) return items;
+  const unit = (i) => (i.desc ? Number(codePrices[i.code]) || 0 : 0);
+  const known = items.filter(i => unit(i) > 0);
+  const unknown = items.filter(i => !(unit(i) > 0));
+  const sumKnown = known.reduce((n, i) => n + unit(i) * (i.count || 1), 0);
+  const unknownUnits = unknown.reduce((n, i) => n + (i.count || 1), 0);
+  const w = new Map();
+  known.forEach(i => w.set(i, unit(i) * (i.count || 1)));
+  if (unknown.length) {
+    const residual = amt - sumKnown;
+    // Leftover goes to the vague lines; if there's none, give each the
+    // average known line so it still shows a sensible share.
+    const each = residual > unknownUnits ? residual / unknownUnits
+      : (known.length ? sumKnown / known.reduce((n, i) => n + (i.count || 1), 0) : amt / unknownUnits);
+    unknown.forEach(i => w.set(i, each * (i.count || 1)));
+  }
+  const sumW = [...w.values()].reduce((n, v) => n + v, 0) || 1;
+  let cents = 0;
+  const target = Math.round(amt * 100);
+  items.forEach(i => {
+    i.price = Math.round((w.get(i) / sumW) * amt * 100) / 100;
+    i.priceEst = !(unit(i) > 0);
+    cents += Math.round(i.price * 100);
+  });
+  // Rounding: put the last few cents on the biggest line so it sums exactly.
+  const diff = target - cents;
+  if (diff) {
+    const big = items.reduce((a, b) => (b.price > a.price ? b : a), items[0]);
+    big.price = Math.round((big.price * 100 + diff)) / 100;
+  }
+  return items;
+}

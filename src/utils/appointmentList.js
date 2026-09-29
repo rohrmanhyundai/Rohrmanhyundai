@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { canonicalAdvisorFirst } from './advisorAliases';
 import { newestPerVehicle } from './deferredVehicles';
 import { loadDeferredRows, loadDeferredCodes, updateAppointmentList, loadServicePricing } from './github';
-import { ownerOf, apptTags, sellToGoal } from './apptMath.mjs';
+import { ownerOf, apptTags, sellToGoal, allocatePrices } from './apptMath.mjs';
 
 export { ownerOf, apptTags, sellToGoal };
 
@@ -142,7 +142,7 @@ const modelWord = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, '
 
 // deferredRows: rows.json byRo values; codes: codes.json ({ CODE: { description } }).
 // Returns a Map apptNo → deferred snapshot (stored on the appointment).
-export function matchDeferred(appts, deferredRows, codes, codeHours = {}) {
+export function matchDeferred(appts, deferredRows, codes, codeHours = {}, codePrices = {}) {
   const { rows } = newestPerVehicle(deferredRows || []);
   const byName = new Map();
   for (const r of rows) {
@@ -179,6 +179,8 @@ export function matchDeferred(appts, deferredRows, codes, codeHours = {}) {
       else if (hoursOf(i)) i.h = hoursOf(i);
       else if (share > 0) { i.h = Math.round(share * 10) / 10; i.est = true; }
     }
+    // Price per line for the customer printout — sums to the RO total.
+    allocatePrices(items, hit.amount, codePrices);
     out.set(a.apptNo, {
       ro: hit.ro, date: hit.date || '', advisorFull: hit.advisor || '', advisor: canonicalAdvisorFirst(hit.advisor),
       amount: hit.amount ?? null, hours: hit.hours ?? null, phone: hit.phone || '', vin: hit.vin || '', items,
@@ -205,11 +207,12 @@ export async function uploadAppointmentFile(file, { advisorList = [], by = '' } 
   ]);
   const deferredRows = Object.values((defRows && defRows.byRo) || {});
   const codeHours = learnCodeHours(deferredRows, hoursByOpCode(pricing));
+  const codePrices = learnCodePrices(deferredRows, defCodes || {}, pricesByOpCode(pricing));
   const roster = new Set((advisorList || []).map(n => String(n || '').trim().split(/\s+/)[0].toUpperCase()));
   const saved = {};
   let autoCount = 0, defCount = 0;
   for (const d of dates) {
-    const matches = matchDeferred(byDate[d], deferredRows, defCodes || {}, codeHours);
+    const matches = matchDeferred(byDate[d], deferredRows, defCodes || {}, codeHours, codePrices);
     const appts = byDate[d].map(a => (matches.has(a.apptNo) ? { ...a, deferred: matches.get(a.apptNo) } : a));
     defCount += matches.size;
     let auto = 0;
@@ -281,3 +284,46 @@ export function learnCodeHours(deferredRows, menuHours = {}) {
   return hours;
 }
 
+
+// Service Pricing Menu → { OPCODE: price }
+export function pricesByOpCode(pricing) {
+  const out = {};
+  for (const c of (pricing && pricing.categories) || []) {
+    for (const sv of c.services || []) {
+      const code = String(sv.opCode || '').trim().toUpperCase();
+      const p = parseFloat(String(sv.price || '').replace(/[$,]/g, ''));
+      if (code && Number.isFinite(p) && p > 0) out[code] = p;
+    }
+  }
+  return out;
+}
+
+// Usual price per op code, learned from the deferred report the same way as
+// hours: on ROs with exactly one code not yet priced (and no vague "REC"
+// lines), the RO total minus the known prices is that code's price; median of
+// 3+ ROs. What the shop actually charged wins; the menu fills the gaps.
+export function learnCodePrices(deferredRows, codes = {}, menuPrices = {}) {
+  const vague = (c) => !(codes[c] && codes[c].description);
+  const prices = {};
+  for (let pass = 0; pass < 4; pass++) {
+    const obs = {};
+    for (const r of deferredRows || []) {
+      if (!(r && r.amount > 0) || !Array.isArray(r.codes) || !r.codes.length) continue;
+      if (r.codes.some(vague)) continue;
+      const unk = r.codes.filter(c => !prices[c]);
+      if (unk.length !== 1 || r.codes.filter(c => c === unk[0]).length !== 1) continue;
+      const rest = r.amount - r.codes.reduce((n, c) => n + (prices[c] || 0), 0);
+      if (rest > 0) (obs[unk[0]] = obs[unk[0]] || []).push(rest);
+    }
+    let added = 0;
+    for (const [code, v] of Object.entries(obs)) {
+      if (v.length < 3) continue;
+      v.sort((a, b) => a - b);
+      prices[code] = Math.round(v[Math.floor(v.length / 2)] * 100) / 100;
+      added++;
+    }
+    if (!added) break;
+  }
+  for (const [code, p] of Object.entries(menuPrices || {})) if (!prices[code]) prices[code] = p;
+  return prices;
+}

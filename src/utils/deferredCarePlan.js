@@ -108,8 +108,26 @@ function explain(item) {
   return { ...k, title };
 }
 
+// Lists uploaded before per-line prices existed: split the RO total by each
+// line's hours so the breakdown still adds up (or skip it if there are none).
+function withPrices(items, total) {
+  if (items.every(i => i.price > 0) || !(Number(total) > 0)) return items;
+  const hrs = items.reduce((n, i) => n + (Number(i.h) || 0) * (i.count || 1), 0);
+  if (!(hrs > 0)) return items;
+  let cents = 0;
+  const out = items.map(i => {
+    const price = Math.round(((Number(i.h) || 0) * (i.count || 1) / hrs) * total * 100) / 100;
+    cents += Math.round(price * 100);
+    return { ...i, price, priceEst: true };
+  });
+  const diff = Math.round(total * 100) - cents;
+  if (diff) { const big = out.reduce((a, b) => (b.price > a.price ? b : a)); big.price = Math.round(big.price * 100 + diff) / 100; }
+  return out;
+}
+
 function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl }) {
-  const items = (deferred.items || []).map(i => ({ ...i, ...explain(i) }));
+  const items = withPrices(deferred.items || [], deferred.amount).map(i => ({ ...i, ...explain(i) }));
+  const priced = items.some(i => i.price > 0);
   const tagCounts = items.reduce((m, i) => ({ ...m, [i.tag]: (m[i.tag] || 0) + 1 }), {});
   const first = String(customer || '').trim().split(/\s+/)[0] || 'Valued Customer';
   const visit = deferred.date
@@ -127,6 +145,7 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
             <span class="tag" style="color:${t.color};background:${t.bg};border-color:${t.color}33">${esc(t.label)}</span>
             <div class="svc-name">${esc(i.title)}${i.count > 1 ? ` <span class="x">×${i.count}</span>` : ''}</div>
           </div>
+          ${i.price > 0 ? `<div class="price-tag">${money(i.price)}</div>` : ''}
         </div>
         <div class="why">${esc(i.why)}</div>
         <div class="wait"><b>If you wait:</b> ${esc(i.wait)}</div>
@@ -191,6 +210,20 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
     letter-spacing: .06em; text-transform: uppercase; }
   .svc-name { margin-top: 5px; font-weight: 900; font-size: 16px; line-height: 1.2; color: #0f172a; }
   .svc-name .x { color: #64748b; font-weight: 700; font-size: 13px; }
+  .svc-top { position: relative; }
+  .price-tag { margin-left: auto; align-self: flex-start; background: var(--navy); color: #fff; font-weight: 900; font-size: 15px;
+    padding: 5px 11px; border-radius: 10px; white-space: nowrap; box-shadow: 0 6px 14px -8px rgba(11,37,64,.8); }
+  .breakdown { margin: 16px 40px 0; border: 1px solid #dbe7ef; border-radius: 14px; padding: 14px 18px 12px; background: #fcfeff; }
+  .bd-head { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+  .bd-row { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13.5px; color: #1e293b; }
+  .bd-row + .bd-row { border-top: 1px solid #eef2f6; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; transform: translateY(1px); }
+  .bd-name { font-weight: 700; }
+  .bd-lead { flex: 1; border-bottom: 2px dotted #cbd5e1; transform: translateY(-3px); }
+  .bd-amt { font-weight: 900; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .bd-total { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 10px; border-top: 2px solid var(--navy);
+    font-size: 16px; font-weight: 900; color: var(--navy); }
+  .bd-note { margin-top: 6px; font-size: 10.5px; color: #94a3b8; }
   .why { font-size: 12.8px; color: #334155; line-height: 1.5; }
   .wait { font-size: 12px; color: #9a3412; background: #fff7ed; border-left: 3px solid #fb923c; border-radius: 6px; padding: 6px 9px; line-height: 1.4; }
   .wait b { color: #c2410c; }
@@ -252,6 +285,17 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
     ${summary ? `<div class="summary"><span class="lead">${items.length} recommended item${items.length === 1 ? '' : 's'}:</span>${summary}</div>` : ''}
 
     <div class="services"><div class="grid">${cards}</div></div>
+
+    ${priced ? `
+    <div class="breakdown">
+      <div class="bd-head"><span>Your estimate, line by line</span><span>Price</span></div>
+      ${items.map(i => {
+        const t = TAGS[i.tag] || TAGS.reliability;
+        return `<div class="bd-row"><span class="dot" style="background:${t.color}"></span><span class="bd-name">${esc(i.title)}${i.count > 1 ? ` ×${i.count}` : ''}</span><span class="bd-lead"></span><span class="bd-amt">${i.price > 0 ? money(i.price) : '—'}</span></div>`;
+      }).join('')}
+      <div class="bd-total"><span>Total estimate</span><span>${money(deferred.amount)}</span></div>
+      <div class="bd-note">Parts &amp; labor included · plus applicable taxes &amp; fees · prices from your recommendation and may change</div>
+    </div>` : ''}
 
     ${deferred.amount != null ? `
     <div class="total">
