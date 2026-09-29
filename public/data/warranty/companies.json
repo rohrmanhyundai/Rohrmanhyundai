@@ -322,5 +322,10 @@
     "name": "SUPERIOR AUTO",
     "phone": "765-459-0880",
     "email": "103SUPERIOR-AUTO.COM"
+  },
+  "CERTIFIED CUSTOM GOLD": {
+    "name": "Certified Custom Gold",
+    "phone": "800-205-8988",
+    "email": ""
   }
 }
