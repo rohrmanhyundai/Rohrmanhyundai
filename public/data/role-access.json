@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T03:04:04.350Z",
+  "updatedAt": "2026-09-29T03:07:16.224Z",
   "by": "SHAWN",
   "roles": {
     "advisor": {
@@ -45,10 +45,10 @@
       "workInProgress": true,
       "shopAppointments": true,
       "chargeAccountList": false,
-      "partsHub": true,
+      "partsHub": false,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": true
+      "usedCarHub": false
     },
     "porter": {
       "advisorCalendar": false,
