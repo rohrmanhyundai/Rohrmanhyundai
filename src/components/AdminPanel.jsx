@@ -417,6 +417,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState(null);
+  useEffect(() => { if (openSection !== 'users') setShowRoleSetup(false); }, [openSection]);
   // Upload Reports opens the panel straight onto the section that takes a file.
   useEffect(() => { if (isOpen && initialSection) setOpenSection(initialSection); }, [isOpen, initialSection]);
   // User Management can be locked on the Access Codes screen. Like every other
@@ -3363,6 +3364,21 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* User Management's own setup screens, up top where they're easy to find. */}
+          {openSection === 'users' && !usersGated && (
+            <>
+              <button onClick={() => setShowRoleSetup(v => !v)}
+                style={{ background: showRoleSetup ? 'rgba(255,255,255,.08)' : 'linear-gradient(180deg,rgba(61,214,195,.32),rgba(16,185,129,.18))', border: `1px solid ${showRoleSetup ? 'rgba(255,255,255,.2)' : 'rgba(61,214,195,.6)'}`, color: showRoleSetup ? '#cbd5e1' : '#ccfbf1', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 900, fontSize: 13, whiteSpace: 'nowrap' }}>
+                {showRoleSetup ? '👥 Back to users' : '🧩 Role Setup'}
+              </button>
+              {onOpenAccessCodes && (
+                <button onClick={onOpenAccessCodes}
+                  style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.28),rgba(239,68,68,.16))', border: '1px solid rgba(248,113,113,.55)', color: '#fecaca', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 900, fontSize: 13, whiteSpace: 'nowrap' }}>
+                  🔐 Access Codes
+                </button>
+              )}
+            </>
+          )}
           {reportStatus && (
             <span style={{ fontSize: 12, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24', maxWidth: 420, textAlign: 'right' }}>
               {reportStatus}
