@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T01:21:24.296Z",
+  "updatedAt": "2026-09-29T01:22:40.398Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -14,5 +14,7 @@
     "employee-review": true,
     "user-data-tracker": true
   },
-  "users": {}
+  "users": {
+    "KAI": {}
+  }
 }
