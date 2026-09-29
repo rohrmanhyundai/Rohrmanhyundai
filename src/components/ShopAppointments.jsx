@@ -9,7 +9,7 @@ import { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, is
 // advisor has them, campaigns and special-order parts to have ready, the
 // customer's own words, and the declined work on each car. Pulls the day's DMS
 // list plus each advisor's prep sheet (for the status and their notes).
-// Who can open it: User Management → page access → 📅 Shop Appointments.
+// Who can open it: anyone with Technician Resources or the Parts Hub — the tile lives in both.
 
 const pad = (n) => String(n).padStart(2, '0');
 const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
