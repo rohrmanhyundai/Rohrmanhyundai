@@ -9,21 +9,21 @@
       "managementAccess": true,
       "pages": {
         "advisorCalendar": true,
-        "surveyReports": false,
+        "surveyReports": true,
         "advisorSchedule": true,
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
-        "chargeAccountList": false,
+        "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
         "usedCarHub": true
       },
-      "chatAccess": false,
-      "techChatAccess": false,
+      "chatAccess": true,
+      "techChatAccess": true,
       "hidden": true
     },
     {
