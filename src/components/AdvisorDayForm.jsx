@@ -6,6 +6,7 @@ import {
 } from '../utils/github';
 import { uploadAppointmentFile, shortMD, apptTags, ownerOf, hoursByOpCode, sellToGoal } from '../utils/appointmentList';
 import { firstNameUpper } from '../utils/advisorAliases';
+import { openDeferredCarePlan } from '../utils/deferredCarePlan';
 
 // Appointment prep for one calendar day. The After Call Report used to live at
 // the bottom of this page; it is now its own page (AfterCallReport.jsx), reached
@@ -278,7 +279,8 @@ function CustomerComment({ text }) {
 }
 const isLof50 = (a) => !!a && apptTags(a).some(t => t.key === 'lof50');
 
-function DeferredBox({ d, compact, plan }) {
+// onPrint → the customer-facing Vehicle Care Plan (utils/deferredCarePlan.js).
+function DeferredBox({ d, compact, plan, onPrint }) {
   if (!d) return null;
   const months = d.date ? Math.max(0, Math.round((Date.now() - new Date(d.date + 'T00:00:00').getTime()) / (30.4 * 86400000))) : null;
   const per = (plan && plan.perItem) || {};
@@ -333,8 +335,15 @@ function DeferredBox({ d, compact, plan }) {
         </div>
       )}
 
-      <div style={{ fontSize: 11, color: '#8193ab', marginTop: 6 }}>
-        <CopyRo ro={d.ro} subtle />{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontSize: 11, color: '#8193ab', marginTop: 6 }}>
+        <span><CopyRo ro={d.ro} subtle />{d.date ? ` · ${shortDate(d.date)}` : ''}{months ? ` (${months} mo ago)` : ''}{d.advisor ? ` · ${d.advisor}` : ''}</span>
+        {onPrint && (
+          <button type="button" className="no-print" onClick={onPrint} title="A clean page for the customer: each service, why it matters, and the estimate"
+            style={{ marginLeft: 'auto', padding: '4px 11px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
+              background: 'linear-gradient(180deg,rgba(56,189,248,.3),rgba(14,165,233,.18))', border: '1px solid rgba(125,211,252,.6)', color: '#e0f2fe' }}>
+            🖨 Print for customer
+          </button>
+        )}
       </div>
     </div>
   );
@@ -1003,7 +1012,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                       <td><input className="adv-cell-input" value={row.vehicle || ''} onChange={e => updateRow(row.id, 'vehicle', e.target.value)} placeholder="Vehicle / reason for visit" /></td>
                     </>)}
                     <td style={{ overflowWrap: 'anywhere', verticalAlign: row.deferred ? 'top' : undefined }}>
-                      <DeferredBox d={row.deferred} plan={planFor(row.deferred)} />
+                      <DeferredBox d={row.deferred} plan={planFor(row.deferred)}
+                        onPrint={() => openDeferredCarePlan({ customer: row.customerName, vehicle: row.vehicle, advisor: row._owner || advisorName, deferred: row.deferred })} />
                       <input className="adv-cell-input" value={row.criticalDeferredService} onChange={e => updateRow(row.id, 'criticalDeferredService', e.target.value)} placeholder={row.deferred ? 'Your plan for the deferred work…' : 'Deferred service notes'} />
                     </td>
                     {renderNotesCell(row)}
@@ -1065,7 +1075,8 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
                   <div>{apptTags(a).filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
-                  {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)} /> : (
+                  {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)}
+                    onPrint={() => openDeferredCarePlan({ customer: a.customer, vehicle: a.vehicle, advisor: '', deferred: a.deferred })} /> : (
                     <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>
                   )}
                   {a.deferred && a.deferred.advisor && !rosterSet.has(a.deferred.advisor) && (

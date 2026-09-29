@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { loadAppointmentList, loadAdvisorNotes } from '../utils/github';
 import { apptTags, ownerOf, shortMD } from '../utils/appointmentList';
+import { openDeferredCarePlan } from '../utils/deferredCarePlan';
 import { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50, apptClock, ClockChip } from './AdvisorDayForm';
 
 // ── Shop Appointments ─────────────────────────────────────────────────────────
@@ -172,7 +173,8 @@ export default function ShopAppointments({ onBack, backLabel = '← Back' }) {
                         <div>{tags.filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
                       </td>
                       <td style={{ overflowWrap: 'anywhere' }}>
-                        {a.deferred ? <DeferredBox d={a.deferred} compact /> : <span style={{ fontSize: 12, color: '#64748b' }}>None on file</span>}
+                        {a.deferred ? <DeferredBox d={a.deferred} compact
+                          onPrint={() => openDeferredCarePlan({ customer: a.customer, vehicle: a.vehicle, advisor: owner === 'OPEN' ? '' : owner, deferred: a.deferred })} /> : <span style={{ fontSize: 12, color: '#64748b' }}>None on file</span>}
                         {prep && prep.criticalDeferredService ? (
                           <div style={{ fontSize: 12, color: '#cbd5e1', marginTop: 4 }}><b style={{ color: '#fdba74' }}>Advisor's plan:</b> {prep.criticalDeferredService}</div>
                         ) : null}
