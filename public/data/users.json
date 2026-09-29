@@ -159,7 +159,7 @@
       "role": "technician",
       "canEditDashboard": false,
       "pages": {
-        "advisorCalendar": false,
+        "advisorCalendar": true,
         "surveyReports": false,
         "advisorSchedule": true,
         "techSchedule": true,
@@ -167,13 +167,12 @@
         "aftermarketWarranty": false,
         "originalOwner": true,
         "workInProgress": true,
+        "shopAppointments": true,
         "chargeAccountList": false,
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true,
-        "advisorRankBoard": false,
-        "hotRepairs": true
+        "usedCarHub": true
       },
       "chatAccess": false,
       "techChatAccess": true,
@@ -186,7 +185,10 @@
         "kid": "YuwDZUlFIR",
         "data": "mMmM5sFLdgTkhqMscDx8DAotf8SxyI2Q4W9YBks5PjMB4rq0mmW9hh0D2ywY4oKoEqPhlIdhJhY6tfdxcHgQRsU3TVjA86ZkxOKaNJKKsYKvyEvu54SnABALlqbUp3YnABsRgnPvnzLxTNfGE31hhHDqcxqzcW0VJQqkoVRJwcEKDE1QgTDO0VF6KRNDqPJvJEUveLUCLsHmAnpvm71LKJQolzq5IVpkENQbO9aPfFEWBJy/0WQuxbozqR4YnBl+mXeha59T2KsAMoML2+QdhGUbj8TP/jN+ZJhvyQa7prUF+e3mhCeKwg3K9r1t002QllEMeZeYQEKQS/NgdLwhhQ=="
       },
-      "pageOverrides": {}
+      "pageOverrides": {
+        "advisorCalendar": true,
+        "originalOwner": true
+      }
     },
     {
       "username": "Austin",
