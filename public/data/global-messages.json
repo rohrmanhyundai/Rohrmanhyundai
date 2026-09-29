@@ -1,48 +1,5 @@
 [
   {
-    "id": "gm-muco3uf01dpi",
-    "from": "SHAWN",
-    "to": [
-      "KAI"
-    ],
-    "text": "KM8K62AB2PU934484 can you give me a price on a key and fob will need cut too",
-    "alert": false,
-    "requireReply": false,
-    "replies": [
-      {
-        "id": "rp-mucobdy7oj4e",
-        "from": "KAI",
-        "text": "$677.18 for the key, fob and key cut fee",
-        "timestamp": 1790081516383
-      },
-      {
-        "id": "rp-mucodzmuo4qh",
-        "from": "SHAWN",
-        "text": "how many days to oder?",
-        "timestamp": 1790081637798
-      },
-      {
-        "id": "rp-mucoftja0x0m",
-        "from": "KAI",
-        "text": "we can have it next day if he approves and pays by 2:45",
-        "timestamp": 1790081723206
-      },
-      {
-        "id": "rp-mucoo1pgin6t",
-        "from": "SHAWN",
-        "text": "👍",
-        "timestamp": 1790082107044
-      },
-      {
-        "id": "rp-mud2dej3jjjk",
-        "from": "KAI",
-        "text": "answer my call please",
-        "timestamp": 1790105125071
-      }
-    ],
-    "timestamp": 1790081164476
-  },
-  {
     "id": "gm-mucte1dy4bmr",
     "from": "SHAWN",
     "to": [
@@ -188,5 +145,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790684827805
+  },
+  {
+    "id": "gm-mumommioj89e",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "📷 Sent a picture",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mumomlso-5g56z9.png",
+        "name": "Screenshot 2026-09-29 at 8.58.12 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790686702464
   }
 ]
