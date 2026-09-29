@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-09-29T16:59:21.322Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 780924 tech CARTER"
+  },
+  {
     "at": "2026-09-29T16:59:03.316Z",
     "type": "page",
     "label": "work-in-progress"
