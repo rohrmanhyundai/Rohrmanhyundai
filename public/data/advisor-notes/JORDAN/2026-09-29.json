@@ -377,8 +377,27 @@
           }
         ]
       }
+    },
+    {
+      "id": "rmumlfczeivd3",
+      "customerName": "Seth Miller",
+      "appointmentTime": "4:20 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43234",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-09-29T11:28:28.580Z"
+  "savedAt": "2026-09-29T11:28:48.673Z"
 }
