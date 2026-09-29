@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T01:42:47.785Z",
+  "updatedAt": "2026-09-29T01:44:51.081Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -51,6 +51,16 @@
       "live-pay": true,
       "charge-account-list": true,
       "user-management": true
+    },
+    "DAVID": {
+      "employee-review": true,
+      "live-pay": true,
+      "charge-account-list": true,
+      "after-call": true,
+      "original-owner": true,
+      "live-pay-hub": true,
+      "deferred-service": true,
+      "registration-uploads": true
     }
   }
 }
