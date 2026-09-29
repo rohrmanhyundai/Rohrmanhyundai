@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T01:24:57.702Z",
+  "updatedAt": "2026-09-29T01:25:39.283Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -15,7 +15,17 @@
     "user-data-tracker": true
   },
   "users": {
-    "KAI": {},
+    "KAI": {
+      "payroll": true,
+      "after-call": true,
+      "original-owner": true,
+      "employee-applicants": true,
+      "deferred-service": true,
+      "registration-uploads": true,
+      "employee-review": true,
+      "live-pay": true,
+      "charge-account-list": true
+    },
     "JORDAN": {
       "payroll": true,
       "after-call": true,
