@@ -10,7 +10,13 @@
       "waiter": false,
       "dropOff": true,
       "technician": "",
-      "notes": [],
+      "notes": [
+        {
+          "author": "SHAWN",
+          "text": "note",
+          "at": 1790652707561
+        }
+      ],
       "status": "scheduled",
       "apptNo": "43104",
       "vehicle": "2024 Hyundai IONIQ 5",
@@ -323,5 +329,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-09-29T02:33:13.978Z"
+  "savedAt": "2026-09-29T03:31:51.564Z"
 }
