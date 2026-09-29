@@ -169,5 +169,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790654190184
+  },
+  {
+    "id": "gm-mumnig0t0b4x",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "📷 Sent a picture",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mumnifet-49uteb.png",
+        "name": "Screenshot 2026-09-29 at 8.26.54 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790684827805
   }
 ]
