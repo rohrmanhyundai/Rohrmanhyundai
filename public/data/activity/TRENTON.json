@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-29T12:01:23.456Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-29T12:01:08.923Z",
     "type": "page",
     "label": "work-in-progress"
