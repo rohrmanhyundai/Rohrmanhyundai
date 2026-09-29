@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T03:07:16.224Z",
+  "updatedAt": "2026-09-29T03:13:18.863Z",
   "by": "SHAWN",
   "roles": {
     "advisor": {
@@ -16,7 +16,12 @@
       "partsHub": true,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": true
+      "usedCarHub": true,
+      "mobileWorkSchedule": true,
+      "mobileTireWarranty": true,
+      "mobileAdditionalTime": true,
+      "mobileRegistrationUpload": true,
+      "mobileMediaUpload": true
     },
     "lead advisor": {
       "advisorCalendar": true,
@@ -32,7 +37,12 @@
       "partsHub": true,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": true
+      "usedCarHub": true,
+      "mobileWorkSchedule": true,
+      "mobileTireWarranty": true,
+      "mobileAdditionalTime": true,
+      "mobileRegistrationUpload": true,
+      "mobileMediaUpload": true
     },
     "technician": {
       "advisorCalendar": false,
@@ -48,7 +58,12 @@
       "partsHub": false,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": false
+      "usedCarHub": false,
+      "mobileWorkSchedule": true,
+      "mobileTireWarranty": true,
+      "mobileAdditionalTime": true,
+      "mobileRegistrationUpload": true,
+      "mobileMediaUpload": true
     },
     "porter": {
       "advisorCalendar": false,
@@ -64,7 +79,12 @@
       "partsHub": false,
       "tireQuote": false,
       "atDiagWorksheet": false,
-      "usedCarHub": false
+      "usedCarHub": false,
+      "mobileWorkSchedule": false,
+      "mobileTireWarranty": false,
+      "mobileAdditionalTime": false,
+      "mobileRegistrationUpload": false,
+      "mobileMediaUpload": false
     },
     "parts": {
       "advisorCalendar": true,
@@ -80,7 +100,12 @@
       "partsHub": true,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": true
+      "usedCarHub": true,
+      "mobileWorkSchedule": true,
+      "mobileTireWarranty": true,
+      "mobileAdditionalTime": true,
+      "mobileRegistrationUpload": true,
+      "mobileMediaUpload": true
     },
     "warranty": {
       "advisorCalendar": true,
@@ -96,7 +121,12 @@
       "partsHub": true,
       "tireQuote": true,
       "atDiagWorksheet": true,
-      "usedCarHub": true
+      "usedCarHub": true,
+      "mobileWorkSchedule": true,
+      "mobileTireWarranty": true,
+      "mobileAdditionalTime": true,
+      "mobileRegistrationUpload": true,
+      "mobileMediaUpload": true
     }
   }
 }
