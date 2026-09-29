@@ -1,6 +1,6 @@
 {
   "date": "2026-09-29",
-  "uploadedAt": "2026-09-28T21:10:33.325Z",
+  "uploadedAt": "2026-09-29T11:27:29.096Z",
   "uploadedBy": "SHAWN",
   "appts": [
     {
@@ -78,19 +78,19 @@
       }
     },
     {
-      "apptNo": "43153",
+      "apptNo": "43260",
       "time": "7:20 AM",
-      "customer": "Jackson Grimes",
-      "vehicle": "2023 Hyundai Elantra",
+      "customer": "James Mix",
+      "vehicle": "2020 Toyota Corolla",
       "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+        "PERFORM RECALL. VERIFIED OPEN RECALL:"
       ],
       "comments": "",
-      "transport": "WAIT",
+      "transport": "SELF",
       "advisorRaw": "Any Service Advisor",
       "advisor": "",
-      "source": "Integration",
-      "createdAt": "Wed Sep 23 2026 8:07 PM"
+      "source": "Consumer Scheduling",
+      "createdAt": "Mon Sep 28 2026 10:50 PM"
     },
     {
       "apptNo": "43244",
@@ -118,8 +118,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 7:35 AM",
       "deferred": {
@@ -171,12 +171,12 @@
       "customer": "Rollin McCoart",
       "vehicle": "2023 Hyundai Santa Fe",
       "services": [
-        "PARTS IN SOP"
+        "CUSTOMER STATES WHEN TAKING OFF FROM A START OR SLOW TURNING CAN HEAR A THUMPING NOISE.     (SOR)"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Thu Sep 24 2026 1:12 PM",
       "deferred": {
@@ -217,14 +217,29 @@
       "customer": "Luisa White",
       "vehicle": "2026 Hyundai Tucson",
       "services": [
-        "PART IN SOP"
+        "CUSTOMER STATES CEL ON. CHECK AND ADVISE.    (SOR)"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 9:42 AM"
+    },
+    {
+      "apptNo": "43153",
+      "time": "8:40 AM",
+      "customer": "Jackson Grimes",
+      "vehicle": "2023 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "Integration",
+      "createdAt": "Wed Sep 23 2026 8:07 PM"
     },
     {
       "apptNo": "43231",
@@ -236,8 +251,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 8:23 AM"
     },
@@ -324,8 +339,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 9:05 AM"
     },
@@ -335,7 +350,7 @@
       "customer": "David Quillen",
       "vehicle": "2023 Hyundai Santa Cruz",
       "services": [
-        "Oil & Filter change with Tire Rotation"
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
       ],
       "comments": "",
       "transport": "SELF",
@@ -373,21 +388,6 @@
           }
         ]
       }
-    },
-    {
-      "apptNo": "43219",
-      "time": "10:00 AM",
-      "customer": "Mindi Cogdill",
-      "vehicle": "2006 Hyundai Sonata",
-      "services": [
-        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
-      ],
-      "comments": "The inside door handle has broken off, I am using a binder clip to pull the cable horizontally to open. Thanks!",
-      "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
-      "source": "Integration",
-      "createdAt": "Sat Sep 26 2026 7:22 PM"
     },
     {
       "apptNo": "43099",
@@ -577,6 +577,23 @@
           }
         ]
       }
+    },
+    {
+      "apptNo": "43258",
+      "time": "3:40 PM",
+      "customer": "Minho Park",
+      "vehicle": "2025 Hyundai Palisade",
+      "services": [
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)",
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Mon Sep 28 2026 6:32 PM"
     },
     {
       "apptNo": "43210",
