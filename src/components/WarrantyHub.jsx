@@ -9,6 +9,15 @@ function canSee(pages, role, key) {
 
 const NAV_BUTTONS = [
   {
+    key: 'shopAppointments',
+    label: '📅 Shop Appointments',
+    desc: 'Every advisor\'s appointments for the day — campaigns, parts in SOP, declined work',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(99,102,241,.18))',
+    border: 'rgba(56,189,248,.5)',
+    color: '#7dd3fc',
+    prop: 'onShopAppointments',
+  },
+  {
     key: 'hotRepairs',
     label: '🔧 Recalls/TSB Bulletins',
     desc: 'View recall and TSB bulletin releases',
@@ -85,10 +94,11 @@ const NAV_BUTTONS = [
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
-  onRegistrationUploads,
+  onRegistrationUploads, onShopAppointments,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads };
-  const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key));
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments };
+  // A tile needs page access AND a handler from App (App leaves one out when it's off).
+  const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>

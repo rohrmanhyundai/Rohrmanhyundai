@@ -1470,6 +1470,7 @@ export default function App() {
         onHotRepairs={() => goTo('hot-repairs', 'warranty-hub')}
         onRegistrationUploads={() => goTo('registration-uploads', 'warranty-hub')}
         onTireQuote={() => goTo('tire-quote', 'warranty-hub')}
+        onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'warranty-hub') : undefined}
       />
     );
   }
