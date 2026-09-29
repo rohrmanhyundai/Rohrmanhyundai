@@ -30,6 +30,11 @@
         "hash": "eaaa8100fb09dab4a0279c68aff6cec630f482845734e771f68efbb101ad108f",
         "iterations": 150000,
         "setAt": "2026-09-29T02:39:48.633Z"
+      },
+      "passwordReset": {
+        "hash": "fdb613cb90ae0518db27f44342040dd985558da448c7f7fea8f2fdebc99b7df0",
+        "expires": "2026-09-29T03:39:52.102Z",
+        "requestedAt": "2026-09-29T02:39:52.102Z"
       }
     },
     {
