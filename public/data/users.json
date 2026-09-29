@@ -91,6 +91,13 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "ZfdUVtyDySOveCDwijJJecRqhR/W3qkYaKmgWouaxiMjD+aYOgFKrqaFhKyWl4KhK4atkNmfV85T0k6F99eUPHnBBfG/h6q6637XOwgwANnJCsAbWuNVzB0Snzj9RMRXasnOL4toiXUOoZLr08SY8/E4xAUSYEJXwqBMFTTlOegM6aBfplxSbXCsZAF41JWCH1FHoQnnL/OiUxqhQqxlaXPTcpv/+rtdjI3OnsfCQKhgQDgYn0uPJHAcpEyfZ/dEgsMlLbqho+NNfyeyS41dajrUqEQrgQPcSLCo6kiGUAhuOfUdDpBFoR/WKUIw+u+0wfzcdowYcwSm4+Wv7NH7GA=="
+      },
+      "hidden": false,
+      "applicantCode": {
+        "salt": "863cbfe5e8be64b4903b72fb8552e36c",
+        "hash": "883cd7a0f56811dae33d114ce47ac698659098272d8d5f9a490b78f6b920b533",
+        "iterations": 150000,
+        "setAt": "2026-09-29T01:23:58.467Z"
       }
     },
     {
