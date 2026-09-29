@@ -7,17 +7,6 @@ import { apiFetch } from './api';
 export async function openaiChat(body) {
   const res = await apiFetch('/openai/chat', { method: 'POST', json: body });
   if (res.ok) return res;
-  // Transitional: until the server has its key (503), a browser that still has
-  // its own saved key keeps working the old way. Remove once the key is set.
-  if (res.status === 503) {
-    let local = '';
-    try { local = localStorage.getItem(OPENAI_KEY) || ''; } catch {}
-    if (local) {
-      return fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${local}` }, body: JSON.stringify(body),
-      });
-    }
-  }
   let j = {};
   try { j = JSON.parse(await res.text()); } catch {}
   if (j && typeof j.error === 'string') j = { error: { message: j.error } };
