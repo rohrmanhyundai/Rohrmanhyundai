@@ -47,32 +47,42 @@
             "code": "BELT",
             "desc": "REPLACE SERPENTINE BELT",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 289.68,
+            "priceEst": false
           },
           {
             "code": "REC",
             "desc": "",
             "count": 2,
             "h": 1.2,
-            "est": true
+            "est": true,
+            "price": 613.8,
+            "priceEst": true
           },
           {
             "code": "ALIGN",
             "desc": "WHEEL ALIGNMENT",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
           },
           {
             "code": "VBFL",
             "desc": "BRAKE FLUID EXCHANGE",
             "count": 1,
-            "h": 0.7
+            "h": 0.7,
+            "price": 154.83,
+            "priceEst": false
           },
           {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
             "count": 1,
-            "h": 0.8
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
           }
         ]
       }
@@ -136,31 +146,41 @@
             "code": "VVRDFL",
             "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
             "count": 1,
-            "h": 0.5
+            "h": 0.5,
+            "price": 90.97,
+            "priceEst": false
           },
           {
             "code": "AIRFILTER",
             "desc": "REPLACE ENGINE AIR FILTER",
             "count": 1,
-            "h": 0.2
+            "h": 0.2,
+            "price": 50.54,
+            "priceEst": false
           },
           {
             "code": "CABIN",
             "desc": "REPLACE CABIN AIR FILTER",
             "count": 1,
-            "h": 0.2
+            "h": 0.2,
+            "price": 84,
+            "priceEst": false
           },
           {
             "code": "VVEFL",
             "desc": "ENGINE OIL CLEANING SERVICE",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 236.75,
+            "priceEst": false
           },
           {
             "code": "VVTFL",
             "desc": "TRANSMISSION FLUID EXCHANGE",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 345.66,
+            "priceEst": false
           }
         ]
       }
@@ -194,19 +214,25 @@
             "desc": "",
             "count": 1,
             "h": 1,
-            "est": true
+            "est": true,
+            "price": 309.96,
+            "priceEst": true
           },
           {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
             "count": 1,
-            "h": 0.8
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
           },
           {
             "code": "ALIGN",
             "desc": "WHEEL ALIGNMENT",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
           }
         ]
       }
@@ -284,13 +310,17 @@
             "code": "VACLEAN",
             "desc": "AC EVAP SERVICE",
             "count": 1,
-            "h": 0.3
+            "h": 0.3,
+            "price": 99.99,
+            "priceEst": false
           },
           {
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
             "count": 1,
-            "h": 0.8
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
           }
         ]
       }
@@ -324,7 +354,9 @@
             "code": "REC",
             "desc": "",
             "count": 1,
-            "h": 0.5
+            "h": 0.5,
+            "price": 95,
+            "priceEst": true
           }
         ]
       }
@@ -372,19 +404,25 @@
             "code": "PADRESURF",
             "desc": "Replace Front Pads and Resurface Rotors",
             "count": 1,
-            "h": 1.8
+            "h": 1.8,
+            "price": 456.39,
+            "priceEst": false
           },
           {
             "code": "VVBFL",
             "desc": "BRAKE FLUID EXCHANGE",
             "count": 1,
-            "h": 0.7
+            "h": 0.7,
+            "price": 181.74,
+            "priceEst": false
           },
           {
             "code": "RPADRESURF",
             "desc": "Replace Rear Pads and Resurface Rotors",
             "count": 1,
-            "h": 1.8
+            "h": 1.8,
+            "price": 436.2,
+            "priceEst": false
           }
         ]
       }
@@ -419,25 +457,33 @@
             "code": "AIRFILTER",
             "desc": "REPLACE ENGINE AIR FILTER",
             "count": 1,
-            "h": 0.2
+            "h": 0.2,
+            "price": 58.43,
+            "priceEst": false
           },
           {
             "code": "BELT",
             "desc": "REPLACE SERPENTINE BELT",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 302.54,
+            "priceEst": false
           },
           {
             "code": "VVCFL",
             "desc": "COOLANT FLUID EXCHANGE",
             "count": 1,
-            "h": 0.9
+            "h": 0.9,
+            "price": 229.75,
+            "priceEst": false
           },
           {
             "code": "TUNEUPV6",
             "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
             "count": 1,
-            "h": 3.5
+            "h": 3.5,
+            "price": 955.54,
+            "priceEst": false
           }
         ]
       }
@@ -547,33 +593,43 @@
             "code": "VVRDFL",
             "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
             "count": 1,
-            "h": 0.5
+            "h": 0.5,
+            "price": 100.71,
+            "priceEst": false
           },
           {
             "code": "VVTFL",
             "desc": "TRANSMISSION FLUID EXCHANGE",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 382.67,
+            "priceEst": false
           },
           {
             "code": "ENGPREM",
             "desc": "ENGINE REPLACEMENT PREMIUM KIT",
             "count": 1,
             "h": 3.2,
-            "est": true
+            "est": true,
+            "price": 1071.33,
+            "priceEst": true
           },
           {
             "code": "VVTCFL",
             "desc": "TRANSFER CASE SERVICE",
             "count": 1,
-            "h": 0.5
+            "h": 0.5,
+            "price": 96.84,
+            "priceEst": false
           },
           {
             "code": "REC",
             "desc": "",
             "count": 2,
             "h": 3.2,
-            "est": true
+            "est": true,
+            "price": 2142.65,
+            "priceEst": true
           }
         ]
       }
@@ -653,19 +709,25 @@
             "code": "VVIFL",
             "desc": "FUEL INJECTION SERVICE",
             "count": 1,
-            "h": 0.8
+            "h": 0.8,
+            "price": 191.95,
+            "priceEst": false
           },
           {
             "code": "ALIGN",
             "desc": "WHEEL ALIGNMENT",
             "count": 1,
-            "h": 1
+            "h": 1,
+            "price": 127.93,
+            "priceEst": false
           },
           {
             "code": "TUNEUP",
             "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
             "count": 1,
-            "h": 1.5
+            "h": 1.5,
+            "price": 425.02,
+            "priceEst": false
           }
         ]
       }
