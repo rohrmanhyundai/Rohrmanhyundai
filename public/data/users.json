@@ -434,35 +434,43 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": true,
-        "surveyReports": false,
+        "surveyReports": true,
         "advisorSchedule": true,
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
         "workInProgress": true,
+        "shopAppointments": true,
         "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
         "atDiagWorksheet": true,
         "usedCarHub": true,
-        "advisorRankBoard": false,
-        "warrantyDashboard": true,
-        "warrantyReports": false,
-        "warrantyDocuments": true
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": true,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": true,
+        "mobileMediaUpload": true
       },
       "chatAccess": true,
       "techChatAccess": true,
       "lastName": "",
       "email": "jerry.berkey@rohrmanauto.com",
       "managementAccess": false,
-      "hidden": false,
+      "hidden": true,
       "pwSalt": "f4d0175c951b3bae9e94a91356578f28",
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "VgWNgo5stW6Mmhcxd0Vrw1BFUKAuxtzBFLJWeBZj2vtl1WKCGAZcxaO0ZVQejpTjTC31TKaBNxcYkg7ONZnxLdH8JCQwAwi1iIa/ymcDjuRI21SfhizkrujnN2h7rzSRVYqVIZ1F485o5HSSCJ5yfBe+CvoFPt4O9AwA1PYh1cffuzBAgPtGoglkzkemRvrj9YvgvfybZyrLMqZiiAUAP+LzZ1fzN59GTUlRDBNcL0ENpXEgLlShWDx3fTBSb3ql0dpGB3sS7lcKjSS/c1t/WK0yi0ZaCKr3h+CsYDo+5BBfPzD1okKpvm1a36jYOSZ8urG8c77QHvPIp5sIiHPSZw=="
       },
-      "pageOverrides": {}
+      "pageOverrides": {},
+      "applicantCode": {
+        "salt": "4239ef3eeff267b1c4a3f4b6d7afc2d5",
+        "hash": "531ce37aabe6400ea159d238d53b6a476807b4367dceb4571440556b163adfb7",
+        "iterations": 150000,
+        "setAt": "2026-09-29T15:05:31.323Z"
+      }
     },
     {
       "username": "Kai",
