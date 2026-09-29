@@ -1,15 +1,19 @@
 {
-  "updatedAt": "2026-09-29T19:37:01.998Z",
+  "updatedAt": "2026-09-29T20:33:46.478Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781202",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
+        "ro": "781206",
+        "vehicle": "2016 Honda Pilot"
       },
       {
-        "ro": "781196",
-        "vehicle": "2024 Hyundai Palisade"
+        "ro": "781204",
+        "vehicle": "2021 Hyundai Kona"
+      },
+      {
+        "ro": "781202",
+        "vehicle": "2026 Hyundai Santa Fe Hybrid"
       },
       {
         "ro": "781190",
@@ -21,6 +25,14 @@
       }
     ],
     "JORDAN": [
+      {
+        "ro": "781205",
+        "vehicle": "2025 Hyundai Palisade"
+      },
+      {
+        "ro": "781203",
+        "vehicle": "2021 Hyundai Santa Fe"
+      },
       {
         "ro": "781200",
         "vehicle": "2023 Hyundai IONIQ 5"
