@@ -36,6 +36,7 @@ import UploadReports from './components/UploadReports';
 import AccessGate, { ACCESS_PATH, isLocked, mayOpen } from './components/AccessGate';
 import AccessCodes from './components/AccessCodes';
 import ShopAppointments from './components/ShopAppointments';
+import { ROLE_ACCESS_PATH, resolvePages } from './utils/roleAccess';
 import GlobalMessage from './components/GlobalMessage';
 import FloatingMessenger from './components/FloatingMessenger';
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
@@ -274,10 +275,13 @@ export default function App() {
   // who may open them. null = never set up → the old Payroll/Applicants lock.
   // An unlock lasts 10 minutes on this tab (memory only — a refresh re-asks).
   const [accessCfg, setAccessCfg] = useState(null);
+  // Role access templates (utils/roleAccess.js) — null until set up.
+  const [roleCfg, setRoleCfg] = useState(null);
   const [accessUnlocked, setAccessUnlocked] = useState({});
   useEffect(() => {
     if (!isLoggedIn) { setAccessUnlocked({}); return; }
     loadGithubFile(ACCESS_PATH).then(d => setAccessCfg(d && d.locked ? d : null)).catch(() => {});
+    loadGithubFile(ROLE_ACCESS_PATH).then(d => setRoleCfg(d && d.roles ? d : null)).catch(() => {});
   }, [isLoggedIn]);
   // The 10 minutes are judged when you ARRIVE on a page, never mid-page, so
   // nobody is thrown out of Payroll halfway through a week.
@@ -1014,14 +1018,21 @@ export default function App() {
   const isAdminOrManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   // Keys that are OFF by default — must be explicitly granted in user pages settings
   const DEFAULT_OFF_KEYS = new Set(['surveyReports']);
+  // Page access worked out live from the user record + role templates, so a
+  // Role Setup or User Management change applies on the next refresh — not
+  // only after logging out and back in. Falls back to what login cached.
+  const livePages = (() => {
+    const rec = (users || []).find(u => (u.username || '').toLowerCase() === (currentUser || '').toLowerCase());
+    return rec ? resolvePages(rec, roleCfg) : currentPages;
+  })();
   function canAccess(key) {
     if (isAdminOrManager) return true;
     if (DEFAULT_OFF_KEYS.has(key)) {
       // Feature is off unless explicitly set to true in user's pages
-      return !!(currentPages && currentPages[key] === true);
+      return !!(livePages && livePages[key] === true);
     }
-    if (!currentPages) return true; // no restrictions saved yet
-    return currentPages[key] !== false;
+    if (!livePages) return true; // no restrictions saved yet
+    return livePages[key] !== false;
   }
 
   // Lead advisors are advisors too — include them so they appear in advisor
@@ -1230,7 +1241,7 @@ export default function App() {
         currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
         jobRole={jobRole}
-        userPages={currentPages}
+        userPages={livePages}
         onWorkSchedule={() => goTo('work-schedule', 'tech-resources')}
         onTireQuote={() => goTo('tire-quote', 'tech-resources')}
         onLivePay={canSeeAnyPay ? () => { setLivePayFrom('tech-resources'); goTo('live-pay-hub', 'tech-resources'); } : undefined}
@@ -1393,7 +1404,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
-        userPages={currentPages}
+        userPages={livePages}
         onBack={() => setPage('dashboard')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'parts-hub')}
         onDocumentLibrary={() => goTo('document-library', 'parts-hub')}
@@ -1447,7 +1458,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentUserDisplay={currentUserDisplay}
         currentRole={currentRole}
-        userPages={currentPages}
+        userPages={livePages}
         onBack={() => setPage('dashboard')}
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
@@ -1525,6 +1536,8 @@ export default function App() {
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
           onUsersOpenChange={setAdminUsersOpen}
+          roleCfg={roleCfg}
+          onRoleCfgSaved={setRoleCfg}
         />
       </>
     );
@@ -1812,7 +1825,7 @@ export default function App() {
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
         refreshKey={calendarRefreshKey}
-        userPages={currentPages}
+        userPages={livePages}
         currentRole={currentRole}
         currentUser={currentUser.toUpperCase()}
         schedules={schedules}
@@ -2152,6 +2165,8 @@ export default function App() {
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
           onUsersOpenChange={setAdminUsersOpen}
+          roleCfg={roleCfg}
+          onRoleCfgSaved={setRoleCfg}
         />
       </>
     );
@@ -2167,7 +2182,7 @@ export default function App() {
             currentUser={currentUser}
             currentUserDisplay={userDisplayName(currentUser, users)}
             currentRole={currentRole}
-            userPages={currentPages}
+            userPages={livePages}
             canEditDashboard={canEditDashboard}
             onLogin={handleLogin}
             onLogout={handleLogout}
@@ -2217,6 +2232,8 @@ export default function App() {
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
           onUsersOpenChange={setAdminUsersOpen}
+          roleCfg={roleCfg}
+          onRoleCfgSaved={setRoleCfg}
       />
     </div>
   );
