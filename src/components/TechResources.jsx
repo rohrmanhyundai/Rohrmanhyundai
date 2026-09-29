@@ -10,6 +10,14 @@ function canSee(pages, role, key) {
 
 const NAV_BUTTONS = [
   {
+    key: 'shopAppointments',
+    label: '📅 Shop Appointments',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(99,102,241,.18))',
+    border: 'rgba(56,189,248,.5)',
+    color: '#7dd3fc',
+    prop: 'onShopAppointments',
+  },
+  {
     key: 'hotRepairs',
     label: '🔧 Recalls/TSB Bulletins',
     bg: 'linear-gradient(135deg,rgba(248,113,113,.25),rgba(239,68,68,.18))',
@@ -87,8 +95,8 @@ const NAV_BUTTONS = [
   },
 ];
 
-export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onLivePay, onBack }) {
-  const handlers = { onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview, onLivePay };
+export default function TechResources({ currentUser, currentUserDisplay, currentRole, jobRole, userPages, onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onMyReview, onMyReports, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments, onBack }) {
+  const handlers = { onWorkSchedule, onTireQuote, onDocumentLibrary, onWorkInProgress, onATDiagWorksheet, onHotRepairs, onCashDash, onAdditionalTimeReview, onLivePay, onShopAppointments };
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b) && handlers[b.prop]);
 

@@ -871,3 +871,6 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
     </div>
   );
 }
+
+// Shared with the read-only Shop Appointments page (tech / parts view).
+export { STATUSES, Tag, CopyRo, CustomerComment, DeferredBox, BigMoneyBanner, isLof50 };

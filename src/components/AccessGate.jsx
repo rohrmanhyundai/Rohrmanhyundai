@@ -48,7 +48,7 @@ export const PAGE_GROUPS = [
     ['deferred-service', 'Deferred Service'], ['ro-upload', 'RO Upload'], ['work-in-progress', 'Work in Progress'],
     ['performance-report', 'My Reports'], ['service-pricing', 'Service Pricing Menu'], ['tire-quote', 'Tire Quote'],
     ['document-library', 'Document Library'], ['charge-account-list', 'Charge Account List'], ['hot-repairs', 'Recalls/TSB Bulletins'],
-    ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'],
+    ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'], ['shop-appointments', 'Shop Appointments'],
   ] },
   { group: 'Parts · Warranty · Used Cars', pages: [
     ['parts-hub', 'Parts Hub'], ['parts-goal-forecast', 'Parts Goal Forecast'], ['warranty-hub', 'Warranty Hub'],

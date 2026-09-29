@@ -165,6 +165,7 @@ const PAGE_ACCESS = [
   { key: 'aftermarketWarranty',label: '🛡 After Market Warranty/Tire Warranty',   group: 'Warranty' },
   { key: 'originalOwner',      label: '📋 Original Owner Affidavit', group: 'Warranty' },
   { key: 'workInProgress',     label: '🔧 Work in Progress',         group: 'Tech' },
+  { key: 'shopAppointments',   label: '📅 Shop Appointments (view every advisor\'s book)', group: 'Shared', defaultOff: true },
   { key: 'chargeAccountList', label: '💳 Charge Account List',      group: 'Manager', defaultOff: true },
   { key: 'partsHub',           label: '📦 Parts Hub',               group: 'Parts' },
   { key: 'tireQuote',          label: '🛞 Tire Quote',              group: 'Shared' },

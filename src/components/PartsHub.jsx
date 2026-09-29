@@ -11,6 +11,15 @@ function canSee(pages, role, key) {
 // href: opens external URL directly (no prop needed)
 const NAV_BUTTONS = [
   {
+    key: 'shopAppointments',
+    label: '📅 Shop Appointments',
+    desc: 'Every advisor\'s appointments for the day — parts in SOP, campaigns, declined work',
+    bg: 'linear-gradient(135deg,rgba(56,189,248,.28),rgba(99,102,241,.18))',
+    border: 'rgba(56,189,248,.5)',
+    color: '#7dd3fc',
+    prop: 'onShopAppointments',
+  },
+  {
     key: 'hotRepairs',
     label: '🔧 Recalls/TSB Bulletins',
     desc: 'View recall and TSB bulletin releases',
@@ -102,9 +111,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage,
+  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b)
