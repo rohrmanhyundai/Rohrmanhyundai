@@ -472,7 +472,6 @@
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
-        "advisorRankBoard": false,
         "surveyReports": false,
         "advisorSchedule": false,
         "techSchedule": false,
@@ -484,11 +483,14 @@
         "partsHub": false,
         "tireQuote": false,
         "atDiagWorksheet": false,
-        "usedCarHub": true
+        "usedCarHub": true,
+        "advisorRankBoard": false
       },
       "chatAccess": false,
       "techChatAccess": true,
-      "managementAccess": false
+      "managementAccess": false,
+      "email": "",
+      "hidden": true
     },
     {
       "username": "Kaden",
