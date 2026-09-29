@@ -982,8 +982,9 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           >
             {btn => renderTool(btn.key)}
           </SortableTiles>
-          <button className="secondary" onClick={onBack}>← Service Operations Dashboard</button>
         </div>
+        {/* Back sits on its own at the far right, outside the tool row. */}
+        <button className="secondary" onClick={onBack} style={{ flexShrink: 0, alignSelf: 'flex-start' }}>← Dashboard</button>
       </div>
 
       {/* Advisor switcher tabs (left) + the month switcher (centre) share one
