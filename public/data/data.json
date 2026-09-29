@@ -335,6 +335,23 @@
         "roh50_add_rate": 0.57,
         "lof_tickets": 76,
         "lof_oil_only": 33
+      },
+      {
+        "name": "KAI",
+        "mtd_hours": 0,
+        "daily_avg": 0,
+        "hours_per_ro": 0,
+        "align": 0,
+        "tires": 0,
+        "valvoline": 0,
+        "roh50_hrs_ro": 0,
+        "roh50_add_rate": 0,
+        "csi": 0,
+        "asr": 0,
+        "elr": 0,
+        "last_month_total": 0,
+        "ro_count": 0,
+        "hidden": true
       }
     ],
     "advisorTraining": [
@@ -349,6 +366,12 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
+      },
+      {
+        "name": "KAI",
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "vacations": [
@@ -401,10 +424,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 553.2,
-      "align": 0.08065,
-      "tires": 0.0562,
-      "valvoline": 0.19640000000000002,
-      "csi": 943.5
+      "align": 0.053766666666666664,
+      "tires": 0.03746666666666667,
+      "valvoline": 0.13093333333333335,
+      "csi": 629
     },
     "techTotals": {
       "mon": 47.49999999999999,
