@@ -460,7 +460,7 @@
     {
       "username": "Chapman",
       "lastName": "Cory",
-      "role": "admin",
+      "role": "advisor",
       "canEditDashboard": false,
       "pages": {
         "advisorCalendar": false,
