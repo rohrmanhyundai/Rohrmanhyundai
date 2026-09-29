@@ -2933,7 +2933,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (openSection === 'users' && usersGated) return (
       <AccessGate inline page="user-management" allowed={accessLock.allowed}
         currentUser={accessLock.currentUser} currentUserRecord={accessLock.currentUserRecord}
-        onUnlock={accessLock.onUnlock} />
+        onUnlock={accessLock.onUnlock} admins={accessLock.admins} />
     );
     if (openSection === 'users') return (
       <div className="group-body">

@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { saveGithubFile } from '../utils/github';
+import React, { useEffect, useMemo, useState } from 'react';
+import { saveGithubFile, loadAccessLockouts, updateAccessLockouts } from '../utils/github';
 import { hasAccessCode } from '../utils/accessCode';
 import { ACCESS_PATH, DEFAULT_LOCKED, PAGE_GROUPS, PAGE_LABEL } from './AccessGate';
 
@@ -27,6 +27,28 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [dirty, setDirty] = useState(!cfg);
+  // Wrong-code lockouts (see AccessGate): who is waiting out 5 minutes, and who
+  // is locked until an admin clears them.
+  const [lockouts, setLockouts] = useState({});
+  const [clearing, setClearing] = useState('');
+  useEffect(() => { loadAccessLockouts().then(d => setLockouts(d.users || {})).catch(() => {}); }, []);
+  const lockState = (key) => {
+    const r = lockouts[key];
+    if (!r) return null;
+    if (r.hard) return 'hard';
+    if (r.lockedUntil > Date.now()) return 'wait';
+    return null;
+  };
+  async function clearLockout(key) {
+    setClearing(key);
+    try {
+      const next = await updateAccessLockouts(users => { delete users[key]; }, `Access code lockout cleared for ${key} (${up(currentUser)})`);
+      setLockouts(next.users || {});
+      setMsg(`✓ ${key} can try their code again`);
+    } catch (e) { setMsg('⚠️ ' + (e.message || 'Could not clear the lockout')); }
+    finally { setClearing(''); }
+  }
+  const lockedOut = people.filter(p => lockState(p.key));
 
   const people = useMemo(() => (users || [])
     .filter(u => u && u.username && !u.disabled)
@@ -93,6 +115,31 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
             </div>
           )}
           {msg && <div style={{ marginBottom: 12, fontSize: 13, fontWeight: 800, color: msg.startsWith('⚠') ? '#fca5a5' : '#4ade80' }}>{msg}</div>}
+          {lockedOut.length > 0 && (
+            <div style={{ marginBottom: 16, padding: '12px 14px', borderRadius: 12, background: 'rgba(239,68,68,.12)', border: '1px solid rgba(248,113,113,.55)' }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: '#fecaca', marginBottom: 8 }}>🚫 Locked out for wrong codes</div>
+              {lockedOut.map(p => {
+                const r = lockouts[p.key];
+                return (
+                  <div key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 0', flexWrap: 'wrap' }}>
+                    <b style={{ color: '#f1f5f9' }}>{p.name}</b>
+                    <span style={{ fontSize: 12.5, color: '#fca5a5' }}>
+                      {r.hard ? `locked until an admin clears it${r.hardAt ? ` · since ${new Date(r.hardAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : ''}` : '5-minute lockout'}
+                      {r.page ? ` · trying ${PAGE_LABEL[r.page] || r.page}` : ''}
+                    </span>
+                    <div style={{ flex: 1 }} />
+                    {isAdmin && (
+                      <button onClick={() => clearLockout(p.key)} disabled={clearing === p.key}
+                        style={{ background: 'rgba(52,211,153,.2)', borderColor: 'rgba(52,211,153,.6)', color: '#bbf7d0', fontWeight: 900 }}>
+                        {clearing === p.key ? '⏳' : '🔓 Clear lockout'}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+              <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 6 }}>If they've forgotten their code, set a new one in Edit Dashboard → Users → Access Code first.</div>
+            </div>
+          )}
 
           {tab === 'pages' ? (
             <>
@@ -141,8 +188,8 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                       <span style={{ display: 'block', fontSize: 13.5, fontWeight: 800 }}>{p.name}</span>
                       <span style={{ display: 'block', fontSize: 11, color: '#64748b', textTransform: 'capitalize' }}>{p.role}</span>
                     </span>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: p.hasCode ? '#6ee7b7' : '#fbbf24', whiteSpace: 'nowrap' }}>
-                      {p.hasCode ? `🔑 ${userCount(p.key)}/${lockedPages.length}` : '⚠ no code'}
+                    <span style={{ fontSize: 11, fontWeight: 800, color: lockState(p.key) ? '#fca5a5' : p.hasCode ? '#6ee7b7' : '#fbbf24', whiteSpace: 'nowrap' }}>
+                      {lockState(p.key) === 'hard' ? '🚫 locked out' : lockState(p.key) === 'wait' ? '⏳ 5-min lock' : p.hasCode ? `🔑 ${userCount(p.key)}/${lockedPages.length}` : '⚠ no code'}
                     </span>
                   </button>
                 ))}
@@ -161,6 +208,15 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                         <button className="secondary" onClick={() => setAllGrants(selPerson.key, false)}>Clear</button>
                       </>}
                     </div>
+                    {lockState(selPerson.key) && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, padding: '8px 11px', borderRadius: 10, background: 'rgba(239,68,68,.12)', border: '1px solid rgba(248,113,113,.5)' }}>
+                        <span style={{ fontSize: 12.5, fontWeight: 800, color: '#fecaca' }}>
+                          {lockState(selPerson.key) === 'hard' ? '🚫 Locked out after two rounds of wrong codes.' : '⏳ In a 5-minute lockout.'}
+                        </span>
+                        <div style={{ flex: 1 }} />
+                        {isAdmin && <button onClick={() => clearLockout(selPerson.key)} disabled={clearing === selPerson.key} style={{ background: 'rgba(52,211,153,.2)', borderColor: 'rgba(52,211,153,.6)', color: '#bbf7d0', fontWeight: 900 }}>{clearing === selPerson.key ? '⏳' : '🔓 Clear lockout'}</button>}
+                      </div>
+                    )}
                     <div style={{ fontSize: 12.5, marginBottom: 12, color: selPerson.hasCode ? '#6ee7b7' : '#fbbf24', fontWeight: 700 }}>
                       {selPerson.hasCode ? '🔑 Access code is set.' : '⚠ No access code yet — they can\'t open any locked page until one is set in Edit Dashboard → Users → Access Code.'}
                       {selPerson.role === 'admin' && <span style={{ color: '#94a3b8' }}> Admins can open every locked page with their code.</span>}

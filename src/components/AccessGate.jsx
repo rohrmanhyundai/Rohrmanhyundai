@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { verifyAccessCode, hasAccessCode } from '../utils/accessCode';
+import { loadAccessLockouts, updateAccessLockouts, sendGlobalMessage } from '../utils/github';
+import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT } from '../utils/pusher';
+
+// Wrong-code rules. 4 wrong → 5-minute lockout. 4 more wrong after that →
+// locked out of every locked page until an admin clears it on the Access
+// Codes screen, and every admin gets a message. A right code resets it all.
+export const TRIES_PER_ROUND = 4;
+export const LOCKOUT_MS = 5 * 60 * 1000;
+const CODE_LEN = 4;
 
 // ── Access codes ──────────────────────────────────────────────────────────────
 // Any page can be put behind the user's 4-digit access code (set per user in
@@ -70,23 +79,90 @@ export function mayOpen(cfg, page, username, role) {
 
 // Shown in place of a locked page: "no access", or the code prompt.
 // `inline` = just the prompt card, for use inside another screen (Edit Dashboard).
-export default function AccessGate({ page, allowed, currentUser, currentUserRecord, onUnlock, onBack, inline }) {
+export default function AccessGate({ page, allowed, currentUser, currentUserRecord, onUnlock, onBack, inline, admins = [] }) {
   const label = PAGE_LABEL[page] || page;
+  const me = up(currentUser);
   const codeSet = hasAccessCode(currentUserRecord);
   const [code, setCode] = useState('');
   const [err, setErr] = useState('');
   const [checking, setChecking] = useState(false);
+  const [lock, setLock] = useState({});          // this user's lockout record
+  const [now, setNow] = useState(Date.now());
 
-  async function submit(e) {
+  useEffect(() => {
+    let alive = true;
+    loadAccessLockouts().then(d => { if (alive) setLock((d.users && d.users[me]) || {}); }).catch(() => {});
+    return () => { alive = false; };
+  }, [me]);
+  const waiting = !lock.hard && lock.lockedUntil > now;
+  useEffect(() => {
+    if (!waiting) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [waiting]);
+
+  async function notifyAdmins() {
+    const to = (admins || []).map(up).filter(a => a && a !== me);
+    if (!to.length) return;
+    const entry = {
+      id: `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+      from: 'ACCESS CODES', to, alert: true, requireReply: false, replies: [], timestamp: Date.now(),
+      text: `🔒 ${me} entered the wrong access code ${TRIES_PER_ROUND * 2} times (two rounds) trying to open ${label}, and is now locked out of every locked page until an admin clears it. `
+        + `Fix: Edit Dashboard → Users → 🔐 Access Codes → Users → ${me} → Clear lockout (and reset their code in User Management if they've forgotten it).`,
+    };
+    try { await sendGlobalMessage(entry); await triggerEvent(GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, entry); } catch {}
+  }
+
+  // One wrong code: count it on the site, apply the round / lockout rules.
+  async function recordFail() {
+    let rec = null, becameHard = false;
+    try {
+      const next = await updateAccessLockouts(users => {
+        const r = { fails: 0, strikes: 0, ...(users[me] || {}) };
+        becameHard = false;
+        r.fails += 1; r.lastFailAt = Date.now(); r.page = page;
+        if (r.fails >= TRIES_PER_ROUND) {
+          r.fails = 0; r.strikes += 1;
+          if (r.strikes >= 2) { becameHard = !r.hard; r.hard = true; r.hardAt = Date.now(); r.lockedUntil = 0; }
+          else r.lockedUntil = Date.now() + LOCKOUT_MS;
+        }
+        users[me] = r;
+      }, `Access code: wrong try (${me})`);
+      rec = next.users[me];
+    } catch {
+      // Couldn't reach the site — still count it on this screen.
+      rec = { ...lock, fails: (lock.fails || 0) + 1 };
+      if (rec.fails >= TRIES_PER_ROUND) { rec.fails = 0; rec.strikes = (rec.strikes || 0) + 1; rec.lockedUntil = Date.now() + LOCKOUT_MS; }
+    }
+    setLock(rec); setNow(Date.now());
+    if (becameHard) notifyAdmins();
+    return rec;
+  }
+
+  async function submit(e, value) {
     e?.preventDefault?.();
+    const v = String(value != null ? value : code).trim();
+    if (!v || checking || lock.hard || waiting) return;
     setChecking(true); setErr('');
     try {
-      const ok = await verifyAccessCode(code.trim(), currentUserRecord?.applicantCode);
-      if (ok) onUnlock();
-      else setErr('That code doesn\'t match. Ask an admin if you\'ve forgotten it.');
+      const ok = await verifyAccessCode(v, currentUserRecord?.applicantCode);
+      if (ok) {
+        if (lock.fails || lock.strikes || lock.lockedUntil) updateAccessLockouts(users => { delete users[me]; }, `Access code: unlocked (${me})`).catch(() => {});
+        onUnlock();
+        return;
+      }
+      setCode('');
+      const r = await recordFail();
+      if (r.hard) setErr('');
+      else if (r.lockedUntil > Date.now()) setErr('');
+      else {
+        const left = TRIES_PER_ROUND - (r.fails || 0);
+        setErr(`Wrong code — ${left} ${left === 1 ? 'try' : 'tries'} left before ${r.strikes ? "you're locked out until an admin clears it" : 'a 5-minute lockout'}.`);
+      }
     } catch { setErr('Could not check the code on this device.'); }
     finally { setChecking(false); }
   }
+  const mmss = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
   const input = { width: '100%', background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 10, color: '#e2e8f0', outline: 'none', boxSizing: 'border-box' };
   const card = (
@@ -99,18 +175,44 @@ export default function AccessGate({ page, allowed, currentUser, currentUserReco
                 {label} is locked, and your login hasn't been given access to it. An admin can add it for you on the <strong>Access Codes</strong> screen.
               </div>
             </>
+          ) : codeSet && lock.hard ? (
+            <>
+              <div style={{ fontSize: 19, fontWeight: 900, color: '#fecaca', marginTop: 12 }}>Locked out</div>
+              <div style={{ fontSize: 13.5, color: '#fca5a5', marginTop: 10, lineHeight: 1.65 }}>
+                Too many wrong codes. You're locked out of every locked page until an admin clears it — they've been sent a message.
+              </div>
+            </>
+          ) : codeSet && waiting ? (
+            <>
+              <div style={{ fontSize: 19, fontWeight: 900, color: '#fde68a', marginTop: 12 }}>Too many wrong codes</div>
+              <div style={{ fontSize: 13.5, color: '#fcd34d', marginTop: 10, lineHeight: 1.6 }}>Try again in</div>
+              <div style={{ fontSize: 40, fontWeight: 1000, color: '#fef3c7', marginTop: 4, fontVariantNumeric: 'tabular-nums' }}>{mmss(lock.lockedUntil - now)}</div>
+              <div style={{ fontSize: 12, color: '#fca5a5', marginTop: 8, lineHeight: 1.5 }}>
+                {TRIES_PER_ROUND} more wrong codes after this and you'll be locked out until an admin clears it.
+              </div>
+            </>
           ) : codeSet ? (
             <>
               <div style={{ fontSize: 19, fontWeight: 900, color: '#e8f1ff', marginTop: 12 }}>Enter your code</div>
-              <div style={{ fontSize: 13, color: '#8296b4', marginTop: 8, lineHeight: 1.6 }}>{label} is locked. Enter your 4-digit access code to open it.</div>
-              <input autoFocus value={code} onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 10)); setErr(''); }}
+              <div style={{ fontSize: 13, color: '#8296b4', marginTop: 8, lineHeight: 1.6 }}>{label} is locked. Enter your 4-digit access code — it opens as soon as it's right.</div>
+              <input autoFocus value={code} disabled={checking}
+                onChange={e => {
+                  const v = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setCode(v); setErr('');
+                  if (v.length === CODE_LEN) submit(null, v);   // opens by itself on the 4th digit
+                }}
                 type="password" inputMode="numeric" placeholder="••••" autoComplete="off"
                 style={{ ...input, marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
+              {code.length > CODE_LEN && !checking && (
+                <button type="submit" style={{ marginTop: 14, width: '100%', padding: 10, fontSize: 14, fontWeight: 800, background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 10 }}>Unlock</button>
+              )}
+              {checking && <div style={{ color: '#93c5fd', fontSize: 12.5, fontWeight: 700, marginTop: 10 }}>Checking…</div>}
               {err && <div style={{ color: '#fca5a5', fontSize: 12.5, fontWeight: 700, marginTop: 10 }}>⚠ {err}</div>}
-              <button type="submit" disabled={checking || !code}
-                style={{ marginTop: 16, width: '100%', padding: 11, fontSize: 15, fontWeight: 800, background: (checking || !code) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: (checking || !code) ? '#7d8ba3' : '#93c5fd', borderRadius: 10 }}>
-                {checking ? 'Checking…' : 'Unlock'}
-              </button>
+              {!err && (lock.fails > 0 || lock.strikes > 0) && !checking && (
+                <div style={{ color: '#fcd34d', fontSize: 12, fontWeight: 700, marginTop: 10 }}>
+                  {TRIES_PER_ROUND - (lock.fails || 0)} tries left{lock.strikes ? ' before an admin has to unlock you' : ''}.
+                </div>
+              )}
             </>
           ) : (
             <>

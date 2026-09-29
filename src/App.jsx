@@ -1134,6 +1134,8 @@ export default function App() {
     document.body
   ) : null;
 
+  // Who gets the "locked out" message from the access-code prompt.
+  const accessAdmins = (users || []).filter(u => u && u.role === 'admin' && !u.disabled).map(u => String(u.username || '').toUpperCase());
   const renderPage = () => {
   // ── Access-code lock ── any page an admin has locked asks for the code first.
   if (page !== 'dashboard' && page !== 'access-codes' && isLocked(accessCfg, page)) {
@@ -1145,6 +1147,7 @@ export default function App() {
           allowed={mayOpen(accessCfg, page, currentUser, currentRole)}
           currentUser={currentUser}
           currentUserRecord={currentUserRecord}
+          admins={accessAdmins}
           onUnlock={() => setAccessUnlocked(u => ({ ...u, [page]: Date.now() }))}
           onBack={() => navTo(prevPage && prevPage !== page ? prevPage : 'dashboard')}
         />
@@ -1464,7 +1467,7 @@ export default function App() {
             allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
             unlockedAt: accessUnlocked['user-management'] || 0,
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
-            currentUser, currentUserRecord,
+            currentUser, currentUserRecord, admins: accessAdmins,
           }}
         />
       </>
@@ -2090,7 +2093,7 @@ export default function App() {
             allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
             unlockedAt: accessUnlocked['user-management'] || 0,
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
-            currentUser, currentUserRecord,
+            currentUser, currentUserRecord, admins: accessAdmins,
           }}
         />
       </>
@@ -2154,7 +2157,7 @@ export default function App() {
             allowed: mayOpen(accessCfg, 'user-management', currentUser, currentRole),
             unlockedAt: accessUnlocked['user-management'] || 0,
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
-            currentUser, currentUserRecord,
+            currentUser, currentUserRecord, admins: accessAdmins,
           }}
       />
     </div>

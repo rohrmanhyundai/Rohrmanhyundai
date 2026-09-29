@@ -2199,6 +2199,23 @@ export async function updateRoAttention(mutate, message) {
   }, message || `RO attention ${new Date().toISOString()}`);
 }
 
+// ── Access-code lockouts ─────────────────────────────────────────────────────
+// public/data/access-lockouts.json → { updatedAt, users: { USER: { fails, strikes, lockedUntil, hard, hardAt, page } } }
+// Kept on the site (not the browser) so a refresh or another computer can't
+// reset someone's failed tries. See components/AccessGate.jsx.
+export const ACCESS_LOCKOUT_PATH = 'data/access-lockouts.json';
+export async function loadAccessLockouts() {
+  const d = await loadGithubFile(ACCESS_LOCKOUT_PATH);
+  return d && typeof d === 'object' && d.users ? d : { updatedAt: null, users: {} };
+}
+export async function updateAccessLockouts(mutate, message) {
+  return mutateGitHubJson(`public/${ACCESS_LOCKOUT_PATH}`, (cur) => {
+    const users = { ...((cur && cur.users) || {}) };
+    mutate(users);
+    return { updatedAt: new Date().toISOString(), users };
+  }, message || `Access lockouts ${new Date().toISOString()}`);
+}
+
 // ── DMS appointment list (Appointment Prep) ──────────────────────────────────
 // One file per day: { date, uploadedAt, uploadedBy, appts, claims }. See
 // utils/appointmentList.js. Written with the conflict-safe mutate so a re-upload
