@@ -14,9 +14,12 @@ const up = (s) => String(s || '').trim().toUpperCase();
 // Never saved → Payroll + Applicants start locked and NOBODY is given access
 // yet: the admin grants each user by hand. Codes already set on users are
 // untouched (they live on the user records, not in this file).
+// idle: { minutes: shop default (2), users: { USER: minutes } } — 0 = never.
 function initialDraft(cfg) {
-  if (cfg) return { locked: { ...(cfg.locked || {}) }, users: JSON.parse(JSON.stringify(cfg.users || {})) };
-  return { locked: { ...DEFAULT_LOCKED }, users: {} };
+  const idle = { minutes: 2, users: {}, ...((cfg && cfg.idle) || {}) };
+  idle.users = { ...(idle.users || {}) };
+  if (cfg) return { locked: { ...(cfg.locked || {}) }, users: JSON.parse(JSON.stringify(cfg.users || {})), idle };
+  return { locked: { ...DEFAULT_LOCKED }, users: {}, idle };
 }
 
 export default function AccessCodes({ users = [], cfg, currentUser, currentRole, onSaved, onBack }) {
@@ -48,13 +51,13 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
     } catch (e) { setMsg('⚠️ ' + (e.message || 'Could not clear the lockout')); }
     finally { setClearing(''); }
   }
-  const lockedOut = people.filter(p => lockState(p.key));
 
   const people = useMemo(() => (users || [])
     .filter(u => u && u.username && !u.disabled)
     .map(u => ({ key: up(u.username), name: u.username, role: u.role || '', hasCode: hasAccessCode(u) }))
     .sort((a, b) => a.key.localeCompare(b.key)), [users]);
   const lockedPages = PAGE_GROUPS.flatMap(g => g.pages).filter(([k]) => draft.locked[k]);
+  const lockedOut = people.filter(p => lockState(p.key));
   const grantCount = (page) => people.filter(p => draft.users[p.key] && draft.users[p.key][page]).length;
   const userCount = (key) => lockedPages.filter(([k]) => draft.users[key] && draft.users[key][k]).length;
 
@@ -65,6 +68,12 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
     if (g[page]) delete g[page]; else g[page] = true;
     return d;
   });
+  const setIdleDefault = (v) => change(d => { d.idle.minutes = v === '' ? 2 : Math.max(0, Number(v) || 0); return d; });
+  const setIdleUser = (user, v) => change(d => {
+    if (v === '') delete d.idle.users[user]; else d.idle.users[user] = Math.max(0, Number(v) || 0);
+    return d;
+  });
+  const idleText = (m) => (Number(m) === 0 ? 'never' : `${m} min`);
   const setAllGrants = (user, on) => change(d => {
     d.users[user] = on ? Object.fromEntries(lockedPages.map(([k]) => [k, true])) : {};
     return d;
@@ -73,7 +82,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
   async function save() {
     setBusy(true); setMsg('');
     try {
-      const next = { updatedAt: new Date().toISOString(), by: up(currentUser), locked: draft.locked, users: draft.users };
+      const next = { updatedAt: new Date().toISOString(), by: up(currentUser), locked: draft.locked, users: draft.users, idle: draft.idle };
       await saveGithubFile(ACCESS_PATH, next, `Access codes (${up(currentUser)})`);
       onSaved(next); setDirty(false);
       setMsg('✓ Saved — takes effect on each person\'s next page load');
@@ -143,6 +152,14 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
 
           {tab === 'pages' ? (
             <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 14, padding: '10px 14px', borderRadius: 12, background: 'rgba(110,231,249,.07)', border: '1px solid rgba(110,231,249,.3)' }}>
+                <span style={{ fontSize: 13.5, fontWeight: 900, color: '#a5f3fc' }}>⏱ Idle lock</span>
+                <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Inside a locked page, no activity for</span>
+                <input type="number" min="0" max="120" value={draft.idle.minutes} disabled={!isAdmin}
+                  onChange={e => setIdleDefault(e.target.value)}
+                  style={{ width: 64, background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '5px 8px', color: '#e2e8f0', fontSize: 14, fontWeight: 800, colorScheme: 'dark' }} />
+                <span style={{ fontSize: 12.5, color: '#94a3b8' }}>minutes → locks again and sends them to their home screen. 0 = never. Change it per user on the Users tab.</span>
+              </div>
               <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 14, lineHeight: 1.5 }}>
                 Click a page to lock it. A locked page asks for the user's 4-digit code, and only users given it on the Users tab can open it (admins always can).
               </div>
@@ -220,6 +237,19 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                     <div style={{ fontSize: 12.5, marginBottom: 12, color: selPerson.hasCode ? '#6ee7b7' : '#fbbf24', fontWeight: 700 }}>
                       {selPerson.hasCode ? '🔑 Access code is set.' : '⚠ No access code yet — they can\'t open any locked page until one is set in Edit Dashboard → Users → Access Code.'}
                       {selPerson.role === 'admin' && <span style={{ color: '#94a3b8' }}> Admins can open every locked page with their code.</span>}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12, fontSize: 12.5, color: '#94a3b8' }}>
+                      <span style={{ fontWeight: 900, color: '#a5f3fc' }}>⏱ Idle lock after</span>
+                      <input type="number" min="0" max="120" disabled={!isAdmin}
+                        value={draft.idle.users[selPerson.key] ?? ''} placeholder={String(draft.idle.minutes)}
+                        onChange={e => setIdleUser(selPerson.key, e.target.value)}
+                        style={{ width: 64, background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '5px 8px', color: '#e2e8f0', fontSize: 14, fontWeight: 800, colorScheme: 'dark' }} />
+                      <span>minutes</span>
+                      <span style={{ color: '#64748b' }}>
+                        {draft.idle.users[selPerson.key] !== undefined
+                          ? `(their own setting · ${idleText(draft.idle.users[selPerson.key])})`
+                          : `(blank = shop default · ${idleText(draft.idle.minutes)})`}
+                      </span>
                     </div>
                     {lockedPages.length === 0 ? (
                       <div style={{ color: '#94a3b8', fontSize: 13.5 }}>No pages are locked. Lock some on the Locked pages tab first.</div>

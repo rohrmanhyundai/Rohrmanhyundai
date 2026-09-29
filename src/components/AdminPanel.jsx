@@ -174,7 +174,7 @@ const PAGE_ACCESS = [
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));
 
-export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes, accessLock }) {
+export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes, accessLock, onUsersOpenChange }) {
   const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   // Backend card: the worker's /health answer, and which users have a password
   // set there (users.json no longer says).
@@ -279,6 +279,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const inUsers = isOpen && openSection === 'users';
   if (inUsers && !usersArrival.current.open) usersArrival.current = { open: true, at: Date.now() };
   if (!inUsers && usersArrival.current.open) usersArrival.current = { open: false, at: 0 };
+  // Tell App when User Management is open, for the access-code idle lock.
+  useEffect(() => { if (onUsersOpenChange) onUsersOpenChange(inUsers); }, [inUsers, onUsersOpenChange]);
   const usersGated = !!(accessLock && accessLock.locked &&
     (!accessLock.unlockedAt || usersArrival.current.at - accessLock.unlockedAt > 10 * 60 * 1000));
 

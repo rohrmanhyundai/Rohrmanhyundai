@@ -281,6 +281,29 @@ export default function App() {
   // The 10 minutes are judged when you ARRIVE on a page, never mid-page, so
   // nobody is thrown out of Payroll halfway through a week.
   const pageArrival = useRef({ page: null, at: 0 });
+  // ── Idle lock ── inside a code-protected page, no mouse / keys / touch for
+  // the set minutes (Access Codes screen; default 2) → every code unlock is
+  // dropped and the user goes back to their home screen. The live context is
+  // refreshed each render further down (idleCtx), after the role is known.
+  const lastActivity = useRef(Date.now());
+  const idleCtx = useRef({});
+  const [idleNotice, setIdleNotice] = useState(null);   // minutes, while the notice shows
+  const [adminUsersOpen, setAdminUsersOpen] = useState(false);
+  useEffect(() => {
+    const bump = () => { lastActivity.current = Date.now(); };
+    const evs = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll'];
+    evs.forEach(e => window.addEventListener(e, bump, { passive: true, capture: true }));
+    const tick = setInterval(() => {
+      const c = idleCtx.current;
+      if (c.inArea && c.limitMs && Date.now() - lastActivity.current >= c.limitMs) c.relock();
+    }, 5000);
+    return () => { evs.forEach(e => window.removeEventListener(e, bump, { capture: true })); clearInterval(tick); };
+  }, []);
+  useEffect(() => {
+    if (!idleNotice) return;
+    const t = setTimeout(() => setIdleNotice(null), 8000);
+    return () => clearTimeout(t);
+  }, [idleNotice]);
   if (pageArrival.current.page !== page) pageArrival.current = { page, at: Date.now() };
   useEffect(() => { loadBigMoney().then(setBigMoney).catch(() => {}); }, []);
 
@@ -1040,6 +1063,29 @@ export default function App() {
   // matching `=== 'technician'` — losing his own tech schedule, reviews, and
   // performance reports. Falls back to stripping the marker while `users` loads.
   const jobRole = (currentUserRecord.role || (currentRole || '').replace(/\s*manager$/i, '')).toLowerCase();
+  // Idle lock context (see the idle hook above).
+  {
+    const idle = (accessCfg && accessCfg.idle) || {};
+    const mine = idle.users ? idle.users[String(currentUser || '').toUpperCase()] : undefined;
+    const minutes = mine !== undefined && mine !== '' && mine !== null ? Number(mine) : (idle.minutes != null && idle.minutes !== '' ? Number(idle.minutes) : 2);
+    const inLockedPage = page !== 'dashboard' && isLocked(accessCfg, page) && !!accessUnlocked[page];
+    const inLockedUsers = adminOpen && adminUsersOpen && isLocked(accessCfg, 'user-management') && !!accessUnlocked['user-management'];
+    const home = /advisor/.test(jobRole) ? 'advisor-calendar'
+      : jobRole === 'technician' ? 'tech-resources'
+      : /parts/.test(jobRole) ? 'parts-hub'
+      : /warranty/.test(jobRole) ? 'warranty-hub'
+      : isAdminOrManager ? 'manager-hub' : 'dashboard';
+    idleCtx.current = {
+      inArea: inLockedPage || inLockedUsers,
+      limitMs: minutes > 0 ? minutes * 60 * 1000 : 0,
+      relock: () => {
+        setAccessUnlocked({});
+        if (inLockedUsers) { setAdminOpen(false); setAdminSection(null); }
+        navTo(home);
+        setIdleNotice(minutes);
+      },
+    };
+  }
   myRoleRef.current = jobRole; // keep the @tech/@advisor/@part group matcher current
   const ownAdvisor = currentUser.toUpperCase();
   const activeAdvisor = viewingAdvisor || ownAdvisor;
@@ -1469,6 +1515,7 @@ export default function App() {
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
+          onUsersOpenChange={setAdminUsersOpen}
         />
       </>
     );
@@ -2095,6 +2142,7 @@ export default function App() {
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
+          onUsersOpenChange={setAdminUsersOpen}
         />
       </>
     );
@@ -2159,6 +2207,7 @@ export default function App() {
             onUnlock: () => setAccessUnlocked(u => ({ ...u, 'user-management': Date.now() })),
             currentUser, currentUserRecord, admins: accessAdmins,
           }}
+          onUsersOpenChange={setAdminUsersOpen}
       />
     </div>
   );
@@ -2192,5 +2241,14 @@ export default function App() {
       {showForgotPw && <ForgotPasswordModal initialUsername={showForgotPw.username} onClose={() => setShowForgotPw(null)} />}
     </>
   );
-  return (<>{mentionModal}{messenger}{passwordModals}{renderPage()}</>);
+  const idleToast = idleNotice ? (
+    <div onClick={() => setIdleNotice(null)} style={{
+      position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 99999, cursor: 'pointer',
+      padding: '12px 20px', borderRadius: 12, fontWeight: 800, fontSize: 14, color: '#fde68a',
+      background: 'rgba(15,23,42,.96)', border: '1px solid rgba(250,204,21,.55)', boxShadow: '0 10px 30px rgba(0,0,0,.5)',
+    }}>
+      🔒 Locked after {idleNotice} min idle — enter your code again to go back in.
+    </div>
+  ) : null;
+  return (<>{mentionModal}{messenger}{passwordModals}{idleToast}{renderPage()}</>);
 }
