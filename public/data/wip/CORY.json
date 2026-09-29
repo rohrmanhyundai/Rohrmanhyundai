@@ -39,5 +39,21 @@
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY. CORY WILL START THIS ON TUESDAY ",
     "partsArrived": true,
     "partsArrivedDate": "09/26/2026"
+  },
+  {
+    "id": "mumz956qgrfk",
+    "ro": "781181",
+    "roDate": "2026-09-29",
+    "vehicle": "2018 Hyundai Santa Fe Sport",
+    "jobDesc": "CUSTOMER STATES WINDSHEILD WASHER IS NOT WORKING",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
