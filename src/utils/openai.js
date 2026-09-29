@@ -1,9 +1,38 @@
+import { apiFetch } from './api';
+
+// Every OpenAI call goes through the Cloudflare Worker (/openai/chat), which
+// holds the key. Returns the fetch Response, same shape OpenAI sends back.
+// Worker errors come back as { error: "text" }; OpenAI's as { error: { message } }.
+// Callers read error.message, so the worker's shape is converted here.
+export async function openaiChat(body) {
+  const res = await apiFetch('/openai/chat', { method: 'POST', json: body });
+  if (res.ok) return res;
+  // Transitional: until the server has its key (503), a browser that still has
+  // its own saved key keeps working the old way. Remove once the key is set.
+  if (res.status === 503) {
+    let local = '';
+    try { local = localStorage.getItem(OPENAI_KEY) || ''; } catch {}
+    if (local) {
+      return fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${local}` }, body: JSON.stringify(body),
+      });
+    }
+  }
+  let j = {};
+  try { j = JSON.parse(await res.text()); } catch {}
+  if (j && typeof j.error === 'string') j = { error: { message: j.error } };
+  return new Response(JSON.stringify(j || {}), { status: res.status, headers: { 'Content-Type': 'application/json' } });
+}
+// Same, taking fetch-style options ({ body: JSON string }) so the callers
+// below read the way they did when they called OpenAI directly.
+export function openaiRequest(opts) {
+  return openaiChat(JSON.parse(opts.body));
+}
+
 const OPENAI_KEY = 'openai_api_key';
 
 // Analyze a PDF's raw text and return a structured form definition (JSON)
 export async function analyzeReviewForm(pdfText) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
 
   const prompt = `You are an expert at analyzing HR/performance review forms. I will give you raw text extracted from a PDF performance review form. Analyze the structure and return a JSON form definition to build an interactive digital version.
 
@@ -78,9 +107,9 @@ Rules:
 PDF TEXT:
 ${pdfText.slice(0, 8000)}`;
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
@@ -108,13 +137,11 @@ ${pdfText.slice(0, 8000)}`;
 }
 
 // Big-Money LOF Coach's Note — the prompt is built by utils/bigMoneyCoach.mjs
-// (shared with the nightly Action); this just runs it with the browser's key.
+// (shared with the nightly Action); this runs it through the worker's key.
 export async function generateBigMoneyCoaching(prompt) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 400, temperature: 0.6 }),
   });
   if (!res.ok) {
@@ -125,8 +152,10 @@ export async function generateBigMoneyCoaching(prompt) {
   return (data.choices?.[0]?.message?.content || '').trim();
 }
 
+// The key moved to the server. Kept so older "is AI available?" checks stay
+// true everywhere; nothing sends a browser key any more.
 export function getOpenAIKey() {
-  return localStorage.getItem(OPENAI_KEY) || '';
+  return 'server';
 }
 
 export function setOpenAIKey(key) {
@@ -134,8 +163,6 @@ export function setOpenAIKey(key) {
 }
 
 export async function generateTechCoaching({ techName, weeklyEntries, wip, awaiting, goalHrs }) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
 
   const fmt = (n, d = 1) => (n === null || n === undefined || n === '' ? '—' : Number(n).toFixed(d));
   const pct = (v) => (v === null || v === undefined || v === '' ? '—' : (Number(v) * 100).toFixed(1) + '%');
@@ -195,9 +222,9 @@ A 2-3 sentence overview tying together how their last week, last 6 weeks, and la
 
 Keep the entire report under 450 words. Use the tech's first name once or twice, but don't overdo it.`;
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
@@ -214,8 +241,6 @@ Keep the entire report under 450 words. Use the tech's first name once or twice,
 }
 
 export async function generateAdvisorCoaching({ advisorName, dailyEntries, wipForAdvisor = [], goals = {} }) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
 
   const fmt = (n, d = 1) => (n === null || n === undefined || n === '' ? '—' : Number(n).toFixed(d));
   const pct = (v) => (v === null || v === undefined || v === '' ? '—' : (Number(v) * 100).toFixed(1) + '%');
@@ -270,9 +295,9 @@ A 2-3 sentence overview of how the advisor is trending day-over-day, week-over-w
 
 Keep the entire report under 450 words. Use the advisor's first name once or twice, but don't overdo it.`;
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
@@ -289,8 +314,6 @@ Keep the entire report under 450 words. Use the advisor's first name once or twi
 }
 
 export async function generateReviewReport({ techName, techAnswers, managerAnswers, questions }) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings > OpenAI Key.');
 
   const questionList = questions.map((q, i) => `Q${i + 1}: ${q.question}`).join('\n');
 
@@ -321,11 +344,10 @@ ${managerSection}
 
 Please write the full professional performance review report now.`;
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`,
     },
     body: JSON.stringify({
       model: 'gpt-4o-mini',

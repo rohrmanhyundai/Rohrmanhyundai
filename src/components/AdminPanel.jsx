@@ -13,7 +13,6 @@ import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee, ma
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
-import { getOpenAIKey, setOpenAIKey } from '../utils/openai';
 import ManagerReports from './ManagerReports';
 import AdditionalTimeReview from './AdditionalTimeReview';
 import { userDisplayName } from '../utils/userDisplay';
@@ -187,6 +186,43 @@ const PAGE_GROUP_ORDER = [...new Set(PAGE_ACCESS.map(p => p.group))];
 // Admins and anything with "manager" in it always see everything.
 const roleIsFull = (r) => r === 'admin' || String(r || '').includes('manager');
 
+// ── OpenAI Settings ── the key lives on the server now (worker secret
+// OPENAI_API_KEY); every AI feature goes through /openai/chat. This just shows
+// whether it's set, and clears any old key a browser still has saved.
+function OpenAIServerStatus() {
+  const [state, setState] = useState(null);   // null = checking
+  const [cleared, setCleared] = useState(false);
+  const hadLocal = (() => { try { return !!localStorage.getItem('openai_api_key'); } catch { return false; } })();
+  useEffect(() => { api.health().then(h => setState(h ? !!h.openai : 'down')).catch(() => setState('down')); }, []);
+  return (
+    <div className="group-body">
+      <div className="form-section" style={{ marginTop: 0 }}>
+        <div className="small">
+          AI features — the $50 add-on screenshot reader, Big-Money coaching notes, review forms and historical report uploads —
+          now use one OpenAI key kept on the server. Nothing needs to be entered on each computer any more.
+        </div>
+        <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 10, fontWeight: 800, fontSize: 14,
+          background: state === true ? 'rgba(34,197,94,.12)' : state === null ? 'rgba(255,255,255,.04)' : 'rgba(250,204,21,.1)',
+          border: `1px solid ${state === true ? 'rgba(74,222,128,.45)' : state === null ? 'rgba(255,255,255,.12)' : 'rgba(250,204,21,.45)'}`,
+          color: state === true ? '#86efac' : state === null ? '#94a3b8' : '#fde68a' }}>
+          {state === null ? 'Checking the server…'
+            : state === true ? '✅ The OpenAI key is set on the server — AI features work on every computer.'
+            : state === 'down' ? '⚠ Could not reach the server to check.'
+            : '⚠ No OpenAI key on the server yet. In Terminal: cd ~/Work/Rohrmanhyundai/worker && npx wrangler secret put OPENAI_API_KEY — then paste the key (sk-…).'}
+        </div>
+        {hadLocal && !cleared && (
+          <div className="actions" style={{ marginTop: 10 }}>
+            <button className="secondary" onClick={() => { try { localStorage.removeItem('openai_api_key'); } catch {} setCleared(true); }}>
+              Remove the old key saved in this browser
+            </button>
+          </div>
+        )}
+        {cleared && <div className="small" style={{ color: '#86efac', marginTop: 8 }}>✓ Removed from this browser.</div>}
+      </div>
+    </div>
+  );
+}
+
 // ── 🧩 Role Setup ─────────────────────────────────────────────────────────────
 // Page access per role (utils/roleAccess.js). First time in, each role starts
 // from what most of its users already have, and you choose whether people whose
@@ -327,7 +363,6 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
 }
 
 export default function AdminPanel({ data, vacations, isOpen, onClose, onDataChange, onRefresh, currentUser, currentRole, users, vaultAccess, onUsersChange, schedules, onSchedulesChange, initialSection, onOpenAccessCodes, accessLock, onUsersOpenChange, roleCfg, onRoleCfgSaved }) {
-  const [openAIKey, setOpenAIKeyState] = useState(getOpenAIKey());
   // Backend card: the worker's /health answer, and which users have a password
   // set there (users.json no longer says).
   const [backendHealth, setBackendHealth] = useState(undefined);
@@ -2281,21 +2316,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       </div>
     );
 
-    if (openSection === 'openai') return (
-      <div className="group-body">
-        <div className="form-section" style={{ marginTop: 0 }}>
-          <div className="small">Enter your OpenAI API key to enable AI-generated performance review reports in Employee Reviews. The key is stored locally on this device only.</div>
-          <div className="field" style={{ marginTop: 8 }}>
-            <label>OpenAI API Key</label>
-            <input type="password" value={openAIKey} onChange={e => setOpenAIKeyState(e.target.value)} placeholder="sk-..." />
-          </div>
-          <div className="actions">
-            <button onClick={() => { setOpenAIKey(openAIKey); alert('OpenAI API key saved!'); }}>Save OpenAI Key</button>
-            {openAIKey && <button className="secondary" style={{ marginLeft: 8 }} onClick={() => { setOpenAIKeyState(''); setOpenAIKey(''); }}>Clear Key</button>}
-          </div>
-        </div>
-      </div>
-    );
+    if (openSection === 'openai') return <OpenAIServerStatus />;
 
     if (openSection === 'dashboard') return (
       <div className="group-body">

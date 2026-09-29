@@ -21,6 +21,8 @@
 //                                                        warranty-media/ only (phone videos
 //                                                        outgrow the 25 MB proxy)
 //   POST /pusher/trigger        { channel, event, data } → publishes with the app secret; session
+//   POST /openai/chat           OpenAI chat.completions body → OpenAI's reply; session. The
+//                               key lives here (OPENAI_API_KEY), never in a browser.
 //
 // Credentials live in KV as cred:<USERNAME> = { salt, hash, iterations, setAt }
 // (PBKDF2-SHA256, 100k iterations — the most Workers allow per call). A session
@@ -47,6 +49,9 @@ const WRITABLE_PREFIX = 'public/data/';
 const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching', 'daily-wrench']);
 const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/'];
 const S3_MAX_BYTES = 25 * 1024 * 1024;
+// Models the app asks for (add-on screenshot reader = gpt-4o; the rest mini).
+const OPENAI_MODELS = new Set(['gpt-4o', 'gpt-4o-mini']);
+const OPENAI_MAX_TOKENS = 8000;
 const PUSHER_CHANNELS = new Set(['rohrman-advisor-chat', 'rohrman-tech-chat', 'rohrman-system', 'rohrman-global-msg']);
 
 class HttpError extends Error { constructor(status, message) { super(message); this.status = status; } }
@@ -245,7 +250,7 @@ async function route(request, env, url) {
   const method = request.method;
 
   if (p === '/health') {
-    const out = { ok: true, github: !!env.GITHUB_TOKEN, aws: !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY), pusher: !!env.PUSHER_SECRET, sessions: !!env.SESSION_SECRET };
+    const out = { ok: true, github: !!env.GITHUB_TOKEN, aws: !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY), pusher: !!env.PUSHER_SECRET, sessions: !!env.SESSION_SECRET, openai: !!env.OPENAI_API_KEY };
     // ?check=s3 makes a signed, harmless request to the bucket so a wrong or
     // mistyped key shows up here (403) instead of only when someone uploads.
     // Signed in only: it spends a real S3 call and reports key lengths.
@@ -405,6 +410,28 @@ async function route(request, env, url) {
     if (!PUSHER_CHANNELS.has(channel) || typeof event !== 'string' || !event) throw new HttpError(403, 'That channel is not allowed.');
     await pusherTrigger(env, channel, event, data);
     return json({ ok: true });
+  }
+
+  // ── OpenAI ── the app's AI features (add-on screenshot, coaching notes,
+  // review forms, historical reports) go through here so the key never sits in
+  // a browser. Signed-in users only, known models only, capped output, and a
+  // per-user rate limit so a stuck page can't run up the bill.
+  if (p === '/openai/chat' && method === 'POST') {
+    const s = await requireSession(env, request);
+    if (!env.OPENAI_API_KEY) throw new HttpError(503, 'The OpenAI key is not set on the server yet (wrangler secret put OPENAI_API_KEY).');
+    throttle(`openai:${up(s.u)}`, 60, 10 * 60 * 1000);
+    const body = await readJson(request);
+    if (!OPENAI_MODELS.has(body && body.model)) throw new HttpError(400, 'That model is not allowed.');
+    if (!Array.isArray(body.messages) || !body.messages.length) throw new HttpError(400, 'No messages.');
+    const out = { ...body, stream: false };
+    if (out.max_tokens == null || out.max_tokens > OPENAI_MAX_TOKENS) out.max_tokens = OPENAI_MAX_TOKENS;
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+      body: JSON.stringify(out),
+    });
+    // Pass OpenAI's answer (or its error) straight back.
+    return new Response(await res.text(), { status: res.status, headers: { 'Content-Type': 'application/json' } });
   }
 
   throw new HttpError(404, 'Not found.');

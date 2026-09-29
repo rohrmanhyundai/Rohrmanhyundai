@@ -10,7 +10,7 @@
 // So tickets are the $50 oil-change ROs and oil-only are the ones that left
 // with nothing added — that's what makes the coaching pace math exact.
 
-import { getOpenAIKey } from './openai';
+import { openaiRequest } from './openai';
 import { canonicalAdvisorFirst } from './advisorAliases';
 
 const readAsDataUrl = (file) => new Promise((resolve, reject) => {
@@ -49,14 +49,12 @@ If there are no person rows return {"columns":[],"rows":[]}.`;
 
 // → { rows: [{ name, first, tickets, add_on_rate(0-1), oil_only_tickets, addl_hrs_ro, addl_gp_ticket, total_addl_gp }], raw }
 export async function parseAddOnScreenshot(file) {
-  const key = getOpenAIKey();
-  if (!key) throw new Error('No OpenAI API key set. Go to Admin Settings → OpenAI Settings.');
   if (!/^image\//.test(file.type || '')) throw new Error('That is not an image — take a screenshot (PNG/JPG) of the add-on board.');
   const dataUrl = await readAsDataUrl(file);
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await openaiRequest({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       // The full 4o model reads dense tables far more reliably than mini
       // (mini slid columns and dropped rows). A screenshot is ~1–2¢.
