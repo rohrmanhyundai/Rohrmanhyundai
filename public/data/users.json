@@ -389,7 +389,7 @@
     },
     {
       "username": "Kai",
-      "role": "admin",
+      "role": "advisor",
       "goalDept": "parts",
       "canEditDashboard": true,
       "pages": {
