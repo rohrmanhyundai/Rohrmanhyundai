@@ -24,7 +24,13 @@
       },
       "chatAccess": true,
       "techChatAccess": true,
-      "hidden": true
+      "hidden": true,
+      "applicantCode": {
+        "salt": "d71756dab7fb71ec4efb2939350bb804",
+        "hash": "eaaa8100fb09dab4a0279c68aff6cec630f482845734e771f68efbb101ad108f",
+        "iterations": 150000,
+        "setAt": "2026-09-29T02:39:48.633Z"
+      }
     },
     {
       "username": "Shawn",
