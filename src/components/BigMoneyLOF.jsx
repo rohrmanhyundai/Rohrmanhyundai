@@ -63,6 +63,51 @@ const FLOATERS = [
   { e: '💵', l: '66%', t: '86%', d: '3.2s', s: 28 }, { e: '💎', l: '42%', t: '20%', d: '.4s',  s: 24 },
 ];
 
+// ── Progress chart ─────────────────────────────────────────────────────────────
+// One metric for one advisor across the whole contest window: a dashed goal
+// line and the actual numbers, day by day (from `history`, plus today's live
+// value). The x-axis always runs start → end, so the empty stretch on the
+// right is the time left to close the gap.
+const dayNum = (iso) => { const [y, m, d] = String(iso).split('-').map(Number); return Date.UTC(y, m - 1, d) / 86400000; };
+function ProgressChart({ title, points, goal, start, end, fmt, color = '#22d3ee' }) {
+  const W = 320, H = 150, L = 38, R = 12, T = 14, B = 26;
+  const x0 = dayNum(start), x1 = Math.max(dayNum(end), x0 + 1);
+  const vals = points.map(p => p.v);
+  const top = Math.max(goal * 1.15, ...vals, 0.0001);
+  const X = (iso) => L + ((dayNum(iso) - x0) / (x1 - x0)) * (W - L - R);
+  const Y = (v) => T + (1 - v / top) * (H - T - B);
+  const path = points.map((p, i) => `${i ? 'L' : 'M'}${X(p.date).toFixed(1)},${Y(p.v).toFixed(1)}`).join(' ');
+  const last = points[points.length - 1];
+  const hit = last && goal > 0 && last.v >= goal;
+  const today = todayKey();
+  const showToday = dayNum(today) >= x0 && dayNum(today) <= x1;
+  const md = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}/${d}`; };
+  return (
+    <div style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 12, padding: '10px 12px 6px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <span className="bml-label">{title}</span>
+        {last && <span style={{ marginLeft: 'auto', fontSize: 16, fontWeight: 1000, color: hit ? '#4ade80' : color }}>{fmt(last.v)}</span>}
+        <span style={{ fontSize: 11, color: '#fbbf24', fontWeight: 800 }}>goal {fmt(goal)}</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block', marginTop: 4 }}>
+        {[0, 0.5, 1].map(f => (
+          <g key={f}>
+            <line x1={L} x2={W - R} y1={Y(top * f)} y2={Y(top * f)} stroke="rgba(148,163,184,.12)" />
+            <text x={L - 5} y={Y(top * f) + 3.5} fontSize="9" fill="#64748b" textAnchor="end">{fmt(top * f)}</text>
+          </g>
+        ))}
+        {showToday && <line x1={X(today)} x2={X(today)} y1={T} y2={H - B} stroke="rgba(148,163,184,.35)" strokeDasharray="2 3" />}
+        {goal > 0 && <line x1={L} x2={W - R} y1={Y(goal)} y2={Y(goal)} stroke="#fbbf24" strokeWidth="2" strokeDasharray="6 4" />}
+        {points.length > 1 && <path d={path} fill="none" stroke={color} strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round" />}
+        {points.map((p, i) => <circle key={i} cx={X(p.date)} cy={Y(p.v)} r={i === points.length - 1 ? 4.2 : 2.6} fill={i === points.length - 1 ? (hit ? '#4ade80' : color) : color} stroke="#0b1220" strokeWidth="1.2" />)}
+        <text x={L} y={H - 8} fontSize="9.5" fill="#94a3b8">{md(start)}</text>
+        {showToday && X(today) - L > 30 && W - R - X(today) > 30 && <text x={X(today)} y={H - 8} fontSize="9.5" fill="#cbd5e1" textAnchor="middle">today</text>}
+        <text x={W - R} y={H - 8} fontSize="9.5" fill="#94a3b8" textAnchor="end">{md(end)}</text>
+      </svg>
+    </div>
+  );
+}
+
 function Confetti() {
   // Only the leader's screen rains money — a little celebration, not a nuisance.
   const bits = useMemo(() => Array.from({ length: 22 }, (_, i) => ({
@@ -204,9 +249,12 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
       const changed = !cur || sig(cur.standings) !== sig(live.rows);
       if (stale && changed) {
         const latest = { takenAt: now, date: todayKey(), goals: live.goals, standings: live.rows, store: live.store };
+        // Each day's numbers are also kept in `history` for the progress charts
+        // (last snapshot of the day wins).
+        const day = { goals: live.goals, standings: live.rows.map(r => ({ name: r.name, hrsRo: r.hrsRo, rate: r.rate })), store: { hrsRo: live.store.hrsRo, rate: live.store.rate } };
         // Mirror it locally straight away so a dashboard poll doesn't re-trigger this.
-        setFile(f => ({ ...f, latest }));
-        updateBigMoney(f => ({ ...f, latest })).catch(() => {});
+        setFile(f => ({ ...f, latest, history: { ...(f.history || {}), [latest.date]: day } }));
+        updateBigMoney(f => ({ ...f, latest, history: { ...(f.history || {}), [latest.date]: day } })).catch(() => {});
       }
     } else if (status === STATUS.ENDED && !file.final && !bankingRef.current) {
       // Prefer the last snapshot taken inside the window: by now the dashboard
@@ -646,6 +694,52 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
               <div style={{ marginTop: 12, fontSize: 12.5, color: '#94a3b8', textAlign: 'center' }}>Nobody has hit both goals yet — the {money(prizes.full)} is wide open. 💪</div>
             )}
           </div>
+
+          {/* Progress toward goal — two charts per advisor */}
+          {!loading && board.rows.length > 0 && file && file.contest && file.contest.start && file.contest.end && (() => {
+            const c = file.contest;
+            const hist = file.history || {};
+            const days = Object.keys(hist).filter(d => d >= c.start && d <= c.end).sort();
+            const series = (name, key) => {
+              const pts = days.map(d => {
+                const r = ((hist[d] || {}).standings || []).find(x => x.name === name);
+                return r ? { date: d, v: Number(r[key]) || 0 } : null;
+              }).filter(Boolean);
+              // Today's live number rides on the end while the contest is running.
+              const lr = status === STATUS.LIVE ? (live.rows || []).find(x => x.name === name) : null;
+              const tk = todayKey();
+              if (lr && tk >= c.start && tk <= c.end) {
+                const i = pts.findIndex(p => p.date === tk);
+                const pt = { date: tk, v: Number(lr[key]) || 0 };
+                if (i >= 0) pts[i] = pt; else pts.push(pt);
+              }
+              return pts;
+            };
+            const g = board.goals || {};
+            return (
+              <div className="bml-card">
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 18, fontWeight: 1000, color: '#fff' }}>📈 Progress toward goal</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>{fmtContestDate(c.start)} → {fmtContestDate(c.end)} · <span style={{ color: '#fbbf24' }}>- - goal</span> · <span style={{ color: '#22d3ee' }}>── where you are</span></div>
+                </div>
+                <div style={{ display: 'grid', gap: 16 }}>
+                  {board.rows.map(r => (
+                    <div key={r.name}>
+                      <div style={{ fontSize: 15, fontWeight: 900, color: r.name === me ? '#67e8f9' : '#f1f5f9', marginBottom: 6 }}>
+                        {r.display}{r.name === me && <span style={{ fontSize: 11, color: '#67e8f9', marginLeft: 8, fontWeight: 800 }}>YOU</span>}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+                        <ProgressChart title="$50 Add Rate %" points={series(r.name, 'rate')} goal={Number(g.add_rate) || 0}
+                          start={c.start} end={c.end} fmt={(v) => `${Math.round(v * 100)}%`} color="#22d3ee" />
+                        <ProgressChart title="$50 Add'l Hrs/RO" points={series(r.name, 'hrsRo')} goal={Number(g.hrs_ro) || 0}
+                          start={c.start} end={c.end} fmt={(v) => Number(v).toFixed(2)} color="#a78bfa" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Rules */}
           <div className="bml-card">
