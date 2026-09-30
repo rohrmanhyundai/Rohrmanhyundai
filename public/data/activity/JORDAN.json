@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-30T19:54:06.944Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-30T19:53:59.308Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-30T18:36:35.755Z",
     "type": "page",
     "label": "big-money-lof"
@@ -1158,10 +1168,5 @@
     "at": "2026-08-31T19:55:18.347Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-31T19:54:19.526Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
