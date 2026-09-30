@@ -947,6 +947,20 @@
         "agreed": true,
         "agreedBy": "DAVID",
         "submittedAt": 1790718954797
+      },
+      "2026-09-30": {
+        "hours": 257.4,
+        "hrsRo": 1.09,
+        "openRoCount": 12,
+        "invoiced": "no",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "answers": {},
+        "agreed": true,
+        "agreedBy": "DAVID",
+        "submittedAt": 1790805893860
       }
     },
     "entryMode": "mtd"
