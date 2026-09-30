@@ -1,0 +1,469 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-01",
+  "rows": [
+    {
+      "id": "rmuoofxb7st60",
+      "customerName": "Alden Swartz",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43305",
+      "vehicle": "2024 Hyundai Tucson Hybrid",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoofxb7qjy8",
+      "customerName": "Kathy Ellet",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43283",
+      "vehicle": "2019 Hyundai Santa Fe",
+      "services": [
+        "CUSTOMER STATES"
+      ],
+      "comments": "There is a recommended list of work for our car. We want some, but not all of that done. We want the transmission fluid exchange, break fluid exchange, fuel injection service, and serpentine belt.",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "777463",
+        "date": "2026-05-12",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1861.47,
+        "hours": 6.7,
+        "phone": "2604371517",
+        "vin": "5NMS33AD4KH095684",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 112.02,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 143.84,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 35.92,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 297.73,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 477.85,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 215.82,
+            "priceEst": false
+          },
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1,
+            "h": 1,
+            "price": 393.3,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 184.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoofxb7e87i",
+      "customerName": "Kimberly Lanam",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43322",
+      "vehicle": "2017 Hyundai Santa Fe Sport",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780598",
+        "date": "2026-09-08",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1060.62,
+        "hours": 3.4,
+        "phone": "7653661506",
+        "vin": "5NMZUDLB6HH035461",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 1.5,
+            "est": true,
+            "price": 550.95,
+            "priceEst": true
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 289.68,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 219.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoofxb7ir9s",
+      "customerName": "Myron Mc cutcheon",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43318",
+      "vehicle": "2025 Hyundai Sonata Hybrid",
+      "services": [
+        "PERFORM LOF ROTATION (WARRANTY)",
+        "LA30 V 5YR/60K-ACTU SOFTWARE UPD(26-01-052H)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoofxb7l6ao",
+      "customerName": "Cailin Wilson",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43259",
+      "vehicle": "2024 Hyundai Santa Cruz",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777622",
+        "date": "2026-05-18",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 498.97,
+        "hours": 1.8,
+        "phone": "2034172007",
+        "vin": "5NTJBDDE9RH125043",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 108.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoofxb7r6gg",
+      "customerName": "Bonnie Wilson",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43274",
+      "vehicle": "2014 Hyundai Sonata",
+      "services": [
+        "CUSTOMER STATES- Quote Valve cover gasket"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778508",
+        "date": "2026-06-18",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1586.94,
+        "hours": 6,
+        "phone": "7658067909",
+        "vin": "5NPEB4AC3EH861568",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 142.32,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 56.9,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 213.55,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 294.59,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 183.04,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 223.72,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 472.82,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoofxb7kkn0",
+      "customerName": "Ena Clarke",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43312",
+      "vehicle": "2012 Hyundai Accent",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "CUSTOMER STATES A/C NOT COOLING. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoofxb7bb6s",
+      "customerName": "Shari Mikaelsson",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43209",
+      "vehicle": "2018 Hyundai Elantra",
+      "services": [
+        "LIFETIME FREE OIL CHANGE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoofxb76lmz",
+      "customerName": "Kathryn Jaeger",
+      "appointmentTime": "2:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43223",
+      "vehicle": "2022 Hyundai Elantra",
+      "services": [
+        "CUSTOMER STATES"
+      ],
+      "comments": "Fuel injection service and Brake fluid exchange",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "780195",
+        "date": "2026-08-21",
+        "advisorFull": "CODY TINCHER",
+        "advisor": "CODY",
+        "amount": 537.92,
+        "hours": 2.7,
+        "phone": "7654143833",
+        "vin": "KMHLN4AG4NU361406",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 142.06,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 213.16,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 182.7,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoofxb7y0py",
+      "customerName": "NETTA Frey",
+      "appointmentTime": "3:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43171",
+      "vehicle": "2023 Hyundai Santa Fe",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
+        "CUSTOMER STATES- go over maintinance scedule with customer",
+        "CUSTOMER STATES- Driver seat memory isnt going back to preset location"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoofxb7ui3o",
+      "customerName": "Neerav Reddy Chinna Chowdary",
+      "appointmentTime": "4:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43303",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "LUBE, OIL AND OIL FILTER SERVICE. RESET OIL LIFE MONITOR. HAZARDOUS WASTE FEE WILL BE APPLIED."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-09-30T22:28:49.973Z"
+}
