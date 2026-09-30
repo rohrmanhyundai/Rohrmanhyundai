@@ -46,21 +46,6 @@
     "partsArrivedDate": ""
   },
   {
-    "id": "mro3a7o9xsj",
-    "ro": "779297",
-    "roDate": "2026-07-16",
-    "vehicle": "",
-    "jobDesc": "Crank no start",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/25/2026",
-    "highPriority": true,
-    "advisor": "DAVID",
-    "notes": "Tow in, Crank no start. NEED TO GET HTTS# AND CALL TECH LINE FOR APPROVAL FOR ENGINE REPLACEMENT. NEED REGISTRATION TO SUBMITT TO P/A./ STILL WAITING ON REGISTRATION . engine approved ",
-    "flag": "purple"
-  },
-  {
     "id": "muejgcc1lv0k",
     "ro": "781052",
     "roDate": "2026-09-23",
@@ -105,21 +90,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mun4w80dt23t",
-    "ro": "781204",
-    "roDate": "2026-09-29",
-    "vehicle": "2021 Hyundai Kona",
-    "jobDesc": "ENGINE OIL CLEANING SERVICE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
