@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-30T19:31:00.384Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
     "at": "2026-09-30T14:48:43.977Z",
     "type": "page",
     "label": "advisor-calendar"
@@ -940,15 +945,5 @@
     "at": "2026-08-31T21:02:47.846Z",
     "type": "page",
     "label": "advisor-goals"
-  },
-  {
-    "at": "2026-08-31T14:55:06.453Z",
-    "type": "page",
-    "label": "charge-account-list"
-  },
-  {
-    "at": "2026-08-31T14:54:52.624Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
