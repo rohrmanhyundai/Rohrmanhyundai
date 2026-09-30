@@ -1,17 +1,5 @@
 [
   {
-    "id": "gm-mue453ln4mib",
-    "from": "SHAWN",
-    "to": [
-      "DAVID"
-    ],
-    "text": "did you get a PO for 781024 so we can close it",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1790168563067
-  },
-  {
     "id": "gm-mufzi4tpnrpu",
     "from": "SHAWN",
     "to": [
@@ -219,5 +207,18 @@
       }
     ],
     "timestamp": 1790769542257
+  },
+  {
+    "id": "gm-muodkrseq7v2",
+    "from": "SHAWN",
+    "to": [
+      "DAVID",
+      "KADEN"
+    ],
+    "text": "781215 ENGINE APPROVED",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790789072558
   }
 ]
