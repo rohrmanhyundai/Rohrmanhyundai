@@ -1,0 +1,308 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-02",
+  "rows": [
+    {
+      "id": "rmuoo2a9zgzb8",
+      "customerName": "Carol Rusk",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43238",
+      "vehicle": "2022 Hyundai Kona",
+      "services": [
+        "CUSTOMER STATES- Radiator leaking SOR 12698- Gaven"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuoo2a9z2wb0",
+      "customerName": "Jordam Pierre",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43092",
+      "vehicle": "2025 Hyundai Tucson",
+      "services": [
+        "Replace Horns",
+        "Remove Screen and Adjust Coax Cable",
+        "CUSTOMER STATES- Pill pay via SUNBIT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781008",
+        "date": "2026-09-22",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1725.44,
+        "hours": 7.3,
+        "phone": "7656378124",
+        "vin": "5NMJBCDE7SH459051",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 2,
+            "h": 2.1,
+            "est": true,
+            "price": 830.51,
+            "priceEst": true
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 219.99,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 464.95,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoo2a9zy8iw",
+      "customerName": "Jeanette Tisdale-Rowe",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43271",
+      "vehicle": "2025 Hyundai Sonata Hybrid",
+      "services": [
+        "CUSTOMER STATES USB PORT NOT OPERATING. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777943",
+        "date": "2026-05-28",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 551.92,
+        "hours": 2.4,
+        "phone": "7654639435",
+        "vin": "KMHL54JJ1SA123683",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 108.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoo2a9zwevp",
+      "customerName": "Kim Sang",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43316",
+      "vehicle": "2025 Hyundai Elantra N",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779768",
+        "date": "2026-08-04",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 209.99,
+        "hours": 0.8,
+        "phone": "8315219558",
+        "vin": "KMHLW4DK0SU031383",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoo2a9zc2k4",
+      "customerName": "Dennis Homco",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43251",
+      "vehicle": "2020 Hyundai Santa Fe",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778522",
+        "date": "2026-06-19",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1362.83,
+        "hours": 5.3,
+        "phone": "7657146820",
+        "vin": "5NMS3CAD8LH185485",
+        "items": [
+          {
+            "code": "VVTFL",
+            "desc": "TRANSMISSION FLUID EXCHANGE",
+            "count": 1,
+            "h": 1,
+            "price": 373.82,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 205.13,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 136.71,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 454.19,
+            "priceEst": false
+          },
+          {
+            "code": "VVRDFL",
+            "desc": "REAR DIFFERENTIAL FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.5,
+            "price": 98.38,
+            "priceEst": false
+          },
+          {
+            "code": "VVTCFL",
+            "desc": "TRANSFER CASE SERVICE",
+            "count": 1,
+            "h": 0.5,
+            "price": 94.6,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuoo2a9zt2ot",
+      "customerName": "Joe Pacheco",
+      "appointmentTime": "4:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43293",
+      "vehicle": "2025 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779014",
+        "date": "2026-07-07",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 30,
+        "hours": 0.3,
+        "phone": "7087430288",
+        "vin": "KMHL54JJ3SA132174",
+        "items": [
+          {
+            "code": "TIRE1",
+            "desc": "REPLACE ONE TIRE",
+            "count": 1,
+            "h": 0.3,
+            "price": 30,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-09-30T22:18:09.861Z"
+}
