@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-09-30T15:28:32.625Z",
+    "type": "page",
+    "label": "aftermarket-warranty"
+  },
+  {
     "at": "2026-09-29T13:32:48.193Z",
     "type": "page",
     "label": "aftermarket-warranty"
@@ -248,15 +253,5 @@
     "at": "2026-08-31T17:54:06.724Z",
     "type": "page",
     "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-08-31T12:35:03.102Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-08-31T12:34:35.312Z",
-    "type": "page",
-    "label": "tire-warranty"
   }
 ]
