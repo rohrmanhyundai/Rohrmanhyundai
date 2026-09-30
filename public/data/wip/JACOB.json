@@ -96,22 +96,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mulamhislqny",
-    "ro": "781153",
-    "roDate": "2026-09-28",
-    "vehicle": "2024 Hyundai IONIQ 5",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/30/2026",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mulng2t962gt",
     "ro": "781170",
     "roDate": "2026-09-28",
@@ -124,22 +108,6 @@
     "etaCompletion": "",
     "partsArrived": null,
     "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mulng2t9bizb",
-    "ro": "781158",
-    "roDate": "2026-09-28",
-    "vehicle": "2021 Hyundai Elantra",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/29/2026",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
   },
