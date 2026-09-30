@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-09-30T19:58:52.306Z",
+    "type": "page",
+    "label": "manager-hub"
+  },
+  {
+    "at": "2026-09-30T19:58:49.231Z",
+    "type": "page",
+    "label": "employee-applicants"
+  },
+  {
+    "at": "2026-09-30T19:58:17.732Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-09-30T19:58:14.649Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-09-30T19:54:06.944Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1163,10 +1183,5 @@
     "at": "2026-08-31T20:09:40.030Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-31T19:55:18.347Z",
-    "type": "page",
-    "label": "advisor-goals"
   }
 ]
