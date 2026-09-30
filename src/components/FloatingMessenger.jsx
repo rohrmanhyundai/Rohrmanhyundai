@@ -293,15 +293,26 @@ export default function FloatingMessenger({
     .filter(u => u.name !== me)
     .sort((a, b) => a.name.localeCompare(b.name)), [users, me]);
 
-  const groups = useMemo(() => {
-    const by = (pred) => roster.filter(u => pred(u.role)).map(u => u.name);
-    return [
-      { key: 'all', label: '👥 Everyone', names: roster.map(u => u.name) },
-      { key: 'tech', label: '🔧 Techs', names: by(r => r.includes('technician')) },
-      { key: 'advisor', label: '📋 Advisors', names: by(r => r.includes('advisor')) },
-      { key: 'parts', label: '📦 Parts', names: by(r => r.includes('part')) },
-    ].filter(g => g.names.length);
+  // The roster grouped by what people do — each heading selects its group.
+  // A role lands in the first category it matches (a parts manager is Parts,
+  // a service manager is Managers), so nobody shows twice.
+  const categories = useMemo(() => {
+    const CATS = [
+      { key: 'mgr', label: '👔 Managers', test: r => r === 'admin' || (r.includes('manager') && !r.includes('part')) },
+      { key: 'advisor', label: '📋 Advisors', test: r => r.includes('advisor') },
+      { key: 'tech', label: '🔧 Technicians', test: r => r.includes('technician') },
+      { key: 'parts', label: '📦 Parts', test: r => r.includes('part') },
+      { key: 'warranty', label: '🛡 Warranty', test: r => r.includes('warranty') },
+      { key: 'other', label: '👥 Other', test: () => true },
+    ];
+    const used = new Set();
+    return CATS.map(c => {
+      const people = roster.filter(u => !used.has(u.name) && c.test(u.role));
+      people.forEach(u => used.add(u.name));
+      return { ...c, people, names: people.map(u => u.name) };
+    }).filter(c => c.people.length);
   }, [roster]);
+  const everyone = useMemo(() => roster.map(u => u.name), [roster]);
 
   const toggle = (name) => setSelected(prev => {
     const next = new Set(prev);
@@ -579,20 +590,35 @@ export default function FloatingMessenger({
                 <div style={{ color: '#7a92b8', fontSize: 11.5, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 6 }}>
                   Send to
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
-                  {groups.map(g => (
-                    <button key={g.key} onClick={() => addGroup(g.names)} style={chip(g.names.every(n => selected.has(n)))}>
-                      {g.label}
-                    </button>
-                  ))}
-                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 10 }}>
-                  {roster.map(u => (
-                    <button key={u.name} onClick={() => toggle(u.name)} style={chip(selected.has(u.name))}>
-                      {u.name}
-                    </button>
-                  ))}
+                  <button onClick={() => addGroup(everyone)} style={chip(everyone.length > 0 && everyone.every(n => selected.has(n)))}>👥 Everyone</button>
+                  {selected.size > 0 && (
+                    <button onClick={() => setSelected(new Set())} style={{ ...chip(false), color: '#94a3b8' }}>Clear ({selected.size})</button>
+                  )}
                 </div>
+                {/* Each category: click the heading for the whole group, or pick names under it. */}
+                {categories.map(c => {
+                  const all = c.names.every(n => selected.has(n));
+                  const some = !all && c.names.some(n => selected.has(n));
+                  return (
+                    <div key={c.key} style={{ marginBottom: 10 }}>
+                      <button onClick={() => addGroup(c.names)} title={all ? `Unselect all ${c.label.replace(/^\S+\s/, '')}` : `Select all ${c.label.replace(/^\S+\s/, '')}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', background: 'none', border: 'none', padding: '2px 0 5px', cursor: 'pointer', fontFamily: 'inherit',
+                          color: all ? '#7dd3fc' : '#a5b4c8', fontSize: 11.5, fontWeight: 900, letterSpacing: '.06em', textTransform: 'uppercase', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 6 }}>
+                        <span>{c.label}</span>
+                        <span style={{ color: '#64748b', fontWeight: 700 }}>· {c.people.length}</span>
+                        <span style={{ marginLeft: 'auto', fontSize: 10.5, letterSpacing: 0, textTransform: 'none', color: all ? '#7dd3fc' : some ? '#fbbf24' : '#64748b' }}>
+                          {all ? '✓ all' : some ? `${c.names.filter(n => selected.has(n)).length} picked` : 'select all'}
+                        </span>
+                      </button>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                        {c.people.map(u => (
+                          <button key={u.name} onClick={() => toggle(u.name)} style={chip(selected.has(u.name))}>{u.name}</button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
                 <textarea
                   ref={composeRef}
                   value={text}
