@@ -12,21 +12,6 @@
     "isNew": false
   },
   {
-    "id": "muh9io5bwo6l",
-    "ro": "781121",
-    "roDate": "2026-09-25",
-    "vehicle": "2017 BMW 430i xDrive",
-    "jobDesc": "REPLACE ONE TIRE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL",
-    "partsArrived": true,
-    "partsArrivedDate": "09/26/2026",
-    "isNew": true
-  },
-  {
     "id": "muh9io5bmk7k",
     "ro": "781111",
     "roDate": "2026-09-25",
