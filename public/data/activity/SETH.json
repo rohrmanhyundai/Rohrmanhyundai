@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-30T13:10:06.105Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
+    "at": "2026-09-30T13:09:39.325Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-09-26T17:40:42.007Z",
     "type": "action",
     "label": "parts-received-mark",
@@ -206,37 +216,6 @@
   },
   {
     "at": "2026-09-01T12:15:05.512Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-08-29T11:16:15.682Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780281"
-  },
-  {
-    "at": "2026-08-29T11:02:00.305Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-08-28T18:53:40.027Z",
-    "type": "page",
-    "label": "advisor-view-tech-schedule"
-  },
-  {
-    "at": "2026-08-28T18:53:34.046Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-08-28T14:32:57.310Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-08-28T14:32:57.306Z",
     "type": "page",
     "label": "hot-repairs"
   }
