@@ -1,6 +1,6 @@
 {
   "date": "2026-10-01",
-  "uploadedAt": "2026-09-30T22:17:52.202Z",
+  "uploadedAt": "2026-09-30T22:27:59.523Z",
   "uploadedBy": "SHAWN",
   "appts": [
     {
@@ -56,8 +56,8 @@
       ],
       "comments": "Driver side tire is making a grinding noise. More pronounced when making a sharp right turn and accelerating. Not a very loud noise but noticeable.",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
       "createdAt": "Wed Sep 30 2026 8:43 AM",
       "deferred": {
@@ -131,8 +131,8 @@
       ],
       "comments": "There is a recommended list of work for our car. We want some, but not all of that done. We want the transmission fluid exchange, break fluid exchange, fuel injection service, and serpentine belt.",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Tue Sep 29 2026 1:54 PM",
       "deferred": {
@@ -222,8 +222,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 9:31 AM"
     },
@@ -237,8 +237,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 3:24 PM",
       "deferred": {
@@ -321,8 +321,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
       "createdAt": "Sun Sep 27 2026 7:04 PM"
     },
@@ -347,12 +347,12 @@
       "customer": "Cailin Wilson",
       "vehicle": "2024 Hyundai Santa Cruz",
       "services": [
-        "LIFETIME FREE OIL CHANGE"
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Consumer Scheduling",
       "createdAt": "Mon Sep 28 2026 9:53 PM",
       "deferred": {
@@ -402,8 +402,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
       "createdAt": "Fri Sep 25 2026 3:54 PM"
     },
@@ -501,8 +501,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 12:41 PM"
     },
@@ -516,8 +516,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Tue Sep 29 2026 2:33 PM"
     },
@@ -546,8 +546,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Mon Sep 28 2026 3:53 PM",
       "deferred": {
@@ -621,8 +621,8 @@
       ],
       "comments": "Fuel injection service and Brake fluid exchange",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Sun Sep 27 2026 10:03 AM",
       "deferred": {
@@ -672,8 +672,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 3:46 PM"
     },
@@ -704,8 +704,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 10:21 AM"
     }
