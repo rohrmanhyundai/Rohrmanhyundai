@@ -386,8 +386,30 @@ export function appointmentFacts(list, advisorFirst, hrsRoGoal) {
   };
 }
 
+// ── Big-Money numbers (from the dashboard's $50 add-on board) ────────────────
+// Works whether or not a contest is live. tickets = $50 LOF tickets, oilOnly =
+// the ones that left with nothing added. From those: how many add-on tickets
+// in a row reach the add-rate goal, and how many add-on hours the current
+// tickets are short of the hrs/RO goal.
+export function bigMoneyFacts(advisorRow, goals = {}) {
+  if (!advisorRow) return null;
+  const hrsRo = num(advisorRow.roh50_hrs_ro, 0), rate = num(advisorRow.roh50_add_rate, 0);
+  const tickets = num(advisorRow.lof_tickets, 0), oilOnly = num(advisorRow.lof_oil_only, 0);
+  const gH = num(goals.hrsRo, 0), gR = num(goals.addRate, 0);
+  if (!tickets && !hrsRo && !rate) return null;
+  const withAdd = Math.max(0, tickets - oilOnly);
+  const addonsNeeded = gR > 0 && gR < 1 && tickets > 0 && rate < gR ? Math.max(0, Math.ceil((gR * tickets - withAdd) / (1 - gR))) : 0;
+  const hoursShort = gH > 0 && tickets > 0 && hrsRo < gH ? round((gH - hrsRo) * tickets) : 0;
+  return {
+    hrsRo: round(hrsRo, 2), rate: round(rate, 3), tickets, oilOnly,
+    goalHrsRo: gH, goalRate: gR,
+    hitHrsRo: gH > 0 && hrsRo >= gH, hitRate: gR > 0 && rate >= gR,
+    addonsNeeded, hoursShort,
+  };
+}
+
 // ── One advisor's pack ───────────────────────────────────────────────────────
-export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today = new Date() }) {
+export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, bmGoals, today = new Date() }) {
   const f = first(name);
   const rows = (roStatus && roStatus.rows) || [];
   const mine = rows.filter(r => first(r.advisor) === f);
@@ -401,6 +423,7 @@ export function advisorPack({ name, roStatus, attention, wipByTech, goals, offKe
     stalled: stalledFacts(attention, mine, f),
     partsReady: partsFacts(wipByTech, f),
     appointments: appointmentFacts(apptList, f, hrsRoGoal),
+    bigMoney: bigMoneyFacts(advisorRow, bmGoals || { hrsRo: hrsRoGoal }),
     deferred: deferredFacts(deferred, deferredActivity, f, today, deferredCodes),
     trend: trendFacts(goals, today),
     hours,
@@ -464,6 +487,19 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
       behind: techs.filter(t => t.pct < 50).map(t => t.name),
     },
     contest: contestFacts(bigMoney, null),
+    // One card per advisor on the manager's report: goal pace, today's book,
+    // Big-Money — straight from each advisor's own pack.
+    breakdown: (advisorPacks || []).map(p => ({
+      advisor: p.advisor,
+      hours: p.hours,
+      appts: p.appointments ? {
+        total: p.appointments.total, waiters: p.appointments.waiters, lof50: p.appointments.lof50,
+        withDeferred: p.appointments.withDeferred, deferredAmount: p.appointments.deferredAmount,
+        goalHours: p.appointments.goalHours, reachGoal: p.appointments.reachGoal,
+      } : null,
+      bigMoney: p.bigMoney,
+      contest: p.contest && p.contest.live && p.contest.me ? { rank: p.contest.me.rank, qualified: p.contest.me.qualified, of: (p.contest.board || []).length } : null,
+    })),
     advisors: (advisorPacks || []).map(p => ({
       advisor: p.advisor,
       openRos: p.openRos.total, oldestDays: p.openRos.oldestDays, needsAttention: p.openRos.attention.length,

@@ -175,7 +175,7 @@ async function askOpenAI(prompt, maxTokens) {
     const name = firstName(a.name);
     const goals = readJSON(`advisor-goals/${name}.json`, {});
     const offKeys = W.offDatesFor(name, now.getFullYear(), now.getMonth(), schedules, vacations);
-    const pack = W.advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow: a, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, today: now });
+    const pack = W.advisorPack({ name, roStatus, attention, wipByTech, goals, offKeys, bigMoney, advisorRow: a, deferred, deferredActivity, deferredCodes, apptList, hrsRoGoal, bmGoals: { hrsRo: hrsRoGoal, addRate: Number(g.add_rate) || 0 }, today: now });
     packs.push(pack);
 
     const user = users.find(u => firstName(u.username) === name);
