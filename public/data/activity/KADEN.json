@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-09-30T23:06:19.947Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-09-30T23:06:18.131Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-09-30T14:16:24.167Z",
     "type": "page",
     "label": "shop-appointments"
@@ -873,16 +883,6 @@
   },
   {
     "at": "2026-09-01T12:06:44.167Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-08-31T21:40:25.597Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-08-31T21:40:24.714Z",
     "type": "page",
     "label": "tech-resources"
   }
