@@ -210,7 +210,14 @@
     ],
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-muo2an2zmbt8",
+        "from": "KAI",
+        "text": "🚗💯🔥",
+        "timestamp": 1790770124123
+      }
+    ],
     "timestamp": 1790769542257
   }
 ]
