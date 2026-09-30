@@ -9,7 +9,7 @@ import AccessGate from './AccessGate';
 import { ROLE_ACCESS_PATH, pageOn, overridesFrom } from '../utils/roleAccess';
 import { hasCredential, passwordProblem, withPassword } from '../utils/password';
 import * as api from '../utils/api';
-import { requestPasswordReset, requestBigMoneyCoaching, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
+import { requestPasswordReset, requestBigMoneyCoaching, requestDailyWrench, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
 import { loadTechPay, saveTechWeek } from '../utils/github';
 import { buildWeekRecord, planIsSet, boardWeekBounds, shiftWeek, payableHoursOf, payBasis } from '../utils/techPay';
 import { canonicalAdvisorFirst, reportNamesForAdvisor } from '../utils/advisorAliases';
@@ -1869,7 +1869,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       requestBigMoneyCoaching(currentUser)
         .then(() => setReportStatus(s => `${s} · 🗣️ Coach's notes writing (ready in ~2 min)`))
         .catch(() => {});
-      setTimeout(() => setReportStatus(''), 7000);
+      // …and rewrite today's Daily Wrench on the same fresh numbers (a manual
+      // run replaces the day's report; the AI takes a few minutes).
+      requestDailyWrench(currentUser, 'Send to Reports')
+        .then(() => setReportStatus(s => `${s} · 🔧 Daily Wrench AI running (ready in ~3–5 min)`))
+        .catch(() => setReportStatus(s => `${s} · ⚠️ Daily Wrench didn't start — use Generate on the Daily Wrench page`));
+      setTimeout(() => setReportStatus(''), 12000);
     } catch (e) {
       setReportStatus(`❌ ${e.message}`);
     } finally {
