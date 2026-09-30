@@ -1,49 +1,33 @@
 {
-  "updatedAt": "2026-09-29T20:33:46.478Z",
+  "updatedAt": "2026-09-30T17:59:13.232Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781206",
-        "vehicle": "2016 Honda Pilot"
-      },
-      {
-        "ro": "781204",
-        "vehicle": "2021 Hyundai Kona"
-      },
-      {
-        "ro": "781202",
-        "vehicle": "2026 Hyundai Santa Fe Hybrid"
-      },
-      {
-        "ro": "781190",
-        "vehicle": "2012 Hyundai Accent"
-      },
-      {
-        "ro": "781178",
-        "vehicle": "2018 Hyundai Sonata"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "781205",
-        "vehicle": "2025 Hyundai Palisade"
+        "ro": "781225",
+        "vehicle": "2019 Hyundai Tucson"
       },
       {
-        "ro": "781203",
-        "vehicle": "2021 Hyundai Santa Fe"
-      },
-      {
-        "ro": "781200",
-        "vehicle": "2023 Hyundai IONIQ 5"
+        "ro": "781224",
+        "vehicle": "2012 Hyundai Elantra"
       },
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781222",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
       },
       {
-        "ro": "781072",
-        "vehicle": "2015 Hyundai Tucson"
+        "ro": "781218",
+        "vehicle": "2021 Hyundai Sonata"
+      },
+      {
+        "ro": "781069",
+        "vehicle": "2019 Hyundai Santa Fe"
       }
     ],
     "CORY": [
@@ -60,16 +44,8 @@
         "vehicle": "2019 Kia Sorento"
       },
       {
-        "ro": "781158",
-        "vehicle": "2021 Hyundai Elantra"
-      },
-      {
         "ro": "781154",
         "vehicle": "2016 Honda Pilot"
-      },
-      {
-        "ro": "781153",
-        "vehicle": "2024 Hyundai IONIQ 5"
       },
       {
         "ro": "781125",
@@ -82,10 +58,6 @@
       {
         "ro": "781070",
         "vehicle": "2017 Kia Sorento"
-      },
-      {
-        "ro": "781069",
-        "vehicle": "2019 Hyundai Santa Fe"
       },
       {
         "ro": "780913",
