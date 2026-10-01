@@ -361,15 +361,19 @@
         "techSchedule": true,
         "documentLibrary": true,
         "aftermarketWarranty": false,
-        "originalOwner": true,
+        "originalOwner": false,
         "workInProgress": true,
+        "shopAppointments": true,
         "chargeAccountList": false,
-        "partsHub": true,
+        "partsHub": false,
         "tireQuote": true,
         "atDiagWorksheet": true,
-        "usedCarHub": true,
-        "advisorRankBoard": true,
-        "hotRepairs": true
+        "usedCarHub": false,
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": true,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": true,
+        "mobileMediaUpload": true
       },
       "chatAccess": false,
       "techChatAccess": true,
@@ -382,7 +386,13 @@
         "kid": "YuwDZUlFIR",
         "data": "ATkI5sdNOjZTu3lfBkF49Pp3OMpWo5Yii92xWjYY/OJwaTCrjc4EHvhADTR9ERug3kpmcl1pHNBXTTTWo35k0Q2pJuK7CNKpbDxKBfSe091YR87TuyeCMzafN0SB2oP0BUOwCdH51DRcH3PVZqLJzgIYENJMvpIb6JQ3VfDqDWo4GbmKG/X3wYZMeU5IaUhZFLTj3eXNT1J5UeSzO9V1K4ttdPuBf07Od/iS8HLyExS6egWRjXTPc0Zyu9Ossnlq4fY15eYiEnrUV1LgHh/VkTakTF+MpTSMEGN7WreMTtUnOk370lC4q26NVieLCsdNsoN7oMOG21wJG8AWvNyDRQ=="
       },
-      "pageOverrides": {}
+      "pageOverrides": {},
+      "applicantCode": {
+        "salt": "290f1e0f6c493d9f269cdd00a505b4b1",
+        "hash": "aec47561d5b9c6b91f8b7aa1565da512beca772860bf30a1b4b33415f067d9ee",
+        "iterations": 150000,
+        "setAt": "2026-10-01T11:09:59.822Z"
+      }
     },
     {
       "username": "Derrick",
