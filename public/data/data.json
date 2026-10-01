@@ -396,7 +396,7 @@
     "cpGoal": 76715,
     "cpActual": 55193.46,
     "advisorMonthlyWorkdays": 26,
-    "service_policy": 553.81,
+    "service_policy": 0,
     "roh50_goals": {
       "hrs_ro": 1.3,
       "add_rate": 0.75
