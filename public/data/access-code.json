@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T15:06:10.266Z",
+  "updatedAt": "2026-10-01T11:11:12.325Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -80,6 +80,10 @@
       "registration-uploads": true,
       "original-owner": true,
       "charge-account-list": true
+    },
+    "JACOB": {
+      "employee-review": true,
+      "live-pay-hub": true
     }
   },
   "idle": {
