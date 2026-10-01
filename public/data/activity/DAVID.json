@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-01T16:04:53.483Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-10-01T16:04:48.268Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-01T16:04:44.442Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-09-30T22:04:14.354Z",
     "type": "page",
     "label": "advisor-goals"
@@ -950,15 +965,5 @@
     "at": "2026-09-01T18:55:11.890Z",
     "type": "page",
     "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-01T14:12:09.741Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-01T11:57:24.102Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
