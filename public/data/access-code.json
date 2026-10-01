@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-01T11:11:12.325Z",
+  "updatedAt": "2026-10-01T11:12:09.820Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -84,6 +84,14 @@
     "JACOB": {
       "employee-review": true,
       "live-pay-hub": true
+    },
+    "GAVEN": {
+      "payroll": true,
+      "live-pay-hub": true,
+      "deferred-service": true,
+      "original-owner": true,
+      "registration-uploads": true,
+      "charge-account-list": true
     }
   },
   "idle": {
