@@ -476,13 +476,30 @@ export default function App() {
     };
   }, [isLoggedIn]);
 
+  // `window.innerWidth < 600` was read during render with nothing to re-run it,
+  // so rotating a phone left it stranded in whichever layout it loaded with.
+  // Recomputed on resize/orientation change; a 1920px TV is never < 600, so the
+  // scaled stage view is unaffected.
+  const [isPhone, setIsPhone] = useState(() => window.innerWidth < 600);
+  useEffect(() => {
+    const onResize = () => setIsPhone(window.innerWidth < 600);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+    };
+  }, []);
+
   // ── @mention alerts ─────────────────────────────────────────────────────────
   // When someone types "@<you>" in either chat, pop a blocking OK popup on this
   // user's screen. Real-time via the chat Pusher events (which now carry the
   // message text); a scan on login/reconnect catches any that fired while this
   // browser was asleep. Acknowledged ids are remembered so a popup shows once.
   useEffect(() => {
-    if (!isLoggedIn || !currentUser) return;
+    // Messages are a computer-view thing — the phone view neither shows nor
+    // polls for them (saves the shared GitHub rate limit too).
+    if (!isLoggedIn || !currentUser || isPhone) return;
     const meU = currentUser.toUpperCase();
     const ackKey = `chatMentionAck:${meU}`;
     const baseKey = `chatMentionBaseline:${meU}`;
@@ -652,7 +669,7 @@ export default function App() {
         if (pusher) pusher.connection.unbind('connected', onConnect);
       } catch {}
     };
-  }, [isLoggedIn, currentUser]);
+  }, [isLoggedIn, currentUser, isPhone]);
 
   // OK on the mention popup: acknowledge it (so it never returns), jump to the
   // screen that holds that chat, then show the next queued mention, if any.
@@ -806,20 +823,6 @@ export default function App() {
     });
   }, []);
 
-  // `window.innerWidth < 600` was read during render with nothing to re-run it,
-  // so rotating a phone left it stranded in whichever layout it loaded with.
-  // Recomputed on resize/orientation change; a 1920px TV is never < 600, so the
-  // scaled stage view is unaffected.
-  const [isPhone, setIsPhone] = useState(() => window.innerWidth < 600);
-  useEffect(() => {
-    const onResize = () => setIsPhone(window.innerWidth < 600);
-    window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
-    return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
-    };
-  }, []);
 
   // The dashboard is designed at 1920x1080 and scaled to fit. On a screen that
   // isn't 16:9 (a laptop browser window, say) "fit" alone leaves empty bands
@@ -1127,7 +1130,7 @@ export default function App() {
   // The @mention popup must appear on EVERY screen, but each page below returns
   // early — so render it through a portal to <body>, above the page switch, and
   // wrap all the page rendering in renderPage() so the portal always renders.
-  const mentionModal = mention ? createPortal(
+  const mentionModal = mention && !isPhone ? createPortal(
     (
       <div style={{ position: 'fixed', inset: 0, zIndex: 2147483000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{
@@ -2261,7 +2264,8 @@ export default function App() {
   // switch, so it survives every navigation. Everyone who is logged in can
   // both read and send.
   const canSendGlobal = true;
-  const messenger = isLoggedIn ? createPortal(
+  // Not on the phone view — messaging is for the computer view only.
+  const messenger = isLoggedIn && !isPhone ? createPortal(
     <FloatingMessenger
       currentUser={currentUser}
       currentRole={currentRole}
