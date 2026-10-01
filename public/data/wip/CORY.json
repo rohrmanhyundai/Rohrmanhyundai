@@ -71,19 +71,5 @@
     "partsArrivedDate": "10/01/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mun2v93ukdk3",
-    "ro": "781202",
-    "roDate": "2026-09-29",
-    "vehicle": "2026 Hyundai Santa Fe Hybrid",
-    "jobDesc": "CONCERN - CUSTOMER STATES FRONT RADAR CALIBRATION",
-    "notes": "CAR SHOULD BE DONE TODAY ",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": ""
   }
 ]
