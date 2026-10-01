@@ -1,7 +1,31 @@
 {
-  "updatedAt": "2026-10-01T16:20:24.049Z",
+  "updatedAt": "2026-10-01T16:25:30.428Z",
   "by": "SHAWN",
   "rows": [
+    {
+      "ro": "781255",
+      "advisor": "SHAWN LAUGHNER",
+      "vehicle": "2017 Hyundai Santa Fe Sport",
+      "tech": "",
+      "userFlag": "PURPLE",
+      "warranty": false,
+      "roStatus": "READY_FOR_DISPATCH",
+      "cpStatus": "NOT_STARTED",
+      "roAge": 1,
+      "openDate": "Thu, Oct 1, 2026 12:18 PM"
+    },
+    {
+      "ro": "781254",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2023 Subaru Crosstrek",
+      "tech": "KADEN WILSON",
+      "userFlag": "NO_LABEL",
+      "warranty": false,
+      "roStatus": "READY_FOR_INVOICE",
+      "cpStatus": "COMPLETED",
+      "roAge": 1,
+      "openDate": "Thu, Oct 1, 2026 11:35 AM"
+    },
     {
       "ro": "781253",
       "advisor": "JORDAN TROXEL",
@@ -21,8 +45,8 @@
       "tech": "TRENTON MCQUINN",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "NA",
       "roAge": 1,
       "openDate": "Thu, Oct 1, 2026 10:56 AM"
     },
@@ -33,22 +57,10 @@
       "tech": "GAVEN LAUGHNER",
       "userFlag": "NO_LABEL",
       "warranty": false,
-      "roStatus": "TECH_ASSIGNED",
-      "cpStatus": "NOT_STARTED",
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
       "roAge": 1,
       "openDate": "Thu, Oct 1, 2026 10:35 AM"
-    },
-    {
-      "ro": "781250",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2012 Hyundai Accent",
-      "tech": "CORY SWINDLE",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 10:24 AM"
     },
     {
       "ro": "781249",
@@ -61,18 +73,6 @@
       "cpStatus": "CLOSED",
       "roAge": 1,
       "openDate": "Thu, Oct 1, 2026 10:14 AM"
-    },
-    {
-      "ro": "781246",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2017 Hyundai Santa Fe Sport",
-      "tech": "",
-      "userFlag": "PURPLE",
-      "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 9:53 AM"
     },
     {
       "ro": "781244",
@@ -203,7 +203,7 @@
       "warranty": false,
       "roStatus": "READY_FOR_INVOICE",
       "cpStatus": "COMPLETED",
-      "roAge": 2,
+      "roAge": 3,
       "openDate": "Tue, Sep 29, 2026 11:51 AM"
     },
     {
@@ -213,8 +213,8 @@
       "tech": "KADEN WILSON",
       "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "READY_FOR_INVOICE",
-      "cpStatus": "COMPLETED",
+      "roStatus": "INVOICED",
+      "cpStatus": "INVOICED",
       "roAge": 3,
       "openDate": "Tue, Sep 29, 2026 9:31 AM"
     },
@@ -347,7 +347,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "IN_PROGRESS",
-      "roAge": 8,
+      "roAge": 9,
       "openDate": "Wed, Sep 23, 2026 12:14 PM"
     },
     {
