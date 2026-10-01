@@ -1,29 +1,27 @@
 {
-  "updatedAt": "2026-10-01T19:16:15.293Z",
+  "updatedAt": "2026-10-01T20:43:07.645Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781266",
-        "vehicle": "2023 Hyundai Santa Fe"
-      },
-      {
-        "ro": "781258",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781254",
-        "vehicle": "2023 Subaru Crosstrek"
-      }
-    ],
     "JORDAN": [
+      {
+        "ro": "781272",
+        "vehicle": "2015 Buick Encore"
+      },
+      {
+        "ro": "781270",
+        "vehicle": "2012 Kia Soul"
+      },
+      {
+        "ro": "781268",
+        "vehicle": "2018 BMW M4"
+      },
+      {
+        "ro": "781267",
+        "vehicle": "2021 Toyota Prius"
+      },
       {
         "ro": "781265",
         "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781262",
-        "vehicle": "2022 Hyundai Elantra"
       },
       {
         "ro": "781260",
@@ -42,36 +40,18 @@
         "vehicle": "2013 Hyundai Sonata"
       }
     ],
-    "SHAWN": [
-      {
-        "ro": "781264",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "781255",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      }
-    ],
     "CORY": [
+      {
+        "ro": "781269",
+        "vehicle": "2021 Kia Seltos"
+      },
       {
         "ro": "781228",
         "vehicle": "2016 Mazda CX-5"
       },
       {
-        "ro": "781198",
-        "vehicle": "2016 Buick Encore"
-      },
-      {
-        "ro": "781197",
-        "vehicle": "2019 Kia Optima"
-      },
-      {
         "ro": "781154",
         "vehicle": "2016 Honda Pilot"
-      },
-      {
-        "ro": "781125",
-        "vehicle": "2013 Ford Focus"
       },
       {
         "ro": "781071",
@@ -84,6 +64,26 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
+      }
+    ],
+    "SHAWN": [
+      {
+        "ro": "781264",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781255",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "781254",
+        "vehicle": "2023 Subaru Crosstrek"
       }
     ]
   }
