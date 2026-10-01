@@ -46,5 +46,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mupx0702kxtj",
+    "ro": "781254",
+    "roDate": "2026-10-01",
+    "vehicle": "2023 Subaru Crosstrek",
+    "jobDesc": "CUSTOMER STATES PASSENGER REAR TIRE HAS A NAIL. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
