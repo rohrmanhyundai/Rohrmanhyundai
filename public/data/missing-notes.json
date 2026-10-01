@@ -1,11 +1,37 @@
 {
-  "updatedAt": "2026-09-30T21:55:48.510Z",
+  "updatedAt": "2026-10-01T15:47:31.403Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "781253",
+        "vehicle": "2023 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781249",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781244",
+        "vehicle": "2015 Hyundai Sonata"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
     "DAVID": [
       {
-        "ro": "781237",
-        "vehicle": "2018 Honda Odyssey"
+        "ro": "781252",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "781251",
+        "vehicle": "2025 Hyundai Elantra N"
+      },
+      {
+        "ro": "781250",
+        "vehicle": "2012 Hyundai Accent"
       },
       {
         "ro": "781229",
@@ -13,10 +39,6 @@
       }
     ],
     "CORY": [
-      {
-        "ro": "781232",
-        "vehicle": "2025 Hyundai Santa Fe Hybrid"
-      },
       {
         "ro": "781228",
         "vehicle": "2016 Mazda CX-5"
@@ -48,12 +70,6 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
       }
     ]
   }
