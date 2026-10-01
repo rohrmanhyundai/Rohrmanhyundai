@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-10-01T10:51:13.530Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 780952 tech KADEN"
+  },
+  {
     "at": "2026-10-01T10:51:00.300Z",
     "type": "page",
     "label": "work-in-progress"
