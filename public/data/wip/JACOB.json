@@ -112,38 +112,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "muon8kuaa81p",
-    "ro": "781237",
-    "roDate": "2026-09-30",
-    "vehicle": "2018 Honda Odyssey",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "muon8kua87gb",
-    "ro": "781232",
-    "roDate": "2026-09-30",
-    "vehicle": "2025 Hyundai Santa Fe Hybrid",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "muon8kua258i",
     "ro": "781228",
     "roDate": "2026-09-30",
