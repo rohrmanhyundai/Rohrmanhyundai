@@ -377,7 +377,7 @@ function MonthDetail({ mkStr, monthData, editable = false, onEditDay, onEditFore
         </div>
       </>) : (
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-          {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', `${M.enteredDays} of ${M.totalDays} days entered`)}
+          {card('🏁', 'Final Total', money(M.actualTotal), '#34d399', bd ? `🔍 Click for ${bd.unit} breakdown · ${M.enteredDays} of ${M.totalDays} days` : `${M.enteredDays} of ${M.totalDays} days entered`, bd ? () => setBkOpen(true) : undefined, bd ? '#6ee7b7' : undefined)}
           {onEditForecast
             ? editMoneyCard('💰', 'Forecast', M.forecast, '#7dd3fc', '#38bdf8', onEditForecast)
             : card('💰', 'Forecast', money(M.forecast), '#38bdf8', `${vsForecast >= 0 ? '▲ ' : '▼ '}${money(Math.abs(vsForecast))} vs forecast`)}
