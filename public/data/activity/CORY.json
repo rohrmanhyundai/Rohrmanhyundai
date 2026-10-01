@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-01T13:38:20.976Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-01T13:38:12.013Z",
     "type": "action",
     "label": "delete-wip-row",
