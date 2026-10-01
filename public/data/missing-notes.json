@@ -1,43 +1,19 @@
 {
-  "updatedAt": "2026-10-01T20:43:07.645Z",
+  "updatedAt": "2026-10-01T21:30:17.510Z",
   "by": "SHAWN",
   "advisors": {
-    "JORDAN": [
+    "DAVID": [
       {
-        "ro": "781272",
-        "vehicle": "2015 Buick Encore"
+        "ro": "781273",
+        "vehicle": "2022 Hyundai Kona"
       },
       {
-        "ro": "781270",
-        "vehicle": "2012 Kia Soul"
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
       },
       {
-        "ro": "781268",
-        "vehicle": "2018 BMW M4"
-      },
-      {
-        "ro": "781267",
-        "vehicle": "2021 Toyota Prius"
-      },
-      {
-        "ro": "781265",
-        "vehicle": "2026 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781260",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
-        "ro": "781249",
-        "vehicle": "2024 Hyundai Palisade"
-      },
-      {
-        "ro": "781244",
-        "vehicle": "2015 Hyundai Sonata"
-      },
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
+        "ro": "781254",
+        "vehicle": "2023 Subaru Crosstrek"
       }
     ],
     "CORY": [
@@ -66,6 +42,28 @@
         "vehicle": "2019 Hyundai Kona"
       }
     ],
+    "JORDAN": [
+      {
+        "ro": "781265",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781260",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781249",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781244",
+        "vehicle": "2015 Hyundai Sonata"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
     "SHAWN": [
       {
         "ro": "781264",
@@ -74,16 +72,6 @@
       {
         "ro": "781255",
         "vehicle": "2017 Hyundai Santa Fe Sport"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781258",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781254",
-        "vehicle": "2023 Subaru Crosstrek"
       }
     ]
   }
