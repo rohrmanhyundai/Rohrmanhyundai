@@ -90,21 +90,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "muon8lt2g2zk",
-    "ro": "781229",
-    "roDate": "2026-09-30",
-    "vehicle": "2018 Hyundai Santa Fe",
-    "jobDesc": "ENGINE REPLACEMENT BASIC KIT",
-    "notes": "WILL BE DONE 10/1 ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
