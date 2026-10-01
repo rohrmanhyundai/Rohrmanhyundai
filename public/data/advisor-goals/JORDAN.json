@@ -923,7 +923,22 @@
   "2026-10": {
     "hoursGoal": 375,
     "hrsRoGoal": 1.5,
-    "days": {},
+    "days": {
+      "2026-10-01": {
+        "hours": 0,
+        "hrsRo": 0,
+        "openRoCount": 22,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "no",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "answers": {},
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1790887826540
+      }
+    },
     "entryMode": "mtd"
   }
 }
