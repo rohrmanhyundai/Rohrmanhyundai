@@ -1,6 +1,6 @@
 {
   "date": "2026-10-02",
-  "uploadedAt": "2026-09-30T22:17:53.789Z",
+  "uploadedAt": "2026-10-01T20:34:35.337Z",
   "uploadedBy": "SHAWN",
   "appts": [
     {
@@ -19,6 +19,73 @@
       "createdAt": "Mon Sep 28 2026 10:13 AM"
     },
     {
+      "apptNo": "43347",
+      "time": "7:20 AM",
+      "customer": "Michael Newell",
+      "vehicle": "2024 Hyundai Elantra",
+      "services": [
+        "CUSTOMER STATES NAVIGATION NOT WORKING. CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 1 2026 2:14 PM",
+      "deferred": {
+        "ro": "780694",
+        "date": "2026-09-09",
+        "advisorFull": "CODY TINCHER",
+        "advisor": "CODY",
+        "amount": 685.92,
+        "hours": 3.8,
+        "phone": "3173069589",
+        "vin": "KMHLS4DG5RU644620",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 141.02,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 120.92,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 156.01,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 56.38,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 211.59,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
       "apptNo": "43270",
       "time": "7:40 AM",
       "customer": "Anthony Frigo",
@@ -28,8 +95,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
       "createdAt": "Tue Sep 29 2026 10:04 AM"
     },
@@ -43,10 +110,25 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Tue Sep 29 2026 10:19 PM"
+    },
+    {
+      "apptNo": "43353",
+      "time": "9:00 AM",
+      "customer": "Allison Archer",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES WATER LEAKING INTO VEHICLE. CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 1 2026 4:10 PM"
     },
     {
       "apptNo": "43279",
@@ -58,8 +140,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "Integration",
       "createdAt": "Tue Sep 29 2026 12:52 PM"
     },
@@ -73,8 +155,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Fri Sep 25 2026 4:29 PM"
     },
@@ -89,8 +171,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Wed Sep 30 2026 4:52 PM"
     },
@@ -104,8 +186,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Tue Sep 29 2026 12:33 PM"
     },
@@ -181,8 +263,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
       "source": "BDC Scheduling",
       "createdAt": "Tue Sep 29 2026 10:18 AM",
       "deferred": {
@@ -231,39 +313,34 @@
       }
     },
     {
-      "apptNo": "43316",
-      "time": "11:00 AM",
-      "customer": "Kim Sang",
-      "vehicle": "2025 Hyundai Elantra N",
+      "apptNo": "43346",
+      "time": "10:20 AM",
+      "customer": "Cyrena Staller",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
       "services": [
         "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "DAVID RILEY",
-      "advisor": "DAVID",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
-      "createdAt": "Wed Sep 30 2026 2:10 PM",
-      "deferred": {
-        "ro": "779768",
-        "date": "2026-08-04",
-        "advisorFull": "DAVID RILEY",
-        "advisor": "DAVID",
-        "amount": 209.99,
-        "hours": 0.8,
-        "phone": "8315219558",
-        "vin": "KMHLW4DK0SU031383",
-        "items": [
-          {
-            "code": "VVIFL",
-            "desc": "FUEL INJECTION SERVICE",
-            "count": 1,
-            "h": 0.8,
-            "price": 209.99,
-            "priceEst": false
-          }
-        ]
-      }
+      "createdAt": "Thu Oct 1 2026 1:50 PM"
+    },
+    {
+      "apptNo": "43328",
+      "time": "11:00 AM",
+      "customer": "William Mingo",
+      "vehicle": "2016 Hyundai Santa Fe",
+      "services": [
+        "OIL GUARD REDEMPTION - OIL CHANGE 2 OF 3"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Sep 30 2026 6:52 PM"
     },
     {
       "apptNo": "43251",
@@ -341,6 +418,72 @@
       }
     },
     {
+      "apptNo": "43333",
+      "time": "1:00 PM",
+      "customer": "Risa Pearson",
+      "vehicle": "2017 Hyundai Tucson",
+      "services": [
+        "part in soip. door latch"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 1 2026 9:47 AM",
+      "deferred": {
+        "ro": "780657",
+        "date": "2026-09-08",
+        "advisorFull": "CODY TINCHER",
+        "advisor": "CODY",
+        "amount": 914.93,
+        "hours": 3.2,
+        "phone": "7656501877",
+        "vin": "KM8J33A29HU315599",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 475.34,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 224.91,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 214.68,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43345",
+      "time": "1:20 PM",
+      "customer": "Jaeana Alford",
+      "vehicle": "2013 Hyundai Sonata Hybrid",
+      "services": [
+        "CUSTOMER STATES CHECK ENGINE LIGHT IS ON POSSIBLE CAT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Thu Oct 1 2026 1:28 PM"
+    },
+    {
       "apptNo": "43269",
       "time": "3:00 PM",
       "customer": "Charles Kincade",
@@ -350,8 +493,8 @@
       ],
       "comments": "",
       "transport": "WAIT",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Integration",
       "createdAt": "Tue Sep 29 2026 9:55 AM"
     },
@@ -365,8 +508,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "BDC Scheduling",
       "createdAt": "Tue Sep 29 2026 10:53 AM"
     },
@@ -380,8 +523,8 @@
       ],
       "comments": "",
       "transport": "SELF",
-      "advisorRaw": "Any Service Advisor",
-      "advisor": "",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
       "source": "Consumer Scheduling",
       "createdAt": "Tue Sep 29 2026 8:47 PM",
       "deferred": {
