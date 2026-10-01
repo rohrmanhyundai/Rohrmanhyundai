@@ -1,7 +1,27 @@
 {
-  "updatedAt": "2026-10-01T16:20:21.324Z",
+  "updatedAt": "2026-10-01T16:25:28.296Z",
   "by": "SHAWN",
   "advisors": {
+    "SHAWN": [
+      {
+        "ro": "781255",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781254",
+        "vehicle": "2023 Subaru Crosstrek"
+      },
+      {
+        "ro": "781251",
+        "vehicle": "2025 Hyundai Elantra N"
+      },
+      {
+        "ro": "781229",
+        "vehicle": "2018 Hyundai Santa Fe"
+      }
+    ],
     "JORDAN": [
       {
         "ro": "781253",
@@ -18,24 +38,6 @@
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781252",
-        "vehicle": "2025 Hyundai Elantra"
-      },
-      {
-        "ro": "781251",
-        "vehicle": "2025 Hyundai Elantra N"
-      },
-      {
-        "ro": "781250",
-        "vehicle": "2012 Hyundai Accent"
-      },
-      {
-        "ro": "781229",
-        "vehicle": "2018 Hyundai Santa Fe"
       }
     ],
     "CORY": [
