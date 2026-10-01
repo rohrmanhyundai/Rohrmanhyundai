@@ -653,34 +653,6 @@
       "pageOverrides": {}
     },
     {
-      "username": "Cody",
-      "lastName": "",
-      "role": "advisor",
-      "canEditDashboard": false,
-      "managementAccess": false,
-      "pages": {
-        "advisorCalendar": true,
-        "surveyReports": false,
-        "advisorSchedule": true,
-        "techSchedule": true,
-        "documentLibrary": true,
-        "aftermarketWarranty": true,
-        "originalOwner": true,
-        "workInProgress": true,
-        "chargeAccountList": true,
-        "partsHub": false,
-        "tireQuote": true,
-        "atDiagWorksheet": true,
-        "usedCarHub": true,
-        "advisorRankBoard": true
-      },
-      "chatAccess": true,
-      "techChatAccess": true,
-      "email": "",
-      "hidden": true,
-      "pageOverrides": {}
-    },
-    {
       "username": "Bryson",
       "lastName": "Hutsell",
       "role": "technician",
