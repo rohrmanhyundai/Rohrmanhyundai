@@ -42,8 +42,54 @@ const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 
 // carrying last month's totals. Self-corrects once the first day is entered.
 export function advisorsForDisplay(data) {
   const advisors = (data && data.advisors) || [];
-  if (advisorMonthStarted()) return advisors;
-  return advisors.map(a => { const c = { ...a }; MONTH_METRIC_FIELDS.forEach(f => { c[f] = 0; }); return c; });
+  const month = monthKeyNow();
+  const started = advisorMonthStarted();
+  return advisors.map(a => {
+    // Numbers still from an earlier month (see rollAdvisorMonths): they ARE
+    // last month's total, and this month reads empty until its first report.
+    const stale = a.mtd_month ? a.mtd_month < month : !started;
+    if (!stale) return a;
+    const c = { ...a };
+    if (a.mtd_month) c.last_month_total = a.mtd_hours;
+    MONTH_METRIC_FIELDS.forEach(f => { c[f] = 0; });
+    return c;
+  });
+}
+
+// 'YYYY-MM' for today (shop-local time).
+export function monthKeyNow() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// ── Month rollover for "Last Month Total" ─────────────────────────────────────
+// Every save of data.json runs this against what's on the server. Each advisor
+// carries mtd_month = the month their MTD numbers belong to. Reports run a day
+// behind, so early in a new month an upload can still be last month's final
+// (MTD keeps climbing → still last month). The first upload where MTD hours
+// DROP in a new month is the reset: the old MTD is banked as last_month_total.
+export function rollAdvisorMonths(prevData, nextData, month = monthKeyNow()) {
+  const prevList = (prevData && prevData.advisors) || [];
+  const byName = new Map(prevList.map(a => [String(a.name || '').trim().toUpperCase(), a]));
+  for (const a of (nextData && nextData.advisors) || []) {
+    const p = byName.get(String(a.name || '').trim().toUpperCase());
+    if (!p) { if (!a.mtd_month) a.mtd_month = month; continue; }
+    // A browser holding an older copy mustn't undo a rollover already saved.
+    if (p.mtd_month && (!a.mtd_month || a.mtd_month < p.mtd_month)) {
+      a.mtd_month = p.mtd_month;
+      a.last_month_total = p.last_month_total;
+    }
+    const pm = a.mtd_month || p.mtd_month;
+    if (!pm) { a.mtd_month = month; continue; }
+    if (pm < month && Number(a.mtd_hours) < Number(p.mtd_hours)) {
+      // Reset detected. Keep a Last Month Total someone just typed by hand.
+      if (Number(a.last_month_total) === Number(p.last_month_total)) a.last_month_total = Number(p.mtd_hours) || 0;
+      a.mtd_month = month;
+    } else {
+      a.mtd_month = pm;
+    }
+  }
+  return nextData;
 }
 
 // Dashboard-wide goals for the two $50 add-on columns. Set from the Edit

@@ -283,7 +283,8 @@
         "min_csi": 917,
         "roh50_add_rate": 0.48,
         "lof_tickets": 17,
-        "lof_oil_only": 9
+        "lof_oil_only": 9,
+        "mtd_month": "2026-09"
       },
       {
         "name": "JORDAN",
@@ -306,7 +307,8 @@
         "min_csi": 917,
         "roh50_add_rate": 0.57,
         "lof_tickets": 36,
-        "lof_oil_only": 15
+        "lof_oil_only": 15,
+        "mtd_month": "2026-09"
       }
     ],
     "advisorTraining": [

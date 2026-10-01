@@ -4,6 +4,7 @@ const GITHUB_BRANCH = 'main';
 const GITHUB_PATH = 'public/data/data.json';
 const BASE = import.meta.env.BASE_URL;
 
+import { rollAdvisorMonths } from './calculations.js';
 import { uploadFileToS3, deleteFileFromS3, deleteS3ObjectByUrl, ensureAwsCreds } from './s3.js';
 import { API_URL, getSession, setSession } from './api.js';
 
@@ -83,7 +84,8 @@ export async function saveDashboardToGitHub(payload) {
   const apiPath = GITHUB_PATH;
   const getUrl = `${ghBase(headers)}/contents/${apiPath}?ref=${GITHUB_BRANCH}`;
   const putUrl = `${ghBase(headers)}/contents/${apiPath}`;
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+  const encode = (obj) => btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
+  let content = encode(payload);
 
   // Retry on stale-sha/conflict so a concurrent save (another manager, the
   // client poll, or GitHub replica lag) doesn't make Save Changes silently fail.
@@ -93,7 +95,17 @@ export async function saveDashboardToGitHub(payload) {
     try {
       const getRes = await fetch(`${getUrl}&_=${Date.now()}`, { headers, cache: 'no-store' });
       noteRateLimit(getRes);
-      if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha || null; }
+      if (getRes.ok) {
+        const existing = await getRes.json(); sha = existing.sha || null;
+        // Month rollover for Last Month Total, judged against the saved copy.
+        try {
+          const prev = JSON.parse(decodeURIComponent(escape(atob(String(existing.content || '').replace(/\s/g, '')))));
+          if (prev && prev.data && payload && payload.data) {
+            rollAdvisorMonths(prev.data, payload.data);
+            content = encode(payload);
+          }
+        } catch { /* unreadable copy — save as-is */ }
+      }
       else if (getRes.status !== 404) { lastErr = new Error(`Failed to read existing file (${getRes.status})`); }
     } catch { /* network hiccup on GET — retry */ }
 
