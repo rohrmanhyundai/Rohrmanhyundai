@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-10-01T12:17:28.661Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
+    "at": "2026-10-01T12:17:24.384Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-10-01T12:16:52.917Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 781202 tech CORY"
+  },
+  {
     "at": "2026-10-01T12:16:13.429Z",
     "type": "page",
     "label": "work-in-progress"
