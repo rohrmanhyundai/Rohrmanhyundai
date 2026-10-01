@@ -391,11 +391,11 @@
       "week_pct": 0.4867805519053877,
       "shop_pacing": 315.36333333333334
     },
-    "grossGoal": 152561,
-    "grossActual": 122325.97,
-    "cpGoal": 76715,
-    "cpActual": 55193.46,
-    "advisorMonthlyWorkdays": 26,
+    "grossGoal": 144069,
+    "grossActual": 0,
+    "cpGoal": 62917,
+    "cpActual": 0,
+    "advisorMonthlyWorkdays": 27,
     "service_policy": 0,
     "roh50_goals": {
       "hrs_ro": 1.3,
