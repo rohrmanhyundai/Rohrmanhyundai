@@ -1,31 +1,33 @@
 {
-  "updatedAt": "2026-10-01T16:25:28.296Z",
+  "updatedAt": "2026-10-01T19:16:15.293Z",
   "by": "SHAWN",
   "advisors": {
-    "SHAWN": [
-      {
-        "ro": "781255",
-        "vehicle": "2017 Hyundai Santa Fe Sport"
-      }
-    ],
     "DAVID": [
+      {
+        "ro": "781266",
+        "vehicle": "2023 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
+      },
       {
         "ro": "781254",
         "vehicle": "2023 Subaru Crosstrek"
-      },
-      {
-        "ro": "781251",
-        "vehicle": "2025 Hyundai Elantra N"
-      },
-      {
-        "ro": "781229",
-        "vehicle": "2018 Hyundai Santa Fe"
       }
     ],
     "JORDAN": [
       {
-        "ro": "781253",
-        "vehicle": "2023 Hyundai Tucson Hybrid"
+        "ro": "781265",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781262",
+        "vehicle": "2022 Hyundai Elantra"
+      },
+      {
+        "ro": "781260",
+        "vehicle": "2026 Hyundai Palisade"
       },
       {
         "ro": "781249",
@@ -38,6 +40,16 @@
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
+    "SHAWN": [
+      {
+        "ro": "781264",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781255",
+        "vehicle": "2017 Hyundai Santa Fe Sport"
       }
     ],
     "CORY": [
