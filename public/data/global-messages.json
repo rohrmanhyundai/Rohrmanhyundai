@@ -220,5 +220,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1790789072558
+  },
+  {
+    "id": "gm-mupi358kdu4n",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "781104 TIRE IS HERE WE NEED TO GET CAR HERE. 781181 PART IS HERE WE NEED TO GET CAR HERE. 780924 CALL DALE 317-402-6596 SO WE CAN GET RO CLOSED. THANK YOU",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1790857114436
   }
 ]
