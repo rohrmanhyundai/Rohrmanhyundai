@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { saveGithubFile, loadAccessLockouts, updateAccessLockouts } from '../utils/github';
 import { hasAccessCode } from '../utils/accessCode';
 import { ACCESS_PATH, DEFAULT_LOCKED, PAGE_GROUPS, PAGE_LABEL } from './AccessGate';
+import { reachablePages } from '../utils/pageReach';
 
 // ── Access Codes screen ───────────────────────────────────────────────────────
 // Opened from Edit Dashboard → Users (the 🔐 button by Access Code). Two tabs:
@@ -22,11 +23,12 @@ function initialDraft(cfg) {
   return { locked: { ...DEFAULT_LOCKED }, users: {}, idle };
 }
 
-export default function AccessCodes({ users = [], cfg, currentUser, currentRole, onSaved, onBack }) {
+export default function AccessCodes({ users = [], cfg, roleCfg = null, currentUser, currentRole, onSaved, onBack }) {
   const isAdmin = currentRole === 'admin';
   const [draft, setDraft] = useState(() => initialDraft(cfg));
   const [tab, setTab] = useState('pages');
   const [sel, setSel] = useState('');
+  const [showAll, setShowAll] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [dirty, setDirty] = useState(!cfg);
@@ -54,12 +56,15 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
 
   const people = useMemo(() => (users || [])
     .filter(u => u && u.username && !u.disabled)
-    .map(u => ({ key: up(u.username), name: u.username, role: u.role || '', hasCode: hasAccessCode(u) }))
-    .sort((a, b) => a.key.localeCompare(b.key)), [users]);
+    .map(u => ({ key: up(u.username), name: u.username, role: u.role || '', hasCode: hasAccessCode(u), reach: reachablePages(u, roleCfg) }))
+    .sort((a, b) => a.key.localeCompare(b.key)), [users, roleCfg]);
   const lockedPages = PAGE_GROUPS.flatMap(g => g.pages).filter(([k]) => draft.locked[k]);
   const lockedOut = people.filter(p => lockState(p.key));
   const grantCount = (page) => people.filter(p => draft.users[p.key] && draft.users[p.key][page]).length;
-  const userCount = (key) => lockedPages.filter(([k]) => draft.users[key] && draft.users[key][k]).length;
+  // Locked pages that are part of this person's job (null reach = admin /
+  // manager → all). Pages their role can't get to are left off their list.
+  const pagesFor = (p) => (p && p.reach ? lockedPages.filter(([k]) => p.reach.has(k)) : lockedPages);
+  const userCount = (key) => { const p = people.find(x => x.key === key); return pagesFor(p).filter(([k]) => draft.users[key] && draft.users[key][k]).length; };
 
   const change = (fn) => { if (!isAdmin) return; setDraft(d => fn(JSON.parse(JSON.stringify(d)))); setDirty(true); setMsg(''); };
   const toggleLock = (page) => change(d => { if (d.locked[page]) delete d.locked[page]; else d.locked[page] = true; return d; });
@@ -75,7 +80,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
   });
   const idleText = (m) => (Number(m) === 0 ? 'never' : `${m} min`);
   const setAllGrants = (user, on) => change(d => {
-    d.users[user] = on ? Object.fromEntries(lockedPages.map(([k]) => [k, true])) : {};
+    d.users[user] = on ? Object.fromEntries(pagesFor(people.find(x => x.key === user)).map(([k]) => [k, true])) : {};
     return d;
   });
 
@@ -195,7 +200,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
             <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 18, alignItems: 'start' }}>
               <div style={{ display: 'grid', gap: 6 }}>
                 {people.map(p => (
-                  <button key={p.key} onClick={() => setSel(p.key)}
+                  <button key={p.key} onClick={() => { setSel(p.key); setShowAll(false); }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left', padding: '9px 12px', borderRadius: 10, fontFamily: 'inherit', cursor: 'pointer',
                       background: sel === p.key ? 'rgba(110,231,249,.16)' : 'rgba(255,255,255,.035)',
@@ -206,7 +211,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                       <span style={{ display: 'block', fontSize: 11, color: '#64748b', textTransform: 'capitalize' }}>{p.role}</span>
                     </span>
                     <span style={{ fontSize: 11, fontWeight: 800, color: lockState(p.key) ? '#fca5a5' : p.hasCode ? '#6ee7b7' : '#fbbf24', whiteSpace: 'nowrap' }}>
-                      {lockState(p.key) === 'hard' ? '🚫 locked out' : lockState(p.key) === 'wait' ? '⏳ 5-min lock' : p.hasCode ? `🔑 ${userCount(p.key)}/${lockedPages.length}` : '⚠ no code'}
+                      {lockState(p.key) === 'hard' ? '🚫 locked out' : lockState(p.key) === 'wait' ? '⏳ 5-min lock' : p.hasCode ? `🔑 ${userCount(p.key)}/${pagesFor(p).length}` : '⚠ no code'}
                     </span>
                   </button>
                 ))}
@@ -255,7 +260,7 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                       <div style={{ color: '#94a3b8', fontSize: 13.5 }}>No pages are locked. Lock some on the Locked pages tab first.</div>
                     ) : (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 7 }}>
-                        {lockedPages.map(([k, label]) => {
+                        {(showAll ? lockedPages : pagesFor(selPerson)).map(([k, label]) => {
                           const on = !!(draft.users[selPerson.key] && draft.users[selPerson.key][k]);
                           return (
                             <label key={k} style={{
@@ -267,6 +272,17 @@ export default function AccessCodes({ users = [], cfg, currentUser, currentRole,
                             </label>
                           );
                         })}
+                      </div>
+                    )}
+                    {lockedPages.length > pagesFor(selPerson).length && (
+                      <div style={{ marginTop: 10, fontSize: 12, color: '#64748b' }}>
+                        {showAll
+                          ? <>Showing every locked page. </>
+                          : <>{lockedPages.length - pagesFor(selPerson).length} locked page{lockedPages.length - pagesFor(selPerson).length === 1 ? '' : 's'} hidden — not part of the <span style={{ textTransform: 'capitalize' }}>{selPerson.role || 'user'}</span> role. </>}
+                        <button type="button" onClick={() => setShowAll(v => !v)}
+                          style={{ background: 'none', border: 'none', padding: 0, color: '#67e8f9', fontWeight: 800, fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}>
+                          {showAll ? 'Show only their pages' : 'Show all'}
+                        </button>
                       </div>
                     )}
                   </>

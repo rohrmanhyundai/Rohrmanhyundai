@@ -1231,6 +1231,7 @@ export default function App() {
       <AccessCodes
         users={users}
         cfg={accessCfg}
+        roleCfg={roleCfg}
         currentUser={currentUser}
         currentRole={currentRole}
         onSaved={cfg => setAccessCfg(cfg)}
