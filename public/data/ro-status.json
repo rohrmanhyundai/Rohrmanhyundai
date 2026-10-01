@@ -1,30 +1,18 @@
 {
-  "updatedAt": "2026-10-01T20:43:09.499Z",
+  "updatedAt": "2026-10-01T21:30:18.829Z",
   "by": "SHAWN",
   "rows": [
     {
-      "ro": "781272",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2015 Buick Encore",
-      "tech": "",
-      "userFlag": "NO_LABEL",
+      "ro": "781273",
+      "advisor": "DAVID RILEY",
+      "vehicle": "2022 Hyundai Kona",
+      "tech": "GAVEN LAUGHNER",
+      "userFlag": "PURPLE",
       "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
+      "roStatus": "TECH_ASSIGNED",
+      "cpStatus": "NOT_STARTED",
       "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 4:34 PM"
-    },
-    {
-      "ro": "781270",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2012 Kia Soul",
-      "tech": "",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 3:47 PM"
+      "openDate": "Thu, Oct 1, 2026 4:49 PM"
     },
     {
       "ro": "781269",
@@ -37,30 +25,6 @@
       "cpStatus": "COMPLETED",
       "roAge": 1,
       "openDate": "Thu, Oct 1, 2026 3:34 PM"
-    },
-    {
-      "ro": "781268",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2018 BMW M4",
-      "tech": "",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 3:17 PM"
-    },
-    {
-      "ro": "781267",
-      "advisor": "JORDAN TROXEL",
-      "vehicle": "2021 Toyota Prius",
-      "tech": "",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "READY_FOR_DISPATCH",
-      "cpStatus": "COMPLETED",
-      "roAge": 1,
-      "openDate": "Thu, Oct 1, 2026 3:16 PM"
     },
     {
       "ro": "781265",
@@ -335,7 +299,7 @@
       "warranty": false,
       "roStatus": "TECH_ASSIGNED",
       "cpStatus": "NA",
-      "roAge": 7,
+      "roAge": 8,
       "openDate": "Thu, Sep 24, 2026 4:56 PM"
     },
     {
