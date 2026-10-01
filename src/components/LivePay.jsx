@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { safe } from '../utils/formatters';
-import { advisorProjectedHours } from '../utils/calculations';
+import { advisorProjectedHours, advisorsForDisplay } from '../utils/calculations';
 
 // Commission tiers — $/CP+Warranty hour. Base = 50% (always paid when the tier
 // qualifies), CSI = 50% (paid only when the advisor's CSI ≥ their Min CSI).
@@ -46,7 +46,10 @@ export const lbl = { fontSize: 10, fontWeight: 800, letterSpacing: '.08em', text
 const CSS = `@keyframes lpPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,146,60,.35),0 12px 34px -14px rgba(249,115,22,.6)}50%{box-shadow:0 0 24px 5px rgba(251,146,60,.32),0 14px 40px -12px rgba(249,115,22,.8)}}`;
 
 export default function LivePay({ data, currentUser, currentRole, leadAdvisor = '', initialAdvisor = '', onFixCsi, onBack, backLabel = '← Back' }) {
-  const advisors = (data && data.advisors) || [];
+  // advisorsForDisplay blanks MTD numbers still left from last month, so a new
+  // month's pay starts at $0 instead of projecting September's hours over
+  // October's first workday.
+  const advisors = advisorsForDisplay(data);
   const servicePolicy = safe(data && data.service_policy, 0);
   const numAdvisors = advisors.length || 1;
   const me = (currentUser || '').toUpperCase();
