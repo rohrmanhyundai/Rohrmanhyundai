@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-01T11:12:09.820Z",
+  "updatedAt": "2026-10-01T11:12:30.329Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -91,7 +91,11 @@
       "deferred-service": true,
       "original-owner": true,
       "registration-uploads": true,
-      "charge-account-list": true
+      "charge-account-list": true,
+      "employee-review": true,
+      "live-pay": true,
+      "user-data-tracker": true,
+      "after-call": true
     }
   },
   "idle": {
