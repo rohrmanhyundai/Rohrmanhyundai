@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-01T14:40:28.370Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
     "at": "2026-10-01T13:38:20.976Z",
     "type": "page",
     "label": "tech-resources"
@@ -838,10 +843,5 @@
     "at": "2026-09-01T15:04:03.846Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-01T13:48:58.340Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
