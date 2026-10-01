@@ -209,8 +209,11 @@ export default function FloatingMessenger({
     if (!openSignal) return;
     setTab('inbox');
     setOpen(true);
-    if (onMarkSeen) onMarkSeen();
-  }, [openSignal, onMarkSeen]);
+  }, [openSignal]);
+  // Looking at the inbox is what clears the unread count.
+  useEffect(() => {
+    if (open && tab === 'inbox' && onMarkSeen) onMarkSeen();
+  }, [open, tab, onMarkSeen, unread]);
 
   const composeRef = useRef(null);
   const replyInputRef = useRef(null);   // the one open reply box, so a send can hand focus back
@@ -266,9 +269,11 @@ export default function FloatingMessenger({
       try { localStorage.setItem(posKey, JSON.stringify(posRef.current)); } catch {}
     } else {
       // A press that never moved is a click → open/close the panel.
+      // Opens on Send (inbox only if this user can't send); unread stays
+      // badged on the Inbox chip until they actually look at the inbox.
       setOpen(v => {
         const next = !v;
-        if (next) onMarkSeen?.();
+        if (next) setTab(canSend ? 'send' : 'inbox');
         return next;
       });
     }
@@ -378,8 +383,8 @@ export default function FloatingMessenger({
       setStatus(`✅ Sent to ${entry.to.length} user${entry.to.length === 1 ? '' : 's'}`);
       setTimeout(() => setStatus(s => (s && s.startsWith('✅')) ? '' : s), 4000);
       // Sending is the end of the job — get the panel out of the way rather
-      // than leaving it parked over the page. It reopens on the inbox.
-      setTab('inbox');
+      // than leaving it parked over the page. It reopens on Send.
+      setTab('send');
       setOpen(false);
     } catch (e) {
       setStatus('⚠️ ' + (e.message || 'Send failed'));
@@ -469,7 +474,13 @@ export default function FloatingMessenger({
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             <span style={{ fontWeight: 800, fontSize: 14, color: '#7dd3fc' }}>Messages</span>
-            <button onClick={() => setTab('inbox')} style={{ ...chip(tab === 'inbox'), marginLeft: 'auto' }}>Inbox</button>
+            <button onClick={() => setTab('inbox')} style={{ ...chip(tab === 'inbox'), marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              Inbox
+              {unread > 0 && tab !== 'inbox' && (
+                <span style={{ minWidth: 17, height: 17, borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 10.5, fontWeight: 900,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>{unread > 99 ? '99+' : unread}</span>
+              )}
+            </button>
             {canSend && <button onClick={() => setTab('send')} style={chip(tab === 'send')}>Send</button>}
             <button onClick={() => setOpen(false)}
               style={{ background: 'none', border: 'none', color: '#7a92b8', fontSize: 18, fontWeight: 700, cursor: 'pointer', lineHeight: 1, padding: '0 2px' }}>×</button>
@@ -718,7 +729,7 @@ export default function FloatingMessenger({
           fontSize: 24, userSelect: 'none',
         }}>
         💬
-        {unread > 0 && !open && (
+        {unread > 0 && !(open && tab === 'inbox') && (
           <span style={{
             position: 'absolute', top: -4, right: -4, minWidth: 22, height: 22,
             borderRadius: 999, background: '#ef4444', color: '#fff',
