@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-02T14:47:57.004Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-10-02T14:47:50.600Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-10-02T13:27:22.001Z",
     "type": "action",
     "label": "parts-received-mark",
