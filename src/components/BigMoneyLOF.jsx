@@ -85,12 +85,36 @@ function zoomWindow(zoom, start, end) {
   return [lo, hi];
 }
 
-function ProgressChart({ title, points, goal, win, fmt, color = '#22d3ee', onZoom }) {
+// Trend: least-squares slope over the last 14 days of points (needs 3+ points
+// spanning 4+ days), projected two weeks ahead (or to the contest end if
+// sooner). Only two weeks: these are contest-to-date averages, which flatten
+// as tickets pile up, so a straight line to the end date overshoots.
+function trendOf(points, end, cap) {
+  if (!points.length || !end) return null;
+  const last = points[points.length - 1];
+  const ln = dayNum(last.date);
+  const recent = points.filter(p => dayNum(p.date) >= ln - 14);
+  if (recent.length < 3 || ln - dayNum(recent[0].date) < 4) return null;
+  const xs = recent.map(p => dayNum(p.date)), ys = recent.map(p => p.v);
+  const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+  const den = xs.reduce((s, x) => s + (x - mx) ** 2, 0);
+  if (!den) return null;
+  const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / den;
+  const ahead = Math.min(14, Math.max(0, dayNum(end) - ln));
+  if (!ahead) return { slope, perWeek: slope * 7, proj: null, from: last, end: null };
+  let proj = last.v + slope * ahead;
+  proj = Math.max(0, cap != null ? Math.min(cap, proj) : proj);
+  return { slope, perWeek: slope * 7, proj, from: last, end: isoOf(ln + ahead) };
+}
+
+function ProgressChart({ title, points, goal, win, fmt, fmtDelta, end, cap, color = '#22d3ee', onZoom }) {
   const W = 320, H = 150, L = 38, R = 12, T = 14, B = 26;
   const [x0, x1] = win;
   const zoomed = x1 - x0 <= 31;
+  const trend = trendOf(points, end, cap);
   const inWin = points.filter(p => { const n = dayNum(p.date); return n >= x0 && n <= x1; });
   const vals = (inWin.length ? inWin : points).map(p => p.v);
+  if (trend && trend.end && dayNum(trend.end) <= x1) vals.push(trend.proj);
   // Zoomed in, the y-axis tightens too (still keeping the goal line in view)
   // so day-to-day movement is easy to see.
   const top = Math.max(goal * (zoomed ? 1.08 : 1.15), ...vals, 0.0001);
@@ -126,6 +150,23 @@ function ProgressChart({ title, points, goal, win, fmt, color = '#22d3ee', onZoo
         {last && <span style={{ marginLeft: 'auto', fontSize: 16, fontWeight: 1000, color: hit ? '#4ade80' : color }}>{fmt(last.v)}</span>}
         <span style={{ fontSize: 11, color: '#fbbf24', fontWeight: 800 }}>goal {fmt(goal)}</span>
       </div>
+      {trend && (() => {
+        const flat = Math.abs(trend.perWeek) < Math.max(goal, 0.0001) * 0.01;
+        const up = trend.perWeek > 0;
+        const onTrack = goal > 0 && trend.proj != null && trend.proj >= goal;
+        const tc = flat ? '#94a3b8' : up ? '#4ade80' : '#fb7185';
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 4, fontSize: 11.5, fontWeight: 800 }}>
+            <span style={{ color: tc, background: `${tc}1f`, border: `1px solid ${tc}55`, borderRadius: 999, padding: '1px 8px' }}
+              title="Change per week, from the last two weeks of numbers">
+              {flat ? '▬ Flat' : `${up ? '▲' : '▼'} ${up ? '+' : '−'}${fmtDelta(Math.abs(trend.perWeek))}/wk`}
+            </span>
+            {trend.end && <span style={{ color: onTrack ? '#4ade80' : '#cbd5e1' }} title="Where the last two weeks' trend lands two weeks from now">
+              → {fmt(trend.proj)} by {(() => { const [, m, d] = trend.end.split('-').map(Number); return `${m}/${d}`; })()}{onTrack ? ' · at goal ✓' : ''}
+            </span>}
+          </div>
+        );
+      })()}
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block', marginTop: 4, cursor: onZoom ? 'zoom-in' : undefined }}
         onDoubleClick={onZoom ? () => onZoom(zoomed ? 'out' : 'in') : undefined}>
         <defs><clipPath id={clipId}><rect x={L - 5} y={0} width={W - L - R + 10} height={H - B + 2} /></clipPath></defs>
@@ -139,6 +180,10 @@ function ProgressChart({ title, points, goal, win, fmt, color = '#22d3ee', onZoo
         {showToday && <line x1={X(today)} x2={X(today)} y1={T} y2={H - B} stroke="rgba(148,163,184,.35)" strokeDasharray="2 3" />}
         {goal > 0 && <line x1={L} x2={W - R} y1={Y(goal)} y2={Y(goal)} stroke="#fbbf24" strokeWidth="2" strokeDasharray="6 4" />}
         <g clipPath={`url(#${clipId})`}>
+          {trend && trend.end && <>
+            <line x1={X(trend.from.date)} y1={Y(trend.from.v)} x2={X(trend.end)} y2={Y(trend.proj)} stroke={color} strokeOpacity=".55" strokeWidth="2" strokeDasharray="2 4" strokeLinecap="round" />
+            <circle cx={X(trend.end)} cy={Y(trend.proj)} r="3.6" fill="#0b1220" stroke={color} strokeOpacity=".8" strokeWidth="1.6"><title>{`Trend → ${fmt(trend.proj)} by contest end`}</title></circle>
+          </>}
           {points.length > 1 && <path d={path} fill="none" stroke={color} strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round" />}
           {points.map((p, i) => {
             const lastPt = i === points.length - 1;
@@ -799,7 +844,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
               <div className="bml-card">
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
                   <div style={{ fontSize: 18, fontWeight: 1000, color: '#fff' }}>📈 Progress toward goal</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>{fmtContestDate(c.start)} → {fmtContestDate(c.end)} · <span style={{ color: '#fbbf24' }}>- - goal</span> · <span style={{ color: '#22d3ee' }}>── where you are</span></div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>{fmtContestDate(c.start)} → {fmtContestDate(c.end)} · <span style={{ color: '#fbbf24' }}>- - goal</span> · <span style={{ color: '#22d3ee' }}>── where you are</span> · <span style={{ color: '#94a3b8' }}>┈ 2-week trend</span></div>
                 </div>
                 <div style={{ display: 'grid', gap: 16 }}>
                   {board.rows.map(r => (
@@ -810,9 +855,9 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                       <AdvisorProgress start={c.start} end={c.end}>
                         {(win, onZoom) => (<>
                           <ProgressChart title="$50 Add Rate %" points={series(r.name, 'rate')} goal={Number(g.add_rate) || 0}
-                            win={win} onZoom={onZoom} fmt={(v) => `${Math.round(v * 100)}%`} color="#22d3ee" />
+                            win={win} onZoom={onZoom} end={c.end} cap={1} fmt={(v) => `${Math.round(v * 100)}%`} fmtDelta={(d) => `${(d * 100).toFixed(1)} pts`} color="#22d3ee" />
                           <ProgressChart title="Add-on Hrs/Ticket" points={series(r.name, 'hrsRo')} goal={Number(g.hrs_ro) || 0}
-                            win={win} onZoom={onZoom} fmt={(v) => Number(v).toFixed(2)} color="#a78bfa" />
+                            win={win} onZoom={onZoom} end={c.end} fmt={(v) => Number(v).toFixed(2)} fmtDelta={(d) => d.toFixed(2)} color="#a78bfa" />
                         </>)}
                       </AdvisorProgress>
                     </div>
