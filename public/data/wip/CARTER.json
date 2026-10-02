@@ -12,21 +12,5 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
-  },
-  {
-    "id": "mulng3xzq02q",
-    "ro": "781167",
-    "roDate": "2026-09-28",
-    "vehicle": "2023 Hyundai Santa Cruz",
-    "jobDesc": "CUSTOMER STATES CHECK ENGINE LIGHT IS ON.",
-    "notes": "WAITING ON PARTS ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/02/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
