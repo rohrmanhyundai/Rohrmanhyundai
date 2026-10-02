@@ -529,6 +529,15 @@ function TechBoxes({ list, asOf }) {
               <div style={{ fontSize: 14.5, fontWeight: 800, color: met ? '#86efac' : '#fecaca' }}>
                 {met ? `✓ Goal met · +${r1(total - goal)} hrs` : `Needs ${ceil1(need)} hrs to goal`}
               </div>
+              {x.pacing != null && goal > 0 ? (() => {
+                const pace = Number(x.pacing) || 0, ok = pace >= goal;
+                return (
+                  <div style={{ fontSize: 13.5, fontWeight: 800, color: '#94a3b8', marginTop: 4 }} title="Where this week lands at the current daily pace">
+                    📈 Pacing <span style={{ color: ok ? '#4ade80' : '#fbbf24' }}>{r1(pace)} hrs</span>
+                    <span style={{ color: ok ? '#86efac' : '#fca5a5' }}> ({ok ? '+' : '−'}{r1(Math.abs(pace - goal))})</span>
+                  </div>
+                );
+              })() : null}
             </div>
             <div style={{ textAlign: 'center', flexShrink: 0 }} title={e ? `Average goal % over the last ${e.weeks} completed week${e.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
               <MiniGauge pct={e ? e.pct : null} />
