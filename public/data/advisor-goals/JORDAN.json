@@ -925,8 +925,8 @@
     "hrsRoGoal": 1.5,
     "days": {
       "2026-10-01": {
-        "hours": 0,
-        "hrsRo": 0,
+        "hours": 3.9,
+        "hrsRo": 0.39,
         "openRoCount": 22,
         "invoiced": "yes",
         "customersUpdated": "yes",
