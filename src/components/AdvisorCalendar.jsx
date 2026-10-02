@@ -1160,7 +1160,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                     {isToday && pacing && (
                       <div className={pacing.mode === 'behind' ? 'pace-behind' : 'pace-ahead'}
                         title={pacing.mode === 'behind'
-                          ? 'Hours to sell today to reach your monthly goal'
+                          ? `Hours to sell today to be back on pace by tonight (pace ${pacing.dailyTarget.toFixed(1)} hrs/day). Spread over the ${pacing.remaining} days left, it's ${pacing.perDayToGoal.toFixed(1)} hrs/day to still reach goal.`
                           : 'Hours to sell today to hold your pace above goal'}
                         style={{
                           marginTop: 6, borderRadius: 9, padding: '5px 9px', lineHeight: 1.15,
@@ -1173,7 +1173,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                           🎯 {pacing.value.toFixed(1)} hrs
                         </div>
                         <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: .4, textTransform: 'uppercase', color: pacing.mode === 'behind' ? '#fca5a5' : '#86efac' }}>
-                          {pacing.mode === 'behind' ? 'to hit goal' : 'to hold pace'}
+                          {pacing.mode === 'behind' ? 'to get back on pace' : 'to hold pace'}
                         </div>
                       </div>
                     )}

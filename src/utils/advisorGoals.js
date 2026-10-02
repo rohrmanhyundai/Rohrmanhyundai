@@ -29,7 +29,8 @@ export function ensureMtd(bucket) {
 }
 
 // Today's pacing number for an advisor's calendar:
-//   behind pace  → hours to sell today (and each remaining day) to REACH the goal
+//   behind pace  → hours to sell today to be BACK ON PACE by tonight
+//                  (perDayToGoal = the spread-out daily need, for the tooltip)
 //   ahead of pace → hours to sell today to HOLD their current above-goal pace
 // Working days = non-Sundays in the month minus `offKeys` (from advisorOffDates).
 // `remaining` includes today. Returns null when it can't be computed (no goal,
@@ -56,11 +57,14 @@ export function dailyPacing({ hoursGoal, mtd, year, month, offKeys, today = new 
   const expectedByNow = dailyTarget * elapsed;        // where they should be through yesterday
   const behind = m < expectedByNow;
   let value;
+  // Spread-out view: what each remaining day needs to still reach the goal.
+  const perDayToGoal = Math.max(0, (goal - m) / remaining);
   if (behind) {
-    value = (goal - m) / remaining;                   // catch up to the monthly goal
-    if (value < 0) value = 0;
+    // Hours to sell TODAY to be back on pace by tonight: where they should be
+    // through today (daily target × days through today) minus MTD.
+    value = Math.max(0, dailyTarget * (elapsed + 1) - m);
   } else {
     value = elapsed > 0 ? m / elapsed : dailyTarget;  // hold current daily pace
   }
-  return { mode: behind ? 'behind' : 'ahead', value, dailyTarget, total, elapsed, remaining };
+  return { mode: behind ? 'behind' : 'ahead', value, perDayToGoal, dailyTarget, total, elapsed, remaining };
 }
