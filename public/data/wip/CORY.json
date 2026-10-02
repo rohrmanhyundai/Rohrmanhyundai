@@ -55,21 +55,5 @@
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY. CORY WILL START THIS ON TUESDAY. Transmission done, radiator leaking. Rec. made. ",
     "partsArrived": null,
     "partsArrivedDate": ""
-  },
-  {
-    "id": "mumz956qgrfk",
-    "ro": "781181",
-    "roDate": "2026-09-29",
-    "vehicle": "2018 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES WINDSHEILD WASHER IS NOT WORKING",
-    "notes": "PARTS ARE HERE. AFTER MARKET WARRANTY CAR IS NOT HERE ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/01/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
