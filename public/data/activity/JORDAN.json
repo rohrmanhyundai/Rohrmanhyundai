@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-02T21:57:49.605Z",
+    "type": "page",
+    "label": "advisor-goals"
+  },
+  {
+    "at": "2026-10-02T21:57:44.826Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-02T21:57:43.511Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-10-02T21:00:09.867Z",
     "type": "page",
     "label": "daily-wrench"
