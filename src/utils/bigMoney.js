@@ -9,6 +9,7 @@
 //     latest:  { takenAt, standings: [...] } } // rolling snapshot while live
 import { safe } from './formatters';
 import { roh50Goals } from './calculations';
+import { contestAddOn } from './bigMoneyMath.mjs';
 
 export const BIG_MONEY_PATH = 'data/big-money-lof.json';
 // Team-effort payout: the full prize needs the STORE AVERAGE over goal on both
@@ -91,14 +92,16 @@ export function daysLeft(file, now = new Date()) {
 // Returns rows sorted qualified-first, then by hrs/RO desc, then rate desc,
 // plus the store average (team goal) — same rule as the dashboard's Avg tiles:
 // advisors flagged "Don't apply to dashboard" are left out of the average.
-export function computeStandings(advisors, dashboardData) {
+// Pass the contest so numbers are contest-to-date across months (bigMoneyMath).
+export function computeStandings(advisors, dashboardData, contest = null) {
   const goals = roh50Goals(dashboardData);
   const goalsSet = goals.hrs_ro > 0 && goals.add_rate > 0;
   const rows = (advisors || [])
     .filter(a => a && a.name && !a.hidden)
     .map(a => {
-      const hrsRo = Math.round(safe(a.roh50_hrs_ro, 0) * 100) / 100;
-      const rate  = Math.round(safe(a.roh50_add_rate, 0) * 1000) / 1000;
+      const c = contestAddOn(a, contest);
+      const hrsRo = Math.round(c.hrsRo * 100) / 100;
+      const rate  = Math.round(c.rate * 1000) / 1000;
       const hitHrs  = goals.hrs_ro   > 0 && hrsRo >= goals.hrs_ro;
       const hitRate = goals.add_rate > 0 && rate  >= goals.add_rate;
       return { name: firstName(a.name), display: a.name, hrsRo, rate, hitHrs, hitRate, qualified: goalsSet && hitHrs && hitRate, inAvg: !a.exclude_from_avg };
@@ -126,7 +129,7 @@ export function standingsFor(file, advisors, dashboardData, now = new Date()) {
              store: f.store || computeStandings(f.standings.map(r => ({ name: r.name, roh50_hrs_ro: r.hrsRo, roh50_add_rate: r.rate, exclude_from_avg: r.inAvg === false })), dashboardData).store,
              banked: true };
   }
-  return { ...computeStandings(advisors, dashboardData), banked: false };
+  return { ...computeStandings(advisors, dashboardData, file && file.contest), banked: false };
 }
 
 // What the Advisor Calendar tab shows next to the label for this advisor.
@@ -135,7 +138,7 @@ export function tabBadgeFor(file, advisors, dashboardData, username, now = new D
   const status = contestStatus(file, now);
   if (status !== STATUS.LIVE) return '';
   const me = firstName(username);
-  const row = computeStandings(advisors, dashboardData).rows.find(r => r.name === me);
+  const row = computeStandings(advisors, dashboardData, file && file.contest).rows.find(r => r.name === me);
   if (!row || !row.qualified) return '';
   return row.leader ? '🏆' : '✅';
 }

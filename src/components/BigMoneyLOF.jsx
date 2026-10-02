@@ -260,7 +260,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
 
   const status = useMemo(() => contestStatus(file || {}), [file]);
   const board  = useMemo(() => standingsFor(file || {}, advisors, data), [file, advisors, data]);
-  const live   = useMemo(() => computeStandings(advisors, data), [advisors, data]);
+  const live   = useMemo(() => computeStandings(advisors, data, file && file.contest), [advisors, data, file]);
   const prizes = prizeFor(file);
   const left   = daysLeft(file || {});
   // Team goal decides the payout: store average over goal on both → full prize.
@@ -433,8 +433,8 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.22em', textTransform: 'uppercase', color: '#fde68a', marginBottom: 8 }}>Advisor Contest</div>
                 <div style={{ fontSize: 40, fontWeight: 1000, color: '#fff', lineHeight: 1, textShadow: '0 4px 18px rgba(0,0,0,.45)' }}>Big-Money <span style={{ color: '#facc15' }}>LOF</span></div>
                 <div style={{ fontSize: 15, color: 'rgba(255,255,255,.85)', marginTop: 12, lineHeight: 1.55, maxWidth: 540 }}>
-                  Hit the goal on <b>$50 Add'l Hrs/RO</b> <i>and</i> <b>$50 Add Rate %</b> to qualify. The qualified advisor with the highest
-                  <b> $50 Add'l Hrs/RO</b> when the contest closes wins — and it's a team effort: the <b>store average</b> has to clear both goals
+                  Hit the goal on <b>Add-on Hrs/Ticket</b> <i>and</i> <b>$50 Add Rate %</b> to qualify. The qualified advisor with the highest
+                  <b> Add-on Hrs/Ticket</b> when the contest closes wins — and it's a team effort: the <b>store average</b> has to clear both goals
                   for the full <b>{money(prizes.full)}</b>. Miss it as a store and the winner takes <b>{money(prizes.reduced)}</b>.
                 </div>
                 {status !== STATUS.OFF && (
@@ -464,7 +464,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 <>
                   <div style={{ fontSize: 44 }}>🏆</div>
                   <div style={{ fontSize: 26, fontWeight: 1000, color: '#fde047', marginTop: 4 }}>{leader.display} wins {money(payout)}!</div>
-                  <div style={{ color: '#fef3c7', fontSize: 14, marginTop: 6 }}>{num2(leader.hrsRo)} $50 Add'l Hrs/RO · {pct(leader.rate)} add rate</div>
+                  <div style={{ color: '#fef3c7', fontSize: 14, marginTop: 6 }}>{num2(leader.hrsRo)} Add-on Hrs/Ticket · {pct(leader.rate)} add rate</div>
                   <div style={{ color: storeHit ? '#bbf7d0' : '#fde68a', fontSize: 13, marginTop: 8, fontWeight: 800 }}>
                     {storeHit ? '🤝 The store cleared both goals — full prize!' : `🤝 Store average fell short of goal, so the prize is ${money(prizes.reduced)} instead of ${money(prizes.full)}.`}
                   </div>
@@ -531,7 +531,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 </div>
               </div>
               <div style={{ fontSize: 12.5, color: '#cbd5e1', marginTop: 12, lineHeight: 1.7 }}>
-                <span style={{ color: '#67e8f9', fontWeight: 800 }}>⚙️ Runs itself</span> off <b style={{ color: '#f1f5f9' }}>Edit Dashboard → Advisor Performance</b> — each advisor's $50 Add'l Hrs/RO and $50 Add Rate %, judged against the goals set there.{' '}
+                <span style={{ color: '#67e8f9', fontWeight: 800 }}>⚙️ Runs itself</span> off <b style={{ color: '#f1f5f9' }}>Edit Dashboard → Advisor Performance</b> — each advisor's Add-on Hrs/Ticket and $50 Add Rate %, judged against the goals set there. Numbers are <b style={{ color: '#f1f5f9' }}>contest-to-date</b>: when the add-on board resets for a new month, last month's numbers are kept and averaged in (weighted by tickets) from the start date to the end.{' '}
                 <span style={{ color: '#4ade80', fontWeight: 800 }}>🤝 Team rule:</span> full prize needs the <b style={{ color: '#f1f5f9' }}>store average</b> over goal on both — otherwise the winner gets <b style={{ color: '#fde047' }}>{money(prizes.reduced)}</b>.{' '}
                 <span style={{ color: '#c4b5fd', fontWeight: 800 }}>📅 Timing:</span> advisors get the tab on their Appointment Prep Calendar from the start date; results lock in the day after the end date.
                 {!live.goalsSet && <div style={{ color: '#fbbf24', fontWeight: 800, marginTop: 6 }}>⚠️ Set BOTH $50 goals in Edit Dashboard or nobody can qualify.</div>}
@@ -555,7 +555,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 <div style={{ display: 'flex', gap: 22 }}>
                   <div style={{ textAlign: 'center' }}>
                     <div className={`bml-stat ${board.store.hitHrs ? 'hit' : 'miss'}`}>{num2(board.store.hrsRo)} {board.store.hitHrs ? '✓' : ''}</div>
-                    <div className="bml-label">avg hrs/RO · goal {board.goals.hrs_ro > 0 ? num2(board.goals.hrs_ro) : '—'}</div>
+                    <div className="bml-label">avg hrs/ticket · goal {board.goals.hrs_ro > 0 ? num2(board.goals.hrs_ro) : '—'}</div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div className={`bml-stat ${board.store.hitRate ? 'hit' : 'miss'}`}>{pct(board.store.rate)} {board.store.hitRate ? '✓' : ''}</div>
@@ -608,7 +608,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
             <div className="bml-card" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ fontSize: 34 }}>🛢️</div>
               <div>
-                <div className="bml-label">$50 Add'l Hrs/RO goal</div>
+                <div className="bml-label">Add-on Hrs/Ticket goal</div>
                 <div className="bml-stat" style={{ color: '#67e8f9' }}>{board.goals.hrs_ro > 0 ? num2(board.goals.hrs_ro) : '—'}</div>
               </div>
             </div>
@@ -629,7 +629,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                   </div>
                   {!myRow.qualified && (
                     <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3 }}>
-                      {!myRow.hitHrs && board.goals.hrs_ro > 0 && <>Need {num2(Math.max(0, board.goals.hrs_ro - myRow.hrsRo))} more hrs/RO. </>}
+                      {!myRow.hitHrs && board.goals.hrs_ro > 0 && <>Need {num2(Math.max(0, board.goals.hrs_ro - myRow.hrsRo))} more hrs/ticket. </>}
                       {!myRow.hitRate && board.goals.add_rate > 0 && <>Need {pct(Math.max(0, board.goals.add_rate - myRow.rate))} more add rate.</>}
                     </div>
                   )}
@@ -732,7 +732,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                 <div className="bml-row" style={{ background: 'transparent', border: 'none', padding: '0 16px' }}>
                   <div className="bml-label">Rank</div>
                   <div className="bml-label">Advisor</div>
-                  <div className="bml-label">$50 Add'l Hrs/RO</div>
+                  <div className="bml-label">Add-on Hrs/Ticket</div>
                   <div className="bml-label">$50 Add Rate %</div>
                   <div className="bml-label bml-hide" style={{ textAlign: 'right' }}>Status</div>
                 </div>
@@ -811,7 +811,7 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
                         {(win, onZoom) => (<>
                           <ProgressChart title="$50 Add Rate %" points={series(r.name, 'rate')} goal={Number(g.add_rate) || 0}
                             win={win} onZoom={onZoom} fmt={(v) => `${Math.round(v * 100)}%`} color="#22d3ee" />
-                          <ProgressChart title="$50 Add'l Hrs/RO" points={series(r.name, 'hrsRo')} goal={Number(g.hrs_ro) || 0}
+                          <ProgressChart title="Add-on Hrs/Ticket" points={series(r.name, 'hrsRo')} goal={Number(g.hrs_ro) || 0}
                             win={win} onZoom={onZoom} fmt={(v) => Number(v).toFixed(2)} color="#a78bfa" />
                         </>)}
                       </AdvisorProgress>
@@ -826,10 +826,10 @@ export default function BigMoneyLOF({ currentUser, currentRole, advisors = [], d
           <div className="bml-card">
             <div style={{ fontSize: 15, fontWeight: 1000, color: '#fff', marginBottom: 10 }}>📜 How to win</div>
             <ol style={{ margin: 0, paddingLeft: 22, color: '#cbd5e1', fontSize: 13.5, lineHeight: 1.8 }}>
-              <li>Meet or beat <b>both</b> goals — <b>$50 Add'l Hrs/RO</b> and <b>$50 Add Rate %</b> — to qualify. One without the other doesn't count.</li>
-              <li>Among the qualified advisors, the <b>highest $50 Add'l Hrs/RO</b> when the contest closes is the winner.</li>
+              <li>Meet or beat <b>both</b> goals — <b>Add-on Hrs/Ticket</b> and <b>$50 Add Rate %</b> — to qualify. One without the other doesn't count.</li>
+              <li>Among the qualified advisors, the <b>highest Add-on Hrs/Ticket</b> when the contest closes is the winner.</li>
               <li><b>Team effort:</b> the winner takes home <b>{money(prizes.full)} cash</b> only if the <b>store average</b> is at or over goal on <b>both</b> numbers. If the store falls short, the winner gets <b>{money(prizes.reduced)}</b>. Everyone's numbers count toward the store average.</li>
-              <li>Tied on hrs/RO? The higher <b>$50 Add Rate %</b> takes it.</li>
+              <li>Tied on hrs/ticket? The higher <b>$50 Add Rate %</b> takes it.</li>
               <li>Numbers come straight from the dashboard and are judged as of the contest's last day. Dip under a goal and you're out until you're back over it.</li>
               {leadView && lead.bonus > 0 && (
                 <li style={{ color: '#e9d5ff' }}><b>🎖️ Lead advisor ({lead.name}):</b> earns an extra <b>{money(lead.bonus)}</b> <b>only if the store average meets BOTH goals</b> on the contest's last day — it does not matter whether {lead.name} wins. If the store misses either goal, there is <b>no</b> bonus. Win the contest <i>and</i> the store hits both goals → <b>{money(prizes.full)} + {money(lead.bonus)} = {money(prizes.full + lead.bonus)}</b>. <span style={{ color: '#a78bfa' }}>(Visible only to the lead advisor and managers.)</span></li>

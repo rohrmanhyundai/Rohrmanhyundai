@@ -30,12 +30,13 @@ const todayKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
 
 // Mirrors computeStandings() in src/utils/bigMoney.js (that module pulls in
 // browser-side helpers, so the ranking is restated here — keep them in step).
-function standings(advisors, data) {
+function standings(advisors, data, contestAddOn, contest) {
   const g = data.roh50_goals || {};
   const goals = { hrs_ro: g.hrs_ro == null ? 1.2 : safe(g.hrs_ro), add_rate: safe(g.add_rate) };
   const goalsSet = goals.hrs_ro > 0 && goals.add_rate > 0;
   const rows = (advisors || []).filter(a => a && a.name && !a.hidden).map(a => {
-    const hrsRo = Math.round(safe(a.roh50_hrs_ro) * 100) / 100, rate = Math.round(safe(a.roh50_add_rate) * 1000) / 1000;
+    const c = contestAddOn(a, contest);
+    const hrsRo = Math.round(c.hrsRo * 100) / 100, rate = Math.round(c.rate * 1000) / 1000;
     const hitHrs = goals.hrs_ro > 0 && hrsRo >= goals.hrs_ro, hitRate = goals.add_rate > 0 && rate >= goals.add_rate;
     return { name: firstName(a.name), display: a.name, hrsRo, rate, hitHrs, hitRate, qualified: goalsSet && hitHrs && hitRate, inAvg: !a.exclude_from_avg };
   }).sort((x, y) => (y.qualified - x.qualified) || (y.hrsRo - x.hrsRo) || (y.rate - x.rate) || x.name.localeCompare(y.name));
@@ -82,6 +83,7 @@ async function writeContest(mutate) {
 (async () => {
   if (!process.env.OPENAI_API_KEY) { console.log('OPENAI_API_KEY not set — skipping Big-Money coaching.'); return; }
   const { coachPrompt } = await import('../src/utils/bigMoneyCoach.mjs');
+  const { contestAddOn } = await import('../src/utils/bigMoneyMath.mjs');
 
   const { file } = await readContest();
   const c = file.contest || {};
@@ -91,7 +93,7 @@ async function writeContest(mutate) {
 
   const payload = readJSON(path.join(PUBLIC, 'data.json'), {});
   const data = payload && payload.data ? payload.data : payload;
-  const board = standings(data.advisors || [], data);
+  const board = standings(data.advisors || [], data, contestAddOn, c);
   if (!board.goalsSet) { console.log('Both $50 goals are not set — skipping coaching.'); return; }
   const prizes = { full: Number(c.prize) || 1000, reduced: c.reducedPrize != null ? Number(c.reducedPrize) || 0 : 500 };
 

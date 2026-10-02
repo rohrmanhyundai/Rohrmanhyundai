@@ -26,8 +26,7 @@ const rate = (v) => { const n = num(v); if (n == null) return null; return n > 1
 
 const PROMPT = `This is a screenshot of a service-advisor "add-on" rank board table. Work carefully, column by column.
 
-STEP 1 — Read the header row and list the column titles left to right. The usual order is:
-RANK | STORE (or advisor name) | STORE SCORE | TICKETS | ADD-ON RATE | OIL-ONLY TKTS | ADD'L HRS / RO | ADD'L GP / TICKET | TOTAL ADD'L GP | +0.1HR UPSIDE
+STEP 1 — Read the header row and list the column titles left to right (skip blank icon/arrow columns). The board's layout changes from time to time. The current board starts with TICKETS, ADD-ON RATE, OIL-ONLY TKTS and ends with the add-on hours column, titled "ADD ON HRS / TICKET" — usually the LAST column. Older boards called it "ADD'L HRS / RO".
 (Some may be missing or the screenshot may be cropped — use what is actually there.)
 
 STEP 2 — Find EVERY row whose second column is a PERSON'S NAME (e.g. "JORDAN TROXEL", "DAVID RILEY"). Skip dealership/store rows like "FW Lexus" or "LAF Hyundai", headers, and totals. Do not stop early — count the person rows and return all of them, including the last one at the bottom edge.
@@ -37,11 +36,11 @@ STEP 3 — For each person row, transcribe the BIG number in every column in ord
 - tickets: the TICKETS column (whole number, e.g. 47)
 - add_on_rate: ADD-ON RATE as printed, e.g. 51 for "51%"
 - oil_only_tickets: OIL-ONLY TKTS big number (whole number, e.g. 23). It is ALWAYS smaller than tickets. It is NOT a dollar amount.
-- addl_hrs_ro: ADD'L HRS / RO decimal, e.g. 0.57
+- addl_hrs_ro: the ADD ON HRS / TICKET column (or ADD'L HRS / RO on older boards), a decimal like 0.27. NEVER take it from any other decimal column — some boards have another column (e.g. 3.67) that is the SAME for every advisor; that is not it.
 - addl_gp_ticket: ADD'L GP / TICKET dollars (e.g. 84 for "$84"), null if absent
 - total_addl_gp: TOTAL ADD'L GP dollars, null if absent
 
-Sanity rule: oil_only_tickets ≈ tickets × (1 − add_on_rate/100). If yours doesn't fit, re-read the columns.
+Sanity rules: oil_only_tickets ≈ tickets × (1 − add_on_rate/100). addl_hrs_ro differs from advisor to advisor and is usually under 2. If yours doesn't fit, re-read the columns.
 
 Return ONLY a JSON object, no markdown fences:
 {"columns":["RANK","STORE",...],"rows":[{"name":"JORDAN TROXEL","cells":["#14","JORDAN TROXEL","39.6","47","51%","23","0.57","$84","$3,945","+$697"],"tickets":47,"add_on_rate":51,"oil_only_tickets":23,"addl_hrs_ro":0.57,"addl_gp_ticket":84,"total_addl_gp":3945}]}
@@ -80,6 +79,10 @@ export async function parseAddOnScreenshot(file) {
   if (!list) throw new Error('Unexpected reply from the reader — try again.');
 
   const warnings = [];
+  // Belt and braces: take the hours straight from the cell under the header
+  // that names it, when the reader gave us aligned columns + cells.
+  const cols = (parsed && Array.isArray(parsed.columns) ? parsed.columns : []).map(c => String(c || '').toUpperCase());
+  const hrsCol = cols.findIndex(c => /HRS?\s*\/\s*(TICKET|TKT|RO)\b/.test(c) && !/GP|\$/.test(c));
   const rows = list
     .filter(r => r && r.name)
     .map(r => {
@@ -93,6 +96,10 @@ export async function parseAddOnScreenshot(file) {
         addl_gp_ticket: num(r.addl_gp_ticket),
         total_addl_gp: num(r.total_addl_gp),
       };
+      if (hrsCol >= 0 && Array.isArray(r.cells) && r.cells.length === cols.length) {
+        const v = num(r.cells[hrsCol]);
+        if (v != null) row.addl_hrs_ro = v;
+      }
       // Tickets and the add-on rate are the big, unambiguous numbers on the
       // board and oil-only = tickets × (1 − rate) by definition. If the
       // oil-only read doesn't agree (or exceeds tickets), derive it instead of
@@ -108,16 +115,33 @@ export async function parseAddOnScreenshot(file) {
       return row;
     })
     .filter(r => r.first && (r.add_on_rate != null || r.addl_hrs_ro != null));
+  const hrs = rows.map(r => r.addl_hrs_ro).filter(v => v != null);
+  if (hrs.length >= 2 && hrs.every(v => v === hrs[0])) warnings.push(`Every advisor read as ${hrs[0]} add-on hrs — that looks like the wrong column. Check before applying.`);
   return { rows, warnings, raw: text };
 }
 
 // Apply parsed rows onto a cloned advisor list. Returns { updated, skipped }.
-export function applyAddOnRows(advisors, rows) {
+//
+// The board is month-to-date, but the Big-Money contest runs across months.
+// Each advisor carries roh50_month (the month their numbers belong to). The
+// first import in a newer month where tickets DROP is the board resetting:
+// last month's final numbers are banked in roh50_hist[month] before being
+// overwritten, and bigMoney.js adds the banked months back in for the
+// contest-to-date average. (Tickets still climbing = late last-month data.)
+export const monthNow = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
+export function applyAddOnRows(advisors, rows, month = monthNow()) {
   const updated = [], skipped = [];
   const stamp = Date.now();
   for (const r of rows) {
     const a = (advisors || []).find(x => canonicalAdvisorFirst(x.name) === r.first);
     if (!a) { skipped.push(r.name); continue; }
+    const pm = a.roh50_month;
+    if (pm && pm < month && r.tickets != null && Number(r.tickets) < Number(a.lof_tickets || 0)) {
+      a.roh50_hist = { ...(a.roh50_hist || {}), [pm]: { hrsRo: a.roh50_hrs_ro, rate: a.roh50_add_rate, tickets: a.lof_tickets, oilOnly: a.lof_oil_only } };
+      a.roh50_month = month;
+    } else if (!pm) {
+      a.roh50_month = month;
+    }
     if (r.addl_hrs_ro != null) a.roh50_hrs_ro = Math.round(r.addl_hrs_ro * 100) / 100;
     if (r.add_on_rate != null) a.roh50_add_rate = Math.round(r.add_on_rate * 1000) / 1000;
     if (r.tickets != null) a.lof_tickets = Math.round(r.tickets);
