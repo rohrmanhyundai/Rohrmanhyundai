@@ -71,5 +71,20 @@
     "partsArrivedDate": "10/01/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mur219578xq",
+    "ro": "781264",
+    "roDate": "2026-10-01",
+    "vehicle": "",
+    "jobDesc": "CUSTOMER STATES ORDER DRIVERS SIDE WINDOW. CRACK ACROSS THE WINDOW",
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": true,
+    "partsArrivedDate": "10/02/2026",
+    "highPriority": false,
+    "advisor": "SHAWN LAUGHNER",
+    "notes": "",
+    "flag": "purple"
   }
 ]
