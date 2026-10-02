@@ -1,5 +1,11 @@
 [
   {
+    "at": "2026-10-02T18:44:20.289Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 781269 tech JACOB"
+  },
+  {
     "at": "2026-10-02T14:49:53.684Z",
     "type": "action",
     "label": "delete-wip-row",
@@ -832,10 +838,5 @@
     "at": "2026-09-02T21:00:02.250Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-09-02T15:26:02.472Z",
-    "type": "page",
-    "label": "tech-resources"
   }
 ]
