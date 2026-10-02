@@ -277,8 +277,6 @@ function AdvisorReport({ report, name }) {
 
       <DashboardScorecards names={[name]} />
 
-      <PickupSection appts={f.appointments} line={report.pickupLine} />
-
       {contest.live ? (
         <Section icon="💵" title="Big-Money LOF">
           <div className="dw-stats" style={{ marginBottom: report.contest ? 14 : 0 }}>
@@ -301,6 +299,9 @@ function AdvisorReport({ report, name }) {
           <BigMoneyCharts names={[firstUp(name)]} asOf={f.date} label="Your progress toward goal" />
         </Section>
       ) : null}
+
+      <PickupSection appts={f.appointments} line={report.pickupLine} />
+
 
       <div className="dw-stats">
         {h.hasGoal ? (
