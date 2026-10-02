@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { loadDailyWrench, loadDailyWrenchIndex, requestDailyWrench } from '../utils/github';
 import { trackPage, trackAction } from '../utils/activityTracker';
 import { BigMoneyAdvisorCharts, CHART_LEGEND } from './BigMoneyProgress';
+import { advisorDailyAverage, advisorsForDisplay, roh50Goals } from '../utils/calculations';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
 // The morning briefing. An advisor opens it and sees their own day: where the
@@ -274,6 +275,8 @@ function AdvisorReport({ report, name }) {
         ) : null}
       </div>
 
+      <DashboardScorecards names={[name]} />
+
       <PickupSection appts={f.appointments} line={report.pickupLine} />
 
       {contest.live ? (
@@ -457,6 +460,143 @@ function BigMoneyCharts({ names, asOf, label }) {
   );
 }
 
+// ── Dashboard scorecard ──────────────────────────────────────────────────────
+// The advisor's row off the Shop TV's Advisor Performance table, live from the
+// dashboard, dressed up to grab attention: a "goals hit" ring, then one tile per
+// number with a progress ring to its goal. Same goals as the TV. A 👑 marks any
+// number where they lead the team.
+function useDashboardData() {
+  const [d, setD] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${import.meta.env.BASE_URL}data/data.json?v=${Date.now()}`, { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+      .then(j => { if (!cancelled) setD(j && j.data ? j.data : j); });
+    return () => { cancelled = true; };
+  }, []);
+  return d;
+}
+const SC_CSS = `
+@keyframes scGlow{0%,100%{box-shadow:0 0 0 1px rgba(74,222,128,.35),0 0 18px -6px rgba(74,222,128,.55)}50%{box-shadow:0 0 0 1px rgba(74,222,128,.6),0 0 28px -4px rgba(74,222,128,.8)}}
+@keyframes scMiss{0%,100%{border-color:rgba(248,113,113,.35)}50%{border-color:rgba(248,113,113,.75)}}
+.sc-tile{position:relative;border-radius:14px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(148,163,184,.2);overflow:hidden}
+.sc-tile.hit{animation:scGlow 2.6s ease-in-out infinite;background:linear-gradient(160deg,rgba(34,197,94,.16),rgba(34,197,94,.03))}
+.sc-tile.miss{animation:scMiss 2.2s ease-in-out infinite;background:linear-gradient(160deg,rgba(239,68,68,.12),rgba(239,68,68,.02))}
+.sc-tile .lbl{font-size:10.5px;font-weight:900;letter-spacing:.06em;white-space:nowrap;text-transform:uppercase;color:#94a3b8}
+.sc-crown{position:absolute;top:34px;right:3px;font-size:14px;filter:drop-shadow(0 0 6px rgba(250,204,21,.8))}
+`;
+function Ring({ frac, color, size = 86, stroke = 8, children }) {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, f = Math.max(0, Math.min(1, frac || 0));
+  return (
+    <div style={{ position: 'relative', width: size, height: size, margin: '8px 0 6px' }}>
+      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(148,163,184,.16)" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={`${c * f} ${c}`} style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>{children}</div>
+    </div>
+  );
+}
+const SC_P = (v, d = 1) => `${((Number(v) || 0) * 100).toFixed(d)}%`;
+function scoreMetrics(data) {
+  const r50 = roh50Goals(data || {});
+  return [
+    { key: 'hours_per_ro', label: 'Hrs / RO', goal: 1.4, fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs/RO` },
+    { key: 'align', label: 'Alignment', goal: 0.10, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'tires', label: 'Tires', goal: 0.15, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'valvoline', label: 'Valvoline', goal: 0.25, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'roh50_hrs_ro', label: '$50 Add-on Hrs', goal: r50.hrs_ro, fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs` },
+    { key: 'roh50_add_rate', label: '$50 Add Rate', goal: r50.add_rate, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'csi', label: 'CSI', goal: 910, fmt: v => String(Math.round(Number(v) || 0)), gap: d => `${Math.ceil(d)} pts` },
+    { key: 'asr', label: 'ASR', goal: 0.21, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'elr', label: 'ELR', goal: 0.88, fmt: v => SC_P(v, 0), gap: d => `${(d * 100).toFixed(1)} pts` },
+  ].filter(m => m.goal > 0);
+}
+function Scorecard({ data, advisor, team }) {
+  const metrics = scoreMetrics(data);
+  const val = (a, k) => Number(a && a[k]) || 0;
+  const rows = metrics.map(m => {
+    const v = val(advisor, m.key);
+    const hit = v >= m.goal - 1e-9;
+    const best = team.length > 1 && team.every(o => o === advisor || val(o, m.key) < v) && v > 0;
+    return { ...m, v, hit, best };
+  });
+  const hits = rows.filter(r => r.hit).length;
+  const share = rows.length ? hits / rows.length : 0;
+  const ringCol = share >= 0.75 ? '#4ade80' : share >= 0.45 ? '#facc15' : '#f87171';
+  const daily = advisorDailyAverage(advisor, data);
+  const big = (k, v, sub, color = '#f8fafc') => (
+    <div style={{ minWidth: 120 }}>
+      <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#64748b' }}>{k}</div>
+      <div style={{ fontSize: 30, fontWeight: 1000, color, lineHeight: 1.1 }}>{v}</div>
+      {sub ? <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 700 }}>{sub}</div> : null}
+    </div>
+  );
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap', padding: '14px 18px', borderRadius: 16, marginBottom: 14,
+        background: 'linear-gradient(120deg,rgba(56,189,248,.14),rgba(168,85,247,.10) 55%,rgba(250,204,21,.08))', border: '1px solid rgba(125,211,252,.3)' }}>
+        <Ring frac={share} color={ringCol} size={104} stroke={10}>
+          <div style={{ fontSize: 30, fontWeight: 1000, color: ringCol, lineHeight: 1 }}>{hits}<span style={{ fontSize: 16, color: '#94a3b8' }}>/{rows.length}</span></div>
+          <div style={{ fontSize: 9.5, fontWeight: 900, color: '#94a3b8', letterSpacing: '.08em' }}>GOALS HIT</div>
+        </Ring>
+        {big('Daily avg', daily.toFixed(1), 'hrs / workday')}
+        {big('MTD hrs', (Number(advisor.mtd_hours) || 0).toFixed(1), `${Number(advisor.ro_count) || 0} ROs`)}
+        {big('Last month', (Number(advisor.last_month_total) || 0).toFixed(1), 'hrs total', '#cbd5e1')}
+        <div style={{ flex: 1, minWidth: 160, fontSize: 15, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.45 }}>
+          {hits === rows.length ? '🔥 Every goal on the board is hit. Keep it there.'
+            : hits === 0 ? '🎯 Nothing green yet — pick one tile and turn it today.'
+            : <>🎯 {rows.length - hits} to turn green. Closest: <span style={{ color: '#fde047' }}>{(() => {
+                const miss = rows.filter(r => !r.hit).sort((a, b) => (b.v / b.goal) - (a.v / a.goal))[0];
+                return miss ? `${miss.label} (${miss.gap(miss.goal - miss.v)} away)` : '';
+              })()}</span></>}
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${rows.length}, minmax(0, 1fr))`, gap: 9 }}>
+        {rows.map(r => {
+          const col = r.hit ? '#4ade80' : r.v / r.goal >= 0.85 ? '#facc15' : '#f87171';
+          return (
+            <div key={r.key} className={`sc-tile ${r.hit ? 'hit' : 'miss'}`}>
+              {r.best ? <span className="sc-crown" title="Best on the team">👑</span> : null}
+              <div className="lbl">{r.label}</div>
+              <Ring frac={r.v / r.goal} color={col} size={78} stroke={7}>
+                <div style={{ fontSize: 17, fontWeight: 1000, color: col }}>{r.fmt(r.v)}</div>
+              </Ring>
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>goal {r.fmt(r.goal)}</div>
+              <div style={{ marginTop: 5, fontSize: 12.5, fontWeight: 900, color: r.hit ? '#86efac' : '#fca5a5' }}>
+                {r.hit ? '✓ HIT' : `▼ ${r.gap(r.goal - r.v)} to go`}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+function DashboardScorecards({ names }) {
+  const data = useDashboardData();
+  if (!data) return null;
+  const team = advisorsForDisplay(data).filter(a => !a.hidden);
+  const list = names.map(n => team.find(a => firstUp(a.name) === firstUp(n))).filter(Boolean);
+  if (!list.length) return null;
+  return (
+    <Section icon="📊" title={list.length > 1 ? 'Dashboard scorecards' : 'Your dashboard scorecard'}
+      right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>live from the Shop TV</span>}>
+      <style>{SC_CSS}</style>
+      <div style={{ display: 'grid', gap: 22 }}>
+        {list.map(a => (
+          <div key={a.name}>
+            {list.length > 1 && <div style={{ fontSize: 19, fontWeight: 1000, color: '#f8fafc', marginBottom: 8 }}>{firstUp(a.name)}</div>}
+            <Scorecard data={data} advisor={a} team={team} />
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 // ── One box per technician ───────────────────────────────────────────────────
 // This week's flagged hours vs their weekly goal, the hours still needed, and
 // an efficiency gauge = average goal % of their last two COMPLETED pay weeks
@@ -581,6 +721,8 @@ function ManagerReport({ report }) {
       <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
 
       <AdvisorBreakdown rows={f.breakdown} />
+
+      <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} />
 
       {f.contest && f.contest.live && (f.breakdown || []).length ? (
         <Section icon="💵" title="Big-Money LOF — every advisor">
