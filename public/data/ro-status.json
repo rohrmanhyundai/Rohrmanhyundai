@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-02T19:02:26.030Z",
+  "updatedAt": "2026-10-02T19:08:43.080Z",
   "by": "SHAWN",
   "rows": [
     {
@@ -291,23 +291,11 @@
       "openDate": "Tue, Sep 29, 2026 11:51 AM"
     },
     {
-      "ro": "781190",
-      "advisor": "DAVID RILEY",
-      "vehicle": "2012 Hyundai Accent",
-      "tech": "KADEN WILSON",
-      "userFlag": "NO_LABEL",
-      "warranty": false,
-      "roStatus": "INVOICED",
-      "cpStatus": "PAID",
-      "roAge": 4,
-      "openDate": "Tue, Sep 29, 2026 9:31 AM"
-    },
-    {
       "ro": "781181",
       "advisor": "DAVID RILEY",
       "vehicle": "2018 Hyundai Santa Fe Sport",
       "tech": "CORY SWINDLE",
-      "userFlag": "PURPLE",
+      "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
@@ -331,7 +319,7 @@
       "advisor": "JORDAN TROXEL",
       "vehicle": "2023 Hyundai Santa Cruz",
       "tech": "CARTER JEAN",
-      "userFlag": "PURPLE",
+      "userFlag": "NO_LABEL",
       "warranty": false,
       "roStatus": "INVOICED",
       "cpStatus": "INVOICED",
