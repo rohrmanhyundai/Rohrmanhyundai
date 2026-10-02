@@ -2,8 +2,8 @@
   "techResources": [
     "hotRepairs",
     "workSchedule",
-    "documentLibrary",
     "workInProgress",
+    "documentLibrary",
     "tireQuote",
     "atDiagWorksheet",
     "additionalTimeReview",
