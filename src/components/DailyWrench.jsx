@@ -491,18 +491,92 @@ const SC_P = (v, d = 1) => `${((Number(v) || 0) * 100).toFixed(d)}%`;
 function scoreMetrics(data) {
   const r50 = roh50Goals(data || {});
   return [
-    { key: 'hours_per_ro', label: 'Hrs / RO', goal: 1.4, fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs/RO` },
-    { key: 'align', label: 'Alignment', goal: 0.10, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
-    { key: 'tires', label: 'Tires', goal: 0.15, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
-    { key: 'valvoline', label: 'Valvoline', goal: 0.25, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
-    { key: 'roh50_hrs_ro', label: '$50 Add-on Hrs', goal: r50.hrs_ro, fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs` },
-    { key: 'roh50_add_rate', label: '$50 Add Rate', goal: r50.add_rate, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'hours_per_ro', label: 'Hrs / RO', goal: 1.4, sell: 'hours', base: 'ro', fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs/RO` },
+    { key: 'align', label: 'Alignment', goal: 0.10, sell: 'count', base: 'ro', unit: ['alignment', 'alignments'], fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'tires', label: 'Tires', goal: 0.15, sell: 'count', base: 'ro', unit: ['tire sale', 'tire sales'], fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'valvoline', label: 'Valvoline', goal: 0.25, sell: 'count', base: 'ro', unit: ['Valvoline service', 'Valvoline services'], fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'roh50_hrs_ro', label: '$50 Add-on Hrs', goal: r50.hrs_ro, sell: 'hours', base: 'lof', fmt: v => (Number(v) || 0).toFixed(2), gap: d => `${d.toFixed(2)} hrs` },
+    { key: 'roh50_add_rate', label: '$50 Add Rate', goal: r50.add_rate, sell: 'count', base: 'lof', unit: ['add-on ticket', 'add-on tickets'], fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
     { key: 'csi', label: 'CSI', goal: 910, fmt: v => String(Math.round(Number(v) || 0)), gap: d => `${Math.ceil(d)} pts` },
-    { key: 'asr', label: 'ASR', goal: 0.21, fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
+    { key: 'asr', label: 'ASR', goal: 0.21, sell: 'count', base: 'ro', unit: ['ASR sell', 'ASR sells'], fmt: v => SC_P(v), gap: d => `${(d * 100).toFixed(1)} pts` },
     { key: 'elr', label: 'ELR', goal: 0.88, fmt: v => SC_P(v, 0), gap: d => `${(d * 100).toFixed(1)} pts` },
   ].filter(m => m.goal > 0);
 }
-function Scorecard({ data, advisor, team }) {
+// What it takes today. Rates are (sold ÷ base) month to date; the base is the
+// RO count (or $50 tickets for the add-on numbers). Today adds T more —
+// today's booked appointments (or $50 LOF tickets), else their average per
+// workday. The DMS uses its own denominators, so these are close estimates.
+function sellPlan(m, advisor, today) {
+  const v = Number(advisor[m.key]) || 0;
+  const N = m.base === 'lof' ? (Number(advisor.lof_tickets) || 0) : (Number(advisor.ro_count) || 0);
+  if (!m.sell || N <= 0) return null;
+  const T = Math.max(1, Math.round(m.base === 'lof' ? (today.lof50 || today.lofAvg || 1) : (today.ros || today.roAvg || 1)));
+  const have = v * N;                           // sold so far (count or hours)
+  const at = (k) => (have + k) / (N + T);       // the rate after k more sells today
+  const hit = v >= m.goal - 1e-9;
+  if (m.sell === 'hours') {
+    const need = Math.max(0, m.goal * (N + T) - have);
+    // Steps scaled to the job: quarter, half, three-quarters and all of the
+    // hours needed (or of a goal-paced day when they're already there).
+    const span = need > 0 ? need : m.goal * T;
+    const ladder = [0.25, 0.5, 0.75, 1].map(f => Math.round(span * f * 10) / 10).filter((k, i, a) => k > 0 && a.indexOf(k) === i).map(k => ({ k, r: at(k) }));
+    return { kind: 'hours', N, T, hit, need, ladder, cushion: hit ? Math.max(0, have - m.goal * (N + T)) : 0 };
+  }
+  const need = Math.max(0, Math.ceil(m.goal * (N + T) - have - 1e-9));
+  const ladder = Array.from({ length: Math.min(T, Math.max(need, 3)) + 1 }, (_, k) => ({ k, r: at(k) })).slice(1);
+  // Goal hit: how many more ROs can go out with no sell and still hold goal.
+  const cushion = hit ? Math.max(0, Math.floor(have / m.goal - N + 1e-9)) : 0;
+  return { kind: 'count', N, T, hit, need, ladder, cushion, all: at(T), perSell: at(1) - at(0) };
+}
+function SellPanel({ m, plan, onClose }) {
+  const unit = (k) => (m.unit ? m.unit[k === 1 ? 0 : 1] : 'hrs');
+  const baseWord = m.base === 'lof' ? '$50 tickets' : 'ROs';
+  const todayWord = m.base === 'lof' ? `${plan.T} $50 LOF${plan.T === 1 ? '' : 's'} today` : `${plan.T} RO${plan.T === 1 ? '' : 's'} today`;
+  const good = plan.hit;
+  const reachable = plan.kind === 'hours' || plan.need <= plan.T;
+  return (
+    <div style={{ gridColumn: '1 / -1', borderRadius: 16, padding: '16px 18px', position: 'relative',
+      background: good ? 'linear-gradient(120deg,rgba(34,197,94,.18),rgba(56,189,248,.08))' : 'linear-gradient(120deg,rgba(250,204,21,.16),rgba(239,68,68,.10))',
+      border: `1px solid ${good ? 'rgba(74,222,128,.55)' : 'rgba(250,204,21,.55)'}`, boxShadow: `0 0 26px -8px ${good ? 'rgba(74,222,128,.8)' : 'rgba(250,204,21,.8)'}` }}>
+      <button onClick={onClose} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: '#94a3b8', fontSize: 18, cursor: 'pointer' }}>×</button>
+      <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#94a3b8' }}>{m.label} · what it takes today</div>
+      {good ? (
+        <div style={{ fontSize: 22, fontWeight: 1000, color: '#86efac', marginTop: 6 }}>
+          ✓ At goal. {plan.kind === 'hours'
+            ? <>Cushion today: {plan.cushion.toFixed(1)} hrs over goal across {todayWord}.</>
+            : <>You can write {plan.cushion} more {baseWord} with no {unit(1)} and still hold {m.fmt(m.goal)}.</>}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', marginTop: 6 }}>
+          <span style={{ fontSize: 44, fontWeight: 1000, color: '#fde047', lineHeight: 1, textShadow: '0 0 18px rgba(250,204,21,.6)' }}>
+            {plan.kind === 'hours' ? plan.need.toFixed(1) : plan.need}
+          </span>
+          <span style={{ fontSize: 18, fontWeight: 900, color: '#f8fafc' }}>
+            {plan.kind === 'hours' ? `hrs to sell today across ${todayWord.replace(' today', '')}` : `${unit(plan.need)} to sell today`} → {m.fmt(m.goal)}
+          </span>
+          {!reachable ? <span style={{ fontSize: 14, fontWeight: 800, color: '#fca5a5' }}>More than today's {plan.T} {baseWord} — sell on every one and you reach {m.fmt(plan.all)}.</span> : null}
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+        {plan.ladder.map(x => {
+          const ok = x.r >= m.goal - 1e-9;
+          return (
+            <span key={x.k} style={{ padding: '6px 11px', borderRadius: 999, fontSize: 13.5, fontWeight: 900,
+              background: ok ? 'rgba(74,222,128,.18)' : 'rgba(148,163,184,.12)', border: `1px solid ${ok ? 'rgba(74,222,128,.6)' : 'rgba(148,163,184,.3)'}`, color: ok ? '#86efac' : '#e2e8f0' }}>
+              {plan.kind === 'hours' ? `+${x.k} hrs` : `Sell ${x.k}`} → {m.fmt(x.r)}{ok ? ' ✓' : ''}
+            </span>
+          );
+        })}
+      </div>
+      <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10 }}>
+        Based on {plan.N} {baseWord} month to date plus {todayWord}{plan.kind === 'count' && plan.perSell ? ` · each sell ≈ +${(plan.perSell * 100).toFixed(1)} pts` : ''}. The DMS counts on its own base, so treat these as close estimates.
+      </div>
+    </div>
+  );
+}
+
+function Scorecard({ data, advisor, team, today = {} }) {
+  const [open, setOpen] = useState(null);
   const metrics = scoreMetrics(data);
   const val = (a, k) => Number(a && a[k]) || 0;
   const rows = metrics.map(m => {
@@ -546,7 +620,10 @@ function Scorecard({ data, advisor, team }) {
         {rows.map(r => {
           const col = r.hit ? '#4ade80' : r.v / r.goal >= 0.85 ? '#facc15' : '#f87171';
           return (
-            <div key={r.key} className={`sc-tile ${r.hit ? 'hit' : 'miss'}`}>
+            <div key={r.key} className={`sc-tile ${r.hit ? 'hit' : 'miss'}`}
+              onClick={sellPlan(r, advisor, today) ? () => setOpen(o => (o === r.key ? null : r.key)) : undefined}
+              title={sellPlan(r, advisor, today) ? 'Click: how many sells today' : undefined}
+              style={{ cursor: sellPlan(r, advisor, today) ? 'pointer' : 'default', outline: open === r.key ? '2px solid #fde047' : 'none', outlineOffset: 2 }}>
               {r.best ? <span className="sc-crown" title="Best on the team">👑</span> : null}
               <div className="lbl">{r.label}</div>
               <Ring frac={r.v / r.goal} color={col} size={78} stroke={7}>
@@ -556,9 +633,11 @@ function Scorecard({ data, advisor, team }) {
               <div style={{ marginTop: 5, fontSize: 12.5, fontWeight: 900, color: r.hit ? '#86efac' : '#fca5a5' }}>
                 {r.hit ? '✓ HIT' : `▼ ${r.gap(r.goal - r.v)} to go`}
               </div>
+              {sellPlan(r, advisor, today) ? <div style={{ fontSize: 10, fontWeight: 800, color: '#7dd3fc', marginTop: 4, letterSpacing: '.04em' }}>👆 TAP FOR TODAY</div> : null}
             </div>
           );
         })}
+        {open && (() => { const m = rows.find(r => r.key === open); const plan = m && sellPlan(m, advisor, today); return plan ? <SellPanel m={m} plan={plan} onClose={() => setOpen(null)} /> : null; })()}
       </div>
     </div>
   );
@@ -618,7 +697,19 @@ function TodayStrip({ facts }) {
   );
 }
 
-function DashboardScorecards({ names, facts }) {
+// Today's expected volume for the sell planner: booked appointments / $50 LOFs
+// when the report has them, else the month's average per workday so far.
+function todayCounts(a, data, ap, hours) {
+  const elapsed = Math.max(1, Number(hours && hours.workingDaysElapsed) || 0) ;
+  const d = advisorDailyAverage(a, data) > 0 && Number(a.mtd_hours) > 0 ? Number(a.mtd_hours) / advisorDailyAverage(a, data) : elapsed;
+  const days = Math.max(1, Math.round(d));
+  return {
+    ros: ap && ap.total ? ap.total : 0, lof50: ap && ap.lof50 ? ap.lof50 : 0,
+    roAvg: (Number(a.ro_count) || 0) / days, lofAvg: (Number(a.lof_tickets) || 0) / days,
+  };
+}
+
+function DashboardScorecards({ names, facts, appts = {} }) {
   const data = useDashboardData();
   const team = data ? advisorsForDisplay(data).filter(a => !a.hidden) : [];
   const list = names.map(n => team.find(a => firstUp(a.name) === firstUp(n))).filter(Boolean);
@@ -639,7 +730,7 @@ function DashboardScorecards({ names, facts }) {
         {list.map(a => (
           <div key={a.name}>
             {list.length > 1 && <div style={{ fontSize: 19, fontWeight: 1000, color: '#f8fafc', marginBottom: 8 }}>{firstUp(a.name)}</div>}
-            <Scorecard data={data} advisor={a} team={team} />
+            <Scorecard data={data} advisor={a} team={team} today={todayCounts(a, data, (facts && facts.appointments) || appts[firstUp(a.name)], facts && facts.hours)} />
           </div>
         ))}
       </div>
@@ -772,7 +863,8 @@ function ManagerReport({ report }) {
 
       <AdvisorBreakdown rows={f.breakdown} />
 
-      <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} />
+      <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)}
+        appts={Object.fromEntries((f.breakdown || []).map(r => [firstUp(r.advisor), r.appts || {}]))} />
 
       {f.contest && f.contest.live && (f.breakdown || []).length ? (
         <Section icon="💵" title="Big-Money LOF — every advisor">
