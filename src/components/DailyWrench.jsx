@@ -3,6 +3,7 @@ import { loadDailyWrench, loadDailyWrenchIndex, requestDailyWrench } from '../ut
 import { trackPage, trackAction } from '../utils/activityTracker';
 import { BigMoneyAdvisorCharts, CHART_LEGEND } from './BigMoneyProgress';
 import { advisorDailyAverage, advisorsForDisplay, roh50Goals } from '../utils/calculations';
+import { ownerOf, apptTags } from '../utils/apptMath.mjs';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
 // The morning briefing. An advisor opens it and sees their own day: where the
@@ -256,7 +257,7 @@ function AdvisorBreakdown({ rows }) {
 }
 
 // ── One advisor's briefing ───────────────────────────────────────────────────
-function AdvisorReport({ report, name }) {
+function AdvisorReport({ report, name, onOpenPrep }) {
   if (!report) return null;
   const f = report.facts || {};
   const h = f.hours || {};
@@ -278,7 +279,7 @@ function AdvisorReport({ report, name }) {
         ) : null}
       </div>
 
-      <DashboardScorecards names={[name]} facts={f} />
+      <DashboardScorecards names={[name]} facts={f} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep} />
 
       {contest.live ? (
         <Section icon="💵" title="Big-Money LOF">
@@ -506,6 +507,43 @@ function scoreMetrics(data) {
 // RO count (or $50 tickets for the add-on numbers). Today adds T more —
 // today's booked appointments (or $50 LOF tickets), else their average per
 // workday. The DMS uses its own denominators, so these are close estimates.
+// Today's book × each tile: the advisor's booked cars whose declined work
+// (the deferred snapshot matched at DMS upload) includes that kind of sell.
+// Valvoline services are the V-prefixed op codes (VVIFL, VVBFL, VVCFL…).
+const OPP_MATCH = {
+  align: i => /^ALIGN/i.test(i.code || '') || /ALIGNMENT/i.test(i.desc || ''),
+  tires: i => /^TIRE\d/i.test(i.code || '') || /REPLACE .*TIRE/i.test(i.desc || ''),
+  valvoline: i => /^V/i.test(i.code || ''),
+  asr: () => true,
+  hours_per_ro: () => true,
+  roh50_add_rate: () => true,
+  roh50_hrs_ro: () => true,
+};
+function useApptDay(date) {
+  const [day, setDay] = useState(null);
+  useEffect(() => {
+    if (!date) return;
+    let cancelled = false;
+    fetch(`${import.meta.env.BASE_URL}data/appointments/${date}.json?v=${Date.now()}`, { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+      .then(j => { if (!cancelled) setDay(j); });
+    return () => { cancelled = true; };
+  }, [date]);
+  return day;
+}
+function oppsFor(day, advisorFirst, key) {
+  const match = OPP_MATCH[key];
+  if (!day || !match || !Array.isArray(day.appts)) return [];
+  const claims = day.claims || {};
+  const lofOnly = key === 'roh50_add_rate' || key === 'roh50_hrs_ro';
+  return day.appts
+    .filter(a => a.deferred && ownerOf(a, claims) === advisorFirst)
+    .filter(a => !lofOnly || apptTags(a).some(t => t.key === 'lof50'))
+    .map(a => ({ a, items: (a.deferred.items || []).filter(i => i.code !== 'REC' && match(i)) }))
+    .filter(x => x.items.length);
+}
+const oppHours = (o) => o.items.reduce((n, i) => n + (Number(i.h) || 0) * (Number(i.count) || 1), 0);
+
 function sellPlan(m, advisor, today) {
   const v = Number(advisor[m.key]) || 0;
   const N = m.base === 'lof' ? (Number(advisor.lof_tickets) || 0) : (Number(advisor.ro_count) || 0);
@@ -528,7 +566,7 @@ function sellPlan(m, advisor, today) {
   const cushion = hit ? Math.max(0, Math.floor(have / m.goal - N + 1e-9)) : 0;
   return { kind: 'count', N, T, hit, need, ladder, cushion, all: at(T), perSell: at(1) - at(0) };
 }
-function SellPanel({ m, plan, onClose }) {
+function SellPanel({ m, plan, onClose, opps = [], date, advisorFirst, onOpenPrep }) {
   const unit = (k) => (m.unit ? m.unit[k === 1 ? 0 : 1] : 'hrs');
   const baseWord = m.base === 'lof' ? '$50 tickets' : 'ROs';
   const todayWord = m.base === 'lof' ? `${plan.T} $50 LOF${plan.T === 1 ? '' : 's'} today` : `${plan.T} RO${plan.T === 1 ? '' : 's'} today`;
@@ -568,6 +606,43 @@ function SellPanel({ m, plan, onClose }) {
           );
         })}
       </div>
+      {opps.length ? (
+        <div style={{ marginTop: 14, borderTop: '1px solid rgba(148,163,184,.2)', paddingTop: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
+            <span style={{ fontSize: 15, fontWeight: 1000, color: '#fde047', textShadow: '0 0 12px rgba(250,204,21,.5)' }}>
+              🔥 {opps.length} car{opps.length === 1 ? '' : 's'} on today's book already declined this
+            </span>
+            {onOpenPrep && date ? (
+              <button onClick={() => onOpenPrep(advisorFirst, date)}
+                style={{ marginLeft: 'auto', background: 'linear-gradient(180deg,#38bdf8,#0369a1)', border: '1px solid rgba(125,211,252,.7)', color: '#fff', fontWeight: 900, fontSize: 13, borderRadius: 10, padding: '7px 14px', cursor: 'pointer', boxShadow: '0 0 14px -2px rgba(56,189,248,.7)' }}>
+                📋 Open today's prep sheet →
+              </button>
+            ) : null}
+          </div>
+          <div style={{ display: 'grid', gap: 7 }}>
+            {opps.map(({ a, items }) => (
+              <div key={a.apptNo || a.customer + a.time} onClick={onOpenPrep && date ? () => onOpenPrep(advisorFirst, date) : undefined}
+                style={{ display: 'grid', gridTemplateColumns: '78px 1fr auto', gap: 12, alignItems: 'center', padding: '9px 12px', borderRadius: 11, cursor: onOpenPrep && date ? 'pointer' : 'default',
+                  background: 'rgba(2,6,23,.5)', border: '1px solid rgba(250,204,21,.3)' }}>
+                <span style={{ fontSize: 13.5, fontWeight: 900, color: '#7dd3fc' }}>{a.time}</span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>{a.customer} <span style={{ fontWeight: 700, color: '#94a3b8', fontSize: 12.5 }}>· {a.vehicle}</span></div>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                    {items.map((i, k) => (
+                      <span key={k} style={{ fontSize: 12, fontWeight: 800, padding: '2px 9px', borderRadius: 999, background: 'rgba(250,204,21,.12)', border: '1px solid rgba(250,204,21,.4)', color: '#fef08a' }}>
+                        {(i.desc || i.code).toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}{i.count > 1 ? ` ×${i.count}` : ''}{i.price ? ` · $${Math.round(i.price)}` : ''}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 900, color: '#86efac', whiteSpace: 'nowrap' }}>{oppHours({ items }).toFixed(1)} hrs</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div style={{ marginTop: 12, fontSize: 12.5, color: '#64748b', fontWeight: 700 }}>No car on today's book has declined {m.label.toLowerCase()} work on file — this one comes from fresh recommendations.</div>
+      )}
       <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 10 }}>
         Based on {plan.N} {baseWord} month to date plus {todayWord}{plan.kind === 'count' && plan.perSell ? ` · each sell ≈ +${(plan.perSell * 100).toFixed(1)} pts` : ''}. The DMS counts on its own base, so treat these as close estimates.
       </div>
@@ -575,8 +650,9 @@ function SellPanel({ m, plan, onClose }) {
   );
 }
 
-function Scorecard({ data, advisor, team, today = {} }) {
+function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPrep }) {
   const [open, setOpen] = useState(null);
+  const me = firstUp(advisor.name);
   const metrics = scoreMetrics(data);
   const val = (a, k) => Number(a && a[k]) || 0;
   const rows = metrics.map(m => {
@@ -633,11 +709,19 @@ function Scorecard({ data, advisor, team, today = {} }) {
               <div style={{ marginTop: 5, fontSize: 12.5, fontWeight: 900, color: r.hit ? '#86efac' : '#fca5a5' }}>
                 {r.hit ? '✓ HIT' : `▼ ${r.gap(r.goal - r.v)} to go`}
               </div>
-              {sellPlan(r, advisor, today) ? <div style={{ fontSize: 10, fontWeight: 800, color: '#7dd3fc', marginTop: 4, letterSpacing: '.04em' }}>👆 TAP FOR TODAY</div> : null}
+              {(() => {
+                if (!sellPlan(r, advisor, today)) return null;
+                const n = oppsFor(day, me, r.key).length;
+                return n ? (
+                  <div style={{ fontSize: 10.5, fontWeight: 900, color: '#1c1917', background: 'linear-gradient(180deg,#fde047,#f59e0b)', borderRadius: 999, padding: '2px 8px', marginTop: 5, boxShadow: '0 0 10px rgba(250,204,21,.7)' }}>
+                    🔥 {n} ON TODAY'S BOOK
+                  </div>
+                ) : <div style={{ fontSize: 10, fontWeight: 800, color: '#7dd3fc', marginTop: 4, letterSpacing: '.04em' }}>👆 TAP FOR TODAY</div>;
+              })()}
             </div>
           );
         })}
-        {open && (() => { const m = rows.find(r => r.key === open); const plan = m && sellPlan(m, advisor, today); return plan ? <SellPanel m={m} plan={plan} onClose={() => setOpen(null)} /> : null; })()}
+        {open && (() => { const m = rows.find(r => r.key === open); const plan = m && sellPlan(m, advisor, today); return plan ? <SellPanel m={m} plan={plan} onClose={() => setOpen(null)} opps={oppsFor(day, me, m.key)} date={date} advisorFirst={me} onOpenPrep={onOpenPrep} /> : null; })()}
       </div>
     </div>
   );
@@ -709,8 +793,9 @@ function todayCounts(a, data, ap, hours) {
   };
 }
 
-function DashboardScorecards({ names, facts, appts = {} }) {
+function DashboardScorecards({ names, facts, appts = {}, date, onOpenPrep }) {
   const data = useDashboardData();
+  const day = useApptDay(date);
   const team = data ? advisorsForDisplay(data).filter(a => !a.hidden) : [];
   const list = names.map(n => team.find(a => firstUp(a.name) === firstUp(n))).filter(Boolean);
   if (!list.length && !facts) return null;
@@ -730,7 +815,7 @@ function DashboardScorecards({ names, facts, appts = {} }) {
         {list.map(a => (
           <div key={a.name}>
             {list.length > 1 && <div style={{ fontSize: 19, fontWeight: 1000, color: '#f8fafc', marginBottom: 8 }}>{firstUp(a.name)}</div>}
-            <Scorecard data={data} advisor={a} team={team} today={todayCounts(a, data, (facts && facts.appointments) || appts[firstUp(a.name)], facts && facts.hours)} />
+            <Scorecard data={data} advisor={a} team={team} day={day} date={date} onOpenPrep={onOpenPrep} today={todayCounts(a, data, (facts && facts.appointments) || appts[firstUp(a.name)], facts && facts.hours)} />
           </div>
         ))}
       </div>
@@ -832,7 +917,7 @@ function TechBoxes({ list, asOf }) {
 }
 
 // ── The manager's shop-wide report ───────────────────────────────────────────
-function ManagerReport({ report }) {
+function ManagerReport({ report, onOpenPrep }) {
   if (!report) return null;
   const f = report.facts || {};
   const m = f.money || {};
@@ -863,7 +948,7 @@ function ManagerReport({ report }) {
 
       <AdvisorBreakdown rows={f.breakdown} />
 
-      <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)}
+      <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep}
         appts={Object.fromEntries((f.breakdown || []).map(r => [firstUp(r.advisor), r.appts || {}]))} />
 
       {f.contest && f.contest.live && (f.breakdown || []).length ? (
@@ -945,7 +1030,7 @@ function ManagerReport({ report }) {
   );
 }
 
-export default function DailyWrench({ currentUser, currentRole, onBack }) {
+export default function DailyWrench({ currentUser, currentRole, onBack, onOpenPrep }) {
   const isManager = isManagerRole(currentRole);
   const me = firstWord(currentUser);
   const [day, setDay] = useState(todayKey());
@@ -1056,12 +1141,12 @@ export default function DailyWrench({ currentUser, currentRole, onBack }) {
           )}
 
           {!loading && doc && view === 'manager' && isManager && (
-            doc.manager ? <ManagerReport report={doc.manager} />
+            doc.manager ? <ManagerReport report={doc.manager} onOpenPrep={onOpenPrep} />
               : <div className="dw-card" style={{ textAlign: 'center', color: '#94a3b8', padding: 30 }}>No shop report in this day's file.</div>
           )}
 
           {!loading && doc && view !== 'manager' && (
-            shown ? <AdvisorReport report={shown} name={shownName} />
+            shown ? <AdvisorReport report={shown} name={shownName} onOpenPrep={onOpenPrep} />
               : (
                 <div className="dw-card" style={{ textAlign: 'center', padding: 36 }}>
                   <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9', marginBottom: 6 }}>Nothing for {shownName} on {prettyDay(day)}</div>

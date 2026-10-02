@@ -1651,6 +1651,8 @@ export default function App() {
       <DailyWrench
         currentUser={currentUser}
         currentRole={currentRole}
+        // Scorecard "on today's book" → that advisor's prep sheet for the day.
+        onOpenPrep={(advisor, date) => { setViewingAdvisor(advisor); setSelectedDay(date); goTo('advisor-day', 'daily-wrench'); }}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
       />
     );
@@ -1876,7 +1878,12 @@ export default function App() {
         currentRole={currentRole}
         advisorList={advisorList}
         hrsRoGoal={roh50Goals(data).hrs_ro}
-        onBack={() => { setCalendarRefreshKey(k => k + 1); navTo('advisor-calendar'); }}
+        onBack={() => {
+          setCalendarRefreshKey(k => k + 1);
+          // Opened from a Daily Wrench scorecard → back to the paper.
+          if (prevPage === 'daily-wrench') { setPrevPage('advisor-calendar'); navTo('daily-wrench'); return; }
+          navTo('advisor-calendar');
+        }}
       />
     );
   }
