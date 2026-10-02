@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { loadDailyWrench, loadDailyWrenchIndex, requestDailyWrench } from '../utils/github';
 import { trackPage, trackAction } from '../utils/activityTracker';
+import { BigMoneyAdvisorCharts, CHART_LEGEND } from './BigMoneyProgress';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
 // The morning briefing. An advisor opens it and sees their own day: where the
@@ -281,19 +282,20 @@ function AdvisorReport({ report, name }) {
             {contest.me ? (
               <>
                 <Stat k="Your rank" v={`#${contest.me.rank}`} s={contest.me.qualified ? 'qualified' : 'not qualified yet'} tone={contest.me.qualified ? 'good' : 'warn'} />
-                <Stat k="$50 Hrs/RO" v={contest.me.hrsRo} s={contest.me.hrsRoGap > 0 ? `${contest.me.hrsRoGap} under the ${contest.goals.hrsRo} goal` : `goal ${contest.goals.hrsRo} — hit`} tone={contest.me.hrsRoGap > 0 ? 'warn' : 'good'} />
+                <Stat k="Add-on Hrs/Ticket" v={contest.me.hrsRo} s={contest.me.hrsRoGap > 0 ? `${contest.me.hrsRoGap} under the ${contest.goals.hrsRo} goal` : `goal ${contest.goals.hrsRo} — hit`} tone={contest.me.hrsRoGap > 0 ? 'warn' : 'good'} />
                 <Stat k="$50 Add rate" v={`${Math.round(contest.me.rate * 100)}%`} s={contest.me.rateGap > 0 ? `${Math.round(contest.me.rateGap * 100)} points under goal` : 'goal hit'} tone={contest.me.rateGap > 0 ? 'warn' : 'good'} />
               </>
             ) : (
               <>
                 <Stat k="Your rank" v="—" s="no standing on the board yet" tone="warn" />
-                <Stat k="$50 Hrs/RO goal" v={contest.goals.hrsRo} />
+                <Stat k="Add-on Hrs/Ticket goal" v={contest.goals.hrsRo} />
                 <Stat k="$50 Add rate goal" v={`${Math.round(contest.goals.addRate * 100)}%`} />
               </>
             )}
             <Stat k="Days left" v={contest.daysLeft} s={contest.prize ? `${money(contest.prize)} on the line` : ''} />
           </div>
           {report.contest ? <div className="dw-quote">{report.contest}</div> : null}
+          <BigMoneyCharts names={[firstUp(name)]} asOf={f.date} label="Your progress toward goal" />
         </Section>
       ) : null}
 
@@ -413,6 +415,48 @@ function AdvisorReport({ report, name }) {
   );
 }
 
+// ── Big-Money progress charts ────────────────────────────────────────────────
+// The contest file (with its daily history) read straight off the site — the
+// same charts as the Big-Money page, cut off at the report's date.
+function useBigMoneyFile() {
+  const [file, setFile] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${import.meta.env.BASE_URL}data/big-money-lof.json?v=${Date.now()}`, { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+      .then(j => { if (!cancelled) setFile(j); });
+    return () => { cancelled = true; };
+  }, []);
+  return file;
+}
+const goalsOf = (file) => {
+  const g = (file && file.latest && file.latest.goals) || {};
+  return { hrs_ro: Number(g.hrs_ro) || 0, add_rate: Number(g.add_rate) || 0 };
+};
+const firstUp = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+function BigMoneyCharts({ names, asOf, label }) {
+  const file = useBigMoneyFile();
+  const c = file && file.contest;
+  if (!c || !c.start || !c.end || !file.history || !names.length) return null;
+  const goals = goalsOf(file);
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
+        <span style={{ fontSize: 13, fontWeight: 900, color: '#e2e8f0' }}>📈 {label || 'Progress toward goal'}</span>
+        <span style={{ fontSize: 11.5, color: '#64748b' }}>{CHART_LEGEND}</span>
+      </div>
+      <div style={{ display: 'grid', gap: 16 }}>
+        {names.map(n => (
+          <div key={n}>
+            {names.length > 1 && <div style={{ fontSize: 15, fontWeight: 900, color: '#f1f5f9', marginBottom: 6 }}>{n}</div>}
+            <BigMoneyAdvisorCharts file={file} name={n} goals={goals} asOf={asOf} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── One box per technician ───────────────────────────────────────────────────
 // This week's flagged hours vs their weekly goal, the hours still needed, and
 // an efficiency gauge = average goal % of their last two COMPLETED pay weeks
@@ -528,6 +572,12 @@ function ManagerReport({ report }) {
       <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
 
       <AdvisorBreakdown rows={f.breakdown} />
+
+      {f.contest && f.contest.live && (f.breakdown || []).length ? (
+        <Section icon="💵" title="Big-Money LOF — every advisor">
+          <BigMoneyCharts names={(f.breakdown || []).map(r => firstUp(r.advisor))} asOf={f.date} label="Progress toward goal" />
+        </Section>
+      ) : null}
 
       {report.forecast ? <Section icon="📈" title="Where the month lands"><div className="dw-quote">{report.forecast}</div></Section> : null}
 
