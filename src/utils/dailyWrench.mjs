@@ -260,6 +260,11 @@ export function hoursFacts({ goals, offKeys, today = new Date() }) {
     onPace: mtd >= expectedByNow,
     // What today actually has to produce to finish the month on goal.
     neededToday: round(remaining > 0 ? remainingHours / remaining : 0),
+    // Same rule as the Prep Calendar's today badge: behind → hours today to be
+    // back on pace by tonight; ahead → hours today to hold their current pace.
+    paceToday: round(mtd >= expectedByNow
+      ? (elapsed > 0 ? mtd / elapsed : dailyTarget)
+      : Math.max(0, dailyTarget * (elapsed + 1) - mtd)),
     percentOfGoal: goal > 0 ? Math.round((mtd / goal) * 100) : 0,
   };
 }

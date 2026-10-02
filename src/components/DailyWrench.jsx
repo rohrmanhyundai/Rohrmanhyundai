@@ -147,22 +147,32 @@ function Bar({ value, goal, color }) {
 }
 function AdvisorBreakdown({ rows }) {
   if (!rows || !rows.length) return null;
-  const k = { fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#64748b' };
+  const k = { fontSize: 12, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#64748b' };
+  // Back-on-pace / hold-pace hours for today. Newer reports carry paceToday;
+  // older ones are worked out from the same facts (expected = MTD − aheadBy).
+  const paceFor = (h) => {
+    if (h.paceToday != null) return h.paceToday;
+    const t = Number(h.dailyTarget) || 0, ahead = Number(h.aheadBy) || 0, mtd = Number(h.mtd) || 0;
+    if (!t) return null;
+    if (!h.onPace) return Math.max(0, Math.round((t - ahead) * 10) / 10);
+    const elapsed = Math.round((mtd - ahead) / t);
+    return Math.round((elapsed > 0 ? mtd / elapsed : t) * 10) / 10;
+  };
   const pct = (v) => `${(Number(v || 0) * 100).toFixed(1)}%`;
   return (
     <Section icon="👥" title="Advisor breakdown" right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>goal forecast · today's book · Big-Money</span>}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 16 }}>
         {rows.map(r => {
           const h = r.hours || {};
           const a = r.appts;
           const b = r.bigMoney;
           const covers = h.hasGoal && a && a.goalHours > 0 ? Math.round((a.goalHours / Math.max(0.1, h.neededToday)) * 100) : null;
           return (
-            <div key={r.advisor} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 14, padding: '14px 15px', display: 'grid', gap: 12 }}>
+            <div key={r.advisor} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 16, padding: '20px 22px', display: 'grid', gap: 18 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 17, fontWeight: 1000, color: '#f8fafc' }}>{r.advisor}</span>
+                <span style={{ fontSize: 22, fontWeight: 1000, color: '#f8fafc' }}>{r.advisor}</span>
                 {h.hasGoal && (
-                  <span className="dw-pill" style={{ marginLeft: 'auto', color: h.onPace ? '#4ade80' : '#f87171', borderColor: h.onPace ? 'rgba(74,222,128,.5)' : 'rgba(248,113,113,.5)', background: h.onPace ? 'rgba(74,222,128,.1)' : 'rgba(248,113,113,.1)' }}>
+                  <span className="dw-pill" style={{ marginLeft: 'auto', fontSize: 13.5, padding: '4px 12px', color: h.onPace ? '#4ade80' : '#f87171', borderColor: h.onPace ? 'rgba(74,222,128,.5)' : 'rgba(248,113,113,.5)', background: h.onPace ? 'rgba(74,222,128,.1)' : 'rgba(248,113,113,.1)' }}>
                     {h.onPace ? `▲ ${Math.abs(h.aheadBy)} hrs ahead` : `▼ ${Math.abs(h.aheadBy)} hrs behind`}
                   </span>
                 )}
@@ -173,47 +183,56 @@ function AdvisorBreakdown({ rows }) {
                 <div style={k}>🎯 Goal forecast — needed today</div>
                 {h.hasGoal ? (
                   <>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 3 }}>
-                      <span style={{ fontSize: 26, fontWeight: 1000, color: h.onPace ? '#86efac' : '#fca5a5' }}>{h.neededToday}</span>
-                      <span style={{ fontSize: 12.5, color: '#94a3b8', fontWeight: 700 }}>hrs today · {h.workingDaysLeft} day{h.workingDaysLeft === 1 ? '' : 's'} left</span>
+                    {(() => { const pv = paceFor(h); return pv != null ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 6, padding: '10px 14px', borderRadius: 12,
+                        background: h.onPace ? 'rgba(34,197,94,.12)' : 'rgba(239,68,68,.12)', border: `1px solid ${h.onPace ? 'rgba(74,222,128,.5)' : 'rgba(248,113,113,.55)'}` }}>
+                        <span style={{ fontSize: 34, fontWeight: 1000, color: h.onPace ? '#86efac' : '#fca5a5', lineHeight: 1 }}>{Number(pv).toFixed(1)}</span>
+                        <span style={{ fontSize: 14, fontWeight: 800, color: h.onPace ? '#bbf7d0' : '#fecaca', lineHeight: 1.3 }}>
+                          hrs today<br /><span style={{ fontSize: 12.5, fontWeight: 700, color: '#94a3b8' }}>{h.onPace ? 'to hold pace' : 'to get back on pace'}</span>
+                        </span>
+                      </div>
+                    ) : null; })()}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
+                      <span style={{ fontSize: 20, fontWeight: 1000, color: '#e2e8f0' }}>{h.neededToday}</span>
+                      <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 700 }}>hrs/day to reach goal · {h.workingDaysLeft} day{h.workingDaysLeft === 1 ? '' : 's'} left</span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#cbd5e1', marginTop: 2 }}>MTD <b>{h.mtd}</b> / {h.goal} hrs ({h.percentOfGoal}%) · flat pace {h.dailyTarget}/day</div>
+                    <div style={{ fontSize: 14, color: '#cbd5e1', marginTop: 2 }}>MTD <b>{h.mtd}</b> / {h.goal} hrs ({h.percentOfGoal}%) · flat pace {h.dailyTarget}/day</div>
                     <Bar value={h.mtd} goal={h.goal} color={h.onPace ? '#22c55e' : '#f97316'} />
                   </>
-                ) : <div style={{ fontSize: 12.5, color: '#64748b', marginTop: 3 }}>No hours goal set for this month.</div>}
+                ) : <div style={{ fontSize: 14.5, color: '#64748b', marginTop: 4 }}>No hours goal set for this month.</div>}
               </div>
 
               {/* Today's book */}
               <div>
                 <div style={k}>📅 Today's book</div>
                 {a && a.total ? (
-                  <div style={{ fontSize: 12.5, color: '#e2e8f0', marginTop: 3, lineHeight: 1.55 }}>
+                  <div style={{ fontSize: 15, color: '#e2e8f0', marginTop: 4, lineHeight: 1.6 }}>
                     <b>{a.total}</b> appts · {a.waiters} waiter{a.waiters === 1 ? '' : 's'} · <span style={{ color: '#fde047' }}>{a.lof50} $50 LOF</span><br />
                     {a.withDeferred ? <><b style={{ color: '#fdba74' }}>{a.withDeferred}</b> with declined work · {money(a.deferredAmount)} · pickup <b style={{ color: '#86efac' }}>{a.goalHours} hrs</b>{covers != null ? <span style={{ color: covers >= 100 ? '#86efac' : '#94a3b8' }}> ({covers}% of today's need)</span> : null}</> : <span style={{ color: '#64748b' }}>No declined work on today's cars.</span>}
                   </div>
-                ) : <div style={{ fontSize: 12.5, color: '#64748b', marginTop: 3 }}>Nothing booked.</div>}
+                ) : <div style={{ fontSize: 14.5, color: '#64748b', marginTop: 4 }}>Nothing booked.</div>}
               </div>
 
               {/* Big-Money */}
               <div>
                 <div style={{ ...k, display: 'flex', alignItems: 'center', gap: 6 }}>💵 Big-Money
-                  {r.contest ? <span style={{ marginLeft: 'auto', letterSpacing: 0, textTransform: 'none', fontSize: 11.5, color: r.contest.qualified ? '#4ade80' : '#fde047' }}>#{r.contest.rank} of {r.contest.of}{r.contest.qualified ? ' · qualified' : ''}</span> : null}
+                  {r.contest ? <span style={{ marginLeft: 'auto', letterSpacing: 0, textTransform: 'none', fontSize: 13.5, color: r.contest.qualified ? '#4ade80' : '#fde047' }}>#{r.contest.rank} of {r.contest.of}{r.contest.qualified ? ' · qualified' : ''}</span> : null}
                 </div>
                 {b ? (
                   <div style={{ display: 'grid', gap: 7, marginTop: 4 }}>
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: '#e2e8f0' }}>
-                        <span>Add'l Hrs/RO</span><span><b style={{ color: b.hitHrsRo ? '#4ade80' : '#fbbf24' }}>{b.hrsRo.toFixed(2)}</b> / {b.goalHrsRo || '—'}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, color: '#e2e8f0' }}>
+                        <span>Add-on Hrs/Ticket</span><span><b style={{ color: b.hitHrsRo ? '#4ade80' : '#fbbf24' }}>{b.hrsRo.toFixed(2)}</b> / {b.goalHrsRo || '—'}</span>
                       </div>
                       <Bar value={b.hrsRo} goal={b.goalHrsRo} color={b.hitHrsRo ? '#22c55e' : '#f59e0b'} />
                     </div>
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: '#e2e8f0' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, color: '#e2e8f0' }}>
                         <span>Add-on Rate</span><span><b style={{ color: b.hitRate ? '#4ade80' : '#fbbf24' }}>{pct(b.rate)}</b> / {b.goalRate ? pct(b.goalRate) : '—'}</span>
                       </div>
                       <Bar value={b.rate} goal={b.goalRate} color={b.hitRate ? '#22c55e' : '#f59e0b'} />
                     </div>
-                    <div style={{ fontSize: 11.5, color: '#94a3b8', lineHeight: 1.5 }}>
+                    <div style={{ fontSize: 13.5, color: '#94a3b8', lineHeight: 1.55 }}>
                       {b.tickets ? `${b.tickets} tickets · ${b.oilOnly} left oil-only. ` : ''}
                       {b.hitRate && b.hitHrsRo ? <span style={{ color: '#4ade80', fontWeight: 800 }}>Both goals hit.</span> : <>
                         {!b.hitRate && b.addonsNeeded > 0 ? <span style={{ color: '#fde047', fontWeight: 800 }}>{b.addonsNeeded} add-on tickets in a row reach {pct(b.goalRate)}. </span> : null}
@@ -221,7 +240,7 @@ function AdvisorBreakdown({ rows }) {
                       </>}
                     </div>
                   </div>
-                ) : <div style={{ fontSize: 12.5, color: '#64748b', marginTop: 3 }}>No $50 add-on numbers yet.</div>}
+                ) : <div style={{ fontSize: 14.5, color: '#64748b', marginTop: 4 }}>No $50 add-on numbers yet.</div>}
               </div>
             </div>
           );
