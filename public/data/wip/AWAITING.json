@@ -13,20 +13,5 @@
     "partsArrived": null,
     "partsArrivedDate": "",
     "isNew": true
-  },
-  {
-    "id": "mupx07vfy6ec",
-    "ro": "781264",
-    "roDate": "2026-10-01",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES ORDER DRIVERS SIDE WINDOW. CRACK ACROSS THE WINDOW",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "SHAWN LAUGHNER",
-    "partsArrived": true,
-    "partsArrivedDate": "10/02/2026",
-    "isNew": true
   }
 ]
