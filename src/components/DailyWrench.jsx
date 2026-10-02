@@ -147,19 +147,22 @@ function Bar({ value, goal, color }) {
     </div>
   );
 }
+// Back-on-pace / hold-pace hours for today. Newer reports carry paceToday;
+// older ones are worked out from the same facts (expected = MTD − aheadBy).
+function paceFor(h) {
+  if (!h) return null;
+  if (h.paceToday != null) return h.paceToday;
+  const t = Number(h.dailyTarget) || 0, ahead = Number(h.aheadBy) || 0, mtd = Number(h.mtd) || 0;
+  if (!t) return null;
+  if (!h.onPace) return Math.max(0, Math.round((t - ahead) * 10) / 10);
+  const elapsed = Math.round((mtd - ahead) / t);
+  return Math.round((elapsed > 0 ? mtd / elapsed : t) * 10) / 10;
+}
+
 function AdvisorBreakdown({ rows }) {
   if (!rows || !rows.length) return null;
   const k = { fontSize: 12, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#64748b' };
-  // Back-on-pace / hold-pace hours for today. Newer reports carry paceToday;
-  // older ones are worked out from the same facts (expected = MTD − aheadBy).
-  const paceFor = (h) => {
-    if (h.paceToday != null) return h.paceToday;
-    const t = Number(h.dailyTarget) || 0, ahead = Number(h.aheadBy) || 0, mtd = Number(h.mtd) || 0;
-    if (!t) return null;
-    if (!h.onPace) return Math.max(0, Math.round((t - ahead) * 10) / 10);
-    const elapsed = Math.round((mtd - ahead) / t);
-    return Math.round((elapsed > 0 ? mtd / elapsed : t) * 10) / 10;
-  };
+
   const pct = (v) => `${(Number(v || 0) * 100).toFixed(1)}%`;
   return (
     <Section icon="👥" title="Advisor breakdown" right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>goal forecast · today's book · Big-Money</span>}>
@@ -275,7 +278,7 @@ function AdvisorReport({ report, name }) {
         ) : null}
       </div>
 
-      <DashboardScorecards names={[name]} />
+      <DashboardScorecards names={[name]} facts={f} />
 
       {contest.live ? (
         <Section icon="💵" title="Big-Money LOF">
@@ -303,22 +306,6 @@ function AdvisorReport({ report, name }) {
       <PickupSection appts={f.appointments} line={report.pickupLine} />
 
 
-      <div className="dw-stats">
-        {h.hasGoal ? (
-          <>
-            <Stat k="Hours needed today" v={h.neededToday} s={`to finish on ${h.goal}`} tone={h.neededToday > h.dailyTarget * 1.25 ? 'warn' : 'good'} />
-            <Stat k="Month to date" v={h.mtd} s={`${h.percentOfGoal}% of goal · ${h.workingDaysLeft} days left`} />
-            <Stat k="Pace" v={`${h.onPace ? '+' : ''}${h.aheadBy}`} s={h.onPace ? 'ahead of pace' : 'behind pace'} tone={h.onPace ? 'good' : 'bad'} />
-          </>
-        ) : (
-          <Stat k="Hours goal" v="—" s="no goal set for this month" />
-        )}
-        <Stat k="Open ROs" v={ro.total || 0} s={ro.total ? `oldest ${ro.oldestDays} days · avg ${ro.averageDays}` : 'nothing open'} tone={(ro.buckets && ro.buckets.days6plus) ? 'warn' : 'good'} />
-        {f.partsReady && f.partsReady.length ? <Stat k="Parts in, ready to book" v={f.partsReady.length} s="hours sitting on the shelf" tone="good" /> : null}
-        {f.deferred && f.deferred.total ? (
-          <Stat k="Declined work, never called" v={money(f.deferred.totalAmount)} s={`${f.deferred.neverContacted} customers · ${f.deferred.totalHours} hours`} tone="good" />
-        ) : null}
-      </div>
 
       {wins.length ? (
         <Section icon="🏆" title="Wins">
@@ -576,16 +563,78 @@ function Scorecard({ data, advisor, team }) {
     </div>
   );
 }
-function DashboardScorecards({ names }) {
+// Today's game — the advisor report's headline numbers (from the report facts),
+// as glowing chips on top of the scorecard.
+const TS_CSS = `
+@keyframes tsPulseR{0%,100%{box-shadow:0 0 0 1px rgba(248,113,113,.35),0 0 16px -6px rgba(248,113,113,.6)}50%{box-shadow:0 0 0 1px rgba(248,113,113,.7),0 0 26px -4px rgba(248,113,113,.85)}}
+@keyframes tsPulseG{0%,100%{box-shadow:0 0 0 1px rgba(74,222,128,.35),0 0 16px -6px rgba(74,222,128,.55)}50%{box-shadow:0 0 0 1px rgba(74,222,128,.65),0 0 26px -4px rgba(74,222,128,.8)}}
+.ts-chip{position:relative;border-radius:16px;padding:13px 14px 12px;overflow:hidden;border:1px solid rgba(148,163,184,.2);
+  background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015))}
+.ts-chip.r{animation:tsPulseR 2.2s ease-in-out infinite;background:linear-gradient(160deg,rgba(239,68,68,.16),rgba(239,68,68,.03))}
+.ts-chip.g{animation:tsPulseG 2.6s ease-in-out infinite;background:linear-gradient(160deg,rgba(34,197,94,.16),rgba(34,197,94,.03))}
+.ts-chip.a{border-color:rgba(250,204,21,.5);background:linear-gradient(160deg,rgba(250,204,21,.13),rgba(250,204,21,.02))}
+.ts-chip.b{border-color:rgba(56,189,248,.45);background:linear-gradient(160deg,rgba(56,189,248,.14),rgba(56,189,248,.02))}
+.ts-chip .ic{position:absolute;right:10px;top:8px;font-size:22px;opacity:.9;filter:drop-shadow(0 0 6px rgba(255,255,255,.25))}
+.ts-chip .k{font-size:10.5px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;padding-right:26px}
+.ts-chip .v{font-size:30px;font-weight:1000;line-height:1.1;margin-top:4px}
+.ts-chip .s{font-size:12px;font-weight:700;color:#94a3b8;margin-top:3px;line-height:1.35}
+`;
+function TodayStrip({ facts }) {
+  const f = facts || {};
+  const h = f.hours || {};
+  const ro = f.openRos || {};
+  const chips = [];
+  if (h.hasGoal) {
+    const pv = paceFor(h);
+    chips.push({ ic: '🎯', k: h.onPace ? 'Hours today · hold pace' : 'Hours today · back on pace', v: pv != null ? Number(pv).toFixed(1) : h.neededToday,
+      s: `${h.neededToday}/day to finish on ${h.goal}`, tone: h.onPace ? 'g' : 'r', color: h.onPace ? '#86efac' : '#fca5a5' });
+    chips.push({ ic: '📅', k: 'Month to date', v: h.mtd, s: `${h.percentOfGoal}% of goal · ${h.workingDaysLeft} days left`, tone: 'b', color: '#f8fafc', bar: Math.min(1, (Number(h.mtd) || 0) / (Number(h.goal) || 1)) });
+    chips.push({ ic: h.onPace ? '🚀' : '⚡', k: 'Pace', v: `${h.onPace ? '+' : ''}${h.aheadBy}`, s: h.onPace ? 'hours ahead of pace' : 'hours behind pace', tone: h.onPace ? 'g' : 'r', color: h.onPace ? '#4ade80' : '#f87171' });
+  }
+  const old = ro.buckets && ro.buckets.days6plus;
+  chips.push({ ic: '🔧', k: 'Open ROs', v: ro.total || 0, s: ro.total ? `oldest ${ro.oldestDays} days · avg ${ro.averageDays}` : 'nothing open', tone: old ? 'a' : 'g', color: old ? '#fde047' : '#4ade80' });
+  if (f.partsReady && f.partsReady.length) chips.push({ ic: '📦', k: 'Parts in, ready to book', v: f.partsReady.length, s: 'hours sitting on the shelf', tone: 'g', color: '#4ade80' });
+  if (f.deferred && f.deferred.total) chips.push({ ic: '💰', k: 'Declined work, never called', v: money(f.deferred.totalAmount), s: `${f.deferred.neverContacted} customers · ${f.deferred.totalHours} hours`, tone: 'a', color: '#fde047' });
+  if (!chips.length) return null;
+  return (
+    <>
+      <style>{TS_CSS}</style>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(chips.length, 6)}, minmax(0, 1fr))`, gap: 10, marginBottom: 14 }}>
+        {chips.map(c => (
+          <div key={c.k} className={`ts-chip ${c.tone}`}>
+            <span className="ic">{c.ic}</span>
+            <div className="k">{c.k}</div>
+            <div className="v" style={{ color: c.color }}>{c.v}</div>
+            {c.bar != null ? (
+              <div style={{ height: 6, borderRadius: 3, background: 'rgba(148,163,184,.18)', margin: '6px 0 2px', overflow: 'hidden' }}>
+                <div style={{ width: `${c.bar * 100}%`, height: '100%', background: 'linear-gradient(90deg,#38bdf8,#a78bfa)', boxShadow: '0 0 8px #38bdf8' }} />
+              </div>
+            ) : null}
+            <div className="s">{c.s}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function DashboardScorecards({ names, facts }) {
   const data = useDashboardData();
-  if (!data) return null;
-  const team = advisorsForDisplay(data).filter(a => !a.hidden);
+  const team = data ? advisorsForDisplay(data).filter(a => !a.hidden) : [];
   const list = names.map(n => team.find(a => firstUp(a.name) === firstUp(n))).filter(Boolean);
-  if (!list.length) return null;
+  if (!list.length && !facts) return null;
+  if (!list.length) {
+    return (
+      <Section icon="📊" title="Your dashboard scorecard">
+        <TodayStrip facts={facts} />
+      </Section>
+    );
+  }
   return (
     <Section icon="📊" title={list.length > 1 ? 'Dashboard scorecards' : 'Your dashboard scorecard'}
       right={<span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'none', letterSpacing: 0, fontWeight: 600 }}>live from the Shop TV</span>}>
       <style>{SC_CSS}</style>
+      {facts ? <TodayStrip facts={facts} /> : null}
       <div style={{ display: 'grid', gap: 22 }}>
         {list.map(a => (
           <div key={a.name}>
