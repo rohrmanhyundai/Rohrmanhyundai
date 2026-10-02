@@ -1,48 +1,28 @@
 {
-  "updatedAt": "2026-10-01T21:30:17.510Z",
+  "updatedAt": "2026-10-02T19:02:24.771Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781273",
-        "vehicle": "2022 Hyundai Kona"
-      },
-      {
-        "ro": "781258",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781254",
-        "vehicle": "2023 Subaru Crosstrek"
-      }
-    ],
-    "CORY": [
-      {
-        "ro": "781269",
-        "vehicle": "2021 Kia Seltos"
-      },
-      {
-        "ro": "781228",
-        "vehicle": "2016 Mazda CX-5"
-      },
-      {
-        "ro": "781154",
-        "vehicle": "2016 Honda Pilot"
-      },
-      {
-        "ro": "781071",
-        "vehicle": "2020 Ford Explorer"
-      },
-      {
-        "ro": "781070",
-        "vehicle": "2017 Kia Sorento"
-      },
-      {
-        "ro": "780913",
-        "vehicle": "2019 Hyundai Kona"
-      }
-    ],
     "JORDAN": [
+      {
+        "ro": "781291",
+        "vehicle": "2024 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781288",
+        "vehicle": "2026 Hyundai Sonata Hybrid"
+      },
+      {
+        "ro": "781285",
+        "vehicle": "2017 Hyundai Tucson"
+      },
+      {
+        "ro": "781280",
+        "vehicle": "2025 Hyundai Kona"
+      },
+      {
+        "ro": "781279",
+        "vehicle": "2017 Hyundai Sonata"
+      },
       {
         "ro": "781265",
         "vehicle": "2026 Hyundai Santa Cruz"
@@ -66,12 +46,40 @@
     ],
     "SHAWN": [
       {
-        "ro": "781264",
-        "vehicle": "2026 Hyundai Palisade"
+        "ro": "781290",
+        "vehicle": "2025 Hyundai Palisade"
       },
       {
         "ro": "781255",
         "vehicle": "2017 Hyundai Santa Fe Sport"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781278",
+        "vehicle": "2026 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
+    "CORY": [
+      {
+        "ro": "781228",
+        "vehicle": "2016 Mazda CX-5"
+      },
+      {
+        "ro": "781154",
+        "vehicle": "2016 Honda Pilot"
+      },
+      {
+        "ro": "781070",
+        "vehicle": "2017 Kia Sorento"
+      },
+      {
+        "ro": "780913",
+        "vehicle": "2019 Hyundai Kona"
       }
     ]
   }
