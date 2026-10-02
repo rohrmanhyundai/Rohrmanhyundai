@@ -35,6 +35,7 @@ export function advisorMonthStarted() {
 }
 
 // Current-month cumulative fields that should read empty before the month starts.
+const ADD_ON_FIELDS = ['roh50_hrs_ro', 'roh50_add_rate', 'lof_tickets', 'lof_oil_only'];
 const MONTH_METRIC_FIELDS = ['mtd_hours', 'daily_avg', 'hours_per_ro', 'align', 'tires', 'valvoline', 'roh50_hrs_ro', 'roh50_add_rate', 'lof_tickets', 'lof_oil_only', 'csi', 'asr', 'elr', 'ro_count', 'coupon_labor', 'total_sales', 'coupon_usage_pct'];
 
 // Advisors for display: before the month has started, zero the current-month
@@ -48,10 +49,17 @@ export function advisorsForDisplay(data) {
     // Numbers still from an earlier month (see rollAdvisorMonths): they ARE
     // last month's total, and this month reads empty until its first report.
     const stale = a.mtd_month ? a.mtd_month < month : !started;
-    if (!stale) return a;
+    // The $50 add-on numbers come from their own screenshot import, so they
+    // carry their own month (roh50_month) — this month's add-on import shows
+    // even before this month's advisor report is in, and vice versa.
+    const addOnStale = a.roh50_month ? a.roh50_month < month : stale;
+    if (!stale && !addOnStale) return a;
     const c = { ...a };
-    if (a.mtd_month) c.last_month_total = a.mtd_hours;
-    MONTH_METRIC_FIELDS.forEach(f => { c[f] = 0; });
+    if (stale) {
+      if (a.mtd_month) c.last_month_total = a.mtd_hours;
+      MONTH_METRIC_FIELDS.filter(f => !ADD_ON_FIELDS.includes(f)).forEach(f => { c[f] = 0; });
+    }
+    if (addOnStale) ADD_ON_FIELDS.forEach(f => { c[f] = 0; });
     return c;
   });
 }

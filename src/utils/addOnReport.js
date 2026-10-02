@@ -96,6 +96,22 @@ export async function parseAddOnScreenshot(file) {
         addl_gp_ticket: num(r.addl_gp_ticket),
         total_addl_gp: num(r.total_addl_gp),
       };
+      // Tickets / oil-only: on every board layout TICKETS sits just before
+      // the ADD-ON RATE % cell and OIL-ONLY just after it. Read them by that
+      // position from the row's cells (the named fields have slid a column
+      // before), and only when they agree with the rate.
+      if (Array.isArray(r.cells)) {
+        const i = r.cells.findIndex(c => /%/.test(String(c)));
+        if (i > 0) {
+          const rt = rate(r.cells[i]), t = num(r.cells[i - 1]), o = num(r.cells[i + 1]);
+          if (rt != null && t != null && Number.isInteger(t) && t >= 0) {
+            const okOil = o != null && Number.isInteger(o) && o <= t && Math.abs(o - t * (1 - rt)) <= 1;
+            row.tickets = t; row.add_on_rate = rt;
+            if (okOil) row.oil_only_tickets = o;
+            else row.oil_only_tickets = Math.round(t * (1 - rt));
+          }
+        }
+      }
       if (hrsCol >= 0 && Array.isArray(r.cells) && r.cells.length === cols.length) {
         const v = num(r.cells[hrsCol]);
         if (v != null) row.addl_hrs_ro = v;
@@ -107,7 +123,7 @@ export async function parseAddOnScreenshot(file) {
       if (row.tickets != null && row.add_on_rate != null) {
         const expect = Math.round(row.tickets * (1 - row.add_on_rate));
         const got = row.oil_only_tickets;
-        if (got == null || got > row.tickets || Math.abs(got - expect) > Math.max(2, row.tickets * 0.06)) {
+        if (got == null || got > row.tickets || Math.abs(got - expect) > Math.max(1, row.tickets * 0.06)) {
           if (got != null) warnings.push(`${row.first}: oil-only read as ${got} but ${row.tickets} tickets at ${(row.add_on_rate * 100).toFixed(0)}% means ${expect} — used ${expect}.`);
           row.oil_only_tickets = expect;
         }
