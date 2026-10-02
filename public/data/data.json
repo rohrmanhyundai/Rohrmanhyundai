@@ -291,19 +291,27 @@
         "asr": 0.1575,
         "elr": 0.8938,
         "last_month_total": 257.4,
-        "roh50_hrs_ro": 0.52,
+        "roh50_hrs_ro": 0.2,
         "hidden": false,
         "ro_count": 18,
         "coupon_labor": 284,
-        "_lastImport": 1790939191937,
+        "_lastImport": 1790940831011,
         "total_sales": 3266.67,
         "coupon_usage_pct": 0.0869,
         "min_csi": 917,
-        "roh50_add_rate": 0.48,
-        "lof_tickets": 17,
-        "lof_oil_only": 9,
+        "roh50_add_rate": 0.5,
+        "lof_tickets": 6,
+        "lof_oil_only": 3,
         "mtd_month": "2026-10",
-        "roh50_month": "2026-09"
+        "roh50_month": "2026-10",
+        "roh50_hist": {
+          "2026-09": {
+            "hrsRo": 0.52,
+            "rate": 0.48,
+            "tickets": 17,
+            "oilOnly": 9
+          }
+        }
       },
       {
         "name": "JORDAN",
@@ -317,18 +325,26 @@
         "asr": 0.1798,
         "elr": 0.7351,
         "last_month_total": 326.3,
-        "roh50_hrs_ro": 0.77,
+        "roh50_hrs_ro": 0.27,
         "ro_count": 10,
         "coupon_labor": 116,
-        "_lastImport": 1790939191937,
+        "_lastImport": 1790940831011,
         "total_sales": 524.84,
         "coupon_usage_pct": 0.221,
         "min_csi": 917,
-        "roh50_add_rate": 0.57,
-        "lof_tickets": 36,
-        "lof_oil_only": 15,
+        "roh50_add_rate": 0.667,
+        "lof_tickets": 3,
+        "lof_oil_only": 1,
         "mtd_month": "2026-10",
-        "roh50_month": "2026-09"
+        "roh50_month": "2026-10",
+        "roh50_hist": {
+          "2026-09": {
+            "hrsRo": 0.77,
+            "rate": 0.57,
+            "tickets": 36,
+            "oilOnly": 15
+          }
+        }
       }
     ],
     "advisorTraining": [
