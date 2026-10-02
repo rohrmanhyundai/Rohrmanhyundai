@@ -706,17 +706,20 @@ function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPr
                 <div style={{ fontSize: 17, fontWeight: 1000, color: col }}>{r.fmt(r.v)}</div>
               </Ring>
               <div style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>goal {r.fmt(r.goal)}</div>
-              <div style={{ marginTop: 5, fontSize: 12.5, fontWeight: 900, color: r.hit ? '#86efac' : '#fca5a5' }}>
+              <div style={{ marginTop: 5, marginBottom: 8, minHeight: 32, fontSize: 12.5, fontWeight: 900, lineHeight: 1.25, color: r.hit ? '#86efac' : '#fca5a5' }}>
                 {r.hit ? '✓ HIT' : `▼ ${r.gap(r.goal - r.v)} to go`}
               </div>
               {(() => {
                 if (!sellPlan(r, advisor, today)) return null;
                 const n = oppsFor(day, me, r.key).length;
+                // Pinned to the bottom of the tile (marginTop auto) so every
+                // tile's badge sits on the same line whatever wraps above it.
                 return n ? (
-                  <div style={{ fontSize: 10.5, fontWeight: 900, color: '#1c1917', background: 'linear-gradient(180deg,#fde047,#f59e0b)', borderRadius: 999, padding: '2px 8px', marginTop: 5, boxShadow: '0 0 10px rgba(250,204,21,.7)' }}>
-                    🔥 {n} ON TODAY'S BOOK
+                  <div title={`${n} car${n === 1 ? '' : 's'} on today's book already declined this`}
+                    style={{ marginTop: 'auto', fontSize: 11, fontWeight: 900, color: '#1c1917', background: 'linear-gradient(180deg,#fde047,#f59e0b)', borderRadius: 999, padding: '4px 10px', whiteSpace: 'nowrap', boxShadow: '0 0 10px rgba(250,204,21,.7)' }}>
+                    🔥 {n} ON BOOK
                   </div>
-                ) : <div style={{ fontSize: 10, fontWeight: 800, color: '#7dd3fc', marginTop: 4, letterSpacing: '.04em' }}>👆 TAP FOR TODAY</div>;
+                ) : <div style={{ marginTop: 'auto', fontSize: 10.5, fontWeight: 800, color: '#7dd3fc', padding: '4px 0', letterSpacing: '.04em', whiteSpace: 'nowrap' }}>👆 TAP FOR TODAY</div>;
               })()}
             </div>
           );
