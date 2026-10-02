@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-02T11:54:00.939Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
+    "at": "2026-10-02T11:53:58.753Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-01T19:33:13.507Z",
     "type": "page",
     "label": "tech-resources"
@@ -786,30 +796,5 @@
     "at": "2026-09-02T15:26:02.472Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-02T11:49:46.139Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-02T11:49:29.167Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-09-02T11:49:16.517Z",
-    "type": "page",
-    "label": "cash-dash"
-  },
-  {
-    "at": "2026-09-02T11:49:15.180Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-02T11:48:12.115Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
