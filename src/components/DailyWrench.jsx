@@ -431,7 +431,7 @@ function MiniGauge({ pct }) {
   const R = 34, cx = 44, cy = 42, len = Math.PI * R;
   const a = Math.PI * (1 - p / 1.5);
   return (
-    <svg viewBox="0 0 88 52" width="96" height="57" style={{ display: 'block' }}>
+    <svg viewBox="0 0 88 52" width="138" height="82" style={{ display: 'block' }}>
       <path d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`} fill="none" stroke="rgba(148,163,184,.18)" strokeWidth="7" strokeLinecap="round" />
       {!none && <path d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`} fill="none" stroke={col} strokeWidth="7" strokeLinecap="round"
         strokeDasharray={`${len * (p / 1.5)} ${len}`} />}
@@ -445,7 +445,7 @@ function MiniGauge({ pct }) {
 function TechBoxes({ list, asOf }) {
   const eff = useTwoWeekEfficiency(list.map(x => x.name), asOf);
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(215px, 1fr))', gap: 10 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14 }}>
       {list.map(x => {
         const goal = Number(x.goal) || 0, total = Number(x.total) || 0;
         const need = Math.max(0, goal - total);
@@ -454,22 +454,22 @@ function TechBoxes({ list, asOf }) {
         const col = met ? '#4ade80' : pct >= 0.5 ? '#fde047' : '#fca5a5';
         const e = eff[x.name];
         return (
-          <div key={x.name} style={{ background: 'rgba(2,6,23,.45)', border: `1px solid ${col}55`, borderRadius: 12, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div key={x.name} style={{ background: 'rgba(2,6,23,.45)', border: `1px solid ${col}55`, borderRadius: 14, padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', letterSpacing: .3 }}>{x.name}</div>
-              <div style={{ fontSize: 17, fontWeight: 900, color: col, marginTop: 2 }}>
-                {r1(total)}<span style={{ fontSize: 11.5, color: '#94a3b8', fontWeight: 700 }}> / {r1(goal)} hrs</span>
+              <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9', letterSpacing: .4 }}>{x.name}</div>
+              <div style={{ fontSize: 26, fontWeight: 900, color: col, marginTop: 4 }}>
+                {r1(total)}<span style={{ fontSize: 15, color: '#94a3b8', fontWeight: 700 }}> / {r1(goal)} hrs</span>
               </div>
-              <div style={{ height: 5, borderRadius: 3, background: 'rgba(148,163,184,.16)', margin: '5px 0 6px', overflow: 'hidden' }}>
+              <div style={{ height: 8, borderRadius: 4, background: 'rgba(148,163,184,.16)', margin: '8px 0 9px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, pct * 100)}%`, height: '100%', background: col }} />
               </div>
-              <div style={{ fontSize: 11.5, fontWeight: 800, color: met ? '#86efac' : '#fecaca' }}>
+              <div style={{ fontSize: 14.5, fontWeight: 800, color: met ? '#86efac' : '#fecaca' }}>
                 {met ? `✓ Goal met · +${r1(total - goal)} hrs` : `Needs ${ceil1(need)} hrs to goal`}
               </div>
             </div>
             <div style={{ textAlign: 'center', flexShrink: 0 }} title={e ? `Average goal % over the last ${e.weeks} completed week${e.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
               <MiniGauge pct={e ? e.pct : null} />
-              <div style={{ fontSize: 9, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: .5, marginTop: -2 }}>2-wk efficiency</div>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: .5, marginTop: -2 }}>2-wk efficiency</div>
             </div>
           </div>
         );
