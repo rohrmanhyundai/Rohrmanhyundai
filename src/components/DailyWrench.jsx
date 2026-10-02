@@ -394,6 +394,90 @@ function AdvisorReport({ report, name }) {
   );
 }
 
+// ── One box per technician ───────────────────────────────────────────────────
+// This week's flagged hours vs their weekly goal, the hours still needed, and
+// an efficiency gauge = average goal % of their last two COMPLETED pay weeks
+// (same rule as the tech Performance Report gauges: total ÷ goal per week).
+const r1 = (n) => (Math.round((Number(n) || 0) * 10) / 10).toFixed(1);
+const ceil1 = (n) => (Math.ceil((Number(n) || 0) * 10 - 1e-9) / 10).toFixed(1);
+const BASE = import.meta.env.BASE_URL;
+function useTwoWeekEfficiency(names, asOf) {
+  const [eff, setEff] = useState({});
+  const key = names.join(',');
+  useEffect(() => {
+    let cancelled = false;
+    const cutoff = asOf || new Date().toISOString().slice(0, 10);
+    Promise.all(names.map(n =>
+      fetch(`${BASE}data/performance-reports/${encodeURIComponent(String(n).toUpperCase())}.json?v=${Date.now()}`, { cache: 'no-store' })
+        .then(r => (r.ok ? r.json() : []))
+        .catch(() => [])
+        .then(list => {
+          const weeks = (Array.isArray(list) ? list : [])
+            .filter(e => e && e.type === 'tech' && (e.weekEnd || e.date) < cutoff)
+            .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+            .slice(0, 2)
+            .map(e => { const g = parseFloat(e.goal), tot = parseFloat(e.total); return g > 0 && Number.isFinite(tot) ? tot / g : parseFloat(e.goal_pct) || 0; });
+          return [n, weeks.length ? { pct: weeks.reduce((a, b) => a + b, 0) / weeks.length, weeks: weeks.length } : null];
+        })))
+      .then(pairs => { if (!cancelled) setEff(Object.fromEntries(pairs)); });
+    return () => { cancelled = true; };
+  }, [key, asOf]); // eslint-disable-line react-hooks/exhaustive-deps
+  return eff;
+}
+function MiniGauge({ pct }) {
+  const none = pct == null || !Number.isFinite(pct);
+  const p = none ? 0 : Math.max(0, Math.min(1.5, pct));
+  const col = none ? '#334155' : pct >= 1 ? '#4ade80' : pct >= 0.8 ? '#fbbf24' : '#f87171';
+  const R = 34, cx = 44, cy = 42, len = Math.PI * R;
+  const a = Math.PI * (1 - p / 1.5);
+  return (
+    <svg viewBox="0 0 88 52" width="96" height="57" style={{ display: 'block' }}>
+      <path d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`} fill="none" stroke="rgba(148,163,184,.18)" strokeWidth="7" strokeLinecap="round" />
+      {!none && <path d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`} fill="none" stroke={col} strokeWidth="7" strokeLinecap="round"
+        strokeDasharray={`${len * (p / 1.5)} ${len}`} />}
+      {/* 100% mark */}
+      {(() => { const m = Math.PI * (1 - 1 / 1.5); return <line x1={cx + (R - 6) * Math.cos(m)} y1={cy - (R - 6) * Math.sin(m)} x2={cx + (R + 5) * Math.cos(m)} y2={cy - (R + 5) * Math.sin(m)} stroke="#e2e8f0" strokeWidth="1.5" />; })()}
+      {!none && <circle cx={cx + R * Math.cos(a)} cy={cy - R * Math.sin(a)} r="3.2" fill="#fff" />}
+      <text x={cx} y={cy - 4} textAnchor="middle" fontSize="15" fontWeight="900" fill={col}>{none ? '—' : `${Math.round(pct * 100)}%`}</text>
+    </svg>
+  );
+}
+function TechBoxes({ list, asOf }) {
+  const eff = useTwoWeekEfficiency(list.map(x => x.name), asOf);
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(215px, 1fr))', gap: 10 }}>
+      {list.map(x => {
+        const goal = Number(x.goal) || 0, total = Number(x.total) || 0;
+        const need = Math.max(0, goal - total);
+        const met = goal > 0 && need <= 0;
+        const pct = goal > 0 ? total / goal : 0;
+        const col = met ? '#4ade80' : pct >= 0.5 ? '#fde047' : '#fca5a5';
+        const e = eff[x.name];
+        return (
+          <div key={x.name} style={{ background: 'rgba(2,6,23,.45)', border: `1px solid ${col}55`, borderRadius: 12, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', letterSpacing: .3 }}>{x.name}</div>
+              <div style={{ fontSize: 17, fontWeight: 900, color: col, marginTop: 2 }}>
+                {r1(total)}<span style={{ fontSize: 11.5, color: '#94a3b8', fontWeight: 700 }}> / {r1(goal)} hrs</span>
+              </div>
+              <div style={{ height: 5, borderRadius: 3, background: 'rgba(148,163,184,.16)', margin: '5px 0 6px', overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min(100, pct * 100)}%`, height: '100%', background: col }} />
+              </div>
+              <div style={{ fontSize: 11.5, fontWeight: 800, color: met ? '#86efac' : '#fecaca' }}>
+                {met ? `✓ Goal met · +${r1(total - goal)} hrs` : `Needs ${ceil1(need)} hrs to goal`}
+              </div>
+            </div>
+            <div style={{ textAlign: 'center', flexShrink: 0 }} title={e ? `Average goal % over the last ${e.weeks} completed week${e.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
+              <MiniGauge pct={e ? e.pct : null} />
+              <div style={{ fontSize: 9, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: .5, marginTop: -2 }}>2-wk efficiency</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── The manager's shop-wide report ───────────────────────────────────────────
 function ManagerReport({ report }) {
   if (!report) return null;
@@ -486,17 +570,7 @@ function ManagerReport({ report }) {
       {report.technicians ? (
         <Section icon="🔧" title="The shop floor">
           <div className="dw-quote" style={{ marginBottom: t.list && t.list.length ? 14 : 0 }}>{report.technicians}</div>
-          {t.list && t.list.length ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {t.list.map(x => (
-                <span key={x.name} className="dw-pill" style={{
-                  background: x.pct >= 100 ? 'rgba(74,222,128,.14)' : x.pct >= 50 ? 'rgba(250,204,21,.12)' : 'rgba(248,113,113,.12)',
-                  borderColor: x.pct >= 100 ? 'rgba(74,222,128,.45)' : x.pct >= 50 ? 'rgba(250,204,21,.4)' : 'rgba(248,113,113,.4)',
-                  color: x.pct >= 100 ? '#4ade80' : x.pct >= 50 ? '#fde047' : '#fca5a5',
-                }}>{x.name} {x.total}/{x.goal}</span>
-              ))}
-            </div>
-          ) : null}
+          {t.list && t.list.length ? <TechBoxes list={t.list} asOf={f.date} /> : null}
         </Section>
       ) : null}
 

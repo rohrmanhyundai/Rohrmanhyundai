@@ -460,9 +460,11 @@ export function managerPack({ roStatus, attention, wipByTech, bigMoney, data, fo
   }
 
   const techs = (data && data.technicians || []).filter(t => t && t.name && !t.hidden).map(t => ({
-    name: t.name, goal: num(t.goal, 0), total: num(t.total, 0),
+    name: t.name, goal: round(num(t.goal, 0)), total: round(num(t.total, 0)),
     pct: num(t.goal, 0) > 0 ? Math.round((num(t.total, 0) / num(t.goal, 0)) * 100) : 0,
-    pacing: num(t.pacing, 0),
+    // Hours still needed this week to reach the weekly goal (0 once met).
+    needed: round(Math.max(0, num(t.goal, 0) - num(t.total, 0))),
+    pacing: round(num(t.pacing, 0)),
   }));
 
   return {
