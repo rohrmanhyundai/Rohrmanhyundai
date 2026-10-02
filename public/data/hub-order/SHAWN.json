@@ -1,6 +1,7 @@
 {
   "managerHub": [
     "goalForecast",
+    "uploadReports",
     "performanceReports",
     "chargeAccountList",
     "surveyReports",
@@ -15,7 +16,10 @@
     "globalMessage",
     "cashDash",
     "employeeApplicants",
-    "livePay"
+    "livePay",
+    "payroll",
+    "dailyWrench",
+    "bigMoneyLof"
   ],
   "warrantyHub": [
     "aftermarketWarranty",
