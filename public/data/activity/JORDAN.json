@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-03T17:17:51.141Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-03T17:17:51.138Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-10-03T16:48:44.215Z",
     "type": "page",
     "label": "tire-quote"
@@ -1161,11 +1171,6 @@
   },
   {
     "at": "2026-09-03T18:56:14.680Z",
-    "type": "page",
-    "label": "registration-upload"
-  },
-  {
-    "at": "2026-09-03T16:51:16.625Z",
     "type": "page",
     "label": "registration-upload"
   }
