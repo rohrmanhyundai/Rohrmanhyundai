@@ -1,5 +1,35 @@
 [
   {
+    "at": "2026-10-03T12:58:42.571Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-10-03T12:58:34.046Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-03T12:58:34.042Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-03T12:58:27.033Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-03T12:58:26.024Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-10-03T12:58:23.473Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
     "at": "2026-10-02T21:57:49.605Z",
     "type": "page",
     "label": "advisor-goals"
