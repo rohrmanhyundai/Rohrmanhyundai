@@ -1,11 +1,5 @@
 [
   {
-    "id": "mtlgkx1zakc",
-    "username": "KAI",
-    "text": "@DAVID @KADEN RO 780525 parts have been received",
-    "timestamp": 1788435937367
-  },
-  {
     "id": "mtmv6miw4e1",
     "username": "KAI",
     "text": "@JORDAN @CORY RO 780440 parts have been received",
@@ -375,5 +369,11 @@
     "username": "SETH",
     "text": "@JORDAN @CORY RO 780361 parts have been received",
     "timestamp": 1791027710482
+  },
+  {
+    "id": "muspdj0312g",
+    "username": "SETH",
+    "text": "@DAVID @KADEN RO 781254 parts have been received",
+    "timestamp": 1791050754675
   }
 ]
