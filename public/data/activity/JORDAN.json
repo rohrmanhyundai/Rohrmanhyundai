@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-03T15:06:46.617Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-03T15:06:46.614Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-10-03T12:58:42.571Z",
     "type": "page",
     "label": "recalls"
@@ -1163,20 +1173,5 @@
     "at": "2026-09-03T16:45:30.573Z",
     "type": "page",
     "label": "registration-upload"
-  },
-  {
-    "at": "2026-09-03T14:47:47.499Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-03T14:46:29.529Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-09-03T14:46:24.887Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
