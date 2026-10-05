@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-05T15:42:11.577Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-10-05T15:42:10.180Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-10-03T17:17:51.141Z",
     "type": "page",
     "label": "hotRepairs"
@@ -1063,115 +1073,5 @@
     "at": "2026-09-08T16:54:19.676Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T20:27:29.946Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T20:22:14.588Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-04T19:55:01.631Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T19:54:58.138Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-04T19:54:45.617Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-04T19:54:40.734Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-04T19:54:30.770Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-04T19:47:21.969Z",
-    "type": "page",
-    "label": "tire-quote"
-  },
-  {
-    "at": "2026-09-04T19:47:20.679Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T19:45:52.238Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-04T19:45:50.002Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-04T19:45:45.225Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-04T19:45:44.612Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T18:13:47.780Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T16:56:37.531Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-04T16:56:01.476Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-04T16:55:59.516Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-04T16:55:56.793Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-04T16:55:56.345Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-03T20:07:23.289Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-03T20:07:20.922Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-03T18:56:14.680Z",
-    "type": "page",
-    "label": "registration-upload"
   }
 ]
