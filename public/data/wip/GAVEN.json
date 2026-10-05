@@ -106,21 +106,5 @@
     "partsArrivedDate": "10/02/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "muq1sm2bknbc",
-    "ro": "781273",
-    "roDate": "2026-10-01",
-    "vehicle": "2022 Hyundai Kona",
-    "jobDesc": "CUSTOMER STATES- Radiator leaking SOR 12698- Gaven",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
