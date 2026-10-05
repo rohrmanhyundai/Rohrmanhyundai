@@ -32,22 +32,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "muoetauzjt0m",
-    "ro": "781215",
-    "roDate": "2026-09-30",
-    "vehicle": "2017 Hyundai Tucson",
-    "jobDesc": "CUSTOMER STATES CAR NOT GOING AND CEL IS FLASHING.  CHECK AND ADVISED.",
-    "notes": "ENGINE IS ON ORDER ",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/02/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "mupx0702kxtj",
     "ro": "781254",
     "roDate": "2026-10-01",
