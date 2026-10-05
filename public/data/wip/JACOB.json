@@ -46,5 +46,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "muvhsrkp3apj",
+    "ro": "781308",
+    "roDate": "2026-10-05",
+    "vehicle": "2022 Ford Edge",
+    "jobDesc": "CUSTOMER STATES TRANSMISSION NOT SHIFTING PROPERLY. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
