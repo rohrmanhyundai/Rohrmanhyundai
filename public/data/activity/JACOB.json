@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-05T11:12:46.542Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-02T18:44:20.289Z",
     "type": "action",
     "label": "delete-wip-row",
@@ -792,51 +797,5 @@
     "at": "2026-09-08T11:08:02.787Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-04T14:12:35.390Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-04T14:12:25.085Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-04T14:12:22.905Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-03T13:27:54.521Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-03T13:27:05.508Z",
-    "type": "action",
-    "label": "undo-parts-arrived",
-    "details": "RO 780382"
-  },
-  {
-    "at": "2026-09-03T13:26:42.849Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-03T13:26:36.364Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-02T21:00:03.627Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-02T21:00:02.250Z",
-    "type": "action",
-    "label": "login"
   }
 ]
