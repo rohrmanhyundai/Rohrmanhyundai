@@ -32,22 +32,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "muon8kua258i",
-    "ro": "781228",
-    "roDate": "2026-09-30",
-    "vehicle": "2016 Mazda CX-5",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "muvhsrkp3apj",
     "ro": "781308",
     "roDate": "2026-10-05",
