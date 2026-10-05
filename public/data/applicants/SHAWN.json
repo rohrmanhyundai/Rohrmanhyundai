@@ -29,8 +29,8 @@
     "position": "Advisor",
     "source": "Indeed",
     "interviewAt": "",
-    "contacted": "",
-    "contactedAt": "",
+    "contacted": "yes",
+    "contactedAt": "2026-10-05T13:25",
     "contactNotes": "",
     "decisionNotes": "",
     "interviewed": "",
@@ -42,7 +42,7 @@
     "archived": false,
     "id": "ap-muv9bs31ktnm",
     "appliedAt": "2026-10-05T12:59:57.805Z",
-    "updatedAt": "2026-10-05T17:22:11.575Z",
+    "updatedAt": "2026-10-05T17:25:20.638Z",
     "updatedBy": "SHAWN"
   },
   {
