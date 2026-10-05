@@ -951,6 +951,10 @@
         "agreed": true,
         "agreedBy": "JORDAN",
         "submittedAt": 1790978324379
+      },
+      "2026-10-03": {
+        "hours": 12.3,
+        "hrsRo": 0.59
       }
     },
     "entryMode": "mtd"
