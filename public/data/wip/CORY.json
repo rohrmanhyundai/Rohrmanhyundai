@@ -70,5 +70,21 @@
     "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY. CORY WILL START THIS ON TUESDAY. Transmission done, radiator leaking. Rec. made. ",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "muvhsqp34hb7",
+    "ro": "781320",
+    "roDate": "2026-10-05",
+    "vehicle": "2026 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
