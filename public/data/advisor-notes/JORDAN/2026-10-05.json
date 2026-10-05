@@ -1,0 +1,334 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-05",
+  "rows": [
+    {
+      "id": "rmuv6d5xvmm5f",
+      "customerName": "Joan Klimek",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43364",
+      "vehicle": "2024 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES- Horns failed"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xv39px",
+      "customerName": "Michael Hunter",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "42677",
+      "vehicle": "2025 Hyundai IONIQ 6",
+      "services": [
+        "WHEEL ALIGNMENT",
+        "recheck the alignment"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xvzi45",
+      "customerName": "Stephanie Anglin",
+      "appointmentTime": "7:14 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43410",
+      "vehicle": "2022 Ford Edge",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xvc3yy",
+      "customerName": "Jennifer Akridge",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43367",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xve4u4",
+      "customerName": "Bill Defouw",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43371",
+      "vehicle": "2022 Hyundai Santa Cruz",
+      "services": [
+        "CUSTOMER STATES SEES OIL LEAK. CHECK AND ADVISE.",
+        "NOTE: PRIMARY NUMBER 317-432-8149 JAY"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xv7232",
+      "customerName": "Melissa Schroeder",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43401",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SHUTTLE",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xv7ush",
+      "customerName": "Sean Conley",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43341",
+      "vehicle": "2022 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SHUTTLE",
+      "deferred": {
+        "ro": "778609",
+        "date": "2026-06-23",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 431.99,
+        "hours": 1.8,
+        "phone": "7655866323",
+        "vin": "KM8R7DHE1NU385736",
+        "items": [
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 431.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuv6d5xv9iwl",
+      "customerName": "Jennifer Pryor",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43400",
+      "vehicle": "2025 Hyundai Kona",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778465",
+        "date": "2026-06-18",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 232.94,
+        "hours": 1.3,
+        "phone": "6154192419",
+        "vin": "KM8HECA38SU206690",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuv6d5xv4lln",
+      "customerName": "Andrew Park",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43409",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xv7n4u",
+      "customerName": "Steven Cox",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43309",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xvg0ms",
+      "customerName": "Aditya Vardhan Padala",
+      "appointmentTime": "12:20 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43386",
+      "vehicle": "2026 Hyundai Elantra",
+      "services": [
+        "Routine Maintenance (e.g. Oil Change, etc) — Driver-side heated seat is not functioning turns off in a minute or so of running, does not turn back on and needs the car to be re-started for it to work and again does the same thing.",
+        "Diagnostic/Service (Check Engine Light) — Driver-side heated seat is not functioning turns off in a minute or so of running, does not turn back on and needs the car to be re-started for it to work and again does the same thing."
+      ],
+      "comments": "Driver-side heated seat is not functioning turns off in a minute or so of running, does not turn back on and needs the car to be re-started for it to work and again does the same thing.",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmuv6d5xvb9c1",
+      "customerName": "Kiera Harmon",
+      "appointmentTime": "1:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43255",
+      "vehicle": "2011 Hyundai Sonata",
+      "services": [
+        "CUSTOMER STATES NEEDS TRANSMISSION REPLACED. HAS QUOTE FROM LAST VISIT.",
+        "NEEDS LOANER"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779180",
+        "date": "2026-07-14",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 162.62,
+        "hours": 0.7,
+        "phone": "5743982343",
+        "vin": "KMHEC4A44BA003028",
+        "items": [
+          {
+            "code": "VTFL",
+            "desc": "",
+            "count": 1,
+            "h": 0.4,
+            "est": true,
+            "price": 81.31,
+            "priceEst": true
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 0.4,
+            "est": true,
+            "price": 81.31,
+            "priceEst": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuv6d5xvofti",
+      "customerName": "Emma Gibilisco",
+      "appointmentTime": "3:20 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43321",
+      "vehicle": "2019 Hyundai Sonata",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "9C2 C ECU S/W UPDATE THETA II (26-01-013H-2)",
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-05T11:37:05.540Z"
+}
