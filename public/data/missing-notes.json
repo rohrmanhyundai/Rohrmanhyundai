@@ -1,23 +1,11 @@
 {
-  "updatedAt": "2026-10-05T16:57:11.978Z",
+  "updatedAt": "2026-10-05T21:25:59.481Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781335",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781334",
-        "vehicle": "2025 Hyundai Tucson Hybrid"
-      },
-      {
         "ro": "781332",
         "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "781331",
-        "vehicle": "2013 Hyundai Elantra"
       },
       {
         "ro": "781322",
@@ -26,10 +14,6 @@
       {
         "ro": "781318",
         "vehicle": "2027 Hyundai Palisade"
-      },
-      {
-        "ro": "781316",
-        "vehicle": "2024 Hyundai Elantra Hybrid"
       },
       {
         "ro": "781315",
@@ -50,44 +34,12 @@
     ],
     "JORDAN": [
       {
-        "ro": "781333",
-        "vehicle": "2026 Hyundai Elantra"
-      },
-      {
-        "ro": "781330",
-        "vehicle": "2019 Hyundai Elantra"
-      },
-      {
-        "ro": "781328",
-        "vehicle": "2025 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "781320",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
         "ro": "781319",
         "vehicle": "2026 Hyundai Sonata Hybrid"
       },
       {
-        "ro": "781317",
-        "vehicle": "2022 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781308",
-        "vehicle": "2022 Ford Edge"
-      },
-      {
-        "ro": "781306",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
         "ro": "781299",
         "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "781293",
-        "vehicle": "2026 Hyundai Kona"
       },
       {
         "ro": "781176",
@@ -98,10 +50,6 @@
       {
         "ro": "781302",
         "vehicle": "2027 Hyundai Palisade Hybrid"
-      },
-      {
-        "ro": "781228",
-        "vehicle": "2016 Mazda CX-5"
       },
       {
         "ro": "781070",
