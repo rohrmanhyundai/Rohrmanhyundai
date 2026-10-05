@@ -1,5 +1,28 @@
 [
   {
+    "name": "Casey Tate",
+    "phone": "765-309-4559",
+    "email": "slickgyvi@gmail.com",
+    "position": "Technician",
+    "source": "Indeed",
+    "interviewAt": "",
+    "contacted": "",
+    "contactedAt": "",
+    "contactNotes": "",
+    "decisionNotes": "",
+    "interviewed": "",
+    "interviewedAt": "",
+    "interviewNotes": "",
+    "considerHire": "",
+    "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-muv9brx2o2bc.pdf",
+    "resumeName": "Casey_Tate_-_Resume.pdf",
+    "archived": false,
+    "id": "ap-muv9bs31ktnm",
+    "appliedAt": "2026-10-05T12:59:57.805Z",
+    "updatedAt": "2026-10-05T12:59:57.806Z",
+    "updatedBy": "SHAWN"
+  },
+  {
     "name": "Shaelynn Svoboda",
     "phone": "765-315-8505",
     "email": "shaes47923@hotmail.com",
