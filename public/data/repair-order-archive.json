@@ -103,26 +103,6 @@
     "_sourceTech": "KADEN"
   },
   {
-    "id": "mupiia2fg5s",
-    "ro": "781235",
-    "roDate": "2026-09-30",
-    "vehicle": "",
-    "jobDesc": "NO START/POSSIBLE OIL LEAK",
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN",
-    "notes": "",
-    "flag": "purple",
-    "_archiveId": "mupkxkl5ek2",
-    "_archivedAt": "2026-10-01T13:38:13.241Z",
-    "_archivedBy": "CORY",
-    "_source": "wip",
-    "_sourceTech": "CORY"
-  },
-  {
     "id": "mun2v93ukdk3",
     "ro": "781202",
     "roDate": "2026-09-29",
