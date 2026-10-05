@@ -66,7 +66,12 @@ const todayKey = () => {
 
 // Where an applicant stands, worked out from what's filled in rather than kept
 // as a separate field that can disagree with it.
+const prettyDay = (iso) => {
+  const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number);
+  return y ? new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+};
 function stageOf(a) {
+  if (a.hired === 'yes') return { key: 'hired', label: a.startDate ? `✅ Hired · starts ${prettyDay(a.startDate)}` : '✅ Hired', color: '#4ade80', bg: 'rgba(34,197,94,.18)', border: 'rgba(74,222,128,.6)' };
   if (a.archived) return { key: 'archived', label: 'Archived', color: '#7d8ba3', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)' };
   if (a.considerHire === 'yes') return { key: 'hire', label: '★ Consider for hire', color: '#6ee7b7', bg: 'rgba(52,211,153,.14)', border: 'rgba(52,211,153,.45)' };
   if (a.considerHire === 'no') return { key: 'pass', label: 'Passed', color: '#fca5a5', bg: 'rgba(248,113,113,.12)', border: 'rgba(248,113,113,.35)' };
@@ -89,6 +94,7 @@ const FILTERS = [
   { key: 'today', label: 'Today & overdue' },
   { key: 'decide', label: 'Needs a decision' },
   { key: 'hire', label: 'Consider for hire' },
+  { key: 'hired', label: '✅ Hired' },
   { key: 'archived', label: 'Archived' },
   { key: 'all', label: 'Everyone' },
 ];
@@ -183,12 +189,13 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   // ones waiting on a decision, then everything upcoming by date.
   const view = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const rank = { today: 0, overdue: 1, decide: 2, scheduled: 3, new: 4, hire: 5, pass: 6, archived: 7 };
+    const rank = { today: 0, overdue: 1, decide: 2, scheduled: 3, new: 4, hire: 5, hired: 6, pass: 7, archived: 8 };
     return rows
       .filter(a => {
         if (a.id === openId) return true;              // never pull it out from under you
         const st = stageOf(a).key;
-        if (filter === 'open') return !a.archived && st !== 'pass';
+        if (filter === 'open') return !a.archived && st !== 'pass' && st !== 'hired';
+        if (filter === 'hired') return st === 'hired';
         if (filter === 'today') return st === 'today' || st === 'overdue';
         if (filter === 'decide') return st === 'decide';
         if (filter === 'hire') return st === 'hire';
@@ -212,7 +219,8 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
     const c = {};
     rows.forEach(a => {
       const st = stageOf(a).key;
-      const passesStatus = filter === 'open' ? (!a.archived && st !== 'pass')
+      const passesStatus = filter === 'open' ? (!a.archived && st !== 'pass' && st !== 'hired')
+        : filter === 'hired' ? st === 'hired'
         : filter === 'today' ? (st === 'today' || st === 'overdue')
         : filter === 'decide' ? st === 'decide'
         : filter === 'hire' ? st === 'hire'
@@ -241,8 +249,8 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   }, [view]);
 
   const counts = useMemo(() => {
-    const c = { today: 0, decide: 0, hire: 0 };
-    rows.forEach(a => { const k = stageOf(a).key; if (k === 'today' || k === 'overdue') c.today++; if (k === 'decide') c.decide++; if (k === 'hire') c.hire++; });
+    const c = { today: 0, decide: 0, hire: 0, hired: 0 };
+    rows.forEach(a => { const k = stageOf(a).key; if (k === 'today' || k === 'overdue') c.today++; if (k === 'decide') c.decide++; if (k === 'hire') c.hire++; if (k === 'hired') c.hired++; });
     return c;
   }, [rows]);
 
@@ -329,7 +337,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
               <button key={f.key} onClick={() => setFilter(f.key)}
                 className={`adv-advisor-tab${filter === f.key ? ' adv-advisor-tab--active' : ''}`}
                 style={{ fontSize: 12.5, padding: '6px 14px' }}>
-                {f.label}
+                {f.label}{f.key === 'hired' && counts.hired ? ` · ${counts.hired}` : ''}
               </button>
             ))}
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name, phone, email…"
@@ -817,6 +825,26 @@ function ApplicantCard({ applicant: a, busy, onOpenChange, onChange, onDelete })
                 />
                 <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 4 }}>Saves when you click out of the box.</div>
               </div>
+            )}
+          </div>
+
+          {/* Hired — the end of the road for an applicant. Takes them out of
+              the Open list; the start date shows on their badge. */}
+          <div style={{ borderTop: '1px solid rgba(148,163,184,.14)', paddingTop: 14, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            {a.hired === 'yes' ? (
+              <>
+                <span style={{ fontSize: 15, fontWeight: 900, color: '#4ade80' }}>✅ Hired{a.hiredAt ? <span style={{ fontSize: 12, color: '#86efac', fontWeight: 700 }}> · marked {prettyStamp(a.hiredAt)}</span> : null}</span>
+                <label style={{ ...labelStyle, margin: 0 }}>Start date</label>
+                <input type="date" value={a.startDate || ''} onChange={e => onChange({ startDate: e.target.value })}
+                  style={{ ...inputStyle, width: 170, colorScheme: 'dark' }} />
+                <div style={{ flex: 1 }} />
+                <button className="secondary" onClick={() => onChange({ hired: '', hiredAt: '', startDate: '' })} style={{ fontSize: 12.5 }}>Undo hired</button>
+              </>
+            ) : (
+              <button onClick={() => onChange({ hired: 'yes', hiredAt: new Date().toISOString(), considerHire: 'yes', archived: false })}
+                style={{ background: 'linear-gradient(180deg,#22c55e,#15803d)', border: '1px solid rgba(74,222,128,.7)', color: '#fff', fontWeight: 900, fontSize: 13.5, borderRadius: 10, padding: '8px 16px', cursor: 'pointer', boxShadow: '0 0 14px -3px rgba(74,222,128,.8)' }}>
+                ✅ Mark as hired
+              </button>
             )}
           </div>
 
