@@ -138,27 +138,27 @@
     "weekEnd": "2026-10-02",
     "days": {
       "mon": 0,
-      "tue": 3.38,
-      "wed": 11.48,
-      "thu": 5.96,
-      "fri": 5.64,
+      "tue": 0,
+      "wed": 0,
+      "thu": 0,
+      "fri": 0,
       "sat": 0
     },
-    "hours": 26.46,
-    "payableHours": 26.46,
-    "overridden": true,
+    "hours": 0,
+    "payableHours": 0,
+    "overridden": false,
     "adjustment": 0,
-    "boardHours": 26.46,
+    "boardHours": 0,
     "ptoHours": 0,
     "ptoPaid": true,
     "rate": 27,
     "tier": "Up to 50 hrs",
-    "pay": 714.42,
+    "pay": 0,
     "payType": "flat",
     "closed": true,
-    "updatedAt": "2026-10-06T11:12:11.604Z",
+    "updatedAt": "2026-10-06T11:12:34.674Z",
     "adjustSource": "week-report",
     "closedBy": "SHAWN",
-    "closedAt": "2026-10-06T11:12:11.604Z"
+    "closedAt": "2026-10-06T11:12:34.674Z"
   }
 }
