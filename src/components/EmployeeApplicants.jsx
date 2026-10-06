@@ -74,6 +74,11 @@ function stageOf(a) {
   if (a.hired === 'yes') return { key: 'hired', label: a.startDate ? `✅ Hired · starts ${prettyDay(a.startDate)}` : '✅ Hired', color: '#4ade80', bg: 'rgba(34,197,94,.18)', border: 'rgba(74,222,128,.6)' };
   if (a.archived) return { key: 'archived', label: 'Archived', color: '#7d8ba3', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)' };
   if (a.considerHire === 'yes') return { key: 'hire', label: '★ Consider for hire', color: '#6ee7b7', bg: 'rgba(52,211,153,.14)', border: 'rgba(52,211,153,.45)' };
+  if (a.considerHire === 'second') {
+    if (!a.secondInterviewAt) return { key: 'second', label: '2nd interview · date not set', color: '#c4b5fd', bg: 'rgba(167,139,250,.14)', border: 'rgba(167,139,250,.45)' };
+    const overdue = String(a.secondInterviewAt).slice(0, 10) < todayKey();
+    return { key: 'second', label: overdue ? `2nd interview passed — log it` : `2nd interview ${prettyWhen(a.secondInterviewAt)}`, color: '#c4b5fd', bg: 'rgba(167,139,250,.14)', border: 'rgba(167,139,250,.45)' };
+  }
   if (a.considerHire === 'no') return { key: 'pass', label: 'Passed', color: '#fca5a5', bg: 'rgba(248,113,113,.12)', border: 'rgba(248,113,113,.35)' };
   if (a.interviewed === 'yes') return { key: 'decide', label: 'Needs a decision', color: '#fbbf24', bg: 'rgba(251,191,36,.14)', border: 'rgba(251,191,36,.4)' };
   if (a.interviewAt) {
@@ -93,6 +98,7 @@ const FILTERS = [
   { key: 'open', label: 'Open' },
   { key: 'today', label: 'Today & overdue' },
   { key: 'decide', label: 'Needs a decision' },
+  { key: 'second', label: '2nd interview' },
   { key: 'hire', label: 'Consider for hire' },
   { key: 'hired', label: '✅ Hired' },
   { key: 'archived', label: 'Archived' },
@@ -189,7 +195,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
   // ones waiting on a decision, then everything upcoming by date.
   const view = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const rank = { today: 0, overdue: 1, decide: 2, scheduled: 3, new: 4, hire: 5, hired: 6, pass: 7, archived: 8 };
+    const rank = { today: 0, overdue: 1, decide: 2, second: 3, scheduled: 3, new: 4, hire: 5, hired: 6, pass: 7, archived: 8 };
     return rows
       .filter(a => {
         if (a.id === openId) return true;              // never pull it out from under you
@@ -199,6 +205,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         if (filter === 'today') return st === 'today' || st === 'overdue';
         if (filter === 'decide') return st === 'decide';
         if (filter === 'hire') return st === 'hire';
+        if (filter === 'second') return st === 'second';
         if (filter === 'archived') return !!a.archived;
         return true;
       })
@@ -224,6 +231,7 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
         : filter === 'today' ? (st === 'today' || st === 'overdue')
         : filter === 'decide' ? st === 'decide'
         : filter === 'hire' ? st === 'hire'
+        : filter === 'second' ? st === 'second'
         : filter === 'archived' ? !!a.archived
         : true;
       if (!passesStatus) return;
@@ -635,6 +643,19 @@ function ApplicantCard({ applicant: a, busy, onOpenChange, onChange, onDelete })
     </div>
   );
 
+  // A standalone toggle styled like the yes/no pills, in the 2nd-interview purple.
+  const pill = (on, label, onClick) => (
+    <button onClick={onClick}
+      style={{
+        padding: '5px 14px', fontSize: 12.5, fontWeight: 800, borderRadius: 999, cursor: 'pointer',
+        background: on ? 'rgba(167,139,250,.2)' : 'rgba(255,255,255,.05)',
+        border: `1px solid ${on ? 'rgba(167,139,250,.6)' : 'rgba(148,163,184,.25)'}`,
+        color: on ? '#c4b5fd' : '#94a3b8',
+      }}>
+      {label}
+    </button>
+  );
+
   return (
     <div style={{
       border: `1px solid ${stage.border}`, borderRadius: 16, padding: '16px 18px',
@@ -808,7 +829,22 @@ function ApplicantCard({ applicant: a, busy, onOpenChange, onChange, onDelete })
             <label style={labelStyle}>
               Consider for hire <span style={{ fontWeight: 600, letterSpacing: 0, textTransform: 'none', color: '#64748b' }}>— click again to clear</span>
             </label>
-            {yesNo(a.considerHire, v => onChange({ considerHire: v }))}
+            <div style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap' }}>
+              {yesNo(a.considerHire, v => onChange({ considerHire: v }))}
+              {pill(a.considerHire === 'second', 'Consider for 2nd interview',
+                () => onChange({ considerHire: a.considerHire === 'second' ? '' : 'second' }))}
+            </div>
+
+            {a.considerHire === 'second' && (
+              <div style={{ marginTop: 12, display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ minWidth: 220 }}>
+                  <label style={labelStyle}>2nd interview set for</label>
+                  <input type="datetime-local" value={a.secondInterviewAt || ''} style={{ ...inputStyle, colorScheme: 'dark' }}
+                    onChange={e => onChange({ secondInterviewAt: e.target.value })} />
+                </div>
+                {pill(!a.secondInterviewAt, 'Date not set yet', () => onChange({ secondInterviewAt: '' }))}
+              </div>
+            )}
 
             {/* Why someone was passed over is the thing you'll want months later
                 — when they reapply, or when the same question comes up again. */}
