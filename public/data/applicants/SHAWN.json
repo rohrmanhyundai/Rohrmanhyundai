@@ -10,8 +10,8 @@
     "contactedAt": "2026-10-05T13:31",
     "contactNotes": "caleed left voice mail. Called back interview set for 2:00pm. ",
     "decisionNotes": "",
-    "interviewed": "",
-    "interviewedAt": "",
+    "interviewed": "yes",
+    "interviewedAt": "2026-10-06T14:43",
     "interviewNotes": "",
     "considerHire": "",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-muv9crqnpaei.pdf",
@@ -19,7 +19,7 @@
     "archived": false,
     "id": "ap-muv9crvwt73g",
     "appliedAt": "2026-10-05T13:00:44.204Z",
-    "updatedAt": "2026-10-05T18:31:11.252Z",
+    "updatedAt": "2026-10-06T18:43:37.295Z",
     "updatedBy": "SHAWN"
   },
   {
