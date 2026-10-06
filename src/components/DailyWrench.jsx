@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { loadDailyWrench, loadDailyWrenchIndex, requestDailyWrench } from '../utils/github';
 import { trackPage, trackAction } from '../utils/activityTracker';
 import { BigMoneyAdvisorCharts, CHART_LEGEND } from './BigMoneyProgress';
-import { advisorDailyAverage, advisorsForDisplay, roh50Goals } from '../utils/calculations';
+import { advisorDailyAverage, advisorProjectedHours, advisorsForDisplay, roh50Goals } from '../utils/calculations';
 import { ownerOf, apptTags } from '../utils/apptMath.mjs';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
@@ -665,6 +665,9 @@ function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPr
   const share = rows.length ? hits / rows.length : 0;
   const ringCol = share >= 0.75 ? '#4ade80' : share >= 0.45 ? '#facc15' : '#f87171';
   const daily = advisorDailyAverage(advisor, data);
+  // Month-end pace: daily average × the month's workdays (same as the dashboard).
+  const pace = advisorProjectedHours(advisor, data);
+  const lastMonth = Number(advisor.last_month_total) || 0;
   const big = (k, v, sub, color = '#f8fafc') => (
     <div style={{ minWidth: 120 }}>
       <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase', color: '#64748b' }}>{k}</div>
@@ -682,7 +685,9 @@ function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPr
         </Ring>
         {big('Daily avg', daily.toFixed(1), 'hrs / workday')}
         {big('MTD hrs', (Number(advisor.mtd_hours) || 0).toFixed(1), `${Number(advisor.ro_count) || 0} ROs`)}
-        {big('Last month', (Number(advisor.last_month_total) || 0).toFixed(1), 'hrs total', '#cbd5e1')}
+        {big('Pacing', pace.toFixed(1), lastMonth > 0 ? `${pace >= lastMonth ? '▲' : '▼'} ${Math.abs(pace - lastMonth).toFixed(1)} vs last month` : 'hrs this month',
+          lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f8fafc')}
+        {big('Last month', lastMonth.toFixed(1), 'hrs total', '#cbd5e1')}
         <div style={{ flex: 1, minWidth: 160, fontSize: 15, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.45 }}>
           {hits === rows.length ? '🔥 Every goal on the board is hit. Keep it there.'
             : hits === 0 ? '🎯 Nothing green yet — pick one tile and turn it today.'
