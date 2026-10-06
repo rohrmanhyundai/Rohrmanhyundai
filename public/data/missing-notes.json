@@ -1,7 +1,25 @@
 {
-  "updatedAt": "2026-10-06T16:37:04.655Z",
+  "updatedAt": "2026-10-06T21:45:56.535Z",
   "by": "SHAWN",
   "advisors": {
+    "DAVID": [
+      {
+        "ro": "781371",
+        "vehicle": "2018 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781366",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781345",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
+      }
+    ],
     "CORY": [
       {
         "ro": "781358",
@@ -16,14 +34,6 @@
         "vehicle": "2017 Kia Sorento"
       },
       {
-        "ro": "781355",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781070",
-        "vehicle": "2017 Kia Sorento"
-      },
-      {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
       }
@@ -34,26 +44,12 @@
         "vehicle": "2024 Hyundai Palisade"
       },
       {
-        "ro": "781349",
-        "vehicle": "2022 Hyundai Tucson"
-      },
-      {
         "ro": "781344",
         "vehicle": "2019 Hyundai Santa Fe"
       },
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781345",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781258",
-        "vehicle": "2026 Hyundai Tucson"
       }
     ]
   }
