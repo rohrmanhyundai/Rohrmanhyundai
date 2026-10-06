@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { loadTirePromos, saveTirePromo, deleteTirePromo, reorderTirePromos, loadTirePromoNote, saveTirePromoNote } from '../utils/github';
 import { uploadTirePromoToS3, deleteS3ObjectByUrl } from '../utils/s3';
 
@@ -151,8 +151,7 @@ function PricingPanel() {
 /* ── Promotions ────────────────────────────────────────────────────────────── */
 function PromoBoard({ promos: allPromos, note, loading, canEdit, onManage }) {
   // Expired promotions come off the board on their own — no one has to remember
-  // to pull last month's sale down. They stay in Manage so a manager can extend
-  // or delete them.
+  // to pull last month's sale down. Opening Manage deletes them for good.
   const promos = allPromos.filter(p => !isExpired(p));
 
   if (loading) return null;
@@ -308,6 +307,23 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
 
+  // Expired promotions are cleared out of Manage too: the first manager to open
+  // it after an end date passes deletes them (index entry + picture). The ref
+  // stops a re-render from firing a second delete for the same promo.
+  const live = promos.filter(p => !isExpired(p));
+  const purgingRef = useRef(new Set());
+  useEffect(() => {
+    const stale = promos.filter(p => isExpired(p) && !purgingRef.current.has(p.id));
+    if (!stale.length) return;
+    stale.forEach(p => purgingRef.current.add(p.id));
+    (async () => {
+      for (const p of stale) {
+        try { await deleteTirePromo(p); } catch { purgingRef.current.delete(p.id); }
+      }
+      onChange(cur => cur.filter(p => !isExpired(p)));
+    })();
+  }, [promos, onChange]);
+
   // Revoke the object URL when the picked file changes, or the preview leaks.
   useEffect(() => {
     if (!file) { setPreview(''); return; }
@@ -408,7 +424,7 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
   }
 
   async function move(index, delta) {
-    const next = promos.slice();
+    const next = live.slice();
     const target = index + delta;
     if (target < 0 || target >= next.length) return;
     [next[index], next[target]] = [next[target], next[index]];
@@ -419,8 +435,6 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
       setError('Order not saved: ' + (err.message || err));
     }
   }
-
-  const expiredCount = promos.filter(p => isExpired(p)).length;
 
   const inputStyle = {
     width: '100%', background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.25)',
@@ -513,16 +527,16 @@ function ManagePanel({ promos, note, currentUser, onChange, onNoteChange }) {
       {/* Existing */}
       <div>
         <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.14em', color: '#8fa7c8', marginBottom: 12 }}>
-          Posted promotions ({promos.filter(p => !isExpired(p)).length} live{expiredCount ? ` · ${expiredCount} expired` : ''})
+          Posted promotions ({live.length} live)
         </div>
-        {!promos.length && <div style={{ color: '#7a92b8', fontSize: 14 }}>Nothing posted yet.</div>}
+        {!live.length && <div style={{ color: '#7a92b8', fontSize: 14 }}>Nothing posted yet.</div>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {promos.map((p, i) => (
+          {live.map((p, i) => (
             <PromoRow
               key={p.id}
               promo={p}
               isFirst={i === 0}
-              isLast={i === promos.length - 1}
+              isLast={i === live.length - 1}
               busy={busy}
               inputStyle={inputStyle}
               onMoveUp={() => move(i, -1)}
