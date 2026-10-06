@@ -1,55 +1,23 @@
 {
-  "updatedAt": "2026-10-05T21:25:59.481Z",
+  "updatedAt": "2026-10-06T16:37:04.655Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781332",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "781322",
-        "vehicle": "2012 Hyundai Accent"
-      },
-      {
-        "ro": "781318",
-        "vehicle": "2027 Hyundai Palisade"
-      },
-      {
-        "ro": "781315",
-        "vehicle": "2025 Hyundai Kona"
-      },
-      {
-        "ro": "781310",
-        "vehicle": "2022 Hyundai Palisade"
-      },
-      {
-        "ro": "781300",
-        "vehicle": "2016 Hyundai Elantra"
-      },
-      {
-        "ro": "781258",
-        "vehicle": "2026 Hyundai Tucson"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781319",
-        "vehicle": "2026 Hyundai Sonata Hybrid"
-      },
-      {
-        "ro": "781299",
-        "vehicle": "2025 Hyundai Palisade"
-      },
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
     "CORY": [
       {
-        "ro": "781302",
-        "vehicle": "2027 Hyundai Palisade Hybrid"
+        "ro": "781358",
+        "vehicle": "2018 Jeep Wrangler Unlimited"
+      },
+      {
+        "ro": "781357",
+        "vehicle": "2016 Nissan Rogue"
+      },
+      {
+        "ro": "781356",
+        "vehicle": "2017 Kia Sorento"
+      },
+      {
+        "ro": "781355",
+        "vehicle": "2024 Hyundai Tucson"
       },
       {
         "ro": "781070",
@@ -58,6 +26,34 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
+      }
+    ],
+    "JORDAN": [
+      {
+        "ro": "781350",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781349",
+        "vehicle": "2022 Hyundai Tucson"
+      },
+      {
+        "ro": "781344",
+        "vehicle": "2019 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781345",
+        "vehicle": "2026 Hyundai Tucson"
+      },
+      {
+        "ro": "781258",
+        "vehicle": "2026 Hyundai Tucson"
       }
     ]
   }
