@@ -123,5 +123,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1791317129635
+  },
+  {
+    "id": "gm-mux3zigqp4co",
+    "from": "SHAWN",
+    "to": [
+      "CHRIS"
+    ],
+    "text": "VMPI BONUS=82.20",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1791317159738
   }
 ]
