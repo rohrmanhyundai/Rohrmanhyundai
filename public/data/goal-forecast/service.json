@@ -195,5 +195,33 @@
       }
     },
     "partsBreakdown": null
+  },
+  "2026-10": {
+    "forecast": 0,
+    "lastYear": 0,
+    "actuals": {
+      "2026-10-05": 7034.52,
+      "2026-10-04": 0,
+      "2026-10-03": 64.82,
+      "2026-10-02": 5689.36,
+      "2026-10-01": 5277.68
+    },
+    "laborBreakdown": {
+      "mtd": {
+        "cp": 6826.9,
+        "warranty": 5000.41,
+        "internal": 6239.07,
+        "unapplied": 0,
+        "total": 18066.38
+      },
+      "ly": {
+        "cp": 59733.77,
+        "warranty": 36893.03,
+        "internal": 33941.55,
+        "unapplied": -2788.91,
+        "total": 127779.44
+      }
+    },
+    "partsBreakdown": null
   }
 }
