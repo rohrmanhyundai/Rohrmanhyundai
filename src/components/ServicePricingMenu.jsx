@@ -1387,6 +1387,13 @@ export function FloatingPricingTool({ currentUser, currentRole }) {
           />
         </div>
       )}
+      <style>{`
+        @keyframes ptBubbleGlow {
+          0%, 100% { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #1e3a8a, 0 10px 20px rgba(0,0,0,.5), 0 0 14px 2px rgba(96,165,250,.55); }
+          50%      { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #1e3a8a, 0 10px 20px rgba(0,0,0,.5), 0 0 26px 8px rgba(96,165,250,.85); }
+        }
+        @media (prefers-reduced-motion: reduce) { @keyframes ptBubbleGlow { 0%, 100% { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #1e3a8a, 0 10px 20px rgba(0,0,0,.5), 0 0 18px 4px rgba(96,165,250,.7); } } }
+      `}</style>
       {/* Hidden while the tool is open so it never sits on top of it — ✕ or a
           click outside brings it back. */}
       {!(open && menu) && <div
@@ -1398,11 +1405,13 @@ export function FloatingPricingTool({ currentUser, currentRole }) {
         style={{
           position: 'fixed', left: pos.x, top: pos.y, width: PT_BUBBLE, height: PT_BUBBLE,
           borderRadius: '50%', zIndex: 2147483000, cursor: 'grab', touchAction: 'none',
-          background: 'linear-gradient(180deg,#60a5fa,#3b82f6)',
-          border: '1px solid rgba(147,197,253,.75)',
-          boxShadow: open ? '0 0 0 3px rgba(96,165,250,.45), 0 8px 24px rgba(0,0,0,.45)' : '0 8px 24px rgba(0,0,0,.45)',
+          // Raised button: a light catching the top-left, a darker rim
+          // underneath, and a soft blue glow that breathes to draw the eye.
+          background: 'radial-gradient(circle at 35% 28%, #bfdbfe 0%, #60a5fa 32%, #2563eb 72%, #1d4ed8 100%)',
+          border: '1px solid rgba(191,219,254,.85)',
+          animation: 'ptBubbleGlow 2.4s ease-in-out infinite',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 28, fontWeight: 1000, color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,.4)', userSelect: 'none',
+          fontSize: 28, fontWeight: 1000, color: '#fff', textShadow: '0 2px 2px rgba(15,23,42,.55), 0 0 8px rgba(191,219,254,.6)', userSelect: 'none',
           fontFamily: 'Inter, sans-serif',
         }}>
         {loading && !menu ? '⏳' : '$'}
