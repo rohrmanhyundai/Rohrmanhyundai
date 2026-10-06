@@ -1,0 +1,208 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-06",
+  "rows": [
+    {
+      "id": "rmuwm9499jvf0",
+      "customerName": "David Dock",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43427",
+      "vehicle": "2019 Hyundai Santa Fe XL",
+      "services": [
+        "CUSTOMER STATES CEL ON CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuwm949afio0",
+      "customerName": "Allison Archer",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43414",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES LEAK IN SUNROOF. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuwm949a8jnc",
+      "customerName": "Kevin Brost",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43445",
+      "vehicle": "2024 Hyundai Palisade",
+      "services": [
+        "HY 292 safety Side Curtain Air Bag May Deploy Improperly",
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuwm949a5bb2",
+      "customerName": "Daya Moona",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43447",
+      "vehicle": "2022 Hyundai Tucson Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmuwm949achbx",
+      "customerName": "Carol SHELTON",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43422",
+      "vehicle": "2024 Hyundai Santa Cruz",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuwm949atizf",
+      "customerName": "Yoon Byung",
+      "appointmentTime": "1:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43454",
+      "vehicle": "2024 Hyundai Santa Fe",
+      "services": [
+        "CUSTOMER STATES RADIO NO SOUND AND TURN SIGNAL HAS NO SOUND INSIDE THE CAR."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778376",
+        "date": "2026-06-15",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 389.98,
+        "hours": 1.5,
+        "phone": "7654133107",
+        "vin": "5NMP44GL5RH033860",
+        "items": [
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuwm949a6xi1",
+      "customerName": "Kristi Brown",
+      "appointmentTime": "3:40 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43450",
+      "vehicle": "2018 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779530",
+        "date": "2026-07-24",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1296.73,
+        "hours": 5.5,
+        "phone": "7654279784",
+        "vin": "5NPD84LF1JH268075",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 2,
+            "h": 2.8,
+            "est": true,
+            "price": 1296.73,
+            "priceEst": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuwm949a2xp0",
+      "customerName": "Alexis Bravo",
+      "appointmentTime": "4:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43446",
+      "vehicle": "2026 Hyundai IONIQ 9",
+      "services": [
+        "TIRE ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-06T11:49:39.827Z"
+}
