@@ -122,5 +122,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mux7jyxjsqsz",
+    "ro": "781371",
+    "roDate": "2026-10-06",
+    "vehicle": "2018 Hyundai Santa Fe",
+    "jobDesc": "CUSTOMER STATES SOMETIMES HARD TO START AND CAN SMELL FUEL AT TIMES.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
