@@ -111,5 +111,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1791317108251
+  },
+  {
+    "id": "gm-mux3yv8jkcyi",
+    "from": "SHAWN",
+    "to": [
+      "BRYSON"
+    ],
+    "text": "VMPI BONUS=149.60",
+    "alert": true,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1791317129635
   }
 ]
