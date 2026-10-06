@@ -17,7 +17,7 @@ import RoUpload from './components/RoUpload';
 import AdvisorDayForm from './components/AdvisorDayForm';
 import AfterCallReport from './components/AfterCallReport';
 import DocumentLibrary from './components/DocumentLibrary';
-import ServicePricingMenu from './components/ServicePricingMenu';
+import ServicePricingMenu, { FloatingPricingTool } from './components/ServicePricingMenu';
 import LivePay from './components/LivePay';
 import TechLivePay from './components/TechLivePay';
 import LivePayHub from './components/LivePayHub';
@@ -2286,6 +2286,10 @@ export default function App() {
       onMessagesChange={setGlobalMessages}
       openSignal={messengerOpen}
     />, document.body) : null;
+  // 🧮 Pricing Tool bubble — draggable like the messenger, on every page for
+  // anyone with Service Pricing Menu access (computer view only).
+  const pricingBubble = isLoggedIn && !isPhone && canAccess('servicePricing') ? createPortal(
+    <FloatingPricingTool currentUser={currentUser} currentRole={currentRole} />, document.body) : null;
 
   if (showReset && resetLink) {
     return <ResetPasswordPage token={resetLink.token} username={resetLink.username}
@@ -2306,5 +2310,5 @@ export default function App() {
       🔒 Locked after {idleNotice} min idle — enter your code again to go back in.
     </div>
   ) : null;
-  return (<>{mentionModal}{messenger}{passwordModals}{idleToast}{renderPage()}</>);
+  return (<>{mentionModal}{messenger}{pricingBubble}{passwordModals}{idleToast}{renderPage()}</>);
 }

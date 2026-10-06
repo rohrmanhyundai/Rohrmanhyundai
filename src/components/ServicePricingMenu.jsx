@@ -1043,7 +1043,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 // the Package Builder — pick services, apply a coupon (with an optional cap) —
 // but nothing is saved or posted; it just prices a job on the spot. Services the
 // manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
-function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose }) {
+function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose, zIndex = 1000 }) {
   // The coupon cap is manager-locked: it always starts from the saved menu value.
   const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
   const [search, setSearch] = useState('');
@@ -1073,7 +1073,7 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
   const countInPkg = (name) => (draft.items || []).filter(it => it.name === name).length;
 
   return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '4vh 16px', overflowY: 'auto' }}>
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '4vh 16px', overflowY: 'auto' }}>
       <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 1080, background: 'linear-gradient(180deg,#141c2e,#0d1424)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 18, boxShadow: '0 30px 80px -30px rgba(0,0,0,.9)', overflow: 'hidden' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '15px 20px', background: 'linear-gradient(90deg, rgba(96,165,250,.2), rgba(96,165,250,0))', borderBottom: '1px solid rgba(96,165,250,.24)' }}>
@@ -1290,5 +1290,120 @@ function SummaryEdit({ label, value, onChange, prefix, suffix, color = '#e2e8f0'
         style={{ ...editInp, width: 92, padding: '5px 9px', fontSize: 13, textAlign: 'right', fontWeight: 800, color }} />
       <span style={{ fontSize: 12.5, color: '#94a3b8', marginLeft: 5, width: 26 }}>{suffix || ''}</span>
     </div>
+  );
+}
+
+// ── Floating Pricing Tool bubble ─────────────────────────────────────────────
+// A draggable 🧮 bubble, like the messenger's, that sits above every page. A
+// click opens the Pricing Tool; ✕ or a click outside it closes it back to the
+// bubble. The tool stays mounted while hidden, so a quote in progress is still
+// there when it's reopened (until Start over or a refresh).
+const PT_BUBBLE = 56;
+const PT_DRAG_SLOP = 4;
+function ptClamp(x, y) {
+  const maxX = Math.max(0, window.innerWidth - PT_BUBBLE - 8);
+  const maxY = Math.max(0, window.innerHeight - PT_BUBBLE - 8);
+  return { x: Math.min(Math.max(8, x), maxX), y: Math.min(Math.max(8, y), maxY) };
+}
+
+export function FloatingPricingTool({ currentUser, currentRole }) {
+  const isEditor = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const posKey = `floatingPricingPos:${(currentUser || '').toUpperCase()}`;
+  const [pos, setPos] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(posKey) || 'null');
+      if (saved && typeof saved.x === 'number') return ptClamp(saved.x, saved.y);
+    } catch {}
+    // Default: just above the messenger bubble.
+    return ptClamp(window.innerWidth - PT_BUBBLE - 16, window.innerHeight - PT_BUBBLE * 2 - 108);
+  });
+  const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(null);   // { categories, doorRate, maxCoupon } once loaded
+  const [loading, setLoading] = useState(false);
+
+  // Fresh menu every time it opens, so price edits show without a refresh.
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    setLoading(true);
+    loadServicePricing()
+      .then(d => { if (!cancelled) setMenu({ categories: d.categories || [], doorRate: d.doorRate || '', maxCoupon: d.maxCoupon || '' }); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [open]);
+
+  // Managers can still set the coupon cap from here: re-read the file so a
+  // cap change never overwrites someone else's menu edits.
+  async function commitMaxCoupon(value) {
+    const v = (value || '').trim();
+    if (!menu || v === (menu.maxCoupon || '').trim()) return;
+    const fresh = await loadServicePricing();
+    await saveServicePricing({ ...fresh, by: (currentUser || '').toUpperCase(), maxCoupon: v });
+    setMenu(m => ({ ...m, maxCoupon: v }));
+  }
+
+  const dragRef = useRef({ active: false, moved: false });
+  const posRef = useRef(pos);
+  const setPosBoth = useCallback((next) => { posRef.current = next; setPos(next); }, []);
+  useEffect(() => {
+    const onResize = () => setPosBoth(ptClamp(posRef.current.x, posRef.current.y));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [setPosBoth]);
+
+  const onPointerDown = (e) => {
+    const p = posRef.current;
+    dragRef.current = { active: true, moved: false, dx: e.clientX - p.x, dy: e.clientY - p.y, startX: p.x, startY: p.y };
+    try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch {}
+  };
+  const onPointerMove = (e) => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    const nx = e.clientX - d.dx, ny = e.clientY - d.dy;
+    if (!d.moved && (Math.abs(nx - d.startX) > PT_DRAG_SLOP || Math.abs(ny - d.startY) > PT_DRAG_SLOP)) d.moved = true;
+    if (d.moved) setPosBoth(ptClamp(nx, ny));
+  };
+  const onPointerUp = (e) => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    dragRef.current.active = false;
+    try { e.currentTarget.releasePointerCapture?.(e.pointerId); } catch {}
+    if (d.moved) {
+      try { localStorage.setItem(posKey, JSON.stringify(posRef.current)); } catch {}
+    } else {
+      setOpen(v => !v);   // a press that never moved is a click
+    }
+  };
+
+  return (
+    <>
+      {menu && (
+        <div style={{ display: open ? 'contents' : 'none' }}>
+          <PricingToolModal
+            categories={menu.categories} doorRate={menu.doorRate}
+            maxCoupon={menu.maxCoupon} canEditCap={isEditor} onCommitCap={commitMaxCoupon}
+            onClose={() => setOpen(false)} zIndex={2147482990}
+          />
+        </div>
+      )}
+      <div
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        title="Pricing Tool — drag to move"
+        style={{
+          position: 'fixed', left: pos.x, top: pos.y, width: PT_BUBBLE, height: PT_BUBBLE,
+          borderRadius: '50%', zIndex: 2147483000, cursor: 'grab', touchAction: 'none',
+          background: 'linear-gradient(180deg,#60a5fa,#3b82f6)',
+          border: '1px solid rgba(147,197,253,.75)',
+          boxShadow: open ? '0 0 0 3px rgba(96,165,250,.45), 0 8px 24px rgba(0,0,0,.45)' : '0 8px 24px rgba(0,0,0,.45)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 24, userSelect: 'none',
+        }}>
+        {loading && !menu ? '⏳' : '🧮'}
+      </div>
+    </>
   );
 }
