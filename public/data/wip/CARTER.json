@@ -12,5 +12,21 @@
     "advisor": "JORDAN TROXEL",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mux7jzvywc4i",
+    "ro": "781366",
+    "roDate": "2026-10-06",
+    "vehicle": "2026 Hyundai Palisade",
+    "jobDesc": "CUSTOMER STATES- 1 key Fob doesnt work, the cut.key does",
+    "notes": "LOTS OF OTHER CONCERNS",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
