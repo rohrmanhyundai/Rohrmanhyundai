@@ -1088,19 +1088,19 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
 
         <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', alignItems: 'stretch' }}>
           {/* Palette */}
-          <div style={{ flex: '1 1 320px', minWidth: 280, borderRight: '1px solid rgba(148,163,184,.14)', maxHeight: '68vh', overflowY: 'auto', padding: 16 }}>
+          <div style={{ flex: '1 1 320px', minWidth: 280, borderRight: '1px solid rgba(148,163,184,.14)', maxHeight: '68vh', overflowY: 'auto', overflowX: 'hidden', padding: 16 }}>
             <div style={{ ...lbl, marginBottom: 8 }}>Add services · click to add</div>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search services…" style={{ ...editInp, marginBottom: 12 }} />
             {!shownGroups.length ? (
               <div style={{ color: '#64748b', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>No matching services.</div>
             ) : shownGroups.map(g => (
               <div key={g.name} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 6 }}>{g.name}</div>
-                <div style={{ display: 'grid', gap: 6 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 6, overflowWrap: 'anywhere' }}>{g.name}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
                   {g.services.map(s => {
                     const n = countInPkg(s.name);
                     return (
-                      <button key={s.id} onClick={() => addService(s)} style={{ display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left', background: 'rgba(30,41,59,.6)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 9, padding: '8px 11px', cursor: 'pointer' }}>
+                      <button key={s.id} onClick={() => addService(s)} title={s.name} style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left', background: 'rgba(30,41,59,.6)', border: '1px solid rgba(148,163,184,.16)', borderRadius: 9, padding: '8px 11px', cursor: 'pointer' }}>
                         <span style={{ color: '#60a5fa', fontWeight: 900, fontSize: 15 }}>＋</span>
                         <span style={{ flex: 1, minWidth: 0 }}>
                           <span style={{ display: 'block', fontSize: 13.5, fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}{s.noCoupon ? ' 🔒' : ''}</span>
@@ -1294,7 +1294,7 @@ function SummaryEdit({ label, value, onChange, prefix, suffix, color = '#e2e8f0'
 }
 
 // ── Floating Pricing Tool bubble ─────────────────────────────────────────────
-// A draggable 🧮 bubble, like the messenger's, that sits above every page. A
+// A draggable $ bubble, like the messenger's, that sits above every page. A
 // click opens the Pricing Tool; ✕ or a click outside it closes it back to the
 // bubble. The tool stays mounted while hidden, so a quote in progress is still
 // there when it's reopened (until Start over or a refresh).
@@ -1387,7 +1387,9 @@ export function FloatingPricingTool({ currentUser, currentRole }) {
           />
         </div>
       )}
-      <div
+      {/* Hidden while the tool is open so it never sits on top of it — ✕ or a
+          click outside brings it back. */}
+      {!(open && menu) && <div
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -1400,10 +1402,11 @@ export function FloatingPricingTool({ currentUser, currentRole }) {
           border: '1px solid rgba(147,197,253,.75)',
           boxShadow: open ? '0 0 0 3px rgba(96,165,250,.45), 0 8px 24px rgba(0,0,0,.45)' : '0 8px 24px rgba(0,0,0,.45)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 24, userSelect: 'none',
+          fontSize: 28, fontWeight: 1000, color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,.4)', userSelect: 'none',
+          fontFamily: 'Inter, sans-serif',
         }}>
-        {loading && !menu ? '⏳' : '🧮'}
-      </div>
+        {loading && !menu ? '⏳' : '$'}
+      </div>}
     </>
   );
 }

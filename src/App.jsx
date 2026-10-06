@@ -2286,7 +2286,7 @@ export default function App() {
       onMessagesChange={setGlobalMessages}
       openSignal={messengerOpen}
     />, document.body) : null;
-  // 🧮 Pricing Tool bubble — draggable like the messenger, on every page for
+  // $ Pricing Tool bubble — draggable like the messenger, on every page for
   // anyone with Service Pricing Menu access (computer view only).
   const pricingBubble = isLoggedIn && !isPhone && canAccess('servicePricing') ? createPortal(
     <FloatingPricingTool currentUser={currentUser} currentRole={currentRole} />, document.body) : null;
