@@ -712,6 +712,13 @@ export default function FloatingMessenger({
         </div>
       )}
 
+      <style>{`
+        @keyframes msgBubbleGlow {
+          0%, 100% { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #0c4a6e, 0 10px 20px rgba(0,0,0,.5), 0 0 14px 2px rgba(56,189,248,.55); }
+          50%      { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #0c4a6e, 0 10px 20px rgba(0,0,0,.5), 0 0 26px 8px rgba(56,189,248,.85); }
+        }
+        @media (prefers-reduced-motion: reduce) { @keyframes msgBubbleGlow { 0%, 100% { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #0c4a6e, 0 10px 20px rgba(0,0,0,.5), 0 0 18px 4px rgba(56,189,248,.7); } } }
+      `}</style>
       <div
         ref={bubbleRef}
         onPointerDown={onPointerDown}
@@ -722,9 +729,11 @@ export default function FloatingMessenger({
         style={{
           position: 'fixed', left: pos.x, top: pos.y, width: BUBBLE, height: BUBBLE,
           borderRadius: '50%', zIndex: 2147483001, cursor: 'grab', touchAction: 'none',
-          background: 'linear-gradient(180deg,#38bdf8,#0369a1)',
-          border: '1px solid rgba(125,211,252,.7)',
-          boxShadow: '0 8px 24px rgba(0,0,0,.45)',
+          // Raised button with a breathing glow — same treatment as the $
+          // Pricing Tool bubble, in the messenger's sky blue.
+          background: 'radial-gradient(circle at 35% 28%, #bae6fd 0%, #38bdf8 32%, #0284c7 72%, #0369a1 100%)',
+          border: '1px solid rgba(186,230,253,.85)',
+          animation: 'msgBubbleGlow 2.4s ease-in-out infinite',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 24, userSelect: 'none',
         }}>
