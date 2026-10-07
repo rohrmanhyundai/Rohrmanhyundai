@@ -243,7 +243,7 @@
   {
     "id": "muh0bzogubm7",
     "createdAt": "2026-09-25T13:39:24.640Z",
-    "updatedAt": "2026-10-07T14:26:17.745Z",
+    "updatedAt": "2026-10-07T20:18:56.022Z",
     "dealershipName": "Bob Rohrman Hyundai",
     "customerName": "ISIAH SCALES",
     "customerPhone": "346) 578 - 1440",
@@ -255,11 +255,11 @@
     "mileage": "209829",
     "warrantyCompany": "SUPERIOR AUTO",
     "warrantyPhone": "765-459-0880",
-    "warrantyEmail": "103SUPERIOR-AUTO.COM",
+    "warrantyEmail": "103@SUPERIOR-AUTO.COM",
     "claimNumber": "",
     "authNumber": "",
     "laborRate": "190.00",
-    "laborTime": "9.0",
+    "laborTime": "12.40",
     "diagnosisTime": "1.0",
     "laborTotalOverride": "",
     "parts": [
