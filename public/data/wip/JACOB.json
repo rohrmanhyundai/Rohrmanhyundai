@@ -30,21 +30,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "muwwiqhw5jko",
-    "ro": "781357",
-    "roDate": "2026-10-06",
-    "vehicle": "2016 Nissan Rogue",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
   }
 ]
