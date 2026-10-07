@@ -106,5 +106,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "muyj4le9ba7n",
+    "ro": "781374",
+    "roDate": "2026-10-07",
+    "vehicle": "2026 Hyundai Santa Fe Hybrid",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHTS ON AND POSSIBLE OIL LEAK.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
