@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-07T19:57:40.537Z",
+  "updatedAt": "2026-10-07T21:10:06.146Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
@@ -39,10 +39,6 @@
       }
     ],
     "CORY": [
-      {
-        "ro": "781357",
-        "vehicle": "2016 Nissan Rogue"
-      },
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
