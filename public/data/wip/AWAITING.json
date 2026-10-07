@@ -1,20 +1,5 @@
 [
   {
-    "id": "muyj4m76b20k",
-    "ro": "781394",
-    "roDate": "2026-10-07",
-    "vehicle": "2027 Hyundai Palisade Hybrid",
-    "jobDesc": "PDI",
-    "notes": "",
-    "flag": "pink",
-    "usedCar": false,
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "isNew": true
-  },
-  {
     "id": "muyj4m7755jz",
     "ro": "781393",
     "roDate": "2026-10-07",
