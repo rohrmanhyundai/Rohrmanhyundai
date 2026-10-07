@@ -24,7 +24,40 @@ const num = (v) => { const n = parseFloat(String(v == null ? '' : v).replace(/[^
 // "51%" or "51" → 0.51 ; 0.51 stays 0.51
 const rate = (v) => { const n = num(v); if (n == null) return null; return n > 1 ? n / 100 : n; };
 
-const PROMPT = `This is a screenshot of a service-advisor "add-on" rank board table. Work carefully, column by column.
+// Tickets aren't printed per advisor on the card layout, but they're pinned
+// down exactly by the add-on % and the "N to 70%" upsells-needed count:
+// N = ceil(0.70·T − A) with A = add-ons and round(100·A/T) = the printed %.
+// Returns { tickets, addOns } for the smallest T that fits, or null.
+const GOAL = 0.70;
+export function solveTickets(ratePct, upsellsTo70) {
+  if (ratePct == null || upsellsTo70 == null || upsellsTo70 <= 0) return null;
+  for (let t = 1; t <= 1000; t++) {
+    for (let a = 0; a <= t; a++) {
+      if (Math.round((100 * a) / t) !== Math.round(ratePct)) continue;
+      if (Math.ceil(GOAL * t - a - 1e-9) === upsellsTo70) return { tickets: t, addOns: a };
+    }
+  }
+  return null;
+}
+
+const PROMPT = `This is a screenshot of a service-advisor "add-on" rank board. Work carefully.
+
+FIRST decide the layout:
+- "cards": each advisor is a line like "#18  JORDAN TROXEL  7" followed by a line like "Add-On 40% · Oil-Only 60% · 0.16 hrs/RO · 6 to 70%". (The store/dealership summary above them — e.g. "LAF HYUNDAI" with TICKETS / ADD-ON % / HRS/RO / OIL-ONLY tiles — is NOT an advisor.)
+- "table": a header row with columns like TICKETS, ADD-ON RATE, OIL-ONLY TKTS and one row per advisor.
+
+IF "cards": for EVERY advisor line return
+- name: the name as printed
+- add_on_rate: the Add-On % number, e.g. 40 for "Add-On 40%"
+- oil_only_pct: the Oil-Only % number, e.g. 60 for "Oil-Only 60%"
+- addl_hrs_ro: the hrs/RO decimal, e.g. 0.16
+- upsells_to_70: the N in "N to 70%" (whole number), or null if that part isn't shown
+- tickets: null, oil_only_tickets: null
+Also return "store": {"name","tickets","oil_only_tickets"} from the store summary tiles (TICKETS big number, OIL-ONLY big number), or null if not visible.
+Return ONLY JSON, no markdown fences:
+{"layout":"cards","store":{"name":"LAF HYUNDAI","tickets":46,"oil_only_tickets":28},"rows":[{"name":"JORDAN TROXEL","add_on_rate":40,"oil_only_pct":60,"addl_hrs_ro":0.16,"upsells_to_70":6,"tickets":null,"oil_only_tickets":null}]}
+
+IF "table", follow the steps below.
 
 STEP 1 — Read the header row and list the column titles left to right (skip blank icon/arrow columns). The board's layout changes from time to time. The current board starts with TICKETS, ADD-ON RATE, OIL-ONLY TKTS and ends with the add-on hours column, titled "ADD ON HRS / TICKET" — usually the LAST column. Older boards called it "ADD'L HRS / RO".
 (Some may be missing or the screenshot may be cropped — use what is actually there.)
@@ -43,8 +76,8 @@ STEP 3 — For each person row, transcribe the BIG number in every column in ord
 Sanity rules: oil_only_tickets ≈ tickets × (1 − add_on_rate/100). addl_hrs_ro differs from advisor to advisor and is usually under 2. If yours doesn't fit, re-read the columns.
 
 Return ONLY a JSON object, no markdown fences:
-{"columns":["RANK","STORE",...],"rows":[{"name":"JORDAN TROXEL","cells":["#14","JORDAN TROXEL","39.6","47","51%","23","0.57","$84","$3,945","+$697"],"tickets":47,"add_on_rate":51,"oil_only_tickets":23,"addl_hrs_ro":0.57,"addl_gp_ticket":84,"total_addl_gp":3945}]}
-If there are no person rows return {"columns":[],"rows":[]}.`;
+{"layout":"table","columns":["RANK","STORE",...],"rows":[{"name":"JORDAN TROXEL","cells":["#14","JORDAN TROXEL","39.6","47","51%","23","0.57","$84","$3,945","+$697"],"tickets":47,"add_on_rate":51,"oil_only_tickets":23,"addl_hrs_ro":0.57,"addl_gp_ticket":84,"total_addl_gp":3945}]}
+If there are no person rows return {"layout":"table","columns":[],"rows":[]}.`;
 
 // → { rows: [{ name, first, tickets, add_on_rate(0-1), oil_only_tickets, addl_hrs_ro, addl_gp_ticket, total_addl_gp }], raw }
 export async function parseAddOnScreenshot(file) {
@@ -81,6 +114,7 @@ export async function parseAddOnScreenshot(file) {
   const warnings = [];
   // Belt and braces: take the hours straight from the cell under the header
   // that names it, when the reader gave us aligned columns + cells.
+  const cards = String(parsed?.layout || '').toLowerCase() === 'cards';
   const cols = (parsed && Array.isArray(parsed.columns) ? parsed.columns : []).map(c => String(c || '').toUpperCase());
   const hrsCol = cols.findIndex(c => /HRS?\s*\/\s*(TICKET|TKT|RO)\b/.test(c) && !/GP|\$/.test(c));
   const rows = list
@@ -96,6 +130,19 @@ export async function parseAddOnScreenshot(file) {
         addl_gp_ticket: num(r.addl_gp_ticket),
         total_addl_gp: num(r.total_addl_gp),
       };
+      if (cards) {
+        // No ticket counts on the card layout — solve them from the % and the
+        // upsells-to-70% count; oil-only tickets are the ones with no add-on.
+        const solved = solveTickets(num(r.add_on_rate), num(r.upsells_to_70));
+        if (solved) {
+          row.tickets = solved.tickets;
+          row.oil_only_tickets = solved.tickets - solved.addOns;
+        } else {
+          row.tickets = null; row.oil_only_tickets = null;
+          warnings.push(`${row.first || row.name}: couldn't work out tickets (no "N to 70%" shown) — tickets and oil-only left as they were.`);
+        }
+        return row;
+      }
       // Tickets / oil-only: on every board layout TICKETS sits just before
       // the ADD-ON RATE % cell and OIL-ONLY just after it. Read them by that
       // position from the row's cells (the named fields have slid a column
@@ -131,6 +178,16 @@ export async function parseAddOnScreenshot(file) {
       return row;
     })
     .filter(r => r.first && (r.add_on_rate != null || r.addl_hrs_ro != null));
+  // Cross-check solved tickets against the store tiles when every advisor in
+  // the store was read.
+  const store = parsed?.store;
+  if (cards && store && num(store.tickets) != null && rows.length && rows.every(r => r.tickets != null)) {
+    const sumT = rows.reduce((s, r) => s + r.tickets, 0);
+    const sumO = rows.reduce((s, r) => s + r.oil_only_tickets, 0);
+    if (sumT !== num(store.tickets) || (num(store.oil_only_tickets) != null && sumO !== num(store.oil_only_tickets))) {
+      warnings.push(`Worked-out tickets total ${sumT} (oil-only ${sumO}) vs. the store tiles ${num(store.tickets)} (oil-only ${num(store.oil_only_tickets) ?? '?'}) — fine if not every advisor is in the screenshot, otherwise double-check.`);
+    }
+  }
   const hrs = rows.map(r => r.addl_hrs_ro).filter(v => v != null);
   if (hrs.length >= 2 && hrs.every(v => v === hrs[0])) warnings.push(`Every advisor read as ${hrs[0]} add-on hrs — that looks like the wrong column. Check before applying.`);
   return { rows, warnings, raw: text };
