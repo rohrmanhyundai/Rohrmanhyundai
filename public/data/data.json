@@ -6,172 +6,186 @@
         "name": "JACOB",
         "goal": 42.5,
         "mon": 11.4,
-        "tue": 0,
+        "tue": 14.6,
         "wed": 0,
         "thu": 0,
         "fri": 8,
         "sat": 0,
-        "total": 19.4,
-        "goal_pct": 0.4564705882352941,
-        "pacing": 48.5,
+        "total": 34,
+        "goal_pct": 0.8,
+        "pacing": 56.66666666666667,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "12",
-        "_hrsStamp": 1791285291897,
+        "_hrsStamp": 1791371274218,
         "warrantyMultiplier": true,
-        "total_raw": 19.4,
+        "total_raw": 34,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 11.4
+        "mon_raw": 11.4,
+        "tue_raw": 14.6
       },
       {
         "name": "CARTER",
         "goal": 42.5,
         "mon": 6.18,
-        "tue": 0,
+        "tue": 1.58,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 6.18,
-        "goal_pct": 0.14541176470588235,
-        "pacing": 30.9,
+        "total": 7.76,
+        "goal_pct": 0.18258823529411763,
+        "pacing": 19.4,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "NA",
-        "_hrsStamp": 1791285291897,
-        "total_raw": 4.5,
+        "_hrsStamp": 1791371274218,
+        "total_raw": 6.2,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 4.5
+        "mon_raw": 4.5,
+        "tue_raw": 1.7
       },
       {
         "name": "GAVEN",
         "goal": 42.5,
         "mon": 9.32,
-        "tue": 0,
+        "tue": 3.82,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 9.32,
-        "goal_pct": 0.21929411764705883,
-        "pacing": 46.6,
+        "total": 13.14,
+        "goal_pct": 0.30917647058823533,
+        "pacing": 32.85,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "85",
-        "_hrsStamp": 1791285291897,
-        "total_raw": 8,
+        "_hrsStamp": 1791371274218,
+        "total_raw": 11.5,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 8
+        "mon_raw": 8,
+        "tue_raw": 3.5
       },
       {
         "name": "CORY",
         "goal": 42.5,
         "mon": 1.14,
-        "tue": 0,
+        "tue": 2,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 1.14,
-        "goal_pct": 0.026823529411764704,
-        "pacing": 5.699999999999999,
+        "total": 3.1399999999999997,
+        "goal_pct": 0.07388235294117647,
+        "pacing": 7.85,
         "certified": "NO",
         "trainings_due": "4",
         "excel_training": "126",
-        "_hrsStamp": 1791285291897,
-        "total_raw": 0.9,
+        "_hrsStamp": 1791371274218,
+        "total_raw": 2.9,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 0.9
+        "mon_raw": 0.9,
+        "tue_raw": 2
       },
       {
         "name": "KADEN",
         "goal": 42.5,
         "mon": 16.78,
-        "tue": 0,
+        "tue": 3.84,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 2.26,
-        "total": 19.04,
-        "goal_pct": 0.44799999999999995,
-        "pacing": 57.12,
+        "total": 22.880000000000003,
+        "goal_pct": 0.5383529411764707,
+        "pacing": 45.760000000000005,
         "certified": "NO",
         "trainings_due": "65",
         "excel_training": "NA",
-        "_hrsStamp": 1791285291897,
-        "total_raw": 15,
+        "_hrsStamp": 1791371274218,
+        "total_raw": 19,
         "sat_raw": 2.1,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 12.9
+        "mon_raw": 12.9,
+        "tue_raw": 4
       },
       {
         "name": "BRYSON",
         "goal": 25.5,
         "mon": 3.4,
-        "tue": 0,
+        "tue": 2.7,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 2.9,
-        "total": 6.3,
-        "goal_pct": 0.24705882352941175,
-        "pacing": 18.9,
+        "total": 9,
+        "goal_pct": 0.35294117647058826,
+        "pacing": 18,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
-        "_hrsStamp": 1791285291897,
-        "total_raw": 6.3,
+        "_hrsStamp": 1791371274218,
+        "total_raw": 9,
         "warrantyMultiplier": false,
         "sat_raw": 2.9,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 3.4
+        "mon_raw": 3.4,
+        "tue_raw": 2.7
       },
       {
         "name": "CHRIS",
         "goal": 47.5,
         "mon": 2.2,
-        "tue": 0,
+        "tue": 2.6,
         "wed": 0,
         "thu": 0,
         "fri": 0,
         "sat": 0,
-        "total": 2.2,
-        "goal_pct": 0.04631578947368421,
-        "pacing": 11,
+        "total": 4.800000000000001,
+        "goal_pct": 0.10105263157894738,
+        "pacing": 12.000000000000002,
         "certified": "—",
         "trainings_due": "—",
         "excel_training": "—",
-        "total_raw": 2.2,
-        "_hrsStamp": 1791285291897,
+        "total_raw": 4.800000000000001,
+        "_hrsStamp": 1791371274218,
         "warrantyMultiplier": false,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 2.2
+        "mon_raw": 2.2,
+        "tue_raw": 2.6
       },
       {
         "name": "TRENTON",
@@ -189,13 +203,15 @@
         "trainings_due": "—",
         "excel_training": "—",
         "total_raw": 0.3,
-        "_hrsStamp": 1791285291897,
+        "_hrsStamp": 1791371274218,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 0.3
+        "mon_raw": 0.3,
+        "tue_raw": 0
       },
       {
         "name": "DERRICK",
@@ -213,15 +229,17 @@
         "trainings_due": "—",
         "excel_training": "—",
         "total_raw": 0,
-        "_hrsStamp": 1791285291897,
+        "_hrsStamp": 1791371274218,
         "hidden": false,
         "payrollHidden": true,
         "sat_raw": 0,
         "hoursOverride": {
           "2026-10-03": true,
-          "2026-10-05": true
+          "2026-10-05": true,
+          "2026-10-06": true
         },
-        "mon_raw": 0
+        "mon_raw": 0,
+        "tue_raw": 0
       }
     ],
     "advisors": [
@@ -364,14 +382,14 @@
     },
     "techTotals": {
       "mon": 50.72,
-      "tue": 0,
+      "tue": 31.14,
       "wed": 0,
       "thu": 0,
       "fri": 8,
       "sat": 5.16,
-      "week_total": 63.879999999999995,
-      "week_pct": 0.1678843626806833,
-      "shop_pacing": 220.22
+      "week_total": 95.02,
+      "week_pct": 0.24972404730617606,
+      "shop_pacing": 194.02666666666664
     },
     "grossGoal": 144069,
     "grossActual": 121948.07,
