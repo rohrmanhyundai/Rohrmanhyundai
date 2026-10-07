@@ -1,0 +1,323 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-07",
+  "rows": [
+    {
+      "id": "rmuy0ekyjgnc8",
+      "customerName": "Janet Osting",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43463",
+      "vehicle": "2019 Hyundai NEXO",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "NOTE: HONDA CRV 2019"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuy0ekyjo35v",
+      "customerName": "Andrew Park",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43409",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmuy0ekyj25u8",
+      "customerName": "Mindy Wells",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43112",
+      "vehicle": "2011 Hyundai Sonata",
+      "services": [
+        "174 R AIRBAG CONTROL UNIT (24-01-079H-1)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780441",
+        "date": "2026-08-31",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1037.92,
+        "hours": 4,
+        "phone": "7654268646",
+        "vin": "5NPEC4AB6BH206157",
+        "items": [
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 187.77,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 485.03,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURFNONOEM",
+            "desc": "Replace Rear Pads and Resurface Rotors NON OEM",
+            "count": 1,
+            "h": 1.8,
+            "price": 365.12,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuy0ekyj6c99",
+      "customerName": "David Harris",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43430",
+      "vehicle": "2021 Hyundai Accent",
+      "services": [
+        "OIL GUARD REDEMPTION - OIL CHANGE 2 OF 3"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuy0ekyjddb5",
+      "customerName": "Aditya Vardhan Padala",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43475",
+      "vehicle": "2026 Hyundai Elantra",
+      "services": [
+        "parts in sop"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuy0ekyjxjit",
+      "customerName": "Stephen Puckett",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43412",
+      "vehicle": "2026 Hyundai Kona",
+      "services": [
+        "306 R REAR CTR SEAT BELT BUCKLE(26-01-062H-1)",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780169",
+        "date": "2026-08-20",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 139.95,
+        "hours": 1,
+        "phone": "7654274085",
+        "vin": "KM8HDCA34TU449871",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuy0ekyjcj2g",
+      "customerName": "Trudy Hopkins",
+      "appointmentTime": "10:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43482",
+      "vehicle": "2023 Hyundai Palisade",
+      "services": [
+        "Routine Maintenance (e.g. Oil Change, etc) — Oil change - routine maintenance checks, rotate tires, etc."
+      ],
+      "comments": "Oil change - routine maintenance checks, rotate tires, etc.",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "778396",
+        "date": "2026-06-15",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 616.92,
+        "hours": 3.4,
+        "phone": "3177303066",
+        "vin": "KM8R7DGE9PU636779",
+        "items": [
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 116.98,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 104.28,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 54.54,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 136.42,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 204.7,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuy0ekyjmx3q",
+      "customerName": "Won Jun Lee",
+      "appointmentTime": "3:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43394",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "WHEEL ALIGNMENT",
+        "FUEL INJECTION SERVICE",
+        "AC EVAP SERVICE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781304",
+        "date": "2026-10-03",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 456.92,
+        "hours": 2.1,
+        "phone": "7654097003",
+        "vin": "KM8JBCAE1NU065509",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 106.98,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuy0ekyjtwrf",
+      "customerName": "Anna Mikels",
+      "appointmentTime": "4:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43484",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-07T11:13:33.079Z"
+}
