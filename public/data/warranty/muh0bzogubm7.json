@@ -1,7 +1,7 @@
 {
   "id": "muh0bzogubm7",
   "createdAt": "2026-09-25T13:39:24.640Z",
-  "updatedAt": "2026-10-06T14:04:38.470Z",
+  "updatedAt": "2026-10-07T14:25:55.586Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "ISIAH SCALES",
   "customerPhone": "346) 578 - 1440",
@@ -34,6 +34,20 @@
       "description": "ATF-SP-IV-M",
       "qty": "7",
       "price": "51.86"
+    },
+    {
+      "id": "muy75m4bqgo6",
+      "partNumber": "25310-S8700-FFF",
+      "description": "RADIATOR ASSY",
+      "qty": "1",
+      "price": "242.23"
+    },
+    {
+      "id": "muy765o1jh5a",
+      "partNumber": "00232-19098",
+      "description": "PINK, ANTIFREEZE/COOLANT",
+      "qty": "2",
+      "price": "36.99"
     }
   ],
   "taxPct": "7",
@@ -44,7 +58,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "WHEN 90% OF WORK IS DONE SEND FINAL QUOTE TO THE E-MAIL AND THEY WILL SEND A CHECK. CUSTOMER IS TO PAY $500.00 TO US AND THE REST COMES FROM SUPERIOR.\nSENT NEW QUOTE 09/30/2026\nCALLED 10/02/2026 @ 10:30AM FOR UPDATE. THEY HAVE SENT TO INS. COMPANY AND ARE AWAITING RESPONSE.\nCALLED 10/05/2026 @ 11:39AM FOR UPDATE. THEY HAVE NOT HEAR FROM THE INS. COMPANY YET. THEY WILL REACH OUT TO THE INS. CO. AND CALL US BACK.\ncalled 10/06/2026 @ 9:42 am FOR UPDATE: NO ASSANTCE WITH RADIATOR.",
+  "notes": "WHEN 90% OF WORK IS DONE SEND FINAL QUOTE TO THE E-MAIL AND THEY WILL SEND A CHECK. CUSTOMER IS TO PAY $500.00 TO US AND THE REST COMES FROM SUPERIOR.\nSENT NEW QUOTE 09/30/2026\nCALLED 10/02/2026 @ 10:30AM FOR UPDATE. THEY HAVE SENT TO INS. COMPANY AND ARE AWAITING RESPONSE.\nCALLED 10/05/2026 @ 11:39AM FOR UPDATE. THEY HAVE NOT HEAR FROM THE INS. COMPANY YET. THEY WILL REACH OUT TO THE INS. CO. AND CALL US BACK.\ncalled 10/06/2026 @ 9:42 am FOR UPDATE: NO ASSANTCE WITH RADIATOR.\nCALLED 10/07/2026 @ 10AM WITH APPROVAL OF THE RADIATOR ASSY. $ 984.34 PLUSE THE ORG $ 4,867.68 AFTER $500.00. DED. TOTAL PABLE IS $5,852.02",
   "approved": false,
   "approvedDate": "",
   "denied": false,
