@@ -92,22 +92,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mupx05va9duy",
-    "ro": "781258",
-    "roDate": "2026-10-01",
-    "vehicle": "2026 Hyundai Tucson",
-    "jobDesc": "5YR/60K RR CMB LMP ASSY RPL 26-01-040H-1",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/02/2026",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  },
-  {
     "id": "muwwirbw2ozb",
     "ro": "781338",
     "roDate": "2026-10-06",
