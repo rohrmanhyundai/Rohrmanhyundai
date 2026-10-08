@@ -436,7 +436,7 @@
       "lastName": "",
       "email": "",
       "managementAccess": false,
-      "hidden": false
+      "hidden": true
     },
     {
       "username": "Jerry",
