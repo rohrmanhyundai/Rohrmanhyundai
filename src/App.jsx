@@ -1654,6 +1654,10 @@ export default function App() {
         // Scorecard "on today's book" → that advisor's prep sheet for the day.
         onOpenPrep={(advisor, date) => { setViewingAdvisor(advisor); setSelectedDay(date); goTo('advisor-day', 'daily-wrench'); }}
         onBack={() => setPage(prevPage || 'advisor-calendar')}
+        // Service Goal Forecast board, embedded for the manager view only.
+        goalForecast={<GoalForecast embedded data={data} currentUser={currentUser.toUpperCase()}
+          currentUserDisplay={currentUserDisplay} storagePrefix="goalForecast"
+          deptLabel="Service Department" onGaugeActuals={handleGaugeActuals} />}
       />
     );
   }

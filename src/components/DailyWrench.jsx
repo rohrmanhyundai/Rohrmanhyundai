@@ -925,7 +925,7 @@ function TechBoxes({ list, asOf }) {
 }
 
 // ── The manager's shop-wide report ───────────────────────────────────────────
-function ManagerReport({ report, onOpenPrep }) {
+function ManagerReport({ report, onOpenPrep, goalForecast }) {
   if (!report) return null;
   const f = report.facts || {};
   const m = f.money || {};
@@ -951,6 +951,10 @@ function ManagerReport({ report, onOpenPrep }) {
           <Stat k="Declined work on the table" v={money(f.deferredShopWide.totalAmount)} s={`${f.deferredShopWide.neverContacted} never called`} tone="good" />
         ) : null}
       </div>
+
+      {/* The live Goal Forecast board — same component and saves as the Goal
+          Forecast page, so the morning read is all in one place. */}
+      {goalForecast ? <Section icon="📈" title="Goal Forecast">{goalForecast}</Section> : null}
 
       <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep}
         appts={Object.fromEntries((f.breakdown || []).map(r => [firstUp(r.advisor), r.appts || {}]))} />
@@ -1038,7 +1042,7 @@ function ManagerReport({ report, onOpenPrep }) {
   );
 }
 
-export default function DailyWrench({ currentUser, currentRole, onBack, onOpenPrep }) {
+export default function DailyWrench({ currentUser, currentRole, onBack, onOpenPrep, goalForecast }) {
   const isManager = isManagerRole(currentRole);
   const me = firstWord(currentUser);
   const [day, setDay] = useState(todayKey());
@@ -1149,7 +1153,7 @@ export default function DailyWrench({ currentUser, currentRole, onBack, onOpenPr
           )}
 
           {!loading && doc && view === 'manager' && isManager && (
-            doc.manager ? <ManagerReport report={doc.manager} onOpenPrep={onOpenPrep} />
+            doc.manager ? <ManagerReport report={doc.manager} onOpenPrep={onOpenPrep} goalForecast={goalForecast} />
               : <div className="dw-card" style={{ textAlign: 'center', color: '#94a3b8', padding: 30 }}>No shop report in this day's file.</div>
           )}
 

@@ -686,6 +686,7 @@ export default function GoalForecast({
   backLabel = '← Manager Hub',
   storagePrefix = 'goalForecast',
   onGaugeActuals,
+  embedded = false,
 }) {
   const now = new Date();
   const mk = monthKey(now);
@@ -1168,6 +1169,171 @@ export default function GoalForecast({
   const mainBd = breakdownConfig({ laborBreakdown, partsBreakdown }, dept);
   const parseTargetLabel = (() => { try { return new Date((parseTargetMk || mk) + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' }); } catch { return monthLabel; } })();
 
+  // The current-month board (cards, daily entry, pace chart). Also rendered on
+  // its own when embedded in another page (The Daily Wrench manager view) —
+  // same state and saves, so the numbers match this page exactly.
+  const currentBody = (<>
+          {/* Forecast input + daily target */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
+            <MetricCard accent="#34d399" icon="💰" label="Month Forecast Gross Profit" minWidth={250}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <span style={{ fontSize: 26, fontWeight: 900, color: '#6ee7b7' }}>$</span>
+                <input type="number" value={forecast || ''} placeholder="0" onChange={e => updateForecast(e.target.value)}
+                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(52,211,153,.45)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#6ee7b7', width: 200, outline: 'none' }} />
+              </div>
+            </MetricCard>
+            <MetricCard accent="#38bdf8" icon="📆" label="Last Year (This Month)" minWidth={240}
+              sub={forecast > 0 && lastYear > 0 ? (forecast >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(forecast - lastYear)) + ' forecast vs LY' : 'last year’s final gross'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <span style={{ fontSize: 26, fontWeight: 900, color: '#7dd3fc' }}>$</span>
+                <input type="number" value={lastYear || ''} placeholder="0" onChange={e => updateLastYear(e.target.value)}
+                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(56,189,248,.4)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#7dd3fc', width: 190, outline: 'none' }} />
+              </div>
+            </MetricCard>
+            <MetricCard accent="#22d3ee" icon="🎯" label="Daily Target" sub={`${totalDays} working days · ${completedDays} completed`}>
+              <div style={gfBig('#67e8f9')}>{money(dailyTarget)}</div>
+            </MetricCard>
+          </div>
+
+          {/* Summary cards */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
+            <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD"
+              onClick={mainBd ? () => setBreakdownOpen(true) : undefined}
+              sub={mainBd ? `🔍 Click for ${mainBd.unit} breakdown` : undefined} subColor="#c4b5fd">
+              <div style={gfBig('#c4b5fd')}>{money(actualMTD)}</div>
+            </MetricCard>
+            <MetricCard accent="#38bdf8" icon="📊" label="Expected MTD" sub={`where you should be (${completedDays} × daily target)`}>
+              <div style={gfBig('#7dd3fc')}>{money(expectedMTD)}</div>
+            </MetricCard>
+            <MetricCard accent="#34d399" icon="📈" label="Daily Average"
+              sub={hasActuals ? 'per working day · target ' + money(dailyTarget) : 'avg gross per working day'}
+              subColor={!hasActuals ? undefined : runRate >= dailyTarget ? '#34d399' : '#fb7185'}>
+              <div style={gfBig(!hasActuals ? '#e2e8f0' : runRate >= dailyTarget ? '#34d399' : '#fb7185')}>{hasActuals ? money(runRate) : '—'}</div>
+            </MetricCard>
+            <MetricCard accent={up ? '#34d399' : '#fb7185'} icon="⚡" label={up ? 'Ahead of Pace' : 'Behind Pace'}>
+              <div style={gfBig(up ? '#34d399' : '#fb7185')}>{up ? '▲ ' : '▼ '}{money(Math.abs(variance))}</div>
+            </MetricCard>
+            <MetricCard accent="#fbbf24" icon="🏁" label="Projected Month-End"
+              sub={hasActuals && forecast > 0 ? (projected >= forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - forecast)) + ' vs forecast' : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
+              subColor={!hasActuals ? undefined : projected >= forecast ? '#34d399' : '#fb7185'}>
+              <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= forecast ? '#fbbf24' : '#fb7185')}>{hasActuals ? money(projected) : '—'}</div>
+            </MetricCard>
+            {lastYear > 0 && (
+              <MetricCard accent="#f472b6" icon="📉" label="vs Last Year"
+                sub={hasActuals ? 'projected ' + (projected >= lastYear ? '+' : '−') + (lastYear > 0 ? Math.abs((projected / lastYear - 1) * 100).toFixed(1) : '0') + '% vs LY' : 'LY ' + money(lastYear)}
+                subColor={!hasActuals ? undefined : projected >= lastYear ? '#34d399' : '#fb7185'}>
+                <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= lastYear ? '#34d399' : '#fb7185')}>{hasActuals ? (projected >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - lastYear)) : '—'}</div>
+              </MetricCard>
+            )}
+          </div>
+
+          {/* Daily grid (collapsible) */}
+          <div style={{ background: 'linear-gradient(160deg, rgba(56,189,248,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(56,189,248,.28)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 30px -18px rgba(56,189,248,.7)' }}>
+            {/* Toggle bar — click to expand/collapse the daily entry table */}
+            <div
+              onClick={() => setGridOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: gridOpen ? 'rgba(56,189,248,.08)' : 'transparent' }}
+            >
+              <span style={{ fontSize: 13, color: gridOpen ? '#38bdf8' : '#94a3b8', transition: 'transform .15s', transform: gridOpen ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
+              <span style={{ fontSize: 14 }}>📅</span>
+              <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Daily Entry — {monthLabel}</div>
+              <div style={{ flex: 1 }} />
+              <div style={{ fontSize: 12, color: '#64748b' }}>
+                MTD <strong style={{ color: '#6ee7b7' }}>{money(actualMTD)}</strong>
+                <span style={{ margin: '0 8px', color: '#334155' }}>·</span>
+                {gridOpen ? 'Click to hide' : 'Click to enter / view daily numbers'}
+              </div>
+            </div>
+
+            {gridOpen && (
+            <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
+              <div>Day</div>
+              <div>Date</div>
+              <div style={{ textAlign: 'right' }}>Daily Target</div>
+              <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
+              <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
+              <div style={{ textAlign: 'right' }}>+/-</div>
+            </div>
+            {rows.map((r) => {
+              const diff = r.cumActual - r.cumTarget;
+              const showDiff = r.hasActual;
+              return (
+                <div
+                  key={r.k}
+                  style={{
+                    display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0,
+                    padding: '8px 20px', alignItems: 'center', fontSize: 14,
+                    background: r.isToday ? 'rgba(110,231,249,.08)' : 'transparent',
+                    borderLeft: r.isToday ? '3px solid #6ee7f9' : '3px solid transparent',
+                    borderBottom: '1px solid rgba(148,163,184,.06)',
+                  }}
+                >
+                  <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
+                  <div style={{ color: r.isToday ? '#6ee7f9' : '#cbd5e1', fontWeight: r.isToday ? 800 : 500 }}>
+                    {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
+                    {r.isToday && <span style={{ fontSize: 11, marginLeft: 8, color: '#6ee7f9' }}>TODAY</span>}
+                  </div>
+                  <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(dailyTarget)}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={r.hasActual ? r.entered : ''}
+                      placeholder="$ daily total"
+                      onChange={e => updateActual(r.k, e.target.value)}
+                      onFocus={e => { e.target.style.borderColor = '#6ee7b7'; e.target.style.background = 'rgba(2,6,23,.7)'; }}
+                      onBlur={e => { e.target.style.borderColor = r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'; e.target.style.background = 'rgba(2,6,23,.55)'; }}
+                      style={{
+                        background: 'rgba(2,6,23,.55)',
+                        border: `1px solid ${r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'}`,
+                        borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700,
+                        color: r.hasActual ? '#6ee7b7' : '#e2e8f0', width: 120, textAlign: 'right',
+                        outline: 'none', cursor: 'text',
+                      }}
+                    />
+                  </div>
+                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
+                  <div style={{ textAlign: 'right', fontWeight: 700, color: !showDiff ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>
+                    {showDiff ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{ fontSize: 12, color: '#475569', padding: '14px 20px', textAlign: 'center' }}>
+              Enter each day's total — the Month Total (MTD) and forecast are calculated automatically. Saved to {deptLabel} and synced across devices. Working days come from Goal Gauges (Edit Dashboard).
+            </div>
+            </div>
+            )}
+          </div>
+
+          {/* Year-over-year comparison chart */}
+          <ComparisonChart
+            rows={rows}
+            dailyTarget={dailyTarget}
+            lastYear={lastYear}
+            totalDays={totalDays}
+            completedDays={completedDays}
+            actualMTD={actualMTD}
+            expectedMTD={expectedMTD}
+            projected={projected}
+            forecast={forecast}
+          />
+  </>);
+
+  if (embedded) {
+    return (
+      <div>
+        {breakdownOpen && mainBd && (
+    <GrossBreakdownModal breakdown={mainBd.breakdown} cats={mainBd.cats} title={mainBd.title} icon={mainBd.icon}
+      completedDays={completedDays} totalDays={totalDays}
+      monthLabel={monthLabel} onClose={() => setBreakdownOpen(false)} />
+  )}
+        {currentBody}
+      </div>
+    );
+  }
+
   return (
     <div className="adv-page" style={{ display: 'flex', flexDirection: 'column' }}>
       {breakdownOpen && mainBd && (
@@ -1394,152 +1560,7 @@ export default function GoalForecast({
             );
           })() : (<>
 
-          {/* Forecast input + daily target */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
-            <MetricCard accent="#34d399" icon="💰" label="Month Forecast Gross Profit" minWidth={250}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                <span style={{ fontSize: 26, fontWeight: 900, color: '#6ee7b7' }}>$</span>
-                <input type="number" value={forecast || ''} placeholder="0" onChange={e => updateForecast(e.target.value)}
-                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(52,211,153,.45)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#6ee7b7', width: 200, outline: 'none' }} />
-              </div>
-            </MetricCard>
-            <MetricCard accent="#38bdf8" icon="📆" label="Last Year (This Month)" minWidth={240}
-              sub={forecast > 0 && lastYear > 0 ? (forecast >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(forecast - lastYear)) + ' forecast vs LY' : 'last year’s final gross'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                <span style={{ fontSize: 26, fontWeight: 900, color: '#7dd3fc' }}>$</span>
-                <input type="number" value={lastYear || ''} placeholder="0" onChange={e => updateLastYear(e.target.value)}
-                  style={{ background: 'rgba(2,6,23,.5)', border: '1px solid rgba(56,189,248,.4)', borderRadius: 10, padding: '8px 12px', fontSize: 26, fontWeight: 900, color: '#7dd3fc', width: 190, outline: 'none' }} />
-              </div>
-            </MetricCard>
-            <MetricCard accent="#22d3ee" icon="🎯" label="Daily Target" sub={`${totalDays} working days · ${completedDays} completed`}>
-              <div style={gfBig('#67e8f9')}>{money(dailyTarget)}</div>
-            </MetricCard>
-          </div>
-
-          {/* Summary cards */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
-            <MetricCard accent="#a78bfa" icon="🔥" label="Actual MTD"
-              onClick={mainBd ? () => setBreakdownOpen(true) : undefined}
-              sub={mainBd ? `🔍 Click for ${mainBd.unit} breakdown` : undefined} subColor="#c4b5fd">
-              <div style={gfBig('#c4b5fd')}>{money(actualMTD)}</div>
-            </MetricCard>
-            <MetricCard accent="#38bdf8" icon="📊" label="Expected MTD" sub={`where you should be (${completedDays} × daily target)`}>
-              <div style={gfBig('#7dd3fc')}>{money(expectedMTD)}</div>
-            </MetricCard>
-            <MetricCard accent="#34d399" icon="📈" label="Daily Average"
-              sub={hasActuals ? 'per working day · target ' + money(dailyTarget) : 'avg gross per working day'}
-              subColor={!hasActuals ? undefined : runRate >= dailyTarget ? '#34d399' : '#fb7185'}>
-              <div style={gfBig(!hasActuals ? '#e2e8f0' : runRate >= dailyTarget ? '#34d399' : '#fb7185')}>{hasActuals ? money(runRate) : '—'}</div>
-            </MetricCard>
-            <MetricCard accent={up ? '#34d399' : '#fb7185'} icon="⚡" label={up ? 'Ahead of Pace' : 'Behind Pace'}>
-              <div style={gfBig(up ? '#34d399' : '#fb7185')}>{up ? '▲ ' : '▼ '}{money(Math.abs(variance))}</div>
-            </MetricCard>
-            <MetricCard accent="#fbbf24" icon="🏁" label="Projected Month-End"
-              sub={hasActuals && forecast > 0 ? (projected >= forecast ? '▲ ' : '▼ ') + money(Math.abs(projected - forecast)) + ' vs forecast' : forecast > 0 ? 'current daily pace × ' + totalDays + ' days' : 'enter a forecast'}
-              subColor={!hasActuals ? undefined : projected >= forecast ? '#34d399' : '#fb7185'}>
-              <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= forecast ? '#fbbf24' : '#fb7185')}>{hasActuals ? money(projected) : '—'}</div>
-            </MetricCard>
-            {lastYear > 0 && (
-              <MetricCard accent="#f472b6" icon="📉" label="vs Last Year"
-                sub={hasActuals ? 'projected ' + (projected >= lastYear ? '+' : '−') + (lastYear > 0 ? Math.abs((projected / lastYear - 1) * 100).toFixed(1) : '0') + '% vs LY' : 'LY ' + money(lastYear)}
-                subColor={!hasActuals ? undefined : projected >= lastYear ? '#34d399' : '#fb7185'}>
-                <div style={gfBig(!hasActuals ? '#e2e8f0' : projected >= lastYear ? '#34d399' : '#fb7185')}>{hasActuals ? (projected >= lastYear ? '▲ ' : '▼ ') + money(Math.abs(projected - lastYear)) : '—'}</div>
-              </MetricCard>
-            )}
-          </div>
-
-          {/* Daily grid (collapsible) */}
-          <div style={{ background: 'linear-gradient(160deg, rgba(56,189,248,.10), rgba(15,23,42,.55) 60%)', border: '1px solid rgba(56,189,248,.28)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 30px -18px rgba(56,189,248,.7)' }}>
-            {/* Toggle bar — click to expand/collapse the daily entry table */}
-            <div
-              onClick={() => setGridOpen(o => !o)}
-              style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', cursor: 'pointer', userSelect: 'none', background: gridOpen ? 'rgba(56,189,248,.08)' : 'transparent' }}
-            >
-              <span style={{ fontSize: 13, color: gridOpen ? '#38bdf8' : '#94a3b8', transition: 'transform .15s', transform: gridOpen ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-block' }}>▶</span>
-              <span style={{ fontSize: 14 }}>📅</span>
-              <div style={{ fontSize: 13, fontWeight: 900, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '.05em' }}>Daily Entry — {monthLabel}</div>
-              <div style={{ flex: 1 }} />
-              <div style={{ fontSize: 12, color: '#64748b' }}>
-                MTD <strong style={{ color: '#6ee7b7' }}>{money(actualMTD)}</strong>
-                <span style={{ margin: '0 8px', color: '#334155' }}>·</span>
-                {gridOpen ? 'Click to hide' : 'Click to enter / view daily numbers'}
-              </div>
-            </div>
-
-            {gridOpen && (
-            <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0, padding: '14px 20px', fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em', borderTop: '1px solid rgba(148,163,184,.15)', borderBottom: '1px solid rgba(148,163,184,.15)' }}>
-              <div>Day</div>
-              <div>Date</div>
-              <div style={{ textAlign: 'right' }}>Daily Target</div>
-              <div style={{ textAlign: 'right' }}>Daily Total ($)</div>
-              <div style={{ textAlign: 'right' }}>Month Total (MTD)</div>
-              <div style={{ textAlign: 'right' }}>+/-</div>
-            </div>
-            {rows.map((r) => {
-              const diff = r.cumActual - r.cumTarget;
-              const showDiff = r.hasActual;
-              return (
-                <div
-                  key={r.k}
-                  style={{
-                    display: 'grid', gridTemplateColumns: '64px 1fr 130px 150px 150px 130px', gap: 0,
-                    padding: '8px 20px', alignItems: 'center', fontSize: 14,
-                    background: r.isToday ? 'rgba(110,231,249,.08)' : 'transparent',
-                    borderLeft: r.isToday ? '3px solid #6ee7f9' : '3px solid transparent',
-                    borderBottom: '1px solid rgba(148,163,184,.06)',
-                  }}
-                >
-                  <div style={{ color: '#64748b', fontWeight: 700 }}>{r.dayNum}</div>
-                  <div style={{ color: r.isToday ? '#6ee7f9' : '#cbd5e1', fontWeight: r.isToday ? 800 : 500 }}>
-                    {DOW[r.dt.getDay()]} {r.dt.getMonth() + 1}/{r.dt.getDate()}
-                    {r.isToday && <span style={{ fontSize: 11, marginLeft: 8, color: '#6ee7f9' }}>TODAY</span>}
-                  </div>
-                  <div style={{ textAlign: 'right', color: '#94a3b8' }}>{money(dailyTarget)}</div>
-                  <div style={{ textAlign: 'right' }}>
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      value={r.hasActual ? r.entered : ''}
-                      placeholder="$ daily total"
-                      onChange={e => updateActual(r.k, e.target.value)}
-                      onFocus={e => { e.target.style.borderColor = '#6ee7b7'; e.target.style.background = 'rgba(2,6,23,.7)'; }}
-                      onBlur={e => { e.target.style.borderColor = r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'; e.target.style.background = 'rgba(2,6,23,.55)'; }}
-                      style={{
-                        background: 'rgba(2,6,23,.55)',
-                        border: `1px solid ${r.hasActual ? 'rgba(52,211,153,.4)' : 'rgba(148,163,184,.35)'}`,
-                        borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700,
-                        color: r.hasActual ? '#6ee7b7' : '#e2e8f0', width: 120, textAlign: 'right',
-                        outline: 'none', cursor: 'text',
-                      }}
-                    />
-                  </div>
-                  <div style={{ textAlign: 'right', color: '#cbd5e1', fontWeight: 600 }}>{r.hasActual ? money(r.cumActual) : '—'}</div>
-                  <div style={{ textAlign: 'right', fontWeight: 700, color: !showDiff ? '#475569' : diff >= 0 ? '#6ee7b7' : '#fca5a5' }}>
-                    {showDiff ? (diff >= 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) : '—'}
-                  </div>
-                </div>
-              );
-            })}
-            <div style={{ fontSize: 12, color: '#475569', padding: '14px 20px', textAlign: 'center' }}>
-              Enter each day's total — the Month Total (MTD) and forecast are calculated automatically. Saved to {deptLabel} and synced across devices. Working days come from Goal Gauges (Edit Dashboard).
-            </div>
-            </div>
-            )}
-          </div>
-
-          {/* Year-over-year comparison chart */}
-          <ComparisonChart
-            rows={rows}
-            dailyTarget={dailyTarget}
-            lastYear={lastYear}
-            totalDays={totalDays}
-            completedDays={completedDays}
-            actualMTD={actualMTD}
-            expectedMTD={expectedMTD}
-            projected={projected}
-            forecast={forecast}
-          />
+          {currentBody}
 
           </>)}
 
