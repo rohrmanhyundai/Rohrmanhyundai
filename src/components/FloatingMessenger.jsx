@@ -25,6 +25,9 @@ const shortTime = (ts) => {
   } catch { return ''; }
 };
 
+// KAI → Kai, for the softer iMessage-style labels.
+const titleName = (n) => String(n || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
 // "You → BRYSON, CARTER, CORY, DERRICK, GAVEN, JACOB, KADEN, WEI" ate three
 // lines. One name plus a count keeps the row to one, and the full list is in
 // the tooltip.
@@ -84,13 +87,13 @@ const EMOJI_PANEL_W = 250;
 
 // Pictures attached to a message ({ url, name, type }). Click one to open it
 // full size in a new tab. Also used by the message pop-up in App.jsx.
-export function MessageMedia({ media, size = 110 }) {
+export function MessageMedia({ media, size = 110, radius = 8, align = 'flex-start' }) {
   if (!Array.isArray(media) || !media.length) return null;
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8, justifyContent: align }}>
       {media.map((m, i) => (
         <a key={i} href={m.url} target="_blank" rel="noreferrer" title={m.name || 'Open picture'}
-          style={{ display: 'block', width: size, height: size, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(148,163,184,.35)', background: 'rgba(2,6,23,.5)' }}>
+          style={{ display: 'block', width: size, height: size, borderRadius: radius, overflow: 'hidden', border: '1px solid rgba(148,163,184,.35)', background: 'rgba(2,6,23,.5)' }}>
           <img src={m.url} alt={m.name || 'picture'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </a>
       ))}
@@ -467,7 +470,7 @@ export default function FloatingMessenger({
       {open && (
         <div ref={panelRef} style={{
           position: 'fixed', left: panelPos.left, top: panelPos.top, width: PANEL_W, height: panelH,
-          background: '#111d33', border: '1px solid rgba(56,189,248,.35)', borderRadius: 14,
+          background: '#151517', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16,
           boxShadow: '0 18px 50px rgba(0,0,0,.55)', zIndex: 2147483000,
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
           fontFamily: 'Inter, sans-serif', color: '#e2e8f0',
@@ -500,98 +503,119 @@ export default function FloatingMessenger({
                 const fromMe = (m.from || '').toUpperCase() === me;
                 const replies = Array.isArray(m.replies) ? m.replies : [];
                 const open = replyOpenId === m.id;
+                // iMessage-style thread: a small grey header, then every
+                // message and reply as a bubble — yours on the right in blue,
+                // theirs on the left in grey. Alerts get a red bubble.
+                const bubble = (mineSide, alert, text, key, sender) => (
+                  <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: mineSide ? 'flex-end' : 'flex-start', marginTop: 4 }}>
+                    {sender && <div style={{ fontSize: 10.5, color: '#8e8e93', margin: '4px 12px 2px' }}>{sender}</div>}
+                    {text && (
+                      <div style={{
+                        maxWidth: '78%', padding: '7px 12px', fontSize: 13.5, lineHeight: 1.38,
+                        whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                        borderRadius: 18,
+                        [mineSide ? 'borderBottomRightRadius' : 'borderBottomLeftRadius']: 5,
+                        background: alert ? 'linear-gradient(180deg,#ff5a52,#e5322a)'
+                          : mineSide ? 'linear-gradient(180deg,#2b95ff,#0a7cff)' : '#2c2c2e',
+                        color: mineSide || alert ? '#fff' : '#f2f2f7',
+                      }}>
+                        {text}
+                      </div>
+                    )}
+                  </div>
+                );
                 return (
-                  <div key={m.id} style={{
-                    background: m.alert ? 'rgba(248,113,113,.09)' : 'rgba(255,255,255,0.04)',
-                    border: `1px solid ${m.alert ? 'rgba(248,113,113,.4)' : 'rgba(255,255,255,0.09)'}`,
-                    borderRadius: 10, padding: '10px 12px', marginBottom: 10,
-                  }}>
-                    {/* Who and when, on one line that never wraps */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div key={m.id} className="imsg-thread" style={{ marginBottom: 18 }}>
+                    {/* Who and when — centered, quiet, like iMessage's timestamps */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 2 }}>
                       <span
                         title={fromMe ? `To: ${(m.to || []).join(', ')}` : `From ${m.from}`}
                         style={{
-                          fontWeight: 800, fontSize: 12, letterSpacing: '.02em',
-                          color: m.alert ? '#fca5a5' : fromMe ? '#7dd3fc' : '#c4b5fd',
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flex: 1,
+                          fontSize: 10.5, fontWeight: 600, color: m.alert ? '#ff6961' : '#8e8e93',
+                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0,
                         }}>
-                        {m.alert ? '🚨 ' : ''}{fromMe ? `You → ${toSummary(m.to)}` : String(m.from || 'Management').toUpperCase()}
-                      </span>
-                      <span title={timeLabel(m.timestamp)}
-                        style={{ color: '#64748b', fontSize: 10.5, whiteSpace: 'nowrap', flexShrink: 0 }}>
-                        {shortTime(m.timestamp)}
+                        {m.alert ? '🚨 Alert · ' : ''}{fromMe ? `To ${toSummary(m.to)}` : titleName(m.from || 'Management')}
+                        <span style={{ fontWeight: 400 }}> · </span>
+                        <span title={timeLabel(m.timestamp)} style={{ fontWeight: 400 }}>{shortTime(m.timestamp)}</span>
                       </span>
                       {canDelete && (
-                        <button onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete for everyone"
+                        <button className="imsg-del" onClick={() => handleDelete(m)} disabled={deletingId === m.id} title="Delete for everyone"
                           style={{
-                            flexShrink: 0,
-                            background: 'transparent', border: 'none',
-                            color: '#7d8ba3', padding: '0 2px', fontSize: 12,
-                            cursor: deletingId === m.id ? 'default' : 'pointer', fontFamily: 'inherit', lineHeight: 1.4,
+                            flexShrink: 0, background: 'transparent', border: 'none',
+                            color: '#8e8e93', padding: '0 2px', fontSize: 11,
+                            cursor: deletingId === m.id ? 'default' : 'pointer', fontFamily: 'inherit', lineHeight: 1,
                           }}>
                           {deletingId === m.id ? '⏳' : '🗑'}
                         </button>
                       )}
                     </div>
 
-                    <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 6, whiteSpace: 'pre-wrap' }}>{m.text}</div>
-                    <MessageMedia media={m.media} />
-
-                    {replies.length > 0 && (
-                      <div style={{ marginTop: 9, borderLeft: '2px solid rgba(125,211,252,.35)', paddingLeft: 10, display: 'grid', gap: 7 }}>
-                        {replies.map(rep => (
-                          <div key={rep.id}>
-                            <div style={{ fontSize: 10.5, fontWeight: 800, color: (rep.from || '').toUpperCase() === me ? '#6ee7b7' : '#c4b5fd' }}>
-                              {(rep.from || '').toUpperCase() === me ? 'You' : String(rep.from || '').toUpperCase()}
-                              <span style={{ color: '#64748b', fontWeight: 600 }}> · {shortTime(rep.timestamp)}</span>
-                            </div>
-                            <div style={{ fontSize: 13, lineHeight: 1.4, whiteSpace: 'pre-wrap', color: '#cbd5e1' }}>{rep.text}</div>
-                          </div>
-                        ))}
+                    {bubble(fromMe, m.alert, m.text, 'msg')}
+                    {Array.isArray(m.media) && m.media.length > 0 && (
+                      <div style={{ display: 'flex', justifyContent: fromMe ? 'flex-end' : 'flex-start' }}>
+                        <MessageMedia media={m.media} size={96} radius={14} align={fromMe ? 'flex-end' : 'flex-start'} />
                       </div>
                     )}
 
-                    {/* The reply box is out of the way until it's wanted — a box
-                        under every message is most of what made this hard to read.
+                    {replies.map((rep, i) => {
+                      const repMine = (rep.from || '').toUpperCase() === me;
+                      const prev = i === 0 ? m.from : replies[i - 1].from;
+                      // Name above their bubble only when the speaker changes.
+                      const showName = !repMine && String(prev || '').toUpperCase() !== String(rep.from || '').toUpperCase();
+                      return bubble(repMine, false, rep.text, rep.id || i, showName ? titleName(rep.from) : '');
+                    })}
+
+                    {/* The reply box is out of the way until it's wanted.
                         Once open it stays open across sends (Escape or ✕ closes it),
                         so a back-and-forth doesn't mean re-opening it every turn. */}
                     {open ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 9 }}>
-                        <input
-                          autoFocus
-                          ref={replyInputRef}
-                          value={replyDrafts[m.id] || ''}
-                          onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') sendReply(m);
-                            if (e.key === 'Escape') setReplyOpenId('');
-                          }}
-                          placeholder={replies.length ? 'Continue…' : 'Reply…'}
-                          style={{
-                            flex: 1, minWidth: 0, boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
-                            border: '1px solid rgba(56,189,248,.45)', borderRadius: 8, color: '#e2e8f0',
-                            padding: '7px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none',
-                          }}
-                        />
-                        <EmojiPicker title="Add an emoji to your reply"
-                          onPick={e => setReplyDrafts(d => ({ ...d, [m.id]: (d[m.id] || '') + e }))} />
-                        <button onClick={() => sendReply(m)} disabled={replyingId === m.id}
-                          style={{ flexShrink: 0, background: 'rgba(56,189,248,.15)', border: '1px solid rgba(56,189,248,.45)', color: '#7dd3fc', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
-                          {replyingId === m.id ? '…' : 'Send'}
-                        </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
                         <button type="button" onClick={() => setReplyOpenId('')} title="Close (Esc)"
-                          style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#7d8ba3', padding: '4px 2px', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1 }}>
+                          style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#8e8e93', padding: '4px 2px', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1 }}>
                           ✕
                         </button>
+                        <div style={{
+                          flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 4,
+                          border: '1px solid #3a3a3c', borderRadius: 999, padding: '2px 3px 2px 12px', background: '#1c1c1e',
+                        }}>
+                          <input
+                            autoFocus
+                            ref={replyInputRef}
+                            value={replyDrafts[m.id] || ''}
+                            onChange={e => setReplyDrafts(d => ({ ...d, [m.id]: e.target.value }))}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') sendReply(m);
+                              if (e.key === 'Escape') setReplyOpenId('');
+                            }}
+                            placeholder="iMessage"
+                            style={{
+                              flex: 1, minWidth: 0, background: 'transparent', border: 'none', color: '#f2f2f7',
+                              padding: '6px 0', fontSize: 13, fontFamily: 'inherit', outline: 'none',
+                            }}
+                          />
+                          <EmojiPicker title="Add an emoji to your reply"
+                            onPick={e => setReplyDrafts(d => ({ ...d, [m.id]: (d[m.id] || '') + e }))} />
+                          <button onClick={() => sendReply(m)} disabled={replyingId === m.id} title="Send"
+                            style={{
+                              flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: 'none', padding: 0,
+                              background: (replyDrafts[m.id] || '').trim() ? '#0a84ff' : '#3a3a3c',
+                              color: '#fff', fontSize: 15, fontWeight: 900, lineHeight: 1, cursor: 'pointer',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                            {replyingId === m.id ? '…' : '↑'}
+                          </button>
+                        </div>
                       </div>
                     ) : (
-                      <button onClick={() => setReplyOpenId(m.id)}
-                        style={{
-                          marginTop: 8, background: 'transparent', border: 'none', padding: 0,
-                          color: '#7dd3fc', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
-                        }}>
-                        {replies.length ? `💬 Continue · ${replies.length}` : '↩ Reply'}
-                      </button>
+                      <div style={{ display: 'flex', justifyContent: fromMe ? 'flex-end' : 'flex-start' }}>
+                        <button onClick={() => setReplyOpenId(m.id)}
+                          style={{
+                            margin: '3px 10px 0', background: 'transparent', border: 'none', padding: 0,
+                            color: '#0a84ff', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                          }}>
+                          Reply
+                        </button>
+                      </div>
                     )}
                   </div>
                 );
@@ -713,6 +737,8 @@ export default function FloatingMessenger({
       )}
 
       <style>{`
+        .imsg-thread .imsg-del { opacity: 0; transition: opacity .15s; }
+        .imsg-thread:hover .imsg-del, .imsg-thread .imsg-del:focus { opacity: 1; }
         @keyframes msgBubbleGlow {
           0%, 100% { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #0c4a6e, 0 10px 20px rgba(0,0,0,.5), 0 0 14px 2px rgba(56,189,248,.55); }
           50%      { box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(15,23,42,.45), 0 6px 0 -1px #0c4a6e, 0 10px 20px rgba(0,0,0,.5), 0 0 26px 8px rgba(56,189,248,.85); }
