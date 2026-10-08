@@ -25,8 +25,8 @@
     "usedCar": false,
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/08/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
   },
@@ -61,12 +61,23 @@
     "flag": "purple"
   },
   {
+    "id": "mthoa4nkall",
+    "ro": "780481",
+    "roDate": "2026-08-31",
+    "jobDesc": "CUSTOMER STATES- insurance claim, oil pan damaged, do inspection and give to cust",
+    "highPriority": false,
+    "advisor": "JORDAN",
+    "notes": "THIS WAS WEI DIAG NEEDS TRANSMISSION. MOVED TO CORY. CORY WILL START THIS ON TUESDAY. Transmission done, radiator leaking. Rec. made. ",
+    "partsArrived": null,
+    "partsArrivedDate": ""
+  },
+  {
     "id": "muvhsqp34hb7",
     "ro": "781320",
     "roDate": "2026-10-05",
     "vehicle": "2026 Hyundai Palisade",
     "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "notes": "BATTERY IS BEING INSTALLED. SETTING OUTSIDE AGAIN ",
+    "notes": "",
     "flag": "purple",
     "usedCar": false,
     "etaParts": "",
