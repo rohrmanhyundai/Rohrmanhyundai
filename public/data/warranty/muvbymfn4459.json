@@ -1,7 +1,7 @@
 {
   "id": "muvbymfn4459",
   "createdAt": "2026-10-05T14:13:42.803Z",
-  "updatedAt": "2026-10-08T15:30:39.093Z",
+  "updatedAt": "2026-10-08T15:32:02.962Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "Kimberly Lanam",
   "customerPhone": "(765) 366 - 1506",
@@ -44,7 +44,7 @@
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "OUT OF COVERAGE. \n",
+  "notes": "OUT OF COVERAGE.  STILL PUSHING ON GETTING THIS COVERED \n\n",
   "approved": false,
   "approvedDate": "",
   "denied": true,
