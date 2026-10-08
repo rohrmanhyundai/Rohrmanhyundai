@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-08T13:50:01.213Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
     "at": "2026-10-08T11:57:16.001Z",
     "type": "page",
     "label": "work-in-progress"
@@ -855,16 +860,6 @@
   },
   {
     "at": "2026-09-08T14:55:30.109Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-08T13:32:23.201Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-08T13:32:22.174Z",
     "type": "page",
     "label": "tech-resources"
   }
