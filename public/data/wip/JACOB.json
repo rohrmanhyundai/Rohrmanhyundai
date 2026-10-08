@@ -30,5 +30,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "muzrzikir6vn",
+    "ro": "781407",
+    "roDate": "2026-10-08",
+    "vehicle": "2013 Nissan Murano",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
