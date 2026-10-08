@@ -952,18 +952,18 @@ function ManagerReport({ report, onOpenPrep }) {
         ) : null}
       </div>
 
-      <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
-
-      <AdvisorBreakdown rows={f.breakdown} />
-
       <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep}
         appts={Object.fromEntries((f.breakdown || []).map(r => [firstUp(r.advisor), r.appts || {}]))} />
+
+      <AdvisorBreakdown rows={f.breakdown} />
 
       {f.contest && f.contest.live && (f.breakdown || []).length ? (
         <Section icon="💵" title="Big-Money LOF — every advisor">
           <BigMoneyCharts names={(f.breakdown || []).map(r => firstUp(r.advisor))} asOf={f.date} label="Progress toward goal" />
         </Section>
       ) : null}
+
+      <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
 
       {report.forecast ? <Section icon="📈" title="Where the month lands"><div className="dw-quote">{report.forecast}</div></Section> : null}
 
