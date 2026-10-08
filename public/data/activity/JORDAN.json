@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-08T18:03:58.439Z",
+    "type": "page",
+    "label": "tire-warranty"
+  },
+  {
+    "at": "2026-10-08T18:03:51.959Z",
+    "type": "page",
+    "label": "media-upload"
+  },
+  {
+    "at": "2026-10-08T18:03:50.102Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-07T19:54:15.770Z",
     "type": "page",
     "label": "advisor-goals"
@@ -1098,45 +1113,5 @@
     "at": "2026-09-08T19:12:28.942Z",
     "type": "page",
     "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-08T17:58:18.489Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-08T17:57:32.520Z",
-    "type": "page",
-    "label": "tire-quote"
-  },
-  {
-    "at": "2026-09-08T17:57:31.526Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-08T17:48:58.813Z",
-    "type": "page",
-    "label": "registration-upload"
-  },
-  {
-    "at": "2026-09-08T17:48:53.018Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-08T17:48:50.852Z",
-    "type": "page",
-    "label": "tire-warranty"
-  },
-  {
-    "at": "2026-09-08T17:42:45.658Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-09-08T16:54:19.676Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
