@@ -246,7 +246,7 @@
         "excel_training": "—",
         "total_raw": 0,
         "_hrsStamp": 1791457703807,
-        "hidden": false,
+        "hidden": true,
         "payrollHidden": true,
         "sat_raw": 0,
         "hoursOverride": {
@@ -406,7 +406,7 @@
       "fri": 8,
       "sat": 5.16,
       "week_total": 156.3,
-      "week_pct": 0.41077529566360055,
+      "week_pct": 0.4693693693693694,
       "shop_pacing": 248.195
     },
     "grossGoal": 144069,
