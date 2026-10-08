@@ -650,6 +650,7 @@ function SellPanel({ m, plan, onClose, opps = [], date, advisorFirst, onOpenPrep
   );
 }
 
+const SELL_IN_RING = new Set(['align', 'tires', 'valvoline']);
 function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPrep }) {
   const [open, setOpen] = useState(null);
   const me = firstUp(advisor.name);
@@ -708,7 +709,17 @@ function Scorecard({ data, advisor, team, today = {}, day = null, date, onOpenPr
               {r.best ? <span className="sc-crown" title="Best on the team">👑</span> : null}
               <div className="lbl">{r.label}</div>
               <Ring frac={r.v / r.goal} color={col} size={78} stroke={7}>
-                <div style={{ fontSize: 17, fontWeight: 1000, color: col }}>{r.fmt(r.v)}</div>
+                {(() => {
+                  // Alignment / Tires / Valvoline under goal: the circle shows
+                  // how many to sell today to be back at goal; at goal, the %.
+                  const plan = !r.hit && SELL_IN_RING.has(r.key) ? sellPlan(r, advisor, today) : null;
+                  return plan && plan.need > 0 ? (
+                    <div title={`Currently ${r.fmt(r.v)} — sell ${plan.need} today to be back at ${r.fmt(r.goal)}`} style={{ lineHeight: 1 }}>
+                      <div style={{ fontSize: 22, fontWeight: 1000, color: col }}>{plan.need}</div>
+                      <div style={{ fontSize: 8.5, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em', marginTop: 2 }}>TO SELL</div>
+                    </div>
+                  ) : <div style={{ fontSize: 17, fontWeight: 1000, color: col }}>{r.fmt(r.v)}</div>;
+                })()}
               </Ring>
               <div style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>goal {r.fmt(r.goal)}</div>
               <div style={{ marginTop: 5, marginBottom: 8, minHeight: 32, fontSize: 12.5, fontWeight: 900, lineHeight: 1.25, color: r.hit ? '#86efac' : '#fca5a5' }}>
