@@ -14,5 +14,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mv01evx9bpkv",
+    "ro": "781418",
+    "roDate": "2026-10-08",
+    "vehicle": "2025 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES BUBBLE IN PASSENGER REAR TIRE. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
