@@ -1,0 +1,290 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-08",
+  "rows": [
+    {
+      "id": "rmuzff78gz1n3",
+      "customerName": "Evora Schellingerhout",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43515",
+      "vehicle": "2022 Hyundai Veloster N",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuzff78gf4po",
+      "customerName": "Jaine Sherman",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43512",
+      "vehicle": "2021 Hyundai Ioniq Hybrid",
+      "services": [
+        "CUSTOMER STATES CHECK ENGINE LIGHT IS ON CHECK AND ADVISE",
+        "CUSTOMER STATES EPB LIGHT IS ON"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuzff78gsc35",
+      "customerName": "Renee Gruze",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43340",
+      "vehicle": "2024 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES CHECK HORNS THEY ARE NOT WORKING. (SOP)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780460",
+        "date": "2026-08-31",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 292.94,
+        "hours": 1.1,
+        "phone": "7663372139",
+        "vin": "5NMJBCDE7RH420468",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 203.03,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 89.91,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuzff78gdkt5",
+      "customerName": "Bradley Taylor",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43494",
+      "vehicle": "2018 Hyundai Ioniq Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "REPLACE ENGINE AIR FILTER"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780071",
+        "date": "2026-08-17",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 70.49,
+        "hours": 0.2,
+        "phone": "4803690001",
+        "vin": "KMHC75LC9JU061381",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 70.49,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuzff78g09ap",
+      "customerName": "Mason Riddle",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43395",
+      "vehicle": "2024 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "Check operation of driverside door window switch.",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuzff78glh3k",
+      "customerName": "Mindi Cogdill",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43219",
+      "vehicle": "2006 Hyundai Sonata",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "The inside door handle has broken off, I am using a binder clip to pull the cable horizontally to open. Thanks!",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmuzff78gckwx",
+      "customerName": "Vinay Ayala",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43509",
+      "vehicle": "2021 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "HY 271 collision Rearview Image May Not Display"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmuzff78gjw35",
+      "customerName": "Iqra Nazir",
+      "appointmentTime": "3:40 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43518",
+      "vehicle": "2025 Hyundai Elantra",
+      "services": [
+        "PERFORM LOF ROTATION (WARRANTY)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777269",
+        "date": "2026-05-05",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 156.97,
+        "hours": 0.4,
+        "phone": "7652628030",
+        "vin": "KMHLS4DG1SU941633",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 95.32,
+            "priceEst": false
+          },
+          {
+            "code": "WIPER",
+            "desc": "INSTALL NEW FRONT WIPER BLADES",
+            "count": 1,
+            "h": 0.1,
+            "price": 61.65,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmuzff78grv5r",
+      "customerName": "Carson Purcell",
+      "appointmentTime": "4:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43417",
+      "vehicle": "2025 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "779784",
+        "date": "2026-08-04",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 307.42,
+        "hours": 1.5,
+        "phone": "7654280532",
+        "vin": "KMHLS4DG8SU907771",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 142.05,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 108.58,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 56.79,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-08T11:01:43.849Z"
+}
