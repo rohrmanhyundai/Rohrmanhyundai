@@ -1,0 +1,63 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-10",
+  "rows": [
+    {
+      "id": "rmv02sp7sji7a",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmv02sp7s9z2p",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmv02sp7saas1",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmv02sp7sjf2q",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    },
+    {
+      "id": "rmv02sp7sj7wf",
+      "customerName": "",
+      "appointmentTime": "",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled"
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-08T21:56:02.763Z"
+}
