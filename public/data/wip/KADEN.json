@@ -1,21 +1,5 @@
 [
   {
-    "id": "mu7bvczn46z0",
-    "ro": "780952",
-    "roDate": "2026-09-18",
-    "vehicle": "2020 Hyundai Santa Fe",
-    "jobDesc": "CUSTOMER STATES OIL CONSUMPTION CHECK. OIL LIGHT CAME ON FOR THE CUTSOMER",
-    "notes": "TALKED TO CUSTOMER ABOUT HOSES. WILL CALL BACK. \n",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/05/2026",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mupqwljih1qb",
     "ro": "781255",
     "roDate": "2026-10-01",
