@@ -963,6 +963,13 @@ function ManagerReport({ report, onOpenPrep }) {
         </Section>
       ) : null}
 
+      {report.technicians ? (
+        <Section icon="🔧" title="The shop floor">
+          <div className="dw-quote" style={{ marginBottom: t.list && t.list.length ? 14 : 0 }}>{report.technicians}</div>
+          {t.list && t.list.length ? <TechBoxes list={t.list} asOf={f.date} /> : null}
+        </Section>
+      ) : null}
+
       <PickupSection appts={f.appointments} line={report.appointmentsLine} shop />
 
       {report.forecast ? <Section icon="📈" title="Where the month lands"><div className="dw-quote">{report.forecast}</div></Section> : null}
@@ -1019,13 +1026,6 @@ function ManagerReport({ report, onOpenPrep }) {
               <div><div className="what">{w.what}</div><div className="act">→ {w.action}</div></div>
             </div>
           ))}
-        </Section>
-      ) : null}
-
-      {report.technicians ? (
-        <Section icon="🔧" title="The shop floor">
-          <div className="dw-quote" style={{ marginBottom: t.list && t.list.length ? 14 : 0 }}>{report.technicians}</div>
-          {t.list && t.list.length ? <TechBoxes list={t.list} asOf={f.date} /> : null}
         </Section>
       ) : null}
 
