@@ -1,24 +1,24 @@
 {
-  "updatedAt": "2026-10-08T16:53:25.097Z",
+  "updatedAt": "2026-10-08T21:17:20.326Z",
   "by": "SHAWN",
   "advisors": {
+    "CORY": [
+      {
+        "ro": "781418",
+        "vehicle": "2025 Hyundai Elantra"
+      },
+      {
+        "ro": "780913",
+        "vehicle": "2019 Hyundai Kona"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781407",
+        "vehicle": "2013 Nissan Murano"
+      }
+    ],
     "JORDAN": [
-      {
-        "ro": "781411",
-        "vehicle": "2018 Hyundai Ioniq Hybrid"
-      },
-      {
-        "ro": "781410",
-        "vehicle": "2017 Ford Fusion"
-      },
-      {
-        "ro": "781408",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781398",
-        "vehicle": "2021 Hyundai Veloster N"
-      },
       {
         "ro": "781391",
         "vehicle": "2026 Hyundai Tucson Hybrid"
@@ -26,16 +26,6 @@
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "CORY": [
-      {
-        "ro": "781407",
-        "vehicle": "2013 Nissan Murano"
-      },
-      {
-        "ro": "780913",
-        "vehicle": "2019 Hyundai Kona"
       }
     ]
   }
