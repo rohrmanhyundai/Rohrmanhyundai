@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-09T16:47:45.956Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
     "at": "2026-10-09T13:35:18.695Z",
     "type": "page",
     "label": "tire-quote"
@@ -900,30 +905,5 @@
     "at": "2026-09-09T20:21:44.033Z",
     "type": "page",
     "label": "dashboard"
-  },
-  {
-    "at": "2026-09-09T16:10:23.776Z",
-    "type": "page",
-    "label": "live-pay-hub"
-  },
-  {
-    "at": "2026-09-09T16:10:15.735Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-09T15:36:28.539Z",
-    "type": "page",
-    "label": "registration-upload"
-  },
-  {
-    "at": "2026-09-09T15:36:22.960Z",
-    "type": "action",
-    "label": "login"
-  },
-  {
-    "at": "2026-09-09T15:34:55.855Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
