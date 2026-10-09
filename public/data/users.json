@@ -744,8 +744,44 @@
     },
     {
       "username": "Matthew",
+      "lastName": "",
+      "email": "matthew.clark@rohrmanauto.com",
+      "pwSalt": "7aeca7296e9e9e668162cee0bfdc9d7a",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "vQcD2Kk05FDkGjL7EZuBuvnY6nQ9VnVto6cx3Jn794zQU2Jelngi+lkf/V7VhNoQ4M2ByU4jLqe1NewdUzXDWxswqdfDTCJBrT7WP4O4XamAUdJBK5/IMJtt+iIBsG6EbK9u6tgAoKPLQjz80kbX2WfMCKzRmDS8vUrH9wFuC4RBRnHJdf7vtlPR1lWlb0f+A/0dS3NABIh7pC/tfvpEOP1nWdk0EgHwBEkdvY5fwcvxfY+9xAFNCSpKmBgAKAZNG1weG1oCEwPtKzWT/ZFarYLhNJGoaKCgyzqZRAFDZyTNzpa8a9ambe7cDoxiqJHz9qM3Sux+pYSrCicVvCYRvQ=="
+      },
       "role": "advisor",
-      "email": "matthew.clark@rohrmanauto.com"
+      "canEditDashboard": true,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": true,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": true,
+        "workInProgress": true,
+        "shopAppointments": true,
+        "chargeAccountList": true,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": true,
+        "usedCarHub": false,
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": true,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": true,
+        "mobileMediaUpload": true
+      },
+      "pageOverrides": {
+        "partsHub": false,
+        "usedCarHub": false
+      },
+      "chatAccess": false,
+      "techChatAccess": true,
+      "hidden": false
     }
   ],
   "passwordVault": {
