@@ -11,7 +11,7 @@
 // reloads itself when an admin presses Force Refresh.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import TickerPanel from '../components/TickerPanel';
-import AdvisorPerformance from '../components/AdvisorPerformance';
+import TvAdvisors from './TvAdvisors';
 import Gauges from '../components/Gauges';
 import { useTwoWeekEfficiency, MiniGauge } from '../components/techEfficiency';
 import { recalcTech, recalcAdvisorSummary, weekDatesOf } from '../utils/calculations';
@@ -219,7 +219,7 @@ export default function TvDashboard() {
           <div className="tvdash">
             <TechPanel data={state.data} />
             <TickerPanel data={state.data} vacations={state.vacations} />
-            <AdvisorPerformance data={state.data} />
+            <TvAdvisors data={state.data} />
             <Gauges data={state.data} bigMoney={state.bigMoney} />
           </div>
         ) : (
