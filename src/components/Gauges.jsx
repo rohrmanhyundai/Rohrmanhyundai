@@ -138,7 +138,7 @@ export default function Gauges({ data, bigMoney, animated = false }) {
   const contestOn = bigMoney && (contestStatus(bigMoney) === STATUS.LIVE || contestStatus(bigMoney) === STATUS.ENDED);
 
   return (
-    <section className="card">
+    <section className={`card${animated ? ' tvd-gauges' : ''}`}>
       <div className="panel-head">
         <div>
           <div className="title">Performance Gauges</div>

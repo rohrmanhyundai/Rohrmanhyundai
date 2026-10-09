@@ -1187,3 +1187,13 @@ html, body {
 .gsvg--anim .ghub{transform-box:fill-box;transform-origin:center;animation:gHubPulse 3s ease-in-out 1.8s infinite}
 @keyframes gHubPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 @media (prefers-reduced-motion: reduce){.gsvg--anim .gneedle,.gsvg--anim .garc,.gsvg--anim .ghub{animation:none}}
+
+/* TV gauges: note on the same line as the title, gauges grow into the space. */
+.tvd-gauges{display:flex;flex-direction:column}
+.tvd-gauges .panel-head{margin-bottom:4px;flex-shrink:0}
+.tvd-gauges .panel-head>div{display:flex;align-items:baseline;gap:14px}
+.tvd-gauges .gauges{flex:1;min-height:0;height:auto}
+.tvd-gauges .gcard{grid-template-rows:22px minmax(0,1fr) auto auto}
+.tvd-gauges .gsvg{height:100%;max-height:100%;min-height:0}
+.tvd-gauges .gtitle{font-size:17px}
+.tvd-gauges .gmain{font-size:36px}
