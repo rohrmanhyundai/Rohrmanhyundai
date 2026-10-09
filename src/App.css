@@ -1140,3 +1140,8 @@ html, body {
 .ticker-strip--inline .ticker-label{padding:0 10px;font-size:14px;white-space:nowrap}
 .ticker-strip--inline .ticker-track{padding:0;height:100%}
 .ticker-strip--inline .ticker-item{font-size:15px}
+
+/* Tech box glow when the tech has met or is pacing their weekly goal —
+   matches the scorecard's hit tile. */
+@keyframes tvdGlow{0%,100%{box-shadow:0 0 0 1px rgba(74,222,128,.35),0 0 18px -6px rgba(74,222,128,.55)}50%{box-shadow:0 0 0 1px rgba(74,222,128,.6),0 0 28px -4px rgba(74,222,128,.8)}}
+.tvd-tech.glow{animation:tvdGlow 2.6s ease-in-out infinite;background:linear-gradient(160deg,rgba(34,197,94,.16),rgba(34,197,94,.03));border-color:rgba(74,222,128,.55)!important}

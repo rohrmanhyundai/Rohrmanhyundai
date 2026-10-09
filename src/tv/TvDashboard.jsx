@@ -67,7 +67,8 @@ function TechBox({ t, eff, dates, today }) {
   const col = met ? '#4ade80' : pct >= 0.5 ? '#fde047' : '#fca5a5';
   const pace = Number(t.pacing) || 0, paceOk = pace >= goal;
   return (
-    <div className="tvd-tech" style={{ borderColor: `${col}66` }}>
+    // Met the goal, or pacing to it: the same green glow as a hit scorecard tile.
+    <div className={`tvd-tech${met || (goal > 0 && paceOk) ? ' glow' : ''}`} style={{ borderColor: `${col}66` }}>
       <div className="tvd-tech-top">
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="tvd-tech-name">{t.name}</div>
