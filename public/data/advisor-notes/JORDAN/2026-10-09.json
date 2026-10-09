@@ -1,0 +1,512 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-09",
+  "rows": [
+    {
+      "id": "rmv0v1ginutj9",
+      "customerName": "Jordan Mitchell",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43492",
+      "vehicle": "2021 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginksmr",
+      "customerName": "Joseph Couch JR.",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43507",
+      "vehicle": "2023 Genesis GV70",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginxhta",
+      "customerName": "Dusti Dexter",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43501",
+      "vehicle": "2025 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1gin641m",
+      "customerName": "Lee Ballard",
+      "appointmentTime": "7:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43516",
+      "vehicle": "2023 Hyundai Sonata",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginlvs6",
+      "customerName": "Christy Burrows",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43224",
+      "vehicle": "2021 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation",
+        "CUSTOMER STATES CHECK ENGINE LIGHT IS ON."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginud1u",
+      "customerName": "Madison O'Brien",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43230",
+      "vehicle": "2026 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "Also any routine maintenance needed for 5K miles",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginbwg0",
+      "customerName": "Judy Bower",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43471",
+      "vehicle": "2020 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777230",
+        "date": "2026-05-04",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 789.89,
+        "hours": 3.3,
+        "phone": "7654271340",
+        "vin": "5NMS33AD5LH260708",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 448.6,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 204.8,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 136.49,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv0v1ginedkt",
+      "customerName": "Ali Vansoest",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43249",
+      "vehicle": "2022 Hyundai Palisade",
+      "services": [
+        "CUSTOMER STATES STILL MAKING clicking sound ON DRIVER SIDE FRONT WHEN turning left BRAKE/TURNING. CHECK AND ADVISE",
+        "CUSTOMER STATES- Cust has been here two previous times for this issue and it has not been resolved",
+        "CUSTOMER STATES- rear shocks making noise.",
+        "CUSTOMER STATES- Request advosor to ride with to confirm sound"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780996",
+        "date": "2026-09-22",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1264.84,
+        "hours": 5.9,
+        "phone": "2197413612",
+        "vin": "KM8R4DHE1NU460427",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 133.71,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 171.97,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 412.74,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 200.63,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 33.39,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 210.19,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 102.21,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv0v1ginfwy1",
+      "customerName": "Deb Deline",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43315",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "779314",
+        "date": "2026-07-17",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 270.48,
+        "hours": 1,
+        "phone": "2197758597",
+        "vin": "KM8RGES22TU034089",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 56.91,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 213.57,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv0v1gin6efj",
+      "customerName": "Shay Nevels",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43421",
+      "vehicle": "2017 Hyundai Elantra",
+      "services": [
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H",
+        "CUSTOMER STATES CEL IS ON. CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginya29",
+      "customerName": "Natalie Moore",
+      "appointmentTime": "10:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43456",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1gin3uhx",
+      "customerName": "Lori Loughmiller",
+      "appointmentTime": "11:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43532",
+      "vehicle": "2026 Hyundai Tucson Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780473",
+        "date": "2026-08-31",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 70.49,
+        "hours": 0.2,
+        "phone": "2198690424",
+        "vin": "KM8JBDD1XTU416347",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 70.49,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv0v1ginsjf1",
+      "customerName": "Christine Pangle",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43438",
+      "vehicle": "2023 Hyundai Palisade",
+      "services": [
+        "REPLACE CONTROL ARM",
+        "REPLACE TWO TIRES",
+        "WHEEL ALIGNMENT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780069",
+        "date": "2026-08-17",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1546.26,
+        "hours": 5.5,
+        "phone": "7654907472",
+        "vin": "KM8R7DGE1PU545635",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 57.54,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 321.59,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 226.23,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUPV6",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+            "count": 1,
+            "h": 3.5,
+            "price": 940.9,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv0v1ginodms",
+      "customerName": "Bruce Schneidt",
+      "appointmentTime": "12:40 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43486",
+      "vehicle": "2022 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1ginvo8t",
+      "customerName": "Chad Leap",
+      "appointmentTime": "2:20 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43550",
+      "vehicle": "2025 Hyundai Tucson Hybrid",
+      "services": [
+        "$50 Oil Change (any make/model) — Oil change & tire rotation",
+        "Other (Please use comment box below) — Oil change & tire rotation",
+        "302 R FRONT VIEW CAMERA FCA UPDATE(26-01-048H)"
+      ],
+      "comments": "Oil change & tire rotation",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv0v1gin7tj9",
+      "customerName": "Mason Riddle",
+      "appointmentTime": "3:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43395",
+      "vehicle": "2024 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "Check operation of driverside door window switch.",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-09T11:06:42.737Z"
+}
