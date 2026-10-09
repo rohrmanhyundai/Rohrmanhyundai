@@ -74,23 +74,23 @@ function TechBox({ t, eff, dates, today }) {
           <div className="tvd-tech-total" style={{ color: col }}>
             {r1(total)}<span> / {r1(goal)} hrs</span>
           </div>
-          <div className="tvd-bar"><div style={{ width: `${Math.min(100, pct * 100)}%`, background: col }} /></div>
-          <div className="tvd-tech-line">
-            <span style={{ color: met ? '#86efac' : '#fecaca' }}>
-              {met ? `✓ Goal met · +${r1(total - goal)}` : `Needs ${ceil1(need)} hrs`}
-            </span>
-            {goal > 0 && (
-              <span style={{ color: '#94a3b8' }}>
-                {' · '}📈 <span style={{ color: paceOk ? '#4ade80' : '#fbbf24' }}>{r1(pace)}</span>
-                <span style={{ color: paceOk ? '#86efac' : '#fca5a5' }}> ({paceOk ? '+' : '−'}{r1(Math.abs(pace - goal))})</span>
-              </span>
-            )}
-          </div>
         </div>
         <div className="tvd-eff" title={eff ? `Average goal % over the last ${eff.weeks} completed week${eff.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
-          <MiniGauge pct={eff ? eff.pct : null} width={128} height={76} />
+          <MiniGauge pct={eff ? eff.pct : null} />
           <div>2-wk efficiency</div>
         </div>
+      </div>
+      <div className="tvd-bar"><div style={{ width: `${Math.min(100, pct * 100)}%`, background: col }} /></div>
+      <div className="tvd-tech-line">
+        <span style={{ color: met ? '#86efac' : '#fecaca' }}>
+          {met ? `✓ Goal met · +${r1(total - goal)}` : `Needs ${ceil1(need)} hrs`}
+        </span>
+        {goal > 0 && (
+          <span style={{ color: '#94a3b8' }}>
+            {' · '}📈 Pacing <span style={{ color: paceOk ? '#4ade80' : '#fbbf24' }}>{r1(pace)}</span>
+            <span style={{ color: paceOk ? '#86efac' : '#fca5a5' }}> ({paceOk ? '+' : '−'}{r1(Math.abs(pace - goal))})</span>
+          </span>
+        )}
       </div>
       <div className="tvd-days">
         {WEEK.map(([k, label]) => {
