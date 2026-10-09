@@ -1174,3 +1174,16 @@ html, body {
 .tvd-train .lbl{font-size:11px;font-weight:800;color:#95a9c6;text-transform:uppercase;letter-spacing:.05em}
 .tvd-tech-name{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap}
 .tvd-adv-who .nm{display:flex;align-items:center}
+
+/* Animated gauges (TV dashboard only — Gauges animated prop). Needle sweeps
+   from 0% with a small overshoot, arc draws in, then a gentle idle sway and
+   a breathing glow. Rotation is around the hub (110,98 in the 220×130 box). */
+.gsvg--anim .gneedle{transform-box:view-box;transform-origin:110px 98px;animation:gNeedleIn 1.8s cubic-bezier(.22,1.2,.36,1) both,gNeedleSway 3.6s ease-in-out 1.8s infinite}
+@keyframes gNeedleIn{0%{transform:rotate(calc(var(--sweep) * -1))}100%{transform:rotate(0deg)}}
+@keyframes gNeedleSway{0%,100%{transform:rotate(0deg)}30%{transform:rotate(1.6deg)}65%{transform:rotate(-1.2deg)}}
+.gsvg--anim .garc{animation:gArcIn 1.8s cubic-bezier(.22,1,.36,1) both,gArcBreathe 3s ease-in-out 1.8s infinite}
+@keyframes gArcIn{0%{stroke-dashoffset:var(--prog)}100%{stroke-dashoffset:0}}
+@keyframes gArcBreathe{0%,100%{opacity:1}50%{opacity:.72}}
+.gsvg--anim .ghub{transform-box:fill-box;transform-origin:center;animation:gHubPulse 3s ease-in-out 1.8s infinite}
+@keyframes gHubPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion: reduce){.gsvg--anim .gneedle,.gsvg--anim .garc,.gsvg--anim .ghub{animation:none}}

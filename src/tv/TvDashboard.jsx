@@ -222,7 +222,7 @@ export default function TvDashboard() {
           <div className="tvdash">
             <TechPanel data={state.data} vacations={state.vacations} />
             <TvAdvisors data={state.data} tick={tick} />
-            <Gauges data={state.data} bigMoney={state.bigMoney} />
+            <Gauges data={state.data} bigMoney={state.bigMoney} animated />
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#94a3b8', fontSize: 28, fontWeight: 800 }}>

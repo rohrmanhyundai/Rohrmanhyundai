@@ -4,7 +4,7 @@ import { safe } from '../utils/formatters';
 import { buildGaugeData } from '../utils/calculations';
 import quotes from '../data/quotes';
 
-function gaugeSvg(g) {
+function gaugeSvg(g, animated = false) {
   const p = Math.max(0, Math.min(1.2, safe(g.pct, 0)));
   const angle = Math.PI * (1 - p / 1.2);
   const x = 110 + 78 * Math.cos(angle);
@@ -17,9 +17,13 @@ function gaugeSvg(g) {
   // Unique id suffix per gauge so gradient/filter defs don't collide when
   // several gauges render in the same document.
   const uid = 'g' + String(g.label || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+  // TV dashboard only (animated): the needle sweeps up from 0% to its value,
+  // the arc draws in behind it, then the needle idles with a slight sway and
+  // the arc breathes. --sweep is how far the needle travels from 0%.
+  const sweep = `${((p / 1.2) * 180).toFixed(1)}deg`;
 
   return (
-    <svg viewBox="0 0 220 130" className="gsvg">
+    <svg viewBox="0 0 220 130" className={`gsvg${animated ? ' gsvg--anim' : ''}`} style={animated ? { '--sweep': sweep, '--prog': prog } : undefined}>
       <defs>
         <linearGradient id={uid + 'arc'} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#22d3ee" />
@@ -39,16 +43,18 @@ function gaugeSvg(g) {
       {/* track */}
       <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke="rgba(148,163,184,.16)" strokeWidth="14" strokeLinecap="round" />
       {/* glowing progress arc */}
-      <path d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke={`url(#${uid}arc)`} strokeWidth="14" strokeLinecap="round" strokeDasharray={`${prog} ${total}`} filter={`url(#${uid}glow)`} />
+      <path className="garc" d="M 32 98 A 78 78 0 0 1 188 98" fill="none" stroke={`url(#${uid}arc)`} strokeWidth="14" strokeLinecap="round" strokeDasharray={`${prog} ${total}`} filter={`url(#${uid}glow)`} />
       <text x="32" y="116" fill="#8fa7c8" fontSize="10" textAnchor="middle">0%</text>
       <text x="110" y="16" fill="#8fa7c8" fontSize="10" textAnchor="middle">60%</text>
       <text x="188" y="116" fill="#8fa7c8" fontSize="10" textAnchor="middle">120%</text>
       {/* needle: status-colored glow halo + crisp white core so it stays
           visible at any position — including pinned at the max, where the arc
           tail is the same status color and would otherwise hide it. */}
-      <line x1="110" y1="98" x2={x} y2={y} stroke={status} strokeWidth="8" strokeLinecap="round" filter={`url(#${uid}glow)`} opacity=".9" />
-      <line x1="110" y1="98" x2={x} y2={y} stroke="#f8fafc" strokeWidth="3.2" strokeLinecap="round" />
-      <circle cx="110" cy="98" r="9" fill={`url(#${uid}hub)`} />
+      <g className="gneedle">
+        <line x1="110" y1="98" x2={x} y2={y} stroke={status} strokeWidth="8" strokeLinecap="round" filter={`url(#${uid}glow)`} opacity=".9" />
+        <line x1="110" y1="98" x2={x} y2={y} stroke="#f8fafc" strokeWidth="3.2" strokeLinecap="round" />
+      </g>
+      <circle className="ghub" cx="110" cy="98" r="9" fill={`url(#${uid}hub)`} />
       <circle cx="110" cy="98" r="9" fill="none" stroke="#f8fafc" strokeWidth="1.6" opacity=".95" />
     </svg>
   );
@@ -125,7 +131,8 @@ function BigMoneyTile({ bigMoney, data }) {
   );
 }
 
-export default function Gauges({ data, bigMoney }) {
+// `animated` is set by the shop TV dashboard; the main dashboard's gauges stay still.
+export default function Gauges({ data, bigMoney, animated = false }) {
   const gauges = buildGaugeData(data);
   const quote = getDailyQuote();
   const contestOn = bigMoney && (contestStatus(bigMoney) === STATUS.LIVE || contestStatus(bigMoney) === STATUS.ENDED);
@@ -145,7 +152,7 @@ export default function Gauges({ data, bigMoney }) {
         {gauges.map(g => (
           <div className="gcard" key={g.label}>
             <div className="gtitle">{g.label}</div>
-            {gaugeSvg(g)}
+            {gaugeSvg(g, animated)}
             <div className="gmain">{g.main}</div>
             <div className="gsub">{g.sub}</div>
           </div>
