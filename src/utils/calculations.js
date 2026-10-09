@@ -317,7 +317,6 @@ export function buildGaugeData(data) {
 
   advisorsForDisplay(data).filter(a => !a.hidden).slice(0, 3).forEach(a => {
     const progress = advisorMonthProgress(data);
-    const dailyAvg = advisorDailyAverage(a, data);
     const projected = advisorProjectedHours(a, data);
     const goalHours = 300;
     const p = advisorGoalPct(a, data);
@@ -325,7 +324,9 @@ export function buildGaugeData(data) {
       label: a.name + ' Projected Hours',
       pct: p,
       main: projected.toFixed(1) + ' hrs',
-      sub: dailyAvg.toFixed(1) + ' daily avg \u00d7 ' + progress.total.toFixed(0) + ' workdays \u2022 goal ' + goalHours.toFixed(1) + ' hrs',
+      // Show the real inputs (MTD ÷ days × workdays) — a rounded daily avg ×
+      // workdays doesn't multiply out to the projected number shown above it.
+      sub: safe(a.mtd_hours, 0).toFixed(1) + ' hrs \u00f7 ' + progress.completed + ' days \u00d7 ' + progress.total.toFixed(0) + ' workdays \u2022 goal ' + goalHours.toFixed(0) + ' hrs',
     });
   });
 
