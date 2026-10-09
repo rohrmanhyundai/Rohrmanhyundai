@@ -174,6 +174,7 @@ function EmojiPicker({ onPick, title = 'Add an emoji' }) {
 
 export default function FloatingMessenger({
   currentUser, currentRole, users, messages, unread, canSend, onMarkSeen, onMessagesChange, openSignal = 0,
+  chatMentions = [], onOpenChat,
 }) {
   const me = (currentUser || '').toUpperCase();
   const canDelete = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -279,7 +280,8 @@ export default function FloatingMessenger({
     }
   };
 
-  const mine = useMemo(() => (messages || [])
+  // Chat @mentions ride along in the inbox, read-only, with a jump to the chat.
+  const mine = useMemo(() => [...(messages || []), ...(chatMentions || [])]
     .filter(m => withinRetention(m))
     .filter(m => {
       const to = Array.isArray(m.to) ? m.to.map(u => String(u).toUpperCase()) : [];
@@ -288,7 +290,7 @@ export default function FloatingMessenger({
     .slice()
     // Newest activity first, not newest send: a reply pulls its thread back to
     // the top, which is where you look for what just came in.
-    .sort((a, b) => lastActivity(b) - lastActivity(a)), [messages, me]);
+    .sort((a, b) => lastActivity(b) - lastActivity(a)), [messages, chatMentions, me]);
 
   // Every user in the system until they're deleted — hidden ones included.
   // Only the sender is left out.
@@ -497,6 +499,26 @@ export default function FloatingMessenger({
               mine.length === 0 ? (
                 <div style={{ color: '#7a92b8', fontSize: 13, padding: '10px 0' }}>No messages.</div>
               ) : mine.map(m => {
+                if (m.kind === 'chat') return (
+                  <div key={m.id} style={{
+                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+                    borderRadius: 10, padding: '10px 12px', marginBottom: 10,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontWeight: 800, fontSize: 12, letterSpacing: '.02em', color: '#c4b5fd', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flex: 1 }}>
+                        {String(m.from).toUpperCase()} <span style={{ color: '#64748b', fontWeight: 700 }}>· @you in {m.channel}</span>
+                      </span>
+                      <span title={timeLabel(m.timestamp)} style={{ color: '#64748b', fontSize: 10.5, whiteSpace: 'nowrap', flexShrink: 0 }}>{shortTime(m.timestamp)}</span>
+                    </div>
+                    <div style={{ fontSize: 13.5, lineHeight: 1.45, marginTop: 6, whiteSpace: 'pre-wrap' }}>{m.text}</div>
+                    {onOpenChat && (
+                      <button onClick={() => { onOpenChat(m.channel); setOpen(false); }}
+                        style={{ marginTop: 8, background: 'transparent', border: 'none', padding: 0, color: '#7dd3fc', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        💬 Open {m.channel} →
+                      </button>
+                    )}
+                  </div>
+                );
                 const fromMe = (m.from || '').toUpperCase() === me;
                 const replies = Array.isArray(m.replies) ? m.replies : [];
                 const open = replyOpenId === m.id;

@@ -258,6 +258,10 @@ export default function App() {
   const mentionPersistRef = useRef(() => {});       // persists the ack set to localStorage
   const considerMentionRef = useRef(null);          // shared checker used by the poll safety-net
   const myRoleRef = useRef('');                      // current user's job role, for @tech/@advisor/@part group mentions
+  // Chat posts (Advisor / Tech Chat) that @mention me — also listed in the
+  // Messages inbox so an @SHAWN anywhere lands where messages are looked for.
+  const [chatMentions, setChatMentions] = useState([]);
+  const chatMentionIdsRef = useRef(new Set());
   const [globalUnread, setGlobalUnread] = useState(0); // unread global-message activity → Manager button badge
   const [globalMessages, setGlobalMessages] = useState([]); // feeds the floating messenger panel
   const globalSeenRef = useRef(0);                   // ts the user last opened the Global Message log
@@ -501,6 +505,7 @@ export default function App() {
     // polls for them (saves the shared GitHub rate limit too).
     if (!isLoggedIn || !currentUser || isPhone) return;
     const meU = currentUser.toUpperCase();
+    chatMentionIdsRef.current = new Set(); setChatMentions([]);   // fresh list per signed-in user
     const ackKey = `chatMentionAck:${meU}`;
     const baseKey = `chatMentionBaseline:${meU}`;
 
@@ -519,6 +524,12 @@ export default function App() {
     const consider = (msg, channel) => {
       if (!msg || !msg.id || !msg.text) return;
       if ((msg.username || '').toUpperCase() === meU) return;            // not my own message
+      if (!chatMentionIdsRef.current.has(msg.id) && msg.timestamp > Date.now() - 7 * 24 * 60 * 60 * 1000
+        && mentionsUser(msg.text, currentUser, myRoleRef.current)) {
+        chatMentionIdsRef.current.add(msg.id);
+        const entry = { id: `chat:${msg.id}`, kind: 'chat', channel, from: msg.username || 'Someone', to: [meU], text: String(msg.text), timestamp: msg.timestamp };
+        setChatMentions(list => [...list, entry]);
+      }
       if (msg.timestamp && msg.timestamp < baseline) return;            // predates this session's baseline
       if (!mentionsUser(msg.text, currentUser, myRoleRef.current)) return; // by name or @tech/@advisor/@part group
       // A 🚨 reaction on the message marks it an alert → red popup.
@@ -2284,6 +2295,8 @@ export default function App() {
       // payroll and contests; they still log in, so they can still be messaged.
       users={users}
       messages={globalMessages}
+      chatMentions={chatMentions}
+      onOpenChat={(channel) => navTo(channel === 'Tech Chat' ? 'work-in-progress' : 'advisor-calendar')}
       unread={globalUnread}
       canSend={canSendGlobal}
       onMarkSeen={markGlobalSeen}
