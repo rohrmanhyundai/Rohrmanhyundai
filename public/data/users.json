@@ -741,6 +741,11 @@
       "techChatAccess": true,
       "hidden": false,
       "pageOverrides": {}
+    },
+    {
+      "username": "Matthew",
+      "role": "advisor",
+      "email": "matthew.clark@rohrmanauto.com"
     }
   ],
   "passwordVault": {
