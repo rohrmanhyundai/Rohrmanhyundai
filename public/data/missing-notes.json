@@ -1,8 +1,48 @@
 {
-  "updatedAt": "2026-10-08T21:17:20.326Z",
+  "updatedAt": "2026-10-09T19:42:10.963Z",
   "by": "SHAWN",
   "advisors": {
+    "JORDAN": [
+      {
+        "ro": "781460",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781456",
+        "vehicle": "2025 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "781455",
+        "vehicle": "2020 Hyundai Tucson"
+      },
+      {
+        "ro": "781451",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781459",
+        "vehicle": "2022 Hyundai Tucson Plug-In Hybrid"
+      },
+      {
+        "ro": "781457",
+        "vehicle": "2022 Hyundai Palisade"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "781453",
+        "vehicle": "2026 Hyundai Palisade"
+      },
+      {
+        "ro": "781448",
+        "vehicle": "2023 Hyundai IONIQ 6"
+      },
       {
         "ro": "781418",
         "vehicle": "2025 Hyundai Elantra"
@@ -10,22 +50,6 @@
       {
         "ro": "780913",
         "vehicle": "2019 Hyundai Kona"
-      }
-    ],
-    "DAVID": [
-      {
-        "ro": "781407",
-        "vehicle": "2013 Nissan Murano"
-      }
-    ],
-    "JORDAN": [
-      {
-        "ro": "781391",
-        "vehicle": "2026 Hyundai Tucson Hybrid"
-      },
-      {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
       }
     ]
   }
