@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bob Rohrman Hyundai</title>
+  <script>
+    // GitHub Pages paths are case-sensitive, and TV / phone keyboards love to
+    // capitalize ("/Rohrmanhyundai/Dashboard"). Any address under this site
+    // that isn't found is retried in lowercase (the real page names), and
+    // anything still unknown goes to the main dashboard.
+    (function () {
+      var ROOT = '/Rohrmanhyundai/';
+      var PAGES = { dashboard: 'dashboard/', sales: 'sales/' };
+      var rest = window.location.pathname.replace(/^\/[^\/]*\/?/, '');   // drop the /Rohrmanhyundai/ part, any case
+      var first = rest.split('/')[0].toLowerCase().replace(/\.html?$/, '');
+      var dest = ROOT + (PAGES[first] || '');
+      window.location.replace(dest + window.location.search + window.location.hash);
+    })();
+  </script>
+  <meta http-equiv="refresh" content="2; url=/Rohrmanhyundai/" />
+  <style>
+    body { background:#0d1627; color:#e2e8f0; font-family:Inter,-apple-system,system-ui,sans-serif;
+           display:flex; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; font-size:22px; }
+    a { color:#4fc3f7; }
+  </style>
+</head>
+<body>
+  <p>Opening the dashboard&hellip;<br /><a href="/Rohrmanhyundai/dashboard/">Shop TV dashboard</a> &middot; <a href="/Rohrmanhyundai/">Main dashboard</a></p>
+</body>
+</html>
