@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         main:  resolve(__dirname, 'index.html'),
         sales: resolve(__dirname, 'sales/index.html'),
+        dashboard: resolve(__dirname, 'dashboard/index.html'),
       },
     },
   },

@@ -1081,3 +1081,31 @@ html, body {
 /* All Tools page: a card that needs doing (calls owed, reporting due) pulses red. */
 @keyframes toolCardAlert { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.35); } 50% { box-shadow: 0 0 18px 4px rgba(239,68,68,.55); } }
 .tool-card-alert { animation: toolCardAlert 1.6s ease-in-out infinite; }
+
+/* ── Shop TV dashboard (/dashboard/, src/tv/TvDashboard.jsx) ────────────────
+   Same 1920×1080 stage as the main dashboard. Tech boxes take the top (where
+   the header + tech table sit on the main one); the advisor rows below match
+   the main dashboard's heights exactly. */
+.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:452px 86px 248px 270px;gap:4px;box-sizing:border-box}
+.tvd-techs{display:flex;flex-direction:column;gap:7px;padding:8px 10px}
+.tvd-head{display:flex;align-items:center;gap:12px;height:28px;flex-shrink:0}
+.tvd-head .title{font-size:21px;font-weight:900}
+.tvd-head .note{font-size:15px;color:var(--muted);font-weight:700}
+.tvd-grid{flex:1;min-height:0;display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:8px}
+.tvd-tech{background:rgba(2,6,23,.45);border:1.5px solid;border-radius:14px;padding:9px 14px 9px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;overflow:hidden}
+.tvd-tech-top{display:flex;gap:10px;align-items:center}
+.tvd-tech-name{font-size:22px;font-weight:900;color:#f1f5f9;letter-spacing:.4px;line-height:1.1}
+.tvd-tech-total{font-size:34px;font-weight:1000;line-height:1.1;margin-top:1px}
+.tvd-tech-total span{font-size:18px;color:#94a3b8;font-weight:700}
+.tvd-bar{height:8px;border-radius:4px;background:rgba(148,163,184,.16);margin:6px 0 6px;overflow:hidden}
+.tvd-bar>div{height:100%;border-radius:4px}
+.tvd-tech-line{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvd-eff{text-align:center;flex-shrink:0}
+.tvd-eff>div{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:-3px}
+.tvd-days{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-top:7px}
+.tvd-day{background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.16);border-radius:9px;padding:3px 2px 4px;text-align:center}
+.tvd-day .lbl{font-size:12px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}
+.tvd-day .lbl span{font-weight:700;color:#64748b;letter-spacing:0}
+.tvd-day .val{font-size:21px;font-weight:900;line-height:1.15}
+.tvd-day.today{border-color:rgba(110,231,249,.75);background:rgba(110,231,249,.12);box-shadow:0 0 12px rgba(110,231,249,.35)}
+.tvd-day.today .lbl{color:#6ee7f9}
