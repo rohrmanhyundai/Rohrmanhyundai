@@ -8,6 +8,7 @@ import { n, pct, safe } from '../utils/formatters';
 import { advisorDailyAverage, advisorProjectedHours, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
 import { SC_CSS, Ring, scoreMetrics, sellPlan, todayCounts } from '../components/scorecard';
 import { appointmentFacts } from '../utils/dailyWrench.mjs';
+import TrainingBadge from './TrainingBadge';
 import { fetchLiveJson } from '../utils/liveData';
 
 const firstUp = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
@@ -45,6 +46,7 @@ function useHeight() {
 }
 
 function AdvisorRow({ a, data, team, today }) {
+  const training = (data.advisorTraining || []).find(x => firstUp(x.name) === firstUp(a.name));
   const [ref, h] = useHeight();
   const metrics = scoreMetrics(data);
   const val = (x, k) => Number(x && x[k]) || 0;
@@ -76,7 +78,7 @@ function AdvisorRow({ a, data, team, today }) {
   return (
     <div className={`tvd-adv${compact ? ' compact' : ''}`} ref={ref}>
       <div className="tvd-adv-who">
-        <div className="nm">{a.name}</div>
+        <div className="nm">{a.name} <TrainingBadge p={training} /></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Ring frac={share} color={ringCol} size={whoRing} stroke={Math.max(5, Math.round(whoRing / 11))}>
             {noReport && !scored.length

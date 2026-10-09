@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { badgeCls } from '../utils/formatters';
-import { hasExcelTraining } from '../utils/training';
 
 export default function TrainingRotator({ data, vacations }) {
   const [showTraining, setShowTraining] = useState(true);
@@ -35,18 +34,16 @@ export default function TrainingRotator({ data, vacations }) {
               <div className="innerTitle">Technicians</div>
               <div className="tableArea">
                 <table>
-                  <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th><th>Excel Training</th></tr></thead>
+                  <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th></tr></thead>
                   <tbody>
                     {(data.technicians || []).map(t => {
                       const certified = t.certified || '\u2014';
                       const due = t.trainings_due || '\u2014';
-                      const excel = hasExcelTraining(t) ? (t.excel_training || t.excel || '\u2014') : 'N/A';
                       return (
                         <tr key={t.name}>
                           <td className="name">{t.name || '\u2014'}</td>
                           <td className="center"><span className={`badge ${badgeCls(certified)}`}>{certified}</span></td>
                           <td className="center"><span className="badge neutral">{due}</span></td>
-                          <td className="center"><span className="badge neutral">{excel}</span></td>
                         </tr>
                       );
                     })}
@@ -58,18 +55,16 @@ export default function TrainingRotator({ data, vacations }) {
               <div className="innerTitle">Advisors</div>
               <div className="tableArea">
                 <table>
-                  <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th><th>Excel Training</th></tr></thead>
+                  <thead><tr><th>Name</th><th>Certified</th><th>Training Due</th></tr></thead>
                   <tbody>
                     {(data.advisorTraining || []).map(a => {
                       const certified = a.certified || '\u2014';
                       const due = a.trainings_due || '\u2014';
-                      const excel = hasExcelTraining(a) ? (a.excel_training || a.excel || '\u2014') : 'N/A';
                       return (
                         <tr key={a.name}>
                           <td className="name">{a.name || '\u2014'}</td>
                           <td className="center"><span className={`badge ${badgeCls(certified)}`}>{certified}</span></td>
                           <td className="center"><span className="badge neutral">{due}</span></td>
-                          <td className="center"><span className="badge neutral">{excel}</span></td>
                         </tr>
                       );
                     })}

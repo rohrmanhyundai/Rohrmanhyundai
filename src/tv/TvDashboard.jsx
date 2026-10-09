@@ -10,7 +10,8 @@
 // no sign-in and never writes anything. It re-reads every 90 seconds and
 // reloads itself when an admin presses Force Refresh.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import TickerPanel, { TickerStrip, vacationItemsFor } from '../components/TickerPanel';
+import { TickerStrip, vacationItemsFor } from '../components/TickerPanel';
+import TrainingBadge from './TrainingBadge';
 import TvAdvisors from './TvAdvisors';
 import Gauges from '../components/Gauges';
 import { useTwoWeekEfficiency, MiniGauge } from '../components/techEfficiency';
@@ -69,7 +70,7 @@ function TechBox({ t, eff, dates, today }) {
     <div className={`tvd-tech${met || (goal > 0 && paceOk) ? ' glow' : ''}`} style={{ borderColor: `${col}66` }}>
       <div className="tvd-tech-top">
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="tvd-tech-name">{t.name}</div>
+          <div className="tvd-tech-name">{t.name} <TrainingBadge p={t} /></div>
           <div className="tvd-tech-total" style={{ color: col }}>
             {r1(total)}<span> / {r1(goal)} hrs</span>
           </div>
@@ -220,7 +221,6 @@ export default function TvDashboard() {
         {state ? (
           <div className="tvdash">
             <TechPanel data={state.data} vacations={state.vacations} />
-            <TickerPanel data={state.data} vacations={state.vacations} show="training" />
             <TvAdvisors data={state.data} tick={tick} />
             <Gauges data={state.data} bigMoney={state.bigMoney} />
           </div>

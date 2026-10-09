@@ -1635,7 +1635,7 @@ export default function App() {
           formerRef.current = { set: null, ts: 0 };
           next.technicians.push({
             name, lastName: String(lastName || '').trim(), goal: 47.5, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
-            total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014', excel_training: '\u2014',
+            total: 0, goal_pct: 0, pacing: 0, certified: '\u2014', trainings_due: '\u2014',
           });
           setData(next);
           await saveDashboardToGitHub({ data: next, vacations });
