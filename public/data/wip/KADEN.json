@@ -12,21 +12,5 @@
     "advisor": "DAVID RILEY",
     "partsArrived": null,
     "partsArrivedDate": ""
-  },
-  {
-    "id": "muvhsshr21tr",
-    "ro": "781301",
-    "roDate": "2026-10-05",
-    "vehicle": "2017 Hyundai Santa Fe Sport",
-    "jobDesc": "CUSTOMER STATES ON A COLD START THE VEHICLE JERKS. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
