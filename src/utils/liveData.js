@@ -13,7 +13,13 @@ export async function fetchLiveJson(path) {
   const bust = `v=${Date.now()}`;
   for (const url of [`${RAW}${path}?${bust}`, `${BASE}data/${path}?${bust}`]) {
     try {
-      const res = await fetch(url, { cache: 'no-store' });
+      // A TV on a filtered network can leave a request hanging forever, which
+      // would sit on "Loading…" — give each source 8s, then try the next.
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
+      let res;
+      try { res = await fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined }); }
+      finally { if (timer) clearTimeout(timer); }
       if (res.ok) return await res.json();
       if (res.status === 404) return null;   // file really isn't there
     } catch { /* try the next source */ }
