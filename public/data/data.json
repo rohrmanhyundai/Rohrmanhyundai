@@ -345,6 +345,23 @@
             "oilOnly": 15
           }
         }
+      },
+      {
+        "name": "MATTHEW",
+        "mtd_hours": 0,
+        "daily_avg": 0,
+        "hours_per_ro": 0,
+        "align": 0,
+        "tires": 0,
+        "valvoline": 0,
+        "roh50_hrs_ro": 0,
+        "roh50_add_rate": 0,
+        "csi": 0,
+        "asr": 0,
+        "elr": 0,
+        "last_month_total": 0,
+        "ro_count": 0,
+        "mtd_month": "2026-10"
       }
     ],
     "advisorTraining": [
@@ -359,6 +376,12 @@
         "certified": "YES",
         "trainings_due": "0",
         "excel_training": "NA"
+      },
+      {
+        "name": "MATTHEW",
+        "certified": "—",
+        "trainings_due": "—",
+        "excel_training": "—"
       }
     ],
     "vacations": [
@@ -411,10 +434,10 @@
     "advisorSummary": {
       "date": "March 27, 2026",
       "total_hours": 173.7,
-      "align": 0.13225,
-      "tires": 0.02345,
-      "valvoline": 0.22205,
-      "csi": 930.5
+      "align": 0.08816666666666667,
+      "tires": 0.015633333333333332,
+      "valvoline": 0.14803333333333332,
+      "csi": 620.3333333333334
     },
     "techTotals": {
       "mon": 50.72,
