@@ -1,4 +1,11 @@
 {
-  "updatedAt": "2026-09-29T02:07:35.142Z",
-  "users": {}
+  "updatedAt": "2026-10-09T19:25:45.959Z",
+  "users": {
+    "SHAWN": {
+      "fails": 1,
+      "strikes": 0,
+      "lastFailAt": 1791573945959,
+      "page": "employee-applicants"
+    }
+  }
 }
