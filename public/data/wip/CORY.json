@@ -59,21 +59,5 @@
     "advisor": "JORDAN",
     "notes": "Engine seized. Waiting on registration. ",
     "flag": "purple"
-  },
-  {
-    "id": "muvhsqp34hb7",
-    "ro": "781320",
-    "roDate": "2026-10-05",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES VEHICLE WILL NOT START. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": true,
-    "advisor": "JORDAN TROXEL"
   }
 ]
