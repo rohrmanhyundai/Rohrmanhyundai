@@ -28,21 +28,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
-  },
-  {
-    "id": "mv01ewz8biu6",
-    "ro": "781414",
-    "roDate": "2026-10-08",
-    "vehicle": "2024 Hyundai Palisade",
-    "jobDesc": "CUSTOMER STATES- pass rear tire losing air",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
