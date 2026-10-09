@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-09T16:47:24.071Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-10-09T16:47:23.040Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-09T12:05:25.563Z",
     "type": "page",
     "label": "dashboard"
@@ -805,67 +815,5 @@
     "at": "2026-09-09T16:49:21.412Z",
     "type": "page",
     "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-09T15:04:21.956Z",
-    "type": "page",
-    "label": "additional-time"
-  },
-  {
-    "at": "2026-09-09T15:03:45.599Z",
-    "type": "page",
-    "label": "additional-time-menu"
-  },
-  {
-    "at": "2026-09-09T15:03:43.337Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-09T15:03:40.369Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T15:03:39.895Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T15:03:39.379Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T15:03:38.859Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T15:03:38.293Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T14:53:14.639Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780600 tech CORY"
-  },
-  {
-    "at": "2026-09-09T14:16:16.018Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T12:21:47.558Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780440 tech CORY"
-  },
-  {
-    "at": "2026-09-09T12:21:39.675Z",
-    "type": "page",
-    "label": "work-in-progress"
   }
 ]
