@@ -5,7 +5,7 @@
 // goal; at goal it shows the number itself.
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { n, pct, safe } from '../utils/formatters';
-import { advisorDailyAverage, advisorProjectedHours, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
+import { advisorDailyAverage, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
 import { SC_CSS, Ring, scoreMetrics, sellPlan, todayCounts } from '../components/scorecard';
 import { appointmentFacts } from '../utils/dailyWrench.mjs';
 import TrainingBadge from './TrainingBadge';
@@ -65,7 +65,6 @@ function AdvisorRow({ a, data, team, today }) {
   const hits = rows.filter(r => r.hit).length;
   const share = scored.length ? hits / scored.length : 0;
   const ringCol = share >= 0.75 ? '#4ade80' : share >= 0.45 ? '#facc15' : '#f87171';
-  const pace = advisorProjectedHours(a, data);
   const lastMonth = Number(a.last_month_total) || 0;
   // Ring diameter from the row height: label + ring + two short lines fit.
   // Short rows (three or more advisors on a 1080 TV) go compact: the text
@@ -89,15 +88,12 @@ function AdvisorRow({ a, data, team, today }) {
           {compact ? (
             <div className="tvd-who-lines">
               <div><span className="k">Avg</span> <b style={{ color: noReport ? '#94a3b8' : '#6ee7f9' }}>{noReport ? 'NA' : n(advisorDailyAverage(a, data), 2)}</b></div>
-              <div><span className="k">Pace</span> <b style={{ color: noReport ? '#94a3b8' : lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f1f5f9' }}>{noReport ? 'NA' : pace.toFixed(1)}</b></div>
               <div className="mtd">{noReport ? 'No report yet' : <>MTD {n(a.mtd_hours, 1)} · {Number(a.ro_count) || 0} ROs</>}</div>
             </div>
           ) : (
           <div style={{ minWidth: 0 }}>
             <div className="k">Daily avg</div>
             <div className="v" style={{ color: noReport ? '#94a3b8' : '#6ee7f9' }}>{noReport ? 'NA' : n(advisorDailyAverage(a, data), 2)}</div>
-            <div className="k">Pacing</div>
-            <div className="v" style={{ color: noReport ? '#94a3b8' : lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f1f5f9' }}>{noReport ? 'NA' : pace.toFixed(1)}</div>
           </div>
           )}
         </div>
