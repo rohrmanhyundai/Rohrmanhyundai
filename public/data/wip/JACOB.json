@@ -46,5 +46,37 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mv1dgb8dcew4",
+    "ro": "781453",
+    "roDate": "2026-10-09",
+    "vehicle": "2026 Hyundai Palisade",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
+  },
+  {
+    "id": "mv1dgb8dd6pc",
+    "ro": "781448",
+    "roDate": "2026-10-09",
+    "vehicle": "2023 Hyundai IONIQ 6",
+    "jobDesc": "USED CAR INSPECTION",
+    "notes": "",
+    "flag": "green",
+    "usedCar": true,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "CORY CHAPMAN"
   }
 ]
