@@ -10,7 +10,7 @@
 // no sign-in and never writes anything. It re-reads every 90 seconds and
 // reloads itself when an admin presses Force Refresh.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import TickerPanel from '../components/TickerPanel';
+import TickerPanel, { TickerStrip, vacationItemsFor } from '../components/TickerPanel';
 import TvAdvisors from './TvAdvisors';
 import Gauges from '../components/Gauges';
 import { useTwoWeekEfficiency, MiniGauge } from '../components/techEfficiency';
@@ -110,7 +110,7 @@ function TechBox({ t, eff, dates, today }) {
   );
 }
 
-function TechPanel({ data }) {
+function TechPanel({ data, vacations }) {
   const techs = (data.technicians || []).filter(t => t && t.name && !t.hidden);
   const eff = useTwoWeekEfficiency(techs.map(t => t.name));
   const dates = weekDatesOf(new Date());
@@ -123,7 +123,9 @@ function TechPanel({ data }) {
       <div className="tvd-head">
         <div className="title">Technician Production</div>
         <div className="note">Week of {shortDate(dates.sat)} – {shortDate(dates.fri)} · Sat → Fri</div>
-        <div style={{ flex: 1 }} />
+        {/* Vacation Approved rides in the header — a touch slower than the
+            main dashboard's 55 px/s so it's easy to read from across the shop. */}
+        <div className="tvd-vac"><TickerStrip label="🏖 Vacation" items={vacationItemsFor(data, vacations)} speed={42} inline /></div>
         <div className="chip">Shop {r1(tt.week_total)} / {r1(goalSum)} hrs</div>
         <div className="chip chip--pacing">Shop Pacing {r1(tt.shop_pacing)} hrs</div>
       </div>
@@ -218,8 +220,8 @@ export default function TvDashboard() {
       <div className="stage" ref={setStage}>
         {state ? (
           <div className="tvdash">
-            <TechPanel data={state.data} />
-            <TickerPanel data={state.data} vacations={state.vacations} />
+            <TechPanel data={state.data} vacations={state.vacations} />
+            <TickerPanel data={state.data} vacations={state.vacations} show="training" />
             <TvAdvisors data={state.data} tick={tick} />
             <Gauges data={state.data} bigMoney={state.bigMoney} />
           </div>

@@ -4,7 +4,9 @@ import { hasExcelTraining } from '../utils/training';
 
 const SPEED = 55; // pixels per second
 
-function TickerStrip({ label, items }) {
+// `speed` (px/s) and `inline` (label beside the track, no card) are used by
+// the shop TV dashboard; the main dashboard uses the defaults.
+export function TickerStrip({ label, items, speed = SPEED, inline = false }) {
   const contentRef = useRef(null);
   const animRef = useRef({ x: 0, last: null, raf: null });
 
@@ -24,7 +26,7 @@ function TickerStrip({ label, items }) {
 
       const half = el.scrollWidth / 2;
       if (half > 0) {
-        a.x += SPEED * dt / 1000;
+        a.x += speed * dt / 1000;
         if (a.x >= half) a.x -= half;
         el.style.transform = `translateX(${-a.x}px)`;
       }
@@ -36,12 +38,12 @@ function TickerStrip({ label, items }) {
       cancelAnimationFrame(a.raf);
       a.last = null;
     };
-  }, [items]);
+  }, [items, speed]);
 
   const doubled = [...items, ...items];
 
   return (
-    <div className="ticker-strip">
+    <div className={`ticker-strip${inline ? ' ticker-strip--inline' : ''}`}>
       <div className="ticker-label">{label}</div>
       <div className="ticker-track">
         {items.length === 0 ? (
@@ -61,10 +63,27 @@ function TickerStrip({ label, items }) {
   );
 }
 
-export default function TickerPanel({ data, vacations }) {
-  const hiddenAdvisors = new Set(
-    (data.advisors || []).filter(a => a.hidden).map(a => a.name.toUpperCase())
-  );
+const hiddenAdvisorsOf = (data) => new Set(
+  (data.advisors || []).filter(a => a.hidden).map(a => a.name.toUpperCase())
+);
+
+export function vacationItemsFor(data, vacations) {
+  const hiddenAdvisors = hiddenAdvisorsOf(data);
+  return (vacations || [])
+    .filter(v => !hiddenAdvisors.has((v.name || '').toUpperCase()))
+    .map(v => (
+      <span className="ticker-item" key={`v-${v.name}-${v.dates}`}>
+        <span className="ticker-name">{v.name || '\u2014'}</span>
+        <span>{v.dates || '\u2014'}</span>
+        <span className="badge neutral">{v.status || '\u2014'}</span>
+      </span>
+    ));
+}
+
+// `show` lets the TV dashboard render just one strip ('training' |
+// 'vacation'); the main dashboard shows both.
+export default function TickerPanel({ data, vacations, show = 'both' }) {
+  const hiddenAdvisors = hiddenAdvisorsOf(data);
 
   const trainingItems = [
     ...(data.technicians || []).map(t => (
@@ -95,20 +114,12 @@ export default function TickerPanel({ data, vacations }) {
       )),
   ];
 
-  const vacationItems = (vacations || [])
-    .filter(v => !hiddenAdvisors.has((v.name || '').toUpperCase()))
-    .map(v => (
-      <span className="ticker-item" key={`v-${v.name}-${v.dates}`}>
-        <span className="ticker-name">{v.name || '\u2014'}</span>
-        <span>{v.dates || '\u2014'}</span>
-        <span className="badge neutral">{v.status || '\u2014'}</span>
-      </span>
-    ));
+  const vacationItems = vacationItemsFor(data, vacations);
 
   return (
     <div className="ticker-section">
-      <TickerStrip label="Training Center" items={trainingItems} />
-      <TickerStrip label="Vacation Approved" items={vacationItems} />
+      {show !== 'vacation' && <TickerStrip label="Training Center" items={trainingItems} />}
+      {show !== 'training' && <TickerStrip label="Vacation Approved" items={vacationItems} />}
     </div>
   );
 }

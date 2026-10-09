@@ -1086,7 +1086,7 @@ html, body {
    Same 1920×1080 stage as the main dashboard. Tech boxes take the top (where
    the header + tech table sit on the main one); the advisor rows below match
    the main dashboard's heights exactly. */
-.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(370px + var(--stage-extra-h,0px) * .4) 86px calc(358px + var(--stage-extra-h,0px) * .35) calc(234px + var(--stage-extra-h,0px) * .25);gap:4px;box-sizing:border-box}
+.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(412px + var(--stage-extra-h,0px) * .4) 44px calc(358px + var(--stage-extra-h,0px) * .35) calc(234px + var(--stage-extra-h,0px) * .25);gap:4px;box-sizing:border-box}
 .tvd-fs{position:fixed;top:12px;right:12px;z-index:50;background:rgba(15,23,42,.85);border:1px solid rgba(110,231,249,.5);color:#6ee7f9;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:800;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
 .tvd-fs.on{opacity:1;pointer-events:auto}
 .tvd-techs{display:flex;flex-direction:column;gap:7px;padding:8px 10px}
@@ -1133,3 +1133,10 @@ html, body {
 .tvd-adv-tiles .sc-tile>div[style*="position: relative"]{margin:4px 0 3px!important}
 .tvd-sc-goal{font-weight:800;color:#94a3b8;white-space:nowrap}
 .tvd-sc-gap{font-weight:900;line-height:1.2;margin-top:2px;white-space:nowrap}
+
+/* Vacation ticker inline in the TV tech header (label beside the track). */
+.tvd-vac{flex:1;min-width:0;height:100%;display:flex;align-items:center}
+.ticker-strip--inline{flex:1;min-width:0;height:100%;flex-direction:row;align-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.03);box-shadow:none;padding:0 4px 0 2px}
+.ticker-strip--inline .ticker-label{padding:0 10px;font-size:14px;white-space:nowrap}
+.ticker-strip--inline .ticker-track{padding:0;height:100%}
+.ticker-strip--inline .ticker-item{font-size:15px}
