@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-09T13:35:18.695Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
     "at": "2026-10-08T21:56:30.204Z",
     "type": "page",
     "label": "work-schedule"
@@ -918,31 +923,6 @@
   },
   {
     "at": "2026-09-09T15:34:55.855Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T12:06:20.931Z",
-    "type": "page",
-    "label": "service-pricing"
-  },
-  {
-    "at": "2026-09-09T12:06:14.995Z",
-    "type": "page",
-    "label": "aftermarket-warranty"
-  },
-  {
-    "at": "2026-09-09T12:06:10.052Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-09T12:06:01.286Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T12:06:00.447Z",
     "type": "page",
     "label": "work-in-progress"
   }
