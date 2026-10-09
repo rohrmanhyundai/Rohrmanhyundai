@@ -165,14 +165,21 @@ export default function TvDashboard() {
     return () => clearInterval(id);
   }, []);
 
-  // Design is 1920×1080; scale to whatever the TV (or a laptop) reports.
+  // Design is 1920×1080 and always fills the whole window edge to edge: a
+  // 16:9 TV gets it exactly; a taller window stretches the rows (extra height
+  // split between the tech boxes and the advisor panels), a wider one
+  // stretches the columns. No bars, no scrolling.
   const fit = useCallback(() => {
     const el = stageRef.current;
     if (!el) return;
-    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    const left = Math.max(0, (window.innerWidth - 1920 * scale) / 2);
-    const top = Math.max(0, (window.innerHeight - 1080 * scale) / 2);
-    el.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const scale = Math.min(vw / 1920, vh / 1080);
+    const w = Math.round(vw / scale), h = Math.round(vh / scale);
+    el.style.width = `${w}px`;
+    el.style.height = `${h}px`;
+    el.style.setProperty('--stage-extra-h', `${h - 1080}px`);
+    el.classList.toggle('stage--stretched', h > 1080);
+    el.style.transform = `scale(${scale})`;
   }, []);
   useEffect(() => {
     fit();
@@ -181,8 +188,32 @@ export default function TvDashboard() {
   }, [fit]);
   const setStage = useCallback((el) => { stageRef.current = el; if (el) fit(); }, [fit]);
 
+  // Full-screen button for a computer preview: shows when the mouse moves,
+  // hides after a few seconds so it never sits on the TV picture.
+  const [showFs, setShowFs] = useState(false);
+  const [isFs, setIsFs] = useState(false);
+  useEffect(() => {
+    let t;
+    const wake = () => { setShowFs(true); clearTimeout(t); t = setTimeout(() => setShowFs(false), 3000); };
+    const onFs = () => { setIsFs(!!document.fullscreenElement); setTimeout(fit, 50); };
+    window.addEventListener('mousemove', wake);
+    document.addEventListener('fullscreenchange', onFs);
+    return () => { clearTimeout(t); window.removeEventListener('mousemove', wake); document.removeEventListener('fullscreenchange', onFs); };
+  }, [fit]);
+  const toggleFs = () => {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    } catch { /* not supported */ }
+  };
+
   return (
     <div className="viewport">
+      {document.fullscreenEnabled && (
+        <button onClick={toggleFs} className={`tvd-fs${showFs ? ' on' : ''}`} title="Full screen (Esc to exit)">
+          {isFs ? '⤡ Exit full screen' : '⛶ Full screen'}
+        </button>
+      )}
       <div className="stage" ref={setStage}>
         {state ? (
           <div className="tvdash">
