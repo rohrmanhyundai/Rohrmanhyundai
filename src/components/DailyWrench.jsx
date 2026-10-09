@@ -6,6 +6,7 @@ import { advisorDailyAverage, advisorProjectedHours, advisorsForDisplay } from '
 import { ownerOf, apptTags } from '../utils/apptMath.mjs';
 import { useTwoWeekEfficiency, MiniGauge } from './techEfficiency';
 import { SC_CSS, Ring, scoreMetrics, sellPlan, todayCounts } from './scorecard';
+import { fetchLiveJson } from '../utils/liveData';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
 // The morning briefing. An advisor opens it and sees their own day: where the
@@ -416,8 +417,7 @@ function useBigMoneyFile() {
   const [file, setFile] = useState(null);
   useEffect(() => {
     let cancelled = false;
-    fetch(`${import.meta.env.BASE_URL}data/big-money-lof.json?v=${Date.now()}`, { cache: 'no-store' })
-      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+    fetchLiveJson('big-money-lof.json')
       .then(j => { if (!cancelled) setFile(j); });
     return () => { cancelled = true; };
   }, []);
@@ -460,8 +460,7 @@ function useDashboardData() {
   const [d, setD] = useState(null);
   useEffect(() => {
     let cancelled = false;
-    fetch(`${import.meta.env.BASE_URL}data/data.json?v=${Date.now()}`, { cache: 'no-store' })
-      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+    fetchLiveJson('data.json')
       .then(j => { if (!cancelled) setD(j && j.data ? j.data : j); });
     return () => { cancelled = true; };
   }, []);
@@ -488,8 +487,7 @@ function useApptDay(date) {
   useEffect(() => {
     if (!date) return;
     let cancelled = false;
-    fetch(`${import.meta.env.BASE_URL}data/appointments/${date}.json?v=${Date.now()}`, { cache: 'no-store' })
-      .then(r => (r.ok ? r.json() : null)).catch(() => null)
+    fetchLiveJson(`appointments/${date}.json`)
       .then(j => { if (!cancelled) setDay(j); });
     return () => { cancelled = true; };
   }, [date]);

@@ -1086,7 +1086,7 @@ html, body {
    Same 1920×1080 stage as the main dashboard. Tech boxes take the top (where
    the header + tech table sit on the main one); the advisor rows below match
    the main dashboard's heights exactly. */
-.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(412px + var(--stage-extra-h,0px) * .4) 44px calc(358px + var(--stage-extra-h,0px) * .35) calc(234px + var(--stage-extra-h,0px) * .25);gap:4px;box-sizing:border-box}
+.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(392px + var(--stage-extra-h,0px) * .4) 44px calc(378px + var(--stage-extra-h,0px) * .35) calc(234px + var(--stage-extra-h,0px) * .25);gap:4px;box-sizing:border-box}
 .tvd-fs{position:fixed;top:12px;right:12px;z-index:50;background:rgba(15,23,42,.85);border:1px solid rgba(110,231,249,.5);color:#6ee7f9;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:800;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
 .tvd-fs.on{opacity:1;pointer-events:auto}
 .tvd-techs{display:flex;flex-direction:column;gap:7px;padding:8px 10px}
@@ -1130,9 +1130,27 @@ html, body {
 .tvd-adv-who .sub b{color:#e2e8f0}
 .tvd-adv-tiles{flex:1;min-width:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:7px}
 .tvd-adv-tiles .sc-tile{padding:6px 4px;justify-content:center;min-width:0}
-.tvd-adv-tiles .sc-tile>div[style*="position: relative"]{margin:4px 0 3px!important}
-.tvd-sc-goal{font-weight:800;color:#94a3b8;white-space:nowrap}
-.tvd-sc-gap{font-weight:900;line-height:1.2;margin-top:2px;white-space:nowrap}
+.tvd-adv div[style*="position: relative"]{margin:3px 0!important;flex-shrink:0}
+.tvd-adv-tiles .sc-tile .lbl{font-size:13px}
+.tvd-sc-body{display:flex;flex-direction:column;align-items:center;min-width:0}
+.tvd-sc-txt{text-align:center;min-width:0}
+.tvd-sc-goal{font-size:13px;font-weight:800;color:#94a3b8;white-space:nowrap}
+.tvd-sc-gap{font-size:13.5px;font-weight:900;line-height:1.2;margin-top:2px;white-space:nowrap}
+/* Compact rows: text beside the ring, stacked */
+.tvd-adv.compact{padding:4px 10px}
+.tvd-adv.compact .tvd-adv-who{gap:0}
+.tvd-adv.compact .tvd-adv-who .nm{font-size:21px}
+.tvd-adv.compact .tvd-adv-who .v{font-size:21px}
+.tvd-adv.compact .tvd-adv-who .k{font-size:9.5px}
+.tvd-adv.compact .tvd-adv-who .sub{font-size:12.5px}
+.tvd-adv.compact .sc-tile{padding:3px 4px}
+.tvd-adv.compact .sc-tile .lbl{font-size:12px}
+.tvd-adv.compact .tvd-sc-body{flex-direction:row;gap:6px;justify-content:center}
+.tvd-adv.compact .tvd-sc-txt{text-align:left}
+.tvd-adv.compact .tvd-sc-goal{font-size:12px;white-space:normal;line-height:1.2}
+.tvd-adv.compact .tvd-sc-goal span{display:block}
+.tvd-adv.compact .tvd-sc-goal .dot{display:none}
+.tvd-adv.compact .tvd-sc-gap{font-size:12.5px;white-space:normal}
 
 /* Vacation ticker inline in the TV tech header (label beside the track). */
 .tvd-vac{flex:1;min-width:0;height:100%;display:flex;align-items:center}
@@ -1145,3 +1163,8 @@ html, body {
    matches the scorecard's hit tile. */
 @keyframes tvdGlow{0%,100%{box-shadow:0 0 0 1px rgba(74,222,128,.35),0 0 18px -6px rgba(74,222,128,.55)}50%{box-shadow:0 0 0 1px rgba(74,222,128,.6),0 0 28px -4px rgba(74,222,128,.8)}}
 .tvd-tech.glow{animation:tvdGlow 2.6s ease-in-out infinite;background:linear-gradient(160deg,rgba(34,197,94,.16),rgba(34,197,94,.03));border-color:rgba(74,222,128,.55)!important}
+.tvd-who-lines{min-width:0;line-height:1.15}
+.tvd-who-lines>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvd-who-lines .k{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#64748b}
+.tvd-who-lines b{font-size:20px;font-weight:1000}
+.tvd-who-lines .mtd{font-size:12.5px;font-weight:700;color:#94a3b8}

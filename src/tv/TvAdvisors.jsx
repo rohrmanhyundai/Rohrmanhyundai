@@ -8,8 +8,8 @@ import { n, pct, safe } from '../utils/formatters';
 import { advisorDailyAverage, advisorProjectedHours, advisorsForDisplay, advisorMonthStarted } from '../utils/calculations';
 import { SC_CSS, Ring, scoreMetrics, sellPlan, todayCounts } from '../components/scorecard';
 import { appointmentFacts } from '../utils/dailyWrench.mjs';
+import { fetchLiveJson } from '../utils/liveData';
 
-const BASE = import.meta.env.BASE_URL;
 const firstUp = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
 const isoToday = () => {
   const d = new Date();
@@ -23,9 +23,7 @@ function useTodayAppts(tick) {
   const date = isoToday();
   useEffect(() => {
     let cancelled = false;
-    fetch(`${BASE}data/appointments/${date}.json?v=${Date.now()}`, { cache: 'no-store' })
-      .then(r => (r.ok ? r.json() : null)).catch(() => null)
-      .then(j => { if (!cancelled) setList(j); });
+    fetchLiveJson(`appointments/${date}.json`).then(j => { if (!cancelled) setList(j); });
     return () => { cancelled = true; };
   }, [date, tick]);
   return list;
@@ -56,42 +54,79 @@ function AdvisorRow({ a, data, team, today }) {
     const best = team.length > 1 && team.every(o => o === a || val(o, m.key) < v) && v > 0;
     return { ...m, v, hit, best, plan: hit ? null : sellPlan(m, a, today) };
   });
+  // A new advisor with no report yet: show NA instead of a wall of red zeros.
+  // A tile with its own number (e.g. the $50 screenshot import) still shows it.
+  const noReport = !(Number(a.mtd_hours) > 0) && !(Number(a.ro_count) > 0);
+  const na = (r) => noReport && !(r.v > 0);
+  rows.forEach(r => { if (na(r)) { r.hit = false; r.plan = null; r.best = false; } });
+  const scored = rows.filter(r => !na(r));
   const hits = rows.filter(r => r.hit).length;
-  const share = rows.length ? hits / rows.length : 0;
+  const share = scored.length ? hits / scored.length : 0;
   const ringCol = share >= 0.75 ? '#4ade80' : share >= 0.45 ? '#facc15' : '#f87171';
   const pace = advisorProjectedHours(a, data);
   const lastMonth = Number(a.last_month_total) || 0;
   // Ring diameter from the row height: label + ring + two short lines fit.
-  const ring = Math.max(60, Math.min(150, Math.round((h || 160) * 0.5)));
+  // Short rows (three or more advisors on a 1080 TV) go compact: the text
+  // sits beside the ring instead of under it.
+  const compact = h > 0 && h < 150;
+  const ring = compact ? Math.max(44, Math.min(90, h - 40)) : Math.max(60, Math.min(150, Math.round((h || 160) * 0.5)));
+  const whoRing = compact ? Math.max(40, Math.min(70, h - 40)) : Math.round(ring * 0.9);
   const fs = ring / 78; // font scale relative to the Daily Wrench's 78px ring
 
   return (
-    <div className="tvd-adv" ref={ref}>
+    <div className={`tvd-adv${compact ? ' compact' : ''}`} ref={ref}>
       <div className="tvd-adv-who">
         <div className="nm">{a.name}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Ring frac={share} color={ringCol} size={Math.round(ring * 0.9)} stroke={Math.max(6, Math.round(ring / 11))}>
-            <div style={{ fontSize: 24 * fs, fontWeight: 1000, color: ringCol, lineHeight: 1 }}>{hits}<span style={{ fontSize: 13 * fs, color: '#94a3b8' }}>/{rows.length}</span></div>
+          <Ring frac={share} color={ringCol} size={whoRing} stroke={Math.max(5, Math.round(whoRing / 11))}>
+            {noReport && !scored.length
+              ? <div style={{ fontSize: 22 * fs, fontWeight: 1000, color: '#94a3b8', lineHeight: 1 }}>NA</div>
+              : <div style={{ fontSize: 24 * fs, fontWeight: 1000, color: ringCol, lineHeight: 1 }}>{hits}<span style={{ fontSize: 13 * fs, color: '#94a3b8' }}>/{scored.length}</span></div>}
             <div style={{ fontSize: 8 * fs, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em' }}>GOALS HIT</div>
           </Ring>
+          {compact ? (
+            <div className="tvd-who-lines">
+              <div><span className="k">Avg</span> <b style={{ color: noReport ? '#94a3b8' : '#6ee7f9' }}>{noReport ? 'NA' : n(advisorDailyAverage(a, data), 2)}</b></div>
+              <div><span className="k">Pace</span> <b style={{ color: noReport ? '#94a3b8' : lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f1f5f9' }}>{noReport ? 'NA' : pace.toFixed(1)}</b></div>
+              <div className="mtd">{noReport ? 'No report yet' : <>MTD {n(a.mtd_hours, 1)} · {Number(a.ro_count) || 0} ROs</>}</div>
+            </div>
+          ) : (
           <div style={{ minWidth: 0 }}>
             <div className="k">Daily avg</div>
-            <div className="v" style={{ color: '#6ee7f9' }}>{n(advisorDailyAverage(a, data), 2)}</div>
+            <div className="v" style={{ color: noReport ? '#94a3b8' : '#6ee7f9' }}>{noReport ? 'NA' : n(advisorDailyAverage(a, data), 2)}</div>
             <div className="k">Pacing</div>
-            <div className="v" style={{ color: lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f1f5f9' }}>{pace.toFixed(1)}</div>
+            <div className="v" style={{ color: noReport ? '#94a3b8' : lastMonth > 0 ? (pace >= lastMonth ? '#4ade80' : '#f87171') : '#f1f5f9' }}>{noReport ? 'NA' : pace.toFixed(1)}</div>
           </div>
+          )}
         </div>
-        <div className="sub">MTD <b>{n(a.mtd_hours, 1)}</b> · {Number(a.ro_count) || 0} ROs · Last mo <b>{n(lastMonth, 1)}</b></div>
+        {!compact && <div className="sub">{noReport
+          ? <>No report yet{lastMonth > 0 ? <> · Last mo <b>{n(lastMonth, 1)}</b></> : null}</>
+          : <>MTD <b>{n(a.mtd_hours, 1)}</b> · {Number(a.ro_count) || 0} ROs · Last mo <b>{n(lastMonth, 1)}</b></>}</div>}
       </div>
       <div className="tvd-adv-tiles">
         {rows.map(r => {
+          if (na(r)) return (
+            <div key={r.key} className="sc-tile" title="No report for this advisor yet">
+              <div className="lbl">{r.label}</div>
+              <div className="tvd-sc-body">
+                <Ring frac={0} color="#475569" size={ring} stroke={Math.max(5, Math.round(ring / 11))}>
+                  <div style={{ fontSize: 20 * fs, fontWeight: 1000, color: '#94a3b8' }}>NA</div>
+                </Ring>
+                <div className="tvd-sc-txt">
+                  <div className="tvd-sc-goal">goal {r.fmt(r.goal)}</div>
+                  <div className="tvd-sc-gap" style={{ color: '#64748b' }}>no report yet</div>
+                </div>
+              </div>
+            </div>
+          );
           const col = r.hit ? '#4ade80' : r.v / r.goal >= 0.85 ? '#facc15' : '#f87171';
           const sellCount = r.plan && r.plan.kind === 'count' && r.plan.need > 0;
           return (
             <div key={r.key} className={`sc-tile ${r.hit ? 'hit' : 'miss'}`}>
               {r.best ? <span className="sc-crown" style={{ top: 6, fontSize: 13 * fs }} title="Best on the team">👑</span> : null}
-              <div className="lbl" style={{ fontSize: Math.max(11, 11 * fs) }}>{r.label}</div>
-              <Ring frac={r.v / r.goal} color={col} size={ring} stroke={Math.max(6, Math.round(ring / 11))}>
+              <div className="lbl">{r.label}</div>
+              <div className="tvd-sc-body">
+              <Ring frac={r.v / r.goal} color={col} size={ring} stroke={Math.max(5, Math.round(ring / 11))}>
                 {sellCount ? (
                   <div style={{ lineHeight: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: 27 * fs, fontWeight: 1000, color: col }}>{r.plan.need}</div>
@@ -99,13 +134,16 @@ function AdvisorRow({ a, data, team, today }) {
                   </div>
                 ) : <div style={{ fontSize: 17 * fs, fontWeight: 1000, color: col }}>{r.fmt(r.v)}</div>}
               </Ring>
-              <div className="tvd-sc-goal" style={{ fontSize: Math.max(12, 12 * fs) }}>
-                {sellCount ? <>now {r.fmt(r.v)} · goal {r.fmt(r.goal)}</> : <>goal {r.fmt(r.goal)}</>}
+              <div className="tvd-sc-txt">
+                <div className="tvd-sc-goal">
+                  {sellCount ? <><span className="now">now {r.fmt(r.v)}</span><span className="dot"> · </span><span>goal {r.fmt(r.goal)}</span></> : <>goal {r.fmt(r.goal)}</>}
+                </div>
+                <div className="tvd-sc-gap" style={{ color: r.hit ? '#86efac' : '#fca5a5' }}>
+                  {r.hit ? '✓ HIT'
+                    : sellCount ? `${r.plan.need} today = goal`
+                    : `▼ ${r.gap(r.goal - r.v)} to go`}
+                </div>
               </div>
-              <div className="tvd-sc-gap" style={{ fontSize: Math.max(12, 12.5 * fs), color: r.hit ? '#86efac' : '#fca5a5' }}>
-                {r.hit ? '✓ HIT'
-                  : sellCount ? `${r.plan.need} today = goal`
-                  : `▼ ${r.gap(r.goal - r.v)} to go`}
               </div>
             </div>
           );

@@ -15,12 +15,10 @@ import TvAdvisors from './TvAdvisors';
 import Gauges from '../components/Gauges';
 import { useTwoWeekEfficiency, MiniGauge } from '../components/techEfficiency';
 import { recalcTech, recalcAdvisorSummary, weekDatesOf } from '../utils/calculations';
+import { fetchLiveJson } from '../utils/liveData';
 
-const BASE = import.meta.env.BASE_URL;
-const fetchJson = (path) =>
-  fetch(`${BASE}data/${path}?v=${Date.now()}`, { cache: 'no-store' })
-    .then(r => (r.ok ? r.json() : null))
-    .catch(() => null);
+// Live from the repo (see utils/liveData) — the site's own /data/ copy lags.
+const fetchJson = (path) => fetchLiveJson(path);
 
 const r1 = (n) => (Math.round((Number(n) || 0) * 10) / 10).toFixed(1);
 const ceil1 = (n) => (Math.ceil((Number(n) || 0) * 10 - 1e-9) / 10).toFixed(1);

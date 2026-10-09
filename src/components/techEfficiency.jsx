@@ -2,8 +2,8 @@
 // the weekly performance-report snapshots) and the small arc gauge that shows
 // it. Shared by The Daily Wrench and the TV dashboard (/dashboard/).
 import React, { useEffect, useState } from 'react';
+import { fetchLiveJson } from '../utils/liveData';
 
-const BASE = import.meta.env.BASE_URL;
 
 export function useTwoWeekEfficiency(names, asOf) {
   const [eff, setEff] = useState({});
@@ -12,9 +12,8 @@ export function useTwoWeekEfficiency(names, asOf) {
     let cancelled = false;
     const cutoff = asOf || new Date().toISOString().slice(0, 10);
     Promise.all(names.map(n =>
-      fetch(`${BASE}data/performance-reports/${encodeURIComponent(String(n).toUpperCase())}.json?v=${Date.now()}`, { cache: 'no-store' })
-        .then(r => (r.ok ? r.json() : []))
-        .catch(() => [])
+      fetchLiveJson(`performance-reports/${encodeURIComponent(String(n).toUpperCase())}.json`)
+        .then(j => j || [])
         .then(list => {
           const weeks = (Array.isArray(list) ? list : [])
             .filter(e => e && e.type === 'tech' && (e.weekEnd || e.date) < cutoff)
