@@ -136,9 +136,10 @@ function TechPanel({ data }) {
 
 export default function TvDashboard() {
   const [state, setState] = useState(null);
+  const [tick, setTick] = useState(0);
   const stageRef = useRef(null);
 
-  const refresh = useCallback(() => { loadAll().then(s => { if (s) setState(s); }); }, []);
+  const refresh = useCallback(() => { loadAll().then(s => { if (s) { setState(s); setTick(t => t + 1); } }); }, []);
   useEffect(() => {
     refresh();
     const id = setInterval(refresh, 90 * 1000);
@@ -219,7 +220,7 @@ export default function TvDashboard() {
           <div className="tvdash">
             <TechPanel data={state.data} />
             <TickerPanel data={state.data} vacations={state.vacations} />
-            <TvAdvisors data={state.data} />
+            <TvAdvisors data={state.data} tick={tick} />
             <Gauges data={state.data} bigMoney={state.bigMoney} />
           </div>
         ) : (

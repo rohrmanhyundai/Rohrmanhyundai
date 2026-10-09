@@ -1086,7 +1086,7 @@ html, body {
    Same 1920×1080 stage as the main dashboard. Tech boxes take the top (where
    the header + tech table sit on the main one); the advisor rows below match
    the main dashboard's heights exactly. */
-.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(452px + var(--stage-extra-h,0px) * .5) 86px calc(248px + var(--stage-extra-h,0px) * .2) calc(270px + var(--stage-extra-h,0px) * .3);gap:4px;box-sizing:border-box}
+.tvdash{width:100%;height:100%;padding:8px 8px 6px;display:grid;grid-template-rows:calc(370px + var(--stage-extra-h,0px) * .4) 86px calc(358px + var(--stage-extra-h,0px) * .35) calc(234px + var(--stage-extra-h,0px) * .25);gap:4px;box-sizing:border-box}
 .tvd-fs{position:fixed;top:12px;right:12px;z-index:50;background:rgba(15,23,42,.85);border:1px solid rgba(110,231,249,.5);color:#6ee7f9;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:800;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
 .tvd-fs.on{opacity:1;pointer-events:auto}
 .tvd-techs{display:flex;flex-direction:column;gap:7px;padding:8px 10px}
@@ -1121,17 +1121,15 @@ html, body {
 .tvd-avg{font-size:15px;font-weight:800;color:#94a3b8;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:rgba(255,255,255,.04);white-space:nowrap}
 .tvd-avg b{font-size:17px;font-weight:900;margin-left:4px}
 .tvd-adv-list{flex:1;min-height:0;display:grid;gap:6px}
-.tvd-adv{container-type:size;min-height:0;display:flex;gap:10px;align-items:stretch;background:rgba(2,6,23,.45);border:1.5px solid rgba(110,231,249,.22);border-radius:14px;padding:6px 10px;overflow:hidden}
-.tvd-adv-who{width:15%;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;min-width:0}
-.tvd-adv-who .nm{font-size:clamp(16px,22cqh,34px);font-weight:900;color:#f1f5f9;letter-spacing:.4px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tvd-adv-who .tag{margin-left:6px;font-size:.42em;font-weight:800;color:#7dd3fc;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.32);border-radius:5px;padding:1px 5px;vertical-align:middle}
-.tvd-adv-who .avg{font-size:clamp(20px,30cqh,48px);font-weight:1000;color:#6ee7f9;line-height:1.05}
-.tvd-adv-who .avg span{font-size:.45em;color:#94a3b8;font-weight:700}
-.tvd-adv-who .sub{font-size:clamp(13px,14cqh,19px);color:#94a3b8;font-weight:700;white-space:nowrap}
+.tvd-adv{min-height:0;display:flex;gap:10px;align-items:stretch;background:rgba(2,6,23,.45);border:1.5px solid rgba(110,231,249,.22);border-radius:14px;padding:6px 10px;overflow:hidden}
+.tvd-adv-who{width:17%;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;min-width:0;gap:2px}
+.tvd-adv-who .nm{font-size:26px;font-weight:1000;color:#f1f5f9;letter-spacing:.4px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvd-adv-who .k{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#64748b}
+.tvd-adv-who .v{font-size:26px;font-weight:1000;line-height:1.05}
+.tvd-adv-who .sub{font-size:14px;color:#94a3b8;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tvd-adv-who .sub b{color:#e2e8f0}
-.tvd-adv-tiles{flex:1;min-width:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
-.tvd-mt{background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.16);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;padding:2px}
-.tvd-mt.hit{background:rgba(74,222,128,.08);box-shadow:inset 0 0 14px rgba(74,222,128,.12)}
-.tvd-mt .lbl{font-size:clamp(13px,min(13cqh,1.3cqw),18px);font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.tvd-mt .val{font-size:clamp(17px,min(30cqh,2.6cqw),46px);font-weight:1000;line-height:1.1}
-.tvd-mt .goal{font-size:clamp(12px,min(12cqh,1.2cqw),17px);font-weight:700;color:#64748b}
+.tvd-adv-tiles{flex:1;min-width:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:7px}
+.tvd-adv-tiles .sc-tile{padding:6px 4px;justify-content:center;min-width:0}
+.tvd-adv-tiles .sc-tile>div[style*="position: relative"]{margin:4px 0 3px!important}
+.tvd-sc-goal{font-weight:800;color:#94a3b8;white-space:nowrap}
+.tvd-sc-gap{font-weight:900;line-height:1.2;margin-top:2px;white-space:nowrap}
