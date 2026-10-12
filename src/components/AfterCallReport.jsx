@@ -314,7 +314,7 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
     if (!e) return <span style={{ color: '#475569' }}>—</span>;
     return (
       <button type="button" title="Click to view / copy" onClick={() => { setEmailCopied(false); setEmailPop({ email: e, name: r.customerName || '' }); }}
-        style={{ background: 'none', border: 'none', padding: 0, margin: 0, cursor: 'pointer', color: '#a5b4fc', fontSize: 13, textAlign: 'left', maxWidth: 230, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', font: 'inherit' }}>
+        style={{ background: 'none', border: 'none', padding: 0, margin: 0, cursor: 'pointer', color: '#a5b4fc', fontSize: 13, textAlign: 'left', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', font: 'inherit' }}>
         {e}
       </button>
     );
@@ -491,9 +491,12 @@ export default function AfterCallReport({ advisorName, ownAdvisor, currentRole, 
                     transition: 'background .2s, border-color .2s',
                   }}>
                     {/* Survey info */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '4px 20px', marginBottom: 16 }}>
+                    {/* Each cell is clipped to its own column (minWidth 0) so a long value —
+                        usually the email — can never run into the next one; the email gets
+                        a double-width cell and is clickable to see/copy it in full. */}
+                    <div className="ac-info" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '6px 20px', marginBottom: 16 }}>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Customer</div><div style={{ fontWeight: 800, color: '#f1f5f9', fontSize: 14 }}>{survey.customerName || '—'}</div></div>
-                      <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Email Address</div><div style={{ wordBreak: 'break-all' }}>{emailCell(survey)}</div></div>
+                      <div className="ac-email"><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Email Address</div><div>{emailCell(survey)}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>RO #</div><div style={{ fontFamily: 'monospace', color: '#6ee7f9', fontSize: 13, fontWeight: 700 }}>{survey.repairOrder || '—'}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Model</div><div style={{ color: '#e2e8f0', fontSize: 13, fontWeight: 600 }}>{survey.model || '—'}</div></div>
                       <div><div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Service Date</div><div style={{ color: '#cbd5e1', fontSize: 13 }}>{fmtDate(survey.serviceDate)}</div></div>

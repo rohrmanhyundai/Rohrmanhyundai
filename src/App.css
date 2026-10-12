@@ -1197,3 +1197,9 @@ html, body {
 .tvd-gauges .gsvg{height:100%;max-height:100%;min-height:0}
 .tvd-gauges .gtitle{font-size:17px}
 .tvd-gauges .gmain{font-size:36px}
+
+/* After Call Reviews card: keep every info cell inside its own column. */
+.ac-info>div{min-width:0;overflow:hidden}
+.ac-info>div>div:last-child{overflow:hidden;text-overflow:ellipsis}
+.ac-email{grid-column:span 2}
+@media(max-width:560px){.ac-email{grid-column:auto}}
