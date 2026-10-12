@@ -7,6 +7,7 @@ import { ownerOf, apptTags } from '../utils/apptMath.mjs';
 import { useTwoWeekEfficiency, MiniGauge } from './techEfficiency';
 import { SC_CSS, Ring, scoreMetrics, sellPlan, todayCounts } from './scorecard';
 import { fetchLiveJson } from '../utils/liveData';
+import { partialOutOn, fmtTimeRange } from '../utils/partialOut';
 
 // ── The Daily Wrench ─────────────────────────────────────────────────────────
 // The morning briefing. An advisor opens it and sees their own day: where the
@@ -260,6 +261,33 @@ function AdvisorBreakdown({ rows }) {
 }
 
 // ── One advisor's briefing ───────────────────────────────────────────────────
+// Who's out part of the report's day (Vacation list → "Part of a day"):
+// coming in late, leaving early, appointments. Heads-up only.
+function PartialOutToday({ date }) {
+  const [vacs, setVacs] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetchLiveJson('data.json').then(j => { if (!cancelled) setVacs((j && (j.vacations || (j.data && j.data.vacations))) || []); });
+    return () => { cancelled = true; };
+  }, []);
+  const list = vacs && date ? partialOutOn(vacs, date) : [];
+  if (!list.length) return null;
+  return (
+    <Section icon="⏰" title="Out part of the day">
+      <div style={{ display: 'grid', gap: 6 }}>
+        {list.map((v, i) => (
+          <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'baseline', flexWrap: 'wrap', padding: '8px 12px', borderRadius: 10,
+            background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.35)' }}>
+            <span style={{ fontWeight: 900, color: '#fde68a', fontSize: 15 }}>{firstUp(v.name)}</span>
+            <span style={{ fontWeight: 800, color: '#fbbf24' }}>{v.reason || 'Out'} {fmtTimeRange(v.timeFrom, v.timeTo)}</span>
+            {v.note ? <span style={{ color: '#cbd5e1', fontSize: 13 }}>— {v.note}</span> : null}
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 function AdvisorReport({ report, name, onOpenPrep }) {
   if (!report) return null;
   const f = report.facts || {};
@@ -281,6 +309,8 @@ function AdvisorReport({ report, name, onOpenPrep }) {
           </div>
         ) : null}
       </div>
+
+      <PartialOutToday date={f.date} />
 
       <DashboardScorecards names={[name]} facts={f} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep} />
 
@@ -854,6 +884,8 @@ function ManagerReport({ report, onOpenPrep, goalForecast }) {
 
       {/* The live Goal Forecast board — same component and saves as the Goal
           Forecast page, so the morning read is all in one place. */}
+      <PartialOutToday date={f.date} />
+
       {goalForecast ? <Section icon="📈" title="Goal Forecast">{goalForecast}</Section> : null}
 
       <DashboardScorecards names={(f.breakdown || []).map(r => r.advisor)} date={(f.appointments && f.appointments.date) || f.date} onOpenPrep={onOpenPrep}

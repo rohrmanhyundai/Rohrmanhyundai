@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { partialOutFor, fmtTimeRange } from '../utils/partialOut';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -23,7 +24,7 @@ function shiftColor(val) {
   return '#3dd6c3';
 }
 
-function ShiftBadge({ name, val, isOwn }) {
+function ShiftBadge({ name, val, isOwn, out = [] }) {
   const color = shiftColor(val);
   const parts = val && val !== 'vacation' && val !== 'off' && val !== 'training' ? val.split(' | ') : null;
   const shiftPart = parts ? parts[0] : null;
@@ -35,18 +36,25 @@ function ShiftBadge({ name, val, isOwn }) {
       background: 'rgba(255,255,255,0.06)', borderRadius: 5,
       padding: '3px 6px', boxSizing: 'border-box', width: '100%',
     }}>
-      <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+      <div style={{ width: 6, height: 6, borderRadius: '50%', background: color || '#fbbf24', flexShrink: 0 }} />
       <span className="ws-print-badge-name" style={{ fontSize: 10, color: '#c8d8f0', fontWeight: 700, whiteSpace: 'nowrap' }}>
         {name.split(' ')[0]}
       </span>
       <span className={`ws-print-badge-shift${val === 'vacation' ? ' ws-print-badge-shift--vac' : val === 'off' ? ' ws-print-badge-shift--off' : ''}`} style={{ fontSize: 9, color: val === 'vacation' ? '#f59e0b' : val === 'off' ? '#94a3b8' : val === 'training' ? '#a78bfa' : '#3dd6c3', whiteSpace: 'nowrap' }}>
-        {val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val === 'training' ? '🎓 Training' : shiftPart}
+        {!val ? '' : val === 'vacation' ? 'Vacation' : val === 'off' ? 'Off' : val === 'training' ? '🎓 Training' : shiftPart}
       </span>
       {lunchPart && (
         <span className="ws-print-badge-lunch" style={{ fontSize: 9, color: '#f59e0b', whiteSpace: 'nowrap' }}>
           🍽 {lunchPart}
         </span>
       )}
+      {/* Part-day time off (Vacation list → "Part of a day") — heads-up only. */}
+      {out.map((o, i) => (
+        <span key={i} title={`${o.reason || 'Out'}${o.note ? ` — ${o.note}` : ''}`}
+          style={{ fontSize: 9, fontWeight: 800, color: '#1c1917', background: '#fbbf24', borderRadius: 4, padding: '0 4px', whiteSpace: 'nowrap' }}>
+          ⏰ {o.reason === 'Coming in late' ? 'In late' : o.reason === 'Leaving early' ? 'Leaving' : 'Out'} {fmtTimeRange(o.timeFrom, o.timeTo)}
+        </span>
+      ))}
     </div>
   );
 }
@@ -459,7 +467,7 @@ const monthStepStyle = {
   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
 };
 
-function CalendarView({ year, month, schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs, onPrevMonth, onNextMonth, onToday, isCurrentMonth }) {
+function CalendarView({ year, month, schedules, vacations = [], employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs, onPrevMonth, onNextMonth, onToday, isCurrentMonth }) {
   const today = new Date();
   const totalDays = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month); // 0=Sun,1=Mon,...
@@ -481,8 +489,8 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
     const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
     const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
     const entries = isHoliday ? [] : employeeNames
-      .map(name => ({ name, val: schedules[name]?.[dateStr] }))
-      .filter(e => e.val);
+      .map(name => ({ name, val: schedules[name]?.[dateStr], out: partialOutFor(vacations, name, dateStr) }))
+      .filter(e => e.val || e.out.length);
     return { day, dateStr, isToday, isHoliday, entries };
   });
 
@@ -535,13 +543,13 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
               }}>
                 <div style={{ position: 'absolute', top: 5, left: 8, fontWeight: 700, fontSize: 12, color: c.isHoliday ? '#ef4444' : c.isToday ? '#3dd6c3' : '#94a3b8' }}>{c.day}</div>
                 {c.isHoliday && <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textAlign: 'center' }}>🎉 Holiday</div>}
-                {c.entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} isOwn={e.name.toUpperCase() === currentUser} />)}
+                {c.entries.map(e => <ShiftBadge key={e.name} name={e.name} val={e.val} out={e.out} isOwn={e.name.toUpperCase() === currentUser} />)}
               </div>
             );
           })}
         </div>
         <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap', flexShrink: 0 }}>
-          {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation / Lunch'], ['#64748b', 'Off']].map(([color, label]) => (
+          {[['#3dd6c3', 'Scheduled Shift'], ['#f59e0b', 'Vacation / Lunch'], ['#fbbf24', '⏰ Part-day out'], ['#64748b', 'Off']].map(([color, label]) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
               <span style={{ color: '#7a92b8', fontSize: 12 }}>{label}</span>
@@ -554,7 +562,7 @@ function CalendarView({ year, month, schedules, employeeNames, currentUser, curr
   );
 }
 
-export default function WorkSchedule({ schedules, employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs }) {
+export default function WorkSchedule({ schedules, vacations = [], employeeNames, currentUser, currentRole, onBack, backLabel, title, tabs }) {
   const today = new Date();
   // Opens straight on the current month. The month picker this used to land on
   // was a click on the way to the month everyone wanted anyway — ‹ › in the
@@ -575,6 +583,7 @@ export default function WorkSchedule({ schedules, employeeNames, currentUser, cu
   return (
     <div className="adv-page">
       <CalendarView
+        vacations={vacations}
         year={shown.year} month={shown.month}
         schedules={schedules} employeeNames={employeeNames}
         currentUser={currentUser} currentRole={currentRole}

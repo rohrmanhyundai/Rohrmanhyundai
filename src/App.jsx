@@ -1389,6 +1389,7 @@ export default function App() {
     return (
       <WorkScheduleTabs
         schedules={schedules}
+        vacations={vacations}
         advisorNames={advisorScheduleList}
         techNames={techScheduleList}
         currentUser={currentUser.toUpperCase()}

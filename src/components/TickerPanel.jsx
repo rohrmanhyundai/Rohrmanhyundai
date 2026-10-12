@@ -68,12 +68,16 @@ const hiddenAdvisorsOf = (data) => new Set(
 
 export function vacationItemsFor(data, vacations) {
   const hiddenAdvisors = hiddenAdvisorsOf(data);
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   return (vacations || [])
     .filter(v => !hiddenAdvisors.has((v.name || '').toUpperCase()))
+    // A part-day heads-up drops off the ticker once its day has passed.
+    .filter(v => v.kind !== 'partial' || !v.partialDate || v.partialDate >= today)
     .map(v => (
       <span className="ticker-item" key={`v-${v.name}-${v.dates}`}>
         <span className="ticker-name">{v.name || '\u2014'}</span>
-        <span>{v.dates || '\u2014'}</span>
+        <span>{v.kind === 'partial' ? '⏰ ' : ''}{v.dates || '\u2014'}</span>
         <span className="badge neutral">{v.status || '\u2014'}</span>
       </span>
     ));

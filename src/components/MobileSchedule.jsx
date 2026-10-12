@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { partialOutFor, fmtTimeRange } from '../utils/partialOut';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -10,7 +11,7 @@ function shiftColor(val) {
   return '#3dd6c3';
 }
 
-export default function MobileSchedule({ schedules, employeeNames, currentUser, title, onBack, tabs }) {
+export default function MobileSchedule({ schedules, vacations = [], employeeNames, currentUser, title, onBack, tabs }) {
   const today = new Date();
   const [year, setYear]   = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -40,8 +41,8 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
     const isToday = dateStr === todayStr;
     const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
     const entries = isHoliday ? [] : employeeNames
-      .map(name => ({ name, val: schedules[name]?.[dateStr] }))
-      .filter(e => e.val);
+      .map(name => ({ name, val: schedules[name]?.[dateStr], out: partialOutFor(vacations, name, dateStr) }))
+      .filter(e => e.val || e.out.length);
     const myEntry = entries.find(e => e.name.toUpperCase() === currentUser);
     currentWeek.push({ d, dateStr, dow, isToday, isHoliday, entries, myEntry });
     // New week starts on Monday (dow === 1), flush previous week
@@ -62,8 +63,8 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
     const isToday = dateStr === todayStr;
     const isHoliday = schedules['__HOLIDAY__']?.[dateStr] === 'holiday';
     const entries = isHoliday ? [] : employeeNames
-      .map(name => ({ name, val: schedules[name]?.[dateStr] }))
-      .filter(e => e.val);
+      .map(name => ({ name, val: schedules[name]?.[dateStr], out: partialOutFor(vacations, name, dateStr) }))
+      .filter(e => e.val || e.out.length);
     const myEntry = entries.find(e => e.name.toUpperCase() === currentUser);
     allDays.push({ d, dateStr, dow, isToday, isHoliday, entries, myEntry });
   }
@@ -158,8 +159,8 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
                       <div style={{ padding: '6px 10px 8px' }}>
                         {entries.map(e => {
                           const isMe = e.name.toUpperCase() === currentUser;
-                          const parts = e.val !== 'vacation' && e.val !== 'off' && e.val !== 'training' ? e.val.split(' | ') : null;
-                          const shift = parts ? parts[0] : (e.val === 'vacation' ? '🌴 Vacation' : e.val === 'training' ? '🎓 Training' : 'Off');
+                          const parts = e.val && e.val !== 'vacation' && e.val !== 'off' && e.val !== 'training' ? e.val.split(' | ') : null;
+                          const shift = parts ? parts[0] : !e.val ? '' : (e.val === 'vacation' ? '🌴 Vacation' : e.val === 'training' ? '🎓 Training' : 'Off');
                           const lunch = parts?.[1]?.replace('Lunch ', '');
                           const dot = shiftColor(e.val);
                           return (
@@ -182,6 +183,11 @@ export default function MobileSchedule({ schedules, employeeNames, currentUser, 
                                 {lunch && (
                                   <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 2 }}>🍽 Lunch {lunch}</div>
                                 )}
+                                {e.out.map((o, k) => (
+                                  <div key={k} style={{ fontSize: 11.5, fontWeight: 800, color: '#fbbf24', marginTop: 3 }}>
+                                    ⏰ {o.reason || 'Out'} {fmtTimeRange(o.timeFrom, o.timeTo)}{o.note ? ` — ${o.note}` : ''}
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           );

@@ -19,6 +19,7 @@ import MobileSchedule from './MobileSchedule';
  */
 export default function WorkScheduleTabs({
   schedules = {},
+  vacations = [],
   advisorNames = [],
   techNames = [],
   currentUser = '',
@@ -78,6 +79,7 @@ export default function WorkScheduleTabs({
     return (
       <MobileSchedule
         schedules={schedules}
+        vacations={vacations}
         employeeNames={current.names}
         currentUser={me}
         title={current.title}
@@ -90,6 +92,7 @@ export default function WorkScheduleTabs({
   return (
     <WorkSchedule
       schedules={schedules}
+      vacations={vacations}
       employeeNames={current.names}
       currentUser={me}
       currentRole={currentRole}

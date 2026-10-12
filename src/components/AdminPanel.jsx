@@ -22,6 +22,7 @@ import { parseTechReportHtml, WARRANTY_MULTIPLIER } from '../utils/techFlaggedRe
 import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPerfReport';
 import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 import { decryptWithVault, inVault } from '../utils/passwordVault';
+import { isPartial, PARTIAL_REASONS, partialLabel } from '../utils/partialOut';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -524,6 +525,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const active = vacations.filter(v => {
       // Only auto-remove APPROVED entries whose end date has passed
       if ((v.status || '').toUpperCase() !== 'APPROVED') return true;
+      // A part-day row drops off once its day has passed.
+      if (isPartial(v)) return !v.partialDate || new Date(v.partialDate + 'T00:00:00') >= today;
       // Use dateEnd picker value first
       if (v.dateEnd) {
         const end = new Date(v.dateEnd + 'T00:00:00');
@@ -569,6 +572,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // Working days one vacation row covers (picker dates first, else the text).
   function vacRowDays(v) {
+    if (isPartial(v)) return [];   // part-day rows never mark the schedule
     let range;
     if (v && v.dateStart) {
       const s = new Date(v.dateStart + 'T00:00:00');
@@ -640,6 +644,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
 
   async function syncVacationToSchedule(idx, vac, vacList, oldRow) {
+    if (isPartial(vac)) return;    // heads-up only — nothing goes on the schedule as vacation
     const list = vacList || vacations.map((v, i) => i === idx ? vac : v);
     const empKey = matchEmployeeName(vac.name, users);
     if (!empKey) {
@@ -2122,6 +2127,35 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
+  // Full day(s) ↔ part of a day. Leaving full-day mode takes that row's days
+  // back off the schedule; part-day rows never put anything there.
+  function setVacKind(idx, kind) {
+    const oldRow = vacEdit[idx];
+    if ((oldRow.kind === 'partial') === (kind === 'partial')) return;
+    const patch = kind === 'partial'
+      ? { kind: 'partial', dateStart: '', dateEnd: '', partialDate: oldRow.dateStart || '', timeFrom: '', timeTo: '', reason: 'Coming in late', note: '' }
+      : { kind: '', partialDate: '', timeFrom: '', timeTo: '', reason: '', note: '' };
+    const updated = { ...oldRow, ...patch };
+    updated.dates = (kind === 'partial' ? partialLabel(updated) : '') || '\u2014';
+    setVacEdit(prev => prev.map((v, i) => i === idx ? updated : v));
+    const newVac = structuredClone(vacations);
+    newVac[idx] = { ...newVac[idx], ...patch, dates: updated.dates };
+    onDataChange(structuredClone(data), newVac);
+    const empKey = matchEmployeeName(oldRow.name, users);
+    if (kind === 'partial' && empKey && (oldRow.status || '').toUpperCase() === 'APPROVED') {
+      const sched = rebuildEmpSchedule(empKey, newVac, schedules, vacRowDays(oldRow));
+      saveSchedules(sched).then(() => onSchedulesChange(sched)).catch(() => {});
+    }
+  }
+  function commitPartial(idx, patch) {
+    const updated = { ...vacEdit[idx], ...patch };
+    updated.dates = partialLabel(updated) || '\u2014';
+    setVacEdit(prev => prev.map((v, i) => i === idx ? updated : v));
+    const newVac = structuredClone(vacations);
+    newVac[idx] = { ...newVac[idx], ...patch, dates: updated.dates };
+    onDataChange(structuredClone(data), newVac);
+  }
+
   function addVacation() {
     const newVac = structuredClone(vacations);
     newVac.push({ name: '', dates: '', dateStart: '', dateEnd: '', status: 'APPROVED' });
@@ -2979,7 +3013,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             const isErr = syncState?.startsWith('err:');
             // If old text-only entry (no dateStart), show current dates as a read note
             const hasPickerDates = !!v.dateStart;
-            const oldDatesNote = !hasPickerDates && v.dates && v.dates !== '—' ? v.dates : null;
+            const oldDatesNote = !hasPickerDates && !isPartial(v) && v.dates && v.dates !== '—' ? v.dates : null;
             return (
               <div key={idx} style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 10, padding: '10px 12px', marginBottom: 10 }}>
                 {/* Row 1: Name + Status + buttons */}
@@ -3046,7 +3080,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                       <option value="DENIED">❌ DENIED</option>
                     </select>
                   </div>
-                  {isApproved && (
+                  {isApproved && !isPartial(v) && (
                     <button
                       title="Manually sync vacation days to the Work Schedule"
                       disabled={isSyncing}
@@ -3059,7 +3093,50 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <button className="secondary" style={{ flexShrink: 0, padding: '6px 10px', color: '#ef4444', borderColor: 'rgba(239,68,68,.35)' }} onClick={() => removeVacation(idx)}>✕</button>
                 </div>
 
-                {/* Row 2: Date pickers */}
+                {/* Full day(s) vs part of a day */}
+                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                  {[['', '🗓 Full day(s)'], ['partial', '⏰ Part of a day']].map(([k, label]) => {
+                    const on = (v.kind === 'partial' ? 'partial' : '') === k;
+                    return (
+                      <button key={k || 'full'} type="button" onClick={() => setVacKind(idx, k)}
+                        style={{ padding: '4px 12px', fontSize: 12, fontWeight: 800, borderRadius: 999,
+                          background: on ? 'rgba(245,158,11,.18)' : 'rgba(255,255,255,.04)',
+                          border: `1px solid ${on ? 'rgba(245,158,11,.55)' : 'rgba(255,255,255,.12)'}`, color: on ? '#fbbf24' : '#94a3b8' }}>
+                        {label}
+                      </button>
+                    );
+                  })}
+                  {isPartial(v) && <span style={{ fontSize: 11.5, color: '#64748b', alignSelf: 'center' }}>Heads-up only — no hours added, no change to pay or reports.</span>}
+                </div>
+
+                {isPartial(v) ? (
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                    <div className="field" style={{ flex: '1 1 150px' }}>
+                      <label>Date</label>
+                      <input type="date" value={v.partialDate || ''} onChange={e => commitPartial(idx, { partialDate: e.target.value })} style={{ colorScheme: 'dark' }} />
+                    </div>
+                    <div className="field" style={{ flex: '1 1 120px' }}>
+                      <label>Out from</label>
+                      <input type="time" value={v.timeFrom || ''} onChange={e => commitPartial(idx, { timeFrom: e.target.value })} style={{ colorScheme: 'dark' }} />
+                    </div>
+                    <div className="field" style={{ flex: '1 1 120px' }}>
+                      <label>Until</label>
+                      <input type="time" value={v.timeTo || ''} onChange={e => commitPartial(idx, { timeTo: e.target.value })} style={{ colorScheme: 'dark' }} />
+                    </div>
+                    <div className="field" style={{ flex: '1 1 160px' }}>
+                      <label>Reason</label>
+                      <select value={v.reason || 'Coming in late'} onChange={e => commitPartial(idx, { reason: e.target.value })}
+                        style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.15)', color: '#e2e8f0', borderRadius: 6, padding: '6px 8px', fontSize: 13, width: '100%' }}>
+                        {PARTIAL_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
+                      </select>
+                    </div>
+                    <div className="field" style={{ flex: '2 1 200px' }}>
+                      <label>Note (optional)</label>
+                      <input defaultValue={v.note || ''} key={`note-${idx}-${v.partialDate}`} placeholder="Dentist, kid's school…" onBlur={e => { if ((e.target.value || '') !== (v.note || '')) commitPartial(idx, { note: e.target.value.trim() }); }} />
+                    </div>
+                    {v.partialDate && <div style={{ paddingBottom: 8, fontSize: 12, color: '#fbbf24', whiteSpace: 'nowrap', fontWeight: 700 }}>{partialLabel(v)}</div>}
+                  </div>
+                ) : (
                 <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
                   <div className="field" style={{ flex: 1 }}>
                     <label>Start Date</label>
@@ -3092,6 +3169,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Sync status */}
                 {syncState && (
