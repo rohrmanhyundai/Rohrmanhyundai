@@ -1,0 +1,432 @@
+{
+  "key": "2026-10-03",
+  "start": "2026-10-03",
+  "end": "2026-10-09",
+  "savedAt": "2026-10-12T11:58:07.124Z",
+  "by": "SHAWN",
+  "report": "All Reports.html",
+  "warnings": [
+    "On the report but not on the tech roster (skipped): SHAWN LAUGHNER"
+  ],
+  "rows": [
+    {
+      "name": "JACOB KUNTZ",
+      "key": "JACOB",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 31,
+        "tier1Hours": 50,
+        "tier1Bump": 2,
+        "tier2Hours": 60,
+        "tier2Bump": 2,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 42.3,
+        "school": "",
+        "pto": "8",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 1,
+        "int": 41.3,
+        "war": 0,
+        "warX": 0,
+        "mult": 1.4,
+        "total": 42.3
+      },
+      "calc": {
+        "frh": 42.3,
+        "school": 0,
+        "pto": 8,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 31,
+        "frhPay": 1311.3,
+        "schoolPay": 0,
+        "ptoPay": 248,
+        "hourlyPay": 0,
+        "total": 1559.3
+      }
+    },
+    {
+      "name": "CARTER JEAN",
+      "key": "CARTER",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 24,
+        "tier1Hours": 50,
+        "tier1Bump": 2,
+        "tier2Hours": 60,
+        "tier2Bump": 2,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 24.16,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 10.4,
+        "int": 0.6,
+        "war": 9.4,
+        "warX": 13.16,
+        "mult": 1.4,
+        "total": 24.16
+      },
+      "calc": {
+        "frh": 24.16,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 24,
+        "frhPay": 579.84,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 579.84
+      }
+    },
+    {
+      "name": "GAVEN LAUGHNER",
+      "key": "GAVEN",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 28,
+        "tier1Hours": 50,
+        "tier1Bump": 2,
+        "tier2Hours": 60,
+        "tier2Bump": 2,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 46.6,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 34.8,
+        "int": 0.6,
+        "war": 8,
+        "warX": 11.2,
+        "mult": 1.4,
+        "total": 46.6
+      },
+      "calc": {
+        "frh": 46.6,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 28,
+        "frhPay": 1304.8,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 1304.8
+      }
+    },
+    {
+      "name": "CORY SWINDLE",
+      "key": "CORY",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 27,
+        "tier1Hours": 50,
+        "tier1Bump": 2,
+        "tier2Hours": 60,
+        "tier2Bump": 2,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 33.56,
+        "school": "2",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 8.5,
+        "int": 0,
+        "war": 17.9,
+        "warX": 25.06,
+        "mult": 1.4,
+        "total": 33.56
+      },
+      "calc": {
+        "frh": 33.56,
+        "school": 2,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 27,
+        "frhPay": 906.12,
+        "schoolPay": 54,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 960.12
+      }
+    },
+    {
+      "name": "KADEN WILSON",
+      "key": "KADEN",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 25,
+        "tier1Hours": 50,
+        "tier1Bump": 2,
+        "tier2Hours": 60,
+        "tier2Bump": 2,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 45.54,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 15.3,
+        "int": 0,
+        "war": 21.6,
+        "warX": 30.24,
+        "mult": 1.4,
+        "total": 45.54
+      },
+      "calc": {
+        "frh": 45.54,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 25,
+        "frhPay": 1138.5,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 1138.5
+      }
+    },
+    {
+      "name": "BRYSON HUTSELL",
+      "key": "BRYSON",
+      "plan": {
+        "payType": "flat_clock",
+        "flatRate": 0,
+        "tier1Hours": 50,
+        "tier1Bump": 0,
+        "tier2Hours": 60,
+        "tier2Bump": 0,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": true,
+        "bumpEligible": false,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 17.9,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 7.3,
+        "int": 1.5,
+        "war": 9.1,
+        "warX": 9.1,
+        "mult": 1,
+        "total": 17.9
+      },
+      "calc": {
+        "frh": 17.9,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 0,
+        "frhPay": 0,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 0
+      }
+    },
+    {
+      "name": "CHRIS FOLEY",
+      "key": "CHRIS",
+      "plan": {
+        "payType": "flat_clock",
+        "flatRate": 0,
+        "tier1Hours": 50,
+        "tier1Bump": 0,
+        "tier2Hours": 60,
+        "tier2Bump": 0,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": true,
+        "bumpEligible": false,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 13.7,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 8.8,
+        "int": 1.7,
+        "war": 3.2,
+        "warX": 3.2,
+        "mult": 1,
+        "total": 13.7
+      },
+      "calc": {
+        "frh": 13.7,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 0,
+        "frhPay": 0,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 0
+      }
+    },
+    {
+      "name": "TRENTON MCQUINN",
+      "key": "TRENTON",
+      "plan": {
+        "payType": "flat",
+        "flatRate": 27,
+        "tier1Hours": 50,
+        "tier1Bump": 0,
+        "tier2Hours": 60,
+        "tier2Bump": 0,
+        "clockRate": 0,
+        "clockHours": 40,
+        "clockMode": "add",
+        "eligiblePto": true,
+        "hybrid": false,
+        "bumpEligible": true,
+        "perTier": 2
+      },
+      "inputs": {
+        "frh": 34.54,
+        "school": "",
+        "pto": "",
+        "clockHours": "",
+        "otherBonus": "",
+        "otherNote": ""
+      },
+      "frhDetail": {
+        "cp": 20.4,
+        "int": 0,
+        "war": 10.1,
+        "warX": 14.14,
+        "mult": 1.4,
+        "total": 34.54
+      },
+      "calc": {
+        "frh": 34.54,
+        "school": 0,
+        "pto": 0,
+        "clockHours": 40,
+        "otherBonus": 0,
+        "otherNote": "",
+        "tier1": false,
+        "tier2": false,
+        "weeklyRate": 27,
+        "frhPay": 932.58,
+        "schoolPay": 0,
+        "ptoPay": 0,
+        "hourlyPay": 0,
+        "total": 932.58
+      }
+    }
+  ],
+  "totals": {
+    "frh": 258.3,
+    "frhPay": 6173.14,
+    "school": 2,
+    "schoolPay": 54,
+    "pto": 8,
+    "ptoPay": 248,
+    "hourlyPay": 0,
+    "otherBonus": 0,
+    "total": 6475.14
+  }
+}
