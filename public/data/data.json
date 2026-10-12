@@ -566,6 +566,19 @@
       "timeTo": "12:00",
       "reason": "Coming in late",
       "note": "Dr app"
+    },
+    {
+      "name": "MATTHEW",
+      "dates": "Sat, Nov 14 · Out until 3pm",
+      "dateStart": "",
+      "dateEnd": "",
+      "status": "APPROVED",
+      "kind": "partial",
+      "partialDate": "2026-11-14",
+      "timeFrom": "",
+      "timeTo": "15:00",
+      "reason": "Other",
+      "note": "Needs day off"
     }
   ]
 }
