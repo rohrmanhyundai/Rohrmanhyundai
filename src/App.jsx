@@ -1079,10 +1079,13 @@ export default function App() {
   // The Advisor Schedule roster also includes the service manager, who works
   // advisor shifts but isn't an advisor for survey/performance purposes — so this
   // is kept separate from `advisorList` (which seeds advisor pickers/reports).
-  const advisorScheduleList = activeUsers
+  // Work schedules use the FULL user list: Hide User only takes someone off the
+  // dashboards and reports — they still work shifts that need scheduling.
+  const advisorScheduleList = users
     .filter(u => u.role === 'advisor' || u.role === 'lead advisor' || u.role === 'service manager')
     .map(u => u.username.toUpperCase());
   const techList = activeUsers.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
+  const techScheduleList = users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase());
   const currentUserDisplay = userDisplayName(currentUser, users).toUpperCase();
   // Which Goal Forecast a user owns is decided by WHO they are, not which page
   // they open — so a parts manager always sees parts and a service manager always
@@ -1385,7 +1388,7 @@ export default function App() {
       <WorkScheduleTabs
         schedules={schedules}
         advisorNames={advisorScheduleList}
-        techNames={techList}
+        techNames={techScheduleList}
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         jobRole={jobRole}
