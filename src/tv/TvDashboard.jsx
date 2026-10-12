@@ -78,6 +78,17 @@ function TechBox({ t, eff, dates, today }) {
         <div className="tvd-eff" title={eff ? `Average goal % over the last ${eff.weeks} completed week${eff.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
           <MiniGauge pct={eff ? eff.pct : null} />
           <div>2-wk efficiency</div>
+          {/* VMPI % from the last VMPI report upload (Edit Dashboard → Technicians). */}
+          {t.vmpi != null && t.vmpi !== '' && (() => {
+            const v = Number(t.vmpi) || 0;
+            const c = v >= 0.9 ? '#4ade80' : v >= 0.75 ? '#fbbf24' : '#f87171';
+            return (
+              <div className="tvd-vmpi" style={{ color: c, borderColor: `${c}77`, background: `${c}1f` }}
+                title={t.vmpi_ros ? `${t.vmpi_with} of ${t.vmpi_ros} ROs with a video${t.vmpi_asof ? ` · report ${t.vmpi_asof}` : ''}` : 'Video multi-point inspection'}>
+                🎥 VMPI {(v * 100).toFixed(v >= 0.9995 ? 0 : 1)}%
+              </div>
+            );
+          })()}
         </div>
       </div>
       <div className="tvd-bar"><div style={{ width: `${Math.min(100, pct * 100)}%`, background: col }} /></div>

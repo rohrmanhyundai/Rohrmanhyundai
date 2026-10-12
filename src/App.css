@@ -1203,3 +1203,5 @@ html, body {
 .ac-info>div>div:last-child{overflow:hidden;text-overflow:ellipsis}
 .ac-email{grid-column:span 2}
 @media(max-width:560px){.ac-email{grid-column:auto}}
+/* VMPI pill under the 2-wk efficiency gauge on the TV tech boxes. */
+.tvd-eff .tvd-vmpi{margin-top:4px;display:inline-block;font-size:clamp(11px,min(7cqh,2.6cqw),18px);font-weight:900;letter-spacing:.02em;text-transform:none;border:1px solid;border-radius:999px;padding:2px 10px;white-space:nowrap}
