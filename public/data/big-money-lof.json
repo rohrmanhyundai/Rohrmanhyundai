@@ -10,18 +10,18 @@
     "by": "SHAWN"
   },
   "latest": {
-    "takenAt": 1791287672514,
-    "date": "2026-10-06",
+    "takenAt": 1791812415385,
+    "date": "2026-10-12",
     "goals": {
       "hrs_ro": 1.3,
       "add_rate": 0.75
     },
     "standings": [
       {
-        "name": "JORDAN",
-        "display": "JORDAN",
-        "hrsRo": 0.47,
-        "rate": 0.49,
+        "name": "DAVID",
+        "display": "DAVID",
+        "hrsRo": 0.52,
+        "rate": 0.459,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -30,25 +30,37 @@
         "leader": false
       },
       {
-        "name": "DAVID",
-        "display": "DAVID",
-        "hrsRo": 0.38,
-        "rate": 0.439,
+        "name": "JORDAN",
+        "display": "JORDAN",
+        "hrsRo": 0.48,
+        "rate": 0.502,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
         "inAvg": true,
         "rank": 2,
         "leader": false
+      },
+      {
+        "name": "MATTHEW",
+        "display": "MATTHEW",
+        "hrsRo": 0,
+        "rate": 0,
+        "hitHrs": false,
+        "hitRate": false,
+        "qualified": false,
+        "inAvg": true,
+        "rank": 3,
+        "leader": false
       }
     ],
     "store": {
-      "hrsRo": 0.43,
-      "rate": 0.465,
+      "hrsRo": 0.33,
+      "rate": 0.32,
       "hitHrs": false,
       "hitRate": false,
       "hit": false,
-      "count": 2
+      "count": 3
     }
   },
   "coaching": {
@@ -400,6 +412,33 @@
       "store": {
         "hrsRo": 0.43,
         "rate": 0.465
+      }
+    },
+    "2026-10-12": {
+      "goals": {
+        "hrs_ro": 1.3,
+        "add_rate": 0.75
+      },
+      "standings": [
+        {
+          "name": "DAVID",
+          "hrsRo": 0.52,
+          "rate": 0.459
+        },
+        {
+          "name": "JORDAN",
+          "hrsRo": 0.48,
+          "rate": 0.502
+        },
+        {
+          "name": "MATTHEW",
+          "hrsRo": 0,
+          "rate": 0
+        }
+      ],
+      "store": {
+        "hrsRo": 0.33,
+        "rate": 0.32
       }
     }
   }
