@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SortableTiles from './SortableTiles';
 import { loadGithubFile } from '../utils/github';
+import VmpiReportView from './VmpiReportView';
+import { loadVmpiReport } from '../utils/github';
 
 function canSee(pages, role, key) {
   if (role === 'admin' || (role || '').includes('manager')) return true;
@@ -123,6 +125,20 @@ export default function TechResources({ currentUser, currentUserDisplay, current
 
   const showMyReview = myJobRole === 'technician' && (hasPendingReview || hasSubmittedReview);
 
+  // VMPI tile: a tech sees their own % and RO list; anyone else (managers)
+  // sees the shop % and every tech. From the last VMPI upload.
+  const [vmpi, setVmpi] = useState(undefined);
+  const [vmpiOpen, setVmpiOpen] = useState(false);
+  useEffect(() => { let c = false; loadVmpiReport().then(r => { if (!c) setVmpi(r); }).catch(() => { if (!c) setVmpi(null); }); return () => { c = true; }; }, []);
+  const meFirst = String(currentUser || '').trim().split(/\s+/)[0].toUpperCase();
+  const isTech = myJobRole === 'technician';
+  const vmpiMine = vmpi && (vmpi.techs || []).find(t => t.first === meFirst);
+  const vmpiShop = vmpi && (vmpi.techs || []).reduce((a, t) => ({ ros: a.ros + (t.ros || 0), w: a.w + (t.withVideo || 0) }), { ros: 0, w: 0 });
+  const vmpiPct = isTech ? (vmpiMine ? vmpiMine.pct : null) : (vmpiShop && vmpiShop.ros ? vmpiShop.w / vmpiShop.ros : null);
+  const vmpiSub = isTech ? (vmpiMine ? `${vmpiMine.withVideo} of ${vmpiMine.ros} ROs with video` : vmpi ? 'Not on the last report' : vmpi === null ? 'No report yet' : 'Loading…')
+    : (vmpiShop && vmpiShop.ros ? `Shop · ${vmpiShop.w} of ${vmpiShop.ros} ROs` : vmpi === null ? 'No report yet' : 'Loading…');
+  const vmpiCol = vmpiPct == null ? '#94a3b8' : vmpiPct >= 0.9 ? '#4ade80' : vmpiPct >= 0.75 ? '#fbbf24' : '#f87171';
+
   return (
     <div className="adv-page">
       <div className="adv-topbar">
@@ -135,6 +151,7 @@ export default function TechResources({ currentUser, currentUserDisplay, current
         </div>
       </div>
 
+      {vmpiOpen && <VmpiReportView onClose={() => setVmpiOpen(false)} onlyFirst={isTech ? meFirst : ''} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
         <p style={{ color: '#7a92b8', margin: 0, fontSize: 15 }}>Select a resource below.</p>
 
@@ -147,10 +164,24 @@ export default function TechResources({ currentUser, currentUserDisplay, current
             ...visible,
             onMyReports && { key: 'myReports', custom: 'reports' },
             showMyReview && { key: 'myReview', custom: 'review' },
+            { key: 'vmpi', custom: 'vmpi' },
           ].filter(Boolean)}
           style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}
         >
-          {btn => btn.custom === 'reports' ? (
+          {btn => btn.custom === 'vmpi' ? (
+            <button
+              onClick={() => setVmpiOpen(true)}
+              title={isTech ? 'Your video multi-point inspections — every RO, yes or no' : 'Every tech\'s video multi-point inspections'}
+              style={{ width: 220, minHeight: 140, background: 'linear-gradient(135deg,rgba(103,232,249,.22),rgba(14,165,233,.14))', border: `2px solid ${vmpiPct == null ? 'rgba(103,232,249,.4)' : vmpiCol + '99'}`, borderRadius: 18, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, padding: 20, transition: 'transform .15s' }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <span style={{ fontSize: 30 }}>🎥</span>
+              <span style={{ fontWeight: 800, fontSize: 16, color: '#67e8f9' }}>VMPI</span>
+              <span style={{ fontWeight: 1000, fontSize: 30, color: vmpiCol, lineHeight: 1 }}>{vmpiPct == null ? '—' : `${(vmpiPct * 100).toFixed(vmpiPct >= 0.9995 ? 0 : 1)}%`}</span>
+              <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700 }}>{vmpiSub}</span>
+            </button>
+          ) : btn.custom === 'reports' ? (
             <button
               onClick={onMyReports}
               style={{ width: 220, minHeight: 140, background: 'linear-gradient(135deg,rgba(110,231,249,.25),rgba(61,214,195,.18))', border: '1px solid rgba(61,214,195,.45)', borderRadius: 18, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 24, transition: 'transform .15s' }}

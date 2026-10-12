@@ -57,20 +57,23 @@ async function savePdf(report, techs, onlyNo) {
   pdf.save(`vmpi-report-${(report.stamp || '').split(' ')[0].replace(/\//g, '-') || 'latest'}${onlyNo ? '-no-video' : ''}.pdf`);
 }
 
-export default function VmpiReportView({ onClose, io }) {
+// onlyFirst: show just this tech (a tech opening their own VMPI from Technician Resources).
+export default function VmpiReportView({ onClose, io, onlyFirst = '' }) {
   const load = (io && io.loadVmpiReport) || loadVmpiReport;
   const [report, setReport] = useState(undefined);
   const [onlyNo, setOnlyNo] = useState(false);
   const [saving, setSaving] = useState(false);
   useEffect(() => { let c = false; load().then(r => { if (!c) setReport(r); }); return () => { c = true; }; }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const techs = useMemo(() => ((report && report.techs) || []).slice().sort((a, b) => a.pct - b.pct || a.name.localeCompare(b.name)), [report]);
+  const techs = useMemo(() => ((report && report.techs) || [])
+    .filter(t => !onlyFirst || t.first === String(onlyFirst).trim().split(/\s+/)[0].toUpperCase())
+    .slice().sort((a, b) => a.pct - b.pct || a.name.localeCompare(b.name)), [report, onlyFirst]);
   const shop = techs.reduce((a, t) => ({ ros: a.ros + t.ros, w: a.w + t.withVideo }), { ros: 0, w: 0 });
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1100, background: '#0b1220', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px', borderBottom: '1px solid rgba(148,163,184,.18)', flexWrap: 'wrap', background: '#0f172a' }}>
         <div style={{ flex: 1, minWidth: 220 }}>
-          <div style={{ fontSize: 20, fontWeight: 900, color: '#67e8f9' }}>🎥 VMPI Report</div>
+          <div style={{ fontSize: 20, fontWeight: 900, color: '#67e8f9' }}>🎥 {onlyFirst ? 'My VMPI' : 'VMPI Report'}</div>
           <div style={{ fontSize: 13, color: '#94a3b8' }}>
             {report ? `${report.store || 'Bob Rohrman Hyundai'} · report ${report.stamp || '—'} · uploaded ${new Date(report.savedAt).toLocaleDateString()}` : report === null ? 'No VMPI report uploaded yet' : 'Loading…'}
           </div>
@@ -86,10 +89,11 @@ export default function VmpiReportView({ onClose, io }) {
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 24px 40px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          {report === null && <div style={{ color: '#fbbf24', fontWeight: 700 }}>Upload a VMPI report on this page first — the report is saved when you click Apply.</div>}
+          {report === null && <div style={{ color: '#fbbf24', fontWeight: 700 }}>{onlyFirst ? 'No VMPI report has been uploaded yet.' : 'Upload a VMPI report on this page first — the report is saved when you click Apply.'}</div>}
+          {report && onlyFirst && !techs.length && <div style={{ color: '#fbbf24', fontWeight: 700 }}>You're not on the last VMPI report ({report.stamp || 'latest'}).</div>}
           {techs.length > 0 && (
             <>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
+              {!onlyFirst && <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
                 <div style={{ padding: '10px 16px', borderRadius: 12, background: 'rgba(103,232,249,.08)', border: '1px solid rgba(103,232,249,.3)' }}>
                   <div style={{ fontSize: 11, fontWeight: 900, color: '#94a3b8', letterSpacing: '.08em' }}>SHOP</div>
                   <div style={{ fontSize: 26, fontWeight: 1000, color: tone(shop.ros ? shop.w / shop.ros : 0) }}>{pctTxt(shop.ros ? shop.w / shop.ros : 0)}</div>
@@ -102,7 +106,7 @@ export default function VmpiReportView({ onClose, io }) {
                     <div style={{ fontSize: 11.5, color: '#94a3b8' }}>{t.withVideo} of {t.ros}</div>
                   </a>
                 ))}
-              </div>
+              </div>}
               {techs.map(t => {
                 const lines = onlyNo ? t.lines.filter(l => !l.video) : t.lines;
                 return (
