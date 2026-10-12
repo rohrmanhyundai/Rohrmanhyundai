@@ -34,9 +34,9 @@ const shortDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return
 const WEEK = [['sat', 'Sat'], ['mon', 'Mon'], ['tue', 'Tue'], ['wed', 'Wed'], ['thu', 'Thu'], ['fri', 'Fri']];
 
 async function loadAll() {
-  const [payload, schedules, former, usersFile, bigMoney] = await Promise.all([
+  const [payload, schedules, former, usersFile, bigMoney, vmpi] = await Promise.all([
     fetchJson('data.json'), fetchJson('schedules.json'), fetchJson('former-employees.json'),
-    fetchJson('users.json'), fetchJson('big-money-lof.json'),
+    fetchJson('users.json'), fetchJson('big-money-lof.json'), fetchJson('vmpi/report.json'),
   ]);
   if (!payload || !payload.data) return null;
   const d = payload.data;
@@ -49,6 +49,13 @@ async function loadAll() {
     d.technicians = (d.technicians || []).filter(t => !out(t.name));
     d.advisors = (d.advisors || []).filter(a => !out(a.name));
     d.advisorTraining = (d.advisorTraining || []).filter(a => !out(a.name));
+  }
+  // VMPI %: the tech's saved value wins (it can be typed by hand); otherwise
+  // the last uploaded VMPI report fills it in.
+  for (const t of d.technicians || []) {
+    if (t.vmpi != null && t.vmpi !== '') continue;
+    const hit = ((vmpi && vmpi.techs) || []).find(x => x.first === firstWord(t.name));
+    if (hit) { t.vmpi = hit.pct; t.vmpi_ros = hit.ros; t.vmpi_with = hit.withVideo; t.vmpi_asof = vmpi.stamp; }
   }
   d.techTotals = d.techTotals || {};
   recalcTech(d, schedules || {});

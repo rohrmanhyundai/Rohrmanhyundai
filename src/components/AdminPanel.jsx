@@ -1522,7 +1522,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       savedAt: new Date().toISOString(), by: currentUser, fileName: vmpiUpload.fileName, stamp: rep.stamp, store: rep.store,
       techs: rep.rows.filter(r => vmpiUpload.rows.some(x => x.matchedName === r.name)),
     }).catch(err => setVmpiErr('Report detail not saved: ' + (err.message || err)));
-    setVmpiMsg(`✅ VMPI filled for ${vmpiUpload.rows.length} tech${vmpiUpload.rows.length === 1 ? '' : 's'}${vmpiUpload.stamp ? ` (report ${vmpiUpload.stamp})` : ''}. Click Save Changes to push it live.`);
+    // Saved right away (like a roster change) — the dashboard pills shouldn't
+    // hinge on remembering Save Changes after Apply.
+    const n = vmpiUpload.rows.length, stamp = vmpiUpload.stamp;
+    setVmpiMsg(`⏳ Saving VMPI for ${n} tech${n === 1 ? '' : 's'}…`);
+    saveDashboardToGitHub({ data: newData, vacations })
+      .then(() => setVmpiMsg(`✅ VMPI saved for ${n} tech${n === 1 ? '' : 's'}${stamp ? ` (report ${stamp})` : ''} — live on the dashboard.`))
+      .catch(err => { setVmpiErr('VMPI not saved: ' + (err.message || err) + ' — click Save Changes to try again.'); setVmpiMsg(''); });
     setVmpiUpload(null);
   }
 
@@ -2754,7 +2760,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           <div className="small" style={{ margin: '0 0 10px' }}>
             The <strong>Service Technician Video Report</strong> saved as .csv. Each tech's <strong>Video Utilization Per Ro</strong> (ROs with a video
             attached ÷ RO count) fills their <strong>VMPI %</strong> box — Bob Rohrman Hyundai's techs only. Techs not on the report are left as they are.
-            Review before applying, then <em>Save Changes</em>.
+            Review, then Apply — it saves straight to the dashboard.
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             <input ref={vmpiInputRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
