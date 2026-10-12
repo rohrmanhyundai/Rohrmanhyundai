@@ -24,6 +24,8 @@ import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 import { decryptWithVault, inVault } from '../utils/passwordVault';
 import { isPartial, PARTIAL_REASONS, partialLabel } from '../utils/partialOut';
 import { parseVmpiReport } from '../utils/vmpiReport';
+import { saveVmpiReport } from '../utils/github';
+import VmpiReportView from './VmpiReportView';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -1478,6 +1480,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [vmpiErr, setVmpiErr] = useState('');
   const [vmpiMsg, setVmpiMsg] = useState('');
   const vmpiInputRef = useRef(null);
+  const [vmpiView, setVmpiView] = useState(false);
   async function handleVmpiReport(file) {
     if (!file) return;
     setVmpiErr(''); setVmpiMsg(''); setVmpiUpload(null);
@@ -1494,7 +1497,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         rows.push({ idx, name: t.name, matchedName: hit.name, pct: hit.pct, ros: hit.ros, withVideo: hit.withVideo, videos: hit.videos, before: t.vmpi });
       });
       setVmpiUpload({
-        stamp: rep.stamp, fileName: file.name, rows,
+        stamp: rep.stamp, fileName: file.name, rows, report: rep,
         unmatched: rep.rows.filter(r => !used.has(r)).map(r => r.name),
         missing: techs.filter(t => !rows.some(r => r.name === t.name)).map(t => t.name),
       });
@@ -1513,6 +1516,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       t.vmpi = r.pct; t.vmpi_ros = r.ros; t.vmpi_with = r.withVideo; t.vmpi_videos = r.videos; t.vmpi_asof = vmpiUpload.stamp;
     }
     onDataChange(newData, structuredClone(vacations));
+    // The RO-by-RO detail is its own file (for View VMPI Report) — saved now.
+    const rep = vmpiUpload.report;
+    saveVmpiReport({
+      savedAt: new Date().toISOString(), by: currentUser, fileName: vmpiUpload.fileName, stamp: rep.stamp, store: rep.store,
+      techs: rep.rows.filter(r => vmpiUpload.rows.some(x => x.matchedName === r.name)),
+    }).catch(err => setVmpiErr('Report detail not saved: ' + (err.message || err)));
     setVmpiMsg(`✅ VMPI filled for ${vmpiUpload.rows.length} tech${vmpiUpload.rows.length === 1 ? '' : 's'}${vmpiUpload.stamp ? ` (report ${vmpiUpload.stamp})` : ''}. Click Save Changes to push it live.`);
     setVmpiUpload(null);
   }
@@ -2747,7 +2756,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             attached ÷ RO count) fills their <strong>VMPI %</strong> box — Bob Rohrman Hyundai's techs only. Techs not on the report are left as they are.
             Review before applying, then <em>Save Changes</em>.
           </div>
-          <input ref={vmpiInputRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <input ref={vmpiInputRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
+            <button type="button" onClick={() => setVmpiView(true)}
+              style={{ marginLeft: 'auto', background: 'rgba(103,232,249,.14)', border: '1px solid rgba(103,232,249,.45)', color: '#67e8f9', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer' }}>
+              📋 View VMPI Report
+            </button>
+          </div>
+          {vmpiView && <VmpiReportView onClose={() => setVmpiView(false)} />}
           {vmpiErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {vmpiErr}</div>}
           {vmpiMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{vmpiMsg}</div>}
           {vmpiUpload && (

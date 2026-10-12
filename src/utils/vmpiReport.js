@@ -42,6 +42,8 @@ export function parseVmpiReport(text) {
   const C = {
     util: col('VIDEO UTILIZATION PER RO'), attached: col("RO'S W/VIDEOS ATTACHED"), videos: col('QTY OF VIDEOS CAPTUREED'),
     roCnt: col('RO CNT'), tech: col('TECHNICIAN'), idTech: col('ID TECH'), dealerId: col('DEALER ID'), dealerName: col('DEALER NAME'),
+    ro: col('RO NUMBER'), opened: col('RO OPEN DATE'), closed: col('RO CLOSED DATE'), customer: col('CUSTOMER NAME'),
+    year: col('YEAR'), make: col('MAKE'), model: col('MODEL'), advisor: col('ID ADVISOR'),
   };
   if (C.tech < 0 || C.idTech < 0) throw new Error('Couldn\'t find the TECHNICIAN / ID TECH columns in this report.');
   const g = (r, i) => (i >= 0 && i < r.length ? r[i] : '');
@@ -57,6 +59,22 @@ export function parseVmpiReport(text) {
   }
   if (!dealerId) throw new Error('Bob Rohrman Hyundai isn\'t on this report.');
 
+  // Each RO line (one per repair order) sits above its tech's total line.
+  const detail = {};   // ID TECH → [{ ro, opened, closed, customer, vehicle, advisor, video, videos }]
+  const tidy = (x) => { const t = String(x || '').trim(); return t === t.toLowerCase() || t === t.toUpperCase() ? t.toLowerCase().replace(/(^|[\s,'-])([a-z])/g, (m, a, b) => a + b.toUpperCase()) : t; };
+  for (const r of all.slice(hi + 1)) {
+    const idTech = String(g(r, C.idTech)).trim();
+    const ro = String(g(r, C.ro)).trim();
+    if (!ro || !idTech.startsWith(dealerId) || String(g(r, C.util)).trim()) continue;
+    (detail[idTech] ||= []).push({
+      ro, opened: String(g(r, C.opened)).trim(), closed: String(g(r, C.closed)).trim(),
+      customer: tidy(String(g(r, C.customer)).replace(/<blank>,?\s*/i, '')),
+      vehicle: [g(r, C.year), tidy(g(r, C.make)), g(r, C.model)].map(x => String(x || '').trim()).filter(Boolean).join(' '),
+      advisor: tidy(String(g(r, C.advisor)).replace(new RegExp('^' + dealerId), '')),
+      video: numOf(g(r, C.attached)) > 0, videos: numOf(g(r, C.videos)),
+    });
+  }
+
   const rows = [];
   for (const r of all.slice(hi + 1)) {
     const util = g(r, C.util);
@@ -69,6 +87,7 @@ export function parseVmpiReport(text) {
     rows.push({
       name: tech, first: tech.split(/\s+/)[0].toUpperCase(),
       ros: numOf(g(r, C.roCnt)), withVideo: numOf(g(r, C.attached)), videos: numOf(g(r, C.videos)), pct,
+      lines: (detail[idTech] || []).sort((a, b) => String(a.ro).localeCompare(String(b.ro))),
     });
   }
   if (!rows.length) throw new Error(`No technician totals found for ${store || 'our store'}.`);

@@ -2450,3 +2450,14 @@ export async function updateOilGuardFixes(mutate) {
   return mutateGitHubJson('public/data/oil-guard/fixes.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { fixes: {} }),
     `Oil Guard fix ${new Date().toISOString()}`);
 }
+
+// ── VMPI report detail ────────────────────────────────────────────────────────
+// public/data/vmpi/report.json → { savedAt, by, fileName, stamp, store, techs: [{ name, first, pct, ros, withVideo, videos, lines: [...] }] }
+// Written when a VMPI .csv is applied; read by the View VMPI Report page.
+export async function loadVmpiReport() {
+  try { const d = await loadGithubFile('data/vmpi/report.json'); if (d && typeof d === 'object') return d; } catch {}
+  return null;
+}
+export async function saveVmpiReport(report) {
+  return mutateGitHubJson('public/data/vmpi/report.json', () => report, `VMPI report ${new Date().toISOString()}`);
+}
