@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-12T14:48:56.598Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-10-12T14:48:55.343Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-10-09T19:37:03.799Z",
     "type": "page",
     "label": "work-in-progress"
@@ -1018,100 +1028,5 @@
     "at": "2026-09-14T14:12:57.351Z",
     "type": "action",
     "label": "login"
-  },
-  {
-    "at": "2026-09-11T13:09:18.692Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-09-11T13:09:12.065Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-11T12:53:20.224Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-11T12:53:17.442Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-10T20:06:39.479Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-10T19:09:27.350Z",
-    "type": "page",
-    "label": "original-owner"
-  },
-  {
-    "at": "2026-09-10T19:09:23.302Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-10T19:04:04.774Z",
-    "type": "page",
-    "label": "registration-upload"
-  },
-  {
-    "at": "2026-09-10T19:04:03.530Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-10T19:03:54.096Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-10T18:20:30.369Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-10T18:20:28.019Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-10T18:19:45.033Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-10T18:19:43.529Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-10T18:19:31.360Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-09T20:06:28.162Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-09T19:59:02.937Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-09T19:58:12.832Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-09T19:58:11.701Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
