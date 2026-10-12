@@ -37,6 +37,8 @@ export const REPORTS = [
     last: 'appointments' },
   { key: 'deferred', icon: '🔧', title: 'Deferred Services', file: '.pdf', freq: 'weekly', color: '#fb923c',
     desc: 'DMS Deferred Services report. Feeds the Deferred Service follow-up list and prep-sheet deferred matching.' },
+  { key: 'oilGuard', icon: '🛢', title: 'Oil Guard 3X', file: '.pdf', freq: 'asneeded', color: '#fbbf24',
+    desc: 'Schedule 3029 Summary with Detail. Feeds the Oil Guard VIN look-up (oil changes left).' },
   { key: 'grossReport', icon: '🎯', title: 'Gross Report', file: '.pdf', freq: 'daily', color: '#f472b6',
     desc: 'Daily labor & parts gross. Fills Goal Forecast actuals and the dashboard gauges.' },
   { key: 'advisorGoals', icon: '📈', title: 'Advisor Daily Hours', file: '.xlsx', freq: 'daily', color: '#c4b5fd',

@@ -2428,3 +2428,25 @@ export async function saveTechWeek(techName, record) {
     return all;
   }, `Tech week ${record.weekStart} — ${key}`);
 }
+
+// ── Oil Guard 3X ──────────────────────────────────────────────────────────────
+// public/data/oil-guard/data.json  → { uploadedAt, by, fileName, reportStamp, blocks: [...] }
+//   The parsed Schedule 3029 PDF (full history; each upload replaces it).
+// public/data/oil-guard/fixes.json → { fixes: { [key]: { …, by, at } } }
+//   A manager's fixes for flagged lines — kept across uploads (see utils/oilGuard).
+export async function loadOilGuard() {
+  try { const d = await loadGithubFile('data/oil-guard/data.json'); if (d && typeof d === 'object') return d; } catch {}
+  return null;
+}
+export async function saveOilGuard(store) {
+  return mutateGitHubJson('public/data/oil-guard/data.json', () => store,
+    `Oil Guard report upload ${new Date().toISOString()}`);
+}
+export async function loadOilGuardFixes() {
+  try { const d = await loadGithubFile('data/oil-guard/fixes.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { fixes: {} };
+}
+export async function updateOilGuardFixes(mutate) {
+  return mutateGitHubJson('public/data/oil-guard/fixes.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { fixes: {} }),
+    `Oil Guard fix ${new Date().toISOString()}`);
+}

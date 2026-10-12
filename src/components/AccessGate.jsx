@@ -45,7 +45,7 @@ export const PAGE_GROUPS = [
   ] },
   { group: 'Advisor', pages: [
     ['advisor-calendar', 'Appointment Prep Calendar'], ['advisor-day', 'Prep Sheet (a day)'], ['after-call', 'After Call Reviews'],
-    ['deferred-service', 'Deferred Service'], ['ro-upload', 'RO Upload'], ['work-in-progress', 'Work in Progress'],
+    ['deferred-service', 'Deferred Service'], ['oil-guard', 'Oil Guard'], ['ro-upload', 'RO Upload'], ['work-in-progress', 'Work in Progress'],
     ['performance-report', 'My Reports'], ['service-pricing', 'Service Pricing Menu'], ['tire-quote', 'Tire Quote'],
     ['document-library', 'Document Library'], ['charge-account-list', 'Charge Account List'], ['hot-repairs', 'Recalls/TSB Bulletins'],
     ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'], ['shop-appointments', 'Shop Appointments'],

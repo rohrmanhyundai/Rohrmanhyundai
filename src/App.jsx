@@ -42,6 +42,7 @@ import FloatingMessenger, { MessageMedia } from './components/FloatingMessenger'
 import CashDash, { SEASON, seasonOf } from './components/CashDash';
 import BigMoneyLOF from './components/BigMoneyLOF';
 import DeferredService from './components/DeferredService';
+import OilGuard from './components/OilGuard';
 import DailyWrench from './components/DailyWrench';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
@@ -205,6 +206,7 @@ export default function App() {
     weekCloseout:     { admin: 'technicians' },
     roUpload:         { page: 'ro-upload' },
     deferred:         { page: 'deferred-service', tab: 'settings' },
+    oilGuard:         { page: 'oil-guard', tab: 'settings' },
     grossReport:      { page: 'goal-forecast' },
     advisorGoals:     { page: 'advisor-goals' },
     surveys:          { page: 'after-call', tab: 'upload' },
@@ -1676,6 +1678,17 @@ export default function App() {
     );
   }
 
+  if (page === 'oil-guard') {
+    return (
+      <OilGuard
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        initialTab={launched ? uploadLaunch.tab : undefined}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
+      />
+    );
+  }
+
   if (page === 'deferred-service') {
     return (
       <DeferredService
@@ -1860,6 +1873,7 @@ export default function App() {
         onCashDash={cashSeason !== SEASON.OFF ? () => goTo('cash-dash', 'advisor-calendar') : undefined}
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
+        onOilGuard={() => goTo('oil-guard', 'advisor-calendar')}
         onDailyWrench={() => goTo('daily-wrench', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}
