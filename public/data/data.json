@@ -527,19 +527,6 @@
       "dateStart": "2026-12-28",
       "dateEnd": "2026-12-30",
       "status": "APPROVED"
-    },
-    {
-      "name": "MATTHEW",
-      "dates": "Tue, Oct 13 · In late 9am–11am",
-      "dateStart": "",
-      "dateEnd": "",
-      "status": "APPROVED",
-      "kind": "partial",
-      "partialDate": "2026-10-13",
-      "timeFrom": "09:00",
-      "timeTo": "11:00",
-      "reason": "Coming in late",
-      "note": "Dr App"
     }
   ]
 }
