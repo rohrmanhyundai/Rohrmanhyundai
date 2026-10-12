@@ -201,6 +201,74 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     });
   }, [rows, selCodes, from, to, q, serviceOfCode, onlyValvoline, onlyUncontacted, showScheduled, byRoActivity, vehicles]);
 
+  // ── Save the current search as a PDF ──────────────────────────────────────
+  // Exactly the list on screen (every filter applied), with the filters
+  // spelled out at the top so the printout says what it is.
+  const [savingPdf, setSavingPdf] = useState(false);
+  async function saveSearchPdf() {
+    if (!filtered.length) return;
+    setSavingPdf(true);
+    try {
+      const { default: jsPDF } = await import('jspdf');
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+      const W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight(), M = 32;
+      const cols = [['Date', 54], ['RO', 50], ['Customer', 120], ['Phone', 82], ['Vehicle', 118], ['Advisor', 62], ['Deferred services', 0], ['Amount', 56]];
+      cols[6][1] = W - 2 * M - cols.reduce((n, c) => n + c[1], 0);
+      const picked = services.filter(g => selCodes.has(g.key)).map(g => g.label);
+      const filters = [
+        showScheduled ? 'Scheduled' : onlyUncontacted ? 'Not yet contacted' : null,
+        onlyValvoline ? 'Valvoline only' : null,
+        from || to ? `Date ${from ? fmtDate(from) : 'start'} – ${to ? fmtDate(to) : 'today'}` : null,
+        q.trim() ? `Search "${q.trim()}"` : null,
+        picked.length ? `Services: ${picked.join(', ')}` : null,
+      ].filter(Boolean);
+      const total = filtered.reduce((n, r) => n + (Number(r.amount) || 0), 0);
+      let y = 0, page = 0;
+      const head = () => {
+        page += 1;
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(15); pdf.setTextColor(15, 23, 42);
+        pdf.text('Deferred Service', M, M + 4);
+        pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9.5); pdf.setTextColor(100, 116, 139);
+        pdf.text(`${filtered.length} repair order${filtered.length === 1 ? '' : 's'} · $${Math.round(total).toLocaleString()} deferred · saved ${new Date().toLocaleString()}`, M, M + 18);
+        pdf.text(`Page ${page}`, W - M, M + 4, { align: 'right' });
+        y = M + 30;
+        if (page === 1 && filters.length) {
+          const lines = pdf.splitTextToSize(`Filters: ${filters.join(' · ')}`, W - 2 * M);
+          pdf.setTextColor(30, 41, 59); pdf.text(lines, M, y); y += lines.length * 11 + 4;
+        }
+        y += 10;
+        pdf.setFillColor(226, 232, 240); pdf.rect(M, y - 11, W - 2 * M, 16, 'F');
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(30, 41, 59);
+        let x = M + 4; for (const [k, w] of cols) { pdf.text(k.toUpperCase(), x, y); x += w; }
+        y += 16;
+      };
+      head();
+      filtered.forEach((r, i) => {
+        pdf.setFontSize(9);
+        const svc = [...new Set((r.codes || []).map(c => (serviceOfCode[c] && serviceOfCode[c].label) || c))].join(', ');
+        const svcLines = pdf.splitTextToSize(svc || '—', cols[6][1] - 6).slice(0, 4);
+        const h = Math.max(1, svcLines.length) * 11 + 5;
+        if (y + h > H - M) { pdf.addPage(); head(); pdf.setFontSize(9); }
+        if (i % 2 === 1) { pdf.setFillColor(248, 250, 252); pdf.rect(M, y - 10, W - 2 * M, h, 'F'); }
+        const digits = String(r.phone || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+        const phone = digits.length === 10 ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}` : (r.phone || '—');
+        const cells = [fmtDate(r.date), String(r.ro || ''), r.customer || '—', phone, r.vehicle || '—', r.advisor || '—', null,
+          r.amount != null && r.amount !== '' ? `$${Number(r.amount).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '—'];
+        let x = M + 4;
+        cells.forEach((c, k) => {
+          pdf.setFont('helvetica', k === 2 ? 'bold' : 'normal'); pdf.setTextColor(15, 23, 42);
+          if (k === 6) pdf.text(svcLines, x, y);
+          else pdf.text(pdf.splitTextToSize(String(c), cols[k][1] - 6)[0] || '', x, y);
+          x += cols[k][1];
+        });
+        pdf.setDrawColor(226, 232, 240); pdf.line(M, y + h - 10, W - M, y + h - 10);
+        y += h;
+      });
+      const stamp = new Date().toISOString().slice(0, 10);
+      pdf.save(`deferred-service-${stamp}.pdf`);
+    } finally { setSavingPdf(false); }
+  }
+
   const toggle = (set, setter, key) => { const n = new Set(set); if (n.has(key)) n.delete(key); else n.add(key); setter(n); setOpenRo(''); };
   const clearAll = () => { setSelCodes(new Set()); setFrom(''); setTo(''); setQ(''); setOpenRo(''); setOnlyValvoline(false); setOnlyUncontacted(false); setShowScheduled(false); };
   const anyFilter = selCodes.size || from || to || q.trim() || onlyValvoline || onlyUncontacted || showScheduled;
@@ -635,6 +703,11 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                   <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : showScheduled ? `${filtered.length} of ${scheduledCount} with an appointment set` : `${filtered.length} of ${rows.length - scheduledCount} repair orders${scheduledCount ? ` · ${scheduledCount} scheduled` : ''}`}{selCodes.size ? ` · ${services.filter(g => selCodes.has(g.key)).map(g => g.label).join(', ')}` : ''}</div>
                   <div style={{ flex: 1 }} />
                   <div style={{ fontSize: 11.5, color: '#64748b' }}>Click a customer for the full line from the report</div>
+                  <button className="secondary" disabled={!filtered.length || savingPdf} onClick={saveSearchPdf}
+                    title="Download this list — every filter you've picked — as a PDF"
+                    style={{ fontSize: 12.5, fontWeight: 800, color: '#86efac', borderColor: 'rgba(74,222,128,.45)', background: 'rgba(74,222,128,.1)' }}>
+                    {savingPdf ? '⏳ Saving…' : `📄 Save as .pdf (${filtered.length})`}
+                  </button>
                 </div>
                 <div className="ds-row" style={{ background: 'transparent', border: 'none', cursor: 'default', padding: '0 14px 6px' }}>
                   <div className="ds-label">Customer</div><div className="ds-label ds-hide">Previous RO</div><div className="ds-label ds-hide">Advisor</div><div className="ds-label">Date</div><div />
