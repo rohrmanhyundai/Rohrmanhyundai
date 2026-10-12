@@ -37,6 +37,156 @@ export async function pdfToLines(file) {
   return lines;
 }
 
+// ── Call-back list ───────────────────────────────────────────────────────────
+// Customers whose LAST Oil Guard visit (a package bought or an oil change) fell
+// in the chosen range and who still have oil changes left — they haven't been
+// back since. Name / phone / vehicle come from the Deferred Services data where
+// the VIN matches; the rest are looked up in the DMS by VIN or RO.
+const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const monthsAgo = (n) => { const d = new Date(); d.setMonth(d.getMonth() - n); return isoDay(d); };
+const fmtPhone = (p) => { const d = String(p || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''); return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : (p || ''); };
+
+// "hyundai" / "TOM PIERCE" → "Hyundai" / "Tom Pierce". Mixed-case text (a
+// name someone typed properly, "iPhone"-style models) is left alone.
+const tidy = (s) => {
+  const t = String(s || '').trim();
+  if (!t || (t !== t.toLowerCase() && t !== t.toUpperCase())) return t;
+  return t.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+};
+
+function customerIndex(deferred) {
+  const by = {};
+  for (const r of Object.values((deferred && deferred.byRo) || {})) {
+    const v = String(r.vin || '').toUpperCase();
+    if (!v) continue;
+    if (!by[v] || String(r.date || '') > String(by[v].date || '')) by[v] = r;   // newest wins
+  }
+  return by;
+}
+
+export function callBackRows(analysed, from, to, people = {}) {
+  const rows = [];
+  for (const a of Object.values(analysed)) {
+    if (!(a.left > 0)) continue;
+    const visits = a.events.filter(e => e.kind === 'use' || e.kind === 'package' || e.kind === 'credit');
+    if (!visits.length) continue;
+    const last = visits[visits.length - 1];
+    if ((from && last.date < from) || (to && last.date > to)) continue;
+    const c = people[a.vin] || {};
+    const vehicle = [c.year, tidy(c.make), c.model].filter(Boolean).join(' ') || c.vehicle || '';
+    rows.push({ vin: a.vin, left: a.left, lastDate: last.date, lastRo: last.ro, lastKind: last.kind,
+      customer: tidy(c.customer), phone: fmtPhone(c.phone), email: c.email || '', vehicle });
+  }
+  return rows.sort((x, y) => x.lastDate.localeCompare(y.lastDate));
+}
+
+async function callBackPdf(rows, from, to, stamp) {
+  const { default: jsPDF } = await import('jspdf');
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+  const W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight(), M = 36;
+  const cols = [
+    ['Customer', 150], ['Phone', 92], ['Vehicle', 150], ['VIN', 128], ['Last visit', 62], ['Last RO', 58], ['Left', 32], ['Called / notes', 0],
+  ];
+  const fixed = cols.reduce((s, c) => s + c[1], 0);
+  cols[cols.length - 1][1] = W - 2 * M - fixed;
+  const range = `${from ? prettyDate(from) : 'start'} – ${to ? prettyDate(to) : 'today'}`;
+  let y = 0, page = 0;
+  const head = () => {
+    page += 1;
+    pdf.setFont('helvetica', 'bold'); pdf.setFontSize(15); pdf.setTextColor(15, 23, 42);
+    pdf.text('Oil Guard — call-back list', M, M + 4);
+    pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9.5); pdf.setTextColor(100, 116, 139);
+    pdf.text(`Last visit ${range} · oil changes still left · ${rows.length} customer${rows.length === 1 ? '' : 's'}${stamp ? ` · report as of ${stamp}` : ''}`, M, M + 19);
+    pdf.text(`Page ${page}`, W - M, M + 4, { align: 'right' });
+    y = M + 38;
+    pdf.setFillColor(226, 232, 240); pdf.rect(M, y - 11, W - 2 * M, 16, 'F');
+    pdf.setFont('helvetica', 'bold'); pdf.setFontSize(8.5); pdf.setTextColor(30, 41, 59);
+    let x = M + 4; for (const [k, w] of cols) { pdf.text(k.toUpperCase(), x, y); x += w; }
+    y += 16;
+  };
+  head();
+  pdf.setFontSize(9.5);
+  rows.forEach((r, i) => {
+    if (y > H - M - 10) { pdf.addPage(); head(); pdf.setFontSize(9.5); }
+    if (i % 2 === 1) { pdf.setFillColor(248, 250, 252); pdf.rect(M, y - 11, W - 2 * M, 16, 'F'); }
+    const cells = [r.customer || '—', r.phone || '—', r.vehicle || '—', r.vin, prettyDate(r.lastDate), r.lastRo || '', String(r.left), ''];
+    let x = M + 4;
+    cells.forEach((c, k) => {
+      pdf.setFont('helvetica', k === 0 || k === 6 ? 'bold' : 'normal'); pdf.setTextColor(15, 23, 42);
+      const w = cols[k][1] - 6;
+      const t = pdf.splitTextToSize(String(c), w)[0] || '';
+      pdf.text(t, x, y); x += cols[k][1];
+    });
+    pdf.setDrawColor(226, 232, 240); pdf.line(M, y + 5, W - M, y + 5);
+    y += 16;
+  });
+  pdf.save(`oil-guard-call-back-${from || 'start'}-to-${to || 'today'}.pdf`);
+}
+
+function CallBack({ analysed, stamp, loadDeferredRows }) {
+  const [from, setFrom] = useState(monthsAgo(6));
+  const [to, setTo] = useState(monthsAgo(3));
+  const [people, setPeople] = useState(null);
+  const [making, setMaking] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    loadDeferredRows().then(d => { if (!cancelled) setPeople(customerIndex(d)); }).catch(() => { if (!cancelled) setPeople({}); });
+    return () => { cancelled = true; };
+  }, [loadDeferredRows]);
+  const rows = useMemo(() => callBackRows(analysed, from, to, people || {}), [analysed, from, to, people]);
+  const named = rows.filter(r => r.customer || r.phone).length;
+  const preset = (a, b) => { setFrom(monthsAgo(a)); setTo(b == null ? isoDay(new Date()) : monthsAgo(b)); };
+  const dateIn = { ...inputStyle, fontSize: 14, padding: '7px 10px', letterSpacing: 0, colorScheme: 'dark' };
+  return (
+    <div style={card}>
+      <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>📞 Call-back list</div>
+      <div style={{ fontSize: 13.5, color: '#94a3b8', marginTop: 4, lineHeight: 1.5 }}>
+        Customers whose <b>last</b> Oil Guard visit was in this range and who still have oil changes left — they haven't been back since.
+      </div>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 12 }}>
+        <label style={{ fontSize: 13, color: '#94a3b8', fontWeight: 800 }}>From <input type="date" value={from} onChange={e => setFrom(e.target.value)} style={dateIn} /></label>
+        <label style={{ fontSize: 13, color: '#94a3b8', fontWeight: 800 }}>To <input type="date" value={to} onChange={e => setTo(e.target.value)} style={dateIn} /></label>
+        <span style={{ fontSize: 12, color: '#64748b', fontWeight: 800 }}>Quick:</span>
+        <button style={btn('110,231,249', false)} onClick={() => preset(6, 3)}>3–6 mo ago</button>
+        <button style={btn('110,231,249', false)} onClick={() => preset(12, 6)}>6–12 mo ago</button>
+        <button style={btn('110,231,249', false)} onClick={() => preset(24, 12)}>Over a year</button>
+        <div style={{ flex: 1 }} />
+        <button disabled={!rows.length || making} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 16px' }}
+          onClick={async () => { setMaking(true); try { await callBackPdf(rows, from, to, stamp); } finally { setMaking(false); } }}>
+          {making ? '⏳ Making…' : '📄 Create .pdf'}
+        </button>
+      </div>
+      <div style={{ fontSize: 13.5, color: '#cbd5e1', fontWeight: 800, marginTop: 12 }}>
+        {people == null ? 'Loading customer names…' : `${rows.length} customer${rows.length === 1 ? '' : 's'} · ${rows.reduce((s, r) => s + r.left, 0)} oil changes waiting${rows.length ? ` · ${named} with a name/phone on file` : ''}`}
+      </div>
+      {rows.length > 0 && (
+        <div style={{ marginTop: 10, overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
+            <thead>
+              <tr style={{ color: '#64748b', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.06em' }}>
+                {['Customer', 'Phone', 'Vehicle', 'VIN', 'Last visit', 'Last RO', 'Left'].map(h => <th key={h} style={{ padding: '6px 8px', borderBottom: '1px solid rgba(148,163,184,.2)' }}>{h}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r => (
+                <tr key={r.vin} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                  <td style={{ padding: '7px 8px', fontWeight: 800, color: r.customer ? '#f1f5f9' : '#64748b' }}>{r.customer || '— look up in DMS'}</td>
+                  <td style={{ padding: '7px 8px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{r.phone ? <a href={`tel:${r.phone.replace(/\D/g, '')}`} style={{ color: '#7dd3fc' }}>{r.phone}</a> : '—'}</td>
+                  <td style={{ padding: '7px 8px', color: '#cbd5e1' }}>{r.vehicle || '—'}</td>
+                  <td style={{ padding: '7px 8px', color: '#94a3b8', fontFamily: 'ui-monospace,monospace', fontSize: 12.5 }}>{r.vin}</td>
+                  <td style={{ padding: '7px 8px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{prettyDate(r.lastDate)}</td>
+                  <td style={{ padding: '4px 8px' }}>{r.lastRo ? <CopyRo ro={r.lastRo} /> : '—'}</td>
+                  <td style={{ padding: '7px 8px', fontWeight: 1000, color: '#4ade80', fontSize: 16 }}>{r.left}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LeftBadge({ left }) {
   const col = left > 0 ? '#4ade80' : left === 0 ? '#94a3b8' : '#f87171';
   return (
@@ -165,7 +315,7 @@ function IssueRow({ vin, issue, onFix, busy }) {
 
 export default function OilGuard({ currentUser, currentRole, onBack, initialTab, io }) {
   // Storage — swappable so it can be exercised without touching live data.
-  const { loadOilGuard, saveOilGuard, loadOilGuardFixes, updateOilGuardFixes } = io || github;
+  const { loadOilGuard, saveOilGuard, loadOilGuardFixes, updateOilGuardFixes, loadDeferredRows } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(initialTab === 'settings' && isManager ? 'settings' : 'lookup');
   const [store, setStore] = useState(null);
@@ -265,12 +415,16 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0 }}>
         {tabBtn('lookup', '🔎 Look up a VIN')}
+        {tabBtn('callback', '📞 Call-back list')}
         {isManager && tabBtn('settings', `⚙️ Settings${counts.open && !preview ? ` · ${counts.open} to fix` : ''}`)}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 40px 40px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
-          {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div> : tab === 'lookup' ? (
+          {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div> : tab === 'callback' ? (
+            store ? <CallBack analysed={analysed} stamp={store.reportStamp} loadDeferredRows={loadDeferredRows} />
+              : <div style={{ ...card, color: '#fbbf24', fontWeight: 700 }}>No Oil Guard report uploaded yet.</div>
+          ) : tab === 'lookup' ? (
             <>
               {!store ? (
                 <div style={{ ...card, color: '#fbbf24', fontWeight: 700 }}>No Oil Guard report uploaded yet.{isManager ? ' Upload one on the Settings tab.' : ' Ask a manager to upload it.'}</div>
