@@ -553,6 +553,19 @@
       "timeTo": "09:30",
       "reason": "Coming in late",
       "note": ""
+    },
+    {
+      "name": "MATTHEW",
+      "dates": "Thu, Oct 29 · In late until 12pm",
+      "dateStart": "",
+      "dateEnd": "",
+      "status": "APPROVED",
+      "kind": "partial",
+      "partialDate": "2026-10-29",
+      "timeFrom": "",
+      "timeTo": "12:00",
+      "reason": "Coming in late",
+      "note": "Dr app"
     }
   ]
 }
