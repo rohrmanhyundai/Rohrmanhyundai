@@ -49,6 +49,29 @@ function LeftBadge({ left }) {
   );
 }
 
+// Click an RO number to copy it (for pasting into the DMS search).
+function CopyRo({ ro }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(String(ro)); }
+    catch {
+      // Older browsers / non-https: fall back to a hidden textarea.
+      const t = document.createElement('textarea'); t.value = String(ro); document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } catch {} document.body.removeChild(t);
+    }
+    setDone(true); setTimeout(() => setDone(false), 1400);
+  };
+  return (
+    <button type="button" onClick={copy} title="Click to copy the RO number"
+      style={{ width: 110, textAlign: 'left', background: done ? 'rgba(74,222,128,.15)' : 'transparent', border: `1px solid ${done ? 'rgba(74,222,128,.5)' : 'transparent'}`,
+        borderRadius: 7, padding: '2px 6px', margin: '-3px 0', color: done ? '#86efac' : '#94a3b8', fontWeight: 800, fontSize: 'inherit', fontFamily: 'inherit', cursor: 'copy' }}
+      onMouseEnter={e => { if (!done) e.currentTarget.style.borderColor = 'rgba(110,231,249,.45)'; }}
+      onMouseLeave={e => { if (!done) e.currentTarget.style.borderColor = 'transparent'; }}>
+      {done ? '✓ Copied' : <>RO {ro} <span style={{ fontSize: 11, opacity: .7 }}>⧉</span></>}
+    </button>
+  );
+}
+
 function VinResult({ a }) {
   const dots = (pkgNo) => {
     const used = a.events.filter(e => e.kind === 'use' && e.pkgNo === pkgNo).length;
@@ -77,7 +100,7 @@ function VinResult({ a }) {
             background: e.kind === 'package' || e.kind === 'credit' ? 'rgba(74,222,128,.08)' : 'rgba(255,255,255,.03)',
             border: `1px solid ${e.kind === 'package' || e.kind === 'credit' ? 'rgba(74,222,128,.3)' : 'rgba(148,163,184,.14)'}` }}>
             <span style={{ width: 82, fontWeight: 800, color: '#cbd5e1' }}>{prettyDate(e.date)}</span>
-            <span style={{ width: 96, color: '#94a3b8', fontWeight: 700 }}>RO {e.ro}</span>
+            {e.ro ? <CopyRo ro={e.ro} /> : <span style={{ width: 110 }} />}
             {e.kind === 'package' ? (
               <span style={{ fontWeight: 900, color: '#86efac' }}>💳 Package {e.pkgNo} bought — ${Math.abs(e.amount).toFixed(2)} <span style={{ marginLeft: 8 }}>{dots(e.pkgNo)}</span></span>
             ) : e.kind === 'credit' ? (
