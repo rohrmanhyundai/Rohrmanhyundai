@@ -23,5 +23,53 @@
     "notes": "wiating on all proper documents to start p/a. will need engine. ",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mv5ro1d5qvqh",
+    "ro": "781495",
+    "roDate": "2026-10-12",
+    "vehicle": "2025 Hyundai Santa Cruz",
+    "jobDesc": "CUSTOMER STATES BOTH DRIVER SIDE TIRES ARE LOSING AIR. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mv5ro1d539fn",
+    "ro": "781488",
+    "roDate": "2026-10-12",
+    "vehicle": "2023 Hyundai Sonata Hybrid",
+    "jobDesc": "CUSTOMER STATES- transmission feels like its lunging / hard shifr, only happens under 40mph",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mv5ro1d512ki",
+    "ro": "781476",
+    "roDate": "2026-10-12",
+    "vehicle": "2018 Hyundai Sonata Hybrid",
+    "jobDesc": "back up camera R&R",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
