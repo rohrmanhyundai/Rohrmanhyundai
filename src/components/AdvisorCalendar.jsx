@@ -11,6 +11,7 @@ import RoAttention from './RoAttention';
 import CompletedTime from './CompletedTime';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
+import { partialOutOn, fmtTimeRange } from '../utils/partialOut';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -1134,11 +1135,17 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const isToday = dateStr === todayStr;
                 const hasNotes = noteDates.has(dateStr);
-                const events = scheduleEvents[dateStr] || [];
+                // Schedule marks (vacation / training / holiday) plus part-day heads-ups
+                // from the Vacation list (in late, leaving early, appointment).
+                const events = [
+                  ...(scheduleEvents[dateStr] || []),
+                  ...partialOutOn(vacations, dateStr).map(v => ({ name: String(v.name).trim().split(/\s+/)[0].toUpperCase(), type: 'partial', v })),
+                ];
                 const styleFor = (type) => {
                   if (type === 'holiday')  return { bg: 'rgba(244,114,182,.18)', border: 'rgba(244,114,182,.5)', color: '#f9a8d4', icon: '🎉' };
                   if (type === 'vacation') return { bg: 'rgba(74,222,128,.16)',  border: 'rgba(74,222,128,.45)',  color: '#86efac', icon: '🌴' };
                   if (type === 'training') return { bg: 'rgba(96,165,250,.16)', border: 'rgba(96,165,250,.45)',  color: '#93c5fd', icon: '📘' };
+                  if (type === 'partial')  return { bg: 'rgba(251,191,36,.18)', border: 'rgba(251,191,36,.55)',  color: '#fcd34d', icon: '⏰' };
                   return { bg: 'rgba(148,163,184,.15)', border: 'rgba(148,163,184,.4)', color: '#cbd5e1', icon: '•' };
                 };
                 // Cell colour, weakest signal to strongest: closed Sunday, then
@@ -1210,9 +1217,14 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                           const s = styleFor(ev.type);
                           const label = ev.type === 'holiday'
                             ? '🎉 Holiday'
-                            : `${s.icon} ${ev.name} ${ev.type === 'vacation' ? 'Vac' : 'Trng'}`;
+                            : ev.type === 'partial'
+                              ? `${s.icon} ${ev.name} ${ev.v.reason === 'Coming in late' ? 'in late' : ev.v.reason === 'Leaving early' ? 'leaves' : 'out'} ${fmtTimeRange(ev.v.timeFrom, ev.v.timeTo)}`
+                              : `${s.icon} ${ev.name} ${ev.type === 'vacation' ? 'Vac' : 'Trng'}`;
+                          const tip = ev.type === 'partial'
+                            ? `${ev.name}: ${ev.v.reason || 'Out'} ${fmtTimeRange(ev.v.timeFrom, ev.v.timeTo)}${ev.v.note ? ` — ${ev.v.note}` : ''}`
+                            : `${ev.name}: ${ev.type}`;
                           return (
-                            <span key={j} title={`${ev.name}: ${ev.type}`} style={{
+                            <span key={j} title={tip} style={{
                               fontSize: 9.5, fontWeight: 700, color: s.color,
                               background: s.bg, border: `1px solid ${s.border}`,
                               borderRadius: 4, padding: '1px 5px', lineHeight: 1.3,
