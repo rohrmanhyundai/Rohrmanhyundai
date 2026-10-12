@@ -205,6 +205,11 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   // Exactly the list on screen (every filter applied), with the filters
   // spelled out at the top so the printout says what it is.
   const [savingPdf, setSavingPdf] = useState(false);
+  // The list draws 300 at a time; "Show 300 more" grows it. A new search starts
+  // back at 300. (Save as .pdf always takes every match, not just what's drawn.)
+  const PAGE = 300;
+  const [showN, setShowN] = useState(PAGE);
+  useEffect(() => { setShowN(PAGE); }, [filtered]);
   async function saveSearchPdf() {
     if (!filtered.length) return;
     setSavingPdf(true);
@@ -713,7 +718,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                   <div className="ds-label">Customer</div><div className="ds-label ds-hide">Previous RO</div><div className="ds-label ds-hide">Advisor</div><div className="ds-label">Date</div><div />
                 </div>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  {filtered.slice(0, 300).map(r => {
+                  {filtered.slice(0, showN).map(r => {
                     const open = openRo === r.ro;
                     return (
                       <div key={r.ro}>
@@ -733,7 +738,17 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                     );
                   })}
                   {!loading && !filtered.length && <div style={{ color: '#64748b', textAlign: 'center', padding: 24, fontSize: 13 }}>{rows.length ? 'Nothing matches those filters.' : (isManager ? 'Upload the Deferred Services PDF under Settings to get started.' : 'No deferred-service report has been uploaded yet.')}</div>}
-                  {filtered.length > 300 && <div style={{ color: '#94a3b8', textAlign: 'center', fontSize: 12, padding: 8 }}>Showing the first 300 — narrow the filters to see the rest.</div>}
+                  {filtered.length > showN && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap', padding: 10 }}>
+                      <span style={{ color: '#94a3b8', fontSize: 12.5 }}>Showing {showN.toLocaleString()} of {filtered.length.toLocaleString()}</span>
+                      <button className="secondary" onClick={() => setShowN(n => n + PAGE)}
+                        style={{ fontSize: 13, fontWeight: 800, color: '#67e8f9', borderColor: 'rgba(103,232,249,.45)', background: 'rgba(103,232,249,.1)' }}>
+                        ⬇ Show {Math.min(PAGE, filtered.length - showN)} more
+                      </button>
+                      <button className="secondary" onClick={() => setShowN(filtered.length)} style={{ fontSize: 12.5 }}>Show all</button>
+                      <span style={{ color: '#64748b', fontSize: 11.5 }}>Save as .pdf always includes all {filtered.length.toLocaleString()}.</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </>
