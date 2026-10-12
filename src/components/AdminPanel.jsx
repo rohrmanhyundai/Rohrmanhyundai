@@ -23,6 +23,7 @@ import { parseAdvisorReportHtml, advisorFieldsFromRow } from '../utils/advisorPe
 import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 import { decryptWithVault, inVault } from '../utils/passwordVault';
 import { isPartial, PARTIAL_REASONS, partialLabel } from '../utils/partialOut';
+import { parseVmpiReport } from '../utils/vmpiReport';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -1468,6 +1469,54 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     }
   }
 
+  // ── VMPI (video multi-point inspection) report upload ─────────────────────
+  // The group's Service Technician Video Report (.csv). Each of our techs'
+  // "Video Utilization Per Ro" % goes in their VMPI box (matched by first
+  // name); techs not on the report are left as they are. Preview, then apply;
+  // Save Changes pushes it live.
+  const [vmpiUpload, setVmpiUpload] = useState(null);   // { stamp, rows: [{ idx, name, matchedName, pct, ros, withVideo, before }], unmatched, missing }
+  const [vmpiErr, setVmpiErr] = useState('');
+  const [vmpiMsg, setVmpiMsg] = useState('');
+  const vmpiInputRef = useRef(null);
+  async function handleVmpiReport(file) {
+    if (!file) return;
+    setVmpiErr(''); setVmpiMsg(''); setVmpiUpload(null);
+    try {
+      const rep = parseVmpiReport(await file.text());
+      const techs = data.technicians || [];
+      const first = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+      const used = new Set();
+      const rows = [];
+      techs.forEach((t, idx) => {
+        const hit = rep.rows.find(r => !used.has(r) && r.first === first(t.name));
+        if (!hit) return;
+        used.add(hit);
+        rows.push({ idx, name: t.name, matchedName: hit.name, pct: hit.pct, ros: hit.ros, withVideo: hit.withVideo, videos: hit.videos, before: t.vmpi });
+      });
+      setVmpiUpload({
+        stamp: rep.stamp, fileName: file.name, rows,
+        unmatched: rep.rows.filter(r => !used.has(r)).map(r => r.name),
+        missing: techs.filter(t => !rows.some(r => r.name === t.name)).map(t => t.name),
+      });
+    } catch (err) {
+      setVmpiErr(err.message || String(err));
+    } finally {
+      if (vmpiInputRef.current) vmpiInputRef.current.value = '';
+    }
+  }
+  function applyVmpiUpload() {
+    if (!vmpiUpload) return;
+    const newData = structuredClone(data);
+    for (const r of vmpiUpload.rows) {
+      const t = newData.technicians[r.idx];
+      if (!t) continue;
+      t.vmpi = r.pct; t.vmpi_ros = r.ros; t.vmpi_with = r.withVideo; t.vmpi_videos = r.videos; t.vmpi_asof = vmpiUpload.stamp;
+    }
+    onDataChange(newData, structuredClone(vacations));
+    setVmpiMsg(`✅ VMPI filled for ${vmpiUpload.rows.length} tech${vmpiUpload.rows.length === 1 ? '' : 's'}${vmpiUpload.stamp ? ` (report ${vmpiUpload.stamp})` : ''}. Click Save Changes to push it live.`);
+    setVmpiUpload(null);
+  }
+
   // Screenshot of the Fixed Ops add-on rank board → $50 Add'l Hrs/RO, $50 Add
   // Rate %, Tickets and Oil-only tickets per advisor, read by OpenAI vision.
   // Same preview-then-apply flow as the other advisor imports.
@@ -2690,6 +2739,42 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           {techUploadErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {techUploadErr}</div>}
           {techUploadMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{techUploadMsg}</div>}
         </div>
+        {/* VMPI report — video multi-point inspection % per tech. */}
+        <div className="upload-card">
+          <div className="upload-title"><span style={{ fontSize: 17 }}>🎥</span><span>Upload VMPI Report (.csv)</span></div>
+          <div className="small" style={{ margin: '0 0 10px' }}>
+            The <strong>Service Technician Video Report</strong> saved as .csv. Each tech's <strong>Video Utilization Per Ro</strong> (ROs with a video
+            attached ÷ RO count) fills their <strong>VMPI %</strong> box — Bob Rohrman Hyundai's techs only. Techs not on the report are left as they are.
+            Review before applying, then <em>Save Changes</em>.
+          </div>
+          <input ref={vmpiInputRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
+          {vmpiErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {vmpiErr}</div>}
+          {vmpiMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{vmpiMsg}</div>}
+          {vmpiUpload && (
+            <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(110,231,249,.06)', border: '1px solid rgba(110,231,249,.3)' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#6ee7f9', marginBottom: 6 }}>VMPI from {vmpiUpload.fileName}{vmpiUpload.stamp ? ` · report ${vmpiUpload.stamp}` : ''}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: '4px 14px', fontSize: 12.5, alignItems: 'baseline' }}>
+                {vmpiUpload.rows.map(r => (
+                  <React.Fragment key={r.name}>
+                    <span style={{ fontWeight: 800, color: '#f1f5f9' }}>{r.name}</span>
+                    <span style={{ fontWeight: 900, color: r.pct >= 0.9 ? '#4ade80' : r.pct >= 0.75 ? '#fbbf24' : '#f87171' }}>{(r.pct * 100).toFixed(1)}%</span>
+                    <span style={{ color: '#94a3b8' }}>{r.withVideo} of {r.ros} ROs</span>
+                    <span style={{ color: '#64748b' }}>{r.before != null && r.before !== '' ? `was ${(Number(r.before) * 100).toFixed(1)}%` : 'new'}</span>
+                  </React.Fragment>
+                ))}
+              </div>
+              {vmpiUpload.missing.length > 0 && <div style={{ fontSize: 12, color: '#fbbf24', marginTop: 8 }}>Not on the report (left as is): {vmpiUpload.missing.join(', ')}</div>}
+              {vmpiUpload.unmatched.length > 0 && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>On the report but not a tech here (skipped): {vmpiUpload.unmatched.join(', ')}</div>}
+              <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                <button onClick={applyVmpiUpload} disabled={!vmpiUpload.rows.length}
+                  style={{ background: 'rgba(52,211,153,.18)', border: '1px solid rgba(52,211,153,.5)', color: '#6ee7b7', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12.5 }}>
+                  ✓ Apply to {vmpiUpload.rows.length} tech{vmpiUpload.rows.length === 1 ? '' : 's'}
+                </button>
+                <button className="secondary" onClick={() => setVmpiUpload(null)} style={{ fontSize: 12.5 }}>Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="title">Technician Daily Hours</div>
         {data.technicians.map((t, idx) => (
           <div className="form-section" key={t.name}>
@@ -2723,6 +2808,19 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
             </div>
             <div className="form-grid" style={{ marginBottom: 8 }}>
               <div className="field"><label>Weekly Goal (hrs)</label><input defaultValue={t.goal ?? ''} onBlur={e => updateField(`technicians.${idx}.goal`, safe(e.target.value, t.goal))} /></div>
+              {/* VMPI % — filled by the VMPI report upload; can be typed too. */}
+              <div className="field">
+                <label title={t.vmpi_asof ? `From the VMPI report ${t.vmpi_asof}${t.vmpi_ros ? ` — ${t.vmpi_with} of ${t.vmpi_ros} ROs with video` : ''}` : 'Video multi-point inspection %'}>
+                  VMPI %{t.vmpi_asof ? <span style={{ fontWeight: 600, color: '#64748b', textTransform: 'none', letterSpacing: 0 }}> · {t.vmpi_with} of {t.vmpi_ros} ROs · {String(t.vmpi_asof).split(' ')[0]}</span> : null}
+                </label>
+                <input key={`vmpi-${t.vmpi ?? ''}`} defaultValue={t.vmpi != null && t.vmpi !== '' ? (Number(t.vmpi) * 100).toFixed(1) : ''} placeholder="—"
+                  onBlur={e => {
+                    const v = e.target.value.trim().replace('%', '');
+                    if (v === '') { if (t.vmpi != null) updateField(`technicians.${idx}.vmpi`, null); return; }
+                    const n = parseFloat(v);
+                    if (Number.isFinite(n) && Math.abs(n / 100 - (Number(t.vmpi) || 0)) > 0.00001) updateField(`technicians.${idx}.vmpi`, Math.round(n * 100) / 10000);
+                  }} />
+              </div>
             </div>
             <div className="form-grid">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (

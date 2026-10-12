@@ -203,6 +203,7 @@ export default function App() {
   const UPLOAD_LAUNCH = {
     advisorPerf:      { admin: 'advisors' },
     techHours:        { admin: 'technicians' },
+    vmpi:             { admin: 'technicians' },
     weekCloseout:     { admin: 'technicians' },
     roUpload:         { page: 'ro-upload' },
     deferred:         { page: 'deferred-service', tab: 'settings' },
