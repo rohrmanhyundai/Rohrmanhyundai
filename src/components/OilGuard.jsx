@@ -80,7 +80,7 @@ export function callBackRows(analysed, from, to, people = {}) {
   return rows.sort((x, y) => x.lastDate.localeCompare(y.lastDate));
 }
 
-async function callBackPdf(rows, from, to, stamp) {
+async function callBackPdf(rows, from, to, stamp, leftOnly = 0) {
   const { default: jsPDF } = await import('jspdf');
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
   const W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight(), M = 36;
@@ -96,7 +96,7 @@ async function callBackPdf(rows, from, to, stamp) {
     pdf.setFont('helvetica', 'bold'); pdf.setFontSize(15); pdf.setTextColor(15, 23, 42);
     pdf.text('Oil Guard — call-back list', M, M + 4);
     pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9.5); pdf.setTextColor(100, 116, 139);
-    pdf.text(`Last visit ${range} · oil changes still left · ${rows.length} customer${rows.length === 1 ? '' : 's'}${stamp ? ` · report as of ${stamp}` : ''}`, M, M + 19);
+    pdf.text(`Last visit ${range} · ${leftOnly ? `${leftOnly} oil change${leftOnly === 1 ? '' : 's'} left` : 'oil changes still left'} · ${rows.length} customer${rows.length === 1 ? '' : 's'}${stamp ? ` · report as of ${stamp}` : ''}`, M, M + 19);
     pdf.text(`Page ${page}`, W - M, M + 4, { align: 'right' });
     y = M + 38;
     pdf.setFillColor(226, 232, 240); pdf.rect(M, y - 11, W - 2 * M, 16, 'F');
@@ -120,7 +120,7 @@ async function callBackPdf(rows, from, to, stamp) {
     pdf.setDrawColor(226, 232, 240); pdf.line(M, y + 5, W - M, y + 5);
     y += 16;
   });
-  pdf.save(`oil-guard-call-back-${from || 'start'}-to-${to || 'today'}.pdf`);
+  pdf.save(`oil-guard-call-back-${from || 'start'}-to-${to || 'today'}${leftOnly ? `-${leftOnly}-left` : ''}.pdf`);
 }
 
 function CallBack({ analysed, stamp, loadDeferredRows }) {
@@ -128,12 +128,13 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
   const [to, setTo] = useState(monthsAgo(3));
   const [people, setPeople] = useState(null);
   const [making, setMaking] = useState(false);
+  const [leftOnly, setLeftOnly] = useState(0);   // 0 = everyone, else exactly this many left
   useEffect(() => {
     let cancelled = false;
     loadDeferredRows().then(d => { if (!cancelled) setPeople(customerIndex(d)); }).catch(() => { if (!cancelled) setPeople({}); });
     return () => { cancelled = true; };
   }, [loadDeferredRows]);
-  const rows = useMemo(() => callBackRows(analysed, from, to, people || {}), [analysed, from, to, people]);
+  const rows = useMemo(() => callBackRows(analysed, from, to, people || {}).filter(r => !leftOnly || r.left === leftOnly), [analysed, from, to, people, leftOnly]);
   const named = rows.filter(r => r.customer || r.phone).length;
   const preset = (a, b) => { setFrom(monthsAgo(a)); setTo(b == null ? isoDay(new Date()) : monthsAgo(b)); };
   const dateIn = { ...inputStyle, fontSize: 14, padding: '7px 10px', letterSpacing: 0, colorScheme: 'dark' };
@@ -150,9 +151,13 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
         <button style={btn('110,231,249', false)} onClick={() => preset(6, 3)}>3–6 mo ago</button>
         <button style={btn('110,231,249', false)} onClick={() => preset(12, 6)}>6–12 mo ago</button>
         <button style={btn('110,231,249', false)} onClick={() => preset(24, 12)}>Over a year</button>
+        <span style={{ fontSize: 12, color: '#64748b', fontWeight: 800, marginLeft: 6 }}>Show:</span>
+        {[[0, 'All'], [2, '2 left'], [1, '1 left']].map(([n, label]) => (
+          <button key={n} style={btn('74,222,128', leftOnly === n)} onClick={() => setLeftOnly(n)}>{label}</button>
+        ))}
         <div style={{ flex: 1 }} />
         <button disabled={!rows.length || making} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 16px' }}
-          onClick={async () => { setMaking(true); try { await callBackPdf(rows, from, to, stamp); } finally { setMaking(false); } }}>
+          onClick={async () => { setMaking(true); try { await callBackPdf(rows, from, to, stamp, leftOnly); } finally { setMaking(false); } }}>
           {making ? '⏳ Making…' : '📄 Create .pdf'}
         </button>
       </div>
@@ -161,7 +166,8 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
       </div>
       {rows.length > 0 && (
         <div style={{ marginTop: 10, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
+          {/* auto layout: the app-wide table rule is fixed-width columns, which cut names and VINs short */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5, tableLayout: 'auto' }}>
             <thead>
               <tr style={{ color: '#64748b', textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.06em' }}>
                 {['Customer', 'Phone', 'Vehicle', 'VIN', 'Last visit', 'Last RO', 'Left'].map(h => <th key={h} style={{ padding: '6px 8px', borderBottom: '1px solid rgba(148,163,184,.2)' }}>{h}</th>)}
@@ -173,7 +179,7 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
                   <td style={{ padding: '7px 8px', fontWeight: 800, color: r.customer ? '#f1f5f9' : '#64748b' }}>{r.customer || '— look up in DMS'}</td>
                   <td style={{ padding: '7px 8px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{r.phone ? <a href={`tel:${r.phone.replace(/\D/g, '')}`} style={{ color: '#7dd3fc' }}>{r.phone}</a> : '—'}</td>
                   <td style={{ padding: '7px 8px', color: '#cbd5e1' }}>{r.vehicle || '—'}</td>
-                  <td style={{ padding: '7px 8px', color: '#94a3b8', fontFamily: 'ui-monospace,monospace', fontSize: 12.5 }}>{r.vin}</td>
+                  <td style={{ padding: '4px 8px' }}><CopyText value={r.vin} mono title="Click to copy the VIN" /></td>
                   <td style={{ padding: '7px 8px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{prettyDate(r.lastDate)}</td>
                   <td style={{ padding: '4px 8px' }}>{r.lastRo ? <CopyRo ro={r.lastRo} /> : '—'}</td>
                   <td style={{ padding: '7px 8px', fontWeight: 1000, color: '#4ade80', fontSize: 16 }}>{r.left}</td>
@@ -199,28 +205,29 @@ function LeftBadge({ left }) {
   );
 }
 
-// Click an RO number to copy it (for pasting into the DMS search).
-function CopyRo({ ro }) {
+// Click an RO number (or a VIN) to copy it, for pasting into the DMS search.
+function CopyText({ value, children, title, width, mono }) {
   const [done, setDone] = useState(false);
   const copy = async () => {
-    try { await navigator.clipboard.writeText(String(ro)); }
+    try { await navigator.clipboard.writeText(String(value)); }
     catch {
       // Older browsers / non-https: fall back to a hidden textarea.
-      const t = document.createElement('textarea'); t.value = String(ro); document.body.appendChild(t); t.select();
+      const t = document.createElement('textarea'); t.value = String(value); document.body.appendChild(t); t.select();
       try { document.execCommand('copy'); } catch {} document.body.removeChild(t);
     }
     setDone(true); setTimeout(() => setDone(false), 1400);
   };
   return (
-    <button type="button" onClick={copy} title="Click to copy the RO number"
-      style={{ width: 110, textAlign: 'left', background: done ? 'rgba(74,222,128,.15)' : 'transparent', border: `1px solid ${done ? 'rgba(74,222,128,.5)' : 'transparent'}`,
-        borderRadius: 7, padding: '2px 6px', margin: '-3px 0', color: done ? '#86efac' : '#94a3b8', fontWeight: 800, fontSize: 'inherit', fontFamily: 'inherit', cursor: 'copy' }}
+    <button type="button" onClick={copy} title={title || 'Click to copy'}
+      style={{ width, textAlign: 'left', whiteSpace: 'nowrap', fontFamily: mono ? 'ui-monospace,monospace' : 'inherit', fontSize: mono ? 12.5 : 'inherit', background: done ? 'rgba(74,222,128,.15)' : 'transparent', border: `1px solid ${done ? 'rgba(74,222,128,.5)' : 'transparent'}`,
+        borderRadius: 7, padding: '2px 6px', margin: '-3px 0', color: done ? '#86efac' : '#94a3b8', fontWeight: 800, cursor: 'copy' }}
       onMouseEnter={e => { if (!done) e.currentTarget.style.borderColor = 'rgba(110,231,249,.45)'; }}
       onMouseLeave={e => { if (!done) e.currentTarget.style.borderColor = 'transparent'; }}>
-      {done ? '✓ Copied' : <>RO {ro} <span style={{ fontSize: 11, opacity: .7 }}>⧉</span></>}
+      {done ? '✓ Copied' : <>{children || value} <span style={{ fontSize: 11, opacity: .7 }}>⧉</span></>}
     </button>
   );
 }
+const CopyRo = ({ ro }) => <CopyText value={ro} width={110} title="Click to copy the RO number">RO {ro}</CopyText>;
 
 function VinResult({ a }) {
   const dots = (pkgNo) => {
@@ -420,7 +427,7 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 40px 40px' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto' }}>
+        <div style={{ maxWidth: tab === 'callback' ? 1400 : 980, margin: '0 auto' }}>
           {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div> : tab === 'callback' ? (
             store ? <CallBack analysed={analysed} stamp={store.reportStamp} loadDeferredRows={loadDeferredRows} />
               : <div style={{ ...card, color: '#fbbf24', fontWeight: 700 }}>No Oil Guard report uploaded yet.</div>
