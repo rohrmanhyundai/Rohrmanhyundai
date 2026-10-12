@@ -499,6 +499,13 @@
       "dateStart": "2026-11-26",
       "dateEnd": "2026-11-27",
       "status": "APPROVED"
+    },
+    {
+      "name": "JERRY",
+      "dates": "Oct 22–23, 2026",
+      "dateStart": "2026-10-22",
+      "dateEnd": "2026-10-23",
+      "status": "APPROVED"
     }
   ]
 }
