@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-13T21:13:52.426Z",
+  "updatedAt": "2026-10-13T21:14:17.193Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -99,6 +99,9 @@
       "live-pay": true,
       "user-data-tracker": true,
       "after-call": true
+    },
+    "MATTHEW": {
+      "live-pay-hub": true
     }
   },
   "idle": {
