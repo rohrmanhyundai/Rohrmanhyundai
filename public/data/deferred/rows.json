@@ -43275,6 +43275,31 @@
       "vehicle": "2017 hyundai Sonata",
       "uploadedAt": "2026-09-28T21:52:01.863Z"
     },
+    "780681": {
+      "rowId": "1715 1715780681",
+      "date": "2026-10-12",
+      "customer": "Shinsung E&G USA INC",
+      "email": "noemail@hmausa.com",
+      "phone": "6154389747",
+      "ro": "780681",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KM8J3CAL5JU746620",
+      "year": "2018",
+      "make": "hyundai",
+      "model": "Tucson",
+      "hours": 5.9,
+      "amount": 3875.53,
+      "codes": [
+        "VVRDFL",
+        "VVTFL",
+        "REC",
+        "VVTCFL",
+        "ALIGN",
+        "VVCFL"
+      ],
+      "vehicle": "2018 hyundai Tucson",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
     "780682": {
       "rowId": "1715 1715780682",
       "date": "2026-09-09",
@@ -44257,6 +44282,31 @@
       "vehicle": "2011 Hyundai Sonata",
       "uploadedAt": "2026-09-28T21:52:01.863Z"
     },
+    "780755": {
+      "rowId": "1715 1715780755",
+      "date": "2026-10-12",
+      "customer": "Dawn Smith",
+      "email": "Na@gmail.com",
+      "phone": "5092207376",
+      "ro": "780755",
+      "advisor": "DAVID RILEY",
+      "vin": "KM8JFDD25RU173939",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Tucson Plug-In Hybrid",
+      "hours": 8.3,
+      "amount": 2517.84,
+      "codes": [
+        "VVCFL",
+        "ENGBAS",
+        "ALIGN",
+        "ENGBAS",
+        "ALIGN",
+        "VVICFL"
+      ],
+      "vehicle": "2024 hyundai Tucson Plug-In Hybrid",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
     "780758": {
       "rowId": "1715 1715780758",
       "date": "2026-09-11",
@@ -44719,12 +44769,12 @@
       "hours": 2.9,
       "amount": 1113.34,
       "codes": [
-        "ALIGN",
+        "TIRE4",
         "VBFL",
-        "TIRE4"
+        "ALIGN"
       ],
       "vehicle": "2023 hyundai IONIQ 5",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "780805": {
       "rowId": "1715 1715780805",
@@ -46341,12 +46391,12 @@
       "hours": 5.3,
       "amount": 2076.41,
       "codes": [
-        "REC",
         "VVIFL",
-        "ALIGN"
+        "ALIGN",
+        "REC"
       ],
       "vehicle": "2026 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "780926": {
       "rowId": "1715 1715780926",
@@ -47927,13 +47977,13 @@
       "hours": 1,
       "amount": 664,
       "codes": [
+        "INTWIPERS",
         "INTRWIPER",
-        "INTCABIN",
         "REC",
-        "INTWIPERS"
+        "INTCABIN"
       ],
       "vehicle": "2017 Kia Sorento",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781071": {
       "rowId": "1715 1715781071",
@@ -47950,14 +48000,14 @@
       "hours": 4,
       "amount": 2008.64,
       "codes": [
-        "INTRWIPER",
+        "REC",
+        "REC",
+        "INTWIPERS",
         "INTCABIN",
-        "REC",
-        "REC",
-        "INTWIPERS"
+        "INTRWIPER"
       ],
       "vehicle": "2020 Ford Explorer",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781073": {
       "rowId": "1715 1715781073",
@@ -48349,7 +48399,7 @@
         "TIRE1"
       ],
       "vehicle": "2021 Hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781108": {
       "rowId": "1715 1715781108",
@@ -48655,14 +48705,14 @@
       "hours": 5.6,
       "amount": 1753.43,
       "codes": [
+        "REC",
+        "REC",
+        "REC",
         "INTWIPERS",
-        "REC",
-        "INTBELT",
-        "REC",
-        "REC"
+        "INTBELT"
       ],
       "vehicle": "2013 Ford Focus",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781128": {
       "rowId": "1715 1715781128",
@@ -48796,6 +48846,33 @@
       "vehicle": "2014 hyundai Santa Fe Sport",
       "uploadedAt": "2026-09-28T21:52:01.863Z"
     },
+    "781143": {
+      "rowId": "1715 1715781143",
+      "date": "2026-10-12",
+      "customer": "Daniel Sternisha",
+      "email": "feanor31@yahoo.com",
+      "phone": "2198691355",
+      "ro": "781143",
+      "advisor": "JORDAN TROXEL",
+      "vin": "5NMZT3LB9JH058185",
+      "year": "2018",
+      "make": "hyundai",
+      "model": "Santa Fe Sport",
+      "hours": 9.2,
+      "amount": 1898.52,
+      "codes": [
+        "REC",
+        "ALIGN",
+        "TIRE4",
+        "CABIN",
+        "VVACLEAN",
+        "VVIFL",
+        "DECARB",
+        "AIRFILTER"
+      ],
+      "vehicle": "2018 hyundai Santa Fe Sport",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
     "781154": {
       "rowId": "1715 1715781154",
       "date": "2026-10-05",
@@ -48815,7 +48892,7 @@
         "REC"
       ],
       "vehicle": "2016 Honda Pilot",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781167": {
       "rowId": "1715 1715781167",
@@ -48835,7 +48912,7 @@
         "CABIN"
       ],
       "vehicle": "2023 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781181": {
       "rowId": "1715 1715781181",
@@ -48852,12 +48929,12 @@
       "hours": 1.7,
       "amount": 363.98,
       "codes": [
-        "VVCFL",
         "FLAT",
-        "CABIN"
+        "CABIN",
+        "VVCFL"
       ],
       "vehicle": "2018 hyundai Santa Fe Sport",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781190": {
       "rowId": "1715 1715781190",
@@ -48874,13 +48951,13 @@
       "hours": 4,
       "amount": 939.72,
       "codes": [
-        "VVIFL",
-        "ALIGN",
         "VBFL",
+        "ALIGN",
+        "VVIFL",
         "REC"
       ],
       "vehicle": "2012 hyundai Accent",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781194": {
       "rowId": "1715 1715781194",
@@ -48897,15 +48974,15 @@
       "hours": 5.9,
       "amount": 1528.2,
       "codes": [
-        "TUNEUP",
         "VVIFL",
-        "VVBFL",
-        "BELT",
         "ALIGN",
-        "VVCFL"
+        "VVBFL",
+        "VVCFL",
+        "TUNEUP",
+        "BELT"
       ],
       "vehicle": "2017 Hyundai Sonata Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781197": {
       "rowId": "1715 1715781197",
@@ -48926,7 +49003,7 @@
         "INTBELT"
       ],
       "vehicle": "2019 Kia Optima",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781198": {
       "rowId": "1715 1715781198",
@@ -48943,16 +49020,16 @@
       "hours": 14.2,
       "amount": 4066.63,
       "codes": [
-        "ROTATE",
         "INTRWIPER",
-        "REC",
         "INTWIPERS",
-        "TIRE2",
         "REC",
-        "REC"
+        "REC",
+        "REC",
+        "TIRE2",
+        "ROTATE"
       ],
       "vehicle": "2016 Buick Encore",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781215": {
       "rowId": "1715 1715781215",
@@ -48969,14 +49046,14 @@
       "hours": 7.4,
       "amount": 2304.83,
       "codes": [
-        "ENGBAS",
-        "ENGBAS",
         "ALIGN",
+        "ENGBAS",
+        "VVTFL",
         "ALIGN",
-        "VVTFL"
+        "ENGBAS"
       ],
       "vehicle": "2017 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781218": {
       "rowId": "1715 1715781218",
@@ -48994,15 +49071,15 @@
       "amount": 2462.15,
       "codes": [
         "REC",
-        "CABIN",
-        "VVACLEAN",
-        "AIRFILTER",
-        "TIRE1",
         "REC",
-        "REC"
+        "CABIN",
+        "REC",
+        "VVACLEAN",
+        "TIRE1",
+        "AIRFILTER"
       ],
       "vehicle": "2021 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781220": {
       "rowId": "1715 1715781220",
@@ -49022,7 +49099,7 @@
         "AIRFILTER"
       ],
       "vehicle": "2017 hyundai Santa Fe Sport",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781228": {
       "rowId": "1715 1715781228",
@@ -49040,11 +49117,11 @@
       "amount": 430,
       "codes": [
         "INTBELT",
-        "INTWIPERS",
-        "INTRWIPER"
+        "INTRWIPER",
+        "INTWIPERS"
       ],
       "vehicle": "2016 Mazda CX-5",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781229": {
       "rowId": "1715 1715781229",
@@ -49066,6 +49143,27 @@
       "vehicle": "2018 Hyundai Santa Fe",
       "uploadedAt": "2026-10-06T11:48:32.179Z"
     },
+    "781235": {
+      "rowId": "1715 1715781235",
+      "date": "2026-10-12",
+      "customer": "GREG SHOWALTER",
+      "email": "na@na.na",
+      "phone": "3165187598",
+      "ro": "781235",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHC75LD7NU282900",
+      "year": "2022",
+      "make": "Hyundai",
+      "model": "Ioniq Plug-In Hybrid",
+      "hours": 1.7,
+      "amount": 429.98,
+      "codes": [
+        "VVIFL",
+        "VVCFL"
+      ],
+      "vehicle": "2022 Hyundai Ioniq Plug-In Hybrid",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
     "781238": {
       "rowId": "1715 1715781238",
       "date": "2026-10-01",
@@ -49081,11 +49179,11 @@
       "hours": 1.2,
       "amount": 273.48,
       "codes": [
-        "VVCFL",
-        "CABIN"
+        "CABIN",
+        "VVCFL"
       ],
       "vehicle": "2013 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781239": {
       "rowId": "1715 1715781239",
@@ -49105,7 +49203,7 @@
         "BELT"
       ],
       "vehicle": "2019 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781240": {
       "rowId": "1715 1715781240",
@@ -49123,11 +49221,11 @@
       "amount": 499.93,
       "codes": [
         "VIFL",
-        "ALIGN",
-        "VBFL"
+        "VBFL",
+        "ALIGN"
       ],
       "vehicle": "2024 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781241": {
       "rowId": "1715 1715781241",
@@ -49148,7 +49246,7 @@
         "VVIFL"
       ],
       "vehicle": "2025 hyundai Sonata Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781242": {
       "rowId": "1715 1715781242",
@@ -49168,7 +49266,7 @@
         "VVCFL"
       ],
       "vehicle": "2017 hyundai Santa Fe Sport",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781243": {
       "rowId": "1715 1715781243",
@@ -49190,7 +49288,7 @@
         "PADRESURF"
       ],
       "vehicle": "2020 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781244": {
       "rowId": "1715 1715781244",
@@ -49207,14 +49305,14 @@
       "hours": 5.2,
       "amount": 1172.86,
       "codes": [
-        "VVBFL",
-        "ROTATE",
         "VVIFL",
+        "VVBFL",
+        "PADRESURF",
         "REC",
-        "PADRESURF"
+        "ROTATE"
       ],
       "vehicle": "2015 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781245": {
       "rowId": "1715 1715781245",
@@ -49231,13 +49329,13 @@
       "hours": 2,
       "amount": 559.46,
       "codes": [
-        "VVBFL",
         "AIRFILTER",
+        "VVIFL",
         "VVACLEAN",
-        "VVIFL"
+        "VVBFL"
       ],
       "vehicle": "2024 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781247": {
       "rowId": "1715 1715781247",
@@ -49254,13 +49352,13 @@
       "hours": 2.8,
       "amount": 632.91,
       "codes": [
+        "VVBFL",
         "VACLEAN",
         "VVIFL",
-        "ALIGN",
-        "VVBFL"
+        "ALIGN"
       ],
       "vehicle": "2026 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781248": {
       "rowId": "1715 1715781248",
@@ -49277,17 +49375,17 @@
       "hours": 8.2,
       "amount": 2282.73,
       "codes": [
-        "VVIFL",
+        "VVCFL",
         "LOF",
+        "VVBFL",
+        "BELT",
+        "VVIFL",
         "REC",
         "ALIGN",
-        "TUNEUP",
-        "VVBFL",
-        "VVCFL",
-        "BELT"
+        "TUNEUP"
       ],
       "vehicle": "2014 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781249": {
       "rowId": "1715 1715781249",
@@ -49304,15 +49402,15 @@
       "hours": 5.8,
       "amount": 1113.92,
       "codes": [
+        "ALIGN",
         "VVACLEAN",
+        "RPADRESURF",
         "VVIFL",
         "TIRE4",
-        "ALIGN",
-        "VBFL",
-        "RPADRESURF"
+        "VBFL"
       ],
       "vehicle": "2024 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781250": {
       "rowId": "1715 1715781250",
@@ -49329,15 +49427,15 @@
       "hours": 3.8,
       "amount": 1182.28,
       "codes": [
-        "TUNEUP",
-        "CABIN",
         "BELT",
-        "VVACLEAN",
+        "CABIN",
         "VVIFL",
-        "VVCFL"
+        "VVACLEAN",
+        "VVCFL",
+        "TUNEUP"
       ],
       "vehicle": "2012 hyundai Accent",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781252": {
       "rowId": "1715 1715781252",
@@ -49358,7 +49456,7 @@
         "ALIGN"
       ],
       "vehicle": "2025 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781253": {
       "rowId": "1715 1715781253",
@@ -49376,12 +49474,12 @@
       "amount": 629.9,
       "codes": [
         "ALIGN",
+        "VVBFL",
         "VVIFL",
-        "VVACLEAN",
-        "VVBFL"
+        "VVACLEAN"
       ],
       "vehicle": "2023 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781256": {
       "rowId": "1715 1715781256",
@@ -49398,15 +49496,15 @@
       "hours": 4.5,
       "amount": 1106.91,
       "codes": [
-        "AIRFILTER",
-        "VVIFL",
         "REC",
-        "VVBFL",
         "ROTATE",
+        "VVIFL",
+        "VVBFL",
+        "AIRFILTER",
         "VACLEAN"
       ],
       "vehicle": "2018 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781257": {
       "rowId": "1715 1715781257",
@@ -49424,14 +49522,14 @@
       "amount": 965.89,
       "codes": [
         "VIFL",
-        "VVBFL",
-        "CABIN",
-        "ALIGN",
+        "VVCFL",
         "TIRE4",
-        "VVCFL"
+        "ALIGN",
+        "VVBFL",
+        "CABIN"
       ],
       "vehicle": "2023 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781261": {
       "rowId": "1715 1715781261",
@@ -49448,13 +49546,13 @@
       "hours": 1.7,
       "amount": 426.9,
       "codes": [
-        "ALIGN",
+        "AIRFILTER",
         "VVACLEAN",
-        "CABIN",
-        "AIRFILTER"
+        "ALIGN",
+        "CABIN"
       ],
       "vehicle": "2025 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781263": {
       "rowId": "1715 1715781263",
@@ -49471,12 +49569,12 @@
       "hours": 2,
       "amount": 426.92,
       "codes": [
+        "VVACLEAN",
         "ALIGN",
-        "VVBFL",
-        "VVACLEAN"
+        "VVBFL"
       ],
       "vehicle": "2022 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781266": {
       "rowId": "1715 1715781266",
@@ -49497,7 +49595,7 @@
         "VVIFL"
       ],
       "vehicle": "2023 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781269": {
       "rowId": "1715 1715781269",
@@ -49514,13 +49612,13 @@
       "hours": 2.7,
       "amount": 1065.56,
       "codes": [
-        "RWIPER",
+        "INTWIPERS",
         "INTBAT",
         "REC",
-        "INTWIPERS"
+        "RWIPER"
       ],
       "vehicle": "2021 Kia Seltos",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781273": {
       "rowId": "1715 1715781273",
@@ -49538,11 +49636,11 @@
       "amount": 554.38,
       "codes": [
         "ALIGN",
-        "VVCFL",
-        "VIFL"
+        "VIFL",
+        "VVCFL"
       ],
       "vehicle": "2022 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781274": {
       "rowId": "1715 1715781274",
@@ -49559,12 +49657,12 @@
       "hours": 2.1,
       "amount": 479.91,
       "codes": [
-        "ALIGN",
+        "VVIFL",
         "CABIN",
-        "VVIFL"
+        "ALIGN"
       ],
       "vehicle": "2024 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781276": {
       "rowId": "1715 1715781276",
@@ -49584,7 +49682,7 @@
         "CABIN"
       ],
       "vehicle": "2021 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781277": {
       "rowId": "1715 1715781277",
@@ -49601,12 +49699,12 @@
       "hours": 2.1,
       "amount": 456.92,
       "codes": [
-        "VVIFL",
+        "ALIGN",
         "VVACLEAN",
-        "ALIGN"
+        "VVIFL"
       ],
       "vehicle": "2024 genesis GV70",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781279": {
       "rowId": "1715 1715781279",
@@ -49623,17 +49721,17 @@
       "hours": 6.5,
       "amount": 1797.98,
       "codes": [
-        "CABIN",
+        "BELT",
         "VVBFL",
         "ROTATE",
         "VVCFL",
-        "BELT",
+        "CABIN",
         "TUNEUP",
-        "ALIGN",
-        "VVIFL"
+        "VVIFL",
+        "ALIGN"
       ],
       "vehicle": "2017 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781280": {
       "rowId": "1715 1715781280",
@@ -49650,13 +49748,13 @@
       "hours": 3,
       "amount": 642.92,
       "codes": [
-        "ALIGN",
         "VVCFL",
-        "CABIN",
-        "VVIFL"
+        "VVIFL",
+        "ALIGN",
+        "CABIN"
       ],
       "vehicle": "2025 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781282": {
       "rowId": "1715 1715781282",
@@ -49676,7 +49774,7 @@
         "VVACLEAN"
       ],
       "vehicle": "2026 hyundai Santa Fe Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781283": {
       "rowId": "1715 1715781283",
@@ -49693,17 +49791,17 @@
       "hours": 5.6,
       "amount": 1435.36,
       "codes": [
-        "TUNEUP",
-        "ROTATE",
-        "BELT",
-        "VVACLEAN",
+        "VVCFL",
         "ALIGN",
+        "ROTATE",
+        "VVACLEAN",
         "VVBFL",
-        "VVIFL",
-        "VVCFL"
+        "TUNEUP",
+        "BELT",
+        "VVIFL"
       ],
       "vehicle": "2016 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781284": {
       "rowId": "1715 1715781284",
@@ -49720,12 +49818,12 @@
       "hours": 1.4,
       "amount": 619.91,
       "codes": [
-        "VBCLEAN",
+        "REC",
         "VVBFL",
-        "REC"
+        "VBCLEAN"
       ],
       "vehicle": "2022 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781287": {
       "rowId": "1715 1715781287",
@@ -49748,7 +49846,7 @@
         "VVBFL"
       ],
       "vehicle": "2020 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781288": {
       "rowId": "1715 1715781288",
@@ -49765,12 +49863,12 @@
       "hours": 2.2,
       "amount": 384.89,
       "codes": [
-        "VVIFL",
+        "ALIGN",
         "ROTATE",
-        "ALIGN"
+        "VVIFL"
       ],
       "vehicle": "2026 hyundai Sonata Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781289": {
       "rowId": "1715 1715781289",
@@ -49813,7 +49911,7 @@
         "ALIGN"
       ],
       "vehicle": "2025 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781291": {
       "rowId": "1715 1715781291",
@@ -49834,7 +49932,7 @@
         "ALIGN"
       ],
       "vehicle": "2024 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781293": {
       "rowId": "1715 1715781293",
@@ -49855,7 +49953,7 @@
         "ALIGN"
       ],
       "vehicle": "2026 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781294": {
       "rowId": "1715 1715781294",
@@ -49872,13 +49970,13 @@
       "hours": 2.9,
       "amount": 554.88,
       "codes": [
+        "VBFL",
         "ALIGN",
         "VVIFL",
-        "VBFL",
         "ROTATE"
       ],
       "vehicle": "2024 Toyota Crown",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781296": {
       "rowId": "1715 1715781296",
@@ -49895,17 +49993,17 @@
       "hours": 5.6,
       "amount": 1644.47,
       "codes": [
-        "ROTATE",
-        "VVIFL",
         "ALIGN",
-        "TUNEUP",
+        "BELT",
+        "VVIFL",
         "VVACLEAN",
+        "ROTATE",
+        "TUNEUP",
         "VVCFL",
-        "VVBFL",
-        "BELT"
+        "VVBFL"
       ],
       "vehicle": "2018 hyundai Santa Fe Sport",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781297": {
       "rowId": "1715 1715781297",
@@ -49942,14 +50040,14 @@
       "hours": 3.5,
       "amount": 607.87,
       "codes": [
-        "ROTATE",
         "VIFL",
+        "ROTATE",
+        "TIRE2",
         "ALIGN",
-        "VVBFL",
-        "TIRE2"
+        "VVBFL"
       ],
       "vehicle": "2022 hyundai Tucson Plug-In Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781300": {
       "rowId": "1715 1715781300",
@@ -49966,15 +50064,15 @@
       "hours": 7,
       "amount": 1462.7,
       "codes": [
+        "TIRE4",
+        "VVIFL",
+        "VVBFL",
         "RPADRESURF",
         "ALIGN",
-        "VVIFL",
-        "TIRE4",
-        "TUNEUP",
-        "VVBFL"
+        "TUNEUP"
       ],
       "vehicle": "2016 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781301": {
       "rowId": "1715 1715781301",
@@ -49992,14 +50090,14 @@
       "amount": 497.86,
       "codes": [
         "FLAT",
-        "CABIN",
-        "ALIGN",
-        "AIRFILTER",
+        "VVACLEAN",
         "ROTATE",
-        "VVACLEAN"
+        "ALIGN",
+        "CABIN",
+        "AIRFILTER"
       ],
       "vehicle": "2017 hyundai Santa Fe Sport",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781303": {
       "rowId": "1715 1715781303",
@@ -50018,12 +50116,12 @@
       "codes": [
         "ALIGN",
         "ROTATE",
+        "VVBFL",
         "VVIFL",
-        "TIRE4",
-        "VVBFL"
+        "TIRE4"
       ],
       "vehicle": "2022 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781304": {
       "rowId": "1715 1715781304",
@@ -50062,13 +50160,13 @@
       "hours": 1.8,
       "amount": 444.9,
       "codes": [
-        "AIRFILTER",
-        "VVACLEAN",
+        "VIFL",
         "CABIN",
-        "VIFL"
+        "VVACLEAN",
+        "AIRFILTER"
       ],
       "vehicle": "2021 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781309": {
       "rowId": "1715 1715781309",
@@ -50107,14 +50205,14 @@
       "codes": [
         "ROTATE",
         "VVCFL",
+        "VVTFL",
         "VRDFL",
-        "VIFL",
         "VVTCFL",
-        "TUNEUPV6",
-        "VVTFL"
+        "VIFL",
+        "TUNEUPV6"
       ],
       "vehicle": "2022 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781311": {
       "rowId": "1715 1715781311",
@@ -50131,20 +50229,20 @@
       "hours": 11.3,
       "amount": 3168.3,
       "codes": [
-        "VVIFL",
-        "AIRFILTER",
         "VVTCFL",
-        "TIRE3",
-        "VVTFL",
         "TIRE1",
+        "VVRDFL",
         "TUNEUPV6",
-        "ALIGN",
+        "VVTFL",
         "VVCFL",
+        "AIRFILTER",
         "RPADRESURF",
-        "VVRDFL"
+        "TIRE3",
+        "ALIGN",
+        "VVIFL"
       ],
       "vehicle": "2022 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781312": {
       "rowId": "1715 1715781312",
@@ -50161,11 +50259,11 @@
       "hours": 2,
       "amount": 445.48,
       "codes": [
-        "AIRFILTER",
-        "PADRESURF"
+        "PADRESURF",
+        "AIRFILTER"
       ],
       "vehicle": "2022 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781314": {
       "rowId": "1715 1715781314",
@@ -50182,18 +50280,18 @@
       "hours": 10.1,
       "amount": 2685.57,
       "codes": [
-        "VVCFL",
-        "TIRE4",
-        "VVBFL",
-        "ALIGN",
-        "TUNEUP",
+        "BELT",
+        "PADROTOR",
         "VIFL",
         "RPADROTOR",
-        "BELT",
-        "PADROTOR"
+        "VVBFL",
+        "VVCFL",
+        "TUNEUP",
+        "ALIGN",
+        "TIRE4"
       ],
       "vehicle": "2019 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781315": {
       "rowId": "1715 1715781315",
@@ -50213,7 +50311,7 @@
         "VVIFL"
       ],
       "vehicle": "2025 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781317": {
       "rowId": "1715 1715781317",
@@ -50230,13 +50328,13 @@
       "hours": 3.4,
       "amount": 752.91,
       "codes": [
-        "VVIFL",
         "VVBFL",
-        "VVCFL",
-        "ALIGN"
+        "VVIFL",
+        "ALIGN",
+        "VVCFL"
       ],
       "vehicle": "2022 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781325": {
       "rowId": "1715 1715781325",
@@ -50255,11 +50353,11 @@
       "codes": [
         "ROTATE",
         "VVIFL",
-        "ALIGN",
-        "VVACLEAN"
+        "VVACLEAN",
+        "ALIGN"
       ],
       "vehicle": "2022 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781326": {
       "rowId": "1715 1715781326",
@@ -50276,12 +50374,12 @@
       "hours": 2.2,
       "amount": 384.89,
       "codes": [
+        "ALIGN",
         "VVIFL",
-        "ROTATE",
-        "ALIGN"
+        "ROTATE"
       ],
       "vehicle": "2026 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781328": {
       "rowId": "1715 1715781328",
@@ -50303,7 +50401,7 @@
         "VVIFL"
       ],
       "vehicle": "2025 hyundai Sonata Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781329": {
       "rowId": "1715 1715781329",
@@ -50320,14 +50418,14 @@
       "hours": 2.5,
       "amount": 587.9,
       "codes": [
+        "AIRFILTER",
         "ALIGN",
-        "VVIFL",
-        "CABIN",
         "VVACLEAN",
-        "AIRFILTER"
+        "VVIFL",
+        "CABIN"
       ],
       "vehicle": "2025 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781330": {
       "rowId": "1715 1715781330",
@@ -50347,7 +50445,7 @@
         "VVBFL"
       ],
       "vehicle": "2019 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781331": {
       "rowId": "1715 1715781331",
@@ -50364,15 +50462,15 @@
       "hours": 5.3,
       "amount": 1317.94,
       "codes": [
-        "VVIFL",
-        "ALIGN",
-        "VVBFL",
         "VCFL",
         "VVACLEAN",
-        "TUNEUP"
+        "VVBFL",
+        "ALIGN",
+        "TUNEUP",
+        "VVIFL"
       ],
       "vehicle": "2013 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781332": {
       "rowId": "1715 1715781332",
@@ -50390,12 +50488,12 @@
       "amount": 1342.85,
       "codes": [
         "VVIFL",
-        "ROTATE",
+        "VVBFL",
         "TUNEUPV6",
-        "VVBFL"
+        "ROTATE"
       ],
       "vehicle": "2022 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781335": {
       "rowId": "1715 1715781335",
@@ -50412,19 +50510,19 @@
       "hours": 8.7,
       "amount": 1998.8,
       "codes": [
+        "VVIFL",
+        "RPADRESURF",
+        "VVACLEAN",
+        "REC",
+        "VVCFL",
+        "ROTATE",
+        "ALIGN",
         "VRDFL",
         "VBFL",
-        "ALIGN",
-        "ROTATE",
-        "PADRESURF",
-        "VVCFL",
-        "VVIFL",
-        "VVACLEAN",
-        "RPADRESURF",
-        "REC"
+        "PADRESURF"
       ],
       "vehicle": "2024 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781337": {
       "rowId": "1715 1715781337",
@@ -50441,14 +50539,14 @@
       "hours": 4.4,
       "amount": 938.9,
       "codes": [
-        "VVCFL",
         "VVBFL",
         "ALIGN",
-        "VVIFL",
-        "VACLEAN"
+        "VACLEAN",
+        "VVCFL",
+        "VVIFL"
       ],
       "vehicle": "2021 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781338": {
       "rowId": "1715 1715781338",
@@ -50466,11 +50564,11 @@
       "amount": 7195.5,
       "codes": [
         "REC",
-        "VTFL",
-        "REC"
+        "REC",
+        "VTFL"
       ],
       "vehicle": "2011 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781341": {
       "rowId": "1715 1715781341",
@@ -50487,14 +50585,14 @@
       "hours": 3.7,
       "amount": 1213.6,
       "codes": [
+        "BELT",
+        "CABIN",
         "AIRFILTER",
         "VVIFL",
-        "TUNEUP",
-        "CABIN",
-        "BELT"
+        "TUNEUP"
       ],
       "vehicle": "2019 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781343": {
       "rowId": "1715 1715781343",
@@ -50511,17 +50609,17 @@
       "hours": 4.7,
       "amount": 1050.87,
       "codes": [
+        "VVBFL",
+        "VVACLEAN",
+        "VVCFL",
+        "ALIGN",
+        "VVIFL",
         "CABIN",
         "TIRE2",
-        "AIRFILTER",
-        "VVIFL",
-        "VVBFL",
-        "ALIGN",
-        "VVACLEAN",
-        "VVCFL"
+        "AIRFILTER"
       ],
       "vehicle": "2023 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781344": {
       "rowId": "1715 1715781344",
@@ -50538,13 +50636,13 @@
       "hours": 3.6,
       "amount": 1256.6,
       "codes": [
-        "VVACLEAN",
-        "BELT",
         "TUNEUP",
-        "VVIFL"
+        "VVIFL",
+        "BELT",
+        "VVACLEAN"
       ],
       "vehicle": "2019 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781345": {
       "rowId": "1715 1715781345",
@@ -50565,7 +50663,7 @@
         "REC"
       ],
       "vehicle": "2026 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781346": {
       "rowId": "1715 1715781346",
@@ -50583,14 +50681,14 @@
       "amount": 783.9,
       "codes": [
         "ALIGN",
+        "CABIN",
         "VVIFL",
-        "TIRE4",
-        "AIRFILTER",
         "VVBFL",
-        "CABIN"
+        "AIRFILTER",
+        "TIRE4"
       ],
       "vehicle": "2024 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781347": {
       "rowId": "1715 1715781347",
@@ -50607,15 +50705,15 @@
       "hours": 6.1,
       "amount": 1510.85,
       "codes": [
-        "VVBFL",
-        "TUNEUP",
+        "RPADRESURF",
+        "ALIGN",
         "VVACLEAN",
         "VIFL",
-        "ALIGN",
-        "RPADRESURF"
+        "TUNEUP",
+        "VVBFL"
       ],
       "vehicle": "2020 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781348": {
       "rowId": "1715 1715781348",
@@ -50639,7 +50737,7 @@
         "VVBFL"
       ],
       "vehicle": "2024 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781349": {
       "rowId": "1715 1715781349",
@@ -50656,16 +50754,16 @@
       "hours": 6.1,
       "amount": 1308.19,
       "codes": [
-        "ROTATE",
         "ALIGN",
-        "RPADRESURF",
+        "VVIFL",
         "VVBFL",
         "VVCFL",
-        "VVIFL",
+        "ROTATE",
+        "RPADRESURF",
         "CABIN"
       ],
       "vehicle": "2022 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781350": {
       "rowId": "1715 1715781350",
@@ -50682,11 +50780,11 @@
       "hours": 1.8,
       "amount": 339.94,
       "codes": [
-        "VVIFL",
-        "ALIGN"
+        "ALIGN",
+        "VVIFL"
       ],
       "vehicle": "2024 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781351": {
       "rowId": "1715 1715781351",
@@ -50704,13 +50802,13 @@
       "amount": 1133.87,
       "codes": [
         "ALIGN",
-        "VVIFL",
         "VVCFL",
         "VVBFL",
-        "TUNEUP"
+        "TUNEUP",
+        "VVIFL"
       ],
       "vehicle": "2022 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781353": {
       "rowId": "1715 1715781353",
@@ -50730,7 +50828,7 @@
         "TUNEUP"
       ],
       "vehicle": "2020 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781354": {
       "rowId": "1715 1715781354",
@@ -50747,14 +50845,14 @@
       "hours": 4.7,
       "amount": 990.95,
       "codes": [
-        "RPADRESURF",
-        "PADRESURF",
         "CABIN",
         "CABINAFTER",
+        "RPADRESURF",
+        "PADRESURF",
         "VBFL"
       ],
       "vehicle": "2023 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781355": {
       "rowId": "1715 1715781355",
@@ -50774,7 +50872,7 @@
         "INTALIGN"
       ],
       "vehicle": "2024 Hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781356": {
       "rowId": "1715 1715781356",
@@ -50791,12 +50889,12 @@
       "hours": 1.7,
       "amount": 430,
       "codes": [
-        "INTBELT",
         "INTWIPERS",
-        "INTRWIPER"
+        "INTRWIPER",
+        "INTBELT"
       ],
       "vehicle": "2017 Kia Sorento",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781357": {
       "rowId": "1715 1715781357",
@@ -50813,11 +50911,11 @@
       "hours": 0.2,
       "amount": 105,
       "codes": [
-        "INTWIPERS",
-        "INTRWIPER"
+        "INTRWIPER",
+        "INTWIPERS"
       ],
       "vehicle": "2016 Nissan Rogue",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781359": {
       "rowId": "1715 1715781359",
@@ -50837,7 +50935,7 @@
         "VBFL"
       ],
       "vehicle": "2017 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781362": {
       "rowId": "1715 1715781362",
@@ -50854,14 +50952,14 @@
       "hours": 5,
       "amount": 1262.34,
       "codes": [
-        "BELT",
-        "VVACLEAN",
         "VBFL",
+        "VVACLEAN",
         "VVIFL",
-        "REC"
+        "REC",
+        "BELT"
       ],
       "vehicle": "2018 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781363": {
       "rowId": "1715 1715781363",
@@ -50878,11 +50976,11 @@
       "hours": 1.5,
       "amount": 389.98,
       "codes": [
-        "VVIFL",
-        "VVBFL"
+        "VVBFL",
+        "VVIFL"
       ],
       "vehicle": "2024 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781364": {
       "rowId": "1715 1715781364",
@@ -50904,7 +51002,7 @@
         "ROTATE"
       ],
       "vehicle": "2024 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781365": {
       "rowId": "1715 1715781365",
@@ -50921,18 +51019,18 @@
       "hours": 8,
       "amount": 2742.49,
       "codes": [
-        "ALIGN",
-        "VIFL",
-        "REC",
         "VVBFL",
-        "CABIN",
-        "VVCFL",
-        "REC",
+        "VIFL",
         "TUNEUP",
-        "BELT"
+        "REC",
+        "ALIGN",
+        "VVCFL",
+        "CABIN",
+        "BELT",
+        "REC"
       ],
       "vehicle": "2015 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781368": {
       "rowId": "1715 1715781368",
@@ -50953,7 +51051,7 @@
         "ALIGN"
       ],
       "vehicle": "2026 hyundai IONIQ 9",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781369": {
       "rowId": "1715 1715781369",
@@ -50974,7 +51072,7 @@
         "VVBFL"
       ],
       "vehicle": "2025 hyundai Santa Cruz",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781370": {
       "rowId": "1715 1715781370",
@@ -50992,14 +51090,14 @@
       "amount": 1092.82,
       "codes": [
         "TUNEUP",
-        "ROTATE",
-        "VVBFL",
-        "ALIGN",
         "VVIFL",
-        "VACLEAN"
+        "VACLEAN",
+        "ALIGN",
+        "VVBFL",
+        "ROTATE"
       ],
       "vehicle": "2023 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781372": {
       "rowId": "1715 1715781372",
@@ -51017,14 +51115,14 @@
       "amount": 1333.8,
       "codes": [
         "VVIFL",
-        "BELT",
+        "TUNEUP",
         "VVACLEAN",
         "ALIGN",
-        "TUNEUP",
+        "BELT",
         "VVBFL"
       ],
       "vehicle": "2019 Honda CR-V",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781373": {
       "rowId": "1715 1715781373",
@@ -51041,17 +51139,17 @@
       "hours": 8.5,
       "amount": 2054.63,
       "codes": [
-        "BELT",
-        "VVBFL",
-        "ALIGN",
-        "VVCFL",
-        "PADRESURF",
-        "RPADRESURF",
         "TUNEUP",
-        "VVIFL"
+        "PADRESURF",
+        "BELT",
+        "VVCFL",
+        "VVIFL",
+        "ALIGN",
+        "VVBFL",
+        "RPADRESURF"
       ],
       "vehicle": "2011 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781374": {
       "rowId": "1715 1715781374",
@@ -51071,7 +51169,7 @@
         "ALIGN"
       ],
       "vehicle": "2026 hyundai Santa Fe Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781375": {
       "rowId": "1715 1715781375",
@@ -51088,14 +51186,14 @@
       "hours": 4.7,
       "amount": 1094.9,
       "codes": [
+        "VVBFL",
         "VVACLEAN",
-        "VVCFL",
-        "ALIGN",
         "PADRESURF",
-        "VVBFL"
+        "ALIGN",
+        "VVCFL"
       ],
       "vehicle": "2021 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781376": {
       "rowId": "1715 1715781376",
@@ -51112,13 +51210,13 @@
       "hours": 3.3,
       "amount": 898.92,
       "codes": [
-        "VIFL",
         "VBFL",
-        "TUNEUP",
-        "VVACLEAN"
+        "VVACLEAN",
+        "VIFL",
+        "TUNEUP"
       ],
       "vehicle": "2019 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781378": {
       "rowId": "1715 1715781378",
@@ -51138,7 +51236,7 @@
         "VVIFL"
       ],
       "vehicle": "2021 hyundai Accent",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781379": {
       "rowId": "1715 1715781379",
@@ -51155,15 +51253,15 @@
       "hours": 4.3,
       "amount": 1168.9,
       "codes": [
-        "CABIN",
-        "AIRFILTER",
         "TUNEUP",
         "VVIFL",
+        "AIRFILTER",
         "VVBFL",
+        "CABIN",
         "VVCFL"
       ],
       "vehicle": "2023 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781380": {
       "rowId": "1715 1715781380",
@@ -51180,12 +51278,12 @@
       "hours": 2.2,
       "amount": 384.89,
       "codes": [
-        "ROTATE",
+        "ALIGN",
         "VVIFL",
-        "ALIGN"
+        "ROTATE"
       ],
       "vehicle": "2026 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781382": {
       "rowId": "1715 1715781382",
@@ -51202,14 +51300,14 @@
       "hours": 4.1,
       "amount": 978.87,
       "codes": [
+        "VIFL",
         "TUNEUP",
         "VVBFL",
-        "VIFL",
-        "AIRFILTER",
-        "ALIGN"
+        "ALIGN",
+        "AIRFILTER"
       ],
       "vehicle": "2024 genesis GV70",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781383": {
       "rowId": "1715 1715781383",
@@ -51227,14 +51325,14 @@
       "amount": 1550.87,
       "codes": [
         "VVIFL",
-        "VVACLEAN",
-        "VVBFL",
+        "AIRFILTER",
         "CABIN",
         "TUNEUPV6",
-        "AIRFILTER"
+        "VVBFL",
+        "VVACLEAN"
       ],
       "vehicle": "2025 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781384": {
       "rowId": "1715 1715781384",
@@ -51251,13 +51349,13 @@
       "hours": 2.8,
       "amount": 628.92,
       "codes": [
-        "VVBFL",
         "ALIGN",
+        "VVBFL",
         "VVACLEAN",
         "VVIFL"
       ],
       "vehicle": "2023 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781385": {
       "rowId": "1715 1715781385",
@@ -51278,7 +51376,7 @@
         "VVBFL"
       ],
       "vehicle": "2025 hyundai Elantra Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781386": {
       "rowId": "1715 1715781386",
@@ -51295,17 +51393,17 @@
       "hours": 6.6,
       "amount": 1424.59,
       "codes": [
-        "VVBFL",
-        "VVACLEAN",
-        "ROTATE",
-        "AIRFILTER",
         "ALIGN",
-        "ROHR50",
+        "ROTATE",
+        "CABIN",
+        "VVACLEAN",
         "DECARB",
-        "CABIN"
+        "VVBFL",
+        "AIRFILTER",
+        "ROHR50"
       ],
       "vehicle": "2018 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781387": {
       "rowId": "1715 1715781387",
@@ -51322,16 +51420,16 @@
       "hours": 5.9,
       "amount": 1155.9,
       "codes": [
-        "PADRESURF",
-        "VVIFL",
         "AIRFILTER",
-        "TIRE4",
-        "CABIN",
         "VBFL",
-        "ALIGN"
+        "TIRE4",
+        "VVIFL",
+        "ALIGN",
+        "PADRESURF",
+        "CABIN"
       ],
       "vehicle": "2020 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781389": {
       "rowId": "1715 1715781389",
@@ -51348,15 +51446,15 @@
       "hours": 5.9,
       "amount": 1508.31,
       "codes": [
-        "ALIGN",
-        "VVBFL",
-        "BELT",
-        "TUNEUP",
         "VVIFL",
-        "VVCFL"
+        "TUNEUP",
+        "VVCFL",
+        "ALIGN",
+        "BELT",
+        "VVBFL"
       ],
       "vehicle": "2023 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781395": {
       "rowId": "1715 1715781395",
@@ -51373,19 +51471,19 @@
       "hours": 10.3,
       "amount": 2280.63,
       "codes": [
-        "VIFL",
-        "VBFL",
-        "VACLEAN",
         "RPADRESURF",
-        "PADRESURF",
         "ALIGN",
-        "REC",
-        "RPADRESURF",
+        "VIFL",
         "TUNEUP",
-        "CABIN"
+        "RPADRESURF",
+        "VACLEAN",
+        "PADRESURF",
+        "CABIN",
+        "VBFL",
+        "REC"
       ],
       "vehicle": "2018 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781397": {
       "rowId": "1715 1715781397",
@@ -51402,14 +51500,14 @@
       "hours": 5.9,
       "amount": 1654.19,
       "codes": [
-        "REC",
-        "VVCFL",
         "VVIFL",
+        "TUNEUP",
+        "REC",
         "VVBFL",
-        "TUNEUP"
+        "VVCFL"
       ],
       "vehicle": "2017 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781398": {
       "rowId": "1715 1715781398",
@@ -51426,15 +51524,15 @@
       "hours": 3.6,
       "amount": 770.39,
       "codes": [
-        "TIRE2",
         "ALIGN",
+        "CABIN",
         "VVIFL",
         "VVBFL",
-        "VVACLEAN",
-        "CABIN"
+        "TIRE2",
+        "VVACLEAN"
       ],
       "vehicle": "2021 hyundai Veloster N",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781399": {
       "rowId": "1715 1715781399",
@@ -51451,16 +51549,16 @@
       "hours": 7.8,
       "amount": 2106.76,
       "codes": [
+        "ALIGN",
+        "PADROTOR",
         "VVBFL",
         "RPADRESURF",
-        "PADROTOR",
-        "VVTFL",
-        "ALIGN",
+        "TUNEUP",
         "VVACLEAN",
-        "TUNEUP"
+        "VVTFL"
       ],
       "vehicle": "2015 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781402": {
       "rowId": "1715 1715781402",
@@ -51477,15 +51575,15 @@
       "hours": 5.2,
       "amount": 1274.87,
       "codes": [
-        "TUNEUP",
-        "VVBFL",
-        "VVIFL",
-        "VACLEAN",
         "ALIGN",
-        "VVCFL"
+        "VVIFL",
+        "VVBFL",
+        "VVCFL",
+        "TUNEUP",
+        "VACLEAN"
       ],
       "vehicle": "2024 Hyundai Sonata Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781403": {
       "rowId": "1715 1715781403",
@@ -51502,11 +51600,11 @@
       "hours": 2.5,
       "amount": 634.39,
       "codes": [
-        "VIFL",
-        "TUNEUP"
+        "TUNEUP",
+        "VIFL"
       ],
       "vehicle": "2021 hyundai Ioniq Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781404": {
       "rowId": "1715 1715781404",
@@ -51527,7 +51625,7 @@
         "VVIFL"
       ],
       "vehicle": "2025 hyundai Elantra Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781405": {
       "rowId": "1715 1715781405",
@@ -51544,11 +51642,32 @@
       "hours": 1.1,
       "amount": 377.95,
       "codes": [
-        "REC",
-        "AIRFILTER"
+        "AIRFILTER",
+        "REC"
       ],
       "vehicle": "2022 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781407": {
+      "rowId": "1715 1715781407",
+      "date": "2026-10-12",
+      "customer": "1722_BOB ROHRMAN HYUNDAI GENESIS LG1062",
+      "email": "jason.troxel@ROHRMANAUTO.COM",
+      "phone": "7654902754",
+      "ro": "781407",
+      "advisor": "DAVID RILEY",
+      "vin": "JN8AZ1MWXDW311750",
+      "year": "2013",
+      "make": "Nissan",
+      "model": "Murano",
+      "hours": 5,
+      "amount": 2223.8,
+      "codes": [
+        "REC",
+        "REC"
+      ],
+      "vehicle": "2013 Nissan Murano",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781408": {
       "rowId": "1715 1715781408",
@@ -51569,7 +51688,7 @@
         "VVIFL"
       ],
       "vehicle": "2024 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781409": {
       "rowId": "1715 1715781409",
@@ -51589,7 +51708,7 @@
         "ALIGN"
       ],
       "vehicle": "2012 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781411": {
       "rowId": "1715 1715781411",
@@ -51606,16 +51725,16 @@
       "hours": 8.1,
       "amount": 1833.86,
       "codes": [
-        "RPADRESURF",
-        "PADRESURF",
-        "ALIGN",
+        "TUNEUP",
         "VBFL",
+        "PADRESURF",
         "VVIFL",
-        "VACLEAN",
-        "TUNEUP"
+        "RPADRESURF",
+        "ALIGN",
+        "VACLEAN"
       ],
       "vehicle": "2018 hyundai Ioniq Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781412": {
       "rowId": "1715 1715781412",
@@ -51632,15 +51751,15 @@
       "hours": 6.7,
       "amount": 1723.27,
       "codes": [
-        "RPADRESURF",
-        "VVIFL",
-        "TUNEUP",
         "VVCFL",
+        "BELT",
+        "VVIFL",
+        "RPADRESURF",
         "VVBFL",
-        "BELT"
+        "TUNEUP"
       ],
       "vehicle": "2012 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781413": {
       "rowId": "1715 1715781413",
@@ -51658,13 +51777,13 @@
       "amount": 1143.45,
       "codes": [
         "VVBFL",
-        "TIRE4",
-        "CABIN",
+        "RPADRESURF",
         "PADRESURF",
-        "RPADRESURF"
+        "CABIN",
+        "TIRE4"
       ],
       "vehicle": "2021 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781417": {
       "rowId": "1715 1715781417",
@@ -51681,14 +51800,14 @@
       "hours": 3.1,
       "amount": 951.05,
       "codes": [
-        "VVIFL",
-        "TIRE1",
-        "REC",
+        "VVBFL",
         "VVACLEAN",
-        "VVBFL"
+        "REC",
+        "VVIFL",
+        "TIRE1"
       ],
       "vehicle": "2023 genesis G80",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781418": {
       "rowId": "1715 1715781418",
@@ -51708,7 +51827,7 @@
         "REC"
       ],
       "vehicle": "2025 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781419": {
       "rowId": "1715 1715781419",
@@ -51729,7 +51848,7 @@
         "ALIGN"
       ],
       "vehicle": "2025 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781420": {
       "rowId": "1715 1715781420",
@@ -51746,15 +51865,15 @@
       "hours": 3.4,
       "amount": 732.35,
       "codes": [
-        "VVIFL",
         "ROTATE",
         "VVACLEAN",
         "AIRFILTER",
-        "VVBFL",
-        "ALIGN"
+        "VVIFL",
+        "ALIGN",
+        "VVBFL"
       ],
       "vehicle": "2025 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781421": {
       "rowId": "1715 1715781421",
@@ -51771,17 +51890,17 @@
       "hours": 8,
       "amount": 1534.85,
       "codes": [
-        "ALIGN",
-        "TIRE2",
-        "VBFL",
         "RPADRESURF",
-        "ROTATE",
         "VVIFL",
         "VVCFL",
+        "ALIGN",
+        "TIRE2",
+        "ROTATE",
+        "VBFL",
         "PADRESURF"
       ],
       "vehicle": "2025 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781423": {
       "rowId": "1715 1715781423",
@@ -51798,12 +51917,12 @@
       "hours": 3.2,
       "amount": 815.93,
       "codes": [
-        "REC",
         "VVCFL",
+        "REC",
         "VVIFL"
       ],
       "vehicle": "2021 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781424": {
       "rowId": "1715 1715781424",
@@ -51820,12 +51939,12 @@
       "hours": 3,
       "amount": 1056.42,
       "codes": [
+        "ALIGN",
         "TIRE4",
-        "VVIFL",
-        "ALIGN"
+        "VVIFL"
       ],
       "vehicle": "2024 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781425": {
       "rowId": "1715 1715781425",
@@ -51842,15 +51961,15 @@
       "hours": 3.7,
       "amount": 1076.89,
       "codes": [
-        "VVACLEAN",
+        "VVBFL",
         "CABIN",
         "TUNEUP",
-        "VVBFL",
         "AIRFILTER",
+        "VVACLEAN",
         "VVIFL"
       ],
       "vehicle": "2023 genesis G70",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781426": {
       "rowId": "1715 1715781426",
@@ -51867,14 +51986,14 @@
       "hours": 5,
       "amount": 944.92,
       "codes": [
+        "VVBFL",
+        "ALIGN",
         "TIRE2",
         "VVCFL",
-        "ALIGN",
-        "RPADRESURF",
-        "VVBFL"
+        "RPADRESURF"
       ],
       "vehicle": "2023 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781427": {
       "rowId": "1715 1715781427",
@@ -51891,13 +52010,13 @@
       "hours": 2.4,
       "amount": 541.92,
       "codes": [
+        "CABIN",
         "VVIFL",
         "ALIGN",
-        "VVACLEAN",
-        "CABIN"
+        "VVACLEAN"
       ],
       "vehicle": "2025 hyundai Santa Fe Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781430": {
       "rowId": "1715 1715781430",
@@ -51916,11 +52035,11 @@
       "codes": [
         "VVACLEAN",
         "VIFL",
-        "TIRE4",
-        "VVBFL"
+        "VVBFL",
+        "TIRE4"
       ],
       "vehicle": "2021 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781431": {
       "rowId": "1715 1715781431",
@@ -51938,11 +52057,11 @@
       "amount": 469.94,
       "codes": [
         "ALIGN",
-        "VVIFL",
-        "TIRE4"
+        "TIRE4",
+        "VVIFL"
       ],
       "vehicle": "2024 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781435": {
       "rowId": "1715 1715781435",
@@ -51962,7 +52081,7 @@
         "REC"
       ],
       "vehicle": "2026 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781436": {
       "rowId": "1715 1715781436",
@@ -51979,20 +52098,20 @@
       "hours": 7.4,
       "amount": 2097.89,
       "codes": [
-        "ROTATE",
-        "CABIN",
-        "TUNEUP",
-        "BELT",
-        "VVBFL",
-        "AIRFILTER",
-        "VVACLEAN",
-        "VVCFL",
-        "VVIFL",
         "ALIGN",
-        "TIRE1"
+        "ROTATE",
+        "BELT",
+        "TIRE1",
+        "VVCFL",
+        "VVBFL",
+        "VVIFL",
+        "TUNEUP",
+        "AIRFILTER",
+        "CABIN",
+        "VVACLEAN"
       ],
       "vehicle": "2018 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781437": {
       "rowId": "1715 1715781437",
@@ -52009,12 +52128,12 @@
       "hours": 5.3,
       "amount": 1492.27,
       "codes": [
+        "BELT",
         "TUNEUPV6",
-        "VVIFL",
-        "BELT"
+        "VVIFL"
       ],
       "vehicle": "2022 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781438": {
       "rowId": "1715 1715781438",
@@ -52034,7 +52153,7 @@
         "VVIFL"
       ],
       "vehicle": "2026 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781439": {
       "rowId": "1715 1715781439",
@@ -52052,19 +52171,19 @@
       "amount": 3746.63,
       "codes": [
         "REC",
-        "VVBFL",
-        "VVIFL",
-        "CABIN",
-        "REC",
         "TIRE4",
-        "ALIGN",
         "DECARB",
+        "CABIN",
+        "VVBFL",
+        "ALIGN",
         "VVCFL",
-        "BELT",
-        "TUNEUP"
+        "VVIFL",
+        "TUNEUP",
+        "REC",
+        "BELT"
       ],
       "vehicle": "2017 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781440": {
       "rowId": "1715 1715781440",
@@ -52086,7 +52205,7 @@
         "VVIFL"
       ],
       "vehicle": "2022 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781441": {
       "rowId": "1715 1715781441",
@@ -52103,12 +52222,12 @@
       "hours": 3.3,
       "amount": 789.89,
       "codes": [
-        "VVIFL",
+        "TUNEUP",
         "ALIGN",
-        "TUNEUP"
+        "VVIFL"
       ],
       "vehicle": "2020 hyundai Santa Fe",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781442": {
       "rowId": "1715 1715781442",
@@ -52129,7 +52248,7 @@
         "VVIFL"
       ],
       "vehicle": "2023 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781443": {
       "rowId": "1715 1715781443",
@@ -52146,15 +52265,15 @@
       "hours": 8.2,
       "amount": 1866.8,
       "codes": [
-        "VVIFL",
-        "ALIGN",
-        "RPADRESURF",
         "TUNEUPV6",
+        "ALIGN",
+        "ROTATE",
         "VVBFL",
-        "ROTATE"
+        "VVIFL",
+        "RPADRESURF"
       ],
       "vehicle": "2022 Hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781444": {
       "rowId": "1715 1715781444",
@@ -52176,7 +52295,7 @@
         "VVIFL"
       ],
       "vehicle": "2024 hyundai Palisade",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781445": {
       "rowId": "1715 1715781445",
@@ -52193,12 +52312,35 @@
       "hours": 1.9,
       "amount": 393.42,
       "codes": [
+        "ALIGN",
         "VVBFL",
-        "CABIN",
-        "ALIGN"
+        "CABIN"
       ],
       "vehicle": "2026 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781446": {
+      "rowId": "1715 1715781446",
+      "date": "2026-10-12",
+      "customer": "Hina Faruqi",
+      "email": "HKFAROOKI@HOTMAIL.COM",
+      "phone": "7654091822",
+      "ro": "781446",
+      "advisor": "DAVID RILEY",
+      "vin": "KMHLM4DG7SU971858",
+      "year": "2025",
+      "make": "hyundai",
+      "model": "Elantra",
+      "hours": 2.3,
+      "amount": 540.4,
+      "codes": [
+        "VVIFL",
+        "ALIGN",
+        "CABIN",
+        "AIRFILTER"
+      ],
+      "vehicle": "2025 hyundai Elantra",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781449": {
       "rowId": "1715 1715781449",
@@ -52212,18 +52354,14 @@
       "year": "2025",
       "make": "hyundai",
       "model": "Kona",
-      "hours": 4.4,
-      "amount": 765.87,
+      "hours": 1.6,
+      "amount": 154.95,
       "codes": [
         "ROTATE",
-        "VVCFL",
-        "VVIFL",
-        "AIRFILTER",
-        "TIRE4",
-        "ALIGN"
+        "TIRE4"
       ],
       "vehicle": "2025 hyundai Kona",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781450": {
       "rowId": "1715 1715781450",
@@ -52243,7 +52381,7 @@
         "CABIN"
       ],
       "vehicle": "2025 hyundai Tucson",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781454": {
       "rowId": "1715 1715781454",
@@ -52260,12 +52398,12 @@
       "hours": 2.7,
       "amount": 569.93,
       "codes": [
-        "VVIFL",
         "ALIGN",
+        "VVIFL",
         "VVCFL"
       ],
       "vehicle": "2023 hyundai Elantra",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781458": {
       "rowId": "1715 1715781458",
@@ -52282,13 +52420,13 @@
       "hours": 2.3,
       "amount": 450.43,
       "codes": [
-        "VVIFL",
-        "CABIN",
         "ALIGN",
+        "CABIN",
+        "VVIFL",
         "TIRE1"
       ],
       "vehicle": "2020 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781460": {
       "rowId": "1715 1715781460",
@@ -52309,7 +52447,7 @@
         "ALIGN"
       ],
       "vehicle": "2025 hyundai Tucson Hybrid",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781461": {
       "rowId": "1715 1715781461",
@@ -52327,13 +52465,13 @@
       "amount": 1022.87,
       "codes": [
         "TIRE1",
-        "VVIFL",
         "VVBFL",
-        "TUNEUP",
-        "ALIGN"
+        "ALIGN",
+        "VVIFL",
+        "TUNEUP"
       ],
       "vehicle": "2022 hyundai Elantra N",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     },
     "781462": {
       "rowId": "1715 1715781462",
@@ -52350,16 +52488,436 @@
       "hours": 5.4,
       "amount": 1049.92,
       "codes": [
-        "ALIGN",
         "VVIFL",
-        "PADRESURF",
-        "RPADRESURF"
+        "RPADRESURF",
+        "ALIGN",
+        "PADRESURF"
       ],
       "vehicle": "2022 hyundai Sonata",
-      "uploadedAt": "2026-10-12T11:13:06.800Z"
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781463": {
+      "rowId": "1715 1715781463",
+      "date": "2026-10-12",
+      "customer": "Mason Riddle",
+      "email": "Masonriddle199@gmail.com",
+      "phone": "7658301217",
+      "ro": "781463",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHL14JAXRA422269",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Sonata",
+      "hours": 2,
+      "amount": 536.96,
+      "codes": [
+        "VVCFL",
+        "VVIFL",
+        "VVACLEAN"
+      ],
+      "vehicle": "2024 hyundai Sonata",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781464": {
+      "rowId": "1715 1715781464",
+      "date": "2026-10-12",
+      "customer": "Edgar Sanders",
+      "email": "edsanders@enbarqmail.com",
+      "phone": "2192081871",
+      "ro": "781464",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHLR4AF5NU240413",
+      "year": "2022",
+      "make": "hyundai",
+      "model": "Elantra",
+      "hours": 8.9,
+      "amount": 1874.83,
+      "codes": [
+        "ROTATE",
+        "AIRFILTERNONOEM",
+        "RPADRESURF",
+        "VVACLEAN",
+        "PADRESURF",
+        "CABINAFTER",
+        "REC",
+        "VVIFL",
+        "VVCFL",
+        "ALIGN"
+      ],
+      "vehicle": "2022 hyundai Elantra",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781465": {
+      "rowId": "1715 1715781465",
+      "date": "2026-10-12",
+      "customer": "Kelly Bauer",
+      "email": "Kbauer@yourjccs.org",
+      "phone": "2196130102",
+      "ro": "781465",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHL14JA6RA404707",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Sonata",
+      "hours": 2.8,
+      "amount": 612.92,
+      "codes": [
+        "VVIFL",
+        "ALIGN",
+        "VVBFL",
+        "CABIN"
+      ],
+      "vehicle": "2024 hyundai Sonata",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781466": {
+      "rowId": "1715 1715781466",
+      "date": "2026-10-12",
+      "customer": "Sheryl Foley",
+      "email": "sherylfoley6@gmail.com",
+      "phone": "7654146014",
+      "ro": "781466",
+      "advisor": "DAVID RILEY",
+      "vin": "5NPD84LF3HH036362",
+      "year": "2017",
+      "make": "hyundai",
+      "model": "Elantra",
+      "hours": 2.4,
+      "amount": 575.97,
+      "codes": [
+        "VVBFL",
+        "VVIFL",
+        "VVCFL"
+      ],
+      "vehicle": "2017 hyundai Elantra",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781467": {
+      "rowId": "1715 1715781467",
+      "date": "2026-10-12",
+      "customer": "Brooke Smith",
+      "email": "brookenm83@gmail.com",
+      "phone": "7655857321",
+      "ro": "781467",
+      "advisor": "DAVID RILEY",
+      "vin": "5NMS5DAL0PH583190",
+      "year": "2023",
+      "make": "hyundai",
+      "model": "Santa Fe",
+      "hours": 4.8,
+      "amount": 1013.45,
+      "codes": [
+        "RPADRESURF",
+        "PADRESURF",
+        "VBFL",
+        "AIRFILTER",
+        "CABIN"
+      ],
+      "vehicle": "2023 hyundai Santa Fe",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781471": {
+      "rowId": "1715 1715781471",
+      "date": "2026-10-12",
+      "customer": "Molly Kelley",
+      "email": "mkelley7911@gmail.com",
+      "phone": "5748701820",
+      "ro": "781471",
+      "advisor": "DAVID RILEY",
+      "vin": "KM8R7DGE6SU931394",
+      "year": "2025",
+      "make": "hyundai",
+      "model": "Palisade",
+      "hours": 1,
+      "amount": 139.95,
+      "codes": [
+        "ALIGN"
+      ],
+      "vehicle": "2025 hyundai Palisade",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781472": {
+      "rowId": "1715 1715781472",
+      "date": "2026-10-12",
+      "customer": "DONNA ZUEHL",
+      "email": "jzhuel@gmail.com",
+      "phone": "5748705916",
+      "ro": "781472",
+      "advisor": "DAVID RILEY",
+      "vin": "KMHLM4DJ7SU143059",
+      "year": "2025",
+      "make": "hyundai",
+      "model": "Elantra Hybrid",
+      "hours": 1.9,
+      "amount": 399.2,
+      "codes": [
+        "VVIFL",
+        "ALIGN",
+        "FOBBAT"
+      ],
+      "vehicle": "2025 hyundai Elantra Hybrid",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781473": {
+      "rowId": "1715 1715781473",
+      "date": "2026-10-12",
+      "customer": "Dalton May",
+      "email": "dalton_may@rocketmail.com",
+      "phone": "7654304828",
+      "ro": "781473",
+      "advisor": "DAVID RILEY",
+      "vin": "KM8JBCDE1RU284259",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Tucson",
+      "hours": 2,
+      "amount": 536.96,
+      "codes": [
+        "VVCFL",
+        "VVIFL",
+        "VVACLEAN"
+      ],
+      "vehicle": "2024 hyundai Tucson",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781474": {
+      "rowId": "1715 1715781474",
+      "date": "2026-10-12",
+      "customer": "Luzbey Avila Rodriguez",
+      "email": "LUZBEAVILA@HOTMAIL.COM",
+      "phone": "7654267087",
+      "ro": "781474",
+      "advisor": "DAVID RILEY",
+      "vin": "5NPE24AF8JH690286",
+      "year": "2018",
+      "make": "hyundai",
+      "model": "Sonata",
+      "hours": 6.8,
+      "amount": 1789.54,
+      "codes": [
+        "ALIGN",
+        "VIFL",
+        "VVBFL",
+        "PADRESURF",
+        "BELT",
+        "TUNEUP"
+      ],
+      "vehicle": "2018 hyundai Sonata",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781475": {
+      "rowId": "1715 1715781475",
+      "date": "2026-10-12",
+      "customer": "Robert Mcmahon",
+      "email": "rw.mcmahon71@gmail.com",
+      "phone": "7654270825",
+      "ro": "781475",
+      "advisor": "JORDAN TROXEL",
+      "vin": "5NMZUDLB7JH062352",
+      "year": "2018",
+      "make": "hyundai",
+      "model": "Santa Fe Sport",
+      "hours": 2.5,
+      "amount": 836.44,
+      "codes": [
+        "REC",
+        "VVBFL",
+        "AIRFILTER",
+        "TIRE1",
+        "BELT",
+        "CABIN"
+      ],
+      "vehicle": "2018 hyundai Santa Fe Sport",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781478": {
+      "rowId": "1715 1715781478",
+      "date": "2026-10-12",
+      "customer": "Juan Osorio",
+      "email": "jc.osorio1505@gmail.com",
+      "phone": "7654096605",
+      "ro": "781478",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHLM4DJ8RU103180",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Elantra Hybrid",
+      "hours": 0.8,
+      "amount": 209.99,
+      "codes": [
+        "VVIFL"
+      ],
+      "vehicle": "2024 hyundai Elantra Hybrid",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781479": {
+      "rowId": "1715 1715781479",
+      "date": "2026-10-12",
+      "customer": "Euiwon Bae",
+      "email": "baega21@gmail.com",
+      "phone": "7654910893",
+      "ro": "781479",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KM8R4DGE6SU907833",
+      "year": "2025",
+      "make": "hyundai",
+      "model": "Palisade",
+      "hours": 0.8,
+      "amount": 209.99,
+      "codes": [
+        "VVIFL"
+      ],
+      "vehicle": "2025 hyundai Palisade",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781480": {
+      "rowId": "1715 1715781480",
+      "date": "2026-10-12",
+      "customer": "Nico MASTASCUSA",
+      "email": "noemail@hmausa.com",
+      "phone": "5639201542",
+      "ro": "781480",
+      "advisor": "DAVID RILEY",
+      "vin": "KM8R5DGE1RU800437",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Palisade",
+      "hours": 2.7,
+      "amount": 603.41,
+      "codes": [
+        "CABIN",
+        "VVBFL",
+        "VVIFL",
+        "ALIGN"
+      ],
+      "vehicle": "2024 hyundai Palisade",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781484": {
+      "rowId": "1715 1715781484",
+      "date": "2026-10-12",
+      "customer": "Darvie Graves",
+      "email": "5165gravesdj@gmail.com",
+      "phone": "7653661384",
+      "ro": "781484",
+      "advisor": "DAVID RILEY",
+      "vin": "5NMJBCDE8RH412864",
+      "year": "2024",
+      "make": "hyundai",
+      "model": "Tucson",
+      "hours": 2.9,
+      "amount": 554.88,
+      "codes": [
+        "VVBFL",
+        "VVIFL",
+        "ALIGN",
+        "ROTATE"
+      ],
+      "vehicle": "2024 hyundai Tucson",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781485": {
+      "rowId": "1715 1715781485",
+      "date": "2026-10-12",
+      "customer": "Mollie Walker",
+      "email": "MOLLIEHILL.2021@GMAIL.COM",
+      "phone": "3175607987",
+      "ro": "781485",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHGN4JE8HU168874",
+      "year": "2017",
+      "make": "genesis",
+      "model": "G80",
+      "hours": 4.3,
+      "amount": 1124.61,
+      "codes": [
+        "VVIFL",
+        "ALIGN",
+        "VBFL",
+        "VACLEAN",
+        "TUNEUP"
+      ],
+      "vehicle": "2017 genesis G80",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781489": {
+      "rowId": "1715 1715781489",
+      "date": "2026-10-12",
+      "customer": "Jonathan Dickerhoff",
+      "email": "jdickerhoff@gmail.com",
+      "phone": "7653377964",
+      "ro": "781489",
+      "advisor": "DAVID RILEY",
+      "vin": "5NPLM4AGXPH114931",
+      "year": "2023",
+      "make": "hyundai",
+      "model": "Elantra",
+      "hours": 2.3,
+      "amount": 984.86,
+      "codes": [
+        "REC",
+        "VVIFL",
+        "ALIGN"
+      ],
+      "vehicle": "2023 hyundai Elantra",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781493": {
+      "rowId": "1715 1715781493",
+      "date": "2026-10-12",
+      "customer": "Keith Kalish",
+      "email": "kkalish78@gmail.com",
+      "phone": "6186101273",
+      "ro": "781493",
+      "advisor": "DAVID RILEY",
+      "vin": "KMHE34L3XKA093564",
+      "year": "2019",
+      "make": "hyundai",
+      "model": "Sonata Hybrid",
+      "hours": 2.5,
+      "amount": 532.92,
+      "codes": [
+        "ALIGN",
+        "VVIFL",
+        "VVBFL"
+      ],
+      "vehicle": "2019 hyundai Sonata Hybrid",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
+    },
+    "781494": {
+      "rowId": "1715 1715781494",
+      "date": "2026-10-12",
+      "customer": "Jellie Moore Snyder",
+      "email": "jelliems97@gmail.com",
+      "phone": "7657604231",
+      "ro": "781494",
+      "advisor": "JORDAN TROXEL",
+      "vin": "KMHGC46E69U036860",
+      "year": "2009",
+      "make": "hyundai",
+      "model": "Genesis",
+      "hours": 4.7,
+      "amount": 1255.88,
+      "codes": [
+        "AIRFILTER",
+        "CABIN",
+        "RPADRESURF",
+        "TUNEUP",
+        "VBFL",
+        "VACLEAN"
+      ],
+      "vehicle": "2009 hyundai Genesis",
+      "uploadedAt": "2026-10-13T11:14:22.416Z"
     }
   },
   "uploads": [
+    {
+      "at": "2026-10-13T11:14:22.416Z",
+      "by": "SHAWN",
+      "file": "1715 2610 Bob Rohrman Hyu Deferred.pdf",
+      "lastUpdate": "2026-10-12",
+      "rows": 179
+    },
     {
       "at": "2026-10-12T11:13:06.800Z",
       "by": "SHAWN",
@@ -52438,7 +52996,7 @@
       "rows": 422
     }
   ],
-  "updatedAt": "2026-10-12T11:13:06.800Z",
+  "updatedAt": "2026-10-13T11:14:22.416Z",
   "advisorTabs": [
     "CAIDEN",
     "CODY",
