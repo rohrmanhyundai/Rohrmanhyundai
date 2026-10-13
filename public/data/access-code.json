@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-13T21:14:28.821Z",
+  "updatedAt": "2026-10-13T21:14:39.557Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -26,7 +26,10 @@
       "registration-uploads": true,
       "employee-review": true,
       "live-pay": true,
-      "charge-account-list": true
+      "charge-account-list": true,
+      "oil-guard": true,
+      "user-data-tracker": true,
+      "live-pay-hub": true
     },
     "JORDAN": {
       "payroll": true,
