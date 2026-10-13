@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-10-13T14:11:37.723Z",
+    "type": "page",
+    "label": "recalls"
+  },
+  {
+    "at": "2026-10-13T14:11:36.515Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-13T14:11:36.513Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-13T14:11:35.731Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-13T11:27:21.179Z",
     "type": "action",
     "label": "parts-received-mark",
