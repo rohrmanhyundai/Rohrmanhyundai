@@ -215,6 +215,25 @@
       "deferred": null
     },
     {
+      "id": "rmv6kserzzybl",
+      "customerName": "Alyson Stanifer",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43469",
+      "vehicle": "2026 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
       "id": "rmv6kr0m6rvl4",
       "customerName": "Issic Cruz",
       "appointmentTime": "1:00 PM",
@@ -254,5 +273,5 @@
     }
   ],
   "afterCallRows": [],
-  "savedAt": "2026-10-13T11:05:19.477Z"
+  "savedAt": "2026-10-13T11:06:21.426Z"
 }
