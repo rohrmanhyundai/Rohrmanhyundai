@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-13T21:14:17.193Z",
+  "updatedAt": "2026-10-13T21:14:28.821Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -101,7 +101,13 @@
       "after-call": true
     },
     "MATTHEW": {
-      "live-pay-hub": true
+      "live-pay-hub": true,
+      "deferred-service": true,
+      "original-owner": true,
+      "live-pay": true,
+      "oil-guard": true,
+      "after-call": true,
+      "charge-account-list": true
     }
   },
   "idle": {
