@@ -10,8 +10,8 @@
     "by": "SHAWN"
   },
   "latest": {
-    "takenAt": 1791812415385,
-    "date": "2026-10-12",
+    "takenAt": 1791905050588,
+    "date": "2026-10-13",
     "goals": {
       "hrs_ro": 1.3,
       "add_rate": 0.75
@@ -20,8 +20,8 @@
       {
         "name": "DAVID",
         "display": "DAVID",
-        "hrsRo": 0.52,
-        "rate": 0.459,
+        "hrsRo": 0.49,
+        "rate": 0.443,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -33,7 +33,7 @@
         "name": "JORDAN",
         "display": "JORDAN",
         "hrsRo": 0.48,
-        "rate": 0.502,
+        "rate": 0.49,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -55,8 +55,8 @@
       }
     ],
     "store": {
-      "hrsRo": 0.33,
-      "rate": 0.32,
+      "hrsRo": 0.32,
+      "rate": 0.311,
       "hitHrs": false,
       "hitRate": false,
       "hit": false,
@@ -439,6 +439,33 @@
       "store": {
         "hrsRo": 0.33,
         "rate": 0.32
+      }
+    },
+    "2026-10-13": {
+      "goals": {
+        "hrs_ro": 1.3,
+        "add_rate": 0.75
+      },
+      "standings": [
+        {
+          "name": "DAVID",
+          "hrsRo": 0.49,
+          "rate": 0.443
+        },
+        {
+          "name": "JORDAN",
+          "hrsRo": 0.48,
+          "rate": 0.49
+        },
+        {
+          "name": "MATTHEW",
+          "hrsRo": 0,
+          "rate": 0
+        }
+      ],
+      "store": {
+        "hrsRo": 0.32,
+        "rate": 0.311
       }
     }
   }
