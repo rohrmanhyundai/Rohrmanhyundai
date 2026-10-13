@@ -44,6 +44,9 @@ function packageSummary(pkg, doorRate) {
     autoLineTotal += lt;
     if (!it.excludeCoupon) eligLineTotal += lt;    // only non-excluded lines earn the coupon
   }
+  // Manual Quote parts (part number · qty × unit price) add straight to parts.
+  const manualParts = (pkg.manualParts || []).reduce((n, p) => n + (numOf(p.qty) || 0) * (numOf(p.price) || 0), 0);
+  autoParts += manualParts; autoLineTotal += manualParts; eligLineTotal += manualParts;
   // Fraction of the package the coupon is allowed to touch (1 when nothing is excluded).
   const eligibleFrac = autoLineTotal > 0 ? eligLineTotal / autoLineTotal : 1;
   const autoElr = (autoHours > 0 && dr > 0) ? (autoLabor / autoHours) / dr * 100 : null;
@@ -1072,21 +1075,33 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
   const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
-  const clearAll = () => { setCustName(''); setCustVehicle(''); setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined })); };
+  const clearAll = () => { setCustName(''); setCustVehicle(''); setManualOpen(false); setDraft(d => ({ ...d, items: [], manualParts: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined })); };
   const countInPkg = (name) => (draft.items || []).filter(it => it.name === name).length;
 
   // 🖨 Print — the quote as a customer printout, same look as the deferred-work
   // Vehicle Care Plan. Line prices are each service's parts + labor; if the job
   // totals were adjusted, they're scaled so the lines add up to the subtotal.
+  // Manual Quote: a parts list (part # · description · qty · unit price), like
+  // the Aftermarket tool. Its total feeds Parts $; labor comes from the hours.
+  const [manualOpen, setManualOpen] = useState(false);
+  const newPart = () => ({ id: uid('mp'), pn: '', desc: '', qty: '1', price: '' });
+  const setParts = (fn) => setDraft(d => ({ ...d, manualParts: fn(d.manualParts || []) }));
+  const openManual = () => { setManualOpen(o => !o); if (!(draft.manualParts || []).length) setParts(() => [newPart()]); };
+  const manualTotal = (draft.manualParts || []).reduce((n, p) => n + (numOf(p.qty) || 0) * (numOf(p.price) || 0), 0);
   // A job to print / clear: service lines, or a manual parts + labor price.
   const hasJob = (draft.items || []).length > 0 || sum.subtotal > 0.005;
   const [custName, setCustName] = useState('');
   const [custVehicle, setCustVehicle] = useState('');
   const printQuote = () => {
-    // Manual job (no service lines): print it as parts + labor.
-    const raw = (draft.items || []).length
-      ? (draft.items || []).map(it => ({ name: it.name, code: it.opCode, price: itemMath(it, doorRate).total }))
-      : [{ name: 'Parts', price: sum.parts }, { name: `Labor — ${round2(sum.hours)} hrs`, price: sum.labor }].filter(l => l.price > 0.005);
+    // Services, then each Manual Quote part, then any labor not already in a
+    // service line (e.g. the hours typed in for a manual job).
+    const svc = (draft.items || []).map(it => ({ name: it.name, code: it.opCode, price: itemMath(it, doorRate).total }));
+    const parts = (draft.manualParts || []).filter(p => (numOf(p.qty) || 0) * (numOf(p.price) || 0) > 0)
+      .map(p => ({ name: `${p.desc || 'Part'}${p.pn ? ` (#${p.pn})` : ''}${(numOf(p.qty) || 0) !== 1 ? ` ×${numOf(p.qty)}` : ''}`, code: '', price: (numOf(p.qty) || 0) * (numOf(p.price) || 0) }));
+    const raw = [...svc, ...parts];
+    if (!raw.length && sum.parts > 0.005) raw.push({ name: 'Parts', price: sum.parts });
+    const left = sum.subtotal - raw.reduce((n, l) => n + l.price, 0);
+    if (left > 0.005) raw.push({ name: `Labor — ${round2(sum.hours)} hrs`, price: left });
     const rawSum = raw.reduce((n, l) => n + l.price, 0);
     const k = rawSum > 0 ? sum.subtotal / rawSum : 1;
     let cents = 0;
@@ -1192,6 +1207,36 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
               );
             })}
 
+            {/* Manual Quote — parts by part number, like the Aftermarket tool. */}
+            {manualOpen && (
+              <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 12, background: 'rgba(52,211,153,.06)', border: '1px solid rgba(52,211,153,.3)' }}>
+                <div style={{ fontSize: 12, fontWeight: 900, color: '#6ee7b7', letterSpacing: '.08em', textTransform: 'uppercase', paddingBottom: 6, borderBottom: '1px solid rgba(148,163,184,.15)', marginBottom: 8 }}>Parts</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 2fr 60px 100px 30px', gap: 6, fontSize: 10.5, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 4 }}>
+                  <span>Part number</span><span>Description</span><span>Qty</span><span>Unit price ($)</span><span />
+                </div>
+                {(draft.manualParts || []).map(p => (
+                  <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '1.1fr 2fr 60px 100px 30px', gap: 6, marginBottom: 6 }}>
+                    <input value={p.pn} onChange={e => setParts(ps => ps.map(x => x.id === p.id ? { ...x, pn: e.target.value } : x))} placeholder="Part #"
+                      style={{ ...editInp, padding: '6px 8px', fontSize: 12.5, fontFamily: 'ui-monospace,monospace' }} />
+                    <input value={p.desc} onChange={e => setParts(ps => ps.map(x => x.id === p.id ? { ...x, desc: e.target.value } : x))} placeholder="Description"
+                      style={{ ...editInp, padding: '6px 8px', fontSize: 12.5 }} />
+                    <input value={p.qty} onChange={e => setParts(ps => ps.map(x => x.id === p.id ? { ...x, qty: e.target.value } : x))} inputMode="decimal"
+                      style={{ ...editInp, padding: '6px 8px', fontSize: 12.5, textAlign: 'center' }} />
+                    <input value={p.price} onChange={e => setParts(ps => ps.map(x => x.id === p.id ? { ...x, price: e.target.value } : x))} inputMode="decimal" placeholder="0.00"
+                      style={{ ...editInp, padding: '6px 8px', fontSize: 12.5, textAlign: 'right' }} />
+                    <button title="Remove part" onClick={() => setParts(ps => ps.filter(x => x.id !== p.id))} style={{ ...iconBtn(false), width: 28, height: 30, fontSize: 11, color: '#f87171' }}>✕</button>
+                  </div>
+                ))}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
+                  <button onClick={() => setParts(ps => [...ps, newPart()])}
+                    style={{ background: 'rgba(52,211,153,.12)', border: '1px solid rgba(52,211,153,.45)', color: '#6ee7b7', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 800, fontSize: 12.5 }}>+ Add Part</button>
+                  <span style={{ flex: 1 }} />
+                  <span style={{ fontSize: 13, color: '#94a3b8', fontWeight: 700 }}>Parts Total: <b style={{ color: '#6ee7b7', fontSize: 15 }}>{money(manualTotal)}</b></span>
+                </div>
+                <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 6 }}>Adds to Parts $ below. Put the job's hours in <b>Labor hours</b> — labor is priced at the door rate.</div>
+              </div>
+            )}
+
             {/* Totals — same math as the builder, coupon-aware. */}
             <div style={{ marginTop: 16, padding: '14px 16px', background: 'rgba(96,165,250,.1)', border: '1px solid rgba(96,165,250,.3)', borderRadius: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
@@ -1285,6 +1330,10 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
               {hasJob && <button onClick={printQuote} title="Print this quote for the customer — same look as the deferred-work printout"
                 style={{ background: 'rgba(0,165,201,.14)', border: '1px solid rgba(0,165,201,.55)', color: '#67e8f9', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>🖨 Print</button>}
               {hasJob && <button onClick={clearAll} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>↺ Start over</button>}
+              <button onClick={openManual} title="Add parts by part number (like the Aftermarket tool) and price the job by labor hours"
+                style={{ background: manualOpen ? 'rgba(52,211,153,.2)' : 'rgba(52,211,153,.1)', border: '1px solid rgba(52,211,153,.5)', color: '#6ee7b7', borderRadius: 10, padding: '10px 16px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+                {manualOpen ? '✓ Manual quote' : '🧾 Manual quote'}
+              </button>
               <button onClick={onClose} style={{ background: 'linear-gradient(180deg,#60a5fa,#3b82f6)', border: '1px solid rgba(96,165,250,.6)', color: '#04122e', borderRadius: 10, padding: '10px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 14 }}>Done</button>
             </div>
           </div>
