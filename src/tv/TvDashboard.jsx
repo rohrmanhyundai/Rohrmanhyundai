@@ -82,7 +82,7 @@ function TechBox({ t, eff, dates, today }) {
             {r1(total)}<span> / {r1(goal)} hrs</span>
           </div>
         </div>
-        <div className="tvd-eff" title={eff ? `Average goal % over the last ${eff.weeks} completed week${eff.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
+        <div className={`tvd-eff${t.vmpi != null && t.vmpi !== '' ? ' has-vmpi' : ''}`} title={eff ? `Average goal % over the last ${eff.weeks} completed week${eff.weeks === 1 ? '' : 's'}` : 'No completed weeks on file yet'}>
           <MiniGauge pct={eff ? eff.pct : null} />
           <div>2-wk efficiency</div>
           {/* VMPI % from the last VMPI report upload (Edit Dashboard → Technicians). */}

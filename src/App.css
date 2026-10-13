@@ -1205,3 +1205,8 @@ html, body {
 @media(max-width:560px){.ac-email{grid-column:auto}}
 /* VMPI pill under the 2-wk efficiency gauge on the TV tech boxes. */
 .tvd-eff .tvd-vmpi{margin-top:4px;display:inline-block;font-size:clamp(11px,min(7cqh,2.6cqw),18px);font-weight:900;letter-spacing:.02em;text-transform:none;border:1px solid;border-radius:999px;padding:2px 10px;white-space:nowrap}
+/* With a VMPI pill the gauge column must stay as tall as before, or it pushes
+   the needs/pacing line under the day boxes: smaller gauge, tighter pill. */
+.tvd-eff.has-vmpi svg{height:clamp(50px,29cqh,118px)!important}
+.tvd-eff.has-vmpi>div{margin-top:-.2em}
+.tvd-eff.has-vmpi .tvd-vmpi{margin-top:2px;font-size:clamp(10px,min(5.6cqh,2.3cqw),16px);padding:1px 8px;line-height:1.25}
