@@ -1,7 +1,7 @@
 {
   "id": "muvkbo6c507u",
   "createdAt": "2026-10-05T18:07:48.516Z",
-  "updatedAt": "2026-10-13T14:44:02.836Z",
+  "updatedAt": "2026-10-13T16:35:53.276Z",
   "dealershipName": "Bob Rohrman Hyundai",
   "customerName": "STEPHANIE ANGLIN",
   "customerPhone": "765) 225 - 8270",
@@ -16,8 +16,8 @@
   "warrantyEmail": "payments@dowc.com",
   "claimNumber": "750257",
   "authNumber": "",
-  "laborRate": "170.00",
-  "laborTime": "13.5",
+  "laborRate": "150.00",
+  "laborTime": "14.1",
   "diagnosisTime": "1.0",
   "laborTotalOverride": "",
   "parts": [
@@ -44,16 +44,16 @@
     }
   ],
   "taxPct": "7",
-  "deductible": "",
+  "deductible": "200.00",
   "rental": null,
   "towing": null,
   "sublet": null,
   "tireRepair": null,
   "tireTax": null,
   "tireDisposal": null,
-  "notes": "10/05/2026 @ 2:28PM CLAIM IN REVIEW DUE TO AMOUNT OF CLAIM. MAY ALSO SEND INSP.? THEY WILL CALL BACK WITH FURTHER INFO.\nCALLED 10/6/2026 @ 10:27AM FOR UPDATE: EMAILED MORE INFO. AWATING FOR DOWC TO RESPOND.\nEMAIL: Good Afternoon Jerry, \n\nPlease note that a 3rd party independent inspector has been assigned to your claim. One Guard will reach out within 24-72 hrs. to advise of a better time frame of arrival. Also, they may ask for additional items prior to arrival, Just a FYI. \n\nINSPECTOR CAME 10/07/2026 SHOULD HEAR BACK 10/07/2026 FROM DOWC HIGHLINE.\n\nCALLED 10/08/2026 IN REVIEW. MAY HEAR TODAY.\nCALLED 10/09/2026 IN REVIEW ON LABOR RATE.\nCALLED 10/12/2026 @9:55AM ABOUT LABOR RATE. STILL IN REVIEW ABOUT THE RATE WE GET. THEY ARE STILL SAYING THAT IT IS $150.00 PER HS. WILL CONTACT BY EMAIL WHEN DONE WITH REVIEW.\nemailed ben 10/13/2026. HE WILL TAKE CARE OF IT.",
-  "approved": false,
-  "approvedDate": "",
+  "notes": "10/05/2026 @ 2:28PM CLAIM IN REVIEW DUE TO AMOUNT OF CLAIM. MAY ALSO SEND INSP.? THEY WILL CALL BACK WITH FURTHER INFO.\nCALLED 10/6/2026 @ 10:27AM FOR UPDATE: EMAILED MORE INFO. AWATING FOR DOWC TO RESPOND.\nEMAIL: Good Afternoon Jerry, \n\nPlease note that a 3rd party independent inspector has been assigned to your claim. One Guard will reach out within 24-72 hrs. to advise of a better time frame of arrival. Also, they may ask for additional items prior to arrival, Just a FYI. \n\nINSPECTOR CAME 10/07/2026 SHOULD HEAR BACK 10/07/2026 FROM DOWC HIGHLINE.\n\nCALLED 10/08/2026 IN REVIEW. MAY HEAR TODAY.\nCALLED 10/09/2026 IN REVIEW ON LABOR RATE.\nCALLED 10/12/2026 @9:55AM ABOUT LABOR RATE. STILL IN REVIEW ABOUT THE RATE WE GET. THEY ARE STILL SAYING THAT IT IS $150.00 PER HS. WILL CONTACT BY EMAIL WHEN DONE WITH REVIEW.\nemailed ben 10/13/2026. HE WILL TAKE CARE OF IT.\nCALLED 10/13/2026 @ 12.25PM. AND WAS TOLD OUR CONTRACTS ARE AT $150.00. FLUSH .60",
+  "approved": true,
+  "approvedDate": "2026-10-13",
   "denied": false,
   "deniedDate": "",
   "waiting": false,
@@ -64,6 +64,6 @@
   "repairsFinishedDate": "",
   "readySubmission": false,
   "readySubmissionDate": "",
-  "inspectorDispatched": true,
-  "inspectorDispatchedDate": "2026-10-06"
+  "inspectorDispatched": false,
+  "inspectorDispatchedDate": ""
 }
