@@ -1,4 +1,11 @@
 {
-  "updatedAt": "2026-10-09T19:25:49.622Z",
-  "users": {}
+  "updatedAt": "2026-10-13T19:15:05.475Z",
+  "users": {
+    "SHAWN": {
+      "fails": 1,
+      "strikes": 0,
+      "lastFailAt": 1791918905475,
+      "page": "deferred-service"
+    }
+  }
 }
