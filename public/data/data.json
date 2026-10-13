@@ -31,7 +31,12 @@
         "mon_raw": 11.4,
         "tue_raw": 14.6,
         "wed_raw": 14.3,
-        "thu_raw": 2
+        "thu_raw": 2,
+        "vmpi": 1,
+        "vmpi_ros": 2,
+        "vmpi_with": 2,
+        "vmpi_videos": 2,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "CARTER",
@@ -63,7 +68,12 @@
         "tue_raw": 1.7,
         "wed_raw": 5.2,
         "thu_raw": 3.5,
-        "fri_raw": 5.5
+        "fri_raw": 5.5,
+        "vmpi": 0.8214,
+        "vmpi_ros": 28,
+        "vmpi_with": 23,
+        "vmpi_videos": 35,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "GAVEN",
@@ -95,7 +105,12 @@
         "tue_raw": 3.5,
         "wed_raw": 4.2,
         "thu_raw": 2.7,
-        "fri_raw": 25
+        "fri_raw": 25,
+        "vmpi": 0.9375,
+        "vmpi_ros": 32,
+        "vmpi_with": 30,
+        "vmpi_videos": 41,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "CORY",
@@ -127,7 +142,12 @@
         "tue_raw": 2,
         "wed_raw": 5.6,
         "thu_raw": 1,
-        "fri_raw": 16.9
+        "fri_raw": 16.9,
+        "vmpi": 1,
+        "vmpi_ros": 12,
+        "vmpi_with": 12,
+        "vmpi_videos": 17,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "KADEN",
@@ -159,7 +179,12 @@
         "tue_raw": 4,
         "wed_raw": 4.4,
         "thu_raw": 8.5,
-        "fri_raw": 5
+        "fri_raw": 5,
+        "vmpi": 0.95,
+        "vmpi_ros": 20,
+        "vmpi_with": 19,
+        "vmpi_videos": 28,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "BRYSON",
@@ -192,7 +217,12 @@
         "tue_raw": 2.7,
         "wed_raw": 4.9,
         "thu_raw": 1.5,
-        "fri_raw": 2.5
+        "fri_raw": 2.5,
+        "vmpi": 0.9655,
+        "vmpi_ros": 29,
+        "vmpi_with": 28,
+        "vmpi_videos": 45,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "CHRIS",
@@ -225,7 +255,12 @@
         "tue_raw": 2.6,
         "wed_raw": 2.6,
         "thu_raw": 2.2,
-        "fri_raw": 4.1
+        "fri_raw": 4.1,
+        "vmpi": 1,
+        "vmpi_ros": 36,
+        "vmpi_with": 36,
+        "vmpi_videos": 58,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "TRENTON",
@@ -257,7 +292,12 @@
         "tue_raw": 0,
         "wed_raw": 14.2,
         "thu_raw": 11.7,
-        "fri_raw": 4.3
+        "fri_raw": 4.3,
+        "vmpi": 1,
+        "vmpi_ros": 14,
+        "vmpi_with": 14,
+        "vmpi_videos": 20,
+        "vmpi_asof": "10/13/26 3:46 AM"
       },
       {
         "name": "DERRICK",
@@ -311,7 +351,7 @@
         "hidden": false,
         "ro_count": 130,
         "coupon_labor": 1911.45,
-        "_lastImport": 1791889843882,
+        "_lastImport": 1791890124663,
         "total_sales": 23846.73,
         "coupon_usage_pct": 0.0802,
         "min_csi": 917,
@@ -344,7 +384,7 @@
         "roh50_hrs_ro": 0.27,
         "ro_count": 116,
         "coupon_labor": 1697.27,
-        "_lastImport": 1791889843882,
+        "_lastImport": 1791890124663,
         "total_sales": 15456.74,
         "coupon_usage_pct": 0.1098,
         "min_csi": 917,
@@ -378,7 +418,7 @@
         "last_month_total": 0,
         "ro_count": 0,
         "mtd_month": "2026-10",
-        "_lastImport": 1791889833807
+        "_lastImport": 1791890124663
       }
     ],
     "advisorTraining": [
