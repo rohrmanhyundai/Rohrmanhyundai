@@ -285,7 +285,7 @@ tr:last-child td{border-bottom:none}
 .adv-cal-month{font-size:28px;font-weight:900;min-width:260px;text-align:center;letter-spacing:.01em;background:linear-gradient(90deg,#eafcff,#7dd3fc 55%,#c4b5fd);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .adv-nav-btn{font-size:22px;line-height:1;width:44px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(148,163,184,.2);transition:transform .15s,border-color .15s,background .15s}
 .adv-nav-btn:hover{transform:translateY(-1px);border-color:rgba(110,231,249,.5);background:linear-gradient(180deg,rgba(110,231,249,.18),rgba(110,231,249,.05))}
-.adv-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;width:100%;max-width:1100px}
+.adv-cal-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;max-width:1100px}
 .adv-cal-dayname{text-align:center;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#8fa7c8;padding:4px 0 8px}
 /* Sunday is closed, so its column header recedes too. */
 .adv-cal-dayname--off{color:#55647d}

@@ -742,9 +742,11 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
+  // Mon–Sat grid — the shop is closed Sundays, so they're left off entirely
+  // to give the working days more room.
   const cells = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  for (let i = 0; i < (firstDay === 0 ? 0 : firstDay - 1); i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) if (new Date(year, month, d).getDay() !== 0) cells.push(d);
 
   // ── Tools (the buttons along the top) ─────────────────────────────────────
   // Every tool lives on the 🧰 All Tools page. Which ones also sit along the top
@@ -1127,8 +1129,8 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           <div className="adv-cal-wrap">
 
             <div className="adv-cal-grid">
-              {DAY_NAMES.map((d, i) => (
-                <div key={d} className={`adv-cal-dayname${i === 0 ? ' adv-cal-dayname--off' : ''}`}>{d}</div>
+              {DAY_NAMES.slice(1).map(d => (
+                <div key={d} className="adv-cal-dayname">{d}</div>
               ))}
               {cells.map((d, i) => {
                 if (!d) return <div key={`empty-${i}`} className="adv-cal-day adv-cal-empty" />;
@@ -1151,7 +1153,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 // Cell colour, weakest signal to strongest: closed Sunday, then
                 // whatever event the day carries, then today on top.
                 const isPast   = dateStr < todayStr;
-                const isSunday = i % 7 === 0;
+                const isSunday = false;   // Sundays aren't drawn (closed)
                 const eventTint = events.some(e => e.type === 'holiday')  ? ' adv-cal-day--holiday'
                                 : events.some(e => e.type === 'vacation') ? ' adv-cal-day--vacation'
                                 : events.some(e => e.type === 'training') ? ' adv-cal-day--training'
