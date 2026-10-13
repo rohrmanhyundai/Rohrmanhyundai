@@ -1,21 +1,27 @@
 {
-  "updatedAt": "2026-10-12T21:31:09.848Z",
+  "updatedAt": "2026-10-13T14:54:53.170Z",
   "by": "SHAWN",
   "advisors": {
-    "DAVID": [
-      {
-        "ro": "781495",
-        "vehicle": "2025 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781488",
-        "vehicle": "2023 Hyundai Sonata Hybrid"
-      }
-    ],
     "JORDAN": [
       {
-        "ro": "781492",
-        "vehicle": "2022 Hyundai Kona N"
+        "ro": "781513",
+        "vehicle": "2027 Hyundai Sonata"
+      },
+      {
+        "ro": "781510",
+        "vehicle": "2013 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781507",
+        "vehicle": "2018 Hyundai Tucson"
+      },
+      {
+        "ro": "781505",
+        "vehicle": "2025 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781497",
+        "vehicle": "2007 Hyundai Elantra"
       },
       {
         "ro": "781451",
@@ -26,22 +32,46 @@
         "vehicle": "2013 Hyundai Sonata"
       }
     ],
+    "MATTHEW": [
+      {
+        "ro": "781512",
+        "vehicle": "2027 Hyundai Palisade Hybrid"
+      }
+    ],
+    "DAVID": [
+      {
+        "ro": "781511",
+        "vehicle": "2027 Hyundai Palisade"
+      },
+      {
+        "ro": "781509",
+        "vehicle": "2023 Hyundai Elantra Hybrid"
+      },
+      {
+        "ro": "781508",
+        "vehicle": "2026 Hyundai Venue"
+      },
+      {
+        "ro": "781501",
+        "vehicle": "2018 Hyundai Santa Fe Sport"
+      },
+      {
+        "ro": "781498",
+        "vehicle": "2026 Hyundai Tucson Hybrid"
+      }
+    ],
     "CORY": [
+      {
+        "ro": "781503",
+        "vehicle": "2024 Hyundai Sonata"
+      },
       {
         "ro": "781477",
         "vehicle": "2024 Hyundai IONIQ 5"
       },
       {
-        "ro": "781453",
-        "vehicle": "2026 Hyundai Palisade"
-      },
-      {
         "ro": "781448",
         "vehicle": "2023 Hyundai IONIQ 6"
-      },
-      {
-        "ro": "780913",
-        "vehicle": "2019 Hyundai Kona"
       }
     ]
   }
