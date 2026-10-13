@@ -32,22 +32,6 @@
     "advisor": "JORDAN TROXEL"
   },
   {
-    "id": "mv1dgb8dcew4",
-    "ro": "781453",
-    "roDate": "2026-10-09",
-    "vehicle": "2026 Hyundai Palisade",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "10/13/2026",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mv1dgb8dd6pc",
     "ro": "781448",
     "roDate": "2026-10-09",
