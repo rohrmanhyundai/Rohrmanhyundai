@@ -54,13 +54,26 @@ const tidy = (s) => {
   return t.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
 };
 
-function customerIndex(deferred) {
+// Customer info by VIN, cross-referenced from what the app already has:
+//  1. Deferred work (name, phone, email, vehicle) — newest line wins;
+//  2. After Call reviews — the phone number the advisor actually called;
+//  3. the survey (service invitation) list — name, email, model.
+// Each later source only fills what's still missing.
+function customerIndex(deferred, surveys = [], reviews = []) {
   const by = {};
   for (const r of Object.values((deferred && deferred.byRo) || {})) {
-    const v = String(r.vin || '').toUpperCase();
+    const v = String(r.vin || '').toUpperCase().trim();
     if (!v) continue;
-    if (!by[v] || String(r.date || '') > String(by[v].date || '')) by[v] = r;   // newest wins
+    if (!by[v] || String(r.date || '') > String(by[v].date || '')) by[v] = { ...r };   // newest wins
   }
+  const fill = (vin, patch) => {
+    const v = String(vin || '').toUpperCase().trim();
+    if (!v) return;
+    const c = by[v] || (by[v] = {});
+    for (const [k, val] of Object.entries(patch)) if (val && !c[k]) c[k] = val;
+  };
+  for (const r of reviews || []) fill(r.vin, { phone: r.phone, customer: r.customerName, model: r.model });
+  for (const r of surveys || []) if (r && !r.__meta) fill(r.vin, { customer: r.customerName, email: r.email, model: r.model });
   return by;
 }
 
@@ -73,7 +86,7 @@ export function callBackRows(analysed, from, to, people = {}) {
     const last = visits[visits.length - 1];
     if ((from && last.date < from) || (to && last.date > to)) continue;
     const c = people[a.vin] || {};
-    const vehicle = [c.year, tidy(c.make), c.model].filter(Boolean).join(' ') || c.vehicle || '';
+    const vehicle = [c.year, tidy(c.make), tidy(c.model)].filter(Boolean).join(' ') || c.vehicle || '';
     rows.push({ vin: a.vin, left: a.left, lastDate: last.date, lastRo: last.ro, lastKind: last.kind,
       customer: tidy(c.customer), phone: fmtPhone(c.phone), email: c.email || '', vehicle });
   }
@@ -147,7 +160,7 @@ async function callBackPdf(rows, from, to, stamp, leftOnly = 0) {
   pdf.save(`oil-guard-call-back-${from || 'start'}-to-${to || 'today'}${leftOnly ? `-${leftOnly}-left` : ''}.pdf`);
 }
 
-function CallBack({ analysed, stamp, loadDeferredRows }) {
+function CallBack({ analysed, stamp, loadDeferredRows, loadServiceInvitations, loadCompletedReviews }) {
   const [from, setFrom] = useState(monthsAgo(6));
   const [to, setTo] = useState(monthsAgo(3));
   const [people, setPeople] = useState(null);
@@ -155,7 +168,16 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
   const [leftOnly, setLeftOnly] = useState(0);   // 0 = everyone, else exactly this many left
   useEffect(() => {
     let cancelled = false;
-    loadDeferredRows().then(d => { if (!cancelled) setPeople(customerIndex(d)); }).catch(() => { if (!cancelled) setPeople({}); });
+    const advisorsOf = (si) => [...new Set((si || []).filter(r => r && r.consultant).map(r => String(r.consultant).trim().split(/\s+/)[0].toUpperCase()))];
+    Promise.all([
+      loadDeferredRows().catch(() => null),
+      (loadServiceInvitations ? loadServiceInvitations() : Promise.resolve([])).catch(() => []),
+    ]).then(async ([d, si]) => {
+      const reviews = loadCompletedReviews
+        ? (await Promise.all(advisorsOf(si).map(a => loadCompletedReviews(a).catch(() => [])))).flat()
+        : [];
+      if (!cancelled) setPeople(customerIndex(d, si, reviews));
+    }).catch(() => { if (!cancelled) setPeople({}); });
     return () => { cancelled = true; };
   }, [loadDeferredRows]);
   const rows = useMemo(() => callBackRows(analysed, from, to, people || {}).filter(r => !leftOnly || r.left === leftOnly), [analysed, from, to, people, leftOnly]);
@@ -353,7 +375,7 @@ function IssueRow({ vin, issue, onFix, busy }) {
 
 export default function OilGuard({ currentUser, currentRole, onBack, initialTab, io }) {
   // Storage — swappable so it can be exercised without touching live data.
-  const { loadOilGuard, saveOilGuard, loadOilGuardFixes, updateOilGuardFixes, loadDeferredRows } = io || github;
+  const { loadOilGuard, saveOilGuard, loadOilGuardFixes, updateOilGuardFixes, loadDeferredRows, loadServiceInvitations, loadCompletedReviews } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(initialTab === 'settings' && isManager ? 'settings' : 'lookup');
   const [store, setStore] = useState(null);
@@ -460,7 +482,7 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 40px 40px' }}>
         <div style={{ maxWidth: tab === 'callback' ? 1400 : 980, margin: '0 auto' }}>
           {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div> : tab === 'callback' ? (
-            store ? <CallBack analysed={analysed} stamp={store.reportStamp} loadDeferredRows={loadDeferredRows} />
+            store ? <CallBack analysed={analysed} stamp={store.reportStamp} loadDeferredRows={loadDeferredRows} loadServiceInvitations={loadServiceInvitations} loadCompletedReviews={loadCompletedReviews} />
               : <div style={{ ...card, color: '#fbbf24', fontWeight: 700 }}>No Oil Guard report uploaded yet.</div>
           ) : tab === 'lookup' ? (
             <>
