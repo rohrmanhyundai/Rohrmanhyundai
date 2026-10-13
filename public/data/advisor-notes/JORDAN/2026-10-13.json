@@ -1,0 +1,383 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-13",
+  "rows": [
+    {
+      "id": "rmv6kr0m69w08",
+      "customerName": "Chris Kuczynski",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43558",
+      "vehicle": "2023 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6cfw7",
+      "customerName": "Scott Brown",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43611",
+      "vehicle": "2007 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "INSTALL BRACKETS FOR SUSPENSION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6a9um",
+      "customerName": "Hyebin Han",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43615",
+      "vehicle": "2022 Hyundai Sonata",
+      "services": [
+        "Diagnostic/Service (Check Engine Light) — Underbody shield was broken",
+        "Other (Please use comment box below) — Underbody shield was broken"
+      ],
+      "comments": "Underbody shield was broken",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "780204",
+        "date": "2026-08-21",
+        "advisorFull": "CODY TINCHER",
+        "advisor": "CODY",
+        "amount": 199.99,
+        "hours": 0.8,
+        "phone": "9492324372",
+        "vin": "KMHL44J29NA244087",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 199.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv6kr0m6f832",
+      "customerName": "Melissa Hitz",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43524",
+      "vehicle": "2024 OTHER OTHER",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SHUTTLE",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6u72j",
+      "customerName": "Emmanouil Zacharioudakis",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43602",
+      "vehicle": "2025 Hyundai Tucson Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6q2zu",
+      "customerName": "Aditya Vardhan Padala",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43565",
+      "vehicle": "2026 Hyundai Elantra",
+      "services": [
+        "CUSTOMER STATES DRIVER HEATED SEAT WILL NOT WORK. (SOP)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6ahod",
+      "customerName": "Kaitlyn Hood",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43504",
+      "vehicle": "2018 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES INDICATOR FOR HEADLIGHT OUT. CHECK AND ADVISE.",
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6uw59",
+      "customerName": "Christine Pangle",
+      "appointmentTime": "10:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43438",
+      "vehicle": "2023 Hyundai Palisade",
+      "services": [
+        "REPLACE CONTROL ARM",
+        "REPLACE TWO TIRES",
+        "WHEEL ALIGNMENT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "780069",
+        "date": "2026-08-17",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1546.26,
+        "hours": 5.5,
+        "phone": "7654907472",
+        "vin": "KM8R7DGE1PU545635",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 57.54,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 321.59,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 226.23,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUPV6",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+            "count": 1,
+            "h": 3.5,
+            "price": 940.9,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv6kr0m683g1",
+      "customerName": "Benjamin Teninty",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43568",
+      "vehicle": "2025 Hyundai IONIQ 5",
+      "services": [
+        "24,000 mile EV maintenance",
+        "Tire Rotation",
+        "CABIN AIR FILTER",
+        "replace wipers",
+        "Brake Fluid Exchange",
+        "tire mount and balance"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6rxuk",
+      "customerName": "Alyson Stanifer",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43468",
+      "vehicle": "2026 Hyundai Sonata",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m611h3",
+      "customerName": "Te Guo",
+      "appointmentTime": "3:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43552",
+      "vehicle": "2019 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m620rj",
+      "customerName": "John Freed",
+      "appointmentTime": "4:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43344",
+      "vehicle": "2021 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "779509",
+        "date": "2026-07-23",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1542.83,
+        "hours": 6.1,
+        "phone": "8122390777",
+        "vin": "KMHLR4AF6MU154932",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 450.33,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 205.6,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 166.43,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 91.04,
+            "priceEst": false
+          },
+          {
+            "code": "VACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 97.9,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.22,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 54.78,
+            "priceEst": false
+          },
+          {
+            "code": "PADRESURF",
+            "desc": "Replace Front Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 442.53,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-13T11:05:16.450Z"
+}
