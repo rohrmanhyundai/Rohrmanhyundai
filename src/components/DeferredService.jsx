@@ -764,16 +764,19 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                   <div style={{ fontSize: 12, color: '#94a3b8' }}>{loading ? 'Loading…' : showScheduled ? `${filtered.length} of ${scheduledCount} with an appointment set` : `${filtered.length} of ${rows.length - scheduledCount} repair orders${scheduledCount ? ` · ${scheduledCount} scheduled` : ''}`}{selCodes.size ? ` · ${services.filter(g => selCodes.has(g.key)).map(g => g.label).join(', ')}` : ''}</div>
                   <div style={{ flex: 1 }} />
                   <div style={{ fontSize: 11.5, color: '#64748b' }}>Click a customer for the full line from the report</div>
-                  <button className="secondary" disabled={!filtered.length || savingPdf} onClick={saveSearchPdf}
-                    title="Download this list — every filter you've picked — as a PDF"
-                    style={{ fontSize: 12.5, fontWeight: 800, color: '#86efac', borderColor: 'rgba(74,222,128,.45)', background: 'rgba(74,222,128,.1)' }}>
-                    {savingPdf ? '⏳ Saving…' : `📄 Save as .pdf (${filtered.length})`}
-                  </button>
-                  <button className="secondary" disabled={!filtered.length || savingXlsx} onClick={saveSearchXlsx}
-                    title="Download this list — every filter you've picked — as an Excel spreadsheet"
-                    style={{ fontSize: 12.5, fontWeight: 800, color: '#6ee7b7', borderColor: 'rgba(16,185,129,.5)', background: 'rgba(16,185,129,.1)' }}>
-                    {savingXlsx ? '⏳ Saving…' : `📊 Save as Excel (${filtered.length})`}
-                  </button>
+                  {/* Save buttons stacked: PDF on top, Excel under it. */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
+                    <button className="secondary" disabled={!filtered.length || savingPdf} onClick={saveSearchPdf}
+                      title="Download this list — every filter you've picked — as a PDF"
+                      style={{ fontSize: 12.5, fontWeight: 800, color: '#86efac', borderColor: 'rgba(74,222,128,.45)', background: 'rgba(74,222,128,.1)' }}>
+                      {savingPdf ? '⏳ Saving…' : `📄 Save as .pdf (${filtered.length})`}
+                    </button>
+                    <button className="secondary" disabled={!filtered.length || savingXlsx} onClick={saveSearchXlsx}
+                      title="Download this list — every filter you've picked — as an Excel spreadsheet"
+                      style={{ fontSize: 12.5, fontWeight: 800, color: '#6ee7b7', borderColor: 'rgba(16,185,129,.5)', background: 'rgba(16,185,129,.1)' }}>
+                      {savingXlsx ? '⏳ Saving…' : `📊 Save as Excel (${filtered.length})`}
+                    </button>
+                  </div>
                 </div>
                 <div className="ds-row" style={{ background: 'transparent', border: 'none', cursor: 'default', padding: '0 14px 6px' }}>
                   <div className="ds-label">Customer</div><div className="ds-label ds-hide">Previous RO</div><div className="ds-label ds-hide">Advisor</div><div className="ds-label">Date</div><div />
