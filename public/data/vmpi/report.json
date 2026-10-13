@@ -1,17 +1,17 @@
 {
-  "savedAt": "2026-10-12T23:01:20.453Z",
+  "savedAt": "2026-10-13T11:17:44.912Z",
   "by": "Shawn",
   "fileName": "TECH VIDEO(VIDEO ONLY).csv",
-  "stamp": "10/9/26 5:01 AM",
+  "stamp": "10/13/26 3:46 AM",
   "store": "BOB ROHRMAN HYUNDAI",
   "techs": [
     {
       "name": "BRYSON HUTSELL",
       "first": "BRYSON",
-      "ros": 28,
+      "ros": 29,
       "withVideo": 28,
-      "videos": 47,
-      "pct": 1,
+      "videos": 45,
+      "pct": 0.9655,
       "lines": [
         {
           "ro": "781242",
@@ -19,26 +19,6 @@
           "closed": "10/01/26",
           "customer": "Lanam, Kimberly",
           "vehicle": "2017 Hyundai Santa Fe Sport",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 1
-        },
-        {
-          "ro": "781245",
-          "opened": "10/01/26",
-          "closed": "10/01/26",
-          "customer": "Wilson, Cailin",
-          "vehicle": "2024 Hyundai Santa Cruz",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
-          "ro": "781247",
-          "opened": "10/01/26",
-          "closed": "10/01/26",
-          "customer": "Thornton, Ian",
-          "vehicle": "2026 Hyundai Santa Fe",
           "advisor": "David Riley",
           "video": true,
           "videos": 1
@@ -234,16 +214,6 @@
           "videos": 2
         },
         {
-          "ro": "781372",
-          "opened": "10/07/26",
-          "closed": "10/07/26",
-          "customer": "Osting, Janet",
-          "vehicle": "2019 Honda CR-V",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781377",
           "opened": "10/07/26",
           "closed": "10/07/26",
@@ -254,31 +224,11 @@
           "videos": 2
         },
         {
-          "ro": "781382",
-          "opened": "10/07/26",
-          "closed": "10/07/26",
-          "customer": "Goudy, Traci",
-          "vehicle": "2024 Genesis GV70",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 1
-        },
-        {
           "ro": "781385",
           "opened": "10/07/26",
           "closed": "10/07/26",
           "customer": "Eitnier, Alyssa",
           "vehicle": "2025 Hyundai Elantra Hybrid",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
-          "ro": "781417",
-          "opened": "10/08/26",
-          "closed": "10/08/26",
-          "customer": "Casad, Deborah",
-          "vehicle": "2023 Genesis G80",
           "advisor": "David Riley",
           "video": true,
           "videos": 2
@@ -292,16 +242,76 @@
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 2
+        },
+        {
+          "ro": "781440",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Moore, Natalie",
+          "vehicle": "2022 Hyundai Tucson",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781456",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Yu, Caleb",
+          "vehicle": "2025 Hyundai Elantra Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781461",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Correa, Jahir",
+          "vehicle": "2022 Hyundai Elantra N",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781478",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Osorio, Juan",
+          "vehicle": "2024 Hyundai Elantra Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781482",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Kim, Kyungtae",
+          "vehicle": "2026 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781486",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Knight, Kendra",
+          "vehicle": "2026 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": false,
+          "videos": 0
         }
       ]
     },
     {
       "name": "CARTER JEAN",
       "first": "CARTER",
-      "ros": 26,
+      "ros": 28,
       "withVideo": 23,
-      "videos": 36,
-      "pct": 0.8846,
+      "videos": 35,
+      "pct": 0.8214,
       "lines": [
         {
           "ro": "780924",
@@ -310,6 +320,16 @@
           "customer": "Mccarty, Enterprise",
           "vehicle": "2026 Hyundai Santa Fe",
           "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781143",
+          "opened": "09/28/26",
+          "closed": "10/12/26",
+          "customer": "Sternisha, Daniel",
+          "vehicle": "2018 Hyundai Santa Fe Sport",
+          "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
         },
@@ -324,31 +344,11 @@
           "videos": 1
         },
         {
-          "ro": "781194",
-          "opened": "09/29/26",
-          "closed": "10/02/26",
-          "customer": "Hodge, Nathan",
-          "vehicle": "2017 Hyundai Sonata Hybrid",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781257",
           "opened": "10/01/26",
           "closed": "10/01/26",
           "customer": "Purcifull, Jamie",
           "vehicle": "2023 Hyundai Tucson",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 1
-        },
-        {
-          "ro": "781262",
-          "opened": "10/01/26",
-          "closed": "10/01/26",
-          "customer": "Jaeger, Kathryn",
-          "vehicle": "2022 Hyundai Elantra",
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
@@ -360,16 +360,6 @@
           "customer": "Roberts, Sophia",
           "vehicle": "2023 Hyundai Tucson Hybrid",
           "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
-          "ro": "781279",
-          "opened": "10/02/26",
-          "closed": "10/02/26",
-          "customer": "Hefner, Jessy",
-          "vehicle": "2017 Hyundai Sonata",
-          "advisor": "Jordan Troxel",
           "video": true,
           "videos": 2
         },
@@ -390,16 +380,6 @@
           "customer": "Pacheco, Joe",
           "vehicle": "2025 Hyundai Sonata Hybrid",
           "advisor": "David Riley",
-          "video": true,
-          "videos": 1
-        },
-        {
-          "ro": "781293",
-          "opened": "10/02/26",
-          "closed": "10/05/26",
-          "customer": "Sagamore, Enterprise",
-          "vehicle": "2026 Hyundai Kona",
-          "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
         },
@@ -444,16 +424,6 @@
           "videos": 2
         },
         {
-          "ro": "781346",
-          "opened": "10/06/26",
-          "closed": "10/06/26",
-          "customer": "SHELTON, Carol",
-          "vehicle": "2024 Hyundai Santa Cruz",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781351",
           "opened": "10/06/26",
           "closed": "10/06/26",
@@ -494,14 +464,14 @@
           "videos": 1
         },
         {
-          "ro": "781384",
+          "ro": "781389",
           "opened": "10/07/26",
           "closed": "10/07/26",
-          "customer": "Hopkins, Trudy",
-          "vehicle": "2023 Hyundai Palisade",
-          "advisor": "Jordan Troxel",
-          "video": false,
-          "videos": 0
+          "customer": "Joongwon",
+          "vehicle": "2023 Hyundai Santa Fe",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
         },
         {
           "ro": "781396",
@@ -522,16 +492,6 @@
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
-        },
-        {
-          "ro": "781401",
-          "opened": "10/08/26",
-          "closed": "10/08/26",
-          "customer": "Hagen, Gary",
-          "vehicle": "2026 Hyundai Palisade Hybrid",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
         },
         {
           "ro": "781408",
@@ -562,15 +522,85 @@
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781427",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Dexter, Dusti",
+          "vehicle": "2025 Hyundai Santa Fe Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": false,
+          "videos": 0
+        },
+        {
+          "ro": "781439",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Nevels, Shareka",
+          "vehicle": "2017 Hyundai Elantra",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781452",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Hagen, Gary",
+          "vehicle": "2026 Hyundai Palisade Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": false,
+          "videos": 0
+        },
+        {
+          "ro": "781458",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Sweat, Robin",
+          "vehicle": "2020 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781475",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Mcmahon, Robert",
+          "vehicle": "2018 Hyundai Santa Fe Sport",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781480",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "MASTASCUSA, Nico",
+          "vehicle": "2024 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": false,
+          "videos": 0
+        },
+        {
+          "ro": "781484",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Graves, Darvie",
+          "vehicle": "2024 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
         }
       ]
     },
     {
       "name": "CHRIS FOLEY",
       "first": "CHRIS",
-      "ros": 22,
-      "withVideo": 22,
-      "videos": 32,
+      "ros": 36,
+      "withVideo": 36,
+      "videos": 58,
       "pct": 1,
       "lines": [
         {
@@ -654,16 +684,6 @@
           "videos": 2
         },
         {
-          "ro": "781284",
-          "opened": "10/02/26",
-          "closed": "10/02/26",
-          "customer": "Leachman Haab, Brianna",
-          "vehicle": "2022 Hyundai Tucson",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 1
-        },
-        {
           "ro": "781290",
           "opened": "10/02/26",
           "closed": "10/02/26",
@@ -694,16 +714,6 @@
           "videos": 2
         },
         {
-          "ro": "781321",
-          "opened": "10/05/26",
-          "closed": "10/05/26",
-          "customer": "Nolan, Edward",
-          "vehicle": "2026 Hyundai Sonata",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781326",
           "opened": "10/05/26",
           "closed": "10/05/26",
@@ -714,6 +724,16 @@
           "videos": 2
         },
         {
+          "ro": "781335",
+          "opened": "10/05/26",
+          "closed": "10/05/26",
+          "customer": "Pfeifer , Diane",
+          "vehicle": "2024 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
           "ro": "781345",
           "opened": "10/06/26",
           "closed": "10/07/26",
@@ -722,6 +742,16 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781364",
+          "opened": "10/06/26",
+          "closed": "10/06/26",
+          "customer": "Gross, Camron",
+          "vehicle": "2024 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
         },
         {
           "ro": "781370",
@@ -792,15 +822,155 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781426",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Ballard, Lee",
+          "vehicle": "2023 Hyundai Sonata",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781434",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Onken, Carla",
+          "vehicle": "2025 Genesis GV70",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781447",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Schneidt, Bruce",
+          "vehicle": "2022 Hyundai Santa Fe",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 3
+        },
+        {
+          "ro": "781460",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Leap, Chad",
+          "vehicle": "2025 Hyundai Tucson Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781462",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Kaabipour, Sina",
+          "vehicle": "2022 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781465",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Bauer, Kelly",
+          "vehicle": "2024 Hyundai Sonata",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781467",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Smith, Brooke",
+          "vehicle": "2023 Hyundai Santa Fe",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 3
+        },
+        {
+          "ro": "781468",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Sparenberg, Bruce",
+          "vehicle": "2025 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781469",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Cooley, Kristina",
+          "vehicle": "2016 Subaru Legacy",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781470",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Morris, Kevin",
+          "vehicle": "2025 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781471",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Kelley, Molly",
+          "vehicle": "2025 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781472",
+          "opened": "10/10/26",
+          "closed": "10/12/26",
+          "customer": "Zuehl, Donna",
+          "vehicle": "2025 Hyundai Elantra Hybrid",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781485",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Walker, Mollie",
+          "vehicle": "2017 Genesis G80",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781490",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Cromer, James",
+          "vehicle": "2025 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
         }
       ]
     },
     {
       "name": "CORY SWINDLE",
       "first": "CORY",
-      "ros": 10,
-      "withVideo": 10,
-      "videos": 15,
+      "ros": 12,
+      "withVideo": 12,
+      "videos": 17,
       "pct": 1,
       "lines": [
         {
@@ -822,6 +992,16 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781235",
+          "opened": "09/30/26",
+          "closed": "10/12/26",
+          "customer": "Showalter, Greg",
+          "vehicle": "2022 Hyundai Ioniq Plug-In Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
         },
         {
           "ro": "781250",
@@ -854,16 +1034,6 @@
           "videos": 2
         },
         {
-          "ro": "781285",
-          "opened": "10/02/26",
-          "closed": "10/02/26",
-          "customer": "Pearson, Risa",
-          "vehicle": "2017 Hyundai Tucson",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781311",
           "opened": "10/05/26",
           "closed": "10/05/26",
@@ -880,6 +1050,16 @@
           "customer": "Swearingen, Andrew",
           "vehicle": "2024 Hyundai Elantra Hybrid",
           "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781320",
+          "opened": "10/05/26",
+          "closed": "10/09/26",
+          "customer": "Lakin, Albert",
+          "vehicle": "2026 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
         },
@@ -902,17 +1082,47 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 2
+        },
+        {
+          "ro": "781431",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Blake, Chris",
+          "vehicle": "2024 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
         }
       ]
     },
     {
       "name": "GAVEN LAUGHNER",
       "first": "GAVEN",
-      "ros": 22,
-      "withVideo": 21,
-      "videos": 27,
-      "pct": 0.9545,
+      "ros": 32,
+      "withVideo": 30,
+      "videos": 41,
+      "pct": 0.9375,
       "lines": [
+        {
+          "ro": "780681",
+          "opened": "09/08/26",
+          "closed": "10/12/26",
+          "customer": "E&G USA INC, Shinsung",
+          "vehicle": "2018 Hyundai Tucson",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "780755",
+          "opened": "09/10/26",
+          "closed": "10/12/26",
+          "customer": "Smith, Dawn",
+          "vehicle": "2024 Hyundai Tucson Plug-In Hybrid",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
         {
           "ro": "781229",
           "opened": "09/30/26",
@@ -922,36 +1132,6 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
-        },
-        {
-          "ro": "781251",
-          "opened": "10/01/26",
-          "closed": "10/01/26",
-          "customer": "Sang, Kim",
-          "vehicle": "2025 Hyundai Elantra N",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
-          "ro": "781273",
-          "opened": "10/01/26",
-          "closed": "10/02/26",
-          "customer": "Rusk, Carol",
-          "vehicle": "2022 Hyundai Kona",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 1
-        },
-        {
-          "ro": "781307",
-          "opened": "10/05/26",
-          "closed": "10/05/26",
-          "customer": "Hunter, Michael",
-          "vehicle": "2025 Hyundai IONIQ 6",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
         },
         {
           "ro": "781310",
@@ -1074,14 +1254,14 @@
           "videos": 2
         },
         {
-          "ro": "781367",
+          "ro": "781371",
           "opened": "10/06/26",
-          "closed": "10/06/26",
-          "customer": "Brown, Kristi",
-          "vehicle": "2018 Hyundai Elantra",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 1
+          "closed": "10/12/26",
+          "customer": "Rowe, Andrew",
+          "vehicle": "2018 Hyundai Santa Fe",
+          "advisor": "David Riley",
+          "video": false,
+          "videos": 0
         },
         {
           "ro": "781374",
@@ -1132,15 +1312,125 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781423",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Mitchell, Jordan",
+          "vehicle": "2021 Hyundai Tucson",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781432",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Farrell, Kelley",
+          "vehicle": "2026 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781435",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Auto Sales, Walters",
+          "vehicle": "2026 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781437",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Ostanek, Jason",
+          "vehicle": "2022 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781441",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Bower, Judy",
+          "vehicle": "2020 Hyundai Santa Fe",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781444",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Donahue, Elaina",
+          "vehicle": "2024 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781449",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Bookout, Allison",
+          "vehicle": "2025 Hyundai Kona",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781473",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "May, Dalton",
+          "vehicle": "2024 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781479",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Bae, Euiwon",
+          "vehicle": "2025 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781483",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Nam, Jongjin",
+          "vehicle": "2026 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781487",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Gardner, Stephanie",
+          "vehicle": "2016 Hyundai Sonata Hybrid",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 1
         }
       ]
     },
     {
       "name": "JACOB KUNTZ",
       "first": "JACOB",
-      "ros": 1,
-      "withVideo": 1,
-      "videos": 1,
+      "ros": 2,
+      "withVideo": 2,
+      "videos": 2,
       "pct": 1,
       "lines": [
         {
@@ -1152,16 +1442,26 @@
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781481",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Cartwright, Andrew",
+          "vehicle": "2020 Hyundai Palisade",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
         }
       ]
     },
     {
       "name": "KADEN WILSON",
       "first": "KADEN",
-      "ros": 15,
-      "withVideo": 15,
-      "videos": 22,
-      "pct": 1,
+      "ros": 20,
+      "withVideo": 19,
+      "videos": 28,
+      "pct": 0.95,
       "lines": [
         {
           "ro": "780804",
@@ -1224,6 +1524,16 @@
           "videos": 1
         },
         {
+          "ro": "781301",
+          "opened": "10/03/26",
+          "closed": "10/09/26",
+          "customer": "Jin, Jianhua",
+          "vehicle": "2017 Hyundai Santa Fe Sport",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
           "ro": "781305",
           "opened": "10/03/26",
           "closed": "10/05/26",
@@ -1244,16 +1554,6 @@
           "videos": 1
         },
         {
-          "ro": "781330",
-          "opened": "10/05/26",
-          "closed": "10/05/26",
-          "customer": "Mills, John",
-          "vehicle": "2019 Hyundai Elantra",
-          "advisor": "Jordan Troxel",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781332",
           "opened": "10/05/26",
           "closed": "10/07/26",
@@ -1269,16 +1569,6 @@
           "closed": "10/06/26",
           "customer": "Baughman, Hunter",
           "vehicle": "2023 Hyundai Santa Fe",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
-          "ro": "781359",
-          "opened": "10/06/26",
-          "closed": "10/06/26",
-          "customer": "Aquino, Antonio",
-          "vehicle": "2017 Hyundai Tucson",
           "advisor": "David Riley",
           "video": true,
           "videos": 2
@@ -1312,15 +1602,75 @@
           "advisor": "David Riley",
           "video": true,
           "videos": 1
+        },
+        {
+          "ro": "781412",
+          "opened": "10/08/26",
+          "closed": "10/08/26",
+          "customer": "Barnett, Theodore",
+          "vehicle": "2012 Hyundai Santa Fe",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781414",
+          "opened": "10/08/26",
+          "closed": "10/09/26",
+          "customer": "Kelson, Milton",
+          "vehicle": "2024 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
+          "video": false,
+          "videos": 0
+        },
+        {
+          "ro": "781422",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Keen, Kevin",
+          "vehicle": "2026 Hyundai Palisade Hybrid",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781433",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Johnson , Michael",
+          "vehicle": "2024 Hyundai Palisade",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781442",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Smith, Jacqueline",
+          "vehicle": "2023 Hyundai Elantra",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781474",
+          "opened": "10/12/26",
+          "closed": "10/12/26",
+          "customer": "Avila Rodriguez, Luzbey",
+          "vehicle": "2018 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
         }
       ]
     },
     {
       "name": "TRENTON MCQUINN",
       "first": "TRENTON",
-      "ros": 9,
-      "withVideo": 9,
-      "videos": 14,
+      "ros": 14,
+      "withVideo": 14,
+      "videos": 20,
       "pct": 1,
       "lines": [
         {
@@ -1354,16 +1704,6 @@
           "videos": 1
         },
         {
-          "ro": "781252",
-          "opened": "10/01/26",
-          "closed": "10/02/26",
-          "customer": "Robles, Irene",
-          "vehicle": "2025 Hyundai Elantra",
-          "advisor": "David Riley",
-          "video": true,
-          "videos": 2
-        },
-        {
           "ro": "781256",
           "opened": "10/01/26",
           "closed": "10/01/26",
@@ -1382,6 +1722,16 @@
           "advisor": "Jordan Troxel",
           "video": true,
           "videos": 2
+        },
+        {
+          "ro": "781387",
+          "opened": "10/07/26",
+          "closed": "10/07/26",
+          "customer": "Alobeidli, Saeed",
+          "vehicle": "2020 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
         },
         {
           "ro": "781405",
@@ -1404,14 +1754,64 @@
           "videos": 1
         },
         {
-          "ro": "781416",
+          "ro": "781417",
           "opened": "10/08/26",
           "closed": "10/08/26",
-          "customer": "Suh, Ryan",
-          "vehicle": "2026 Hyundai Elantra N",
+          "customer": "Casad, Deborah",
+          "vehicle": "2023 Genesis G80",
           "advisor": "David Riley",
           "video": true,
           "videos": 2
+        },
+        {
+          "ro": "781430",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Burrows, Christy",
+          "vehicle": "2021 Hyundai Sonata",
+          "advisor": "Jordan Troxel",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781436",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Ford, Caleb",
+          "vehicle": "2018 Hyundai Sonata",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781446",
+          "opened": "10/09/26",
+          "closed": "10/12/26",
+          "customer": "Faruqi, Hina",
+          "vehicle": "2025 Hyundai Elantra",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 2
+        },
+        {
+          "ro": "781450",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Hannon, Ricky",
+          "vehicle": "2025 Hyundai Tucson",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
+        },
+        {
+          "ro": "781459",
+          "opened": "10/09/26",
+          "closed": "10/09/26",
+          "customer": "Bang, Stein",
+          "vehicle": "2022 Hyundai Tucson Plug-In Hybrid",
+          "advisor": "David Riley",
+          "video": true,
+          "videos": 1
         }
       ]
     }
