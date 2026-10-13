@@ -1,0 +1,258 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-13",
+  "rows": [
+    {
+      "id": "rmv6kr0m69xw6",
+      "customerName": "Alan Duttlinger",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43583",
+      "vehicle": "2026 Hyundai Tucson Hybrid",
+      "services": [
+        "Routine Maintenance (e.g. Oil Change, etc) — I would like a couple of items investigated for warranty work. 1) On a cold start, the transmission shifts rough between 35 & 45 MPH. 2) The driver door lock button does not seem to function properly.",
+        "302 R FRONT VIEW CAMERA FCA UPDATE(26-01-048H)",
+        "CUSTOMER STATES- This car is owned through enterprise"
+      ],
+      "comments": "I would like a couple of items investigated for warranty work. 1) On a cold start, the transmission shifts rough between 35 & 45 MPH. 2) The driver door lock button does not seem to function properly.",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6lph2",
+      "customerName": "Marina Sligor",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43522",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
+        "996 C UNDERBODY CORROSION PREV.SVC(23-01-063H)",
+        "9C2 C ECU S/W UPDATE THETA II (26-01-013H-2)",
+        "P33 C CUST REQ ONLY ANTITHEFT PROT. 25-BE-016H"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m645ch",
+      "customerName": "Joshua Widhalm",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43586",
+      "vehicle": "2024 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m65zoq",
+      "customerName": "Tammy North",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43567",
+      "vehicle": "2026 Hyundai Venue",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6s0ng",
+      "customerName": "Shareka Nevels",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43576",
+      "vehicle": "2017 Hyundai Elantra",
+      "services": [
+        "EXHAUST CAM PHASER AND ALL TIMING COMPONENTS",
+        "CUSTOMER STATES- Cust will need ride back home"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781439",
+        "date": "2026-10-09",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 3746.63,
+        "hours": 17.7,
+        "phone": "7654148123",
+        "vin": "5NPD84LF9HH042778",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 2,
+            "h": 3.4,
+            "est": true,
+            "price": 1283.24,
+            "priceEst": true
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 209.99,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 120,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "DECARB",
+            "desc": "Engine decarb service 4 cyl engines.",
+            "count": 1,
+            "h": 3.5,
+            "price": 727.81,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 219.99,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 312.72,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 459.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmv6kr0m6pm9k",
+      "customerName": "Ian Brown",
+      "appointmentTime": "10:40 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43449",
+      "vehicle": "2023 Hyundai Elantra Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m6rvl4",
+      "customerName": "Issic Cruz",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43599",
+      "vehicle": "2013 Hyundai Elantra",
+      "services": [
+        "PERFORM RECALL. VERIFIED OPEN RECALL:"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmv6kr0m62v1e",
+      "customerName": "Joyce Van Deman",
+      "appointmentTime": "3:40 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43596",
+      "vehicle": "2023 Hyundai Tucson",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-13T11:05:19.477Z"
+}
