@@ -83,6 +83,9 @@ const KNOWLEDGE = [
   { m: /oil clean|oil flush|engine flush|efl/i, tag: 'longevity', title: 'Engine Oil Cleaning Service',
     why: 'Dissolves sludge and deposits inside the engine so fresh oil can reach and protect every moving part.',
     wait: 'Sludge buildup and faster engine wear.' },
+  { m: /oil change|synthetic|\blof\b|oil & filter|oil and filter|rohr\s*50/i, tag: 'longevity', title: 'Oil Change',
+    why: 'Fresh oil and a new filter keep every moving part in your engine lubricated, cool and clean — the single best thing you can do for engine life.',
+    wait: 'Sludge, extra wear and a shorter engine life.' },
   { m: /wiper|blade/i, tag: 'safety', title: 'Wiper Blades',
     why: 'Streak-free wipers give you a clear view in rain, sleet and snow.',
     wait: 'Smearing and poor visibility in bad weather.' },
@@ -101,9 +104,12 @@ const GENERIC = { tag: 'reliability', title: null,
 const ICON_AC = `<svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="17" fill="#e8f7fb" stroke="${NAVY}" stroke-width="2"/><g stroke="${TEAL}" stroke-width="3" stroke-linecap="round"><line x1="24" y1="11" x2="24" y2="37"/><line x1="12.7" y1="17.5" x2="35.3" y2="30.5"/><line x1="12.7" y1="30.5" x2="35.3" y2="17.5"/></g><g stroke="${NAVY}" stroke-width="2" stroke-linecap="round"><path d="M20.5 13.5L24 16.5l3.5-3"/><path d="M20.5 34.5L24 31.5l3.5 3"/></g><circle cx="24" cy="24" r="3" fill="${NAVY}"/></svg>`;
 const iconFor = (name) => (/evap|a\/?c\b|air condition|ac clean/i.test(name) ? ICON_AC : iconForService(name));
 
-function explain(item) {
+const GENERIC_QUOTE = { tag: 'reliability', title: null,
+  why: 'Part of the service we talked about today. Your advisor can walk you through exactly what\'s included.',
+  wait: 'Ask your advisor what to watch for.' };
+function explain(item, quote) {
   const name = String(item.desc || item.code || '');
-  const k = KNOWLEDGE.find(x => x.m.test(name) || x.m.test(item.code || '')) || GENERIC;
+  const k = KNOWLEDGE.find(x => x.m.test(name) || x.m.test(item.code || '')) || (quote ? GENERIC_QUOTE : GENERIC);
   const title = item.desc ? niceCase(item.desc) : (k.title || 'Technician Recommendation');
   return { ...k, title };
 }
@@ -125,11 +131,13 @@ function withPrices(items, total) {
   return out;
 }
 
-function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl }) {
-  const items = withPrices(deferred.items || [], deferred.amount).map(i => ({ ...i, ...explain(i) }));
+// `quote` (from the Pricing Tool): same page, worded as today's quote, with the
+// coupon and tax spelled out — { subtotal, coupon, couponLabel, tax, taxLabel, total }.
+function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl, quote = null }) {
+  const items = withPrices(deferred.items || [], deferred.amount).map(i => ({ ...i, ...explain(i, quote) }));
   const priced = items.some(i => i.price > 0);
   const tagCounts = items.reduce((m, i) => ({ ...m, [i.tag]: (m[i.tag] || 0) + 1 }), {});
-  const first = String(customer || '').trim().split(/\s+/)[0] || 'Valued Customer';
+  const first = String(customer || '').trim().split(/\s+/)[0] || (quote ? '' : 'Valued Customer');
   const visit = deferred.date
     ? new Date(deferred.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : '';
@@ -163,7 +171,7 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Vehicle Care Plan — ${esc(customer || '')} — ${esc(dealer)}</title>
+<title>${quote ? 'Service Quote' : 'Vehicle Care Plan'} — ${esc(customer || '')} — ${esc(dealer)}</title>
 <style>
   * { box-sizing: border-box; }
   :root { --navy:${NAVY}; --teal:${TEAL}; }
@@ -271,18 +279,23 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
         <div class="logo">${logoUrl ? `<img src="${esc(logoUrl)}" alt="Hyundai" />` : '🔧'}</div>
         <div><div class="name">${esc(dealer)}</div><div class="sub">Service Center</div></div>
       </div>
-      <div class="kicker">Your Vehicle Care Plan</div>
-      <h1>${esc(first)}, here's what your ${esc(vehicle || 'vehicle')} needs next</h1>
+      <div class="kicker">${quote ? 'Your Service Quote' : 'Your Vehicle Care Plan'}</div>
+      ${quote
+        ? `<h1>${first ? `${esc(first)}, here's` : `Here's`} your quote${vehicle ? ` for your ${esc(vehicle)}` : ''}</h1>
+      <p>Here's the service we talked about today and exactly what it costs. Every item below is done by our
+        factory-trained technicians with genuine Hyundai parts.</p>`
+        : `<h1>${esc(first)}, here's what your ${esc(vehicle || 'vehicle')} needs next</h1>
       <p>At your last visit our factory-trained technicians looked your vehicle over and recommended the service below.
-        Taking care of it now keeps you safe on the road, protects your investment and helps avoid bigger repairs later.</p>
+        Taking care of it now keeps you safe on the road, protects your investment and helps avoid bigger repairs later.</p>`}
       <div class="facts">
         ${vehicle ? `<span class="fact">🚗&nbsp; <b>${esc(vehicle)}</b></span>` : ''}
+        ${quote ? `<span class="fact">📅&nbsp; Quoted <b>${esc(today)}</b></span>` : ''}
         ${visit ? `<span class="fact">📅&nbsp; Recommended <b>${esc(visit)}</b></span>` : ''}
         ${advisor ? `<span class="fact">👤&nbsp; Your advisor <b>${esc(niceCase(advisor))}</b></span>` : ''}
       </div>
     </div>
 
-    ${summary ? `<div class="summary"><span class="lead">${items.length} recommended item${items.length === 1 ? '' : 's'}:</span>${summary}</div>` : ''}
+    ${summary ? `<div class="summary"><span class="lead">${items.length} ${quote ? 'service' : 'recommended item'}${items.length === 1 ? '' : 's'}:</span>${summary}</div>` : ''}
 
     <div class="services"><div class="grid">${cards}</div></div>
 
@@ -293,18 +306,24 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl })
         const t = TAGS[i.tag] || TAGS.reliability;
         return `<div class="bd-row"><span class="dot" style="background:${t.color}"></span><span class="bd-name">${esc(i.title)}${i.count > 1 ? ` ×${i.count}` : ''}</span><span class="bd-lead"></span><span class="bd-amt">${i.price > 0 ? money(i.price) : '—'}</span></div>`;
       }).join('')}
-      <div class="bd-total"><span>Total estimate</span><span>${money(deferred.amount)}</span></div>
-      <div class="bd-note">Parts &amp; labor included · plus applicable taxes &amp; fees · prices from your recommendation and may change</div>
+      ${quote ? `
+      <div class="bd-row"><span class="dot" style="background:#94a3b8"></span><span class="bd-name">Subtotal</span><span class="bd-lead"></span><span class="bd-amt">${money(quote.subtotal)}</span></div>
+      ${quote.coupon > 0.005 ? `<div class="bd-row" style="color:#15803d"><span class="dot" style="background:#16a34a"></span><span class="bd-name">${esc(quote.couponLabel || 'Coupon')}</span><span class="bd-lead"></span><span class="bd-amt" style="color:#15803d">−${money(quote.coupon)}</span></div>` : ''}
+      ${quote.tax > 0.005 ? `<div class="bd-row"><span class="dot" style="background:#94a3b8"></span><span class="bd-name">${esc(quote.taxLabel || 'Tax')}</span><span class="bd-lead"></span><span class="bd-amt">${money(quote.tax)}</span></div>` : ''}
+      <div class="bd-total"><span>Your price</span><span>${money(quote.total)}</span></div>
+      <div class="bd-note">Parts &amp; labor included${quote.tax > 0.005 ? ' · tax included' : ''} · quote good for today's visit; prices may change</div>`
+      : `<div class="bd-total"><span>Total estimate</span><span>${money(deferred.amount)}</span></div>
+      <div class="bd-note">Parts &amp; labor included · plus applicable taxes &amp; fees · prices from your recommendation and may change</div>`}
     </div>` : ''}
 
     ${deferred.amount != null ? `
     <div class="total">
       <div class="left">
-        <div class="k">Estimated total</div>
-        <div class="v">All ${items.length} recommended service${items.length === 1 ? '' : 's'}, parts &amp; labor</div>
-        <div class="fine">Estimate from your ${esc(visit || 'last')} visit. Plus applicable taxes &amp; fees. Ask your advisor about today's specials.</div>
+        <div class="k">${quote ? 'Your price' : 'Estimated total'}</div>
+        <div class="v">All ${items.length} ${quote ? '' : 'recommended '}service${items.length === 1 ? '' : 's'}, parts &amp; labor${quote && quote.coupon > 0.005 ? ` · you save ${money(quote.coupon)}` : ''}</div>
+        <div class="fine">${quote ? `Quoted ${esc(today)}${quote.tax > 0.005 ? ', tax included' : ''}. Ask your advisor about scheduling.` : `Estimate from your ${esc(visit || 'last')} visit. Plus applicable taxes &amp; fees. Ask your advisor about today's specials.`}</div>
       </div>
-      <div class="amt"><small>Estimate</small>${money(deferred.amount)}</div>
+      <div class="amt"><small>${quote ? 'Total' : 'Estimate'}</small>${money(quote ? quote.total : deferred.amount)}</div>
     </div>` : ''}
 
     <div class="trust">
@@ -339,6 +358,18 @@ export function openDeferredCarePlan({ customer, vehicle, advisor, deferred, dea
   win.document.open();
   win.document.write(html);
   win.document.close();
+  return true;
+}
+
+// Pricing Tool quote → the same printout. lines: [{ name, price }].
+export function openServiceQuote({ customer, vehicle, advisor, lines, subtotal, coupon, couponLabel, tax, taxLabel, total, dealer = 'Bob Rohrman Hyundai' }) {
+  const base = `${window.location.origin}${(import.meta.env && import.meta.env.BASE_URL) || '/'}`;
+  const deferred = { items: (lines || []).map(l => ({ desc: l.name, code: l.code || '', count: 1, price: l.price })), amount: total };
+  const html = carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl: `${base}hyundai-logo.png`,
+    quote: { subtotal, coupon, couponLabel, tax, taxLabel, total } });
+  const win = window.open('', '_blank');
+  if (!win) { alert('Please allow pop-ups for this site to print the quote.'); return false; }
+  win.document.open(); win.document.write(html); win.document.close();
   return true;
 }
 

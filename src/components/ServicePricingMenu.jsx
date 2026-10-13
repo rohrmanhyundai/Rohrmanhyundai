@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { loadServicePricing, saveServicePricing } from '../utils/github';
 import { openPackageFlyer } from '../utils/packageFlyer';
+import { openServiceQuote } from '../utils/deferredCarePlan';
 
 const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 // laborCost = labor $ charged to the customer, laborHours = the job's hours.
@@ -324,7 +325,7 @@ export default function ServicePricingMenu({ currentUser, currentRole, onBack, b
         <PricingToolModal
           categories={categories} doorRate={doorRate}
           maxCoupon={maxCoupon} canEditCap={isEditor} onCommitCap={commitMaxCoupon}
-          onClose={() => setPricingOpen(false)}
+          onClose={() => setPricingOpen(false)} advisorName={currentUser}
         />
       )}
     </div>
@@ -1043,7 +1044,7 @@ function PackageBuilderModal({ categories, doorRate, packages, onSavePackage, on
 // the Package Builder — pick services, apply a coupon (with an optional cap) —
 // but nothing is saved or posted; it just prices a job on the spot. Services the
 // manager flagged "No coupon" on the pricing menu arrive locked out of the coupon.
-function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose, zIndex = 1000 }) {
+function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = false, onCommitCap, onClose, zIndex = 1000, advisorName = '' }) {
   // The coupon cap is manager-locked: it always starts from the saved menu value.
   const [draft, setDraft] = useState(() => ({ items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', taxRate: '7', taxBase: 'parts' }));
   const [search, setSearch] = useState('');
@@ -1069,8 +1070,29 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
   const addService = (s) => setItems(items => [...items, itemFromService(s, doorRate)]);
   const updateItem = (id, field, value) => setItems(items => items.map(it => it.id === id ? { ...it, [field]: value } : it));
   const removeItem = (id) => setItems(items => items.filter(it => it.id !== id));
-  const clearAll = () => setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined }));
+  const clearAll = () => { setCustName(''); setCustVehicle(''); setDraft(d => ({ ...d, items: [], couponAmt: '0', couponType: 'percent', couponMax: maxCoupon || '', ovrHours: undefined, ovrElr: undefined, ovrParts: undefined })); };
   const countInPkg = (name) => (draft.items || []).filter(it => it.name === name).length;
+
+  // 🖨 Print — the quote as a customer printout, same look as the deferred-work
+  // Vehicle Care Plan. Line prices are each service's parts + labor; if the job
+  // totals were adjusted, they're scaled so the lines add up to the subtotal.
+  const [custName, setCustName] = useState('');
+  const [custVehicle, setCustVehicle] = useState('');
+  const printQuote = () => {
+    const raw = (draft.items || []).map(it => ({ name: it.name, code: it.opCode, price: itemMath(it, doorRate).total }));
+    const rawSum = raw.reduce((n, l) => n + l.price, 0);
+    const k = rawSum > 0 ? sum.subtotal / rawSum : 1;
+    let cents = 0;
+    const lines = raw.map(l => { const p = Math.round(l.price * k * 100) / 100; cents += Math.round(p * 100); return { ...l, price: p }; });
+    const diff = Math.round(sum.subtotal * 100) - cents;
+    if (diff && lines.length) { const big = lines.reduce((a, b) => (b.price > a.price ? b : a)); big.price = Math.round(big.price * 100 + diff) / 100; }
+    const couponLabel = sum.couponType === 'percent' ? `Coupon (${round2(sum.couponVal)}% off${sum.couponCapped ? `, max ${money(sum.couponMax)}` : ''})` : 'Coupon';
+    openServiceQuote({
+      customer: custName.trim(), vehicle: custVehicle.trim(), advisor: advisorName,
+      lines, subtotal: sum.subtotal, coupon: sum.couponAmt, couponLabel,
+      tax: sum.taxAmt, taxLabel: `Tax (${round2(sum.taxRate)}% on ${sum.taxBase === 'subtotal' ? 'parts + labor' : 'parts'})`, total: sum.grand,
+    });
+  };
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex, background: 'rgba(2,6,23,.72)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '4vh 16px', overflowY: 'auto' }}>
@@ -1243,8 +1265,18 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18 }}>
+            {(draft.items || []).length > 0 && (
+              <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                <input value={custName} onChange={e => setCustName(e.target.value)} placeholder="Customer name (for the printout, optional)"
+                  style={{ ...editInp, flex: '1 1 200px', fontSize: 12.5, padding: '7px 10px' }} />
+                <input value={custVehicle} onChange={e => setCustVehicle(e.target.value)} placeholder="Vehicle (optional) — e.g. 2022 Tucson"
+                  style={{ ...editInp, flex: '1 1 200px', fontSize: 12.5, padding: '7px 10px' }} />
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 }}>
               <div style={{ flex: 1 }} />
+              {(draft.items || []).length > 0 && <button onClick={printQuote} title="Print this quote for the customer — same look as the deferred-work printout"
+                style={{ background: 'rgba(0,165,201,.14)', border: '1px solid rgba(0,165,201,.55)', color: '#67e8f9', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>🖨 Print</button>}
               {(draft.items || []).length > 0 && <button onClick={clearAll} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>↺ Start over</button>}
               <button onClick={onClose} style={{ background: 'linear-gradient(180deg,#60a5fa,#3b82f6)', border: '1px solid rgba(96,165,250,.6)', color: '#04122e', borderRadius: 10, padding: '10px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 14 }}>Done</button>
             </div>
@@ -1383,7 +1415,7 @@ export function FloatingPricingTool({ currentUser, currentRole }) {
           <PricingToolModal
             categories={menu.categories} doorRate={menu.doorRate}
             maxCoupon={menu.maxCoupon} canEditCap={isEditor} onCommitCap={commitMaxCoupon}
-            onClose={() => setOpen(false)} zIndex={2147482990}
+            onClose={() => setOpen(false)} zIndex={2147482990} advisorName={currentUser}
           />
         </div>
       )}
