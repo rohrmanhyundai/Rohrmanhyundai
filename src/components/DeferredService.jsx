@@ -210,6 +210,69 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
   const PAGE = 300;
   const [showN, setShowN] = useState(PAGE);
   useEffect(() => { setShowN(PAGE); }, [filtered]);
+  // The filters behind the list on screen, spelled out for the PDF / Excel.
+  const searchFilters = () => {
+    const picked = services.filter(g => selCodes.has(g.key)).map(g => g.label);
+    return [
+      showScheduled ? 'Scheduled' : onlyUncontacted ? 'Not yet contacted' : null,
+      onlyValvoline ? 'Valvoline only' : null,
+      from || to ? `Date ${from ? fmtDate(from) : 'start'} – ${to ? fmtDate(to) : 'today'}` : null,
+      q.trim() ? `Search "${q.trim()}"` : null,
+      picked.length ? `Services: ${picked.join(', ')}` : null,
+    ].filter(Boolean);
+  };
+
+  // ── Save the current search as an Excel workbook ───────────────────────────
+  // Same list as the PDF (every filter applied), one row per RO with sortable
+  // columns, plus a "Filters" tab saying what the list is.
+  const [savingXlsx, setSavingXlsx] = useState(false);
+  async function saveSearchXlsx() {
+    if (!filtered.length) return;
+    setSavingXlsx(true);
+    try {
+      const XLSX = await import('xlsx');
+      const rowsOut = filtered.map(r => {
+        const acts = byRoActivity[r.ro] || [];
+        const last = acts[0];
+        const appt = activeAppt(r.ro);
+        return {
+          Date: r.date || '',
+          RO: String(r.ro || ''),
+          Customer: r.customer || '',
+          Phone: r.phone || '',
+          Email: r.email || '',
+          VIN: r.vin || '',
+          Vehicle: r.vehicle || '',
+          Advisor: r.advisor || '',
+          'Deferred services': [...new Set((r.codes || []).map(c => (serviceOfCode[c] && serviceOfCode[c].label) || c))].join(', '),
+          'Op codes': (r.codes || []).join(', '),
+          Hours: r.hours != null && r.hours !== '' ? Number(r.hours) : '',
+          Amount: r.amount != null && r.amount !== '' ? Number(r.amount) : '',
+          'Last contact': last ? `${last.type === 'appointment' ? 'Appointment set' : last.type === 'contacted' ? 'Contacted' : last.type} ${last.by ? `by ${last.by}` : ''} ${last.at ? new Date(last.at).toLocaleDateString() : ''}`.replace(/\s+/g, ' ').trim() : '',
+          Appointment: appt ? [appt.date, appt.time].filter(Boolean).join(' ') : '',
+        };
+      });
+      const ws = XLSX.utils.json_to_sheet(rowsOut);
+      ws['!cols'] = [10, 9, 24, 15, 26, 19, 24, 16, 60, 24, 7, 10, 30, 16].map(wch => ({ wch }));
+      ws['!autofilter'] = { ref: ws['!ref'] };
+      const total = filtered.reduce((n, r) => n + (Number(r.amount) || 0), 0);
+      const info = XLSX.utils.aoa_to_sheet([
+        ['Deferred Service — saved search'],
+        ['Saved', new Date().toLocaleString()],
+        ['Repair orders', filtered.length],
+        ['Total deferred $', Math.round(total * 100) / 100],
+        [],
+        ['Filters'],
+        ...(searchFilters().length ? searchFilters().map(f => [f]) : [['(none — all deferred work)']]),
+      ]);
+      info['!cols'] = [{ wch: 22 }, { wch: 60 }];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Deferred work');
+      XLSX.utils.book_append_sheet(wb, info, 'Filters');
+      XLSX.writeFile(wb, `deferred-service-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    } finally { setSavingXlsx(false); }
+  }
+
   async function saveSearchPdf() {
     if (!filtered.length) return;
     setSavingPdf(true);
@@ -219,14 +282,7 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
       const W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight(), M = 32;
       const cols = [['Date', 54], ['RO', 50], ['Customer', 120], ['Phone', 82], ['Vehicle', 118], ['Advisor', 62], ['Deferred services', 0], ['Amount', 56]];
       cols[6][1] = W - 2 * M - cols.reduce((n, c) => n + c[1], 0);
-      const picked = services.filter(g => selCodes.has(g.key)).map(g => g.label);
-      const filters = [
-        showScheduled ? 'Scheduled' : onlyUncontacted ? 'Not yet contacted' : null,
-        onlyValvoline ? 'Valvoline only' : null,
-        from || to ? `Date ${from ? fmtDate(from) : 'start'} – ${to ? fmtDate(to) : 'today'}` : null,
-        q.trim() ? `Search "${q.trim()}"` : null,
-        picked.length ? `Services: ${picked.join(', ')}` : null,
-      ].filter(Boolean);
+      const filters = searchFilters();
       const total = filtered.reduce((n, r) => n + (Number(r.amount) || 0), 0);
       let y = 0, page = 0;
       const head = () => {
@@ -712,6 +768,11 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
                     title="Download this list — every filter you've picked — as a PDF"
                     style={{ fontSize: 12.5, fontWeight: 800, color: '#86efac', borderColor: 'rgba(74,222,128,.45)', background: 'rgba(74,222,128,.1)' }}>
                     {savingPdf ? '⏳ Saving…' : `📄 Save as .pdf (${filtered.length})`}
+                  </button>
+                  <button className="secondary" disabled={!filtered.length || savingXlsx} onClick={saveSearchXlsx}
+                    title="Download this list — every filter you've picked — as an Excel spreadsheet"
+                    style={{ fontSize: 12.5, fontWeight: 800, color: '#6ee7b7', borderColor: 'rgba(16,185,129,.5)', background: 'rgba(16,185,129,.1)' }}>
+                    {savingXlsx ? '⏳ Saving…' : `📊 Save as Excel (${filtered.length})`}
                   </button>
                 </div>
                 <div className="ds-row" style={{ background: 'transparent', border: 'none', cursor: 'default', padding: '0 14px 6px' }}>
