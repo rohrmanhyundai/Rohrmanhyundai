@@ -10,6 +10,7 @@
 // window, then the print dialog, same as the package flyer.
 
 import { iconForService } from './packageFlyer';
+import { isFiftyOil, oilSavingsRibbon, OIL50 } from './oilSavings';
 
 const NAVY = '#0b2540';
 const TEAL = '#00a5c9';
@@ -136,6 +137,7 @@ function withPrices(items, total) {
 function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl, quote = null }) {
   const items = withPrices(deferred.items || [], deferred.amount).map(i => ({ ...i, ...explain(i, quote) }));
   const priced = items.some(i => i.price > 0);
+  const hasOil50 = items.some(i => isFiftyOil(i.desc || i.title, i.code));
   const tagCounts = items.reduce((m, i) => ({ ...m, [i.tag]: (m[i.tag] || 0) + 1 }), {});
   const first = String(customer || '').trim().split(/\s+/)[0] || (quote ? '' : 'Valued Customer');
   const visit = deferred.date
@@ -152,6 +154,7 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl, q
           <div class="svc-head">
             <span class="tag" style="color:${t.color};background:${t.bg};border-color:${t.color}33">${esc(t.label)}</span>
             <div class="svc-name">${esc(i.title)}${i.count > 1 ? ` <span class="x">×${i.count}</span>` : ''}</div>
+            ${isFiftyOil(i.desc || i.title, i.code) ? oilSavingsRibbon() : ''}
           </div>
           ${i.price > 0 ? `<div class="price-tag">${money(i.price)}</div>` : ''}
         </div>
@@ -304,7 +307,7 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl, q
       <div class="bd-head"><span>Your estimate, line by line</span><span>Price</span></div>
       ${items.map(i => {
         const t = TAGS[i.tag] || TAGS.reliability;
-        return `<div class="bd-row"><span class="dot" style="background:${t.color}"></span><span class="bd-name">${esc(i.title)}${i.count > 1 ? ` ×${i.count}` : ''}</span><span class="bd-lead"></span><span class="bd-amt">${i.price > 0 ? money(i.price) : '—'}</span></div>`;
+        return `<div class="bd-row"><span class="dot" style="background:${t.color}"></span><span class="bd-name">${esc(i.title)}${i.count > 1 ? ` ×${i.count}` : ''}${isFiftyOil(i.desc || i.title, i.code) ? ` <span style="color:#059669;font-weight:800;font-size:12px">⚡ instant savings $${OIL50.save} (reg. $${OIL50.regular})</span>` : ''}</span><span class="bd-lead"></span><span class="bd-amt">${i.price > 0 ? money(i.price) : '—'}</span></div>`;
       }).join('')}
       ${quote ? `
       <div class="bd-row"><span class="dot" style="background:#94a3b8"></span><span class="bd-name">Subtotal</span><span class="bd-lead"></span><span class="bd-amt">${money(quote.subtotal)}</span></div>
@@ -321,6 +324,7 @@ function carePlanHtml({ customer, vehicle, advisor, deferred, dealer, logoUrl, q
       <div class="left">
         <div class="k">${quote ? 'Your price' : 'Estimated total'}</div>
         <div class="v">All ${items.length} ${quote ? '' : 'recommended '}service${items.length === 1 ? '' : 's'}, parts &amp; labor${quote && quote.coupon > 0.005 ? ` · you save ${money(quote.coupon)}` : ''}</div>
+        ${hasOil50 ? `<div class="v" style="color:#6ee7b7;font-size:13.5px">⚡ Includes a $${OIL50.save} instant savings on your oil change (reg. $${OIL50.regular}, yours for $${OIL50.price})</div>` : ''}
         <div class="fine">${quote ? `Quoted ${esc(today)}${quote.tax > 0.005 ? ', tax included' : ''}. Ask your advisor about scheduling.` : `Estimate from your ${esc(visit || 'last')} visit. Plus applicable taxes &amp; fees. Ask your advisor about today's specials.`}</div>
       </div>
       <div class="amt"><small>${quote ? 'Total' : 'Estimate'}</small>${money(quote ? quote.total : deferred.amount)}</div>

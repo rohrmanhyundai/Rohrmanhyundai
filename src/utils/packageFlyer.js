@@ -5,6 +5,7 @@
 // dialog. Every service gets an auto-matched line illustration (no photos needed)
 // and its menu description; a discounted package shows the regular price struck
 // through next to the customer's price with an eye-catching "You Save" badge.
+import { isFiftyOil, oilSavingsRibbon } from './oilSavings';
 
 const NAVY = '#0b2540';
 const TEAL = '#00a5c9';
@@ -70,6 +71,7 @@ function flyerHtml({ pkg, lines, pricing, dealer }) {
         <div class="svc-body">
           <div class="svc-name">${esc(l.name)}</div>
           ${l.desc ? `<div class="svc-desc">${esc(l.desc)}</div>` : ''}
+          ${isFiftyOil(l.name, l.opCode) ? oilSavingsRibbon() : ''}
         </div>
       </div>`).join('');
 
