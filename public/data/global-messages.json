@@ -99,5 +99,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1791899516118
+  },
+  {
+    "id": "gm-mv6urqz3cjmq",
+    "from": "SHAWN",
+    "to": [
+      "JORDAN"
+    ],
+    "text": "DID YOU GET THAT LOANER AGREEMENT SIGNED?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1791906342735
   }
 ]
