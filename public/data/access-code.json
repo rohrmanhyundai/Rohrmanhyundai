@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-13T21:12:38.399Z",
+  "updatedAt": "2026-10-13T21:13:52.426Z",
   "by": "SHAWN",
   "locked": {
     "payroll": true,
@@ -37,7 +37,8 @@
       "registration-uploads": true,
       "employee-review": true,
       "live-pay": true,
-      "charge-account-list": true
+      "charge-account-list": true,
+      "oil-guard": true
     },
     "SHAWN": {
       "payroll": true,
