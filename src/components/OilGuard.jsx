@@ -80,6 +80,30 @@ export function callBackRows(analysed, from, to, people = {}) {
   return rows.sort((x, y) => x.lastDate.localeCompare(y.lastDate));
 }
 
+// Same list as the PDF, as an Excel workbook: one row per customer (with a
+// filter row) plus an "About" tab saying which range / filter it is.
+async function callBackXlsx(rows, from, to, stamp, leftOnly = 0) {
+  const XLSX = await import('xlsx');
+  const ws = XLSX.utils.json_to_sheet(rows.map(r => ({
+    Customer: r.customer || '', Phone: r.phone || '', Email: r.email || '', Vehicle: r.vehicle || '', VIN: r.vin,
+    'Last visit': r.lastDate || '', 'Last RO': r.lastRo || '', 'Oil changes left': r.left, 'Called / notes': '',
+  })));
+  ws['!cols'] = [24, 15, 28, 26, 19, 11, 10, 15, 30].map(wch => ({ wch }));
+  ws['!autofilter'] = { ref: ws['!ref'] };
+  const about = XLSX.utils.aoa_to_sheet([
+    ['Oil Guard — call-back list'],
+    ['Last visit from', from || 'start'], ['Last visit to', to || 'today'],
+    ['Showing', leftOnly ? `${leftOnly} oil change${leftOnly === 1 ? '' : 's'} left` : 'All with oil changes left'],
+    ['Customers', rows.length], ['Oil changes waiting', rows.reduce((n, r) => n + r.left, 0)],
+    ['Oil Guard report as of', stamp || ''], ['Saved', new Date().toLocaleString()],
+  ]);
+  about['!cols'] = [{ wch: 24 }, { wch: 34 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Call-back list');
+  XLSX.utils.book_append_sheet(wb, about, 'About');
+  XLSX.writeFile(wb, `oil-guard-call-back-${from || 'start'}-to-${to || 'today'}${leftOnly ? `-${leftOnly}-left` : ''}.xlsx`);
+}
+
 async function callBackPdf(rows, from, to, stamp, leftOnly = 0) {
   const { default: jsPDF } = await import('jspdf');
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
@@ -156,10 +180,17 @@ function CallBack({ analysed, stamp, loadDeferredRows }) {
           <button key={n} style={btn('74,222,128', leftOnly === n)} onClick={() => setLeftOnly(n)}>{label}</button>
         ))}
         <div style={{ flex: 1 }} />
-        <button disabled={!rows.length || making} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 16px' }}
-          onClick={async () => { setMaking(true); try { await callBackPdf(rows, from, to, stamp, leftOnly); } finally { setMaking(false); } }}>
-          {making ? '⏳ Making…' : '📄 Create .pdf'}
-        </button>
+        {/* PDF on top, Excel under it — same list, same filters. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <button disabled={!rows.length || making} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 16px' }}
+            onClick={async () => { setMaking(true); try { await callBackPdf(rows, from, to, stamp, leftOnly); } finally { setMaking(false); } }}>
+            {making ? '⏳ Making…' : '📄 Create .pdf'}
+          </button>
+          <button disabled={!rows.length || making} style={{ ...btn('16,185,129'), fontSize: 14, padding: '9px 16px' }}
+            onClick={async () => { setMaking(true); try { await callBackXlsx(rows, from, to, stamp, leftOnly); } finally { setMaking(false); } }}>
+            {making ? '⏳ Making…' : '📊 Create Excel'}
+          </button>
+        </div>
       </div>
       <div style={{ fontSize: 13.5, color: '#cbd5e1', fontWeight: 800, marginTop: 12 }}>
         {people == null ? 'Loading customer names…' : `${rows.length} customer${rows.length === 1 ? '' : 's'} · ${rows.reduce((s, r) => s + r.left, 0)} oil changes waiting${rows.length ? ` · ${named} with a name/phone on file` : ''}`}
