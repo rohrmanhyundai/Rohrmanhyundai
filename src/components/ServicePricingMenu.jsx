@@ -50,7 +50,9 @@ function packageSummary(pkg, doorRate) {
 
   const ovrHours = numOf(pkg.ovrHours), ovrElr = numOf(pkg.ovrElr), ovrParts = numOf(pkg.ovrParts);
   const hours = ovrHours != null ? ovrHours : autoHours;
-  const elr = ovrElr != null ? ovrElr : autoElr;
+  // Manual mode (no service lines, just parts $ + labor hours typed in): with
+  // no ELR to go on, labor is priced at the full door rate (100%).
+  const elr = ovrElr != null ? ovrElr : autoElr != null ? autoElr : (hours > 0 && dr > 0 ? 100 : null);
   const parts = ovrParts != null ? ovrParts : autoParts;
   // Labor from ELR% when we can figure it, else fall back to the summed labor.
   const labor = (elr != null && dr > 0 && hours > 0) ? (elr / 100) * dr * hours : autoLabor;
@@ -1076,10 +1078,15 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
   // 🖨 Print — the quote as a customer printout, same look as the deferred-work
   // Vehicle Care Plan. Line prices are each service's parts + labor; if the job
   // totals were adjusted, they're scaled so the lines add up to the subtotal.
+  // A job to print / clear: service lines, or a manual parts + labor price.
+  const hasJob = (draft.items || []).length > 0 || sum.subtotal > 0.005;
   const [custName, setCustName] = useState('');
   const [custVehicle, setCustVehicle] = useState('');
   const printQuote = () => {
-    const raw = (draft.items || []).map(it => ({ name: it.name, code: it.opCode, price: itemMath(it, doorRate).total }));
+    // Manual job (no service lines): print it as parts + labor.
+    const raw = (draft.items || []).length
+      ? (draft.items || []).map(it => ({ name: it.name, code: it.opCode, price: itemMath(it, doorRate).total }))
+      : [{ name: 'Parts', price: sum.parts }, { name: `Labor — ${round2(sum.hours)} hrs`, price: sum.labor }].filter(l => l.price > 0.005);
     const rawSum = raw.reduce((n, l) => n + l.price, 0);
     const k = rawSum > 0 ? sum.subtotal / rawSum : 1;
     let cents = 0;
@@ -1265,7 +1272,7 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
               </div>
             </div>
 
-            {(draft.items || []).length > 0 && (
+            {hasJob && (
               <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
                 <input value={custName} onChange={e => setCustName(e.target.value)} placeholder="Customer name (for the printout, optional)"
                   style={{ ...editInp, flex: '1 1 200px', fontSize: 12.5, padding: '7px 10px' }} />
@@ -1275,9 +1282,9 @@ function PricingToolModal({ categories, doorRate, maxCoupon = '', canEditCap = f
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 }}>
               <div style={{ flex: 1 }} />
-              {(draft.items || []).length > 0 && <button onClick={printQuote} title="Print this quote for the customer — same look as the deferred-work printout"
+              {hasJob && <button onClick={printQuote} title="Print this quote for the customer — same look as the deferred-work printout"
                 style={{ background: 'rgba(0,165,201,.14)', border: '1px solid rgba(0,165,201,.55)', color: '#67e8f9', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>🖨 Print</button>}
-              {(draft.items || []).length > 0 && <button onClick={clearAll} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>↺ Start over</button>}
+              {hasJob && <button onClick={clearAll} style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.35)', color: '#f87171', borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>↺ Start over</button>}
               <button onClick={onClose} style={{ background: 'linear-gradient(180deg,#60a5fa,#3b82f6)', border: '1px solid rgba(96,165,250,.6)', color: '#04122e', borderRadius: 10, padding: '10px 22px', cursor: 'pointer', fontWeight: 900, fontSize: 14 }}>Done</button>
             </div>
           </div>
