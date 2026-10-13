@@ -10,8 +10,8 @@
     "usedCar": true,
     "etaParts": "",
     "etaCompletion": "",
-    "partsArrived": true,
-    "partsArrivedDate": "09/19/2026",
+    "partsArrived": null,
+    "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
   },
