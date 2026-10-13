@@ -160,26 +160,43 @@ async function callBackPdf(rows, from, to, stamp, leftOnly = 0) {
   pdf.save(`oil-guard-call-back-${from || 'start'}-to-${to || 'today'}${leftOnly ? `-${leftOnly}-left` : ''}.pdf`);
 }
 
-function CallBack({ analysed, stamp, loadDeferredRows, loadServiceInvitations, loadCompletedReviews }) {
+// Customer info by VIN, always current: loaded when Oil Guard opens, again
+// whenever the tab comes back into view, and every 5 minutes while it's open —
+// so a new deferred upload or After Call review shows without leaving the page.
+function usePeople({ loadDeferredRows, loadServiceInvitations, loadCompletedReviews }) {
+  const [people, setPeople] = useState(null);
+  useEffect(() => {
+    let cancelled = false, busy = false;
+    const advisorsOf = (si) => [...new Set((si || []).filter(r => r && r.consultant).map(r => String(r.consultant).trim().split(/\s+/)[0].toUpperCase()))];
+    const load = async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        const [d, si] = await Promise.all([
+          loadDeferredRows ? loadDeferredRows().catch(() => null) : null,
+          (loadServiceInvitations ? loadServiceInvitations() : Promise.resolve([])).catch(() => []),
+        ]);
+        const reviews = loadCompletedReviews
+          ? (await Promise.all(advisorsOf(si).map(a => loadCompletedReviews(a).catch(() => [])))).flat()
+          : [];
+        if (!cancelled) setPeople(customerIndex(d, si, reviews));
+      } catch { if (!cancelled) setPeople(p => p || {}); }
+      finally { busy = false; }
+    };
+    load();
+    const id = setInterval(load, 5 * 60 * 1000);
+    const onVis = () => { if (document.visibilityState === 'visible') load(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { cancelled = true; clearInterval(id); document.removeEventListener('visibilitychange', onVis); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return people;
+}
+
+function CallBack({ analysed, stamp, people }) {
   const [from, setFrom] = useState(monthsAgo(6));
   const [to, setTo] = useState(monthsAgo(3));
-  const [people, setPeople] = useState(null);
   const [making, setMaking] = useState(false);
   const [leftOnly, setLeftOnly] = useState(0);   // 0 = everyone, else exactly this many left
-  useEffect(() => {
-    let cancelled = false;
-    const advisorsOf = (si) => [...new Set((si || []).filter(r => r && r.consultant).map(r => String(r.consultant).trim().split(/\s+/)[0].toUpperCase()))];
-    Promise.all([
-      loadDeferredRows().catch(() => null),
-      (loadServiceInvitations ? loadServiceInvitations() : Promise.resolve([])).catch(() => []),
-    ]).then(async ([d, si]) => {
-      const reviews = loadCompletedReviews
-        ? (await Promise.all(advisorsOf(si).map(a => loadCompletedReviews(a).catch(() => [])))).flat()
-        : [];
-      if (!cancelled) setPeople(customerIndex(d, si, reviews));
-    }).catch(() => { if (!cancelled) setPeople({}); });
-    return () => { cancelled = true; };
-  }, [loadDeferredRows]);
   const rows = useMemo(() => callBackRows(analysed, from, to, people || {}).filter(r => !leftOnly || r.left === leftOnly), [analysed, from, to, people, leftOnly]);
   const named = rows.filter(r => r.customer || r.phone).length;
   const preset = (a, b) => { setFrom(monthsAgo(a)); setTo(b == null ? isoDay(new Date()) : monthsAgo(b)); };
@@ -282,7 +299,7 @@ function CopyText({ value, children, title, width, mono }) {
 }
 const CopyRo = ({ ro }) => <CopyText value={ro} width={110} title="Click to copy the RO number">RO {ro}</CopyText>;
 
-function VinResult({ a }) {
+function VinResult({ a, person }) {
   const dots = (pkgNo) => {
     const used = a.events.filter(e => e.kind === 'use' && e.pkgNo === pkgNo).length;
     return Array.from({ length: PER_PACKAGE }, (_, i) => (
@@ -296,6 +313,13 @@ function VinResult({ a }) {
         <LeftBadge left={a.left} />
         <div style={{ flex: 1, minWidth: 240 }}>
           <div style={{ fontSize: 22, fontWeight: 1000, color: '#f1f5f9', letterSpacing: '.06em' }}>{a.vin}</div>
+          {person && (person.customer || person.phone) ? (
+            <div style={{ fontSize: 15, fontWeight: 800, color: '#e2e8f0', marginTop: 4 }}>
+              {tidy(person.customer) || 'Customer'}
+              {person.phone ? <> · <a href={`tel:${String(person.phone).replace(/\D/g, '')}`} style={{ color: '#7dd3fc' }}>{fmtPhone(person.phone)}</a></> : null}
+              {(() => { const v = [person.year, tidy(person.make), tidy(person.model)].filter(Boolean).join(' ') || person.vehicle; return v ? <span style={{ color: '#94a3b8', fontWeight: 700 }}> · {v}</span> : null; })()}
+            </div>
+          ) : person === undefined ? null : <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>No customer info on file for this VIN — look it up in the DMS.</div>}
           <div style={{ fontSize: 14, color: '#94a3b8', fontWeight: 700, marginTop: 4 }}>
             {a.packages} package{a.packages === 1 ? '' : 's'} bought · {a.used} oil change{a.used === 1 ? '' : 's'} used
             {a.adjust ? ` · ${a.adjust > 0 ? '+' : ''}${a.adjust} adjusted by a manager` : ''}
@@ -376,6 +400,7 @@ function IssueRow({ vin, issue, onFix, busy }) {
 export default function OilGuard({ currentUser, currentRole, onBack, initialTab, io }) {
   // Storage — swappable so it can be exercised without touching live data.
   const { loadOilGuard, saveOilGuard, loadOilGuardFixes, updateOilGuardFixes, loadDeferredRows, loadServiceInvitations, loadCompletedReviews } = io || github;
+  const people = usePeople({ loadDeferredRows, loadServiceInvitations, loadCompletedReviews });
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(initialTab === 'settings' && isManager ? 'settings' : 'lookup');
   const [store, setStore] = useState(null);
@@ -482,7 +507,7 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 40px 40px' }}>
         <div style={{ maxWidth: tab === 'callback' ? 1400 : 980, margin: '0 auto' }}>
           {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div> : tab === 'callback' ? (
-            store ? <CallBack analysed={analysed} stamp={store.reportStamp} loadDeferredRows={loadDeferredRows} loadServiceInvitations={loadServiceInvitations} loadCompletedReviews={loadCompletedReviews} />
+            store ? <CallBack analysed={analysed} stamp={store.reportStamp} people={people} />
               : <div style={{ ...card, color: '#fbbf24', fontWeight: 700 }}>No Oil Guard report uploaded yet.</div>
           ) : tab === 'lookup' ? (
             <>
@@ -510,7 +535,7 @@ export default function OilGuard({ currentUser, currentRole, onBack, initialTab,
                       </div>
                     </div>
                   )}
-                  {shown && <VinResult a={shown} />}
+                  {shown && <VinResult a={shown} person={people ? (people[shown.vin] || null) : undefined} />}
                 </>
               )}
             </>
