@@ -66,6 +66,9 @@ export function parseLine(frags) {
   let i = 0, rowId = '';
   if (RE_ROWID.test(items[0])) { rowId = items[0]; i = 1; }
   else if (RE_STORE.test(items[0]) && items[1] && RE_ROWNUM.test(items[1])) { rowId = `${items[0]} ${items[1]}`; i = 2; }
+  // Older exports (e.g. "1715 2602 … Deferred.pdf") have no row-id column —
+  // the line starts straight with the date ("2/3/26 satish satish …").
+  else if (RE_DATE.test(items[0])) { i = 0; }
   else return null;
   const row = { rowId, date: '', customer: '', email: '', phone: '', ro: '', advisor: '', vin: '', year: '', make: '', model: '', hours: null, amount: null, codes: [] };
   const rest = [];
