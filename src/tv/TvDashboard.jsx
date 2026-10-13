@@ -19,7 +19,7 @@ import { recalcTech, recalcAdvisorSummary, weekDatesOf } from '../utils/calculat
 import { fetchLiveJson } from '../utils/liveData';
 
 // Live from the repo (see utils/liveData) — the site's own /data/ copy lags.
-const fetchJson = (path) => fetchLiveJson(path);
+const fetchJson = (path) => fetchLiveJson(path, { fresh: true });
 
 const r1 = (n) => (Math.round((Number(n) || 0) * 10) / 10).toFixed(1);
 const ceil1 = (n) => (Math.ceil((Number(n) || 0) * 10 - 1e-9) / 10).toFixed(1);
