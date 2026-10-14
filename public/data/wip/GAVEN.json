@@ -60,5 +60,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mv8lwrklohie",
+    "ro": "781544",
+    "roDate": "2026-10-14",
+    "vehicle": "2016 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES VEHICLE HAS A TICKING NOISE. CHECK AND ADVISE. wheelz warranty.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
