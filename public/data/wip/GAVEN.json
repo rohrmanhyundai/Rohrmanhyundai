@@ -44,5 +44,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mv8aijdc64gp",
+    "ro": "781497",
+    "roDate": "2026-10-14",
+    "vehicle": "2007 Hyundai Elantra",
+    "jobDesc": "INSTALL CUSTOMER SUPPLIED PARTS",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
