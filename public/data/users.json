@@ -746,11 +746,7 @@
       "username": "Matthew",
       "lastName": "",
       "email": "matthew.clark@rohrmanauto.com",
-      "pwSalt": "7aeca7296e9e9e668162cee0bfdc9d7a",
-      "passwordEnc": {
-        "kid": "YuwDZUlFIR",
-        "data": "vQcD2Kk05FDkGjL7EZuBuvnY6nQ9VnVto6cx3Jn794zQU2Jelngi+lkf/V7VhNoQ4M2ByU4jLqe1NewdUzXDWxswqdfDTCJBrT7WP4O4XamAUdJBK5/IMJtt+iIBsG6EbK9u6tgAoKPLQjz80kbX2WfMCKzRmDS8vUrH9wFuC4RBRnHJdf7vtlPR1lWlb0f+A/0dS3NABIh7pC/tfvpEOP1nWdk0EgHwBEkdvY5fwcvxfY+9xAFNCSpKmBgAKAZNG1weG1oCEwPtKzWT/ZFarYLhNJGoaKCgyzqZRAFDZyTNzpa8a9ambe7cDoxiqJHz9qM3Sux+pYSrCicVvCYRvQ=="
-      },
+      "pwSalt": "6a68642366e6588fcac2fd574dd6eec1",
       "role": "advisor",
       "canEditDashboard": true,
       "managementAccess": false,
@@ -788,10 +784,9 @@
         "iterations": 150000,
         "setAt": "2026-10-14T19:19:19.473Z"
       },
-      "passwordReset": {
-        "hash": "d47a30f782f75bed404f81209d2e45bc514a346c8b3f2980424855c904a57c3a",
-        "expires": "2026-10-14T20:20:25.297Z",
-        "requestedAt": "2026-10-14T19:20:25.298Z"
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "T20peD53kQWUWZR5tUjFcTgJ6cmZQ7Ri+JT6BmfhtVoMqPFtAxdWVfDBZd1A57kxHJCvv73prNvlev5IRadjNf/+ABENmeJ5WaKy6+fLSbQwg4CyJ4+w5hDJ4qRvfqyjYRWt0dmGbkOt5F/olqwe0zUlohzJ6V9tUXu/sVuHL1v1bjZoX+KC+oVzF7mvS5/WzJMentb/jJe2zR8iGDgIf6t+UgpaC+MA0S1WLfT4gmtezGSQPzwIWX38ECK/0YvukYcFuXy35vuXQ59l/V0rM15CrWjcE+8EwDUakEsE1SaHUiEbYs3xavLQLTR/UDOot6zCbRTkc9k4U/8JbBF1mg=="
       }
     }
   ],
