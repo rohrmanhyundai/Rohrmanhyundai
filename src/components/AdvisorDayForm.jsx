@@ -7,6 +7,9 @@ import {
 import { uploadAppointmentFile, shortMD, apptTags, ownerOf, hoursByOpCode, sellToGoal } from '../utils/appointmentList';
 import { firstNameUpper } from '../utils/advisorAliases';
 import { openDeferredCarePlan } from '../utils/deferredCarePlan';
+import SpecialsSettings from './SpecialsSettings';
+import { matchSpecials } from '../utils/specials';
+import { loadSpecials } from '../utils/github';
 
 // Appointment prep for one calendar day. The After Call Report used to live at
 // the bottom of this page; it is now its own page (AfterCallReport.jsx), reached
@@ -173,6 +176,29 @@ function mergeAll(rows, list, owners) {
   }
   const sorted = sortRows(out);
   return JSON.stringify(sorted) === JSON.stringify(rows) ? rows : sorted;
+}
+
+// "🎯 Possible Winter Special" — a manager-built special this appointment
+// matches (utils/specials.js). Hover shows what matched and the offer.
+function SpecialTags({ appt, specials, date }) {
+  const hits = matchSpecials(appt, specials, date);
+  if (!hits.length) return null;
+  return (
+    <div>
+      {hits.map(h => {
+        const why = [h.booked.length ? `Booked: ${h.booked.join(', ')}` : '', h.deferred.length ? `Deferred: ${[...new Set(h.deferred.map(d => d.desc || d.code))].join(', ')}` : ''].filter(Boolean).join(' · ');
+        return (
+          <div key={h.special.id} title={[why, h.special.note].filter(Boolean).join('\n')}
+            style={{ display: 'inline-flex', flexDirection: 'column', marginTop: 5, marginRight: 4, padding: '4px 10px', borderRadius: 10,
+              background: `${h.special.color}22`, border: `1.5px solid ${h.special.color}`, boxShadow: `0 0 10px ${h.special.color}55` }}>
+            <span style={{ fontSize: 12, fontWeight: 900, color: h.special.color, whiteSpace: 'nowrap' }}>🎯 Possible {h.special.name}</span>
+            {why && <span style={{ fontSize: 10.5, color: '#cbd5e1', fontWeight: 700 }}>{why}</span>}
+            {h.special.note && <span style={{ fontSize: 10.5, color: '#fde68a', fontWeight: 700 }}>💬 {h.special.note}</span>}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function Tag({ t }) {
@@ -358,6 +384,10 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
   const [clockNow, setClockNow] = useState(Date.now());
   useEffect(() => { const id = setInterval(() => setClockNow(Date.now()), 30000); return () => clearInterval(id); }, []);
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
+  // Manager-built specials (⚙️ Specials) tagged onto matching appointments.
+  const [specials, setSpecials] = useState([]);
+  const [specialsOpen, setSpecialsOpen] = useState(false);
+  useEffect(() => { loadSpecials().then(d => setSpecials((d && d.specials) || [])).catch(() => {}); }, []);
   // The manager tab (a manager's own name, not an advisor on the roster) shows
   // EVERY advisor's appointments, fully editable, each saved to its own sheet.
   const rosterFirsts = (advisorList || []).map(firstNameUpper).filter(Boolean);
@@ -877,9 +907,13 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
             style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.28),rgba(16,185,129,.18))', borderColor: 'rgba(52,211,153,.5)' }}>
             {uploadBusy ? '⏳ Uploading…' : '📤 Upload DMS Appointments'}
           </button>
+          {isManager && (
+            <button className="secondary" onClick={() => setSpecialsOpen(true)} title="Build specials — e.g. tag a $50 oil change with deferred coolant as a possible Winter Special">⚙️ Specials</button>
+          )}
           <button className="secondary" onClick={() => window.print()}>Print</button>
         </div>
       </div>
+      {specialsOpen && <SpecialsSettings currentUser={ownAdvisor} onClose={() => setSpecialsOpen(false)} onSaved={setSpecials} />}
 
       <div className="adv-form-wrap">
 
@@ -1005,6 +1039,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                           <div key={i} style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.35 }}>{s}</div>
                         ))}
                         <div>{apptTags(rowAppt).filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
+                        <SpecialTags appt={rowAppt} specials={specials} date={date} />
                       </td>
                     </>) : (<>
                       <td><input className="adv-cell-input" value={row.customerName} onChange={e => updateRow(row.id, 'customerName', e.target.value)} placeholder="Customer name" /></td>
@@ -1075,6 +1110,7 @@ export default function AdvisorDayForm({ advisorName, ownAdvisor, date, onBack, 
                     <div key={i} style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.35 }}>{s}</div>
                   ))}
                   <div>{apptTags(a).filter(t => t.key !== 'lof50' && t.key !== 'comment').map(t => <Tag key={t.key} t={t} />)}</div>
+                  <SpecialTags appt={a} specials={specials} date={date} />
                   {a.deferred ? <DeferredBox d={a.deferred} compact plan={planFor(a.deferred)}
                     onPrint={() => openDeferredCarePlan({ customer: a.customer, vehicle: a.vehicle, advisor: '', deferred: a.deferred })} /> : (
                     <div style={{ fontSize: 11.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>✓ No deferred work on file for this vehicle</div>

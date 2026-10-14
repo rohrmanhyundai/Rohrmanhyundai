@@ -2461,3 +2461,13 @@ export async function loadVmpiReport() {
 export async function saveVmpiReport(report) {
   return mutateGitHubJson('public/data/vmpi/report.json', () => report, `VMPI report ${new Date().toISOString()}`);
 }
+
+// ── Prep-sheet specials (utils/specials.js) ──────────────────────────────────
+export async function loadSpecials() {
+  try { const d = await loadGithubFile('data/specials.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { specials: [] };
+}
+export async function updateSpecials(mutate) {
+  return mutateGitHubJson('public/data/specials.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { specials: [] }),
+    `Specials ${new Date().toISOString()}`);
+}
