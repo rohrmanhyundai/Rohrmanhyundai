@@ -39,21 +39,5 @@
     "notes": "wiating on all proper documents to start p/a. will need engine. ",
     "partsArrived": null,
     "partsArrivedDate": ""
-  },
-  {
-    "id": "mv5ro1d5qvqh",
-    "ro": "781495",
-    "roDate": "2026-10-12",
-    "vehicle": "2025 Hyundai Santa Cruz",
-    "jobDesc": "CUSTOMER STATES BOTH DRIVER SIDE TIRES ARE LOSING AIR. CHECK AND ADVISE.",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
   }
 ]
