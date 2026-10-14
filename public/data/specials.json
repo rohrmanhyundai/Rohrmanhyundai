@@ -4,7 +4,7 @@
       "id": "sp-mv81eca8ll68",
       "name": "Winter Special",
       "color": "#38bdf8",
-      "active": false,
+      "active": true,
       "from": "2026-10-01",
       "to": "2026-10-31",
       "booked": [
@@ -17,6 +17,6 @@
       "note": ""
     }
   ],
-  "updatedAt": "2026-10-14T11:40:13.553Z",
+  "updatedAt": "2026-10-14T11:41:38.275Z",
   "by": "SHAWN"
 }
