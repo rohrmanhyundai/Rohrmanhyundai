@@ -1,0 +1,13 @@
+{
+  "2026-10": {
+    "hoursGoal": 0,
+    "hrsRoGoal": 0,
+    "days": {
+      "2026-10-13": {
+        "hours": 0.8,
+        "hrsRo": 0.8
+      }
+    },
+    "entryMode": "mtd"
+  }
+}
