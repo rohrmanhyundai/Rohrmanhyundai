@@ -1,18 +1,1 @@
-[
-  {
-    "id": "mv5ro2gcz16t",
-    "ro": "781491",
-    "roDate": "2026-10-12",
-    "vehicle": "2025 Hyundai Kona",
-    "jobDesc": "REPLACE FOUR TIRES",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY"
-  }
-]
+[]
