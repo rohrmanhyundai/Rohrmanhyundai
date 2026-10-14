@@ -14,5 +14,21 @@
     "partsArrivedDate": "10/14/2026",
     "highPriority": false,
     "advisor": "DAVID RILEY"
+  },
+  {
+    "id": "mv8aihy9naqa",
+    "ro": "781498",
+    "roDate": "2026-10-14",
+    "vehicle": "2026 Hyundai Tucson Hybrid",
+    "jobDesc": "CUSTOMER STATES- Drive side doors fail to lock and unlock",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
