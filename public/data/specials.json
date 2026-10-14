@@ -1,0 +1,22 @@
+{
+  "specials": [
+    {
+      "id": "sp-mv81eca8ll68",
+      "name": "Winter Special",
+      "color": "#38bdf8",
+      "active": true,
+      "from": "2026-10-01",
+      "to": "2026-10-31",
+      "booked": [
+        "lof50"
+      ],
+      "keywords": [],
+      "deferred": [
+        "VVCFL"
+      ],
+      "note": ""
+    }
+  ],
+  "updatedAt": "2026-10-14T11:39:39.318Z",
+  "by": "SHAWN"
+}
