@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-14T19:31:14.156Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
     "at": "2026-10-14T13:44:14.735Z",
     "type": "page",
     "label": "service-pricing"
@@ -1098,20 +1103,5 @@
     "at": "2026-09-14T20:05:19.950Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-14T14:13:03.673Z",
-    "type": "page",
-    "label": "tire-quote"
-  },
-  {
-    "at": "2026-09-14T14:12:59.101Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-14T14:12:57.351Z",
-    "type": "action",
-    "label": "login"
   }
 ]
