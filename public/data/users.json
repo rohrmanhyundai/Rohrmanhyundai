@@ -787,6 +787,11 @@
         "hash": "46516b15640ee618c46a7ce6d9a77417c383f0f170b394ff58f822961c7da360",
         "iterations": 150000,
         "setAt": "2026-10-14T19:19:19.473Z"
+      },
+      "passwordReset": {
+        "hash": "d47a30f782f75bed404f81209d2e45bc514a346c8b3f2980424855c904a57c3a",
+        "expires": "2026-10-14T20:20:25.297Z",
+        "requestedAt": "2026-10-14T19:20:25.298Z"
       }
     }
   ],
