@@ -14,9 +14,11 @@
       "deferred": [
         "VVCFL"
       ],
+      "minAge": "3",
+      "minMiles": "36000",
       "note": ""
     }
   ],
-  "updatedAt": "2026-10-14T11:41:38.275Z",
+  "updatedAt": "2026-10-14T11:50:45.373Z",
   "by": "SHAWN"
 }
