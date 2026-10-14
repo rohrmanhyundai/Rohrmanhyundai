@@ -188,12 +188,11 @@ function SpecialTags({ appt, specials, date }) {
       {hits.map(h => {
         const why = [h.booked.length ? `Booked: ${h.booked.join(', ')}` : '', h.deferred.length ? `Deferred: ${[...new Set(h.deferred.map(d => d.desc || d.code))].join(', ')}` : ''].filter(Boolean).join(' · ');
         return (
-          <div key={h.special.id} title={[why, h.special.note].filter(Boolean).join('\n')}
-            style={{ display: 'inline-flex', flexDirection: 'column', marginTop: 5, marginRight: 4, padding: '4px 10px', borderRadius: 10,
-              background: `${h.special.color}22`, border: `1.5px solid ${h.special.color}`, boxShadow: `0 0 10px ${h.special.color}55` }}>
-            <span style={{ fontSize: 12, fontWeight: 900, color: h.special.color, whiteSpace: 'nowrap' }}>🎯 Possible {h.special.name}</span>
-            {why && <span style={{ fontSize: 10.5, color: '#cbd5e1', fontWeight: 700 }}>{why}</span>}
-            {h.special.note && <span style={{ fontSize: 10.5, color: '#fde68a', fontWeight: 700 }}>💬 {h.special.note}</span>}
+          <div key={h.special.id} className="sp-tag" title={[why, h.special.note].filter(Boolean).join('\n')} style={{ '--sp': h.special.color }}>
+            <span className="sp-shine" />
+            <span className="sp-head">🎯 Possible {h.special.name}</span>
+            {why && <span className="sp-why">{why}</span>}
+            {h.special.note && <span className="sp-note">💬 {h.special.note}</span>}
           </div>
         );
       })}
