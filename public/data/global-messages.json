@@ -1,53 +1,5 @@
 [
   {
-    "id": "gm-mux3xs01xh8j",
-    "from": "SHAWN",
-    "to": [
-      "GAVEN"
-    ],
-    "text": "VMPI BONUS= 337.20",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791317078785
-  },
-  {
-    "id": "gm-mux3yeqjlolj",
-    "from": "SHAWN",
-    "to": [
-      "KADEN"
-    ],
-    "text": "VMPI BONUS=272.20",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791317108251
-  },
-  {
-    "id": "gm-mux3yv8jkcyi",
-    "from": "SHAWN",
-    "to": [
-      "BRYSON"
-    ],
-    "text": "VMPI BONUS=149.60",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791317129635
-  },
-  {
-    "id": "gm-mux3zigqp4co",
-    "from": "SHAWN",
-    "to": [
-      "CHRIS"
-    ],
-    "text": "VMPI BONUS=82.20",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791317159738
-  },
-  {
     "id": "gm-muzgk4m4yy24",
     "from": "SHAWN",
     "to": [
@@ -111,5 +63,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1791906342735
+  },
+  {
+    "id": "gm-mv87qe6dhefi",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "please call customer wants to prepay for ac compressor",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mv87qduy-m5xjmp.png",
+        "name": "Screenshot 2026-10-14 at 10.35.54 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1791988580677
   }
 ]
