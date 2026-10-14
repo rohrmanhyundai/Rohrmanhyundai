@@ -36,6 +36,8 @@ const COLS = {
   advisorRaw: ['service advisor', 'advisor'],
   createdAt: ['appointment created time', 'created'],
   status: ['status'],
+  // Not in today's export — read automatically if the DMS ever includes it.
+  mileage: ['mileage', 'miles', 'odometer', 'mileage in', 'odometer in', 'current mileage', 'odometer reading'],
 };
 const norm = (s) => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
 
@@ -122,6 +124,7 @@ export function parseAppointmentBuffer(buf) {
       advisor: dmsAdvisor(get('advisorRaw')),
       source: get('source'),
       createdAt: get('createdAt'),
+      ...(() => { const n = parseInt(get('mileage').replace(/[^\d]/g, ''), 10); return n > 0 ? { mileage: n } : {}; })(),
     };
     (byDate[when.date] = byDate[when.date] || []).push(appt);
   }

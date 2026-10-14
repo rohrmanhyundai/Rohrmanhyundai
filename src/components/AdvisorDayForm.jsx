@@ -186,7 +186,7 @@ function SpecialTags({ appt, specials, date }) {
   return (
     <div>
       {hits.map(h => {
-        const why = [h.booked.length ? `Booked: ${h.booked.join(', ')}` : '', h.deferred.length ? `Deferred: ${[...new Set(h.deferred.map(d => d.desc || d.code))].join(', ')}` : ''].filter(Boolean).join(' · ');
+        const why = [h.booked.length ? `Booked: ${h.booked.join(', ')}` : '', h.deferred.length ? `Deferred: ${[...new Set(h.deferred.map(d => d.desc || d.code))].join(', ')}` : '', h.vehicle ? `Vehicle: ${h.vehicle}` : ''].filter(Boolean).join(' · ');
         return (
           <div key={h.special.id} className="sp-tag" title={[why, h.special.note].filter(Boolean).join('\n')} style={{ '--sp': h.special.color }}>
             <span className="sp-shine" />

@@ -12,7 +12,7 @@ const chip = (on, color = '110,231,249') => ({
   background: on ? `rgba(${color},.2)` : 'rgba(255,255,255,.04)', border: `1px solid ${on ? `rgba(${color},.6)` : 'rgba(148,163,184,.25)'}`,
   color: on ? `rgb(${color})` : '#cbd5e1', borderRadius: 999, padding: '4px 11px', fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
 });
-const blank = () => ({ id: uid(), name: '', color: SPECIAL_COLORS[0], active: true, from: '', to: '', booked: [], keywords: [], deferred: [], note: '' });
+const blank = () => ({ id: uid(), name: '', color: SPECIAL_COLORS[0], active: true, from: '', to: '', booked: [], keywords: [], deferred: [], minAge: '', minMiles: '', note: '' });
 
 export default function SpecialsSettings({ currentUser, onClose, onSaved, io }) {
   const { loadSpecials, updateSpecials, loadDeferredCodes } = io || github;
@@ -54,7 +54,7 @@ export default function SpecialsSettings({ currentUser, onClose, onSaved, io }) 
   }
   const saveEdit = async () => {
     if (!edit.name.trim()) { setMsg('❌ Give the special a name.'); return; }
-    if (!edit.booked.length && !edit.keywords.length && !edit.deferred.length) { setMsg('❌ Pick at least one thing to look for.'); return; }
+    if (!edit.booked.length && !edit.keywords.length && !edit.deferred.length && !Number(edit.minAge) && !Number(edit.minMiles)) { setMsg('❌ Pick at least one thing to look for.'); return; }
     const next = list.some(s => s.id === edit.id) ? list.map(s => (s.id === edit.id ? edit : s)) : [...list, edit];
     if (await save(next)) setEdit(null);
   };
@@ -63,7 +63,8 @@ export default function SpecialsSettings({ currentUser, onClose, onSaved, io }) 
   const describe = (s) => {
     const booked = [...(s.booked || []).map(k => (BOOKED_OPTIONS.find(o => o.key === k) || { label: k }).label), ...(s.keywords || []).map(w => `"${w}"`)];
     const def = [...new Set((s.deferred || []).map(c => (codes[c] && codes[c].description) || c))];
-    return [booked.length ? `Booked: ${booked.join(' or ')}` : null, def.length ? `Deferred: ${def.join(' or ')}` : null].filter(Boolean).join('  +  ');
+    const veh = [Number(s.minAge) ? `${s.minAge}+ yrs old` : null, Number(s.minMiles) ? `over ${Number(s.minMiles).toLocaleString()} mi` : null].filter(Boolean).join(' and ');
+    return [[booked.length ? `Booked: ${booked.join(' or ')}` : null, def.length ? `Deferred: ${def.join(' or ')}` : null].filter(Boolean).join('  +  '), veh ? `Or any car ${veh}` : null].filter(Boolean).join('   ·   ');
   };
 
   return (
@@ -123,13 +124,26 @@ export default function SpecialsSettings({ currentUser, onClose, onSaved, io }) 
                   ))}
                 </div>
               </div>
+              <div>
+                <div style={lbl}>3 · Or any vehicle that's… (also tagged) — optional</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontSize: 13, color: '#cbd5e1', fontWeight: 700 }}>
+                  at least <input value={edit.minAge ?? ''} onChange={e => setEdit({ ...edit, minAge: e.target.value.replace(/[^\d]/g, '') })} inputMode="numeric" placeholder="3"
+                    style={{ ...inp, width: 60, padding: '5px 8px', textAlign: 'center' }} /> years old
+                  <span style={{ color: '#64748b' }}>and</span>
+                  over <input value={edit.minMiles ?? ''} onChange={e => setEdit({ ...edit, minMiles: e.target.value.replace(/[^\d]/g, '') })} inputMode="numeric" placeholder="36000"
+                    style={{ ...inp, width: 96, padding: '5px 8px', textAlign: 'center' }} /> miles
+                </div>
+                <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 5 }}>
+                  Age is from the model year. Miles are used when the DMS appointment export includes them — it doesn't today, so for now the age decides.
+                </div>
+              </div>
               <div><div style={lbl}>Offer for the advisor (optional)</div>
                 <textarea value={edit.note} onChange={e => setEdit({ ...edit, note: e.target.value })} rows={2}
                   placeholder="Coolant service $99 with today's oil change — through Dec 31." style={{ ...inp, width: '100%', resize: 'vertical' }} /></div>
               <label style={{ fontSize: 13, color: '#cbd5e1', display: 'inline-flex', gap: 6, alignItems: 'center', fontWeight: 700 }}>
                 <input type="checkbox" checked={edit.active !== false} onChange={e => setEdit({ ...edit, active: e.target.checked })} /> Turned on
               </label>
-              <div style={{ fontSize: 12.5, color: '#94a3b8' }}>Tags an appointment when <b>both</b> filled-in parts match (1 and 2). Leave one blank to match on the other alone.</div>
+              <div style={{ fontSize: 12.5, color: '#94a3b8' }}>Tags an appointment when <b>both</b> filled-in parts match (1 and 2) — leave one blank to match on the other alone — <b>or</b> when the car meets part 3.</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button disabled={busy} onClick={saveEdit} style={{ ...chip(true, '74,222,128'), padding: '8px 18px', fontSize: 13.5 }}>{busy ? '⏳ Saving…' : '✓ Save special'}</button>
                 <button className="secondary" onClick={() => { setEdit(null); setMsg(''); }}>Cancel</button>
