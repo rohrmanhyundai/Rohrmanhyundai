@@ -1,26 +1,5 @@
 [
   {
-    "id": "mv5ro1d539fn",
-    "ro": "781488",
-    "roDate": "2026-10-12",
-    "vehicle": "2023 Hyundai Sonata Hybrid",
-    "jobDesc": "CUSTOMER STATES- transmission feels like its lunging / hard shifr, only happens under 40mph",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "DAVID RILEY",
-    "_archiveId": "mv83obfpyym",
-    "_archivedAt": "2026-10-14T12:42:45.349Z",
-    "_archivedBy": "KADEN",
-    "_source": "wip",
-    "_sourceTech": "KADEN"
-  },
-  {
     "id": "mv6lapt61ek",
     "ro": "781451",
     "roDate": "2026-10-09",
