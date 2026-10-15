@@ -263,7 +263,6 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
         {tabBtn('list', `📋 Contracts (${contracts.length})`)}
-        {tabBtn('upload', '📤 Upload Contract')}
         {tabBtn('requests', '🙋 Loaner Request')}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
@@ -368,10 +367,13 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
             </div>
           ) : (
             <div style={card}>
-              <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name, RO, VIN, model…"
-                style={{ ...inputStyle, maxWidth: 460, marginBottom: 14 }} />
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
+                <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name, RO, VIN, model…"
+                  style={{ ...inputStyle, maxWidth: 460, flex: '1 1 260px' }} />
+                <button onClick={() => { cancelEdit(); setTab('upload'); }} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px', whiteSpace: 'nowrap' }}>📤 Upload Contract</button>
+              </div>
               {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
-                : contracts.length === 0 ? <div style={{ color: '#94a3b8' }}>No loaner contracts yet — add one on the Upload Contract tab.</div>
+                : contracts.length === 0 ? <div style={{ color: '#94a3b8' }}>No loaner contracts yet — click 📤 Upload Contract to add one.</div>
                 : shown.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
                 : (
                   <div style={{ overflowX: 'auto' }}>
