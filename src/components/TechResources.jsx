@@ -151,7 +151,7 @@ export default function TechResources({ currentUser, currentUserDisplay, current
         </div>
       </div>
 
-      {vmpiOpen && <VmpiReportView onClose={() => setVmpiOpen(false)} onlyFirst={isTech ? meFirst : ''} />}
+      {vmpiOpen && <VmpiReportView onClose={() => setVmpiOpen(false)} onlyFirst={isTech ? meFirst : ''} currentUser={currentUser} currentRole={currentRole} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
         <p style={{ color: '#7a92b8', margin: 0, fontSize: 15 }}>Select a resource below.</p>
 

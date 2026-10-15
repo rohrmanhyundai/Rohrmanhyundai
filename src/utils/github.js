@@ -2462,6 +2462,17 @@ export async function saveVmpiReport(report) {
   return mutateGitHubJson('public/data/vmpi/report.json', () => report, `VMPI report ${new Date().toISOString()}`);
 }
 
+// public/data/vmpi/rules.json → { rules: [{ id, title, detail }], updatedAt, by }
+// VMPI program rules — edited in VMPI Setup (managers/admins), shown at the top of My VMPI.
+export async function loadVmpiRules() {
+  try { const d = await loadGithubFile('data/vmpi/rules.json'); if (d && typeof d === 'object') return d; } catch {}
+  return { rules: [] };
+}
+export async function updateVmpiRules(mutate) {
+  return mutateGitHubJson('public/data/vmpi/rules.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { rules: [] }),
+    `VMPI rules ${new Date().toISOString()}`);
+}
+
 // ── Prep-sheet specials (utils/specials.js) ──────────────────────────────────
 export async function loadSpecials() {
   try { const d = await loadGithubFile('data/specials.json'); if (d && typeof d === 'object') return d; } catch {}

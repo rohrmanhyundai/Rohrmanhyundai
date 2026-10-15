@@ -2769,7 +2769,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               📋 View VMPI Report
             </button>
           </div>
-          {vmpiView && <VmpiReportView onClose={() => setVmpiView(false)} />}
+          {vmpiView && <VmpiReportView onClose={() => setVmpiView(false)} currentUser={currentUser} currentRole={currentRole} />}
           {vmpiErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {vmpiErr}</div>}
           {vmpiMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{vmpiMsg}</div>}
           {vmpiUpload && (

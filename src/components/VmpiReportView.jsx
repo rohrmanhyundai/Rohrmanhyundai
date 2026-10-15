@@ -1,8 +1,11 @@
 // View VMPI Report — every repair order per tech from the last VMPI upload,
 // YES / NO for a video attached to the inspection, each tech's %. Opened from
 // Edit Dashboard → Technicians; "Save as .pdf" downloads what's on screen.
+// The VMPI program rules (data/vmpi/rules.json) show above the RO tables;
+// managers/admins edit them from ⚙️ Setup.
 import React, { useEffect, useMemo, useState } from 'react';
-import { loadVmpiReport } from '../utils/github';
+import { loadVmpiReport, loadVmpiRules } from '../utils/github';
+import VmpiSetup from './VmpiSetup';
 
 const pctTxt = (p) => `${(Number(p || 0) * 100).toFixed(1)}%`;
 const tone = (p) => (p >= 0.9 ? '#4ade80' : p >= 0.75 ? '#fbbf24' : '#f87171');
@@ -58,8 +61,14 @@ async function savePdf(report, techs, onlyNo) {
 }
 
 // onlyFirst: show just this tech (a tech opening their own VMPI from Technician Resources).
-export default function VmpiReportView({ onClose, io, onlyFirst = '' }) {
+// currentRole: admin or any manager role gets the ⚙️ Setup button (program rules).
+export default function VmpiReportView({ onClose, io, onlyFirst = '', currentUser = '', currentRole = '' }) {
   const load = (io && io.loadVmpiReport) || loadVmpiReport;
+  const loadRules = (io && io.loadVmpiRules) || loadVmpiRules;
+  const canSetup = currentRole === 'admin' || (currentRole || '').includes('manager');
+  const [rules, setRules] = useState([]);
+  const [setupOpen, setSetupOpen] = useState(false);
+  useEffect(() => { let c = false; loadRules().then(d => { if (!c) setRules((d && d.rules) || []); }).catch(() => {}); return () => { c = true; }; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [report, setReport] = useState(undefined);
   const [onlyNo, setOnlyNo] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -85,10 +94,25 @@ export default function VmpiReportView({ onClose, io, onlyFirst = '' }) {
           style={{ background: 'rgba(74,222,128,.15)', border: '1px solid rgba(74,222,128,.5)', color: '#86efac', borderRadius: 9, padding: '8px 16px', fontWeight: 800, fontSize: 13.5, cursor: 'pointer' }}>
           {saving ? '⏳ Saving…' : '📄 Save as .pdf'}
         </button>
+        {canSetup && <button className="secondary" onClick={() => setSetupOpen(true)}>⚙️ Setup</button>}
         <button className="secondary" onClick={onClose}>✕ Close</button>
       </div>
+      {setupOpen && <VmpiSetup currentUser={currentUser} io={io} onClose={() => setSetupOpen(false)} onSaved={setRules} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 24px 40px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {rules.length > 0 && (
+            <div style={{ marginBottom: 18, borderRadius: 14, border: '1px solid rgba(103,232,249,.3)', background: 'rgba(103,232,249,.06)', padding: '12px 16px' }}>
+              <div style={{ fontSize: 11, fontWeight: 900, color: '#67e8f9', letterSpacing: '.08em', marginBottom: 8 }}>VMPI PROGRAM RULES</div>
+              <ol style={{ margin: 0, paddingLeft: 22, display: 'grid', gap: 6 }}>
+                {rules.map(r => (
+                  <li key={r.id} style={{ color: '#f1f5f9', fontSize: 14 }}>
+                    {r.title && <span style={{ fontWeight: 800 }}>{r.title}</span>}
+                    {r.detail && <div style={{ fontSize: 13, color: '#cbd5e1', whiteSpace: 'pre-wrap', marginTop: r.title ? 2 : 0 }}>{r.detail}</div>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
           {report === null && <div style={{ color: '#fbbf24', fontWeight: 700 }}>{onlyFirst ? 'No VMPI report has been uploaded yet.' : 'Upload a VMPI report on this page first — the report is saved when you click Apply.'}</div>}
           {report && onlyFirst && !techs.length && <div style={{ color: '#fbbf24', fontWeight: 700 }}>You're not on the last VMPI report ({report.stamp || 'latest'}).</div>}
           {techs.length > 0 && (
