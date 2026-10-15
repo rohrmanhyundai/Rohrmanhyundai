@@ -163,7 +163,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
-      <div className="apt-prep-bg" style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,.12)', overflow: 'hidden' }}>
+      <div className="apt-prep-bg loaner-cal" style={{ background: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '14px 18px 0', flexWrap: 'wrap' }}>
           <div style={{ fontSize: 14, fontWeight: 800, color: '#dbe8ff' }}>🙋 Click a day to request a loaner</div>
           <div className="adv-cal-nav">

@@ -810,6 +810,8 @@ html, body {
   z-index: -1;
   pointer-events: none;
 }
+/* Loaner Request calendar: Advisor Calendar cells, no blue backdrop / logo */
+.loaner-cal .adv-cal-grid::before { display: none; }
 
 /* ── Manager Portal (Edit Dashboard) — modern shell ───────────────────────────
    The editor screens were running on browser defaults: white system inputs,
