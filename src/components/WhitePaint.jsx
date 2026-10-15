@@ -46,6 +46,7 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
   const [q, setQ] = useState('');
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
+  const [copied, setCopied] = useState('');           // `${id}:vin` / `${id}:phone` just copied
   const [draft, setDraft] = useState(EMPTY);
   const [editing, setEditing] = useState(null);       // { id, ...fields }
   const [file, setFile] = useState(null);
@@ -224,6 +225,32 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
     </>
   );
 
+  // Click a VIN or phone to copy it for pasting into the DMS.
+  async function copy(text, key) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch {}
+      ta.remove();
+    }
+    setCopied(key);
+    setTimeout(() => setCopied(c => (c === key ? '' : c)), 1500);
+  }
+  const copyCell = (e, field, text, extra) => {
+    if (!text) return muted;
+    const key = `${e.id}:${field}`;
+    const on = copied === key;
+    return (
+      <span role="button" tabIndex={0} title="Click to copy" onClick={() => copy(text, key)}
+        onKeyDown={ev => { if (ev.key === 'Enter') copy(text, key); }}
+        style={{ cursor: 'copy', padding: '3px 6px', margin: '-3px -6px', borderRadius: 6, background: on ? 'rgba(74,222,128,.15)' : 'transparent', ...extra }}>
+        {text}{on && <span style={{ marginLeft: 6, fontFamily: 'inherit', fontSize: 11.5, fontWeight: 900, color: '#86efac', letterSpacing: 0 }}>✓ Copied</span>}
+      </span>
+    );
+  };
+
   const queueTable = (
     <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
       <thead><tr>
@@ -240,8 +267,8 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
               </td>
               <td style={{ ...td, fontWeight: 800 }}>{e.firstName || muted}{nameCell(e)}</td>
               <td style={{ ...td, fontWeight: 800 }}>{e.lastName || muted}</td>
-              <td style={{ ...td, ...mono }}>{e.vin || muted}</td>
-              <td style={td}>{e.phone ? <a href={`tel:${String(e.phone).replace(/[^\d+]/g, '')}`} style={{ color: '#7dd3fc', textDecoration: 'none' }}>{fmtPhone(e.phone)}</a> : muted}</td>
+              <td style={{ ...td, ...mono }}>{copyCell(e, 'vin', e.vin)}</td>
+              <td style={td}>{copyCell(e, 'phone', e.phone ? fmtPhone(e.phone) : '', { color: '#7dd3fc' })}</td>
               <td style={td}>{fmtDate(e.dateAdded) || muted}</td>
               {isManager && (
                 <td style={{ ...td, textAlign: 'right' }}>
@@ -272,8 +299,8 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
           <tr key={e.id}>
             <td style={{ ...td, fontWeight: 800 }}>{e.firstName || muted}{nameCell(e)}</td>
             <td style={{ ...td, fontWeight: 800 }}>{e.lastName || muted}</td>
-            <td style={{ ...td, ...mono }}>{e.vin || muted}</td>
-            <td style={td}>{e.phone ? fmtPhone(e.phone) : muted}</td>
+            <td style={{ ...td, ...mono }}>{copyCell(e, 'vin', e.vin)}</td>
+            <td style={td}>{copyCell(e, 'phone', e.phone ? fmtPhone(e.phone) : '', { color: '#7dd3fc' })}</td>
             <td style={td}>{fmtDate(e.dateAdded) || muted}</td>
             <td style={{ ...td, color: '#86efac', fontWeight: 800 }}>✓ {new Date(e.paintedAt).toLocaleDateString()}<span style={{ color: '#94a3b8', fontWeight: 600, fontSize: 12.5 }}> · {e.paintedBy}</span></td>
             {isManager && (
