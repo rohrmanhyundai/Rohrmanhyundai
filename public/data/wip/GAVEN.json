@@ -76,5 +76,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mva2pu4bb733",
+    "ro": "781573",
+    "roDate": "2026-10-15",
+    "vehicle": "2021 Hyundai Sonata",
+    "jobDesc": "EGR ASSY WITH COOLER AND ALL SEALS AND BOLTS",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
