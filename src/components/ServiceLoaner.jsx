@@ -14,7 +14,9 @@ const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box' };
 const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 9, padding: '7px 13px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' });
 const th = { textAlign: 'left', padding: '9px 10px', fontSize: 12, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', borderBottom: '1px solid rgba(148,163,184,.25)', whiteSpace: 'nowrap' };
-const td = { padding: '9px 10px', fontSize: 14, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.1)', verticalAlign: 'middle' };
+// App.css clips every td (fixed layout + ellipsis); this table sizes to its
+// content so the Open / Print / Delete buttons never get cut off.
+const td = { padding: '9px 10px', fontSize: 14, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.1)', verticalAlign: 'middle', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' };
 
 const EMPTY = { firstName: '', lastName: '', ro: '', vin: '', year: '', make: '', model: '', dateOut: '', timeOut: '' };
 const FIELDS = [
@@ -230,7 +232,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                 : shown.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
                 : (
                   <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
                       <thead><tr>
                         <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
                         <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Uploaded</th><th style={th}></th>
@@ -240,7 +242,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                           <tr key={c.id}>
                             <td style={{ ...td, fontWeight: 800 }}>{c.firstName} {c.lastName}</td>
                             <td style={td}>{c.ro || <span style={{ color: '#64748b' }}>—</span>}</td>
-                            <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13 }}>{c.vin}</td>
+                            <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{c.vin}</td>
                             <td style={td}>{c.year}</td>
                             <td style={td}>{c.make}</td>
                             <td style={td}>{c.model}</td>
@@ -249,7 +251,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                             <td style={{ ...td, whiteSpace: 'nowrap', textAlign: 'right' }}>
                               <a href={c.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...btn('110,231,249'), textDecoration: 'none', display: 'inline-block' }}>📄 Open</a>{' '}
                               <button style={btn('196,181,253')} onClick={() => printContract(c.fileUrl)}>🖨 Print</button>{' '}
-                              {isManager && <button disabled={busy} style={btn('248,113,113', false)} onClick={() => remove(c)}>🗑</button>}
+                              {isManager && <button disabled={busy} title="Delete contract" style={btn('248,113,113', false)} onClick={() => remove(c)}>🗑 Delete</button>}
                             </td>
                           </tr>
                         ))}
