@@ -15,6 +15,7 @@ const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,
 const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 9, padding: '7px 13px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' });
 // Row actions: one size and shape whether it's a link or a button.
 const actionBtn = (rgb) => ({ ...btn(rgb), display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5, height: 32, minWidth: 82, padding: '0 12px', boxSizing: 'border-box', lineHeight: 1, margin: 0 });
+const money = (n) => `$${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const th = { textAlign: 'left', padding: '9px 10px', fontSize: 12, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', borderBottom: '1px solid rgba(148,163,184,.25)', whiteSpace: 'nowrap' };
 // App.css clips every td (fixed layout + ellipsis); this table sizes to its
 // content so the Open / Print / Delete buttons never get cut off.
@@ -73,6 +74,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
   const [editing, setEditing] = useState(null);     // stored contract being corrected
   const [editDraft, setEditDraft] = useState(null);
   const [editView, setEditView] = useState('out'); // which copy the editor previews
+  const [warrantyAmt, setWarrantyAmt] = useState(null); // popup open when not null
   const completedRef = useRef(null);
   const fileRef = useRef(null);
 
@@ -134,7 +136,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
     setEditView(c.completedUrl ? 'completed' : 'out');
     setEditDraft(Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])));
   }
-  function cancelEdit() { setEditing(null); setEditDraft(null); }
+  function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAmt(null); }
 
   async function saveEdit() {
     if (!editing || !editDraft) return;
@@ -175,6 +177,24 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
     setBusy(false);
   }
 
+  // Warranty claim: the loaner days are billed to warranty for this amount.
+  async function saveWarranty(amount) {
+    if (!editing) return;
+    const warranty = amount == null ? null : { amount, at: new Date().toISOString(), by: currentUser };
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, warranty } : x) }),
+        `${warranty ? 'warranty' : 'remove warranty'} RO ${editing.ro || '(none)'}`);
+      setContracts(next.contracts);
+      setEditing(e => ({ ...e, warranty }));
+      setWarrantyAmt(null);
+      setStatus(warranty ? `✓ Warranty claim saved — ${money(amount)}.` : '✓ Warranty claim removed.');
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+
   async function remove(c) {
     if (!isManager) return;
     if (!window.confirm(`Delete the loaner contract for ${c.firstName} ${c.lastName}${c.ro ? ` (RO ${c.ro})` : ''}? This can't be undone.`)) return;
@@ -198,7 +218,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
       `${b.dateOut || ''}${b.timeOut || ''}${b.uploadedAt || ''}`.localeCompare(`${a.dateOut || ''}${a.timeOut || ''}${a.uploadedAt || ''}`));
     if (!terms.length) return list;
     return list.filter(c => {
-      const hay = [c.firstName, c.lastName, c.ro, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by, c.notes].join(' ').toLowerCase();
+      const hay = [c.firstName, c.lastName, c.ro, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by, c.notes, c.warranty ? 'warranty' : ''].join(' ').toLowerCase();
       return terms.every(t => hay.includes(t));
     });
   }, [contracts, q]);
@@ -307,6 +327,10 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                     {busy ? 'Saving…' : '✓ Save changes'}
                   </button>
                   <button disabled={busy} style={btn('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
+                  <button disabled={busy} style={{ ...btn('251,146,60', !!editing.warranty), marginLeft: 'auto' }}
+                    onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
+                    🛡 {editing.warranty ? `Warranty ${money(editing.warranty.amount)}` : 'Warranty'}
+                  </button>
                 </div>
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Loaner returned?</div>
@@ -369,6 +393,12 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                               {c.completedUrl
                                 ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
                                 : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
+                              {c.warranty && (
+                                <div title={`Warranty claim by ${c.warranty.by} ${new Date(c.warranty.at).toLocaleDateString()}`}
+                                  style={{ marginTop: 4, display: 'inline-block', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
+                                  🛡 Warranty {money(c.warranty.amount)}
+                                </div>
+                              )}
                             </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
@@ -389,6 +419,42 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
           )}
         </div>
       </div>
+      {warrantyAmt != null && editing && (() => {
+        const n = parseFloat(String(warrantyAmt).replace(/[$,\s]/g, ''));
+        const valid = isFinite(n) && n > 0;
+        const submit = () => { if (valid && !busy) saveWarranty(Math.round(n * 100) / 100); };
+        return (
+          <div onClick={() => !busy && setWarrantyAmt(null)}
+            style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 380, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>🛡 Warranty claim</div>
+              <div style={{ fontSize: 13, color: '#94a3b8', margin: '4px 0 14px' }}>
+                {editing.firstName} {editing.lastName}{editing.ro ? ` · RO ${editing.ro}` : ''}
+              </div>
+              <label style={{ display: 'grid', gap: 4 }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>Claim amount</span>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontWeight: 800 }}>$</span>
+                  <input autoFocus inputMode="decimal" value={warrantyAmt} placeholder="0.00" disabled={busy}
+                    onChange={e => setWarrantyAmt(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') setWarrantyAmt(null); }}
+                    style={{ ...inputStyle, paddingLeft: 26, fontSize: 18 }} />
+                </div>
+              </label>
+              <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
+                <button disabled={!valid || busy} style={{ ...btn('251,146,60'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
+                  {busy ? 'Saving…' : '✓ Save'}
+                </button>
+                <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setWarrantyAmt(null)}>Cancel</button>
+                {editing.warranty && (
+                  <button disabled={busy} style={{ ...btn('248,113,113', false), marginLeft: 'auto' }}
+                    onClick={() => { if (window.confirm('Remove the warranty claim from this contract?')) saveWarranty(null); }}>Remove</button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
