@@ -652,41 +652,42 @@ export default function FloatingMessenger({
                     </div>
                   );
                 })}
-                <textarea
-                  ref={composeRef}
-                  value={text}
-                  onChange={e => setText(e.target.value)}
-                  onPaste={onPasteMedia}
-                  rows={4}
-                  placeholder="Type your message…"
-                  style={{
-                    width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.07)',
-                    border: '1px solid rgba(255,255,255,0.14)', borderRadius: 8, color: '#e2e8f0',
-                    padding: '9px 11px', fontSize: 13.5, lineHeight: 1.45, resize: 'vertical', fontFamily: 'inherit',
-                  }}
-                />
+                {/* The message box is also the drop zone: type, drag a picture
+                    onto it, or paste a screenshot — whichever is handy. */}
+                <input ref={mediaInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }}
+                  onChange={e => { addMedia(e.target.files); e.target.value = ''; }} />
+                <div
+                  style={{ position: 'relative' }}
+                  onDragOver={e => { e.preventDefault(); if (!dragOver) setDragOver(true); }}
+                  onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDragOver(false); }}
+                  onDrop={e => { e.preventDefault(); setDragOver(false); addMedia(e.dataTransfer.files); }}>
+                  <textarea
+                    ref={composeRef}
+                    value={text}
+                    onChange={e => setText(e.target.value)}
+                    onPaste={onPasteMedia}
+                    rows={4}
+                    placeholder="Type your message… or drag a picture here"
+                    style={{
+                      width: '100%', boxSizing: 'border-box', background: dragOver ? 'rgba(56,189,248,.10)' : 'rgba(255,255,255,0.07)',
+                      border: dragOver ? '1.5px dashed rgba(56,189,248,.9)' : '1px solid rgba(255,255,255,0.14)', borderRadius: 8, color: '#e2e8f0',
+                      padding: '9px 11px', fontSize: 13.5, lineHeight: 1.45, resize: 'vertical', fontFamily: 'inherit',
+                    }}
+                  />
+                  {dragOver && (
+                    <div style={{
+                      position: 'absolute', inset: 0, borderRadius: 8, pointerEvents: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: 'rgba(2,6,23,.55)', color: '#7dd3fc', fontSize: 13.5, fontWeight: 800,
+                    }}>
+                      📎 Drop to attach
+                    </div>
+                  )}
+                </div>
                 {/* An emoji lands where the cursor is, not tacked on the end —
                     people add one mid-sentence as often as at the finish. */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
                   <EmojiPicker onPick={insertIntoCompose} />
-                </div>
-                {/* 📎 Send media — click, drag a picture in, or paste a screenshot. */}
-                <input ref={mediaInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }}
-                  onChange={e => { addMedia(e.target.files); e.target.value = ''; }} />
-                <div
-                  onClick={() => mediaInputRef.current && mediaInputRef.current.click()}
-                  onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={e => { e.preventDefault(); setDragOver(false); addMedia(e.dataTransfer.files); }}
-                  onPaste={onPasteMedia}
-                  tabIndex={0}
-                  style={{
-                    marginTop: 8, padding: '12px 10px', borderRadius: 10, cursor: 'pointer', textAlign: 'center',
-                    border: `1.5px dashed ${dragOver ? 'rgba(56,189,248,.9)' : 'rgba(148,163,184,.4)'}`,
-                    background: dragOver ? 'rgba(56,189,248,.12)' : 'rgba(255,255,255,.03)',
-                    color: dragOver ? '#7dd3fc' : '#94a3b8', fontSize: 12.5, fontWeight: 700,
-                  }}>
-                  📎 <span style={{ color: '#e2e8f0' }}>Send media</span> — click, drag a picture here, or paste a screenshot
                 </div>
                 {attachments.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
