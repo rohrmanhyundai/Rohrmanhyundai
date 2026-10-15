@@ -126,7 +126,7 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
   }
 
   async function saveEdit() {
-    if (!editing) return;
+    if (!editing || !isManager) return;   // edits and place in line are manager/admin only
     const changes = { ...clean(editing), updatedAt: new Date().toISOString(), updatedBy: currentUser };
     const place = parseInt(editing.place, 10);
     const moving = isManager && place > 0 && place !== editing.pos;
