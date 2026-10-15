@@ -54,6 +54,15 @@ const NAV_BUTTONS = [
     prop: 'onServiceLoaner',
   },
   {
+    key: 'whitePaint',
+    label: '🎨 White Paint',
+    desc: 'Paint repair waiting list — who\'s next up',
+    bg: 'linear-gradient(135deg,rgba(226,232,240,.28),rgba(148,163,184,.18))',
+    border: 'rgba(226,232,240,.45)',
+    color: '#f1f5f9',
+    prop: 'onWhitePaint',
+  },
+  {
     key: 'documentLibrary',
     label: '📁 Document Library',
     desc: 'Access warranty forms and reference documents',
@@ -103,9 +112,9 @@ const NAV_BUTTONS = [
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
-  onRegistrationUploads, onShopAppointments, onServiceLoaner,
+  onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint };
   // A tile needs page access AND a handler from App (App leaves one out when it's off).
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 

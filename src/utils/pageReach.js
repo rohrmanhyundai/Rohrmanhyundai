@@ -25,7 +25,7 @@ const LINKS = {
   'parts-hub': ['advisor-calendar', 'aftermarket-warranty', 'document-library', 'hot-repairs', 'parts-goal-forecast',
     'shop-appointments', 'tire-quote', 'work-in-progress'],
   'warranty-hub': ['aftermarket-warranty', 'at-diag-worksheet', 'document-library', 'hot-repairs', 'ntt-att-worksheet',
-    'original-owner', 'registration-uploads', 'service-loaner', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
+    'original-owner', 'registration-uploads', 'service-loaner', 'white-paint', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
 };
 
 // Pages behind a page-access box (Role Setup / User Management).

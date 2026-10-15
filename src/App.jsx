@@ -1503,6 +1503,7 @@ export default function App() {
         onAftermarketWarranty={() => goTo('aftermarket-warranty', 'warranty-hub')}
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'warranty-hub') : undefined}
+        onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'warranty-hub') : undefined}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
