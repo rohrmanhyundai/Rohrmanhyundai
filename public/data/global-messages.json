@@ -89,7 +89,14 @@
     ],
     "alert": false,
     "requireReply": false,
-    "replies": [],
+    "replies": [
+      {
+        "id": "rp-mv9rin671dub",
+        "from": "KAI",
+        "text": "👍",
+        "timestamp": 1792082277584
+      }
+    ],
     "timestamp": 1792073075931
   }
 ]
