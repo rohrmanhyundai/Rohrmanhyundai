@@ -70,6 +70,8 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
   const [fileUrl, setFileUrl] = useState('');       // local preview of the chosen file
   const [reading, setReading] = useState(false);
   const [draft, setDraft] = useState(null);
+  const [editing, setEditing] = useState(null);     // stored contract being corrected
+  const [editDraft, setEditDraft] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -124,6 +126,29 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
     setBusy(false);
   }
 
+  function startEdit(c) {
+    setStatus('');
+    setEditing(c);
+    setEditDraft(Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])));
+  }
+  function cancelEdit() { setEditing(null); setEditDraft(null); }
+
+  async function saveEdit() {
+    if (!editing || !editDraft) return;
+    setBusy(true); setStatus('Saving…');
+    try {
+      const changes = { ...editDraft, vin: editDraft.vin.trim().toUpperCase(), editedAt: new Date().toISOString(), editedBy: currentUser };
+      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
+        `edit RO ${changes.ro || '(none)'}`);
+      setContracts(next.contracts);
+      cancelEdit();
+      setStatus(`✓ Updated ${changes.firstName} ${changes.lastName}'s contract.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+
   async function remove(c) {
     if (!isManager) return;
     if (!window.confirm(`Delete the loaner contract for ${c.firstName} ${c.lastName}${c.ro ? ` (RO ${c.ro})` : ''}? This can't be undone.`)) return;
@@ -154,8 +179,23 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
   const warnings = draft && !reading ? fieldWarnings(draft) : [];
   const dupe = draft && draft.ro ? contracts.find(c => c.ro && c.ro === draft.ro) : null;
 
+  const fieldGrid = (d, set, disabled) => (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      {FIELDS.map(([k, label, type]) => (
+        <label key={k} style={{ display: 'grid', gap: 4, gridColumn: k === 'vin' || k === 'model' ? '1 / -1' : undefined }}>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>{label}</span>
+          <input type={type || 'text'} value={d[k] || ''} disabled={disabled}
+            onChange={e => set(x => ({ ...x, [k]: k === 'vin' ? e.target.value.toUpperCase() : e.target.value }))}
+            style={{ ...inputStyle, letterSpacing: k === 'vin' ? '.06em' : 0, colorScheme: 'dark' }} />
+        </label>
+      ))}
+    </div>
+  );
+
+  const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
+
   const tabBtn = (k, label) => (
-    <button onClick={() => setTab(k)} style={{ ...btn(k === 'upload' ? '74,222,128' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
+    <button onClick={() => { setTab(k); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
   );
 
   return (
@@ -191,16 +231,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                 <div style={card}>
                   <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', marginBottom: 2 }}>{reading ? '🔎 Reading the contract…' : 'Check the fields'}</div>
                   <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12, wordBreak: 'break-all' }}>{file && file.name}</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                    {FIELDS.map(([k, label, type]) => (
-                      <label key={k} style={{ display: 'grid', gap: 4, gridColumn: k === 'vin' || k === 'model' ? '1 / -1' : undefined }}>
-                        <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>{label}</span>
-                        <input type={type || 'text'} value={draft[k] || ''} disabled={reading || busy}
-                          onChange={e => setDraft(d => ({ ...d, [k]: k === 'vin' ? e.target.value.toUpperCase() : e.target.value }))}
-                          style={{ ...inputStyle, letterSpacing: k === 'vin' ? '.06em' : 0, colorScheme: 'dark' }} />
-                      </label>
-                    ))}
-                  </div>
+                  {fieldGrid(draft, setDraft, reading || busy)}
                   {warnings.length > 0 && (
                     <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 10, background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.35)', color: '#fde68a', fontSize: 13 }}>
                       <b>Check:</b> {warnings.join(' · ')}
@@ -225,6 +256,32 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                 </div>
               </div>
             )
+          ) : editing && editDraft ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 440px) 1fr', gap: 16, alignItems: 'start' }}>
+              <div style={card}>
+                <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', marginBottom: 2 }}>✏️ Edit contract</div>
+                <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12, wordBreak: 'break-all' }}>
+                  {editing.fileName} · uploaded by {editing.by}{editing.uploadedAt ? ` ${new Date(editing.uploadedAt).toLocaleDateString()}` : ''}
+                </div>
+                {fieldGrid(editDraft, setEditDraft, busy)}
+                {editWarnings.length > 0 && (
+                  <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 10, background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.35)', color: '#fde68a', fontSize: 13 }}>
+                    <b>Check:</b> {editWarnings.join(' · ')}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+                  <button disabled={busy || !editDraft.firstName && !editDraft.lastName} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={saveEdit}>
+                    {busy ? 'Saving…' : '✓ Save changes'}
+                  </button>
+                  <button disabled={busy} style={btn('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
+                </div>
+              </div>
+              <div style={{ ...card, padding: 8, height: 'calc(100vh - 230px)', minHeight: 480 }}>
+                {/\.pdf$/i.test(editing.fileName || editing.fileUrl || '')
+                  ? <iframe title="Contract" src={editing.fileUrl} style={{ width: '100%', height: '100%', border: 0, borderRadius: 10, background: '#fff' }} />
+                  : <img alt="Contract" src={editing.fileUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
+              </div>
+            </div>
           ) : (
             <div style={card}>
               <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name, RO, VIN, model…"
@@ -254,6 +311,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                               <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
                                 <a href={c.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
                                 <button style={actionBtn('196,181,253')} onClick={() => printContract(c.fileUrl)}>🖨 Print</button>
+                                <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
                                 {isManager && <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>}
                               </div>
                             </td>
