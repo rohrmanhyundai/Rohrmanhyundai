@@ -2496,3 +2496,20 @@ export async function updateSpecials(mutate) {
   return mutateGitHubJson('public/data/specials.json', (cur) => mutate(cur && typeof cur === 'object' ? cur : { specials: [] }),
     `Specials ${new Date().toISOString()}`);
 }
+
+// ── White Paint waiting list ──────────────────────────────────────────────────
+// public/data/white-paint/list.json → { queue: [{ id, firstName, lastName, vin, phone, dateAdded (yyyy-mm-dd),
+//   notes, source: 'pdf'|'manual', addedAt, addedBy }], done: [{ …same, paintedAt, paintedBy }] }
+// queue order IS the line — index 0 is next up for paint (see utils/whitePaint).
+export async function loadWhitePaint() {
+  try {
+    const d = await loadGithubFile('data/white-paint/list.json');
+    if (d && Array.isArray(d.queue)) return { ...d, done: Array.isArray(d.done) ? d.done : [] };
+  } catch {}
+  return { queue: [], done: [] };
+}
+export async function updateWhitePaint(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/white-paint/list.json',
+    (cur) => mutate(cur && Array.isArray(cur.queue) ? { ...cur, done: Array.isArray(cur.done) ? cur.done : [] } : { queue: [], done: [] }),
+    `White paint ${what} ${new Date().toISOString()}`);
+}

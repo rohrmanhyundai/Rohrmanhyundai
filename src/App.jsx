@@ -44,6 +44,7 @@ import BigMoneyLOF from './components/BigMoneyLOF';
 import DeferredService from './components/DeferredService';
 import OilGuard from './components/OilGuard';
 import ServiceLoaner from './components/ServiceLoaner';
+import WhitePaint from './components/WhitePaint';
 import DailyWrench from './components/DailyWrench';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
@@ -210,6 +211,7 @@ export default function App() {
     deferred:         { page: 'deferred-service', tab: 'settings' },
     oilGuard:         { page: 'oil-guard', tab: 'settings' },
     serviceLoaner:    { page: 'service-loaner', tab: 'upload' },
+    whitePaint:       { page: 'white-paint', tab: 'import' },
     grossReport:      { page: 'goal-forecast' },
     advisorGoals:     { page: 'advisor-goals' },
     surveys:          { page: 'after-call', tab: 'upload' },
@@ -1696,6 +1698,19 @@ export default function App() {
     );
   }
 
+  if (page === 'white-paint') {
+    if (!canAccess('whitePaint')) { setPage(prevPage || 'dashboard'); return null; }
+    return (
+      <WhitePaint
+        currentUser={currentUser.toUpperCase()}
+        currentRole={currentRole}
+        initialTab={launched ? uploadLaunch.tab : undefined}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
+        backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
+      />
+    );
+  }
+
   if (page === 'oil-guard') {
     return (
       <OilGuard
@@ -1893,6 +1908,7 @@ export default function App() {
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
         onOilGuard={() => goTo('oil-guard', 'advisor-calendar')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'advisor-calendar') : undefined}
+        onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'advisor-calendar') : undefined}
         onDailyWrench={() => goTo('daily-wrench', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}

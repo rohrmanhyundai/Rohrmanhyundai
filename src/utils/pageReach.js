@@ -14,7 +14,7 @@ import { resolvePages, pageOn } from './roleAccess';
 const LINKS = {
   dashboard: ['additional-time-menu', 'media-upload', 'registration-upload', 'tire-warranty', 'used-car-hub'],
   'advisor-calendar': ['advisor-day', 'advisor-goals', 'aftermarket-warranty', 'big-money-lof', 'cash-dash', 'charge-account-list',
-    'daily-wrench', 'deferred-service', 'oil-guard', 'service-loaner', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
+    'daily-wrench', 'deferred-service', 'oil-guard', 'service-loaner', 'white-paint', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
     'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call'],
   'advisor-goals': ['live-pay'],
   'live-pay-hub': ['live-pay', 'tech-live-pay'],
@@ -34,7 +34,7 @@ const ACCESS_KEY = {
   'survey-reports': 'surveyReports', 'work-in-progress': 'workInProgress', 'shop-appointments': 'shopAppointments',
   'used-car-hub': 'usedCarHub', 'media-upload': 'mobileMediaUpload', 'registration-upload': 'mobileRegistrationUpload',
   'tire-warranty': 'mobileTireWarranty', 'additional-time-menu': 'mobileAdditionalTime',
-  'service-loaner': 'serviceLoaner',
+  'service-loaner': 'serviceLoaner', 'white-paint': 'whitePaint',
 };
 const DEFAULT_OFF = new Set(['surveyReports']);
 
