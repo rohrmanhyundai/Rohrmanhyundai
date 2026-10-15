@@ -1,60 +1,38 @@
 {
-  "updatedAt": "2026-10-14T21:13:14.642Z",
+  "updatedAt": "2026-10-15T21:51:31.294Z",
   "by": "SHAWN",
   "advisors": {
+    "CORY": [
+      {
+        "ro": "781581",
+        "vehicle": "2013 Ford Edge"
+      },
+      {
+        "ro": "781568",
+        "vehicle": "2018 Genesis G80"
+      },
+      {
+        "ro": "781567",
+        "vehicle": "2017 Nissan Murano"
+      }
+    ],
     "DAVID": [
       {
-        "ro": "781543",
-        "vehicle": "2021 Hyundai Kona"
+        "ro": "781578",
+        "vehicle": "2023 Hyundai Elantra"
       },
       {
-        "ro": "781534",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781531",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781518",
-        "vehicle": "2020 Hyundai Elantra"
+        "ro": "781573",
+        "vehicle": "2021 Hyundai Sonata"
       }
     ],
     "MATTHEW": [
       {
-        "ro": "781538",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781533",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781503",
-        "vehicle": "2024 Hyundai Sonata"
+        "ro": "781448",
+        "vehicle": "2023 Hyundai IONIQ 6"
       }
     ],
     "JORDAN": [
-      {
-        "ro": "781537",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781536",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781532",
-        "vehicle": "2026 Hyundai Tucson"
-      },
-      {
-        "ro": "781523",
-        "vehicle": "2027 Hyundai Santa Cruz"
-      },
-      {
-        "ro": "781448",
-        "vehicle": "2023 Hyundai IONIQ 6"
-      },
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
