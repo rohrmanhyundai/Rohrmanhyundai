@@ -30,5 +30,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mva2psspl4w9",
+    "ro": "781578",
+    "roDate": "2026-10-15",
+    "vehicle": "2023 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES TURN SIGNAL BULB WAS REPLACE AND CAUSED ANOTHER BULB TO BLOW, POSSIBLE SHORT. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "DAVID RILEY"
   }
 ]
