@@ -276,7 +276,7 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
                     <button disabled={busy || !!q.trim() || e.pos === 1} title="Move up" style={actionBtn('148,163,184')} onClick={() => move(e.id, -1)}>▲</button>
                     <button disabled={busy || !!q.trim() || e.pos === queue.length} title="Move down" style={actionBtn('148,163,184')} onClick={() => move(e.id, 1)}>▼</button>
                     <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => { setStatus(''); setEditing({ ...e, place: String(e.pos) }); }}>✏️ Edit</button>
-                    <button disabled={busy} style={actionBtn('74,222,128')} onClick={() => markPainted(e)}>✓ Painted</button>
+                    <button disabled={busy} title="Mark painted — moves them to the Painted tab" style={{ ...actionBtn('148,163,184'), background: 'rgba(255,255,255,.04)', color: '#cbd5e1' }} onClick={() => markPainted(e)}>🎨 Mark painted</button>
                     <button disabled={busy} title="Remove from the list" style={actionBtn('248,113,113')} onClick={() => remove(e, 'queue')}>🗑</button>
                   </div>
                 </td>
