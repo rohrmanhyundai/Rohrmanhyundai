@@ -2513,3 +2513,16 @@ export async function updateWhitePaint(mutate, what = 'update') {
     (cur) => mutate(cur && Array.isArray(cur.queue) ? { ...cur, done: Array.isArray(cur.done) ? cur.done : [] } : { queue: [], done: [] }),
     `White paint ${what} ${new Date().toISOString()}`);
 }
+
+// ── Service Loaner requests ───────────────────────────────────────────────────
+// public/data/service-loaner/requests.json → { requests: [{ id, firstName, lastName, vin (customer car),
+//   advisor, date (yyyy-mm-dd), time (HH:MM), notes, requestedAt, requestedBy }] }
+export async function loadLoanerRequests() {
+  try { const d = await loadGithubFile('data/service-loaner/requests.json'); if (d && Array.isArray(d.requests)) return d; } catch {}
+  return { requests: [] };
+}
+export async function updateLoanerRequests(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/requests.json',
+    (cur) => mutate(cur && Array.isArray(cur.requests) ? cur : { requests: [] }),
+    `Loaner request ${what} ${new Date().toISOString()}`);
+}

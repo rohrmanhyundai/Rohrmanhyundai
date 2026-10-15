@@ -1692,6 +1692,7 @@ export default function App() {
       <ServiceLoaner
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
+        advisors={advisorList}
         initialTab={launched ? uploadLaunch.tab : undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
