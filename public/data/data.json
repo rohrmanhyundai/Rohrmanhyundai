@@ -588,6 +588,19 @@
       "timeTo": "10:00",
       "reason": "Coming in late",
       "note": "Dr app"
+    },
+    {
+      "name": "SHAWN",
+      "dates": "Sat, Oct 17 · Appointment 12:30pm–2:30pm",
+      "dateStart": "",
+      "dateEnd": "",
+      "status": "APPROVED",
+      "kind": "partial",
+      "partialDate": "2026-10-17",
+      "timeFrom": "12:30",
+      "timeTo": "14:30",
+      "reason": "Appointment",
+      "note": "Dr app"
     }
   ]
 }
