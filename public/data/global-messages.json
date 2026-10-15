@@ -72,5 +72,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792065006200
+  },
+  {
+    "id": "gm-mv9m1f4rnnyx",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "You guys have some training sir",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mv9m1eu5-run38s.png",
+        "name": "Screenshot 2026-10-15 at 10.04.12 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792073075931
   }
 ]
