@@ -11,7 +11,9 @@ import { loadPdfJs } from './pdfText';
 const PROMPT = `This is a scanned Hyundai dealership "VEHICLE USE AGREEMENT" (service loaner contract) face page.
 Read these boxes and return ONLY a JSON object, no markdown fences:
 - first_name, last_name: from the "Customer" box under CUSTOMER INFORMATION (top left). Not the additional drivers, not the signature.
-- ro: the "RO#" box (top right, left of Unit# and RA#). Often left blank — then null. Never use the Unit# or RA#.
+- ro: the repair order number in the "RO#" box — the top-right header row reads "RO#  Unit#  RA#"; RO# is the LEFTMOST of the three.
+  It may be printed or HANDWRITTEN (often 5–6 digits, sometimes written right next to or under the "RO#" label). The SECOND image is a
+  close-up of that header row — read the RO from it. Never use the Unit# (e.g. TU393247) or RA# (e.g. A1275). null only if the box is truly empty.
 - vin: the "Vehicle VIN" box under VEHICLE INFORMATION — 17 characters. NOT the "License No." in the insurance section.
 - year, make, model: the Year / Make / Model boxes under VEHICLE INFORMATION (the loaner). Model is the full model text as printed, e.g. "KONA SEL PREMIUM AWD".
 - date_out: "Date and Time OUT" date, as YYYY-MM-DD.
@@ -28,13 +30,26 @@ const readAsDataUrl = (file) => new Promise((resolve, reject) => {
 
 export const isPdf = (file) => /pdf/i.test(file.type || '') || /\.pdf$/i.test(file.name || '');
 
-// Page 1 of the PDF as a JPEG data URL, about 1700px wide (the scan's own size).
-async function pdfFirstPageImage(file) {
+// Page 1 of the PDF as a JPEG data URL, about 1700px wide (the scan's own size),
+// plus a sharper close-up of the top-right RO# / Unit# / RA# row — the RO is
+// often a small handwritten number the full-page read misses.
+const HEADER_CROP = { x: 0.57, y: 0.06, w: 0.43, h: 0.075 };
+function cropImage(source, w, h, scaleUp) {
+  const c = document.createElement('canvas');
+  c.width = Math.round(w * HEADER_CROP.w * scaleUp);
+  c.height = Math.round(h * HEADER_CROP.h * scaleUp);
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(source, w * HEADER_CROP.x, h * HEADER_CROP.y, w * HEADER_CROP.w, h * HEADER_CROP.h, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.92);
+}
+async function pdfFirstPageImages(file) {
   const pdfjs = await loadPdfJs();
   const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
   const page = await doc.getPage(1);
   const base = page.getViewport({ scale: 1 });
-  const viewport = page.getViewport({ scale: Math.min(3, 1700 / base.width) });
+  // Render at twice the working size so the header close-up has real detail.
+  const viewport = page.getViewport({ scale: Math.min(6, 3400 / base.width) });
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(viewport.width);
   canvas.height = Math.round(viewport.height);
@@ -42,9 +57,22 @@ async function pdfFirstPageImage(file) {
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   await page.render({ canvasContext: ctx, viewport }).promise;
-  const url = canvas.toDataURL('image/jpeg', 0.85);
+  const full = document.createElement('canvas');
+  full.width = Math.round(canvas.width / 2);
+  full.height = Math.round(canvas.height / 2);
+  full.getContext('2d').drawImage(canvas, 0, 0, full.width, full.height);
+  const page1 = full.toDataURL('image/jpeg', 0.85);
+  const header = cropImage(canvas, canvas.width, canvas.height, 1);
   try { doc.destroy(); } catch {}
-  return url;
+  return [page1, header];
+}
+
+async function imageFileImages(file) {
+  const url = await readAsDataUrl(file);
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image(); i.onload = () => resolve(i); i.onerror = () => reject(new Error('Could not open that image.')); i.src = url;
+  });
+  return [url, cropImage(img, img.naturalWidth, img.naturalHeight, 2)];
 }
 
 const clean = (v) => (v == null ? '' : String(v).trim());
@@ -91,9 +119,9 @@ export function fieldWarnings(f) {
 
 // → { firstName, lastName, ro, vin, year, make, model, dateOut, timeOut }
 export async function readLoanerContract(file) {
-  let dataUrl;
-  if (isPdf(file)) dataUrl = await pdfFirstPageImage(file);
-  else if (/^image\//.test(file.type || '')) dataUrl = await readAsDataUrl(file);
+  let images;
+  if (isPdf(file)) images = await pdfFirstPageImages(file);
+  else if (/^image\//.test(file.type || '')) images = await imageFileImages(file);
   else throw new Error('Upload the contract as a PDF (or a photo of it).');
 
   const res = await openaiRequest({
@@ -105,7 +133,7 @@ export async function readLoanerContract(file) {
       max_tokens: 400,
       messages: [{ role: 'user', content: [
         { type: 'text', text: PROMPT },
-        { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
+        ...images.map(url => ({ type: 'image_url', image_url: { url, detail: 'high' } })),
       ] }],
     }),
   });
