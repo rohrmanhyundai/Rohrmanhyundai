@@ -20,7 +20,7 @@ const th = { textAlign: 'left', padding: '9px 10px', fontSize: 12, fontWeight: 9
 // content so the Open / Print / Delete buttons never get cut off.
 const td = { padding: '9px 10px', fontSize: 14, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.1)', verticalAlign: 'middle', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' };
 
-const EMPTY = { firstName: '', lastName: '', ro: '', vin: '', year: '', make: '', model: '', dateOut: '', timeOut: '' };
+const EMPTY = { firstName: '', lastName: '', ro: '', vin: '', year: '', make: '', model: '', dateOut: '', timeOut: '', notes: '' };
 const FIELDS = [
   ['firstName', 'First name'], ['lastName', 'Last name'], ['ro', 'RO #'], ['vin', 'Loaner VIN'],
   ['year', 'Year'], ['make', 'Make'], ['model', 'Model'], ['dateOut', 'Date out', 'date'], ['timeOut', 'Time out', 'time'],
@@ -198,7 +198,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
       `${b.dateOut || ''}${b.timeOut || ''}${b.uploadedAt || ''}`.localeCompare(`${a.dateOut || ''}${a.timeOut || ''}${a.uploadedAt || ''}`));
     if (!terms.length) return list;
     return list.filter(c => {
-      const hay = [c.firstName, c.lastName, c.ro, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by].join(' ').toLowerCase();
+      const hay = [c.firstName, c.lastName, c.ro, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by, c.notes].join(' ').toLowerCase();
       return terms.every(t => hay.includes(t));
     });
   }, [contracts, q]);
@@ -216,6 +216,12 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
             style={{ ...inputStyle, letterSpacing: k === 'vin' ? '.06em' : 0, colorScheme: 'dark' }} />
         </label>
       ))}
+      <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
+        <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>Notes</span>
+        <textarea value={d.notes || ''} disabled={disabled} rows={3} placeholder="Damage, fuel, mileage, anything to remember…"
+          onChange={e => set(x => ({ ...x, notes: e.target.value }))}
+          style={{ ...inputStyle, fontWeight: 600, fontSize: 14, lineHeight: 1.45, resize: 'vertical' }} />
+      </label>
     </div>
   );
 
@@ -349,7 +355,10 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                       <tbody>
                         {shown.map(c => (
                           <tr key={c.id}>
-                            <td style={{ ...td, fontWeight: 800 }}>{c.firstName} {c.lastName}</td>
+                            <td style={{ ...td, fontWeight: 800 }}>
+                              {c.firstName} {c.lastName}
+                              {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
+                            </td>
                             <td style={td}>{c.ro || <span style={{ color: '#64748b' }}>—</span>}</td>
                             <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{c.vin}</td>
                             <td style={td}>{c.year}</td>
