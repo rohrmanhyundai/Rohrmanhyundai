@@ -18,7 +18,12 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mv9sem0f-ruhfg1o5.pdf",
       "completedFileName": "img20261015_11542763.pdf",
       "completedAt": "2026-10-15T17:02:49.731Z",
-      "completedBy": "SHAWN"
+      "completedBy": "SHAWN",
+      "warranty": {
+        "amount": 300,
+        "at": "2026-10-15T17:18:49.106Z",
+        "by": "SHAWN"
+      }
     }
   ]
 }
