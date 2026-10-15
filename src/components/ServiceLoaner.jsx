@@ -266,8 +266,8 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 40px 40px' }}>
-        <div style={{ maxWidth: 1300, margin: '0 auto' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
+        <div style={{ maxWidth: 1800, margin: '0 auto' }}>
           {tab === 'upload' ? (
             !draft ? (
               <div style={card}>
@@ -379,7 +379,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                       <tbody>
                         {shown.map(c => (
                           <tr key={c.id}>
-                            <td style={{ ...td, fontWeight: 800 }}>
+                            <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
                               {c.firstName} {c.lastName}
                               {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
                             </td>
@@ -387,7 +387,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                             <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{c.vin}</td>
                             <td style={td}>{c.year}</td>
                             <td style={td}>{c.make}</td>
-                            <td style={td}>{c.model}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap' }}>{c.model}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
                               {c.completedUrl
@@ -395,14 +395,14 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                                 : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
                               {c.warranty && (
                                 <div title={`Warranty claim by ${c.warranty.by} ${new Date(c.warranty.at).toLocaleDateString()}`}
-                                  style={{ marginTop: 4, display: 'inline-block', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
+                                  style={{ marginTop: 5, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
                                   🛡 Warranty {money(c.warranty.amount)}
                                 </div>
                               )}
                             </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
-                              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
                                 <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
                                 <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
                                 <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
