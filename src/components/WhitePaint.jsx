@@ -109,8 +109,21 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
   async function saveEdit() {
     if (!editing) return;
     const changes = { ...clean(editing), updatedAt: new Date().toISOString(), updatedBy: currentUser };
-    const ok = await write(cur => ({ ...cur, queue: cur.queue.map(e => e.id === editing.id ? { ...e, ...changes } : e) }),
-      `edit ${changes.firstName} ${changes.lastName}`, `✓ Updated ${changes.firstName} ${changes.lastName}.`);
+    const place = parseInt(editing.place, 10);
+    const moving = isManager && place > 0 && place !== editing.pos;
+    const ok = await write(cur => {
+      const qq = cur.queue.map(e => e.id === editing.id ? { ...e, ...changes } : e);
+      if (moving) {
+        // Place in line (managers): take them out and drop them in at that spot.
+        const i = qq.findIndex(e => e.id === editing.id);
+        if (i >= 0) {
+          const [rec] = qq.splice(i, 1);
+          qq.splice(Math.min(Math.max(place, 1), qq.length + 1) - 1, 0, rec);
+        }
+      }
+      return { ...cur, queue: qq };
+    }, `edit ${changes.firstName} ${changes.lastName}`,
+      `✓ Updated ${changes.firstName} ${changes.lastName}${moving ? ` — now #${Math.min(place, queue.length)} in line` : ''}.`);
     if (ok) setEditing(null);
   }
 
@@ -235,7 +248,7 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
                   <div style={{ display: 'inline-flex', gap: 6 }}>
                     <button disabled={busy || !!q.trim() || e.pos === 1} title="Move up" style={actionBtn('148,163,184')} onClick={() => move(e.id, -1)}>▲</button>
                     <button disabled={busy || !!q.trim() || e.pos === queue.length} title="Move down" style={actionBtn('148,163,184')} onClick={() => move(e.id, 1)}>▼</button>
-                    <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => { setStatus(''); setEditing({ ...e }); }}>✏️ Edit</button>
+                    <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => { setStatus(''); setEditing({ ...e, place: String(e.pos) }); }}>✏️ Edit</button>
                     <button disabled={busy} style={actionBtn('74,222,128')} onClick={() => markPainted(e)}>✓ Painted</button>
                     <button disabled={busy} title="Remove from the list" style={actionBtn('248,113,113')} onClick={() => remove(e, 'queue')}>🗑</button>
                   </div>
@@ -306,6 +319,17 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
             <div style={{ ...card, maxWidth: 760 }}>
               <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', marginBottom: 12 }}>✏️ Edit {editing.firstName} {editing.lastName}</div>
               {fieldGrid(editing, setEditing)}
+              {isManager && (
+                <label style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, padding: '10px 12px', borderRadius: 10, background: 'rgba(110,231,249,.06)', border: '1px solid rgba(110,231,249,.25)' }}>
+                  <span style={{ fontSize: 13, fontWeight: 900, color: '#7dd3fc', whiteSpace: 'nowrap' }}>Place in line</span>
+                  <input type="number" min={1} max={queue.length} value={editing.place ?? ''} disabled={busy}
+                    onChange={e => setEditing(x => ({ ...x, place: e.target.value }))}
+                    style={{ ...inputStyle, width: 90, textAlign: 'center', colorScheme: 'dark' }} />
+                  <span style={{ fontSize: 12.5, color: '#94a3b8' }}>
+                    of {queue.length} · now #{editing.pos}{editing.pos === 1 ? ' (next up)' : ''} · 1 = next up for paint
+                  </span>
+                </label>
+              )}
               {warnBox(editWarnings)}
               <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
                 <button disabled={busy || (!String(editing.firstName || "").trim() && !String(editing.lastName || "").trim()) || dupVin(editing, editing.id)} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={saveEdit}>
