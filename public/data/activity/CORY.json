@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-15T12:25:58.832Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-14T12:48:29.945Z",
     "type": "page",
     "label": "tech-resources"
@@ -758,44 +763,6 @@
   },
   {
     "at": "2026-09-15T13:36:43.086Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-14T20:02:51.976Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780760 tech CORY"
-  },
-  {
-    "at": "2026-09-14T20:02:11.832Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780180 tech CORY"
-  },
-  {
-    "at": "2026-09-14T20:02:09.475Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-14T20:02:08.519Z",
-    "type": "page",
-    "label": "tech-resources"
-  },
-  {
-    "at": "2026-09-14T14:21:11.362Z",
-    "type": "action",
-    "label": "delete-wip-row",
-    "details": "RO 780514 tech CORY"
-  },
-  {
-    "at": "2026-09-14T14:20:57.198Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-14T14:20:56.042Z",
     "type": "page",
     "label": "tech-resources"
   }
