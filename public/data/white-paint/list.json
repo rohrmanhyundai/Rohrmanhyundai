@@ -41,12 +41,14 @@
       "firstName": "Breana",
       "lastName": "Parr",
       "vin": "5NPE34AB7FH257656",
-      "phone": "(765) 715 - 7158",
+      "phone": "(765) 715-7158",
       "dateAdded": "2025-07-09",
-      "notes": "next",
+      "notes": "",
       "source": "pdf",
       "addedAt": "2026-10-15T18:55:06.574Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "updatedAt": "2026-10-15T18:59:05.885Z",
+      "updatedBy": "SHAWN"
     },
     {
       "id": "wp-mv9wf0pbv4nt",
