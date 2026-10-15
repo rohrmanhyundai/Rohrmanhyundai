@@ -72,6 +72,8 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
   const [draft, setDraft] = useState(null);
   const [editing, setEditing] = useState(null);     // stored contract being corrected
   const [editDraft, setEditDraft] = useState(null);
+  const [editView, setEditView] = useState('out'); // which copy the editor previews
+  const completedRef = useRef(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -129,6 +131,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
   function startEdit(c) {
     setStatus('');
     setEditing(c);
+    setEditView(c.completedUrl ? 'completed' : 'out');
     setEditDraft(Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])));
   }
   function cancelEdit() { setEditing(null); setEditDraft(null); }
@@ -149,6 +152,29 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
     setBusy(false);
   }
 
+  // The signed contract comes back filled in when the loaner is returned; that
+  // copy is stored beside the original (never over it).
+  async function uploadCompleted(f) {
+    if (!f || !editing) return;
+    if (completedRef.current) completedRef.current.value = '';
+    setBusy(true); setStatus('Uploading completed contract…');
+    try {
+      const url = await uploadServiceLoanerToS3(f);
+      const changes = { completedUrl: url, completedFileName: f.name || 'completed.pdf', completedAt: new Date().toISOString(), completedBy: currentUser };
+      const old = editing.completedUrl;
+      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
+        `completed contract RO ${editing.ro || '(none)'}`);
+      setContracts(next.contracts);
+      setEditing(e => ({ ...e, ...changes }));
+      setEditView('completed');
+      if (old) { try { await deleteS3ObjectByUrl(old); } catch {} }
+      setStatus('✓ Completed contract saved.');
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Upload failed.'}`);
+    }
+    setBusy(false);
+  }
+
   async function remove(c) {
     if (!isManager) return;
     if (!window.confirm(`Delete the loaner contract for ${c.firstName} ${c.lastName}${c.ro ? ` (RO ${c.ro})` : ''}? This can't be undone.`)) return;
@@ -158,6 +184,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
         `delete RO ${c.ro || '(none)'}`);
       setContracts(next.contracts);
       try { await deleteS3ObjectByUrl(c.fileUrl); } catch {}
+      if (c.completedUrl) { try { await deleteS3ObjectByUrl(c.completedUrl); } catch {} }
       setStatus('✓ Contract deleted.');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Delete failed.'}`);
@@ -275,11 +302,34 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                   </button>
                   <button disabled={busy} style={btn('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
                 </div>
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Loaner returned?</div>
+                  <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '3px 0 10px', lineHeight: 1.45 }}>
+                    {editing.completedUrl
+                      ? <>✓ Completed contract uploaded by {editing.completedBy} {new Date(editing.completedAt).toLocaleDateString()} ({editing.completedFileName}). The original is kept too.</>
+                      : 'Scan the contract once the loaner is checked back in and upload it here. The original stays on file.'}
+                  </div>
+                  <input ref={completedRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadCompleted(e.target.files && e.target.files[0])} />
+                  <button disabled={busy} style={{ ...btn('56,189,248'), fontSize: 14, padding: '9px 18px' }} onClick={() => completedRef.current && completedRef.current.click()}>
+                    📥 {editing.completedUrl ? 'Replace completed contract' : 'Upload completed contract'}
+                  </button>
+                </div>
               </div>
-              <div style={{ ...card, padding: 8, height: 'calc(100vh - 230px)', minHeight: 480 }}>
-                {/\.pdf$/i.test(editing.fileName || editing.fileUrl || '')
-                  ? <iframe title="Contract" src={editing.fileUrl} style={{ width: '100%', height: '100%', border: 0, borderRadius: 10, background: '#fff' }} />
-                  : <img alt="Contract" src={editing.fileUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
+              <div style={{ ...card, padding: 8, height: 'calc(100vh - 230px)', minHeight: 480, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {editing.completedUrl && (
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button style={btn('110,231,249', editView === 'out')} onClick={() => setEditView('out')}>Original (out)</button>
+                    <button style={btn('56,189,248', editView === 'completed')} onClick={() => setEditView('completed')}>Completed (returned)</button>
+                  </div>
+                )}
+                {(() => {
+                  const showCompleted = editView === 'completed' && editing.completedUrl;
+                  const url = showCompleted ? editing.completedUrl : editing.fileUrl;
+                  const name = showCompleted ? editing.completedFileName : editing.fileName;
+                  return /\.pdf$/i.test(name || url || '')
+                    ? <iframe key={url} title="Contract" src={url} style={{ flex: 1, width: '100%', border: 0, borderRadius: 10, background: '#fff' }} />
+                    : <img alt="Contract" src={url} style={{ flex: 1, minHeight: 0, width: '100%', objectFit: 'contain' }} />;
+                })()}
               </div>
             </div>
           ) : (
@@ -294,7 +344,7 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                     <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
                       <thead><tr>
                         <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
-                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Uploaded</th><th style={th}></th>
+                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
                       </tr></thead>
                       <tbody>
                         {shown.map(c => (
@@ -306,11 +356,16 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                             <td style={td}>{c.make}</td>
                             <td style={td}>{c.model}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
+                              {c.completedUrl
+                                ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
+                                : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
+                            </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
                               <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
-                                <a href={c.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
-                                <button style={actionBtn('196,181,253')} onClick={() => printContract(c.fileUrl)}>🖨 Print</button>
+                                <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
+                                <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
                                 <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
                                 {isManager && <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>}
                               </div>
