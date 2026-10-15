@@ -62,7 +62,7 @@ async function printContract(url) {
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const [tab, setTab] = useState(initialTab === 'upload' ? 'upload' : initialTab === 'requests' ? 'requests' : 'list');
+  const [tab, setTab] = useState(initialTab === 'upload' ? 'upload' : initialTab === 'list' ? 'list' : 'requests');
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -262,8 +262,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
-        {tabBtn('list', `📋 Contracts (${contracts.length})`)}
         {tabBtn('requests', '🙋 Loaner Request')}
+        {tabBtn('list', `📋 Contracts (${contracts.length})`)}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
 
