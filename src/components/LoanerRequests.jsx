@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import * as github from '../utils/github';
 
 // ── Loaner Request (Service Loaner page tab) ─────────────────────────────────
-// Any user asks for a loaner: customer first/last name, the VIN of the
-// customer's own car, the advisor asking, and the date/time the loaner is
-// needed. Requests are kept in data/service-loaner/requests.json and listed
-// below the form — upcoming first, past ones greyed underneath. The person who
-// made a request (or a manager) can cancel it.
+// A month calendar (same look as the Advisor Calendar) shows every loaner
+// request on its day. Click a day to request a loaner for it: customer
+// first/last name, the VIN of the customer's own car, the advisor asking, and
+// the time. The full list sits under the calendar — upcoming first, past ones
+// folded away. Stored in data/service-loaner/requests.json. The person who made
+// a request (or a manager) can cancel it.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
@@ -47,6 +48,8 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
   const [status, setStatus] = useState('');
   const [draft, setDraft] = useState(() => ({ ...EMPTY(), advisor: advisors.includes(currentUser) ? currentUser : '' }));
   const [showPast, setShowPast] = useState(false);
+  const [view, setView] = useState(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth() }; });
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -75,6 +78,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
       const next = await updateLoanerRequests(cur => ({ ...cur, requests: [...cur.requests, rec] }), `${rec.firstName} ${rec.lastName} ${rec.date}`);
       setRequests(next.requests);
       setDraft(d => ({ ...EMPTY(), advisor: d.advisor }));
+      setFormOpen(false);
       setStatus(`✓ Loaner requested for ${rec.firstName} ${rec.lastName} — ${fmtDate(rec.date)} ${fmtTime(rec.time)}.`);
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
@@ -131,48 +135,86 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
     </div>
   );
 
+  // ── Calendar (Mon–Sat, like the Advisor Calendar — the shop is closed Sundays) ──
+  const today = todayIso();
+  const byDate = useMemo(() => {
+    const m = {};
+    for (const r of requests) (m[r.date] ||= []).push(r);
+    for (const k in m) m[k].sort((a, b) => String(a.time).localeCompare(String(b.time)));
+    return m;
+  }, [requests]);
+  const { y, m } = view;
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < (firstDay === 0 ? 0 : firstDay - 1); i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) if (new Date(y, m, d).getDay() !== 0) cells.push(d);
+  const shift = (n) => setView(v => { const d = new Date(v.y, v.m + n, 1); return { y: d.getFullYear(), m: d.getMonth() }; });
+  const iso = (d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  function openDay(dateStr) {
+    if (dateStr < today) return;
+    setStatus('');
+    setDraft(d => ({ ...d, date: dateStr }));
+    setFormOpen(true);
+  }
+  const dayList = formOpen && draft.date ? (byDate[draft.date] || []) : [];
+
   return (
     <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ ...card, maxWidth: 820 }}>
-        <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>🙋 Request a loaner</div>
-        <div style={{ fontSize: 13.5, color: '#94a3b8', margin: '4px 0 14px' }}>Customer, their car's VIN, the advisor asking, and when the loaner is needed.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
-          <label style={{ display: 'grid', gap: 4 }}><span style={label}>Customer first name</span><input value={draft.firstName} onChange={set('firstName')} disabled={busy} style={inputStyle} /></label>
-          <label style={{ display: 'grid', gap: 4 }}><span style={label}>Customer last name</span><input value={draft.lastName} onChange={set('lastName')} disabled={busy} style={inputStyle} /></label>
-          <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
-            <span style={label}>VIN on the customer's car{vin && vin.length !== 17 && <span style={{ color: '#fde68a', marginLeft: 8 }}>{vin.length} characters — should be 17</span>}</span>
-            <input value={draft.vin} onChange={set('vin')} disabled={busy} maxLength={20} style={{ ...inputStyle, letterSpacing: '.06em' }} />
-          </label>
-        </div>
-        <div style={{ ...label, margin: '14px 0 6px' }}>Advisor requesting the loaner</div>
-        {advisors.length === 0 ? <div style={{ color: '#94a3b8', fontSize: 13 }}>No advisors found.</div> : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {advisors.map(a => (
-              <button key={a} type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, advisor: a }))}
-                style={{ ...btn('96,165,250', draft.advisor === a), fontSize: 13.5, padding: '8px 14px', ...(draft.advisor === a ? { boxShadow: '0 0 0 2px rgba(96,165,250,.6)' } : null) }}>
-                {draft.advisor === a ? '✓ ' : ''}{a}
-              </button>
-            ))}
+      <div className="apt-prep-bg" style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,.12)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '14px 18px 0', flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#dbe8ff' }}>🙋 Click a day to request a loaner</div>
+          <div className="adv-cal-nav">
+            <button className="secondary adv-nav-btn" onClick={() => shift(-1)}>‹</button>
+            <span className="adv-cal-month">{MONTHS[m]} {y}</span>
+            <button className="secondary adv-nav-btn" onClick={() => shift(1)}>›</button>
           </div>
-        )}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
-          <label style={{ display: 'grid', gap: 4 }}><span style={label}>Date loaner needed</span><input type="date" min={todayIso()} value={draft.date} onChange={set('date')} disabled={busy} style={inputStyle} /></label>
-          <label style={{ display: 'grid', gap: 4 }}><span style={label}>Time</span><input type="time" value={draft.time} onChange={set('time')} disabled={busy} style={inputStyle} /></label>
-          <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}><span style={label}>Notes (optional)</span><input value={draft.notes} onChange={set('notes')} disabled={busy} placeholder="How many days, special needs…" style={{ ...inputStyle, fontWeight: 600 }} /></label>
+          <button className="secondary" style={{ visibility: y === new Date().getFullYear() && m === new Date().getMonth() ? 'hidden' : 'visible' }}
+            onClick={() => { const d = new Date(); setView({ y: d.getFullYear(), m: d.getMonth() }); }}>Today</button>
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button disabled={busy || missing.length > 0} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
-            {busy ? 'Saving…' : '✓ Request loaner'}
-          </button>
-          {missing.length > 0 && <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Still need: {missing.join(', ')}</span>}
-          {status && <span style={{ fontSize: 13.5, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</span>}
+        <div className="adv-cal-wrap" style={{ overflow: 'visible' }}>
+          <div className="adv-cal-grid">
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d} className="adv-cal-dayname">{d}</div>)}
+            {cells.map((d, i) => {
+              if (!d) return <div key={`e${i}`} className="adv-cal-day adv-cal-empty" />;
+              const ds = iso(d);
+              const isToday = ds === today;
+              const isPast = ds < today;
+              const list = byDate[ds] || [];
+              const cls = 'adv-cal-day' + (isPast && !isToday ? ' adv-cal-day--past' : '') + (isToday ? ' adv-today' : '');
+              return (
+                <div key={ds} className={cls} onClick={() => openDay(ds)}
+                  title={isPast ? (list.length ? `${list.length} loaner request${list.length === 1 ? '' : 's'}` : '') : 'Click to request a loaner for this day'}
+                  style={isPast ? { cursor: 'default' } : undefined}>
+                  <span className="adv-day-num">{d}</span>
+                  {isToday && <span className="adv-today-chip">TODAY</span>}
+                  {list.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 2, alignItems: 'stretch', width: '100%' }}>
+                      {list.slice(0, 4).map(r => (
+                        <span key={r.id} title={`${fmtTime(r.time)} — ${r.firstName} ${r.lastName} (${r.advisor})${r.notes ? ` · ${r.notes}` : ''}`}
+                          style={{ fontSize: 10.5, fontWeight: 800, color: '#bfdbfe', background: 'rgba(59,130,246,.28)', border: '1px solid rgba(147,197,253,.55)',
+                            borderRadius: 5, padding: '2px 6px', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          🚙 {fmtTime(r.time)} {r.lastName} · {r.advisor}
+                        </span>
+                      ))}
+                      {list.length > 4 && <span style={{ fontSize: 10.5, fontWeight: 800, color: '#dbe8ff' }}>+{list.length - 4} more</span>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
+
+      {status && !formOpen && <div style={{ fontSize: 13.5, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</div>}
 
       <div style={card}>
         <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', marginBottom: 10 }}>📋 Loaner requests ({upcoming.length} upcoming)</div>
         {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
-          : upcoming.length === 0 ? <div style={{ color: '#94a3b8' }}>No upcoming loaner requests.</div>
+          : upcoming.length === 0 ? <div style={{ color: '#94a3b8' }}>No upcoming loaner requests — click a day on the calendar to add one.</div>
           : table(upcoming, false)}
         {past.length > 0 && (
           <div style={{ marginTop: 14 }}>
@@ -181,6 +223,56 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
           </div>
         )}
       </div>
+
+      {formOpen && (
+        <div onClick={() => !busy && setFormOpen(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>🙋 Request a loaner — {fmtDate(draft.date)}</div>
+              <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setFormOpen(false)}>✕</button>
+            </div>
+            {dayList.length > 0 && (
+              <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 10, background: 'rgba(59,130,246,.1)', border: '1px solid rgba(147,197,253,.3)', fontSize: 12.5, color: '#bfdbfe', lineHeight: 1.6 }}>
+                <b>Already requested this day:</b>
+                {dayList.map(r => <div key={r.id}>🚙 {fmtTime(r.time)} — {r.firstName} {r.lastName} ({r.advisor})</div>)}
+              </div>
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Customer first name</span><input autoFocus value={draft.firstName} onChange={set('firstName')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Customer last name</span><input value={draft.lastName} onChange={set('lastName')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
+                <span style={label}>VIN on the customer's car{vin && vin.length !== 17 && <span style={{ color: '#fde68a', marginLeft: 8 }}>{vin.length} characters — should be 17</span>}</span>
+                <input value={draft.vin} onChange={set('vin')} disabled={busy} maxLength={20} style={{ ...inputStyle, letterSpacing: '.06em' }} />
+              </label>
+            </div>
+            <div style={{ ...label, margin: '14px 0 6px' }}>Advisor requesting the loaner</div>
+            {advisors.length === 0 ? <div style={{ color: '#94a3b8', fontSize: 13 }}>No advisors found.</div> : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {advisors.map(a => (
+                  <button key={a} type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, advisor: a }))}
+                    style={{ ...btn('96,165,250', draft.advisor === a), fontSize: 13.5, padding: '8px 14px', ...(draft.advisor === a ? { boxShadow: '0 0 0 2px rgba(96,165,250,.6)' } : null) }}>
+                    {draft.advisor === a ? '✓ ' : ''}{a}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Date loaner needed</span><input type="date" min={today} value={draft.date} onChange={set('date')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Time</span><input type="time" value={draft.time} onChange={set('time')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}><span style={label}>Notes (optional)</span><input value={draft.notes} onChange={set('notes')} disabled={busy} placeholder="How many days, special needs…" style={{ ...inputStyle, fontWeight: 600 }} /></label>
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+              <button disabled={busy || missing.length > 0} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
+                {busy ? 'Saving…' : '✓ Request loaner'}
+              </button>
+              <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setFormOpen(false)}>Cancel</button>
+              {missing.length > 0 && <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Still need: {missing.join(', ')}</span>}
+              {status.startsWith('❌') && <span style={{ fontSize: 13.5, fontWeight: 800, color: '#fca5a5' }}>{status}</span>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
