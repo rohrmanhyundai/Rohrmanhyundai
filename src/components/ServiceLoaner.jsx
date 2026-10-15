@@ -13,6 +13,8 @@ import { readLoanerContract, fieldWarnings, isPdf } from '../utils/serviceLoaner
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box' };
 const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 9, padding: '7px 13px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' });
+// Row actions: one size and shape whether it's a link or a button.
+const actionBtn = (rgb) => ({ ...btn(rgb), display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5, height: 32, minWidth: 82, padding: '0 12px', boxSizing: 'border-box', lineHeight: 1, margin: 0 });
 const th = { textAlign: 'left', padding: '9px 10px', fontSize: 12, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', borderBottom: '1px solid rgba(148,163,184,.25)', whiteSpace: 'nowrap' };
 // App.css clips every td (fixed layout + ellipsis); this table sizes to its
 // content so the Open / Print / Delete buttons never get cut off.
@@ -248,10 +250,12 @@ export default function ServiceLoaner({ currentUser, currentRole, onBack, backLa
                             <td style={td}>{c.model}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap', textAlign: 'right' }}>
-                              <a href={c.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...btn('110,231,249'), textDecoration: 'none', display: 'inline-block' }}>📄 Open</a>{' '}
-                              <button style={btn('196,181,253')} onClick={() => printContract(c.fileUrl)}>🖨 Print</button>{' '}
-                              {isManager && <button disabled={busy} title="Delete contract" style={btn('248,113,113', false)} onClick={() => remove(c)}>🗑 Delete</button>}
+                            <td style={{ ...td, whiteSpace: 'nowrap' }}>
+                              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <a href={c.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
+                                <button style={actionBtn('196,181,253')} onClick={() => printContract(c.fileUrl)}>🖨 Print</button>
+                                {isManager && <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>}
+                              </div>
                             </td>
                           </tr>
                         ))}
