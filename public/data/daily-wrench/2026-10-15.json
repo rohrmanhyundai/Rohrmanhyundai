@@ -1,50 +1,45 @@
 {
   "date": "2026-10-15",
-  "generatedAt": "2026-10-15T11:53:14.174Z",
+  "generatedAt": "2026-10-15T11:55:27.600Z",
   "by": "SHAWN",
   "trigger": "manual",
   "model": "gpt-5",
-  "reason": "Send to Reports",
+  "reason": "manager pressed Generate",
   "advisors": {
     "DAVID": {
-      "headline": "Seven pickups lined up for 8.9 hours",
-      "opening": "You’re at 177.6 hours, 47% of goal, 5.7 hours ahead with 13 days left. Today needs 15.2 hours. The biggest swing is the seven pickups on your book worth 8.9 hours if you present exactly what’s mapped.",
-      "pickupLine": "7 customers already have declined work, $3430.04 on those cars, and 8.9 hours if the suggested services sell.",
+      "headline": "Seven pickups, $3,430.04 deferred, 8.9 hours on deck",
+      "opening": "You’re at 177.6 hours MTD, 47% of 375, and 5.7 hours ahead with 13 working days left. Today needs 15.2 hours against a 15.6 daily target. The biggest win is the seven pickups you already wrote with $3,430.04 deferred and 8.9 hours mapped to sell.",
+      "pickupLine": "Seven of today’s customers have declined work worth $3,430.04, and the suggested services add 8.9 hours if sold.",
       "moneyLine": "",
       "wins": [
         {
           "title": "Ahead of pace",
-          "detail": "5.7 hours ahead with 13 working days left."
+          "detail": "5.7 hours ahead with 13 days left."
         },
         {
           "title": "Big day yesterday",
-          "detail": "Booked 25.8 hours against a 15.6 target."
+          "detail": "25.8 hours booked against a 15.6 target."
         },
         {
-          "title": "On the board",
-          "detail": "Leading the Big-Money board even without both goals hit."
+          "title": "Board leader",
+          "detail": "Leading the Big-Money board even with gaps left to close."
         }
       ],
       "plan": [
         {
-          "when": "By 7:20 AM",
-          "what": "Pre-build write-ups and menus for all pickups with the exact sells: 7:40 Supriya Jairath — Coolant Fluid Exchange + Fuel Injection Service (+1.7); 7:40 JOONGWON — Tune Up With Spark Plugs And PCV Replacement (+1.5); 8:00 Loretta Taylor — Brake Fluid Exchange + Tire Rotation (+1.1); 11:00 Teresa Burtner — Replace One Tire + Replace Cabin Air Filter (+0.5); 1:00 Tawana Williams — Install New Front Wiper Blades (+0.1); 2:00 Chris Blake — Replace Four Tires + Wheel Alignment (+2.2); 4:00 Jordan Anderson — Wheel Alignment + Fuel Injection Service (+1.8).",
-          "why": "Locks down 8.9 hours toward today’s 15.2."
+          "when": "Before 10am",
+          "what": "Prep and present pickup menus at write-up: 7:40 AM Supriya Jairath — Coolant Fluid Exchange + Fuel Injection Service (1.7 hrs); 7:40 AM JOONGWON <blank> — Tune Up With Spark Plugs And PCV Replacement (1.5 hrs); 8:00 AM Loretta Taylor — Brake Fluid Exchange + Tire Rotation (1.1 hrs); 11:00 AM Teresa Burtner — Replace One Tire + Replace Cabin Air Filter (0.5 hrs); 1:00 PM Tawana Williams — Install New Front Wiper Blades (0.1 hrs); 2:00 PM Chris Blake — Replace Four Tires + Wheel Alignment (2.2 hrs); 4:00 PM Jordan Anderson — Wheel Alignment + Fuel Injection Service (1.8 hrs).",
+          "why": "Locks in 8.9 hours toward today’s 15.2-hour need."
         },
         {
-          "when": "8:30–9:30 AM",
-          "what": "Call deferred high-value Valvoline/brake leads: RO 775607 Tawana Williams (7654379456) — Fuel Injection Service; RO 778506 Hannah Weissenburger (7654136051) — Wheel Alignment.",
-          "why": "$11733.5 + $10087.63 on the table and 5.3 + 23.4 hours if they book."
+          "when": "Before 10am",
+          "what": "Work the top five deferred calls in order and offer exactly the named services.",
+          "why": "Pipeline of $47,453.05 and 78.9 hours if booked across these five ROs."
         },
         {
-          "when": "11:30 AM–12:00 PM",
-          "what": "Confirm mid-day sells at delivery: Teresa Burtner (+0.5) and prep 1:00 Tawana Williams (+0.1) so parts/labor lines are clean and authorized.",
-          "why": "0.6 hours secured without new traffic."
-        },
-        {
-          "when": "3:30–4:30 PM",
-          "what": "If the morning calls don’t land, hit the next two: RO 778326 Angela Rusk (7655865997) — Replace Rear Pads and Resurface Rotors; RO 779318 MARK LOWE (7654752172) — Replace Front Pads and Resurface Rotors.",
-          "why": "$6649.79 + $9411.69 and 22.0 + 3.3 hours available to close the gap."
+          "when": "Before 10am",
+          "what": "Unblock aging ROs: accept RO 781488; dispatch RO 781428 and RO 781518.",
+          "why": "Enables posting the 8.9 pickup hours today instead of aging them."
         }
       ],
       "callList": [
@@ -52,63 +47,63 @@
           "name": "Tawana W",
           "phone": "7654379456",
           "ro": "775607",
-          "why": "Fuel Injection Service worth $11733.5 and 5.3 hours"
+          "why": "Fuel Injection Service — $11733.5, 5.3 hours."
         },
         {
           "name": "Hannah W",
           "phone": "7654136051",
           "ro": "778506",
-          "why": "Wheel Alignment worth $10087.63 and 23.4 hours"
+          "why": "Wheel Alignment — $10087.63, 23.4 hours."
         },
         {
           "name": "Davion D",
           "phone": "7655141242",
           "ro": "778620",
-          "why": "Wheel Alignment worth $9570.44 and 24.9 hours"
+          "why": "Wheel Alignment — $9570.44, 24.9 hours."
         },
         {
           "name": "MARK L",
           "phone": "7654752172",
           "ro": "779318",
-          "why": "Replace Front Pads and Resurface Rotors worth $9411.69 and 3.3 hours"
+          "why": "Replace Front Pads and Resurface Rotors — $9411.69, 3.3 hours."
         },
         {
           "name": "Angela R",
           "phone": "7655865997",
           "ro": "778326",
-          "why": "Replace Rear Pads and Resurface Rotors worth $6649.79 and 22 hours"
+          "why": "Replace Rear Pads and Resurface Rotors — $6649.79, 22 hours."
         }
       ],
       "watchlist": [
         {
           "ro": "781428",
-          "what": "Ready for dispatch, not started, 6 days old.",
-          "action": "Dispatch now to stop the 6-day slide."
+          "what": "Ready for dispatch 6 days — dispatch overdue.",
+          "action": "Assign and pull in now."
         },
         {
           "ro": "781518",
-          "what": "Ready for dispatch, completed by KADEN WILSON, 2 days old.",
-          "action": "Send to final QC and move to cashiering today."
+          "what": "Ready for dispatch 2 days — dispatch overdue.",
+          "action": "Move to a bay immediately."
         },
         {
           "ro": "780941",
-          "what": "Invoiced not paid, 27 days old.",
-          "action": "Call for payment and set pickup today — close the ticket."
+          "what": "Invoiced 27 days — not paid.",
+          "action": "Call and collect payment today."
         },
         {
-          "ro": "781255",
-          "what": "Partially assigned, in progress, 14 days old.",
-          "action": "Find the hold and assign the next op to KADEN WILSON."
+          "ro": "781488",
+          "what": "Ready for invoice 3 days — tech completed.",
+          "action": "Accept and finalize the RO."
         },
         {
           "ro": "781366",
-          "what": "Tech assigned 9 days; parts (key and carpet) arrived 10/14/2026.",
-          "action": "Get parts to CARTER JEAN and resume work now."
+          "what": "Tech assigned 9 days — open work; parts arrived 10/14/2026.",
+          "action": "Sync with CARTER and Parts, install key and carpet today."
         }
       ],
-      "contest": "You’re rank 1 on the Big-Money board at 0.49 Hrs/RO and a 0.443 add rate. The gaps are 0.81 Hrs/RO and 0.307 add rate to qualify.",
-      "coaching": "Your add-on rate is the weak spot at 0.44 against a 0.75 goal. On LOF50 and waiters, present a two-line menu every time: one Valvoline service and one alignment or cabin filter tied to their mileage — that’s how you convert 66 needed add-ons and close 38.9 short hours. Keep the language simple at the lane and ask for yes or no before the car pulls in.",
-      "closing": "Start with the seven pickups for 8.9 hours, then land one big deferred call and you’re past today’s 15.2.",
+      "contest": "You’re 1st on the board. To qualify you need +0.81 hrs/RO and +0.307 add rate.",
+      "coaching": "Add rate is the drag: 0.443 against a 0.75 goal. Present a two-line package at write-up on every ticket, exactly like the pickup plans above, and close the smaller item first to keep the door open for the second. Do that on the 3 waiters and the LOF50s today and your rate moves fast in a single shift.",
+      "closing": "Start with the seven pickups, clear the three blockers, then hammer the five calls — that’s today’s 15.2 hours in reach.",
       "facts": {
         "advisor": "DAVID",
         "date": "2026-10-15",
@@ -761,40 +756,40 @@
       }
     },
     "JORDAN": {
-      "headline": "Nine pickups, 22.9 hours sitting on schedule",
-      "opening": "We’re at 128.2 of 375 hours and 36.8 behind pace after 11 of 25 days. Today needs 17.6 hours against a 15 daily target. The biggest opportunity is nine pickups with $5,712.31 and 22.9 hours of deferred work already on their cars.",
-      "pickupLine": "Nine pickups carry $5,712.31 and 22.9 hours if the suggested services sell.",
-      "moneyLine": "There is $1,626,725 in deferred work; booking even a single 3.5-hour job pushes you toward today’s 17.6-hour need.",
+      "headline": "Prep nine pickups; 17.6 hours must land",
+      "opening": "You’re at 128.2 hours on a 375 goal and 36.8 hours behind pace. Needed today is 17.6 against a 15 daily target. The biggest opportunity is the nine pickups with $5,712.31 and 22.9 hours of deferred work already teed up.",
+      "pickupLine": "Nine of today’s appointments carry $5,712.31 in prior declines worth 22.9 hours if the suggested services sell.",
+      "moneyLine": "There is $1,626,725 in never-contacted deferred work; landing RO 768354 alone adds 42.6 hours today.",
       "wins": [
         {
           "title": "Beat target yesterday",
-          "detail": "Booked 18.6 hours yesterday against a 15 daily target."
+          "detail": "Booked 18.6 hours against a 15 target."
         },
         {
-          "title": "Alignment penetration",
-          "detail": "Alignment at 12.4% against a 10% goal."
+          "title": "Alignment above goal",
+          "detail": "Alignment penetration at 12.4% against a 10% goal."
         }
       ],
       "plan": [
         {
-          "when": "Before 10am",
-          "what": "Preload estimates for all nine pickups and present these at write-up: 7:00 AM Michael Newell — Replace Four Tires + Wheel Alignment (2.2 hrs); 7:20 AM Ashley Robinson — Tune Up With Spark Plugs And PCV Replacement On V6 Engine (3.5 hrs); 8:20 AM MURALI Rudra — Tune Up With Spark Plugs And PCV Replacement On V6 Engine (3.5 hrs); 9:20 AM Carri Penale — Fuel Injection Service (0.8 hrs); 10:00 AM Jaine Sherman — Tune Up With Spark Plugs And PCV Replacement (1.5 hrs); 11:40 AM Tom Pierce — Fuel Injection Service (0.8 hrs); 1:00 PM Vinay Ayala — Replace Front Pads and Resurface Rotors (1.8 hrs); 3:00 PM Robert Baker — Wheel Alignment (1.0 hr); 4:00 PM Rae Gray — Replace Engine Air Filter (0.2 hr).",
-          "why": "These nine bay-ready asks total 22.9 hours and $5,712.31 toward today."
+          "when": "Before 7:00 AM",
+          "what": "Prep pitches and parts for every pickup: 7:00 AM Michael Newell — Replace Four Tires, Wheel Alignment (2.2 hrs); 7:20 AM Ashley Robinson — Tune Up With Spark Plugs And PCV Replacement On V6 Engine (3.5 hrs); 8:20 AM MURALI Rudra — Tune Up With Spark Plugs And PCV Replacement On V6 Engine (3.5 hrs); 9:20 AM Carri Penale — Fuel Injection Service (0.8 hrs); 10:00 AM Jaine Sherman — Tune Up With Spark Plugs And PCV Replacement (1.5 hrs); 11:40 AM Tom Pierce — Fuel Injection Service (0.8 hrs); 1:00 PM Vinay Ayala — Replace Front Pads and Resurface Rotors (1.8 hrs); 3:00 PM Robert Baker — Wheel Alignment (1.0 hr); 4:00 PM Rae Gray — Replace Engine Air Filter (0.2 hrs).",
+          "why": "That slate totals 15.3 hours toward today."
         },
         {
-          "when": "Before 11am",
-          "what": "Call the top five deferred Valvoline/brake jobs and book what they’ll say yes to today.",
-          "why": "RO 768354 Justin Patterson — ENGINE REPLACEMENT PLUS KIT, $19,021.13, 42.6 hrs; RO 775022 Levi Houck — ENGINE REPLACEMENT PREMIUM KIT, $12,580.63, 32.8 hrs; RO 776148 James Bailey-Davidson — FUEL INJECTION SERVICE, $12,265.33, 7.3 hrs; RO 773275 Paige Neely — BRAKE FLUID EXCHANGE, $10,638.21, 31.3 hrs; RO 771794 Ron Hedgren — ENGINE REPLACEMENT PREMIUM KIT, $10,197.19, 31.2 hrs."
+          "when": "8:30–10:00 AM",
+          "what": "Call the top five deferred ROs and ask for the booking today.",
+          "why": "$64,702.49 and 145.2 hours on the table if they set — even one lands today and you clear the 17.6-hour need."
         },
         {
-          "when": "By noon",
-          "what": "Book the parts-ready high-priority RO 780361 (25 Santa Fe, Tow in Hybrid Warning) now that parts arrived 10/14/2026.",
-          "why": "Moves a 49-day RO forward and adds hours toward today’s 17.6-hour need."
+          "when": "10:00–11:00 AM",
+          "what": "At write-up, close 10:00 AM Jaine Sherman — Tune Up With Spark Plugs And PCV Replacement.",
+          "why": "Locks 1.5 hours early and keeps pace on the day."
         },
         {
-          "when": "By 2pm",
-          "what": "Clear aging admin: accept and invoice completed ROs 780552 and 781545; collect on 780481.",
-          "why": "Posts finished hours today and stops 43–45 day aging from costing CSI and cycle time."
+          "when": "11:30 AM–4:00 PM",
+          "what": "Hit the mid-day and afternoon add-ons already greenlit in pickups: 11:40 AM Tom Pierce — Fuel Injection Service; 3:00 PM Robert Baker — Wheel Alignment.",
+          "why": "Another 1.8 hours you don’t have to find at 4 PM."
         }
       ],
       "callList": [
@@ -802,63 +797,63 @@
           "name": "Justin Patterson",
           "phone": "7654146677",
           "ro": "768354",
-          "why": "ENGINE REPLACEMENT PLUS KIT — $19,021.13, 42.6 hours"
+          "why": "ENGINE REPLACEMENT PLUS KIT — $19,021.13 and 42.6 hours."
         },
         {
           "name": "Levi Houck",
           "phone": "2193142560",
           "ro": "775022",
-          "why": "ENGINE REPLACEMENT PREMIUM KIT — $12,580.63, 32.8 hours"
+          "why": "ENGINE REPLACEMENT BASIC KIT — $12,580.63 and 32.8 hours."
         },
         {
           "name": "James Bailey-Davidson",
           "phone": "9316986278",
           "ro": "776148",
-          "why": "FUEL INJECTION SERVICE — $12,265.33, 7.3 hours"
+          "why": "FUEL INJECTION SERVICE — $12,265.33 and 7.3 hours."
         },
         {
           "name": "Paige Neely",
           "phone": "3179389201",
           "ro": "773275",
-          "why": "BRAKE FLUID EXCHANGE — $10,638.21, 31.3 hours"
+          "why": "BRAKE FLUID EXCHANGE — $10,638.21 and 31.3 hours."
         },
         {
           "name": "Ron Hedgren",
           "phone": "6303279042",
           "ro": "771794",
-          "why": "ENGINE REPLACEMENT PREMIUM KIT — $10,197.19, 31.2 hours"
+          "why": "WHEEL ALIGNMENT — $10,197.19 and 31.2 hours."
         }
       ],
       "watchlist": [
         {
-          "ro": "780361",
-          "what": "49 days open, In progress; parts arrived 10/14/2026 on Tow in Hybrid Warning",
-          "action": "Book HPCU-related repair work this morning and update the customer by 9:00 AM."
+          "ro": "780481",
+          "what": "Invoiced — not paid, 45 days old; no note in 27 days.",
+          "action": "Call now and collect payment; document the call."
         },
         {
-          "ro": "780481",
-          "what": "45 days, Invoiced — not paid",
-          "action": "Call for payment and close today."
+          "ro": "780361",
+          "what": "49 days old, In progress with parts arrived 10/14/2026, Hybrid warning/HPCU path.",
+          "action": "Book the car today with parts in hand and update the customer."
         },
         {
           "ro": "780552",
-          "what": "43 days, Ready for invoice — Completed",
-          "action": "Accept the RO and call the customer for pickup today."
-        },
-        {
-          "ro": "781087",
-          "what": "21 days, Completed but open",
-          "action": "Finalize, price, and call the customer by noon."
+          "what": "Ready for invoice, 43 days old.",
+          "action": "Accept the RO and move to cashiering."
         },
         {
           "ro": "781052",
-          "what": "22 days, Tech assigned — stalled",
-          "action": "Find the hold-up with the tech and set a promise time today."
+          "what": "Tech assigned, 22 days old, stalled.",
+          "action": "Find what it’s waiting on and get an ETA from the tech."
+        },
+        {
+          "ro": "781087",
+          "what": "Completed, 21 days old, still open.",
+          "action": "QC if needed and advance to invoice today."
         }
       ],
-      "contest": "You’re 2nd on the board at 0.48 hrs/RO and 0.49 add rate, 0.01 hrs/RO behind DAVID. To qualify for $1,000, you need +0.82 hrs/RO and +0.26 add rate to hit 1.3 and 0.75.",
-      "coaching": "Your drag is hrs/RO at 0.37 against a 1.3–1.5 target. Present the exact package at write-up on every pickup (tires + alignment, tune-up bundles) before diagnosis starts; when you lead with the full ask, your close rate and hours per ticket both jump. Do it nine times today and the month turns.",
-      "closing": "Start with the nine pickups, then lock in two high-dollar callbacks before lunch and the rest falls in line.",
+      "contest": "You’re P2 on the board at 0.48 hrs/RO and 0.49 add rate, 0.01 hrs/RO behind the leader. To qualify you need +0.82 hrs/RO and +0.26 add rate from where you sit.",
+      "coaching": "Your weakest number is hours per RO at 0.48 against a 1.3 goal. Fix it by treating every pickup as a write-up close: present the single highest-value item first, tie it to their concern, and ask for authorization before moving on. Do this nine times today and you bank 15.3 hours without chasing new tickets.",
+      "closing": "Start with the nine pickups, get one big deferred booked before 10, and the 17.6 is done.",
       "facts": {
         "advisor": "JORDAN",
         "date": "2026-10-15",
@@ -1583,43 +1578,45 @@
       }
     },
     "MATTHEW": {
-      "headline": "Two pickups can make 3.8 hours before lunch",
-      "opening": "Month-to-date is 2.7 hours with no set goal. Today can produce 3.8 hours from the suggested services on your two pickups. The biggest swing is Siva Abulila at 10:40 AM — Replace Four Tires and Wheel Alignment for 2.2 hours.",
-      "pickupLine": "2 have declined work, $1702.48 on those cars, and 3.8 hours if the suggested services sell.",
-      "moneyLine": "$248 of uncalled deferred work is sitting; booking it adds 0.5 hours today.",
+      "headline": "Two pickups make your 3.8 hours today",
+      "opening": "You’re at 2.7 hours MTD; yesterday ran 1.9 hours at 0.68 hrs/RO. Today’s target on the books is 3.8 hours. The biggest opportunity is the two pickup ROs with $1,702.48 already deferred for 5.7 hours combined.",
+      "pickupLine": "2 pickups carry $1,702.48 in declined work worth 5.7 hours if sold.",
+      "moneyLine": "You have $248 in uncalled deferred worth 0.5 hours; booking it puts another half-hour on today.",
       "wins": [
         {
           "title": "No aging ROs",
-          "detail": "Open ROs older than five days: 0."
+          "detail": "Open RO list has 0 older than five days."
         }
       ],
       "plan": [
         {
-          "when": "Before 8:00 AM",
-          "what": "Prep write-ups and parts/pricing for Derrick Stout (Fuel Injection Service, Replace Cabin Air Filter, Rec) and Siva Abulila (Replace Four Tires, Wheel Alignment) so you can present at arrival.",
-          "why": "Landing both adds 3.8 hours."
+          "when": "Before 10am",
+          "what": "Prep both pickup scripts: 8:00 AM Derrick Stout — Fuel Injection Service + Replace Cabin Air Filter + Rec from RO 775227; 10:40 AM Siva Abulila (waiter, LOF50) — Replace Four Tires + Wheel Alignment from RO 776414.",
+          "why": "Approvals here add 3.8 hours and address $1,702.48 already presented."
         },
         {
-          "when": "8:00–9:00 AM",
-          "what": "Present and close Derrick Stout on Fuel Injection Service + Replace Cabin Air Filter + Rec.",
-          "why": "Worth 1.6 hours on RO 775227’s deferred list."
+          "when": "10:30–12:00",
+          "what": "Call the deferred lead on RO 781503 at 7654902754 for INTWIPERS + INTCABIN + INTFILTER.",
+          "why": "That one call is $248 and 0.5 hours today."
         },
         {
-          "when": "10:40 AM–12:00 PM",
-          "what": "Present and close Siva Abulila on Replace Four Tires + Wheel Alignment.",
-          "why": "Worth 2.2 hours on RO 776414’s deferred list."
-        },
-        {
-          "when": "12:00–1:00 PM",
-          "what": "Call the uncontacted deferred RO and book it.",
-          "why": "RO 781503 is $248 and 0.5 hours."
+          "when": "After lunch",
+          "what": "Revisit Siva Abulila’s tire/alignment decision if not closed during the appointment; offer install today if approved by 2pm.",
+          "why": "That approval alone is 2.2 hours."
         }
       ],
-      "callList": [],
+      "callList": [
+        {
+          "name": "1722_BOB R.",
+          "phone": "7654902754",
+          "ro": "781503",
+          "why": "INTWIPERS + INTCABIN + INTFILTER for $248 and 0.5 hours"
+        }
+      ],
       "watchlist": [],
-      "contest": "Contest is live; you’re at 0.00 hrs/RO and 0.00 add rate. Gap to qualify is 1.30 hrs/RO and 0.75 add rate; you’re 0.49 hrs/RO behind the leader.",
-      "coaching": "Open every write-up with a clear add-on ask tied to the car’s need, and get a yes/no on it before the LOF starts. Hitting both pickup add-ons (3.8 hours across 2 ROs) puts you at 1.90 hrs/RO today and moves your add rate toward the 0.75 goal. Keep the menu simple: tires/alignment for Siva, fuel injection and cabin filter for Derrick.",
-      "closing": "Lead with the two pickups, bank 3.8 hours before lunch, then grab the extra 0.5 from the deferred call.",
+      "contest": "Contest is live and you’re in 3rd with 0.00 hrs/RO and 0.00 add rate. Your gaps are 1.30 hrs/RO and 0.75 add rate; you’re 0.49 hrs/RO behind the leader.",
+      "coaching": "Your weakest number is add rate at 0.00 against a 0.75 goal. Start every pickup write-up with one clear ask tied to the prior decline and the exact hours (“This adds 1.6 hours today and gets your fuel system cleaned”). Stick to the two pickup menus first; two clean approvals puts you at 3.8 hours and lifts both hrs/RO and add rate today.",
+      "closing": "Open strong with the two pickups and lock 3.8 hours before noon.",
       "facts": {
         "advisor": "MATTHEW",
         "date": "2026-10-15",
@@ -1829,86 +1826,86 @@
     }
   },
   "manager": {
-    "headline": "Money behind pace; hours on the table today",
-    "opening": "We’re at $50,117.6 against a $147,864 month, 34% in with 15 working days left. We need $6,516.4 per day to land the forecast. Today has 28 goal hours on the book with 31 appointments and 18 cars carrying $10,844.83 in deferred, so the day can carry its weight. Biggest risk is aging and stalled ROs (oldest 49 days) plus two invoiced-not-paid tickets, which are choking cash.",
-    "appointmentsLine": "31 booked with 6 waiters; 18 arrive with $10,844.83 and 43.6 hours of declined work. Pickup sits with JORDAN at 15.3 hours, DAVID at 8.9 hours, and MATTHEW at 3.8 hours toward today’s 28-hour target.",
-    "forecast": "Forecast is $147,864 with $50,117.6 earned and $97,746.4 remaining. That’s $6,516.4 needed per working day over 15 days. With 28 goal hours on today’s schedule and large deferred pools, it’s achievable only if we convert today’s booked hours and stop the RO aging that’s tying up throughput and cash.",
+    "headline": "Money is there; flow and follow-up decide it",
+    "opening": "We’ve earned 50,117.6 against a 147,864 forecast (34%), with 97,746.4 left. With 15 working days left, the target is 6,516.4 per day. Today has 31 on the books with 28 goal hours available; we need to convert them. Biggest risk is flow stoppage — 42 open ROs with 17 at 6+ days, two dispatch-overdue (RO 781428, RO 781518), and two invoiced-not-paid (RO 780481, RO 780941).",
+    "appointmentsLine": "31 booked, 6 waiters, 18 arriving with declined work worth 10,844.83 and 43.6 hours, with 28 goal hours on the table and 11 visits that reach goal as written. Pickup sits with JORDAN at 15.3 hours, DAVID at 8.9 hours, and MATTHEW at 3.8 hours; open pool is 0.",
+    "forecast": "Forecast is 147,864; we sit at 50,117.6, with 97,746.4 remaining. That means 6,516.4 per day for the next 15 working days. This lands only if we convert today’s 28 goal hours and keep daily production at or above 6,516.4.",
     "wins": [
       {
         "title": "David ahead of pace",
-        "detail": "DAVID is at 177.6 hours MTD, ahead by 5.7 against plan."
+        "detail": "DAVID is ahead by 5.7 hours (177.6 MTD vs 171.9 expected) and produced 25.8 hours yesterday."
       },
       {
-        "title": "Booked hours present",
-        "detail": "Today carries 28 goal hours with 11 appointments that reach their goal on a single sell."
+        "title": "Book is strong",
+        "detail": "31 appointments today with 28 goal hours available and 11 visits that reach goal as written."
       },
       {
-        "title": "Kaden leading techs",
-        "detail": "KADEN sits at 22.6 hours, 53% of a 42.5-hour goal."
+        "title": "No open-pool",
+        "detail": "OpenPool is 0 — every appointment has an owner."
       }
     ],
     "priorities": [
       {
-        "what": "Convert today’s deferred on the drive",
-        "why": "There is $10,844.83 and 43.6 hours on today’s appointments; JORDAN owns 15.3 hours ($5,712.31), DAVID 8.9 hours ($3,430.04), MATTHEW 3.8 hours ($1,702.48)."
+        "what": "Convert today’s owner goals: JORDAN 15.3 hours, DAVID 8.9 hours, MATTHEW 3.8 hours",
+        "why": "That is 28 hours toward the daily target of 6,516.4; owners already have the customers to do it."
       },
       {
-        "what": "Call Titania Bethiana now and set the job",
-        "why": "RO 769647 is 60.5 hours for $30,522.97; assign DAVID to dial 7655326844 and close or schedule."
+        "what": "Call-through and sell the 18 arrivals with declined work (10,844.83 and 43.6 hours)",
+        "why": "Those walk-ins are the fastest path to the 28 goal hours today; JORDAN owns 5,712.31, DAVID 3,430.04, MATTHEW 1,702.48."
       },
       {
-        "what": "Call David Zarate and book the work",
-        "why": "RO 773725 is 42.7 hours for $21,989.93; assign JORDAN to dial 7655512552 and lock dates today."
+        "what": "Work the top deferred tickets now: RO 769647 (60.5h, 30,522.97), RO 773725 (42.7h, 21,989.93), RO 774338 (55.4h, 19,584.4), RO 771181 (55.8h, 19,071.21), RO 768354 (42.6h, 19,021.13), RO 768708 (25.9h, 17,289.77)",
+        "why": "These six total 283. -hour-class hours and 128, -class dollars inside a 4,162,377 shop-wide deferred pile with 17,486.3 hours; any one win moves the month."
       }
     ],
     "advisorNotes": [
       {
         "advisor": "DAVID",
-        "note": "177.6 hours MTD, ahead by 5.7 and on pace; need 15.2 today. Biggest pickup is today’s book at $3,430.04 and 8.9 hours. Push the 7:40 AM (1.7 hours) and 2:00 PM (2.2 hours) plus the 4:00 PM (1.8 hours) to hit 8.9 hours today."
+        "note": "177.6 MTD on a 375 goal, ahead by 5.7 and on pace; needs 15.2 today. Biggest single bucket is 942,299 in deferred value shop-wide and 3,430.04 on today’s book (8.9 goal hours). Push JOONGWON (1.5h), Chris Blake (2.2h), Supriya Jairath (1.7h), and Jordan Anderson (1.8h) to close 7.2 hours before lunch, then add Loretta Taylor (1.1h) to clear your 8.9."
       },
       {
         "advisor": "JORDAN",
-        "note": "128.2 hours MTD, behind by 36.8 and not on pace; need 17.6 today. Biggest pickup is $5,712.31 and 15.3 hours on today’s appointments. Close the 7:20 AM tune-up (3.5 hours) and the 7:00 AM tires+alignment (2.2 hours) early, then stack the 10:00 AM tune-up (1.5 hours) and 1:00 PM front brakes (1.8 hours) to drive to 15.3."
+        "note": "128.2 MTD on a 375 goal, behind by 36.8; needs 17.6 today. Biggest bucket is 1,626,725 in deferred value and 5,712.31 on today’s book (15.3 goal hours). Push Ashley Robinson (3.5h), MURALI Rudra (3.5h), Michael Newell (2.2h), Jaine Sherman (1.5h), and Vinay Ayala (1.8h) to get 12.5 hours, then stack Carri Penale (0.8h), Tom Pierce (0.8h), and Robert Baker (1.0h) to finish 15.3."
       },
       {
         "advisor": "MATTHEW",
-        "note": "No set goal; 2.7 hours MTD. Biggest pickup is $1,702.48 and 3.8 hours today. Sell the 10:40 AM tires+alignment (2.2 hours) and the 8:00 AM fuel/cabin/rec (1.6 hours) to clear 3.8 hours."
+        "note": "2.7 MTD, no goal set. Biggest near-term pickup is 1,702.48 on today’s book (3.8 goal hours). Push Siva Abulila (2.2h, waiter) and Derrick Stout (1.6h) to clear your 3.8 by midday."
       }
     ],
     "watchlist": [
       {
         "ro": "781428",
-        "what": "Ready for dispatch 6 days, severity 9",
-        "action": "Dispatch to a tech now; move it into the shop."
+        "what": "Ready for dispatch 6 days — dispatch overdue",
+        "action": "Advisor/dispatcher to assign and move to rack now"
       },
       {
         "ro": "781518",
-        "what": "Ready for dispatch 2 days, severity 9",
-        "action": "Dispatch to KADEN WILSON now and turn the job."
+        "what": "Ready for dispatch 2 days — dispatch overdue",
+        "action": "Assign off the top; CP completed so it should be on a lift first hour"
       },
       {
         "ro": "780361",
-        "what": "In progress 49 days; last parts note 27 days ago",
-        "action": "SHAWN to update ETA today and set next step to resume work."
+        "what": "Open 49 days — last note 27 days ago (WAITING ON PARTS. NACK ORDER)",
+        "action": "SHAWN/parts to update ETA and either install today if in, or document new promise time"
       },
       {
         "ro": "780913",
-        "what": "Used-car recon stalled 28 days, CP complete",
-        "action": "JACOB KUNTZ to note cause and next action today."
+        "what": "Open 28 days — used-car recon stalled; CP completed",
+        "action": "JACOB to note what it’s waiting on; advisor to clear next step"
       },
       {
         "ro": "780481",
-        "what": "Invoiced not paid 45 days",
-        "action": "JORDAN to call and collect today; note outcome."
+        "what": "Invoiced 45 days — not paid",
+        "action": "Advisor to contact customer today and collect payment or set pickup"
       },
       {
         "ro": "780941",
-        "what": "Invoiced not paid 27 days",
-        "action": "JORDAN to call and collect today; note outcome."
+        "what": "Invoiced 27 days — not paid",
+        "action": "Advisor to contact customer today and collect payment or set pickup"
       }
     ],
-    "technicians": "132 hours produced against a 333-hour team goal; seven techs are behind (JACOB, CARTER, GAVEN, CORY, BRYSON, CHRIS, TRENTON). Today’s 28 goal hours are feasible if we dispatch immediately on the two ready-for-dispatch ROs and clear stalls so flagged techs can stay on flagged work. Keep KADEN and CORY loaded; shift quick turns to BRYSON to lift his 31% to target.",
-    "closing": "Sell the $10,844.83 on today’s appointments and book the 103.2 hours in top deferred calls (ROs 769647 and 773725) — that moves the month today.",
+    "technicians": "We have 132 hours produced against a 333-hour goal across the team, with JACOB, CARTER, GAVEN, CORY, BRYSON, CHRIS, and TRENTON behind. Today’s book carries 28 goal hours; clearing dispatch-overdue and stalled ROs and feeding diag/LOF add-ons will keep bays full enough to hold the 6,516.4 daily target.",
+    "closing": "Convert the 28 goal hours on today’s book and clear the two dispatch-overdue ROs before 10:00.",
     "facts": {
       "date": "2026-10-15",
       "shopOpenRos": {
