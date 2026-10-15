@@ -23,6 +23,17 @@ const td = { padding: '9px 10px', fontSize: 14, color: '#e2e8f0', borderBottom: 
 const mono = { fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, letterSpacing: '.03em' };
 const muted = <span style={{ color: '#64748b' }}>—</span>;
 
+// Painted customers stay at the bottom of the list (green) for 6 months, then
+// drop off on their own — purged on the next load/save after that.
+const PAINTED_KEEP_MONTHS = 6;
+const paintedExpired = (e) => {
+  const t = new Date(e.paintedAt);
+  if (isNaN(t)) return false;
+  t.setMonth(t.getMonth() + PAINTED_KEEP_MONTHS);
+  return t <= new Date();
+};
+const purge = (st) => ({ ...st, done: (st.done || []).filter(e => !paintedExpired(e)) });
+
 const EMPTY = () => ({ firstName: '', lastName: '', vin: '', phone: '', dateAdded: todayIso(), notes: '' });
 const FIELDS = [
   ['firstName', 'First name'], ['lastName', 'Last name'], ['vin', 'VIN'], ['phone', 'Phone number', 'tel'], ['dateAdded', 'Date put on list', 'date'],
@@ -56,18 +67,25 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
 
   useEffect(() => {
     let alive = true;
-    loadWhitePaint().then(d => { if (alive) { setStore(d); setLoading(false); } })
-      .catch(() => { if (alive) setLoading(false); });
+    loadWhitePaint().then(d => {
+      if (!alive) return;
+      setStore(purge(d));
+      setLoading(false);
+      // Anyone past their 6 months comes off the saved file too (rare write).
+      if ((d.done || []).some(paintedExpired)) updateWhitePaint(purge, 'drop painted 6+ months').then(n => { if (alive) setStore(n); }).catch(() => {});
+    }).catch(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, []);
 
   const queue = store.queue || [];
-  const done = store.done || [];
+  // Oldest paint first, so the one just painted is at the very bottom.
+  const done = useMemo(() => [...(store.done || [])].filter(e => !paintedExpired(e))
+    .sort((a, b) => String(a.paintedAt || '').localeCompare(String(b.paintedAt || ''))), [store.done]);
 
   async function write(mutate, what, okMsg) {
     setBusy(true); setStatus('Saving…');
     try {
-      const next = await updateWhitePaint(mutate, what);
+      const next = await updateWhitePaint(cur => purge(mutate(cur)), what);
       setStore(next);
       setStatus(okMsg);
       setBusy(false);
@@ -129,27 +147,29 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
   }
 
   async function markPainted(e) {
-    if (!isManager || !window.confirm(`Mark ${e.firstName} ${e.lastName} as painted and take them off the waiting list?`)) return;
-    const stamp = { paintedAt: new Date().toISOString(), paintedBy: currentUser };
+    if (!isManager || !window.confirm(`Mark ${e.firstName} ${e.lastName} as painted?\n\nThey move to the bottom of the list in green, everyone behind them moves up one, and they drop off the list automatically after ${PAINTED_KEEP_MONTHS} months.`)) return;
     await write(cur => {
-      const hit = cur.queue.find(x => x.id === e.id);
-      if (!hit) return cur;
-      return { ...cur, queue: cur.queue.filter(x => x.id !== e.id), done: [{ ...hit, ...stamp }, ...cur.done] };
-    }, `painted ${e.firstName} ${e.lastName}`, `✓ ${e.firstName} ${e.lastName} moved to Painted.`);
+      const i = cur.queue.findIndex(x => x.id === e.id);
+      if (i < 0) return cur;
+      const rec = { ...cur.queue[i], paintedAt: new Date().toISOString(), paintedBy: currentUser, wasPos: i };
+      return { ...cur, queue: cur.queue.filter(x => x.id !== e.id), done: [...cur.done, rec] };
+    }, `painted ${e.firstName} ${e.lastName}`, `✓ ${e.firstName} ${e.lastName} marked painted.`);
   }
 
   async function restore(e) {
-    if (!isManager || !window.confirm(`Put ${e.firstName} ${e.lastName} back on the waiting list (at the bottom)?`)) return;
+    if (!isManager || !window.confirm(`Undo painted for ${e.firstName} ${e.lastName}? They go back to their old place in line.`)) return;
     await write(cur => {
       const hit = cur.done.find(x => x.id === e.id);
       if (!hit) return cur;
-      const { paintedAt, paintedBy, ...rest } = hit;
-      return { ...cur, done: cur.done.filter(x => x.id !== e.id), queue: [...cur.queue, rest] };
-    }, `restore ${e.firstName} ${e.lastName}`, `✓ ${e.firstName} ${e.lastName} is back on the list.`);
+      const { paintedAt, paintedBy, wasPos, ...rest } = hit;
+      const qq = [...cur.queue];
+      qq.splice(Number.isInteger(wasPos) ? Math.min(wasPos, qq.length) : qq.length, 0, rest);
+      return { ...cur, done: cur.done.filter(x => x.id !== e.id), queue: qq };
+    }, `restore ${e.firstName} ${e.lastName}`, `✓ ${e.firstName} ${e.lastName} is back in line.`);
   }
 
   async function remove(e, from) {
-    if (!isManager || !window.confirm(`Remove ${e.firstName} ${e.lastName} completely? This can't be undone.\n\n(Use ✓ Painted instead if their car was painted.)`)) return;
+    if (!isManager || !window.confirm(`Remove ${e.firstName} ${e.lastName} completely? This can't be undone.\n\n(Use 🎨 Mark painted instead if their car was painted.)`)) return;
     await write(cur => ({ ...cur, [from]: cur[from].filter(x => x.id !== e.id) }),
       `remove ${e.firstName} ${e.lastName}`, `✓ ${e.firstName} ${e.lastName} removed.`);
   }
@@ -276,7 +296,7 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
                     <button disabled={busy || !!q.trim() || e.pos === 1} title="Move up" style={actionBtn('148,163,184')} onClick={() => move(e.id, -1)}>▲</button>
                     <button disabled={busy || !!q.trim() || e.pos === queue.length} title="Move down" style={actionBtn('148,163,184')} onClick={() => move(e.id, 1)}>▼</button>
                     <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => { setStatus(''); setEditing({ ...e, place: String(e.pos) }); }}>✏️ Edit</button>
-                    <button disabled={busy} title="Mark painted — moves them to the Painted tab" style={{ ...actionBtn('148,163,184'), background: 'rgba(255,255,255,.04)', color: '#cbd5e1' }} onClick={() => markPainted(e)}>🎨 Mark painted</button>
+                    <button disabled={busy} title="Mark painted — moves them to the bottom in green" style={{ ...actionBtn('148,163,184'), background: 'rgba(255,255,255,.04)', color: '#cbd5e1' }} onClick={() => markPainted(e)}>🎨 Mark painted</button>
                     <button disabled={busy} title="Remove from the list" style={actionBtn('248,113,113')} onClick={() => remove(e, 'queue')}>🗑</button>
                   </div>
                 </td>
@@ -284,30 +304,23 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
             </tr>
           );
         })}
-      </tbody>
-    </table>
-  );
-
-  const doneTable = (
-    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
-      <thead><tr>
-        <th style={th}>First name</th><th style={th}>Last name</th><th style={th}>VIN</th><th style={th}>Phone number</th>
-        <th style={th}>Date put on list</th><th style={th}>Painted</th>{isManager && <th style={th}></th>}
-      </tr></thead>
-      <tbody>
         {shownDone.map(e => (
-          <tr key={e.id}>
-            <td style={{ ...td, fontWeight: 800 }}>{e.firstName || muted}{nameCell(e)}</td>
-            <td style={{ ...td, fontWeight: 800 }}>{e.lastName || muted}</td>
-            <td style={{ ...td, ...mono }}>{copyCell(e, 'vin', e.vin)}</td>
-            <td style={td}>{copyCell(e, 'phone', e.phone ? fmtPhone(e.phone) : '', { color: '#7dd3fc' })}</td>
-            <td style={td}>{fmtDate(e.dateAdded) || muted}</td>
-            <td style={{ ...td, color: '#86efac', fontWeight: 800 }}>✓ {new Date(e.paintedAt).toLocaleDateString()}<span style={{ color: '#94a3b8', fontWeight: 600, fontSize: 12.5 }}> · {e.paintedBy}</span></td>
+          <tr key={e.id} style={{ background: 'rgba(74,222,128,.12)' }}>
+            <td style={td}>
+              <span title={`Painted ${new Date(e.paintedAt).toLocaleDateString()} by ${e.paintedBy}`}
+                style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#052e16', background: '#4ade80' }}>✓ PAINTED</span>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: '#86efac', marginTop: 4 }}>{new Date(e.paintedAt).toLocaleDateString()}</div>
+            </td>
+            <td style={{ ...td, fontWeight: 800, color: '#bbf7d0' }}>{e.firstName || muted}{nameCell(e)}</td>
+            <td style={{ ...td, fontWeight: 800, color: '#bbf7d0' }}>{e.lastName || muted}</td>
+            <td style={{ ...td, ...mono, color: '#bbf7d0' }}>{copyCell(e, 'vin', e.vin)}</td>
+            <td style={td}>{copyCell(e, 'phone', e.phone ? fmtPhone(e.phone) : '', { color: '#86efac' })}</td>
+            <td style={{ ...td, color: '#bbf7d0' }}>{fmtDate(e.dateAdded) || muted}</td>
             {isManager && (
               <td style={{ ...td, textAlign: 'right' }}>
                 <div style={{ display: 'inline-flex', gap: 6 }}>
-                  <button disabled={busy} style={actionBtn('110,231,249')} onClick={() => restore(e)}>↩ Back on list</button>
-                  <button disabled={busy} title="Delete" style={actionBtn('248,113,113')} onClick={() => remove(e, 'done')}>🗑</button>
+                  <button disabled={busy} title="Not painted after all — back to their old place in line" style={actionBtn('110,231,249')} onClick={() => restore(e)}>↩ Undo painted</button>
+                  <button disabled={busy} title="Remove from the list" style={actionBtn('248,113,113')} onClick={() => remove(e, 'done')}>🗑</button>
                 </div>
               </td>
             )}
@@ -333,9 +346,8 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
-        {tabBtn('list', `📋 Waiting list (${queue.length})`)}
+        {tabBtn('list', `📋 Waiting list (${queue.length}${done.length ? ` · ${done.length} painted` : ''})`)}
         {tabBtn('add', '➕ Add customer', '74,222,128')}
-        {tabBtn('done', `✓ Painted (${done.length})`, '134,239,172')}
         {isManager && tabBtn('import', '📤 Import PDF', '196,181,253')}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
@@ -422,13 +434,9 @@ export default function WhitePaint({ currentUser, currentRole, onBack, backLabel
               <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name, VIN, phone…"
                 style={{ ...inputStyle, maxWidth: 460, marginBottom: 14 }} />
               {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
-                : tab === 'done'
-                  ? (done.length === 0 ? <div style={{ color: '#94a3b8' }}>Nobody marked painted yet.</div>
-                    : shownDone.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
-                    : <div style={{ overflowX: 'auto' }}>{doneTable}</div>)
-                  : (queue.length === 0 ? <div style={{ color: '#94a3b8' }}>The waiting list is empty — add a customer{isManager ? ' or import the paint list PDF' : ''}.</div>
-                    : shownQueue.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
-                    : <div style={{ overflowX: 'auto' }}>{queueTable}</div>)}
+                : (queue.length + done.length === 0 ? <div style={{ color: '#94a3b8' }}>The waiting list is empty — add a customer{isManager ? ' or import the paint list PDF' : ''}.</div>
+                  : shownQueue.length + shownDone.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
+                  : <div style={{ overflowX: 'auto' }}>{queueTable}</div>)}
             </div>
           )}
         </div>
