@@ -98,9 +98,10 @@ export async function uploadWarrantyMediaToS3(filename, file, onProgress) {
 // Upload a signed service loaner contract (Service Loaner page). Opaque key —
 // the contract carries a driver's license and birth date. A big multi-page scan
 // goes straight to the bucket on a signed URL, like the warranty videos.
+// Kept under warranty-media/ so it uses a folder the worker already allows.
 export async function uploadServiceLoanerToS3(file) {
   const ext = (String(file.name || '').split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'pdf';
-  const key = `service-loaners/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+  const key = `warranty-media/service-loaners/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
   const type = file.type || (ext === 'pdf' ? 'application/pdf' : 'application/octet-stream');
   if (file.size <= PROXY_MAX) return putObject(key, file, type);
   const { uploadUrl, url } = await apiJson(`/s3/presign?key=${encodeURIComponent(key)}`, { method: 'POST' });
