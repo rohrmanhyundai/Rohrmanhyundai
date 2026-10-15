@@ -18,7 +18,7 @@
 //   PUT  /s3/object?key=…       raw body               → { url }                    session
 //   DELETE /s3/object?key=…
 //   POST /s3/presign?key=…                               → { uploadUrl, url }          session;
-//                                                        warranty-media/ only (phone videos
+//                                                        warranty-media/ + service-loaners/ only (phone videos
 //                                                        outgrow the 25 MB proxy)
 //   POST /pusher/trigger        { channel, event, data } → publishes with the app secret; session
 //   POST /openai/chat           OpenAI chat.completions body → OpenAI's reply; session. The
@@ -47,7 +47,7 @@ const isAdminRole = (role) => String(role || '').toLowerCase() === 'admin';
 // letting a session write src/ would let anyone logged in ship a new build.
 const WRITABLE_PREFIX = 'public/data/';
 const DISPATCH_EVENTS = new Set(['password-reset', 'big-money-coaching', 'daily-wrench']);
-const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/', 'message-media/'];
+const S3_PREFIXES = ['pdf-reports/', 'tire-photos/', 'additional-time/', 'registrations/', 'tire-promos/', 'applicant-resumes/', 'warranty-media/', 'message-media/', 'service-loaners/'];
 const S3_MAX_BYTES = 25 * 1024 * 1024;
 // Models the app asks for (add-on screenshot reader = gpt-4o; the rest mini).
 const OPENAI_MODELS = new Set(['gpt-4o', 'gpt-4o-mini']);
@@ -397,7 +397,7 @@ async function route(request, env, url) {
   if (p === '/s3/presign' && method === 'POST') {
     await requireSession(env, request);
     const key = s3Key(env, url);
-    if (!key.startsWith('warranty-media/')) throw new HttpError(403, 'That S3 location is not allowed.');
+    if (!key.startsWith('warranty-media/') && !key.startsWith('service-loaners/')) throw new HttpError(403, 'That S3 location is not allowed.');
     const target = new URL(s3Url(env, key));
     target.searchParams.set('X-Amz-Expires', '900');
     const signed = await s3(env).sign(target.toString(), { method: 'PUT', aws: { signQuery: true } });

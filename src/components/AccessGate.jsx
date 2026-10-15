@@ -26,6 +26,9 @@ const CODE_LEN = 4;
 
 export const ACCESS_PATH = 'data/access-code.json';
 export const DEFAULT_LOCKED = { payroll: true, 'employee-applicants': true };
+// Pages added after the file was first saved that start out locked anyway —
+// they stay locked until an admin unlocks them (saved as locked[page] = false).
+export const LOCKED_BY_DEFAULT = { 'service-loaner': true };
 
 // Every page in the app, grouped for the Access Codes screen. Keys are the
 // App.jsx page names. The main dashboard is left out — locking it would lock
@@ -49,6 +52,7 @@ export const PAGE_GROUPS = [
     ['performance-report', 'My Reports'], ['service-pricing', 'Service Pricing Menu'], ['tire-quote', 'Tire Quote'],
     ['document-library', 'Document Library'], ['charge-account-list', 'Charge Account List'], ['hot-repairs', 'Recalls/TSB Bulletins'],
     ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'], ['shop-appointments', 'Shop Appointments'],
+    ['service-loaner', 'Service Loaner'],
   ] },
   { group: 'Parts · Warranty · Used Cars', pages: [
     ['parts-hub', 'Parts Hub'], ['parts-goal-forecast', 'Parts Goal Forecast'], ['warranty-hub', 'Warranty Hub'],
@@ -69,7 +73,8 @@ const up = (s) => String(s || '').trim().toUpperCase();
 // cfg = the saved file, or null (never saved → the old Payroll/Applicants rule).
 export function isLocked(cfg, page) {
   const locked = cfg ? (cfg.locked || {}) : DEFAULT_LOCKED;
-  return !!locked[page];
+  if (page in locked) return !!locked[page];
+  return !!LOCKED_BY_DEFAULT[page];
 }
 export function mayOpen(cfg, page, username, role) {
   if (!cfg) return true;                                   // old rule: code alone decides

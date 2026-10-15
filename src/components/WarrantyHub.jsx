@@ -45,6 +45,15 @@ const NAV_BUTTONS = [
     prop: 'onOriginalOwner',
   },
   {
+    key: 'serviceLoaner',
+    label: '🚙 Service Loaner',
+    desc: 'Signed loaner contracts — upload, look up, view and print',
+    bg: 'linear-gradient(135deg,rgba(96,165,250,.28),rgba(59,130,246,.18))',
+    border: 'rgba(96,165,250,.45)',
+    color: '#93c5fd',
+    prop: 'onServiceLoaner',
+  },
+  {
     key: 'documentLibrary',
     label: '📁 Document Library',
     desc: 'Access warranty forms and reference documents',
@@ -94,9 +103,9 @@ const NAV_BUTTONS = [
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
-  onRegistrationUploads, onShopAppointments,
+  onRegistrationUploads, onShopAppointments, onServiceLoaner,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner };
   // A tile needs page access AND a handler from App (App leaves one out when it's off).
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 

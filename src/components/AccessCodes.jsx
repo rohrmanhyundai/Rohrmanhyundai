@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { saveGithubFile, loadAccessLockouts, updateAccessLockouts } from '../utils/github';
 import { hasAccessCode } from '../utils/accessCode';
-import { ACCESS_PATH, DEFAULT_LOCKED, PAGE_GROUPS, PAGE_LABEL } from './AccessGate';
+import { ACCESS_PATH, DEFAULT_LOCKED, LOCKED_BY_DEFAULT, PAGE_GROUPS, PAGE_LABEL } from './AccessGate';
 import { reachablePages } from '../utils/pageReach';
 
 // ── Access Codes screen ───────────────────────────────────────────────────────
@@ -19,8 +19,8 @@ const up = (s) => String(s || '').trim().toUpperCase();
 function initialDraft(cfg) {
   const idle = { minutes: 2, users: {}, ...((cfg && cfg.idle) || {}) };
   idle.users = { ...(idle.users || {}) };
-  if (cfg) return { locked: { ...(cfg.locked || {}) }, users: JSON.parse(JSON.stringify(cfg.users || {})), idle };
-  return { locked: { ...DEFAULT_LOCKED }, users: {}, idle };
+  if (cfg) return { locked: { ...LOCKED_BY_DEFAULT, ...(cfg.locked || {}) }, users: JSON.parse(JSON.stringify(cfg.users || {})), idle };
+  return { locked: { ...LOCKED_BY_DEFAULT, ...DEFAULT_LOCKED }, users: {}, idle };
 }
 
 export default function AccessCodes({ users = [], cfg, roleCfg = null, currentUser, currentRole, onSaved, onBack }) {
@@ -67,7 +67,12 @@ export default function AccessCodes({ users = [], cfg, roleCfg = null, currentUs
   const userCount = (key) => { const p = people.find(x => x.key === key); return pagesFor(p).filter(([k]) => draft.users[key] && draft.users[key][k]).length; };
 
   const change = (fn) => { if (!isAdmin) return; setDraft(d => fn(JSON.parse(JSON.stringify(d)))); setDirty(true); setMsg(''); };
-  const toggleLock = (page) => change(d => { if (d.locked[page]) delete d.locked[page]; else d.locked[page] = true; return d; });
+  const toggleLock = (page) => change(d => {
+    if (!d.locked[page]) d.locked[page] = true;
+    else if (LOCKED_BY_DEFAULT[page]) d.locked[page] = false;   // keep the "unlocked" so the default doesn't re-lock it
+    else delete d.locked[page];
+    return d;
+  });
   const toggleGrant = (user, page) => change(d => {
     const g = d.users[user] || (d.users[user] = {});
     if (g[page]) delete g[page]; else g[page] = true;

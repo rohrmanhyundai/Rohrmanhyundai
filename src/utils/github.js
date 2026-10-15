@@ -2451,6 +2451,20 @@ export async function updateOilGuardFixes(mutate) {
     `Oil Guard fix ${new Date().toISOString()}`);
 }
 
+// ── Service Loaner contracts ───────────────────────────────────────────────────
+// public/data/service-loaner/contracts.json → { contracts: [{ id, firstName, lastName, ro, vin, year, make,
+//   model, dateOut, timeOut, fileUrl, fileName, uploadedAt, by }] }
+// The signed contract itself is in S3 (service-loaners/); fileUrl points at it.
+export async function loadServiceLoaners() {
+  try { const d = await loadGithubFile('data/service-loaner/contracts.json'); if (d && Array.isArray(d.contracts)) return d; } catch {}
+  return { contracts: [] };
+}
+export async function updateServiceLoaners(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/contracts.json',
+    (cur) => mutate(cur && Array.isArray(cur.contracts) ? cur : { contracts: [] }),
+    `Service loaner ${what} ${new Date().toISOString()}`);
+}
+
 // ── VMPI report detail ────────────────────────────────────────────────────────
 // public/data/vmpi/report.json → { savedAt, by, fileName, stamp, store, techs: [{ name, first, pct, ros, withVideo, videos, lines: [...] }] }
 // Written when a VMPI .csv is applied; read by the View VMPI Report page.

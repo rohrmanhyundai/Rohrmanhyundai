@@ -95,6 +95,20 @@ export async function uploadWarrantyMediaToS3(filename, file, onProgress) {
   return url;
 }
 
+// Upload a signed service loaner contract (Service Loaner page). Opaque key —
+// the contract carries a driver's license and birth date. A big multi-page scan
+// goes straight to the bucket on a signed URL, like the warranty videos.
+export async function uploadServiceLoanerToS3(file) {
+  const ext = (String(file.name || '').split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'pdf';
+  const key = `service-loaners/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+  const type = file.type || (ext === 'pdf' ? 'application/pdf' : 'application/octet-stream');
+  if (file.size <= PROXY_MAX) return putObject(key, file, type);
+  const { uploadUrl, url } = await apiJson(`/s3/presign?key=${encodeURIComponent(key)}`, { method: 'POST' });
+  const res = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': type }, body: file });
+  if (!res.ok) throw new Error(`Upload failed (${res.status})`);
+  return url;
+}
+
 // Upload a tire promotion image. Returns the public URL of the stored object —
 // the promo index stores that URL and the page renders it directly.
 export function uploadTirePromoToS3(filename, file) {

@@ -14,7 +14,7 @@ import { resolvePages, pageOn } from './roleAccess';
 const LINKS = {
   dashboard: ['additional-time-menu', 'media-upload', 'registration-upload', 'tire-warranty', 'used-car-hub'],
   'advisor-calendar': ['advisor-day', 'advisor-goals', 'aftermarket-warranty', 'big-money-lof', 'cash-dash', 'charge-account-list',
-    'daily-wrench', 'deferred-service', 'oil-guard', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
+    'daily-wrench', 'deferred-service', 'oil-guard', 'service-loaner', 'document-library', 'hot-repairs', 'live-pay-hub', 'original-owner', 'performance-report',
     'ro-upload', 'service-pricing', 'tire-quote', 'work-in-progress', 'survey-reports', 'shop-appointments', 'after-call'],
   'advisor-goals': ['live-pay'],
   'live-pay-hub': ['live-pay', 'tech-live-pay'],
@@ -25,7 +25,7 @@ const LINKS = {
   'parts-hub': ['advisor-calendar', 'aftermarket-warranty', 'document-library', 'hot-repairs', 'parts-goal-forecast',
     'shop-appointments', 'tire-quote', 'work-in-progress'],
   'warranty-hub': ['aftermarket-warranty', 'at-diag-worksheet', 'document-library', 'hot-repairs', 'ntt-att-worksheet',
-    'original-owner', 'registration-uploads', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
+    'original-owner', 'registration-uploads', 'service-loaner', 'shop-appointments', 'tire-quote', 'media-upload', 'registration-upload', 'tire-warranty'],
 };
 
 // Pages behind a page-access box (Role Setup / User Management).
@@ -34,6 +34,7 @@ const ACCESS_KEY = {
   'survey-reports': 'surveyReports', 'work-in-progress': 'workInProgress', 'shop-appointments': 'shopAppointments',
   'used-car-hub': 'usedCarHub', 'media-upload': 'mobileMediaUpload', 'registration-upload': 'mobileRegistrationUpload',
   'tire-warranty': 'mobileTireWarranty', 'additional-time-menu': 'mobileAdditionalTime',
+  'service-loaner': 'serviceLoaner',
 };
 const DEFAULT_OFF = new Set(['surveyReports']);
 
