@@ -32,7 +32,7 @@ const daysOpen = (iso) => Math.max(0, Math.floor((Date.now() - new Date(iso).get
 // VIN → { year, make, model } via NHTSA (utils/vinLookup). One lookup per VIN
 // per visit; null while it's out, { ok:false } when it can't be decoded.
 const vinCache = {};
-function useVinDecode(raw) {
+export function useVinDecode(raw) {
   const v = validateVin(String(raw || '').replace(/\s+/g, ''));
   const vin = v.ok ? v.vin : '';
   const [res, setRes] = useState(vin ? vinCache[vin] || null : null);
@@ -52,7 +52,7 @@ function useVinDecode(raw) {
   }, [vin]);
   return { vin, decoding: !!vin && !res, res };
 }
-const vehicleText = (r) => [r.year, r.make, r.model].filter(Boolean).join(' ');
+export const vehicleText = (r) => [r.year, r.make, r.model].filter(Boolean).join(' ');
 
 const isImage = (p) => /^image\//.test(p.type || '') || /\.(jpe?g|png|gif|webp|heic)$/i.test(p.url || '');
 
