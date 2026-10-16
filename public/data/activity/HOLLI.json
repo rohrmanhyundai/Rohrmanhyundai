@@ -1,0 +1,27 @@
+[
+  {
+    "at": "2026-10-16T18:12:05.420Z",
+    "type": "page",
+    "label": "service-loaner"
+  },
+  {
+    "at": "2026-10-16T18:12:04.213Z",
+    "type": "page",
+    "label": "rentals-hub"
+  },
+  {
+    "at": "2026-10-16T18:11:54.317Z",
+    "type": "page",
+    "label": "shop-appointments"
+  },
+  {
+    "at": "2026-10-16T18:11:40.826Z",
+    "type": "page",
+    "label": "document-library"
+  },
+  {
+    "at": "2026-10-16T18:11:06.204Z",
+    "type": "action",
+    "label": "login"
+  }
+]
