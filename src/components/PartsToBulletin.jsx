@@ -20,7 +20,7 @@ export function PartsToBulletinSearch({ items = [], loading = false, onOpen }) {
 
   return (
     <div>
-      <div style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.5)', borderRadius: 8, padding: '8px 14px', marginBottom: 14, color: '#fca5a5', fontWeight: 800, fontSize: 12.5, textAlign: 'center' }}>
+      <div className="confirm-warn-glow" style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.5)', borderRadius: 8, padding: '8px 14px', marginBottom: 14, color: '#fca5a5', fontWeight: 800, fontSize: 12.5, textAlign: 'center' }}>
         ⚠️ ALWAYS CONFIRM AGAINST THE BULLETIN AND WEBDCS BEFORE PERFORMING WORK
       </div>
       <div style={{ position: 'relative' }}>
