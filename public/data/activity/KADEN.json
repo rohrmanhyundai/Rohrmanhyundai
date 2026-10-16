@@ -1,5 +1,25 @@
 [
   {
+    "at": "2026-10-16T18:31:00.339Z",
+    "type": "page",
+    "label": "performance-report"
+  },
+  {
+    "at": "2026-10-16T18:30:51.322Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-16T18:30:51.319Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-16T18:30:50.395Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-16T18:30:43.217Z",
     "type": "page",
     "label": "work-in-progress"
