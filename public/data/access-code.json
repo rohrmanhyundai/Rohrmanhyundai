@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T16:03:58.946Z",
+  "updatedAt": "2026-10-16T16:46:16.438Z",
   "by": "SHAWN",
   "locked": {
     "service-loaner": true,
@@ -116,6 +116,9 @@
       "oil-guard": true,
       "after-call": true,
       "charge-account-list": true,
+      "service-loaner": true
+    },
+    "HOLLI": {
       "service-loaner": true
     }
   },
