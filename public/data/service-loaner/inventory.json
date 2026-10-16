@@ -1,0 +1,16 @@
+{
+  "vehicles": [
+    {
+      "id": "li-mvbctc865dns",
+      "vin": "KM8RMES21TU032648",
+      "stockNo": "LHY2445",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "PALISADE CALLIGRAPHY",
+      "mileage": "",
+      "notes": "",
+      "addedAt": "2026-10-16T19:21:54.727Z",
+      "addedBy": "SHAWN"
+    }
+  ]
+}
