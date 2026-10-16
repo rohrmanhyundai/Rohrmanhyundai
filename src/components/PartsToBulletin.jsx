@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { findBulletinsForPart, BASE_LEN } from '../utils/partsToBulletin';
 import { norm } from '../utils/pdfText';
+import ApplicableVehicles from './ApplicableVehicles';
 
 // ── Parts to Bulletin ─────────────────────────────────────────────────────────
 // Part number in, bulletins out: every TSB and recall whose Warranty table lists
@@ -111,6 +112,7 @@ function Hit({ hit, color, dim, onOpen }) {
         <button onClick={() => onOpen(item)} style={{ ...openBtn, marginLeft: 'auto' }}>📄 Open PDF</button>
       </div>
       <div style={{ color: '#cbd5e1', fontSize: 13, fontWeight: 700, marginTop: 6 }}>{subject}</div>
+      <ApplicableVehicles item={item} />
       {rows.length > 0 && (
         <div style={{ overflowX: 'auto', marginTop: 8 }}>
           <table style={{ tableLayout: 'auto', width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { setHotRepairOpData, docRawUrl } from '../utils/github';
 import { loadPdfJs, extractPdfText, rankedMatches, parseQuery } from '../utils/pdfText';
 import { validateVin, decodeVin, findBulletinsForVehicle } from '../utils/vinLookup';
+import ApplicableVehicles from './ApplicableVehicles';
 
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
@@ -648,7 +649,8 @@ export function OpCodeGenerator({ items, onClose }) {
                 // Ids are only unique within a library, so qualify the key by kind.
                 const isRecall = it._kind === 'recalls';
                 return (
-                <button key={`${it._kind || ''}-${it.id}`} onClick={() => pick(it)} style={rowBtn}>
+                <button key={`${it._kind || ''}-${it.id}`} onClick={() => pick(it)} style={{ ...rowBtn, flexDirection: 'column', alignItems: 'stretch' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{
                     fontSize: 10, fontWeight: 900, letterSpacing: 0.4, marginRight: 8, padding: '2px 7px', borderRadius: 999, whiteSpace: 'nowrap',
                     background: isRecall ? 'rgba(251,191,36,.15)' : 'rgba(96,165,250,.15)',
@@ -662,6 +664,8 @@ export function OpCodeGenerator({ items, onClose }) {
                       : (it.opData && (it.opData.entries || []).length) ? `${it.opData.entries.length} op code(s) →`
                       : 'look up →'}
                   </span>
+                  </div>
+                  <ApplicableVehicles item={it} limit={3} expandable={false} />
                 </button>
                 );
               })}
@@ -680,6 +684,7 @@ export function OpCodeGenerator({ items, onClose }) {
               <span style={{ fontWeight: 800, color: '#e2e8f0', flex: 1 }}>{selected.label}</span>
               <button onClick={() => window.open(docRawUrl(selected.filename), '_blank')} style={viewBulletinBtn}>📄 View Bulletin</button>
             </div>
+            <ApplicableVehicles item={selected} limit={6} style={{ margin: '-4px 0 12px' }} />
 
             {resolved?.source === 'auto' && (resolved.opData.entries || []).length > 0 && (
               <div style={{ background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.4)', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#fbbf24' }}>

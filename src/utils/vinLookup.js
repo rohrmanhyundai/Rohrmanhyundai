@@ -83,6 +83,10 @@ const NOISE_WORD = /^(?:certain|my|and|the|model|year|years|trim|production|date
 // pieces form a plausible model year, so "Page 2 of 23" is left alone.
 function healYears(s) {
   return s
+    .replace(/\b(\d{1,2})\s(\d{1,2})\s(\d{1,2})\b/g, (full, a, b, c) => {   // "20 2 2" → 2022
+      const j = a + b + c;
+      return (j.length === 4 && +j >= 1990 && +j <= 2100) ? j : full;
+    })
     .replace(/\b(\d{1,3})\s(\d{1,3})\b/g, (full, a, b) => {
       const j = a + b;
       return (j.length === 4 && +j >= 1990 && +j <= 2100) ? j : full;
@@ -93,7 +97,37 @@ function healYears(s) {
     });
 }
 
-// → { entries: [{ name, code, hybrid, from, to }], raw }
+// Production dates as printed: "08/23/2022", with PDF stray spaces tolerated.
+const DATE_RE = /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4}|\d{2})\b/g;
+// Stands in for a production date inside the cleaned section: one non-word
+// character, exactly like the space it replaces for the name/year logic, but
+// findable afterwards to hand each vehicle its dates.
+const DATE_MARK = '\uE000';
+const pad2 = n => String(n).padStart(2, '0');
+// "2024 and later" — no last model year.
+export const OPEN_END = 2100;
+
+// Rejoin date digits the PDF split ("1 1 / 24 /2025", "10/01/202 4").
+function healDates(s) {
+  return s
+    .replace(/\b(\d)\s(\d)(?=\s*\/)/g, '$1$2')
+    .replace(/(\/\s*)(\d{1,3})\s(\d{1,3})\b/g, (full, sl, a, b) => ((a + b).length === 4 ? sl + a + b : full));
+}
+
+// A vehicle's production window from the text between it and the next
+// vehicle: "08/23/2022 – 10/19/2024", or one date with its wording
+// ("Beginning 01/05/2024" / "Before 03/02/2023"). '' when none is printed.
+function productionText(seg, dates) {
+  if (dates.length >= 2) return `${dates[0]} – ${dates[1]}`;
+  if (dates.length === 1) {
+    const lead = seg.slice(0, seg.indexOf(DATE_MARK)).slice(-30);
+    if (/\b(before|prior|up\s*to|through|thru|until)\b/i.test(lead)) return `before ${dates[0]}`;
+    return `${dates[0]} onward`;
+  }
+  return '';
+}
+
+// → { entries: [{ name, code, hybrid, from, to, production }], raw }
 export function parseApplicableVehicles(fullText) {
   const text = (fullText || '').replace(/\s+/g, ' ');
   const m = /Applicable\s+Vehicle\s?S?\b[^:]{0,24}:?/i.exec(text);
@@ -104,8 +138,14 @@ export function parseApplicableVehicles(fullText) {
   sec = sec.slice(0, 1200);
   const raw = sec.trim();
 
-  // Production dates would otherwise read as model years.
-  const clean = healYears(sec.replace(/\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{2,4}/g, ' '));
+  // Production dates would otherwise read as model years, so they're lifted out
+  // (kept in order) and their place marked.
+  const dates = [];
+  const clean = healYears(healDates(sec).replace(DATE_RE, (full, mo, d, y) => {
+    dates.push(`${pad2(mo)}/${pad2(d)}/${y.length === 2 ? '20' + y : y}`);
+    return DATE_MARK;
+  }));
+  const spans = [];   // where each kept vehicle sits in `clean`
 
   // "Santa Fe Sport (AN)", "Sonata Hybrid (DN8 HEV)", "IONIQ 6 (CE EV)"
   const RE = /([A-Za-z][A-Za-z0-9]*(?:[ -][A-Za-z0-9]+){0,3}?)\s*\(\s*([A-Z0-9][A-Z0-9 \-]{0,10})\s*\)/g;
@@ -123,9 +163,13 @@ export function parseApplicableVehicles(fullText) {
 
     // In table layouts the Model Year cell gets swept into the name match, so
     // look inside the match as well as before it.
-    const before = clean.slice(Math.max(0, mm.index - 70), mm.index) + ' ' + mm[1];
+    // Never look back past the previous vehicle: in a table that's the row
+    // above, and its years would be taken for this one's ("2019 – 2023 Kona
+    // Electric (OS EV) 2024 and later Kona Electric (SX2 EV)").
+    const prevEnd = spans.length ? spans[spans.length - 1][1] : 0;
+    const before = clean.slice(Math.max(prevEnd, mm.index - 70), mm.index) + ' ' + mm[1];
     const range = /\b((?:19|20)\d{2})\s*[–—-]\s*((?:19|20)?\d{2})\b/.exec(before);
-    const single = /\b((?:19|20)\d{2})\b/.exec(before);
+    const single = /\b((?:19|20)\d{2})\b(\s*(?:MY\s*)?(?:and\s+(?:later|newer|up)|&\s*(?:later|newer|up)|\+|-\s*present|onward))?/i.exec(before);
     let years = null;
     if (range) {
       const from = +range[1];
@@ -133,9 +177,10 @@ export function parseApplicableVehicles(fullText) {
       if (to < 100) to = +(String(from).slice(0, 2) + String(range[2]).padStart(2, '0')); // "2013 – 18"
       years = { from, to: Math.max(from, to) };
     } else if (single) {
-      years = { from: +single[1], to: +single[1] };
+      years = { from: +single[1], to: single[2] ? OPEN_END : +single[1] };
     }
     if (years) lastYears = years; else years = lastYears;   // table rows share the Model Year cell
+    spans.push([mm.index, mm.index + mm[0].length]);
     entries.push({
       name, code,
       hybrid: /hybrid|hev|phev|\bev\b/i.test(`${name} ${code}`),
@@ -143,6 +188,15 @@ export function parseApplicableVehicles(fullText) {
       to: years?.to ?? null,
     });
   }
+  // Production dates print after the model (Model Year | Model | Production
+  // Dates), so each vehicle takes the dates up to the next vehicle.
+  let seen = clean.slice(0, spans[0]?.[0] ?? 0).split(DATE_MARK).length - 1;
+  entries.forEach((en, i) => {
+    const seg = clean.slice(spans[i][1], i + 1 < spans.length ? spans[i + 1][0] : clean.length);
+    const n = seg.split(DATE_MARK).length - 1;
+    en.production = productionText(seg, dates.slice(seen, seen + n));
+    seen += n;
+  });
   return { entries, raw };
 }
 
@@ -218,4 +272,41 @@ export function knownModels(items) {
     .filter(([, n]) => n >= 2)
     .map(([name]) => name)
     .sort((a, b) => a.localeCompare(b));
+}
+
+// ── Applicable Vehicles for display ──────────────────────────────────────────
+// The section parser also catches stray prose that happens to sit before a
+// parenthesis ("A Prior Approval (PA)"), which the VIN matcher simply never
+// matches but a list shown to a tech must not contain. So only names carrying
+// a real Hyundai model are shown, trimmed to start at the model.
+const MODEL_NAME = /\b(?:Accent|Elantra|Sonata|Santa\s+(?:Fe|Cruz)|Tucson|Palisade|Kona|Venue|IONIQ|Ioniq|Veloster|Azera|Genesis|Equus|Nexo|NEXO|Veracruz|Tiburon|Entourage|XG\d*|Casper|Inster)\b/;
+const displayCache = new Map();
+
+// → [{ years: '2023 – 2025', model: 'Venue (QX)', production: '08/23/2022 – 10/19/2024' }]
+export function applicableVehicles(item) {
+  if (!item) return [];
+  const text = item.searchText || '';
+  const key = (item.filename || item.id) + '|' + text.length;
+  if (displayCache.has(key)) return displayCache.get(key);
+  const seen = new Set();
+  const out = [];
+  for (const e of parseApplicableVehicles(text).entries) {
+    // "S anta Cruz" → "Santa Cruz": PDF extraction splits a capital off its word.
+    const name = e.name.replace(/\b([A-Z]) ([a-z])/g, '$1$2');
+    const m = MODEL_NAME.exec(name);
+    if (!m) continue;
+    const model = `${name.slice(m.index)} (${e.code})`;
+    const years = !e.from ? '' : e.to >= OPEN_END ? `${e.from} and later`
+      : (e.to && e.to !== e.from ? `${e.from} – ${e.to}` : String(e.from));
+    const k = years + '|' + model + '|' + e.production;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ years, model, production: e.production || '' });
+  }
+  // The same model again with no dates is a stray re-read of it (body text
+  // naming the model), not another row.
+  const dated = new Set(out.filter(r => r.production).map(r => r.model));
+  const rows = out.filter(r => r.production || !dated.has(r.model));
+  displayCache.set(key, rows);
+  return rows;
 }
