@@ -275,7 +275,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
         <div style={{ maxWidth: 1800, margin: '0 auto' }}>
           {tab === 'inventory' ? (
-            <LoanerInventory currentUser={currentUser} io={io}
+            <LoanerInventory currentUser={currentUser} io={io} isManager={isManager}
               onMaintenance={(v) => { setMaintPrefill({ loanerNo: v.stockNo || '', vin: v.vin || '', year: v.year || '', make: v.make || '', model: v.model || '', mileage: v.mileage || '' }); setTab('maintenance'); }} />
           ) : tab === 'maintenance' ? (
             <LoanerMaintenance key={maintPrefill ? maintPrefill.vin : 'm'} currentUser={currentUser} isManager={isManager} io={io} prefill={maintPrefill} />

@@ -182,6 +182,7 @@ const PAGE_ACCESS = [
   { key: 'mobileAdditionalTime',     label: '⏱️ Warranty Additional Time (techs)', group: 'Mobile' },
   { key: 'mobileRegistrationUpload', label: '🚗 Vehicle Registration Upload',    group: 'Mobile' },
   { key: 'mobileMediaUpload',        label: '📸 Media Upload',                   group: 'Mobile' },
+  { key: 'mobileLoanerMedia',        label: '🚙 Rental check-in / out media',    group: 'Mobile' },
 ];
 // defaultOff entries start unchecked for new/existing users; others default on
 const DEFAULT_PAGES = Object.fromEntries(PAGE_ACCESS.map(p => [p.key, !p.defaultOff]));

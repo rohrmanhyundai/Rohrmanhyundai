@@ -14,6 +14,15 @@ const NAV_BUTTONS = [
     prop: 'onServiceLoaner',
   },
   {
+    key: 'mobileLoanerMedia',
+    label: '📸 Check In / Check Out Media',
+    desc: 'Stock #, in or out, then pictures and videos — best on a phone',
+    bg: 'linear-gradient(135deg,rgba(192,132,252,.28),rgba(147,51,234,.18))',
+    border: 'rgba(192,132,252,.45)',
+    color: '#d8b4fe',
+    prop: 'onRentalMedia',
+  },
+  {
     key: 'shopAppointments',
     label: '📅 Shop Appointments',
     desc: 'Every advisor\'s appointments for the day',
@@ -80,9 +89,9 @@ const NAV_BUTTONS = [
 
 export default function RentalsHub({
   currentUser, currentUserDisplay,
-  onBack, onServiceLoaner, onShopAppointments, onWorkSchedule, onWorkInProgress, onWhitePaint, onAftermarketWarranty, onDocumentLibrary, onTireQuote,
+  onBack, onServiceLoaner, onRentalMedia, onShopAppointments, onWorkSchedule, onWorkInProgress, onWhitePaint, onAftermarketWarranty, onDocumentLibrary, onTireQuote,
 }) {
-  const handlers = { onServiceLoaner, onShopAppointments, onWorkSchedule, onWorkInProgress, onWhitePaint, onAftermarketWarranty, onDocumentLibrary, onTireQuote };
+  const handlers = { onServiceLoaner, onRentalMedia, onShopAppointments, onWorkSchedule, onWorkInProgress, onWhitePaint, onAftermarketWarranty, onDocumentLibrary, onTireQuote };
   // A tile needs a handler from App — App leaves one out when its box is off.
   const visible = NAV_BUTTONS.filter(b => handlers[b.prop]);
 

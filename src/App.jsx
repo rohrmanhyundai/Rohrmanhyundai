@@ -73,6 +73,7 @@ import WorkInProgress from './components/WorkInProgress';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
 import RentalsHub from './components/RentalsHub';
+import LoanerMediaUpload from './components/LoanerMediaUpload';
 import UsedCarHub from './components/UsedCarHub';
 import SurveyReports from './components/SurveyReports';
 import ATDiagWorksheet from './components/ATDiagWorksheet';
@@ -1531,6 +1532,7 @@ export default function App() {
         currentUserDisplay={currentUserDisplay}
         onBack={() => setPage('dashboard')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'rentals-hub') : undefined}
+        onRentalMedia={canAccess('serviceLoaner') && canAccess('mobileLoanerMedia') ? () => goTo('loaner-media', 'rentals-hub') : undefined}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'rentals-hub') : undefined}
         onWorkSchedule={canAccess('advisorSchedule') || canAccess('techSchedule') ? () => goTo('work-schedule', 'rentals-hub') : undefined}
         onWorkInProgress={canAccess('workInProgress') ? () => goTo('work-in-progress', 'rentals-hub') : undefined}
@@ -2161,6 +2163,12 @@ export default function App() {
   // Aftermarket warranty photos/videos from a phone, filed by RO number. Open to
   // every logged-in user, like the registration upload — whoever has the car
   // in front of them takes the pictures.
+  // 🚙 Rental (phone): loaner check-in / check-out pictures and videos.
+  if (page === 'loaner-media') {
+    if (!isLoggedIn || !canAccess('serviceLoaner')) { setPage(prevPage || 'dashboard'); return null; }
+    return <LoanerMediaUpload currentUser={currentUser} onBack={() => setPage(prevPage || 'dashboard')} />;
+  }
+
   if (page === 'media-upload') {
     if (!isLoggedIn) { setPage('dashboard'); return null; }
     return (
@@ -2271,6 +2279,7 @@ export default function App() {
             : undefined}
           onRegistrationUpload={canAccess('mobileRegistrationUpload') ? () => goTo('registration-upload', 'dashboard') : undefined}
           onMediaUpload={canAccess('mobileMediaUpload') ? () => goTo('media-upload', 'dashboard') : undefined}
+          onRentalMedia={canAccess('serviceLoaner') && canAccess('mobileLoanerMedia') ? () => goTo('loaner-media', 'dashboard') : undefined}
         />
         <AdminPanel
           data={data} vacations={vacations} isOpen={adminOpen}

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import * as github from '../utils/github';
+import { deleteS3ObjectByUrl } from '../utils/s3';
 import { useVinDecode, vehicleText } from './LoanerMaintenance';
 
 // ── Loaner Inventory (Service Loaner page tab) ───────────────────────────────
@@ -7,6 +8,8 @@ import { useVinDecode, vehicleText } from './LoanerMaintenance';
 // add stock #, miles and notes → Add to fleet. Each loaner keeps a notes box
 // anyone with the page can edit (who/when last changed is shown). Removing a
 // loaner from the fleet asks first. Stored in data/service-loaner/inventory.json.
+// 📸 Media shows the check-in / check-out pictures and videos sent from a phone
+// (🚙 Rental — LoanerMediaUpload), newest first; managers can delete a set.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
@@ -21,8 +24,11 @@ const fmtWhen = (iso) => {
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
 };
 
-export default function LoanerInventory({ currentUser, io, onMaintenance }) {
-  const { loadLoanerInventory, updateLoanerInventory } = io || github;
+export default function LoanerInventory({ currentUser, io, onMaintenance, isManager }) {
+  const { loadLoanerInventory, updateLoanerInventory, loadLoanerMedia, updateLoanerMedia } = io || github;
+  const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
+  const [media, setMedia] = useState([]);           // check-in / out sessions
+  const [mediaFor, setMediaFor] = useState(null);   // loaner whose 📸 Media is open
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -35,6 +41,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance }) {
     let alive = true;
     loadLoanerInventory().then(d => { if (alive) { setItems(d.vehicles || []); setLoading(false); } })
       .catch(() => { if (alive) setLoading(false); });
+    loadLoanerMedia().then(d => { if (alive) setMedia(d.sessions || []); }).catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -101,6 +108,19 @@ export default function LoanerInventory({ currentUser, io, onMaintenance }) {
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
     }
+    setBusy(false);
+  }
+
+  const sessionsOf = (v) => media.filter(m => m.vehicleId === v.id || (!m.vehicleId && m.stockNo && m.stockNo === v.stockNo))
+    .sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  async function removeSession(m) {
+    if (!isManager || busy || !window.confirm(`Delete this ${m.kind === 'in' ? 'check-in' : 'check-out'} set (${(m.files || []).length} file${(m.files || []).length === 1 ? '' : 's'})? This can't be undone.`)) return;
+    setBusy(true);
+    try {
+      const next = await updateLoanerMedia(cur => ({ ...cur, sessions: cur.sessions.filter(x => x.id !== m.id) }), `delete ${m.stockNo}`);
+      setMedia(next.sessions);
+      for (const f of m.files || []) { try { await deleteByUrl(f.url); } catch {} }
+    } catch (e) { window.alert(e.message || 'Delete failed.'); }
     setBusy(false);
   }
 
@@ -181,8 +201,9 @@ export default function LoanerInventory({ currentUser, io, onMaintenance }) {
                       {v.notesAt && <><br />Notes by {v.notesBy} · {fmtWhen(v.notesAt)}</>}
                     </div>
                     {!editing && (
-                      <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
                         <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
+                        <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
                         {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
                         <div style={{ flex: 1 }} />
                         <button disabled={busy} title="Take out of the fleet" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => remove(v)}>🗑 Remove</button>
@@ -194,6 +215,49 @@ export default function LoanerInventory({ currentUser, io, onMaintenance }) {
             </div>
           )}
       </div>
+
+      {mediaFor && (() => {
+        const sessions = sessionsOf(mediaFor);
+        return (
+          <div onClick={() => setMediaFor(null)} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 1100, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9' }}>📸 {mediaFor.stockNo ? `Stock #${mediaFor.stockNo}` : mediaFor.vin}</div>
+                  <div style={{ fontSize: 14, color: '#94a3b8', fontWeight: 700 }}>{vehicleText(mediaFor)} · check-in / check-out media</div>
+                </div>
+                <button style={btn('148,163,184', false)} onClick={() => setMediaFor(null)}>✕</button>
+              </div>
+              {sessions.length === 0 ? (
+                <div style={{ color: '#94a3b8', marginTop: 16, fontSize: 14.5, lineHeight: 1.5 }}>
+                  Nothing yet. On a phone, open <b>🚙 Rental</b>, enter stock #{mediaFor.stockNo || '…'}, pick Checking In or Checking Out and take the pictures / videos.
+                </div>
+              ) : sessions.map(m => (
+                <div key={m.id} style={{ marginTop: 16, borderTop: '1px solid rgba(148,163,184,.18)', paddingTop: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                    <span style={{ padding: '4px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 900, color: m.kind === 'in' ? '#052e16' : '#422006', background: m.kind === 'in' ? '#4ade80' : '#fde68a' }}>
+                      {m.kind === 'in' ? '🅿️ CHECK IN' : '🔑 CHECK OUT'}
+                    </span>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{fmtWhen(m.at)}</span>
+                    <span style={{ fontSize: 13, color: '#94a3b8' }}>by {m.by} · {(m.files || []).length} file{(m.files || []).length === 1 ? '' : 's'}</span>
+                    <div style={{ flex: 1 }} />
+                    {isManager && <button disabled={busy} style={btn('248,113,113')} onClick={() => removeSession(m)}>🗑 Delete</button>}
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
+                    {(m.files || []).map((f, i) => (
+                      f.kind === 'video'
+                        ? <video key={i} src={f.url} controls playsInline preload="metadata" style={{ width: 300, maxWidth: '100%', height: 200, background: '#000', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
+                        : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" title={f.name}>
+                            <img src={f.url} alt={f.name} style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
+                          </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

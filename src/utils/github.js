@@ -2553,3 +2553,18 @@ export async function updateLoanerInventory(mutate, what = 'update') {
     (cur) => mutate(cur && Array.isArray(cur.vehicles) ? cur : { vehicles: [] }),
     `Loaner inventory ${what} ${new Date().toISOString()}`);
 }
+
+// ── Loaner check-in / check-out media ─────────────────────────────────────────
+// Phone → 🚙 Rental: stock #, check in or out, pictures/videos. Shown on the
+// loaner's card in Loaner Inventory (📸 Media).
+// public/data/service-loaner/media.json → { sessions: [{ id, vehicleId, stockNo, vin, kind: 'in'|'out',
+//   at, by, files: [{ url, name, type, kind: 'image'|'video', size }] }] }
+export async function loadLoanerMedia() {
+  try { const d = await loadGithubFile('data/service-loaner/media.json'); if (d && Array.isArray(d.sessions)) return d; } catch {}
+  return { sessions: [] };
+}
+export async function updateLoanerMedia(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/media.json',
+    (cur) => mutate(cur && Array.isArray(cur.sessions) ? cur : { sessions: [] }),
+    `Loaner media ${what} ${new Date().toISOString()}`);
+}
