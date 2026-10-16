@@ -42,13 +42,24 @@ export function PartsToBulletinSearch({ items = [], loading = false, onOpen }) {
 
       {!loading && q.length >= BASE_LEN && (
         <div style={{ marginTop: 16 }}>
-          <Group
-            title={q.length === BASE_LEN
-              ? `Causal part starts with ${base} — ${res.exact.length}`
-              : `Causal part ${part.trim()} — ${res.exact.length}`}
-            color="#4ade80" hits={res.exact} onOpen={onOpen}
-            empty="No bulletin lists this as its causal part."
-          />
+          {total === 0 ? (
+            <div style={{ fontSize: 13, color: '#64748b', padding: '8px 4px' }}>No TSB or recall lists this part.</div>
+          ) : (
+            // Part numbers get superseded, so the bulletin for the car in the bay
+            // can carry a different number than the one typed — every listed
+            // bulletin is worth a look, not just the exact match.
+            <div className="part-change-glow" style={{ background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.55)', borderRadius: 8, padding: '9px 14px', marginBottom: 14, color: '#fcd34d', fontWeight: 800, fontSize: 12.5, textAlign: 'center', lineHeight: 1.5 }}>
+              ⚠️ TECH: PLEASE REVIEW EVERY BULLETIN LISTED BELOW — THE PART NUMBER MAY HAVE CHANGED (SUPERSEDED)
+            </div>
+          )}
+          {res.exact.length > 0 && (
+            <Group
+              title={q.length === BASE_LEN
+                ? `Causal part starts with ${base} — ${res.exact.length}`
+                : `Causal part ${part.trim()} — ${res.exact.length}`}
+              color="#4ade80" hits={res.exact} onOpen={onOpen}
+            />
+          )}
           {q.length > BASE_LEN && res.family.length > 0 && (
             <Group title={`Same part family (${base}-…), different suffix — ${res.family.length}`}
               color="#fbbf24" hits={res.family} onOpen={onOpen} />
