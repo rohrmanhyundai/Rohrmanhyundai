@@ -23,5 +23,21 @@
     "notes": "wiating on all proper documents to start p/a. will need engine. ",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mvbgtj94k0sz",
+    "ro": "781614",
+    "roDate": "2026-10-16",
+    "vehicle": "2021 Hyundai Elantra",
+    "jobDesc": "oil pan replace",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
