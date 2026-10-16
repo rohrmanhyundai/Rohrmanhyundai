@@ -152,39 +152,39 @@ export default function LoanerInventory({ currentUser, io }) {
         {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
           : list.length === 0 ? <div style={{ color: '#94a3b8' }}>{q.trim() ? `No loaner matches “${q}”.` : 'No loaners in the fleet yet — add one above.'}</div>
           : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(max(300px, calc((100% - 32px) / 3)), 1fr))', gap: 16 }}>
               {list.map(v => {
                 const editing = noteEdit && noteEdit.id === v.id;
                 return (
-                  <div key={v.id} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 12, padding: '12px 14px', display: 'grid', gap: 6, alignContent: 'start' }}>
+                  <div key={v.id} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 14, padding: '20px 22px', display: 'grid', gap: 10, alignContent: 'start' }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <div style={{ fontWeight: 900, fontSize: 16, color: '#f1f5f9', flex: 1 }}>{v.stockNo ? `Stock #${v.stockNo}` : <span style={{ color: '#64748b' }}>no stock #</span>}</div>
-                      {v.mileage && <div style={{ fontSize: 12.5, color: '#94a3b8', fontWeight: 700 }}>{Number(v.mileage).toLocaleString()} mi</div>}
+                      <div style={{ fontWeight: 900, fontSize: 22, color: '#f1f5f9', flex: 1 }}>{v.stockNo ? `Stock #${v.stockNo}` : <span style={{ color: '#64748b' }}>no stock #</span>}</div>
+                      {v.mileage && <div style={{ fontSize: 15, color: '#94a3b8', fontWeight: 700 }}>{Number(v.mileage).toLocaleString()} mi</div>}
                     </div>
-                    <div style={{ fontSize: 14, color: '#cbd5e1', fontWeight: 700 }}>{vehicleText(v) || '—'}</div>
-                    <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#94a3b8' }}>{v.vin}</div>
+                    <div style={{ fontSize: 17, color: '#cbd5e1', fontWeight: 800 }}>{vehicleText(v) || '—'}</div>
+                    <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 14.5, color: '#94a3b8' }}>{v.vin}</div>
                     {editing ? (
                       <>
                         <textarea autoFocus onFocus={e => { const n = e.target.value.length; e.target.setSelectionRange(n, n); }} value={noteEdit.text} onChange={e => setNoteEdit(n => ({ ...n, text: e.target.value }))} disabled={busy} rows={4} placeholder="Notes for this loaner…" style={notesStyle} />
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <button disabled={busy} style={btn('74,222,128')} onClick={saveNotes}>💾 Save notes</button>
-                          <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setNoteEdit(null)}>Cancel</button>
+                          <button disabled={busy} style={{ ...btn('74,222,128'), fontSize: 14.5, padding: '9px 16px' }} onClick={saveNotes}>💾 Save notes</button>
+                          <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit(null)}>Cancel</button>
                         </div>
                       </>
                     ) : (
-                      <div style={{ fontSize: 13.5, color: v.notes ? '#e2e8f0' : '#64748b', whiteSpace: 'pre-wrap', lineHeight: 1.45, background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '7px 9px' }}>
+                      <div style={{ fontSize: 15.5, color: v.notes ? '#e2e8f0' : '#64748b', whiteSpace: 'pre-wrap', lineHeight: 1.5, background: 'rgba(255,255,255,.03)', borderRadius: 10, padding: '10px 12px', minHeight: 48 }}>
                         {v.notes || 'No notes yet.'}
                       </div>
                     )}
-                    <div style={{ fontSize: 11.5, color: '#64748b' }}>
+                    <div style={{ fontSize: 13, color: '#64748b' }}>
                       Added by {v.addedBy} · {fmtWhen(v.addedAt)}
                       {v.notesAt && <><br />Notes by {v.notesBy} · {fmtWhen(v.notesAt)}</>}
                     </div>
                     {!editing && (
                       <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
-                        <button disabled={busy} style={btn('110,231,249')} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
+                        <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
                         <div style={{ flex: 1 }} />
-                        <button disabled={busy} title="Take out of the fleet" style={btn('248,113,113')} onClick={() => remove(v)}>🗑 Remove</button>
+                        <button disabled={busy} title="Take out of the fleet" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => remove(v)}>🗑 Remove</button>
                       </div>
                     )}
                   </div>
