@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { n, pct, safe } from '../utils/formatters';
 
-export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onUsedCar, advisorUnread, techUnread, managerUnread }) {
+export default function Header({ data, isLoggedIn, currentUser, currentUserDisplay, currentRole, userPages, canEditDashboard, onLogin, onLogout, onForgotPassword, onChangePassword, onEdit, onAdvisor, onTechnician, onParts, onManager, onWarranty, onRentals, onUsedCar, advisorUnread, techUnread, managerUnread }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [clock, setClock] = useState({ date: '', time: '' });
@@ -76,6 +76,11 @@ export default function Header({ data, isLoggedIn, currentUser, currentUserDispl
                   {(currentRole === 'warranty' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (
                     <button onClick={onWarranty} style={{ background: 'linear-gradient(180deg,rgba(52,211,153,.35),rgba(16,185,129,.22))', borderColor: 'rgba(52,211,153,.4)' }}>
                       Warranty
+                    </button>
+                  )}
+                  {(currentRole === 'rentals' || currentRole === 'admin' || (currentRole || '').includes('manager')) && onRentals && (
+                    <button onClick={onRentals} style={{ background: 'linear-gradient(180deg,rgba(96,165,250,.35),rgba(59,130,246,.22))', borderColor: 'rgba(96,165,250,.4)' }}>
+                      Rentals
                     </button>
                   )}
                   {(currentRole === 'parts' || currentRole === 'parts manager' || currentRole === 'admin' || (currentRole || '').includes('manager')) && (

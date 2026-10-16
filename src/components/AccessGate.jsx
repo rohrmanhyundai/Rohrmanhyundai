@@ -54,8 +54,8 @@ export const PAGE_GROUPS = [
     ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'], ['shop-appointments', 'Shop Appointments'],
     ['service-loaner', 'Service Loaner'], ['white-paint', 'White Paint'],
   ] },
-  { group: 'Parts · Warranty · Used Cars', pages: [
-    ['parts-hub', 'Parts Hub'], ['parts-goal-forecast', 'Parts Goal Forecast'], ['warranty-hub', 'Warranty Hub'],
+  { group: 'Parts · Warranty · Rentals · Used Cars', pages: [
+    ['parts-hub', 'Parts Hub'], ['parts-goal-forecast', 'Parts Goal Forecast'], ['warranty-hub', 'Warranty Hub'], ['rentals-hub', 'Rentals Hub'],
     ['used-car-hub', 'Used Car Hub'], ['tire-warranty', 'Tire Warranty'], ['registration-upload', 'Registration Upload'],
     ['registration-uploads', 'Registration Uploads (review)'], ['media-upload', 'Warranty Media Upload'],
   ] },

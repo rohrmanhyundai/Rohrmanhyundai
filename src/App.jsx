@@ -72,6 +72,7 @@ import HotRepairs from './components/HotRepairs';
 import WorkInProgress from './components/WorkInProgress';
 import PartsHub from './components/PartsHub';
 import WarrantyHub from './components/WarrantyHub';
+import RentalsHub from './components/RentalsHub';
 import UsedCarHub from './components/UsedCarHub';
 import SurveyReports from './components/SurveyReports';
 import ATDiagWorksheet from './components/ATDiagWorksheet';
@@ -102,6 +103,7 @@ const BACK_LABELS = {
   'advisor-calendar': '← Advisor Calendar',
   'parts-hub': '← Parts Hub',
   'warranty-hub': '← Warranty Hub',
+  'rentals-hub': '← Rentals Hub',
   'manager-hub': '← Manager Hub',
   'upload-reports': '← Upload Reports',
   'live-pay-hub': '← Live Pay',
@@ -176,6 +178,8 @@ export default function App() {
       const r = JSON.parse(localStorage.getItem('resumePage') || 'null');
       localStorage.removeItem('resumePage');
       if (r && r.page && Date.now() - r.ts < 10 * 60 * 1000 && localStorage.getItem(AUTH_KEY) === 'true') return r.page;
+      // Rentals people never use the dashboard — reopen on their hub.
+      if (localStorage.getItem(AUTH_KEY) === 'true' && localStorage.getItem('currentRole') === 'rentals') return 'rentals-hub';
     } catch {}
     return 'dashboard';
   });
@@ -968,6 +972,8 @@ export default function App() {
     setCurrentPages(pages);
     initActivityTracker(match.username, role);
     trackAction('login');
+    // Rentals (loaner) people never use the dashboard — they land on their hub.
+    if (String(match.role || '').toLowerCase() === 'rentals') setPage('rentals-hub');
   }
 
   function handleLogout() {
@@ -1120,6 +1126,7 @@ export default function App() {
       : jobRole === 'technician' ? 'tech-resources'
       : /parts/.test(jobRole) ? 'parts-hub'
       : /warranty/.test(jobRole) ? 'warranty-hub'
+      : jobRole === 'rentals' ? 'rentals-hub'
       : isAdminOrManager ? 'manager-hub' : 'dashboard';
     idleCtx.current = {
       inArea: inLockedPage || inLockedUsers,
@@ -1412,7 +1419,7 @@ export default function App() {
 
   if (page === 'work-in-progress') {
     if (!canAccess('workInProgress')) { setPage('tech-resources'); return null; }
-    const wipBackLabel = prevPage === 'advisor-calendar' ? '← Advisor Calendar' : prevPage === 'parts-hub' ? '← Parts Hub' : '← Technician Resources';
+    const wipBackLabel = prevPage === 'advisor-calendar' ? '← Advisor Calendar' : prevPage === 'parts-hub' ? '← Parts Hub' : prevPage === 'rentals-hub' ? '← Rentals Hub' : '← Technician Resources';
     return (
       <WorkInProgress
         currentUser={currentUser.toUpperCase()}
@@ -1511,6 +1518,26 @@ export default function App() {
         onRegistrationUploads={() => goTo('registration-uploads', 'warranty-hub')}
         onTireQuote={() => goTo('tire-quote', 'warranty-hub')}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'warranty-hub') : undefined}
+      />
+    );
+  }
+
+  // Rentals Hub — home for the loaner people. Every tile follows their page
+  // access boxes, so they see exactly what's ticked for them.
+  if (page === 'rentals-hub') {
+    return (
+      <RentalsHub
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage('dashboard')}
+        onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'rentals-hub') : undefined}
+        onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'rentals-hub') : undefined}
+        onWorkSchedule={canAccess('advisorSchedule') || canAccess('techSchedule') ? () => goTo('work-schedule', 'rentals-hub') : undefined}
+        onWorkInProgress={canAccess('workInProgress') ? () => goTo('work-in-progress', 'rentals-hub') : undefined}
+        onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'rentals-hub') : undefined}
+        onAftermarketWarranty={canAccess('aftermarketWarranty') ? () => goTo('aftermarket-warranty', 'rentals-hub') : undefined}
+        onDocumentLibrary={canAccess('documentLibrary') ? () => goTo('document-library', 'rentals-hub') : undefined}
+        onTireQuote={canAccess('tireQuote') ? () => goTo('tire-quote', 'rentals-hub') : undefined}
       />
     );
   }
@@ -1974,6 +2001,7 @@ export default function App() {
   if (page === 'document-library') {
     const dlBackLabels = {
       'parts-hub':      '← Parts Hub',
+      'rentals-hub':    '← Rentals Hub',
       'manager-hub':    '← Manager Hub',
       'tech-resources': '← Tech Resources',
       'advisor-calendar': '← Advisor Calendar',
@@ -2088,7 +2116,7 @@ export default function App() {
 
   if (page === 'aftermarket-warranty') {
     if (!canAccess('aftermarketWarranty')) { setPage(prevPage || 'advisor-calendar'); return null; }
-    const awBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : prevPage === 'warranty-hub' ? '← Warranty Hub' : '← Advisor Calendar';
+    const awBackLabel = prevPage === 'parts-hub' ? '← Parts Hub' : prevPage === 'warranty-hub' ? '← Warranty Hub' : prevPage === 'rentals-hub' ? '← Rentals Hub' : '← Advisor Calendar';
     return (
       <AftermarketWarranty
         currentUser={currentUser}
@@ -2289,6 +2317,7 @@ export default function App() {
             onTechnician={() => { localStorage.setItem('techChatLastSeen', Date.now().toString()); setTechUnread(0); navTo('tech-resources'); }}
             onParts={() => setPage('parts-hub')}
             onWarranty={() => setPage('warranty-hub')}
+            onRentals={() => setPage('rentals-hub')}
             onUsedCar={() => setPage('used-car-hub')}
             onManager={() => setPage('manager-hub')}
             advisorUnread={advisorUnread}

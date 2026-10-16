@@ -11,6 +11,17 @@
 
 export const ROLE_ACCESS_PATH = 'data/role-access.json';
 
+// A role's starting boxes before Role Setup has ever been saved for it: only
+// these pages on, every other box off. 'rentals' (the loaner people) is a newer
+// role, so it starts on Service Loaner and the few shared pages it needs.
+export const ROLE_DEFAULT_ON = {
+  rentals: ['serviceLoaner', 'documentLibrary', 'shopAppointments', 'advisorSchedule', 'techSchedule', 'mobileWorkSchedule'],
+};
+export function defaultTemplate(role, pageKeys) {
+  const on = ROLE_DEFAULT_ON[String(role || '').toLowerCase()];
+  return on ? Object.fromEntries(pageKeys.map(k => [k, on.includes(k)])) : null;
+}
+
 export function resolvePages(user, roleCfg) {
   if (!user) return null;
   const tpl = roleCfg && roleCfg.roles && roleCfg.roles[String(user.role || '').toLowerCase()];

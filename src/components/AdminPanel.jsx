@@ -6,7 +6,7 @@ import { saveDashboardToGitHub, saveUsers, saveSchedules, loadGithubFile, saveGi
 import { ensureMtd } from '../utils/advisorGoals';
 import { hashAccessCode } from '../utils/accessCode';
 import AccessGate from './AccessGate';
-import { ROLE_ACCESS_PATH, pageOn, overridesFrom } from '../utils/roleAccess';
+import { ROLE_ACCESS_PATH, pageOn, overridesFrom, defaultTemplate } from '../utils/roleAccess';
 import { hasCredential, passwordProblem, withPassword } from '../utils/password';
 import * as api from '../utils/api';
 import { requestPasswordReset, requestBigMoneyCoaching, requestDailyWrench, rehireFormerEmployee, markFormerEmployee, loadFormerEmployees } from '../utils/github';
@@ -240,6 +240,7 @@ function RoleSetup({ roles, users, roleCfg, currentUser, onSaved, onClose }) {
     for (const r of editable) {
       if (roleCfg && roleCfg.roles && roleCfg.roles[r]) { out[r] = { ...DEFAULT_PAGES, ...roleCfg.roles[r] }; continue; }
       const mine = (users || []).filter(u => (u.role || '') === r && u.pages);
+      if (!mine.length && defaultTemplate(r, PAGE_KEYS)) { out[r] = defaultTemplate(r, PAGE_KEYS); continue; }
       out[r] = Object.fromEntries(PAGE_KEYS.map(k => {
         if (!mine.length) return [k, DEFAULT_PAGES[k]];
         const on = mine.filter(u => (DEFAULT_OFF_SET.has(k) ? u.pages[k] === true : u.pages[k] !== false)).length;
@@ -464,7 +465,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [showRoleSetup, setShowRoleSetup] = useState(false);
   // Special boxes for the user in the form (per page; the rest follow the role).
   const [newUserOverrides, setNewUserOverrides] = useState({});
-  const roleTemplate = (r) => (roleCfg && roleCfg.roles && roleCfg.roles[r]) ? { ...DEFAULT_PAGES, ...roleCfg.roles[r] } : null;
+  // A role Role Setup hasn't saved yet (e.g. the new Rentals role) uses its
+  // built-in starting boxes until it is.
+  const roleTemplate = (r) => (roleCfg && roleCfg.roles && roleCfg.roles[r]) ? { ...DEFAULT_PAGES, ...roleCfg.roles[r] } : defaultTemplate(r, PAGE_KEYS);
   // Once roles are set up, the form shows role boxes + this user's special
   // boxes; ticking a box to differ from the role makes just that box special.
   const usingRoles = !!(roleCfg && !roleIsFull(newUserRole) && roleTemplate(newUserRole));
@@ -698,7 +701,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // 'porter' is a schedule-only role: they get a login and a row in the Work
   // Schedule Editor, but never appear on the dashboard, Tech Hours or Payroll.
-  const ROLES = ['admin', 'advisor', 'lead advisor', 'technician', 'porter', 'parts', 'parts manager', 'service manager', 'used car manager', 'warranty'];
+  // 'rentals' (loaners) is the same — never on a dashboard, roster, payroll or
+  // contest; they get the Rentals Hub and whatever pages are ticked for them.
+  const ROLES = ['admin', 'advisor', 'lead advisor', 'technician', 'porter', 'rentals', 'parts', 'parts manager', 'service manager', 'used car manager', 'warranty'];
 
   function updateField(path, value) {
     const newData = structuredClone(data);
@@ -3851,7 +3856,8 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, vacations = 
     { roleLabel: '🔧 Technicians',  color: '#c4b5fd', borderColor: 'rgba(167,139,250,.5)',  bg: 'rgba(167,139,250,.08)', emps: users.filter(u => u.role === 'technician').map(u => u.username.toUpperCase()).filter(Boolean) },
     { roleLabel: '📦 Parts',        color: '#fde68a', borderColor: 'rgba(251,191,36,.5)',   bg: 'rgba(251,191,36,.08)',   emps: users.filter(u => u.role === 'parts' || u.role === 'parts manager').map(u => u.username.toUpperCase()).filter(Boolean) },
     { roleLabel: '🧹 Porters',      color: '#fca5a5', borderColor: 'rgba(248,113,113,.5)',  bg: 'rgba(248,113,113,.08)',  emps: users.filter(u => u.role === 'porter').map(u => u.username.toUpperCase()).filter(Boolean) },
-    { roleLabel: '👤 Other / Admin',color: '#94a3b8', borderColor: 'rgba(148,163,184,.5)', bg: 'rgba(148,163,184,.08)', emps: users.filter(u => !u.role || !['advisor', 'lead advisor', 'technician', 'porter', 'parts', 'parts manager'].includes(u.role)).map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '🚙 Rentals',      color: '#93c5fd', borderColor: 'rgba(96,165,250,.5)',   bg: 'rgba(96,165,250,.08)',   emps: users.filter(u => u.role === 'rentals').map(u => u.username.toUpperCase()).filter(Boolean) },
+    { roleLabel: '👤 Other / Admin',color: '#94a3b8', borderColor: 'rgba(148,163,184,.5)', bg: 'rgba(148,163,184,.08)', emps: users.filter(u => !u.role || !['advisor', 'lead advisor', 'technician', 'porter', 'rentals', 'parts', 'parts manager'].includes(u.role)).map(u => u.username.toUpperCase()).filter(Boolean) },
   ].filter(g => g.emps.length > 0);
   // Map employee name → role color for tab styling
   const empRoleColor = {};
@@ -3861,6 +3867,7 @@ function ScheduleEditor({ schedules = {}, onSchedulesChange, users, vacations = 
     if (u.role === 'advisor' || u.role === 'lead advisor')  { empRoleColor[nm] = '#3dd6c3'; empRoleBorder[nm] = 'rgba(61,214,195,.6)'; }
     else if (u.role === 'technician')                       { empRoleColor[nm] = '#c4b5fd'; empRoleBorder[nm] = 'rgba(167,139,250,.6)'; }
     else if (u.role === 'porter')                           { empRoleColor[nm] = '#fca5a5'; empRoleBorder[nm] = 'rgba(248,113,113,.6)'; }
+    else if (u.role === 'rentals')                          { empRoleColor[nm] = '#93c5fd'; empRoleBorder[nm] = 'rgba(96,165,250,.6)'; }
     else if (u.role === 'parts' || u.role === 'parts manager') { empRoleColor[nm] = '#fde68a'; empRoleBorder[nm] = 'rgba(251,191,36,.6)'; }
     else                                                     { empRoleColor[nm] = '#94a3b8'; empRoleBorder[nm] = 'rgba(148,163,184,.5)'; }
   });
