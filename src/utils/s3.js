@@ -110,6 +110,19 @@ export async function uploadServiceLoanerToS3(file) {
   return url;
 }
 
+// Photo of a loaner that needs service (Service Loaner → Loaner Maintenance).
+// Same opaque-key, warranty-media/ folder the worker already allows.
+export async function uploadLoanerMaintenancePhotoToS3(file) {
+  const ext = (String(file.name || '').split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+  const key = `warranty-media/loaner-maintenance/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+  const type = file.type || 'application/octet-stream';
+  if (file.size <= PROXY_MAX) return putObject(key, file, type);
+  const { uploadUrl, url } = await apiJson(`/s3/presign?key=${encodeURIComponent(key)}`, { method: 'POST' });
+  const res = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': type }, body: file });
+  if (!res.ok) throw new Error(`Upload failed (${res.status})`);
+  return url;
+}
+
 // Upload a tire promotion image. Returns the public URL of the stored object —
 // the promo index stores that URL and the page renders it directly.
 export function uploadTirePromoToS3(filename, file) {

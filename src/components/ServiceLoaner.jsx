@@ -3,6 +3,7 @@ import * as github from '../utils/github';
 import { uploadServiceLoanerToS3, deleteS3ObjectByUrl } from '../utils/s3';
 import { readLoanerContract, fieldWarnings, isPdf } from '../utils/serviceLoaner';
 import LoanerRequests from './LoanerRequests';
+import LoanerMaintenance from './LoanerMaintenance';
 
 // ── Service Loaner ────────────────────────────────────────────────────────────
 // Signed loaner contracts (Vehicle Use Agreement face page). Upload Contract:
@@ -62,7 +63,7 @@ async function printContract(url) {
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const [tab, setTab] = useState(initialTab === 'upload' ? 'upload' : initialTab === 'list' ? 'list' : 'requests');
+  const [tab, setTab] = useState(['upload', 'list', 'maintenance'].includes(initialTab) ? initialTab : 'requests');
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -249,7 +250,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
 
   const tabBtn = (k, label) => (
-    <button onClick={() => { setTab(k); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
+    <button onClick={() => { setTab(k); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
   );
 
   return (
@@ -264,12 +265,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
         {tabBtn('requests', '🙋 Loaner Request')}
         {tabBtn('list', `📋 Contracts (${contracts.length})`)}
+        {tabBtn('maintenance', '🔧 Loaner Maintenance')}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
         <div style={{ maxWidth: 1800, margin: '0 auto' }}>
-          {tab === 'requests' ? (
+          {tab === 'maintenance' ? (
+            <LoanerMaintenance currentUser={currentUser} isManager={isManager} io={io} />
+          ) : tab === 'requests' ? (
             <LoanerRequests currentUser={currentUser} isManager={isManager} advisors={advisors} io={io} />
           ) : tab === 'upload' ? (
             !draft ? (

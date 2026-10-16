@@ -2526,3 +2526,17 @@ export async function updateLoanerRequests(mutate, what = 'update') {
     (cur) => mutate(cur && Array.isArray(cur.requests) ? cur : { requests: [] }),
     `Loaner request ${what} ${new Date().toISOString()}`);
 }
+
+// ── Loaner maintenance requests ───────────────────────────────────────────────
+// public/data/service-loaner/maintenance.json → { requests: [{ id, loanerNo, vin, year, model, mileage,
+//   priority: 'urgent'|'routine', services: [...], description, photos: [{ url, name, type }],
+//   status: 'open'|'done', requestedAt, requestedBy, doneAt, doneBy, doneNote }] }
+export async function loadLoanerMaintenance() {
+  try { const d = await loadGithubFile('data/service-loaner/maintenance.json'); if (d && Array.isArray(d.requests)) return d; } catch {}
+  return { requests: [] };
+}
+export async function updateLoanerMaintenance(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/maintenance.json',
+    (cur) => mutate(cur && Array.isArray(cur.requests) ? cur : { requests: [] }),
+    `Loaner maintenance ${what} ${new Date().toISOString()}`);
+}
