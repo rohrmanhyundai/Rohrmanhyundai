@@ -791,8 +791,48 @@
     },
     {
       "username": "Holli",
+      "lastName": "Lybrook",
+      "email": "hilli.lybrook@rohrmanauto.com",
+      "pwSalt": "516f2e9d393b6cf40dfa0dcf0c033342",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "Bj4ElIhz0TrC5Pno2poH/BpFQ5+oOBT6Df7sPEJao9FlUUU/6rlwX0wi8FyTc7fYrPmP7vgil9zEkaC8kLHiHL7bKcQu9qFkxvPEBchTpelz5qDYsZ6v/Mx/LCmf22SDANiYy5us1IhcLrK4HJCmDRXE/OTvpOjE7hThmd4WorXG+wdhfBJQ5lrAetz8jZgKRpUKDlsRy3TA/Zm7NOS3VQqroRjq04w9PK1lw+Gr6SFZQE2zeRoFtNw5xmiJmw6V9vnRROwwWYPrKSCmDwLPbrwKnyIChd7lciqoi1jGzy80Zz9PYGWrAQMilbifgElfvvOoSgKhO9ofmBSINHlBZA=="
+      },
       "role": "rentals",
-      "email": "hilli.lybrook@rohrmanauto.com"
+      "canEditDashboard": false,
+      "managementAccess": false,
+      "pages": {
+        "advisorCalendar": false,
+        "surveyReports": false,
+        "advisorSchedule": true,
+        "techSchedule": true,
+        "documentLibrary": true,
+        "aftermarketWarranty": true,
+        "originalOwner": false,
+        "serviceLoaner": true,
+        "whitePaint": false,
+        "workInProgress": false,
+        "shopAppointments": true,
+        "chargeAccountList": false,
+        "partsHub": false,
+        "tireQuote": true,
+        "atDiagWorksheet": false,
+        "usedCarHub": false,
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": false,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": false,
+        "mobileMediaUpload": true
+      },
+      "pageOverrides": {
+        "mobileMediaUpload": true,
+        "mobileAdditionalTime": true,
+        "aftermarketWarranty": true,
+        "tireQuote": true
+      },
+      "chatAccess": false,
+      "techChatAccess": true,
+      "hidden": true
     }
   ],
   "passwordVault": {
