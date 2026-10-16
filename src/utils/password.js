@@ -64,7 +64,7 @@ export async function checkResetToken(user, token) {
 // Minimum strength — keep it simple for a shop floor, but not "1234".
 export function passwordProblem(pw) {
   const p = String(pw || '');
-  if (p.length < 6) return 'Use at least 6 characters.';
+  if (p.length < 4) return 'Use at least 4 characters.';
   if (/^(.)\1+$/.test(p)) return 'That is one character repeated — pick something else.';
   return '';
 }
