@@ -2253,7 +2253,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     const existing = users.find(u => u.username === newUserName);
     if (!newUserName || (!existing && !newUserPass)) { alert('Enter username and password'); return; }
     if (newUserPass && passwordProblem(newUserPass)) { alert(passwordProblem(newUserPass)); return; }
-    if (newUserCode && newUserCode.length < 4) { alert('The applicants code needs at least 4 digits.'); return; }
+    if (newUserCode && newUserCode.length !== 4) { alert('The access code must be exactly 4 digits.'); return; }
     // The password goes to the worker (users.json is public and never holds
     // one). A typed password replaces whatever they had; a blank box on an
     // existing user keeps it. The record gets the pwSalt marker back and, with
@@ -3476,7 +3476,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 )}
               </label>
               <input value={newUserCode} inputMode="numeric" type="password"
-                onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 placeholder={existingCode ? 'Set — type to replace' : 'Not set'} />
               <div className="small" style={{ marginTop: 4 }}>
                 {existingCode
