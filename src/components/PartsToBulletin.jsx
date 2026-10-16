@@ -48,7 +48,7 @@ export function PartsToBulletinSearch({ items = [], loading = false, onOpen }) {
             // Part numbers get superseded, so the bulletin for the car in the bay
             // can carry a different number than the one typed — every listed
             // bulletin is worth a look, not just the exact match.
-            <div className="part-change-glow" style={{ background: 'rgba(251,191,36,.12)', border: '1px solid rgba(251,191,36,.55)', borderRadius: 8, padding: '9px 14px', marginBottom: 14, color: '#fcd34d', fontWeight: 800, fontSize: 12.5, textAlign: 'center', lineHeight: 1.5 }}>
+            <div className="confirm-warn-glow" style={{ background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.5)', borderRadius: 8, padding: '9px 14px', marginBottom: 14, color: '#fca5a5', fontWeight: 800, fontSize: 12.5, textAlign: 'center', lineHeight: 1.5 }}>
               ⚠️ TECH: PLEASE REVIEW EVERY BULLETIN LISTED BELOW — THE PART NUMBER MAY HAVE CHANGED (SUPERSEDED)
             </div>
           )}
