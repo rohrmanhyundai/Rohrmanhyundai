@@ -52,7 +52,7 @@ export const PAGE_GROUPS = [
     ['performance-report', 'My Reports'], ['service-pricing', 'Service Pricing Menu'], ['tire-quote', 'Tire Quote'],
     ['document-library', 'Document Library'], ['charge-account-list', 'Charge Account List'], ['hot-repairs', 'Recalls/TSB Bulletins'],
     ['aftermarket-warranty', 'Aftermarket Warranty'], ['original-owner', 'Original Owner'], ['shop-appointments', 'Shop Appointments'],
-    ['service-loaner', 'Service Loaner'], ['white-paint', 'White Paint'],
+    ['service-loaner', 'Service Loaner'], ['white-paint', 'White Paint'], ['parts-to-bulletin', 'Parts to Bulletin'],
   ] },
   { group: 'Parts · Warranty · Used Cars', pages: [
     ['parts-hub', 'Parts Hub'], ['parts-goal-forecast', 'Parts Goal Forecast'], ['warranty-hub', 'Warranty Hub'],

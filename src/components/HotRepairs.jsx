@@ -4,6 +4,7 @@ import { trackPage } from '../utils/activityTracker';
 import { loadPdfJs, extractPdfText, extractPdfTextFromBuffer, rankedMatches, scoreItem, textCache } from '../utils/pdfText';
 import { OpCodeGenerator, OpCodeEditor, OpCodeEditorLauncher, DigitalDocModal, MissingOpCodesModal } from './OpCodeTool';
 import VinSearchModal from './VinSearchModal';
+import PartsToBulletinModal from './PartsToBulletin';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 const NEW_DAYS = 7; // show NEW badge for items uploaded within this many days
@@ -73,7 +74,7 @@ function PdfPreview({ item, rawUrl }) {
 }
 
 // ── PDF Preview Modal ─────────────────────────────────────────────────────────
-function PreviewModal({ item, onClose }) {
+export function PreviewModal({ item, onClose }) {
   const rawUrl = docRawUrl(item.filename);
   const [loading, setLoading] = useState(true);
   // We prefer the browser's NATIVE PDF viewer (loaded from a blob URL) because
@@ -177,6 +178,7 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
   const [reindexStatus, setReindexStatus] = useState('');
   const [showOpGen, setShowOpGen]     = useState(false);
   const [showVin, setShowVin]         = useState(false);
+  const [showParts, setShowParts]     = useState(false);
   const [showOpEditSearch, setShowOpEditSearch] = useState(false);
   const [showMissingOps, setShowMissingOps] = useState(false);
   const [opEditItem, setOpEditItem]   = useState(null);
@@ -627,6 +629,10 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           style={{ background: 'linear-gradient(135deg,rgba(96,165,250,.25),rgba(59,130,246,.18))', border: '1px solid rgba(96,165,250,.5)', color: '#bfdbfe', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
           ⚙️ Op Code Generator
         </button>
+        <button onClick={() => setShowParts(true)}
+          style={{ background: 'linear-gradient(135deg,rgba(244,114,182,.25),rgba(219,39,119,.18))', border: '1px solid rgba(244,114,182,.5)', color: '#f9a8d4', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
+          🔩 Parts to Bulletin
+        </button>
         {canManage && (
           <button onClick={() => setShowOpEditSearch(true)}
             style={{ background: 'linear-gradient(135deg,rgba(167,139,250,.25),rgba(139,92,246,.18))', border: '1px solid rgba(167,139,250,.5)', color: '#c4b5fd', borderRadius: 12, padding: '10px 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}>
@@ -962,6 +968,16 @@ export default function HotRepairs({ currentUser, currentUserDisplay, currentRol
           hidden={!!previewItem}
           onOpen={item => setPreviewItem(item)}
           onClose={() => setShowVin(false)}
+        />
+      )}
+      {showParts && (
+        // Both libraries, whichever tab is open; stays mounted under an open
+        // bulletin so closing it lands back on the same results.
+        <PartsToBulletinModal
+          items={opCodePool}
+          hidden={!!previewItem}
+          onOpen={item => setPreviewItem(item)}
+          onClose={() => setShowParts(false)}
         />
       )}
       {opEditItem && (

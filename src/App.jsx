@@ -45,6 +45,7 @@ import DeferredService from './components/DeferredService';
 import OilGuard from './components/OilGuard';
 import ServiceLoaner from './components/ServiceLoaner';
 import WhitePaint from './components/WhitePaint';
+import PartsToBulletinPage from './components/PartsToBulletinPage';
 import DailyWrench from './components/DailyWrench';
 import Payroll from './components/Payroll';
 import { ResetPasswordPage, ChangePasswordModal, ForgotPasswordModal } from './components/PasswordPages';
@@ -1504,6 +1505,7 @@ export default function App() {
         onOriginalOwner={() => goTo('original-owner', 'warranty-hub')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'warranty-hub') : undefined}
         onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'warranty-hub') : undefined}
+        onPartsToBulletin={() => goTo('parts-to-bulletin', 'warranty-hub')}
         onDocumentLibrary={() => goTo('document-library', 'warranty-hub')}
         onATDiagWorksheet={() => { setPrevPage('warranty-hub'); goTo('at-diag-worksheet', 'warranty-hub'); }}
         onNttAttWorksheet={() => goTo('ntt-att-worksheet', 'warranty-hub')}
@@ -1696,6 +1698,18 @@ export default function App() {
         initialTab={launched ? uploadLaunch.tab : undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
+      />
+    );
+  }
+
+  if (page === 'parts-to-bulletin') {
+    // Open to everyone — no page-access box, same as the TSB library itself.
+    return (
+      <PartsToBulletinPage
+        currentUser={currentUser.toUpperCase()}
+        currentUserDisplay={currentUserDisplay}
+        onBack={() => setPage(prevPage || 'advisor-calendar')}
+        backLabel={BACK_LABELS[prevPage] || '← Back'}
       />
     );
   }
@@ -1911,6 +1925,7 @@ export default function App() {
         onOilGuard={() => goTo('oil-guard', 'advisor-calendar')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'advisor-calendar') : undefined}
         onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'advisor-calendar') : undefined}
+        onPartsToBulletin={() => goTo('parts-to-bulletin', 'advisor-calendar')}
         onDailyWrench={() => goTo('daily-wrench', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
         techNames={(data.technicians || []).map(t => t.name).filter(Boolean)}

@@ -85,7 +85,11 @@ export function extractWarrantyDraft(fullText) {
   body = body
     .replace(/(\d)\s*\.\s*(\d)\s*M\s*\/\s*H/gi, '$1.$2 M/H')                    // "0. 9 M/H" → "0.9 M/H"
     .replace(/\bZ\s*Z\s*(\d)\b/gi, 'ZZ$1')                                     // cause "ZZ 3" / "Z Z3" → "ZZ3"
+    .replace(/\b([A-Z])\s+(\d{1,2})\s+(ZZ\d)\b/g, '$1$2 $3')                   // nature "I 11 ZZ3" → "I11 ZZ3" (else "I" glues onto the causal part)
     .replace(/\b([A-Z]\d?)\s*([A-Z0-9])\s+(ZZ\d)\b/g, '$1$2 $3')               // nature "B1 E ZZ3" → "B1E ZZ3"
+    // causal base split by a stray space ("9661 1 - N9000" → "96611 - N9000").
+    // Hyundai part bases are 5 characters, so only a pair that adds up to 5 joins.
+    .replace(/\b(\d[0-9A-Z]{0,3}) ([0-9A-Z]{1,4})(?=\s*[-–—]\s*[0-9A-Z]{3,9}\b)/g, (m, a, b) => ((a + b).length === 5 ? a + b : m))
     .replace(/([0-9A-Z]{3,7})\s*[-–—]\s*([0-9A-Z]{3,9})/g, '$1-$2')            // causal "940C3 – P9060" → "940C3-P9060"
     .replace(/(\d+(?:\.\d+)?)\s*M\s*\/\s*H/gi, '$1M/H');                        // "0.6 M/H" → "0.6M/H"
 
