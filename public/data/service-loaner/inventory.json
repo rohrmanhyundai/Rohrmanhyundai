@@ -155,6 +155,18 @@
       "notes": "",
       "addedAt": "2026-10-16T19:40:09.785Z",
       "addedBy": "SHAWN"
+    },
+    {
+      "id": "li-mvbdhlibfmql",
+      "vin": "KMHL64JA8TA540488",
+      "stockNo": "LHY2633",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SONATA SEL SPORT",
+      "mileage": "",
+      "notes": "",
+      "addedAt": "2026-10-16T19:40:46.499Z",
+      "addedBy": "SHAWN"
     }
   ]
 }
