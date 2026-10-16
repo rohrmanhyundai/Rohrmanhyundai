@@ -4,7 +4,8 @@ import { uploadWarrantyMediaToS3, ensureAwsCreds } from '../utils/s3';
 
 // ── 🚙 Rental (phone) ─────────────────────────────────────────────────────────
 // Check-in / check-out pictures and videos of a loaner. Stock # (must be in
-// the fleet on Service Loaner → Loaner Inventory) → Checking In or Checking Out
+// the fleet on Service Loaner → Loaner Inventory) → customer first / last name
+// → Checking In or Checking Out
 // → Take Media (opens the phone camera; tap again for more) → Done — Send.
 // Files go to S3 (warranty-media/loaner-media/, big videos on a signed URL);
 // the session lands in data/service-loaner/media.json and shows on that
@@ -31,6 +32,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [fleet, setFleet] = useState(null);        // null = loading
   const [stock, setStock] = useState('');
   const [kind, setKind] = useState('');            // 'in' | 'out'
+  const [first, setFirst] = useState('');
+  const [last, setLast] = useState('');
   const [files, setFiles] = useState([]);          // { id, file, preview, kind, progress }
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -45,7 +48,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
 
   const key = normStock(stock);
   const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) : null), [fleet, key]);
-  const ready = !!vehicle && !!kind;
+  const hasName = !!first.trim() && !!last.trim();
+  const ready = !!vehicle && hasName && !!kind;
   const canSend = ready && files.length > 0 && !saving;
 
   function addFiles(e) {
@@ -69,6 +73,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   }
   function pick(ref) {
     if (!vehicle) { setError('Enter a stock # from the loaner fleet first.'); return; }
+    if (!hasName) { setError("Enter the customer's first and last name first."); return; }
     if (!kind) { setError('Pick Checking In or Checking Out first.'); return; }
     setError('');
     ref.current?.click();
@@ -98,12 +103,13 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
     try {
       const rec = {
         id: sessionId, vehicleId: vehicle.id, stockNo: vehicle.stockNo || key, vin: vehicle.vin || '', kind,
+        customerFirst: first.trim().toUpperCase(), customerLast: last.trim().toUpperCase(),
         at: new Date().toISOString(), by: String(currentUser || '').toUpperCase(), files: uploaded,
       };
       await updateLoanerMedia(cur => ({ ...cur, sessions: [...cur.sessions, rec] }), `${kind === 'in' ? 'check in' : 'check out'} ${rec.stockNo}`);
       files.forEach(f => URL.revokeObjectURL(f.preview));
       setDone({ stockNo: rec.stockNo, kind, count: uploaded.length });
-      setFiles([]); setStock(''); setKind('');
+      setFiles([]); setStock(''); setKind(''); setFirst(''); setLast('');
     } catch (err) {
       setError(`${err.message || 'Save failed.'} Tap Send again.`);
     }
@@ -150,15 +156,24 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           : <div style={{ color: '#fbbf24', fontSize: 12.5, marginTop: 6, fontWeight: 600 }}>No loaner with that stock # in the fleet. Check the number — or add it on Service Loaner → Loaner Inventory.</div>}
       </div>
 
-      {/* Step 2: in or out */}
+      {/* Step 2: customer */}
       <div style={{ ...CARD, opacity: vehicle ? 1 : 0.5 }}>
-        <label style={LABEL}>2 · Is it being…</label>
+        <label style={LABEL}>2 · Customer</label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input value={first} onChange={e => { setFirst(e.target.value); setError(''); }} placeholder="First name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
+          <input value={last} onChange={e => { setLast(e.target.value); setError(''); }} placeholder="Last name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
+        </div>
+      </div>
+
+      {/* Step 3: in or out */}
+      <div style={{ ...CARD, opacity: vehicle && hasName ? 1 : 0.5 }}>
+        <label style={LABEL}>3 · Is it being…</label>
         <div style={{ display: 'flex', gap: 8 }}>
           {['out', 'in'].map(k => {
             const on = kind === k, K = KIND[k];
             return (
-              <button key={k} type="button" disabled={!vehicle || saving} onClick={() => setKind(k)}
-                style={{ flex: 1, borderRadius: 10, padding: '16px 8px', fontSize: 15.5, fontWeight: 900, cursor: vehicle ? 'pointer' : 'not-allowed',
+              <button key={k} type="button" disabled={!vehicle || !hasName || saving} onClick={() => setKind(k)}
+                style={{ flex: 1, borderRadius: 10, padding: '16px 8px', fontSize: 15.5, fontWeight: 900, cursor: vehicle && hasName ? 'pointer' : 'not-allowed',
                   background: on ? `rgba(${K.rgb},.22)` : 'rgba(255,255,255,0.05)', border: `2px solid ${on ? `rgb(${K.rgb})` : 'rgba(255,255,255,0.14)'}`, color: on ? `rgb(${K.rgb})` : '#cbd5e1' }}>
                 {K.icon} {K.label}
               </button>
@@ -167,9 +182,9 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         </div>
       </div>
 
-      {/* Step 3: media */}
+      {/* Step 4: media */}
       <div style={{ ...CARD, opacity: ready ? 1 : 0.5 }}>
-        <label style={LABEL}>3 · Pictures &amp; videos</label>
+        <label style={LABEL}>4 · Pictures &amp; videos</label>
         <input ref={camRef} type="file" accept="image/*,video/*" capture="environment" onChange={addFiles} style={{ display: 'none' }} />
         <input ref={libraryRef} type="file" accept="image/*,video/*" multiple onChange={addFiles} style={{ display: 'none' }} />
         <button type="button" onClick={() => pick(camRef)} disabled={saving}

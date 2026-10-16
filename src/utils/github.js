@@ -2558,7 +2558,7 @@ export async function updateLoanerInventory(mutate, what = 'update') {
 // Phone → 🚙 Rental: stock #, check in or out, pictures/videos. Shown on the
 // loaner's card in Loaner Inventory (📸 Media).
 // public/data/service-loaner/media.json → { sessions: [{ id, vehicleId, stockNo, vin, kind: 'in'|'out',
-//   at, by, files: [{ url, name, type, kind: 'image'|'video', size }] }] }
+//   customerFirst, customerLast, at, by, files: [{ url, name, type, kind: 'image'|'video', size }] }] }
 export async function loadLoanerMedia() {
   try { const d = await loadGithubFile('data/service-loaner/media.json'); if (d && Array.isArray(d.sessions)) return d; } catch {}
   return { sessions: [] };

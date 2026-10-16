@@ -239,6 +239,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                       {m.kind === 'in' ? '🅿️ CHECK IN' : '🔑 CHECK OUT'}
                     </span>
                     <span style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{fmtWhen(m.at)}</span>
+                    {(m.customerFirst || m.customerLast) && <span style={{ fontSize: 14, fontWeight: 800, color: '#bfdbfe' }}>👤 {[m.customerFirst, m.customerLast].filter(Boolean).join(' ')}</span>}
                     <span style={{ fontSize: 13, color: '#94a3b8' }}>by {m.by} · {(m.files || []).length} file{(m.files || []).length === 1 ? '' : 's'}</span>
                     <div style={{ flex: 1 }} />
                     {isManager && <button disabled={busy} style={btn('248,113,113')} onClick={() => removeSession(m)}>🗑 Delete</button>}
