@@ -10,8 +10,7 @@ import ApplicableVehicles from './ApplicableVehicles';
 // utils/partsToBulletin.js.
 //
 // `items` is both libraries pooled, each tagged with _kind. The search itself is
-// the body; PartsToBulletinModal wraps it for the TSB page and
-// PartsToBulletinPage (its own file) for the hub tiles.
+// the body; PartsToBulletinModal wraps it for the TSB page's button.
 export function PartsToBulletinSearch({ items = [], loading = false, onOpen }) {
   const [part, setPart] = useState('');
   const res = useMemo(() => findBulletinsForPart(items, part), [items, part]);

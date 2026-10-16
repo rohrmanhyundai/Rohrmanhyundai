@@ -74,7 +74,7 @@ function PdfPreview({ item, rawUrl }) {
 }
 
 // ── PDF Preview Modal ─────────────────────────────────────────────────────────
-export function PreviewModal({ item, onClose }) {
+function PreviewModal({ item, onClose }) {
   const rawUrl = docRawUrl(item.filename);
   const [loading, setLoading] = useState(true);
   // We prefer the browser's NATIVE PDF viewer (loaded from a blob URL) because

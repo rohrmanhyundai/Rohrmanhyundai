@@ -23,7 +23,7 @@ const TOOLBAR_PATH = 'data/advisor-toolbar.json';
 const TOOL_LABELS = {
   completedTime: '⏰ Completed Time', hotRepairs: '🔧 Recalls/TSB Bulletins', documentLibrary: '📁 Document Library',
   chargeList: '💳 Charge List', servicePricing: '💲 Service Pricing Menu', deferredService: '🔧 Deferred Service', oilGuard: '🛢 Oil Guard',
-  serviceLoaner: '🚙 Service Loaner', whitePaint: '🎨 White Paint', partsToBulletin: '🔩 Parts to Bulletin',
+  serviceLoaner: '🚙 Service Loaner', whitePaint: '🎨 White Paint',
   workSchedule: '📅 Work Schedule', dailyWrench: '🔧 The Daily Wrench', aftermarketWarranty: '🛡 After Market Warranty/Tire Warranty',
   originalOwner: '📋 Original Owner', afterCall: '📞 After Call Reviews', surveyReports: '📊 Survey Reports',
   myReports: '📈 My Reports', cashDash: '💰 Cash Dash', bigMoneyLof: '💵 Big-Money LOF',
@@ -51,7 +51,6 @@ const card = (rgbA, rgbB, color) => ({ bg: `linear-gradient(135deg,rgba(${rgbA},
 const TOOL_CARDS = {
   completedTime:       { icon: '⏰', label: 'Completed Time',          desc: 'Jobs the techs have finished today',            ...card('251,146,60', '243,111,20', '#fdba74') },
   hotRepairs:          { icon: '🔧', label: 'Recalls/TSB Bulletins',   desc: 'Recall and TSB bulletin releases',              ...card('248,113,113', '239,68,68', '#fca5a5') },
-  partsToBulletin:     { icon: '🔩', label: 'Parts to Bulletin',       desc: 'Part number → TSBs and recalls with it as the causal part', ...card('244,114,182', '219,39,119', '#f9a8d4') },
   documentLibrary:     { icon: '📁', label: 'Document Library',        desc: 'Forms and reference documents',                 ...card('110,231,249', '61,214,195', '#6ee7f9') },
   chargeList:          { icon: '💳', label: 'Charge List',             desc: 'Approved charge accounts and tax-exempt status', ...card('99,102,241', '79,70,229', '#a5b4fc') },
   servicePricing:      { icon: '💲', label: 'Service Pricing Menu',    desc: 'Services, prices and packages',                 ...card('52,211,153', '16,185,129', '#6ee7b7') },
@@ -376,7 +375,7 @@ function writeWipCache(wip, awaiting) {
   try { localStorage.setItem(WIP_CACHE_KEY, JSON.stringify({ wip, awaiting })); } catch {}
 }
 
-export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, onOilGuard, onServiceLoaner, onWhitePaint, onPartsToBulletin, onDailyWrench, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
+export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorList, onViewingChange, onSelectDay, onBack, onDocumentLibrary, onWorkSchedule, onTireQuote, onAftermarketWarranty, onSurveyReports, onAfterCall, onOriginalOwner, onWorkInProgress, onRoUpload, onMyReports, onHotRepairs, onGoalsForecasting, onServicePricing, onChargeList, onCashDash, onLivePay, onBigMoneyLof, bigMoneyBadge = '', onDeferredService, onOilGuard, onServiceLoaner, onWhitePaint, onDailyWrench, refreshKey, userPages, currentRole, currentUser, chatUsers, techChatUsers, techNames = [], schedules = {}, vacations = [], advisors = [] }) {
   const today = new Date();
   // After 3pm Eastern, make the End of Day Reporting button pulse to grab the
   // advisor's attention. Ticks each minute so it flips on its own if left open.
@@ -760,7 +759,6 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   const allTools = [
               { key: 'completedTime' },
               canSee(userPages, currentRole, 'hotRepairs') && onHotRepairs && { key: 'hotRepairs' },
-              onPartsToBulletin && { key: 'partsToBulletin' },
               canSee(userPages, currentRole, 'documentLibrary') && { key: 'documentLibrary' },
               canSee(userPages, currentRole, 'chargeAccountList') && onChargeList && { key: 'chargeList' },
               canSee(userPages, currentRole, 'servicePricing') && onServicePricing && { key: 'servicePricing' },
@@ -792,11 +790,6 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
                 case 'hotRepairs': return (
                   <button onClick={onHotRepairs} style={{ background: 'linear-gradient(180deg,rgba(248,113,113,.25),rgba(239,68,68,.18))', borderColor: 'rgba(248,113,113,.35)' }}>
                     🔧 Recalls/TSB Bulletins
-                  </button>
-                );
-                case 'partsToBulletin': return (
-                  <button onClick={onPartsToBulletin} style={{ background: 'linear-gradient(180deg,rgba(244,114,182,.25),rgba(219,39,119,.18))', borderColor: 'rgba(244,114,182,.38)' }}>
-                    🔩 Parts to Bulletin
                   </button>
                 );
                 case 'documentLibrary': return (
@@ -986,7 +979,7 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
   // A Manager-Hub-style card for the All Tools page. Same click as the top-bar
   // button; the live badges ride along as a corner chip.
   const toolClick = {
-    completedTime: () => setShowCompletedTime(true), hotRepairs: onHotRepairs, partsToBulletin: onPartsToBulletin, documentLibrary: onDocumentLibrary,
+    completedTime: () => setShowCompletedTime(true), hotRepairs: onHotRepairs, documentLibrary: onDocumentLibrary,
     chargeList: onChargeList, servicePricing: onServicePricing, deferredService: onDeferredService, oilGuard: onOilGuard, serviceLoaner: onServiceLoaner, whitePaint: onWhitePaint, workSchedule: onWorkSchedule,
     dailyWrench: onDailyWrench ? () => { try { localStorage.setItem('dailyWrenchSeen', new Date().toDateString()); } catch {} onDailyWrench(); } : undefined,
     aftermarketWarranty: onAftermarketWarranty, originalOwner: onOriginalOwner, afterCall: onAfterCall, surveyReports: onSurveyReports,

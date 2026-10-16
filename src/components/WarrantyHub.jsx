@@ -27,15 +27,6 @@ const NAV_BUTTONS = [
     prop: 'onHotRepairs',
   },
   {
-    key: 'partsToBulletin',
-    label: '🔩 Parts to Bulletin',
-    desc: 'Part number → every TSB and recall with it as the causal part',
-    bg: 'linear-gradient(135deg,rgba(244,114,182,.25),rgba(219,39,119,.18))',
-    border: 'rgba(244,114,182,.45)',
-    color: '#f9a8d4',
-    prop: 'onPartsToBulletin',
-  },
-  {
     key: 'aftermarketWarranty',
     label: '🛡 After Market Warranty/Tire Warranty',
     desc: 'View and manage warranty claims',
@@ -121,9 +112,9 @@ const NAV_BUTTONS = [
 export default function WarrantyHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs,
-  onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onPartsToBulletin,
+  onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint,
 }) {
-  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint, onPartsToBulletin };
+  const handlers = { onAftermarketWarranty, onOriginalOwner, onDocumentLibrary, onATDiagWorksheet, onTireQuote, onNttAttWorksheet, onHotRepairs, onRegistrationUploads, onShopAppointments, onServiceLoaner, onWhitePaint };
   // A tile needs page access AND a handler from App (App leaves one out when it's off).
   const visible  = NAV_BUTTONS.filter(b => canSee(userPages, currentRole, b.key) && handlers[b.prop]);
 
