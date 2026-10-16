@@ -1,5 +1,17 @@
 [
   {
+    "id": "mvb0khc902yj",
+    "ro": "780361",
+    "hours": "0.50",
+    "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mvb0khc902yj-1792157973031.png",
+    "tech": "CORY",
+    "techDisplay": "CORY S",
+    "status": "submitted",
+    "submittedAt": "2026-10-16T13:39:35.456Z",
+    "approvedAt": null,
+    "approvedBy": null
+  },
+  {
     "id": "mv9mjl7g4wu9",
     "ro": "780361",
     "hours": "1.00",
