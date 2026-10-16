@@ -16,10 +16,10 @@
     "considerHire": "second",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-muv9crqnpaei.pdf",
     "resumeName": "Hunter_Cardwell.pdf",
-    "archived": false,
+    "archived": true,
     "id": "ap-muv9crvwt73g",
     "appliedAt": "2026-10-05T13:00:44.204Z",
-    "updatedAt": "2026-10-16T18:54:56.602Z",
+    "updatedAt": "2026-10-16T18:54:57.977Z",
     "updatedBy": "SHAWN",
     "secondInterviewAt": "2026-10-16T14:00"
   },
