@@ -18,7 +18,12 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvb80elk-rmpqhzbl.pdf",
       "completedFileName": "mv9sem0f-ruhfg1o5.pdf",
       "completedAt": "2026-10-16T17:07:27.465Z",
-      "completedBy": "SHAWN"
+      "completedBy": "SHAWN",
+      "warranty": {
+        "amount": 450,
+        "at": "2026-10-16T17:07:55.888Z",
+        "by": "SHAWN"
+      }
     },
     {
       "id": "sl-mvb7k8p7fa1k",
