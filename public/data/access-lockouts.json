@@ -1,4 +1,11 @@
 {
-  "updatedAt": "2026-10-13T19:15:10.526Z",
-  "users": {}
+  "updatedAt": "2026-10-16T18:08:14.804Z",
+  "users": {
+    "HOLLI": {
+      "fails": 1,
+      "strikes": 0,
+      "lastFailAt": 1792174094804,
+      "page": "service-loaner"
+    }
+  }
 }
