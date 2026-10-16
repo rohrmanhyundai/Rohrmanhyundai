@@ -21,7 +21,11 @@
     "size": 41278,
     "uploadedBy": "Shawn",
     "uploadedAt": "2026-10-16T11:11:12.956Z",
-    "allowedRoles": []
+    "allowedRoles": [
+      "parts manager",
+      "general manager",
+      "service manager"
+    ]
   },
   {
     "id": "muvap2pwpu7g",
