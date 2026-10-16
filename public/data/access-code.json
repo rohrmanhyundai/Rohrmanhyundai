@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T16:03:26.515Z",
+  "updatedAt": "2026-10-16T16:03:33.662Z",
   "by": "SHAWN",
   "locked": {
     "service-loaner": true,
@@ -68,7 +68,8 @@
       "live-pay-hub": true,
       "deferred-service": true,
       "registration-uploads": true,
-      "oil-guard": true
+      "oil-guard": true,
+      "service-loaner": true
     },
     "ADMIN": {
       "user-management": true,
