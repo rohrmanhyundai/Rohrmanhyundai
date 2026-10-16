@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadLoanerMaintenancePhotoToS3, deleteS3ObjectByUrl } from '../utils/s3';
+import { decodeVin, validateVin } from '../utils/vinLookup';
 
 // ── Loaner Maintenance (Service Loaner page tab) ─────────────────────────────
 // Anyone can put in a request for a loaner that needs maintenance or service:
@@ -19,7 +20,7 @@ const td = { padding: '10px 10px', fontSize: 14, color: '#e2e8f0', borderBottom:
 const label = { fontSize: 12, fontWeight: 800, color: '#94a3b8' };
 
 export const SERVICES = ['Oil change', 'Tires', 'Brakes', 'Detail / clean', 'Damage / body', 'Warning light', 'Recall', 'Other'];
-const EMPTY = () => ({ loanerNo: '', vin: '', year: '', model: '', mileage: '', priority: 'routine', services: [], description: '' });
+const EMPTY = () => ({ loanerNo: '', vin: '', year: '', make: '', model: '', mileage: '', priority: 'routine', services: [], description: '' });
 const MAX_PHOTOS = 6;
 
 const fmtWhen = (iso) => {
@@ -28,6 +29,31 @@ const fmtWhen = (iso) => {
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
 };
 const daysOpen = (iso) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86400000));
+// VIN → { year, make, model } via NHTSA (utils/vinLookup). One lookup per VIN
+// per visit; null while it's out, { ok:false } when it can't be decoded.
+const vinCache = {};
+function useVinDecode(raw) {
+  const v = validateVin(String(raw || '').replace(/\s+/g, ''));
+  const vin = v.ok ? v.vin : '';
+  const [res, setRes] = useState(vin ? vinCache[vin] || null : null);
+  useEffect(() => {
+    if (!vin) { setRes(null); return; }
+    if (vinCache[vin]) { setRes(vinCache[vin]); return; }
+    let alive = true;
+    setRes(null);
+    decodeVin(vin).then(r => {
+      const out = r.ok
+        ? { ok: true, vin, year: String(r.year || ''), make: (r.make || '').toUpperCase(), model: [r.model, r.trim].filter(Boolean).join(' ').toUpperCase() }
+        : { ok: false, vin, year: r.year ? String(r.year) : '', make: '', model: '', error: r.error };
+      vinCache[vin] = out;
+      if (alive) setRes(out);
+    });
+    return () => { alive = false; };
+  }, [vin]);
+  return { vin, decoding: !!vin && !res, res };
+}
+const vehicleText = (r) => [r.year, r.make, r.model].filter(Boolean).join(' ');
+
 const isImage = (p) => /^image\//.test(p.type || '') || /\.(jpe?g|png|gif|webp|heic)$/i.test(p.url || '');
 
 export default function LoanerMaintenance({ currentUser, isManager, io }) {
@@ -56,6 +82,14 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
   const set = (k) => (e) => setDraft(d => ({ ...d, [k]: k === 'vin' ? e.target.value.toUpperCase() : e.target.value }));
   const toggleService = (s) => setDraft(d => ({ ...d, services: d.services.includes(s) ? d.services.filter(x => x !== s) : [...d.services, s] }));
   const vin = draft.vin.replace(/\s+/g, '');
+  const formVin = useVinDecode(formOpen ? vin : '');
+  const searchVin = useVinDecode(q);
+  // A full VIN in the form fills year / make / model from the decoder.
+  useEffect(() => {
+    const r = formVin.res;
+    if (!r || r.vin !== vin) return;
+    setDraft(d => ({ ...d, year: r.year || d.year, make: r.make || d.make, model: r.model || d.model }));
+  }, [formVin.res]); // eslint-disable-line react-hooks/exhaustive-deps
   const missing = [
     !draft.loanerNo.trim() && !vin && 'loaner # or VIN',
     !draft.services.length && !draft.description.trim() && 'what it needs',
@@ -83,7 +117,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
       for (const f of files) photos.push({ url: await uploadPhoto(f.file), name: f.file.name || 'photo', type: f.file.type || '' });
       const rec = {
         id: `lm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
-        loanerNo: draft.loanerNo.trim(), vin, year: draft.year.trim(), model: draft.model.trim().toUpperCase(),
+        loanerNo: draft.loanerNo.trim(), vin, year: draft.year.trim(), make: draft.make.trim().toUpperCase(), model: draft.model.trim().toUpperCase(),
         mileage: draft.mileage.replace(/[^\d]/g, ''), priority: draft.priority,
         services: draft.services, description: draft.description.trim(), photos,
         status: 'open', requestedAt: new Date().toISOString(), requestedBy: currentUser,
@@ -136,7 +170,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
 
   const { open, done } = useMemo(() => {
     const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const hit = (r) => !terms.length || terms.every(t => [r.loanerNo, r.vin, r.year, r.model, r.description, (r.services || []).join(' '), r.requestedBy, r.doneNote].join(' ').toLowerCase().includes(t));
+    const hit = (r) => !terms.length || terms.every(t => [r.loanerNo, r.vin, r.year, r.make, r.model, r.description, (r.services || []).join(' '), r.requestedBy, r.doneNote].join(' ').toLowerCase().includes(t));
     const list = items.filter(hit);
     return {
       open: list.filter(r => r.status !== 'done').sort((a, b) => (a.priority === 'urgent' ? 0 : 1) - (b.priority === 'urgent' ? 0 : 1) || String(a.requestedAt).localeCompare(String(b.requestedAt))),
@@ -158,7 +192,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
       </td>
       <td style={td}>
         <div style={{ fontWeight: 900, fontSize: 15 }}>{r.loanerNo ? `#${r.loanerNo}` : <span style={{ color: '#64748b' }}>no #</span>}</div>
-        <div style={{ fontSize: 13, color: '#cbd5e1' }}>{[r.year, r.model].filter(Boolean).join(' ')}</div>
+        <div style={{ fontSize: 13, color: '#cbd5e1' }}>{vehicleText(r)}</div>
         {r.vin && <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#94a3b8' }}>{r.vin}</div>}
       </td>
       <td style={td}>{r.mileage ? Number(r.mileage).toLocaleString() : <span style={{ color: '#64748b' }}>—</span>}</td>
@@ -213,6 +247,13 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <button disabled={busy} onClick={() => { setStatus(''); setFormOpen(true); }} style={{ ...btn('74,222,128'), fontSize: 14.5, padding: '10px 20px' }}>🔧 New maintenance request</button>
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search loaner #, VIN, model, service…" style={{ ...inputStyle, maxWidth: 420, flex: '1 1 240px' }} />
+        {searchVin.vin && (
+          <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center', fontSize: 13.5, fontWeight: 800, color: '#bfdbfe', background: 'rgba(59,130,246,.14)', border: '1px solid rgba(147,197,253,.4)', borderRadius: 10, padding: '7px 12px' }}>
+            🚗 {searchVin.decoding ? 'Decoding VIN…' : searchVin.res.ok ? vehicleText(searchVin.res) : `${searchVin.res.year ? searchVin.res.year + ' · ' : ''}couldn't decode the model`}
+            <button disabled={busy} style={btn('74,222,128')}
+              onClick={() => { setStatus(''); setDraft({ ...EMPTY(), vin: searchVin.vin }); setFormOpen(true); }}>🔧 New request for this VIN</button>
+          </span>
+        )}
         {status && !formOpen && <span style={{ fontSize: 13.5, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</span>}
       </div>
 
@@ -242,13 +283,20 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, marginTop: 14 }}>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Loaner #</span><input autoFocus value={draft.loanerNo} onChange={set('loanerNo')} disabled={busy} style={inputStyle} /></label>
-              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Year</span><input value={draft.year} onChange={set('year')} disabled={busy} inputMode="numeric" maxLength={4} style={inputStyle} /></label>
-              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Model</span><input value={draft.model} onChange={set('model')} disabled={busy} placeholder="Kona, Tucson…" style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Current miles</span><input value={draft.mileage} onChange={set('mileage')} disabled={busy} inputMode="numeric" style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
-                <span style={label}>Loaner VIN{vin && vin.length !== 17 && <span style={{ color: '#fde68a', marginLeft: 8 }}>{vin.length} characters — should be 17</span>}</span>
-                <input value={draft.vin} onChange={set('vin')} disabled={busy} maxLength={20} style={{ ...inputStyle, letterSpacing: '.06em' }} />
+                <span style={label}>Loaner VIN
+                  {vin && vin.length !== 17 && <span style={{ color: '#fde68a', marginLeft: 8 }}>{vin.length} characters — should be 17</span>}
+                  {formVin.decoding && <span style={{ color: '#93c5fd', marginLeft: 8 }}>Decoding…</span>}
+                  {formVin.res && (formVin.res.ok
+                    ? <span style={{ color: '#86efac', marginLeft: 8 }}>✓ {vehicleText(formVin.res)}</span>
+                    : <span style={{ color: '#fde68a', marginLeft: 8 }}>Couldn't decode the model — type it in</span>)}
+                </span>
+                <input value={draft.vin} onChange={set('vin')} disabled={busy} maxLength={20} placeholder="Type the VIN — year, make and model fill in" style={{ ...inputStyle, letterSpacing: '.06em' }} />
               </label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Year</span><input value={draft.year} onChange={set('year')} disabled={busy} inputMode="numeric" maxLength={4} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Make</span><input value={draft.make} onChange={set('make')} disabled={busy} placeholder="Hyundai" style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Model</span><input value={draft.model} onChange={set('model')} disabled={busy} placeholder="Kona, Tucson…" style={inputStyle} /></label>
             </div>
 
             <div style={{ ...label, margin: '14px 0 6px' }}>Priority</div>
