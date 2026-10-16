@@ -795,7 +795,7 @@
       "email": "hilli.lybrook@rohrmanauto.com",
       "pwSalt": "00d644374b23b740f9e8f3eddb411661",
       "role": "rentals",
-      "canEditDashboard": false,
+      "canEditDashboard": true,
       "managementAccess": false,
       "pages": {
         "advisorCalendar": false,
@@ -832,6 +832,12 @@
       "passwordEnc": {
         "kid": "YuwDZUlFIR",
         "data": "Y4xCYYEtaPvOEVYtDGjDUzzDDiycrFad27MRn6RZgIR8aMAHWthU1BaReZQ+LqlfA6c9bo3tGd4XImZBa6DhZTZij6C3s7IQmDoLRRaKirONcw4UKdVLBngdpMtfkNvKpI0GjWsL3R2IvWIPk7rc3UIhCxTjAmOS2IGmcfjt3aHP9zyQKx7skRKbLf9HVN+PNRbhzAtVJj8JoRqJ9Ka30/9TKoCGtnBgVM+liCkKewXkcTnB41M4UF0WC3Qp7e57ufeyM26g6m1KeNoyz3BI6UMmr87NmcQ1Dh30ExcHrayR/HfBne65uoTMKgWItJh1U5btG9TqEwkk7/u36Tz1MQ=="
+      },
+      "applicantCode": {
+        "salt": "be0a241cc34a7f3e32998c95e85f361f",
+        "hash": "13cc0eedbc00045aa0be0aa5f62c1b5500cc168d0194f74f4938e7041d5282b0",
+        "iterations": 150000,
+        "setAt": "2026-10-16T18:07:33.682Z"
       }
     }
   ],
