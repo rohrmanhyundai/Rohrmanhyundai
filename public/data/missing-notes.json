@@ -1,22 +1,38 @@
 {
-  "updatedAt": "2026-10-15T21:51:31.294Z",
+  "updatedAt": "2026-10-16T21:14:09.661Z",
   "by": "SHAWN",
   "advisors": {
-    "CORY": [
+    "JORDAN": [
       {
-        "ro": "781581",
-        "vehicle": "2013 Ford Edge"
+        "ro": "781631",
+        "vehicle": "2026 Hyundai Elantra"
       },
       {
-        "ro": "781568",
-        "vehicle": "2018 Genesis G80"
+        "ro": "781630",
+        "vehicle": "2023 Hyundai Elantra"
       },
       {
-        "ro": "781567",
-        "vehicle": "2017 Nissan Murano"
+        "ro": "781629",
+        "vehicle": "2022 Hyundai Santa Fe"
+      },
+      {
+        "ro": "781619",
+        "vehicle": "2024 Hyundai Tucson Hybrid"
+      },
+      {
+        "ro": "781176",
+        "vehicle": "2013 Hyundai Sonata"
       }
     ],
     "DAVID": [
+      {
+        "ro": "781626",
+        "vehicle": "2024 Hyundai Palisade"
+      },
+      {
+        "ro": "781620",
+        "vehicle": "2022 Hyundai Tucson Plug-In Hybrid"
+      },
       {
         "ro": "781578",
         "vehicle": "2023 Hyundai Elantra"
@@ -26,16 +42,40 @@
         "vehicle": "2021 Hyundai Sonata"
       }
     ],
-    "MATTHEW": [
+    "CORY": [
       {
-        "ro": "781448",
-        "vehicle": "2023 Hyundai IONIQ 6"
+        "ro": "781625",
+        "vehicle": "2014 Toyota Corolla"
+      },
+      {
+        "ro": "781624",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781623",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781622",
+        "vehicle": "2026 Hyundai Santa Cruz"
+      },
+      {
+        "ro": "781603",
+        "vehicle": "2023 Mazda CX-9"
+      },
+      {
+        "ro": "781602",
+        "vehicle": "2023 Lexus IS350"
+      },
+      {
+        "ro": "781568",
+        "vehicle": "2018 Genesis G80"
       }
     ],
-    "JORDAN": [
+    "MATTHEW": [
       {
-        "ro": "781176",
-        "vehicle": "2013 Hyundai Sonata"
+        "ro": "781621",
+        "vehicle": "2017 Hyundai Sonata"
       }
     ]
   }
