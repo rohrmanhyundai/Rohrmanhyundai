@@ -1,0 +1,586 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-16",
+  "rows": [
+    {
+      "id": "rmvavd9ztnvh9",
+      "customerName": "Tristan Friend",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43714",
+      "vehicle": "2017 OTHER OTHER",
+      "services": [
+        "REPLACE FOUR TIRES"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztk56f",
+      "customerName": "Kahla Shanks",
+      "appointmentTime": "7:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43574",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "CUSTOMER STATES THE CAR WILL DYE WHEN DRIVING DOWN ROAD. THE CAR WILL CRANK OVER WONT START."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777586",
+        "date": "2026-05-18",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 2035.55,
+        "hours": 7.5,
+        "phone": "7654196688",
+        "vin": "5NMZT3LB7JH078306",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 459.97,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.95,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 206,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 289.69,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 200,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 432,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 180,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9ztaqpy",
+      "customerName": "Madison O'Brien",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43651",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztlco2",
+      "customerName": "John Gehm",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43688",
+      "vehicle": "2025 Hyundai Elantra Hybrid",
+      "services": [
+        "PERFORM LOF ROTATION (WARRANTY)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779410",
+        "date": "2026-07-21",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 253.47,
+        "hours": 0.8,
+        "phone": "3176677630",
+        "vin": "KMHLN4DJ0SU153574",
+        "items": [
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 50.48,
+            "priceEst": false
+          },
+          {
+            "code": "VACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 105.18,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 97.81,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9ztkmey",
+      "customerName": "Trista Watkins",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43704",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "CUSTOMER STATES- WE OWE Oil change",
+        "TIRE ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztczbk",
+      "customerName": "Alma Montes Getz",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43693",
+      "vehicle": "2024 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779190",
+        "date": "2026-07-16",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 1538.33,
+        "hours": 6.9,
+        "phone": "8325883364",
+        "vin": "5NMP4DGL2RH011170",
+        "items": [
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 203.94,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 198,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 138.55,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 105.91,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.06,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 455.37,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 178.19,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 47.51,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 118.8,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9zt2ewx",
+      "customerName": "Doreen Watkins",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43267",
+      "vehicle": "2021 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9zt0ze7",
+      "customerName": "Yu Chia Huang",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43712",
+      "vehicle": "2019 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES- Diag failed AC system"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztm205",
+      "customerName": "Bruce Lankenau",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43645",
+      "vehicle": "2024 Hyundai Santa Cruz",
+      "services": [
+        "Routine Maintenance (e.g. Oil Change, etc) — I need an oil change and tire rotation"
+      ],
+      "comments": "I need an oil change and tire rotation",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztrq6m",
+      "customerName": "Hunter Baughman",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43667",
+      "vehicle": "2023 Hyundai Santa Fe",
+      "services": [
+        "CUSTOMER STATES PART IN SOP SHOCKS."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781354",
+        "date": "2026-10-06",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 990.95,
+        "hours": 4.7,
+        "phone": "5748709353",
+        "vin": "5NMS2DAJ2PH602331",
+        "items": [
+          {
+            "code": "CABINAFTER",
+            "desc": "REPLACE CABIN AIR FILTER (NONOEM))",
+            "count": 1,
+            "h": 0.3,
+            "price": 49.67,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 357.64,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 76.99,
+            "priceEst": false
+          },
+          {
+            "code": "PADRESURF",
+            "desc": "Replace Front Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 365.92,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 140.73,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9ztwtgw",
+      "customerName": "Michael Payton",
+      "appointmentTime": "10:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43690",
+      "vehicle": "2022 Hyundai Elantra",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "777731",
+        "date": "2026-05-21",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 92.99,
+        "hours": 0.3,
+        "phone": "2709932160",
+        "vin": "5NPLS4AG1NH074743",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.3,
+            "price": 92.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9ztmrgs",
+      "customerName": "Stein Bang",
+      "appointmentTime": "1:40 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43672",
+      "vehicle": "2022 Hyundai Tucson Plug-In Hybrid",
+      "services": [
+        "CUSTOMER STATES PASSENGER FRONT WINDOW  WILL  GO UP/DOWN A LITTLE THEN HAVE TO PUSH AGAIN TO MAKE IT OPERATE. CHECK AND ADVISE",
+        "HY 9C7 emissions ECM Software Update For EGR Logic Improvement"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9zt0izk",
+      "customerName": "Sharon Burgett",
+      "appointmentTime": "3:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43577",
+      "vehicle": "2024 Hyundai Palisade",
+      "services": [
+        "292 R 3RD ROW QTR WIND GLASS FILM(26-01-050H)",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "775215",
+        "date": "2026-02-16",
+        "advisorFull": "NEVEN CHASTEEN",
+        "advisor": "NEVEN",
+        "amount": 139.95,
+        "hours": 1,
+        "phone": "7654272798",
+        "vin": "KM8R7DGE9RU704873",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvavd9zt3cdu",
+      "customerName": "Susan Dunn",
+      "appointmentTime": "3:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43705",
+      "vehicle": "2026 Hyundai Palisade Hybrid",
+      "services": [
+        "CUSTOMER STATES CHECK REAR LEFT TIRE LEAK."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvavd9ztfi5i",
+      "customerName": "Shae Savoie",
+      "appointmentTime": "4:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43694",
+      "vehicle": "2022 Hyundai Accent",
+      "services": [
+        "CUSTOMER STATES- 2nd owner, engine over heating. Happens at idle and while driving"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-16T11:13:39.022Z"
+}
