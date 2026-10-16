@@ -65,6 +65,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory'].includes(initialTab) ? initialTab : 'requests');
+  const [maintPrefill, setMaintPrefill] = useState(null);   // loaner picked on Loaner Inventory → new maintenance request
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -251,7 +252,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
 
   const tabBtn = (k, label) => (
-    <button onClick={() => { setTab(k); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
+    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
   );
 
   return (
@@ -274,9 +275,10 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
         <div style={{ maxWidth: 1800, margin: '0 auto' }}>
           {tab === 'inventory' ? (
-            <LoanerInventory currentUser={currentUser} io={io} />
+            <LoanerInventory currentUser={currentUser} io={io}
+              onMaintenance={(v) => { setMaintPrefill({ loanerNo: v.stockNo || '', vin: v.vin || '', year: v.year || '', make: v.make || '', model: v.model || '', mileage: v.mileage || '' }); setTab('maintenance'); }} />
           ) : tab === 'maintenance' ? (
-            <LoanerMaintenance currentUser={currentUser} isManager={isManager} io={io} />
+            <LoanerMaintenance key={maintPrefill ? maintPrefill.vin : 'm'} currentUser={currentUser} isManager={isManager} io={io} prefill={maintPrefill} />
           ) : tab === 'requests' ? (
             <LoanerRequests currentUser={currentUser} isManager={isManager} advisors={advisors} io={io} />
           ) : tab === 'upload' ? (

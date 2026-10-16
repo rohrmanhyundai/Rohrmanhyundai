@@ -21,7 +21,7 @@ const fmtWhen = (iso) => {
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
 };
 
-export default function LoanerInventory({ currentUser, io }) {
+export default function LoanerInventory({ currentUser, io, onMaintenance }) {
   const { loadLoanerInventory, updateLoanerInventory } = io || github;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -183,6 +183,7 @@ export default function LoanerInventory({ currentUser, io }) {
                     {!editing && (
                       <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
                         <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
+                        {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
                         <div style={{ flex: 1 }} />
                         <button disabled={busy} title="Take out of the fleet" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => remove(v)}>🗑 Remove</button>
                       </div>

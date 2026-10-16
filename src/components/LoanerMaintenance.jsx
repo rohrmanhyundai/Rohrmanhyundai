@@ -56,7 +56,7 @@ export const vehicleText = (r) => [r.year, r.make, r.model].filter(Boolean).join
 
 const isImage = (p) => /^image\//.test(p.type || '') || /\.(jpe?g|png|gif|webp|heic)$/i.test(p.url || '');
 
-export default function LoanerMaintenance({ currentUser, isManager, io }) {
+export default function LoanerMaintenance({ currentUser, isManager, io, prefill }) {
   const { loadLoanerMaintenance, updateLoanerMaintenance } = io || github;
   const uploadPhoto = io?.uploadLoanerMaintenancePhotoToS3 || uploadLoanerMaintenancePhotoToS3;
   const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
@@ -64,8 +64,9 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
-  const [formOpen, setFormOpen] = useState(false);
-  const [draft, setDraft] = useState(EMPTY);
+  // `prefill` (from Loaner Inventory's 🔧 button) opens the form on that loaner.
+  const [formOpen, setFormOpen] = useState(!!prefill);
+  const [draft, setDraft] = useState(() => prefill ? { ...EMPTY(), ...prefill } : EMPTY());
   const [files, setFiles] = useState([]);           // [{ file, url (preview) }]
   const [showDone, setShowDone] = useState(false);
   const [q, setQ] = useState('');
