@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T16:03:42.992Z",
+  "updatedAt": "2026-10-16T16:03:50.564Z",
   "by": "SHAWN",
   "locked": {
     "service-loaner": true,
@@ -114,7 +114,8 @@
       "live-pay": true,
       "oil-guard": true,
       "after-call": true,
-      "charge-account-list": true
+      "charge-account-list": true,
+      "service-loaner": true
     }
   },
   "idle": {
