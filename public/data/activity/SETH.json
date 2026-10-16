@@ -1,5 +1,10 @@
 [
   {
+    "at": "2026-10-16T14:22:35.588Z",
+    "type": "page",
+    "label": "work-schedule"
+  },
+  {
     "at": "2026-10-10T12:34:31.591Z",
     "type": "page",
     "label": "parts-hub"
@@ -267,36 +272,5 @@
     "at": "2026-09-18T12:09:48.688Z",
     "type": "page",
     "label": "hot-repairs"
-  },
-  {
-    "at": "2026-09-15T12:08:05.901Z",
-    "type": "page",
-    "label": "hotRepairs"
-  },
-  {
-    "at": "2026-09-15T12:08:05.898Z",
-    "type": "page",
-    "label": "hot-repairs"
-  },
-  {
-    "at": "2026-09-12T12:38:39.816Z",
-    "type": "action",
-    "label": "parts-received-mark",
-    "details": "RO 780616"
-  },
-  {
-    "at": "2026-09-12T12:38:13.027Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-11T19:40:59.206Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-09-11T15:13:35.955Z",
-    "type": "page",
-    "label": "advisor-calendar"
   }
 ]
