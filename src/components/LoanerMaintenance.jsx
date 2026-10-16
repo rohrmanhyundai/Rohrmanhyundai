@@ -5,7 +5,7 @@ import { decodeVin, validateVin } from '../utils/vinLookup';
 
 // ── Loaner Maintenance (Service Loaner page tab) ─────────────────────────────
 // Anyone can put in a request for a loaner that needs maintenance or service:
-// loaner #, VIN, year/model, miles, Urgent (out of service) or Routine, what it
+// stock #, VIN, year/model, miles, Urgent (out of service) or Routine, what it
 // needs (checkboxes + description) and phone photos. Open requests list urgent
 // first, then oldest. Anyone can mark one Done (optional note) or reopen it;
 // managers/admin can delete. Stored in data/service-loaner/maintenance.json,
@@ -91,7 +91,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
     setDraft(d => ({ ...d, year: r.year || d.year, make: r.make || d.make, model: r.model || d.model }));
   }, [formVin.res]); // eslint-disable-line react-hooks/exhaustive-deps
   const missing = [
-    !draft.loanerNo.trim() && !vin && 'loaner # or VIN',
+    !draft.loanerNo.trim() && !vin && 'stock # or VIN',
     !draft.services.length && !draft.description.trim() && 'what it needs',
   ].filter(Boolean);
 
@@ -191,7 +191,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
         {!isDone && <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 5 }}>{daysOpen(r.requestedAt) === 0 ? 'today' : `${daysOpen(r.requestedAt)}d open`}</div>}
       </td>
       <td style={td}>
-        <div style={{ fontWeight: 900, fontSize: 15 }}>{r.loanerNo ? `#${r.loanerNo}` : <span style={{ color: '#64748b' }}>no #</span>}</div>
+        <div style={{ fontWeight: 900, fontSize: 15 }}>{r.loanerNo ? `Stock #${r.loanerNo}` : <span style={{ color: '#64748b' }}>no stock #</span>}</div>
         <div style={{ fontSize: 13, color: '#cbd5e1' }}>{vehicleText(r)}</div>
         {r.vin && <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: '#94a3b8' }}>{r.vin}</div>}
       </td>
@@ -246,7 +246,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <button disabled={busy} onClick={() => { setStatus(''); setFormOpen(true); }} style={{ ...btn('74,222,128'), fontSize: 14.5, padding: '10px 20px' }}>🔧 New maintenance request</button>
-        <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search loaner #, VIN, model, service…" style={{ ...inputStyle, maxWidth: 420, flex: '1 1 240px' }} />
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search stock #, VIN, model, service…" style={{ ...inputStyle, maxWidth: 420, flex: '1 1 240px' }} />
         {searchVin.vin && (
           <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center', fontSize: 13.5, fontWeight: 800, color: '#bfdbfe', background: 'rgba(59,130,246,.14)', border: '1px solid rgba(147,197,253,.4)', borderRadius: 10, padding: '7px 12px' }}>
             🚗 {searchVin.decoding ? 'Decoding VIN…' : searchVin.res.ok ? vehicleText(searchVin.res) : `${searchVin.res.year ? searchVin.res.year + ' · ' : ''}couldn't decode the model`}
@@ -282,7 +282,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io }) {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, marginTop: 14 }}>
-              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Loaner #</span><input autoFocus value={draft.loanerNo} onChange={set('loanerNo')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Stock #</span><input autoFocus value={draft.loanerNo} onChange={set('loanerNo')} disabled={busy} style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Current miles</span><input value={draft.mileage} onChange={set('mileage')} disabled={busy} inputMode="numeric" style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
                 <span style={label}>Loaner VIN
