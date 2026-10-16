@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T16:03:50.564Z",
+  "updatedAt": "2026-10-16T16:03:58.946Z",
   "by": "SHAWN",
   "locked": {
     "service-loaner": true,
@@ -57,7 +57,8 @@
       "employee-review": true,
       "live-pay": true,
       "charge-account-list": true,
-      "user-management": true
+      "user-management": true,
+      "service-loaner": true
     },
     "DAVID": {
       "employee-review": true,
