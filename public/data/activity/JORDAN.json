@@ -1,5 +1,15 @@
 [
   {
+    "at": "2026-10-17T16:53:34.627Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-17T16:53:34.616Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
     "at": "2026-10-17T12:57:05.280Z",
     "type": "page",
     "label": "tire-quote"
@@ -1113,10 +1123,5 @@
     "at": "2026-09-17T19:07:37.825Z",
     "type": "page",
     "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-17T12:57:08.048Z",
-    "type": "page",
-    "label": "live-pay-hub"
   }
 ]
