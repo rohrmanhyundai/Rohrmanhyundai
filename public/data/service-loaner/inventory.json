@@ -6,11 +6,14 @@
       "stockNo": "LHY2445",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "PALISADE CALLIGRAPHY",
-      "mileage": "",
+      "model": "PALISADE CALLIGRAPHY AWD",
+      "mileage": "5",
       "notes": "",
       "addedAt": "2026-10-16T19:21:54.727Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TU032648",
+      "serviceStart": "2026-01-02",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbcxm0tpg2i",
@@ -18,11 +21,14 @@
       "stockNo": "LHY2815",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA FE SE",
-      "mileage": "",
+      "model": "SANTA FE HYBRID SE AWD",
+      "mileage": "5",
       "notes": "",
       "addedAt": "2026-10-16T19:25:14.045Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH114746",
+      "serviceStart": "2026-10-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbcydqo75r6",
@@ -30,11 +36,14 @@
       "stockNo": "LHY2828",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA FE XRT",
-      "mileage": "",
+      "model": "SANTA FE XRT 2.5T AWD",
+      "mileage": "5",
       "notes": "",
       "addedAt": "2026-10-16T19:25:49.968Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH203665",
+      "serviceStart": "2026-10-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbczco95qd5",
@@ -42,11 +51,14 @@
       "stockNo": "LHY2473",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA CRUZ SEL",
-      "mileage": "",
+      "model": "SANTA CRUZ SEL AWD",
+      "mileage": "6187",
       "notes": "",
       "addedAt": "2026-10-16T19:26:35.241Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH159469",
+      "serviceStart": "2026-03-02",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbd04g1uy78",
@@ -54,11 +66,14 @@
       "stockNo": "LHY2623",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT AWD",
+      "mileage": "2902",
       "notes": "",
       "addedAt": "2026-10-16T19:27:11.233Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA540737",
+      "serviceStart": "2026-07-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbd9atwntoj",
@@ -66,11 +81,14 @@
       "stockNo": "LHY2595",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT FWD",
+      "mileage": "5443",
       "notes": "",
       "addedAt": "2026-10-16T19:34:19.413Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA540230",
+      "serviceStart": "2026-05-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdalq9z5hm",
@@ -78,11 +96,14 @@
       "stockNo": "LHY2603",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA FE SE",
-      "mileage": "",
+      "model": "SANTA FE HYBRID SE AWD",
+      "mileage": "5639",
       "notes": "",
       "addedAt": "2026-10-16T19:35:20.193Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH095479",
+      "serviceStart": "2026-04-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdcis5m49g",
@@ -90,11 +111,14 @@
       "stockNo": "LHY2665",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA CRUZ SEL",
-      "mileage": "",
+      "model": "SANTA CRUZ SEL AWD",
+      "mileage": "88",
       "notes": "",
       "addedAt": "2026-10-16T19:36:49.686Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH166861",
+      "serviceStart": "2026-10-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbddmwhj1xe",
@@ -102,11 +126,14 @@
       "stockNo": "LHY2733",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "KONA SEL PREMIUM",
-      "mileage": "",
+      "model": "KONA SEL PREMIUM AWD",
+      "mileage": "1658",
       "notes": "",
       "addedAt": "2026-10-16T19:37:41.681Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TU393247",
+      "serviceStart": "2026-07-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdeh0v6oy2",
@@ -114,11 +141,14 @@
       "stockNo": "LHY2621",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT AWD",
+      "mileage": "5964",
       "notes": "",
       "addedAt": "2026-10-16T19:38:20.719Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA540808",
+      "serviceStart": "2026-07-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdf7tb8cef",
@@ -126,11 +156,14 @@
       "stockNo": "LHY2517",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA CRUZ SEL ACTIVITY",
-      "mileage": "",
+      "model": "SANTA CRUZ SEL ACTIVITY AWD",
+      "mileage": "5711",
       "notes": "",
       "addedAt": "2026-10-16T19:38:55.439Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH161729",
+      "serviceStart": "2026-03-03",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdfxrcmzyk",
@@ -138,11 +171,14 @@
       "stockNo": "LHY2684",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT AWD",
+      "mileage": "584",
       "notes": "",
       "addedAt": "2026-10-16T19:39:29.064Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA551715",
+      "serviceStart": "2026-10-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdgt6hpbez",
@@ -150,11 +186,14 @@
       "stockNo": "LHY2583",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT FWD",
+      "mileage": "2045",
       "notes": "",
       "addedAt": "2026-10-16T19:40:09.785Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA540913",
+      "serviceStart": "2026-05-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdhlibfmql",
@@ -162,11 +201,14 @@
       "stockNo": "LHY2633",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SONATA SEL SPORT",
-      "mileage": "",
+      "model": "SONATA SEL SPORT AWD",
+      "mileage": "3455",
       "notes": "",
       "addedAt": "2026-10-16T19:40:46.499Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TA540488",
+      "serviceStart": "2026-07-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdigrk6cvq",
@@ -174,11 +216,14 @@
       "stockNo": "LHY2879",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "PALISADE XRT PRO",
-      "mileage": "",
+      "model": "PALISADE XRT PRO AWD",
+      "mileage": "5",
       "notes": "",
       "addedAt": "2026-10-16T19:41:27.008Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TU107418",
+      "serviceStart": "2026-10-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     },
     {
       "id": "li-mvbdo36foh48",
@@ -186,11 +231,14 @@
       "stockNo": "LHY2609",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA CRUZ SEL",
-      "mileage": "",
+      "model": "SANTA CRUZ SEL AWD",
+      "mileage": "4873",
       "notes": "",
       "addedAt": "2026-10-16T19:45:49.335Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "unitNo": "TH164629",
+      "serviceStart": "2026-05-01",
+      "fleetSyncedAt": "2026-10-18T17:06:25.891Z"
     }
   ]
 }
