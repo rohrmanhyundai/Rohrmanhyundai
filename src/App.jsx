@@ -1541,7 +1541,8 @@ export default function App() {
         currentUserDisplay={currentUserDisplay}
         onBack={() => setPage('dashboard')}
         onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'rentals-hub') : undefined}
-        onRentalMedia={canAccess('serviceLoaner') && canAccess('mobileLoanerMedia') ? () => goTo('loaner-media', 'rentals-hub') : undefined}
+        // Phone only — check-in/out pictures are taken on a phone, never at a desk.
+        onRentalMedia={noPopups && canAccess('serviceLoaner') && canAccess('mobileLoanerMedia') ? () => goTo('loaner-media', 'rentals-hub') : undefined}
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'rentals-hub') : undefined}
         onWorkSchedule={canAccess('advisorSchedule') || canAccess('techSchedule') ? () => goTo('work-schedule', 'rentals-hub') : undefined}
         onWorkInProgress={canAccess('workInProgress') ? () => goTo('work-in-progress', 'rentals-hub') : undefined}
