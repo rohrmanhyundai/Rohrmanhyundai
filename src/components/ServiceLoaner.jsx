@@ -72,7 +72,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory'].includes(initialTab) ? initialTab : 'requests');
   const [maintPrefill, setMaintPrefill] = useState(null);
-  const [bulkOpen, setBulkOpen] = useState(false);   // loaner picked on Loaner Inventory → new maintenance request
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);   // Completed contracts section unfolded   // loaner picked on Loaner Inventory → new maintenance request
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -202,7 +203,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       setEditing(e => ({ ...e, ...changes }));
       setEditView('completed');
       if (old) { try { await deleteS3ObjectByUrl(old); } catch {} }
-      setStatus('✓ Completed contract saved.');
+      setStatus('✓ Completed contract saved — it now sits under ✅ Completed contracts.');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Upload failed.'}`);
     }
@@ -285,6 +286,80 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       return terms.every(t => hay.includes(t));
     });
   }, [contracts, q]);
+
+  const contractTable = (list, done) => (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
+                      <thead><tr>
+                        <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
+                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
+                      </tr></thead>
+                      <tbody>
+                        {list.map(c => (
+                          // Click anywhere on the row to open it for editing; the buttons on the right do their own thing.
+                          <tr key={c.id} onClick={() => !busy && startEdit(c)} title="Click to open / edit" style={{ cursor: 'pointer' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(110,231,249,.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = ''; }}>
+                            <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                              {c.firstName} {c.lastName}
+                              {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
+                              {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
+                            </td>
+                            <td style={td}>{c.ro || <span style={{ color: '#64748b' }}>—</span>}</td>
+                            <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{c.vin}</td>
+                            <td style={td}>{c.year}</td>
+                            <td style={td}>{c.make}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap' }}>{c.model}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
+                              {c.completedUrl
+                                ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
+                                : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
+                              {c.warranty && (
+                                <div title={`Warranty claim by ${c.warranty.by} ${new Date(c.warranty.at).toLocaleDateString()}`}
+                                  style={{ marginTop: 5, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
+                                  🛡 Warranty {money(c.warranty.amount)}
+                                </div>
+                              )}
+                            </td>
+                            <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
+                            <td style={{ ...td, whiteSpace: 'nowrap' }} onClick={e => e.stopPropagation()}>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
+                                {c.completedUrl || c.fileUrl ? (
+                                  <>
+                                    <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
+                                    <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
+                                    {done && <button style={actionBtn('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(c)}>⬇ Download</button>}
+                                  </>
+                                ) : (
+                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={actionBtn('74,222,128')} onClick={() => startEdit(c)}>📎 Attach scan</button>
+                                )}
+                                <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+  );
+  // Save the completed (returned) contract — or the original if that's all there is.
+  async function downloadContract(c) {
+    const url = c.completedUrl || c.fileUrl;
+    const ext = ((c.completedUrl ? c.completedFileName : c.fileName) || url).match(/\.(pdf|jpe?g|png|heic|webp)$/i)?.[1] || 'pdf';
+    const name = [c.lastName, c.firstName, c.raNo || '', c.ro ? `RO${c.ro}` : '', c.completedUrl ? 'returned' : '']
+      .filter(Boolean).join('-').replace(/[^A-Za-z0-9-]+/g, '') + '.' + ext.toLowerCase();
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error();
+      const blobUrl = URL.createObjectURL(await res.blob());
+      const a = document.createElement('a');
+      a.href = blobUrl; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+    } catch {
+      window.open(url, '_blank', 'noopener');
+    }
+  }
 
   const warnings = draft && !reading ? fieldWarnings(draft) : [];
   const dupe = draft && draft.ro ? contracts.find(c => c.ro && c.ro === draft.ro) : null;
@@ -465,60 +540,29 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
               {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
                 : contracts.length === 0 ? <div style={{ color: '#94a3b8' }}>No loaner contracts yet — click 📤 Upload Contract to add one.</div>
                 : shown.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
-                : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
-                      <thead><tr>
-                        <th style={th}>Customer</th><th style={th}>RO #</th><th style={th}>Loaner VIN</th><th style={th}>Year</th>
-                        <th style={th}>Make</th><th style={th}>Model</th><th style={th}>Out</th><th style={th}>Status</th><th style={th}>Uploaded</th><th style={th}></th>
-                      </tr></thead>
-                      <tbody>
-                        {shown.map(c => (
-                          // Click anywhere on the row to open it for editing; the buttons on the right do their own thing.
-                          <tr key={c.id} onClick={() => !busy && startEdit(c)} title="Click to open / edit" style={{ cursor: 'pointer' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(110,231,249,.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = ''; }}>
-                            <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
-                              {c.firstName} {c.lastName}
-                              {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
-                              {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
-                            </td>
-                            <td style={td}>{c.ro || <span style={{ color: '#64748b' }}>—</span>}</td>
-                            <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{c.vin}</td>
-                            <td style={td}>{c.year}</td>
-                            <td style={td}>{c.make}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap' }}>{c.model}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap' }}>{fmtDate(c.dateOut)} {fmtTime(c.timeOut)}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap', fontSize: 13, fontWeight: 800 }}>
-                              {c.completedUrl
-                                ? <span style={{ color: '#86efac' }}>✓ Returned<br /><span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{new Date(c.completedAt).toLocaleDateString()}</span></span>
-                                : <span style={{ color: '#fbbf24' }}>🚗 Out</span>}
-                              {c.warranty && (
-                                <div title={`Warranty claim by ${c.warranty.by} ${new Date(c.warranty.at).toLocaleDateString()}`}
-                                  style={{ marginTop: 5, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
-                                  🛡 Warranty {money(c.warranty.amount)}
-                                </div>
-                              )}
-                            </td>
-                            <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap' }} onClick={e => e.stopPropagation()}>
-                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
-                                {c.completedUrl || c.fileUrl ? (
-                                  <>
-                                    <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
-                                    <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
-                                  </>
-                                ) : (
-                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={actionBtn('74,222,128')} onClick={() => startEdit(c)}>📎 Attach scan</button>
-                                )}
-                                <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                : (() => {
+                  // Still out on top; once the completed (returned) contract is uploaded it
+                  // moves down to Completed contracts — kept for downloading later.
+                  const out = shown.filter(c => !c.completedUrl);
+                  const done = shown.filter(c => c.completedUrl)
+                    .sort((a, b) => String(b.completedAt || '').localeCompare(String(a.completedAt || '')));
+                  const openDone = showCompleted || !!q.trim();
+                  return (
+                    <>
+                      {out.length ? contractTable(out, false)
+                        : <div style={{ color: '#94a3b8', padding: '6px 2px' }}>{q.trim() ? `No open contracts match “${q}”.` : 'No loaners out right now. 👍'}</div>}
+                      <div style={{ marginTop: 22, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.2)' }}>
+                        <button onClick={() => setShowCompleted(v => !v)} disabled={!!q.trim()}
+                          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 16, fontWeight: 900, color: '#86efac' }}>
+                          {openDone ? '▾' : '▸'} ✅ Completed contracts ({done.length})
+                        </button>
+                        <span style={{ fontSize: 12.5, color: '#94a3b8', marginLeft: 10 }}>Returned loaners — open, print or ⬇ download the signed contract any time.</span>
+                        {openDone && (done.length ? <div style={{ marginTop: 10 }}>{contractTable(done, true)}</div>
+                          : <div style={{ color: '#94a3b8', marginTop: 8 }}>{q.trim() ? `No completed contracts match “${q}”.` : 'None yet — upload the completed contract when a loaner comes back.'}</div>)}
+                      </div>
+                    </>
+                  );
+                })()}
             </div>
           )}
         </div>
