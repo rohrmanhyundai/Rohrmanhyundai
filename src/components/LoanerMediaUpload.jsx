@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadWarrantyMediaToS3, ensureAwsCreds } from '../utils/s3';
+import VinScanner from './VinScanner';
 
 // ── 🚙 Rental (phone) ─────────────────────────────────────────────────────────
-// Check-in / check-out pictures and videos of a loaner. Stock # (must be in
+// Check-in / check-out pictures and videos of a loaner. Stock # — or 📷 Scan
+// VIN, which reads the door-jamb barcode and finds the loaner by VIN (must be in
 // the fleet on Service Loaner → Loaner Inventory) → customer first / last name
 // → Checking In or Checking Out
 // → Take Media (opens the phone camera; tap again for more) → Done — Send.
@@ -38,6 +40,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(null);          // { stockNo, kind, count }
+  const [scanning, setScanning] = useState(false);
   const camRef = useRef(null);
   const libraryRef = useRef(null);
 
@@ -47,8 +50,11 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   useEffect(() => () => files.forEach(f => URL.revokeObjectURL(f.preview)), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const key = normStock(stock);
-  // Stock # first; the fleet report's unit # works too.
-  const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) || fleet.find(v => normStock(v.unitNo) === key) : null), [fleet, key]);
+  // Stock # first; the fleet report's unit # works too, and so does the VIN
+  // (scanned, typed in full, or its last 6+ characters).
+  const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) || fleet.find(v => normStock(v.unitNo) === key)
+    || fleet.find(v => v.vin && (v.vin === key || (key.length >= 6 && v.vin.endsWith(key)))) : null), [fleet, key]);
+  const isVin = key.length === 17;
   const hasName = !!first.trim() && !!last.trim();
   const ready = !!vehicle && hasName && !!kind;
   const canSend = ready && files.length > 0 && !saving;
@@ -138,6 +144,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0d1627', color: '#e2e8f0', fontFamily: 'Inter, sans-serif', padding: '16px 14px 40px' }}>
+      {scanning && <VinScanner onCancel={() => setScanning(false)} onScan={(vin) => { setScanning(false); setStock(vin); setError(''); }} />}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 16 }}>
         <div>
           <div style={{ color: '#93c5fd', fontWeight: 800, fontSize: 18 }}>🚙 Rental</div>
@@ -148,12 +155,17 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
 
       {/* Step 1: stock # */}
       <div style={CARD}>
-        <label style={LABEL}>1 · Stock #</label>
-        <input value={stock} onChange={e => { setStock(e.target.value.toUpperCase()); setError(''); }} placeholder="e.g. LHY2445"
+        <label style={LABEL}>1 · Stock # or scan the VIN</label>
+        <button type="button" onClick={() => { setError(''); setScanning(true); }} disabled={saving}
+          style={{ width: '100%', marginBottom: 8, background: 'rgba(74,222,128,.12)', border: '1px dashed rgba(74,222,128,.6)', color: '#e2e8f0', borderRadius: 10, padding: '16px 8px', cursor: 'pointer', fontSize: 16.5, fontWeight: 900 }}>
+          📷 Scan VIN
+        </button>
+        <input value={stock} onChange={e => { setStock(e.target.value.toUpperCase()); setError(''); }} placeholder="…or type the stock # (e.g. LHY2445)"
           autoCapitalize="characters" autoCorrect="off" disabled={saving} style={{ ...INPUT, fontWeight: 800, letterSpacing: '.04em' }} />
         {fleet === null ? <div style={{ color: '#7a92b8', fontSize: 12.5, marginTop: 6 }}>Loading the fleet…</div>
           : !key ? null
-          : vehicle ? <div style={{ color: '#4ade80', fontSize: 13.5, marginTop: 6, fontWeight: 800 }}>✓ {vehicleText(vehicle) || 'Loaner'}{vehicle.vin ? ` · …${vehicle.vin.slice(-6)}` : ''}</div>
+          : vehicle ? <div style={{ color: '#4ade80', fontSize: 13.5, marginTop: 6, fontWeight: 800 }}>✓ {vehicle.stockNo ? `Stock #${vehicle.stockNo} · ` : ''}{vehicleText(vehicle) || 'Loaner'}{vehicle.vin ? ` · …${vehicle.vin.slice(-6)}` : ''}</div>
+          : isVin ? <div style={{ color: '#fbbf24', fontSize: 12.5, marginTop: 6, fontWeight: 600 }}>VIN {key} isn't in the loaner fleet. Add it on Service Loaner → Loaner Inventory (or upload the fleet PDF).</div>
           : <div style={{ color: '#fbbf24', fontSize: 12.5, marginTop: 6, fontWeight: 600 }}>No loaner with that stock # in the fleet. Check the number — or add it on Service Loaner → Loaner Inventory.</div>}
       </div>
 
