@@ -507,6 +507,15 @@ export default function App() {
     };
   }, []);
 
+  // A phone is still a phone when it's turned sideways (then wider than 600px):
+  // touch screen with a short side under 600px. Chat popups, the messenger and
+  // the pricing bubble stay off on phones either way up — they covered the
+  // Rental page / VIN scanner in landscape.
+  const phoneDevice = useMemo(() => {
+    try { return window.matchMedia('(pointer: coarse)').matches && Math.min(window.screen.width, window.screen.height) < 600; } catch { return false; }
+  }, []);
+  const noPopups = isPhone || phoneDevice;
+
   // ── @mention alerts ─────────────────────────────────────────────────────────
   // When someone types "@<you>" in either chat, pop a blocking OK popup on this
   // user's screen. Real-time via the chat Pusher events (which now carry the
@@ -515,7 +524,7 @@ export default function App() {
   useEffect(() => {
     // Messages are a computer-view thing — the phone view neither shows nor
     // polls for them (saves the shared GitHub rate limit too).
-    if (!isLoggedIn || !currentUser || isPhone) return;
+    if (!isLoggedIn || !currentUser || noPopups) return;
     const meU = currentUser.toUpperCase();
     chatMentionIdsRef.current = new Set(); setChatMentions([]);   // fresh list per signed-in user
     const ackKey = `chatMentionAck:${meU}`;
@@ -692,7 +701,7 @@ export default function App() {
         if (pusher) pusher.connection.unbind('connected', onConnect);
       } catch {}
     };
-  }, [isLoggedIn, currentUser, isPhone]);
+  }, [isLoggedIn, currentUser, noPopups]);
 
   // OK on the mention popup: acknowledge it (so it never returns), jump to the
   // screen that holds that chat, then show the next queued mention, if any.
@@ -1159,7 +1168,7 @@ export default function App() {
   // The @mention popup must appear on EVERY screen, but each page below returns
   // early — so render it through a portal to <body>, above the page switch, and
   // wrap all the page rendering in renderPage() so the portal always renders.
-  const mentionModal = mention && !isPhone ? createPortal(
+  const mentionModal = mention && !noPopups ? createPortal(
     (
       <div style={{ position: 'fixed', inset: 0, zIndex: 2147483000, background: 'rgba(2,6,23,.78)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{
@@ -2379,7 +2388,7 @@ export default function App() {
   // both read and send.
   const canSendGlobal = true;
   // Not on the phone view — messaging is for the computer view only.
-  const messenger = isLoggedIn && !isPhone ? createPortal(
+  const messenger = isLoggedIn && !noPopups ? createPortal(
     <FloatingMessenger
       currentUser={currentUser}
       currentRole={currentRole}
@@ -2397,7 +2406,7 @@ export default function App() {
     />, document.body) : null;
   // $ Pricing Tool bubble — draggable like the messenger, on every page for
   // anyone with Service Pricing Menu access (computer view only).
-  const pricingBubble = isLoggedIn && !isPhone && canAccess('servicePricing') ? createPortal(
+  const pricingBubble = isLoggedIn && !noPopups && canAccess('servicePricing') ? createPortal(
     <FloatingPricingTool currentUser={currentUser} currentRole={currentRole} />, document.body) : null;
 
   if (showReset && resetLink) {
