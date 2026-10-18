@@ -474,7 +474,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                       </tr></thead>
                       <tbody>
                         {shown.map(c => (
-                          <tr key={c.id}>
+                          // Click anywhere on the row to open it for editing; the buttons on the right do their own thing.
+                          <tr key={c.id} onClick={() => !busy && startEdit(c)} title="Click to open / edit" style={{ cursor: 'pointer' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(110,231,249,.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = ''; }}>
                             <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
                               {c.firstName} {c.lastName}
                               {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
@@ -498,7 +500,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                               )}
                             </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap' }}>
+                            <td style={{ ...td, whiteSpace: 'nowrap' }} onClick={e => e.stopPropagation()}>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
                                 {c.completedUrl || c.fileUrl ? (
                                   <>
@@ -506,9 +508,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                     <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
                                   </>
                                 ) : (
-                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={{ ...actionBtn('74,222,128'), gridColumn: '1 / -1' }} onClick={() => startEdit(c)}>📎 Attach scan</button>
+                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={actionBtn('74,222,128')} onClick={() => startEdit(c)}>📎 Attach scan</button>
                                 )}
-                                <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
                                 <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                               </div>
                             </td>

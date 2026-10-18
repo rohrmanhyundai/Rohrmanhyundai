@@ -255,7 +255,7 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
                         <td style={cell}>{md2(r.dueDate)}<div style={{ fontSize: 12, color: '#94a3b8' }}>{tm(r.dueTime)}</div></td>
                         <td style={cell}>{r.advisor}</td>
                         <td style={{ ...cell, whiteSpace: 'normal', minWidth: 260, fontSize: 12.5, color: '#cbd5e1' }}>
-                          {x.action === 'new' ? 'Added — no scanned contract yet (attach it from ✏️ Edit)'
+                          {x.action === 'new' ? 'Added — no scanned contract yet (click it to attach the scan)'
                             : x.action === 'same' ? <span style={{ color: '#94a3b8' }}>Already matches the report</span>
                             : x.changes.map(c => <div key={c.k}><b>{c.label}:</b> {shown(c.k, c.from)} → <span style={{ color: '#fde68a' }}>{shown(c.k, c.to)}</span></div>)}
                         </td>
