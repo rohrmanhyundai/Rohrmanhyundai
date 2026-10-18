@@ -11,7 +11,8 @@ import LoanerInventory from './LoanerInventory';
 // pick the scanned PDF → the reader fills customer, RO, loaner VIN/year/make/
 // model and date/time out → the advisor checks/corrects them → Save stores the
 // PDF in S3 and the fields in data/service-loaner/contracts.json. Contracts:
-// searchable list; anyone with the page can open/print, managers can delete.
+// searchable list; anyone with the page can open/print, and delete (after an
+// "are you sure") to fix a wrong upload.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box' };
@@ -199,14 +200,17 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setBusy(false);
   }
 
+  // Anyone with the page can delete a contract (fixing a wrong upload), after
+  // an "are you sure" — it takes the PDF(s) with it.
   async function remove(c) {
-    if (!isManager) return;
-    if (!window.confirm(`Delete the loaner contract for ${c.firstName} ${c.lastName}${c.ro ? ` (RO ${c.ro})` : ''}? This can't be undone.`)) return;
+    const who = [c.firstName, c.lastName].filter(Boolean).join(' ') || 'this customer';
+    if (!window.confirm(`⚠️ Are you sure you want to delete this loaner contract?\n\n${who}${c.ro ? ` · RO ${c.ro}` : ''}${c.dateOut ? ` · out ${fmtDate(c.dateOut)}` : ''}\n\nThe contract${c.completedUrl ? ' and its completed (returned) copy' : ''} will be gone for good. This can't be undone.`)) return;
     setBusy(true); setStatus('');
     try {
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.filter(x => x.id !== c.id) }),
         `delete RO ${c.ro || '(none)'}`);
       setContracts(next.contracts);
+      if (editing && editing.id === c.id) cancelEdit();
       try { await deleteS3ObjectByUrl(c.fileUrl); } catch {}
       if (c.completedUrl) { try { await deleteS3ObjectByUrl(c.completedUrl); } catch {} }
       setStatus('✓ Contract deleted.');
@@ -340,6 +344,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     {busy ? 'Saving…' : '✓ Save changes'}
                   </button>
                   <button disabled={busy} style={btn('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
+                  <button disabled={busy} title="Delete this contract" style={btn('248,113,113')} onClick={() => remove(editing)}>🗑 Delete</button>
                   <button disabled={busy} style={{ ...btn('251,146,60', !!editing.warranty), marginLeft: 'auto' }}
                     onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
                     🛡 {editing.warranty ? `Warranty ${money(editing.warranty.amount)}` : 'Warranty'}
@@ -422,7 +427,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                 <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
                                 <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
                                 <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
-                                {isManager && <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>}
+                                <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                               </div>
                             </td>
                           </tr>
