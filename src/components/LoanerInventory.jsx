@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { deleteS3ObjectByUrl } from '../utils/s3';
+import { decodeVin } from '../utils/vinLookup';
+import { readFleetPdf, fmtServiceStart } from '../utils/loanerFleetPdf';
 import { useVinDecode, vehicleText } from './LoanerMaintenance';
 
 // ── Loaner Inventory (Service Loaner page tab) ───────────────────────────────
@@ -10,6 +12,10 @@ import { useVinDecode, vehicleText } from './LoanerMaintenance';
 // loaner from the fleet asks first. Stored in data/service-loaner/inventory.json.
 // 📸 Media shows the check-in / check-out pictures and videos sent from a phone
 // (🚙 Rental — LoanerMediaUpload), newest first; managers can delete a set.
+// 📄 Upload fleet PDF reads the manufacturer's Fleet report (utils/loanerFleetPdf)
+// and, matched by VIN, updates year / make / model / odometer / service start /
+// unit # on loaners already here and adds the new ones — after a preview.
+// Nothing is removed; loaners missing from the PDF are only listed.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
@@ -29,6 +35,8 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
   const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
   const [media, setMedia] = useState([]);           // check-in / out sessions
   const [mediaFor, setMediaFor] = useState(null);   // loaner whose 📸 Media is open
+  const [fleetImport, setFleetImport] = useState(null); // { reading } | { file, rows: [{ pdf, existing, next, changes }], missing } | { error }
+  const pdfRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -111,6 +119,89 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
     setBusy(false);
   }
 
+  // ── Fleet PDF import ──
+  const FIELDS = [['unitNo', 'Unit #'], ['year', 'Year'], ['make', 'Make'], ['model', 'Model'], ['mileage', 'Odometer'], ['serviceStart', 'Service start']];
+  async function pickFleetPdf(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    setFleetImport({ reading: true, name: file.name });
+    try {
+      const pdfRows = await readFleetPdf(file);
+      if (!pdfRows.length) throw new Error("Couldn't find any loaners in that PDF — is it the Fleet report?");
+      // The PDF's model is the most specific ("SANTA FE HYBRID SE AWD"), but its
+      // column wraps mid-word ("CALLIGRAP / HY"). Two pieces that make a word the
+      // VIN decoder knows are joined back up; no PDF model → the decoder's.
+      const decoded = await Promise.all(pdfRows.map(r => decodeVin(r.vin).catch(() => ({ ok: false }))));
+      const rows = pdfRows.map((pdf, i) => {
+        const d = decoded[i];
+        const decModel = d && d.ok ? [d.model, d.trim].filter(Boolean).join(' ').toUpperCase() : '';
+        const known = new Set(decModel.split(/\s+/).filter(Boolean));
+        const toks = pdf.model.split(/\s+/).filter(Boolean);
+        for (let j = 0; j < toks.length - 1; j++) if (!known.has(toks[j]) && known.has(toks[j] + toks[j + 1])) toks.splice(j, 2, toks[j] + toks[j + 1]);
+        const fromPdf = { ...pdf, model: toks.join(' ') || decModel,
+          make: pdf.make || (d && d.ok ? String(d.make || '').toUpperCase() : ''), year: pdf.year || (d && d.year ? String(d.year) : '') };
+        const existing = items.find(v => v.vin === pdf.vin) || null;
+        const changes = existing ? FIELDS.filter(([k]) => fromPdf[k] && String(existing[k] || '') !== String(fromPdf[k])).map(([k, label]) => ({ k, label, from: existing[k] || '', to: fromPdf[k] })) : [];
+        return { pdf: fromPdf, existing, changes };
+      });
+      const inPdf = new Set(pdfRows.map(r => r.vin));
+      setFleetImport({ name: file.name, rows, missing: items.filter(v => !inPdf.has(v.vin)) });
+    } catch (err) {
+      setFleetImport({ error: err.message || 'Could not read that PDF.', name: file.name });
+    }
+  }
+  async function applyFleetImport() {
+    if (!fleetImport || !fleetImport.rows || busy) return;
+    setBusy(true); setStatus('Saving…');
+    const now = new Date().toISOString();
+    const byVin = new Map(fleetImport.rows.map(r => [r.pdf.vin, r.pdf]));
+    try {
+      const next = await updateLoanerInventory(cur => {
+        const seen = new Set();
+        const vehicles = cur.vehicles.map(v => {
+          const p = byVin.get(v.vin);
+          if (!p) return v;
+          seen.add(v.vin);
+          const upd = { ...v };
+          for (const [k] of FIELDS) if (p[k]) upd[k] = p[k];
+          return { ...upd, fleetSyncedAt: now };
+        });
+        for (const p of byVin.values()) {
+          if (seen.has(p.vin)) continue;
+          vehicles.push({
+            id: `li-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+            vin: p.vin, stockNo: '', unitNo: p.unitNo || '', year: p.year || '', make: p.make || '', model: p.model || '',
+            mileage: p.mileage || '', serviceStart: p.serviceStart || '', notes: '',
+            addedAt: now, addedBy: `${currentUser} (fleet PDF)`, fleetSyncedAt: now,
+          });
+        }
+        return { ...cur, vehicles };
+      }, `fleet PDF (${byVin.size})`);
+      setItems(next.vehicles);
+      const added = fleetImport.rows.filter(r => !r.existing).length;
+      const updated = fleetImport.rows.filter(r => r.existing && r.changes.length).length;
+      setFleetImport(null);
+      setStatus(`✓ Fleet PDF: ${added} added, ${updated} updated.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+  async function setStock(v) {
+    const val = window.prompt(`Stock # for ${vehicleText(v) || v.vin}:`, v.stockNo || '');
+    if (val === null || busy) return;
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateLoanerInventory(cur => ({ ...cur, vehicles: cur.vehicles.map(x => x.id === v.id ? { ...x, stockNo: val.trim().toUpperCase() } : x) }), `stock ${v.vin}`);
+      setItems(next.vehicles);
+      setStatus('✓ Stock # saved.');
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+
   const sessionsOf = (v) => media.filter(m => m.vehicleId === v.id || (!m.vehicleId && m.stockNo && m.stockNo === v.stockNo))
     .sort((a, b) => String(b.at).localeCompare(String(a.at)));
   async function removeSession(m) {
@@ -126,7 +217,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
 
   const list = useMemo(() => {
     const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const hit = (v) => !terms.length || terms.every(t => [v.stockNo, v.vin, v.year, v.make, v.model, v.notes].join(' ').toLowerCase().includes(t));
+    const hit = (v) => !terms.length || terms.every(t => [v.stockNo, v.unitNo, v.vin, v.year, v.make, v.model, v.notes].join(' ').toLowerCase().includes(t));
     return items.filter(hit).sort((a, b) => String(a.stockNo || a.vin).localeCompare(String(b.stockNo || b.vin), undefined, { numeric: true }));
   }, [items, q]);
 
@@ -167,6 +258,9 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
       <div style={card}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
           <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', flex: 1 }}>🚙 Loaner fleet ({items.length})</div>
+          <input ref={pdfRef} type="file" accept="application/pdf,.pdf" onChange={pickFleetPdf} style={{ display: 'none' }} />
+          <button disabled={busy} title="Upload the Fleet report PDF — adds new loaners and updates the ones already here" onClick={() => pdfRef.current?.click()}
+            style={{ ...btn('251,191,36'), fontSize: 14, padding: '9px 16px' }}>📄 Upload fleet PDF</button>
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search stock #, VIN, model, notes…" style={{ ...inputStyle, maxWidth: 360, flex: '1 1 220px' }} />
         </div>
         {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
@@ -178,11 +272,15 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                 return (
                   <div key={v.id} style={{ background: 'rgba(2,6,23,.45)', border: '1px solid rgba(148,163,184,.2)', borderRadius: 14, padding: '20px 22px', display: 'grid', gap: 10, alignContent: 'start' }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <div style={{ fontWeight: 900, fontSize: 22, color: '#f1f5f9', flex: 1 }}>{v.stockNo ? `Stock #${v.stockNo}` : <span style={{ color: '#64748b' }}>no stock #</span>}</div>
+                      <div style={{ fontWeight: 900, fontSize: 22, color: '#f1f5f9', flex: 1 }}>
+                        {v.stockNo ? `Stock #${v.stockNo}` : <span style={{ color: '#fbbf24' }}>no stock #</span>}
+                        <button disabled={busy} title="Set the stock #" onClick={() => setStock(v)} style={{ marginLeft: 8, background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: 0, opacity: 0.7 }}>✏️</button>
+                      </div>
                       {v.mileage && <div style={{ fontSize: 15, color: '#94a3b8', fontWeight: 700 }}>{Number(v.mileage).toLocaleString()} mi</div>}
                     </div>
                     <div style={{ fontSize: 17, color: '#cbd5e1', fontWeight: 800 }}>{vehicleText(v) || '—'}</div>
-                    <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 14.5, color: '#94a3b8' }}>{v.vin}</div>
+                    <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 14.5, color: '#94a3b8' }}>{v.vin}{v.unitNo ? <span style={{ fontFamily: 'inherit', marginLeft: 10, color: '#64748b' }}>Unit {v.unitNo}</span> : null}</div>
+                    {v.serviceStart && <div style={{ fontSize: 14, color: '#a5b4fc', fontWeight: 700 }}>🗓 In service since {fmtServiceStart(v.serviceStart)}</div>}
                     {editing ? (
                       <>
                         <textarea autoFocus onFocus={e => { const n = e.target.value.length; e.target.setSelectionRange(n, n); }} value={noteEdit.text} onChange={e => setNoteEdit(n => ({ ...n, text: e.target.value }))} disabled={busy} rows={4} placeholder="Notes for this loaner…" style={notesStyle} />
@@ -215,6 +313,75 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
             </div>
           )}
       </div>
+
+      {fleetImport && (
+        <div onClick={() => !busy && !fleetImport.reading && setFleetImport(null)} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 1200, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9' }}>📄 Fleet PDF</div>
+                <div style={{ fontSize: 13.5, color: '#94a3b8' }}>{fleetImport.name}</div>
+              </div>
+              {!fleetImport.reading && <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setFleetImport(null)}>✕</button>}
+            </div>
+            {fleetImport.reading ? <div style={{ color: '#93c5fd', marginTop: 16, fontSize: 15, fontWeight: 700 }}>⏳ Reading the PDF and decoding VINs…</div>
+              : fleetImport.error ? <div style={{ color: '#fca5a5', marginTop: 16, fontSize: 15, fontWeight: 700 }}>⚠ {fleetImport.error}</div>
+              : (() => {
+                const added = fleetImport.rows.filter(r => !r.existing);
+                const updated = fleetImport.rows.filter(r => r.existing && r.changes.length);
+                const same = fleetImport.rows.filter(r => r.existing && !r.changes.length);
+                const cell = { padding: '8px 10px', fontSize: 13.5, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.12)', verticalAlign: 'top', whiteSpace: 'nowrap', overflow: 'visible', textOverflow: 'clip' };
+                const head = { ...cell, fontSize: 11.5, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', textAlign: 'left' };
+                return (
+                  <>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 14, fontSize: 14.5, fontWeight: 800 }}>
+                      <span style={{ color: '#4ade80' }}>➕ {added.length} new</span>
+                      <span style={{ color: '#fbbf24' }}>✏️ {updated.length} updated</span>
+                      <span style={{ color: '#94a3b8' }}>✓ {same.length} unchanged</span>
+                    </div>
+                    <div style={{ overflowX: 'auto', marginTop: 10 }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
+                        <thead><tr>
+                          <th style={head}></th><th style={head}>Stock / Unit</th><th style={head}>VIN</th><th style={head}>Vehicle</th>
+                          <th style={head}>Odometer</th><th style={head}>Service start</th><th style={head}>Changes</th>
+                        </tr></thead>
+                        <tbody>
+                          {fleetImport.rows.map(r => (
+                            <tr key={r.pdf.vin} style={!r.existing ? { background: 'rgba(74,222,128,.06)' } : r.changes.length ? { background: 'rgba(251,191,36,.05)' } : { opacity: 0.6 }}>
+                              <td style={cell}>{!r.existing ? <b style={{ color: '#4ade80' }}>NEW</b> : r.changes.length ? <b style={{ color: '#fbbf24' }}>UPDATE</b> : <span style={{ color: '#94a3b8' }}>same</span>}</td>
+                              <td style={cell}>{r.existing && r.existing.stockNo ? <b>#{r.existing.stockNo}</b> : <span style={{ color: '#64748b' }}>—</span>}<div style={{ fontSize: 12, color: '#94a3b8' }}>Unit {r.pdf.unitNo || '—'}</div></td>
+                              <td style={{ ...cell, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12.5 }}>{r.pdf.vin}</td>
+                              <td style={cell}>{vehicleText(r.pdf)}</td>
+                              <td style={cell}>{r.pdf.mileage ? Number(r.pdf.mileage).toLocaleString() : '—'}</td>
+                              <td style={cell}>{fmtServiceStart(r.pdf.serviceStart) || '—'}</td>
+                              <td style={{ ...cell, whiteSpace: 'normal', minWidth: 220, fontSize: 12.5, color: '#cbd5e1' }}>
+                                {r.changes.map(c => <div key={c.k}><b>{c.label}:</b> {c.k === 'serviceStart' ? (fmtServiceStart(c.from) || '—') : (c.from || '—')} → <span style={{ color: '#fde68a' }}>{c.k === 'serviceStart' ? fmtServiceStart(c.to) : c.to}</span></div>)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {fleetImport.missing.length > 0 && (
+                      <div style={{ marginTop: 12, fontSize: 13.5, color: '#fde68a', lineHeight: 1.5 }}>
+                        ⚠ {fleetImport.missing.length} loaner{fleetImport.missing.length === 1 ? ' is' : 's are'} in the fleet here but not in this PDF — left as they are:{' '}
+                        {fleetImport.missing.map(v => v.stockNo ? `#${v.stockNo}` : v.vin).join(', ')}. Remove any that are gone with 🗑 on its card.
+                      </div>
+                    )}
+                    {added.length > 0 && <div style={{ marginTop: 8, fontSize: 13, color: '#94a3b8' }}>New loaners come in without a stock # — set it with ✏️ on the card.</div>}
+                    <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                      <button disabled={busy || (!added.length && !updated.length)} onClick={applyFleetImport}
+                        style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px', opacity: added.length || updated.length ? 1 : 0.5 }}>
+                        {busy ? '⏳ Saving…' : added.length || updated.length ? `✓ Apply — add ${added.length}, update ${updated.length}` : 'Nothing to change'}
+                      </button>
+                      <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 15, padding: '11px 22px' }} onClick={() => setFleetImport(null)}>Cancel</button>
+                    </div>
+                  </>
+                );
+              })()}
+          </div>
+        </div>
+      )}
 
       {mediaFor && (() => {
         const sessions = sessionsOf(mediaFor);

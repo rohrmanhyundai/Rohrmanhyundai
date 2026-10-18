@@ -2543,7 +2543,7 @@ export async function updateLoanerMaintenance(mutate, what = 'update') {
 
 // ── Loaner inventory (the fleet) ──────────────────────────────────────────────
 // public/data/service-loaner/inventory.json → { vehicles: [{ id, vin, stockNo, year, make, model,
-//   mileage, notes, addedAt, addedBy, notesAt, notesBy }] }
+//   mileage, notes, addedAt, addedBy, notesAt, notesBy, unitNo, serviceStart (YYYY-MM-DD), fleetSyncedAt }] }
 export async function loadLoanerInventory() {
   try { const d = await loadGithubFile('data/service-loaner/inventory.json'); if (d && Array.isArray(d.vehicles)) return d; } catch {}
   return { vehicles: [] };

@@ -47,7 +47,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   useEffect(() => () => files.forEach(f => URL.revokeObjectURL(f.preview)), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const key = normStock(stock);
-  const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) : null), [fleet, key]);
+  // Stock # first; the fleet report's unit # works too.
+  const vehicle = useMemo(() => (key && fleet ? fleet.find(v => normStock(v.stockNo) === key) || fleet.find(v => normStock(v.unitNo) === key) : null), [fleet, key]);
   const hasName = !!first.trim() && !!last.trim();
   const ready = !!vehicle && hasName && !!kind;
   const canSend = ready && files.length > 0 && !saving;
