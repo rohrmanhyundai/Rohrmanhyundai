@@ -182,6 +182,34 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setBusy(false);
   }
 
+  // Delete just one copy of a contract that has both — the original (out) or
+  // the completed (returned) one — after an "are you sure". The other copy and
+  // the contract stay. (With only one copy left, 🗑 Delete removes the contract.)
+  async function removeCopy(which) {
+    if (!editing || !editing.fileUrl || !editing.completedUrl) return;
+    const who = [editing.firstName, editing.lastName].filter(Boolean).join(' ') || 'this customer';
+    const label = which === 'out' ? 'ORIGINAL (out)' : 'COMPLETED (returned)';
+    const other = which === 'out' ? 'completed (returned)' : 'original (out)';
+    if (!window.confirm(`⚠️ Are you sure you want to delete the ${label} contract for ${who}?\n\nThe ${other} copy stays. This can't be undone.`)) return;
+    const gone = which === 'out' ? editing.fileUrl : editing.completedUrl;
+    const changes = which === 'out'
+      ? { fileUrl: '', fileName: '' }
+      : { completedUrl: '', completedFileName: '', completedAt: '', completedBy: '' };
+    setBusy(true); setStatus('Deleting…');
+    try {
+      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
+        `delete ${which === 'out' ? 'original' : 'completed'} copy RO ${editing.ro || '(none)'}`);
+      setContracts(next.contracts);
+      setEditing(e => ({ ...e, ...changes }));
+      setEditView(which === 'out' ? 'completed' : 'out');
+      try { await deleteS3ObjectByUrl(gone); } catch {}
+      setStatus(`✓ ${which === 'out' ? 'Original' : 'Completed'} copy deleted.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Delete failed.'}`);
+    }
+    setBusy(false);
+  }
+
   // Warranty claim: the loaner days are billed to warranty for this amount.
   async function saveWarranty(amount) {
     if (!editing) return;
@@ -211,7 +239,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         `delete RO ${c.ro || '(none)'}`);
       setContracts(next.contracts);
       if (editing && editing.id === c.id) cancelEdit();
-      try { await deleteS3ObjectByUrl(c.fileUrl); } catch {}
+      if (c.fileUrl) { try { await deleteS3ObjectByUrl(c.fileUrl); } catch {} }
       if (c.completedUrl) { try { await deleteS3ObjectByUrl(c.completedUrl); } catch {} }
       setStatus('✓ Contract deleted.');
     } catch (e) {
@@ -354,7 +382,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Loaner returned?</div>
                   <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '3px 0 10px', lineHeight: 1.45 }}>
                     {editing.completedUrl
-                      ? <>✓ Completed contract uploaded by {editing.completedBy} {new Date(editing.completedAt).toLocaleDateString()} ({editing.completedFileName}). The original is kept too.</>
+                      ? <>✓ Completed contract uploaded by {editing.completedBy} {new Date(editing.completedAt).toLocaleDateString()} ({editing.completedFileName}).{editing.fileUrl ? ' The original is kept too.' : ''}</>
                       : 'Scan the contract once the loaner is checked back in and upload it here. The original stays on file.'}
                   </div>
                   <input ref={completedRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadCompleted(e.target.files && e.target.files[0])} />
@@ -364,14 +392,20 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                 </div>
               </div>
               <div style={{ ...card, padding: 8, height: 'calc(100vh - 230px)', minHeight: 480, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {editing.completedUrl && (
-                  <div style={{ display: 'flex', gap: 6 }}>
+                {editing.completedUrl && editing.fileUrl && (
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                     <button style={btn('110,231,249', editView === 'out')} onClick={() => setEditView('out')}>Original (out)</button>
+                    <button disabled={busy} title="Delete the original (out) copy" style={{ ...btn('248,113,113'), padding: '7px 10px' }} onClick={() => removeCopy('out')}>🗑</button>
+                    <span style={{ width: 10 }} />
                     <button style={btn('56,189,248', editView === 'completed')} onClick={() => setEditView('completed')}>Completed (returned)</button>
+                    <button disabled={busy} title="Delete the completed (returned) copy" style={{ ...btn('248,113,113'), padding: '7px 10px' }} onClick={() => removeCopy('completed')}>🗑</button>
                   </div>
                 )}
+                {editing.completedUrl && !editing.fileUrl && (
+                  <div style={{ fontSize: 12.5, fontWeight: 800, color: '#94a3b8', padding: '4px 6px' }}>Completed (returned) copy — the original was deleted.</div>
+                )}
                 {(() => {
-                  const showCompleted = editView === 'completed' && editing.completedUrl;
+                  const showCompleted = (editView === 'completed' || !editing.fileUrl) && editing.completedUrl;
                   const url = showCompleted ? editing.completedUrl : editing.fileUrl;
                   const name = showCompleted ? editing.completedFileName : editing.fileName;
                   return /\.pdf$/i.test(name || url || '')
