@@ -1,0 +1,22 @@
+{
+  "requests": [
+    {
+      "id": "lm-mve4fwd3e6uy",
+      "loanerNo": "LHY2473",
+      "vin": "5NTJBDDE5TH159469",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SANTA CRUZ SEL",
+      "mileage": "6187",
+      "priority": "routine",
+      "services": [
+        "Oil change"
+      ],
+      "description": "",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-18T17:50:49.239Z",
+      "requestedBy": "SHAWN"
+    }
+  ]
+}
