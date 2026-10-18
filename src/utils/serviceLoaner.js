@@ -18,8 +18,11 @@ Read these boxes and return ONLY a JSON object, no markdown fences:
 - year, make, model: the Year / Make / Model boxes under VEHICLE INFORMATION (the loaner). Model is the full model text as printed, e.g. "KONA SEL PREMIUM AWD".
 - date_out: "Date and Time OUT" date, as YYYY-MM-DD.
 - time_out: "Date and Time OUT" time, 24-hour HH:MM (10:46 AM → "10:46", 2:05 PM → "14:05").
+- ra_no: the RA# in that header row (the RIGHTMOST of RO# / Unit# / RA#), e.g. "A1275".
+- date_in, time_in: the "Date and Time IN" box (filled in when the loaner comes back) — same formats as out. null if blank.
+- is_face_page: true if this image is the contract FACE page (customer / vehicle information boxes); false for a terms page, a blank page or anything else.
 Use null for anything blank or unreadable. Do not guess.
-{"first_name":"","last_name":"","ro":null,"vin":"","year":"","make":"","model":"","date_out":"","time_out":""}`;
+{"first_name":"","last_name":"","ro":null,"vin":"","year":"","make":"","model":"","date_out":"","time_out":"","ra_no":null,"date_in":null,"time_in":null,"is_face_page":true}`;
 
 const readAsDataUrl = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
@@ -46,7 +49,11 @@ function cropImage(source, w, h, scaleUp) {
 async function pdfFirstPageImages(file) {
   const pdfjs = await loadPdfJs();
   const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
-  const page = await doc.getPage(1);
+  try { return await pdfPageImages(doc, 1); } finally { try { doc.destroy(); } catch {} }
+}
+// One page of an open pdf.js document → [full page JPEG, header close-up JPEG].
+async function pdfPageImages(doc, pageNo) {
+  const page = await doc.getPage(pageNo);
   const base = page.getViewport({ scale: 1 });
   // Render at twice the working size so the header close-up has real detail.
   const viewport = page.getViewport({ scale: Math.min(6, 3400 / base.width) });
@@ -63,7 +70,7 @@ async function pdfFirstPageImages(file) {
   full.getContext('2d').drawImage(canvas, 0, 0, full.width, full.height);
   const page1 = full.toDataURL('image/jpeg', 0.85);
   const header = cropImage(canvas, canvas.width, canvas.height, 1);
-  try { doc.destroy(); } catch {}
+  canvas.width = canvas.height = 0;
   return [page1, header];
 }
 
@@ -78,20 +85,25 @@ async function imageFileImages(file) {
 const clean = (v) => (v == null ? '' : String(v).trim());
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
+const normDate = (v) => {
+  let date = clean(v);
+  const us = date.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (us) date = `${us[3].length === 2 ? '20' + us[3] : us[3]}-${us[1].padStart(2, '0')}-${us[2].padStart(2, '0')}`;
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : '';
+};
+const normTime = (v) => {
+  const t = clean(v).match(/^(\d{1,2}):(\d{2})\s*([AP]M)?$/i);
+  if (!t) return '';
+  let h = Number(t[1]);
+  if (t[3]) { const pm = /p/i.test(t[3]); if (h === 12) h = pm ? 12 : 0; else if (pm) h += 12; }
+  return `${String(h).padStart(2, '0')}:${t[2]}`;
+};
+
 // Normalise what the model sent back into the record's field shape.
 export function normaliseFields(p) {
   const vin = clean(p.vin).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  let date = clean(p.date_out);
-  const us = date.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if (us) date = `${us[3].length === 2 ? '20' + us[3] : us[3]}-${us[1].padStart(2, '0')}-${us[2].padStart(2, '0')}`;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = '';
-  let time = clean(p.time_out);
-  const t = time.match(/^(\d{1,2}):(\d{2})\s*([AP]M)?$/i);
-  if (t) {
-    let h = Number(t[1]);
-    if (t[3]) { const pm = /p/i.test(t[3]); if (h === 12) h = pm ? 12 : 0; else if (pm) h += 12; }
-    time = `${String(h).padStart(2, '0')}:${t[2]}`;
-  } else time = '';
+  const date = normDate(p.date_out);
+  const time = normTime(p.time_out);
   return {
     firstName: clean(p.first_name),
     lastName: clean(p.last_name),
@@ -102,6 +114,9 @@ export function normaliseFields(p) {
     model: clean(p.model).toUpperCase(),
     dateOut: date,
     timeOut: time,
+    raNo: clean(p.ra_no).toUpperCase().replace(/[^0-9A-Z-]/g, ''),
+    dateIn: normDate(p.date_in),
+    timeIn: normTime(p.time_in),
   };
 }
 
@@ -118,12 +133,8 @@ export function fieldWarnings(f) {
 }
 
 // → { firstName, lastName, ro, vin, year, make, model, dateOut, timeOut }
-export async function readLoanerContract(file) {
-  let images;
-  if (isPdf(file)) images = await pdfFirstPageImages(file);
-  else if (/^image\//.test(file.type || '')) images = await imageFileImages(file);
-  else throw new Error('Upload the contract as a PDF (or a photo of it).');
-
+// Images of one contract page → the raw JSON the reader returned.
+async function readImages(images) {
   const res = await openaiRequest({
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -144,7 +155,109 @@ export async function readLoanerContract(file) {
   const data = await res.json();
   const text = (data.choices?.[0]?.message?.content || '').trim()
     .replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
-  let parsed;
-  try { parsed = JSON.parse(text); } catch { throw new Error('Could not read the contract — fill the fields in by hand.'); }
-  return normaliseFields(parsed || {});
+  try { return JSON.parse(text) || {}; } catch { throw new Error('Could not read the contract — fill the fields in by hand.'); }
+}
+
+export async function readLoanerContract(file) {
+  let images;
+  if (isPdf(file)) images = await pdfFirstPageImages(file);
+  else if (/^image\//.test(file.type || '')) images = await imageFileImages(file);
+  else throw new Error('Upload the contract as a PDF (or a photo of it).');
+  return normaliseFields(await readImages(images));
+}
+
+// ── Bulk upload ───────────────────────────────────────────────────────────────
+// One scanned PDF holding many contracts, one face page each (terms / blank
+// pages are spotted and skipped). Every page is read like a single upload;
+// planBulk then matches each to a contract already on file, and the page
+// itself is split out (splitPdfPage) and stored only when the user applies.
+
+// file → [{ page, fields, isFace, thumb, error }] in page order. Reads `conc`
+// pages at a time; onProgress(done, total).
+export async function readLoanerContractPages(file, onProgress, conc = 3) {
+  const pdfjs = await loadPdfJs();
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const total = doc.numPages;
+  const out = new Array(total);
+  let next = 1, done = 0;
+  const worker = async () => {
+    while (next <= total) {
+      const n = next++;
+      try {
+        const images = await pdfPageImages(doc, n);
+        const raw = await readImages(images);
+        out[n - 1] = { page: n, fields: normaliseFields(raw), isFace: raw.is_face_page !== false, thumb: images[0] };
+      } catch (e) {
+        out[n - 1] = { page: n, error: e.message || 'Could not read this page.' };
+      }
+      done++;
+      if (onProgress) onProgress(done, total);
+    }
+  };
+  try { await Promise.all(Array.from({ length: Math.min(conc, total) }, worker)); }
+  finally { try { doc.destroy(); } catch {} }
+  return out;
+}
+
+// Page n (1-based) of a PDF as its own one-page PDF File.
+export async function splitPdfPage(file, n, name) {
+  const { PDFDocument } = await import('pdf-lib');
+  const src = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
+  const one = await PDFDocument.create();
+  const [pg] = await one.copyPages(src, [n - 1]);
+  one.addPage(pg);
+  return new File([await one.save()], name, { type: 'application/pdf' });
+}
+
+const BULK_FIELDS = ['firstName', 'lastName', 'ro', 'raNo', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'dateIn', 'timeIn'];
+const up = (v) => String(v || '').trim().toUpperCase();
+function sameContract(a, f) {
+  if (up(a.raNo) && up(f.raNo)) return up(a.raNo) === up(f.raNo);
+  if (a.vin && f.vin && a.dateOut && f.dateOut) return a.vin === f.vin && a.dateOut === f.dateOut;
+  return !!(up(a.lastName) && up(a.lastName) === up(f.lastName) && a.dateOut && a.dateOut === f.dateOut
+    && (!a.vin || !f.vin || a.vin === f.vin));
+}
+
+// pages (from readLoanerContractPages) + contracts on file → one row per page:
+//   { page, fields, thumb, action: 'new' | 'update' | 'same' | 'skip', why,
+//     target (existing contract) | joinPage (earlier page of this upload),
+//     fill: { field: value } — only fields blank on file (a checked/corrected
+//     contract is never overwritten),
+//     attach: which copy this page becomes — 'original' | 'completed' | null; a
+//     new contract's page is 'original', or 'both' when it is already returned
+//     ('original+' / 'completed+' once another page of the upload took the other copy) }
+// A page with a Date IN is the returned copy: it goes on as the completed copy.
+export function planBulk(pages, contracts) {
+  const rows = [];
+  const pending = [];     // new contracts made earlier in this same upload
+  for (const p of pages) {
+    if (!p) continue;
+    if (p.error) { rows.push({ page: p.page, action: 'skip', why: p.error }); continue; }
+    const f = p.fields;
+    if (!p.isFace || (!f.firstName && !f.lastName && !f.vin)) { rows.push({ page: p.page, thumb: p.thumb, fields: f, action: 'skip', why: 'Not a contract face page' }); continue; }
+    const returned = !!f.dateIn;
+    const target = contracts.find(c => sameContract(c, f));
+    if (target) {
+      const fill = {};
+      for (const k of BULK_FIELDS) if (f[k] && !String(target[k] || '').trim()) fill[k] = f[k];
+      const attach = returned ? (target.completedUrl ? null : 'completed') : (target.fileUrl ? null : 'original');
+      const action = Object.keys(fill).length || attach ? 'update' : 'same';
+      rows.push({ page: p.page, thumb: p.thumb, fields: f, action, target, fill, attach,
+        why: action === 'same' ? (returned ? 'Already has its returned copy' : 'Already on file') : '' });
+      continue;
+    }
+    // The out copy and the returned copy of a new contract, both in this upload.
+    const earlier = pending.find(r => sameContract(r.fields, f));
+    if (earlier) {
+      const join = (attach) => rows.push({ page: p.page, thumb: p.thumb, fields: f, action: 'update', joinPage: earlier.page, attach, fill: {}, why: '' });
+      if (returned && earlier.attach === 'original') { earlier.attach = 'original+'; join('completed'); }
+      else if (!returned && earlier.attach === 'both') { earlier.attach = 'completed+'; join('original'); }
+      else rows.push({ page: p.page, thumb: p.thumb, fields: f, action: 'skip', why: `Same contract as page ${earlier.page}` });
+      continue;
+    }
+    const row = { page: p.page, thumb: p.thumb, fields: f, action: 'new', attach: returned ? 'both' : 'original', why: '' };
+    pending.push(row);
+    rows.push(row);
+  }
+  return rows;
 }

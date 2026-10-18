@@ -5,6 +5,7 @@ import { readLoanerContract, fieldWarnings, isPdf } from '../utils/serviceLoaner
 import LoanerRequests from './LoanerRequests';
 import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
+import BulkContractUpload from './BulkContractUpload';
 
 // ── Service Loaner ────────────────────────────────────────────────────────────
 // Signed loaner contracts (Vehicle Use Agreement face page). Upload Contract:
@@ -12,7 +13,8 @@ import LoanerInventory from './LoanerInventory';
 // model and date/time out → the advisor checks/corrects them → Save stores the
 // PDF in S3 and the fields in data/service-loaner/contracts.json. Contracts:
 // searchable list; anyone with the page can open/print, and delete (after an
-// "are you sure") to fix a wrong upload.
+// "are you sure") to fix a wrong upload. 📚 Bulk Upload: one scanned PDF of many
+// contracts → added / updated in one go (BulkContractUpload).
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box' };
@@ -66,7 +68,8 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory'].includes(initialTab) ? initialTab : 'requests');
-  const [maintPrefill, setMaintPrefill] = useState(null);   // loaner picked on Loaner Inventory → new maintenance request
+  const [maintPrefill, setMaintPrefill] = useState(null);
+  const [bulkOpen, setBulkOpen] = useState(false);   // loaner picked on Loaner Inventory → new maintenance request
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -254,7 +257,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       `${b.dateOut || ''}${b.timeOut || ''}${b.uploadedAt || ''}`.localeCompare(`${a.dateOut || ''}${a.timeOut || ''}${a.uploadedAt || ''}`));
     if (!terms.length) return list;
     return list.filter(c => {
-      const hay = [c.firstName, c.lastName, c.ro, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by, c.notes, c.warranty ? 'warranty' : ''].join(' ').toLowerCase();
+      const hay = [c.firstName, c.lastName, c.ro, c.raNo, c.vin, c.year, c.make, c.model, fmtDate(c.dateOut), c.by, c.notes, c.warranty ? 'warranty' : ''].join(' ').toLowerCase();
       return terms.every(t => hay.includes(t));
     });
   }, [contracts, q]);
@@ -420,7 +423,13 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                 <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search name, RO, VIN, model…"
                   style={{ ...inputStyle, maxWidth: 460, flex: '1 1 260px' }} />
                 <button onClick={() => { cancelEdit(); setTab('upload'); }} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px', whiteSpace: 'nowrap' }}>📤 Upload Contract</button>
+                <button onClick={() => { cancelEdit(); setStatus(''); setBulkOpen(true); }} title="One scanned PDF with all the contracts — adds new ones and updates the ones on file"
+                  style={{ ...btn('251,191,36'), fontSize: 14, padding: '9px 18px', whiteSpace: 'nowrap', marginLeft: 'auto' }}>📚 Bulk Upload</button>
               </div>
+              {bulkOpen && (
+                <BulkContractUpload contracts={contracts} currentUser={currentUser} io={io} onClose={() => setBulkOpen(false)}
+                  onDone={(next, msg) => { setContracts(next); setBulkOpen(false); setStatus(msg); }} />
+              )}
               {loading ? <div style={{ color: '#94a3b8' }}>Loading…</div>
                 : contracts.length === 0 ? <div style={{ color: '#94a3b8' }}>No loaner contracts yet — click 📤 Upload Contract to add one.</div>
                 : shown.length === 0 ? <div style={{ color: '#94a3b8' }}>Nothing matches “{q}”.</div>
