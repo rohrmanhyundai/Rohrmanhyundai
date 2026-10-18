@@ -27,10 +27,13 @@ const th = { textAlign: 'left', padding: '9px 10px', fontSize: 12, fontWeight: 9
 // content so the Open / Print / Delete buttons never get cut off.
 const td = { padding: '9px 10px', fontSize: 14, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.1)', verticalAlign: 'middle', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' };
 
-const EMPTY = { firstName: '', lastName: '', ro: '', vin: '', year: '', make: '', model: '', dateOut: '', timeOut: '', notes: '' };
+const EMPTY = { firstName: '', lastName: '', ro: '', vin: '', year: '', make: '', model: '', dateOut: '', timeOut: '', raNo: '', advisor: '', mileageOut: '', dueDate: '', dueTime: '', plate: '', phone: '', notes: '' };
 const FIELDS = [
   ['firstName', 'First name'], ['lastName', 'Last name'], ['ro', 'RO #'], ['vin', 'Loaner VIN'],
   ['year', 'Year'], ['make', 'Make'], ['model', 'Model'], ['dateOut', 'Date out', 'date'], ['timeOut', 'Time out', 'time'],
+  // From the agreement report (📚 Bulk Upload); RA # also read off a scanned contract.
+  ['raNo', 'RA #'], ['advisor', 'Service advisor'], ['dueDate', 'Due back', 'date'], ['dueTime', 'Due time', 'time'],
+  ['mileageOut', 'Miles out'], ['plate', 'Plate'], ['phone', 'Customer phone'],
 ];
 
 const fmtDate = (d) => {
@@ -84,6 +87,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const [editView, setEditView] = useState('out'); // which copy the editor previews
   const [warrantyAmt, setWarrantyAmt] = useState(null); // popup open when not null
   const completedRef = useRef(null);
+  const originalRef = useRef(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -158,6 +162,26 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       setStatus(`✓ Updated ${changes.firstName} ${changes.lastName}'s contract.`);
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+
+  // A contract added from the agreement report has no scan; attach the signed one.
+  async function uploadOriginal(f) {
+    if (!f || !editing) return;
+    if (originalRef.current) originalRef.current.value = '';
+    setBusy(true); setStatus('Uploading the signed contract…');
+    try {
+      const url = await uploadServiceLoanerToS3(f);
+      const changes = { fileUrl: url, fileName: f.name || 'contract.pdf', scanAttachedAt: new Date().toISOString(), scanAttachedBy: currentUser };
+      const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
+        `attach contract RA ${editing.raNo || editing.ro || '(none)'}`);
+      setContracts(next.contracts);
+      setEditing(e => ({ ...e, ...changes }));
+      setEditView('out');
+      setStatus('✓ Signed contract attached.');
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Upload failed.'}`);
     }
     setBusy(false);
   }
@@ -407,7 +431,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                 {editing.completedUrl && !editing.fileUrl && (
                   <div style={{ fontSize: 12.5, fontWeight: 800, color: '#94a3b8', padding: '4px 6px' }}>Completed (returned) copy — the original was deleted.</div>
                 )}
-                {(() => {
+                {!editing.fileUrl && !editing.completedUrl ? (
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, textAlign: 'center', padding: 20 }}>
+                    <div style={{ fontSize: 40 }}>📎</div>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>No signed contract scanned yet</div>
+                    <div style={{ fontSize: 13.5, color: '#94a3b8', maxWidth: 420, lineHeight: 1.5 }}>This contract came from the agreement report. Scan the signed Vehicle Use Agreement and attach it here.</div>
+                    <input ref={originalRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadOriginal(e.target.files && e.target.files[0])} />
+                    <button disabled={busy} style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px' }} onClick={() => originalRef.current && originalRef.current.click()}>📤 Attach the signed contract</button>
+                  </div>
+                ) : (() => {
                   const showCompleted = (editView === 'completed' || !editing.fileUrl) && editing.completedUrl;
                   const url = showCompleted ? editing.completedUrl : editing.fileUrl;
                   const name = showCompleted ? editing.completedFileName : editing.fileName;
@@ -445,6 +477,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                           <tr key={c.id}>
                             <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
                               {c.firstName} {c.lastName}
+                              {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
                               {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
                             </td>
                             <td style={td}>{c.ro || <span style={{ color: '#64748b' }}>—</span>}</td>
@@ -467,8 +500,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
                             <td style={{ ...td, whiteSpace: 'nowrap' }}>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
-                                <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
-                                <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
+                                {c.completedUrl || c.fileUrl ? (
+                                  <>
+                                    <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
+                                    <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
+                                  </>
+                                ) : (
+                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={{ ...actionBtn('74,222,128'), gridColumn: '1 / -1' }} onClick={() => startEdit(c)}>📎 Attach scan</button>
+                                )}
                                 <button disabled={busy} style={actionBtn('251,191,36')} onClick={() => startEdit(c)}>✏️ Edit</button>
                                 <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                               </div>

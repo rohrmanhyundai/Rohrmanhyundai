@@ -2,9 +2,17 @@ import React, { useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3 } from '../utils/s3';
 import { readLoanerContractPages, splitPdfPage, planBulk, isPdf } from '../utils/serviceLoaner';
+import { readAgreementReport, planReport } from '../utils/loanerAgreementReport';
+import { fmtServiceStart as md2 } from '../utils/loanerFleetPdf';
 
 // ── 📚 Bulk Upload (Service Loaner → Contracts) ──────────────────────────────
-// One scanned PDF with many contracts, one face page each. Every page is read
+// Takes either of two files:
+//  • The rental system's open-AGREEMENT REPORT (PDF or AgreementExport.csv) —
+//    the record of every open loaner (utils/loanerAgreementReport). Agreements
+//    the site doesn't have are ADDED (no scan yet — attach one later); ones on
+//    file are UPDATED wherever the report differs (it is the system of record,
+//    so a misread VIN or name gets corrected). Preview first; nothing deleted.
+//  • A scanned PDF of the signed contracts themselves, one face page each. Every page is read
 // (utils/serviceLoaner readLoanerContractPages), matched to the contracts on
 // file (planBulk) and shown for checking: NEW contracts are added, matches are
 // UPDATED (blank fields filled in, the page added as the original or — when it
@@ -21,6 +29,8 @@ const RECORD_KEYS = ['firstName', 'lastName', 'ro', 'raNo', 'vin', 'year', 'make
 const newId = () => `sl-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 export default function BulkContractUpload({ contracts, currentUser, io, onDone, onClose }) {
+  const readReport = io?.readAgreementReport || readAgreementReport;
+  const loadFleet = (io || github).loadLoanerInventory;
   const readPages = io?.readLoanerContractPages || readLoanerContractPages;
   const splitPage = io?.splitPdfPage || splitPdfPage;
   const upload = io?.uploadServiceLoanerToS3 || uploadServiceLoanerToS3;
@@ -29,6 +39,7 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(null);   // { done, total } while reading
   const [rows, setRows] = useState(null);
+  const [report, setReport] = useState(null);       // { plan, missing } when the file is the agreement report
   const [off, setOff] = useState({});               // page → true when unticked
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -38,10 +49,21 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
-    if (!isPdf(f)) { setMsg('⚠ Choose the scanned PDF of the contracts.'); return; }
-    setFile(f); setRows(null); setOff({}); setMsg('');
+    const csv = /\.csv$/i.test(f.name || '');
+    if (!isPdf(f) && !csv) { setMsg('⚠ Choose the agreement report (PDF or CSV) or a scanned PDF of the contracts.'); return; }
+    setFile(f); setRows(null); setReport(null); setOff({}); setMsg('');
     setProgress({ done: 0, total: 0 });
     try {
+      // The agreement report has text; a scan doesn't (→ read page by page).
+      const agreements = await readReport(f).catch(() => null);
+      if (agreements) {
+        if (!agreements.length) throw new Error('No open agreements in that report.');
+        const fleet = await loadFleet().then(d => d.vehicles || []).catch(() => []);
+        setReport(planReport(agreements, contracts, fleet));
+        setProgress(null);
+        return;
+      }
+      if (csv) throw new Error("That CSV isn't the agreement export (no \"Agreement Number\" column).");
       const pages = await readPages(f, (done, total) => setProgress({ done, total }));
       setRows(planBulk(pages, contracts));
     } catch (err) {
@@ -115,6 +137,43 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
     }
   }
 
+  // ── Agreement report: apply ──
+  const reportCounts = useMemo(() => {
+    const p = (report && report.plan) || [];
+    return { add: p.filter(x => x.action === 'new' && !off[x.r.raNo]).length, upd: p.filter(x => x.action === 'update' && !off[x.r.raNo]).length, same: p.filter(x => x.action === 'same').length };
+  }, [report, off]);
+  async function applyReport() {
+    if (!report || busy) return;
+    const todo = report.plan.filter(x => (x.action === 'new' || x.action === 'update') && !off[x.r.raNo]);
+    if (!todo.length) return;
+    setBusy(true); setMsg('⏳ Saving the contracts…');
+    const now = new Date().toISOString();
+    const KEEP = ['raNo', 'firstName', 'lastName', 'ro', 'advisor', 'vin', 'unitNo', 'plate', 'year', 'make', 'model', 'mileageOut', 'dateOut', 'timeOut', 'dueDate', 'dueTime', 'phone'];
+    try {
+      const updates = new Map(todo.filter(x => x.action === 'update').map(x => [x.target.id, Object.fromEntries(x.changes.map(c => [c.k, c.to]))]));
+      const adds = todo.filter(x => x.action === 'new').map(x => ({
+        id: newId(), ...Object.fromEntries(KEEP.map(k => [k, x.r[k] || ''])), notes: '', fileUrl: '', fileName: '',
+        uploadedAt: now, by: currentUser, fromReport: true, reportSyncedAt: now,
+      }));
+      const next = await updateServiceLoaners(cur => {
+        const have = new Set(cur.contracts.map(c => String(c.raNo || '').toUpperCase()).filter(Boolean));
+        return {
+          ...cur,
+          contracts: [
+            ...adds.filter(a => !have.has(a.raNo)),     // someone else added it meanwhile → leave theirs
+            ...cur.contracts.map(c => (updates.has(c.id) ? { ...c, ...updates.get(c.id), reportSyncedAt: now, editedAt: now, editedBy: currentUser } : c)),
+          ],
+        };
+      }, `agreement report (${adds.length} new, ${updates.size} updated)`);
+      onDone(next.contracts, `✓ Agreement report: ${adds.length} added, ${updates.size} updated.`);
+    } catch (err) {
+      setMsg(`❌ ${err.message || 'Save failed.'} Nothing was changed — try Apply again.`);
+      setBusy(false);
+    }
+  }
+  const tm = (t) => { const m = String(t || '').match(/^(\d{2}):(\d{2})$/); if (!m) return ''; const h = Number(m[1]); return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'AM' : 'PM'}`; };
+  const shown = (k, v) => (k === 'dateOut' || k === 'dueDate' ? md2(v) : k === 'timeOut' || k === 'dueTime' ? tm(v) : v) || '—';
+
   const actionTag = (r) => r.action === 'new' ? <b style={{ color: '#4ade80' }}>NEW</b>
     : r.action === 'update' ? <b style={{ color: '#fbbf24' }}>UPDATE</b>
     : r.action === 'same' ? <span style={{ color: '#94a3b8' }}>same</span>
@@ -140,30 +199,88 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9' }}>📚 Bulk Upload contracts</div>
             <div style={{ fontSize: 13.5, color: '#94a3b8', lineHeight: 1.5 }}>
-              One scanned PDF with every contract — one face page per contract. Each page is read, then <b>added</b> as a new contract or <b>updates</b> the one on file
-              (blank boxes filled in; a page with a Date IN goes on as the returned copy). Nothing is saved until you click Apply.
+              Upload the <b>open agreement report</b> (PDF or the AgreementExport CSV): agreements not on the site are <b>added</b>, and ones already here are
+              <b> updated</b> wherever the report is different. You'll see every change first — nothing is saved until you click Apply.
+              <span style={{ color: '#64748b' }}> (A scanned PDF of the signed contracts works too — each page is read.)</span>
             </div>
           </div>
           {!busy && !progress && <button style={btn('148,163,184', false)} onClick={onClose}>✕</button>}
         </div>
 
-        <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={pick} style={{ display: 'none' }} />
-        {!rows && !progress && (
-          <button onClick={() => fileRef.current?.click()} style={{ ...btn('74,222,128'), fontSize: 15, padding: '14px 24px', marginTop: 16 }}>📄 Choose the contracts PDF</button>
+        <input ref={fileRef} type="file" accept="application/pdf,.pdf,text/csv,.csv" onChange={pick} style={{ display: 'none' }} />
+        {!rows && !report && !progress && (
+          <button onClick={() => fileRef.current?.click()} style={{ ...btn('74,222,128'), fontSize: 15, padding: '14px 24px', marginTop: 16 }}>📄 Choose the report (PDF or CSV)</button>
         )}
         {progress && (
           <div style={{ marginTop: 16 }}>
             <div style={{ color: '#93c5fd', fontSize: 15, fontWeight: 800 }}>
-              ⏳ Reading {file?.name}{progress.total ? ` — page ${progress.done} of ${progress.total}` : '…'}
+              ⏳ Reading {file?.name}{progress.total ? ` — scanned page ${progress.done} of ${progress.total}` : '…'}
             </div>
             <div style={{ marginTop: 8, height: 8, borderRadius: 4, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: progress.total ? `${Math.round(progress.done / progress.total * 100)}%` : '4%', background: '#60a5fa', transition: 'width .3s' }} />
             </div>
-            <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 6 }}>About 5–10 seconds a page. Keep this window open.</div>
+            {progress.total > 0 && <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 6 }}>Scanned contracts take about 5–10 seconds a page. Keep this window open.</div>}
           </div>
         )}
         {msg && <div style={{ marginTop: 12, fontSize: 14, fontWeight: 800, color: msg.startsWith('❌') || msg.startsWith('⚠') ? '#fca5a5' : '#93c5fd' }}>{msg}</div>}
 
+        {report && (
+          <>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 14, fontSize: 14.5, fontWeight: 800 }}>
+              <span style={{ color: '#4ade80' }}>➕ {reportCounts.add} new</span>
+              <span style={{ color: '#fbbf24' }}>✏️ {reportCounts.upd} updates</span>
+              <span style={{ color: '#94a3b8' }}>✓ {reportCounts.same} already right</span>
+              <span style={{ color: '#64748b', fontWeight: 600 }}>{file?.name} · {report.plan.length} open agreement{report.plan.length === 1 ? '' : 's'}</span>
+            </div>
+            <div style={{ overflowX: 'auto', marginTop: 10 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
+                <thead><tr>
+                  <th style={head}></th><th style={head}></th><th style={head}>RA #</th><th style={head}>Customer</th><th style={head}>Loaner</th>
+                  <th style={head}>Out</th><th style={head}>Due back</th><th style={head}>Advisor</th><th style={head}>What changes</th>
+                </tr></thead>
+                <tbody>
+                  {report.plan.map(x => {
+                    const r = x.r;
+                    const can = x.action !== 'same';
+                    const on = can && !off[r.raNo];
+                    return (
+                      <tr key={r.raNo} style={{ opacity: can ? (on ? 1 : 0.45) : 0.6, background: x.action === 'new' && on ? 'rgba(74,222,128,.05)' : x.action === 'update' && on ? 'rgba(251,191,36,.05)' : undefined }}>
+                        <td style={cell}>{can && <input type="checkbox" checked={on} disabled={busy} onChange={e => setOff(o => ({ ...o, [r.raNo]: !e.target.checked }))} style={{ width: 18, height: 18 }} />}</td>
+                        <td style={cell}>{actionTag(x)}</td>
+                        <td style={{ ...cell, fontWeight: 800 }}>{r.raNo}</td>
+                        <td style={cell}><b>{[r.firstName, r.lastName].join(' ')}</b>{r.ro ? <div style={{ fontSize: 12, color: '#94a3b8' }}>RO {r.ro}</div> : null}</td>
+                        <td style={cell}>{[r.year, r.make, r.model].filter(Boolean).join(' ')}
+                          <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 12, color: r.vin ? '#94a3b8' : '#fca5a5' }}>{r.vin || `Unit ${r.unitNo} — not in the fleet, no VIN`}</div></td>
+                        <td style={cell}>{md2(r.dateOut)}<div style={{ fontSize: 12, color: '#94a3b8' }}>{tm(r.timeOut)}</div></td>
+                        <td style={cell}>{md2(r.dueDate)}<div style={{ fontSize: 12, color: '#94a3b8' }}>{tm(r.dueTime)}</div></td>
+                        <td style={cell}>{r.advisor}</td>
+                        <td style={{ ...cell, whiteSpace: 'normal', minWidth: 260, fontSize: 12.5, color: '#cbd5e1' }}>
+                          {x.action === 'new' ? 'Added — no scanned contract yet (attach it from ✏️ Edit)'
+                            : x.action === 'same' ? <span style={{ color: '#94a3b8' }}>Already matches the report</span>
+                            : x.changes.map(c => <div key={c.k}><b>{c.label}:</b> {shown(c.k, c.from)} → <span style={{ color: '#fde68a' }}>{shown(c.k, c.to)}</span></div>)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {report.missing.length > 0 && (
+              <div style={{ marginTop: 12, fontSize: 13.5, color: '#fde68a', lineHeight: 1.5 }}>
+                ⚠ {report.missing.length} contract{report.missing.length === 1 ? ' is' : 's are'} still out on the site but not open in this report (probably returned):{' '}
+                {report.missing.map(c => [c.firstName, c.lastName].filter(Boolean).join(' ') + (c.raNo ? ` (${c.raNo})` : '')).join(', ')}. Left as they are.
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 10, marginTop: 16, flexWrap: 'wrap' }}>
+              <button disabled={busy || !(reportCounts.add + reportCounts.upd)} onClick={applyReport}
+                style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px', opacity: reportCounts.add + reportCounts.upd ? 1 : 0.5 }}>
+                {busy ? '⏳ Saving…' : reportCounts.add + reportCounts.upd ? `✓ Apply — add ${reportCounts.add}, update ${reportCounts.upd}` : 'Nothing to change'}
+              </button>
+              <button disabled={busy} style={{ ...btn('96,165,250'), fontSize: 15, padding: '11px 22px' }} onClick={() => fileRef.current?.click()}>📄 Choose a different file</button>
+              <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 15, padding: '11px 22px' }} onClick={onClose}>Cancel</button>
+            </div>
+          </>
+        )}
         {rows && (
           <>
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 14, fontSize: 14.5, fontWeight: 800 }}>
