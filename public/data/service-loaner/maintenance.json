@@ -108,6 +108,24 @@
       "status": "open",
       "requestedAt": "2026-10-19T20:43:01.176Z",
       "requestedBy": "SHAWN"
+    },
+    {
+      "id": "lm-mvfq1ilf19pi",
+      "loanerNo": "LHY2733",
+      "vin": "KM8HDCA39TU393247",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "KONA SEL PREMIUM AWD",
+      "mileage": "1658",
+      "priority": "routine",
+      "services": [
+        "Recall"
+      ],
+      "description": "",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-19T20:43:15.939Z",
+      "requestedBy": "SHAWN"
     }
   ]
 }
