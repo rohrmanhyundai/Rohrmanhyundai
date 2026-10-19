@@ -1,23 +1,41 @@
 {
-  "updatedAt": "2026-10-19T17:54:23.399Z",
+  "updatedAt": "2026-10-19T20:59:32.912Z",
   "by": "SHAWN",
   "advisors": {
     "DAVID": [
       {
-        "ro": "781667",
-        "vehicle": "2026 Hyundai Palisade"
+        "ro": "781677",
+        "vehicle": "2024 Hyundai Elantra"
+      }
+    ],
+    "CORY": [
+      {
+        "ro": "781672",
+        "vehicle": "2023 Hyundai Palisade"
       },
       {
-        "ro": "781660",
+        "ro": "781671",
+        "vehicle": "2023 Hyundai Kona"
+      },
+      {
+        "ro": "781652",
         "vehicle": "2024 Hyundai Santa Fe"
       },
       {
-        "ro": "781640",
-        "vehicle": "2023 Hyundai Santa Fe"
+        "ro": "781625",
+        "vehicle": "2014 Toyota Corolla"
       },
       {
-        "ro": "781578",
-        "vehicle": "2023 Hyundai Elantra"
+        "ro": "781624",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781623",
+        "vehicle": "2024 Hyundai Tucson"
+      },
+      {
+        "ro": "781568",
+        "vehicle": "2018 Genesis G80"
       }
     ],
     "MATTHEW": [
@@ -40,18 +58,6 @@
     ],
     "JORDAN": [
       {
-        "ro": "781654",
-        "vehicle": "2024 Hyundai Elantra"
-      },
-      {
-        "ro": "781648",
-        "vehicle": "2014 Nissan Rogue Select"
-      },
-      {
-        "ro": "781645",
-        "vehicle": "2009 Hyundai Genesis"
-      },
-      {
         "ro": "781641",
         "vehicle": "2025 Hyundai Elantra"
       },
@@ -70,36 +76,6 @@
       {
         "ro": "781176",
         "vehicle": "2013 Hyundai Sonata"
-      }
-    ],
-    "CORY": [
-      {
-        "ro": "781652",
-        "vehicle": "2024 Hyundai Santa Fe"
-      },
-      {
-        "ro": "781625",
-        "vehicle": "2014 Toyota Corolla"
-      },
-      {
-        "ro": "781624",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781623",
-        "vehicle": "2024 Hyundai Tucson"
-      },
-      {
-        "ro": "781603",
-        "vehicle": "2023 Mazda CX-9"
-      },
-      {
-        "ro": "781602",
-        "vehicle": "2023 Lexus IS350"
-      },
-      {
-        "ro": "781568",
-        "vehicle": "2018 Genesis G80"
       }
     ]
   }
