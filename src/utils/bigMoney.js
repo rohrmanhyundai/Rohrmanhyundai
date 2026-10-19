@@ -119,6 +119,21 @@ export function computeStandings(advisors, dashboardData, contest = null) {
   return { goals, goalsSet, rows, store };
 }
 
+// Today's point for the progress charts: file + the dashboard data just saved
+// → the file with `latest` and history[today] set (last save of the day wins).
+// Unchanged file when the contest isn't live. The Big-Money page writes the
+// same thing when it's opened; this lets a dashboard save (e.g. the $50 add-on
+// screenshot import) do it too, so the charts and the Daily Wrench never wait
+// for someone to open that page.
+export function withDaySnapshot(file, dashboardData, now = new Date()) {
+  if (contestStatus(file, now) !== STATUS.LIVE) return file;
+  const live = computeStandings((dashboardData && dashboardData.advisors) || [], dashboardData, file.contest);
+  const date = todayKey(now);
+  const latest = { takenAt: now.getTime(), date, goals: live.goals, standings: live.rows, store: live.store };
+  const day = { goals: live.goals, standings: live.rows.map(r => ({ name: r.name, hrsRo: r.hrsRo, rate: r.rate })), store: { hrsRo: live.store.hrsRo, rate: live.store.rate } };
+  return { ...file, latest, history: { ...(file.history || {}), [date]: day } };
+}
+
 // The standings a viewer should see: banked final results once the window has
 // closed, otherwise the live computation.
 export function standingsFor(file, advisors, dashboardData, now = new Date()) {

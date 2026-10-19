@@ -10,18 +10,18 @@
     "by": "SHAWN"
   },
   "latest": {
-    "takenAt": 1792097904034,
-    "date": "2026-10-15",
+    "takenAt": 1792411878152,
+    "date": "2026-10-19",
     "goals": {
       "hrs_ro": 1.3,
       "add_rate": 0.75
     },
     "standings": [
       {
-        "name": "DAVID",
-        "display": "DAVID",
-        "hrsRo": 0.57,
-        "rate": 0.45,
+        "name": "MATTHEW",
+        "display": "MATTHEW",
+        "hrsRo": 1.07,
+        "rate": 0.5,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -32,8 +32,8 @@
       {
         "name": "JORDAN",
         "display": "JORDAN",
-        "hrsRo": 0.52,
-        "rate": 0.502,
+        "hrsRo": 0.55,
+        "rate": 0.505,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -42,10 +42,10 @@
         "leader": false
       },
       {
-        "name": "MATTHEW",
-        "display": "MATTHEW",
-        "hrsRo": 0,
-        "rate": 0,
+        "name": "DAVID",
+        "display": "DAVID",
+        "hrsRo": 0.54,
+        "rate": 0.472,
         "hitHrs": false,
         "hitRate": false,
         "qualified": false,
@@ -55,8 +55,8 @@
       }
     ],
     "store": {
-      "hrsRo": 0.36,
-      "rate": 0.317,
+      "hrsRo": 0.72,
+      "rate": 0.492,
       "hitHrs": false,
       "hitRate": false,
       "hit": false,
@@ -65,31 +65,31 @@
   },
   "coaching": {
     "JORDAN": {
-      "text": "**Today's read:** You're at 50.5% add rate and 0.55 add'l hrs/RO, with a positive trend upward!  \n- 💪 Your alignment upsell is strong at 12.0%, exceeding the 10% goal!  \n- 🎯 To hit the add'l hrs/RO goal, you need to add-on 3 more oil changes a day for the rest of the month.  \n- 🤝 This will elevate the store average, pushing it closer to the goal and maximizing our chances for that $1000 payout!  \n**This week's challenge:** Focus on securing an add-on on the first $50 oil change every morning to build momentum!",
+      "text": "**Today's read:** You're at 50.5% add rate and 0.55 add'l hrs/RO, with a positive trend upward!  \n- \ud83d\udcaa Your alignment upsell is strong at 12.0%, exceeding the 10% goal!  \n- \ud83c\udfaf To hit the add'l hrs/RO goal, you need to add-on 3 more oil changes a day for the rest of the month.  \n- \ud83e\udd1d This will elevate the store average, pushing it closer to the goal and maximizing our chances for that $1000 payout!  \n**This week's challenge:** Focus on securing an add-on on the first $50 oil change every morning to build momentum!",
       "generatedAt": "2026-10-19T11:22:05.458Z",
       "date": "2026-10-19",
       "by": "auto"
     },
     "CODY": {
-      "text": "**Today's read:** You're sitting at an add rate of 38.0% and add'l hrs/RO of 0.41, but we need to push these numbers up!  \n- 💪 Your alignment upsell is showing promise at 6.7%, just shy of the 10% goal!  \n- 🎯 To qualify, you need an add-on on 20 more oil changes over the next 9 days—aim for about 2.2 add-ons a day!  \n- 🤝 Achieving this will boost the store average significantly; hitting the add rate goal could lift us to 57.7%, impacting everyone's earnings!  \n**This week's challenge:** Focus on getting an add-on on the first $50 oil change of each day to kickstart your momentum!",
+      "text": "**Today's read:** You're sitting at an add rate of 38.0% and add'l hrs/RO of 0.41, but we need to push these numbers up!  \n- \ud83d\udcaa Your alignment upsell is showing promise at 6.7%, just shy of the 10% goal!  \n- \ud83c\udfaf To qualify, you need an add-on on 20 more oil changes over the next 9 days\u2014aim for about 2.2 add-ons a day!  \n- \ud83e\udd1d Achieving this will boost the store average significantly; hitting the add rate goal could lift us to 57.7%, impacting everyone's earnings!  \n**This week's challenge:** Focus on getting an add-on on the first $50 oil change of each day to kickstart your momentum!",
       "generatedAt": "2026-09-21T11:28:02.000Z",
       "date": "2026-09-21",
       "by": "auto"
     },
     "DAVID": {
-      "text": "**Today's read:** You're at 47.2% add rate and 0.54 add'l hrs/RO, but trending upward with recent efforts!  \n- 💪 Your alignment upsell is strong at 12.0%, exceeding the 10% goal!  \n- 🎯 To qualify, you need an add-on on **all** remaining $50 oil changes—about **4 more oil changes a day** for the rest of the contest.  \n- 🤝 Achieving this will boost the store average add rate significantly, potentially reaching **58.5%**, which helps everyone earn that $500!  \n**This week's challenge:** Focus on securing an add-on on the first $50 oil change every morning to build momentum!",
+      "text": "**Today's read:** You're at 47.2% add rate and 0.54 add'l hrs/RO, but trending upward with recent efforts!  \n- \ud83d\udcaa Your alignment upsell is strong at 12.0%, exceeding the 10% goal!  \n- \ud83c\udfaf To qualify, you need an add-on on **all** remaining $50 oil changes\u2014about **4 more oil changes a day** for the rest of the contest.  \n- \ud83e\udd1d Achieving this will boost the store average add rate significantly, potentially reaching **58.5%**, which helps everyone earn that $500!  \n**This week's challenge:** Focus on securing an add-on on the first $50 oil change every morning to build momentum!",
       "generatedAt": "2026-10-19T11:22:07.790Z",
       "date": "2026-10-19",
       "by": "auto"
     },
     "DANIEL": {
-      "text": "**Today's read:** You're at 0.0% add rate and 0.00 add'l hrs/RO, which means there's a lot of room for improvement.  \n- 💪 The store's add rate is currently 33.3%, and hitting the 75.0% goal would significantly boost our overall performance.  \n- 🎯 You need to add-on on every remaining $50 oil change, which means about 5.0 add-on hours per $50 oil change for the next 7 days.  \n- 🤝 Achieving this will not only qualify you but also elevate the store average to 58.3%, bringing us closer to that $1000 prize!  \n**This week's challenge:** Focus on adding-on during every $50 oil change you handle—let's aim for 5 add-ons this week!",
+      "text": "**Today's read:** You're at 0.0% add rate and 0.00 add'l hrs/RO, which means there's a lot of room for improvement.  \n- \ud83d\udcaa The store's add rate is currently 33.3%, and hitting the 75.0% goal would significantly boost our overall performance.  \n- \ud83c\udfaf You need to add-on on every remaining $50 oil change, which means about 5.0 add-on hours per $50 oil change for the next 7 days.  \n- \ud83e\udd1d Achieving this will not only qualify you but also elevate the store average to 58.3%, bringing us closer to that $1000 prize!  \n**This week's challenge:** Focus on adding-on during every $50 oil change you handle\u2014let's aim for 5 add-ons this week!",
       "generatedAt": "2026-09-23T18:44:55.897Z",
       "date": "2026-09-23",
       "by": "auto"
     },
     "MATTHEW": {
-      "text": "**Today's read:** You’re currently at an add rate of 50.0% and 1.07 add'l hrs/RO, but we need to step it up to qualify for the contest.  \n- 💪 Your 4 $50 oil-change tickets show potential; keep pushing those add-ons!  \n- 🎯 To hit our goals, we need an add-on on **3 more oil changes a day** for the next 12 days—aim for 1.59 add'l hrs/RO.  \n- 🤝 If you hit that add rate, the store average would jump to 57.6%, boosting everyone's chances for that $1000 prize!  \n**This week's challenge:** Focus on adding an alignment or ASR every time you sell a $50 oil change!",
+      "text": "**Today's read:** You\u2019re currently at an add rate of 50.0% and 1.07 add'l hrs/RO, but we need to step it up to qualify for the contest.  \n- \ud83d\udcaa Your 4 $50 oil-change tickets show potential; keep pushing those add-ons!  \n- \ud83c\udfaf To hit our goals, we need an add-on on **3 more oil changes a day** for the next 12 days\u2014aim for 1.59 add'l hrs/RO.  \n- \ud83e\udd1d If you hit that add rate, the store average would jump to 57.6%, boosting everyone's chances for that $1000 prize!  \n**This week's challenge:** Focus on adding an alignment or ASR every time you sell a $50 oil change!",
       "generatedAt": "2026-10-19T11:22:03.371Z",
       "date": "2026-10-19",
       "by": "auto"
@@ -493,6 +493,33 @@
       "store": {
         "hrsRo": 0.36,
         "rate": 0.317
+      }
+    },
+    "2026-10-19": {
+      "goals": {
+        "hrs_ro": 1.3,
+        "add_rate": 0.75
+      },
+      "standings": [
+        {
+          "name": "MATTHEW",
+          "hrsRo": 1.07,
+          "rate": 0.5
+        },
+        {
+          "name": "JORDAN",
+          "hrsRo": 0.55,
+          "rate": 0.505
+        },
+        {
+          "name": "DAVID",
+          "hrsRo": 0.54,
+          "rate": 0.472
+        }
+      ],
+      "store": {
+        "hrsRo": 0.72,
+        "rate": 0.492
       }
     }
   }

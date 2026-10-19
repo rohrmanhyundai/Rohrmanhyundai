@@ -24,7 +24,8 @@ import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 import { decryptWithVault, inVault } from '../utils/passwordVault';
 import { isPartial, PARTIAL_REASONS, partialLabel } from '../utils/partialOut';
 import { parseVmpiReport } from '../utils/vmpiReport';
-import { saveVmpiReport } from '../utils/github';
+import { saveVmpiReport, updateBigMoney } from '../utils/github';
+import { withDaySnapshot } from '../utils/bigMoney';
 import VmpiReportView from './VmpiReportView';
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
@@ -1715,6 +1716,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     try {
       const payload = { data, vacations };
       await saveDashboardToGitHub(payload);
+      // Big-Money LOF charts: today's point from the numbers just saved.
+      updateBigMoney(f => withDaySnapshot(f, data)).catch(e => console.warn('big-money snapshot failed', e));
       // Cross-check: reconcile each advisor's previous working day to these numbers.
       try {
         const corrected = await reconcileAdvisorGoals();
