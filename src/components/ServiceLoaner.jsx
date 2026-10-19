@@ -167,7 +167,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setBusy(false);
   }
 
-  // A contract added from the agreement report has no scan; attach the signed one.
+  // The original (opened / out) contract: attach it when it's missing (a contract
+  // from the agreement report, or one whose returned copy went in first), or
+  // replace it. Stored beside the completed copy, never over it.
   async function uploadOriginal(f) {
     if (!f || !editing) return;
     if (originalRef.current) originalRef.current.value = '';
@@ -175,12 +177,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     try {
       const url = await uploadServiceLoanerToS3(f);
       const changes = { fileUrl: url, fileName: f.name || 'contract.pdf', scanAttachedAt: new Date().toISOString(), scanAttachedBy: currentUser };
+      const old = editing.fileUrl;
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
         `attach contract RA ${editing.raNo || editing.ro || '(none)'}`);
       setContracts(next.contracts);
       setEditing(e => ({ ...e, ...changes }));
       setEditView('out');
-      setStatus('✓ Signed contract attached.');
+      if (old) { try { await deleteS3ObjectByUrl(old); } catch {} }
+      setStatus(old ? '✓ Opened contract replaced.' : '✓ Opened contract added.');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Upload failed.'}`);
     }
@@ -481,6 +485,18 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                   </button>
                 </div>
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Opened contract (out)</div>
+                  <div style={{ fontSize: 12.5, color: editing.fileUrl ? '#94a3b8' : '#fde68a', margin: '3px 0 10px', lineHeight: 1.45 }}>
+                    {editing.fileUrl
+                      ? <>✓ On file{editing.fileName ? ` (${editing.fileName})` : ''}{editing.scanAttachedBy ? ` — added by ${editing.scanAttachedBy} ${new Date(editing.scanAttachedAt).toLocaleDateString()}` : ''}.</>
+                      : '⚠ Not added yet — scan the signed contract from when the loaner went out and upload it here.'}
+                  </div>
+                  <input ref={originalRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadOriginal(e.target.files && e.target.files[0])} />
+                  <button disabled={busy} style={{ ...btn(editing.fileUrl ? '110,231,249' : '74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={() => originalRef.current && originalRef.current.click()}>
+                    📤 {editing.fileUrl ? 'Replace opened contract' : 'Upload opened contract'}
+                  </button>
+                </div>
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Loaner returned?</div>
                   <div style={{ fontSize: 12.5, color: '#94a3b8', margin: '3px 0 10px', lineHeight: 1.45 }}>
                     {editing.completedUrl
@@ -504,14 +520,13 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                   </div>
                 )}
                 {editing.completedUrl && !editing.fileUrl && (
-                  <div style={{ fontSize: 12.5, fontWeight: 800, color: '#94a3b8', padding: '4px 6px' }}>Completed (returned) copy — the original was deleted.</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 800, color: '#94a3b8', padding: '4px 6px' }}>Completed (returned) copy — no opened contract on file (upload it on the left).</div>
                 )}
                 {!editing.fileUrl && !editing.completedUrl ? (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, textAlign: 'center', padding: 20 }}>
                     <div style={{ fontSize: 40 }}>📎</div>
                     <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>No signed contract scanned yet</div>
                     <div style={{ fontSize: 13.5, color: '#94a3b8', maxWidth: 420, lineHeight: 1.5 }}>This contract came from the agreement report. Scan the signed Vehicle Use Agreement and attach it here.</div>
-                    <input ref={originalRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadOriginal(e.target.files && e.target.files[0])} />
                     <button disabled={busy} style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px' }} onClick={() => originalRef.current && originalRef.current.click()}>📤 Attach the signed contract</button>
                   </div>
                 ) : (() => {
