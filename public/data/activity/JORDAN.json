@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-19T12:08:50.393Z",
+    "type": "page",
+    "label": "tire-quote"
+  },
+  {
+    "at": "2026-10-19T12:08:48.580Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-19T12:08:40.519Z",
+    "type": "action",
+    "label": "login"
+  },
+  {
     "at": "2026-10-17T16:53:34.627Z",
     "type": "page",
     "label": "hotRepairs"
@@ -1066,61 +1081,6 @@
   },
   {
     "at": "2026-09-19T15:53:08.429Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-19T11:56:49.953Z",
-    "type": "page",
-    "label": "work-schedule"
-  },
-  {
-    "at": "2026-09-19T11:56:49.038Z",
-    "type": "page",
-    "label": "dashboard"
-  },
-  {
-    "at": "2026-09-19T11:56:46.301Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-19T11:56:45.836Z",
-    "type": "page",
-    "label": "work-in-progress"
-  },
-  {
-    "at": "2026-09-18T20:38:16.009Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-18T20:38:08.663Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-17T19:44:54.802Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-17T19:44:52.649Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-17T19:44:38.778Z",
-    "type": "page",
-    "label": "advisor-goals"
-  },
-  {
-    "at": "2026-09-17T19:44:37.354Z",
-    "type": "page",
-    "label": "advisor-calendar"
-  },
-  {
-    "at": "2026-09-17T19:07:37.825Z",
     "type": "page",
     "label": "advisor-calendar"
   }
