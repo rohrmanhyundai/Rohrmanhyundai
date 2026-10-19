@@ -23,5 +23,37 @@
     "notes": "wiating on all proper documents to start p/a. will need engine. BACK ORDER. NEXT MONTH ",
     "partsArrived": null,
     "partsArrivedDate": ""
+  },
+  {
+    "id": "mvfk01jpxuyh",
+    "ro": "781657",
+    "roDate": "2026-10-19",
+    "vehicle": "2022 Hyundai Palisade",
+    "jobDesc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "MATTHEW CLARK"
+  },
+  {
+    "id": "mvfk01jpi3dj",
+    "ro": "781654",
+    "roDate": "2026-10-19",
+    "vehicle": "2024 Hyundai Elantra",
+    "jobDesc": "CUSTOMER STATES BACK IN AUGUST HE REPLACED THE BATTERY, ALSO REPLACED ALTERNATOR, VEHICLE DIED LAST WEEK AND WOULD NOT START UNTIL BATTERY WAS REPLACED AGAIN. VEHICLE KEEPS DYING. CHECK AND ADVISE.",
+    "notes": "",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "JORDAN TROXEL"
   }
 ]
