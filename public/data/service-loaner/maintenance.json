@@ -72,6 +72,24 @@
       "status": "open",
       "requestedAt": "2026-10-19T20:42:23.307Z",
       "requestedBy": "SHAWN"
+    },
+    {
+      "id": "lm-mvfq0ug6mc7x",
+      "loanerNo": "LHY2623",
+      "vin": "KMHL64JA3TA540737",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SONATA SEL SPORT AWD",
+      "mileage": "2902",
+      "priority": "urgent",
+      "services": [
+        "Recall"
+      ],
+      "description": "",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-19T20:42:44.646Z",
+      "requestedBy": "SHAWN"
     }
   ]
 }
