@@ -5,7 +5,8 @@ import VinScanner from './VinScanner';
 import { blacklistHit } from '../utils/serviceLoaner';
 
 // ── 🚙 Rental (phone) ─────────────────────────────────────────────────────────
-// Check-in / check-out pictures and videos of a loaner. Stock # — or 📷 Scan
+// Check-in / check-out pictures and videos of a loaner. Stock # — or 📋 Select
+// Loaner from the fleet list, or 📷 Scan
 // VIN, which reads the door-jamb barcode and finds the loaner by VIN (must be in
 // the fleet on Service Loaner → Loaner Inventory) → customer first / last name
 // → Checking In or Checking Out
@@ -50,6 +51,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [added, setAdded] = useState(null);        // { kind, n, total } — the "take more?" pop-up after a capture
   const sendRef = useRef(null);
   const [scanning, setScanning] = useState(false);
+  const [picking, setPicking] = useState(false);     // 📋 Select Loaner list open
+  const [pickQ, setPickQ] = useState('');
   const camRef = useRef(null);
   const libraryRef = useRef(null);
 
@@ -164,6 +167,37 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0d1627', color: '#e2e8f0', fontFamily: 'Inter, sans-serif', padding: '16px 14px 40px' }}>
+      {picking && (() => {
+        const terms = pickQ.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        const list = (fleet || [])
+          .filter(v => !terms.length || terms.every(t => [v.stockNo, v.unitNo, v.vin, v.year, v.make, v.model].join(' ').toLowerCase().includes(t)))
+          .sort((a, b) => String(a.stockNo || a.unitNo || a.vin).localeCompare(String(b.stockNo || b.unitNo || b.vin), undefined, { numeric: true }));
+        return (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: '#0d1627', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '14px 14px 10px', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ flex: 1, color: '#93c5fd', fontWeight: 900, fontSize: 18 }}>📋 Select Loaner</div>
+                <button type="button" onClick={() => setPicking(false)} style={{ ...SMALL_BTN, padding: '8px 14px', fontWeight: 800 }}>✕ Close</button>
+              </div>
+              <input autoFocus value={pickQ} onChange={e => setPickQ(e.target.value)} placeholder="🔎 Search stock #, model, VIN…" style={{ ...INPUT, marginTop: 10 }} />
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px 30px' }}>
+              {!list.length ? <div style={{ color: '#7a92b8', fontSize: 14, padding: 10 }}>{(fleet || []).length ? `No loaner matches “${pickQ}”.` : 'No loaners in the fleet yet — add them on Service Loaner → Loaner Inventory.'}</div>
+                : list.map(v => (
+                  <button key={v.id} type="button" onClick={() => { setStock(v.stockNo || v.unitNo || v.vin); setPicking(false); setError(''); }}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', marginBottom: 8, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 12, padding: '13px 14px', cursor: 'pointer', color: '#e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                      <span style={{ fontWeight: 900, fontSize: 17, flex: 1 }}>{v.stockNo ? `#${v.stockNo}` : <span style={{ color: '#fbbf24' }}>Unit {v.unitNo || '—'}</span>}</span>
+                      {v.mileage && <span style={{ fontSize: 12.5, color: '#7a92b8', fontWeight: 700 }}>{Number(v.mileage).toLocaleString()} mi</span>}
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#cbd5e1', marginTop: 2 }}>{vehicleText(v) || 'Loaner'}</div>
+                    <div style={{ fontSize: 12, color: '#7a92b8', fontFamily: 'ui-monospace, Menlo, monospace', marginTop: 2 }}>…{String(v.vin || '').slice(-8)}</div>
+                  </button>
+                ))}
+            </div>
+          </div>
+        );
+      })()}
       {scanning && <VinScanner onCancel={() => setScanning(false)} onScan={(vin) => { setScanning(false); setStock(vin); setError(''); }} />}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 16 }}>
         <div>
@@ -175,11 +209,17 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
 
       {/* Step 1: stock # */}
       <div style={CARD}>
-        <label style={LABEL}>1 · Stock # or scan the VIN</label>
-        <button type="button" onClick={() => { setError(''); setScanning(true); }} disabled={saving}
-          style={{ width: '100%', marginBottom: 8, background: 'rgba(74,222,128,.12)', border: '1px dashed rgba(74,222,128,.6)', color: '#e2e8f0', borderRadius: 10, padding: '16px 8px', cursor: 'pointer', fontSize: 16.5, fontWeight: 900 }}>
-          📷 Scan VIN
-        </button>
+        <label style={LABEL}>1 · Which loaner?</label>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+          <button type="button" onClick={() => { setError(''); setScanning(true); }} disabled={saving}
+            style={{ flex: 1, background: 'rgba(74,222,128,.12)', border: '1px dashed rgba(74,222,128,.6)', color: '#e2e8f0', borderRadius: 10, padding: '16px 6px', cursor: 'pointer', fontSize: 16, fontWeight: 900 }}>
+            📷 Scan VIN
+          </button>
+          <button type="button" onClick={() => { setError(''); setPickQ(''); setPicking(true); }} disabled={saving || !fleet}
+            style={{ flex: 1, background: 'rgba(96,165,250,.12)', border: '1px dashed rgba(96,165,250,.6)', color: '#e2e8f0', borderRadius: 10, padding: '16px 6px', cursor: 'pointer', fontSize: 16, fontWeight: 900 }}>
+            📋 Select Loaner
+          </button>
+        </div>
         <input value={stock} onChange={e => { setStock(e.target.value.toUpperCase()); setError(''); }} placeholder="…or type the stock # (e.g. LHY2445)"
           autoCapitalize="characters" autoCorrect="off" disabled={saving} style={{ ...INPUT, fontWeight: 800, letterSpacing: '.04em' }} />
         {fleet === null ? <div style={{ color: '#7a92b8', fontSize: 12.5, marginTop: 6 }}>Loading the fleet…</div>
