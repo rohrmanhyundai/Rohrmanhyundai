@@ -36,6 +36,24 @@
       "status": "open",
       "requestedAt": "2026-10-19T20:41:27.318Z",
       "requestedBy": "SHAWN"
+    },
+    {
+      "id": "lm-mvfpzytftjx4",
+      "loanerNo": "LHY2473",
+      "vin": "5NTJBDDE5TH159469",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "SANTA CRUZ SEL AWD",
+      "mileage": "6187",
+      "priority": "urgent",
+      "services": [
+        "Recall"
+      ],
+      "description": "",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-19T20:42:03.651Z",
+      "requestedBy": "SHAWN"
     }
   ]
 }
