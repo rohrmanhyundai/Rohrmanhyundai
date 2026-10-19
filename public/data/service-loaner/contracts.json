@@ -231,14 +231,16 @@
       "dueTime": "13:20",
       "phone": "+1 (469) 891-8314",
       "notes": "",
-      "fileUrl": "",
-      "fileName": "",
+      "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfohhkl-hw819lqq.pdf",
+      "fileName": "NAMALA SARANYA.pdf",
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
       "reportSyncedAt": "2026-10-18T18:23:16.260Z",
       "editedAt": "2026-10-19T14:42:41.155Z",
-      "editedBy": "SHAWN"
+      "editedBy": "SHAWN",
+      "scanAttachedAt": "2026-10-19T19:59:42.544Z",
+      "scanAttachedBy": "HOLLI"
     },
     {
       "id": "sl-mve5lmp0dfx2",
