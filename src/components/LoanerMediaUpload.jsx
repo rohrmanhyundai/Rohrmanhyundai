@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadWarrantyMediaToS3, ensureAwsCreds } from '../utils/s3';
 import VinScanner from './VinScanner';
+import { blacklistHit } from '../utils/serviceLoaner';
 
 // ── 🚙 Rental (phone) ─────────────────────────────────────────────────────────
 // Check-in / check-out pictures and videos of a loaner. Stock # — or 📷 Scan
@@ -30,6 +31,11 @@ const KIND = {
 
 export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const { loadLoanerInventory, updateLoanerMedia } = io || github;
+  // ⛔ Black list: a customer name that matches pops a warning (once per entry).
+  const loadBlacklist = (io || github).loadLoanerBlacklist;
+  const [blacklist, setBlacklist] = useState([]);
+  const [blAck, setBlAck] = useState({});            // entry id → warning seen
+  useEffect(() => { loadBlacklist().then(d => setBlacklist(d.entries || [])).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const upload = io?.uploadWarrantyMediaToS3 || uploadWarrantyMediaToS3;
   const ensureCreds = io?.ensureAwsCreds || ensureAwsCreds;
   const [fleet, setFleet] = useState(null);        // null = loading
@@ -59,6 +65,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
     || fleet.find(v => v.vin && (v.vin === key || (key.length >= 6 && v.vin.endsWith(key)))) : null), [fleet, key]);
   const isVin = key.length === 17;
   const hasName = !!first.trim() && !!last.trim();
+  const blHit = hasName ? blacklistHit(blacklist, { firstName: first, lastName: last }) : null;
   const ready = !!vehicle && hasName && !!kind;
   const canSend = ready && files.length > 0 && !saving;
 
@@ -189,6 +196,11 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
           <input value={first} onChange={e => { setFirst(e.target.value); setError(''); }} placeholder="First name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
           <input value={last} onChange={e => { setLast(e.target.value); setError(''); }} placeholder="Last name" autoCapitalize="words" autoComplete="off" disabled={saving} style={INPUT} />
         </div>
+        {blHit && (
+          <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(220,38,38,.18)', border: '1px solid rgba(248,113,113,.7)', color: '#fecaca', fontSize: 13.5, lineHeight: 1.45 }}>
+            <b>⛔ {first.trim()} {last.trim()} is on the BLACK LIST</b><br />📝 {blHit.notes}
+          </div>
+        )}
       </div>
 
       {/* Step 3: in or out */}
@@ -266,6 +278,23 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         }}>
         {saving ? '⏳ Sending… keep this screen open' : `✓ Done — Send${files.length ? ` ${files.length} file${files.length === 1 ? '' : 's'}` : ''}`}
       </button>
+
+      {blHit && !blAck[blHit.id] && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2100, background: 'rgba(2,6,23,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#2a0a0e', borderColor: 'rgba(248,113,113,.8)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
+            <div style={{ fontSize: 46 }}>⛔</div>
+            <div style={{ fontWeight: 900, fontSize: 20, color: '#fca5a5', marginTop: 4 }}>BLACK LISTED CUSTOMER</div>
+            <div style={{ color: '#fff', fontSize: 17, fontWeight: 800, marginTop: 8 }}>{[blHit.firstName, blHit.lastName].filter(Boolean).join(' ')}</div>
+            <div style={{ color: '#fecaca', fontSize: 13, marginTop: 2 }}>Listed {new Date(blHit.listedAt).toLocaleDateString()} by {blHit.listedBy}</div>
+            <div style={{ color: '#fde68a', fontSize: 14.5, marginTop: 12, lineHeight: 1.45, background: 'rgba(255,255,255,.05)', borderRadius: 8, padding: '10px 12px', textAlign: 'left' }}>📝 {blHit.notes}</div>
+            <div style={{ color: '#cbd5e1', fontSize: 13, marginTop: 12 }}>Do not give this customer a loaner. Check with a manager.</div>
+            <button type="button" onClick={() => setBlAck(a => ({ ...a, [blHit.id]: true }))}
+              style={{ width: '100%', marginTop: 16, borderRadius: 10, padding: '15px 12px', fontSize: 16.5, fontWeight: 900, background: 'rgba(248,113,113,.2)', color: '#fecaca', border: '1px solid rgba(248,113,113,.7)', cursor: 'pointer' }}>
+              I understand
+            </button>
+          </div>
+        </div>
+      )}
 
       {added && !saving && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(2,6,23,.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
