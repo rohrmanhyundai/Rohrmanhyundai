@@ -40,8 +40,8 @@
       "dueTime": "10:32",
       "phone": "+1 (352) 616-9633",
       "notes": "",
-      "fileUrl": "",
-      "fileName": "",
+      "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfj0md0-4t677enr.pdf",
+      "fileName": "JOANNA MCCORMICK.pdf",
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
@@ -51,7 +51,9 @@
       "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfggn4d-xbwf743m.pdf",
       "completedFileName": "781087.pdf",
       "completedAt": "2026-10-19T16:15:05.846Z",
-      "completedBy": "HOLLI"
+      "completedBy": "HOLLI",
+      "scanAttachedAt": "2026-10-19T17:26:37.289Z",
+      "scanAttachedBy": "HOLLI"
     },
     {
       "id": "sl-mve5lmp0lgok",
