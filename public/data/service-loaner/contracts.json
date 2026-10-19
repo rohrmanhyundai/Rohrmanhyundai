@@ -86,7 +86,7 @@
       "raNo": "A1319",
       "firstName": "Krista",
       "lastName": "Minardo",
-      "ro": "",
+      "ro": "781366",
       "advisor": "DAVID RILEY",
       "vin": "KM8RJES28TU107418",
       "unitNo": "TU107418",
@@ -106,7 +106,9 @@
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
-      "reportSyncedAt": "2026-10-18T18:23:16.260Z"
+      "reportSyncedAt": "2026-10-18T18:23:16.260Z",
+      "editedAt": "2026-10-19T14:43:23.489Z",
+      "editedBy": "SHAWN"
     },
     {
       "id": "sl-mve5lmp0rgob",
