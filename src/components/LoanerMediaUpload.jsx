@@ -8,7 +8,8 @@ import VinScanner from './VinScanner';
 // VIN, which reads the door-jamb barcode and finds the loaner by VIN (must be in
 // the fleet on Service Loaner → Loaner Inventory) → customer first / last name
 // → Checking In or Checking Out
-// → Take Media (opens the phone camera; tap again for more) → Done — Send.
+// → Take Media (opens the phone camera) → after each one a pop-up asks Take More
+// or I'm Done → Done — Send.
 // Files go to S3 (warranty-media/loaner-media/, big videos on a signed URL);
 // the session lands in data/service-loaner/media.json and shows on that
 // loaner's card under 📸 Media.
@@ -40,6 +41,8 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(null);          // { stockNo, kind, count }
+  const [added, setAdded] = useState(null);        // { kind, n, total } — the "take more?" pop-up after a capture
+  const sendRef = useRef(null);
   const [scanning, setScanning] = useState(false);
   const camRef = useRef(null);
   const libraryRef = useRef(null);
@@ -66,10 +69,20 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
     if (!picked.length) return;
     const ok = picked.filter(f => f.type.startsWith('image/') || f.type.startsWith('video/') || /\.(jpe?g|png|heic|webp|mov|mp4)$/i.test(f.name));
     setError(ok.length < picked.length ? 'Only pictures and videos can be added.' : '');
-    setFiles(prev => [...prev, ...ok.map(file => ({
+    const fresh = ok.map(file => ({
       id: genId(), file, preview: URL.createObjectURL(file),
       kind: file.type.startsWith('video/') || /\.(mov|mp4)$/i.test(file.name) ? 'video' : 'image', progress: 0,
-    }))]);
+    }));
+    if (!fresh.length) return;
+    setFiles(prev => {
+      const next = [...prev, ...fresh];
+      setAdded({ kind: fresh.every(f => f.kind === 'video') ? 'video' : fresh.every(f => f.kind === 'image') ? 'image' : 'mixed', n: fresh.length, total: next.length });
+      return next;
+    });
+  }
+  function imDone() {
+    setAdded(null);
+    setTimeout(() => sendRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
   }
   function removeFile(id) {
     setFiles(prev => {
@@ -239,7 +252,13 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         <div style={{ ...CARD, borderColor: 'rgba(248,113,113,.45)', background: 'rgba(248,113,113,.1)', color: '#fca5a5', fontSize: 13, fontWeight: 600 }}>{error}</div>
       )}
 
-      <button onClick={send} disabled={!canSend}
+      {files.length > 0 && !saving && (
+        <button type="button" onClick={() => pick(camRef)}
+          style={{ width: '100%', marginTop: 4, marginBottom: 8, background: 'rgba(96,165,250,.12)', border: '1px solid rgba(96,165,250,.55)', color: '#bfdbfe', borderRadius: 10, padding: '13px 12px', fontSize: 15.5, fontWeight: 800, cursor: 'pointer' }}>
+          📷 Take More Media
+        </button>
+      )}
+      <button ref={sendRef} onClick={send} disabled={!canSend}
         style={{
           width: '100%', marginTop: 4, borderRadius: 10, padding: '15px 12px', fontSize: 16, fontWeight: 800, cursor: canSend ? 'pointer' : 'not-allowed',
           background: canSend ? 'linear-gradient(180deg,#4ade80,#16a34a)' : 'rgba(255,255,255,0.06)', color: canSend ? '#052e16' : '#64748b',
@@ -247,6 +266,26 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
         }}>
         {saving ? '⏳ Sending… keep this screen open' : `✓ Done — Send${files.length ? ` ${files.length} file${files.length === 1 ? '' : 's'}` : ''}`}
       </button>
+
+      {added && !saving && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(2,6,23,.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 18 }}>
+          <div style={{ ...CARD, background: '#0f1b30', borderColor: 'rgba(74,222,128,.45)', width: '100%', maxWidth: 420, textAlign: 'center', padding: '24px 18px', marginBottom: 0 }}>
+            <div style={{ fontSize: 40 }}>{added.kind === 'video' ? '🎥' : added.kind === 'image' ? '📷' : '📎'}</div>
+            <div style={{ fontWeight: 900, fontSize: 19, color: '#4ade80', marginTop: 6 }}>
+              ✓ {added.n > 1 ? `${added.n} ${added.kind === 'video' ? 'videos' : added.kind === 'image' ? 'pictures' : 'files'}` : added.kind === 'video' ? 'Video' : 'Picture'} added
+            </div>
+            <div style={{ color: '#94a3b8', fontSize: 14, marginTop: 4 }}>{added.total} file{added.total === 1 ? '' : 's'} ready to send. Need another picture or video?</div>
+            <button type="button" onClick={() => { setAdded(null); camRef.current?.click(); }}
+              style={{ width: '100%', marginTop: 18, borderRadius: 10, padding: '16px 12px', fontSize: 17, fontWeight: 900, background: 'linear-gradient(180deg,#60a5fa,#2563eb)', color: '#fff', border: '1px solid rgba(96,165,250,.6)', cursor: 'pointer' }}>
+              📷 Take More
+            </button>
+            <button type="button" onClick={imDone}
+              style={{ width: '100%', marginTop: 10, borderRadius: 10, padding: '15px 12px', fontSize: 16.5, fontWeight: 900, background: 'rgba(74,222,128,.15)', color: '#86efac', border: '1px solid rgba(74,222,128,.55)', cursor: 'pointer' }}>
+              ✓ I'm Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
