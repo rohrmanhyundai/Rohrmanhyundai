@@ -6,10 +6,12 @@
     "photoUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/additional-time/mvb0khc902yj-1792157973031.png",
     "tech": "CORY",
     "techDisplay": "CORY S",
-    "status": "submitted",
+    "status": "approved",
     "submittedAt": "2026-10-16T13:39:35.456Z",
-    "approvedAt": null,
-    "approvedBy": null
+    "approvedAt": "2026-10-19T11:24:40.274Z",
+    "approvedBy": "Shawn",
+    "approvedHours": "0.50",
+    "managerNote": ""
   },
   {
     "id": "mv9mjl7g4wu9",
