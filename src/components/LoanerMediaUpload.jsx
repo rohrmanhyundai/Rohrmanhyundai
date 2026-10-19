@@ -179,7 +179,7 @@ export default function LoanerMediaUpload({ currentUser, onBack, io }) {
                 <div style={{ flex: 1, color: '#93c5fd', fontWeight: 900, fontSize: 18 }}>📋 Select Loaner</div>
                 <button type="button" onClick={() => setPicking(false)} style={{ ...SMALL_BTN, padding: '8px 14px', fontWeight: 800 }}>✕ Close</button>
               </div>
-              <input autoFocus value={pickQ} onChange={e => setPickQ(e.target.value)} placeholder="🔎 Search stock #, model, VIN…" style={{ ...INPUT, marginTop: 10 }} />
+              <input value={pickQ} onChange={e => setPickQ(e.target.value)} placeholder="🔎 Search stock #, model, VIN…" style={{ ...INPUT, marginTop: 10 }} />
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px 30px' }}>
               {!list.length ? <div style={{ color: '#7a92b8', fontSize: 14, padding: 10 }}>{(fleet || []).length ? `No loaner matches “${pickQ}”.` : 'No loaners in the fleet yet — add them on Service Loaner → Loaner Inventory.'}</div>
