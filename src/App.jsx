@@ -179,8 +179,10 @@ export default function App() {
       const r = JSON.parse(localStorage.getItem('resumePage') || 'null');
       localStorage.removeItem('resumePage');
       if (r && r.page && Date.now() - r.ts < 10 * 60 * 1000 && localStorage.getItem(AUTH_KEY) === 'true') return r.page;
-      // Rentals people never use the dashboard — reopen on their hub.
-      if (localStorage.getItem(AUTH_KEY) === 'true' && localStorage.getItem('currentRole') === 'rentals') return 'rentals-hub';
+      // Rentals people reopen on their hub — on a computer. On a phone they get the
+      // same phone dashboard as everyone else (its 🚙 Rental button is theirs).
+      const phone = window.innerWidth < 600 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && Math.min(window.screen.width, window.screen.height) < 600);
+      if (!phone && localStorage.getItem(AUTH_KEY) === 'true' && localStorage.getItem('currentRole') === 'rentals') return 'rentals-hub';
     } catch {}
     return 'dashboard';
   });
@@ -982,8 +984,9 @@ export default function App() {
     setCurrentPages(pages);
     initActivityTracker(match.username, role);
     trackAction('login');
-    // Rentals (loaner) people never use the dashboard — they land on their hub.
-    if (String(match.role || '').toLowerCase() === 'rentals') setPage('rentals-hub');
+    // Rentals (loaner) people land on their hub on a computer; on a phone they
+    // get the phone dashboard like everyone else.
+    if (String(match.role || '').toLowerCase() === 'rentals' && !noPopups) setPage('rentals-hub');
   }
 
   function handleLogout() {
@@ -1136,7 +1139,7 @@ export default function App() {
       : jobRole === 'technician' ? 'tech-resources'
       : /parts/.test(jobRole) ? 'parts-hub'
       : /warranty/.test(jobRole) ? 'warranty-hub'
-      : jobRole === 'rentals' ? 'rentals-hub'
+      : jobRole === 'rentals' ? (noPopups ? 'dashboard' : 'rentals-hub')
       : isAdminOrManager ? 'manager-hub' : 'dashboard';
     idleCtx.current = {
       inArea: inLockedPage || inLockedUsers,
