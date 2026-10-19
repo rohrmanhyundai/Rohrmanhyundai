@@ -1,21 +1,5 @@
 [
   {
-    "id": "mv8aig3qgntz",
-    "ro": "781530",
-    "roDate": "2026-10-14",
-    "vehicle": "2021 Hyundai Palisade",
-    "jobDesc": "REPLACE ONE TIRE",
-    "notes": "",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
-  },
-  {
     "id": "mv8lwqn9pket",
     "ro": "781545",
     "roDate": "2026-10-14",
@@ -46,21 +30,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "DAVID RILEY"
-  },
-  {
-    "id": "mvbgtkwkgk27",
-    "ro": "781613",
-    "roDate": "2026-10-16",
-    "vehicle": "2024 Hyundai Kona",
-    "jobDesc": "MAJOR WIRE REPAIR",
-    "notes": "APPROVED WIRE REPAIR",
-    "flag": "purple",
-    "usedCar": false,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "JORDAN TROXEL"
   }
 ]
