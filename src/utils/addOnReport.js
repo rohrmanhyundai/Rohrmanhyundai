@@ -62,7 +62,16 @@ IF "table", follow the steps below.
 STEP 1 — Read the header row and list the column titles left to right (skip blank icon/arrow columns). The board's layout changes from time to time. The current board starts with TICKETS, ADD-ON RATE, OIL-ONLY TKTS and ends with the add-on hours column, titled "ADD ON HRS / TICKET" — usually the LAST column. Older boards called it "ADD'L HRS / RO".
 (Some may be missing or the screenshot may be cropped — use what is actually there.)
 
-STEP 2 — Find EVERY row whose second column is a PERSON'S NAME (e.g. "JORDAN TROXEL", "DAVID RILEY"). Skip dealership/store rows like "FW Lexus" or "LAF Hyundai", headers, and totals. Do not stop early — count the person rows and return all of them, including the last one at the bottom edge.
+If the screenshot is cropped so NO header row shows, the current board's columns are, left to right:
+RANK ("#18", or "—"), NAME (first name printed above last name), SCORE (a big bold number like 12, or "—" — it is NOT tickets),
+TICKETS, ADD-ON RATE (e.g. "47%" with small "2 pts" under it), OIL-ONLY TKTS (e.g. 32 with a small "52%" under it),
+ADD ON HRS / TICKET (a decimal like 0.55 with small "8 pts" under it), and "N more" (e.g. 14 with "more" under it).
+Return those names in "columns" and read each row by them. Example row: "#18 | DAVID RILEY | 12 | 61 | 47% | 32 | 0.55 | 14 more"
+→ tickets 61 (NOT 12), add_on_rate 47, oil_only_tickets 32, addl_hrs_ro 0.55.
+
+STEP 2 — Find EVERY row whose second column is a PERSON'S NAME (e.g. "JORDAN TROXEL", "DAVID RILEY"). Skip dealership/store rows like "FW Lexus" or "LAF Hyundai" (often with "5 SAs" under the name), headers, and totals.
+INCLUDE greyed-out advisors too — e.g. a faded row marked "UNDER 10 TKTS" with "—" for rank and score still has tickets, add-on rate, oil-only and hours: return it.
+Do not stop early — count the person rows and return all of them, including the last one at the bottom edge.
 
 STEP 3 — For each person row, transcribe the BIG number in every column in order into "cells" (ignore the small grey sub-labels like "5 pts", "49%", "$938 sales" underneath). Then fill the named fields FROM those cells:
 - name: the name as printed
@@ -150,11 +159,21 @@ export async function parseAddOnScreenshot(file) {
       if (Array.isArray(r.cells)) {
         const i = r.cells.findIndex(c => /%/.test(String(c)));
         if (i > 0) {
-          const rt = rate(r.cells[i]), t = num(r.cells[i - 1]), o = num(r.cells[i + 1]);
-          if (rt != null && t != null && Number.isInteger(t) && t >= 0) {
-            const okOil = o != null && Number.isInteger(o) && o <= t && Math.abs(o - t * (1 - rt)) <= 1;
+          const rt = rate(r.cells[i]), o = num(r.cells[i + 1]);
+          let t = num(r.cells[i - 1]);
+          const fits = (tk) => o != null && Number.isInteger(o) && tk != null && o <= tk && Math.abs(o - tk * (1 - rt)) <= 1;
+          // A SCORE column (big number, not tickets) can sit before TICKETS. If
+          // the cell next to the % doesn't fit the oil-only count, take the
+          // whole number before the % that does.
+          if (rt != null && !fits(t)) {
+            const alt = r.cells.slice(0, i).map(num).find(v => v != null && Number.isInteger(v) && fits(v));
+            if (alt != null) t = alt;
+          }
+          // Oil-only above the cell next to the % → that cell isn't tickets; leave
+          // it to the oil-only check below.
+          if (rt != null && t != null && Number.isInteger(t) && t >= 0 && !(o != null && o > t)) {
             row.tickets = t; row.add_on_rate = rt;
-            if (okOil) row.oil_only_tickets = o;
+            if (fits(t)) row.oil_only_tickets = o;
             else row.oil_only_tickets = Math.round(t * (1 - rt));
           }
         }
@@ -168,6 +187,14 @@ export async function parseAddOnScreenshot(file) {
       // oil-only read doesn't agree (or exceeds tickets), derive it instead of
       // storing a number pulled from the wrong column.
       if (row.tickets != null && row.add_on_rate != null) {
+        // Oil-only can't be more than tickets: then the "tickets" read was the
+        // score column — work tickets out from oil-only and the rate instead.
+        const o0 = row.oil_only_tickets;
+        if (o0 != null && o0 > row.tickets && row.add_on_rate < 1) {
+          const t2 = Math.round(o0 / (1 - row.add_on_rate));
+          warnings.push(`${row.first}: tickets read as ${row.tickets} but oil-only is ${o0} at ${(row.add_on_rate * 100).toFixed(0)}% — used ${t2} tickets. Check before applying.`);
+          row.tickets = t2;
+        }
         const expect = Math.round(row.tickets * (1 - row.add_on_rate));
         const got = row.oil_only_tickets;
         if (got == null || got > row.tickets || Math.abs(got - expect) > Math.max(1, row.tickets * 0.06)) {
