@@ -80,22 +80,6 @@
     "advisor": "CORY CHAPMAN"
   },
   {
-    "id": "mvbgtieht4kd",
-    "ro": "781622",
-    "roDate": "2026-10-16",
-    "vehicle": "2026 Hyundai Santa Cruz",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
-  },
-  {
     "id": "mvbgtieh3009",
     "ro": "781603",
     "roDate": "2026-10-16",
