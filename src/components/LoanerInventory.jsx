@@ -204,6 +204,24 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
 
   const sessionsOf = (v) => media.filter(m => m.vehicleId === v.id || (!m.vehicleId && m.stockNo && m.stockNo === v.stockNo))
     .sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  // One box per rental: the same customer's CHECK OUT then CHECK IN sets go
+  // together; a different customer (or a new check-out after a check-in) starts
+  // the next box. Newest rental first.
+  const rentalsOf = (v) => {
+    const who = (m) => [m.customerFirst, m.customerLast].filter(Boolean).join(' ').trim().toUpperCase();
+    const groups = [];
+    let cur = null;
+    for (const m of [...sessionsOf(v)].reverse()) {          // oldest first
+      const name = who(m);
+      if (!cur || (name && cur.name && name !== cur.name) || (m.kind !== 'in' && cur.ins.length)) {
+        cur = { id: m.id, name, outs: [], ins: [] };
+        groups.push(cur);
+      }
+      if (!cur.name) cur.name = name;
+      (m.kind === 'in' ? cur.ins : cur.outs).push(m);
+    }
+    return groups.reverse();
+  };
   async function removeSession(m) {
     if (!isManager || busy || !window.confirm(`Delete this ${m.kind === 'in' ? 'check-in' : 'check-out'} set (${(m.files || []).length} file${(m.files || []).length === 1 ? '' : 's'})? This can't be undone.`)) return;
     setBusy(true);
@@ -399,29 +417,50 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                 <div style={{ color: '#94a3b8', marginTop: 16, fontSize: 14.5, lineHeight: 1.5 }}>
                   Nothing yet. On a phone, open <b>🚙 Rental</b>, enter stock #{mediaFor.stockNo || '…'}, pick Checking In or Checking Out and take the pictures / videos.
                 </div>
-              ) : sessions.map(m => (
-                <div key={m.id} style={{ marginTop: 16, borderTop: '1px solid rgba(148,163,184,.18)', paddingTop: 14 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    <span style={{ padding: '4px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 900, color: m.kind === 'in' ? '#052e16' : '#422006', background: m.kind === 'in' ? '#4ade80' : '#fde68a' }}>
-                      {m.kind === 'in' ? '🅿️ CHECK IN' : '🔑 CHECK OUT'}
+              ) : rentalsOf(mediaFor).map(g => {
+                const first = (g.outs[0] || g.ins[0]);
+                const set = (m) => (
+                  <div key={m.id} style={{ marginTop: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 13.5, fontWeight: 800, color: '#e2e8f0' }}>{fmtWhen(m.at)}</span>
+                      <span style={{ fontSize: 12.5, color: '#94a3b8' }}>by {m.by} · {(m.files || []).length} file{(m.files || []).length === 1 ? '' : 's'}</span>
+                      <div style={{ flex: 1 }} />
+                      {isManager && <button disabled={busy} title="Delete this set" style={{ ...btn('248,113,113'), padding: '4px 9px' }} onClick={() => removeSession(m)}>🗑</button>}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+                      {(m.files || []).map((f, i) => (
+                        f.kind === 'video'
+                          ? <video key={i} src={f.url} controls playsInline preload="metadata" style={{ width: 260, maxWidth: '100%', height: 170, background: '#000', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
+                          : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" title={f.name}>
+                              <img src={f.url} alt={f.name} style={{ width: 170, height: 170, objectFit: 'cover', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
+                            </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+                const side = (kind, list) => (
+                  <div style={{ flex: '1 1 320px', minWidth: 0, background: 'rgba(2,6,23,.35)', border: `1px solid rgba(${kind === 'in' ? '74,222,128' : '251,191,36'},.3)`, borderRadius: 12, padding: '10px 12px' }}>
+                    <span style={{ padding: '4px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 900, color: kind === 'in' ? '#052e16' : '#422006', background: kind === 'in' ? '#4ade80' : '#fde68a' }}>
+                      {kind === 'in' ? '🅿️ CHECK IN' : '🔑 CHECK OUT'}
                     </span>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{fmtWhen(m.at)}</span>
-                    {(m.customerFirst || m.customerLast) && <span style={{ fontSize: 14, fontWeight: 800, color: '#bfdbfe' }}>👤 {[m.customerFirst, m.customerLast].filter(Boolean).join(' ')}</span>}
-                    <span style={{ fontSize: 13, color: '#94a3b8' }}>by {m.by} · {(m.files || []).length} file{(m.files || []).length === 1 ? '' : 's'}</span>
-                    <div style={{ flex: 1 }} />
-                    {isManager && <button disabled={busy} style={btn('248,113,113')} onClick={() => removeSession(m)}>🗑 Delete</button>}
+                    {list.length ? list.map(set)
+                      : <div style={{ fontSize: 13, color: '#64748b', marginTop: 10 }}>{kind === 'in' ? 'Not checked in yet.' : 'No check-out media.'}</div>}
                   </div>
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
-                    {(m.files || []).map((f, i) => (
-                      f.kind === 'video'
-                        ? <video key={i} src={f.url} controls playsInline preload="metadata" style={{ width: 300, maxWidth: '100%', height: 200, background: '#000', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
-                        : <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" title={f.name}>
-                            <img src={f.url} alt={f.name} style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)' }} />
-                          </a>
-                    ))}
+                );
+                return (
+                  <div key={g.id} style={{ marginTop: 16, border: '1px solid rgba(148,163,184,.22)', borderRadius: 14, padding: '12px 14px', background: 'rgba(255,255,255,.02)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+                      <span style={{ fontSize: 16, fontWeight: 900, color: '#bfdbfe' }}>👤 {g.name || 'Customer not entered'}</span>
+                      <span style={{ fontSize: 13, color: '#94a3b8' }}>{first ? fmtWhen(first.at).split(' ')[0] : ''}{g.ins.length ? ` → ${fmtWhen(g.ins[g.ins.length - 1].at).split(' ')[0]}` : ''}</span>
+                      <span style={{ fontSize: 12, fontWeight: 900, color: g.ins.length ? '#86efac' : '#fbbf24' }}>{g.ins.length ? '✓ Returned' : '🚗 Out'}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                      {side('out', g.outs)}
+                      {side('in', g.ins)}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
