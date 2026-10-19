@@ -58,6 +58,9 @@ const isImage = (p) => /^image\//.test(p.type || '') || /\.(jpe?g|png|gif|webp|h
 
 export default function LoanerMaintenance({ currentUser, isManager, io, prefill }) {
   const { loadLoanerMaintenance, updateLoanerMaintenance } = io || github;
+  const loadFleet = (io || github).loadLoanerInventory;
+  const [fleet, setFleet] = useState([]);          // Loaner Inventory — fills stock # ⇄ VIN in the form
+  useEffect(() => { loadFleet().then(d => setFleet(d.vehicles || [])).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const uploadPhoto = io?.uploadLoanerMaintenancePhotoToS3 || uploadLoanerMaintenancePhotoToS3;
   const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
   const [items, setItems] = useState([]);
@@ -89,8 +92,27 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
   useEffect(() => {
     const r = formVin.res;
     if (!r || r.vin !== vin) return;
+    if (fleet.some(v => v.vin === vin)) return;   // a fleet loaner: Loaner Inventory's details win (below)
     setDraft(d => ({ ...d, year: r.year || d.year, make: r.make || d.make, model: r.model || d.model }));
   }, [formVin.res]); // eslint-disable-line react-hooks/exhaustive-deps
+  // The loaner from Loaner Inventory: a full VIN fills its stock #, and a stock
+  // # (or unit #) fills its VIN — plus miles and the fleet's model, when blank.
+  const normS = (x) => String(x || '').trim().toUpperCase().replace(/^#/, '');
+  const fleetHit = !formOpen ? null
+    : (vin.length === 17 && fleet.find(v => v.vin === vin))
+      || (draft.loanerNo.trim() && fleet.find(v => normS(v.stockNo) === normS(draft.loanerNo) || normS(v.unitNo) === normS(draft.loanerNo)))
+      || null;
+  useEffect(() => {
+    const v = fleetHit;
+    if (!v) return;
+    setDraft(d => ({
+      ...d,
+      loanerNo: d.loanerNo.trim() ? d.loanerNo : (v.stockNo || ''),
+      vin: d.vin.replace(/\s+/g, '') ? d.vin : (v.vin || ''),
+      year: v.year || d.year, make: v.make || d.make, model: v.model || d.model,
+      mileage: d.mileage || v.mileage || '',
+    }));
+  }, [fleetHit && fleetHit.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const missing = [
     !draft.loanerNo.trim() && !vin && 'stock # or VIN',
     !draft.services.length && !draft.description.trim() && 'what it needs',
@@ -283,7 +305,10 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, marginTop: 14 }}>
-              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Stock #</span><input autoFocus value={draft.loanerNo} onChange={set('loanerNo')} disabled={busy} style={inputStyle} /></label>
+              <label style={{ display: 'grid', gap: 4 }}><span style={label}>Stock #
+                {fleetHit ? <span style={{ color: '#86efac', marginLeft: 8 }}>✓ from Loaner Inventory</span>
+                  : vin.length === 17 && fleet.length ? <span style={{ color: '#fde68a', marginLeft: 8 }}>not in Loaner Inventory — type it</span> : null}
+              </span><input autoFocus value={draft.loanerNo} onChange={set('loanerNo')} disabled={busy} placeholder="or type the VIN below" style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Current miles</span><input value={draft.mileage} onChange={set('mileage')} disabled={busy} inputMode="numeric" style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
                 <span style={label}>Loaner VIN
