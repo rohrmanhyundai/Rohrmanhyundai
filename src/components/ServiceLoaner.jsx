@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3, deleteS3ObjectByUrl } from '../utils/s3';
-import { readLoanerContract, fieldWarnings, isPdf } from '../utils/serviceLoaner';
+import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet } from '../utils/serviceLoaner';
 import LoanerRequests from './LoanerRequests';
 import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
@@ -89,6 +89,11 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const [warrantyAmt, setWarrantyAmt] = useState(null); // popup open when not null
   const completedRef = useRef(null);
   const originalRef = useRef(null);
+  // Loaner Inventory — a scanned contract's VIN is checked against it (fixWithFleet).
+  const [fleet, setFleet] = useState([]);
+  useEffect(() => { ((io || github).loadLoanerInventory)().then(d => setFleet(d.vehicles || [])).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [autoRead, setAutoRead] = useState('');     // '' | 'reading' | message after filling an opened contract
+  const autoReadDone = useRef(new Set());           // contract ids already read this visit
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -108,7 +113,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setDraft({ ...EMPTY });
     setReading(true);
     try {
-      setDraft(await readLoanerContract(f));
+      const { fields, fixed } = fixWithFleet(await readLoanerContract(f), fleet);
+      setDraft({ ...EMPTY, ...fields });
+      if (fixed.length) setStatus(`✓ ${fixed.join(' & ')} corrected from Loaner Inventory (unit ${fields.unitNo || '—'}).`);
     } catch (e) {
       setStatus(`⚠ ${e.message || 'Could not read the contract.'} Fill the fields in by hand.`);
     }
@@ -148,6 +155,41 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setEditing(c);
     setEditView(c.completedUrl ? 'completed' : 'out');
     setEditDraft(Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])));
+    setAutoRead('');
+    autoFill(c);
+  }
+  // Opening a contract with empty boxes: read its scan once and fill in the
+  // blanks (due back, advisor, miles out, plate, phone, RA # …) and fix a bad
+  // VIN from the fleet. Only the form changes — Save keeps it.
+  const AUTO_KEYS = ['firstName', 'lastName', 'ro', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'raNo', 'advisor', 'mileageOut', 'dueDate', 'dueTime', 'plate', 'phone'];
+  async function autoFill(c) {
+    const url = c.fileUrl || c.completedUrl;
+    const blanks = AUTO_KEYS.filter(k => !String(c[k] || '').trim());
+    const badVin = !/^[A-HJ-NPR-Z0-9]{17}$/.test(c.vin || '');
+    if (!url || autoReadDone.current.has(c.id) || (!blanks.length && !badVin)) return;
+    autoReadDone.current.add(c.id);
+    setAutoRead('reading');
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const name = (c.fileUrl ? c.fileName : c.completedFileName) || 'contract.pdf';
+      const read = await readLoanerContract(new File([blob], name, { type: blob.type || (/\.pdf$/i.test(name) ? 'application/pdf' : 'image/jpeg') }));
+      const { fields, fixed } = fixWithFleet(read, fleet);
+      const filled = [];
+      setEditDraft(d => {
+        if (!d) return d;
+        const n = { ...d };
+        for (const k of AUTO_KEYS) if (!String(n[k] || '').trim() && fields[k]) { n[k] = fields[k]; filled.push(k); }
+        if (fixed.includes('VIN') && n.vin !== fields.vin && !/^[A-HJ-NPR-Z0-9]{17}$/.test(n.vin || '')) { n.vin = fields.vin; filled.push('vin'); }
+        return n;
+      });
+      setTimeout(() => setAutoRead(filled.length
+        ? `✨ Filled in from the contract: ${[...new Set(filled)].map(k => (FIELDS.find(f => f[0] === k) || [k, k])[1]).join(', ')} — check, then Save changes.`
+        : ''), 0);
+    } catch {
+      setAutoRead('');
+    }
   }
   function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAmt(null); }
 
@@ -468,6 +510,11 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                   {editing.fileName} · uploaded by {editing.by}{editing.uploadedAt ? ` ${new Date(editing.uploadedAt).toLocaleDateString()}` : ''}
                 </div>
                 {fieldGrid(editDraft, setEditDraft, busy)}
+                {autoRead && (
+                  <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 10, background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.35)', color: '#bfdbfe', fontSize: 13 }}>
+                    {autoRead === 'reading' ? '⏳ Reading the contract to fill in the empty boxes…' : autoRead}
+                  </div>
+                )}
                 {editWarnings.length > 0 && (
                   <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 10, background: 'rgba(251,191,36,.08)', border: '1px solid rgba(251,191,36,.35)', color: '#fde68a', fontSize: 13 }}>
                     <b>Check:</b> {editWarnings.join(' · ')}

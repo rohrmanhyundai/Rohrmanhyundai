@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3 } from '../utils/s3';
-import { readLoanerContractPages, splitPdfPage, planBulk, isPdf } from '../utils/serviceLoaner';
+import { readLoanerContractPages, splitPdfPage, planBulk, isPdf, fixWithFleet } from '../utils/serviceLoaner';
 import { readAgreementReport, planReport } from '../utils/loanerAgreementReport';
 import { fmtServiceStart as md2 } from '../utils/loanerFleetPdf';
 
@@ -23,9 +23,9 @@ const card = { background: '#0f172a', border: '1px solid rgba(148,163,184,.18)',
 const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(255,255,255,.04)', border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 9, padding: '7px 13px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' });
 const cell = { padding: '8px 10px', fontSize: 13.5, color: '#e2e8f0', borderBottom: '1px solid rgba(148,163,184,.12)', verticalAlign: 'top', whiteSpace: 'nowrap', overflow: 'visible', textOverflow: 'clip' };
 const head = { ...cell, fontSize: 11.5, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em', textAlign: 'left' };
-const LABEL = { firstName: 'First', lastName: 'Last', ro: 'RO', raNo: 'RA #', vin: 'VIN', year: 'Year', make: 'Make', model: 'Model', dateOut: 'Out date', timeOut: 'Out time', dateIn: 'In date', timeIn: 'In time' };
+const LABEL = { firstName: 'First', lastName: 'Last', ro: 'RO', raNo: 'RA #', unitNo: 'Unit #', vin: 'VIN', year: 'Year', make: 'Make', model: 'Model', dateOut: 'Out date', timeOut: 'Out time', dateIn: 'In date', timeIn: 'In time', dueDate: 'Due back', dueTime: 'Due time', advisor: 'Advisor', mileageOut: 'Miles out', plate: 'Plate', phone: 'Phone' };
 const md = (iso) => { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${Number(m[2])}/${Number(m[3])}/${m[1]}` : ''; };
-const RECORD_KEYS = ['firstName', 'lastName', 'ro', 'raNo', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'dateIn', 'timeIn'];
+const RECORD_KEYS = ['firstName', 'lastName', 'ro', 'raNo', 'unitNo', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'dateIn', 'timeIn', 'dueDate', 'dueTime', 'advisor', 'mileageOut', 'plate', 'phone'];
 const newId = () => `sl-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 export default function BulkContractUpload({ contracts, currentUser, io, onDone, onClose }) {
@@ -64,7 +64,9 @@ export default function BulkContractUpload({ contracts, currentUser, io, onDone,
         return;
       }
       if (csv) throw new Error("That CSV isn't the agreement export (no \"Agreement Number\" column).");
-      const pages = await readPages(f, (done, total) => setProgress({ done, total }));
+      const fleetList = await loadFleet().then(d => d.vehicles || []).catch(() => []);
+      const pages = (await readPages(f, (done, total) => setProgress({ done, total })))
+        .map(p => (p && p.fields ? { ...p, fields: fixWithFleet(p.fields, fleetList).fields } : p));
       setRows(planBulk(pages, contracts));
     } catch (err) {
       setMsg(`❌ ${err.message || 'Could not read that PDF.'}`);

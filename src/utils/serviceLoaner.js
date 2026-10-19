@@ -20,9 +20,15 @@ Read these boxes and return ONLY a JSON object, no markdown fences:
 - time_out: "Date and Time OUT" time, 24-hour HH:MM (10:46 AM → "10:46", 2:05 PM → "14:05").
 - ra_no: the RA# in that header row (the RIGHTMOST of RO# / Unit# / RA#), e.g. "A1275".
 - date_in, time_in: the "Date and Time IN" box (filled in when the loaner comes back) — same formats as out. null if blank.
+- unit_no: the Unit# in that header row (the MIDDLE one), e.g. "TA540230".
+- due_date, due_time: the "Date and Time DUE IN" box — same formats as out.
+- advisor: the "Service Advisor" box (top right, under the RO# row), e.g. "MATTHEW CLARK".
+- miles_out: "Mileage OUT Customer" (or "Mileage OUT Delivery" if that is the one filled in) — digits only.
+- plate: the "Plate/Tag No." box under VEHICLE INFORMATION, e.g. "227M29".
+- phone: the customer's "Telephone" box under CUSTOMER INFORMATION — digits as printed.
 - is_face_page: true if this image is the contract FACE page (customer / vehicle information boxes); false for a terms page, a blank page or anything else.
 Use null for anything blank or unreadable. Do not guess.
-{"first_name":"","last_name":"","ro":null,"vin":"","year":"","make":"","model":"","date_out":"","time_out":"","ra_no":null,"date_in":null,"time_in":null,"is_face_page":true}`;
+{"first_name":"","last_name":"","ro":null,"vin":"","year":"","make":"","model":"","date_out":"","time_out":"","ra_no":null,"unit_no":null,"date_in":null,"time_in":null,"due_date":null,"due_time":null,"advisor":null,"miles_out":null,"plate":null,"phone":null,"is_face_page":true}`;
 
 const readAsDataUrl = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
@@ -117,7 +123,36 @@ export function normaliseFields(p) {
     raNo: clean(p.ra_no).toUpperCase().replace(/[^0-9A-Z-]/g, ''),
     dateIn: normDate(p.date_in),
     timeIn: normTime(p.time_in),
+    unitNo: clean(p.unit_no).toUpperCase().replace(/[^0-9A-Z]/g, ''),
+    dueDate: normDate(p.due_date),
+    dueTime: normTime(p.due_time),
+    advisor: clean(p.advisor).toUpperCase(),
+    mileageOut: clean(p.miles_out).replace(/[^\d]/g, ''),
+    plate: clean(p.plate).toUpperCase().replace(/\s+/g, ''),
+    phone: clean(p.phone),
   };
+}
+
+// Check a read contract against the loaner fleet (Loaner Inventory). The Unit #
+// (the VIN's last 8) or a VIN off by a misread character or two picks out the
+// loaner; its VIN, year, make and model are then used — the fleet's are right,
+// a scan read can slip. Returns { fields, fixed: ['VIN', …] }.
+export function fixWithFleet(f, fleet = []) {
+  if (!fleet.length) return { fields: f, fixed: [] };
+  const vin = f.vin || '', unit = f.unitNo || '';
+  const diff = (a, b) => { let n = 0; for (let i = 0; i < 17; i++) if (a[i] !== b[i]) n++; return n; };
+  const v = fleet.find(x => x.vin && x.vin === vin)
+    || (unit.length >= 6 && fleet.find(x => (x.unitNo && x.unitNo.toUpperCase() === unit) || (x.vin && x.vin.endsWith(unit))))
+    || (vin.length >= 8 && fleet.find(x => x.vin && x.vin.endsWith(vin.slice(-8))))
+    || (vin.length === 17 && fleet.find(x => x.vin && x.vin.length === 17 && diff(x.vin, vin) <= 2));
+  if (!v) return { fields: f, fixed: [] };
+  const out = { ...f }, fixed = [];
+  if (v.vin && v.vin !== vin) { out.vin = v.vin; fixed.push('VIN'); }
+  if (v.year && v.year !== f.year) { out.year = v.year; fixed.push('year'); }
+  if (v.make && !f.make) out.make = v.make;
+  if (v.model && !f.model) out.model = v.model;
+  if (!out.unitNo && v.unitNo) out.unitNo = v.unitNo;
+  return { fields: out, fixed };
 }
 
 // What the advisor should double-check before saving.
@@ -209,7 +244,7 @@ export async function splitPdfPage(file, n, name) {
   return new File([await one.save()], name, { type: 'application/pdf' });
 }
 
-const BULK_FIELDS = ['firstName', 'lastName', 'ro', 'raNo', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'dateIn', 'timeIn'];
+const BULK_FIELDS = ['firstName', 'lastName', 'ro', 'raNo', 'unitNo', 'vin', 'year', 'make', 'model', 'dateOut', 'timeOut', 'dateIn', 'timeIn', 'dueDate', 'dueTime', 'advisor', 'mileageOut', 'plate', 'phone'];
 const up = (v) => String(v || '').trim().toUpperCase();
 function sameContract(a, f) {
   if (up(a.raNo) && up(f.raNo)) return up(a.raNo) === up(f.raNo);
