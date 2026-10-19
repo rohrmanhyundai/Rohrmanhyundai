@@ -19,6 +19,26 @@
           "size": 930062
         }
       ]
+    },
+    {
+      "id": "mvf8dmlnf1py",
+      "vehicleId": "li-mvbddmwhj1xe",
+      "stockNo": "LHY2733",
+      "vin": "KM8HDCA39TU393247",
+      "kind": "in",
+      "customerFirst": "PATRICIA",
+      "customerLast": "UNKNOWN",
+      "at": "2026-10-19T12:28:49.866Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/KM8HDCA39TU393247/mvf8dmlnf1py/mvf8dl2mn7w5.mov",
+          "name": "81410569882__B6C0B524-0648-4B48-B3C2-57C9F679802D.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 4301358
+        }
+      ]
     }
   ]
 }
