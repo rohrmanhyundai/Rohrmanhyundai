@@ -296,3 +296,17 @@ export function planBulk(pages, contracts) {
   }
   return rows;
 }
+
+// ── Black list match ──
+// Is this customer on the loaner black list? Same first + last name, or the
+// same phone number (last 10 digits). Returns the entry or null.
+const digits10 = (p) => String(p || '').replace(/\D/g, '').slice(-10);
+export function blacklistHit(entries, c) {
+  if (!c || !Array.isArray(entries) || !entries.length) return null;
+  const name = `${String(c.firstName || '').trim()} ${String(c.lastName || '').trim()}`.toUpperCase().replace(/\s+/g, ' ').trim();
+  const ph = digits10(c.phone);
+  return entries.find(e => {
+    const en = `${String(e.firstName || '').trim()} ${String(e.lastName || '').trim()}`.toUpperCase().replace(/\s+/g, ' ').trim();
+    return (name.includes(' ') && en === name) || (ph.length === 10 && digits10(e.phone) === ph);
+  }) || null;
+}

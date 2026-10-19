@@ -2568,3 +2568,18 @@ export async function updateLoanerMedia(mutate, what = 'update') {
     (cur) => mutate(cur && Array.isArray(cur.sessions) ? cur : { sessions: [] }),
     `Loaner media ${what} ${new Date().toISOString()}`);
 }
+
+// ── Loaner black list ─────────────────────────────────────────────────────────
+// Service Loaner → ⛔ Black List: customers not to give a loaner again.
+// public/data/service-loaner/blacklist.json → { entries: [{ id, firstName, lastName, phone,
+//   notes, listedAt, listedBy, source: 'contract'|'manual', contract?: { id, raNo, ro, vin,
+//   vehicle, dateOut } }] }
+export async function loadLoanerBlacklist() {
+  try { const d = await loadGithubFile('data/service-loaner/blacklist.json'); if (d && Array.isArray(d.entries)) return d; } catch {}
+  return { entries: [] };
+}
+export async function updateLoanerBlacklist(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/blacklist.json',
+    (cur) => mutate(cur && Array.isArray(cur.entries) ? cur : { entries: [] }),
+    `Loaner black list ${what} ${new Date().toISOString()}`);
+}

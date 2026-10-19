@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3, deleteS3ObjectByUrl } from '../utils/s3';
-import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet } from '../utils/serviceLoaner';
+import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet, blacklistHit } from '../utils/serviceLoaner';
 import LoanerRequests from './LoanerRequests';
 import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
 import BulkContractUpload from './BulkContractUpload';
+import LoanerBlacklist from './LoanerBlacklist';
 
 // ── Service Loaner ────────────────────────────────────────────────────────────
 // Signed loaner contracts (Vehicle Use Agreement face page). Upload Contract:
@@ -70,9 +71,47 @@ async function printContract(url) {
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
-  const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory'].includes(initialTab) ? initialTab : 'requests');
+  const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory', 'blacklist'].includes(initialTab) ? initialTab : 'requests');
   const [maintPrefill, setMaintPrefill] = useState(null);
   const [bulkOpen, setBulkOpen] = useState(false);
+  // ⛔ Black List — shared by its tab, the contract button and the ⛔ flags.
+  const { loadLoanerBlacklist, updateLoanerBlacklist } = io || github;
+  const [blacklist, setBlacklist] = useState([]);
+  const [blLoading, setBlLoading] = useState(true);
+  const [blModal, setBlModal] = useState(null);     // { notes } while black-listing the open contract
+  useEffect(() => {
+    loadLoanerBlacklist().then(d => setBlacklist(d.entries || [])).catch(() => {}).finally(() => setBlLoading(false));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  async function addBlacklist(entry) {
+    setBusy(true); setStatus('Saving…');
+    try {
+      const rec = { id: `bl-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, ...entry, listedAt: new Date().toISOString(), listedBy: currentUser };
+      const next = await updateLoanerBlacklist(cur => ({ ...cur, entries: [rec, ...cur.entries] }), `add ${rec.firstName} ${rec.lastName}`);
+      setBlacklist(next.entries);
+      setStatus(`⛔ ${[rec.firstName, rec.lastName].filter(Boolean).join(' ')} added to the black list.`);
+      setBusy(false);
+      return true;
+    } catch (e) { setStatus(`❌ ${e.message || 'Save failed.'}`); setBusy(false); return false; }
+  }
+  async function removeBlacklist(id) {
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateLoanerBlacklist(cur => ({ ...cur, entries: cur.entries.filter(e => e.id !== id) }), 'remove');
+      setBlacklist(next.entries);
+      setStatus('✓ Taken off the black list.');
+    } catch (e) { setStatus(`❌ ${e.message || 'Save failed.'}`); }
+    setBusy(false);
+  }
+  async function saveBlacklistNotes(id, notes) {
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateLoanerBlacklist(cur => ({ ...cur, entries: cur.entries.map(e => e.id === id ? { ...e, notes, notesAt: new Date().toISOString(), notesBy: currentUser } : e) }), 'notes');
+      setBlacklist(next.entries);
+      setStatus('✓ Notes saved.');
+      setBusy(false);
+      return true;
+    } catch (e) { setStatus(`❌ ${e.message || 'Save failed.'}`); setBusy(false); return false; }
+  }
   const [showCompleted, setShowCompleted] = useState(false);   // Completed contracts section unfolded   // loaner picked on Loaner Inventory → new maintenance request
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -347,6 +386,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(110,231,249,.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = ''; }}>
                             <td style={{ ...td, fontWeight: 800, whiteSpace: 'nowrap' }}>
                               {c.firstName} {c.lastName}
+                              {blacklistHit(blacklist, c) && <div title={blacklistHit(blacklist, c).notes} style={{ marginTop: 3, width: 'fit-content', padding: '2px 8px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#fff', background: '#dc2626' }}>⛔ BLACK LISTED</div>}
                               {c.raNo && <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>RA {c.raNo}{c.advisor ? ` · ${c.advisor}` : ''}</div>}
                               {c.notes && <div title={c.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 260, whiteSpace: 'pre-wrap' }}>📝 {c.notes}</div>}
                             </td>
@@ -432,7 +472,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const editWarnings = editDraft ? fieldWarnings(editDraft) : [];
 
   const tabBtn = (k, label) => (
-    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
+    <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}</button>
   );
 
   return (
@@ -449,12 +489,16 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         {tabBtn('list', `📋 Contracts (${contracts.length})`)}
         {tabBtn('inventory', '🚙 Loaner Inventory')}
         {tabBtn('maintenance', '🔧 Loaner Maintenance')}
+        {tabBtn('blacklist', `⛔ Black List (${blacklist.length})`)}
         {status && <span style={{ fontSize: 13.5, fontWeight: 800, marginLeft: 8, color: status.startsWith('❌') ? '#fca5a5' : status.startsWith('⚠') ? '#fde68a' : '#86efac' }}>{status}</span>}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '20px 24px 40px' }}>
         <div style={{ maxWidth: 1800, margin: '0 auto' }}>
-          {tab === 'inventory' ? (
+          {tab === 'blacklist' ? (
+            <LoanerBlacklist entries={blacklist} loading={blLoading} busy={busy} onAdd={addBlacklist} onRemove={removeBlacklist} onSaveNotes={saveBlacklistNotes}
+              onOpenContract={(id) => { const c = contracts.find(x => x.id === id); if (c) { setTab('list'); startEdit(c); } else setStatus('⚠ That contract is no longer on file.'); }} />
+          ) : tab === 'inventory' ? (
             <LoanerInventory currentUser={currentUser} io={io} isManager={isManager}
               onMaintenance={(v) => { setMaintPrefill({ loanerNo: v.stockNo || '', vin: v.vin || '', year: v.year || '', make: v.make || '', model: v.model || '', mileage: v.mileage || '' }); setTab('maintenance'); }} />
           ) : tab === 'maintenance' ? (
@@ -509,6 +553,11 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                 <div style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 12, wordBreak: 'break-all' }}>
                   {editing.fileName} · uploaded by {editing.by}{editing.uploadedAt ? ` ${new Date(editing.uploadedAt).toLocaleDateString()}` : ''}
                 </div>
+                {(() => { const hit = blacklistHit(blacklist, editDraft || editing); return hit && (
+                  <div style={{ marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: 'rgba(220,38,38,.15)', border: '1px solid rgba(248,113,113,.6)', color: '#fecaca', fontSize: 13.5, lineHeight: 1.45 }}>
+                    <b>⛔ This customer is on the black list</b> — listed {new Date(hit.listedAt).toLocaleDateString()} by {hit.listedBy}.<br />📝 {hit.notes}
+                  </div>
+                ); })()}
                 {fieldGrid(editDraft, setEditDraft, busy)}
                 {autoRead && (
                   <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 10, background: 'rgba(96,165,250,.08)', border: '1px solid rgba(96,165,250,.35)', color: '#bfdbfe', fontSize: 13 }}>
@@ -530,6 +579,9 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
                     🛡 {editing.warranty ? `Warranty ${money(editing.warranty.amount)}` : 'Warranty'}
                   </button>
+                  {blacklistHit(blacklist, editDraft || editing)
+                    ? <button disabled style={{ ...btn('248,113,113', false), opacity: 0.7 }} title="Already on the black list — see the ⛔ Black List tab">⛔ Black listed</button>
+                    : <button disabled={busy} style={btn('248,113,113')} onClick={() => setBlModal({ notes: '' })}>⛔ Black List customer</button>}
                 </div>
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Opened contract (out)</div>
@@ -629,6 +681,47 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
           )}
         </div>
       </div>
+      {blModal && editing && (() => {
+        const d = editDraft || editing;
+        const who = [d.firstName, d.lastName].filter(Boolean).join(' ') || 'this customer';
+        const ok = blModal.notes.trim() && !busy;
+        const confirm = async () => {
+          if (!ok) return;
+          const vehicle = [d.year, d.make, d.model].filter(Boolean).join(' ');
+          const done = await addBlacklist({
+            firstName: d.firstName || '', lastName: d.lastName || '', phone: d.phone || '', notes: blModal.notes.trim(), source: 'contract',
+            contract: { id: editing.id, raNo: d.raNo || '', ro: d.ro || '', vin: d.vin || '', vehicle, dateOut: d.dateOut || '' },
+          });
+          if (done) setBlModal(null);
+        };
+        return (
+          <div onClick={() => !busy && setBlModal(null)}
+            style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#1a0b0f', borderColor: 'rgba(248,113,113,.55)', width: '100%', maxWidth: 460, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ fontSize: 19, fontWeight: 900, color: '#fca5a5' }}>⚠️ Black list {who}?</div>
+              <div style={{ fontSize: 13.5, color: '#fecaca', margin: '8px 0 12px', lineHeight: 1.5 }}>
+                Are you sure? <b>{who}</b>{d.phone ? ` (${d.phone})` : ''} will be put on the loaner black list and flagged on every future loaner contract.
+              </div>
+              <label style={{ display: 'grid', gap: 4 }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: '#fca5a5' }}>Why are they being black listed? *required</span>
+                <textarea autoFocus value={blModal.notes} disabled={busy} rows={4} placeholder="e.g. Car has a broken windshield — customer's insurance will not cover it"
+                  onChange={e => setBlModal(m => ({ ...m, notes: e.target.value }))}
+                  style={{ ...inputStyle, fontWeight: 600, fontSize: 14, lineHeight: 1.45, resize: 'vertical' }} />
+              </label>
+              {d.notes && !blModal.notes.trim() && (
+                <button disabled={busy} style={{ ...btn('110,231,249'), marginTop: 8, fontSize: 12 }} onClick={() => setBlModal(m => ({ ...m, notes: d.notes }))}>Use the contract's notes</button>
+              )}
+              <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
+                <button disabled={!ok} style={{ ...btn('248,113,113'), fontSize: 14, padding: '9px 18px', opacity: ok ? 1 : 0.5 }} onClick={confirm}>
+                  {busy ? 'Saving…' : '⛔ Yes, black list them'}
+                </button>
+                <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setBlModal(null)}>Cancel</button>
+                {!blModal.notes.trim() && <span style={{ fontSize: 12, color: '#94a3b8' }}>Add the reason first.</span>}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
       {warrantyAmt != null && editing && (() => {
         const n = parseFloat(String(warrantyAmt).replace(/[$,\s]/g, ''));
         const valid = isFinite(n) && n > 0;
