@@ -59,7 +59,7 @@
       "raNo": "A1316",
       "firstName": "Stephanie",
       "lastName": "Anglin",
-      "ro": "",
+      "ro": "781308",
       "advisor": "JORDAN TROXEL",
       "vin": "KMHL64JA3TA540737",
       "unitNo": "TA540737",
@@ -79,7 +79,9 @@
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
-      "reportSyncedAt": "2026-10-18T18:23:16.260Z"
+      "reportSyncedAt": "2026-10-18T18:23:16.260Z",
+      "editedAt": "2026-10-19T14:45:25.518Z",
+      "editedBy": "SHAWN"
     },
     {
       "id": "sl-mve5lmp02eld",
