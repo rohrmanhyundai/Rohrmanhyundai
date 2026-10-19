@@ -209,14 +209,16 @@
       "dueTime": "13:38",
       "phone": "+1 (765) 429-9089",
       "notes": "",
-      "fileUrl": "",
-      "fileName": "",
+      "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfbu7ok-75ujcusn.pdf",
+      "fileName": "RACHAEL WELCH.pdf",
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
       "reportSyncedAt": "2026-10-18T18:23:16.260Z",
       "editedAt": "2026-10-19T12:54:09.079Z",
-      "editedBy": "SHAWN"
+      "editedBy": "SHAWN",
+      "scanAttachedAt": "2026-10-19T14:05:40.995Z",
+      "scanAttachedBy": "HOLLI"
     },
     {
       "id": "sl-mvb7k8p7fa1k",
