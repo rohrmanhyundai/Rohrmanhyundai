@@ -19,6 +19,26 @@
           "size": 4301358
         }
       ]
+    },
+    {
+      "id": "mvfc1efhjh9q",
+      "vehicleId": "li-mvbdeh0v6oy2",
+      "stockNo": "LHY2621",
+      "vin": "KMHL64JA0TA540808",
+      "kind": "out",
+      "customerFirst": "ROBERT",
+      "customerLast": "BOEHME",
+      "at": "2026-10-19T14:11:17.046Z",
+      "by": "SHAWN",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/KMHL64JA0TA540808/mvfc1efhjh9q/mvfc16q4bwdm.mov",
+          "name": "81411183546__AE51E719-715D-4087-82E3-D57E88D84E0A.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 4645666
+        }
+      ]
     }
   ]
 }
