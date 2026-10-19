@@ -135,7 +135,11 @@
       "fromReport": true,
       "reportSyncedAt": "2026-10-18T18:23:16.260Z",
       "scanAttachedAt": "2026-10-19T14:18:10.533Z",
-      "scanAttachedBy": "HOLLI"
+      "scanAttachedBy": "HOLLI",
+      "completedUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfcahjd-xq8jjz6y.pdf",
+      "completedFileName": "781488 INVOICE.pdf",
+      "completedAt": "2026-10-19T14:18:20.134Z",
+      "completedBy": "HOLLI"
     },
     {
       "id": "sl-mve5lmp0cww6",
