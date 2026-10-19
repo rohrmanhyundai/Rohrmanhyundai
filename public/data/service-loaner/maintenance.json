@@ -126,6 +126,24 @@
       "status": "open",
       "requestedAt": "2026-10-19T20:43:15.939Z",
       "requestedBy": "SHAWN"
+    },
+    {
+      "id": "lm-mvfq1w3eo4u9",
+      "loanerNo": "LHY2445",
+      "vin": "KM8RMES21TU032648",
+      "year": "2026",
+      "make": "HYUNDAI",
+      "model": "PALISADE CALLIGRAPHY AWD",
+      "mileage": "5",
+      "priority": "urgent",
+      "services": [
+        "Recall"
+      ],
+      "description": "",
+      "photos": [],
+      "status": "open",
+      "requestedAt": "2026-10-19T20:43:33.434Z",
+      "requestedBy": "SHAWN"
     }
   ]
 }
