@@ -569,20 +569,31 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     <b>Check:</b> {editWarnings.join(' · ')}
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                  <button disabled={busy || !editDraft.firstName && !editDraft.lastName} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={saveEdit}>
-                    {busy ? 'Saving…' : '✓ Save changes'}
-                  </button>
-                  <button disabled={busy} style={btn('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
-                  <button disabled={busy} title="Delete this contract" style={btn('248,113,113')} onClick={() => remove(editing)}>🗑 Delete</button>
-                  <button disabled={busy} style={{ ...btn('251,146,60', !!editing.warranty), marginLeft: 'auto' }}
-                    onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
-                    🛡 {editing.warranty ? `Warranty ${money(editing.warranty.amount)}` : 'Warranty'}
-                  </button>
-                  {blacklistHit(blacklist, editDraft || editing)
-                    ? <button disabled style={{ ...btn('248,113,113', false), opacity: 0.7 }} title="Already on the black list — see the ⛔ Black List tab">⛔ Black listed</button>
-                    : <button disabled={busy} style={btn('248,113,113')} onClick={() => setBlModal({ notes: '' })}>⛔ Black List customer</button>}
-                </div>
+                {/* Two even rows: save / cancel, then the contract actions — same height, no wrapped labels. */}
+                {(() => {
+                  const b = (rgb, on = true) => ({ ...btn(rgb, on), height: 42, padding: '0 12px', fontSize: 13.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, minWidth: 0 });
+                  const listed = blacklistHit(blacklist, editDraft || editing);
+                  return (
+                    <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 8 }}>
+                        <button disabled={busy || !editDraft.firstName && !editDraft.lastName} style={{ ...b('74,222,128'), fontSize: 14.5 }} onClick={saveEdit}>
+                          {busy ? 'Saving…' : '✓ Save changes'}
+                        </button>
+                        <button disabled={busy} style={b('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
+                        <button disabled={busy} style={b('251,146,60', !!editing.warranty)} title={editing.warranty ? `Warranty claim ${money(editing.warranty.amount)}` : 'Warranty claim'}
+                          onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
+                          🛡 {editing.warranty ? money(editing.warranty.amount) : 'Warranty'}
+                        </button>
+                        {listed
+                          ? <button disabled style={{ ...b('248,113,113', false), opacity: 0.7 }} title="Already on the black list — see the ⛔ Black List tab">⛔ Listed</button>
+                          : <button disabled={busy} style={b('248,113,113')} title="Put this customer on the loaner black list" onClick={() => setBlModal({ notes: '' })}>⛔ Black List</button>}
+                        <button disabled={busy} title="Delete this contract" style={b('248,113,113', false)} onClick={() => remove(editing)}>🗑 Delete</button>
+                      </div>
+                    </div>
+                  );
+                })()}
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(148,163,184,.18)' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#f1f5f9' }}>Opened contract (out)</div>
                   <div style={{ fontSize: 12.5, color: editing.fileUrl ? '#94a3b8' : '#fde68a', margin: '3px 0 10px', lineHeight: 1.45 }}>
