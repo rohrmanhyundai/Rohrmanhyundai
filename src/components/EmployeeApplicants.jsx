@@ -290,10 +290,11 @@ export default function EmployeeApplicants({ currentUser, currentUserRecord, onB
                   autoFocus
                   value={codeInput}
                   onChange={e => { setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 10)); setCodeErr(''); }}
-                  type="password"
+                  type="text"
                   inputMode="numeric"
                   placeholder="••••"
-                  style={{ ...inputStyle, marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: '12px' }}
+                  autoComplete="off" data-1p-ignore data-lpignore="true" name="applicants-code-entry"
+                  style={{ ...inputStyle, WebkitTextSecurity: 'disc', marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: '12px' }}
                 />
                 {codeErr && <div style={{ color: '#fca5a5', fontSize: 12.5, fontWeight: 700, marginTop: 10 }}>⚠ {codeErr}</div>}
                 <button type="submit" disabled={checking || !codeInput}

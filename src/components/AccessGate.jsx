@@ -206,8 +206,9 @@ export default function AccessGate({ page, allowed, currentUser, currentUserReco
                   setCode(v); setErr('');
                   if (v.length === CODE_LEN) submit(null, v);   // opens by itself on the 4th digit
                 }}
-                type="password" inputMode="numeric" placeholder="••••" autoComplete="off"
-                style={{ ...input, marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
+                // Text box drawn as dots (not type="password"), so the browser doesn't offer to save the code as a password.
+                type="text" inputMode="numeric" placeholder="••••" autoComplete="off" data-1p-ignore data-lpignore="true" name="access-code-entry"
+                style={{ ...input, WebkitTextSecurity: 'disc', marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
               {code.length > CODE_LEN && !checking && (
                 <button type="submit" style={{ marginTop: 14, width: '100%', padding: 10, fontSize: 14, fontWeight: 800, background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 10 }}>Unlock</button>
               )}

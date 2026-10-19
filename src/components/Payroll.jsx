@@ -92,8 +92,8 @@ function PayrollLock({ currentUser, currentUserRecord, onBack, onUnlock }) {
             <>
               <div style={{ fontSize: 13, color: '#8296b4', marginTop: 8, lineHeight: 1.6 }}>Payroll shows every technician's pay. Enter your 4-digit code to open it.</div>
               <input autoFocus value={codeInput} onChange={e => { setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 10)); setCodeErr(''); }}
-                type="password" inputMode="numeric" placeholder="••••" autoComplete="off"
-                style={{ ...inputStyle, marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
+                type="text" inputMode="numeric" placeholder="••••" autoComplete="off" data-1p-ignore data-lpignore="true" name="payroll-code-entry"
+                style={{ ...inputStyle, WebkitTextSecurity: 'disc', marginTop: 18, textAlign: 'center', fontSize: 24, letterSpacing: '.5em', padding: 12 }} />
               {codeErr && <div style={{ color: '#fca5a5', fontSize: 12.5, fontWeight: 700, marginTop: 10 }}>⚠ {codeErr}</div>}
               <button type="submit" disabled={checking || !codeInput}
                 style={{ marginTop: 16, width: '100%', padding: 11, fontSize: 15, fontWeight: 800, background: (checking || !codeInput) ? 'rgba(255,255,255,.06)' : 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: (checking || !codeInput) ? '#7d8ba3' : '#93c5fd', borderRadius: 10 }}>

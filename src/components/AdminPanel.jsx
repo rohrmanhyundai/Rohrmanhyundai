@@ -3427,7 +3427,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                     ? <span style={{ marginLeft: 8, fontSize: 10, color: '#4ade80', fontWeight: 800 }}>🔒 set</span>
                     : <span style={{ marginLeft: 8, fontSize: 10, color: '#fbbf24', fontWeight: 800 }} title="They can't log in until a password is set — type one here or send a reset email">⚠️ no password yet</span>; })()}
               </label>
-              <input type="password" autoComplete="new-password" value={newUserPass} onChange={e => setNewUserPass(e.target.value)} placeholder={selectedUser ? '••••••' : ''} />
+              {/* Someone else's password: a dotted text box, not type="password", so the
+                  browser doesn't offer to save it as the admin's own password. */}
+              <input type="text" autoComplete="off" data-1p-ignore data-lpignore="true" name="set-user-password" style={{ WebkitTextSecurity: 'disc' }}
+                value={newUserPass} onChange={e => setNewUserPass(e.target.value)} placeholder={selectedUser ? '••••••' : ''} />
               {/* Admin only: the user's CURRENT password, from the vault the
                   admin's own login unlocked. Hidden until clicked. */}
               {currentRole === 'admin' && selectedUser && (() => {
@@ -3479,7 +3482,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   </button>
                 )}
               </label>
-              <input value={newUserCode} inputMode="numeric" type="password"
+              <input value={newUserCode} inputMode="numeric" type="text" autoComplete="off" data-1p-ignore data-lpignore="true" name="set-access-code" style={{ WebkitTextSecurity: 'disc' }}
                 onChange={e => setNewUserCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 placeholder={existingCode ? 'Set — type to replace' : 'Not set'} />
               <div className="small" style={{ marginTop: 4 }}>
