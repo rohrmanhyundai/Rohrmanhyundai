@@ -76,5 +76,21 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "JORDAN TROXEL"
+  },
+  {
+    "id": "mvfk05n8ssvt",
+    "ro": "781646",
+    "roDate": "2026-10-19",
+    "vehicle": "2020 Hyundai Kona",
+    "jobDesc": "CUSTOMER STATES WARNING LIGHTS ON DASH. CHECK AND ADVISE.",
+    "notes": "MAJOR WIRE DAMAGE",
+    "flag": "purple",
+    "usedCar": false,
+    "etaParts": "",
+    "etaCompletion": "",
+    "partsArrived": null,
+    "partsArrivedDate": "",
+    "highPriority": false,
+    "advisor": "MATTHEW CLARK"
   }
 ]
