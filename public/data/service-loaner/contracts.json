@@ -141,7 +141,12 @@
       "completedAt": "2026-10-19T14:18:20.134Z",
       "completedBy": "HOLLI",
       "editedAt": "2026-10-19T14:18:26.578Z",
-      "editedBy": "HOLLI"
+      "editedBy": "HOLLI",
+      "warranty": {
+        "amount": 315,
+        "at": "2026-10-19T14:18:57.186Z",
+        "by": "HOLLI"
+      }
     },
     {
       "id": "sl-mve5lmp0cww6",
