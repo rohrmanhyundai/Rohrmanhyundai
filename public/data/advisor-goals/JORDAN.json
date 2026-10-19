@@ -1089,6 +1089,20 @@
       "2026-10-17": {
         "hours": 157.6,
         "hrsRo": 0.92
+      },
+      "2026-10-19": {
+        "hours": 170,
+        "hrsRo": 0.92,
+        "openRoCount": 23,
+        "invoiced": "yes",
+        "customersUpdated": "yes",
+        "notesUpdated": "yes",
+        "afterCallReviews": "no",
+        "afterCallContacted": 0,
+        "answers": {},
+        "agreed": true,
+        "agreedBy": "JORDAN",
+        "submittedAt": 1792439591809
       }
     },
     "entryMode": "mtd"
