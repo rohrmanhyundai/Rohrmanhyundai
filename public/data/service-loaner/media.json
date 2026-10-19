@@ -1,26 +1,6 @@
 {
   "sessions": [
     {
-      "id": "mvbhctijvgsb",
-      "vehicleId": "li-mvbctc865dns",
-      "stockNo": "LHY2445",
-      "vin": "KM8RMES21TU032648",
-      "kind": "out",
-      "customerFirst": "JOHN",
-      "customerLast": "JOHN",
-      "at": "2026-10-16T21:29:02.777Z",
-      "by": "SHAWN",
-      "files": [
-        {
-          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/LHY2445/mvbhctijvgsb/mvbhcrpu14wb.mov",
-          "name": "81387893238__B81770F2-9792-48A3-99EC-B006AEC02CE6.MOV",
-          "type": "video/quicktime",
-          "kind": "video",
-          "size": 930062
-        }
-      ]
-    },
-    {
       "id": "mvf8dmlnf1py",
       "vehicleId": "li-mvbddmwhj1xe",
       "stockNo": "LHY2733",
