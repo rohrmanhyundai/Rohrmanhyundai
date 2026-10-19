@@ -1,0 +1,456 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-19",
+  "rows": [
+    {
+      "id": "rmvf5itwe18re",
+      "customerName": "Hailey Gonser",
+      "appointmentTime": "7:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43383",
+      "vehicle": "2015 Hyundai Veloster",
+      "services": [
+        "Other (Please use comment box below) — While I’m driving, my cars rpms will drop to 0 and flash the key fob light and another symbol on the dashboard. I am unsure of what the problem is."
+      ],
+      "comments": "While I’m driving, my cars rpms will drop to 0 and flash the key fob light and another symbol on the dashboard. I am unsure of what the problem is.",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvf5itwexh25",
+      "customerName": "Jellie Moore Snyder",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43641",
+      "vehicle": "2009 Hyundai Genesis",
+      "services": [
+        "Replace Rear Pads and Resurface Rotors",
+        "BRAKE FLUID EXCHANGE",
+        "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781494",
+        "date": "2026-10-12",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1255.88,
+        "hours": 4.7,
+        "phone": "7657604231",
+        "vin": "KMHGC46E69U036860",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 443.35,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 416.4,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 163.86,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 46.26,
+            "priceEst": false
+          },
+          {
+            "code": "VACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 96.38,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 89.63,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwew55k",
+      "customerName": "Robert Mcmahon",
+      "appointmentTime": "8:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43665",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "CUSTOMER STATES- Failed trans seals"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781475",
+        "date": "2026-10-12",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 489.68,
+        "hours": 1.3,
+        "phone": "7654270825",
+        "vin": "5NMZUDLB7JH062352",
+        "items": [
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 443.73,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE1",
+            "desc": "REPLACE ONE TIRE",
+            "count": 1,
+            "h": 0.3,
+            "price": 45.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwexqhi",
+      "customerName": "Sally Bullick",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43738",
+      "vehicle": "2012 Dodge Charger",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvf5itwewsv3",
+      "customerName": "Vijay Raghunathan",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43506",
+      "vehicle": "2009 Hyundai Sonata",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "772639",
+        "date": "2025-10-29",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 559.79,
+        "hours": 2.5,
+        "phone": "3109486088",
+        "vin": "5NPET46C59H570498",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 1.5,
+            "est": true,
+            "price": 419.84,
+            "priceEst": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwenr5a",
+      "customerName": "Annette Steiger",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43623",
+      "vehicle": "2018 Chrysler Pacifica",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "CUSTOMER STATES- maybe due for brakes, please take measurements"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779242",
+        "date": "2026-07-15",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 885.33,
+        "hours": 2.4,
+        "phone": "7654265889",
+        "vin": "2C4RC1BG6JR352392",
+        "items": [
+          {
+            "code": "AIRFILTERNONOEM",
+            "desc": "REPLACE ENGINE AIR FILTER NON OEM",
+            "count": 1,
+            "h": 0.2,
+            "price": 41.66,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 187.49,
+            "priceEst": false
+          },
+          {
+            "code": "RPADROTOR",
+            "desc": "Replace Rear Pads and Rotors",
+            "count": 1,
+            "h": 1.5,
+            "price": 656.18,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwecrk7",
+      "customerName": "Nichole Ebershoff",
+      "appointmentTime": "11:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43746",
+      "vehicle": "2023 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "777598",
+        "date": "2026-05-18",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 302.98,
+        "hours": 1.1,
+        "phone": "7654917263",
+        "vin": "5NPLS4AG1PH106335",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 96.16,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 206.82,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwesnk8",
+      "customerName": "Sharon Gillis",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43740",
+      "vehicle": "2016 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "774285",
+        "date": "2026-01-06",
+        "advisorFull": "NEVEN CHASTEEN",
+        "advisor": "NEVEN",
+        "amount": 928.72,
+        "hours": 3.7,
+        "phone": "7209391018",
+        "vin": "KMHDH4AE3GU567443",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 108.84,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 209.57,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 467.93,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 142.38,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvf5itwepmpj",
+      "customerName": "Pasha Besharaty",
+      "appointmentTime": "3:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43750",
+      "vehicle": "2024 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvf5itweljm7",
+      "customerName": "ROBERT Davison",
+      "appointmentTime": "3:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43758",
+      "vehicle": "2020 Genesis G80",
+      "services": [
+        "CUSTOMER STATES WASHER FLUID NOT SPRAYING. CHECK AND ADVISE."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "775550",
+        "date": "2026-02-27",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1347.35,
+        "hours": 5.3,
+        "phone": "7656500977",
+        "vin": "KMTFN4JB4LU329611",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 159.14,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUPV6",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+            "count": 1,
+            "h": 3.5,
+            "price": 960.8,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 227.41,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-19T11:08:53.521Z"
+}
