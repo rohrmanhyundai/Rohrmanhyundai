@@ -1,41 +1,5 @@
 [
   {
-    "id": "mu6w1vrg0av",
-    "username": "KAI",
-    "text": "@DAVID @CORY RO 780865 parts have been received",
-    "timestamp": 1789731712780
-  },
-  {
-    "id": "mu6w2ykiqzp",
-    "username": "KAI",
-    "text": "780703 fuel filter is here for engine job",
-    "timestamp": 1789731763074
-  },
-  {
-    "id": "mu6w565nq0k",
-    "username": "KAI",
-    "text": "780810 @carter correct weather strip is here",
-    "timestamp": 1789731866219
-  },
-  {
-    "id": "mu8c3u9sd2u",
-    "username": "SETH",
-    "text": "PART RECIEVED FOR RO 780810, ITS THE CORRECT WEATHER STRIP FOR SURE",
-    "timestamp": 1789819144192
-  },
-  {
-    "id": "mu8c4e7f9hk",
-    "username": "SETH",
-    "text": "@JACOB RO 780913 parts have been received",
-    "timestamp": 1789819170027
-  },
-  {
-    "id": "mu8c4z1ie4t",
-    "username": "SETH",
-    "text": "@CODY @CARTER RO 780924 parts have been received",
-    "timestamp": 1789819197030
-  },
-  {
     "id": "mubrp22f6cb",
     "username": "DAVID",
     "text": "@gaven Spark plugs and VVIFL approved!",
@@ -280,5 +244,11 @@
     "username": "SETH",
     "text": "@JACOB RO 781568 parts have been received",
     "timestamp": 1792251404868
+  },
+  {
+    "id": "mvf96d4318k",
+    "username": "KAI",
+    "text": "@JORDAN @JACOB RO 781308 parts have been received",
+    "timestamp": 1792414268643
   }
 ]
