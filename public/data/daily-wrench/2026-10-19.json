@@ -1,0 +1,3529 @@
+{
+  "date": "2026-10-19",
+  "generatedAt": "2026-10-19T11:21:59.972Z",
+  "by": "SHAWN",
+  "trigger": "manual",
+  "model": "gpt-5",
+  "reason": "Send to Reports",
+  "advisors": {
+    "DAVID": {
+      "headline": "Nine pickups hold 11.7 hours—start fast, close calls",
+      "opening": "You’re at 218.3 hours, 58% of goal, 15.2 hours ahead with 11 working days left. Needed today is 14.2 hours; pace target is 16.8. The biggest layup is the nine pickups walking in with 11.7 hours pre-packaged.",
+      "pickupLine": "Nine of today’s appointments already have declined work totaling $6002.23; if you sell the recommended packages that’s 11.7 hours.",
+      "moneyLine": "",
+      "wins": [
+        {
+          "title": "Ahead of pace",
+          "detail": "15.2 hours ahead of pace with 11 working days left."
+        },
+        {
+          "title": "Alignment penetration",
+          "detail": "Alignment at 12% against a 10% goal."
+        },
+        {
+          "title": "Valvoline penetration",
+          "detail": "Valvoline at 28.2% against a 25% goal."
+        }
+      ],
+      "plan": [
+        {
+          "when": "Before 7:30 AM",
+          "what": "Prep menus and scripts for all nine pickups (11.7 hours): 7:40 AM Yan Shah — Wheel Alignment, Fuel Injection Service; 8:00 AM Rucha Karve — Tire Rotation; 9:20 AM Erica Pence — Wheel Alignment, Coolant Fluid Exchange; 9:40 AM Melissa Burton — Tune Up With Spark Plugs And PCV Replacement; 10:00 AM Katherine Suter — Replace Cabin Air Filter; 10:00 AM Constance Brown — Wheel Alignment, Fuel Injection Service; 10:20 AM Kristin Cahoe — Rec; 11:00 AM Madalene Beckner — Wheel Alignment, Fuel Injection Service; 3:20 PM Ciara Russell — Replace Front Pads and Resurface Rotors.",
+          "why": "Locks 11.7 flagged hours before noon."
+        },
+        {
+          "when": "9:30–10:00 AM",
+          "what": "Start the deferred push: call the top three in order and ask for today or first available — Tawana Williams (FUEL INJECTION SERVICE), Hannah Weissenburger (WHEEL ALIGNMENT, ENGINE REPLACEMENT BASIC KIT, TEK02050101, TEK05051502), Davion Darlind (WHEEL ALIGNMENT, REPLACE FOUR TIRES, REC).",
+          "why": "Worth $31391.57 and 53.6 hours on the books."
+        },
+        {
+          "when": "10:00–11:00 AM",
+          "what": "Target one big same-week booking: Hannah Weissenburger RO 778506 for WHEEL ALIGNMENT / ENGINE REPLACEMENT BASIC KIT work.",
+          "why": "Adds $10087.63 and 23.4 hours by itself."
+        },
+        {
+          "when": "Early afternoon",
+          "what": "Close the six goal-ready pickups at write-up (Yan, Erica, Melissa, Constance, Madalene, Ciara) exactly as planned.",
+          "why": "Banks 10.6 hours toward today’s 14.2-hour need."
+        }
+      ],
+      "callList": [
+        {
+          "name": "Tawana W.",
+          "phone": "7654379456",
+          "ro": "775607",
+          "why": "FUEL INJECTION SERVICE — $11733.5, 5.3 hours"
+        },
+        {
+          "name": "Hannah W.",
+          "phone": "7654136051",
+          "ro": "778506",
+          "why": "WHEEL ALIGNMENT — $10087.63, 23.4 hours"
+        },
+        {
+          "name": "Davion D.",
+          "phone": "7655141242",
+          "ro": "778620",
+          "why": "WHEEL ALIGNMENT — $9570.44, 24.9 hours"
+        },
+        {
+          "name": "MARK L.",
+          "phone": "7654752172",
+          "ro": "779318",
+          "why": "Replace Front Pads and Resurface Rotors — $9411.69, 3.3 hours"
+        },
+        {
+          "name": "Angela R.",
+          "phone": "7655865997",
+          "ro": "778326",
+          "why": "Replace Rear Pads and Resurface Rotors — $6649.79, 22 hours"
+        }
+      ],
+      "watchlist": [
+        {
+          "ro": "781428",
+          "what": "Dispatch overdue — 8 days",
+          "action": "Get the car into the shop."
+        },
+        {
+          "ro": "781255",
+          "what": "Open work — stalled — 16 days",
+          "action": "Open work — find out what it's waiting on."
+        },
+        {
+          "ro": "781457",
+          "what": "Open work — stalled — 8 days",
+          "action": "Open work — find out what it's waiting on."
+        },
+        {
+          "ro": "781366",
+          "what": "Needs acceptance — 11 days",
+          "action": "Tech finished — accept the RO."
+        },
+        {
+          "ro": "781488",
+          "what": "Needs acceptance — 5 days",
+          "action": "Tech finished — accept the RO."
+        }
+      ],
+      "contest": "You’re rank 1 on the Big-Money board at 0.57 hrs/RO and 0.45 add rate. The gaps are 0.73 hrs/RO and 0.30 add rate to qualify.",
+      "coaching": "Raise your add rate: on every LOF50, present a two-line choice (alignment plus one Valvoline or brake service) and pause for a yes. Your add rate is 0.45 against a 0.75 goal; tightening the offer at write-up will lift both add rate and hrs/RO together.",
+      "closing": "Start with the nine pickups for 11.7 hours, then land one big deferred booking and the day is won.",
+      "facts": {
+        "advisor": "DAVID",
+        "date": "2026-10-19",
+        "openRos": {
+          "total": 14,
+          "oldestDays": 16,
+          "averageDays": 4.5,
+          "buckets": {
+            "today": 0,
+            "days1to2": 8,
+            "days3to5": 2,
+            "days6plus": 4
+          },
+          "attention": [
+            {
+              "ro": "781428",
+              "vehicle": "2018 Honda Odyssey",
+              "tech": "",
+              "age": 8,
+              "status": "Ready for dispatch",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 9,
+              "reason": "Dispatch overdue",
+              "advice": "Get the car into the shop."
+            },
+            {
+              "ro": "781255",
+              "vehicle": "2017 Hyundai Santa Fe Sport",
+              "tech": "KADEN WILSON",
+              "age": 16,
+              "status": "Partially assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781457",
+              "vehicle": "2022 Hyundai Palisade",
+              "tech": "KADEN WILSON",
+              "age": 8,
+              "status": "Partially assigned",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781366",
+              "vehicle": "2026 Hyundai Palisade",
+              "tech": "CARTER JEAN",
+              "age": 11,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            },
+            {
+              "ro": "781488",
+              "vehicle": "2023 Hyundai Sonata Hybrid",
+              "tech": "KADEN WILSON",
+              "age": 5,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            },
+            {
+              "ro": "781578",
+              "vehicle": "2023 Hyundai Elantra",
+              "tech": "TRENTON MCQUINN",
+              "age": 2,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            },
+            {
+              "ro": "781573",
+              "vehicle": "2021 Hyundai Sonata",
+              "tech": "GAVEN LAUGHNER",
+              "age": 2,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            }
+          ]
+        },
+        "stalled": [],
+        "partsReady": [
+          {
+            "ro": "781366",
+            "vehicle": "2026 Hyundai Palisade",
+            "tech": "CARTER",
+            "job": "CUSTOMER STATES- 1 key Fob doesnt work, the cut.key does",
+            "note": "LOTS OF OTHER CONCERNS. waiting on key and carpet ",
+            "arrived": "10/14/2026",
+            "highPriority": false
+          }
+        ],
+        "appointments": {
+          "date": "2026-10-19",
+          "hrsRoGoal": 1.3,
+          "total": 12,
+          "waiters": 7,
+          "lof50": 8,
+          "campaigns": 0,
+          "partsInSop": 1,
+          "diagnosis": 1,
+          "withDeferred": 9,
+          "deferredAmount": 6002.23,
+          "deferredHours": 26.4,
+          "goalHours": 11.7,
+          "reachGoal": 6,
+          "pickup": [
+            {
+              "time": "7:40 AM",
+              "customer": "Yan Shah",
+              "vehicle": "2026 Hyundai Tucson Hybrid",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "779930",
+                "amount": 552.36,
+                "hours": 2.7,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Replace Engine Air Filter",
+                  "Tire Rotation",
+                  "AC Evap Service",
+                  "Wheel Alignment",
+                  "Fuel Injection Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Wheel Alignment",
+                  "Fuel Injection Service"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "8:00 AM",
+              "customer": "Rucha Karve",
+              "vehicle": "2025 Hyundai Tucson Hybrid",
+              "owner": "DAVID",
+              "waiter": false,
+              "visit": "part in sop",
+              "tags": [
+                "sop"
+              ],
+              "deferred": {
+                "ro": "778690",
+                "amount": 34.95,
+                "hours": 0.4,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Tire Rotation"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Tire Rotation"
+                ],
+                "hours": 0.4,
+                "reachesGoal": false,
+                "shortBy": 0.9
+              }
+            },
+            {
+              "time": "9:20 AM",
+              "customer": "Erica Pence",
+              "vehicle": "2023 Genesis GV80",
+              "owner": "DAVID",
+              "waiter": false,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "779191",
+                "amount": 2814.13,
+                "hours": 11.5,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Rec x2",
+                  "Wheel Alignment",
+                  "Fuel Injection Service",
+                  "Coolant Fluid Exchange",
+                  "Replace Cabin Air Filter"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Wheel Alignment",
+                  "Coolant Fluid Exchange"
+                ],
+                "hours": 1.9,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "9:40 AM",
+              "customer": "Melissa Burton",
+              "vehicle": "2017 Hyundai Santa Fe Sport",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "775350",
+                "amount": 847.33,
+                "hours": 3.6,
+                "deferredBy": "NEVEN",
+                "services": [
+                  "Wheel Alignment",
+                  "Tune Up With Spark Plugs And PCV Replacement",
+                  "Replace Cabin Air Filter",
+                  "Fuel Injection Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Tune Up With Spark Plugs And PCV Replacement"
+                ],
+                "hours": 1.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "10:00 AM",
+              "customer": "Katherine Suter",
+              "vehicle": "2024 Hyundai Santa Fe",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "Routine Maintenance (e.g. Oil Change, etc) — Need front wiper blades",
+              "tags": [],
+              "deferred": {
+                "ro": "775508",
+                "amount": 92.99,
+                "hours": 0.3,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Replace Cabin Air Filter"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Cabin Air Filter"
+                ],
+                "hours": 0.3,
+                "reachesGoal": false,
+                "shortBy": 1
+              }
+            },
+            {
+              "time": "10:00 AM",
+              "customer": "Constance Brown",
+              "vehicle": "2023 Hyundai Palisade",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "775709",
+                "amount": 433.93,
+                "hours": 2.1,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Wheel Alignment",
+                  "Fuel Injection Service",
+                  "AC Evap Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Wheel Alignment",
+                  "Fuel Injection Service"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "10:20 AM",
+              "customer": "Kristin Cahoe",
+              "vehicle": "2025 Hyundai Santa Fe Hybrid",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "Other (Please use comment box below) — hit a pole in a parking lot",
+              "tags": [],
+              "deferred": {
+                "ro": "780258",
+                "amount": 141.67,
+                "hours": 0.4,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Rec"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Rec"
+                ],
+                "hours": 0.4,
+                "reachesGoal": false,
+                "shortBy": 0.9
+              }
+            },
+            {
+              "time": "11:00 AM",
+              "customer": "Madalene Beckner",
+              "vehicle": "2026 Hyundai Palisade",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "777782",
+                "amount": 349.94,
+                "hours": 1.8,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Wheel Alignment",
+                  "Fuel Injection Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Wheel Alignment",
+                  "Fuel Injection Service"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "3:20 PM",
+              "customer": "Ciara Russell",
+              "vehicle": "2024 Hyundai Elantra",
+              "owner": "DAVID",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "779490",
+                "amount": 734.93,
+                "hours": 3.6,
+                "deferredBy": "DAVID",
+                "services": [
+                  "Fuel Injection Service",
+                  "Replace Front Pads and Resurface Rotors",
+                  "Wheel Alignment"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Front Pads and Resurface Rotors"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            }
+          ]
+        },
+        "bigMoney": {
+          "hrsRo": 0.55,
+          "rate": 0.47,
+          "tickets": 61,
+          "oilOnly": 32,
+          "goalHrsRo": 1.3,
+          "goalRate": 0.75,
+          "hitHrsRo": false,
+          "hitRate": false,
+          "addonsNeeded": 67,
+          "hoursShort": 45.8
+        },
+        "deferred": {
+          "total": 920,
+          "neverContacted": 902,
+          "totalAmount": 966277,
+          "totalHours": 4856.7,
+          "targetedCount": 676,
+          "targetedAmount": 772669,
+          "topIs": "valvoline-and-brakes",
+          "top": [
+            {
+              "ro": "775607",
+              "customer": "Tawana Williams",
+              "phone": "7654379456",
+              "vehicle": "2015 hyundai Sonata Hybrid",
+              "hours": 5.3,
+              "amount": 11733.5,
+              "lastSeen": "2026-03-04",
+              "codes": [
+                "VVIFL",
+                "REC",
+                "REC"
+              ],
+              "services": [
+                "FUEL INJECTION SERVICE",
+                "REC",
+                "REC"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "778506",
+              "customer": "Hannah Weissenburger",
+              "phone": "7654136051",
+              "vehicle": "2018 hyundai Elantra",
+              "hours": 23.4,
+              "amount": 10087.63,
+              "lastSeen": "2026-07-27",
+              "codes": [
+                "ALIGN",
+                "TEK02050101",
+                "ENGBAS",
+                "TEK05051502"
+              ],
+              "services": [
+                "WHEEL ALIGNMENT",
+                "TEK02050101",
+                "ENGINE REPLACEMENT BASIC KIT",
+                "TEK05051502"
+              ],
+              "kinds": [
+                "Brakes",
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "778620",
+              "customer": "Davion Darlind",
+              "phone": "7655141242",
+              "vehicle": "2013 hyundai Azera",
+              "hours": 24.9,
+              "amount": 9570.44,
+              "lastSeen": "2026-06-23",
+              "codes": [
+                "REC",
+                "ALIGN",
+                "TIRE4",
+                "REC"
+              ],
+              "services": [
+                "REC",
+                "WHEEL ALIGNMENT",
+                "REPLACE FOUR TIRES",
+                "REC"
+              ],
+              "kinds": [
+                "Brakes",
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "779318",
+              "customer": "MARK LOWE",
+              "phone": "7654752172",
+              "vehicle": "2013 hyundai Equus",
+              "hours": 3.3,
+              "amount": 9411.69,
+              "lastSeen": "2026-07-30",
+              "codes": [
+                "PADRESURF",
+                "REC"
+              ],
+              "services": [
+                "Replace Front Pads and Resurface Rotors",
+                "REC"
+              ],
+              "kinds": [
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "778326",
+              "customer": "Angela Rusk",
+              "phone": "7655865997",
+              "vehicle": "2019 hyundai Kona",
+              "hours": 22,
+              "amount": 6649.79,
+              "lastSeen": "2026-06-11",
+              "codes": [
+                "REC",
+                "RPADRESURF",
+                "TUNEUP",
+                "BELT"
+              ],
+              "services": [
+                "REC",
+                "Replace Rear Pads and Resurface Rotors",
+                "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+                "REPLACE SERPENTINE BELT"
+              ],
+              "kinds": [
+                "Brakes",
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "776191",
+              "customer": "Jennifer Parrilli",
+              "phone": "2245777121",
+              "vehicle": "2018 hyundai Tucson",
+              "hours": 10.3,
+              "amount": 6186.21,
+              "lastSeen": "2026-03-31",
+              "codes": [
+                "VVCFL",
+                "REC",
+                "TIRE4",
+                "VTFL"
+              ],
+              "services": [
+                "COOLANT FLUID EXCHANGE",
+                "REC",
+                "REPLACE FOUR TIRES",
+                "VTFL"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            }
+          ]
+        },
+        "trend": {
+          "recentDays": [
+            {
+              "date": "2026-10-10",
+              "hours": 8.6,
+              "hrsRo": 1.04
+            },
+            {
+              "date": "2026-10-12",
+              "hours": 27.4,
+              "hrsRo": 1.11
+            },
+            {
+              "date": "2026-10-13",
+              "hours": 7.7,
+              "hrsRo": 1.08
+            },
+            {
+              "date": "2026-10-14",
+              "hours": 25.8,
+              "hrsRo": 1.14
+            },
+            {
+              "date": "2026-10-15",
+              "hours": 34.9,
+              "hrsRo": 1.25
+            },
+            {
+              "date": "2026-10-16",
+              "hours": 5.8,
+              "hrsRo": 1.19
+            }
+          ],
+          "recentAverage": 18.4
+        },
+        "hours": {
+          "hasGoal": true,
+          "goal": 375,
+          "mtd": 218.3,
+          "hrsRoGoal": 1.5,
+          "yesterdayHours": 5.8,
+          "yesterdayHrsRo": 1.19,
+          "workingDaysTotal": 24,
+          "workingDaysElapsed": 13,
+          "workingDaysLeft": 11,
+          "dailyTarget": 15.6,
+          "expectedByNow": 203.1,
+          "aheadBy": 15.2,
+          "onPace": true,
+          "neededToday": 14.2,
+          "paceToday": 16.8,
+          "percentOfGoal": 58
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-10-15",
+          "endsOn": "2026-11-30",
+          "daysLeft": 43,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "DAVID",
+              "hrsRo": 0.57,
+              "rate": 0.45,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.52,
+              "rate": 0.502,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "MATTHEW",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "DAVID",
+            "hrsRo": 0.57,
+            "rate": 0.45,
+            "qualified": false,
+            "rank": 1,
+            "hrsRoGap": 0.73,
+            "rateGap": 0.3,
+            "behindLeaderHrsRo": 0
+          }
+        },
+        "wins": [
+          {
+            "kind": "pace",
+            "detail": "15.2 hours ahead of pace with 11 working days left"
+          },
+          {
+            "kind": "contest",
+            "detail": "Leading the Big-Money board even though the goals are not both hit yet"
+          },
+          {
+            "kind": "penetration",
+            "detail": "Alignment at 12% against a 10% goal"
+          },
+          {
+            "kind": "penetration",
+            "detail": "Valvoline at 28.2% against a 25% goal"
+          }
+        ],
+        "penetration": {
+          "hrsRo": 1.19,
+          "align": 0.1197,
+          "tires": 0.1111,
+          "valvoline": 0.2821,
+          "asr": 0.1207,
+          "csi": 924,
+          "roCount": 183
+        }
+      }
+    },
+    "JORDAN": {
+      "headline": "Seven pickups mapped to 13.1 hours — execute",
+      "opening": "Month is at 157.6 hours against a 375 goal, 52.4 behind through 14 of 25 days. We need 19.8 today; flat target is 15. The biggest opportunity is seven pickups already mapped to 13.1 hours.",
+      "pickupLine": "7 customers with declined work totaling $5769.73; selling the suggested services adds 13.1 hours.",
+      "moneyLine": "$1,633,139 in uncalled deferred work; booking any one of the top five adds 7.3–42.6 hours today.",
+      "wins": [
+        {
+          "title": "Alignment over goal",
+          "detail": "Alignment penetration is 12% against a 10% goal."
+        }
+      ],
+      "plan": [
+        {
+          "when": "Before 8:00 AM",
+          "what": "Prep the seven pickups with printed menus and DMS flags for exactly what to present: 8:00 Jellie Moore Snyder (Replace Rear Pads and Resurface Rotors), 8:20 Robert Mcmahon (Replace Serpentine Belt; Replace One Tire), 9:00 Vijay Raghunathan (Wheel Alignment; Rec), 9:40 Annette Steiger (Replace Rear Pads and Rotors), 11:20 Nichole Ebershoff (Fuel Injection Service; Replace Cabin Air Filter), 12:00 Sharon Gillis (Tune Up With Spark Plugs And PCV Replacement), 3:20 ROBERT Davison (Tune Up With Spark Plugs And PCV Replacement On V6 Engine).",
+          "why": "Locks in 13.1 hours sitting on today’s schedule."
+        },
+        {
+          "when": "8:30–10:00 AM",
+          "what": "Call the top five deferred in order and book: Justin Patterson, Levi Houck, James Bailey-Davidson, Paige Neely, Ron Hedgren.",
+          "why": "$64,702.49 and 145.2 hours on the table; one booking swings the day by 7.3–42.6 hours."
+        },
+        {
+          "when": "10:00 AM–12:00 PM",
+          "what": "Close the LOF50 add-ons at write-up and first callback: 9:00 Vijay (2.5), 9:40 Annette (1.5), 11:20 Nichole (1.0), 12:00 Sharon (1.5).",
+          "why": "6.5 hours toward the 19.8 needed today."
+        },
+        {
+          "when": "2:30–4:00 PM",
+          "what": "Set the 3:20 ROBERT Davison tune-up decision at drop and confirm parts/time with foreman.",
+          "why": "3.5 hours to keep pace with today’s 19.8-hour need."
+        }
+      ],
+      "callList": [
+        {
+          "name": "Justin P",
+          "phone": "7654146677",
+          "ro": "768354",
+          "why": "Transmission Fluid Exchange — RO worth $19021.13 and 42.6 hours."
+        },
+        {
+          "name": "Levi H",
+          "phone": "2193142560",
+          "ro": "775022",
+          "why": "Coolant Fluid Exchange — RO worth $12580.63 and 32.8 hours."
+        },
+        {
+          "name": "James B",
+          "phone": "9316986278",
+          "ro": "776148",
+          "why": "Fuel Injection Service — RO worth $12265.33 and 7.3 hours."
+        },
+        {
+          "name": "Paige N",
+          "phone": "3179389201",
+          "ro": "773275",
+          "why": "Brake Fluid Exchange — RO worth $10638.21 and 31.3 hours."
+        },
+        {
+          "name": "Ron H",
+          "phone": "6303279042",
+          "ro": "771794",
+          "why": "AC Evap Service — RO worth $10197.19 and 31.2 hours."
+        }
+      ],
+      "watchlist": [
+        {
+          "ro": "780481",
+          "what": "Invoiced — not paid, 47 days open; last note 31 days ago.",
+          "action": "Call the customer and collect payment today; document the call."
+        },
+        {
+          "ro": "780552",
+          "what": "Ready for invoice, 45 days open; last note 31 days ago.",
+          "action": "Accept the RO, finalize the invoice, and call for pickup today."
+        },
+        {
+          "ro": "781052",
+          "what": "Open work — stalled, 24 days.",
+          "action": "Go to GAVEN LAUGHNER for status/parts hold and set a promise time; update the RO note."
+        },
+        {
+          "ro": "781087",
+          "what": "Open work — stalled, 23 days; PA approved engine replacement; parts note shows 10/16/2026 arrival while engine is on back order.",
+          "action": "Confirm engine ETA with parts, align with GAVEN on timeline, and call the customer with a firm schedule."
+        },
+        {
+          "ro": "781176",
+          "what": "Completed but stalled, 19 days; partsReady note shows P/A in process as of 10/16/2026.",
+          "action": "Clarify with GAVEN whether P/A or completion is accurate, then either invoice or update the customer on P/A status today."
+        }
+      ],
+      "contest": "As of 2026-10-15 you are 2nd at 0.52 hrs/RO and a 0.502 add rate; the leader is at 0.57 hrs/RO. You need 0.78 hrs/RO and 0.248 add rate to qualify, and 0.05 hrs/RO to catch the leader.",
+      "coaching": "Add rate is the weak spot against the 0.75 goal. Present the pre-selected services first at write-up on every LOF50 and waiter, and ask for the yes before the inspection — the seven pickups already give you the script. Keep it to one clear choice per car and close it before you hand off the keys.",
+      "closing": "Start with the seven pickups for 13.1 hours, then land one of the top five calls and the day is won.",
+      "facts": {
+        "advisor": "JORDAN",
+        "date": "2026-10-19",
+        "openRos": {
+          "total": 23,
+          "oldestDays": 51,
+          "averageDays": 10.8,
+          "buckets": {
+            "today": 0,
+            "days1to2": 11,
+            "days3to5": 5,
+            "days6plus": 7
+          },
+          "attention": [
+            {
+              "ro": "780481",
+              "vehicle": "2020 Hyundai Palisade",
+              "tech": "CORY SWINDLE",
+              "age": 47,
+              "status": "Invoiced",
+              "cpStatus": "Invoiced",
+              "warranty": false,
+              "severity": 8,
+              "reason": "Invoiced — not paid",
+              "advice": "Billed but never collected — chase the payment."
+            },
+            {
+              "ro": "780361",
+              "vehicle": "2025 Hyundai Santa Fe Hybrid",
+              "tech": "CORY SWINDLE",
+              "age": 51,
+              "status": "In progress",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781052",
+              "vehicle": "2018 Hyundai Kona",
+              "tech": "GAVEN LAUGHNER",
+              "age": 24,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781087",
+              "vehicle": "2015 Hyundai Santa Fe Sport",
+              "tech": "GAVEN LAUGHNER",
+              "age": 23,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781176",
+              "vehicle": "2013 Hyundai Sonata",
+              "tech": "GAVEN LAUGHNER",
+              "age": 19,
+              "status": "Tech assigned",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781308",
+              "vehicle": "2022 Ford Edge",
+              "tech": "JACOB KUNTZ",
+              "age": 12,
+              "status": "Tech assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            },
+            {
+              "ro": "781528",
+              "vehicle": "2019 Hyundai Sonata",
+              "tech": "KADEN WILSON",
+              "age": 3,
+              "status": "Invoiced",
+              "cpStatus": "Invoiced",
+              "warranty": false,
+              "severity": 4,
+              "reason": "Invoiced — not paid",
+              "advice": "Awaiting payment."
+            },
+            {
+              "ro": "781497",
+              "vehicle": "2007 Hyundai Elantra",
+              "tech": "GAVEN LAUGHNER",
+              "age": 4,
+              "status": "Tech assigned",
+              "cpStatus": "In progress",
+              "warranty": false,
+              "severity": 3,
+              "reason": "Open work — aging",
+              "advice": ""
+            },
+            {
+              "ro": "781615",
+              "vehicle": "2025 Hyundai Santa Fe Hybrid",
+              "tech": "",
+              "age": 1,
+              "status": "Ready for dispatch",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 2,
+              "reason": "Get car in shop",
+              "advice": "Car needs to get into the shop."
+            },
+            {
+              "ro": "780552",
+              "vehicle": "2019 Hyundai Tucson",
+              "tech": "CORY SWINDLE",
+              "age": 45,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            },
+            {
+              "ro": "781545",
+              "vehicle": "2018 Hyundai Santa Fe Sport",
+              "tech": "TRENTON MCQUINN",
+              "age": 3,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            },
+            {
+              "ro": "781544",
+              "vehicle": "2016 Hyundai Elantra",
+              "tech": "GAVEN LAUGHNER",
+              "age": 3,
+              "status": "Ready for invoice",
+              "cpStatus": "Completed",
+              "warranty": false,
+              "severity": 1,
+              "reason": "Needs acceptance",
+              "advice": "Tech finished — accept the RO."
+            }
+          ]
+        },
+        "stalled": [
+          {
+            "ro": "780481",
+            "vehicle": "2020 Hyundai Palisade",
+            "flagged": false,
+            "lastNote": "nope",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 31
+          },
+          {
+            "ro": "780552",
+            "vehicle": "2019 Hyundai Tucson",
+            "flagged": false,
+            "lastNote": "nope",
+            "lastNoteBy": "JORDAN",
+            "daysSinceNote": 31
+          }
+        ],
+        "partsReady": [
+          {
+            "ro": "780361",
+            "vehicle": "25 Santa Fe",
+            "tech": "CORY",
+            "job": "Tow in Hybrid Warning",
+            "note": "Techline advised replacing HPCU. Part ordered. we are now putting two more parts in this car parts are on order. Replaced front harness and control harness. This did not correct the issue. Contacted Techline, they have escalated the concern and will reach out when a potential solution has been found. ",
+            "arrived": "10/14/2026",
+            "highPriority": true
+          },
+          {
+            "ro": "781087",
+            "vehicle": "2015 Hyundai Santa Fe Sport",
+            "tech": "GAVEN",
+            "job": "",
+            "note": "PA APPROVED FOR ENGINE REPLACEMENT UNDER TXXI. WAITING ON THE ENGINE. BACK ORDER ENGINE ",
+            "arrived": "10/16/2026",
+            "highPriority": false
+          },
+          {
+            "ro": "781176",
+            "vehicle": "2013 Hyundai Sonata",
+            "tech": "GAVEN",
+            "job": "CUSTOMER STATES CAR STALLED. CHECK AND ADVISE.",
+            "note": "WORKING ON P/A",
+            "arrived": "10/16/2026",
+            "highPriority": false
+          }
+        ],
+        "appointments": {
+          "date": "2026-10-19",
+          "hrsRoGoal": 1.3,
+          "total": 10,
+          "waiters": 4,
+          "lof50": 6,
+          "campaigns": 0,
+          "partsInSop": 0,
+          "diagnosis": 3,
+          "withDeferred": 7,
+          "deferredAmount": 5769.73,
+          "deferredHours": 21,
+          "goalHours": 13.1,
+          "reachGoal": 6,
+          "pickup": [
+            {
+              "time": "8:00 AM",
+              "customer": "Jellie Moore Snyder",
+              "vehicle": "2009 Hyundai Genesis",
+              "owner": "JORDAN",
+              "waiter": false,
+              "visit": "Replace Rear Pads and Resurface Rotors / BRAKE FLUID EXCHANGE",
+              "tags": [],
+              "deferred": {
+                "ro": "781494",
+                "amount": 1255.88,
+                "hours": 4.7,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Tune Up With Spark Plugs And PCV Replacement",
+                  "Replace Rear Pads and Resurface Rotors",
+                  "Brake Fluid Exchange",
+                  "Replace Engine Air Filter",
+                  "AC Evap Service",
+                  "Replace Cabin Air Filter"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Rear Pads and Resurface Rotors"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "8:20 AM",
+              "customer": "Robert Mcmahon",
+              "vehicle": "2018 Hyundai Santa Fe Sport",
+              "owner": "JORDAN",
+              "waiter": false,
+              "visit": "CUSTOMER STATES- Failed trans seals",
+              "tags": [
+                "diag"
+              ],
+              "deferred": {
+                "ro": "781475",
+                "amount": 489.68,
+                "hours": 1.3,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Replace Serpentine Belt",
+                  "Replace One Tire"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Serpentine Belt",
+                  "Replace One Tire"
+                ],
+                "hours": 1.3,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "9:00 AM",
+              "customer": "Vijay Raghunathan",
+              "vehicle": "2009 Hyundai Sonata",
+              "owner": "JORDAN",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra) / ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "772639",
+                "amount": 559.79,
+                "hours": 2.5,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Wheel Alignment",
+                  "Rec"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Wheel Alignment",
+                  "Rec"
+                ],
+                "hours": 2.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "9:40 AM",
+              "customer": "Annette Steiger",
+              "vehicle": "2018 Chrysler Pacifica",
+              "owner": "JORDAN",
+              "waiter": false,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra) / CUSTOMER STATES- maybe due for brakes, please take measurements",
+              "tags": [
+                "diag",
+                "lof50",
+                "nonhyundai"
+              ],
+              "deferred": {
+                "ro": "779242",
+                "amount": 885.33,
+                "hours": 2.4,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Replace Engine Air Filter Non OEM",
+                  "Brake Fluid Exchange",
+                  "Replace Rear Pads and Rotors"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Rear Pads and Rotors"
+                ],
+                "hours": 1.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "11:20 AM",
+              "customer": "Nichole Ebershoff",
+              "vehicle": "2023 Hyundai Elantra",
+              "owner": "JORDAN",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "777598",
+                "amount": 302.98,
+                "hours": 1.1,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Replace Cabin Air Filter",
+                  "Fuel Injection Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Fuel Injection Service",
+                  "Replace Cabin Air Filter"
+                ],
+                "hours": 1,
+                "reachesGoal": false,
+                "shortBy": 0.3
+              }
+            },
+            {
+              "time": "12:00 PM",
+              "customer": "Sharon Gillis",
+              "vehicle": "2016 Hyundai Elantra",
+              "owner": "JORDAN",
+              "waiter": false,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "774285",
+                "amount": 928.72,
+                "hours": 3.7,
+                "deferredBy": "NEVEN",
+                "services": [
+                  "AC Evap Service",
+                  "Coolant Fluid Exchange",
+                  "Tune Up With Spark Plugs And PCV Replacement",
+                  "Wheel Alignment"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Tune Up With Spark Plugs And PCV Replacement"
+                ],
+                "hours": 1.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "3:20 PM",
+              "customer": "ROBERT Davison",
+              "vehicle": "2020 Genesis G80",
+              "owner": "JORDAN",
+              "waiter": false,
+              "visit": "CUSTOMER STATES WASHER FLUID NOT SPRAYING. CHECK AND ADVISE.",
+              "tags": [
+                "diag"
+              ],
+              "deferred": {
+                "ro": "775550",
+                "amount": 1347.35,
+                "hours": 5.3,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Wheel Alignment",
+                  "Tune Up With Spark Plugs And PCV Replacement On V6 Engine",
+                  "Fuel Injection Service"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Tune Up With Spark Plugs And PCV Replacement On V6 Engine"
+                ],
+                "hours": 3.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            }
+          ]
+        },
+        "bigMoney": {
+          "hrsRo": 0.43,
+          "rate": 0.47,
+          "tickets": 67,
+          "oilOnly": 35,
+          "goalHrsRo": 1.3,
+          "goalRate": 0.75,
+          "hitHrsRo": false,
+          "hitRate": false,
+          "addonsNeeded": 73,
+          "hoursShort": 58.3
+        },
+        "deferred": {
+          "total": 1403,
+          "neverContacted": 1401,
+          "totalAmount": 1633139,
+          "totalHours": 5678,
+          "targetedCount": 1032,
+          "targetedAmount": 1313840,
+          "topIs": "valvoline-and-brakes",
+          "top": [
+            {
+              "ro": "768354",
+              "customer": "Justin Patterson",
+              "phone": "7654146677",
+              "vehicle": "2019 hyundai Kona",
+              "hours": 42.6,
+              "amount": 19021.13,
+              "lastSeen": "2025-05-09",
+              "codes": [
+                "ENGPLUS",
+                "VVTFL",
+                "REC",
+                "VVCFL"
+              ],
+              "services": [
+                "ENGINE REPLACEMENT PLUS KIT",
+                "TRANSMISSION FLUID EXCHANGE",
+                "REC",
+                "COOLANT FLUID EXCHANGE"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "775022",
+              "customer": "Levi Houck",
+              "phone": "2193142560",
+              "vehicle": "2018 hyundai Elantra",
+              "hours": 32.8,
+              "amount": 12580.63,
+              "lastSeen": "2026-02-06",
+              "codes": [
+                "ENGBAS",
+                "ALIGN",
+                "ENGPREM",
+                "VVCFL"
+              ],
+              "services": [
+                "ENGINE REPLACEMENT BASIC KIT",
+                "WHEEL ALIGNMENT",
+                "ENGINE REPLACEMENT PREMIUM KIT",
+                "COOLANT FLUID EXCHANGE"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "776148",
+              "customer": "James Bailey-Davidson",
+              "phone": "9316986278",
+              "vehicle": "2014 hyundai Sonata Hybrid",
+              "hours": 7.3,
+              "amount": 12265.33,
+              "lastSeen": "2026-03-27",
+              "codes": [
+                "VVIFL",
+                "REC",
+                "REC",
+                "TUNEUP"
+              ],
+              "services": [
+                "FUEL INJECTION SERVICE",
+                "REC",
+                "REC",
+                "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "773275",
+              "customer": "Paige Neely",
+              "phone": "3179389201",
+              "vehicle": "2013 hyundai Veloster",
+              "hours": 31.3,
+              "amount": 10638.21,
+              "lastSeen": "2025-11-25",
+              "codes": [
+                "REC",
+                "REC",
+                "VVBFL",
+                "ENGBAS"
+              ],
+              "services": [
+                "REC",
+                "REC",
+                "BRAKE FLUID EXCHANGE",
+                "ENGINE REPLACEMENT BASIC KIT"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "771794",
+              "customer": "Ron Hedgren",
+              "phone": "6303279042",
+              "vehicle": "2020 hyundai Tucson",
+              "hours": 31.2,
+              "amount": 10197.19,
+              "lastSeen": "2025-09-26",
+              "codes": [
+                "ALIGN",
+                "ENGPREM",
+                "VVACLEAN",
+                "ROTATE"
+              ],
+              "services": [
+                "WHEEL ALIGNMENT",
+                "ENGINE REPLACEMENT PREMIUM KIT",
+                "AC EVAP SERVICE",
+                "TIRE ROTATION"
+              ],
+              "kinds": [
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "773211",
+              "customer": "TRAVIS MASIMANGO",
+              "phone": "7734109086",
+              "vehicle": "2016 hyundai Sonata",
+              "hours": 32.8,
+              "amount": 10011.94,
+              "lastSeen": "2025-11-25",
+              "codes": [
+                "ALIGN",
+                "TIRE1",
+                "VVCFL",
+                "REC"
+              ],
+              "services": [
+                "WHEEL ALIGNMENT",
+                "REPLACE ONE TIRE",
+                "COOLANT FLUID EXCHANGE",
+                "REC"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            }
+          ]
+        },
+        "trend": {
+          "recentDays": [
+            {
+              "date": "2026-10-12",
+              "hours": 8.2,
+              "hrsRo": 0.86
+            },
+            {
+              "date": "2026-10-13",
+              "hours": 9.7,
+              "hrsRo": 0.84
+            },
+            {
+              "date": "2026-10-14",
+              "hours": 18.6,
+              "hrsRo": 0.88
+            },
+            {
+              "date": "2026-10-15",
+              "hours": 16.8,
+              "hrsRo": 0.91
+            },
+            {
+              "date": "2026-10-16",
+              "hours": -1.4,
+              "hrsRo": 0.9
+            },
+            {
+              "date": "2026-10-17",
+              "hours": 14,
+              "hrsRo": 0.92
+            }
+          ],
+          "recentAverage": 11
+        },
+        "hours": {
+          "hasGoal": true,
+          "goal": 375,
+          "mtd": 157.6,
+          "hrsRoGoal": 1.5,
+          "yesterdayHours": 14,
+          "yesterdayHrsRo": 0.92,
+          "workingDaysTotal": 25,
+          "workingDaysElapsed": 14,
+          "workingDaysLeft": 11,
+          "dailyTarget": 15,
+          "expectedByNow": 210,
+          "aheadBy": -52.4,
+          "onPace": false,
+          "neededToday": 19.8,
+          "paceToday": 67.4,
+          "percentOfGoal": 42
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-10-15",
+          "endsOn": "2026-11-30",
+          "daysLeft": 43,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "DAVID",
+              "hrsRo": 0.57,
+              "rate": 0.45,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.52,
+              "rate": 0.502,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "MATTHEW",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "JORDAN",
+            "hrsRo": 0.52,
+            "rate": 0.502,
+            "qualified": false,
+            "rank": 2,
+            "hrsRoGap": 0.78,
+            "rateGap": 0.248,
+            "behindLeaderHrsRo": 0.05
+          }
+        },
+        "wins": [
+          {
+            "kind": "penetration",
+            "detail": "Alignment at 12% against a 10% goal"
+          }
+        ],
+        "penetration": {
+          "hrsRo": 0.92,
+          "align": 0.12,
+          "tires": 0.07,
+          "valvoline": 0.23,
+          "asr": 0.1354,
+          "csi": 937,
+          "roCount": 172
+        }
+      }
+    },
+    "MATTHEW": {
+      "headline": "Four pickups, $4,815 and 10.4 hours on deck",
+      "opening": "Month-to-date you are at 12.4 hours. Today needs 10.4 hours from the pickup slate to stay on pace. The biggest layup in front of you is at 9:20 AM with Mindy Warthan on RO 781590 at $2235.34 deferred and 3.5 hours on the table today.",
+      "pickupLine": "You have 4 customers with prior declines totaling $4815.26; if you sell the suggested items that is 10.4 hours.",
+      "moneyLine": "$21772 in uncalled deferred work is sitting open; booking even one from the top adds 40.3 hours (RO 781582) or 7.6 hours (RO 781590) today.",
+      "wins": [
+        {
+          "title": "Valvoline penetration",
+          "detail": "Valvoline at 60% against a 25% goal."
+        }
+      ],
+      "plan": [
+        {
+          "when": "Before 10am",
+          "what": "Prep and print menus for all four pickups with exact line items: 9:20 AM Mindy Warthan — Tune Up With Spark Plugs And PCV Replacement On V6 Engine (3.5 hrs); 10:20 AM Tracy Franklin — Replace Cabin Air Filter (Nonoem)), Replace Engine Air Filter, Rec (3.9 hrs); 12:00 PM Rakesh Patel — Fuel Injection Service, Replace Engine Air Filter, Replace Cabin Air Filter (1.2 hrs); 4:20 PM Bejh Hall — Replace Rear Pads and Resurface Rotors (1.8 hrs).",
+          "why": "Worth 10.4 hours and $4815.26 if sold as planned."
+        },
+        {
+          "when": "9:00–9:45am",
+          "what": "Start the deferred call push with the top two: Xuan Sun (RO 781582) and Mindy Warthan (RO 781590) to book ENGINE REPLACEMENT PREMIUM KIT package and the V6 tune-up/fluids set.",
+          "why": "Worth $13929.28 and 40.3 hours (RO 781582) plus $2235.34 and 7.6 hours (RO 781590)."
+        },
+        {
+          "when": "11:30am–12:00pm",
+          "what": "Work the next three deferred calls: Elyssa Colwell (RO 781627), Derrick Stout (RO 781565), Sergei Protasov (RO 781600).",
+          "why": "Combined $3787.52 and 13.7 hours to backfill tomorrow if today’s slate closes early."
+        },
+        {
+          "when": "All day",
+          "what": "On every LOF and wait, present one paid add-on from the customer’s list (filters, brake fluid, fuel injection) and close it at the counter.",
+          "why": "Closes 0.9 hours and 4 add-ons needed today (current 1.07 hrs/RO vs 1.3 goal; 0.5 add rate vs 0.75 goal)."
+        }
+      ],
+      "callList": [
+        {
+          "name": "Xuan S.",
+          "phone": "4632897479",
+          "ro": "781582",
+          "why": "ENGINE REPLACEMENT PREMIUM KIT, WHEEL ALIGNMENT, TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT — $13929.28 and 40.3 hours."
+        },
+        {
+          "name": "Mindy W.",
+          "phone": "7658079680",
+          "ro": "781590",
+          "why": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE, FUEL INJECTION SERVICE, REAR DIFFERENTIAL FLUID EXCHANGE, REPLACE SERPENTINE BELT — $2235.34 and 7.6 hours."
+        },
+        {
+          "name": "Elyssa C.",
+          "phone": "3174146714",
+          "ro": "781627",
+          "why": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT, REPLACE ENGINE AIR FILTER, FUEL INJECTION SERVICE, COOLANT FLUID EXCHANGE — $1823.52 and 6.3 hours."
+        },
+        {
+          "name": "Derrick S.",
+          "phone": "3175082249",
+          "ro": "781565",
+          "why": "COOLANT FLUID EXCHANGE, REPLACE FOUR TIRES, REPLACE CABIN AIR FILTER, BRAKE FLUID EXCHANGE — $1123.37 and 5.4 hours."
+        },
+        {
+          "name": "Sergei P.",
+          "phone": "6194509523",
+          "ro": "781600",
+          "why": "FUEL INJECTION SERVICE, REPLACE FOUR TIRES — $843.63 and 2 hours."
+        }
+      ],
+      "watchlist": [
+        {
+          "ro": "781313",
+          "what": "2027 Hyundai Palisade Hybrid — open work stalled 12 days, status partially assigned, CP not started, severity 7.",
+          "action": "Call Shawn Laughner for status, assign remaining lines, and update the customer today."
+        }
+      ],
+      "contest": "The $1000 Big-Money contest is live; you’re listed at 0 hrs/RO and 0 add rate, 0.57 hrs/RO behind the leader. To qualify you need 1.3 hrs/RO and 0.75 add rate; stack today’s 10.4 hours and four add-ons to close the gap fast.",
+      "coaching": "Your add-on rate is 0.5 against a 0.75 goal; pair every LOF and every waiter with one clear maintenance line the car already needs and ask for the yes at write-up. Tie the ask to today’s pickup menus — sell the exact lines listed, then add one small win (filters or fluids) to lift hrs/RO from 1.07 toward 1.3. Keep it tight and specific: show the part, price it clean, and stop talking after the close.",
+      "closing": "Start with the four pickups, then work down the call list until your 10.4 hours are banked.",
+      "facts": {
+        "advisor": "MATTHEW",
+        "date": "2026-10-19",
+        "openRos": {
+          "total": 2,
+          "oldestDays": 12,
+          "averageDays": 6.5,
+          "buckets": {
+            "today": 0,
+            "days1to2": 1,
+            "days3to5": 0,
+            "days6plus": 1
+          },
+          "attention": [
+            {
+              "ro": "781313",
+              "vehicle": "2027 Hyundai Palisade Hybrid",
+              "tech": "SHAWN LAUGHNER",
+              "age": 12,
+              "status": "Partially assigned",
+              "cpStatus": "Not started",
+              "warranty": false,
+              "severity": 7,
+              "reason": "Open work — stalled",
+              "advice": "Open work — find out what it's waiting on."
+            }
+          ]
+        },
+        "stalled": [],
+        "partsReady": [],
+        "appointments": {
+          "date": "2026-10-19",
+          "hrsRoGoal": 1.3,
+          "total": 10,
+          "waiters": 4,
+          "lof50": 4,
+          "campaigns": 2,
+          "partsInSop": 0,
+          "diagnosis": 1,
+          "withDeferred": 4,
+          "deferredAmount": 4815.26,
+          "deferredHours": 17.7,
+          "goalHours": 10.4,
+          "reachGoal": 3,
+          "pickup": [
+            {
+              "time": "9:20 AM",
+              "customer": "Mindy Warthan",
+              "vehicle": "2022 Hyundai Palisade",
+              "owner": "MATTHEW",
+              "waiter": false,
+              "visit": "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H) / CUSTOMER STATES VEHICLE KEEPS DYING. CHECK AND ADVISE.",
+              "tags": [
+                "campaign",
+                "diag"
+              ],
+              "deferred": {
+                "ro": "781590",
+                "amount": 2235.34,
+                "hours": 7.6,
+                "deferredBy": "MATTHEW",
+                "services": [
+                  "Vtfl",
+                  "Tune Up With Spark Plugs And PCV Replacement On V6 Engine",
+                  "Replace Cabin Air Filter",
+                  "AC Evap Service",
+                  "Replace Serpentine Belt",
+                  "Coolant Fluid Exchange",
+                  "Fuel Injection Service",
+                  "Brake Fluid Exchange",
+                  "Replace Engine Air Filter",
+                  "Tire Rotation",
+                  "Rear Differential Fluid Exchange"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Tune Up With Spark Plugs And PCV Replacement On V6 Engine"
+                ],
+                "hours": 3.5,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "10:20 AM",
+              "customer": "Tracy Franklin",
+              "vehicle": "2021 Hyundai Palisade",
+              "owner": "MATTHEW",
+              "waiter": false,
+              "visit": "Powertrain Control System Diagnosis & Testing / Engine Oil Drain & Refill",
+              "tags": [],
+              "deferred": {
+                "ro": "780392",
+                "amount": 1007.19,
+                "hours": 3.9,
+                "deferredBy": "JORDAN",
+                "services": [
+                  "Rec",
+                  "Replace Cabin Air Filter (Nonoem))",
+                  "Replace Engine Air Filter"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Cabin Air Filter (Nonoem))",
+                  "Replace Engine Air Filter",
+                  "Rec"
+                ],
+                "hours": 3.9,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            },
+            {
+              "time": "12:00 PM",
+              "customer": "Rakesh Patel",
+              "vehicle": "2023 Hyundai Palisade",
+              "owner": "MATTHEW",
+              "waiter": true,
+              "visit": "We’ve secured your next service visit to keep your vehicle running at its best and ensure you get priority scheduling. If you need to adjust the time, we’re happy to help!",
+              "tags": [],
+              "deferred": {
+                "ro": "776055",
+                "amount": 334.97,
+                "hours": 1.2,
+                "deferredBy": "NEVEN",
+                "services": [
+                  "Fuel Injection Service",
+                  "Replace Engine Air Filter",
+                  "Replace Cabin Air Filter"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Fuel Injection Service",
+                  "Replace Engine Air Filter",
+                  "Replace Cabin Air Filter"
+                ],
+                "hours": 1.2,
+                "reachesGoal": false,
+                "shortBy": 0.1
+              }
+            },
+            {
+              "time": "4:20 PM",
+              "customer": "Bejh Hall",
+              "vehicle": "2013 Hyundai Tucson",
+              "owner": "MATTHEW",
+              "waiter": true,
+              "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+              "tags": [
+                "lof50"
+              ],
+              "deferred": {
+                "ro": "776564",
+                "amount": 1237.76,
+                "hours": 5,
+                "deferredBy": "NEVEN",
+                "services": [
+                  "Replace Rear Pads and Resurface Rotors",
+                  "Fuel Injection Service",
+                  "Tune Up With Spark Plugs And PCV Replacement",
+                  "Coolant Fluid Exchange"
+                ]
+              },
+              "sell": {
+                "services": [
+                  "Replace Rear Pads and Resurface Rotors"
+                ],
+                "hours": 1.8,
+                "reachesGoal": true,
+                "shortBy": 0
+              }
+            }
+          ]
+        },
+        "bigMoney": {
+          "hrsRo": 1.07,
+          "rate": 0.5,
+          "tickets": 4,
+          "oilOnly": 2,
+          "goalHrsRo": 1.3,
+          "goalRate": 0.75,
+          "hitHrsRo": false,
+          "hitRate": false,
+          "addonsNeeded": 4,
+          "hoursShort": 0.9
+        },
+        "deferred": {
+          "total": 10,
+          "neverContacted": 10,
+          "totalAmount": 21772,
+          "totalHours": 69.8,
+          "targetedCount": 8,
+          "targetedAmount": 21353,
+          "topIs": "valvoline-and-brakes",
+          "top": [
+            {
+              "ro": "781582",
+              "customer": "Xuan Sun",
+              "phone": "4632897479",
+              "vehicle": "2015 hyundai Elantra",
+              "hours": 40.3,
+              "amount": 13929.28,
+              "lastSeen": "2026-10-15",
+              "codes": [
+                "ENGPREM",
+                "REC",
+                "ALIGN",
+                "TUNEUP"
+              ],
+              "services": [
+                "ENGINE REPLACEMENT PREMIUM KIT",
+                "REC",
+                "WHEEL ALIGNMENT",
+                "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "781590",
+              "customer": "Mindy Warthan",
+              "phone": "7658079680",
+              "vehicle": "2022 hyundai Palisade",
+              "hours": 7.6,
+              "amount": 2235.34,
+              "lastSeen": "2026-10-15",
+              "codes": [
+                "BELT",
+                "VVIFL",
+                "VRDFL",
+                "TUNEUPV6"
+              ],
+              "services": [
+                "REPLACE SERPENTINE BELT",
+                "FUEL INJECTION SERVICE",
+                "REAR DIFFERENTIAL FLUID EXCHANGE",
+                "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "781627",
+              "customer": "Elyssa Colwell",
+              "phone": "3174146714",
+              "vehicle": "2019 hyundai Sonata",
+              "hours": 6.3,
+              "amount": 1823.52,
+              "lastSeen": "2026-10-16",
+              "codes": [
+                "TUNEUP",
+                "AIRFILTER",
+                "VVIFL",
+                "VVCFL"
+              ],
+              "services": [
+                "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+                "REPLACE ENGINE AIR FILTER",
+                "FUEL INJECTION SERVICE",
+                "COOLANT FLUID EXCHANGE"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "781565",
+              "customer": "Derrick Stout",
+              "phone": "3175082249",
+              "vehicle": "2023 hyundai Elantra",
+              "hours": 5.4,
+              "amount": 1123.37,
+              "lastSeen": "2026-10-15",
+              "codes": [
+                "VVCFL",
+                "TIRE4",
+                "CABIN",
+                "VVBFL"
+              ],
+              "services": [
+                "COOLANT FLUID EXCHANGE",
+                "REPLACE FOUR TIRES",
+                "REPLACE CABIN AIR FILTER",
+                "BRAKE FLUID EXCHANGE"
+              ],
+              "kinds": [
+                "Valvoline",
+                "Brakes"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "781600",
+              "customer": "Sergei Protasov",
+              "phone": "6194509523",
+              "vehicle": "2025 hyundai Sonata Hybrid",
+              "hours": 2,
+              "amount": 843.63,
+              "lastSeen": "2026-10-16",
+              "codes": [
+                "VVIFL",
+                "TIRE4"
+              ],
+              "services": [
+                "FUEL INJECTION SERVICE",
+                "REPLACE FOUR TIRES"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            },
+            {
+              "ro": "781576",
+              "customer": "Siva Abulila",
+              "phone": "2524087925",
+              "vehicle": "2024 hyundai Sonata",
+              "hours": 3.2,
+              "amount": 520.43,
+              "lastSeen": "2026-10-15",
+              "codes": [
+                "ALIGN",
+                "VVIFL",
+                "AIRFILTER",
+                "TIRE4"
+              ],
+              "services": [
+                "WHEEL ALIGNMENT",
+                "FUEL INJECTION SERVICE",
+                "REPLACE ENGINE AIR FILTER",
+                "REPLACE FOUR TIRES"
+              ],
+              "kinds": [
+                "Valvoline"
+              ],
+              "contacted": false
+            }
+          ]
+        },
+        "trend": {
+          "recentDays": [
+            {
+              "date": "2026-10-14",
+              "hours": 1.9,
+              "hrsRo": 0.68
+            },
+            {
+              "date": "2026-10-15",
+              "hours": 12.3,
+              "hrsRo": 1.67
+            },
+            {
+              "date": "2026-10-16",
+              "hours": -2.6,
+              "hrsRo": 0.89
+            }
+          ],
+          "recentAverage": 3.9
+        },
+        "hours": {
+          "goal": 0,
+          "mtd": 12.4,
+          "hasGoal": false
+        },
+        "contest": {
+          "live": true,
+          "asOf": "2026-10-15",
+          "endsOn": "2026-11-30",
+          "daysLeft": 43,
+          "prize": 1000,
+          "reducedPrize": 500,
+          "goals": {
+            "hrsRo": 1.3,
+            "addRate": 0.75
+          },
+          "board": [
+            {
+              "name": "DAVID",
+              "hrsRo": 0.57,
+              "rate": 0.45,
+              "qualified": false,
+              "rank": 1
+            },
+            {
+              "name": "JORDAN",
+              "hrsRo": 0.52,
+              "rate": 0.502,
+              "qualified": false,
+              "rank": 2
+            },
+            {
+              "name": "MATTHEW",
+              "hrsRo": 0,
+              "rate": 0,
+              "qualified": false,
+              "rank": 3
+            }
+          ],
+          "me": {
+            "name": "MATTHEW",
+            "hrsRo": 0,
+            "rate": 0,
+            "qualified": false,
+            "rank": 3,
+            "hrsRoGap": 1.3,
+            "rateGap": 0.75,
+            "behindLeaderHrsRo": 0.57
+          }
+        },
+        "wins": [
+          {
+            "kind": "penetration",
+            "detail": "Valvoline at 60% against a 25% goal"
+          }
+        ],
+        "penetration": {
+          "hrsRo": 0.89,
+          "align": 0,
+          "tires": 0,
+          "valvoline": 0.6,
+          "asr": 0.1455,
+          "csi": 0,
+          "roCount": 14
+        }
+      }
+    }
+  },
+  "manager": {
+    "headline": "Money is in reach if we sell today",
+    "opening": "We are at 58862.6 against a 147864 forecast with 89001.4 to go. Pace is 7416.8 per working day over 12 days. Today has to net 7416.8 and 35.2 hours are sitting in booked deferred work. Biggest risk is aging/stalled ROs — RO 780361 at 51 days and RO 780481 invoiced 47 days with no payment.",
+    "appointmentsLine": "32 booked with 15 waiters; 20 cars carry 16587.22 in declined work worth 65.1 hours, with 35.2 realistic today. The pickup sits with JORDAN at 13.1 hours, DAVID at 11.7 hours, and MATTHEW at 10.4 hours; no open pool.",
+    "forecast": "We have earned 58862.6, with 89001.4 remaining on a 147864 forecast. That requires 7416.8 per working day across 12 days. Hitting 35.2 hours from today’s book puts us on track; missing that slips the month.",
+    "wins": [
+      {
+        "title": "JACOB over goal",
+        "detail": "JACOB is at 49.5 hours on a 42.5 goal (116%)."
+      },
+      {
+        "title": "GAVEN over goal",
+        "detail": "GAVEN is at 44.8 hours on a 42.5 goal (106%)."
+      },
+      {
+        "title": "DAVID ahead on hours",
+        "detail": "DAVID is 15.2 hours ahead of expected (218.3 vs 203.1)."
+      }
+    ],
+    "priorities": [
+      {
+        "what": "Work today’s with-deferred appointments to 35.2 hours",
+        "why": "Worth 35.2 hours today — JORDAN 13.1, DAVID 11.7, MATTHEW 10.4"
+      },
+      {
+        "what": "Feed CHRIS and TRENTON the first flagged sales",
+        "why": "They are short 29.4 and 27.7 hours; today’s 35.2 hours can close most of that gap"
+      },
+      {
+        "what": "Close invoiced-not-paid ROs",
+        "why": "RO 780481 at 47 days and RO 781528 at 3 days free trapped cash and hours today"
+      }
+    ],
+    "advisorNotes": [
+      {
+        "advisor": "DAVID",
+        "note": "At 218.3 on a 375 goal and 15.2 ahead; needs 14.2 today. Biggest pickup is 6002.23 from 9 with-deferred worth 11.7 hours. Push Erica Pence at 9:20 AM for 1.9 hours and stack alignments on waiters to hit paceToday 16.8."
+      },
+      {
+        "advisor": "JORDAN",
+        "note": "At 157.6 on a 375 goal and behind by 52.4; needs 19.8 today. Biggest pickup is 5769.73 from 7 with-deferred worth 13.1 hours. Open the day with the 8:00 AM brakes at 1.8 hours and the 9:00 AM alignment package at 2.5 hours to set the lane."
+      },
+      {
+        "advisor": "MATTHEW",
+        "note": "No stated goal; 12.4 MTD. Biggest pickup is 4815.26 from 4 with-deferred worth 10.4 hours. Sell Mindy Warthan at 9:20 AM for 3.5 hours and Rakesh Patel at 12:00 PM for 1.2 hours to clear half your book."
+      }
+    ],
+    "watchlist": [
+      {
+        "ro": "780361",
+        "what": "Open work stalled 51 days; last note 31 days ago says WAITING ON PARTS. NACK ORDER",
+        "action": "SHAWN to update ETA today and set install plan"
+      },
+      {
+        "ro": "780481",
+        "what": "Invoiced 47 days — billed not paid",
+        "action": "JORDAN to collect payment and close today"
+      },
+      {
+        "ro": "781052",
+        "what": "Open work stalled 24 days with tech assigned",
+        "action": "GAVEN to update cause/parts need and move to teardown today"
+      },
+      {
+        "ro": "781087",
+        "what": "Open work stalled 23 days with tech assigned",
+        "action": "GAVEN to post findings and parts status today"
+      },
+      {
+        "ro": "781313",
+        "what": "Partially assigned, not started for 12 days",
+        "action": "SHAWN to start and post first diag note today"
+      },
+      {
+        "ro": "781308",
+        "what": "Tech assigned, not started for 12 days",
+        "action": "JACOB to begin inspection and flag needed hours today"
+      }
+    ],
+    "technicians": "Shop is at 243.3 hours against a 333 goal; CHRIS at 38% and TRENTON at 42% are the bottleneck with 29.4 and 27.7 hours needed. Today’s 35.2 appointment hours should be routed to CHRIS and TRENTON first while JACOB at 116% and GAVEN at 106% stay on criticals. CARTER at 69% and CORY at 61% can take overflow once the two low performers are fed.",
+    "closing": "Sell the 35.2 hours in today’s book and hand them to CHRIS and TRENTON first.",
+    "facts": {
+      "date": "2026-10-19",
+      "shopOpenRos": {
+        "total": 46,
+        "oldestDays": 51,
+        "averageDays": 7.2,
+        "buckets": {
+          "today": 0,
+          "days1to2": 27,
+          "days3to5": 7,
+          "days6plus": 12
+        },
+        "attention": [
+          {
+            "ro": "781428",
+            "vehicle": "2018 Honda Odyssey",
+            "tech": "",
+            "age": 8,
+            "status": "Ready for dispatch",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 9,
+            "reason": "Dispatch overdue",
+            "advice": "Get the car into the shop."
+          },
+          {
+            "ro": "780481",
+            "vehicle": "2020 Hyundai Palisade",
+            "tech": "CORY SWINDLE",
+            "age": 47,
+            "status": "Invoiced",
+            "cpStatus": "Invoiced",
+            "warranty": false,
+            "severity": 8,
+            "reason": "Invoiced — not paid",
+            "advice": "Billed but never collected — chase the payment."
+          },
+          {
+            "ro": "780361",
+            "vehicle": "2025 Hyundai Santa Fe Hybrid",
+            "tech": "CORY SWINDLE",
+            "age": 51,
+            "status": "In progress",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781052",
+            "vehicle": "2018 Hyundai Kona",
+            "tech": "GAVEN LAUGHNER",
+            "age": 24,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781087",
+            "vehicle": "2015 Hyundai Santa Fe Sport",
+            "tech": "GAVEN LAUGHNER",
+            "age": 23,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781176",
+            "vehicle": "2013 Hyundai Sonata",
+            "tech": "GAVEN LAUGHNER",
+            "age": 19,
+            "status": "Tech assigned",
+            "cpStatus": "Completed",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781255",
+            "vehicle": "2017 Hyundai Santa Fe Sport",
+            "tech": "KADEN WILSON",
+            "age": 16,
+            "status": "Partially assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781313",
+            "vehicle": "2027 Hyundai Palisade Hybrid",
+            "tech": "SHAWN LAUGHNER",
+            "age": 12,
+            "status": "Partially assigned",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781308",
+            "vehicle": "2022 Ford Edge",
+            "tech": "JACOB KUNTZ",
+            "age": 12,
+            "status": "Tech assigned",
+            "cpStatus": "Not started",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781457",
+            "vehicle": "2022 Hyundai Palisade",
+            "tech": "KADEN WILSON",
+            "age": 8,
+            "status": "Partially assigned",
+            "cpStatus": "Completed",
+            "warranty": false,
+            "severity": 7,
+            "reason": "Open work — stalled",
+            "advice": "Open work — find out what it's waiting on."
+          },
+          {
+            "ro": "781528",
+            "vehicle": "2019 Hyundai Sonata",
+            "tech": "KADEN WILSON",
+            "age": 3,
+            "status": "Invoiced",
+            "cpStatus": "Invoiced",
+            "warranty": false,
+            "severity": 4,
+            "reason": "Invoiced — not paid",
+            "advice": "Awaiting payment."
+          },
+          {
+            "ro": "781497",
+            "vehicle": "2007 Hyundai Elantra",
+            "tech": "GAVEN LAUGHNER",
+            "age": 4,
+            "status": "Tech assigned",
+            "cpStatus": "In progress",
+            "warranty": false,
+            "severity": 3,
+            "reason": "Open work — aging",
+            "advice": ""
+          }
+        ]
+      },
+      "stalledShopWide": [
+        {
+          "ro": "780361",
+          "vehicle": "2025 Hyundai Santa Fe Hybrid",
+          "flagged": false,
+          "lastNote": "WAITING ON PARTS. NACK ORDER",
+          "lastNoteBy": "SHAWN",
+          "daysSinceNote": 31
+        },
+        {
+          "ro": "780481",
+          "vehicle": "2020 Hyundai Palisade",
+          "flagged": false,
+          "lastNote": "nope",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 31
+        },
+        {
+          "ro": "780552",
+          "vehicle": "2019 Hyundai Tucson",
+          "flagged": false,
+          "lastNote": "nope",
+          "lastNoteBy": "JORDAN",
+          "daysSinceNote": 31
+        }
+      ],
+      "partsReadyShopWide": 5,
+      "deferredShopWide": {
+        "total": 3582,
+        "neverContacted": 3550,
+        "totalAmount": 4212815,
+        "totalHours": 17624.4,
+        "targetedCount": 2533,
+        "targetedAmount": 3280005,
+        "topIs": "valvoline-and-brakes",
+        "top": [
+          {
+            "ro": "769647",
+            "customer": "Titania Bethiana",
+            "phone": "7655326844",
+            "vehicle": "2017 hyundai Elantra",
+            "hours": 60.5,
+            "amount": 30522.97,
+            "lastSeen": "2025-06-27",
+            "codes": [
+              "ENGBAS",
+              "ROTATE",
+              "LOF",
+              "ENGPLUS"
+            ],
+            "services": [
+              "ENGINE REPLACEMENT BASIC KIT",
+              "TIRE ROTATION",
+              "LOF",
+              "ENGINE REPLACEMENT PLUS KIT"
+            ],
+            "kinds": [
+              "Valvoline"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "773725",
+            "customer": "David Zarate",
+            "phone": "7655512552",
+            "vehicle": "2018 genesis G90",
+            "hours": 42.7,
+            "amount": 21989.93,
+            "lastSeen": "2025-12-31",
+            "codes": [
+              "VVTFL",
+              "ENGPREM",
+              "TIRE4",
+              "VVCFL"
+            ],
+            "services": [
+              "TRANSMISSION FLUID EXCHANGE",
+              "ENGINE REPLACEMENT PREMIUM KIT",
+              "REPLACE FOUR TIRES",
+              "COOLANT FLUID EXCHANGE"
+            ],
+            "kinds": [
+              "Valvoline"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "774338",
+            "customer": "Joshua Niccum",
+            "phone": "7656506145",
+            "vehicle": "2014 hyundai Elantra GT",
+            "hours": 55.4,
+            "amount": 19584.4,
+            "lastSeen": "2026-01-12",
+            "codes": [
+              "REC",
+              "REC",
+              "VVTFL",
+              "RPADROTOR"
+            ],
+            "services": [
+              "REC",
+              "REC",
+              "TRANSMISSION FLUID EXCHANGE",
+              "Replace Rear Pads and Rotors"
+            ],
+            "kinds": [
+              "Brakes",
+              "Valvoline"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "771181",
+            "customer": "hailey ramirez",
+            "phone": "7654316146",
+            "vehicle": "2013 hyundai Sonata",
+            "hours": 55.8,
+            "amount": 19071.21,
+            "lastSeen": "2025-09-11",
+            "codes": [
+              "TIRE4",
+              "VVTFL",
+              "VVBFL",
+              "REC"
+            ],
+            "services": [
+              "REPLACE FOUR TIRES",
+              "TRANSMISSION FLUID EXCHANGE",
+              "BRAKE FLUID EXCHANGE",
+              "REC"
+            ],
+            "kinds": [
+              "Valvoline",
+              "Brakes"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "768354",
+            "customer": "Justin Patterson",
+            "phone": "7654146677",
+            "vehicle": "2019 hyundai Kona",
+            "hours": 42.6,
+            "amount": 19021.13,
+            "lastSeen": "2025-05-09",
+            "codes": [
+              "ENGPLUS",
+              "VVTFL",
+              "REC",
+              "VVCFL"
+            ],
+            "services": [
+              "ENGINE REPLACEMENT PLUS KIT",
+              "TRANSMISSION FLUID EXCHANGE",
+              "REC",
+              "COOLANT FLUID EXCHANGE"
+            ],
+            "kinds": [
+              "Valvoline"
+            ],
+            "contacted": false
+          },
+          {
+            "ro": "768708",
+            "customer": "Jongmyung Jeon",
+            "phone": "7654799114",
+            "vehicle": "2017 hyundai Santa Fe Sport",
+            "hours": 25.9,
+            "amount": 17289.77,
+            "lastSeen": "2025-06-07",
+            "codes": [
+              "VVTFL",
+              "VVCFL",
+              "REC",
+              "ALIGN"
+            ],
+            "services": [
+              "TRANSMISSION FLUID EXCHANGE",
+              "COOLANT FLUID EXCHANGE",
+              "REC",
+              "WHEEL ALIGNMENT"
+            ],
+            "kinds": [
+              "Valvoline"
+            ],
+            "contacted": false
+          }
+        ]
+      },
+      "appointments": {
+        "date": "2026-10-19",
+        "hrsRoGoal": 1.3,
+        "total": 32,
+        "waiters": 15,
+        "lof50": 18,
+        "campaigns": 2,
+        "partsInSop": 1,
+        "diagnosis": 5,
+        "withDeferred": 20,
+        "deferredAmount": 16587.22,
+        "deferredHours": 65.1,
+        "goalHours": 35.2,
+        "reachGoal": 15,
+        "openPool": 0,
+        "byOwner": {
+          "DAVID": {
+            "appointments": 12,
+            "withDeferred": 9,
+            "deferredAmount": 6002.23,
+            "goalHours": 11.7
+          },
+          "JORDAN": {
+            "appointments": 10,
+            "withDeferred": 7,
+            "deferredAmount": 5769.73,
+            "goalHours": 13.1
+          },
+          "MATTHEW": {
+            "appointments": 10,
+            "withDeferred": 4,
+            "deferredAmount": 4815.26,
+            "goalHours": 10.4
+          }
+        },
+        "pickup": [
+          {
+            "time": "7:40 AM",
+            "customer": "Yan Shah",
+            "vehicle": "2026 Hyundai Tucson Hybrid",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "779930",
+              "amount": 552.36,
+              "hours": 2.7,
+              "deferredBy": "DAVID",
+              "services": [
+                "Replace Engine Air Filter",
+                "Tire Rotation",
+                "AC Evap Service",
+                "Wheel Alignment",
+                "Fuel Injection Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Wheel Alignment",
+                "Fuel Injection Service"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "8:00 AM",
+            "customer": "Jellie Moore Snyder",
+            "vehicle": "2009 Hyundai Genesis",
+            "owner": "JORDAN",
+            "waiter": false,
+            "visit": "Replace Rear Pads and Resurface Rotors / BRAKE FLUID EXCHANGE",
+            "tags": [],
+            "deferred": {
+              "ro": "781494",
+              "amount": 1255.88,
+              "hours": 4.7,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Tune Up With Spark Plugs And PCV Replacement",
+                "Replace Rear Pads and Resurface Rotors",
+                "Brake Fluid Exchange",
+                "Replace Engine Air Filter",
+                "AC Evap Service",
+                "Replace Cabin Air Filter"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Rear Pads and Resurface Rotors"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "8:00 AM",
+            "customer": "Rucha Karve",
+            "vehicle": "2025 Hyundai Tucson Hybrid",
+            "owner": "DAVID",
+            "waiter": false,
+            "visit": "part in sop",
+            "tags": [
+              "sop"
+            ],
+            "deferred": {
+              "ro": "778690",
+              "amount": 34.95,
+              "hours": 0.4,
+              "deferredBy": "DAVID",
+              "services": [
+                "Tire Rotation"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Tire Rotation"
+              ],
+              "hours": 0.4,
+              "reachesGoal": false,
+              "shortBy": 0.9
+            }
+          },
+          {
+            "time": "8:20 AM",
+            "customer": "Robert Mcmahon",
+            "vehicle": "2018 Hyundai Santa Fe Sport",
+            "owner": "JORDAN",
+            "waiter": false,
+            "visit": "CUSTOMER STATES- Failed trans seals",
+            "tags": [
+              "diag"
+            ],
+            "deferred": {
+              "ro": "781475",
+              "amount": 489.68,
+              "hours": 1.3,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Replace Serpentine Belt",
+                "Replace One Tire"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Serpentine Belt",
+                "Replace One Tire"
+              ],
+              "hours": 1.3,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "9:00 AM",
+            "customer": "Vijay Raghunathan",
+            "vehicle": "2009 Hyundai Sonata",
+            "owner": "JORDAN",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra) / ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "772639",
+              "amount": 559.79,
+              "hours": 2.5,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Wheel Alignment",
+                "Rec"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Wheel Alignment",
+                "Rec"
+              ],
+              "hours": 2.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "9:20 AM",
+            "customer": "Mindy Warthan",
+            "vehicle": "2022 Hyundai Palisade",
+            "owner": "MATTHEW",
+            "waiter": false,
+            "visit": "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H) / CUSTOMER STATES VEHICLE KEEPS DYING. CHECK AND ADVISE.",
+            "tags": [
+              "campaign",
+              "diag"
+            ],
+            "deferred": {
+              "ro": "781590",
+              "amount": 2235.34,
+              "hours": 7.6,
+              "deferredBy": "MATTHEW",
+              "services": [
+                "Vtfl",
+                "Tune Up With Spark Plugs And PCV Replacement On V6 Engine",
+                "Replace Cabin Air Filter",
+                "AC Evap Service",
+                "Replace Serpentine Belt",
+                "Coolant Fluid Exchange",
+                "Fuel Injection Service",
+                "Brake Fluid Exchange",
+                "Replace Engine Air Filter",
+                "Tire Rotation",
+                "Rear Differential Fluid Exchange"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Tune Up With Spark Plugs And PCV Replacement On V6 Engine"
+              ],
+              "hours": 3.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "9:20 AM",
+            "customer": "Erica Pence",
+            "vehicle": "2023 Genesis GV80",
+            "owner": "DAVID",
+            "waiter": false,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "779191",
+              "amount": 2814.13,
+              "hours": 11.5,
+              "deferredBy": "DAVID",
+              "services": [
+                "Rec x2",
+                "Wheel Alignment",
+                "Fuel Injection Service",
+                "Coolant Fluid Exchange",
+                "Replace Cabin Air Filter"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Wheel Alignment",
+                "Coolant Fluid Exchange"
+              ],
+              "hours": 1.9,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "9:40 AM",
+            "customer": "Annette Steiger",
+            "vehicle": "2018 Chrysler Pacifica",
+            "owner": "JORDAN",
+            "waiter": false,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra) / CUSTOMER STATES- maybe due for brakes, please take measurements",
+            "tags": [
+              "diag",
+              "lof50",
+              "nonhyundai"
+            ],
+            "deferred": {
+              "ro": "779242",
+              "amount": 885.33,
+              "hours": 2.4,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Replace Engine Air Filter Non OEM",
+                "Brake Fluid Exchange",
+                "Replace Rear Pads and Rotors"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Rear Pads and Rotors"
+              ],
+              "hours": 1.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "9:40 AM",
+            "customer": "Melissa Burton",
+            "vehicle": "2017 Hyundai Santa Fe Sport",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "775350",
+              "amount": 847.33,
+              "hours": 3.6,
+              "deferredBy": "NEVEN",
+              "services": [
+                "Wheel Alignment",
+                "Tune Up With Spark Plugs And PCV Replacement",
+                "Replace Cabin Air Filter",
+                "Fuel Injection Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Tune Up With Spark Plugs And PCV Replacement"
+              ],
+              "hours": 1.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "10:00 AM",
+            "customer": "Katherine Suter",
+            "vehicle": "2024 Hyundai Santa Fe",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "Routine Maintenance (e.g. Oil Change, etc) — Need front wiper blades",
+            "tags": [],
+            "deferred": {
+              "ro": "775508",
+              "amount": 92.99,
+              "hours": 0.3,
+              "deferredBy": "DAVID",
+              "services": [
+                "Replace Cabin Air Filter"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Cabin Air Filter"
+              ],
+              "hours": 0.3,
+              "reachesGoal": false,
+              "shortBy": 1
+            }
+          },
+          {
+            "time": "10:00 AM",
+            "customer": "Constance Brown",
+            "vehicle": "2023 Hyundai Palisade",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "775709",
+              "amount": 433.93,
+              "hours": 2.1,
+              "deferredBy": "DAVID",
+              "services": [
+                "Wheel Alignment",
+                "Fuel Injection Service",
+                "AC Evap Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Wheel Alignment",
+                "Fuel Injection Service"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "10:20 AM",
+            "customer": "Kristin Cahoe",
+            "vehicle": "2025 Hyundai Santa Fe Hybrid",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "Other (Please use comment box below) — hit a pole in a parking lot",
+            "tags": [],
+            "deferred": {
+              "ro": "780258",
+              "amount": 141.67,
+              "hours": 0.4,
+              "deferredBy": "DAVID",
+              "services": [
+                "Rec"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Rec"
+              ],
+              "hours": 0.4,
+              "reachesGoal": false,
+              "shortBy": 0.9
+            }
+          },
+          {
+            "time": "10:20 AM",
+            "customer": "Tracy Franklin",
+            "vehicle": "2021 Hyundai Palisade",
+            "owner": "MATTHEW",
+            "waiter": false,
+            "visit": "Powertrain Control System Diagnosis & Testing / Engine Oil Drain & Refill",
+            "tags": [],
+            "deferred": {
+              "ro": "780392",
+              "amount": 1007.19,
+              "hours": 3.9,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Rec",
+                "Replace Cabin Air Filter (Nonoem))",
+                "Replace Engine Air Filter"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Cabin Air Filter (Nonoem))",
+                "Replace Engine Air Filter",
+                "Rec"
+              ],
+              "hours": 3.9,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "11:00 AM",
+            "customer": "Madalene Beckner",
+            "vehicle": "2026 Hyundai Palisade",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "777782",
+              "amount": 349.94,
+              "hours": 1.8,
+              "deferredBy": "DAVID",
+              "services": [
+                "Wheel Alignment",
+                "Fuel Injection Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Wheel Alignment",
+                "Fuel Injection Service"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "11:20 AM",
+            "customer": "Nichole Ebershoff",
+            "vehicle": "2023 Hyundai Elantra",
+            "owner": "JORDAN",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "777598",
+              "amount": 302.98,
+              "hours": 1.1,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Replace Cabin Air Filter",
+                "Fuel Injection Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Fuel Injection Service",
+                "Replace Cabin Air Filter"
+              ],
+              "hours": 1,
+              "reachesGoal": false,
+              "shortBy": 0.3
+            }
+          },
+          {
+            "time": "12:00 PM",
+            "customer": "Sharon Gillis",
+            "vehicle": "2016 Hyundai Elantra",
+            "owner": "JORDAN",
+            "waiter": false,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "774285",
+              "amount": 928.72,
+              "hours": 3.7,
+              "deferredBy": "NEVEN",
+              "services": [
+                "AC Evap Service",
+                "Coolant Fluid Exchange",
+                "Tune Up With Spark Plugs And PCV Replacement",
+                "Wheel Alignment"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Tune Up With Spark Plugs And PCV Replacement"
+              ],
+              "hours": 1.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "12:00 PM",
+            "customer": "Rakesh Patel",
+            "vehicle": "2023 Hyundai Palisade",
+            "owner": "MATTHEW",
+            "waiter": true,
+            "visit": "We’ve secured your next service visit to keep your vehicle running at its best and ensure you get priority scheduling. If you need to adjust the time, we’re happy to help!",
+            "tags": [],
+            "deferred": {
+              "ro": "776055",
+              "amount": 334.97,
+              "hours": 1.2,
+              "deferredBy": "NEVEN",
+              "services": [
+                "Fuel Injection Service",
+                "Replace Engine Air Filter",
+                "Replace Cabin Air Filter"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Fuel Injection Service",
+                "Replace Engine Air Filter",
+                "Replace Cabin Air Filter"
+              ],
+              "hours": 1.2,
+              "reachesGoal": false,
+              "shortBy": 0.1
+            }
+          },
+          {
+            "time": "3:20 PM",
+            "customer": "Ciara Russell",
+            "vehicle": "2024 Hyundai Elantra",
+            "owner": "DAVID",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "779490",
+              "amount": 734.93,
+              "hours": 3.6,
+              "deferredBy": "DAVID",
+              "services": [
+                "Fuel Injection Service",
+                "Replace Front Pads and Resurface Rotors",
+                "Wheel Alignment"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Front Pads and Resurface Rotors"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "3:20 PM",
+            "customer": "ROBERT Davison",
+            "vehicle": "2020 Genesis G80",
+            "owner": "JORDAN",
+            "waiter": false,
+            "visit": "CUSTOMER STATES WASHER FLUID NOT SPRAYING. CHECK AND ADVISE.",
+            "tags": [
+              "diag"
+            ],
+            "deferred": {
+              "ro": "775550",
+              "amount": 1347.35,
+              "hours": 5.3,
+              "deferredBy": "JORDAN",
+              "services": [
+                "Wheel Alignment",
+                "Tune Up With Spark Plugs And PCV Replacement On V6 Engine",
+                "Fuel Injection Service"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Tune Up With Spark Plugs And PCV Replacement On V6 Engine"
+              ],
+              "hours": 3.5,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          },
+          {
+            "time": "4:20 PM",
+            "customer": "Bejh Hall",
+            "vehicle": "2013 Hyundai Tucson",
+            "owner": "MATTHEW",
+            "waiter": true,
+            "visit": "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+            "tags": [
+              "lof50"
+            ],
+            "deferred": {
+              "ro": "776564",
+              "amount": 1237.76,
+              "hours": 5,
+              "deferredBy": "NEVEN",
+              "services": [
+                "Replace Rear Pads and Resurface Rotors",
+                "Fuel Injection Service",
+                "Tune Up With Spark Plugs And PCV Replacement",
+                "Coolant Fluid Exchange"
+              ]
+            },
+            "sell": {
+              "services": [
+                "Replace Rear Pads and Resurface Rotors"
+              ],
+              "hours": 1.8,
+              "reachesGoal": true,
+              "shortBy": 0
+            }
+          }
+        ]
+      },
+      "money": {
+        "forecast": 147864,
+        "earned": 58862.6,
+        "remaining": 89001.4,
+        "percentOfForecast": 40,
+        "workingDaysLeft": 12,
+        "workingDaysTotal": 27,
+        "neededPerDay": 7416.8,
+        "lastYear": 127779
+      },
+      "technicians": {
+        "list": [
+          {
+            "name": "JACOB",
+            "goal": 42.5,
+            "total": 49.5,
+            "pct": 116,
+            "needed": 0,
+            "pacing": 49.5
+          },
+          {
+            "name": "CARTER",
+            "goal": 42.5,
+            "total": 29.5,
+            "pct": 69,
+            "needed": 13,
+            "pacing": 29.5
+          },
+          {
+            "name": "GAVEN",
+            "goal": 42.5,
+            "total": 44.8,
+            "pct": 106,
+            "needed": 0,
+            "pacing": 56.1
+          },
+          {
+            "name": "CORY",
+            "goal": 42.5,
+            "total": 26.1,
+            "pct": 61,
+            "needed": 16.4,
+            "pacing": 26.1
+          },
+          {
+            "name": "KADEN",
+            "goal": 42.5,
+            "total": 41.9,
+            "pct": 99,
+            "needed": 0.6,
+            "pacing": 41.9
+          },
+          {
+            "name": "BRYSON",
+            "goal": 25.5,
+            "total": 13.6,
+            "pct": 53,
+            "needed": 11.9,
+            "pacing": 13.6
+          },
+          {
+            "name": "CHRIS",
+            "goal": 47.5,
+            "total": 18.1,
+            "pct": 38,
+            "needed": 29.4,
+            "pacing": 18.1
+          },
+          {
+            "name": "TRENTON",
+            "goal": 47.5,
+            "total": 19.8,
+            "pct": 42,
+            "needed": 27.7,
+            "pacing": 24.7
+          }
+        ],
+        "hoursTotal": 243.3,
+        "goalTotal": 333,
+        "behind": [
+          "CHRIS",
+          "TRENTON"
+        ]
+      },
+      "contest": {
+        "live": true,
+        "asOf": "2026-10-15",
+        "endsOn": "2026-11-30",
+        "daysLeft": 43,
+        "prize": 1000,
+        "reducedPrize": 500,
+        "goals": {
+          "hrsRo": 1.3,
+          "addRate": 0.75
+        },
+        "board": [
+          {
+            "name": "DAVID",
+            "hrsRo": 0.57,
+            "rate": 0.45,
+            "qualified": false,
+            "rank": 1
+          },
+          {
+            "name": "JORDAN",
+            "hrsRo": 0.52,
+            "rate": 0.502,
+            "qualified": false,
+            "rank": 2
+          },
+          {
+            "name": "MATTHEW",
+            "hrsRo": 0,
+            "rate": 0,
+            "qualified": false,
+            "rank": 3
+          }
+        ],
+        "me": null
+      },
+      "breakdown": [
+        {
+          "advisor": "DAVID",
+          "hours": {
+            "hasGoal": true,
+            "goal": 375,
+            "mtd": 218.3,
+            "hrsRoGoal": 1.5,
+            "yesterdayHours": 5.8,
+            "yesterdayHrsRo": 1.19,
+            "workingDaysTotal": 24,
+            "workingDaysElapsed": 13,
+            "workingDaysLeft": 11,
+            "dailyTarget": 15.6,
+            "expectedByNow": 203.1,
+            "aheadBy": 15.2,
+            "onPace": true,
+            "neededToday": 14.2,
+            "paceToday": 16.8,
+            "percentOfGoal": 58
+          },
+          "appts": {
+            "total": 12,
+            "waiters": 7,
+            "lof50": 8,
+            "withDeferred": 9,
+            "deferredAmount": 6002.23,
+            "goalHours": 11.7,
+            "reachGoal": 6
+          },
+          "bigMoney": {
+            "hrsRo": 0.55,
+            "rate": 0.47,
+            "tickets": 61,
+            "oilOnly": 32,
+            "goalHrsRo": 1.3,
+            "goalRate": 0.75,
+            "hitHrsRo": false,
+            "hitRate": false,
+            "addonsNeeded": 67,
+            "hoursShort": 45.8
+          },
+          "contest": {
+            "rank": 1,
+            "qualified": false,
+            "of": 3
+          }
+        },
+        {
+          "advisor": "JORDAN",
+          "hours": {
+            "hasGoal": true,
+            "goal": 375,
+            "mtd": 157.6,
+            "hrsRoGoal": 1.5,
+            "yesterdayHours": 14,
+            "yesterdayHrsRo": 0.92,
+            "workingDaysTotal": 25,
+            "workingDaysElapsed": 14,
+            "workingDaysLeft": 11,
+            "dailyTarget": 15,
+            "expectedByNow": 210,
+            "aheadBy": -52.4,
+            "onPace": false,
+            "neededToday": 19.8,
+            "paceToday": 67.4,
+            "percentOfGoal": 42
+          },
+          "appts": {
+            "total": 10,
+            "waiters": 4,
+            "lof50": 6,
+            "withDeferred": 7,
+            "deferredAmount": 5769.73,
+            "goalHours": 13.1,
+            "reachGoal": 6
+          },
+          "bigMoney": {
+            "hrsRo": 0.43,
+            "rate": 0.47,
+            "tickets": 67,
+            "oilOnly": 35,
+            "goalHrsRo": 1.3,
+            "goalRate": 0.75,
+            "hitHrsRo": false,
+            "hitRate": false,
+            "addonsNeeded": 73,
+            "hoursShort": 58.3
+          },
+          "contest": {
+            "rank": 2,
+            "qualified": false,
+            "of": 3
+          }
+        },
+        {
+          "advisor": "MATTHEW",
+          "hours": {
+            "goal": 0,
+            "mtd": 12.4,
+            "hasGoal": false
+          },
+          "appts": {
+            "total": 10,
+            "waiters": 4,
+            "lof50": 4,
+            "withDeferred": 4,
+            "deferredAmount": 4815.26,
+            "goalHours": 10.4,
+            "reachGoal": 3
+          },
+          "bigMoney": {
+            "hrsRo": 1.07,
+            "rate": 0.5,
+            "tickets": 4,
+            "oilOnly": 2,
+            "goalHrsRo": 1.3,
+            "goalRate": 0.75,
+            "hitHrsRo": false,
+            "hitRate": false,
+            "addonsNeeded": 4,
+            "hoursShort": 0.9
+          },
+          "contest": {
+            "rank": 3,
+            "qualified": false,
+            "of": 3
+          }
+        }
+      ],
+      "advisors": [
+        {
+          "advisor": "DAVID",
+          "openRos": 14,
+          "oldestDays": 16,
+          "needsAttention": 7,
+          "stalled": 0,
+          "partsReady": 1,
+          "hours": {
+            "mtd": 218.3,
+            "goal": 375,
+            "onPace": true,
+            "aheadBy": 15.2,
+            "neededToday": 14.2,
+            "percentOfGoal": 58
+          },
+          "deferredValue": 966277,
+          "deferredUncalled": 902,
+          "contestRank": 1,
+          "qualified": false
+        },
+        {
+          "advisor": "JORDAN",
+          "openRos": 23,
+          "oldestDays": 51,
+          "needsAttention": 12,
+          "stalled": 2,
+          "partsReady": 3,
+          "hours": {
+            "mtd": 157.6,
+            "goal": 375,
+            "onPace": false,
+            "aheadBy": -52.4,
+            "neededToday": 19.8,
+            "percentOfGoal": 42
+          },
+          "deferredValue": 1633139,
+          "deferredUncalled": 1401,
+          "contestRank": 2,
+          "qualified": false
+        },
+        {
+          "advisor": "MATTHEW",
+          "openRos": 2,
+          "oldestDays": 12,
+          "needsAttention": 1,
+          "stalled": 0,
+          "partsReady": 0,
+          "hours": null,
+          "deferredValue": 21772,
+          "deferredUncalled": 10,
+          "contestRank": 3,
+          "qualified": false
+        }
+      ]
+    }
+  }
+}
