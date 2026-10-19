@@ -128,12 +128,14 @@
       "dueTime": "10:52",
       "phone": "+1 (574) 702-1990",
       "notes": "",
-      "fileUrl": "",
-      "fileName": "",
+      "fileUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/service-loaners/mvfca9zg-eubiixa9.pdf",
+      "fileName": "ROBERT BOEHHME.pdf",
       "uploadedAt": "2026-10-18T18:23:16.260Z",
       "by": "SHAWN",
       "fromReport": true,
-      "reportSyncedAt": "2026-10-18T18:23:16.260Z"
+      "reportSyncedAt": "2026-10-18T18:23:16.260Z",
+      "scanAttachedAt": "2026-10-19T14:18:10.533Z",
+      "scanAttachedBy": "HOLLI"
     },
     {
       "id": "sl-mve5lmp0cww6",
