@@ -1,5 +1,20 @@
 [
   {
+    "at": "2026-10-20T19:35:54.071Z",
+    "type": "page",
+    "label": "hotRepairs"
+  },
+  {
+    "at": "2026-10-20T19:35:54.064Z",
+    "type": "page",
+    "label": "hot-repairs"
+  },
+  {
+    "at": "2026-10-20T19:35:52.640Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-20T11:38:59.118Z",
     "type": "page",
     "label": "dashboard"
