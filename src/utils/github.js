@@ -2529,7 +2529,7 @@ export async function updateLoanerRequests(mutate, what = 'update') {
 
 // ── Loaner maintenance requests ───────────────────────────────────────────────
 // public/data/service-loaner/maintenance.json → { requests: [{ id, loanerNo, vin, year, model, mileage,
-//   priority: 'urgent'|'routine', services: [...], description, photos: [{ url, name, type }],
+//   priority: 'urgent'|'ready'|'routine', services: [...], description, photos: [{ url, name, type }],
 //   status: 'open'|'done', requestedAt, requestedBy, doneAt, doneBy, doneNote }] }
 export async function loadLoanerMaintenance() {
   try { const d = await loadGithubFile('data/service-loaner/maintenance.json'); if (d && Array.isArray(d.requests)) return d; } catch {}

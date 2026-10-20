@@ -5,7 +5,8 @@ import { decodeVin, validateVin } from '../utils/vinLookup';
 
 // ── Loaner Maintenance (Service Loaner page tab) ─────────────────────────────
 // Anyone can put in a request for a loaner that needs maintenance or service:
-// stock #, VIN, year/model, miles, Urgent (out of service) or Routine, what it
+// stock #, VIN, year/model, miles, Urgent (out of service), On lot (here and
+// ready for service) or Routine, what it
 // needs (checkboxes + description) and phone photos. Open requests list urgent
 // first, then oldest. Click a row to edit it. Anyone can mark one Done (optional note) or reopen it;
 // managers/admin can delete. Stored in data/service-loaner/maintenance.json,
@@ -28,6 +29,9 @@ const fmtWhen = (iso) => {
   const d = new Date(iso);
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
 };
+// Open list order: urgent, then on-lot/ready, then routine.
+const PRIORITY_RANK = { urgent: 0, ready: 1 };
+const rank = (p) => PRIORITY_RANK[p] ?? 2;
 const daysOpen = (iso) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86400000));
 // VIN → { year, make, model } via NHTSA (utils/vinLookup). One lookup per VIN
 // per visit; null while it's out, { ok:false } when it can't be decoded.
@@ -226,7 +230,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
     const hit = (r) => !terms.length || terms.every(t => [r.loanerNo, r.vin, r.year, r.make, r.model, r.description, (r.services || []).join(' '), r.requestedBy, r.doneNote].join(' ').toLowerCase().includes(t));
     const list = items.filter(hit);
     return {
-      open: list.filter(r => r.status !== 'done').sort((a, b) => (a.priority === 'urgent' ? 0 : 1) - (b.priority === 'urgent' ? 0 : 1) || String(a.requestedAt).localeCompare(String(b.requestedAt))),
+      open: list.filter(r => r.status !== 'done').sort((a, b) => rank(a.priority) - rank(b.priority) || String(a.requestedAt).localeCompare(String(b.requestedAt))),
       done: list.filter(r => r.status === 'done').sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt))),
     };
   }, [items, q]);
@@ -242,6 +246,8 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
           ? <span style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#052e16', background: '#4ade80' }}>✓ DONE</span>
           : r.priority === 'urgent'
             ? <span style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#450a0a', background: '#fca5a5' }}>🚫 URGENT</span>
+            : r.priority === 'ready'
+            ? <span style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#082f49', background: '#7dd3fc' }}>🅿️ ON LOT · READY</span>
             : <span style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#422006', background: '#fde68a' }}>ROUTINE</span>}
         {!isDone && <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 5 }}>{daysOpen(r.requestedAt) === 0 ? 'today' : `${daysOpen(r.requestedAt)}d open`}</div>}
       </td>
@@ -362,6 +368,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
             <div style={{ ...label, margin: '14px 0 6px' }}>Priority</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, priority: 'urgent' }))} style={{ ...btn('248,113,113', draft.priority === 'urgent'), fontSize: 13.5, padding: '8px 14px' }}>{draft.priority === 'urgent' ? '✓ ' : ''}🚫 Urgent — out of service</button>
+              <button type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, priority: 'ready' }))} style={{ ...btn('56,189,248', draft.priority === 'ready'), fontSize: 13.5, padding: '8px 14px' }}>{draft.priority === 'ready' ? '✓ ' : ''}🅿️ On lot — ready for service</button>
               <button type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, priority: 'routine' }))} style={{ ...btn('251,191,36', draft.priority === 'routine'), fontSize: 13.5, padding: '8px 14px' }}>{draft.priority === 'routine' ? '✓ ' : ''}Routine — still driveable</button>
             </div>
 

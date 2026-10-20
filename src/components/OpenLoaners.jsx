@@ -34,6 +34,13 @@ const fmtTime = (t) => {
 };
 const vehicle = (r) => [r.year, r.make, r.model].filter(Boolean).join(' ');
 // Days-out colour: fresh → green, a few days → amber, a week+ → red.
+// Maintenance order + look: urgent (down), on lot & ready, routine.
+const RANK = { urgent: 0, ready: 1 };
+const MAINT_LOOK = {
+  urgent: { tag: '🚫 DOWN', fg: '#450a0a', bg: '#fca5a5', card: 'rgba(248,113,113,.1)', edge: 'rgba(248,113,113,.45)', text: '#fecaca' },
+  ready: { tag: '🅿️ ON LOT', fg: '#082f49', bg: '#7dd3fc', card: 'rgba(56,189,248,.08)', edge: 'rgba(56,189,248,.4)', text: '#bae6fd' },
+  routine: { tag: 'ROUTINE', fg: '#422006', bg: '#fde68a', card: 'rgba(251,191,36,.07)', edge: 'rgba(251,191,36,.35)', text: '#fde68a' },
+};
 const ageColor = (n) => n >= 7 ? '#f87171' : n >= 3 ? '#fbbf24' : '#4ade80';
 
 export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoaner }) {
@@ -90,7 +97,7 @@ export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoan
 
   const openMaint = useMemo(() => maint
     .filter(r => r.status !== 'done')
-    .sort((a, b) => (a.priority === 'urgent' ? 0 : 1) - (b.priority === 'urgent' ? 0 : 1) || String(a.requestedAt).localeCompare(String(b.requestedAt))), [maint]);
+    .sort((a, b) => (RANK[a.priority] ?? 2) - (RANK[b.priority] ?? 2) || String(a.requestedAt).localeCompare(String(b.requestedAt))), [maint]);
   const urgentCount = openMaint.filter(r => r.priority === 'urgent').length;
 
   const chip = (on, color = '#7dd3fc') => ({
@@ -136,17 +143,17 @@ export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoan
                   🔧 Needs service · {openMaint.length}{urgentCount ? ` (${urgentCount} urgent)` : ''}
                 </div>
                 {openMaint.map(r => {
-                  const urgent = r.priority === 'urgent';
+                  const look = MAINT_LOOK[r.priority] || MAINT_LOOK.routine;
                   const what = [...(r.services || []), r.description].filter(Boolean).join(' · ');
                   return (
                     <div key={r.id} onClick={onOpenLoaner ? () => onOpenLoaner('maintenance') : undefined} title={what}
-                      style={{ ...clickable, background: urgent ? 'rgba(248,113,113,.1)' : 'rgba(251,191,36,.07)', border: `1px solid ${urgent ? 'rgba(248,113,113,.45)' : 'rgba(251,191,36,.35)'}`, borderRadius: 11, padding: '8px 10px' }}>
+                      style={{ ...clickable, background: look.card, border: `1px solid ${look.edge}`, borderRadius: 11, padding: '8px 10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 9.5, fontWeight: 900, color: urgent ? '#450a0a' : '#422006', background: urgent ? '#fca5a5' : '#fde68a', flexShrink: 0 }}>{urgent ? '🚫 DOWN' : 'ROUTINE'}</span>
+                        <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 9.5, fontWeight: 900, color: look.fg, background: look.bg, flexShrink: 0 }}>{look.tag}</span>
                         <span style={{ fontWeight: 900, fontSize: 12.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.loanerNo ? `#${r.loanerNo}` : (r.vin || '').slice(-8)}</span>
                       </div>
                       <div style={{ fontSize: 11, color: '#cbd5e1', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{vehicle(r) || '—'}</div>
-                      {what && <div style={{ fontSize: 11, color: urgent ? '#fecaca' : '#fde68a', marginTop: 2, lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{what}</div>}
+                      {what && <div style={{ fontSize: 11, color: look.text, marginTop: 2, lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{what}</div>}
                     </div>
                   );
                 })}
