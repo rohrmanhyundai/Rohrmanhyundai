@@ -5,8 +5,9 @@ import { canonicalAdvisorFirst, firstNameUpper } from '../utils/advisorAliases';
 /* Open Loaners — the right-hand column of the Appointment Prep Calendar
  * (took the Open RO Attention panel's spot).
  *
- * Top: any open loaner maintenance requests (urgent first) so the advisor
- * knows which loaners are down before promising one. Below: every loaner
+ * Top: open loaner maintenance requests marked "On lot — ready for service"
+ * (only those — urgent/routine stay on the Service Loaner page) so the
+ * advisor sees which loaners are sitting here waiting on the shop. Below: every loaner
  * contract still out (no completed/returned copy yet), longest out first, with
  * the advisor, date out and how many days it's been out. "Mine" narrows the
  * list to the advisor whose calendar is being viewed. Read-only — clicking a
@@ -34,8 +35,7 @@ const fmtTime = (t) => {
 };
 const vehicle = (r) => [r.year, r.make, r.model].filter(Boolean).join(' ');
 // Days-out colour: fresh → green, a few days → amber, a week+ → red.
-// Maintenance order + look: urgent (down), on lot & ready, routine.
-const RANK = { urgent: 0, ready: 1 };
+// Maintenance card look by priority (the panel only lists 'ready' today).
 const MAINT_LOOK = {
   urgent: { tag: '🚫 DOWN', fg: '#450a0a', bg: '#fca5a5', card: 'rgba(248,113,113,.1)', edge: 'rgba(248,113,113,.45)', text: '#fecaca' },
   ready: { tag: '🅿️ ON LOT', fg: '#082f49', bg: '#7dd3fc', card: 'rgba(56,189,248,.08)', edge: 'rgba(56,189,248,.4)', text: '#bae6fd' },
@@ -96,9 +96,8 @@ export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoan
   const shown = filter === 'mine' ? mine : out;
 
   const openMaint = useMemo(() => maint
-    .filter(r => r.status !== 'done')
-    .sort((a, b) => (RANK[a.priority] ?? 2) - (RANK[b.priority] ?? 2) || String(a.requestedAt).localeCompare(String(b.requestedAt))), [maint]);
-  const urgentCount = openMaint.filter(r => r.priority === 'urgent').length;
+    .filter(r => r.status !== 'done' && r.priority === 'ready')
+    .sort((a, b) => String(a.requestedAt).localeCompare(String(b.requestedAt))), [maint]);
 
   const chip = (on, color = '#7dd3fc') => ({
     background: on ? `${color}2b` : 'rgba(255,255,255,.05)', border: `1px solid ${on ? color + '80' : 'rgba(255,255,255,.12)'}`,
@@ -115,7 +114,7 @@ export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoan
         <div style={{ minWidth: 0, flex: 1 }}>
           <div style={{ fontWeight: 900, fontSize: 14, lineHeight: 1.15 }}>Open Loaners</div>
           <div style={{ fontSize: 10.5, color: '#94a3b8', marginTop: 2, lineHeight: 1.3 }}>
-            {out.length} out{openMaint.length ? ` · ${openMaint.length} need service` : ''}
+            {out.length} out{openMaint.length ? ` · ${openMaint.length} on lot for service` : ''}
             {loadedAt ? <><br />as of {new Date(loadedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</> : null}
           </div>
         </div>
@@ -136,12 +135,10 @@ export default function OpenLoaners({ viewingAdvisor, refreshKey = 0, onOpenLoan
           <div style={{ color: '#64748b', fontSize: 12.5, padding: '10px 0', textAlign: 'center' }}>Loading…</div>
         ) : (
           <>
-            {/* Maintenance — on top so nobody hands out a loaner that's down */}
+            {/* On-lot maintenance — on top so the shop's waiting loaners are seen */}
             {openMaint.length > 0 && (
               <>
-                <div style={{ ...sectionTitle, color: urgentCount ? '#fca5a5' : '#fcd34d' }}>
-                  🔧 Needs service · {openMaint.length}{urgentCount ? ` (${urgentCount} urgent)` : ''}
-                </div>
+                <div style={{ ...sectionTitle, color: '#7dd3fc' }}>🅿️ On lot for service · {openMaint.length}</div>
                 {openMaint.map(r => {
                   const look = MAINT_LOOK[r.priority] || MAINT_LOOK.routine;
                   const what = [...(r.services || []), r.description].filter(Boolean).join(' · ');
