@@ -48,26 +48,6 @@ const fmtTime = (t) => {
   return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'AM' : 'PM'}`;
 };
 
-// Print the stored PDF without leaving the page; if the bucket won't hand the
-// bytes over (CORS), open it in a tab where the browser's own Print works.
-async function printContract(url) {
-  try {
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error();
-    const blobUrl = URL.createObjectURL(await res.blob());
-    const frame = document.createElement('iframe');
-    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
-    frame.src = blobUrl;
-    frame.onload = () => {
-      try { frame.contentWindow.focus(); frame.contentWindow.print(); } catch { window.open(url, '_blank', 'noopener'); }
-      setTimeout(() => { frame.remove(); URL.revokeObjectURL(blobUrl); }, 60000);
-    };
-    document.body.appendChild(frame);
-  } catch {
-    window.open(url, '_blank', 'noopener');
-  }
-}
-
 export default function ServiceLoaner({ currentUser, currentRole, advisors = [], rentalUsers = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
@@ -457,25 +437,6 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                     </table>
                   </div>
   );
-  // Save the completed (returned) contract — or the original if that's all there is.
-  async function downloadContract(c) {
-    const url = c.completedUrl || c.fileUrl;
-    const ext = ((c.completedUrl ? c.completedFileName : c.fileName) || url).match(/\.(pdf|jpe?g|png|heic|webp)$/i)?.[1] || 'pdf';
-    const name = [c.lastName, c.firstName, c.raNo || '', c.ro ? `RO${c.ro}` : '', c.completedUrl ? 'returned' : '']
-      .filter(Boolean).join('-').replace(/[^A-Za-z0-9-]+/g, '') + '.' + ext.toLowerCase();
-    try {
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error();
-      const blobUrl = URL.createObjectURL(await res.blob());
-      const a = document.createElement('a');
-      a.href = blobUrl; a.download = name;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-    } catch {
-      window.open(url, '_blank', 'noopener');
-    }
-  }
-
   const warnings = draft && !reading ? fieldWarnings(draft) : [];
   const dupe = draft && draft.ro ? contracts.find(c => c.ro && c.ro === draft.ro) : null;
 
@@ -624,14 +585,6 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                           : <button disabled={busy} style={b('248,113,113')} title="Put this customer on the loaner black list" onClick={() => setBlModal({ notes: '' })}>⛔ Black List</button>}
                         <button disabled={busy} title="Delete this contract" style={b('248,113,113', false)} onClick={() => remove(editing)}>🗑 Delete</button>
                       </div>
-                      {(editing.completedUrl || editing.fileUrl) && (
-                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${editing.completedUrl ? 3 : 2}, minmax(0, 1fr))`, gap: 8 }}>
-                          <a href={editing.completedUrl || editing.fileUrl} target="_blank" rel="noopener noreferrer" title={editing.completedUrl ? 'Completed contract' : 'Contract'}
-                            style={{ ...b('110,231,249'), textDecoration: 'none', textAlign: 'center' }}>📄 Open</a>
-                          <button style={b('196,181,253')} onClick={() => printContract(editing.completedUrl || editing.fileUrl)}>🖨 Print</button>
-                          {editing.completedUrl && <button style={b('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(editing)}>⬇ Download</button>}
-                        </div>
-                      )}
                     </div>
                   );
                 })()}
