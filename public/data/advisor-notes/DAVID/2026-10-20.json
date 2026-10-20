@@ -1,0 +1,456 @@
+{
+  "advisorName": "DAVID",
+  "date": "2026-10-20",
+  "rows": [
+    {
+      "id": "rmvgkxayf8ft9",
+      "customerName": "Molly Brooks",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43814",
+      "vehicle": "2026 Hyundai Sonata",
+      "services": [
+        "CUSTOMER STATES CAR WAS IN LIMP MODE CHECK AND ADVISE",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxayfi36u",
+      "customerName": "Michael Shirley",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43661",
+      "vehicle": "2024 Hyundai IONIQ 5",
+      "services": [
+        "TBM V TMK SEALANT INSP & PARTS REP(24-01-019H)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxaygqq2x",
+      "customerName": "Drew Patel",
+      "appointmentTime": "9:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43774",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxaygmai8",
+      "customerName": "Brandt Swihart",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43801",
+      "vehicle": "2019 Hyundai Kona",
+      "services": [
+        "Our comprehensive service ensures fresh oil, new oil filter, tire rotation, and a thorough multi-point inspection to detect potential issues and keep your vehicle in top shape",
+        "CUSTOMER STATES- front end feels rough and feels like bottoming out while hitting bumps"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "779800",
+        "date": "2026-08-05",
+        "advisorFull": "CODY TINCHER",
+        "advisor": "CODY",
+        "amount": 2413.39,
+        "hours": 10,
+        "phone": "5746015209",
+        "vin": "KM8K1CAA7KU269649",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 100.21,
+            "priceEst": false
+          },
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 404.64,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 430.83,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 131.09,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 192.95,
+            "priceEst": false
+          },
+          {
+            "code": "PADRESURF",
+            "desc": "Replace Front Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 414.01,
+            "priceEst": false
+          },
+          {
+            "code": "TIRE4",
+            "desc": "REPLACE FOUR TIRES",
+            "count": 1,
+            "h": 1.2,
+            "price": 112.4,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 168.59,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 271.34,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 187.33,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxaygzi3s",
+      "customerName": "Brittany Rice",
+      "appointmentTime": "9:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43788",
+      "vehicle": "2020 Hyundai Tucson",
+      "services": [
+        "CUSTOMER STATES HAS CEL ON. CHECK AND ADVISE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778510",
+        "date": "2026-07-30",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 288.98,
+        "hours": 1,
+        "phone": "2604431735",
+        "vin": "KM8J3CA40LU280669",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 107.73,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 181.25,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxaygvg11",
+      "customerName": "Sharon Cornell",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43734",
+      "vehicle": "2026 Hyundai Tucson",
+      "services": [
+        "Routine Maintenance (e.g. Oil Change, etc) — First maintenance since purchase.  2026 Tucson"
+      ],
+      "comments": "First maintenance since purchase.  2026 Tucson",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxaygif3a",
+      "customerName": "Cari Boersma",
+      "appointmentTime": "11:20 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43767",
+      "vehicle": "2025 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "778404",
+        "date": "2026-06-15",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 232.94,
+        "hours": 1.3,
+        "phone": "4193568794",
+        "vin": "5NMP5DG16SH049308",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayg5lwu",
+      "customerName": "Uriel Mora",
+      "appointmentTime": "12:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43732",
+      "vehicle": "2023 Hyundai Santa Fe",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxayg2spo",
+      "customerName": "Maddison McQuern",
+      "appointmentTime": "12:40 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43794",
+      "vehicle": "2025 Hyundai Elantra",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781062",
+        "date": "2026-09-23",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 944.35,
+        "hours": 4.3,
+        "phone": "3177604096",
+        "vin": "KMHLR4DF8SU928770",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 111.53,
+            "priceEst": false
+          },
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 145.9,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 177.22,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 214.74,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 36.44,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 208.49,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 50.03,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayg4pvq",
+      "customerName": "Joy Batcha",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43759",
+      "vehicle": "2018 Hyundai Elantra",
+      "services": [
+        "Replace Driver Brake Light Bulb"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781550",
+        "date": "2026-10-14",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 904.92,
+        "hours": 3.3,
+        "phone": "7653038507",
+        "vin": "5NPD84LF3JH368274",
+        "items": [
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 199.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 106.98,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 1.5,
+            "est": true,
+            "price": 417.96,
+            "priceEst": true
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-20T11:07:55.118Z"
+}
