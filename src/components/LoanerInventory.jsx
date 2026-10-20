@@ -23,6 +23,16 @@ const btn = (rgb, on = true) => ({ background: on ? `rgba(${rgb},.18)` : 'rgba(2
 const label = { fontSize: 12, fontWeight: 800, color: '#94a3b8' };
 const notesStyle = { ...inputStyle, fontWeight: 600, fontSize: 14, lineHeight: 1.45, resize: 'vertical' };
 
+// Whole days between a YYYY-MM-DD date and today (local), or null.
+const daysSince = (iso) => {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  const now = new Date();
+  return Math.round((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(+m[1], +m[2] - 1, +m[3])) / 86400000);
+};
+const shortDate = (iso) => { const m = String(iso || '').match(/^\d{4}-(\d{2})-(\d{2})/); return m ? `${+m[1]}/${+m[2]}` : ''; };
+const firstName = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
+
 const EMPTY = () => ({ vin: '', stockNo: '', year: '', make: '', model: '', mileage: '', notes: '' });
 const fmtWhen = (iso) => {
   if (!iso) return '';
@@ -44,12 +54,15 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
   const [draft, setDraft] = useState(EMPTY);
   const [q, setQ] = useState('');
   const [noteEdit, setNoteEdit] = useState(null);   // { id, text } while a loaner's notes are open
+  const [contracts, setContracts] = useState([]);   // Service Loaner contracts — an open one means the car is out
+  const [where, setWhere] = useState('all');        // all | lot | out
 
   useEffect(() => {
     let alive = true;
     loadLoanerInventory().then(d => { if (alive) { setItems(d.vehicles || []); setLoading(false); } })
       .catch(() => { if (alive) setLoading(false); });
     loadLoanerMedia().then(d => { if (alive) setMedia(d.sessions || []); }).catch(() => {});
+    ((io || github).loadServiceLoaners)().then(d => { if (alive) setContracts(d.contracts || []); }).catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -233,11 +246,26 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
     setBusy(false);
   }
 
+  // A loaner is out while it has a contract with no completed (returned) copy —
+  // matched by VIN, or by unit # when the contract's VIN is missing.
+  const outBy = useMemo(() => {
+    const m = {};
+    for (const c of contracts) {
+      if (c.completedUrl) continue;
+      const vin = String(c.vin || '').trim().toUpperCase();
+      const v = items.find(x => (vin && x.vin === vin) || (!vin && c.unitNo && x.unitNo && x.unitNo === c.unitNo));
+      if (v && (!m[v.id] || String(c.dateOut) > String(m[v.id].dateOut))) m[v.id] = c;
+    }
+    return m;
+  }, [contracts, items]);
+  const outCount = items.filter(v => outBy[v.id]).length;
+
   const list = useMemo(() => {
     const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
     const hit = (v) => !terms.length || terms.every(t => [v.stockNo, v.unitNo, v.vin, v.year, v.make, v.model, v.notes].join(' ').toLowerCase().includes(t));
-    return items.filter(hit).sort((a, b) => String(a.stockNo || a.vin).localeCompare(String(b.stockNo || b.vin), undefined, { numeric: true }));
-  }, [items, q]);
+    const place = (v) => where === 'all' || (where === 'out') === !!outBy[v.id];
+    return items.filter(v => hit(v) && place(v)).sort((a, b) => String(a.stockNo || a.vin).localeCompare(String(b.stockNo || b.vin), undefined, { numeric: true }));
+  }, [items, q, where, outBy]);
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
@@ -275,7 +303,12 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
 
       <div style={card}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
-          <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9', flex: 1 }}>🚙 Loaner fleet ({items.length})</div>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>🚙 Loaner fleet ({items.length})</div>
+          <div style={{ display: 'flex', gap: 6, flex: 1, flexWrap: 'wrap' }}>
+            {[['all', `All · ${items.length}`, '148,163,184'], ['lot', `🅿️ On the lot · ${items.length - outCount}`, '74,222,128'], ['out', `🚗 Out on loan · ${outCount}`, '251,146,60']].map(([k, txt, rgb]) => (
+              <button key={k} onClick={() => setWhere(k)} style={{ ...btn(rgb, where === k), borderRadius: 999, padding: '5px 12px' }}>{txt}</button>
+            ))}
+          </div>
           <input ref={pdfRef} type="file" accept="application/pdf,.pdf" onChange={pickFleetPdf} style={{ display: 'none' }} />
           <button disabled={busy} title="Upload the Fleet report PDF — adds new loaners and updates the ones already here" onClick={() => pdfRef.current?.click()}
             style={{ ...btn('251,191,36'), fontSize: 14, padding: '9px 16px' }}>📄 Upload fleet PDF</button>
@@ -299,6 +332,30 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                     <div style={{ fontSize: 17, color: '#cbd5e1', fontWeight: 800 }}>{vehicleText(v) || '—'}</div>
                     <div style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 14.5, color: '#94a3b8' }}>{v.vin}{v.unitNo ? <span style={{ fontFamily: 'inherit', marginLeft: 10, color: '#64748b' }}>Unit {v.unitNo}</span> : null}</div>
                     {v.serviceStart && <div style={{ fontSize: 14, color: '#a5b4fc', fontWeight: 700 }}>🗓 In service since {fmtServiceStart(v.serviceStart)}</div>}
+                    {(() => {
+                      const c = outBy[v.id];
+                      if (!c) return (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.45)' }}>
+                          <span style={{ fontSize: 15, fontWeight: 900, color: '#4ade80' }}>🅿️ On the lot</span>
+                          <span style={{ fontSize: 12.5, color: '#86efac' }}>— available</span>
+                        </div>
+                      );
+                      const days = daysSince(c.dateOut);
+                      const late = daysSince(c.dueDate);
+                      const who = [c.firstName, c.lastName].filter(Boolean).join(' ');
+                      return (
+                        <div style={{ padding: '9px 12px', borderRadius: 10, background: 'rgba(251,146,60,.1)', border: '1px solid rgba(251,146,60,.5)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 15, fontWeight: 900, color: '#fb923c' }}>🚗 Out on loan</span>
+                            {days != null && <span style={{ fontSize: 12.5, fontWeight: 900, color: '#fdba74' }}>· {days} day{days === 1 ? '' : 's'}</span>}
+                            {late > 0 && <span style={{ fontSize: 12, fontWeight: 900, color: '#fca5a5' }}>⏰ {late}d past due</span>}
+                          </div>
+                          <div style={{ fontSize: 13, color: '#fed7aa', marginTop: 3 }}>
+                            {who || 'Customer'}{c.advisor ? ` · 👤 ${firstName(c.advisor)}` : ''}{c.dateOut ? ` · out ${shortDate(c.dateOut)}` : ''}{c.raNo ? ` · RA ${c.raNo}` : ''}
+                          </div>
+                        </div>
+                      );
+                    })()}
                     {editing ? (
                       <>
                         <textarea autoFocus onFocus={e => { const n = e.target.value.length; e.target.setSelectionRange(n, n); }} value={noteEdit.text} onChange={e => setNoteEdit(n => ({ ...n, text: e.target.value }))} disabled={busy} rows={4} placeholder="Notes for this loaner…" style={notesStyle} />
