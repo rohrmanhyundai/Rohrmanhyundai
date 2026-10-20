@@ -493,6 +493,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [deferredBusy, setDeferredBusy] = useState(false);
   const [apptBusy, setApptBusy] = useState(false);
   const [apptMsg, setApptMsg] = useState('');
+  const [morningSaveMsg, setMorningSaveMsg] = useState('');
   const [deferredMsg, setDeferredMsg] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
@@ -1843,7 +1844,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function resetMorning() {
     if (!window.confirm('Start this morning\'s checklist over? (Nothing uploaded is undone — this only clears the checkmarks.)')) return;
     try { localStorage.removeItem(morningKey()); } catch {}
-    setMorningDone({}); setMorningStep(0); setDeferredMsg(''); setApptMsg('');
+    setMorningDone({}); setMorningStep(0); setDeferredMsg(''); setApptMsg(''); setMorningSaveMsg('');
   }
   // Same upload as Upload Reports → DMS Appointment List (fills every
   // advisor's prep sheet for the next shop day).
@@ -1869,8 +1870,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     } catch (e) { setDeferredMsg('❌ ' + (e?.message || e)); }
     finally { setDeferredBusy(false); }
   }
+  // Save Changes, then Send to Reports — in that order, so the snapshots are
+  // taken from the numbers just pushed live.
   async function handleMorningSave() {
-    if (await handleSave()) markMorning('save');
+    setMorningSaveMsg('⏳ Saving…');
+    if (!(await handleSave())) { setMorningSaveMsg('❌ Save failed — nothing was sent to Reports. Try again.'); return; }
+    setMorningSaveMsg('✅ Saved · ⏳ Sending to Reports…');
+    if (!(await sendToReports())) { setMorningSaveMsg('✅ Saved · ❌ Send to Reports failed — click Save & Send again.'); return; }
+    setMorningSaveMsg('✅ Saved and sent to Reports.');
+    markMorning('save');
   }
 
   // ── Send to Reports ───────────────────────────────────────────────────────
@@ -1908,6 +1916,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     trackAction('send-to-reports');
     setSendingReports(true);
     setReportStatus('⏳ Sending snapshots…');
+    let ok = false;
     const _n = new Date(); const today = `${_n.getFullYear()}-${String(_n.getMonth()+1).padStart(2,'0')}-${String(_n.getDate()).padStart(2,'0')}`;
     const techWeek = getTechWeekRange();
     // Advisor numbers are reported a day behind, so the daily snapshot dates to
@@ -2070,11 +2079,13 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         .then(() => setReportStatus(s => `${s} · 🔧 Daily Wrench AI running (ready in ~3–5 min)`))
         .catch(() => setReportStatus(s => `${s} · ⚠️ Daily Wrench didn't start — use Generate on the Daily Wrench page`));
       setTimeout(() => setReportStatus(''), 12000);
+      ok = true;
     } catch (e) {
       setReportStatus(`❌ ${e.message}`);
     } finally {
       setSendingReports(false);
     }
+    return ok;
   }
 
   function addTechnician() { setAddingTech(true); }
@@ -2955,13 +2966,15 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               );
             })}
           </div>
-          {note('Save pushes the advisor and tech numbers live — the same as Save Changes (it also syncs yesterday\'s advisor hours to Goals/Forecasting).', '125,211,252')}
+          {note('One click does both: Save Changes (pushes the advisor and tech numbers live and syncs yesterday\'s advisor hours to Goals/Forecasting), then Send to Reports (the daily advisor snapshot and the tech week).', '125,211,252')}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 14, flexWrap: 'wrap' }}>
-            <button style={{ ...pill('74,222,128'), fontSize: 15, padding: '11px 24px' }} disabled={saving} onClick={handleMorningSave}>
-              {saving ? '⏳ Saving…' : morningDone.save ? '✓ Saved — save again' : '💾 Save & push live'}
+            <button style={{ ...pill('74,222,128'), fontSize: 15, padding: '11px 24px' }} disabled={saving || sendingReports} onClick={handleMorningSave}>
+              {saving ? '⏳ Saving…' : sendingReports ? '⏳ Sending to Reports…' : morningDone.save ? '✓ Done — save & send again' : '💾 Save & Send to Reports'}
             </button>
-            {morningDone.save && !saving && <span style={{ fontSize: 14, fontWeight: 900, color: '#4ade80' }}>🎉 Morning reporting is done.</span>}
+            {morningDone.save && !saving && !sendingReports && <span style={{ fontSize: 14, fontWeight: 900, color: '#4ade80' }}>🎉 Morning reporting is done.</span>}
           </div>
+          {statusLine(morningSaveMsg)}
+          {!sendingReports && reportStatus && statusLine(reportStatus)}
           {reconcileMsg && statusLine('✅ ' + reconcileMsg.replace(/^✓ /, ''))}
         </>
       );
