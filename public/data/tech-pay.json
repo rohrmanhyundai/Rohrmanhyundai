@@ -1,16 +1,18 @@
 {
   "JACOB": {
     "payType": "flat",
-    "flatRate": 31,
+    "flatRate": 33,
     "tier1Hours": 50,
-    "tier1Rate": 2,
     "tier2Hours": 60,
-    "tier2Rate": 2,
     "tierMode": "all",
     "clockRate": 0,
     "clockHours": 40,
     "clockMode": "add",
-    "updated": "2026-09-09T16:22:14.856Z"
+    "updated": "2026-10-20T15:46:38.294Z",
+    "bumpEligible": true,
+    "tier1Bump": 2,
+    "tier2Bump": 2,
+    "eligiblePto": true
   },
   "CARTER": {
     "payType": "flat",
