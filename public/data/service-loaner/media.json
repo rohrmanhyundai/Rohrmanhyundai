@@ -59,6 +59,33 @@
           "size": 3842964
         }
       ]
+    },
+    {
+      "id": "mvh3ch8gqqgl",
+      "vehicleId": "li-mvbczco95qd5",
+      "stockNo": "LHY2473",
+      "vin": "5NTJBDDE5TH159469",
+      "kind": "out",
+      "customerFirst": "MINDY",
+      "customerLast": "WARTHAN",
+      "at": "2026-10-20T19:43:30.595Z",
+      "by": "HOLLI",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE5TH159469/mvh3ch8gqqgl/mvh3b9rq4kzg.mov",
+          "name": "81421812507__1B1F06F0-EA55-413E-8228-C16910D753E4.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 4274476
+        },
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/5NTJBDDE5TH159469/mvh3ch8gqqgl/mvh3bj3yeqhh.jpg",
+          "name": "image.jpg",
+          "type": "image/jpeg",
+          "kind": "image",
+          "size": 2090786
+        }
+      ]
     }
   ]
 }
