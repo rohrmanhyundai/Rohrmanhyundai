@@ -29,6 +29,7 @@ import { saveVmpiReport, updateBigMoney } from '../utils/github';
 import { withDaySnapshot } from '../utils/bigMoney';
 import VmpiReportView from './VmpiReportView';
 import { uploadDeferredPdf } from './DeferredService';
+import { uploadAppointmentFile, shortMD } from '../utils/appointmentList';
 
 // ── Morning Reporting ─────────────────────────────────────────────────────────
 // The daily uploads in the order they're done, as one checklist. Each step uses
@@ -36,7 +37,7 @@ import { uploadDeferredPdf } from './DeferredService';
 // numbers land exactly the same way. Progress is remembered per day in this
 // browser only (a convenience — nothing reads it).
 const MORNING_STEPS = [
-  { key: 'dms',         icon: '🖥',  title: 'Update DMS',                 file: 'in Tekion' },
+  { key: 'dms',         icon: '📥', title: 'Upload DMS Appointments',    file: 'Advisor next day appointment preparation · .xlsx' },
   { key: 'deferred',    icon: '🔧', title: 'Deferred Services',          file: '.pdf' },
   { key: 'advisorPerf', icon: '📊', title: 'Advisor Performance Report', file: '.html + .pdf', parts: ['advisorHtml', 'advisorPdf'] },
   { key: 'addOn',       icon: '📷', title: '$50 Add-on Board',           file: 'screenshot' },
@@ -490,6 +491,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [morningDone, setMorningDone] = useState(readMorning);   // { stepKey: true | 'skip' }
   const [morningStep, setMorningStep] = useState(0);
   const [deferredBusy, setDeferredBusy] = useState(false);
+  const [apptBusy, setApptBusy] = useState(false);
+  const [apptMsg, setApptMsg] = useState('');
   const [deferredMsg, setDeferredMsg] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
@@ -1840,7 +1843,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function resetMorning() {
     if (!window.confirm('Start this morning\'s checklist over? (Nothing uploaded is undone — this only clears the checkmarks.)')) return;
     try { localStorage.removeItem(morningKey()); } catch {}
-    setMorningDone({}); setMorningStep(0); setDeferredMsg('');
+    setMorningDone({}); setMorningStep(0); setDeferredMsg(''); setApptMsg('');
+  }
+  // Same upload as Upload Reports → DMS Appointment List (fills every
+  // advisor's prep sheet for the next shop day).
+  async function handleMorningAppointments(file) {
+    setApptBusy(true); setApptMsg('📄 Reading the appointment list…');
+    try {
+      const advisorList = (users || []).filter(u => !u.hidden && (u.role === 'advisor' || u.role === 'lead advisor')).map(u => u.username.toUpperCase());
+      const { dates, byDate, defCount, autoCount } = await uploadAppointmentFile(file, { advisorList, by: currentUser, confirmStale: (msg) => window.confirm(msg) });
+      const total = dates.reduce((n, d) => n + byDate[d].length, 0);
+      setApptMsg(`✅ ${total} appointments for ${dates.map(shortMD).join(', ')}`
+        + (defCount ? ` · ${defCount} with deferred work` : '')
+        + (autoCount ? ` · ${autoCount} auto-assigned` : ''));
+      markMorning('dms');
+    } catch (e) { setApptMsg('❌ ' + (e.message || 'Upload failed')); }
+    finally { setApptBusy(false); }
   }
   async function handleMorningDeferred(file) {
     setDeferredBusy(true); setDeferredMsg('📄 Reading the PDF…');
@@ -2472,7 +2490,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Card definitions ──────────────────────────────────────────────────────────
   const ADMIN_CARDS = [
-    { id: 'morning',    icon: '🌅', label: 'Morning Reporting',     desc: 'Every morning upload in order — DMS, deferred, advisor report, $50 add-on, flagged hours, VMPI — then one Save', color: '#fbbf24', bg: 'linear-gradient(120deg,rgba(251,191,36,.16),rgba(249,115,22,.10) 55%,rgba(96,165,250,.10))', border: 'rgba(251,191,36,.5)', wide: true },
+    { id: 'morning',    icon: '🌅', label: 'Morning Reporting',     desc: 'Every morning upload in order — DMS appointments, deferred, advisor report, $50 add-on, flagged hours, VMPI — then one Save', color: '#fbbf24', bg: 'linear-gradient(120deg,rgba(251,191,36,.16),rgba(249,115,22,.10) 55%,rgba(96,165,250,.10))', border: 'rgba(251,191,36,.5)', wide: true },
     { id: 'backend',    icon: '🔐', label: 'Backend',              desc: 'The worker that holds the GitHub, AWS and Pusher secrets', color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
@@ -2842,8 +2860,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     function body(st) {
       if (st.key === 'dms') return (
         <>
-          {note('Run the DMS update in Tekion first, so every report you pull this morning has yesterday\'s closed ROs in it.')}
-          <div style={{ marginTop: 14 }}><button style={pill('74,222,128')} onClick={() => markMorning('dms')}>✓ DMS is updated</button></div>
+          <div style={{ fontSize: 12, fontWeight: 900, color: '#fbbf24', letterSpacing: '.06em', marginTop: 4 }}>ADVISOR NEXT DAY APPOINTMENT PREPARATION</div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept=".xlsx,.xls" label="📥 Upload DMS Appointments" hint="Drop the DMS appointment list (.xlsx) · or click to choose" busy={apptBusy} done={morningDone.dms === true} onFile={handleMorningAppointments} />
+          </div>
+          {note('Fills every advisor\'s prep sheet for the next shop day, puts "Any Service Advisor" appointments in the open pool, and matches deferred work.')}
+          {statusLine(apptMsg)}
         </>
       );
       if (st.key === 'deferred') return (
