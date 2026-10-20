@@ -415,19 +415,18 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                     <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
                                     <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
                                     {done && <button style={actionBtn('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(c)}>⬇ Download</button>}
+                                    <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                                   </>
                                 ) : (
                                   <>
-                                    {/* No signed contract on file — glow red until the scan is attached. */}
+                                    {/* No signed contract on file — just the warning; click it (or the row) to attach the scan. */}
                                     <style>{'@keyframes slMissingGlow{0%,100%{box-shadow:0 0 6px rgba(248,113,113,.4)}50%{box-shadow:0 0 18px rgba(248,113,113,.85)}}@media (prefers-reduced-motion: reduce){.sl-missing{animation:none!important}}'}</style>
-                                    <div className="sl-missing" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
+                                    <div className="sl-missing" title="Click to open this contract and attach the signed scan" onClick={() => !busy && startEdit(c)}
+                                      style={{ gridColumn: '1 / -1', cursor: 'pointer', textAlign: 'center', padding: '8px 14px', borderRadius: 9, fontSize: 13, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
                                       ⚠ Signed contract not uploaded
                                     </div>
-                                    <button disabled={busy} title="From the agreement report — no signed contract scanned yet" className="sl-missing"
-                                      style={{ ...actionBtn('248,113,113'), background: 'rgba(248,113,113,.22)', color: '#fecaca', animation: 'slMissingGlow 1.8s ease-in-out infinite' }} onClick={() => startEdit(c)}>📎 Attach scan</button>
                                   </>
                                 )}
-                                <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                               </div>
                             </td>
                           </tr>
