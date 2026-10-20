@@ -1735,6 +1735,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         advisors={advisorList}
+        rentalUsers={users.filter(u => String(u.role || '').toLowerCase() === 'rentals').map(u => String(u.username || '').toUpperCase()).filter(Boolean)}
         initialTab={launched ? uploadLaunch.tab : undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}

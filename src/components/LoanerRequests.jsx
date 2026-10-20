@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import * as github from '../utils/github';
+import { triggerEvent, GLOBAL_CHANNEL, GLOBAL_MSG_EVENT } from '../utils/pusher';
 
 // ── Loaner Request (Service Loaner page tab) ─────────────────────────────────
 // A month calendar (same look as the Advisor Calendar) shows every loaner
@@ -7,7 +8,8 @@ import * as github from '../utils/github';
 // first/last name, the VIN of the customer's own car, the advisor asking, and
 // the time. The full list sits under the calendar — upcoming first, past ones
 // folded away. Stored in data/service-loaner/requests.json. The person who made
-// a request (or a manager) can cancel it.
+// a request (or a manager) can cancel it. Every new request also pops a Global
+// Message to each Rentals-role user so the loaner desk knows it's coming.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
@@ -40,7 +42,7 @@ const nameCase = (s) => {
   return t.toLowerCase().replace(/(^|[\s\-/'])([a-z])/g, (_, a, b) => a + b.toUpperCase());
 };
 
-export default function LoanerRequests({ currentUser, isManager, advisors = [], io }) {
+export default function LoanerRequests({ currentUser, isManager, advisors = [], rentalUsers = [], io }) {
   const { loadLoanerRequests, updateLoanerRequests } = io || github;
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,10 +82,29 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
       setDraft(d => ({ ...EMPTY(), advisor: d.advisor }));
       setFormOpen(false);
       setStatus(`✓ Loaner requested for ${rec.firstName} ${rec.lastName} — ${fmtDate(rec.date)} ${fmtTime(rec.time)}.`);
+      notifyRentals(rec);
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
     }
     setBusy(false);
+  }
+
+  // Pop-up to the Rentals people; best effort — the request is already saved.
+  async function notifyRentals(rec) {
+    const to = rentalUsers.filter(n => n !== currentUser);
+    if (!to.length) return;
+    const entry = {
+      id: `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+      from: currentUser, to,
+      text: `🚙 Advisor ${rec.advisor} is setting a rental appointment for ${fmtDate(rec.date)} at ${fmtTime(rec.time)} — ${rec.firstName} ${rec.lastName}${rec.notes ? ` (${rec.notes})` : ''}.`,
+      alert: false, requireReply: false, replies: [], timestamp: Date.now(),
+    };
+    try {
+      await github.sendGlobalMessage(entry);
+      try { await triggerEvent(GLOBAL_CHANNEL, GLOBAL_MSG_EVENT, entry); } catch {}
+    } catch {
+      setStatus(s => `${s} (Rentals pop-up failed to send.)`);
+    }
   }
 
   async function cancel(r) {

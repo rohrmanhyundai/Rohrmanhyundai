@@ -68,7 +68,7 @@ async function printContract(url) {
   }
 }
 
-export default function ServiceLoaner({ currentUser, currentRole, advisors = [], onBack, backLabel = '← Back', initialTab, io }) {
+export default function ServiceLoaner({ currentUser, currentRole, advisors = [], rentalUsers = [], onBack, backLabel = '← Back', initialTab, io }) {
   const { loadServiceLoaners, updateServiceLoaners } = io || github;
   const isManager = currentRole === 'admin' || (currentRole || '').includes('manager');
   const [tab, setTab] = useState(['upload', 'list', 'maintenance', 'inventory', 'blacklist'].includes(initialTab) ? initialTab : 'requests');
@@ -504,7 +504,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
           ) : tab === 'maintenance' ? (
             <LoanerMaintenance key={maintPrefill ? maintPrefill.vin : 'm'} currentUser={currentUser} isManager={isManager} io={io} prefill={maintPrefill} />
           ) : tab === 'requests' ? (
-            <LoanerRequests currentUser={currentUser} isManager={isManager} advisors={advisors} io={io} />
+            <LoanerRequests currentUser={currentUser} isManager={isManager} advisors={advisors} rentalUsers={rentalUsers} io={io} />
           ) : tab === 'upload' ? (
             !draft ? (
               <div style={card}>
