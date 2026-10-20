@@ -408,21 +408,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                               )}
                             </td>
                             <td style={{ ...td, fontSize: 12.5, color: '#94a3b8', whiteSpace: 'nowrap' }}>{c.by}<br />{c.uploadedAt ? new Date(c.uploadedAt).toLocaleDateString() : ''}</td>
-                            <td style={{ ...td, whiteSpace: 'nowrap' }} onClick={e => e.stopPropagation()}>
-                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)', gap: 6, justifyContent: 'end' }}>
-                                {c.completedUrl || c.fileUrl ? (
+                            <td style={{ ...td, whiteSpace: 'nowrap' }}>
+                              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                {!(c.completedUrl || c.fileUrl) && (
                                   <>
-                                    <a href={c.completedUrl || c.fileUrl} title={c.completedUrl ? 'Completed contract' : 'Contract'} target="_blank" rel="noopener noreferrer" style={{ ...actionBtn('110,231,249'), textDecoration: 'none' }}>📄 Open</a>
-                                    <button style={actionBtn('196,181,253')} onClick={() => printContract(c.completedUrl || c.fileUrl)}>🖨 Print</button>
-                                    {done && <button style={actionBtn('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(c)}>⬇ Download</button>}
-                                    <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
-                                  </>
-                                ) : (
-                                  <>
-                                    {/* No signed contract on file — just the warning; click it (or the row) to attach the scan. */}
+                                    {/* Warning only — everything else is inside the contract (click the row). */}
                                     <style>{'@keyframes slMissingGlow{0%,100%{box-shadow:0 0 6px rgba(248,113,113,.4)}50%{box-shadow:0 0 18px rgba(248,113,113,.85)}}@media (prefers-reduced-motion: reduce){.sl-missing{animation:none!important}}'}</style>
-                                    <div className="sl-missing" title="Click to open this contract and attach the signed scan" onClick={() => !busy && startEdit(c)}
-                                      style={{ gridColumn: '1 / -1', cursor: 'pointer', textAlign: 'center', padding: '8px 14px', borderRadius: 9, fontSize: 13, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
+                                    <div className="sl-missing" title="Click to open this contract and attach the signed scan"
+                                      style={{ cursor: 'pointer', textAlign: 'center', padding: '8px 14px', borderRadius: 9, fontSize: 13, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
                                       ⚠ Signed contract not uploaded
                                     </div>
                                   </>
@@ -598,6 +591,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                           : <button disabled={busy} style={b('248,113,113')} title="Put this customer on the loaner black list" onClick={() => setBlModal({ notes: '' })}>⛔ Black List</button>}
                         <button disabled={busy} title="Delete this contract" style={b('248,113,113', false)} onClick={() => remove(editing)}>🗑 Delete</button>
                       </div>
+                      {(editing.completedUrl || editing.fileUrl) && (
+                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${editing.completedUrl ? 3 : 2}, minmax(0, 1fr))`, gap: 8 }}>
+                          <a href={editing.completedUrl || editing.fileUrl} target="_blank" rel="noopener noreferrer" title={editing.completedUrl ? 'Completed contract' : 'Contract'}
+                            style={{ ...b('110,231,249'), textDecoration: 'none', textAlign: 'center' }}>📄 Open</a>
+                          <button style={b('196,181,253')} onClick={() => printContract(editing.completedUrl || editing.fileUrl)}>🖨 Print</button>
+                          {editing.completedUrl && <button style={b('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(editing)}>⬇ Download</button>}
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
