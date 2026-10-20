@@ -422,33 +422,55 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
         {!intervals.length ? null
           : dueCars.length === 0 ? <div style={{ color: '#94a3b8' }}>Every loaner is under its next service mileage. 👍</div>
           : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 14 }}>
               {dueCars.map(car => {
                 const v = car.vehicle;
                 const worst = Math.min(...car.list.map(d => d.left));
-                const rgb = worst < 0 ? '248,113,113' : '251,191,36';
+                const past = worst < 0;
+                const rgb = past ? '248,113,113' : '251,191,36';
                 return (
                   <div key={v.id} onClick={() => !busy && startDue(car)} title="Click to start the maintenance request"
-                    style={{ cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: `rgba(${rgb},.08)`, border: `1px solid rgba(${rgb},.5)`, boxShadow: worst < 0 ? `0 0 16px rgba(${rgb},.25)` : 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <div style={{ flex: 1, fontWeight: 900, fontSize: 16, color: '#f1f5f9' }}>{v.stockNo ? `Stock #${v.stockNo}` : v.vin}</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 800, color: '#cbd5e1' }}>{car.miles.toLocaleString()} mi</div>
+                    style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 12, borderRadius: 16, padding: '16px 18px', background: 'rgba(2,6,23,.5)', border: `1px solid rgba(${rgb},.45)`, borderTop: `4px solid rgb(${rgb})`, boxShadow: past ? `0 0 18px rgba(${rgb},.18)` : 'none' }}>
+                    {/* Who */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 900, fontSize: 18, color: '#f1f5f9' }}>{v.stockNo ? `#${v.stockNo}` : v.vin}</div>
+                        <div title={vehicleText(v)} style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{vehicleText(v)}</div>
+                      </div>
+                      <span style={{ flexShrink: 0, padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 900, letterSpacing: '.05em', color: past ? '#450a0a' : '#422006', background: past ? '#fca5a5' : '#fde68a' }}>
+                        {past ? 'PAST DUE' : 'DUE SOON'}
+                      </span>
                     </div>
-                    <div style={{ fontSize: 13, color: '#cbd5e1', marginTop: 2 }}>{vehicleText(v)}</div>
-                    <div style={{ display: 'grid', gap: 4, marginTop: 8 }}>
-                      {car.list.map(d => (
-                        <div key={d.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                          <span style={{ fontWeight: 900, color: '#bfdbfe' }}>{d.rule.service}</span>
-                          <span style={{ color: '#94a3b8' }}>due {d.dueAt.toLocaleString()}</span>
-                          <span style={{ marginLeft: 'auto', fontWeight: 900, color: d.left < 0 ? '#fca5a5' : '#fde68a' }}>
-                            {d.left < 0 ? `${Math.abs(d.left).toLocaleString()} mi past` : d.left === 0 ? 'due now' : `${d.left.toLocaleString()} mi to go`}
-                          </span>
-                        </div>
-                      ))}
+                    {/* What's due */}
+                    <div style={{ display: 'grid', gap: 10 }}>
+                      {car.list.map(d => {
+                        const every = Number(d.rule.every) || 1;
+                        const frac = Math.min(1, Math.max(0, (car.miles - d.lastAt) / every));
+                        const col = d.left < 0 ? '#f87171' : '#fbbf24';
+                        return (
+                          <div key={d.key}>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                              <span style={{ fontWeight: 900, fontSize: 14.5, color: '#e2e8f0' }}>{d.rule.service}</span>
+                              <span style={{ marginLeft: 'auto', fontWeight: 900, fontSize: 15, color: col }}>
+                                {d.left < 0 ? `${Math.abs(d.left).toLocaleString()} mi past` : d.left === 0 ? 'Due now' : `${d.left.toLocaleString()} mi to go`}
+                              </span>
+                            </div>
+                            <div style={{ height: 6, borderRadius: 99, background: 'rgba(148,163,184,.18)', marginTop: 6, overflow: 'hidden' }}>
+                              <div style={{ width: `${frac * 100}%`, height: '100%', borderRadius: 99, background: col }} />
+                            </div>
+                            <div style={{ display: 'flex', fontSize: 11.5, color: '#64748b', marginTop: 4 }}>
+                              <span>{d.lastAt ? `last ${d.lastAt.toLocaleString()}` : 'never logged'}</span>
+                              <span style={{ marginLeft: 'auto' }}>now {car.miles.toLocaleString()} · due {d.dueAt.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                      <span style={{ ...btn('74,222,128'), fontSize: 12 }}>🔧 Set up maintenance</span>
-                      <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 12 }} onClick={e => { e.stopPropagation(); logDueDone(car); }}>✓ Already done</button>
+                    {/* Actions */}
+                    <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+                      <span style={{ ...btn('74,222,128'), flex: 1, textAlign: 'center', fontSize: 13, padding: '9px 12px', whiteSpace: 'nowrap' }}>🔧 Set up maintenance</span>
+                      <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 13, padding: '9px 12px', whiteSpace: 'nowrap' }}
+                        onClick={e => { e.stopPropagation(); logDueDone(car); }}>✓ Already done</button>
                     </div>
                   </div>
                 );
