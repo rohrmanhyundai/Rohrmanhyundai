@@ -6,9 +6,9 @@
       "vin": "5NTJBDDE5TH159469",
       "year": "2026",
       "make": "HYUNDAI",
-      "model": "SANTA CRUZ SEL",
+      "model": "SANTA CRUZ SEL AWD",
       "mileage": "7197",
-      "priority": "routine",
+      "priority": "ready",
       "services": [
         "Oil change",
         "Tires"
@@ -17,7 +17,9 @@
       "photos": [],
       "status": "open",
       "requestedAt": "2026-10-19T18:16:29.094Z",
-      "requestedBy": "HOLLI"
+      "requestedBy": "HOLLI",
+      "editedAt": "2026-10-20T20:07:29.069Z",
+      "editedBy": "SHAWN"
     },
     {
       "id": "lm-mvfpz6s6mdvc",
