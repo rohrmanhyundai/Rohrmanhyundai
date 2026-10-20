@@ -417,7 +417,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                                     {done && <button style={actionBtn('74,222,128')} title="Download the completed (returned) contract" onClick={() => downloadContract(c)}>⬇ Download</button>}
                                   </>
                                 ) : (
-                                  <button disabled={busy} title="From the agreement report — no signed contract scanned yet" style={actionBtn('74,222,128')} onClick={() => startEdit(c)}>📎 Attach scan</button>
+                                  <>
+                                    {/* No signed contract on file — glow red until the scan is attached. */}
+                                    <style>{'@keyframes slMissingGlow{0%,100%{box-shadow:0 0 6px rgba(248,113,113,.4)}50%{box-shadow:0 0 18px rgba(248,113,113,.85)}}@media (prefers-reduced-motion: reduce){.sl-missing{animation:none!important}}'}</style>
+                                    <div className="sl-missing" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 900, color: '#fecaca', background: 'rgba(248,113,113,.16)', border: '1px solid rgba(248,113,113,.7)', animation: 'slMissingGlow 1.8s ease-in-out infinite' }}>
+                                      ⚠ Signed contract not uploaded
+                                    </div>
+                                    <button disabled={busy} title="From the agreement report — no signed contract scanned yet" className="sl-missing"
+                                      style={{ ...actionBtn('248,113,113'), background: 'rgba(248,113,113,.22)', color: '#fecaca', animation: 'slMissingGlow 1.8s ease-in-out infinite' }} onClick={() => startEdit(c)}>📎 Attach scan</button>
+                                  </>
                                 )}
                                 <button disabled={busy} title="Delete contract" style={actionBtn('248,113,113')} onClick={() => remove(c)}>🗑 Delete</button>
                               </div>
