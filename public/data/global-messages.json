@@ -105,5 +105,24 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792512027143
+  },
+  {
+    "id": "gm-mvgwdjgu9w2k",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "do you have that credit for this still or somewhere i can find it?",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mvgwdi7s-s4rmen.png",
+        "name": "Screenshot 2026-10-20 at 12.27.37 PM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792513700814
   }
 ]
