@@ -19,12 +19,14 @@
       "firstName": "Jack",
       "lastName": "Bonnell",
       "vin": "5NMZUDLB3JH066494",
-      "phone": "(317) 794 - 6850",
+      "phone": "(317) 794-6850",
       "dateAdded": "2025-07-01",
-      "notes": "Updated cust on poistion in line, wants to see what eta would be",
+      "notes": "Updated cust on poistion in line, wants to see what eta would be. CALLED TO SET UP APPOINTMENT MAILBOX IS FULL",
       "source": "pdf",
       "addedAt": "2026-10-15T18:55:06.574Z",
-      "addedBy": "SHAWN"
+      "addedBy": "SHAWN",
+      "updatedAt": "2026-10-20T17:21:17.019Z",
+      "updatedBy": "SHAWN"
     },
     {
       "id": "wp-mv9wf0pbbvx9",
