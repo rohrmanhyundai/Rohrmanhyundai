@@ -66,7 +66,7 @@ function parseCurrency(tok) {
 // Gauges: cpActual = Customer Pay (customer-RO LBR GROSS), grossActual = TOTAL
 // GROSS PROFIT LABOR. Both are read off the MTD cumulative row — the summary row
 // directly above "L Y SALES" — so they update on the same upload as the daily grid.
-async function parseGrossReport(file) {
+export async function parseGrossReport(file) {
   const pdfjs = await loadPdfJs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
@@ -746,6 +746,39 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
   );
 }
 
+// One gross report fills both forecasts: LABOR → Service, PARTS → Parts.
+export function splitGrossRows(monthDaily) {
+  const svcRows = {}, partsRows = {};
+  Object.entries(monthDaily || {}).forEach(([k, v]) => {
+    if (v.labor != null) svcRows[k] = safe(v.labor, 0);
+    if (v.parts != null) partsRows[k] = safe(v.parts, 0);
+  });
+  return { svcRows, partsRows };
+}
+// Service MTD pacing → dashboard Goal Gauge fields.
+export function gaugePatchFrom(summary) {
+  const patch = {};
+  if (summary && summary.grossActual != null) patch.grossActual = safe(summary.grossActual, 0);
+  if (summary && summary.cpActual != null) patch.cpActual = safe(summary.cpActual, 0);
+  return patch;
+}
+// Merge daily actuals (+ breakdown extras) into one dept's month on the server
+// and the local cache. `saved` is the server write.
+export async function mergeForecastActuals(targetD, targetMk, rowsByDate, extra) {
+  let all = {};
+  try { all = await loadGoalForecast(targetD); } catch { all = {}; }
+  const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[targetMk]) || {}) };
+  const nextActuals = { ...(bucket.actuals || {}), ...rowsByDate };
+  const nextBucket = { ...bucket, actuals: nextActuals, ...(extra || {}) };
+  const saved = saveGoalForecastMonth(targetD, targetMk, nextBucket);
+  try {
+    const prefix = targetD === 'parts' ? 'partsGoalForecast' : 'goalForecast';
+    const cached = JSON.parse(localStorage.getItem(`${prefix}-${targetMk}`) || '{}') || {};
+    localStorage.setItem(`${prefix}-${targetMk}`, JSON.stringify({ ...cached, actuals: nextActuals, ...(extra || {}) }));
+  } catch {}
+  return { nextBucket, saved };
+}
+
 export default function GoalForecast({
   data, currentUserDisplay, currentUser, onBack,
   title = 'Goal Forecast',
@@ -868,30 +901,17 @@ export default function GoalForecast({
       setGridOpen(true);
     } else {
       // Any other month/dept → load that month's bucket, merge, save.
-      let all = {};
-      try { all = await loadGoalForecast(targetD); } catch { all = {}; }
-      const bucket = { forecast: 0, lastYear: 0, actuals: {}, ...((all && all[targetMk]) || {}) };
-      const nextActuals = { ...(bucket.actuals || {}), ...rowsByDate };
-      const nextBucket = { ...bucket, actuals: nextActuals, ...(extra || {}) };
-      saveGoalForecastMonth(targetD, targetMk, nextBucket).catch(() => {});
+      const { nextBucket, saved } = await mergeForecastActuals(targetD, targetMk, rowsByDate, extra);
+      saved.catch(() => {});
       if (targetD === dept) setAllMonths(prev => ({ ...prev, [targetMk]: nextBucket }));       // history month of own dept
       else if (targetMk === mk) setCrossMonths(prev => ({ ...prev, [mk]: nextBucket }));        // other dept, current month
-      try {
-        const prefix = targetD === 'parts' ? 'partsGoalForecast' : 'goalForecast';
-        const saved = JSON.parse(localStorage.getItem(`${prefix}-${targetMk}`) || '{}') || {};
-        localStorage.setItem(`${prefix}-${targetMk}`, JSON.stringify({ ...saved, actuals: nextActuals, ...(extra || {}) }));
-      } catch {}
     }
   }
 
   function applyParsed() {
     if (!parsePreview || !parsedDaily) return;
     // One report, both departments: LABOR → Service, PARTS → Parts.
-    const svcRows = {}, partsRows = {};
-    Object.entries(parsedDaily).forEach(([k, v]) => {
-      if (v.labor != null) svcRows[k] = safe(v.labor, 0);
-      if (v.parts != null) partsRows[k] = safe(v.parts, 0);
-    });
+    const { svcRows, partsRows } = splitGrossRows(parsedDaily);
     const lb = (parseSummary && parseSummary.labor) ? parseSummary.labor : null;
     const pb = (parseSummary && parseSummary.parts) ? parseSummary.parts : null;
     const targetMk = parseTargetMk || mk;
@@ -901,9 +921,7 @@ export default function GoalForecast({
     // Push the service MTD pacing figures to the dashboard Goal Gauges — only for
     // the CURRENT month (a back-filled prior month must not move today's gauges).
     if (targetMk === mk && parseSummary && onGaugeActuals) {
-      const patch = {};
-      if (parseSummary.grossActual != null) patch.grossActual = safe(parseSummary.grossActual, 0);
-      if (parseSummary.cpActual != null) patch.cpActual = safe(parseSummary.cpActual, 0);
+      const patch = gaugePatchFrom(parseSummary);
       if (Object.keys(patch).length) onGaugeActuals(patch);
     }
     setParsePreview(null);

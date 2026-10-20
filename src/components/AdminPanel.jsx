@@ -30,6 +30,7 @@ import { withDaySnapshot } from '../utils/bigMoney';
 import VmpiReportView from './VmpiReportView';
 import { uploadDeferredPdf } from './DeferredService';
 import { uploadAppointmentFile, shortMD } from '../utils/appointmentList';
+import { parseGrossReport, splitGrossRows, gaugePatchFrom, mergeForecastActuals } from './GoalForecast';
 
 // ── Morning Reporting ─────────────────────────────────────────────────────────
 // The daily uploads in the order they're done, as one checklist. Each step uses
@@ -43,6 +44,7 @@ const MORNING_STEPS = [
   { key: 'addOn',       icon: '📷', title: '$50 Add-on Board',           file: 'screenshot' },
   { key: 'flagged',     icon: '⏱', title: 'Flagged Hours Report',       file: '.html' },
   { key: 'vmpi',        icon: '🎥', title: 'VMPI Report',                file: 'screenshot or .csv' },
+  { key: 'gross',       icon: '🎯', title: 'Gross Report',               file: 'Goal Forecast · .pdf · optional', optional: true },
   { key: 'save',        icon: '💾', title: 'Review & Save',              file: 'push it live' },
 ];
 const morningKey = () => { const d = new Date(); return `morningReporting-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
@@ -494,6 +496,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [apptBusy, setApptBusy] = useState(false);
   const [apptMsg, setApptMsg] = useState('');
   const [morningSaveMsg, setMorningSaveMsg] = useState('');
+  const [grossBusy, setGrossBusy] = useState(false);
+  const [grossMsg, setGrossMsg] = useState('');
+  const [grossPreview, setGrossPreview] = useState(null);   // { mk, monthDaily, summary, rows } awaiting Apply
   const [deferredMsg, setDeferredMsg] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
@@ -1846,7 +1851,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function resetMorning() {
     if (!window.confirm('Start this morning\'s checklist over? (Nothing uploaded is undone — this only clears the checkmarks.)')) return;
     try { localStorage.removeItem(morningKey()); } catch {}
-    setMorningDone({}); setMorningStep(0); setDeferredMsg(''); setApptMsg(''); setMorningSaveMsg('');
+    setMorningDone({}); setMorningStep(0); setDeferredMsg(''); setApptMsg(''); setMorningSaveMsg(''); setGrossMsg(''); setGrossPreview(null);
   }
   // Same upload as Upload Reports → DMS Appointment List (fills every
   // advisor's prep sheet for the next shop day).
@@ -1862,6 +1867,46 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       markMorning('dms');
     } catch (e) { setApptMsg('❌ ' + (e.message || 'Upload failed')); }
     finally { setApptBusy(false); }
+  }
+  // Gross report → Goal Forecast (Service labor + Parts) and the dashboard
+  // gauges — the same reader and merge the Goal Forecast page uses. Fills the
+  // month of the previous working day, so the 1st of the month still lands on
+  // the month that just ended.
+  async function handleMorningGross(file) {
+    setGrossBusy(true); setGrossMsg('📄 Reading the gross report…'); setGrossPreview(null);
+    try {
+      const y = new Date(); y.setDate(y.getDate() - 1);
+      while (y.getDay() === 0) y.setDate(y.getDate() - 1);
+      const gmk = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}`;
+      const { daily, summary } = await parseGrossReport(file);
+      const monthDaily = {};
+      Object.keys(daily).filter(k => k.slice(0, 7) === gmk).forEach(k => { monthDaily[k] = daily[k]; });
+      const rows = Object.keys(monthDaily).sort().map(k => ({ k, ...monthDaily[k] }));
+      if (!rows.length) throw new Error(`No ${new Date(gmk + '-01T00:00:00').toLocaleString('en-US', { month: 'long' })} rows found — is this the gross report?`);
+      setGrossPreview({ mk: gmk, monthDaily, summary, rows });
+      setGrossMsg('');
+    } catch (e) { setGrossMsg('❌ ' + (e.message || e)); }
+    finally { setGrossBusy(false); }
+  }
+  async function applyMorningGross() {
+    const g = grossPreview;
+    if (!g) return;
+    setGrossBusy(true); setGrossMsg('⏳ Saving to Goal Forecast…');
+    try {
+      const { svcRows, partsRows } = splitGrossRows(g.monthDaily);
+      const lb = g.summary && g.summary.labor, pb = g.summary && g.summary.parts;
+      const a = await mergeForecastActuals('service', g.mk, svcRows, lb ? { laborBreakdown: lb } : null);
+      const b = await mergeForecastActuals('parts', g.mk, partsRows, pb ? { partsBreakdown: pb } : null);
+      await Promise.all([a.saved, b.saved]);
+      // Gauges only move for the current month; they go live with the final Save.
+      const now = new Date();
+      const patch = g.mk === `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}` ? gaugePatchFrom(g.summary) : {};
+      if (Object.keys(patch).length) onDataChange({ ...data, ...patch }, structuredClone(vacations));
+      setGrossMsg(`✅ ${g.rows.length} days saved to the Service and Parts Goal Forecast${Object.keys(patch).length ? ' · gauges update on Save' : ''}.`);
+      setGrossPreview(null);
+      markMorning('gross');
+    } catch (e) { setGrossMsg('❌ ' + (e.message || e)); }
+    finally { setGrossBusy(false); }
   }
   async function handleMorningDeferred(file) {
     setDeferredBusy(true); setDeferredMsg('📄 Reading the PDF…');
@@ -2503,7 +2548,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Card definitions ──────────────────────────────────────────────────────────
   const ADMIN_CARDS = [
-    { id: 'morning',    icon: '🌅', label: 'Morning Reporting',     desc: 'Every morning upload in order — DMS appointments, deferred, advisor report, $50 add-on, flagged hours, VMPI — then one Save', color: '#fbbf24', bg: 'linear-gradient(120deg,rgba(251,191,36,.16),rgba(249,115,22,.10) 55%,rgba(96,165,250,.10))', border: 'rgba(251,191,36,.5)', wide: true },
+    { id: 'morning',    icon: '🌅', label: 'Morning Reporting',     desc: 'Every morning upload in order — DMS appointments, deferred, advisor report, $50 add-on, flagged hours, VMPI, gross (optional) — then one Save', color: '#fbbf24', bg: 'linear-gradient(120deg,rgba(251,191,36,.16),rgba(249,115,22,.10) 55%,rgba(96,165,250,.10))', border: 'rgba(251,191,36,.5)', wide: true },
     { id: 'backend',    icon: '🔐', label: 'Backend',              desc: 'The worker that holds the GitHub, AWS and Pusher secrets', color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
@@ -2862,7 +2907,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function renderMorning() {
     const doneCount = MORNING_STEPS.filter(st => morningStepDone(st)).length;
     const pct = Math.round(doneCount / MORNING_STEPS.length * 100);
-    const unsaved = ['advisorHtml', 'advisorPdf', 'addOn', 'flagged'].some(k => morningDone[k] === true) && !morningDone.save;
+    const unsaved = ['advisorHtml', 'advisorPdf', 'addOn', 'flagged', 'gross'].some(k => morningDone[k] === true) && !morningDone.save;
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
     const pill = (rgb) => ({ background: `rgba(${rgb},.16)`, border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 10, padding: '9px 18px', fontWeight: 900, fontSize: 13.5, cursor: 'pointer' });
     const ghost = { background: 'rgba(255,255,255,.04)', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 10, padding: '9px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
@@ -2950,6 +2995,35 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           {statusLine(vmpiMsg)}
         </>
       );
+      if (st.key === 'gross') {
+        const money = (v) => v == null ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const g = grossPreview;
+        const last = g && g.rows[g.rows.length - 1];
+        return (
+          <>
+            <div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8', letterSpacing: '.06em', marginTop: 4 }}>OPTIONAL — SKIP IT IF YOU'RE NOT DOING GROSS TODAY</div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+              <DropZone accept=".pdf" label="📤 Upload Report PDF" hint="Drop the daily gross report (.pdf) · or click to choose" busy={grossBusy && !g} done={morningDone.gross === true} onFile={handleMorningGross} />
+            </div>
+            {note('Fills the Goal Forecast daily actuals — Labor → Service, Parts → Parts — and the dashboard Gross / Customer Pay gauges.')}
+            {g && (
+              <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 12, background: 'rgba(244,114,182,.07)', border: '1px solid rgba(244,114,182,.35)' }}>
+                <div style={{ fontSize: 13.5, fontWeight: 900, color: '#f9a8d4' }}>Read {g.rows.length} day{g.rows.length === 1 ? '' : 's'} for {new Date(g.mk + '-01T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' })}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'auto auto', gap: '3px 18px', fontSize: 12.5, marginTop: 8, color: '#cbd5e1', width: 'fit-content' }}>
+                  <span>Latest day ({Number(last.k.slice(5, 7))}/{Number(last.k.slice(8))})</span><strong>Labor {money(last.labor)} · Parts {money(last.parts)}</strong>
+                  {g.summary && g.summary.grossActual != null && <><span>MTD gross (gauge)</span><strong>{money(g.summary.grossActual)}</strong></>}
+                  {g.summary && g.summary.cpActual != null && <><span>MTD customer pay (gauge)</span><strong>{money(g.summary.cpActual)}</strong></>}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                  <button style={pill('74,222,128')} disabled={grossBusy} onClick={applyMorningGross}>{grossBusy ? '⏳ Saving…' : '✓ OK — Apply'}</button>
+                  <button style={ghost} disabled={grossBusy} onClick={() => setGrossPreview(null)}>Cancel</button>
+                </div>
+              </div>
+            )}
+            {statusLine(grossMsg)}
+          </>
+        );
+      }
       // Review & Save
       return (
         <>
@@ -2958,7 +3032,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               const v = x.parts
                 ? (x.parts.every(k => morningDone[k] === 'skip') ? 'skip' : x.parts.every(k => morningDone[k] === true) ? true : x.parts.some(k => morningDone[k] === true) ? 'part' : '')
                 : morningDone[x.key];
-              const [mark, col, txt] = v === true ? ['✓', '#4ade80', 'done'] : v === 'skip' ? ['↷', '#94a3b8', 'skipped'] : v === 'part' ? ['◐', '#fbbf24', 'half done'] : ['○', '#f87171', 'not done'];
+              const [mark, col, txt] = v === true ? ['✓', '#4ade80', 'done'] : v === 'skip' ? ['↷', '#94a3b8', 'skipped'] : v === 'part' ? ['◐', '#fbbf24', 'half done'] : x.optional ? ['–', '#94a3b8', 'optional'] : ['○', '#f87171', 'not done'];
               return (
                 <div key={x.key} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5 }}>
                   <span style={{ width: 20, textAlign: 'center', fontWeight: 900, color: col }}>{mark}</span>
@@ -3022,6 +3096,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <span style={{ flex: 1, minWidth: 0 }}>
                     <span style={{ display: 'block', fontWeight: 900, fontSize: active ? 16 : 14.5, color: done && !skipped ? '#bbf7d0' : '#f1f5f9' }}>{st.title}</span>
                     <span style={{ display: 'block', fontSize: 11.5, color: '#64748b', fontWeight: 700 }}>{st.file}{skipped ? ' · skipped' : ''}</span>
+                    {st.optional && !done && <span style={{ display: 'inline-block', marginTop: 3, fontSize: 9.5, fontWeight: 900, letterSpacing: '.06em', color: '#cbd5e1', background: 'rgba(148,163,184,.18)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 99, padding: '1px 7px' }}>OPTIONAL</span>}
                   </span>
                   {!active && <span style={{ fontSize: 12, color: '#64748b', fontWeight: 800 }}>{done ? 'redo' : 'open'} ›</span>}
                 </button>
