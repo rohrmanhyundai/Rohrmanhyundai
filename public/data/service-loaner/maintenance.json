@@ -150,5 +150,19 @@
       "requestedAt": "2026-10-19T20:43:33.434Z",
       "requestedBy": "SHAWN"
     }
+  ],
+  "intervals": [
+    {
+      "id": "mi-mvhc0ecm8050",
+      "service": "Oil change",
+      "every": 5000,
+      "warn": 500
+    },
+    {
+      "id": "mi-mvhc0ecmpqbx",
+      "service": "Tires",
+      "every": 7500,
+      "warn": 500
+    }
   ]
 }
