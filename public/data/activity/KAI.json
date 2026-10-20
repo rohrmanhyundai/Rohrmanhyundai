@@ -1,5 +1,45 @@
 [
   {
+    "at": "2026-10-20T11:38:59.118Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-10-20T11:38:57.378Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-20T11:38:54.695Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-10-20T11:38:52.039Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-10-20T11:38:50.398Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-10-20T11:38:47.525Z",
+    "type": "page",
+    "label": "dashboard"
+  },
+  {
+    "at": "2026-10-20T11:38:33.693Z",
+    "type": "page",
+    "label": "advisor-calendar"
+  },
+  {
+    "at": "2026-10-20T11:38:24.780Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-20T11:33:26.361Z",
     "type": "action",
     "label": "parts-received-chat",
