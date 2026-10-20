@@ -7,7 +7,7 @@ import { pendingSurveysFor } from './AfterCallReport';
 import { canonicalAdvisorFirst } from '../utils/advisorAliases';
 import { advisorOffDates } from '../utils/calculations';
 import { ensureMtd, dailyPacing } from '../utils/advisorGoals';
-import RoAttention from './RoAttention';
+import OpenLoaners from './OpenLoaners';
 import CompletedTime from './CompletedTime';
 import TechChat from './TechChat';
 import PartsReceived, { canUsePartsReceived } from './PartsReceived';
@@ -1417,14 +1417,13 @@ export default function AdvisorCalendar({ ownAdvisor, viewingAdvisor, advisorLis
           />
           </>)}
         </div>
-        {/* Open RO Attention — right (replaced Advisor Chat; the chat bubble
-            carries advisor messaging now) */}
+        {/* Open Loaners — right (took Open RO Attention's spot): loaners
+            needing service on top, every loaner still out below */}
         <div className="apt-chat-col" style={{ width: 300, flexShrink: 0 }}>
-          <RoAttention
-            currentUser={currentUser || ''}
-            currentRole={currentRole}
+          <OpenLoaners
             viewingAdvisor={viewingAdvisor}
             refreshKey={refreshKey}
+            onOpenLoaner={onServiceLoaner}
           />
         </div>
       </div>

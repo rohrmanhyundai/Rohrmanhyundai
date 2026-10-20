@@ -205,6 +205,7 @@ export default function App() {
   // The dashboard's Advisors / Technicians uploads live in the Edit Dashboard
   // panel, which Upload Reports opens in place.
   const [uploadLaunch, setUploadLaunch] = useState(null);   // { page, tab }
+  const [loanerTab, setLoanerTab] = useState('');          // Service Loaner tab to open on (calendar's Open Loaners panel)
   const [adminSection, setAdminSection] = useState(null);
   useEffect(() => {
     if (uploadLaunch && page !== uploadLaunch.page && page !== 'upload-reports') setUploadLaunch(null);
@@ -1736,7 +1737,7 @@ export default function App() {
         currentRole={currentRole}
         advisors={advisorList}
         rentalUsers={users.filter(u => String(u.role || '').toLowerCase() === 'rentals').map(u => String(u.username || '').toUpperCase()).filter(Boolean)}
-        initialTab={launched ? uploadLaunch.tab : undefined}
+        initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
       />
@@ -1749,7 +1750,7 @@ export default function App() {
       <WhitePaint
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
-        initialTab={launched ? uploadLaunch.tab : undefined}
+        initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
       />
@@ -1761,7 +1762,7 @@ export default function App() {
       <OilGuard
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
-        initialTab={launched ? uploadLaunch.tab : undefined}
+        initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
       />
     );
@@ -1773,7 +1774,7 @@ export default function App() {
         currentUser={currentUser.toUpperCase()}
         currentRole={currentRole}
         advisors={advisorList}
-        initialTab={launched ? uploadLaunch.tab : undefined}
+        initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
       />
     );
@@ -1952,7 +1953,7 @@ export default function App() {
         onBigMoneyLof={bigMoneyStatus(bigMoney) !== BIG_MONEY.OFF && bigMoneyStatus(bigMoney) !== BIG_MONEY.UPCOMING ? () => goTo('big-money-lof', 'advisor-calendar') : undefined}
         onDeferredService={() => goTo('deferred-service', 'advisor-calendar')}
         onOilGuard={() => goTo('oil-guard', 'advisor-calendar')}
-        onServiceLoaner={canAccess('serviceLoaner') ? () => goTo('service-loaner', 'advisor-calendar') : undefined}
+        onServiceLoaner={canAccess('serviceLoaner') ? (tab) => { setLoanerTab(typeof tab === 'string' ? tab : ''); goTo('service-loaner', 'advisor-calendar'); } : undefined}
         onWhitePaint={canAccess('whitePaint') ? () => goTo('white-paint', 'advisor-calendar') : undefined}
         onDailyWrench={() => goTo('daily-wrench', 'advisor-calendar')}
         bigMoneyBadge={bigMoneyBadgeFor(bigMoney, data.advisors || [], data, currentUser)}
@@ -2137,7 +2138,7 @@ export default function App() {
       <AftermarketWarranty
         currentUser={currentUser}
         currentRole={currentRole}
-        initialTab={launched ? uploadLaunch.tab : undefined}
+        initialTab={launched ? uploadLaunch.tab : (prevPage === 'advisor-calendar' && loanerTab) || undefined}
         onBack={launched ? backToUploads : () => setPage(prevPage || 'advisor-calendar')}
         backLabel={launched ? UP : awBackLabel}
       />
