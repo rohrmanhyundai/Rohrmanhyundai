@@ -150,13 +150,13 @@
     "interviewed": "",
     "interviewedAt": "",
     "interviewNotes": "",
-    "considerHire": "",
+    "considerHire": "no",
     "resumeUrl": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/applicant-resumes/ap-mtu8szvccuu5.pdf",
     "resumeName": "Jeanette_Hernandez-Sanchez_Resume.pdf",
     "archived": false,
     "id": "ap-mtu8t01hr5lm",
     "appliedAt": "2026-09-09T15:17:53.141Z",
-    "updatedAt": "2026-10-19T18:09:11.419Z",
+    "updatedAt": "2026-10-20T19:48:48.887Z",
     "updatedBy": "SHAWN"
   },
   {
