@@ -93,5 +93,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792511414274
+  },
+  {
+    "id": "gm-mvgvdo1zujd0",
+    "from": "SHAWN",
+    "to": [
+      "HOLLI"
+    ],
+    "text": "Did you see i put maintance reminders on loaners for recalls?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792512027143
   }
 ]
