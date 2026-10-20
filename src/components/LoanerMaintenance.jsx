@@ -7,7 +7,7 @@ import { decodeVin, validateVin } from '../utils/vinLookup';
 // Anyone can put in a request for a loaner that needs maintenance or service:
 // stock #, VIN, year/model, miles, Urgent (out of service) or Routine, what it
 // needs (checkboxes + description) and phone photos. Open requests list urgent
-// first, then oldest. Anyone can mark one Done (optional note) or reopen it;
+// first, then oldest. Click a row to edit it. Anyone can mark one Done (optional note) or reopen it;
 // managers/admin can delete. Stored in data/service-loaner/maintenance.json,
 // photos in S3 under warranty-media/loaner-maintenance/.
 
@@ -71,6 +71,8 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
   const [formOpen, setFormOpen] = useState(!!prefill);
   const [draft, setDraft] = useState(() => prefill ? { ...EMPTY(), ...prefill } : EMPTY());
   const [files, setFiles] = useState([]);           // [{ file, url (preview) }]
+  const [editing, setEditing] = useState(null);     // the request being edited (null = new request)
+  const [keptPhotos, setKeptPhotos] = useState([]); // editing: saved photos still on it
   const [showDone, setShowDone] = useState(false);
   const [q, setQ] = useState('');
   const fileRef = useRef(null);
@@ -122,14 +124,25 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
     const all = Array.from(list || []);           // copy first — clearing the input empties the live FileList
     if (fileRef.current) fileRef.current.value = '';
     const picked = all.filter(f => /^(image|video)\//.test(f.type) || /\.(jpe?g|png|heic|webp|mov|mp4)$/i.test(f.name));
-    setFiles(cur => [...cur, ...picked.map(file => ({ file, url: URL.createObjectURL(file) }))].slice(0, MAX_PHOTOS));
+    setFiles(cur => [...cur, ...picked.map(file => ({ file, url: URL.createObjectURL(file) }))].slice(0, MAX_PHOTOS - keptPhotos.length));
   }
   function dropFile(i) {
     setFiles(cur => { URL.revokeObjectURL(cur[i].url); return cur.filter((_, j) => j !== i); });
   }
   function closeForm() {
     files.forEach(f => URL.revokeObjectURL(f.url));
-    setFiles([]); setDraft(EMPTY()); setFormOpen(false);
+    setFiles([]); setDraft(EMPTY()); setFormOpen(false); setEditing(null); setKeptPhotos([]);
+  }
+  function openEdit(r) {
+    if (busy) return;
+    setStatus('');
+    setDraft({
+      ...EMPTY(), loanerNo: r.loanerNo || '', vin: r.vin || '', year: r.year || '', make: r.make || '', model: r.model || '',
+      mileage: r.mileage ? String(r.mileage) : '', priority: r.priority || 'routine', services: [...(r.services || [])], description: r.description || '',
+    });
+    setKeptPhotos(r.photos || []);
+    setEditing(r);
+    setFormOpen(true);
   }
 
   async function submit() {
@@ -138,6 +151,23 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
     try {
       const photos = [];
       for (const f of files) photos.push({ url: await uploadPhoto(f.file), name: f.file.name || 'photo', type: f.file.type || '' });
+      if (editing) {
+        const fields = {
+          loanerNo: draft.loanerNo.trim(), vin, year: draft.year.trim(), make: draft.make.trim().toUpperCase(), model: draft.model.trim().toUpperCase(),
+          mileage: draft.mileage.replace(/[^\d]/g, ''), priority: draft.priority,
+          services: draft.services, description: draft.description.trim(), photos: [...keptPhotos, ...photos],
+          editedAt: new Date().toISOString(), editedBy: currentUser,
+        };
+        const dropped = (editing.photos || []).filter(p => !keptPhotos.some(k => k.url === p.url));
+        setStatus('Saving…');
+        const next = await updateLoanerMaintenance(cur => ({ ...cur, requests: cur.requests.map(x => x.id === editing.id ? { ...x, ...fields } : x) }), `edit ${fields.loanerNo || fields.vin}`);
+        setItems(next.requests);
+        for (const p of dropped) { try { await deleteByUrl(p.url); } catch {} }
+        closeForm();
+        setStatus(`✓ Request updated for loaner ${fields.loanerNo || fields.vin}.`);
+        setBusy(false);
+        return;
+      }
       const rec = {
         id: `lm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
         loanerNo: draft.loanerNo.trim(), vin, year: draft.year.trim(), make: draft.make.trim().toUpperCase(), model: draft.model.trim().toUpperCase(),
@@ -204,7 +234,9 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
   const urgentCount = items.filter(r => r.status !== 'done' && r.priority === 'urgent').length;
 
   const row = (r, isDone) => (
-    <tr key={r.id} style={!isDone && r.priority === 'urgent' ? { background: 'rgba(248,113,113,.07)' } : isDone ? { opacity: 0.7 } : undefined}>
+    <tr key={r.id} title="Click to edit" className="lm-row"
+      onClick={e => { if (!e.target.closest('button, a')) openEdit(r); }}
+      style={{ cursor: 'pointer', ...(!isDone && r.priority === 'urgent' ? { background: 'rgba(248,113,113,.07)' } : isDone ? { opacity: 0.7 } : null) }}>
       <td style={td}>
         {isDone
           ? <span style={{ padding: '3px 9px', borderRadius: 999, fontSize: 11.5, fontWeight: 900, color: '#052e16', background: '#4ade80' }}>✓ DONE</span>
@@ -241,6 +273,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
       </td>
       <td style={{ ...td, fontSize: 12.5, color: '#94a3b8' }}>
         {r.requestedBy}<br />{fmtWhen(r.requestedAt)}
+        {r.editedBy && <div style={{ color: '#a5b4fc', marginTop: 4 }}>Edited: {r.editedBy}<br />{fmtWhen(r.editedAt)}</div>}
         {isDone && <div style={{ color: '#86efac', marginTop: 4 }}>Done: {r.doneBy}<br />{fmtWhen(r.doneAt)}</div>}
       </td>
       <td style={{ ...td, textAlign: 'right' }}>
@@ -267,6 +300,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
+      <style>{'.lm-row:hover > td { background: rgba(99,102,241,.1); }'}</style>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <button disabled={busy} onClick={() => { setStatus(''); setFormOpen(true); }} style={{ ...btn('74,222,128'), fontSize: 14.5, padding: '10px 20px' }}>🔧 New maintenance request</button>
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="🔎 Search stock #, VIN, model, service…" style={{ ...inputStyle, maxWidth: 420, flex: '1 1 240px' }} />
@@ -300,7 +334,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
           style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ flex: 1, fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>🔧 Loaner maintenance request</div>
+              <div style={{ flex: 1, fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>{editing ? '✏️ Edit maintenance request' : '🔧 Loaner maintenance request'}</div>
               <button disabled={busy} style={btn('148,163,184', false)} onClick={closeForm}>✕</button>
             </div>
 
@@ -347,6 +381,15 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
             <div style={{ ...label, margin: '14px 0 6px' }}>Photos (optional, up to {MAX_PHOTOS})</div>
             <input ref={fileRef} type="file" accept="image/*,video/*" multiple style={{ display: 'none' }} onChange={e => addFiles(e.target.files)} />
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              {keptPhotos.map(p => (
+                <div key={p.url} style={{ position: 'relative' }}>
+                  {isImage(p)
+                    ? <img src={p.url} alt={p.name} style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 9, border: '1px solid rgba(148,163,184,.3)' }} />
+                    : <span style={{ display: 'inline-flex', width: 72, height: 72, alignItems: 'center', justifyContent: 'center', borderRadius: 9, border: '1px solid rgba(148,163,184,.3)', fontSize: 26 }}>🎬</span>}
+                  <button type="button" disabled={busy} onClick={() => setKeptPhotos(cur => cur.filter(x => x.url !== p.url))} title="Remove"
+                    style={{ position: 'absolute', top: -7, right: -7, width: 22, height: 22, borderRadius: 999, border: 0, background: '#ef4444', color: '#fff', fontWeight: 900, cursor: 'pointer', lineHeight: '22px', padding: 0 }}>×</button>
+                </div>
+              ))}
               {files.map((f, i) => (
                 <div key={f.url} style={{ position: 'relative' }}>
                   {/^video\//.test(f.file.type)
@@ -356,14 +399,14 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
                     style={{ position: 'absolute', top: -7, right: -7, width: 22, height: 22, borderRadius: 999, border: 0, background: '#ef4444', color: '#fff', fontWeight: 900, cursor: 'pointer', lineHeight: '22px', padding: 0 }}>×</button>
                 </div>
               ))}
-              {files.length < MAX_PHOTOS && (
+              {keptPhotos.length + files.length < MAX_PHOTOS && (
                 <button type="button" disabled={busy} onClick={() => fileRef.current && fileRef.current.click()} style={{ ...btn('196,181,253'), fontSize: 13, padding: '9px 14px' }}>📷 Add photos</button>
               )}
             </div>
 
             <div style={{ display: 'flex', gap: 10, marginTop: 16, alignItems: 'center', flexWrap: 'wrap' }}>
               <button disabled={busy || missing.length > 0} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
-                {busy ? (status || 'Saving…') : '✓ Submit request'}
+                {busy ? (status || 'Saving…') : editing ? '✓ Save changes' : '✓ Submit request'}
               </button>
               <button disabled={busy} style={btn('148,163,184', false)} onClick={closeForm}>Cancel</button>
               {missing.length > 0 && <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Still need: {missing.join(', ')}</span>}
