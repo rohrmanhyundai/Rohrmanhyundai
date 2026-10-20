@@ -28,6 +28,52 @@ import { parseVmpiScreenshot } from '../utils/vmpiScreenshot';
 import { saveVmpiReport, updateBigMoney } from '../utils/github';
 import { withDaySnapshot } from '../utils/bigMoney';
 import VmpiReportView from './VmpiReportView';
+import { uploadDeferredPdf } from './DeferredService';
+
+// ── Morning Reporting ─────────────────────────────────────────────────────────
+// The daily uploads in the order they're done, as one checklist. Each step uses
+// the same handler + review pop-up as the Advisors / Technicians sections, so
+// numbers land exactly the same way. Progress is remembered per day in this
+// browser only (a convenience — nothing reads it).
+const MORNING_STEPS = [
+  { key: 'dms',         icon: '🖥',  title: 'Update DMS',                 file: 'in Tekion' },
+  { key: 'deferred',    icon: '🔧', title: 'Deferred Services',          file: '.pdf' },
+  { key: 'advisorPerf', icon: '📊', title: 'Advisor Performance Report', file: '.html + .pdf', parts: ['advisorHtml', 'advisorPdf'] },
+  { key: 'addOn',       icon: '📷', title: '$50 Add-on Board',           file: 'screenshot' },
+  { key: 'flagged',     icon: '⏱', title: 'Flagged Hours Report',       file: '.html' },
+  { key: 'vmpi',        icon: '🎥', title: 'VMPI Report',                file: 'screenshot or .csv' },
+  { key: 'save',        icon: '💾', title: 'Review & Save',              file: 'push it live' },
+];
+const morningKey = () => { const d = new Date(); return `morningReporting-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+const readMorning = () => { try { return JSON.parse(localStorage.getItem(morningKey()) || '{}') || {}; } catch { return {}; } };
+
+// Click to browse, drag a file onto it, or (when `paste`) Ctrl/⌘+V a screenshot.
+function DropZone({ accept, label, hint, busy, onFile, paste, done }) {
+  const ref = useRef(null);
+  const [over, setOver] = useState(false);
+  useEffect(() => {
+    if (!paste) return;
+    const onPaste = (e) => {
+      const item = Array.from(e.clipboardData?.items || []).find(i => i.kind === 'file' && /^image\//.test(i.type));
+      const f = item && item.getAsFile();
+      if (f && !busy) { e.preventDefault(); onFile(new File([f], f.name || `pasted-${Date.now()}.png`, { type: f.type })); }
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [paste, busy, onFile]);
+  const color = done ? '74,222,128' : over ? '96,165,250' : '148,163,184';
+  return (
+    <div onClick={() => !busy && ref.current && ref.current.click()}
+      onDragOver={e => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
+      onDrop={e => { e.preventDefault(); setOver(false); const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f && !busy) onFile(f); }}
+      style={{ flex: '1 1 240px', cursor: busy ? 'wait' : 'pointer', border: `2px dashed rgba(${color},.55)`, background: `rgba(${color},${over ? '.12' : '.05'})`, borderRadius: 14, padding: '18px 16px', textAlign: 'center', transition: 'background .15s' }}>
+      <input ref={ref} type="file" accept={accept} style={{ display: 'none' }}
+        onChange={e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) onFile(f); }} />
+      <div style={{ fontSize: 14.5, fontWeight: 900, color: done ? '#86efac' : '#e2e8f0' }}>{busy ? '⏳ Reading…' : done ? `✓ ${label}` : label}</div>
+      <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>{hint}</div>
+    </div>
+  );
+}
 
 const isAdminOrManager = role => role === 'admin' || (role || '').includes('manager');
 
@@ -441,6 +487,10 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     while (y.getDay() === 0) y.setDate(y.getDate() - 1);
     return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][y.getDay()];
   });
+  const [morningDone, setMorningDone] = useState(readMorning);   // { stepKey: true | 'skip' }
+  const [morningStep, setMorningStep] = useState(0);
+  const [deferredBusy, setDeferredBusy] = useState(false);
+  const [deferredMsg, setDeferredMsg] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserLast, setNewUserLast] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -1525,6 +1575,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   }
   function applyVmpiUpload() {
     if (!vmpiUpload) return;
+    markMorning('vmpi');
     const newData = structuredClone(data);
     for (const r of vmpiUpload.rows) {
       const t = newData.technicians[r.idx];
@@ -1591,6 +1642,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   function applyAdvisorUpload() {
     if (!advisorUpload) return;
     onDataChange(advisorUpload.newData, structuredClone(vacations));
+    markMorning({ 'HTML report': 'advisorHtml', 'PDF report': 'advisorPdf', 'Add-on board screenshot': 'addOn' }[advisorUpload.source]);
     setAdvisorXlsxStatus(advisorUpload.message);
     setAdvisorUpload(null);
     setTimeout(() => setAdvisorXlsxStatus(''), 30000);
@@ -1636,6 +1688,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   // technician (weighted total, or 0 when absent from the report).
   function applyTechUpload() {
     if (!techUpload) return;
+    markMorning('flagged');
     const { day, rows } = techUpload;
     // The day the report is for — the Friday just gone when it's uploaded on
     // Saturday or Monday, not the Friday coming up. This stamp is what tells
@@ -1720,6 +1773,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     trackAction('save-dashboard');
     setSaving(true);
     setReconcileMsg('');
+    let ok = false;
     try {
       const payload = { data, vacations };
       await saveDashboardToGitHub(payload);
@@ -1757,11 +1811,48 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           setDailyLabor('');
         } catch { /* ignore */ }
       }
+      ok = true;
     } catch (err) {
       alert('Save failed: ' + err.message);
     } finally {
       setSaving(false);
     }
+    return ok;
+  }
+
+  // ── Morning Reporting progress ────────────────────────────────────────────
+  const morningStepDone = (st, done = morningDone) => st.parts ? st.parts.every(k => done[k]) : !!done[st.key];
+  function markMorning(key, value = true) {
+    if (!key) return;
+    setMorningDone(prev => {
+      const next = { ...prev, [key]: value };
+      try { localStorage.setItem(morningKey(), JSON.stringify(next)); } catch {}
+      // Finished the step on screen? Move on to the next one still open.
+      setMorningStep(cur => {
+        const st = MORNING_STEPS[cur];
+        if (!st || !morningStepDone(st, next)) return cur;
+        const after = MORNING_STEPS.findIndex((x, i) => i > cur && !morningStepDone(x, next));
+        return after === -1 ? MORNING_STEPS.length - 1 : after;
+      });
+      return next;
+    });
+  }
+  function resetMorning() {
+    if (!window.confirm('Start this morning\'s checklist over? (Nothing uploaded is undone — this only clears the checkmarks.)')) return;
+    try { localStorage.removeItem(morningKey()); } catch {}
+    setMorningDone({}); setMorningStep(0); setDeferredMsg('');
+  }
+  async function handleMorningDeferred(file) {
+    setDeferredBusy(true); setDeferredMsg('📄 Reading the PDF…');
+    try {
+      const { message } = await uploadDeferredPdf(file, currentUser);
+      setDeferredMsg(message);
+      markMorning('deferred');
+    } catch (e) { setDeferredMsg('❌ ' + (e?.message || e)); }
+    finally { setDeferredBusy(false); }
+  }
+  async function handleMorningSave() {
+    if (await handleSave()) markMorning('save');
   }
 
   // ── Send to Reports ───────────────────────────────────────────────────────
@@ -2381,6 +2472,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
 
   // ── Card definitions ──────────────────────────────────────────────────────────
   const ADMIN_CARDS = [
+    { id: 'morning',    icon: '🌅', label: 'Morning Reporting',     desc: 'Every morning upload in order — DMS, deferred, advisor report, $50 add-on, flagged hours, VMPI — then one Save', color: '#fbbf24', bg: 'linear-gradient(120deg,rgba(251,191,36,.16),rgba(249,115,22,.10) 55%,rgba(96,165,250,.10))', border: 'rgba(251,191,36,.5)', wide: true },
     { id: 'backend',    icon: '🔐', label: 'Backend',              desc: 'The worker that holds the GitHub, AWS and Pusher secrets', color: '#6366f1', bg: 'rgba(99,102,241,.15)',  border: 'rgba(99,102,241,.35)'  },
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
@@ -2406,6 +2498,319 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   ];
 
   const activeCard = ADMIN_CARDS.find(c => c.id === openSection);
+
+  // Review pop-ups / previews shared by the Advisors and Technicians sections
+  // and Morning Reporting — one copy, so every path applies the same way.
+  function renderAdvisorUploadModal() {
+    return advisorUpload && (
+          <div onClick={() => setAdvisorUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 560, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Advisor Import — Review Changes</span>
+                <button onClick={() => setAdvisorUpload(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+              </div>
+              <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12 }}>
+                From the {advisorUpload.source}. Nothing has been changed yet — these are the numbers that will move.
+              </div>
+
+              {advisorUpload.notes.length > 0 && (
+                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.5 }}>
+                  {advisorUpload.notes.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                </div>
+              )}
+
+              {advisorUpload.rows.length === 0 ? (
+                <div style={{ fontSize: 13, color: '#94a3b8', background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '14px 12px', marginBottom: 12 }}>
+                  No advisor numbers change — every value in this report already matches what's on the page.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+                  {advisorUpload.rows.map(r => (
+                    <div key={r.name} style={{ background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '10px 12px' }}>
+                      <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0', marginBottom: 6 }}>{r.name}</div>
+                      {r.changes.map(c => (
+                        <div key={c.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13, padding: '3px 0' }}>
+                          <span style={{ color: '#94a3b8' }}>{c.label}</span>
+                          <span style={{ whiteSpace: 'nowrap' }}>
+                            <span style={{ color: '#64748b', textDecoration: 'line-through' }}>{c.from}</span>
+                            <span style={{ color: '#64748b' }}> → </span>
+                            <span style={{ color: '#6ee7b7', fontWeight: 800 }}>{c.to}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button className="secondary" onClick={() => setAdvisorUpload(null)}>Cancel</button>
+                <button onClick={applyAdvisorUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
+                  ✓ OK — Apply {advisorUpload.rows.length ? `${advisorUpload.rows.length} Advisor${advisorUpload.rows.length === 1 ? '' : 's'}` : ''}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+  }
+  function renderTechUploadModal() {
+    return techUpload && (
+          <div onClick={() => setTechUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 460, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Flagged Hours Import</span>
+                <button onClick={() => setTechUpload(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+              </div>
+              <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span>Apply to</span>
+                <select value={techUpload.day} onChange={e => { setTechUploadDay(e.target.value); setTechUpload({ ...techUpload, day: e.target.value }); }}
+                  style={{ background: '#1e293b', color: '#e2e8f0', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, padding: '5px 8px', fontWeight: 700, fontSize: 13 }}>
+                  {WORK_DAYS.map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
+                </select>
+                <span style={{ color: '#64748b', fontSize: 12 }}>· warranty × {WARRANTY_MULTIPLIER}</span>
+              </div>
+              {techUpload.warnings.length > 0 && (
+                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.45 }}>
+                  {techUpload.warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                </div>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 12 }}>
+                {techUpload.rows.map(r => (
+                  <div key={r.idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
+                    <span style={{ color: '#e2e8f0' }}>
+                      {r.name}{r.matched && r.matchedName.toUpperCase() !== String(r.name).toUpperCase() ? <span style={{ color: '#64748b', fontSize: 11 }}> ({r.matchedName})</span> : null}
+                      {r.matched && r.detailed && (() => {
+                        const on = techMultiplierOn((data.technicians || [])[r.idx]);
+                        return (
+                          <span style={{ display: 'block', color: on ? '#64748b' : '#fbbf24', fontSize: 11 }}>
+                            {r.warranty > 0
+                              ? (on
+                                ? `war ${r.warranty} × ${WARRANTY_MULTIPLIER} = ${(Math.round(r.warranty * WARRANTY_MULTIPLIER * 100) / 100)}`
+                                : `war ${r.warranty} · multiplier OFF`)
+                              : 'no warranty'}
+                            {` + other ${r.other}`}
+                          </span>
+                        );
+                      })()}
+                    </span>
+                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700, whiteSpace: 'nowrap' }}>{previewTotal(r).toFixed(2)} hrs{!r.matched ? ' · not in report' : ''}</span>
+                  </div>
+                ))}
+              </div>
+              {techUpload.unmatched.length > 0 && (
+                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12 }}>
+                  ⚠ {techUpload.unmatched.length} report name{techUpload.unmatched.length === 1 ? '' : 's'} not matched to any tech on this page: {techUpload.unmatched.join(', ')}. Add them under Technicians if needed.
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button className="secondary" onClick={() => setTechUpload(null)}>Cancel</button>
+                <button onClick={applyTechUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✓ Apply to {DAY_LABELS[techUpload.day]}</button>
+              </div>
+            </div>
+          </div>
+        );
+  }
+  function renderVmpiPreview() {
+    return vmpiUpload && (
+            <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(110,231,249,.06)', border: '1px solid rgba(110,231,249,.3)' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#6ee7f9', marginBottom: 6 }}>VMPI from {vmpiUpload.fileName}{vmpiUpload.stamp ? ` · report ${vmpiUpload.stamp}` : ''}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: '4px 14px', fontSize: 12.5, alignItems: 'baseline' }}>
+                {vmpiUpload.rows.map(r => (
+                  <React.Fragment key={r.name}>
+                    <span style={{ fontWeight: 800, color: '#f1f5f9' }}>{r.name}</span>
+                    <span style={{ fontWeight: 900, color: r.pct >= 0.9 ? '#4ade80' : r.pct >= 0.75 ? '#fbbf24' : '#f87171' }}>{(r.pct * 100).toFixed(1)}%</span>
+                    <span style={{ color: '#94a3b8' }}>{vmpiUpload.report && vmpiUpload.report.fromScreenshot ? (r.ros != null ? `${r.ros} tickets` : '') : `${r.withVideo} of ${r.ros} ROs`}</span>
+                    <span style={{ color: '#64748b' }}>{r.before != null && r.before !== '' ? `was ${(Number(r.before) * 100).toFixed(1)}%` : 'new'}</span>
+                  </React.Fragment>
+                ))}
+              </div>
+              {vmpiUpload.missing.length > 0 && <div style={{ fontSize: 12, color: '#fbbf24', marginTop: 8 }}>Not on the report (left as is): {vmpiUpload.missing.join(', ')}</div>}
+              {vmpiUpload.unmatched.length > 0 && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>On the report but not a tech here (skipped): {vmpiUpload.unmatched.join(', ')}</div>}
+              <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                <button onClick={applyVmpiUpload} disabled={!vmpiUpload.rows.length}
+                  style={{ background: 'rgba(52,211,153,.18)', border: '1px solid rgba(52,211,153,.5)', color: '#6ee7b7', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12.5 }}>
+                  ✓ Apply to {vmpiUpload.rows.length} tech{vmpiUpload.rows.length === 1 ? '' : 's'}
+                </button>
+                <button className="secondary" onClick={() => setVmpiUpload(null)} style={{ fontSize: 12.5 }}>Cancel</button>
+              </div>
+            </div>
+          );
+  }
+
+  function renderMorning() {
+    const doneCount = MORNING_STEPS.filter(st => morningStepDone(st)).length;
+    const pct = Math.round(doneCount / MORNING_STEPS.length * 100);
+    const unsaved = ['advisorHtml', 'advisorPdf', 'addOn', 'flagged'].some(k => morningDone[k] === true) && !morningDone.save;
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    const pill = (rgb) => ({ background: `rgba(${rgb},.16)`, border: `1px solid rgba(${rgb},.5)`, color: `rgb(${rgb})`, borderRadius: 10, padding: '9px 18px', fontWeight: 900, fontSize: 13.5, cursor: 'pointer' });
+    const ghost = { background: 'rgba(255,255,255,.04)', border: '1px solid rgba(148,163,184,.3)', color: '#94a3b8', borderRadius: 10, padding: '9px 14px', fontWeight: 800, fontSize: 13, cursor: 'pointer' };
+    const note = (text, tone = '148,163,184') => <div style={{ fontSize: 12.5, color: `rgb(${tone})`, lineHeight: 1.55, marginTop: 8 }}>{text}</div>;
+    const statusLine = (msg) => msg ? <div style={{ marginTop: 10, fontSize: 13, fontWeight: 800, color: msg.startsWith('❌') ? '#f87171' : msg.startsWith('✅') ? '#4ade80' : '#fbbf24' }}>{msg}</div> : null;
+    const go = (i) => setMorningStep(Math.max(0, Math.min(MORNING_STEPS.length - 1, i)));
+
+    function body(st) {
+      if (st.key === 'dms') return (
+        <>
+          {note('Run the DMS update in Tekion first, so every report you pull this morning has yesterday\'s closed ROs in it.')}
+          <div style={{ marginTop: 14 }}><button style={pill('74,222,128')} onClick={() => markMorning('dms')}>✓ DMS is updated</button></div>
+        </>
+      );
+      if (st.key === 'deferred') return (
+        <>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept=".pdf" label="Drop the Deferred Services PDF" hint="or click to choose · .pdf" busy={deferredBusy} done={!!morningDone.deferred && morningDone.deferred !== 'skip'} onFile={handleMorningDeferred} />
+          </div>
+          {note('Saves as soon as it\'s read — feeds the Deferred Service list and prep-sheet matching.')}
+          {statusLine(deferredMsg)}
+        </>
+      );
+      if (st.key === 'advisorPerf') return (
+        <>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept=".html,.htm" label="1 · Pay Type View (.html)" hint="MTD hours, ROs, ELR, coupon, sales" busy={advisorXlsxBusy} done={!!morningDone.advisorHtml}
+              onFile={f => { setAdvisorXlsxStatus(''); handleAdvisorHtml(f); }} />
+            <DropZone accept=".pdf" label="2 · SA Totals (.pdf)" hint="Alignment, Valvoline, Tires, ASR %" busy={advisorXlsxBusy} done={!!morningDone.advisorPdf}
+              onFile={f => { setAdvisorXlsxStatus(''); handleAdvisorPdf(f); }} />
+          </div>
+          {note(<><strong style={{ color: '#fbbf24' }}>Expand every advisor in Tekion before saving the .html</strong> — MTD Hrs subtracts each advisor's Internal hours, and a collapsed row has none to subtract. Each file shows what will change; click <strong>OK — Apply</strong>.</>)}
+          {statusLine(advisorXlsxStatus)}
+        </>
+      );
+      if (st.key === 'addOn') return (
+        <>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept="image/*" paste label="Paste or drop the add-on board screenshot" hint="Ctrl/⌘ + V right here · or click to choose an image" busy={addOnBusy} done={!!morningDone.addOn && morningDone.addOn !== 'skip'} onFile={handleAddOnScreenshot} />
+          </div>
+          {note('Screenshot just the advisor rows of the Fixed Ops add-on rank board. AI reads $50 Add\'l Hrs/RO, Add Rate %, Tickets and Oil-only; you review before anything changes.')}
+          {statusLine(addOnStatus || advisorXlsxStatus)}
+        </>
+      );
+      if (st.key === 'flagged') return (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+            <span style={{ fontSize: 12.5, fontWeight: 800, color: '#cbd5e1' }}>Hours are for</span>
+            {WORK_DAYS.map(d => (
+              <button key={d} onClick={() => setTechUploadDay(d)} disabled={techXlsxBusy}
+                style={{ background: techUploadDay === d ? 'rgba(96,165,250,.28)' : 'rgba(255,255,255,.04)', border: `1px solid ${techUploadDay === d ? 'rgba(96,165,250,.65)' : 'rgba(148,163,184,.25)'}`, color: techUploadDay === d ? '#bfdbfe' : '#94a3b8', borderRadius: 8, padding: '5px 12px', fontWeight: 800, fontSize: 12, cursor: 'pointer' }}>
+                {d.charAt(0).toUpperCase() + d.slice(1)}
+              </button>
+            ))}
+            <span style={{ fontSize: 11.5, color: '#64748b' }}>(yesterday is picked for you)</span>
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept=".html,.htm" label={`Drop the Tech Performance report (.html) → ${DAY_LABELS[techUploadDay]}`} hint="Pay Type View · or click to choose" busy={techXlsxBusy} done={!!morningDone.flagged && morningDone.flagged !== 'skip'} onFile={handleTechReport} />
+          </div>
+          {note(`Warranty × ${WARRANTY_MULTIPLIER} + Internal + Customer Pay. A tech not on the report is set to 0. Review, then Apply.`)}
+          {techUploadErr && statusLine('❌ ' + techUploadErr)}
+          {statusLine(techUploadMsg)}
+        </>
+      );
+      if (st.key === 'vmpi') return (
+        <>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+            <DropZone accept=".csv,text/csv,image/*" paste label="Paste or drop the VMPI screenshot (or .csv)" hint="Ctrl/⌘ + V right here · or click to choose" busy={false} done={!!morningDone.vmpi && morningDone.vmpi !== 'skip'} onFile={handleVmpiReport} />
+          </div>
+          {note('Tech board with LAF Hyundai opened up — AI reads each tech\'s VIDEO %. Applying saves VMPI straight to the dashboard.')}
+          {renderVmpiPreview()}
+          {vmpiErr && statusLine('❌ ' + vmpiErr)}
+          {statusLine(vmpiMsg)}
+        </>
+      );
+      // Review & Save
+      return (
+        <>
+          <div style={{ display: 'grid', gap: 6, marginTop: 12 }}>
+            {MORNING_STEPS.slice(0, -1).map(x => {
+              const v = x.parts
+                ? (x.parts.every(k => morningDone[k] === 'skip') ? 'skip' : x.parts.every(k => morningDone[k] === true) ? true : x.parts.some(k => morningDone[k] === true) ? 'part' : '')
+                : morningDone[x.key];
+              const [mark, col, txt] = v === true ? ['✓', '#4ade80', 'done'] : v === 'skip' ? ['↷', '#94a3b8', 'skipped'] : v === 'part' ? ['◐', '#fbbf24', 'half done'] : ['○', '#f87171', 'not done'];
+              return (
+                <div key={x.key} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5 }}>
+                  <span style={{ width: 20, textAlign: 'center', fontWeight: 900, color: col }}>{mark}</span>
+                  <span style={{ color: '#e2e8f0', fontWeight: 700 }}>{x.icon} {x.title}</span>
+                  <span style={{ color: col, fontSize: 12, fontWeight: 800 }}>{txt}</span>
+                </div>
+              );
+            })}
+          </div>
+          {note('Save pushes the advisor and tech numbers live — the same as Save Changes (it also syncs yesterday\'s advisor hours to Goals/Forecasting).', '125,211,252')}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 14, flexWrap: 'wrap' }}>
+            <button style={{ ...pill('74,222,128'), fontSize: 15, padding: '11px 24px' }} disabled={saving} onClick={handleMorningSave}>
+              {saving ? '⏳ Saving…' : morningDone.save ? '✓ Saved — save again' : '💾 Save & push live'}
+            </button>
+            {morningDone.save && !saving && <span style={{ fontSize: 14, fontWeight: 900, color: '#4ade80' }}>🎉 Morning reporting is done.</span>}
+          </div>
+          {reconcileMsg && statusLine('✅ ' + reconcileMsg.replace(/^✓ /, ''))}
+        </>
+      );
+    }
+
+    return (
+      <div className="group-body" style={{ maxWidth: 820, margin: '0 auto' }}>
+        {/* Header + progress */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <div style={{ fontSize: 20, fontWeight: 900, color: '#fde68a' }}>🌅 Morning Reporting</div>
+            <div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>{today} · work top to bottom — each step opens the next.</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: 22, fontWeight: 900, color: pct === 100 ? '#4ade80' : '#e2e8f0' }}>{doneCount}<span style={{ fontSize: 14, color: '#64748b' }}> / {MORNING_STEPS.length}</span></div>
+            <button onClick={resetMorning} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: 11.5, cursor: 'pointer', padding: 0 }}>↺ start over</button>
+          </div>
+        </div>
+        <div style={{ height: 8, borderRadius: 99, background: 'rgba(148,163,184,.15)', margin: '12px 0 18px', overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${pct}%`, borderRadius: 99, background: 'linear-gradient(90deg,#fbbf24,#f97316,#4ade80)', transition: 'width .4s' }} />
+        </div>
+        {unsaved && morningStep !== MORNING_STEPS.length - 1 && (
+          <div style={{ marginBottom: 14, padding: '9px 12px', borderRadius: 10, background: 'rgba(251,191,36,.1)', border: '1px solid rgba(251,191,36,.4)', color: '#fde68a', fontSize: 12.5, fontWeight: 800 }}>
+            ⚠ Advisor / tech numbers are applied but not live yet — finish with <strong>Review &amp; Save</strong>.
+          </div>
+        )}
+
+        {/* Steps */}
+        <div style={{ display: 'grid', gap: 10 }}>
+          {MORNING_STEPS.map((st, i) => {
+            const active = i === morningStep;
+            const done = morningStepDone(st);
+            const skipped = st.parts ? st.parts.every(k => morningDone[k] === 'skip') : morningDone[st.key] === 'skip';
+            const ring = done && !skipped ? '74,222,128' : active ? '251,191,36' : '148,163,184';
+            return (
+              <div key={st.key} style={{ borderRadius: 16, border: `1px solid rgba(${ring},${active ? '.6' : '.25'})`, background: active ? 'rgba(15,23,42,.85)' : 'rgba(15,23,42,.4)', boxShadow: active ? `0 10px 30px -12px rgba(${ring},.5)` : 'none', transition: 'all .2s' }}>
+                <button onClick={() => go(i)} style={{ all: 'unset', boxSizing: 'border-box', width: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, padding: active ? '16px 18px 4px' : '12px 18px' }}>
+                  <span style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14,
+                    background: done && !skipped ? '#4ade80' : active ? '#fbbf24' : 'rgba(148,163,184,.18)', color: done && !skipped ? '#052e16' : active ? '#422006' : '#94a3b8' }}>
+                    {done && !skipped ? '✓' : skipped ? '↷' : i + 1}
+                  </span>
+                  <span style={{ fontSize: 20 }}>{st.icon}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'block', fontWeight: 900, fontSize: active ? 16 : 14.5, color: done && !skipped ? '#bbf7d0' : '#f1f5f9' }}>{st.title}</span>
+                    <span style={{ display: 'block', fontSize: 11.5, color: '#64748b', fontWeight: 700 }}>{st.file}{skipped ? ' · skipped' : ''}</span>
+                  </span>
+                  {!active && <span style={{ fontSize: 12, color: '#64748b', fontWeight: 800 }}>{done ? 'redo' : 'open'} ›</span>}
+                </button>
+                {active && (
+                  <div style={{ padding: '0 18px 16px 64px' }}>
+                    {body(st)}
+                    {st.key !== 'save' && (
+                      <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                        {i > 0 && <button style={ghost} onClick={() => go(i - 1)}>← Back</button>}
+                        {done
+                          ? <button style={pill('251,191,36')} onClick={() => go(i + 1)}>Next →</button>
+                          : <button style={ghost} onClick={() => { if (st.parts) st.parts.forEach(k => { if (!morningDone[k]) markMorning(k, 'skip'); }); else markMorning(st.key, 'skip'); go(i + 1); }}>Skip today →</button>}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {renderAdvisorUploadModal()}
+        {renderTechUploadModal()}
+      </div>
+    );
+  }
 
   // ── Section body renderer ─────────────────────────────────────────────────────
   function renderSectionBody() {
@@ -2437,6 +2842,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     );
 
     if (openSection === 'openai') return <OpenAIServerStatus />;
+
+    if (openSection === 'morning') return renderMorning();
 
     if (openSection === 'dashboard') return (
       <div className="group-body">
@@ -2655,56 +3062,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               </div>
             </div>
           )}
-        {advisorUpload && (
-          <div onClick={() => setAdvisorUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
-            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 560, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Advisor Import — Review Changes</span>
-                <button onClick={() => setAdvisorUpload(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
-              </div>
-              <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12 }}>
-                From the {advisorUpload.source}. Nothing has been changed yet — these are the numbers that will move.
-              </div>
-
-              {advisorUpload.notes.length > 0 && (
-                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.5 }}>
-                  {advisorUpload.notes.map((w, i) => <div key={i}>⚠ {w}</div>)}
-                </div>
-              )}
-
-              {advisorUpload.rows.length === 0 ? (
-                <div style={{ fontSize: 13, color: '#94a3b8', background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '14px 12px', marginBottom: 12 }}>
-                  No advisor numbers change — every value in this report already matches what's on the page.
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
-                  {advisorUpload.rows.map(r => (
-                    <div key={r.name} style={{ background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '10px 12px' }}>
-                      <div style={{ fontWeight: 800, fontSize: 14, color: '#e2e8f0', marginBottom: 6 }}>{r.name}</div>
-                      {r.changes.map(c => (
-                        <div key={c.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13, padding: '3px 0' }}>
-                          <span style={{ color: '#94a3b8' }}>{c.label}</span>
-                          <span style={{ whiteSpace: 'nowrap' }}>
-                            <span style={{ color: '#64748b', textDecoration: 'line-through' }}>{c.from}</span>
-                            <span style={{ color: '#64748b' }}> → </span>
-                            <span style={{ color: '#6ee7b7', fontWeight: 800 }}>{c.to}</span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button className="secondary" onClick={() => setAdvisorUpload(null)}>Cancel</button>
-                <button onClick={applyAdvisorUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>
-                  ✓ OK — Apply {advisorUpload.rows.length ? `${advisorUpload.rows.length} Advisor${advisorUpload.rows.length === 1 ? '' : 's'}` : ''}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {renderAdvisorUploadModal()}
         </div>
     );
 
@@ -2790,30 +3148,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           {vmpiView && <VmpiReportView onClose={() => setVmpiView(false)} currentUser={currentUser} currentRole={currentRole} />}
           {vmpiErr && <div style={{ marginTop: 8, fontSize: 12, color: '#fca5a5' }}>❌ {vmpiErr}</div>}
           {vmpiMsg && <div style={{ marginTop: 8, fontSize: 12, color: '#6ee7b7', fontWeight: 700 }}>{vmpiMsg}</div>}
-          {vmpiUpload && (
-            <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(110,231,249,.06)', border: '1px solid rgba(110,231,249,.3)' }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#6ee7f9', marginBottom: 6 }}>VMPI from {vmpiUpload.fileName}{vmpiUpload.stamp ? ` · report ${vmpiUpload.stamp}` : ''}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: '4px 14px', fontSize: 12.5, alignItems: 'baseline' }}>
-                {vmpiUpload.rows.map(r => (
-                  <React.Fragment key={r.name}>
-                    <span style={{ fontWeight: 800, color: '#f1f5f9' }}>{r.name}</span>
-                    <span style={{ fontWeight: 900, color: r.pct >= 0.9 ? '#4ade80' : r.pct >= 0.75 ? '#fbbf24' : '#f87171' }}>{(r.pct * 100).toFixed(1)}%</span>
-                    <span style={{ color: '#94a3b8' }}>{vmpiUpload.report && vmpiUpload.report.fromScreenshot ? (r.ros != null ? `${r.ros} tickets` : '') : `${r.withVideo} of ${r.ros} ROs`}</span>
-                    <span style={{ color: '#64748b' }}>{r.before != null && r.before !== '' ? `was ${(Number(r.before) * 100).toFixed(1)}%` : 'new'}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-              {vmpiUpload.missing.length > 0 && <div style={{ fontSize: 12, color: '#fbbf24', marginTop: 8 }}>Not on the report (left as is): {vmpiUpload.missing.join(', ')}</div>}
-              {vmpiUpload.unmatched.length > 0 && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>On the report but not a tech here (skipped): {vmpiUpload.unmatched.join(', ')}</div>}
-              <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                <button onClick={applyVmpiUpload} disabled={!vmpiUpload.rows.length}
-                  style={{ background: 'rgba(52,211,153,.18)', border: '1px solid rgba(52,211,153,.5)', color: '#6ee7b7', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12.5 }}>
-                  ✓ Apply to {vmpiUpload.rows.length} tech{vmpiUpload.rows.length === 1 ? '' : 's'}
-                </button>
-                <button className="secondary" onClick={() => setVmpiUpload(null)} style={{ fontSize: 12.5 }}>Cancel</button>
-              </div>
-            </div>
-          )}
+          {renderVmpiPreview()}
         </div>
         <div className="title">Technician Daily Hours</div>
         {data.technicians.map((t, idx) => (
@@ -2893,61 +3228,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           {reportStatus && <span style={{ fontSize: 13, fontWeight: 700, color: reportStatus.startsWith('✅') ? '#4ade80' : reportStatus.startsWith('❌') ? '#f87171' : '#fbbf24' }}>{reportStatus}</span>}
         </div>
 
-        {techUpload && (
-          <div onClick={() => setTechUpload(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,.7)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 1000, padding: '6vh 16px' }}>
-            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 460, maxHeight: '86vh', overflowY: 'auto', background: '#0f172a', border: '1px solid rgba(96,165,250,.3)', borderRadius: 14, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontWeight: 900, fontSize: 16, color: '#bfdbfe' }}>Flagged Hours Import</span>
-                <button onClick={() => setTechUpload(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
-              </div>
-              <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span>Apply to</span>
-                <select value={techUpload.day} onChange={e => { setTechUploadDay(e.target.value); setTechUpload({ ...techUpload, day: e.target.value }); }}
-                  style={{ background: '#1e293b', color: '#e2e8f0', border: '1px solid rgba(148,163,184,.3)', borderRadius: 8, padding: '5px 8px', fontWeight: 700, fontSize: 13 }}>
-                  {WORK_DAYS.map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
-                </select>
-                <span style={{ color: '#64748b', fontSize: 12 }}>· warranty × {WARRANTY_MULTIPLIER}</span>
-              </div>
-              {techUpload.warnings.length > 0 && (
-                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.45 }}>
-                  {techUpload.warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
-                </div>
-              )}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 12 }}>
-                {techUpload.rows.map(r => (
-                  <div key={r.idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, padding: '5px 10px', background: 'rgba(255,255,255,.03)', borderRadius: 6 }}>
-                    <span style={{ color: '#e2e8f0' }}>
-                      {r.name}{r.matched && r.matchedName.toUpperCase() !== String(r.name).toUpperCase() ? <span style={{ color: '#64748b', fontSize: 11 }}> ({r.matchedName})</span> : null}
-                      {r.matched && r.detailed && (() => {
-                        const on = techMultiplierOn((data.technicians || [])[r.idx]);
-                        return (
-                          <span style={{ display: 'block', color: on ? '#64748b' : '#fbbf24', fontSize: 11 }}>
-                            {r.warranty > 0
-                              ? (on
-                                ? `war ${r.warranty} × ${WARRANTY_MULTIPLIER} = ${(Math.round(r.warranty * WARRANTY_MULTIPLIER * 100) / 100)}`
-                                : `war ${r.warranty} · multiplier OFF`)
-                              : 'no warranty'}
-                            {` + other ${r.other}`}
-                          </span>
-                        );
-                      })()}
-                    </span>
-                    <span style={{ color: r.matched ? '#6ee7b7' : '#64748b', fontWeight: 700, whiteSpace: 'nowrap' }}>{previewTotal(r).toFixed(2)} hrs{!r.matched ? ' · not in report' : ''}</span>
-                  </div>
-                ))}
-              </div>
-              {techUpload.unmatched.length > 0 && (
-                <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12 }}>
-                  ⚠ {techUpload.unmatched.length} report name{techUpload.unmatched.length === 1 ? '' : 's'} not matched to any tech on this page: {techUpload.unmatched.join(', ')}. Add them under Technicians if needed.
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button className="secondary" onClick={() => setTechUpload(null)}>Cancel</button>
-                <button onClick={applyTechUpload} style={{ background: 'rgba(96,165,250,.2)', border: '1px solid rgba(96,165,250,.45)', color: '#93c5fd', borderRadius: 8, padding: '8px 18px', cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>✓ Apply to {DAY_LABELS[techUpload.day]}</button>
-              </div>
-            </div>
-          </div>
-        )}
+        {renderTechUploadModal()}
 
         {closeout && (
           <div onClick={() => { if (!closeout.busy) setCloseout(null); }}
@@ -3695,6 +3976,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                       gap: 10,
                       position: 'relative',
                       boxShadow: card.badge > 0 ? '0 0 22px rgba(251,191,36,.28)' : undefined,
+                      ...(card.wide ? { gridColumn: '1 / -1', flexDirection: 'row', alignItems: 'center', gap: 18 } : null),
                     }}
                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 30px ${card.border}`; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}

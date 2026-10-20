@@ -57,6 +57,25 @@ const CSS = `
 
 const CODE_LABEL = (code, codes) => (codes && codes[code] && codes[code].description) ? codes[code].description : code;
 
+// Read a Deferred Services PDF and merge it into the store. Shared by this
+// page's Settings upload and Manager Portal → Morning Reporting.
+export async function uploadDeferredPdf(file, currentUser, io) {
+  const { loadDeferredRows, updateDeferredRows } = io || github;
+  const { rows: parsed, lastUpdate, warnings } = await parseDeferredPdf(file);
+  const at = new Date().toISOString();
+  let result = null;
+  await updateDeferredRows(cur => {
+    const { byRo, added, updated } = mergeRows(cur.byRo, parsed, at);
+    result = { added, updated };
+    const uploads = [{ at, by: currentUser || '', file: file.name, lastUpdate, rows: parsed.length }, ...(cur.uploads || [])].slice(0, 50);
+    return { ...cur, byRo, uploads, updatedAt: at };
+  });
+  const fresh = await loadDeferredRows();
+  trackAction('deferred-upload', file.name);
+  const message = `✅ ${parsed.length} ROs read from ${file.name} — ${result.added} new, ${result.updated} refreshed${lastUpdate ? ` · report last updated ${fmtDate(lastUpdate)}` : ''}${warnings.length ? ` · ⚠️ ${warnings.length} line${warnings.length === 1 ? '' : 's'} skipped` : ''}`;
+  return { fresh, message };
+}
+
 export default function DeferredService({ currentUser, currentRole, advisors = [], onBack, io, initialTab }) {
   // Storage functions — swappable (tests pass an in-memory version).
   const { loadDeferredRows, updateDeferredRows, loadDeferredCodes, updateDeferredCodes, loadDeferredActivity, updateDeferredActivity } = io || github;
@@ -401,19 +420,9 @@ export default function DeferredService({ currentUser, currentRole, advisors = [
     if (!file) return;
     setBusy('parse'); setStatus('📄 Reading the PDF…');
     try {
-      const { rows: parsed, lastUpdate, warnings } = await parseDeferredPdf(file);
-      const at = new Date().toISOString();
-      let result = null;
-      await updateDeferredRows(cur => {
-        const { byRo, added, updated } = mergeRows(cur.byRo, parsed, at);
-        result = { added, updated };
-        const uploads = [{ at, by: currentUser || '', file: file.name, lastUpdate, rows: parsed.length }, ...(cur.uploads || [])].slice(0, 50);
-        return { ...cur, byRo, uploads, updatedAt: at };
-      });
-      const fresh = await loadDeferredRows();
+      const { fresh, message } = await uploadDeferredPdf(file, currentUser, io);
       setStore(fresh);
-      setStatus(`✅ ${parsed.length} ROs read from ${file.name} — ${result.added} new, ${result.updated} refreshed${lastUpdate ? ` · report last updated ${fmtDate(lastUpdate)}` : ''}${warnings.length ? ` · ⚠️ ${warnings.length} line${warnings.length === 1 ? '' : 's'} skipped` : ''}`);
-      trackAction('deferred-upload', file.name);
+      setStatus(message);
     } catch (e) { setStatus('❌ ' + (e?.message || e)); }
     finally { setBusy(''); if (fileRef.current) fileRef.current.value = ''; }
   }
