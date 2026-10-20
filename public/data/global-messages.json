@@ -1,29 +1,5 @@
 [
   {
-    "id": "gm-mv15vkazk0l8",
-    "from": "SHAWN",
-    "to": [
-      "CORY"
-    ],
-    "text": "CAN YOU FINISH MPI AND LINES ON RO 781320 PLEASE",
-    "alert": true,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791562199435
-  },
-  {
-    "id": "gm-mv6qpfiugejj",
-    "from": "SHAWN",
-    "to": [
-      "KAI"
-    ],
-    "text": "781457 SUB-ENGINE APPROVED. WILL NEED SURGE INTAKE AS WELL. MAY NEED TO LOOK UP TSB WITH ADDITIONAL PARTS",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791899516118
-  },
-  {
     "id": "gm-mv6urqz3cjmq",
     "from": "SHAWN",
     "to": [
@@ -98,5 +74,24 @@
       }
     ],
     "timestamp": 1792073075931
+  },
+  {
+    "id": "gm-mvgtqzcpipsn",
+    "from": "SHAWN",
+    "to": [
+      "KAI"
+    ],
+    "text": "can you email me a copy of the rental bill please",
+    "media": [
+      {
+        "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/message-media/mvgtqyyz-sx7iwc.png",
+        "name": "Screenshot 2026-10-20 at 11.14.26 AM.png",
+        "type": "image/png"
+      }
+    ],
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792509289081
   }
 ]
