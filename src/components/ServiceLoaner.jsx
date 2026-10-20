@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadServiceLoanerToS3, deleteS3ObjectByUrl } from '../utils/s3';
-import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet, blacklistHit } from '../utils/serviceLoaner';
+import { readLoanerContract, fieldWarnings, isPdf, fixWithFleet, blacklistHit, readTotalDue } from '../utils/serviceLoaner';
 import LoanerRequests from './LoanerRequests';
 import LoanerMaintenance from './LoanerMaintenance';
 import LoanerInventory from './LoanerInventory';
@@ -125,7 +125,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const [editing, setEditing] = useState(null);     // stored contract being corrected
   const [editDraft, setEditDraft] = useState(null);
   const [editView, setEditView] = useState('out'); // which copy the editor previews
-  const [warrantyAmt, setWarrantyAmt] = useState(null); // popup open when not null
+  const warrantyNext = useRef(false);                     // the completed upload about to happen is a warranty loaner
   const [warrantyAsk, setWarrantyAsk] = useState(false); // "Is this a warranty loaner?" before the completed upload
   const completedRef = useRef(null);
   const originalRef = useRef(null);
@@ -194,7 +194,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
     setStatus('');
     setEditing(c);
     setEditView(c.completedUrl ? 'completed' : 'out');
-    setEditDraft(Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])));
+    setEditDraft({ ...Object.fromEntries(Object.keys(EMPTY).map(k => [k, c[k] || ''])), warrantyAmount: c.warranty ? String(c.warranty.amount) : '' });
     setAutoRead('');
     autoFill(c);
   }
@@ -231,16 +231,28 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       setAutoRead('');
     }
   }
-  function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAmt(null); setWarrantyAsk(false); }
-  // Completed-contract upload starts with "Is this warranty?". The file picker
-  // opens straight from the No / Done click so the browser allows it.
-  const pickCompleted = () => { if (completedRef.current) completedRef.current.click(); };
+  function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAsk(false); }
+  // Completed-contract upload starts with "Is this warranty?" — either answer
+  // opens the file picker straight from the click (so the browser allows it).
+  // Yes: once the contract is up, its TOTAL DUE becomes the warranty amount.
+  const pickCompleted = (warranty) => { warrantyNext.current = warranty; if (completedRef.current) completedRef.current.click(); };
+  // The Warranty $ box → the stored claim: blank clears it, an unchanged amount
+  // keeps who/when, a new amount restamps it.
+  function warrantyFromDraft(amountText, prev) {
+    const t = String(amountText || '').replace(/[$,\s]/g, '');
+    if (!t) return null;
+    const n = Math.round(parseFloat(t) * 100) / 100;
+    if (!isFinite(n) || n <= 0) return prev || null;
+    if (prev && Number(prev.amount) === n) return prev;
+    return { amount: n, at: new Date().toISOString(), by: currentUser };
+  }
 
   async function saveEdit() {
     if (!editing || !editDraft) return;
     setBusy(true); setStatus('Saving…');
     try {
-      const changes = { ...editDraft, vin: editDraft.vin.trim().toUpperCase(), editedAt: new Date().toISOString(), editedBy: currentUser };
+      const { warrantyAmount, ...fields } = editDraft;
+      const changes = { ...fields, vin: editDraft.vin.trim().toUpperCase(), warranty: warrantyFromDraft(warrantyAmount, editing.warranty), editedAt: new Date().toISOString(), editedBy: currentUser };
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, ...changes } : x) }),
         `edit RO ${changes.ro || '(none)'}`);
       setContracts(next.contracts);
@@ -293,6 +305,19 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       setEditView('completed');
       if (old) { try { await deleteS3ObjectByUrl(old); } catch {} }
       setStatus('✓ Completed contract saved — it now sits under ✅ Completed contracts.');
+      if (warrantyNext.current) {
+        warrantyNext.current = false;
+        setStatus('✓ Completed contract saved · 🛡 reading TOTAL DUE for the warranty…');
+        let total = null;
+        try { total = await readTotalDue(f); } catch {}
+        setBusy(false);
+        if (total != null && total > 0) await saveWarranty(total);
+        else {
+          setEditDraft(d => (d ? { ...d, warrantyAmount: d.warrantyAmount || '' } : d));
+          setStatus('✓ Completed contract saved · ⚠ couldn\'t find TOTAL DUE — type the warranty amount in Warranty $, then Save changes.');
+        }
+        return;
+      }
     } catch (e) {
       setStatus(`❌ ${e.message || 'Upload failed.'}`);
     }
@@ -330,15 +355,15 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   // Warranty claim: the loaner days are billed to warranty for this amount.
   async function saveWarranty(amount) {
     if (!editing) return;
-    const warranty = amount == null ? null : { amount, at: new Date().toISOString(), by: currentUser };
+    const warranty = amount == null ? null : { amount, at: new Date().toISOString(), by: currentUser, fromContract: true };
     setBusy(true); setStatus('Saving…');
     try {
       const next = await updateServiceLoaners(cur => ({ ...cur, contracts: cur.contracts.map(x => x.id === editing.id ? { ...x, warranty } : x) }),
         `${warranty ? 'warranty' : 'remove warranty'} RO ${editing.ro || '(none)'}`);
       setContracts(next.contracts);
       setEditing(e => ({ ...e, warranty }));
-      setWarrantyAmt(null);
-      setStatus(warranty ? `✓ Warranty claim saved — ${money(amount)}.` : '✓ Warranty claim removed.');
+      setEditDraft(d => (d ? { ...d, warrantyAmount: warranty ? String(warranty.amount) : '' } : d));
+      setStatus(warranty ? `✓ Warranty ${money(amount)} read from the contract's TOTAL DUE — change it in Warranty $ if needed, then Save changes.` : '✓ Warranty claim removed.');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Save failed.'}`);
     }
@@ -464,6 +489,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
             style={{ ...inputStyle, letterSpacing: k === 'vin' ? '.06em' : 0, colorScheme: 'dark' }} />
         </label>
       ))}
+      {'warrantyAmount' in d && (
+        <label style={{ display: 'grid', gap: 4 }}>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#fdba74' }}>🛡 Warranty $ <span style={{ color: '#64748b', fontWeight: 700 }}>· blank = not warranty</span></span>
+          <input inputMode="decimal" value={d.warrantyAmount} disabled={disabled} placeholder="—"
+            onChange={e => set(x => ({ ...x, warrantyAmount: e.target.value }))}
+            style={{ ...inputStyle, colorScheme: 'dark', ...(d.warrantyAmount ? { border: '1px solid rgba(251,146,60,.6)' } : null) }} />
+        </label>
+      )}
       <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}>
         <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>Notes</span>
         <textarea value={d.notes || ''} disabled={disabled} rows={3} placeholder="Damage, fuel, mileage, anything to remember…"
@@ -753,53 +786,17 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
             <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>🛡 Is this a warranty loaner?</div>
             <div style={{ fontSize: 13, color: '#94a3b8', margin: '4px 0 16px' }}>
               {editing.firstName} {editing.lastName}{editing.ro ? ` · RO ${editing.ro}` : ''}
+              <div style={{ marginTop: 6, fontSize: 12 }}>Yes → the contract's TOTAL DUE becomes the warranty amount.</div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <button style={{ ...btn('251,146,60'), fontSize: 15, padding: '11px 0' }}
-                onClick={() => { setWarrantyAsk(false); setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : ''); }}>Yes</button>
+                onClick={() => { setWarrantyAsk(false); pickCompleted(true); }}>Yes</button>
               <button style={{ ...btn('148,163,184'), fontSize: 15, padding: '11px 0' }}
-                onClick={() => { setWarrantyAsk(false); pickCompleted(); }}>No</button>
+                onClick={() => { setWarrantyAsk(false); pickCompleted(false); }}>No</button>
             </div>
           </div>
         </div>
       )}
-      {warrantyAmt != null && editing && (() => {
-        const n = parseFloat(String(warrantyAmt).replace(/[$,\s]/g, ''));
-        const valid = isFinite(n) && n > 0;
-        // Done: open the file picker now (inside the click), save the claim alongside.
-        const submit = () => { if (valid && !busy) { pickCompleted(); saveWarranty(Math.round(n * 100) / 100); } };
-        return (
-          <div onClick={() => !busy && setWarrantyAmt(null)}
-            style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 380, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
-              <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>🛡 Warranty claim</div>
-              <div style={{ fontSize: 13, color: '#94a3b8', margin: '4px 0 14px' }}>
-                {editing.firstName} {editing.lastName}{editing.ro ? ` · RO ${editing.ro}` : ''}
-              </div>
-              <label style={{ display: 'grid', gap: 4 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8' }}>Claim amount</span>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontWeight: 800 }}>$</span>
-                  <input autoFocus inputMode="decimal" value={warrantyAmt} placeholder="0.00" disabled={busy}
-                    onChange={e => setWarrantyAmt(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') setWarrantyAmt(null); }}
-                    style={{ ...inputStyle, paddingLeft: 26, fontSize: 18 }} />
-                </div>
-              </label>
-              <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
-                <button disabled={!valid || busy} style={{ ...btn('251,146,60'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
-                  {busy ? 'Saving…' : '✓ Done — upload contract'}
-                </button>
-                <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setWarrantyAmt(null)}>Cancel</button>
-                {editing.warranty && (
-                  <button disabled={busy} style={{ ...btn('248,113,113', false), marginLeft: 'auto' }}
-                    onClick={() => { if (window.confirm('Remove the warranty claim from this contract?')) saveWarranty(null); }}>Remove</button>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })()}
     </div>
   );
 }

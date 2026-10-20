@@ -201,6 +201,50 @@ export async function readLoanerContract(file) {
   return normaliseFields(await readImages(images));
 }
 
+// ── Completed (returned) contract: the charge ──────────────────────────────────
+// TOTAL DUE off the returned contract — used as the warranty claim amount.
+// A PDF with a text layer is read directly; a scan falls back to gpt-4o on the
+// face page. Returns a number, or null when it can't be found.
+const TOTAL_RE = /TOTAL\s*DUE[^0-9$-]{0,40}\$?\s*(-?[\d,]+\.\d{2})/i;
+export async function readTotalDue(file) {
+  if (isPdf(file)) {
+    try {
+      const pdfjs = await loadPdfJs();
+      const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+      try {
+        for (let p = 1; p <= Math.min(doc.numPages, 6); p++) {
+          const page = await doc.getPage(p);
+          const text = (await page.getTextContent()).items.map(i => i.str).join(' ');
+          const m = text.match(TOTAL_RE);
+          if (m) return Number(m[1].replace(/,/g, ''));
+        }
+      } finally { try { doc.destroy(); } catch {} }
+    } catch {}
+  }
+  let image;
+  if (isPdf(file)) image = (await pdfFirstPageImages(file))[0];
+  else if (/^image\//.test(file.type || '')) image = await readAsDataUrl(file);
+  else return null;
+  const res = await openaiRequest({
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o', temperature: 0, max_tokens: 60,
+      messages: [{ role: 'user', content: [
+        { type: 'text', text: 'This is a returned service loaner contract. Find the "TOTAL DUE" row in the PAYMENTS table and return ONLY JSON {"total_due": number|null} — the AMOUNT on that row, no $ or commas. null if there is no TOTAL DUE.' },
+        { type: 'image_url', image_url: { url: image, detail: 'high' } },
+      ] }],
+    }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json().catch(() => null);
+  const text = (data?.choices?.[0]?.message?.content || '').replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+  try {
+    const n = Number(JSON.parse(text).total_due);
+    return isFinite(n) ? n : null;
+  } catch { return null; }
+}
+
 // ── Bulk upload ───────────────────────────────────────────────────────────────
 // One scanned PDF holding many contracts, one face page each (terms / blank
 // pages are spotted and skipped). Every page is read like a single upload;
