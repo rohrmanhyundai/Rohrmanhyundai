@@ -156,9 +156,17 @@ export default function TvAdvisors({ data, tick }) {
   const team = advisorsForDisplay(data).filter(a => !a.hidden);
   const sum = started ? (data.advisorSummary || {}) : {};
   const appts = useTodayAppts(tick);
+  // Shop averages glow against the same goals and colours as the rings:
+  // green at goal, yellow within 85%, red (pulsing) below that.
+  const goalOf = Object.fromEntries(scoreMetrics(data).map(m => [m.key, m.goal]));
+  const tone = (key) => {
+    const goal = goalOf[key], v = safe(sum[key]);
+    if (!started || !goal) return '';
+    return v >= goal - 1e-9 ? 'good' : v / goal >= 0.85 ? 'close' : 'bad';
+  };
   const avgs = [
-    ['Align', pct(sum.align, 1)], ['Tires', pct(sum.tires, 1)],
-    ['Valvoline', pct(sum.valvoline, 1)], ['CSI', Math.round(safe(sum.csi)).toString()],
+    ['Align', pct(sum.align, 1), tone('align')], ['Tires', pct(sum.tires, 1), tone('tires')],
+    ['Valvoline', pct(sum.valvoline, 1), tone('valvoline')], ['CSI', Math.round(safe(sum.csi)).toString(), tone('csi')],
   ];
   return (
     <section className="card tvd-advs">
@@ -167,7 +175,7 @@ export default function TvAdvisors({ data, tick }) {
         <div className="title">Advisor Performance</div>
         <div className="note">Snapshot {started ? (data.advisorSummary && data.advisorSummary.date) || '—' : '—'} · ring number = how many to sell today to be back at goal</div>
         <div style={{ flex: 1 }} />
-        {avgs.map(([k, v]) => <div className="tvd-avg" key={k}>Shop {k} <b>{v}</b></div>)}
+        {avgs.map(([k, v, t]) => <div className={`tvd-avg ${t}`} key={k}>Shop {k} <b>{v}</b></div>)}
       </div>
       <div className="tvd-adv-list" style={{ gridTemplateRows: `repeat(${Math.max(1, team.length)}, minmax(0, 1fr))` }}>
         {team.map(a => {

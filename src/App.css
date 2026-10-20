@@ -1122,6 +1122,14 @@ html, body {
 .tvd-advs{display:flex;flex-direction:column;gap:6px;padding:8px 10px}
 .tvd-avg{font-size:15px;font-weight:800;color:#94a3b8;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:rgba(255,255,255,.04);white-space:nowrap}
 .tvd-avg b{font-size:17px;font-weight:900;margin-left:4px}
+.tvd-avg.good{color:#bbf7d0;border-color:rgba(74,222,128,.7);background:rgba(74,222,128,.12);box-shadow:0 0 14px rgba(74,222,128,.45),inset 0 0 8px rgba(74,222,128,.15)}
+.tvd-avg.good b{color:#4ade80;text-shadow:0 0 10px rgba(74,222,128,.7)}
+.tvd-avg.close{color:#fef08a;border-color:rgba(250,204,21,.7);background:rgba(250,204,21,.1);box-shadow:0 0 14px rgba(250,204,21,.4),inset 0 0 8px rgba(250,204,21,.12)}
+.tvd-avg.close b{color:#facc15;text-shadow:0 0 10px rgba(250,204,21,.7)}
+.tvd-avg.bad{color:#fecaca;border-color:rgba(248,113,113,.75);background:rgba(248,113,113,.12);animation:tvdAvgBad 2.4s ease-in-out infinite}
+.tvd-avg.bad b{color:#f87171;text-shadow:0 0 10px rgba(248,113,113,.75)}
+@keyframes tvdAvgBad{0%,100%{box-shadow:0 0 8px rgba(248,113,113,.35)}50%{box-shadow:0 0 20px rgba(248,113,113,.75)}}
+@media (prefers-reduced-motion: reduce){.tvd-avg.bad{animation:none;box-shadow:0 0 14px rgba(248,113,113,.55)}}
 .tvd-adv-list{flex:1;min-height:0;display:grid;gap:6px}
 .tvd-adv{min-height:0;display:flex;gap:10px;align-items:stretch;background:rgba(2,6,23,.45);border:1.5px solid rgba(110,231,249,.22);border-radius:14px;padding:6px 10px;overflow:hidden}
 .tvd-adv-who{width:17%;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;min-width:0;gap:2px}
