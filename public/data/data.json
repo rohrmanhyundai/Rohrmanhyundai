@@ -342,7 +342,7 @@
         "valvoline": 0.6667,
         "roh50_hrs_ro": 1.07,
         "roh50_add_rate": 0.5,
-        "csi": 0,
+        "csi": 917,
         "asr": 0.2295,
         "elr": 0.9946,
         "last_month_total": 0,
@@ -354,7 +354,8 @@
         "coupon_usage_pct": 0.0266,
         "roh50_month": "2026-10",
         "lof_tickets": 4,
-        "lof_oil_only": 2
+        "lof_oil_only": 2,
+        "min_csi": 917
       }
     ],
     "advisorTraining": [
@@ -430,7 +431,7 @@
       "align": 0.0713,
       "tires": 0.05396666666666666,
       "valvoline": 0.3904666666666667,
-      "csi": 620.3333333333334
+      "csi": 926
     },
     "techTotals": {
       "mon": 39.18,
