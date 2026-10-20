@@ -126,6 +126,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const [editDraft, setEditDraft] = useState(null);
   const [editView, setEditView] = useState('out'); // which copy the editor previews
   const [warrantyAmt, setWarrantyAmt] = useState(null); // popup open when not null
+  const [warrantyAsk, setWarrantyAsk] = useState(false); // "Is this a warranty loaner?" before the completed upload
   const completedRef = useRef(null);
   const originalRef = useRef(null);
   // Loaner Inventory — a scanned contract's VIN is checked against it (fixWithFleet).
@@ -230,7 +231,10 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
       setAutoRead('');
     }
   }
-  function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAmt(null); }
+  function cancelEdit() { setEditing(null); setEditDraft(null); setWarrantyAmt(null); setWarrantyAsk(false); }
+  // Completed-contract upload starts with "Is this warranty?". The file picker
+  // opens straight from the No / Done click so the browser allows it.
+  const pickCompleted = () => { if (completedRef.current) completedRef.current.click(); };
 
   async function saveEdit() {
     if (!editing || !editDraft) return;
@@ -581,11 +585,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                         </button>
                         <button disabled={busy} style={b('148,163,184', false)} onClick={cancelEdit}>Cancel</button>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
-                        <button disabled={busy} style={b('251,146,60', !!editing.warranty)} title={editing.warranty ? `Warranty claim ${money(editing.warranty.amount)}` : 'Warranty claim'}
-                          onClick={() => setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : '')}>
-                          🛡 {editing.warranty ? money(editing.warranty.amount) : 'Warranty'}
-                        </button>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
                         {listed
                           ? <button disabled style={{ ...b('248,113,113', false), opacity: 0.7 }} title="Already on the black list — see the ⛔ Black List tab">⛔ Listed</button>
                           : <button disabled={busy} style={b('248,113,113')} title="Put this customer on the loaner black list" onClick={() => setBlModal({ notes: '' })}>⛔ Black List</button>}
@@ -622,9 +622,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
                       : 'Scan the contract once the loaner is checked back in and upload it here. The original stays on file.'}
                   </div>
                   <input ref={completedRef} type="file" accept="application/pdf,.pdf,image/*" style={{ display: 'none' }} onChange={e => uploadCompleted(e.target.files && e.target.files[0])} />
-                  <button disabled={busy} style={{ ...btn('56,189,248'), fontSize: 14, padding: '9px 18px' }} onClick={() => completedRef.current && completedRef.current.click()}>
+                  <button disabled={busy} style={{ ...btn('56,189,248'), fontSize: 14, padding: '9px 18px' }} onClick={() => setWarrantyAsk(true)}>
                     📥 {editing.completedUrl ? 'Replace completed contract' : 'Upload completed contract'}
                   </button>
+                  {editing.warranty && (
+                    <div style={{ marginTop: 10, width: 'fit-content', padding: '4px 10px', borderRadius: 999, fontSize: 12.5, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.5)' }}>
+                      🛡 Warranty claim {money(editing.warranty.amount)}
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ ...card, padding: 8, height: 'calc(100vh - 230px)', minHeight: 480, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -741,10 +746,28 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
           </div>
         );
       })()}
+      {warrantyAsk && editing && (
+        <div onClick={() => setWarrantyAsk(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 380, boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+            <div style={{ fontSize: 17, fontWeight: 900, color: '#f1f5f9' }}>🛡 Is this a warranty loaner?</div>
+            <div style={{ fontSize: 13, color: '#94a3b8', margin: '4px 0 16px' }}>
+              {editing.firstName} {editing.lastName}{editing.ro ? ` · RO ${editing.ro}` : ''}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <button style={{ ...btn('251,146,60'), fontSize: 15, padding: '11px 0' }}
+                onClick={() => { setWarrantyAsk(false); setWarrantyAmt(editing.warranty ? String(editing.warranty.amount) : ''); }}>Yes</button>
+              <button style={{ ...btn('148,163,184'), fontSize: 15, padding: '11px 0' }}
+                onClick={() => { setWarrantyAsk(false); pickCompleted(); }}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
       {warrantyAmt != null && editing && (() => {
         const n = parseFloat(String(warrantyAmt).replace(/[$,\s]/g, ''));
         const valid = isFinite(n) && n > 0;
-        const submit = () => { if (valid && !busy) saveWarranty(Math.round(n * 100) / 100); };
+        // Done: open the file picker now (inside the click), save the claim alongside.
+        const submit = () => { if (valid && !busy) { pickCompleted(); saveWarranty(Math.round(n * 100) / 100); } };
         return (
           <div onClick={() => !busy && setWarrantyAmt(null)}
             style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
@@ -765,7 +788,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
               </label>
               <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
                 <button disabled={!valid || busy} style={{ ...btn('251,146,60'), fontSize: 14, padding: '9px 18px' }} onClick={submit}>
-                  {busy ? 'Saving…' : '✓ Save'}
+                  {busy ? 'Saving…' : '✓ Done — upload contract'}
                 </button>
                 <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setWarrantyAmt(null)}>Cancel</button>
                 {editing.warranty && (
