@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { uploadLoanerMaintenancePhotoToS3, deleteS3ObjectByUrl } from '../utils/s3';
 import { decodeVin, validateVin } from '../utils/vinLookup';
+import { dueByMileage, SUGGESTED_INTERVALS } from '../utils/loanerIntervals';
 
 // ── Loaner Maintenance (Service Loaner page tab) ─────────────────────────────
 // Anyone can put in a request for a loaner that needs maintenance or service:
@@ -10,7 +11,9 @@ import { decodeVin, validateVin } from '../utils/vinLookup';
 // needs (checkboxes + description) and phone photos. Open requests list urgent
 // first, then oldest. Click a row to edit it. Anyone can mark one Done (optional note) or reopen it;
 // managers/admin can delete. Stored in data/service-loaner/maintenance.json,
-// photos in S3 under warranty-media/loaner-maintenance/.
+// photos in S3 under warranty-media/loaner-maintenance/. ⚙️ Setup holds the
+// mileage intervals (utils/loanerIntervals) — loaners near or past one show
+// under "Due by mileage"; click one to start its request.
 
 const card = { background: 'rgba(15,23,42,.55)', border: '1px solid rgba(148,163,184,.18)', borderRadius: 16, padding: '18px 20px' };
 const inputStyle = { background: 'rgba(2,6,23,.6)', border: '1px solid rgba(148,163,184,.3)', borderRadius: 10, color: '#e2e8f0', padding: '9px 12px', fontSize: 15, fontWeight: 700, fontFamily: 'inherit', outline: 'none', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' };
@@ -68,6 +71,8 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
   const uploadPhoto = io?.uploadLoanerMaintenancePhotoToS3 || uploadLoanerMaintenancePhotoToS3;
   const deleteByUrl = io?.deleteS3ObjectByUrl || deleteS3ObjectByUrl;
   const [items, setItems] = useState([]);
+  const [intervals, setIntervals] = useState([]);   // [{ id, service, every, warn }]
+  const [setup, setSetup] = useState(null);         // draft rows while ⚙️ Setup is open
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
@@ -83,7 +88,7 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
 
   useEffect(() => {
     let alive = true;
-    loadLoanerMaintenance().then(d => { if (alive) { setItems(d.requests || []); setLoading(false); } })
+    loadLoanerMaintenance().then(d => { if (alive) { setItems(d.requests || []); setIntervals(d.intervals || []); setLoading(false); } })
       .catch(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, []);
@@ -204,7 +209,9 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
   const markDone = (r) => {
     const note = window.prompt(`Mark loaner ${r.loanerNo || r.vin} done?\n\nOptional note (what was done, RO #…):`, '');
     if (note === null) return;
-    change(r, x => ({ ...x, status: 'done', doneAt: new Date().toISOString(), doneBy: currentUser, doneNote: note.trim() }),
+    const car = fleet.find(v => (r.vin && v.vin === r.vin) || (r.loanerNo && normS(v.stockNo) === normS(r.loanerNo)));
+    const doneMileage = String(Math.max(Number(r.mileage) || 0, Number(car && car.mileage) || 0) || '');
+    change(r, x => ({ ...x, status: 'done', doneAt: new Date().toISOString(), doneBy: currentUser, doneNote: note.trim(), ...(doneMileage ? { doneMileage } : {}) }),
       `done ${r.loanerNo || r.vin}`, `✓ Loaner ${r.loanerNo || r.vin} marked done.`);
   };
   const reopen = (r) => {
@@ -221,6 +228,70 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
       setStatus('✓ Request deleted.');
     } catch (e) {
       setStatus(`❌ ${e.message || 'Delete failed.'}`);
+    }
+    setBusy(false);
+  }
+
+  // ── Mileage intervals ──────────────────────────────────────────────────
+  const due = useMemo(() => dueByMileage(intervals, fleet, items), [intervals, fleet, items]);
+  // One card per loaner, with every service it has coming due.
+  const dueCars = useMemo(() => {
+    const by = new Map();
+    for (const d of due) {
+      const k = d.vehicle.id;
+      if (!by.has(k)) by.set(k, { vehicle: d.vehicle, miles: d.miles, list: [] });
+      by.get(k).list.push(d);
+    }
+    return [...by.values()];
+  }, [due]);
+  const newId = () => `mi-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  function openSetup() {
+    setSetup(intervals.length ? intervals.map(r => ({ ...r })) : SUGGESTED_INTERVALS.map(r => ({ id: newId(), ...r })));
+  }
+  async function saveSetup() {
+    const rows = setup.filter(r => r.service && Number(r.every) > 0)
+      .map(r => ({ id: r.id || newId(), service: r.service, every: Math.round(Number(r.every)), warn: Math.max(0, Math.round(Number(r.warn) || 0)) }));
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateLoanerMaintenance(cur => ({ ...cur, intervals: rows }), 'intervals');
+      setIntervals(next.intervals || rows); setItems(next.requests);
+      setSetup(null);
+      setStatus(`✓ ${rows.length} maintenance interval${rows.length === 1 ? '' : 's'} saved.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
+    }
+    setBusy(false);
+  }
+  function startDue(car) {
+    const v = car.vehicle;
+    setStatus('');
+    setDraft({
+      ...EMPTY(), loanerNo: v.stockNo || '', vin: v.vin || '', year: v.year || '', make: v.make || '', model: v.model || '',
+      mileage: String(car.miles), priority: 'routine', services: car.list.map(d => d.rule.service),
+      description: car.list.map(d => `${d.rule.service} due at ${d.dueAt.toLocaleString()} mi (every ${Number(d.rule.every).toLocaleString()})`).join(' · '),
+    });
+    setFormOpen(true);
+  }
+  // Done somewhere else / already handled: log it as done at today's miles so
+  // the next interval counts from here.
+  async function logDueDone(car) {
+    const v = car.vehicle;
+    const svcs = car.list.map(d => d.rule.service);
+    if (!window.confirm(`Log ${svcs.join(' + ')} as already done on ${v.stockNo ? `#${v.stockNo}` : v.vin} at ${car.miles.toLocaleString()} mi?`)) return;
+    const now = new Date().toISOString();
+    const rec = {
+      id: `lm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+      loanerNo: v.stockNo || '', vin: v.vin || '', year: v.year || '', make: v.make || '', model: v.model || '',
+      mileage: String(car.miles), doneMileage: String(car.miles), priority: 'routine', services: svcs, description: 'Logged from the mileage reminder', photos: [],
+      status: 'done', requestedAt: now, requestedBy: currentUser, doneAt: now, doneBy: currentUser, doneNote: 'Already done',
+    };
+    setBusy(true); setStatus('Saving…');
+    try {
+      const next = await updateLoanerMaintenance(cur => ({ ...cur, requests: [...cur.requests, rec] }), `log done ${rec.loanerNo || rec.vin}`);
+      setItems(next.requests);
+      setStatus(`✓ Logged ${svcs.join(' + ')} done on ${rec.loanerNo || rec.vin}.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Save failed.'}`);
     }
     setBusy(false);
   }
@@ -318,6 +389,9 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
           </span>
         )}
         {status && !formOpen && <span style={{ fontSize: 13.5, fontWeight: 800, color: status.startsWith('❌') ? '#fca5a5' : '#86efac' }}>{status}</span>}
+        <div style={{ flex: 1 }} />
+        <button disabled={busy} onClick={openSetup} title="Mileage intervals — loaners near or past one show under Due by mileage"
+          style={{ ...btn('196,181,253'), fontSize: 14.5, padding: '10px 18px' }}>⚙️ Setup page</button>
       </div>
 
       <div style={card}>
@@ -334,6 +408,107 @@ export default function LoanerMaintenance({ currentUser, isManager, io, prefill 
           </div>
         )}
       </div>
+
+      {/* Mileage reminders from ⚙️ Setup */}
+      <div style={card}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#f1f5f9' }}>
+            🔔 Due by mileage ({dueCars.length}{due.some(d => d.left < 0) ? <span style={{ color: '#fca5a5' }}> · {new Set(due.filter(d => d.left < 0).map(d => d.vehicle.id)).size} past due</span> : ''})
+          </div>
+          <span style={{ fontSize: 12.5, color: '#94a3b8' }}>
+            {intervals.length ? intervals.map(r => `${r.service} every ${Number(r.every).toLocaleString()} mi`).join(' · ') : 'No intervals yet — set them up on ⚙️ Setup page.'}
+          </span>
+        </div>
+        {!intervals.length ? null
+          : dueCars.length === 0 ? <div style={{ color: '#94a3b8' }}>Every loaner is under its next service mileage. 👍</div>
+          : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+              {dueCars.map(car => {
+                const v = car.vehicle;
+                const worst = Math.min(...car.list.map(d => d.left));
+                const rgb = worst < 0 ? '248,113,113' : '251,191,36';
+                return (
+                  <div key={v.id} onClick={() => !busy && startDue(car)} title="Click to start the maintenance request"
+                    style={{ cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: `rgba(${rgb},.08)`, border: `1px solid rgba(${rgb},.5)`, boxShadow: worst < 0 ? `0 0 16px rgba(${rgb},.25)` : 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                      <div style={{ flex: 1, fontWeight: 900, fontSize: 16, color: '#f1f5f9' }}>{v.stockNo ? `Stock #${v.stockNo}` : v.vin}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 800, color: '#cbd5e1' }}>{car.miles.toLocaleString()} mi</div>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#cbd5e1', marginTop: 2 }}>{vehicleText(v)}</div>
+                    <div style={{ display: 'grid', gap: 4, marginTop: 8 }}>
+                      {car.list.map(d => (
+                        <div key={d.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                          <span style={{ fontWeight: 900, color: '#bfdbfe' }}>{d.rule.service}</span>
+                          <span style={{ color: '#94a3b8' }}>due {d.dueAt.toLocaleString()}</span>
+                          <span style={{ marginLeft: 'auto', fontWeight: 900, color: d.left < 0 ? '#fca5a5' : '#fde68a' }}>
+                            {d.left < 0 ? `${Math.abs(d.left).toLocaleString()} mi past` : d.left === 0 ? 'due now' : `${d.left.toLocaleString()} mi to go`}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                      <span style={{ ...btn('74,222,128'), fontSize: 12 }}>🔧 Set up maintenance</span>
+                      <button disabled={busy} style={{ ...btn('148,163,184', false), fontSize: 12 }} onClick={e => { e.stopPropagation(); logDueDone(car); }}>✓ Already done</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+      </div>
+
+      {setup && (
+        <div onClick={() => !busy && setSetup(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(2,6,23,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...card, background: '#0f172a', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,.5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>⚙️ Maintenance intervals</div>
+              <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setSetup(null)}>✕</button>
+            </div>
+            <div style={{ fontSize: 13, color: '#94a3b8', margin: '6px 0 14px', lineHeight: 1.5 }}>
+              Every loaner's miles (from Loaner Inventory / the fleet PDF) are checked against these. A loaner shows under
+              <strong style={{ color: '#fde68a' }}> 🔔 Due by mileage</strong> once it's within the warning miles of its next service, and turns red when it's past.
+              The next service counts from the miles it was last marked <em>Done</em>.
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr auto', gap: 8, alignItems: 'center' }}>
+              <span style={label}>Service</span><span style={label}>Every (miles)</span><span style={label}>Warn this many miles early</span><span />
+              {setup.map((r, i) => {
+                const upd = (k) => (e) => setSetup(rows => rows.map((x, j) => (j === i ? { ...x, [k]: e.target.value } : x)));
+                return (
+                  <React.Fragment key={r.id || i}>
+                    <select value={r.service} onChange={upd('service')} disabled={busy || !isManager} style={inputStyle}>
+                      <option value="">— pick —</option>
+                      {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <input inputMode="numeric" value={r.every} onChange={upd('every')} disabled={busy || !isManager} placeholder="5000" style={inputStyle} />
+                    <input inputMode="numeric" value={r.warn} onChange={upd('warn')} disabled={busy || !isManager} placeholder="500" style={inputStyle} />
+                    <button disabled={busy || !isManager} title="Remove" onClick={() => setSetup(rows => rows.filter((_, j) => j !== i))} style={{ ...btn('248,113,113', false), padding: '7px 10px' }}>✕</button>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+            {isManager && (
+              <button disabled={busy} style={{ ...btn('96,165,250'), marginTop: 10 }} onClick={() => setSetup(rows => [...rows, { id: newId(), service: '', every: '', warn: 500 }])}>＋ Add interval</button>
+            )}
+            {(() => {
+              const preview = dueByMileage(setup.filter(r => r.service && Number(r.every) > 0).map((r, i) => ({ ...r, id: r.id || String(i) })), fleet, items);
+              const cars = new Set(preview.map(d => d.vehicle.id)).size;
+              return (
+                <div style={{ fontSize: 13, color: '#cbd5e1', marginTop: 14 }}>
+                  With these settings: <strong style={{ color: cars ? '#fde68a' : '#86efac' }}>{cars} of {fleet.length} loaner{fleet.length === 1 ? '' : 's'}</strong> would show as due
+                  {preview.some(d => d.left < 0) ? <> (<strong style={{ color: '#fca5a5' }}>{new Set(preview.filter(d => d.left < 0).map(d => d.vehicle.id)).size} past due</strong>)</> : null}.
+                </div>
+              );
+            })()}
+            <div style={{ display: 'flex', gap: 10, marginTop: 16, alignItems: 'center' }}>
+              {isManager
+                ? <button disabled={busy} style={{ ...btn('74,222,128'), fontSize: 14, padding: '9px 18px' }} onClick={saveSetup}>{busy ? 'Saving…' : '✓ Save intervals'}</button>
+                : <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Only a manager can change these.</span>}
+              <button disabled={busy} style={btn('148,163,184', false)} onClick={() => setSetup(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {formOpen && (
         <div onClick={() => !busy && closeForm()}
