@@ -1,17 +1,5 @@
 [
   {
-    "id": "gm-mv6urqz3cjmq",
-    "from": "SHAWN",
-    "to": [
-      "JORDAN"
-    ],
-    "text": "DID YOU GET THAT LOANER AGREEMENT SIGNED?",
-    "alert": false,
-    "requireReply": false,
-    "replies": [],
-    "timestamp": 1791906342735
-  },
-  {
     "id": "gm-mv87qe6dhefi",
     "from": "SHAWN",
     "to": [
@@ -93,5 +81,17 @@
     "requireReply": false,
     "replies": [],
     "timestamp": 1792509289081
+  },
+  {
+    "id": "gm-mvgv0j5uplc7",
+    "from": "SHAWN",
+    "to": [
+      "DAVID"
+    ],
+    "text": "did you contact 781651 car is ready?",
+    "alert": false,
+    "requireReply": false,
+    "replies": [],
+    "timestamp": 1792511414274
   }
 ]
