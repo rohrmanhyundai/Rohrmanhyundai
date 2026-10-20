@@ -1,0 +1,402 @@
+{
+  "advisorName": "JORDAN",
+  "date": "2026-10-20",
+  "rows": [
+    {
+      "id": "rmvgkxayf0cf4",
+      "customerName": "Julie Ehrlich",
+      "appointmentTime": "8:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43695",
+      "vehicle": "2018 Hyundai Santa Fe Sport",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "776378",
+        "date": "2026-04-02",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 2115.17,
+        "hours": 8.5,
+        "phone": "7654134279",
+        "vin": "5NMZW4LA2JH106968",
+        "items": [
+          {
+            "code": "RPADRESURF",
+            "desc": "Replace Rear Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 431.99,
+            "priceEst": false
+          },
+          {
+            "code": "PADRESURF",
+            "desc": "Replace Front Pads and Resurface Rotors",
+            "count": 1,
+            "h": 1.8,
+            "price": 441.99,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 2.3,
+            "est": true,
+            "price": 576.3,
+            "priceEst": true
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.95,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 459.95,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 169.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayf0ren",
+      "customerName": "Stephen Puckett",
+      "appointmentTime": "8:40 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43673",
+      "vehicle": "2013 BMW 128i",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "CUSTOMER STATES- Bringing fluid for trans exchange and rear diff. Request Gavin"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxayfwejb",
+      "customerName": "Cecil Carter",
+      "appointmentTime": "9:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43689",
+      "vehicle": "2025 Hyundai Palisade",
+      "services": [
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxayfounw",
+      "customerName": "Richard Lofthouse",
+      "appointmentTime": "10:00 AM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43653",
+      "vehicle": "2026 Hyundai Palisade",
+      "services": [
+        "LUBE, OIL AND OIL FILTER SERVICE. RESET OIL LIFE MONITOR. HAZARDOUS WASTE FEE WILL BE APPLIED."
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": null
+    },
+    {
+      "id": "rmvgkxayffd0e",
+      "customerName": "Jennifer Baker",
+      "appointmentTime": "11:00 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43698",
+      "vehicle": "2020 Hyundai Palisade",
+      "services": [
+        "Other (Please use comment box below) — 1000 mile oil check after carbon cleaning"
+      ],
+      "comments": "1000 mile oil check after carbon cleaning",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "780332",
+        "date": "2026-08-31",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1474.63,
+        "hours": 5.3,
+        "phone": "7654040576",
+        "vin": "KM8R5DHE2LU166528",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 3.1,
+            "est": true,
+            "price": 811.98,
+            "priceEst": true
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "VACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 99.99,
+            "priceEst": false
+          },
+          {
+            "code": "BELT",
+            "desc": "REPLACE SERPENTINE BELT",
+            "count": 1,
+            "h": 1,
+            "price": 289.68,
+            "priceEst": false
+          },
+          {
+            "code": "VVBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 179.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayfhjzx",
+      "customerName": "James Weiand",
+      "appointmentTime": "11:20 AM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43772",
+      "vehicle": "2017 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "779382",
+        "date": "2026-07-20",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1224.66,
+        "hours": 5.3,
+        "phone": "3177503674",
+        "vin": "KM8J33A46HU402992",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 141.55,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 35.35,
+            "priceEst": false
+          },
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 465.21,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 202.28,
+            "priceEst": false
+          },
+          {
+            "code": "VBFL",
+            "desc": "BRAKE FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.7,
+            "price": 171.93,
+            "priceEst": false
+          },
+          {
+            "code": "VVCFL",
+            "desc": "COOLANT FLUID EXCHANGE",
+            "count": 1,
+            "h": 0.9,
+            "price": 208.34,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayf9414",
+      "customerName": "Bob Ford",
+      "appointmentTime": "1:00 PM",
+      "criticalDeferredService": "",
+      "waiter": true,
+      "dropOff": false,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43754",
+      "vehicle": "2021 Genesis GV80",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "COMPLIMENTARY TIRE ROTATE"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "deferred": {
+        "ro": "775839",
+        "date": "2026-03-11",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1426.58,
+        "hours": 4.9,
+        "phone": "7654262056",
+        "vin": "KMUHCESCXMU035249",
+        "items": [
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 3.6,
+            "est": true,
+            "price": 1026.62,
+            "priceEst": true
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 106.98,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 92.99,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 199.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "rmvgkxayfd5oy",
+      "customerName": "Curtis Preizner",
+      "appointmentTime": "1:20 PM",
+      "criticalDeferredService": "",
+      "waiter": false,
+      "dropOff": true,
+      "technician": "",
+      "notes": [],
+      "status": "scheduled",
+      "apptNo": "43802",
+      "vehicle": "2021 Hyundai Accent",
+      "services": [],
+      "comments": "",
+      "transport": "SELF",
+      "deferred": {
+        "ro": "781616",
+        "date": "2026-10-16",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 349.94,
+        "hours": 1.8,
+        "phone": "7653766752",
+        "vin": "3KPC24A68ME142000",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 144.07,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 205.87,
+            "priceEst": false
+          }
+        ]
+      }
+    }
+  ],
+  "afterCallRows": [],
+  "savedAt": "2026-10-20T11:07:51.851Z"
+}
