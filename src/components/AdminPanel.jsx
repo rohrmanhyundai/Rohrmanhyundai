@@ -2637,6 +2637,34 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           );
   }
 
+  // Service Policy $ and the two $50 add-on goals — on the Advisors section
+  // and Morning Reporting's Advisor Performance step.
+  function renderAdvisorMonthSettings() {
+    return (
+      <>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 0 4px', flexWrap: 'wrap' }}>
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Monthly Service Policy dollars. Live Pay subtracts (Service Policy ÷ # of advisors × 8%) from each advisor's commission as the Individual Commission Adjustment.">Service Policy $ (monthly)</label>
+          <input type="number" inputMode="decimal" defaultValue={data.service_policy ?? ''} placeholder="e.g. 4200"
+            onBlur={e => updateField('service_policy', safe(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 140, outline: 'none' }} />
+          <span style={{ fontSize: 11, color: '#64748b' }}>Live Pay adjustment = (this ÷ {(data.advisors || []).length || 1} advisors) × 8%</span>
+        </div>
+        {/* Dashboard-wide goals for the two $50 add-on columns. The column header
+            shows the goal and any advisor under it pulses red on the TV. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 4px', flexWrap: 'wrap' }}>
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Goal shown in the $50 ADD'L HRS/RO column header. Advisors under it are flagged on the dashboard.">$50 Add'l Hrs/RO Goal</label>
+          <input type="number" inputMode="decimal" step="0.01" defaultValue={roh50Goals(data).hrs_ro || ''} placeholder="e.g. 1.2"
+            onBlur={e => updateField('roh50_goals.hrs_ro', safe(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
+          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6, marginLeft: 12 }} title="Goal shown in the $50 ADD RATE % column header. Advisors under it are flagged on the dashboard.">$50 Add Rate % Goal</label>
+          <input inputMode="decimal" defaultValue={roh50Goals(data).add_rate ? percentEditValue(roh50Goals(data).add_rate) : ''} placeholder="e.g. 50%"
+            onBlur={e => updateField('roh50_goals.add_rate', parsePercentInput(e.target.value, 0))}
+            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
+          <span style={{ fontSize: 11, color: '#64748b' }}>Leave blank for no goal</span>
+        </div>
+      </>
+    );
+  }
   function renderMorning() {
     const doneCount = MORNING_STEPS.filter(st => morningStepDone(st)).length;
     const pct = Math.round(doneCount / MORNING_STEPS.length * 100);
@@ -2674,6 +2702,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
           </div>
           {note(<><strong style={{ color: '#fbbf24' }}>Expand every advisor in Tekion before saving the .html</strong> — MTD Hrs subtracts each advisor's Internal hours, and a collapsed row has none to subtract. Each file shows what will change; click <strong>OK — Apply</strong>.</>)}
           {statusLine(advisorXlsxStatus)}
+          <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px solid rgba(148,163,184,.15)' }}>
+            {renderAdvisorMonthSettings()}
+          </div>
         </>
       );
       if (st.key === 'addOn') return (
@@ -2965,26 +2996,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <div className="small">Daily Avg is automatic. You can edit MTD Hrs, Hrs/RO, and percentages.</div>
         <div className="small" style={{ color: '#7dd3fc', marginTop: 2 }}>On <em>Save Changes</em>, each advisor's MTD Hrs &amp; Hrs/RO are written to their Goals/Forecasting for the previous working day (a day behind), overwriting their entry.</div>
         {reconcileMsg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#6ee7b7', fontWeight: 700, lineHeight: 1.4 }}>{reconcileMsg}</div>}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 0 4px', flexWrap: 'wrap' }}>
-          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Monthly Service Policy dollars. Live Pay subtracts (Service Policy ÷ # of advisors × 8%) from each advisor's commission as the Individual Commission Adjustment.">Service Policy $ (monthly)</label>
-          <input type="number" inputMode="decimal" defaultValue={data.service_policy ?? ''} placeholder="e.g. 4200"
-            onBlur={e => updateField('service_policy', safe(e.target.value, 0))}
-            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 140, outline: 'none' }} />
-          <span style={{ fontSize: 11, color: '#64748b' }}>Live Pay adjustment = (this ÷ {(data.advisors || []).length || 1} advisors) × 8%</span>
-        </div>
-        {/* Dashboard-wide goals for the two $50 add-on columns. The column header
-            shows the goal and any advisor under it pulses red on the TV. */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 4px', flexWrap: 'wrap' }}>
-          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6 }} title="Goal shown in the $50 ADD'L HRS/RO column header. Advisors under it are flagged on the dashboard.">$50 Add'l Hrs/RO Goal</label>
-          <input type="number" inputMode="decimal" step="0.01" defaultValue={roh50Goals(data).hrs_ro || ''} placeholder="e.g. 1.2"
-            onBlur={e => updateField('roh50_goals.hrs_ro', safe(e.target.value, 0))}
-            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
-          <label style={{ fontSize: 12, fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: .6, marginLeft: 12 }} title="Goal shown in the $50 ADD RATE % column header. Advisors under it are flagged on the dashboard.">$50 Add Rate % Goal</label>
-          <input inputMode="decimal" defaultValue={roh50Goals(data).add_rate ? percentEditValue(roh50Goals(data).add_rate) : ''} placeholder="e.g. 50%"
-            onBlur={e => updateField('roh50_goals.add_rate', parsePercentInput(e.target.value, 0))}
-            style={{ background: 'rgba(2,6,23,.55)', border: '1px solid rgba(148,163,184,.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontWeight: 700, color: '#e2e8f0', width: 100, outline: 'none' }} />
-          <span style={{ fontSize: 11, color: '#64748b' }}>Leave blank for no goal</span>
-        </div>
+        {renderAdvisorMonthSettings()}
         {data.advisors.map((a, idx) => (
           <div className="form-section" key={a.name}>
             <div className="title" style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
