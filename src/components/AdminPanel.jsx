@@ -542,6 +542,8 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
   const [newUserChatAccess, setNewUserChatAccess] = useState(false);
   const [newUserTechChatAccess, setNewUserTechChatAccess] = useState(false);
   const [openSection, setOpenSection] = useState(null);
+  const [sectionFrom, setSectionFrom] = useState(null);   // 'morning' when Advisors/Technicians was opened from Morning Reporting
+  useEffect(() => { if (openSection !== 'advisors' && openSection !== 'technicians') setSectionFrom(null); }, [openSection]);
   useEffect(() => { if (openSection !== 'users') setShowRoleSetup(false); }, [openSection]);
   // Upload Reports opens the panel straight onto the section that takes a file.
   useEffect(() => { if (isOpen && initialSection) setOpenSection(initialSection); }, [isOpen, initialSection]);
@@ -2506,9 +2508,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     { id: 'openai',     icon: '🤖', label: 'OpenAI Settings',       desc: 'Configure AI for performance review reports',         color: '#4ade80', bg: 'rgba(74,222,128,.12)',  border: 'rgba(74,222,128,.35)'  },
     { id: 'dashboard',  icon: '⚙️', label: 'Dashboard Settings',    desc: 'Set the dashboard title and display options',         color: '#94a3b8', bg: 'rgba(148,163,184,.12)', border: 'rgba(148,163,184,.3)'  },
     { id: 'gauges',     icon: '🎯', label: 'Goal Gauges',           desc: 'Set gross profit and customer pay targets',           color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  border: 'rgba(251,191,36,.35)'  },
-    { id: 'advisors',   icon: '📊', label: 'Advisor Performance',   desc: 'Edit advisor hours, rates, and percentages',          color: '#fb923c', bg: 'rgba(251,146,60,.12)',  border: 'rgba(251,146,60,.35)'  },
+    { id: 'advisors',   icon: '📊', label: 'Advisor Performance',   desc: 'Edit advisor hours, rates, and percentages',          color: '#fb923c', bg: 'rgba(251,146,60,.12)',  border: 'rgba(251,146,60,.35)', inMorning: true },
     { id: 'training',   icon: '🎓', label: 'Training Center',       desc: 'Update tech and advisor certification status',        color: '#2dd4bf', bg: 'rgba(45,212,191,.12)',  border: 'rgba(45,212,191,.35)'  },
-    { id: 'technicians',icon: '🔧', label: 'Technicians',           desc: 'Manage technician daily hours and shift schedules',   color: '#f97316', bg: 'rgba(249,115,22,.12)',  border: 'rgba(249,115,22,.35)'  },
+    { id: 'technicians',icon: '🔧', label: 'Technicians',           desc: 'Manage technician daily hours and shift schedules',   color: '#f97316', bg: 'rgba(249,115,22,.12)',  border: 'rgba(249,115,22,.35)', inMorning: true },
     { id: 'vacation',   icon: '🏖️', label: 'Approved Vacation',     desc: 'Track and sync approved vacation dates',              color: '#60a5fa', bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.35)'  },
     ...(isAdminOrManager(currentRole) ? [
       { id: 'users',    icon: '👥', label: 'User Management',       desc: 'Add, edit, and manage user accounts and access',      color: '#c084fc', bg: 'rgba(192,132,252,.12)', border: 'rgba(192,132,252,.35)' },
@@ -3039,6 +3041,22 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
               </div>
             );
           })}
+        </div>
+        {/* Full Advisor / Technician editors — hand edits, schedules, add/remove */}
+        <div style={{ marginTop: 26, paddingTop: 16, borderTop: '1px solid rgba(148,163,184,.15)' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 900, color: '#64748b', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>Edit by hand</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            {ADMIN_CARDS.filter(c => c.inMorning).map(card => (
+              <button key={card.id} onClick={() => { setOpenSection(card.id); setSectionFrom('morning'); }}
+                style={{ background: card.bg, border: `1px solid ${card.border}`, borderRadius: 16, padding: '20px 22px', cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 8, transition: 'transform .15s, box-shadow .15s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 30px ${card.border}`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}>
+                <div style={{ fontSize: 32 }}>{card.icon}</div>
+                <div style={{ fontWeight: 900, fontSize: 15, color: card.color }}>{card.label}</div>
+                <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.55 }}>{card.desc}</div>
+              </button>
+            ))}
+          </div>
         </div>
         {renderAdvisorUploadModal()}
         {renderTechUploadModal()}
@@ -3946,9 +3964,9 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {openSection && (
             <button
-              onClick={() => setOpenSection(null)}
+              onClick={() => setOpenSection(sectionFrom)}
               style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', color: '#94a3b8', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
-              ← Back
+              {sectionFrom === 'morning' ? '← Morning Reporting' : '← Back'}
             </button>
           )}
           <div>
@@ -4010,7 +4028,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-                {ADMIN_CARDS.map(card => (
+                {ADMIN_CARDS.filter(card => !card.inMorning).map(card => (
                   <button
                     key={card.id}
                     onClick={async () => {
