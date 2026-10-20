@@ -24,6 +24,7 @@ import { parseAddOnScreenshot, applyAddOnRows } from '../utils/addOnReport';
 import { decryptWithVault, inVault } from '../utils/passwordVault';
 import { isPartial, PARTIAL_REASONS, partialLabel } from '../utils/partialOut';
 import { parseVmpiReport } from '../utils/vmpiReport';
+import { parseVmpiScreenshot } from '../utils/vmpiScreenshot';
 import { saveVmpiReport, updateBigMoney } from '../utils/github';
 import { withDaySnapshot } from '../utils/bigMoney';
 import VmpiReportView from './VmpiReportView';
@@ -1494,7 +1495,12 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
     if (!file) return;
     setVmpiErr(''); setVmpiMsg(''); setVmpiUpload(null);
     try {
-      const rep = parseVmpiReport(await file.text());
+      // A screenshot of the tech board → AI reads each LAF Hyundai tech's VIDEO %;
+      // the .csv still works the old way.
+      const isImage = /^image\//.test(file.type || '');
+      if (isImage) setVmpiMsg('⏳ Reading the screenshot…');
+      const rep = isImage ? await parseVmpiScreenshot(file) : parseVmpiReport(await file.text());
+      setVmpiMsg('');
       const techs = data.technicians || [];
       const first = (s) => String(s || '').trim().split(/\s+/)[0].toUpperCase();
       const used = new Set();
@@ -1512,6 +1518,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
       });
     } catch (err) {
       setVmpiErr(err.message || String(err));
+      setVmpiMsg('');
     } finally {
       if (vmpiInputRef.current) vmpiInputRef.current.value = '';
     }
@@ -2767,14 +2774,14 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
         </div>
         {/* VMPI report — video multi-point inspection % per tech. */}
         <div className="upload-card">
-          <div className="upload-title"><span style={{ fontSize: 17 }}>🎥</span><span>Upload VMPI Report (.csv)</span></div>
+          <div className="upload-title"><span style={{ fontSize: 17 }}>🎥</span><span>Upload VMPI Report (screenshot or .csv)</span></div>
           <div className="small" style={{ margin: '0 0 10px' }}>
-            The <strong>Service Technician Video Report</strong> saved as .csv. Each tech's <strong>Video Utilization Per Ro</strong> (ROs with a video
-            attached ÷ RO count) fills their <strong>VMPI %</strong> box — Bob Rohrman Hyundai's techs only. Techs not on the report are left as they are.
-            Review, then Apply — it saves straight to the dashboard.
+            A <strong>screenshot of the tech board</strong> with <strong>LAF Hyundai</strong> opened up to its techs — AI reads each tech's
+            <strong> VIDEO %</strong> into their <strong>VMPI %</strong> box (and the TV dashboard). The old Service Technician Video Report .csv still works too.
+            Techs not on the report are left as they are. Review, then Apply — it saves straight to the dashboard.
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-            <input ref={vmpiInputRef} type="file" accept=".csv,text/csv" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
+            <input ref={vmpiInputRef} type="file" accept=".csv,text/csv,image/*" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) handleVmpiReport(f); }} />
             <button type="button" onClick={() => setVmpiView(true)}
               style={{ marginLeft: 'auto', background: 'rgba(103,232,249,.14)', border: '1px solid rgba(103,232,249,.45)', color: '#67e8f9', borderRadius: 8, padding: '6px 14px', fontWeight: 800, fontSize: 12.5, cursor: 'pointer' }}>
               📋 View VMPI Report
@@ -2791,7 +2798,7 @@ export default function AdminPanel({ data, vacations, isOpen, onClose, onDataCha
                   <React.Fragment key={r.name}>
                     <span style={{ fontWeight: 800, color: '#f1f5f9' }}>{r.name}</span>
                     <span style={{ fontWeight: 900, color: r.pct >= 0.9 ? '#4ade80' : r.pct >= 0.75 ? '#fbbf24' : '#f87171' }}>{(r.pct * 100).toFixed(1)}%</span>
-                    <span style={{ color: '#94a3b8' }}>{r.withVideo} of {r.ros} ROs</span>
+                    <span style={{ color: '#94a3b8' }}>{vmpiUpload.report && vmpiUpload.report.fromScreenshot ? (r.ros != null ? `${r.ros} tickets` : '') : `${r.withVideo} of ${r.ros} ROs`}</span>
                     <span style={{ color: '#64748b' }}>{r.before != null && r.before !== '' ? `was ${(Number(r.before) * 100).toFixed(1)}%` : 'new'}</span>
                   </React.Fragment>
                 ))}
