@@ -15,11 +15,14 @@
       ],
       "description": "",
       "photos": [],
-      "status": "open",
+      "status": "done",
       "requestedAt": "2026-10-19T18:16:29.094Z",
       "requestedBy": "HOLLI",
       "editedAt": "2026-10-20T20:07:29.069Z",
-      "editedBy": "SHAWN"
+      "editedBy": "SHAWN",
+      "doneAt": "2026-10-20T23:01:31.637Z",
+      "doneBy": "SHAWN",
+      "doneNote": "finished"
     },
     {
       "id": "lm-mvfpz6s6mdvc",
