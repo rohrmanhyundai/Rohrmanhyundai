@@ -606,6 +606,29 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
   const tyArea = enteredRows.length ? `${x(enteredRows[0].dayNum).toFixed(1)},${y(0).toFixed(1)} ${tyPts} ${x(lastTy.dayNum).toFixed(1)},${y(0).toFixed(1)}` : '';
 
   const C = { ty: '#34d399', tgt: '#38bdf8', ly: '#fbbf24' };
+
+  // Hover: the day nearest the cursor gets a guide line, a dot on each line and
+  // a small card with where you should be that day (plus actual / LY pace).
+  const [hover, setHover] = useState(null);   // index into rows
+  const svgRef = useRef(null);
+  const onMove = (e) => {
+    const svg = svgRef.current;
+    if (!svg || !rows.length) return;
+    const box = svg.getBoundingClientRect();
+    const vx = ((e.clientX - box.left) / box.width) * W;
+    if (vx < padL - 20 || vx > W - padR + 20) { setHover(null); return; }
+    let best = 0;
+    rows.forEach((r, i) => { if (Math.abs(x(r.dayNum) - vx) < Math.abs(x(rows[best].dayNum) - vx)) best = i; });
+    setHover(best);
+  };
+  const hRow = hover != null ? rows[hover] : null;
+  const hTip = hRow && (() => {
+    const tgt = tgtCumAt(hRow.dayNum);
+    const diff = hRow.hasActual ? hRow.cumActual - tgt : null;
+    const left = (x(hRow.dayNum) / W) * 100;
+    return { tgt, diff, ly: lyCumAt(hRow.dayNum), left, flip: left > 70 };
+  })();
+
   const Stat = ({ label, value, color, sub }) => (
     <MetricCard accent={color} icon="" label={label} sub={sub} minWidth={150}>
       <div style={gfBig(color)}>{value}</div>
@@ -637,7 +660,9 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
         <Stat label="Last Year (this month)" value={money(lastYear)} color={C.ly} sub={lastYear > 0 ? `projected ${projected >= lastYear ? '+' : '−'}${money(Math.abs(projected - lastYear))} vs LY` : '—'} />
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }} preserveAspectRatio="xMidYMid meet">
+      <div style={{ position: 'relative' }}>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block', cursor: 'crosshair', touchAction: 'pan-y' }} preserveAspectRatio="xMidYMid meet"
+        onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)}>
         <defs>
           <linearGradient id="gf-ty-fill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={C.ty} stopOpacity="0.38" />
@@ -674,7 +699,49 @@ function ComparisonChart({ rows, dailyTarget, lastYear, totalDays, completedDays
             <text x={x(lastTy.dayNum)} y={y(lastTy.cumActual) - 21} textAnchor="middle" fontSize="13" fontWeight="900" fill="#04201d">{money(lastTy.cumActual)}</text>
           </g>
         )}
+        {/* Hover guide */}
+        {hRow && (
+          <g pointerEvents="none">
+            <line x1={x(hRow.dayNum)} y1={padT} x2={x(hRow.dayNum)} y2={padT + plotH} stroke="rgba(226,232,240,.35)" strokeWidth="1" strokeDasharray="3 4" />
+            {lastYear > 0 && <circle cx={x(hRow.dayNum)} cy={y(hTip.ly)} r="4.5" fill={C.ly} stroke="#0f172a" strokeWidth="2" />}
+            {forecast > 0 && <circle cx={x(hRow.dayNum)} cy={y(hTip.tgt)} r="5.5" fill={C.tgt} stroke="#0f172a" strokeWidth="2" />}
+            {hRow.hasActual && <circle cx={x(hRow.dayNum)} cy={y(hRow.cumActual)} r="5.5" fill={C.ty} stroke="#0f172a" strokeWidth="2" />}
+          </g>
+        )}
       </svg>
+      {hRow && (
+        <div style={{
+          position: 'absolute', top: 6, left: `${hTip.left}%`, transform: `translateX(${hTip.flip ? 'calc(-100% - 14px)' : '14px'})`,
+          pointerEvents: 'none', minWidth: 190, background: 'rgba(2,6,23,.94)', border: `1px solid ${C.tgt}66`, borderRadius: 12,
+          padding: '9px 12px', boxShadow: '0 10px 28px rgba(0,0,0,.5)', fontSize: 12, color: '#cbd5e1', whiteSpace: 'nowrap',
+        }}>
+          <div style={{ fontWeight: 900, color: '#f1f5f9', fontSize: 12.5, marginBottom: 5 }}>
+            {hRow.dt.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })}
+            <span style={{ color: '#64748b', fontWeight: 700 }}> · day {hRow.dayNum} of {n}</span>
+          </div>
+          {forecast > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14 }}>
+              <span>Where you should be</span><strong style={{ color: C.tgt, fontSize: 14 }}>{money(hTip.tgt)}</strong>
+            </div>
+          )}
+          {hRow.hasActual && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, marginTop: 2 }}>
+              <span>This year</span><strong style={{ color: C.ty }}>{money(hRow.cumActual)}</strong>
+            </div>
+          )}
+          {lastYear > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, marginTop: 2 }}>
+              <span>Last year pace</span><strong style={{ color: C.ly }}>{money(hTip.ly)}</strong>
+            </div>
+          )}
+          {hTip.diff != null && forecast > 0 && (
+            <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid rgba(148,163,184,.2)', fontWeight: 900, color: hTip.diff >= 0 ? '#4ade80' : '#f87171' }}>
+              {hTip.diff >= 0 ? '▲ ' : '▼ '}{money(Math.abs(hTip.diff))} {hTip.diff >= 0 ? 'ahead' : 'behind'}
+            </div>
+          )}
+        </div>
+      )}
+      </div>
     </div>
   );
 }
