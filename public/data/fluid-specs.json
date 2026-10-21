@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:14:49.816Z",
+  "updatedAt": "2026-10-21T15:15:40.025Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -594,236 +594,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7vyxcq8oh"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "SONATA",
-      "code": "YFA",
-      "yearFrom": 2011,
-      "yearTo": 2014,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0T GDI",
-          "volume": "5.28 US qt. (5.0L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.4L",
-          "volume": "5.28 US qt. (5.0L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Manual Transmission Fluid",
-          "engine": "",
-          "volume": "1.90 US qt. (1.8L)",
-          "spec": "SAE 75W/85",
-          "partNumber": "0895000020B",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "",
-          "volume": "7.50 US qt. (7.1L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "6.967 US qt. (6.6L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2.0T GDI",
-          "volume": "550±25g",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2.4L",
-          "volume": "650±25g",
-          "spec": "R-134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor",
-          "engine": "",
-          "volume": "100±10cc",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
-          "spec": "DOT 3",
-          "partNumber": "0023219033",
-          "note": ""
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "sonata.pdf",
-        "uploadedAt": "2026-10-21T14:39:37.354Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7xny339xk"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "SONATA",
-      "code": "LFA",
-      "yearFrom": 2015,
-      "yearTo": 2019,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "1.6T GDI",
-          "volume": "4.75 US qt. (4.5L)",
-          "spec": "5W-30 Conventional",
-          "partNumber": "0023319004",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.0T GDI",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "5W-30 Conventional",
-          "partNumber": "0023319004",
-          "note": ""
-        },
-        {
-          "fluid": "Engine Oil",
-          "engine": "2.4 GDI",
-          "volume": "5.07 US qt. (4.8L)",
-          "spec": "5W-20 Conventional",
-          "partNumber": "0023319001",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "",
-          "volume": "7.50 US qt. (7.1L)",
-          "spec": "ATF SP-IV",
-          "partNumber": "0023219057",
-          "note": ""
-        },
-        {
-          "fluid": "Dual Clutch Transmission Fluid",
-          "engine": "",
-          "volume": "2.00 US qt. (1.9L)",
-          "spec": "DCT SAE 70W",
-          "partNumber": "0023219063",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "1.6T GDI",
-          "volume": "7.50 US qt. (7.1L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.0T GDI",
-          "volume": "7.50 US qt. (7.1L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2.4 GDI",
-          "volume": "7.92 US qt. (7.5L) or 7.60 US qt. (7.2L)",
-          "spec": "Mix of Anti-Freeze and Water",
-          "partNumber": "0023219010",
-          "note": "The guide lists both volumes for the 2.4 GDI."
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
-          "spec": "DOT 3",
-          "partNumber": "0023219033",
-          "note": ""
-        },
-        {
-          "fluid": "Brake/Clutch Fluid",
-          "engine": "",
-          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "1.6T GDI",
-          "volume": "16.9±0.88 oz. (470±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2.0T GDI",
-          "volume": "16.9±0.88 oz. (470±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2.4 GDI",
-          "volume": "16.9±0.88 oz. (470±25g)",
-          "spec": "R-1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Fluid",
-          "engine": "",
-          "volume": "2.82±0.35 oz. (80±10g)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Fluid",
-          "engine": "",
-          "volume": "2.82±0.35 oz. (80±10g)",
-          "spec": "POE",
-          "partNumber": "0023219069",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "sonata.pdf",
-        "uploadedAt": "2026-10-21T14:39:37.354Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7xny31z7k"
     },
     {
       "make": "HYUNDAI",
@@ -4272,6 +4042,236 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7vyxcutqs"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "YFA",
+      "yearFrom": 2011,
+      "yearTo": 2014,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0T GDI",
+          "volume": "5.28 US qt. (5.0L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.4L",
+          "volume": "5.28 US qt. (5.0L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "2.4L",
+          "volume": "1.90 US qt. (1.8L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "0895000020B",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "2.4L",
+          "volume": "7.50 US qt. (7.1L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.4L",
+          "volume": "6.967 US qt. (6.6L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.0T GDI",
+          "volume": "550±25g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.4L",
+          "volume": "650±25g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor",
+          "engine": "2.4L",
+          "volume": "100±10cc",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "2.4L",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "2.4L",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T15:15:35.855Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7xny339xk"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "LFA",
+      "yearFrom": 2015,
+      "yearTo": 2019,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6T GDI",
+          "volume": "4.75 US qt. (4.5L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0T GDI",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.4 GDI",
+          "volume": "5.07 US qt. (4.8L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.50 US qt. (7.1L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "",
+          "volume": "2.00 US qt. (1.9L)",
+          "spec": "DCT SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI",
+          "volume": "7.50 US qt. (7.1L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.0T GDI",
+          "volume": "7.92 US qt. (7.5L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.4 GDI",
+          "volume": "7.60 US qt. (7.2L)",
+          "spec": "Mix of Anti-Freeze and Water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt. (0.7-0.8L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "1.6T GDI",
+          "volume": "16.9±0.88 oz. (470±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.0T GDI",
+          "volume": "16.9±0.88 oz. (470±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.4 GDI",
+          "volume": "16.9±0.88 oz. (470±25g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Fluid",
+          "engine": "",
+          "volume": "2.82±0.35 oz. (80±10g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Fluid",
+          "engine": "",
+          "volume": "2.82±0.35 oz. (80±10g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T15:15:35.855Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7xny31z7k"
     }
   ]
 }
