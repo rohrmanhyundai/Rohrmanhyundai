@@ -146,6 +146,26 @@
           "size": 3894978
         }
       ]
+    },
+    {
+      "id": "mvi784w9h9vd",
+      "vehicleId": "li-mvbdfxrcmzyk",
+      "stockNo": "LHY2684",
+      "vin": "KMHL64JA4TA551715",
+      "kind": "out",
+      "customerFirst": "BREANA",
+      "customerLast": "PARR",
+      "at": "2026-10-21T14:19:52.120Z",
+      "by": "HOLLI",
+      "files": [
+        {
+          "url": "https://rohrman-hyundai-files.s3.us-east-2.amazonaws.com/warranty-media/loaner-media/LHY2684/mvi784w9h9vd/mvi77kclwn6h.mov",
+          "name": "81428512660__D2AAC99C-297B-4EA0-A54D-023A06A5AA0B.MOV",
+          "type": "video/quicktime",
+          "kind": "video",
+          "size": 5534871
+        }
+      ]
     }
   ]
 }
