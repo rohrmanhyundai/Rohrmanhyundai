@@ -61,6 +61,14 @@ const emptyForm = () => ({
   readySubmissionDate: '',
   inspectorDispatched: false,
   inspectorDispatchedDate: '',
+  // Inspector has two steps: dispatched, then inspected (= under review until
+  // the claim is approved or denied, which clears both).
+  inspected: false,
+  inspectedDate: '',
+  // Tear down — its own button, alongside whatever status the claim is in.
+  teardown: false,
+  teardownDate: '',
+  teardownLabor: '',
 });
 
 function num(v) { return parseFloat(v) || 0; }
@@ -166,7 +174,7 @@ const STATUS_BTNS = [
   { key: 'paid',            dateKey: 'paymentDate',         label: '💳 Claim Paid',            exclusive: true, group: 'payment', on: { bg: 'rgba(110,231,249,0.25)', border: 'rgba(110,231,249,0.6)',  text: '#6ee7f9' }, off: { bg: 'rgba(110,231,249,0.07)', border: 'rgba(110,231,249,0.22)', text: '#6ee7f9' } },
 ];
 
-function StatusButtons({ form, setForm }) {
+export function StatusButtons({ form, setForm }) {
   const [openKey, setOpenKey] = useState(null);
   const [popupDate, setPopupDate] = useState('');
   const [popupPos, setPopupPos]   = useState({ top: 0, left: 0 });
@@ -198,6 +206,7 @@ function StatusButtons({ form, setForm }) {
         STATUS_BTNS.filter(b => b.exclusive && b.group === btn.group && b.key !== btn.key).forEach(other => {
           update[other.key] = false;
           update[other.dateKey] = '';
+          if (other.key === 'inspectorDispatched') { update.inspected = false; update.inspectedDate = ''; }
         });
       }
       return update;
@@ -206,9 +215,52 @@ function StatusButtons({ form, setForm }) {
   }
 
   function handleRemove(btn) {
-    setForm(f => ({ ...f, [btn.key]: false, [btn.dateKey]: '' }));
+    setForm(f => ({ ...f, [btn.key]: false, [btn.dateKey]: '', ...(btn.key === 'inspectorDispatched' ? { inspected: false, inspectedDate: '' } : {}) }));
     setOpenKey(null);
   }
+
+  // ── Inspector: dispatched → inspected (under review) ──
+  // Step 1 is the normal status save (it clears the other status buttons);
+  // step 2 just adds the inspection date.
+  const inspStage = form.inspected ? 'review' : form.inspectorDispatched ? 'dispatched' : 'none';
+  const shortDate = (d) => (d ? new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }) : '');
+  const INSPECTED_STYLE = { bg: 'rgba(249,115,22,0.24)', border: 'rgba(249,115,22,0.7)', text: '#fdba74' };
+  function openInspector(e) {
+    if (openKey === 'inspectorDispatched') { setOpenKey(null); return; }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPopupPos({ top: rect.bottom + 8, left: rect.left });
+    const today = new Date().toISOString().slice(0, 10);
+    setPopupDate(inspStage === 'none' ? (form.inspectorDispatchedDate || today) : (form.inspectedDate || today));
+    setOpenKey('inspectorDispatched');
+  }
+  function saveInspected() {
+    setForm(f => ({ ...f, inspected: true, inspectedDate: popupDate }));
+    setOpenKey(null);
+  }
+  function undoInspected() {
+    setForm(f => ({ ...f, inspected: false, inspectedDate: '' }));
+    setOpenKey(null);
+  }
+
+  // ── Tear down: date + teardown labor hours ──
+  const [tdHours, setTdHours] = useState('');
+  function openTeardown(e) {
+    if (openKey === 'teardown') { setOpenKey(null); return; }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPopupPos({ top: rect.bottom + 8, left: rect.left });
+    setPopupDate(form.teardownDate || new Date().toISOString().slice(0, 10));
+    setTdHours(form.teardownLabor || '');
+    setOpenKey('teardown');
+  }
+  function saveTeardown() {
+    setForm(f => ({ ...f, teardown: true, teardownDate: popupDate, teardownLabor: String(tdHours || '').trim() }));
+    setOpenKey(null);
+  }
+  function removeTeardown() {
+    setForm(f => ({ ...f, teardown: false, teardownDate: '', teardownLabor: '' }));
+    setOpenKey(null);
+  }
+  const TD = { on: { bg: 'rgba(148,163,184,0.25)', border: 'rgba(203,213,225,0.65)', text: '#e2e8f0' }, off: { bg: 'rgba(148,163,184,0.07)', border: 'rgba(148,163,184,0.3)', text: '#cbd5e1' } };
 
   const activeBtn = STATUS_BTNS.find(b => b.key === openKey);
 
@@ -217,6 +269,25 @@ function StatusButtons({ form, setForm }) {
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         {STATUS_BTNS.map(btn => {
           const active = !!form[btn.key];
+          if (btn.key === 'inspectorDispatched') {
+            const st = inspStage === 'review' ? INSPECTED_STYLE : inspStage === 'dispatched' ? btn.on : btn.off;
+            const label = inspStage === 'review' ? '🔎 Inspected — Under Review'
+              : inspStage === 'dispatched' ? `🕵 Dispatched ${shortDate(form.inspectorDispatchedDate)} — click when car is inspected`
+              : btn.label;
+            return (
+              <React.Fragment key={btn.key}>
+                <button onClick={openInspector}
+                  style={{ background: st.bg, border: `1px solid ${st.border}`, color: st.text, borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13, outline: openKey === btn.key ? `2px solid ${st.border}` : 'none', outlineOffset: 2,
+                    ...(inspStage === 'dispatched' ? { boxShadow: '0 0 12px rgba(168,85,247,0.45)' } : null) }}>
+                  {label}
+                </button>
+                <button onClick={openTeardown}
+                  style={{ background: (form.teardown ? TD.on : TD.off).bg, border: `1px solid ${(form.teardown ? TD.on : TD.off).border}`, color: (form.teardown ? TD.on : TD.off).text, borderRadius: 10, padding: '10px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 13, outline: openKey === 'teardown' ? `2px solid ${TD.on.border}` : 'none', outlineOffset: 2 }}>
+                  🔩 Tear Down{form.teardown ? ` · ${shortDate(form.teardownDate)}${form.teardownLabor ? ` · ${form.teardownLabor} hrs` : ''}` : ''}
+                </button>
+              </React.Fragment>
+            );
+          }
           const st = active ? btn.on : btn.off;
           return (
             <button key={btn.key} onClick={e => handleBtnClick(btn, e)}
@@ -227,8 +298,61 @@ function StatusButtons({ form, setForm }) {
         })}
       </div>
 
+      {/* Inspector popup — what it asks depends on the step */}
+      {openKey === 'inspectorDispatched' && inspStage !== 'none' && (() => {
+        const st = inspStage === 'review' ? INSPECTED_STYLE : activeBtn.on;
+        return (
+          <div ref={popupRef} style={{ position: 'fixed', top: popupPos.top, left: popupPos.left, zIndex: 9999, background: '#0f172a', border: `1px solid ${st.border}`, borderRadius: 12, padding: '14px 16px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 290 }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: st.text, marginBottom: 4 }}>{inspStage === 'review' ? '🔎 Inspected — Under Review' : '🕵 Has the car been inspected?'}</div>
+            <div style={{ fontSize: 11.5, color: '#94a3b8', marginBottom: 10 }}>Inspector dispatched {form.inspectorDispatchedDate ? new Date(form.inspectorDispatchedDate + 'T12:00:00').toLocaleDateString() : ''}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, whiteSpace: 'nowrap' }}>Inspected on:</label>
+              <input type="date" value={popupDate} onChange={e => setPopupDate(e.target.value)}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${st.border}`, borderRadius: 7, color: st.text, padding: '6px 10px', fontSize: 13, fontWeight: 700, outline: 'none', colorScheme: 'dark' }} />
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={saveInspected}
+                style={{ flex: 1, background: st.bg, border: `1px solid ${st.border}`, color: st.text, borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                {inspStage === 'review' ? 'Save' : '✓ Car inspected'}
+              </button>
+              <button onClick={() => (inspStage === 'review' ? undoInspected() : handleRemove(activeBtn))}
+                style={{ flex: 1, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>
+                {inspStage === 'review' ? 'Not inspected yet' : 'Remove dispatch'}
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Tear down popup — date + labor hours */}
+      {openKey === 'teardown' && (
+        <div ref={popupRef} style={{ position: 'fixed', top: popupPos.top, left: popupPos.left, zIndex: 9999, background: '#0f172a', border: `1px solid ${TD.on.border}`, borderRadius: 12, padding: '14px 16px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 280 }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: TD.on.text, marginBottom: 10 }}>🔩 Tear Down</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, width: 84 }}>Date:</label>
+            <input type="date" value={popupDate} onChange={e => setPopupDate(e.target.value)}
+              style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${TD.on.border}`, borderRadius: 7, color: TD.on.text, padding: '6px 10px', fontSize: 13, fontWeight: 700, outline: 'none', colorScheme: 'dark' }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <label style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, width: 84 }}>Labor (hrs):</label>
+            <input inputMode="decimal" value={tdHours} onChange={e => setTdHours(e.target.value.replace(/[^\d.]/g, ''))} placeholder="e.g. 2.5"
+              style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: `1px solid ${TD.on.border}`, borderRadius: 7, color: TD.on.text, padding: '6px 10px', fontSize: 13, fontWeight: 700, outline: 'none' }} />
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={saveTeardown}
+              style={{ flex: 1, background: TD.on.bg, border: `1px solid ${TD.on.border}`, color: TD.on.text, borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              Save
+            </button>
+            <button onClick={removeTeardown}
+              style={{ flex: 1, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', borderRadius: 8, padding: '8px 0', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Date popup — fixed so it's never clipped by scroll containers */}
-      {openKey && activeBtn && (
+      {openKey && activeBtn && !(openKey === 'inspectorDispatched' && inspStage !== 'none') && (
         <div ref={popupRef} style={{ position: 'fixed', top: popupPos.top, left: popupPos.left, zIndex: 9999, background: '#0f172a', border: `1px solid ${activeBtn.on.border}`, borderRadius: 12, padding: '14px 16px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 260 }}>
           <div style={{ fontSize: 12, fontWeight: 800, color: activeBtn.on.text, marginBottom: 10 }}>{activeBtn.label}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -902,13 +1026,17 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
   const isRepairsFinished = !!contract.repairsFinished;
   const isReadySubmission = !!contract.readySubmission;
   const isInspectorDispatched = !!contract.inspectorDispatched;
+  const isInspected = isInspectorDispatched && !!contract.inspected;
+  const isTeardown = !!contract.teardown;
 
   const statusBadges = [
     isPaid            && { label: 'CLAIM PAID',            bg: '#0369a1' },
     isWaiting         && { label: 'WAITING FOR PAYMENT',   bg: '#b45309' },
     isDenied          && { label: 'CLAIM DENIED',           bg: '#9f1239' },
     isApproved        && { label: 'APPROVED',               bg: '#15803d' },
-    isInspectorDispatched && { label: 'INSPECTOR DISPATCHED', bg: '#7c3aed' },
+    isInspected && { label: 'INSPECTED — UNDER REVIEW', bg: '#c2410c' },
+    isInspectorDispatched && !isInspected && { label: 'INSPECTOR DISPATCHED', bg: '#7c3aed' },
+    isTeardown && { label: 'TEAR DOWN', bg: '#475569' },
     isRepairsFinished && { label: 'REPAIRS FINISHED',       bg: '#b91c1c' },
     isReadySubmission && { label: 'READY FOR SUBMISSION',   bg: '#0e7490' },
   ].filter(Boolean);
@@ -1132,7 +1260,7 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                 <div style={{ fontSize: 20, fontWeight: 900, color: '#b45309' }}>{fmtDol(totalDue)}</div>
               </div>
               {/* Status dates */}
-              {(isRepairsFinished || isPaid || isApproved || isReadySubmission || isInspectorDispatched) && (
+              {(isRepairsFinished || isPaid || isApproved || isReadySubmission || isInspectorDispatched || isTeardown) && (
                 <div style={{ background: '#f8fafc', borderTop: `1px solid ${PD_BORDER}`, padding: '10px 14px' }}>
                   {isReadySubmission && contract.readySubmissionDate && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
@@ -1144,6 +1272,18 @@ function PrintDocument({ contract, laborTotal, partsTotal, taxAmt, rental, towin
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
                       <span style={{ color: '#7c3aed', fontWeight: 700 }}>Inspector Dispatched</span>
                       <span style={{ color: PD_MID }}>{new Date(contract.inspectorDispatchedDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isInspected && contract.inspectedDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#c2410c', fontWeight: 700 }}>Inspected — Under Review</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.inspectedDate + 'T12:00:00').toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {isTeardown && contract.teardownDate && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 10 }}>
+                      <span style={{ color: '#475569', fontWeight: 700 }}>Tear Down{contract.teardownLabor ? ` · ${contract.teardownLabor} hrs labor` : ''}</span>
+                      <span style={{ color: PD_MID }}>{new Date(contract.teardownDate + 'T12:00:00').toLocaleDateString()}</span>
                     </div>
                   )}
                   {isApproved && contract.approvedDate && (
@@ -1353,7 +1493,8 @@ function ContractList({ contracts, loading, onNew, onView, mediaCounts = {} }) {
                     isWaiting  && '⏳ Waiting',
                     isDenied   && '❌ Denied',
                     isApproved && '✅ Approved',
-                    isInspector && '🕵 Inspector Dispatched',
+                    isInspector && (c.inspected ? '🔎 Under Review' : '🕵 Inspector Dispatched'),
+                    c.teardown && `🔩 Tear Down${c.teardownLabor ? ` ${c.teardownLabor}h` : ''}`,
                     isReady    && '📋 Submission',
                     isFinished && '🔧 Ready',
                   ].filter(Boolean).join(' · ') || '';
@@ -1409,7 +1550,8 @@ function tireStatusLabel(c) {
     c.waiting && '⏳ Waiting',
     c.denied && '❌ Denied',
     c.approved && '✅ Approved',
-    c.inspectorDispatched && '🕵 Inspector',
+    c.inspectorDispatched && (c.inspected ? '🔎 Under Review' : '🕵 Inspector'),
+    c.teardown && '🔩 Tear Down',
     c.readySubmission && '📋 Submission',
     c.repairsFinished && '🔧 Finished',
   ].filter(Boolean).join(' · ');
