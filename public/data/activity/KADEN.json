@@ -1,5 +1,26 @@
 [
   {
+    "at": "2026-10-21T12:01:07.015Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
+    "at": "2026-10-21T12:01:00.628Z",
+    "type": "action",
+    "label": "delete-wip-row",
+    "details": "RO 781657 tech KADEN"
+  },
+  {
+    "at": "2026-10-21T12:00:52.044Z",
+    "type": "page",
+    "label": "work-in-progress"
+  },
+  {
+    "at": "2026-10-21T12:00:48.954Z",
+    "type": "page",
+    "label": "tech-resources"
+  },
+  {
     "at": "2026-10-20T19:16:40.248Z",
     "type": "page",
     "label": "work-in-progress"
