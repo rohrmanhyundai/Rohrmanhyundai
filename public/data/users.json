@@ -269,13 +269,23 @@
         "documentLibrary": true,
         "aftermarketWarranty": true,
         "originalOwner": true,
+        "serviceLoaner": true,
+        "whitePaint": true,
         "workInProgress": true,
-        "chargeAccountList": false,
+        "shopAppointments": true,
+        "chargeAccountList": true,
         "partsHub": true,
         "tireQuote": true,
+        "batteryGuide": true,
+        "oilCapacity": true,
         "atDiagWorksheet": true,
         "usedCarHub": true,
-        "advisorRankBoard": false
+        "mobileWorkSchedule": true,
+        "mobileTireWarranty": true,
+        "mobileAdditionalTime": true,
+        "mobileRegistrationUpload": true,
+        "mobileMediaUpload": true,
+        "mobileLoanerMedia": true
       },
       "chatAccess": true,
       "techChatAccess": true,
@@ -283,11 +293,12 @@
       "email": "devin.drake@rohrmanauto.com",
       "managementAccess": false,
       "pageOverrides": {},
-      "passwordReset": {
-        "hash": "928063540f2eebbdcddcfa98d564311507e9c5e3816741e4b8513387e2069837",
-        "expires": "2026-10-21T16:30:20.428Z",
-        "requestedAt": "2026-10-21T15:30:20.428Z"
-      }
+      "pwSalt": "4d7408e391142bbc42edd45adc17bf5f",
+      "passwordEnc": {
+        "kid": "YuwDZUlFIR",
+        "data": "DMT5uZru+Kzjq25MJbCW1opYHqDdkq6CiBYprTrV9KLxVmCqh+BC0eUbBXJuR/cu5oZYfaJIHrxyclV0lYJ8n1UzgVLscBU71h8gDKHEnM1vILjTYw04wgpBsMRm7t2i/2KGBHAod5+o4m1I2CZKx0dXiJkfKXigTrPGRtoy17u4mo+nsGdS0eoQtbdlcZ6iP/hdYin+YYD6aqQVAFclHcjPO1qDVwVS358FhL1uZCCiFQa8JLB9vhfatFvMf2xuFaItO7+c+18/gmrUcQUQJT78DZmTu1NJyiMqkb6SOA7fLpsMoWRccPmbikmYdwNpkxN+QsRCPr0LS5dEpbQJNg=="
+      },
+      "hidden": false
     },
     {
       "username": "Cory",
