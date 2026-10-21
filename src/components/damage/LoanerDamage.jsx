@@ -26,6 +26,8 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const fileRef = useRef(null);
+  const addRef = useRef(null);
+  const addFor = useRef(null);                       // report getting 📷 Add media
   const [reports, setReports] = useState([]);
   const [pendingAll, setPendingAll] = useState([]); // damage media from the phone, not yet on a part
   const [chosen, setChosen] = useState([]);         // phone files picked to attach: [{ url, name, type, kind, size }]
@@ -127,6 +129,31 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
     setBusy(false);
   }
 
+  // 📷 Add media on a report already on file: new pictures from this computer /
+  // phone, plus any phone media selected under Manage media.
+  async function addMedia(r, list) {
+    const picked = Array.from(list || []).filter(f => /^(image|video)\//.test(f.type) || /\.(jpe?g|png|heic|webp|mov|mp4)$/i.test(f.name));
+    if (!picked.length && !chosen.length) return;
+    const used = new Set(chosen.map(f => f.url));
+    setBusy(true); setStatus(picked.length ? `Uploading ${picked.length} file${picked.length === 1 ? '' : 's'}…` : 'Saving…');
+    try {
+      const photos = [];
+      for (const f of picked) photos.push({ url: await uploadPhoto(f), name: f.name || 'photo', type: f.type || '' });
+      for (const f of chosen) photos.push({ url: f.url, name: f.name || 'photo', type: f.type || (f.kind === 'video' ? 'video/mp4' : 'image/jpeg'), fromPhone: true });
+      const next = await updateLoanerDamage(cur => ({
+        ...cur,
+        reports: cur.reports.map(x => (x.id === r.id ? { ...x, photos: [...(x.photos || []), ...photos] } : x)),
+        pending: (cur.pending || []).map(p => ({ ...p, files: (p.files || []).filter(f => !used.has(f.url)) })).filter(p => p.files.length),
+      }), `add media ${r.stockNo || r.vin} ${r.partLabel}`);
+      applyStore(next);
+      setChosen([]);
+      setStatus(`✓ ${photos.length} file${photos.length === 1 ? '' : 's'} added to the ${r.partLabel.toLowerCase()}.`);
+    } catch (e) {
+      setStatus(`❌ ${e.message || 'Upload failed.'}`);
+    }
+    setBusy(false);
+  }
+
   // Phone media that turned out not to be damage (or a duplicate): gone for good.
   async function discardPending(p) {
     if (!window.confirm(`Delete these ${p.files.length} file${p.files.length === 1 ? '' : 's'} from the phone? They won't be attached to any damage.`)) return;
@@ -178,8 +205,12 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
           ))}
         </div>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, fontSize: 11.5, color: '#94a3b8' }}>
-        <span style={{ flex: 1 }}>{done ? `${done ? r.type + ' · ' : ''}repaired by ${r.repairedBy} ${fmtWhen(r.repairedAt)}` : `${r.reportedBy} · ${fmtWhen(r.reportedAt)}`}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, fontSize: 11.5, color: '#94a3b8', flexWrap: 'wrap' }}>
+        <span style={{ flex: '1 1 140px' }}>{done ? `${done ? r.type + ' · ' : ''}repaired by ${r.repairedBy} ${fmtWhen(r.repairedAt)}` : `${r.reportedBy} · ${fmtWhen(r.reportedAt)}`}</span>
+        {!done && chosen.length > 0 && (
+          <button disabled={busy} title="Attach the phone pictures selected under Manage media" onClick={() => addMedia(r, [])} style={{ ...btn('34,211,238'), padding: '4px 10px', fontSize: 11.5 }}>📸 Attach {chosen.length}</button>
+        )}
+        {!done && <button disabled={busy} title="Add pictures / videos of this damage" onClick={() => { addFor.current = r; addRef.current && addRef.current.click(); }} style={{ ...btn('196,181,253'), padding: '4px 10px', fontSize: 11.5 }}>📷 Add media</button>}
         {!done && <button disabled={busy} onClick={() => markRepaired(r)} style={{ ...btn('74,222,128'), padding: '4px 10px', fontSize: 11.5 }}>✓ Repaired</button>}
       </div>
     </div>
@@ -340,6 +371,8 @@ export default function LoanerDamage({ vehicle, currentUser, io, onClose, onChan
             </div>
           )}
 
+          <input ref={addRef} type="file" accept="image/*,video/*" multiple style={{ display: 'none' }}
+            onChange={e => { const list = Array.from(e.target.files || []); e.target.value = ''; if (addFor.current && list.length) addMedia(addFor.current, list); }} />
           <div>
             <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.08em', color: '#fca5a5', marginBottom: 8 }}>OPEN DAMAGE · {open.length}</div>
             {loading ? <div style={{ color: '#64748b', fontSize: 13 }}>Loading…</div>
