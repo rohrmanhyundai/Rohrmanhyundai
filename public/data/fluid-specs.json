@@ -1,77 +1,6 @@
 {
-  "updatedAt": "2026-10-21T15:11:09.798Z",
+  "updatedAt": "2026-10-21T15:11:49.932Z",
   "vehicles": [
-    {
-      "make": "HYUNDAI",
-      "model": "TUCSON",
-      "code": "NX4a",
-      "yearFrom": 2025,
-      "yearTo": 2025,
-      "fluids": [
-        {
-          "fluid": "Engine oil",
-          "engine": "",
-          "volume": "6.13 US qt. (5.8 ℓ)",
-          "spec": "SAE 0W-20, API SN PLUS/SP or ILSAC GF-6",
-          "partNumber": "",
-          "note": "*3"
-        },
-        {
-          "fluid": "Auto transmission fluid",
-          "engine": "",
-          "volume": "6.87 US qt. (6.5 ℓ)",
-          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1, Hyundai Genuine ATF SP4-M1",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "8.99 US qt. (8.51 ℓ)",
-          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
-          "partNumber": "",
-          "note": ""
-        },
-        {
-          "fluid": "Brake fluid",
-          "engine": "",
-          "volume": "0.87±0.02 US qt. (0.82±0.02 ℓ)",
-          "spec": "SAE J1704 DOT-4 LV, ISO4925 CLASS-6, FMVSS 116 DOT-4",
-          "partNumber": "",
-          "note": "*4"
-        },
-        {
-          "fluid": "Rear differential oil (4WD)",
-          "engine": "",
-          "volume": "0.56-0.67 US qt. (0.53~0.63 ℓ)",
-          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
-          "partNumber": "",
-          "note": "*5"
-        },
-        {
-          "fluid": "Transfer case oil (4WD)",
-          "engine": "",
-          "volume": "0.65-0.71 US qt. (0.62-0.68 ℓ)",
-          "spec": "",
-          "partNumber": "",
-          "note": "*5"
-        },
-        {
-          "fluid": "Fuel",
-          "engine": "",
-          "volume": "14.26 US gal. (54 ℓ)",
-          "spec": "Refer to the “Fuel requirements” section in chapter 9.",
-          "partNumber": "",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "2025 Tucson (NX4a) OM Maintenance specs.pdf",
-        "uploadedAt": "2026-10-21T14:34:34.985Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi7rbsxw66l"
-    },
     {
       "make": "HYUNDAI",
       "model": "EQUUS",
@@ -4288,6 +4217,69 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7q9npe3ql"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "TUCSON",
+      "code": "NX4a",
+      "yearFrom": 2025,
+      "yearTo": 2025,
+      "fluids": [
+        {
+          "fluid": "Engine oil",
+          "engine": "",
+          "volume": "6.13 US qt. (5.8 ℓ)",
+          "spec": "SAE 0W-20, API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "",
+          "note": "*3"
+        },
+        {
+          "fluid": "Auto transmission fluid",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5 ℓ)",
+          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1, Hyundai Genuine ATF SP4-M1",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "8.99 US qt. (8.51 ℓ)",
+          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake fluid",
+          "engine": "",
+          "volume": "0.87±0.02 US qt. (0.82±0.02 ℓ)",
+          "spec": "SAE J1704 DOT-4 LV, ISO4925 CLASS-6, FMVSS 116 DOT-4",
+          "partNumber": "",
+          "note": "*4"
+        },
+        {
+          "fluid": "Rear differential oil (4WD)",
+          "engine": "",
+          "volume": "0.56-0.67 US qt. (0.53~0.63 ℓ)",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
+          "partNumber": "",
+          "note": "*5"
+        },
+        {
+          "fluid": "Transfer case oil (4WD)",
+          "engine": "",
+          "volume": "0.65-0.71 US qt. (0.62-0.68 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": "*5"
+        }
+      ],
+      "source": {
+        "fileName": "2025 Tucson (NX4a) OM Maintenance specs.pdf",
+        "uploadedAt": "2026-10-21T15:11:36.146Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7rbsxw66l"
     }
   ]
 }
