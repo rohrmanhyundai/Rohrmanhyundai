@@ -2541,6 +2541,20 @@ export async function updateLoanerMaintenance(mutate, what = 'update') {
     `Loaner maintenance ${what} ${new Date().toISOString()}`);
 }
 
+// ── Loaner damage (3D Report Damage page) ─────────────────────────────────────
+// public/data/service-loaner/damage.json → { reports: [{ id, vehicleId, vin, stockNo, part, partLabel,
+//   type, description, photos: [{ url, name, type }], status: 'open'|'repaired',
+//   reportedAt, reportedBy, repairedAt, repairedBy }] }
+export async function loadLoanerDamage() {
+  try { const d = await loadGithubFile('data/service-loaner/damage.json'); if (d && Array.isArray(d.reports)) return d; } catch {}
+  return { reports: [] };
+}
+export async function updateLoanerDamage(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/service-loaner/damage.json',
+    (cur) => mutate(cur && Array.isArray(cur.reports) ? cur : { reports: [] }),
+    `Loaner damage ${what} ${new Date().toISOString()}`);
+}
+
 // ── Loaner inventory (the fleet) ──────────────────────────────────────────────
 // public/data/service-loaner/inventory.json → { vehicles: [{ id, vin, stockNo, year, make, model,
 //   mileage, notes, addedAt, addedBy, notesAt, notesBy, unitNo, serviceStart (YYYY-MM-DD), fleetSyncedAt }] }

@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import * as github from '../utils/github';
 import { deleteS3ObjectByUrl } from '../utils/s3';
 import { decodeVin } from '../utils/vinLookup';
 import { readFleetPdf, fmtServiceStart } from '../utils/loanerFleetPdf';
 import { useVinDecode, vehicleText } from './LoanerMaintenance';
+// three.js lives only in this chunk — it downloads when Report damage opens.
+const LoanerDamage = lazy(() => import('./damage/LoanerDamage'));
 
 // ── Loaner Inventory (Service Loaner page tab) ───────────────────────────────
 // The loaner fleet. Type a VIN → year / make / model fill in from the decoder →
@@ -56,6 +58,8 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
   const [noteEdit, setNoteEdit] = useState(null);   // { id, text } while a loaner's notes are open
   const [contracts, setContracts] = useState([]);   // Service Loaner contracts — an open one means the car is out
   const [where, setWhere] = useState('all');        // all | lot | out
+  const [damage, setDamage] = useState([]);         // damage reports (data/service-loaner/damage.json)
+  const [damageFor, setDamageFor] = useState(null); // loaner whose 🚨 Report damage page is open
 
   useEffect(() => {
     let alive = true;
@@ -63,6 +67,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
       .catch(() => { if (alive) setLoading(false); });
     loadLoanerMedia().then(d => { if (alive) setMedia(d.sessions || []); }).catch(() => {});
     ((io || github).loadServiceLoaners)().then(d => { if (alive) setContracts(d.contracts || []); }).catch(() => {});
+    ((io || github).loadLoanerDamage)().then(d => { if (alive) setDamage(d.reports || []); }).catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -259,6 +264,7 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
     return m;
   }, [contracts, items]);
   const outCount = items.filter(v => outBy[v.id]).length;
+  const openDamage = (v) => damage.filter(r => r.status !== 'repaired' && (r.vehicleId === v.id || (r.vin && r.vin === v.vin))).length;
 
   const list = useMemo(() => {
     const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -377,6 +383,10 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
                       <div style={{ display: 'flex', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
                         <button disabled={busy} style={{ ...btn('110,231,249'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setNoteEdit({ id: v.id, text: v.notes || '' })}>📝 {v.notes ? 'Edit notes' : 'Add notes'}</button>
                         <button disabled={busy} title="Check-in / check-out pictures and videos" style={{ ...btn('192,132,252'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => setMediaFor(v)}>📸 Media ({sessionsOf(v).length})</button>
+                        <button disabled={busy} title="Spin the car in 3D and click a panel to report damage" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px', position: 'relative' }} onClick={() => setDamageFor(v)}>
+                          🚨 Report damage
+                          {openDamage(v) > 0 && <span style={{ position: 'absolute', top: -8, right: -8, minWidth: 20, height: 20, padding: '0 5px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 11.5, fontWeight: 900, lineHeight: '20px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)' }}>{openDamage(v)}</span>}
+                        </button>
                         {onMaintenance && <button disabled={busy} title="New maintenance request for this loaner" style={{ ...btn('251,146,60'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => onMaintenance(v)}>🔧 Maintenance</button>}
                         <div style={{ flex: 1 }} />
                         <button disabled={busy} title="Take out of the fleet" style={{ ...btn('248,113,113'), fontSize: 14.5, padding: '9px 16px' }} onClick={() => remove(v)}>🗑 Remove</button>
@@ -458,6 +468,11 @@ export default function LoanerInventory({ currentUser, io, onMaintenance, isMana
         </div>
       )}
 
+      {damageFor && (
+        <Suspense fallback={<div style={{ position: 'fixed', inset: 0, zIndex: 1200, background: '#050913', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>Loading the 3D car…</div>}>
+          <LoanerDamage vehicle={damageFor} currentUser={currentUser} io={io} onClose={() => setDamageFor(null)} onChanged={setDamage} />
+        </Suspense>
+      )}
       {mediaFor && (() => {
         const sessions = sessionsOf(mediaFor);
         return (
