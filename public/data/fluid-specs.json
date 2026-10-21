@@ -1,647 +1,647 @@
 {
- "updatedAt": "2026-10-21T12:00:00.000Z",
- "vehicles": [
-  {
-   "id": "fs-palisade-2026",
-   "make": "HYUNDAI",
-   "model": "PALISADE",
-   "code": "",
-   "yearFrom": 2026,
-   "yearTo": 2026,
-   "source": {
-    "fileName": "2026 Hyundai Palisade Maintenance Specs.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
+  "updatedAt": "2026-10-21T14:33:56.857Z",
+  "vehicles": [
     {
-     "fluid": "Engine Oil",
-     "engine": "",
-     "volume": "6.13 US qt (5.8 L)",
-     "spec": "SAE 0W-20 API SN PLUS/SP or ILSAC GF-6",
-     "partNumber": "",
-     "note": "Drain and refill. Requires API SN PLUS (or above) full synthetic — a lower grade means the severe maintenance schedule."
+      "id": "fs-sonata-yfa",
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "YFA",
+      "yearFrom": 2011,
+      "yearTo": 2014,
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T12:00:00.000Z",
+        "by": "SHAWN"
+      },
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0T GDI",
+          "volume": "5.28 US qt (5.0 L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.4L",
+          "volume": "5.28 US qt (5.0 L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Manual Transmission Fluid",
+          "engine": "",
+          "volume": "1.90 US qt (1.8 L)",
+          "spec": "SAE 75W/85",
+          "partNumber": "0895000020B",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.50 US qt (7.1 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "6.967 US qt (6.6 L)",
+          "spec": "Mix of anti-freeze and water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.0T GDI",
+          "volume": "550 ± 25 g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2.4L",
+          "volume": "650 ± 25 g",
+          "spec": "R-134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Oil",
+          "engine": "",
+          "volume": "100 ± 10 cc",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt (0.7-0.8 L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt (0.7-0.8 L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        }
+      ]
     },
     {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "7.39 US qt (7.0 L)",
-     "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1 or other brands meeting the spec approved by Hyundai",
-     "partNumber": "",
-     "note": ""
+      "id": "fs-sonata-lfa",
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "LFA",
+      "yearFrom": 2015,
+      "yearTo": 2019,
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T12:00:00.000Z",
+        "by": "SHAWN"
+      },
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "1.6T GDI",
+          "volume": "4.75 US qt (4.5 L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.0T GDI",
+          "volume": "5.07 US qt (4.8 L)",
+          "spec": "5W-30 Conventional",
+          "partNumber": "0023319004",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2.4 GDI",
+          "volume": "5.07 US qt (4.8 L)",
+          "spec": "5W-20 Conventional",
+          "partNumber": "0023319001",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.50 US qt (7.1 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid",
+          "engine": "",
+          "volume": "2.00 US qt (1.9 L)",
+          "spec": "DCT SAE 70W",
+          "partNumber": "0023219063",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "1.6T GDI / 2.0T GDI",
+          "volume": "7.50 US qt (7.1 L)",
+          "spec": "Mix of anti-freeze and water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2.4 GDI",
+          "volume": "7.92 US qt (7.5 L) or 7.60 US qt (7.2 L)",
+          "spec": "Mix of anti-freeze and water",
+          "partNumber": "0023219010",
+          "note": "The guide lists both volumes for the 2.4 GDI."
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt (0.7-0.8 L)",
+          "spec": "DOT 3",
+          "partNumber": "0023219033",
+          "note": ""
+        },
+        {
+          "fluid": "Brake/Clutch Fluid",
+          "engine": "",
+          "volume": "0.7-0.8 US qt (0.7-0.8 L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "1.6T GDI / 2.0T GDI / 2.4 GDI",
+          "volume": "16.9 ± 0.88 oz (470 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Fluid",
+          "engine": "",
+          "volume": "2.82 ± 0.35 oz (80 ± 10 g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Fluid",
+          "engine": "",
+          "volume": "2.82 ± 0.35 oz (80 ± 10 g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ]
     },
     {
-     "fluid": "Coolant",
-     "engine": "",
-     "volume": "12.44 US qt (11.77 L)",
-     "spec": "Mixture, antifreeze with water (ethylene glycol base coolant for aluminum radiator)",
-     "partNumber": "",
-     "note": ""
+      "id": "fs-sonata-dn8a",
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "DN8A & DN8-N",
+      "yearFrom": 2020,
+      "yearTo": 2022,
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T12:00:00.000Z",
+        "by": "SHAWN"
+      },
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "SmartStream G 1.6T-GDI",
+          "volume": "5.07 US qt (4.8 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "SmartStream G 2.5 GDI",
+          "volume": "6.13 US qt (5.8 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2020 Model SmartStream G 1.6T-GDI",
+          "volume": "4.76 US qt (4.5 L)",
+          "spec": "API Latest (SN PLUS)",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2020 Model SmartStream G 2.5 GDI",
+          "volume": "5.49 US qt (5.2 L)",
+          "spec": "API Latest (SN PLUS)",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "SmartStream G 2.5T-GDI",
+          "volume": "6.13 US qt (5.8 L)",
+          "spec": "0W-30 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.89 US qt (6.5 L)",
+          "spec": "SP4-M",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
+          "engine": "SmartStream G 2.5T-GDI",
+          "volume": "3.49-3.59 US qt (3.3-3.4 L)",
+          "spec": "WDCTF HD G",
+          "partNumber": "0023219100",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
+          "engine": "SmartStream G 2.5T-GDI",
+          "volume": "2.59-2.64 US qt (2.45-2.5 L)",
+          "spec": "WDCTF HD H",
+          "partNumber": "0023219101",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "SmartStream G 1.6T-GDI",
+          "volume": "8.03 US qt (7.6 L)",
+          "spec": "Green coolant / Pink coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2020 Model SmartStream G 1.6T-GDI",
+          "volume": "4.76 US qt (4.5 L)",
+          "spec": "Green coolant / Pink coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "SmartStream G 2.5 GDI",
+          "volume": "9.07 US qt (8.59 L)",
+          "spec": "Green coolant / Pink coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2020 Model SmartStream G 2.5 GDI",
+          "volume": "5.49 US qt (5.2 L)",
+          "spec": "Green coolant / Pink coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "SmartStream G 2.5T-GDI",
+          "volume": "8.59 US qt (8.13 L)",
+          "spec": "Green coolant / Pink coolant",
+          "partNumber": "0023219010 / 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt (0.7-0.8 L)",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "SmartStream G 1.6T-GDI",
+          "volume": "17.6 ± 0.88 oz (500 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "SmartStream G 2.5 GDI",
+          "volume": "18.3 ± 0.88 oz (520 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "32.8 ± 0.35 oz (80 ± 10 g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ]
     },
     {
-     "fluid": "Brake Fluid",
-     "engine": "",
-     "volume": "As required",
-     "spec": "DOT-4",
-     "partNumber": "",
-     "note": ""
+      "id": "fs-sonata-dn8-hev",
+      "make": "HYUNDAI",
+      "model": "SONATA HYBRID",
+      "code": "DN8 HEV",
+      "yearFrom": 2020,
+      "yearTo": 2023,
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T12:00:00.000Z",
+        "by": "SHAWN"
+      },
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "4.5 US qt (4.3 L)",
+          "spec": "0W-16 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.3 US qt (6.0 L)",
+          "spec": "SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "8.6 US qt (8.18 L)",
+          "spec": "Mixture of anti-freeze and water",
+          "partNumber": "0023219010",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "Required amount",
+          "spec": "DOT-4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "21.2 ± 0.88 oz (600 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Fluid",
+          "engine": "",
+          "volume": "4.6 ± 0.35 oz (130 ± 10 g)",
+          "spec": "POE",
+          "partNumber": "0023219069",
+          "note": ""
+        }
+      ]
     },
     {
-     "fluid": "Rear Differential Oil (4WD)",
-     "engine": "",
-     "volume": "0.67 US qt (0.65 L)",
-     "spec": "Hypoid gear oil API GL-5, SAE 75W/85 (SK HCT-5 Gear Oil 75W/85 or equivalent)",
-     "partNumber": "",
-     "note": ""
+      "id": "fs-sonata-dn8",
+      "make": "HYUNDAI",
+      "model": "SONATA",
+      "code": "DN8",
+      "yearFrom": 2021,
+      "yearTo": 2023,
+      "source": {
+        "fileName": "sonata.pdf",
+        "uploadedAt": "2026-10-21T12:00:00.000Z",
+        "by": "SHAWN"
+      },
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "2021 1.6T GDI",
+          "volume": "5.07 US qt (4.8 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2021 2.5 GDI",
+          "volume": "5.49 US qt (5.2 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2022-2023 2.5 GDI",
+          "volume": "6.13 US qt (5.8 L)",
+          "spec": "0W-20 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Engine Oil",
+          "engine": "2022-2023 2.5 T-GDI",
+          "volume": "6.13 US qt (5.8 L)",
+          "spec": "0W-30 Full Synthetic",
+          "partNumber": "Refer to the Hyundai Lubricants Program",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "6.89 US qt (6.5 L)",
+          "spec": "ATF SP-IV",
+          "partNumber": "0023219057",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
+          "engine": "2022-2023 2.5 T-GDI",
+          "volume": "3.49-3.59 US qt (3.3-3.4 L)",
+          "spec": "GS WDCTF HD G (GS CALTEX)",
+          "partNumber": "0023219100",
+          "note": ""
+        },
+        {
+          "fluid": "Dual Clutch Transmission Fluid — Control Oil",
+          "engine": "2022-2023 2.5 T-GDI",
+          "volume": "2.59-2.64 US qt (2.45-2.5 L)",
+          "spec": "GS WDCTF HD H (GS CALTEX)",
+          "partNumber": "0023219101",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2021 1.6T GDI",
+          "volume": "4.76 US qt (4.5 L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green: 0023219010 / Pink: 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2021 2.5 GDI",
+          "volume": "5.49 US qt (5.2 L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green: 0023219010 / Pink: 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2022-2023 1.6 T-GDI",
+          "volume": "8.03 US qt (7.6 L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green: 0023219010 / Pink: 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2022-2023 2.5 GDI",
+          "volume": "9.07 US qt (8.59 L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green: 0023219010 / Pink: 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "2022-2023 2.5 T-GDI",
+          "volume": "8.59 US qt (8.13 L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Green: 0023219010 / Pink: 0023219098",
+          "note": ""
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "0.74-0.85 US qt (0.7-0.8 L)",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2021-2022 1.6T GDI",
+          "volume": "17.6 ± 0.88 oz (500 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "2021-2022 2.5 GDI",
+          "volume": "18.3 ± 0.88 oz (520 ± 25 g)",
+          "spec": "R-1234yf",
+          "partNumber": "0023219068",
+          "note": ""
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "32.8 ± 0.35 oz (80 ± 10 g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ]
     },
     {
-     "fluid": "Transfer Case Oil (4WD)",
-     "engine": "",
-     "volume": "0.74 US qt (0.7 L)",
-     "spec": "Hypoid gear oil API GL-5, SAE 75W/85 (SK HCT-5 Gear Oil 75W/85 or equivalent)",
-     "partNumber": "",
-     "note": ""
-    },
-    {
-     "fluid": "Electronic Limited Differential (e-LSD) Oil",
-     "engine": "",
-     "volume": "480 ± 15 mL (0.507 ± 0.015 US qt)",
-     "spec": "SHELL TF0870C or equivalent",
-     "partNumber": "",
-     "note": ""
-    },
-    {
-     "fluid": "Fuel",
-     "engine": "",
-     "volume": "19 US gal (72 L)",
-     "spec": "Refer to the Fuel Requirements",
-     "partNumber": "",
-     "note": ""
+      "make": "HYUNDAI",
+      "model": "PALISADE",
+      "code": "",
+      "yearFrom": 2026,
+      "yearTo": 2026,
+      "fluids": [
+        {
+          "fluid": "Engine oil",
+          "engine": "",
+          "volume": "6.13 US qt. (5.8 ℓ)",
+          "spec": "SAE 0W-20 API SN PLUS/SP or ILSAC GF-6",
+          "partNumber": "",
+          "note": "Requires <API SN PLUS (or above) Full synthetic> grade engine oil. If a lower grade engine oil (mineral oil including Semi-synthetic) is used, then the engine oil and engine oil filter must be replaced as indicated severe maintenance condition."
+        },
+        {
+          "fluid": "Automatic transmission fluid",
+          "engine": "",
+          "volume": "7.39 US qt. (7.0 ℓ)",
+          "spec": "SK ATF SP4M-1, MICHANG ATF SP4M-1, S-OIL ATF SP4M-1 or other brands meeting the above specification approved by HYUNDAI Motor Co.",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "12.44 US qt. (11.77 ℓ)",
+          "spec": "MIXTURE, Antifreeze with water (Ethylene glycol base coolant for aluminum radiator)",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Brake fluid",
+          "engine": "",
+          "volume": "As required",
+          "spec": "DOT-4",
+          "partNumber": "",
+          "note": "To maintain the best braking performance and ABS/ESC performance, use genuine brake fluid that conform to specifications. (SAE J1704 DOT-4 LV, FMVSS 116 DOT-4, ISO4925 CLASS-6)"
+        },
+        {
+          "fluid": "Rear differential oil (4WD)",
+          "engine": "",
+          "volume": "0.67 US qt. (0.65 ℓ)",
+          "spec": "HYPOID GEAR OIL API GL-5, SAE 75W/85 (SK HCT-5 GEAR OIL 75W/85 or EQUIVALENT)",
+          "partNumber": "",
+          "note": "If the transfer case/rear differential is submerged, visit an authorized HYUNDAI genuine products to replace the differential oil."
+        },
+        {
+          "fluid": "Transfer case oil (4WD)",
+          "engine": "",
+          "volume": "0.74 US qt. (0.7 ℓ)",
+          "spec": "",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Electronic Limited Differential (e-LSD) oil",
+          "engine": "",
+          "volume": "0.507 ± 0.015 US qt. 480 ± 15 mℓ",
+          "spec": "SHELL TF0870C or equivalent",
+          "partNumber": "",
+          "note": ""
+        },
+        {
+          "fluid": "Fuel",
+          "engine": "",
+          "volume": "19 US gal. (72ℓ)",
+          "spec": "Refer to the Fuel Requirements.",
+          "partNumber": "",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2026 Hyundai Palisade Maintenance Specs.pdf",
+        "uploadedAt": "2026-10-21T14:33:34.680Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi7q9npe3ql"
     }
-   ]
-  },
-  {
-   "id": "fs-sonata-yfa",
-   "make": "HYUNDAI",
-   "model": "SONATA",
-   "code": "YFA",
-   "yearFrom": 2011,
-   "yearTo": 2014,
-   "source": {
-    "fileName": "sonata.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
-    {
-     "fluid": "Engine Oil",
-     "engine": "2.0T GDI",
-     "volume": "5.28 US qt (5.0 L)",
-     "spec": "5W-20 Conventional",
-     "partNumber": "0023319001",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2.4L",
-     "volume": "5.28 US qt (5.0 L)",
-     "spec": "5W-20 Conventional",
-     "partNumber": "0023319001",
-     "note": ""
-    },
-    {
-     "fluid": "Manual Transmission Fluid",
-     "engine": "",
-     "volume": "1.90 US qt (1.8 L)",
-     "spec": "SAE 75W/85",
-     "partNumber": "0895000020B",
-     "note": ""
-    },
-    {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "7.50 US qt (7.1 L)",
-     "spec": "ATF SP-IV",
-     "partNumber": "0023219057",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "",
-     "volume": "6.967 US qt (6.6 L)",
-     "spec": "Mix of anti-freeze and water",
-     "partNumber": "0023219010",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "2.0T GDI",
-     "volume": "550 ± 25 g",
-     "spec": "R-134a",
-     "partNumber": "0023219046",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "2.4L",
-     "volume": "650 ± 25 g",
-     "spec": "R-134a",
-     "partNumber": "0023219046",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Oil",
-     "engine": "",
-     "volume": "100 ± 10 cc",
-     "spec": "PAG",
-     "partNumber": "0023219022",
-     "note": ""
-    },
-    {
-     "fluid": "Brake/Clutch Fluid",
-     "engine": "",
-     "volume": "0.7-0.8 US qt (0.7-0.8 L)",
-     "spec": "DOT 3",
-     "partNumber": "0023219033",
-     "note": ""
-    },
-    {
-     "fluid": "Brake/Clutch Fluid",
-     "engine": "",
-     "volume": "0.7-0.8 US qt (0.7-0.8 L)",
-     "spec": "DOT 4",
-     "partNumber": "0023219053",
-     "note": ""
-    }
-   ]
-  },
-  {
-   "id": "fs-sonata-lfa",
-   "make": "HYUNDAI",
-   "model": "SONATA",
-   "code": "LFA",
-   "yearFrom": 2015,
-   "yearTo": 2019,
-   "source": {
-    "fileName": "sonata.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
-    {
-     "fluid": "Engine Oil",
-     "engine": "1.6T GDI",
-     "volume": "4.75 US qt (4.5 L)",
-     "spec": "5W-30 Conventional",
-     "partNumber": "0023319004",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2.0T GDI",
-     "volume": "5.07 US qt (4.8 L)",
-     "spec": "5W-30 Conventional",
-     "partNumber": "0023319004",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2.4 GDI",
-     "volume": "5.07 US qt (4.8 L)",
-     "spec": "5W-20 Conventional",
-     "partNumber": "0023319001",
-     "note": ""
-    },
-    {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "7.50 US qt (7.1 L)",
-     "spec": "ATF SP-IV",
-     "partNumber": "0023219057",
-     "note": ""
-    },
-    {
-     "fluid": "Dual Clutch Transmission Fluid",
-     "engine": "",
-     "volume": "2.00 US qt (1.9 L)",
-     "spec": "DCT SAE 70W",
-     "partNumber": "0023219063",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "1.6T GDI / 2.0T GDI",
-     "volume": "7.50 US qt (7.1 L)",
-     "spec": "Mix of anti-freeze and water",
-     "partNumber": "0023219010",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2.4 GDI",
-     "volume": "7.92 US qt (7.5 L) or 7.60 US qt (7.2 L)",
-     "spec": "Mix of anti-freeze and water",
-     "partNumber": "0023219010",
-     "note": "The guide lists both volumes for the 2.4 GDI."
-    },
-    {
-     "fluid": "Brake/Clutch Fluid",
-     "engine": "",
-     "volume": "0.7-0.8 US qt (0.7-0.8 L)",
-     "spec": "DOT 3",
-     "partNumber": "0023219033",
-     "note": ""
-    },
-    {
-     "fluid": "Brake/Clutch Fluid",
-     "engine": "",
-     "volume": "0.7-0.8 US qt (0.7-0.8 L)",
-     "spec": "DOT 4",
-     "partNumber": "0023219053",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "1.6T GDI / 2.0T GDI / 2.4 GDI",
-     "volume": "16.9 ± 0.88 oz (470 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Fluid",
-     "engine": "",
-     "volume": "2.82 ± 0.35 oz (80 ± 10 g)",
-     "spec": "PAG",
-     "partNumber": "0023219022",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Fluid",
-     "engine": "",
-     "volume": "2.82 ± 0.35 oz (80 ± 10 g)",
-     "spec": "POE",
-     "partNumber": "0023219069",
-     "note": ""
-    }
-   ]
-  },
-  {
-   "id": "fs-sonata-dn8a",
-   "make": "HYUNDAI",
-   "model": "SONATA",
-   "code": "DN8A & DN8-N",
-   "yearFrom": 2020,
-   "yearTo": 2022,
-   "source": {
-    "fileName": "sonata.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
-    {
-     "fluid": "Engine Oil",
-     "engine": "SmartStream G 1.6T-GDI",
-     "volume": "5.07 US qt (4.8 L)",
-     "spec": "0W-20 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "SmartStream G 2.5 GDI",
-     "volume": "6.13 US qt (5.8 L)",
-     "spec": "0W-20 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2020 Model SmartStream G 1.6T-GDI",
-     "volume": "4.76 US qt (4.5 L)",
-     "spec": "API Latest (SN PLUS)",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2020 Model SmartStream G 2.5 GDI",
-     "volume": "5.49 US qt (5.2 L)",
-     "spec": "API Latest (SN PLUS)",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "SmartStream G 2.5T-GDI",
-     "volume": "6.13 US qt (5.8 L)",
-     "spec": "0W-30 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "6.89 US qt (6.5 L)",
-     "spec": "SP4-M",
-     "partNumber": "0023219057",
-     "note": ""
-    },
-    {
-     "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
-     "engine": "SmartStream G 2.5T-GDI",
-     "volume": "3.49-3.59 US qt (3.3-3.4 L)",
-     "spec": "WDCTF HD G",
-     "partNumber": "0023219100",
-     "note": ""
-    },
-    {
-     "fluid": "Dual Clutch Transmission Fluid — Control Oil",
-     "engine": "SmartStream G 2.5T-GDI",
-     "volume": "2.59-2.64 US qt (2.45-2.5 L)",
-     "spec": "WDCTF HD H",
-     "partNumber": "0023219101",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "SmartStream G 1.6T-GDI",
-     "volume": "8.03 US qt (7.6 L)",
-     "spec": "Green coolant / Pink coolant",
-     "partNumber": "0023219010 / 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2020 Model SmartStream G 1.6T-GDI",
-     "volume": "4.76 US qt (4.5 L)",
-     "spec": "Green coolant / Pink coolant",
-     "partNumber": "0023219010 / 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "SmartStream G 2.5 GDI",
-     "volume": "9.07 US qt (8.59 L)",
-     "spec": "Green coolant / Pink coolant",
-     "partNumber": "0023219010 / 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2020 Model SmartStream G 2.5 GDI",
-     "volume": "5.49 US qt (5.2 L)",
-     "spec": "Green coolant / Pink coolant",
-     "partNumber": "0023219010 / 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "SmartStream G 2.5T-GDI",
-     "volume": "8.59 US qt (8.13 L)",
-     "spec": "Green coolant / Pink coolant",
-     "partNumber": "0023219010 / 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Brake Fluid",
-     "engine": "",
-     "volume": "0.74-0.85 US qt (0.7-0.8 L)",
-     "spec": "DOT-4",
-     "partNumber": "0023219053",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "SmartStream G 1.6T-GDI",
-     "volume": "17.6 ± 0.88 oz (500 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "SmartStream G 2.5 GDI",
-     "volume": "18.3 ± 0.88 oz (520 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Lubricant",
-     "engine": "",
-     "volume": "32.8 ± 0.35 oz (80 ± 10 g)",
-     "spec": "PAG",
-     "partNumber": "0023219022",
-     "note": ""
-    }
-   ]
-  },
-  {
-   "id": "fs-sonata-dn8-hev",
-   "make": "HYUNDAI",
-   "model": "SONATA HYBRID",
-   "code": "DN8 HEV",
-   "yearFrom": 2020,
-   "yearTo": 2023,
-   "source": {
-    "fileName": "sonata.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
-    {
-     "fluid": "Engine Oil",
-     "engine": "",
-     "volume": "4.5 US qt (4.3 L)",
-     "spec": "0W-16 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "6.3 US qt (6.0 L)",
-     "spec": "SP-IV",
-     "partNumber": "0023219057",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "",
-     "volume": "8.6 US qt (8.18 L)",
-     "spec": "Mixture of anti-freeze and water",
-     "partNumber": "0023219010",
-     "note": ""
-    },
-    {
-     "fluid": "Brake Fluid",
-     "engine": "",
-     "volume": "Required amount",
-     "spec": "DOT-4",
-     "partNumber": "0023219053",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "",
-     "volume": "21.2 ± 0.88 oz (600 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Fluid",
-     "engine": "",
-     "volume": "4.6 ± 0.35 oz (130 ± 10 g)",
-     "spec": "POE",
-     "partNumber": "0023219069",
-     "note": ""
-    }
-   ]
-  },
-  {
-   "id": "fs-sonata-dn8",
-   "make": "HYUNDAI",
-   "model": "SONATA",
-   "code": "DN8",
-   "yearFrom": 2021,
-   "yearTo": 2023,
-   "source": {
-    "fileName": "sonata.pdf",
-    "uploadedAt": "2026-10-21T12:00:00.000Z",
-    "by": "SHAWN"
-   },
-   "fluids": [
-    {
-     "fluid": "Engine Oil",
-     "engine": "2021 1.6T GDI",
-     "volume": "5.07 US qt (4.8 L)",
-     "spec": "0W-20 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2021 2.5 GDI",
-     "volume": "5.49 US qt (5.2 L)",
-     "spec": "0W-20 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2022-2023 2.5 GDI",
-     "volume": "6.13 US qt (5.8 L)",
-     "spec": "0W-20 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Engine Oil",
-     "engine": "2022-2023 2.5 T-GDI",
-     "volume": "6.13 US qt (5.8 L)",
-     "spec": "0W-30 Full Synthetic",
-     "partNumber": "Refer to the Hyundai Lubricants Program",
-     "note": ""
-    },
-    {
-     "fluid": "Automatic Transmission Fluid",
-     "engine": "",
-     "volume": "6.89 US qt (6.5 L)",
-     "spec": "ATF SP-IV",
-     "partNumber": "0023219057",
-     "note": ""
-    },
-    {
-     "fluid": "Dual Clutch Transmission Fluid — Gear Oil",
-     "engine": "2022-2023 2.5 T-GDI",
-     "volume": "3.49-3.59 US qt (3.3-3.4 L)",
-     "spec": "GS WDCTF HD G (GS CALTEX)",
-     "partNumber": "0023219100",
-     "note": ""
-    },
-    {
-     "fluid": "Dual Clutch Transmission Fluid — Control Oil",
-     "engine": "2022-2023 2.5 T-GDI",
-     "volume": "2.59-2.64 US qt (2.45-2.5 L)",
-     "spec": "GS WDCTF HD H (GS CALTEX)",
-     "partNumber": "0023219101",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2021 1.6T GDI",
-     "volume": "4.76 US qt (4.5 L)",
-     "spec": "Mix of antifreeze and water",
-     "partNumber": "Green: 0023219010 / Pink: 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2021 2.5 GDI",
-     "volume": "5.49 US qt (5.2 L)",
-     "spec": "Mix of antifreeze and water",
-     "partNumber": "Green: 0023219010 / Pink: 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2022-2023 1.6 T-GDI",
-     "volume": "8.03 US qt (7.6 L)",
-     "spec": "Mix of antifreeze and water",
-     "partNumber": "Green: 0023219010 / Pink: 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2022-2023 2.5 GDI",
-     "volume": "9.07 US qt (8.59 L)",
-     "spec": "Mix of antifreeze and water",
-     "partNumber": "Green: 0023219010 / Pink: 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Coolant",
-     "engine": "2022-2023 2.5 T-GDI",
-     "volume": "8.59 US qt (8.13 L)",
-     "spec": "Mix of antifreeze and water",
-     "partNumber": "Green: 0023219010 / Pink: 0023219098",
-     "note": ""
-    },
-    {
-     "fluid": "Brake Fluid",
-     "engine": "",
-     "volume": "0.74-0.85 US qt (0.7-0.8 L)",
-     "spec": "DOT 4",
-     "partNumber": "0023219053",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "2021-2022 1.6T GDI",
-     "volume": "17.6 ± 0.88 oz (500 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Refrigerant",
-     "engine": "2021-2022 2.5 GDI",
-     "volume": "18.3 ± 0.88 oz (520 ± 25 g)",
-     "spec": "R-1234yf",
-     "partNumber": "0023219068",
-     "note": ""
-    },
-    {
-     "fluid": "Compressor Lubricant",
-     "engine": "",
-     "volume": "32.8 ± 0.35 oz (80 ± 10 g)",
-     "spec": "PAG",
-     "partNumber": "0023219022",
-     "note": ""
-    }
-   ]
-  }
- ]
+  ]
 }
