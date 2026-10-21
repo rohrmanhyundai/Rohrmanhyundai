@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T15:17:03.053Z",
+  "updatedAt": "2026-10-21T15:17:34.304Z",
   "vehicles": [
     {
       "make": "HYUNDAI",
@@ -1451,109 +1451,6 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7yza46u5s"
-    },
-    {
-      "make": "HYUNDAI",
-      "model": "PALISADE",
-      "code": "LX2",
-      "yearFrom": 2020,
-      "yearTo": 2024,
-      "fluids": [
-        {
-          "fluid": "Engine Oil",
-          "engine": "",
-          "volume": "6.87 US qt. (6.5L)",
-          "spec": "5W-30 full synthetic",
-          "partNumber": "Contact your lubricant drop ship vendor for part information.",
-          "note": ""
-        },
-        {
-          "fluid": "Automatic Transmission Fluid",
-          "engine": "",
-          "volume": "7.4 US qt. (7.0L)",
-          "spec": "ATF SPIV",
-          "partNumber": "0023219045",
-          "note": ""
-        },
-        {
-          "fluid": "Transfer Case Oil (AWD)",
-          "engine": "",
-          "volume": "0.74 US qt. (0.7L)",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219075",
-          "note": ""
-        },
-        {
-          "fluid": "Rear Differential Oil (AWD)",
-          "engine": "",
-          "volume": "0.74 US qt. (0.7L)",
-          "spec": "Hypoid Gear Oil SAE 75W/85",
-          "partNumber": "0023219075",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "",
-          "volume": "9.4 US qt. (8.9L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "Contact your lubricant drop ship vendor for part information.",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2023-2024 model without trailer",
-          "volume": "12.44 US qt. (11.79L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "Contact your lubricant drop ship vendor for part information.",
-          "note": ""
-        },
-        {
-          "fluid": "Coolant",
-          "engine": "2023-2024 model with trailer",
-          "volume": "12.65 US qt. (11.98L)",
-          "spec": "Mix of antifreeze and water",
-          "partNumber": "Contact your lubricant drop ship vendor for part information.",
-          "note": ""
-        },
-        {
-          "fluid": "Brake Fluid",
-          "engine": "",
-          "volume": "As Required",
-          "spec": "DOT 4",
-          "partNumber": "0023219053",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "",
-          "volume": "31.75±0.88 oz. (900±25g)",
-          "spec": "R134a",
-          "partNumber": "0023219046",
-          "note": ""
-        },
-        {
-          "fluid": "Refrigerant",
-          "engine": "2023-2024 model",
-          "volume": "29.98±0.88 oz. (850±25g)",
-          "spec": "R1234yf",
-          "partNumber": "0023219068",
-          "note": ""
-        },
-        {
-          "fluid": "Compressor Lubricant",
-          "engine": "",
-          "volume": "6.35 oz. (180g)",
-          "spec": "PAG",
-          "partNumber": "0023219022",
-          "note": ""
-        }
-      ],
-      "source": {
-        "fileName": "2020-2024 palisade.pdf",
-        "uploadedAt": "2026-10-21T14:41:38.434Z",
-        "by": "SHAWN"
-      },
-      "id": "fs-mvi807s4zij0"
     },
     {
       "make": "HYUNDAI",
@@ -4272,6 +4169,109 @@
         "by": "SHAWN"
       },
       "id": "fs-mvi7znfmm62r"
+    },
+    {
+      "make": "HYUNDAI",
+      "model": "PALISADE",
+      "code": "LX2",
+      "yearFrom": 2020,
+      "yearTo": 2024,
+      "fluids": [
+        {
+          "fluid": "Engine Oil",
+          "engine": "",
+          "volume": "6.87 US qt. (6.5L)",
+          "spec": "5W-30 full synthetic",
+          "partNumber": "Contact your lubricant drop ship vendor for part information.",
+          "note": ""
+        },
+        {
+          "fluid": "Automatic Transmission Fluid",
+          "engine": "",
+          "volume": "7.4 US qt. (7.0L)",
+          "spec": "ATF SPIV",
+          "partNumber": "0023219045",
+          "note": ""
+        },
+        {
+          "fluid": "Transfer Case Oil (AWD)",
+          "engine": "",
+          "volume": "0.74 US qt. (0.7L)",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219075",
+          "note": ""
+        },
+        {
+          "fluid": "Rear Differential Oil (AWD)",
+          "engine": "",
+          "volume": "0.74 US qt. (0.7L)",
+          "spec": "Hypoid Gear Oil SAE 75W/85",
+          "partNumber": "0023219075",
+          "note": ""
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "9.4 US qt. (8.9L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Contact your lubricant drop ship vendor for part information.",
+          "note": "2023-2024 model without trailer"
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "12.44 US qt. (11.79L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Contact your lubricant drop ship vendor for part information.",
+          "note": "2023-2024 model without trailer"
+        },
+        {
+          "fluid": "Coolant",
+          "engine": "",
+          "volume": "12.65 US qt. (11.98L)",
+          "spec": "Mix of antifreeze and water",
+          "partNumber": "Contact your lubricant drop ship vendor for part information.",
+          "note": "2023-2024 model with trailer"
+        },
+        {
+          "fluid": "Brake Fluid",
+          "engine": "",
+          "volume": "As Required",
+          "spec": "DOT 4",
+          "partNumber": "0023219053",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "31.75±0.88 oz. (900±25g)",
+          "spec": "R134a",
+          "partNumber": "0023219046",
+          "note": ""
+        },
+        {
+          "fluid": "Refrigerant",
+          "engine": "",
+          "volume": "29.98±0.88 oz. (850±25g)",
+          "spec": "R1234yf",
+          "partNumber": "0023219068",
+          "note": "2023-2024 model"
+        },
+        {
+          "fluid": "Compressor Lubricant",
+          "engine": "",
+          "volume": "6.35 oz. (180g)",
+          "spec": "PAG",
+          "partNumber": "0023219022",
+          "note": ""
+        }
+      ],
+      "source": {
+        "fileName": "2020-2024 palisade.pdf",
+        "uploadedAt": "2026-10-21T15:17:31.343Z",
+        "by": "SHAWN"
+      },
+      "id": "fs-mvi807s4zij0"
     }
   ]
 }
