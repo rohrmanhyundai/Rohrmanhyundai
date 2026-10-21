@@ -21,6 +21,7 @@ Rules:
 - fluids: one row per fluid per engine. "fluid" = the lubricant name (Engine Oil, Automatic Transmission Fluid, Coolant, Brake Fluid, Refrigerant, …). "engine" = the engine size / variant for that row ("" if the row is for all engines). Keep any years printed in the engine cell, e.g. "2021 1.6T GDI".
 - When one cell spans several rows (a classification or part number shared by several engines, a volume shared by two engines), REPEAT it on every row it covers. A value printed once, vertically BETWEEN two engine rows (centred on the line between them), belongs to BOTH rows — e.g. "5W-30" printed between the 1.6T and 2.0T rows applies to 1.6T and 2.0T, and the next value down starts with the following engine. Never shift values down a row to fill gaps.
 - When a cell holds two values for one engine (e.g. two volumes stacked for the same engine), keep both in that one row joined with " or ".
+- A wet dual-clutch transmission lists two fluids: put " — Gear Oil" or " — Control Oil" on the end of the fluid name (the WDCTF HD G one is Gear Oil, HD H is Control Oil).
 - When a row lists two choices (e.g. DOT 3 and DOT 4 with different part numbers), make two rows.
 - volume: exactly as printed incl. units and metric in brackets, e.g. "5.07 US qt (4.8 L)". spec: the classification / specification text. part_number: the OEM part number, or the printed text such as "Refer to the Hyundai Lubricants Program". note: any footnote that changes what to use (keep it short), else "".
 - Copy values exactly; do not invent anything. Skip marketing text, warnings and table headers.`;
@@ -93,11 +94,65 @@ export async function readFluidSpecPdf(file, loadPdfJs) {
     model: s(v.model).toUpperCase(),
     code: s(v.code),
     yearFrom: yr(v.year_from), yearTo: yr(v.year_to) || yr(v.year_from),
-    fluids: (v.fluids || []).map(f => ({ fluid: s(f.fluid), engine: s(f.engine), volume: s(f.volume), spec: s(f.spec), partNumber: s(f.part_number), note: s(f.note) }))
+    fluids: (v.fluids || []).map(f => labelDct({ fluid: s(f.fluid), engine: s(f.engine), volume: s(f.volume), spec: s(f.spec), partNumber: s(f.part_number), note: s(f.note) }))
       .filter(f => f.fluid || f.volume),
   })).filter(v => v.fluids.length);
   if (!vehicles.length) throw new Error('No fluid tables were found in that file.');
   return vehicles;
+}
+
+// Wet DCT lines come in pairs; name them by spec when the reader didn't.
+function labelDct(f) {
+  const txt = `${f.fluid} ${f.engine} ${f.volume}`.toLowerCase();
+  if (!/dual clutch/i.test(f.fluid) || /gear oil|control oil/.test(txt)) return f;
+  if (/HD\s*G\b/i.test(f.spec)) return { ...f, fluid: `${f.fluid} — Gear Oil` };
+  if (/HD\s*H\b/i.test(f.spec)) return { ...f, fluid: `${f.fluid} — Control Oil` };
+  return f;
+}
+
+// ── Re-upload check: a fresh reading vs. what's on file ───────────────────────
+// Formatting the reader varies on (ℓ vs L, "qt." vs "qt", case, spacing,
+// "~" vs "-") isn't a change; a different number, spec or part number is.
+const FIELDS = ['fluid', 'engine', 'volume', 'spec', 'partNumber', 'note'];
+export const sameText = (a, b) => cmp(a) === cmp(b);
+function cmp(t) {
+  return String(t || '').toLowerCase()
+    .replace(/ℓ/g, 'l').replace(/u\.s\./g, 'us').replace(/[~–—]/g, '-')
+    .replace(/\bquarts?\b/g, 'qt').replace(/\bliters?\b/g, 'l')
+    .replace(/(?<![0-9])\.|\.(?![0-9])/g, '')          // "qt." → "qt", keep "5.07"
+    .replace(/[^a-z0-9±.\-/]+/g, '');
+}
+const lineKey = (f) => `${cmp(f.fluid)}|${cmp(f.engine)}`;
+
+// The vehicle on file this reading is about (same model + code + years, else
+// same model with overlapping years), or null for a new vehicle.
+export function findOnFile(vehicles, d) {
+  const m = cmp(d.model), c = cmp(d.code);
+  const same = vehicles.filter(v => cmp(v.model) === m && v.yearFrom === d.yearFrom && v.yearTo === d.yearTo);
+  return same.find(v => cmp(v.code) === c) || same[0]
+    || vehicles.find(v => cmp(v.model) === m && cmp(v.code) === c && c && d.yearFrom && v.yearFrom <= (d.yearTo || d.yearFrom) && d.yearFrom <= (v.yearTo || v.yearFrom))
+    || null;
+}
+
+// → { changed: { [newIndex]: { field: oldValue } }, added: [newIndex], missing: [oldLine], header: { field: oldValue }, count }
+export function compareToOnFile(d, old) {
+  const out = { changed: {}, added: [], missing: [], header: {}, count: 0 };
+  for (const k of ['make', 'model', 'code', 'yearFrom', 'yearTo']) {
+    if (!sameText(d[k], old[k])) { out.header[k] = old[k]; out.count++; }
+  }
+  const used = new Set();
+  d.fluids.forEach((f, i) => {
+    // Same fluid + engine; among duplicates (DOT 3 / DOT 4) the closest one.
+    const cands = old.fluids.map((g, j) => ({ g, j })).filter(x => !used.has(x.j) && lineKey(x.g) === lineKey(f));
+    const pick = cands.sort((a, b) => FIELDS.filter(k => !sameText(a.g[k], f[k])).length - FIELDS.filter(k => !sameText(b.g[k], f[k])).length)[0];
+    if (!pick) { out.added.push(i); out.count++; return; }
+    used.add(pick.j);
+    const diff = {};
+    for (const k of FIELDS) if (!sameText(pick.g[k], f[k])) diff[k] = pick.g[k] || '(blank)';
+    if (Object.keys(diff).length) { out.changed[i] = diff; out.count += Object.keys(diff).length; }
+  });
+  old.fluids.forEach((g, j) => { if (!used.has(j)) { out.missing.push(g); out.count++; } });
+  return out;
 }
 
 // What a draft still needs before it can be saved.

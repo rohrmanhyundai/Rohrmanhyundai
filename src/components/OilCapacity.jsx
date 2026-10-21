@@ -3,7 +3,7 @@ import * as github from '../utils/github';
 import { decodeVin, validateVin } from '../utils/vinLookup';
 import { loadPdfJs } from '../utils/pdfText';
 import { printFluidSheet } from '../utils/fluidPrint';
-import { readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
+import { findOnFile, compareToOnFile, readFluidSpecPdf, missingFields, vehiclesFor, yearsIn, modelsFor, coversYear, engineYearOk, engineMatches, isEngineOil } from '../utils/fluidSpecs';
 
 // ── 🛢 Oil Capacity ───────────────────────────────────────────────────────────
 // Engine oil (and every other fluid) capacity, spec and part number — by VIN
@@ -39,6 +39,7 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
   const [reading, setReading] = useState(false);
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
+  const [openSame, setOpenSame] = useState({});  // unchanged re-upload sections the user expanded
   const draftsRef = useRef(null);                // the review / edit form — scrolled into view when it opens
   const [jump, setJump] = useState(0);
   // The page scrolls inside its own panel, so bring the form to the user (Edit
@@ -79,10 +80,19 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
     if (!f) return;
     setReading(true); setMsg('📄 Reading the spec sheet — this takes a few seconds…'); setDrafts(null);
     try {
-      const found = await readFluidSpecPdf(f, loadPdfJs);
-      setDrafts(found.map(v => ({ ...v, _key: newId(), source: { fileName: f.name, uploadedAt: new Date().toISOString(), by: currentUser } })));
+      const found = await (io?.readFluidSpecPdf || readFluidSpecPdf)(f, loadPdfJs);
+      // Re-upload check: pair each section with what's on file and compare.
+      const next = found.map(v => {
+        const on = findOnFile(vehicles, v);
+        return { ...v, _key: newId(), _onFileId: on ? on.id : null, source: { fileName: f.name, uploadedAt: new Date().toISOString(), by: currentUser } };
+      });
+      const counts = next.map(d => { const on = d._onFileId && vehicles.find(v => v.id === d._onFileId); return on ? compareToOnFile(d, on).count : -1; });
+      setDrafts(next);
       setJump(n => n + 1);
-      setMsg(`Found ${found.length} vehicle section${found.length === 1 ? '' : 's'} in ${f.name}. Check everything — fill in anything marked red — then Save.`);
+      const fresh = counts.filter(c => c === -1).length, changed = counts.filter(c => c > 0).length;
+      setMsg(!fresh && !changed
+        ? `✅ No changes needed — everything in ${f.name} (${next.length} vehicle section${next.length === 1 ? '' : 's'}) already matches what's on file.`
+        : `Read ${next.length} section${next.length === 1 ? '' : 's'} from ${f.name}: ${[changed && `${changed} with changes`, fresh && `${fresh} new`, next.length - changed - fresh && `${next.length - changed - fresh} unchanged`].filter(Boolean).join(', ')}. Changes are highlighted — check them against the PDF before saving.`);
     } catch (err) {
       setMsg(`❌ ${err.message || 'Could not read that file.'}`);
     }
@@ -91,14 +101,19 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
   const addByHand = () => { setMsg(''); setJump(n => n + 1); setDrafts([{ _key: newId(), make: 'HYUNDAI', model: '', code: '', yearFrom: null, yearTo: null, fluids: [EMPTY_FLUID()], source: { fileName: '', uploadedAt: new Date().toISOString(), by: currentUser } }]); };
   const editExisting = (v) => { setMsg(`✏️ Editing ${title(v)} ${years(v)} — make your changes, then Save.`); setDrafts([{ ...JSON.parse(JSON.stringify(v)), _key: newId() }]); setJump(n => n + 1); };
   const setDraft = (key, fn) => setDrafts(ds => ds.map(d => (d._key === key ? fn(d) : d)));
-  const allReady = drafts && drafts.length > 0 && drafts.every(d => !missingFields(d).length && d.fluids.some(f => f.fluid && f.volume));
+  // Uploaded section vs. its vehicle on file (null = new vehicle / not an upload).
+  const compareOf = (d) => { const on = d._onFileId && vehicles.find(v => v.id === d._onFileId); return on ? compareToOnFile(d, on) : null; };
+  const needsSave = (d) => { const c = compareOf(d); return !c || c.count > 0; };
+  const toSave = drafts ? drafts.filter(needsSave) : [];
+  const allReady = toSave.length > 0 && toSave.every(d => !missingFields(d).length && d.fluids.some(f => f.fluid && f.volume));
 
   async function saveDrafts() {
     if (!allReady || busy) return;
     setBusy(true); setMsg('Saving…');
     try {
-      const clean = drafts.map(({ _key, score, ...v }) => ({
-        ...v, id: v.id || newId(), make: v.make.trim().toUpperCase(), model: v.model.trim().toUpperCase(), code: (v.code || '').trim(),
+      // Only sections that are new or actually changed; a re-upload keeps the vehicle's id.
+      const clean = toSave.map(({ _key, _onFileId, score, ...v }) => ({
+        ...v, id: v.id || _onFileId || newId(), make: v.make.trim().toUpperCase(), model: v.model.trim().toUpperCase(), code: (v.code || '').trim(),
         fluids: v.fluids.filter(f => f.fluid || f.volume).map(f => Object.fromEntries(Object.entries(f).map(([k, x]) => [k, String(x || '').trim()]))),
       }));
       // Same id (edit) or same make + model + code + years (a re-upload) replaces what's there.
@@ -108,7 +123,8 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
         vehicles: [...cur.vehicles.filter(v => !clean.some(c => same(c, v))), ...clean],
       }), `save ${clean.map(c => `${c.model} ${c.yearFrom}`).join(', ')}`);
       setData(next); setDrafts(null);
-      setMsg(`✅ Saved ${clean.length} vehicle${clean.length === 1 ? '' : 's'}.`);
+      const skipped = drafts.length - clean.length;
+      setMsg(`✅ Saved ${clean.length} vehicle${clean.length === 1 ? '' : 's'}.${skipped ? ` ${skipped} already matched — left as is.` : ''}`);
     } catch (err) {
       setMsg(`❌ ${err.message || 'Save failed.'}`);
     }
@@ -192,11 +208,28 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
       setDraft(d._key, x => ({ ...x, [k]: k === 'yearFrom' || k === 'yearTo' ? (parseInt(val, 10) || null) : val }));
     };
     const setRow = (j, k) => (e) => { const val = e.target.value; setDraft(d._key, x => ({ ...x, fluids: x.fluids.map((f, n) => (n === j ? { ...f, [k]: val } : f)) })); };
+    // Re-upload: what differs from the vehicle on file.
+    const cmp = compareOf(d);
+    const same = cmp && cmp.count === 0;
+    const amber = { borderColor: 'rgba(251,191,36,.9)', boxShadow: '0 0 0 2px rgba(251,191,36,.18)' };
+    const wasNote = (old) => <div style={{ fontSize: 10.5, color: '#fcd34d', marginTop: 2, whiteSpace: 'normal', lineHeight: 1.3 }}>was: {String(old)}</div>;
+    const status = d.id ? <span style={{ fontSize: 12, fontWeight: 900, color: '#93c5fd' }}>✏️ Editing</span>
+      : !cmp ? <span style={{ fontSize: 12, fontWeight: 900, color: '#c4b5fd' }}>🆕 New — not on file yet</span>
+      : same ? <span style={{ fontSize: 12, fontWeight: 900, color: '#052e16', background: '#4ade80', borderRadius: 999, padding: '3px 10px' }}>✓ No changes — matches on file</span>
+      : <span style={{ fontSize: 12, fontWeight: 900, color: '#422006', background: '#fbbf24', borderRadius: 999, padding: '3px 10px' }}>⚠ {cmp.count} change{cmp.count === 1 ? '' : 's'} vs on file</span>;
+    if (same && !openSame[d._key]) return (
+      <div key={d._key} style={{ ...card, padding: '12px 16px', borderColor: 'rgba(74,222,128,.45)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, fontSize: 14.5, fontWeight: 900, color: '#f1f5f9' }}>{title(d)} {years(d)}<span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 700 }}> · {d.fluids.length} lines</span></div>
+        {status}
+        <button onClick={() => setOpenSame(o => ({ ...o, [d._key]: true }))} style={{ ...btn('148,163,184', false), padding: '5px 10px', fontSize: 12 }}>Show lines</button>
+      </div>
+    );
     return (
-      <div key={d._key} style={{ ...card, borderColor: miss.length ? 'rgba(248,113,113,.5)' : 'rgba(74,222,128,.45)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-          <div style={{ flex: 1, fontSize: 15, fontWeight: 900, color: '#f1f5f9' }}>{d.id ? '✏️ Editing' : '🆕 New'} · {title(d)} {d.yearFrom ? years(d) : ''}</div>
-          {miss.length > 0 ? <span style={{ fontSize: 12, fontWeight: 900, color: '#fca5a5' }}>Needs: {miss.join(', ')}</span> : <span style={{ fontSize: 12, fontWeight: 900, color: '#86efac' }}>✓ Ready</span>}
+      <div key={d._key} style={{ ...card, borderColor: miss.length ? 'rgba(248,113,113,.5)' : cmp && !same ? 'rgba(251,191,36,.55)' : 'rgba(74,222,128,.45)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, fontSize: 15, fontWeight: 900, color: '#f1f5f9' }}>{title(d)} {d.yearFrom ? years(d) : ''}</div>
+          {status}
+          {miss.length > 0 ? <span style={{ fontSize: 12, fontWeight: 900, color: '#fca5a5' }}>Needs: {miss.join(', ')}</span> : null}
           <button disabled={busy} title="Leave this one out" onClick={() => setDrafts(ds => ds.filter(x => x._key !== d._key))} style={{ ...btn('248,113,113', false), padding: '5px 10px' }}>✕</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr 0.8fr 0.8fr', gap: 8 }}>
@@ -205,7 +238,8 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
               <span style={{ fontSize: 11.5, fontWeight: 800, color: need[k] ? '#fca5a5' : '#94a3b8' }}>{l}</span>
               <input value={d[k] == null ? '' : d[k]} onChange={setF(k)} inputMode={k.startsWith('year') ? 'numeric' : undefined} disabled={busy}
                 placeholder={k === 'model' ? 'e.g. PALISADE' : k.startsWith('year') ? 'e.g. 2026' : ''}
-                style={{ ...inputStyle, ...red(need[k]) }} />
+                style={{ ...inputStyle, ...(cmp && k in cmp.header ? amber : null), ...red(need[k]) }} />
+              {cmp && k in cmp.header && wasNote(cmp.header[k] || '(blank)')}
             </label>
           ))}
         </div>
@@ -213,21 +247,41 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
           <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto', minWidth: 760 }}>
             <thead><tr><th style={th}>Fluid</th><th style={th}>Engine</th><th style={th}>Capacity</th><th style={th}>Spec</th><th style={th}>Part #</th><th style={th}>Note</th><th style={th} /></tr></thead>
             <tbody>
-              {d.fluids.map((f, j) => (
-                <tr key={j}>
+              {d.fluids.map((f, j) => {
+                const ch = cmp && cmp.changed[j];
+                const isNew = cmp && cmp.added.includes(j);
+                return (
+                <tr key={j} style={isNew ? { boxShadow: 'inset 3px 0 0 #a78bfa' } : undefined}>
                   {['fluid', 'engine', 'volume', 'spec', 'partNumber', 'note'].map(k => (
                     <td key={k} style={{ ...td, padding: 4 }}>
-                      <input value={f[k] || ''} onChange={setRow(j, k)} disabled={busy} placeholder={k === 'engine' ? 'All' : ''} style={{ ...cell, ...(k === 'fluid' || k === 'volume' ? red(!f[k]) : null) }} />
+                      <input value={f[k] || ''} onChange={setRow(j, k)} disabled={busy} placeholder={k === 'engine' ? 'All' : ''} title={ch && k in ch ? `On file: ${ch[k]}` : undefined}
+                        style={{ ...cell, ...(ch && k in ch ? amber : null), ...(k === 'fluid' || k === 'volume' ? red(!f[k]) : null) }} />
+                      {ch && k in ch && wasNote(ch[k])}
+                      {isNew && k === 'fluid' && <div style={{ fontSize: 10.5, color: '#c4b5fd', marginTop: 2 }}>new line — not on file</div>}
                     </td>
                   ))}
                   <td style={{ ...td, padding: 4 }}>
                     <button disabled={busy} title="Remove this line" onClick={() => setDraft(d._key, x => ({ ...x, fluids: x.fluids.filter((_, n) => n !== j) }))} style={{ ...btn('248,113,113', false), padding: '4px 8px' }}>✕</button>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
+        {cmp && cmp.missing.length > 0 && (
+          <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(248,113,113,.08)', border: '1px solid rgba(248,113,113,.4)' }}>
+            <div style={{ fontSize: 12.5, fontWeight: 900, color: '#fca5a5' }}>On file but not in this reading — saving would drop {cmp.missing.length === 1 ? 'it' : 'them'} unless you keep {cmp.missing.length === 1 ? 'it' : 'them'}:</div>
+            <div style={{ display: 'grid', gap: 4, marginTop: 6 }}>
+              {cmp.missing.map((g, n) => (
+                <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#e2e8f0' }}>
+                  <span style={{ flex: 1 }}><b>{g.fluid}</b>{g.engine ? ` · ${g.engine}` : ''} · {g.volume} · {g.spec}{g.partNumber ? ` · ${g.partNumber}` : ''}</span>
+                  <button disabled={busy} onClick={() => setDraft(d._key, x => ({ ...x, fluids: [...x.fluids, { ...EMPTY_FLUID(), ...g }] }))} style={{ ...btn('74,222,128'), padding: '3px 10px', fontSize: 12 }}>↩ Keep</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <button disabled={busy} onClick={() => setDraft(d._key, x => ({ ...x, fluids: [...x.fluids, EMPTY_FLUID()] }))} style={{ ...btn('96,165,250'), marginTop: 8, padding: '6px 12px' }}>＋ Add a line</button>
       </div>
     );
@@ -316,11 +370,21 @@ export default function OilCapacity({ currentUser, onBack, backLabel = '← Back
                 <>
                   {drafts.map(draftCard)}
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <button disabled={!allReady || busy} onClick={saveDrafts} style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px', opacity: allReady ? 1 : 0.55 }}>
-                      {busy ? 'Saving…' : `✓ Save ${drafts.length} vehicle${drafts.length === 1 ? '' : 's'}`}
-                    </button>
-                    <button disabled={busy} onClick={() => { setDrafts(null); setMsg(''); }} style={btn('148,163,184', false)}>Cancel</button>
-                    {!allReady && <span style={{ fontSize: 12.5, color: '#fca5a5', fontWeight: 800 }}>Fill in everything marked red first.</span>}
+                    {toSave.length === 0 ? (
+                      <>
+                        <span style={{ fontSize: 15, fontWeight: 900, color: '#86efac' }}>✅ No changes needed — nothing to save.</span>
+                        <button onClick={() => { setDrafts(null); setOpenSame({}); }} style={{ ...btn('74,222,128'), padding: '9px 18px' }}>Done</button>
+                      </>
+                    ) : (
+                      <>
+                        <button disabled={!allReady || busy} onClick={saveDrafts} style={{ ...btn('74,222,128'), fontSize: 15, padding: '11px 22px', opacity: allReady ? 1 : 0.55 }}>
+                          {busy ? 'Saving…' : `✓ Save ${toSave.length} vehicle${toSave.length === 1 ? '' : 's'}`}
+                        </button>
+                        <button disabled={busy} onClick={() => { setDrafts(null); setMsg(''); setOpenSame({}); }} style={btn('148,163,184', false)}>Cancel</button>
+                        {drafts.length > toSave.length && <span style={{ fontSize: 12.5, color: '#86efac', fontWeight: 800 }}>{drafts.length - toSave.length} unchanged — left as is.</span>}
+                        {!allReady && <span style={{ fontSize: 12.5, color: '#fca5a5', fontWeight: 800 }}>Fill in everything marked red first.</span>}
+                      </>
+                    )}
                   </div>
                 </>
               )}
