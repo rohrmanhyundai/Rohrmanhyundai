@@ -114,6 +114,15 @@ const NAV_BUTTONS = [
     prop: 'onBattery',
   },
   {
+    key: 'oilCapacity',
+    label: '🛢 Oil Capacity',
+    desc: 'Engine oil and fluid capacities, specs and part numbers by VIN or year and model',
+    bg: 'linear-gradient(135deg,rgba(251,191,36,.25),rgba(217,119,6,.15))',
+    border: 'rgba(251,191,36,.5)',
+    color: '#fcd34d',
+    prop: 'onOilCapacity',
+  },
+  {
     key: 'globalMessage',
     adminOnly: true,
     label: '📣 Global Message',
@@ -129,9 +138,9 @@ const NAV_BUTTONS = [
 export default function PartsHub({
   currentUser, currentUserDisplay, currentRole, userPages,
   onBack, onAftermarketWarranty, onDocumentLibrary,
-  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery,
+  onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery, onOilCapacity,
 }) {
-  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery };
+  const handlers = { onAftermarketWarranty, onDocumentLibrary, onAdvisorCalendar, onWorkSchedule, onTireQuote, onWorkInProgress, onHotRepairs, onGoalForecast, onGlobalMessage, onShopAppointments, onChargeList, onBattery, onOilCapacity };
   const isMgr = currentRole === 'admin' || (currentRole || '').includes('manager');
   const allowed = b => (b.anyKeys || [b.key]).some(k => canSee(userPages, currentRole, k));
   const visible = NAV_BUTTONS.filter(b => allowed(b)

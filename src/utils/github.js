@@ -2541,6 +2541,18 @@ export async function updateLoanerMaintenance(mutate, what = 'update') {
     `Loaner maintenance ${what} ${new Date().toISOString()}`);
 }
 
+// ── Oil capacity / fluid specs (🛢 Oil Capacity page) ──────────────────────────
+// public/data/fluid-specs.json → { updatedAt, vehicles: [...] } — see utils/fluidSpecs.
+export async function loadFluidSpecs() {
+  try { const d = await loadGithubFile('data/fluid-specs.json'); if (d && Array.isArray(d.vehicles)) return d; } catch {}
+  return { vehicles: [] };
+}
+export async function updateFluidSpecs(mutate, what = 'update') {
+  return mutateGitHubJson('public/data/fluid-specs.json',
+    (cur) => mutate(cur && Array.isArray(cur.vehicles) ? cur : { vehicles: [] }),
+    `Fluid specs ${what} ${new Date().toISOString()}`);
+}
+
 // ── Loaner quick media (phone 📤 Add media → Service Loaner 📸 Media) ─────────
 // public/data/service-loaner/quick-media.json → { items: [{ id, note, by, at,
 //   files: [{ url, name, type, kind, size }] }] } — kept 72 hours (utils/quickMedia).

@@ -26,6 +26,7 @@ const PAGE_LABELS = {
   'ro-upload': 'RO Upload',
   'charge-account-list': 'Charge Account List',
   'battery-guide': 'Battery',
+  'oil-capacity': 'Oil Capacity',
   'employee-review': 'Employee Review',
   'tech-self-review': 'Tech Self-Review',
   'original-owner': 'Original Owner Affidavit',

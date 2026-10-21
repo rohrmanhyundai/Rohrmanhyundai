@@ -61,6 +61,7 @@ import TechReview from './components/TechReview';
 import AdvisorReview from './components/AdvisorReview';
 import ChargeAccountList from './components/ChargeAccountList';
 import BatteryGuide from './components/BatteryGuide';
+import OilCapacity from './components/OilCapacity';
 import { recalcTech, recalcAdvisorSummary, roh50Goals } from './utils/calculations';
 import { userDisplayName } from './utils/userDisplay';
 
@@ -229,6 +230,7 @@ export default function App() {
     histReports:      { page: 'mgr-performance-reports', tab: 'backfill' },
     chargeAccounts:   { page: 'charge-account-list' },
     batteryGuide:     { page: 'battery-guide' },
+    oilCapacity:      { page: 'oil-capacity' },
     hotRepairs:       { page: 'hot-repairs' },
     warrantyContacts: { page: 'aftermarket-warranty', tab: 'contacts' },
     documents:        { page: 'document-library' },
@@ -1481,6 +1483,7 @@ export default function App() {
         onShopAppointments={canAccess('shopAppointments') ? () => goTo('shop-appointments', 'parts-hub') : undefined}
         onChargeList={canAccess('chargeAccountList') ? () => goTo('charge-account-list', 'parts-hub') : undefined}
         onBattery={canAccess('batteryGuide') ? () => goTo('battery-guide', 'parts-hub') : undefined}
+        onOilCapacity={canAccess('oilCapacity') ? () => goTo('oil-capacity', 'parts-hub') : undefined}
       />
     );
   }
@@ -1856,6 +1859,18 @@ export default function App() {
       <RepairOrderDatabase
         currentUser={currentUser.toUpperCase()}
         onBack={() => navTo(prevPage || 'manager-hub')}
+      />
+    );
+  }
+
+  if (page === 'oil-capacity') {
+    if (!canAccess('oilCapacity')) { setPage('dashboard'); return null; }
+    return (
+      <OilCapacity
+        currentUser={currentUser.toUpperCase()}
+        initialTab={launched ? 'settings' : undefined}
+        onBack={launched ? backToUploads : () => setPage(prevPage || 'dashboard')}
+        backLabel={launched ? UP : (BACK_LABELS[prevPage] || '← Back')}
       />
     );
   }
