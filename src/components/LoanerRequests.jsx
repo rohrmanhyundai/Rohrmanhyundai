@@ -23,7 +23,7 @@ const todayIso = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
-const EMPTY = () => ({ firstName: '', lastName: '', vin: '', advisor: '', date: '', time: '', notes: '' });
+const EMPTY = () => ({ firstName: '', lastName: '', vin: '', advisor: '', date: '', time: '', notes: '', warranty: false });
 const fmtDate = (d) => {
   const m = String(d || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return '';
@@ -73,6 +73,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
       id: `lr-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
       firstName: nameCase(draft.firstName), lastName: nameCase(draft.lastName), vin,
       advisor: draft.advisor, date: draft.date, time: draft.time, notes: draft.notes.trim(),
+      ...(draft.warranty ? { warranty: true } : {}),
       requestedAt: new Date().toISOString(), requestedBy: currentUser,
     };
     setBusy(true); setStatus('Saving…');
@@ -96,7 +97,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
     const entry = {
       id: `gm-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
       from: currentUser, to,
-      text: `🚙 Advisor ${rec.advisor} is setting a rental appointment for ${fmtDate(rec.date)} at ${fmtTime(rec.time)} — ${rec.firstName} ${rec.lastName}${rec.notes ? ` (${rec.notes})` : ''}.`,
+      text: `🚙 Advisor ${rec.advisor} is setting a ${rec.warranty ? '🛡 WARRANTY REPAIR ' : ''}rental appointment for ${fmtDate(rec.date)} at ${fmtTime(rec.time)} — ${rec.firstName} ${rec.lastName}${rec.notes ? ` (${rec.notes})` : ''}.`,
       alert: false, requireReply: false, replies: [], timestamp: Date.now(),
     };
     try {
@@ -132,6 +133,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
       <td style={{ ...td, fontWeight: 900, color: old ? '#94a3b8' : '#fde68a' }}>{fmtDate(r.date)}<span style={{ color: '#e2e8f0', marginLeft: 8 }}>{fmtTime(r.time)}</span></td>
       <td style={{ ...td, fontWeight: 800 }}>
         {r.firstName} {r.lastName}
+        {r.warranty && <span style={{ display: 'inline-block', marginLeft: 8, padding: '1px 8px', borderRadius: 999, fontSize: 11, fontWeight: 900, color: '#fdba74', background: 'rgba(251,146,60,.15)', border: '1px solid rgba(251,146,60,.55)', verticalAlign: 'middle' }}>🛡 WARRANTY</span>}
         {r.notes && <div title={r.notes} style={{ fontSize: 12, fontWeight: 600, color: '#fde68a', marginTop: 3, maxWidth: 320, whiteSpace: 'normal' }}>📝 {r.notes}</div>}
       </td>
       <td style={{ ...td, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 13 }}>{r.vin}</td>
@@ -214,10 +216,10 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
                   {list.length > 0 && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 2, alignItems: 'stretch', width: '100%' }}>
                       {list.slice(0, 4).map(r => (
-                        <span key={r.id} title={`${fmtTime(r.time)} — ${r.firstName} ${r.lastName} (${r.advisor})${r.notes ? ` · ${r.notes}` : ''}`}
-                          style={{ fontSize: 10.5, fontWeight: 800, color: '#bfdbfe', background: 'rgba(59,130,246,.28)', border: '1px solid rgba(147,197,253,.55)',
+                        <span key={r.id} title={`${fmtTime(r.time)} — ${r.firstName} ${r.lastName} (${r.advisor})${r.warranty ? ' · WARRANTY REPAIR' : ''}${r.notes ? ` · ${r.notes}` : ''}`}
+                          style={{ fontSize: 10.5, fontWeight: 800, color: r.warranty ? '#fed7aa' : '#bfdbfe', background: r.warranty ? 'rgba(251,146,60,.25)' : 'rgba(59,130,246,.28)', border: `1px solid ${r.warranty ? 'rgba(251,146,60,.6)' : 'rgba(147,197,253,.55)'}`,
                             borderRadius: 5, padding: '2px 6px', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          🚙 {fmtTime(r.time)} {r.lastName} · {r.advisor}
+                          {r.warranty ? '🛡' : '🚙'} {fmtTime(r.time)} {r.lastName} · {r.advisor}
                         </span>
                       ))}
                       {list.length > 4 && <span style={{ fontSize: 10.5, fontWeight: 800, color: '#dbe8ff' }}>+{list.length - 4} more</span>}
@@ -256,7 +258,7 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
             {dayList.length > 0 && (
               <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 10, background: 'rgba(59,130,246,.1)', border: '1px solid rgba(147,197,253,.3)', fontSize: 12.5, color: '#bfdbfe', lineHeight: 1.6 }}>
                 <b>Already requested this day:</b>
-                {dayList.map(r => <div key={r.id}>🚙 {fmtTime(r.time)} — {r.firstName} {r.lastName} ({r.advisor})</div>)}
+                {dayList.map(r => <div key={r.id}>{r.warranty ? '🛡' : '🚙'} {fmtTime(r.time)} — {r.firstName} {r.lastName} ({r.advisor}){r.warranty ? ' · warranty repair' : ''}</div>)}
               </div>
             )}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
@@ -281,6 +283,15 @@ export default function LoanerRequests({ currentUser, isManager, advisors = [], 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 14 }}>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Date loaner needed</span><input type="date" min={today} value={draft.date} onChange={set('date')} disabled={busy} style={inputStyle} /></label>
               <label style={{ display: 'grid', gap: 4 }}><span style={label}>Time</span><input type="time" value={draft.time} onChange={set('time')} disabled={busy} style={inputStyle} /></label>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <button type="button" disabled={busy} onClick={() => setDraft(d => ({ ...d, warranty: !d.warranty }))}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 10, fontSize: 14.5, fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
+                    color: draft.warranty ? '#fed7aa' : '#94a3b8', background: draft.warranty ? 'rgba(251,146,60,.2)' : 'rgba(255,255,255,.04)', border: `1px solid ${draft.warranty ? 'rgba(251,146,60,.75)' : 'rgba(148,163,184,.35)'}`,
+                    boxShadow: draft.warranty ? '0 0 14px rgba(251,146,60,.35)' : 'none' }}>
+                  <span style={{ width: 18, height: 18, borderRadius: 5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, background: draft.warranty ? '#fb923c' : 'transparent', color: '#1a0f05', border: `2px solid ${draft.warranty ? '#fb923c' : 'rgba(148,163,184,.6)'}` }}>{draft.warranty ? '✓' : ''}</span>
+                  🛡 Warranty repair
+                </button>
+              </div>
               <label style={{ display: 'grid', gap: 4, gridColumn: '1 / -1' }}><span style={label}>Notes (optional)</span><input value={draft.notes} onChange={set('notes')} disabled={busy} placeholder="How many days… special needs… model of car…" style={{ ...inputStyle, fontWeight: 600 }} /></label>
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 14, alignItems: 'center', flexWrap: 'wrap' }}>
