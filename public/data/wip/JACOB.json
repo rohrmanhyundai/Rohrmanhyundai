@@ -62,21 +62,5 @@
     "partsArrivedDate": "",
     "highPriority": false,
     "advisor": "CORY CHAPMAN"
-  },
-  {
-    "id": "mvfqmdtbagby",
-    "ro": "781671",
-    "roDate": "2026-10-19",
-    "vehicle": "2023 Hyundai Kona",
-    "jobDesc": "USED CAR INSPECTION",
-    "notes": "",
-    "flag": "green",
-    "usedCar": true,
-    "etaParts": "",
-    "etaCompletion": "",
-    "partsArrived": null,
-    "partsArrivedDate": "",
-    "highPriority": false,
-    "advisor": "CORY CHAPMAN"
   }
 ]
