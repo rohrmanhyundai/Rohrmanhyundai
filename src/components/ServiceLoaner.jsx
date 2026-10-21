@@ -116,6 +116,14 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   // Badge on the Loaner Maintenance tab: loaners with an open request or due by
   // mileage. Re-read on every tab switch so it follows what was just done there.
   const [maint, setMaint] = useState(null);
+  // Badge on Loaner Request: requests for today or later (same re-read rule).
+  const [loanerReqs, setLoanerReqs] = useState([]);
+  useEffect(() => { ((io || github).loadLoanerRequests)().then(d => setLoanerReqs(d.requests || [])).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  const upcomingReqs = useMemo(() => {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return loanerReqs.filter(r => String(r.date || '') >= today).length;
+  }, [loanerReqs]);
   useEffect(() => { ((io || github).loadLoanerMaintenance)().then(setMaint).catch(() => {}); }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
   const maintCount = useMemo(() => {
     if (!maint) return 0;
@@ -484,7 +492,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
   const tabBtn = (k, label, badge = 0) => (
     <button onClick={() => { setTab(k); setMaintPrefill(null); cancelEdit(); }} style={{ position: 'relative', ...btn(k === 'upload' ? '74,222,128' : k === 'requests' ? '251,191,36' : k === 'maintenance' ? '251,146,60' : k === 'inventory' ? '45,212,191' : k === 'blacklist' ? '248,113,113' : '110,231,249', tab === k), fontSize: 14, padding: '9px 18px' }}>{label}
       {badge > 0 && (
-        <span title={k === 'list' ? `${badge} signed contract${badge === 1 ? '' : 's'} not uploaded` : `${badge} loaner${badge === 1 ? '' : 's'} need maintenance`} className="sl-tab-badge"
+        <span title={k === 'list' ? `${badge} signed contract${badge === 1 ? '' : 's'} not uploaded` : k === 'requests' ? `${badge} upcoming loaner request${badge === 1 ? '' : 's'}` : `${badge} loaner${badge === 1 ? '' : 's'} need maintenance`} className="sl-tab-badge"
           style={{ position: 'absolute', top: -8, right: -8, minWidth: 22, height: 22, padding: '0 6px', boxSizing: 'border-box', borderRadius: 999, background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 900, lineHeight: '22px', textAlign: 'center', border: '2px solid #0b1120', boxShadow: '0 0 10px rgba(239,68,68,.7)', animation: 'slBadgePulse 2s ease-in-out infinite' }}>
           {badge}
         </span>
@@ -502,7 +510,7 @@ export default function ServiceLoaner({ currentUser, currentRole, advisors = [],
         <button className="secondary" onClick={onBack}>{backLabel}</button>
       </div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 40px 0', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center' }}>
-        {tabBtn('requests', '🙋 Loaner Request')}
+        {tabBtn('requests', '🙋 Loaner Request', upcomingReqs)}
         {/* Bubble = contracts showing "⚠ Signed contract not uploaded" */}
         {tabBtn('list', `📋 Contracts (${contracts.length})`, contracts.filter(c => !c.fileUrl && !c.completedUrl).length)}
         {tabBtn('inventory', '🚙 Loaner Inventory')}
