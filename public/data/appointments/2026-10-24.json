@@ -1,0 +1,360 @@
+{
+  "date": "2026-10-24",
+  "uploadedAt": "2026-10-21T11:05:04.021Z",
+  "uploadedBy": "Shawn",
+  "appts": [
+    {
+      "apptNo": "43553",
+      "time": "8:00 AM",
+      "customer": "Ryan Watson",
+      "vehicle": "2017 Hyundai Elantra",
+      "services": [
+        "JUST NEEDS A MPI"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Fri Oct 9 2026 8:18 AM",
+      "deferred": {
+        "ro": "769951",
+        "date": "2025-07-24",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 429.95,
+        "hours": 1.5,
+        "phone": "7652021214",
+        "vin": "5NPD84LF1HH040832",
+        "items": [
+          {
+            "code": "TUNEUP",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT",
+            "count": 1,
+            "h": 1.5,
+            "price": 429.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43752",
+      "time": "8:40 AM",
+      "customer": "Barry Siddall",
+      "vehicle": "2026 Hyundai Santa Fe Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Fri Oct 16 2026 8:50 PM"
+    },
+    {
+      "apptNo": "43131",
+      "time": "9:00 AM",
+      "customer": "Marc Ream",
+      "vehicle": "2024 Hyundai Palisade",
+      "services": [
+        "CABIN AIR FILTER",
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)",
+        "283 R 1ST/2ND ROW SEAT BELT BUCKLE(25-01-085H)"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "JORDAN TROXEL",
+      "advisor": "JORDAN",
+      "source": "BDC Scheduling",
+      "createdAt": "Wed Sep 23 2026 1:03 PM",
+      "deferred": {
+        "ro": "779344",
+        "date": "2026-07-21",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 1502.45,
+        "hours": 4,
+        "phone": "7654127282",
+        "vin": "KM8R7DGE7RU650411",
+        "items": [
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 106.98,
+            "priceEst": false
+          },
+          {
+            "code": "REC",
+            "desc": "",
+            "count": 1,
+            "h": 0.2,
+            "est": true,
+            "price": 550.54,
+            "priceEst": true
+          },
+          {
+            "code": "TUNEUPV6",
+            "desc": "TUNE UP WITH SPARK PLUGS AND PCV REPLACEMENT ON V6 ENGINE",
+            "count": 1,
+            "h": 3.5,
+            "price": 844.93,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43608",
+      "time": "9:20 AM",
+      "customer": "Nicole Anderson",
+      "vehicle": "2021 Hyundai Tucson",
+      "services": [
+        "TRANSMISSION FLUID EXCHANGE"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "DAVID RILEY",
+      "advisor": "DAVID",
+      "source": "BDC Scheduling",
+      "createdAt": "Mon Oct 12 2026 3:23 PM"
+    },
+    {
+      "apptNo": "43806",
+      "time": "10:00 AM",
+      "customer": "Isaac Chang",
+      "vehicle": "2024 Hyundai Kona",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Mon Oct 19 2026 3:06 PM",
+      "deferred": {
+        "ro": "776190",
+        "date": "2026-03-25",
+        "advisorFull": "JORDAN TROXEL",
+        "advisor": "JORDAN",
+        "amount": 498.75,
+        "hours": 0.9,
+        "phone": "3475007290",
+        "vin": "KM8HCCAB5RU062300",
+        "items": [
+          {
+            "code": "RWIPER",
+            "desc": "INSTALL NEW REAR WIPER BLADE",
+            "count": 1,
+            "h": 0.1,
+            "price": 55.82,
+            "priceEst": false
+          },
+          {
+            "code": "WIPER",
+            "desc": "INSTALL NEW FRONT WIPER BLADES",
+            "count": 1,
+            "h": 0.1,
+            "price": 86.46,
+            "priceEst": false
+          },
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 133.68,
+            "priceEst": false
+          },
+          {
+            "code": "VVACLEAN",
+            "desc": "AC EVAP SERVICE",
+            "count": 1,
+            "h": 0.3,
+            "price": 153.8,
+            "priceEst": false
+          },
+          {
+            "code": "AIRFILTER",
+            "desc": "REPLACE ENGINE AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 68.99,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43850",
+      "time": "10:40 AM",
+      "customer": "Ashley Beazer",
+      "vehicle": "2025 Hyundai Tucson Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Tue Oct 20 2026 3:44 PM",
+      "deferred": {
+        "ro": "777712",
+        "date": "2026-05-21",
+        "advisorFull": "PARKER OVERMAN",
+        "advisor": "PARKER",
+        "amount": 302.98,
+        "hours": 1.1,
+        "phone": "4357751475",
+        "vin": "KM8JCDD15SU314739",
+        "items": [
+          {
+            "code": "CABIN",
+            "desc": "REPLACE CABIN AIR FILTER",
+            "count": 1,
+            "h": 0.2,
+            "price": 96.16,
+            "priceEst": false
+          },
+          {
+            "code": "VVIFL",
+            "desc": "FUEL INJECTION SERVICE",
+            "count": 1,
+            "h": 0.8,
+            "price": 206.82,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43204",
+      "time": "11:20 AM",
+      "customer": "Maria Otero Iregui",
+      "vehicle": "2023 Hyundai Tucson",
+      "services": [
+        "ROHRMAN EXCLUSIVE – $50 Oil & Filter Change (taxes and fees extra)"
+      ],
+      "comments": "",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Fri Sep 25 2026 3:40 PM"
+    },
+    {
+      "apptNo": "43856",
+      "time": "12:00 PM",
+      "customer": "Braden Denny",
+      "vehicle": "2026 Hyundai Tucson Hybrid",
+      "services": [
+        "PERFORM LOF ROTATION"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "BDC Scheduling",
+      "createdAt": "Tue Oct 20 2026 5:23 PM"
+    },
+    {
+      "apptNo": "43859",
+      "time": "12:20 PM",
+      "customer": "Lilly Gastineau",
+      "vehicle": "2022 Hyundai Tucson",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "I am needing my splash guard reattached on the passenger side, lost a clip :)",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Tue Oct 20 2026 9:24 PM"
+    },
+    {
+      "apptNo": "43776",
+      "time": "12:40 PM",
+      "customer": "Kevin Bree",
+      "vehicle": "2025 Hyundai Tucson Hybrid",
+      "services": [
+        "Oil & Filter change with Tire Rotation"
+      ],
+      "comments": "",
+      "transport": "SELF",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Consumer Scheduling",
+      "createdAt": "Sun Oct 18 2026 3:39 PM",
+      "deferred": {
+        "ro": "778656",
+        "date": "2026-06-24",
+        "advisorFull": "DAVID RILEY",
+        "advisor": "DAVID",
+        "amount": 174.9,
+        "hours": 1.4,
+        "phone": "8125840757",
+        "vin": "KM8JEDD11SU376990",
+        "items": [
+          {
+            "code": "ALIGN",
+            "desc": "WHEEL ALIGNMENT",
+            "count": 1,
+            "h": 1,
+            "price": 139.95,
+            "priceEst": false
+          },
+          {
+            "code": "ROTATE",
+            "desc": "TIRE ROTATION",
+            "count": 1,
+            "h": 0.4,
+            "price": 34.95,
+            "priceEst": false
+          }
+        ]
+      }
+    },
+    {
+      "apptNo": "43811",
+      "time": "2:00 PM",
+      "customer": "Daina Smith",
+      "vehicle": "2024 Hyundai Sonata",
+      "services": [
+        "$50 Oil Change (any make/model) — Still have warranty. Need new key fob, oil change, and tire pressure monitoring system replaced and driver side door panel checked as windows don&#39;t always work",
+        "Other (Please use comment box below) — Still have warranty. Need new key fob, oil change, and tire pressure monitoring system replaced and driver side door panel checked as windows don&#39;t always work"
+      ],
+      "comments": "Still have warranty. Need new key fob, oil change, and tire pressure monitoring system replaced and driver side door panel checked as windows don&#39;t always work",
+      "transport": "WAIT",
+      "advisorRaw": "Any Service Advisor",
+      "advisor": "",
+      "source": "Integration",
+      "createdAt": "Mon Oct 19 2026 4:16 PM"
+    }
+  ],
+  "claims": {
+    "43553": {
+      "advisor": "JORDAN",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-21T11:05:04.021Z"
+    },
+    "43776": {
+      "advisor": "DAVID",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-21T11:05:04.021Z"
+    },
+    "43806": {
+      "advisor": "JORDAN",
+      "by": "AUTO",
+      "reason": "deferred",
+      "at": "2026-10-21T11:05:04.021Z"
+    }
+  }
+}
